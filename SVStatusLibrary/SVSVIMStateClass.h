@@ -45,6 +45,11 @@ constexpr DWORD SV_STATE_STOP			= 0x00000800;
 constexpr DWORD SV_STATE_MODIFIED		= 0x00000001;
 constexpr DWORD SV_STATE_REMOTE_CMD		= 0x00000002;
 
+constexpr DWORD SV_DEFAULT_NOT_ALLOWED_STATES = 
+SV_STATE_UNAVAILABLE | SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING | SV_STATE_EDITING |
+SV_STATE_CANCELING | SV_STATE_INTERNAL_RUN | SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_REMOTE_CMD;
+
+
 typedef std::function<void(SvPb::NotifyType, const _variant_t&)> NotifyFunctor;
 
 //This class manages the state variable and uses a lock to 
@@ -109,6 +114,8 @@ public:
 	//the internal value and outputs in the result parameter 
 	//whether there is at least one bit (state) matching.
 	static bool CheckState( DWORD dwState );
+
+	static HRESULT CheckNotAllowedState(DWORD States = SV_DEFAULT_NOT_ALLOWED_STATES);
 
 	/// This method do RemoveState and CheckState at once to avoid to send two notification
 	/// \param addStates [in] States which should be added.

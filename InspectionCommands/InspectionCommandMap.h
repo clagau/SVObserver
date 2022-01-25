@@ -19,9 +19,10 @@ namespace  SvCmd
 	using ThreadPrefFktPtr = ThreadPref(*)();
 	using  TimeoutFktPtr = std::chrono::seconds(*)();
 	using  ExecuteFktPtr = SvPb::InspectionCmdResponse(*)(const SvPb::InspectionCmdRequest& rRequest);
-	enum FunctionPtrSelect { ThFkt = 0, TiFkt = 1, ExFkt = 2 };
+	using ForbiddenStateFktPtr = DWORD(*) ();
+	enum FunctionPtrSelect { ThFkt = 0, TiFkt = 1, ExFkt = 2, FoSFkt=3 };
 
-	using FktPtrs = std::tuple< ThreadPrefFktPtr, TimeoutFktPtr, ExecuteFktPtr>;
+	using FktPtrs = std::tuple< ThreadPrefFktPtr, TimeoutFktPtr, ExecuteFktPtr, ForbiddenStateFktPtr>;
 	extern std::map<DWORD, FktPtrs > InspectionCommandMap;
 
 }

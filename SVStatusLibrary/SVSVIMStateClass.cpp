@@ -13,6 +13,10 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
+#include "Definitions/StringTypeDef.h"	
+#include "SVUtilityLibrary/StringHelper.h"
+#include "MessageManager.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 std::atomic_long SVSVIMStateClass::m_SVIMState{SV_STATE_AVAILABLE};
@@ -206,4 +210,19 @@ std::string  SVSVIMStateClass::GetHash()
 	std::lock_guard<std::mutex> lockGuard(m_protectHash);
 	std::string result(m_hash);
 	return result;
+}
+
+HRESULT SVSVIMStateClass::CheckNotAllowedState(DWORD States /*=SV_DefaultNotAllowedStates*/)
+{
+
+	bool accessDenied = SVSVIMStateClass::CheckState(States);
+	if (accessDenied)
+	{
+		SvDef::StringVector msgList;
+		msgList.emplace_back(std::move(SvUl::Format(_T("0X%X"), SVSVIMStateClass::GetState())));
+		msgList.emplace_back(std::move(SvUl::Format(_T("0X%X"), States)));
+		SvStl::MessageManager message(SvStl::MsgType::Log);
+		message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVRC_AccessDenied, msgList, SvStl::SourceFileParams(StdMessageParams));
+	}
+	return  accessDenied ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 }

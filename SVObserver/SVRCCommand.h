@@ -15,6 +15,7 @@
 #include "SVStorageResult.h"
 #pragma endregion Includes
 
+
 struct SVStorageResult;
 
 class SVRCCommand 
@@ -63,8 +64,9 @@ public:
 		SvRpc::Observer<SvPb::GetMessageStreamResponse>& rObserver,
 		SvRpc::ServerStreamContext::Ptr ctx);
 
+	
 private:
-	HRESULT CheckState(DWORD additionalStates=0) const;
+
 	std::string GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension = std::string()) const;
 	HRESULT ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const;
 	HRESULT ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const;

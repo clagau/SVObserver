@@ -68,7 +68,8 @@ void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<S
 
 void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState() };
+	
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 
 	if (S_OK == result)
 	{
@@ -134,7 +135,7 @@ void SVRCCommand::GetState(const SvPb::GetStateRequest&, SvRpc::Task<SvPb::GetSt
 
 void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<SvPb::GetConfigResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetConfigResponse Response;
 
 	if (S_OK == result)
@@ -203,7 +204,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
 
 	// Check if we are in an allowed state first
@@ -258,7 +259,7 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 
 void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Task<SvPb::GetOfflineCountResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetOfflineCountResponse Response;
 
 	if (S_OK == result)
@@ -272,7 +273,7 @@ void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Ta
 
 void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES |SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result && SVSVIMStateClass::CheckState(SV_STATE_READY))
@@ -304,7 +305,7 @@ void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rR
 
 void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest, SvRpc::Task<SvPb::GetProductFilterResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetProductFilterResponse Response;
 
 	if (S_OK == result)
@@ -347,7 +348,7 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 
 void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result)
@@ -385,7 +386,7 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 
 void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<SvPb::GetItemsResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetItemsResponse Response;
 
 	if (S_OK == result)
@@ -505,7 +506,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<SvPb::SetItemsResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::SetItemsResponse Response;
 
 	if (S_OK == result)
@@ -567,7 +568,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb::GetFileResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetFileResponse Response;
 
 	if (S_OK == result)
@@ -601,7 +602,7 @@ void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result)
@@ -646,7 +647,7 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rRequest, SvRpc::Task<SvPb::RegisterMonitorListResponse> task)
 {
-	HRESULT result{ CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
 	SvPb::RegisterMonitorListResponse Response;
 
 	if (S_OK == result)
@@ -699,7 +700,7 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 
 void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest&, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::NamesResponse Response;
 
 	if (S_OK == result)
@@ -724,7 +725,7 @@ void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest&, SvR
 
 void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result)
@@ -757,7 +758,7 @@ void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesRequest& rRequest, SvRpc::Task<SvPb::GetMonitorListPropertiesResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetMonitorListPropertiesResponse Response;
 
 	if (S_OK == result)
@@ -779,7 +780,7 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 
 void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest&, SvRpc::Task<SvPb::GetMaxRejectDepthResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetMaxRejectDepthResponse Response;
 
 	if (S_OK == result)
@@ -792,7 +793,7 @@ void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest&, SvRpc
 
 void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest&, SvRpc::Task<SvPb::GetConfigReportResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetConfigReportResponse Response;
 
 	if (S_OK == result)
@@ -813,7 +814,7 @@ void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest&, SvRpc::Ta
 
 void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest& rRequest, SvRpc::Task<SvPb::GetDataDefinitionListResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetDataDefinitionListResponse Response;
 
 	if (S_OK == result)
@@ -855,7 +856,7 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 
 void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::NamesResponse Response;
 
 	if(S_OK == result)
@@ -902,7 +903,7 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 
 void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest&, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::NamesResponse Response;
 
 	if (S_OK == result)
@@ -927,7 +928,7 @@ void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest
 
 void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState(SV_STATE_RUNNING) };
+	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES| SV_STATE_RUNNING) };
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result)
@@ -960,7 +961,7 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
 
 	// Check if we are in an allowed state first
@@ -992,7 +993,7 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 
 void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetObjectSelectorItemsResponse selectorResponse;
 
 	if (S_OK == result)
@@ -1023,9 +1024,9 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 
 void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rRequest, SvRpc::Task<SvPb::InspectionCmdResponse> task)
 {
-	HRESULT result{ CheckState() };
 	SvPb::InspectionCmdResponse response;
-
+	uint32_t inspectionID = rRequest.inspectionid();
+	HRESULT result = SvCmd::InspectionCommandsCheckState(rRequest, &response);
 	if (S_OK == result)
 	{
 		std::string deleteObjectName;
@@ -1039,9 +1040,7 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 				deleteObjectName = pObject->GetName();
 			}
 		}
-
-		uint32_t inspectionID = rRequest.inspectionid();
-
+		
 		{
 			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			SvCmd::InspectionCommands(inspectionID, rRequest, &response);
@@ -1103,7 +1102,7 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 
 void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&, SvRpc::Task<SvPb::GetConfigurationTreeResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::GetConfigurationTreeResponse response;
 
 	if (S_OK == result)
@@ -1147,7 +1146,7 @@ void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&,
 
 void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRpc::Task<SvPb::ConfigCommandResponse> task)
 {
-	HRESULT result{ CheckState() };
+	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::ConfigCommandResponse response;
 
 	if (S_OK == result)
@@ -1182,7 +1181,7 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 
 void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES  |SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
 
 	if (S_OK == result)
 	{
@@ -1240,7 +1239,7 @@ void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&,
 void SVRCCommand::SoftwareTrigger(const SvPb::SoftwareTriggerRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
 	DWORD checkAdditional = (0 < rRequest.period()) ? SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION : 0;
-	HRESULT result{ CheckState(checkAdditional) };
+	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES  | checkAdditional) };
 
 	if (S_OK == result)
 	{
@@ -1328,22 +1327,6 @@ void SVRCCommand::RegisterMessageStream(const SvPb::GetMessageStreamRequest& rRe
 	SVVisionProcessorHelper::Instance().RegisterMessageStream(rRequest, rObserver, ctx);
 }
 
-HRESULT SVRCCommand::CheckState(DWORD additionalStates /*=0*/) const
-{
-	constexpr DWORD cDefaultNotAllowedStates = SV_STATE_UNAVAILABLE | SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING | SV_STATE_EDITING |
-		SV_STATE_CANCELING | SV_STATE_INTERNAL_RUN | SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_REMOTE_CMD;
-
-	bool accessDenied = SVSVIMStateClass::CheckState(cDefaultNotAllowedStates | additionalStates);
-	if (accessDenied)
-	{
-		SvDef::StringVector msgList;
-		msgList.emplace_back(std::move(SvUl::Format(_T("0X%X"), SVSVIMStateClass::GetState())));
-		msgList.emplace_back(std::move(SvUl::Format(_T("0X%X"), cDefaultNotAllowedStates | additionalStates)));
-		SvStl::MessageManager message(SvStl::MsgType::Log);
-		message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVRC_AccessDenied, msgList, SvStl::SourceFileParams(StdMessageParams));
-	}
-	return  accessDenied  ? SVMSG_SVO_ACCESS_DENIED : S_OK;
-}
 
 std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/) const
 {

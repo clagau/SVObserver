@@ -18,7 +18,6 @@
 #include "SVObserverOuttakes.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVPPQObject.h"
-#include "SVRCCommand.h"
 #include "SVRCWebsocketServer.h"
 #include "SVToolSet.h"
 #include "SVUtilities.h"

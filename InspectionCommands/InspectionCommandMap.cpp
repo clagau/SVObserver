@@ -13,6 +13,7 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #include "CommandExternalHelper.h"
 #include "CommandFunction.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 
 
 #pragma endregion Includes
@@ -25,630 +26,710 @@ static char THIS_FILE[] = __FILE__;
 namespace SvCmd
 {
 
-	class CGetObjectId
+class CGetObjectId
+{
+public:
+	static DWORD GetMessageCase()
 	{
-	public:
-		static DWORD GetMessageCase()
-		{
-			return SvPb::InspectionCmdRequest::kGetObjectIdRequest;
-		}
-		static  ThreadPref  GetThreadPref()
-		{
-			return ThreadPref::cur;
-		};
-
-		static  std::chrono::seconds  GetTimout()
-		{
-			return std::chrono::seconds{ 1 };
-		}
-
-		static SvPb::InspectionCmdResponse Execute(const SvPb::InspectionCmdRequest& rRequest)
-		{
-			return getObjectId(rRequest.getobjectidrequest());
-		}
-
-		static FktPtrs GetFunctionPtrTupe()
-		{
-			return std::make_tuple(GetThreadPref, GetTimout, Execute);
-		}
-
+		return SvPb::InspectionCmdRequest::kGetObjectIdRequest;
+	}
+	static  ThreadPref  GetThreadPref()
+	{
+		return ThreadPref::cur;
 	};
 
-	class CInspectionRunOnce
+	static  std::chrono::seconds  GetTimout()
 	{
-	public:
-		static DWORD GetMessageCase()
-		{
-			return SvPb::InspectionCmdRequest::kInspectionRunOnceRequest;
-		}
-		static  ThreadPref  GetThreadPref()
-		{
-			return ThreadPref::inspection;
-		};
+		return std::chrono::seconds {1};
+	}
 
-		static  std::chrono::seconds  GetTimout()
-		{
-			return std::chrono::seconds{ 120 };
-		}
+	static SvPb::InspectionCmdResponse Execute(const SvPb::InspectionCmdRequest& rRequest)
+	{
+		return getObjectId(rRequest.getobjectidrequest());
+	}
 
-		static SvPb::InspectionCmdResponse Execute(const SvPb::InspectionCmdRequest& rRequest)
-		{
-			return InspectionRunOnce(rRequest.inspectionrunoncerequest());
-		}
+	static DWORD ForbiddenState()
+	{
+		return 0;
+	}
 
-		static FktPtrs GetFunctionPtrTupe()
-		{
-			return std::make_tuple(GetThreadPref, GetTimout, Execute);
-		}
+	static FktPtrs GetFunctionPtrTupel()
+	{
+		return std::make_tuple(GetThreadPref, GetTimout, Execute, ForbiddenState);
+	}
 
+};
+
+class CInspectionRunOnce
+{
+public:
+	static DWORD GetMessageCase()
+	{
+		return SvPb::InspectionCmdRequest::kInspectionRunOnceRequest;
+	}
+	static  ThreadPref  GetThreadPref()
+	{
+		return ThreadPref::inspection;
 	};
 
-
-	std::map<DWORD, FktPtrs > InspectionCommandMap =
+	static  std::chrono::seconds  GetTimout()
 	{
+		return std::chrono::seconds {120};
+	}
 
-		{CGetObjectId::GetMessageCase(),CGetObjectId::GetFunctionPtrTupe() },
-		{CInspectionRunOnce::GetMessageCase(),CInspectionRunOnce::GetFunctionPtrTupe() },
+	static SvPb::InspectionCmdResponse Execute(const SvPb::InspectionCmdRequest& rRequest)
+	{
+		return InspectionRunOnce(rRequest.inspectionrunoncerequest());
+	}
+	static DWORD ForbiddenState()
+	{
+		return SV_DEFAULT_NOT_ALLOWED_STATES;
+	}
+	static FktPtrs GetFunctionPtrTupel()
+	{
+		return std::make_tuple(GetThreadPref, GetTimout, Execute, ForbiddenState);
 
-		{SvPb::InspectionCmdRequest::kDeleteObjectRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  DeleteObject(rRequest.deleteobjectrequest()); }
-		)
-		},
+	}
 
-			{SvPb::InspectionCmdRequest::kGetMessageListRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  GetMessageList(rRequest.getmessagelistrequest()); }
-		)
-		},
-
-
-			{SvPb::InspectionCmdRequest::kResetObjectRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  ResetObject(rRequest.resetobjectrequest()); }
-		)
-		},
-
-		{SvPb::InspectionCmdRequest::kCreateModelRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  CreateModel(rRequest.createmodelrequest()); }
-		)
-		},
+};
 
 
-		{SvPb::InspectionCmdRequest::kGetObjectParametersRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectParameters(rRequest.getobjectparametersrequest()); }
-		)
-		},
+std::map<DWORD, FktPtrs > InspectionCommandMap =
+{
 
+	{CGetObjectId::GetMessageCase(),CGetObjectId::GetFunctionPtrTupel() },
+	{CInspectionRunOnce::GetMessageCase(),CInspectionRunOnce::GetFunctionPtrTupel() },
 
-
-		{SvPb::InspectionCmdRequest::kGetEquationRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  GetEquation(rRequest.getequationrequest()); }
-		)
-		},
-
-		{SvPb::InspectionCmdRequest::kValidateAndSetEquationRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  ValidateAndSetEquation(rRequest.validateandsetequationrequest()); }
-		)
-		},
-
-
-		{SvPb::InspectionCmdRequest::kGetObjectsForMonitorListRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectsForMonitorList(rRequest.getobjectsformonitorlistrequest()); }
-		)
-		},
-
-
-		{SvPb::InspectionCmdRequest::kMoveObjectRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  MoveObject(rRequest.moveobjectrequest()); }
-		)
-		},
-
-
-		{SvPb::InspectionCmdRequest::kTaskObjectListRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  GetTaskObjectsList(rRequest.taskobjectlistrequest()); }
-		)
-		},
-
-
-		{SvPb::InspectionCmdRequest::kGetImageRequest,
-		std::make_tuple(
-			[] {return ThreadPref::inspection; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  getImage(rRequest.getimagerequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kAreAuxiliaryExtentsAvailableRequest,
-		std::make_tuple(
+	{SvPb::InspectionCmdRequest::kDeleteObjectRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  areAuxiliaryExtentsAvailable(rRequest.areauxiliaryextentsavailablerequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  DeleteObject(rRequest.deleteobjectrequest()); },
+		[](){return  (SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION); }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kGetAvailableAuxImagesRequest,
-		std::make_tuple(
+
+		{SvPb::InspectionCmdRequest::kGetMessageListRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getAvailableAuxImages(rRequest.getavailableauximagesrequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  GetMessageList(rRequest.getmessagelistrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kGetAuxImageObjectRequest,
-		std::make_tuple(
+
+		{SvPb::InspectionCmdRequest::kResetObjectRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getAuxImageObject(rRequest.getauximageobjectrequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  ResetObject(rRequest.resetobjectrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
 
-		{ SvPb::InspectionCmdRequest::kSetAuxImageObjectRequest,
-		std::make_tuple(
+	)
+	},
+
+	{SvPb::InspectionCmdRequest::kCreateModelRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setAuxImageObject(rRequest.setauximageobjectrequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  CreateModel(rRequest.createmodelrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kGetInputsRequest,
-		std::make_tuple(
+
+	{SvPb::InspectionCmdRequest::kGetObjectParametersRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getInputs(rRequest.getinputsrequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectParameters(rRequest.getobjectparametersrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
 
-		{ SvPb::InspectionCmdRequest::kConnectToObjectRequest,
-		std::make_tuple(
+
+	{SvPb::InspectionCmdRequest::kGetEquationRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  connectToObject(rRequest.connecttoobjectrequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  GetEquation(rRequest.getequationrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kSaveImageRequest,
-		std::make_tuple(
+	{SvPb::InspectionCmdRequest::kValidateAndSetEquationRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  saveImage(rRequest.saveimagerequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  ValidateAndSetEquation(rRequest.validateandsetequationrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kSetObjectNameRequest,
-		std::make_tuple(
+
+	{SvPb::InspectionCmdRequest::kGetObjectsForMonitorListRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setObjectName(rRequest.setobjectnamerequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectsForMonitorList(rRequest.getobjectsformonitorlistrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kGetAvailableObjectsRequest,
-		std::make_tuple(
+
+	{SvPb::InspectionCmdRequest::kMoveObjectRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getAvailableObjects(rRequest.getavailableobjectsrequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  MoveObject(rRequest.moveobjectrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
 
-		{ SvPb::InspectionCmdRequest::kGetSpecialImageListRequest,
-		std::make_tuple(
+	{SvPb::InspectionCmdRequest::kTaskObjectListRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getSpecialImageList(rRequest.getspecialimagelistrequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  GetTaskObjectsList(rRequest.taskobjectlistrequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kExportMaskRequest,
-		std::make_tuple(
+
+	{SvPb::InspectionCmdRequest::kGetImageRequest,
+	std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  exportMask(rRequest.exportmaskrequest()); }
-		)
-		},
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getImage(rRequest.getimagerequest()); },
+		[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kImportMaskRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  importMask(rRequest.importmaskrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kAreAuxiliaryExtentsAvailableRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  areAuxiliaryExtentsAvailable(rRequest.areauxiliaryextentsavailablerequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-			/*{ SvPb::InspectionCmdRequest::kGetObjectIdRequest,
-			std::make_tuple(
-			[] {return ThreadPref::cur;; },
-			[] {return std::chrono::seconds{120}; } ,
-			[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectId(rRequest.getobjectidrequest()); }
-			)
-			},*/
+	{ SvPb::InspectionCmdRequest::kGetAvailableAuxImagesRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getAvailableAuxImages(rRequest.getavailableauximagesrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kCreateObjectRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  createObject(rRequest.createobjectrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kGetAuxImageObjectRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getAuxImageObject(rRequest.getauximageobjectrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kGetCreatableObjectsRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getCreatableObjects(rRequest.getcreatableobjectsrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kSetAuxImageObjectRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  setAuxImageObject(rRequest.setauximageobjectrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kShouldInspectionResetRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  shouldInspectionReset(rRequest.shouldinspectionresetrequest()); }
-		)
-		},
-
-
-		{ SvPb::InspectionCmdRequest::kGetPPQNameRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getPPQName(rRequest.getppqnamerequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetValueObjectEnumsRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getValueObjectEnums(rRequest.getvalueobjectenumsrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetEmbeddedValuesRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getEmbeddedValues(rRequest.getembeddedvaluesrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kSetEmbeddedValuesRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setEmbeddedValues(rRequest.setembeddedvaluesrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kValidateLinkedValueRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  validateLinkedValue(rRequest.validatelinkedvaluerequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetOutputRectangleRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getOutputRectangle(rRequest.getoutputrectanglerequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetToolSizeAdjustParameterRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getToolSizeAdjustParameter(rRequest.gettoolsizeadjustparameterrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetExtentParameterRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getExtentParameter(rRequest.getextentparameterrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kSetExtentParameterRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setExtentParameter(rRequest.setextentparameterrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kIsAllowedLocationRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  isAllowedLocation(rRequest.isallowedlocationrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kPropagateSizeAndPositionRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  propagateSizeAndPosition(rRequest.propagatesizeandpositionrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kUsePropagateSizeAndPositionRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  usePropagateSizeAndPosition(rRequest.usepropagatesizeandpositionrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetOverlayStructRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getOverlayStruct(rRequest.getoverlaystructrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetObjectSelectorItemsRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectSelectorItems(rRequest.getobjectselectoritemsrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kSetDefaultInputsRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setDefaultInputsRequest(rRequest.setdefaultinputsrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetBarCodeTypeInfosRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getBarCodeTypeInfos(rRequest.getbarcodetypeinfosrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kGetInputsRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getInputs(rRequest.getinputsrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
 
+	{ SvPb::InspectionCmdRequest::kConnectToObjectRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  connectToObject(rRequest.connecttoobjectrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kGetNormalizerValuesRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getNormalizerValues(rRequest.getnormalizervaluesrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kSaveImageRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  saveImage(rRequest.saveimagerequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kSetNormalizerRangesRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setNormalizerRanges(rRequest.setnormalizerrangesrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kSetObjectNameRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  setObjectName(rRequest.setobjectnamerequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kGetImageInfoRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getImageInfo(rRequest.getimageinforequest()); }
-		)
-		},
-
-
-		{ SvPb::InspectionCmdRequest::kGetBlobAnalyzerInfoRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getBlobAnalyzerInfo(rRequest.getblobanalyzerinforequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kComputeOverscanRectRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  computeOverscanRect(rRequest.computeoverscanrectrequest()); }
-		)
-		},
-
-		{ SvPb::InspectionCmdRequest::kGetFeaturesRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getFeatures(rRequest.getfeaturesrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kGetAvailableObjectsRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getAvailableObjects(rRequest.getavailableobjectsrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
 
-		{ SvPb::InspectionCmdRequest::kSetFeaturesRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setFeatures(rRequest.setfeaturesrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kGetSpecialImageListRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getSpecialImageList(rRequest.getspecialimagelistrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kGetAvailableFeaturesRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getAvailableFeatures(rRequest.getavailablefeaturesrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kExportMaskRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  exportMask(rRequest.exportmaskrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kInitializeExternalToolTaskRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  initializeExternalToolTask(rRequest.initializeexternaltooltaskrequest()); }
-		)
-		},
+	{ SvPb::InspectionCmdRequest::kImportMaskRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  importMask(rRequest.importmaskrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
-		{ SvPb::InspectionCmdRequest::kResetAllObjectsRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  resetAllObjects(rRequest.resetallobjectsrequest()); }
-		)
-		},
+	/*{ SvPb::InspectionCmdRequest::kGetObjectIdRequest,
+	std::make_tuple(
+	[] {return ThreadPref::cur;; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectId(rRequest.getobjectidrequest()); }
+	)
+	},*/
 
-		{ SvPb::InspectionCmdRequest::kClearDataExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  clearDataExternalTool(rRequest.cleardataexternaltoolrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kCreateObjectRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  createObject(rRequest.createobjectrequest()); },
+	[](){ return SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kSetAllAttributesExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setAllAttributesExternalTool(rRequest.setallattributesexternaltoolrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kGetCreatableObjectsRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getCreatableObjects(rRequest.getcreatableobjectsrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetInputValuesDefinitionExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getInputValuesDefinitionExternalTool(rRequest.getinputvaluesdefinitionexternaltoolrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kShouldInspectionResetRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  shouldInspectionReset(rRequest.shouldinspectionresetrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetPropTreeStateExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getPropTreeStateExternalTool(rRequest.getproptreestateexternaltoolrequest()); }
-		)
-		},
-		
-		{ SvPb::InspectionCmdRequest::kSetPropTreeStateExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setPropTreeStateExternalTool(rRequest.setproptreestateexternaltoolrequest()); }
-		)
-		},
 
-		{ SvPb::InspectionCmdRequest::kValidateValueParameterExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  validateValueParameterExternalTool(rRequest.validatevalueparameterexternaltoolrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kGetPPQNameRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getPPQName(rRequest.getppqnamerequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetDllMessageStringRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getDllMessageString(rRequest.getdllmessagestringrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kGetValueObjectEnumsRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getValueObjectEnums(rRequest.getvalueobjectenumsrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetResultValuesDefinitionExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getResultValuesDefinitionExternalTool(rRequest.getresultvaluesdefinitionexternaltoolrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kGetEmbeddedValuesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getEmbeddedValues(rRequest.getembeddedvaluesrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetTableResultsExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getTableResultsExternalTool(rRequest.gettableresultsexternaltoolrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kSetEmbeddedValuesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setEmbeddedValues(rRequest.setembeddedvaluesrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetResultRangeObjectRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getResultRangeObject(rRequest.getresultrangeobjectrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kValidateLinkedValueRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  validateLinkedValue(rRequest.validatelinkedvaluerequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetImageInfoExternalToolRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getImageInfoExternalTool(rRequest.getimageinfoexternaltoolrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kGetOutputRectangleRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getOutputRectangle(rRequest.getoutputrectanglerequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetToolsWithReplaceableSourceImageRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getToolsWithReplaceableSourceImage(rRequest.gettoolswithreplaceablesourceimagerequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kGetToolSizeAdjustParameterRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getToolSizeAdjustParameter(rRequest.gettoolsizeadjustparameterrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kSetAndSortEmbeddedValueRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{120}; } ,
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  setandSortEmbeddedValues(rRequest.setandsortembeddedvaluerequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kGetExtentParameterRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getExtentParameter(rRequest.getextentparameterrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetInvalidDependenciesRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getInvalidDependencies(rRequest.getinvaliddependenciesrequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kSetExtentParameterRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setExtentParameter(rRequest.setextentparameterrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-		{ SvPb::InspectionCmdRequest::kGetObjectNameRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectName(rRequest.getobjectnamerequest()); }
-		)
-		},
+{ SvPb::InspectionCmdRequest::kIsAllowedLocationRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  isAllowedLocation(rRequest.isallowedlocationrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 
-	};
+{ SvPb::InspectionCmdRequest::kPropagateSizeAndPositionRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  propagateSizeAndPosition(rRequest.propagatesizeandpositionrequest()); },
+	[](){ return DWORD(SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION); }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kUsePropagateSizeAndPositionRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  usePropagateSizeAndPosition(rRequest.usepropagatesizeandpositionrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetOverlayStructRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getOverlayStruct(rRequest.getoverlaystructrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetObjectSelectorItemsRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectSelectorItems(rRequest.getobjectselectoritemsrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kSetDefaultInputsRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setDefaultInputsRequest(rRequest.setdefaultinputsrequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetBarCodeTypeInfosRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getBarCodeTypeInfos(rRequest.getbarcodetypeinfosrequest()); }
+ ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+
+
+{ SvPb::InspectionCmdRequest::kGetNormalizerValuesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getNormalizerValues(rRequest.getnormalizervaluesrequest()); }
+ ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kSetNormalizerRangesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setNormalizerRanges(rRequest.setnormalizerrangesrequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetImageInfoRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getImageInfo(rRequest.getimageinforequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+
+{ SvPb::InspectionCmdRequest::kGetBlobAnalyzerInfoRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getBlobAnalyzerInfo(rRequest.getblobanalyzerinforequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kComputeOverscanRectRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  computeOverscanRect(rRequest.computeoverscanrectrequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetFeaturesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getFeatures(rRequest.getfeaturesrequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+
+{ SvPb::InspectionCmdRequest::kSetFeaturesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setFeatures(rRequest.setfeaturesrequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetAvailableFeaturesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getAvailableFeatures(rRequest.getavailablefeaturesrequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kInitializeExternalToolTaskRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  initializeExternalToolTask(rRequest.initializeexternaltooltaskrequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kResetAllObjectsRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  resetAllObjects(rRequest.resetallobjectsrequest()); } ,
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kClearDataExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  clearDataExternalTool(rRequest.cleardataexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kSetAllAttributesExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setAllAttributesExternalTool(rRequest.setallattributesexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetInputValuesDefinitionExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getInputValuesDefinitionExternalTool(rRequest.getinputvaluesdefinitionexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetPropTreeStateExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getPropTreeStateExternalTool(rRequest.getproptreestateexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kSetPropTreeStateExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setPropTreeStateExternalTool(rRequest.setproptreestateexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kValidateValueParameterExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  validateValueParameterExternalTool(rRequest.validatevalueparameterexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetDllMessageStringRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getDllMessageString(rRequest.getdllmessagestringrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetResultValuesDefinitionExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getResultValuesDefinitionExternalTool(rRequest.getresultvaluesdefinitionexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetTableResultsExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getTableResultsExternalTool(rRequest.gettableresultsexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetResultRangeObjectRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getResultRangeObject(rRequest.getresultrangeobjectrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetImageInfoExternalToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getImageInfoExternalTool(rRequest.getimageinfoexternaltoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetToolsWithReplaceableSourceImageRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getToolsWithReplaceableSourceImage(rRequest.gettoolswithreplaceablesourceimagerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kSetAndSortEmbeddedValueRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setandSortEmbeddedValues(rRequest.setandsortembeddedvaluerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetInvalidDependenciesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getInvalidDependencies(rRequest.getinvaliddependenciesrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{ SvPb::InspectionCmdRequest::kGetObjectNameRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{ 120 }; },
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectName(rRequest.getobjectnamerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+}
+
+};
 
 }
