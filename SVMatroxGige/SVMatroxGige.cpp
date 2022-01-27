@@ -46,6 +46,13 @@ HRESULT SVMatroxGige::Create()
 
 	if ( ::InterlockedIncrement( &m_lRefCount ) == 1 )
 	{
+		long sysCount {0L};
+		//This is to check if Matrox Startup has already been called if not then it shall be called by the dll
+		if (SVMEE_INVALID_HANDLE == SVMatroxApplicationInterface::GetSystemCount(sysCount))
+		{
+			SVMatroxApplicationInterface::Startup();
+			m_DllMatroxStartup = true;
+		}
 		result = CreateSystems();
 
 		if (S_OK != result)
@@ -64,6 +71,11 @@ HRESULT SVMatroxGige::Destroy( bool close /*=false*/)
 		::InterlockedExchange( &m_lRefCount, 0 );
 
 		DestroySystems();
+		//If dll called startup then in needs to call shutdown
+		if (m_DllMatroxStartup)
+		{
+			SVMatroxApplicationInterface::Shutdown();
+		}
 	}
 
 	return S_OK;

@@ -52,6 +52,7 @@ public:
 
 private:
 	long m_lRefCount{ 0L };
+	bool m_DllMatroxStartup {false};
 
 	SVMatroxGigeSystemList m_Systems;
 
