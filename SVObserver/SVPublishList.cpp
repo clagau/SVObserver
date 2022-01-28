@@ -89,35 +89,29 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 					pOutput = pOutputList->GetOutput(pObject->GetCompleteName().c_str());
 				}
 
-				if (SvPb::SVBoolValueObjectType == pObject->GetObjectSubType())
+				SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+				pIOEntry->setLinkedObject(pObject);
+				pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
+				pIOEntry->m_PPQIndex = -1;
+				if (pIOEntry->isAimObjectBool())
 				{
-					SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-					pIOEntry->setLinkedObject(pObject);
-					pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
 					pIOEntry->m_ObjectType = SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
-					pIOEntry->m_PPQIndex = -1;
 					pIOEntry->m_Enabled = (nullptr != pOutput);
 
 					if (pIOEntry->m_Enabled)
 					{
 						pIOEntry->m_IOId = pOutput->getObjectId();
 					}
-
-					if (nullptr != pPPQ) { pPPQ->AddOutput(pIOEntry); }
 				}
 				else
 				{
-					SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-					pIOEntry->setLinkedObject(pObject);
-					pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
 					pIOEntry->m_ObjectType = IO_REMOTE_OUTPUT;
-					pIOEntry->m_PPQIndex = -1;
 					pIOEntry->m_Enabled = true;
 
 					pIOEntry->m_IOId = pObject->getObjectId();
-
-					if (nullptr != pPPQ) { pPPQ->AddOutput(pIOEntry); }
 				}
+
+				if (nullptr != pPPQ) { pPPQ->AddOutput(pIOEntry); }
 				// add to the list
 				m_objectIdList.push_back(pObject->getObjectId());
 			}// end if

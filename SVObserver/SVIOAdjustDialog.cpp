@@ -211,8 +211,7 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 					continue;
 				}
 				///Note entries with IO_INVALID_OBJECT have not yet been set and shall either become IO_DIGITAL_OUPUT or IO_PLC_OUTPUT
-				if(SvDef::InvalidObjectId == pIOEntry->m_IOId && SV_IS_KIND_OF( pIOEntry->getObject(), SvVol::SVBoolValueObjectClass ) &&
-					(pIOEntry->m_ObjectType == outputType))
+				if(SvDef::InvalidObjectId == pIOEntry->m_IOId && pIOEntry->m_ObjectType == outputType && pIOEntry->isAimObjectBool())
 				{
 					std::string name {pIOEntry->getObject()->GetCompleteName()};
 					IOCombo.AddString(name.c_str());

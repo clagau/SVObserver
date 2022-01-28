@@ -16,6 +16,7 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "ObjectInterfaces/ILinkedObject.h"
 #pragma endregion Includes
 
 void SVIOEntryHostStruct::clear()
@@ -53,6 +54,23 @@ void SVIOEntryHostStruct::setLinkedObject(SVObjectClass* pObject)
 	{
 		m_inspectionId = pInspection->getObjectId();
 	}
+}
+
+bool SVIOEntryHostStruct::isAimObjectBool() const
+{
+	if (nullptr != m_pObject)
+	{
+		if (SvPb::SVBoolValueObjectType != m_pObject->GetObjectSubType())
+		{
+			auto* pLinkedObject = dynamic_cast<SvOi::ILinkedObject*> (m_pObject);
+			return (nullptr != pLinkedObject && nullptr != pLinkedObject->getLinkedObject() && SvPb::SVBoolValueObjectType == pLinkedObject->getLinkedObject()->GetObjectSubType());
+		}
+		else
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool SVIOEntryHostStruct::PtrGreater(SVIOEntryHostStructPtr elem1, SVIOEntryHostStructPtr elem2)

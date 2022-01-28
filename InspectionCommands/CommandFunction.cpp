@@ -1379,6 +1379,10 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> tre
 		{
 			SvOi::fillRootChildSelectorList(treeInserter, _T(""), request.attribute(), request.type());
 		}
+		else
+		{
+			SvOi::fillRootChildSelectorList(treeInserter, SvDef::FqnEnvironment, request.attribute(), request.type());
+		}
 		return;
 	}
 	case SvPb::ppqItems:
