@@ -287,7 +287,7 @@ bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 	if (S_OK != hResult)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidScaleFactor, SvStl::SourceFileParams(StdMessageParams), 0, m_toolID);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidScaleFactor, SvStl::SourceFileParams(StdMessageParams), 0, m_toolID);
 		return false;
 	}
 	if (S_OK != SvCmd::RunOnceSynchronous(m_inspectionID))

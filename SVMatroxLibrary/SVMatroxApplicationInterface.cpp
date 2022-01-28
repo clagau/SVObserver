@@ -21,6 +21,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary\SVSVIMStateClass.h"
 #pragma endregion Includes
 
 constexpr long MATROX_FILTER_EVENT = 525843;
@@ -119,6 +120,7 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 {
 	if( p_rStatusInfo.m_StatusCode != 0 )
 	{
+		bool running = SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 		DWORD OsError = static_cast<DWORD> ( p_rStatusInfo.m_StatusCode );
 		DWORD MessageCode( 0 );
 		DWORD ProgramCode( 0 );
@@ -129,7 +131,14 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 		}
 		else
 		{
-			MessageCode = SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR;
+			if (running)
+			{
+				MessageCode = SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR;
+			}
+			else
+			{
+				MessageCode = SVMSG_SVMATROXLIBRARY_GENERAL_ERROR_NOT_IN_RUNMODE;
+			}
 			ProgramCode = SvStl::Err_25021_MatroxLibraryFatal;
 		}
 		SvDef::StringVector msgList;
