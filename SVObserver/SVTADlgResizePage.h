@@ -10,7 +10,6 @@
 
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxEnums.h"
-#include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/PictureDisplay.h"
 #include "SVOGui/ISVPropertyPageDialog.h"  // for QueryAllowExit()
 #include "SVOGui/ImageController.h"
@@ -19,9 +18,6 @@
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
-class SVRPropertyItem;
-
-
 struct ResizeParameters;
 
 enum ScaleFactorDimension { Width, Height, Max };

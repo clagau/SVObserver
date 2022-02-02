@@ -288,20 +288,41 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 			if (S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result || E_BOUNDS == Result && VT_EMPTY != rValue.vt)
 			{
-				//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
-				if (VT_BOOL == rValue.vt && GetDefaultType() != rValue.vt)
-				{
-					rValue.boolVal = rValue.boolVal ? 1 : 0;
-				}
 				VARTYPE vtType = GetDefaultType();
-				if (0 <= Index && 0 != (vtType & VT_ARRAY))
+				bool returnSingleValue = (0 <= Index || 0 == (vtType & VT_ARRAY));
+				if (returnSingleValue)
 				{
-					vtType = vtType & ~VT_ARRAY;
+					//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
+					if (VT_BOOL == rValue.vt && GetDefaultType() != rValue.vt)
+					{
+						rValue.boolVal = rValue.boolVal ? 1 : 0;
+					}
+
+					if (0 != (vtType & VT_ARRAY))
+					{
+						vtType = vtType & ~VT_ARRAY;
+					}
+					if (S_OK != ::VariantChangeTypeEx(&rValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, vtType))
+					{
+						//empty value if variant can not be converted in the right type
+						::VariantClear(&rValue);
+					}
 				}
-				if (S_OK != ::VariantChangeTypeEx(&rValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, vtType))
+				else
 				{
-					//empty value if variant can not be converted in the right type
-					::VariantClear(&rValue);
+					if (0 != (rValue.vt & VT_ARRAY))
+					{
+						rValue = SvUl::convertSafeArrayToOtherSafeArray(rValue, vtType);
+					}
+					else
+					{
+						if (S_OK != ::VariantChangeTypeEx(&rValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, vtType & ~VT_ARRAY))
+						{
+							//empty value if variant can not be converted in the right type
+							::VariantClear(&rValue);
+						}
+						rValue = SvUl::VariantToSafeArray(rValue);
+					}
 				}
 			}
 		}
@@ -617,7 +638,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			_variant_t vtTemp;
 			vtTemp.SetString(rValue.c_str());
 
-			if (rDefaultValue.vt != VT_EMPTY)
+			if (rDefaultValue.vt != VT_EMPTY && VT_BSTR != rDefaultValue.vt)
 			{
 				if (S_OK != ::VariantChangeTypeEx(&vtTemp, &vtTemp, SvDef::LCID_USA, 0, rDefaultValue.vt))
 				{
@@ -627,12 +648,8 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					Exception.Throw();
 				}
-				Result = vtTemp;
 			}
-			else
-			{
-				Result = SVVariantValueObjectClass::ConvertString2Type(rValue, rDefaultValue);
-			}
+			Result = vtTemp;
 		}
 		return Result;
 	}

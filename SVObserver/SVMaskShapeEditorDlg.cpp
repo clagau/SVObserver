@@ -124,11 +124,12 @@ void SVMaskShapeEditorDlg::SetInspectionData()
 {
 	m_ShapeHelperValues.Commit();
 
-	//This needs to be called due to SetInspectionData being called by UpdateMask which has values set but not commited
+	//This needs to be called due to SetInspectionData being called by UpdateMask which has values set but not committed
 	m_Values.Set<bool>(SvPb::ContRecalcEId, m_bContRecalc ? true : false);
 	m_Values.Commit(SvOg::PostAction::doRunOnce | SvOg::PostAction::doReset);
 
 	m_ShapeHelperValues.Init();
+	RefreshProperties();
 }
 
 #pragma region AFX Methods
@@ -720,19 +721,6 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 	while ( pChild )
 	{
 		auto embeddedId = GetPropertyEmbeddedId(pChild->GetCtrlID());
-		if ( SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (pChild) )
-		{
-			pCombo->SetItemValue( m_ShapeHelperValues.Get<long>(embeddedId));
-		}
-		else if(SVRPropertyItemEdit* pEdit = dynamic_cast <SVRPropertyItemEdit*> (pChild))
-		{
-			setValueColumn(embeddedId, *pEdit);
-		}
-		else
-		{
-			assert(false);
-		}
-
 		const std::initializer_list<SvPb::EmbeddedIdEnum> availableWithAutoResize { SvPb::ShapeMaskPropertyOffsetEId, SvPb::ShapeMaskPropertySymmetryOrientationEId, SvPb::ShapeMaskPropertySideThicknessEId, SvPb::ShapeMaskPropertyTopBottomThicknessEId };
 		if (m_bAutoResize && std::none_of(availableWithAutoResize.begin(), availableWithAutoResize.end(), [embeddedId](auto value) { return embeddedId == value; }))
 		{
@@ -747,7 +735,19 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 			// enable property
 			pChild->SetCanHighlight( true );
 			pChild->SetForeColor( SvDef::Black );
-			pChild->ReadOnly( false );
+			if (SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (pChild))
+			{
+				pCombo->SetItemValue(m_ShapeHelperValues.Get<long>(embeddedId));
+				pChild->ReadOnly(false);
+			}
+			else if (SVRPropertyItemEdit* pEdit = dynamic_cast <SVRPropertyItemEdit*> (pChild))
+			{
+				setValueColumn(embeddedId, *pEdit);
+			}
+			else
+			{
+				assert(false);
+			}
 		}
 
 		pChild = pChild->GetSibling();

@@ -755,7 +755,7 @@ namespace SvOp
 				GetInspection()->OnObjectRenamed(*m_objects[pos], oldName);
 				GetInspection()->OnObjectRenamed(*m_TypeObjects[pos], oldName + cTypeNamePostfix);
 			}
-			m_objects[pos]->setDefaultValue(rDefault);
+			m_objects[pos]->SetDefaultValue(rDefault);
 			m_objects[pos]->setValue(rValue.value());
 		}
 		catch (const SvStl::MessageContainer& e)
