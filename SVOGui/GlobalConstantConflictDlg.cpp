@@ -28,7 +28,6 @@ namespace SvOg
 	constexpr int cHeaderSize = 1;
 	constexpr int DataSets = 2;
 	constexpr int GridColumnNumber = 4;
-	constexpr int GridColumnWidth[] = {30, 150, 80, 100};
 
 	BEGIN_MESSAGE_MAP(GlobalConstantConflictDlg, CDialog)
 		ON_NOTIFY(NM_CLICK, IDC_GLOBAL_CONFLICT_GRID, &GlobalConstantConflictDlg::OnGridClick)
@@ -62,25 +61,18 @@ namespace SvOg
 		m_Grid.SetRedraw( false );
 		m_Grid.SetFixedRowCount( cHeaderSize );
 		m_Grid.SetRowResize( false );
-		m_Grid.SetColumnResize( false );
+		m_Grid.SetColumnResize( true );
 		m_Grid.AllowReorderColumn( false );
 		m_Grid.EnableDragAndDrop( false );
 		m_Grid.SetEditable( false );
 		m_Grid.SetColumnCount( GridColumnNumber * DataSets );
 		m_Grid.SetRowCount( static_cast<int> (m_rGlobalPairs.size()) + cHeaderSize );
-		//This is 2 sets of the same data 
-		for( int i=0; i < DataSets; i++ )
-		{
-			for( int j=0; j < GridColumnNumber; j++ )
-			{
-				int ColumnNr = (i*GridColumnNumber) + j;
-				m_Grid.SetColumnWidth( ColumnNr,  GridColumnWidth[j] );
-			}
-		}
+		
 		LoadGlobalData();
-		m_Grid.SetRedraw( true );
-
 		UpdateData( FALSE );
+
+		m_Grid.SetRedraw( true );
+		m_Grid.AutoSizeColumns();
 		return TRUE;
 	}
 

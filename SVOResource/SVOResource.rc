@@ -2887,14 +2887,14 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,196,230,50,14
 END
 
-IDD_GLOBAL_CONSTANT_CONFLICT DIALOGEX 0, 0, 500, 250
+IDD_GLOBAL_CONSTANT_CONFLICT DIALOGEX 0, 0, 800, 450
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Global Constants Conflict"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Conflict Table",IDC_GLOBAL_CONFLICT_GRID,"MfcGridCtrl",WS_TABSTOP,7,7,486,202
-    DEFPUSHBUTTON   "OK",IDOK,443,229,50,14
-    LTEXT           "Please select which Global Constant value should be used:\r\n1. The current value from the loaded configuration or\r\n2.The value being imported from the inspection",IDC_STATIC,7,213,330,30
+    CONTROL         "Conflict Table",IDC_GLOBAL_CONFLICT_GRID,"MfcGridCtrl",WS_TABSTOP,7,7,786,402
+    DEFPUSHBUTTON   "OK",IDOK,743,429,50,14
+    LTEXT           "Please select which Global Constant value should be used:\r\n1. The current value from the loaded configuration or\r\n2.The value being imported from the inspection",IDC_STATIC,7,413,630,30
 END
 
 IDD_RANKING2_FILTER DIALOGEX 0, 0, 480, 290
