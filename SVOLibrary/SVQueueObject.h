@@ -37,12 +37,14 @@ public:
 	//This method removes the head element from the queue.
 	void pop_front();
 	//This method places the supplied object on the end of the queue.
-	void push_back( const T& p_rValue );
+	void push_back(const T& p_rValue);
+
+	void emplace_back(T&& Value);
 
 	//This method adds a new element to the head of the queue. This method uses svnew instead of new. svnew uses a member variable m_Allocator that is derived from Loki::smallObject allocator.  This maintains a memory pool for each Queue object. The reason for this memory pool is to prevent contention between different tasks using new and delete.
-	bool AddHead( T pParam );
+	bool AddHead(const T& rValue);
 	//This method adds a new element to the tail of the queue.  This method uses svnew instead of new. svnew uses a member variable m_Allocator that is derived from Loki::smallObject allocator.  This maintains a memory pool for each Queue object. The reason for this memory pool is to prevent contention between different tasks using new and delete.
-	bool AddTail( T pParam );
+	bool AddTail(const T&  rValue);
 
 	// Get information about the Queue
 	bool IsEmpty() { return m_Queue.empty(); };

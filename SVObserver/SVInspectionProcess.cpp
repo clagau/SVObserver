@@ -117,10 +117,6 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 	rProcessed = m_processActive;
 	if (rProcessed)
 	{
-#ifdef EnableTracking
-		m_InspectionTracking.EventStart(_T("Process Inspections"));
-#endif
-
 		// Get the info struct for this inspection
 		const auto iter = product.m_svInspectionInfos.find(getObjectId());
 		bool validProduct = product.m_svInspectionInfos.end() != iter || false == product.m_triggered;
@@ -159,8 +155,34 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 			SvIe::SVObjectIdSVCameraInfoStructMap::const_iterator iterCamera(product.m_svCameraInfos.find(m_pToolSetCamera->getObjectId()));
 			if (product.m_svCameraInfos.cend() != iterCamera)
 			{
-				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
-				acqTime = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
+				const CameraInfo& rCameraInfo = iterCamera->second.getCameraInfo();
+				triggerToAcqTime = (rCameraInfo.m_startFrameTimestamp - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
+				acqTime = (rCameraInfo.m_endFrameTimestamp - rCameraInfo.m_endFrameTimestamp) * SvUl::c_MicrosecondsPerMillisecond;
+
+				if (VT_EMPTY != rCameraInfo.m_cameraData[CameraDataEnum::ChunkFrameID].vt)
+				{
+					SvVol::BasicValueObjectPtr pFrameID = m_pToolSetCamera->getCameraValue(SvDef::FqnCameraFrameID);
+					if (nullptr != pFrameID)
+					{
+						pFrameID->setValue(rCameraInfo.m_cameraData[CameraDataEnum::ChunkFrameID].lVal);
+					}
+				}
+				if (VT_EMPTY != rCameraInfo.m_cameraData[CameraDataEnum::ChunkTimeStamp].vt)
+				{
+					SvVol::BasicValueObjectPtr pTimestamp = m_pToolSetCamera->getCameraValue(SvDef::FqnCameraTimestamp);
+					if (nullptr != pTimestamp)
+					{
+						pTimestamp->setValue(rCameraInfo.m_cameraData[CameraDataEnum::ChunkTimeStamp].lVal);
+					}
+				}
+				if (VT_EMPTY != rCameraInfo.m_cameraData[CameraDataEnum::ChunkLineStatusAll].vt)
+				{
+					SvVol::BasicValueObjectPtr pLineStatusAll = m_pToolSetCamera->getCameraValue(SvDef::FqnCameraLineStatusAll);
+					if (nullptr != pLineStatusAll)
+					{
+						pLineStatusAll->setValue(rCameraInfo.m_cameraData[CameraDataEnum::ChunkLineStatusAll].lVal);
+					}
+				}
 			}
 		}
 
@@ -169,25 +191,25 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		m_pCurrentToolset->setTime(triggerToAcqTime, ToolSetTimes::TriggerToAcquisitionStart);
 		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
 
-		SvTrig::IntVariantMap::const_iterator iterData = product.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
-		if (product.m_triggerInfo.m_Data.end() != iterData)
+		const _variant_t& rObjectID = product.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
+		if (VT_EMPTY != rObjectID.vt)
 		{
-			m_pCurrentToolset->setObjectID(static_cast<double> (iterData->second));
+			m_pCurrentToolset->setObjectID(static_cast<double> (rObjectID));
 		}
-		iterData = product.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectType);
-		if (product.m_triggerInfo.m_Data.end() != iterData)
+		const _variant_t& rObjectType = product.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectType];
+		if (VT_EMPTY != rObjectType.vt)
 		{
-			m_pCurrentToolset->setObjectType(static_cast<DWORD> (iterData->second));
+			m_pCurrentToolset->setObjectType(static_cast<DWORD> (rObjectType));
 		}
-		iterData = product.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
-		if (product.m_triggerInfo.m_Data.end() != iterData)
+		const _variant_t& rTriggerIndex = product.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
+		if (VT_EMPTY != rTriggerIndex.vt)
 		{
-			m_pCurrentToolset->setTriggerIndex(iterData->second);
+			m_pCurrentToolset->setTriggerIndex(static_cast<DWORD> (rTriggerIndex));
 		}
-		iterData = product.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerPerObjectID);
-		if (product.m_triggerInfo.m_Data.end() != iterData)
+		const _variant_t& rTriggerPerObjectID = product.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID];
+		if (VT_EMPTY != rTriggerPerObjectID.vt)
 		{
-			m_pCurrentToolset->setTriggerPerObjectID(iterData->second);
+			m_pCurrentToolset->setTriggerPerObjectID(static_cast<DWORD> (rTriggerPerObjectID));
 		}
 
 
@@ -272,10 +294,6 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 			rIPInfo.ClearIndexes();
 			m_NotifyWithLastInspected = true;
 		}
-
-#ifdef EnableTracking
-		m_InspectionTracking.EventEnd(_T("Process Inspections"));
-#endif
 	}
 	return l_Status;
 }
@@ -355,9 +373,6 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 
 	if (m_NotifyWithLastInspected)
 	{
-#ifdef EnableTracking
-		m_InspectionTracking.EventStart(_T("Process Notify With Last Inspected"));
-#endif
 		m_NotifyWithLastInspected = false;
 
 		SVPPQObject* pPPQ{ GetPPQ() };
@@ -375,9 +390,6 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 		m_lastRunProduct.m_triggered = false;
 
 		p_rProcessed = true;
-#ifdef EnableTracking
-		m_InspectionTracking.EventEnd(_T("Process Notify With Last Inspected"));
-#endif
 	}
 	return l_Status;
 }
@@ -388,9 +400,6 @@ HRESULT SVInspectionProcess::ProcessCommandQueue(bool& p_rProcessed)
 
 	if (!(m_CommandQueue.IsEmpty()))
 	{
-#ifdef EnableTracking
-		m_InspectionTracking.EventStart(_T("Process Command Queue"));
-#endif
 		SvOi::ICommandPtr pCommand;
 
 		if (m_CommandQueue.RemoveHead(&pCommand))
@@ -402,10 +411,6 @@ HRESULT SVInspectionProcess::ProcessCommandQueue(bool& p_rProcessed)
 		}
 
 		p_rProcessed = true;
-
-#ifdef EnableTracking
-		m_InspectionTracking.EventEnd(_T("Process Command Queue"));
-#endif
 	}
 
 	return l_Status;
@@ -499,9 +504,6 @@ void CALLBACK SVInspectionProcess::APCThreadProcess(ULONG_PTR)
 void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 {
 	bool processed = false;
-#ifdef EnableTracking
-	m_InspectionTracking.SetStartTime();
-#endif
 
 	if (m_processActive)
 	{
@@ -657,10 +659,6 @@ bool SVInspectionProcess::CanRegressionGoOnline()
 
 bool SVInspectionProcess::GoOnline()
 {
-#ifdef EnableTracking
-	m_InspectionTracking.clear();
-#endif
-
 	resetLastProduct();
 	m_offlineRequest = false;
 
@@ -699,91 +697,6 @@ bool SVInspectionProcess::GoOnline()
 
 bool SVInspectionProcess::GoOffline()
 {
-#ifdef EnableTracking
-	if (TheSVObserverApp().UpdateAndGetLogDataManager())
-	{
-		std::string l_FileName;
-
-		l_FileName.Format(_T("C:\\SVObserver\\ProductLastIndexes_%ld-%s.log"),
-			SVObjectManagerClass::Instance().GetFileSequenceNumber(), GetName());
-
-		std::fstream l_Stream(l_FileName.ToString(), std::ios_base::trunc | std::ios_base::out);
-
-		if (l_Stream.is_open())
-		{
-			std::string l_Info;
-			SVProductInfoStruct l_Product = LastProductGet();
-
-			l_Product.DumpIndexInfo(l_Info);
-
-			l_Stream << _T("Last : ");
-			l_Stream << l_Info.ToString();
-			l_Stream << std::endl;
-
-			l_Stream.close();
-		}
-
-		std::string l_Name;
-
-		l_Name.Format(_T("C:\\SVObserver\\%s-Counts-%ld.csv"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
-
-		std::fstream l_TrackingStream(l_Name.ToString(), std::ios_base::trunc | std::ios_base::out);
-
-		if (l_TrackingStream.is_open())
-		{
-			SVInspectionTracking::SVEventTrackingMap::iterator l_Iter;
-
-			for (l_Iter = m_InspectionTracking.m_EventCounts.begin(); l_Iter != m_InspectionTracking.m_EventCounts.end(); ++l_Iter)
-			{
-				// Write Outputs Time...
-				l_TrackingStream << _T("Name/Time ms");
-
-				SVInspectionTrackingElement::SVTimeCountMap::iterator l_CountIter;
-
-				for (l_CountIter = l_Iter->second.m_Start.begin(); l_CountIter != l_Iter->second.m_Start.end(); ++l_CountIter)
-				{
-					l_TrackingStream << _T(",") << l_CountIter->first;
-				}
-
-				l_TrackingStream << std::endl;
-
-				l_TrackingStream << l_Iter->first.c_str();
-				l_TrackingStream << _T(" - Start");
-
-				for (l_CountIter = l_Iter->second.m_Start.begin(); l_CountIter != l_Iter->second.m_Start.end(); ++l_CountIter)
-				{
-					l_TrackingStream << _T(",") << l_CountIter->second;
-				}
-
-				l_TrackingStream << std::endl;
-
-				l_TrackingStream << _T("Name/Time ms");
-
-				for (l_CountIter = l_Iter->second.m_Duration.begin(); l_CountIter != l_Iter->second.m_Duration.end(); ++l_CountIter)
-				{
-					l_TrackingStream << _T(",") << l_CountIter->first;
-				}
-
-				l_TrackingStream << std::endl;
-
-				l_TrackingStream << l_Iter->first.c_str();
-				l_TrackingStream << _T(" - Duration");
-
-				for (l_CountIter = l_Iter->second.m_Duration.begin(); l_CountIter != l_Iter->second.m_Duration.end(); ++l_CountIter)
-				{
-					l_TrackingStream << _T(",") << l_CountIter->second;
-				}
-
-				l_TrackingStream << std::endl;
-
-				l_TrackingStream << std::endl;
-			}
-
-			l_TrackingStream.close();
-		}
-	}
-#endif
-
 	m_offlineRequest = true;
 	//Wait a while to make sure that m_processActive and m_offlineRequest not set simultaneously
 	::Sleep(10);
@@ -3048,91 +2961,6 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SvIe::SVImageClass
 	}
 	return E_FAIL;
 }
-
-
-// @TODO - this needs to be moved out of here into another more generic class
-#ifdef EnableTracking
-SVInspectionProcess::SVInspectionTrackingElement::SVInspectionTrackingElement()
-	: m_StartTime(0), m_Start(), m_End(), m_Duration()
-{
-}
-
-SVInspectionProcess::SVInspectionTrackingElement::SVInspectionTrackingElement(const SVInspectionTrackingElement& p_rObject)
-	: m_StartTime(p_rObject.m_StartTime), m_Start(p_rObject.m_Start), m_End(p_rObject.m_End), m_Duration(p_rObject.m_Duration)
-{
-}
-
-SVInspectionProcess::SVInspectionTrackingElement::~SVInspectionTrackingElement()
-{
-	m_StartTime = 0;
-
-	m_Start.clear();
-	m_End.clear();
-	m_Duration.clear();
-}
-
-void SVInspectionProcess::SVInspectionTrackingElement::clear()
-{
-	m_StartTime = 0;
-
-	m_Start.clear();
-	m_End.clear();
-	m_Duration.clear();
-}
-
-SVInspectionProcess::SVInspectionTracking::SVInspectionTracking()
-	: m_StartTime(0.0), m_EventCounts()
-{
-}
-
-SVInspectionProcess::SVInspectionTracking::SVInspectionTracking(const SVInspectionTracking& p_rObject)
-	: m_StartTime(p_rObject.m_StartTime), m_EventCounts(p_rObject.m_EventCounts)
-{
-}
-
-SVInspectionProcess::SVInspectionTracking::~SVInspectionTracking()
-{
-	m_StartTime = 0;
-
-	if (!(m_EventCounts.empty()))
-	{
-		m_EventCounts.clear();
-	}
-}
-
-void SVInspectionProcess::SVInspectionTracking::clear()
-{
-	if (!(m_EventCounts.empty()))
-	{
-		m_EventCounts.clear();
-	}
-}
-
-void SVInspectionProcess::SVInspectionTracking::SetStartTime()
-{
-	m_StartTime = SvUl::GetTimeStamp();
-}
-
-void SVInspectionProcess::SVInspectionTracking::EventStart(const std::string& p_rName)
-{
-	double l_StartTime = SvUl::GetTimeStamp();
-	__int64 l_EventTime = static_cast<__int64>(l_StartTime - m_StartTime);
-
-	m_EventCounts[p_rName].m_StartTime = l_StartTime;
-
-	++(m_EventCounts[p_rName].m_Start[l_EventTime]);
-}
-
-void SVInspectionProcess::SVInspectionTracking::EventEnd(const std::string& p_rName)
-{
-	double l_EndTime = SvUl::GetTimeStamp();
-	__int64 l_Duration = static_cast<__int64>(l_EndTime - m_EventCounts[p_rName].m_StartTime);
-	__int64 l_EventTime = static_cast<__int64>(l_EndTime - m_StartTime);
-
-	++(m_EventCounts[p_rName].m_End[l_EventTime]);
-	++(m_EventCounts[p_rName].m_Duration[l_Duration]);
-}
-#endif
 
 void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter) const
 {

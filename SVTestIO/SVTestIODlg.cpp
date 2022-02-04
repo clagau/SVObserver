@@ -11,9 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <functional>
-//Moved to precompiled header: #include <algorithm>
 #include "SVTestIODlg.h"
+#include "Triggering/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 #define WM_SETOUTPUT (WM_USER + 101)
@@ -133,7 +132,7 @@ void SVTestIODlg::OnTriggerButtonClicked( UINT nID )
 	auto iter = m_triggerCallbackMap.find(triggerIndex);
 	if (m_triggerCallbackMap.end() != iter)
 	{
-		SvTrig::IntVariantMap triggerData;
+		SvTrig::TriggerData triggerData;
 		iter->second(std::move(triggerData));
 	}
 

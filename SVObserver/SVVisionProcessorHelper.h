@@ -114,6 +114,7 @@ public:
 		SvRpc::ServerStreamContext::Ptr ctx);
 
 	void setMainhWnd(HWND mainhWnd) { m_mainhWnd = mainhWnd; }
+	HWND getMainhWnd() { return m_mainhWnd; }
 private:
 	using SVGetItemsFunctor = std::function<HRESULT(const SvDef::StringSet&, SVNameStorageResultMap&)>;
 	using SVSetItemsFunctor = std::function<HRESULT(const SVNameStorageMap&, SVNameStatusMap&, bool RunOnce)>;

@@ -250,7 +250,16 @@ DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SV
 	const auto& rCameraList = GetCameras(rIP);
 	for (auto* pCamera : rCameraList)
 	{
-		pCamera->setRegFileName(_T(""));
+		SvVol::BasicValueObjectPtr pRegValue = pCamera->getCameraValue(SvDef::FqnCameraRegPath);
+		if (nullptr != pRegValue)
+		{
+			pRegValue->setValue(_T(""));
+		}
+		pRegValue = pCamera->getCameraValue(SvDef::FqnCameraRegFile);
+		if (nullptr != pRegValue)
+		{
+			pRegValue->setValue(_T(""));
+		}
 	}
 
 	return 0L;
@@ -360,7 +369,28 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 				{
 					return pCamera != nullptr && runFileStruct.ObjectName == pCamera->GetName();
 				});
-			(*cameraIter)->setRegFileName(runFileStruct.FileName);
+			std::string regPath;
+			std::string regFile;
+			size_t pos = runFileStruct.FileName.find_last_of('\\');
+			if (std::string::npos != pos)
+			{
+				regPath = runFileStruct.FileName.substr(0, pos);
+				regFile = runFileStruct.FileName.substr(pos + 1);
+			}
+			else
+			{
+				regFile = runFileStruct.FileName;
+			}
+			SvVol::BasicValueObjectPtr pRegValue = (*cameraIter)->getCameraValue(SvDef::FqnCameraRegPath);
+			if (nullptr != pRegValue)
+			{
+				pRegValue->setValue(regPath.c_str());
+			}
+			pRegValue = (*cameraIter)->getCameraValue(SvDef::FqnCameraRegFile);
+			if (nullptr != pRegValue)
+			{
+				pRegValue->setValue(regFile.c_str());
+			}
 			rIP.AddInputImageRequestByCameraName(runFileStruct.ObjectName, runFileStruct.FileName);
 
 			if (RegressionRunModeEnum::RegModeSingleStepBack == m_RunMode)

@@ -44,12 +44,12 @@ SVTriggerClass::SVTriggerClass(LPCTSTR deviceName) : TriggerDevice(deviceName)
 	}
 }
 
-void __stdcall SVTriggerClass::triggerCallback(const SvTrig::IntVariantMap& rTriggerData)
+void __stdcall SVTriggerClass::triggerCallback(SvTrig::TriggerData&& triggerData)
 {
 	SvTrig::SVTriggerInfoStruct triggerInfo;
 
 	triggerInfo.bValid = true;
-	triggerInfo.m_Data = rTriggerData;
+	triggerInfo.m_Data = std::move(triggerData);
 	Notify(triggerInfo);
 }
 
@@ -92,7 +92,7 @@ HRESULT SVTriggerClass::RegisterCallback(PpqTriggerCallBack pPpqTriggerCallback)
 	{
 		if ( S_OK == result)
 		{
-			auto triggerFunctor = [this](const SvTrig::IntVariantMap& rTriggerData) {return triggerCallback(rTriggerData); };
+			auto triggerFunctor = [this](SvTrig::TriggerData&& triggerData) {return triggerCallback(std::move(triggerData)); };
 			result = m_pDLLTrigger->Register(m_triggerChannel, triggerFunctor);
 		}
 
@@ -192,9 +192,9 @@ void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInf
 		{
 			rObjIDParam.m_currentObjectID = 1L;
 		}
-		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rObjIDParam.m_currentObjectID);
-		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(m_triggerIndex);
-		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rObjIDParam.m_triggerPerObjectID);
+		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(static_cast<uint32_t> (rObjIDParam.m_currentObjectID));
+		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(static_cast<uint8_t> (m_triggerIndex));
+		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(static_cast<uint8_t> (rObjIDParam.m_triggerPerObjectID));
 
 		if (rObjIDParam.m_objectIDCount > 0 && (rObjIDParam.m_currentObjectID >= rObjIDParam.m_startObjectID + rObjIDParam.m_objectIDCount))
 		{

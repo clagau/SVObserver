@@ -55,6 +55,7 @@
 #include <afxtempl.h>
 #include <assert.h>
 
+#include <array>			//Used by static library
 #include <atomic>			//Used by static library
 #include <comutil.h>		//Used by static library
 #include <functional>		//Used by static library

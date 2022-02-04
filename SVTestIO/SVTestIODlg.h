@@ -33,7 +33,7 @@ public:
 	enum { IDD = IDD_TEST_IO_DLG };
 
 private:
-	FILE *m_fpLog;
+	FILE* m_fpLog {nullptr};
 	afx_msg void OnInputButtonClicked( UINT nID );
 
 
@@ -45,8 +45,8 @@ public:
 	LRESULT OnSetOutput(WPARAM wParam, LPARAM lParam);
 	
 	void SetOutput( unsigned long p_iChannel, bool p_bState);
-	unsigned __int64 m_i64Frequency;
-	unsigned __int64 m_i64Start;
+	unsigned __int64 m_i64Frequency {0ULL};
+	unsigned __int64 m_i64Start {0ULL};
 
 	void ToggleInput(unsigned int inputchannel);
 

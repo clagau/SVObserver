@@ -7,15 +7,15 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
+#include "Definitions/GlobalConst.h"
+#pragma endregion Includes
 
 namespace SvTrig
 {
-typedef  std::map<int, _variant_t> IntVariantMap;
-typedef std::function<void(const IntVariantMap&)> TriggerCallBack;
-
 enum TriggerDataEnum : int
 {
-	TimeStamp = 1,
+	TimeStamp = 0,
 	ObjectID,
 	TriggerIndex,
 	TriggerPerObjectID,
@@ -23,8 +23,13 @@ enum TriggerDataEnum : int
 	TriggerChannel,
 	ObjectType,
 	SoftwareTrigger,
+	TriggerDataNumber
 };
 
+static_assert(TriggerDataEnum::TriggerDataNumber == SvDef::cTriggerDataNumber, "The trigger data enum number must be the same size as the variable SvDef::cTriggerDataNumber");
+
+using TriggerData = std::array<_variant_t, TriggerDataEnum::TriggerDataNumber>;
+using TriggerCallBack = std::function<void(TriggerData&&)>;
 
 struct SVTriggerInfoStruct
 {
@@ -45,7 +50,7 @@ struct SVTriggerInfoStruct
 	double m_triggerTimeStamp{0.0};
 	double m_ToggleTimeStamp{0.0};
 	double m_PreviousTrigger{0.0};
-	IntVariantMap m_Data;
+	TriggerData m_Data;
 	std::vector<_variant_t> m_Inputs;
 };
 

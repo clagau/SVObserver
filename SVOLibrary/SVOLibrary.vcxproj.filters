@@ -53,9 +53,6 @@
     <ClInclude Include="SVQueueObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="CameraInfo.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="AcquisitionDevice.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -81,6 +78,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObsoleteItemChecker.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraInfo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

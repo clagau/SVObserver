@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCameraInfoStruct.h"
-#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -25,49 +24,28 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Public Methods
-HRESULT SVCameraInfoStruct::Assign( double p_StartFrameTS, double p_EndFrameTS, const SvOi::ITRCImagePtr pImage)
+void SVCameraInfoStruct::Assign(const CameraInfo& rCameraInfo)
 {
-	HRESULT l_Status = S_OK;
-
-	m_StartFrameTimeStamp = p_StartFrameTS;
-	m_EndFrameTimeStamp = p_EndFrameTS;
-
-	m_CallbackTimeStamp = SvUl::GetTimeStamp();
-	m_pImage = pImage;
-
-	return l_Status;
+	m_cameraInfo = rCameraInfo;
 }
 
 
 void SVCameraInfoStruct::ClearInfo()
 {
-	m_StartFrameTimeStamp = 0;
-	m_EndFrameTimeStamp = 0;
-	//! For Debugging Only
-	m_CallbackTimeStamp	= 0;
-
-	ClearIndexes();
-}
-
-void SVCameraInfoStruct::ClearCameraInfo()
-{
-	m_StartFrameTimeStamp = 0;
-	m_EndFrameTimeStamp = 0;
-
-	ClearIndexes();
+	m_cameraInfo = {};
 }
 
 const SvOi::ITRCImagePtr SVCameraInfoStruct::GetNextImage()
 {
 	if (nullptr != m_NextImageFunctor)
 	{
-		m_pImage = m_NextImageFunctor();
+		m_cameraInfo.m_pImage = m_NextImageFunctor();
 	}
 	else
 	{
-		m_pImage = nullptr;
+		m_cameraInfo.m_pImage.reset();
 	}
-	return m_pImage;
+	return m_cameraInfo.m_pImage;
 }
 
 const void SVCameraInfoStruct::setCamera(uint32_t cameraId, NextImageHandleFunctor NextImageHandleFunctor)
@@ -80,18 +58,11 @@ bool SVCameraInfoStruct::setImage(SvOi::ITRCImagePtr pImage)
 {
 	if (nullptr == pImage || pImage->isValid())
 	{
-		m_pImage = pImage;
+		m_cameraInfo.m_pImage = pImage;
 		return true;
 	}
 	return false;
 };
 #pragma endregion Public Methods
-
-#pragma region Private Methods
-void SVCameraInfoStruct::ClearIndexes()
-{
-	m_pImage = nullptr;
-}
-#pragma endregion Private Methods
 
 } //namespace SvIe

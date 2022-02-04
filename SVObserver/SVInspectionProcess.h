@@ -273,46 +273,6 @@ protected:
 	};
 	
 	typedef   std::unique_ptr<WatchListElement> WatchlistelementPtr;
-
-#ifdef EnableTracking
-	struct SVInspectionTrackingElement
-	{
-		typedef std::map< unsigned __int64, long > SVTimeCountMap;
-
-		SVInspectionTrackingElement();
-		SVInspectionTrackingElement( const SVInspectionTrackingElement& p_rObject );
-
-		virtual ~SVInspectionTrackingElement();
-
-		void clear();
-
-		double m_StartTime;
-		SVTimeCountMap m_Start;
-		SVTimeCountMap m_End;
-		SVTimeCountMap m_Duration;
-	};
-
-	struct SVInspectionTracking
-	{
-		typedef std::map<std::string, SVInspectionTrackingElement> SVEventTrackingMap;
-
-		SVInspectionTracking();
-		SVInspectionTracking( const SVInspectionTracking& p_rObject );
-
-		virtual ~SVInspectionTracking();
-
-		void clear();
-
-		void SetStartTime();
-
-		void EventStart( const std::string& p_rName );
-		void EventEnd( const std::string& p_rName );
-
-		double m_StartTime;
-		SVEventTrackingMap m_EventCounts;
-	};
-#endif //EnableTracking
-
 	typedef SVTQueueObject<SvOi::ICommandPtr> SVCommandQueue;
 	typedef SVTQueueObject<SVInputRequestInfoStructPtr> SVInputRequestQueue;
 	typedef SVTQueueObject<SVInputImageRequestInfoStructPtr> SVInputImageRequestQueue;
@@ -397,10 +357,6 @@ private:
 	std::string m_DeviceName;
 
 	SvIe::SVVirtualCamera* m_pToolSetCamera{nullptr};
-
-#ifdef EnableTracking
-	SVInspectionTracking m_InspectionTracking;
-#endif
 
 	mutable std::mutex m_inspectionMutex;
 	bool m_lastRunProductValid{ true };

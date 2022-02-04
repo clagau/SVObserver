@@ -48,6 +48,7 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <array>
 #include <assert.h>
 #include <atomic>			//Used by static library
 #include <comdef.h>

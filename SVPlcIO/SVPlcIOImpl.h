@@ -37,7 +37,7 @@ public:
 	unsigned long GetInputCount();
 	unsigned long GetOutputCount();
 
-	HRESULT SetOutputData(unsigned long triggerIndex, const SvTrig::IntVariantMap& rData);
+	HRESULT SetOutputData(unsigned long triggerIndex, const SvTrig::TriggerData& rData);
 
 	// Triggers
 	unsigned long GetTriggerCount() const;

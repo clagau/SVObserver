@@ -14,8 +14,8 @@ void SVTQueueObject<T>::clear()
 {
 	{
 		std::lock_guard<std::mutex> lock {m_queueMutex};
-		m_Queue.clear();
-	}
+			m_Queue.clear();
+		}
 }
 
 template <typename T>
@@ -23,10 +23,10 @@ void SVTQueueObject<T>::pop_front()
 {
 	std::lock_guard<std::mutex> lock {m_queueMutex};
 
-	if( !( m_Queue.empty() ) )
-	{
-		m_Queue.pop_front();
-	}
+		if( !( m_Queue.empty() ) )
+		{
+			m_Queue.pop_front();
+		}
 }
 
 template <typename T>
@@ -36,21 +36,27 @@ void SVTQueueObject<T>::push_back( const T& p_rValue )
 	m_Queue.push_back( p_rValue );
 }
 
-
 template <typename T>
-bool SVTQueueObject<T>::AddHead( T pParam )
+void SVTQueueObject<T>::emplace_back(T&& Value)
 {
 	std::lock_guard<std::mutex> lock {m_queueMutex};
-	m_Queue.push_front( pParam );
+	m_Queue.emplace_back(std::move(Value));
+}
+
+template <typename T>
+bool SVTQueueObject<T>::AddHead(const T& rValue)
+{
+	std::lock_guard<std::mutex> lock {m_queueMutex};
+	m_Queue.push_front(rValue);
 	
 	return true;
 }
 
 template <typename T>
-bool SVTQueueObject<T>::AddTail( T pParam )
+bool SVTQueueObject<T>::AddTail(const T& rValue)
 {
 	std::lock_guard<std::mutex> lock {m_queueMutex};
-	m_Queue.push_back( pParam );
+	m_Queue.push_back(rValue);
 
 	return true;
 }
@@ -76,7 +82,6 @@ bool SVTQueueObject<T>::GetHead( T* pParam )
 	if(nullptr != pParam )
 	{
 		std::lock_guard<std::mutex> lock {m_queueMutex};
-
 		if( 0 < m_Queue.size() )
 		{
 			*pParam = m_Queue.front();
@@ -93,7 +98,6 @@ bool SVTQueueObject<T>::GetTail( T* pParam )
 	if(nullptr != pParam )
 	{
 		std::lock_guard<std::mutex> lock {m_queueMutex};
-
 		if( 0 < m_Queue.size() )
 		{
 			*pParam = m_Queue.back();
@@ -112,7 +116,6 @@ bool SVTQueueObject<T>::GetAt( long lPosition, T* pParam )
 	if( 0 <= lPosition && lPosition < static_cast<long> (m_Queue.size()))
 	{
 		*pParam = m_Queue[ lPosition ];
-
 		return true;
 	}
 
@@ -130,7 +133,6 @@ template <typename T>
 bool SVTQueueObject<T>::GetNextItem( QUEUEPOS& pos, T* pParam )
 {
 	std::lock_guard<std::mutex> lock {m_queueMutex};
-
 	if( 0 <= pos && static_cast< size_t>( pos ) < m_Queue.size() )
 	{
 		*pParam = m_Queue[ pos++ ];
@@ -160,7 +162,6 @@ bool SVTQueueObject<T>::RemoveAt( long lPosition )
 	std::lock_guard<std::mutex> lock {m_queueMutex};
 
 	auto l_Iter = m_Queue.begin();
-
 	std::advance( l_Iter, lPosition );
 
 	if( l_Iter != m_Queue.end() )

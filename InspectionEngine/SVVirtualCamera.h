@@ -127,7 +127,7 @@ public:
 	void setTempImage(const SVMatroxBuffer pImage);
 	SVMatroxBuffer getTempImage();
 
-	void setRegFileName(const std::string& rFullFileName);
+	SvVol::BasicValueObjectPtr getCameraValue(LPCTSTR pName);
 
 	void addNeededBuffer(uint32_t id, int neededBufferSize);
 	void removeNeededBufferEntry(uint32_t id);

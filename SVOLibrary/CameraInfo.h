@@ -11,30 +11,24 @@
 #include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
+enum CameraDataEnum : int
+{
+	ChunkFrameID = 0,
+	ChunkTimeStamp,
+	ChunkLineStatusAll,
+	CameraDataNumber
+};
+
+
 struct CameraInfo
 {
-	CameraInfo() {}
-	CameraInfo(const CameraInfo& rRhs)
-	{
-		*this = rRhs;
-	}
+	CameraInfo() = default;
 
-	CameraInfo& operator=(const CameraInfo& rRhs)
-	{
-		m_pImage = rRhs.m_pImage;
-		m_startFrameTime = rRhs.m_startFrameTime;
-		m_endFrameTime = rRhs.m_endFrameTime;
-		return *this;
-	}
-
-	void reset()
-	{ 
-		m_pImage.reset();
-	}
-
-	double m_startFrameTime{ 0.0 };
-	double m_endFrameTime{ 0.0 };
+	double m_startFrameTimestamp{ 0.0 };
+	double m_endFrameTimestamp{ 0.0 };
 
 	SvOi::ITRCImagePtr m_pImage{nullptr};
+
+	std::array<_variant_t, CameraDataEnum::CameraDataNumber> m_cameraData;
 };
 

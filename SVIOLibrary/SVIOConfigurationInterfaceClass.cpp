@@ -375,7 +375,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputPortValue( unsigned lon
 	return m_DigitalBoard.SetOutputPortValue( port, Value );
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputData(unsigned long channel, const IntVariantMap& rData)
+HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputData(unsigned long channel, const TriggerData& rData)
 {
 	return m_DigitalBoard.SetOutputData(channel, rData);
 }

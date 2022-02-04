@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVInfoStructs.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
 #pragma endregion Includes
@@ -290,7 +289,7 @@ void SVProductInfoStruct::ClearIndexes()
 {
 	for (auto& rCamera : m_svCameraInfos)
 	{
-		rCamera.second.ClearCameraInfo();
+		rCamera.second.ClearInfo();
 	}
 
 	for (auto& rInspection : m_svInspectionInfos)
@@ -319,37 +318,6 @@ bool SVProductInfoStruct::setNextAvailableCameraImage()
 	}
 
 	return true;
-}
-
-void SVProductInfoStruct::DumpIndexInfo(std::string& rData)
-{
-	rData = SvUl::Format(_T("TriggerCount=%ld-DataComplete=%s"), triggerCount(), m_dataComplete ? _T("T") : _T("F"));
-
-	for (const auto& rCamera : m_svCameraInfos)
-	{
-		if (SvDef::InvalidObjectId != rCamera.first)
-		{
-			std::string CameraName(_T("(null)"));
-
-			SvOi::IObjectClass* pCamera = SvOi::getObject(rCamera.first);
-			if (nullptr != pCamera)
-			{
-				CameraName = pCamera->GetName();
-			}
-
-			SvOi::ITRCImagePtr pImage = rCamera.second.getImage();
-			rData += SvUl::Format(_T(" : %s-Index=%ld"), CameraName.c_str(), (nullptr != pImage) ? pImage->getBufferPos() : -1);
-		}
-	}
-
-	for (const auto& rInspection : m_svInspectionInfos)
-	{
-		std::string l_Temp = SvUl::Format(_T(" : %s-State=0x%x"),
-			(nullptr != rInspection.second.m_pInspection) ? rInspection.second.m_pInspection->GetName() : _T("(null)"),
-			rInspection.second.m_InspectedState);
-
-		rData += l_Temp;
-	}
 }
 
 bool SVProductInfoStruct::IsProductActive() const

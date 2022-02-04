@@ -10,8 +10,9 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/ITRCImage.h"
 #include "Definitions/ObjectDefines.h"
+#include "ObjectInterfaces/ITRCImage.h"
+#include "SVOLibrary/CameraInfo.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -35,37 +36,32 @@ public:
 
 #pragma region Public Methods
 public:
-	HRESULT Assign( double p_StartFrameTS, double p_EndFrameTS, const SvOi::ITRCImagePtr pImage );
+	void Assign(const CameraInfo& rCameraInfo);
 
 	void ClearInfo();
-	void ClearCameraInfo();
 
 	const SvOi::ITRCImagePtr GetNextImage();
 	const void setCamera(uint32_t cameraId, NextImageHandleFunctor NextImageHandleFunctor);
 	uint32_t getCameraId() const { return m_CameraId; };
-	const SvOi::ITRCImagePtr getImage() const { return m_pImage; };
+	const SvOi::ITRCImagePtr getImage() const { return m_cameraInfo.m_pImage; };
 	bool setImage(SvOi::ITRCImagePtr pImage);
+	const CameraInfo& getCameraInfo() const { return m_cameraInfo; }
 
-	double m_StartFrameTimeStamp {0.0};
-	double m_EndFrameTimeStamp {0.0};
-	double m_CallbackTimeStamp {0.0};
 #pragma endregion Public Methods
 
-protected:
 #pragma region Private Methods
 private:
-	void ClearIndexes();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
 	NextImageHandleFunctor m_NextImageFunctor;
 	uint32_t m_CameraId{ SvDef::InvalidObjectId };
-	SvOi::ITRCImagePtr m_pImage {nullptr};
+
+	CameraInfo m_cameraInfo;
 #pragma endregion Member Variables
 };
 
-typedef std::vector<SVCameraInfoStruct> SVCameraInfoStructVector;
 typedef std::map<uint32_t, SVCameraInfoStruct> SVObjectIdSVCameraInfoStructMap;
 
 } //namespace SvIe

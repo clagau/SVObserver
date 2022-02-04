@@ -13,23 +13,24 @@
 #include "stdafx.h"
 #include "ConfigurationOuttakes.h"
 #include "RemoteCommand.h"
+#include "SVVisionProcessorHelper.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "Definitions/SVIMCommand.h"
 #include "Definitions/SVUserMessage.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "Definitions/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #pragma endregion includes
 
 #pragma region Global functions
 void GlobalRCGoOnline()
 {
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_GO_ONLINE, 0), 0);
+	::SendMessage(SVVisionProcessorHelper::Instance().getMainhWnd(), WM_COMMAND, MAKEWPARAM (ID_RC_GO_ONLINE, 0), 0);
 }
 
 void GlobalRCGoOffline()
 {
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_GO_OFFLINE, 0), 0);
+	::SendMessage(SVVisionProcessorHelper::Instance().getMainhWnd(), WM_COMMAND, MAKEWPARAM (ID_RC_GO_OFFLINE, 0), 0);
 }
 
 bool GlobalRCGetState( DWORD* pdwSVIMState )
@@ -96,7 +97,7 @@ bool GlobalRCGetState( DWORD* pdwSVIMState )
 
 HRESULT GlobalRCSetMode( unsigned long newMode )
 {
-	return static_cast<HRESULT>(SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, static_cast<LPARAM> (newMode)));
+	return static_cast<HRESULT> (::SendMessage(SVVisionProcessorHelper::Instance().getMainhWnd(), SV_SET_MODE, 0, static_cast<LPARAM> (newMode)));
 }
 
 HRESULT GlobalRCGetMode( unsigned long* pMode )
@@ -140,33 +141,33 @@ std::string GlobalRCGetConfigurationName(bool runPath)
 HRESULT GlobalRCSaveConfiguration(LPCTSTR pFileName)
 {
 	LPARAM lParam = reinterpret_cast<LPARAM> (pFileName);
-	return static_cast<HRESULT> (::SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, SV_SAVE_CONFIG, 0, lParam));
+	return static_cast<HRESULT> (::SendMessage(SVVisionProcessorHelper::Instance().getMainhWnd(), SV_SAVE_CONFIG, 0, lParam));
 }
 
 bool GlobalRCOpenConfiguration( LPCTSTR ConfigName )
 {
 	SVRCSetSVCPathName( ConfigName );
 
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_OPEN_CURRENT_SVX, 0), 0);
+	::SendMessage(SVVisionProcessorHelper::Instance().getMainhWnd(), WM_COMMAND, MAKEWPARAM (ID_RC_OPEN_CURRENT_SVX, 0), 0);
 
 	return true;
 }
 
 void GlobalRCCloseConfiguration()
 {
-	SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM(ID_RC_CLOSE, 0), 0);
+	::SendMessage(SVVisionProcessorHelper::Instance().getMainhWnd(), WM_COMMAND, MAKEWPARAM(ID_RC_CLOSE, 0), 0);
 }
 
 HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 {
 	WPARAM wParam = static_cast<WPARAM> (fileType);
 	LPARAM lParam = reinterpret_cast<LPARAM> (pFileName);
-	return static_cast<HRESULT> (::SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_LOAD_PACKED_CONFIGURATION, wParam, lParam));
+	return static_cast<HRESULT> (::SendMessage(SVVisionProcessorHelper::Instance().getMainhWnd(), SV_LOAD_PACKED_CONFIGURATION, wParam, lParam));
 }
 
 HRESULT GlobalRCAddFileToConfig(LPCTSTR pFileName)
 {
 	LPARAM lParam = reinterpret_cast<LPARAM> (pFileName);
-	return static_cast<HRESULT>(::SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_ADD_FILE_TO_CONFIG, 0, lParam));
+	return static_cast<HRESULT>(::SendMessage(SVVisionProcessorHelper::Instance().getMainhWnd(), SV_ADD_FILE_TO_CONFIG, 0, lParam));
 }
 #pragma endregion Global functions

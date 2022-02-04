@@ -56,7 +56,7 @@ public:
 
 	HRESULT SetDigitalOutputPortValue( unsigned long port, unsigned long value );
 
-	HRESULT SetDigitalOutputData(unsigned long channel, const IntVariantMap& rData);
+	HRESULT SetDigitalOutputData(unsigned long channel, const TriggerData& rData);
 
 	HRESULT ClearDigitalOutputs();
 	HRESULT TestDigitalOutputs();

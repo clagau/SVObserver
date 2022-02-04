@@ -73,7 +73,7 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long , unsigned long )
 	return S_OK;
 }
 
-HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTrig::IntVariantMap& rData)
+HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTrig::TriggerData& rData)
 {
 	HRESULT result {E_FAIL};
 

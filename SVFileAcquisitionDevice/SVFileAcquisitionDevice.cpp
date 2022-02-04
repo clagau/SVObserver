@@ -13,10 +13,11 @@
 #include "stdafx.h"
 #include "SVFileAcquisitionDevice.h"
 #include "SVFileAcquisitionDeviceParamEnum.h"
-#include "SVImageLibrary/SVAcquisitionBufferInterface.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/SVMessage.h"
 #include "Definitions/SVImageFormatEnum.h"
+#include "SVOLibrary/CameraInfo.h"
+#include "SVImageLibrary/SVAcquisitionBufferInterface.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
@@ -420,11 +421,14 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame(unsigned long cameraIndex
 		SVFileCamera& rCamera = m_cameras[cameraIndex];
 		if (rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface)
 		{
-			SvOi::ITRCImagePtr pImage = rCamera.m_pBufferInterface->GetNextBuffer();
+			CameraInfo cameraInfo;
+			cameraInfo.m_startFrameTimestamp = rCamera.m_StartTimeStamp;
+			cameraInfo.m_endFrameTimestamp =  SvUl::GetTimeStamp();
+			cameraInfo.m_pImage = rCamera.m_pBufferInterface->GetNextBuffer();
 
-			if (nullptr != pImage && nullptr != pImage->getHandle())
+			if (nullptr != cameraInfo.m_pImage && nullptr != cameraInfo.m_pImage->getHandle())
 			{
-				result = rCamera.CopyImage(pImage.get());
+				result = rCamera.CopyImage(cameraInfo.m_pImage.get());
 
 				if (S_OK != result)
 				{
@@ -447,7 +451,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame(unsigned long cameraIndex
 			}
 
 			//Send this command also if buffer failed to trigger the PPQ-Thread to give it a change for cleanup.
-			rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, rCamera.m_StartTimeStamp, SvUl::GetTimeStamp());
+			rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(std::move(cameraInfo));
 		}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ACQDEVICE)
 		else

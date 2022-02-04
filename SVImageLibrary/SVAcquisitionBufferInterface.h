@@ -13,6 +13,8 @@
 
 #include "ObjectInterfaces/ITRCImage.h"
 
+struct CameraInfo;
+
 class SVAcquisitionBufferInterface  
 {
 public:
@@ -23,7 +25,7 @@ public:
 	virtual int GetBufferFormat() const = 0;
 
 	virtual SvOi::ITRCImagePtr GetNextBuffer() = 0;
-	virtual HRESULT UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& rImage, const double StartTick, const double StopTick) = 0;
+	virtual HRESULT UpdateWithCompletedBuffer(CameraInfo&& cameraInfo) = 0;
 	virtual void setNeededBuffers(int neededBuffers) = 0;
 };
 

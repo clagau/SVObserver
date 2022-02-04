@@ -747,13 +747,13 @@ SvOi::ITRCImagePtr SVAcquisitionClass::GetNextBuffer()
 	return result;
 }
 
-HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& rpImage, const double StartTick, const double StopTick)
+HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(CameraInfo&& cameraInfo)
 {
 	if (nullptr != m_SingleGrabHandle)
 	{
-		if (nullptr != rpImage && nullptr != rpImage->getHandle() && !(rpImage->getHandle()->empty()) && !(m_SingleGrabHandle->empty()))
+		if (nullptr != cameraInfo.m_pImage && nullptr != cameraInfo.m_pImage->getHandle() && !(cameraInfo.m_pImage->getHandle()->empty()) && !(m_SingleGrabHandle->empty()))
 		{
-			SVMatroxBufferInterface::CopyBuffer(m_SingleGrabHandle->GetBuffer(), rpImage->getHandle()->GetBuffer());
+			SVMatroxBufferInterface::CopyBuffer(m_SingleGrabHandle->GetBuffer(), cameraInfo.m_pImage->getHandle()->GetBuffer());
 		}
 		//This only resets this smart pointer as another smart pointer is still alive
 		m_SingleGrabHandle.reset();
@@ -761,12 +761,7 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& 
 		this->mbTempOnline = false;
 	}
 
-	CameraInfo cameraInfo;
-	cameraInfo.m_pImage = rpImage;
-	cameraInfo.m_startFrameTime = StartTick;
-	cameraInfo.m_endFrameTime = StopTick;
-
-	Notify(cameraInfo);
+	Notify(std::move(cameraInfo));
 	return S_OK;
 }
 

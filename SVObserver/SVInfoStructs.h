@@ -177,8 +177,6 @@ struct SVProductInfoStruct
 	inline long triggerCount() const {return m_triggerInfo.lTriggerCount;}
 	inline const double& TimeStamp() const {return m_triggerInfo.m_triggerTimeStamp;}
 
-	void DumpIndexInfo( std::string& p_rData );
-
 	bool IsProductActive() const;
 	void SetProductActive();
 	void SetProductComplete() const;

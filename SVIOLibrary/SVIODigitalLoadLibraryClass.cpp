@@ -194,7 +194,7 @@ HRESULT SVIODigitalLoadLibraryClass::SetOutputPortValue(unsigned long port, unsi
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::SetOutputData(unsigned long channel, const IntVariantMap& rData)
+HRESULT SVIODigitalLoadLibraryClass::SetOutputData(unsigned long channel, const TriggerData& rData)
 {
 	HRESULT result {E_FAIL};
 

@@ -186,7 +186,7 @@ namespace SvTrig
 			}
 			triggerInfo.bValid = true;
 			///Trigger channel 0 based
-			triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(m_pCurrentTrigger->getTriggerChannel());
+			triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(static_cast<uint8_t> (m_pCurrentTrigger->getTriggerChannel()));
 			m_pCurrentTrigger->Notify(triggerInfo);
 		}
 	}

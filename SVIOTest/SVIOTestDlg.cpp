@@ -600,20 +600,19 @@ void SVIOTestDlg::StartTrigger(int triggerchannel)
 
 }
 
-void __stdcall SVIOTestDlg::triggerCallback(const SvTrig::IntVariantMap& rTriggerData)
+void __stdcall SVIOTestDlg::triggerCallback(SvTrig::TriggerData&& triggerData)
 {
 	double timestamp{ 0.0 };
-	SvTrig::IntVariantMap::const_iterator Iter(rTriggerData.end());
-	Iter = rTriggerData.find(SvTrig::TriggerDataEnum::TimeStamp);
-	if (rTriggerData.end() != Iter)
+	const _variant_t& rTimestamp = triggerData[SvTrig::TriggerDataEnum::TimeStamp];
+	if (VT_R8 == rTimestamp.vt)
 	{
-		timestamp = Iter->second;
+		timestamp = rTimestamp.dblVal;
 	}
 
-	Iter = rTriggerData.find(SvTrig::TriggerDataEnum::TriggerChannel);
-	if (rTriggerData.end() != Iter)
+	const _variant_t& rTriggerChannel = triggerData[SvTrig::TriggerDataEnum::TriggerChannel];
+	if (VT_UI1 == rTriggerChannel.vt)
 	{
-		unsigned long triggerChannel = Iter->second;
+		unsigned long triggerChannel = rTriggerChannel;
 		SVIOTriggerDataStruct* pData = getTriggerData(triggerChannel);
 
 		if (nullptr != pData)
@@ -666,7 +665,7 @@ void SVIOTestDlg::OnStartTriggers()
 		StartTrigger(triggerchannel);
 		if (numTriggers >= triggerchannel)
 		{
-			auto triggerFunction = [this](const SvTrig::IntVariantMap& rTriggerData) {return triggerCallback(rTriggerData);  };
+			auto triggerFunction = [this](SvTrig::TriggerData&& triggerData) {return triggerCallback(std::move(triggerData));  };
 			m_psvTriggers->Register(triggerIndex, triggerFunction);
 		}
 	}
@@ -715,7 +714,7 @@ void SVIOTestDlg::OnStopTriggers()
 
 DWORD WINAPI SVWorkerThreadFunc( LPVOID lpParam )
 {
-	SVIOTestDlg* l_pOwner = (SVIOTestDlg*) lpParam;
+	SVIOTestDlg* l_pOwner = reinterpret_cast<SVIOTestDlg*> (lpParam);
 
 	DWORD l_dwAccum = 0;
 	do

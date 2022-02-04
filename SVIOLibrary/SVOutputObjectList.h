@@ -15,6 +15,7 @@
 
 #include "SVOutputObject.h"
 #include "SVIOEntryHostStruct.h"
+#include "SVIODigitalLoadLibraryClass.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -52,7 +53,7 @@ public:
 
 	typedef  std::map<int, _variant_t> IntVariantMap;
 	///This function returns no error because the IO PLC dll is the only type which supports this functionality
-	void WriteOutputData(unsigned long triggerChannel, const IntVariantMap& rData);
+	void WriteOutputData(unsigned long triggerChannel, const TriggerData& rData);
 	void setModuleReady(bool value);
 
 #pragma region Methods to replace processMessage

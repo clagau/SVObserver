@@ -96,6 +96,7 @@ public:
 	SVMatroxGigeCameraId m_svCameraId;
 
 	double m_StartFrameTimeStamp{0.0};
+	bool m_chunkData {false};
 
 	SVMatroxGigeAcqParams m_params;
 

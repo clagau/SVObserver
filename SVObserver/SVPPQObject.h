@@ -414,51 +414,6 @@ private:
 	bool EvaluateConditionalOutput() const;
 	void init();
 
-#ifdef EnableTracking
-	struct SVPPQTrackingElement
-	{
-		typedef std::vector< long > SVCountVector;
-
-		SVPPQTrackingElement() = default;
-		SVPPQTrackingElement( const SVPPQTrackingElement& p_rObject ) = default;
-		SVPPQTrackingElement& operator=(const SVPPQTrackingElement&) = default;
-
-		virtual ~SVPPQTrackingElement();
-
-		void clear();
-
-		void IncrementCount( size_t p_Index, size_t p_VectorSize );
-
-		SVCountVector m_TrackedCounts {};
-	};
-
-	struct SVPPQTracking
-	{
-		typedef std::map<std::string, SVPPQTrackingElement> SVQueueTrackingMap;
-		typedef std::map<std::string, long> SVPPQTrackingMap;
-
-		SVPPQTracking() = default;
-		SVPPQTracking( const SVPPQTracking& p_rObject ) = default;
-		SVPPQTracking& operator=(const SVPPQTracking&) = default;
-
-		virtual ~SVPPQTracking();
-
-		void clear();
-
-		void IncrementCount( const std::string& p_rName );
-		void IncrementCount( const std::string& p_rName, size_t p_Index );
-
-		size_t m_QueueLength = 0;
-		size_t m_TimeLength = 0;
-
-		SVPPQTrackingMap m_Counts {};
-		SVQueueTrackingMap m_QueueCounts {};
-		SVQueueTrackingMap m_QueueWriteTimeCounts {};
-	};
-
-	SVPPQTracking m_PPQTracking;
-#endif // EnableTracking
-
 	void ResetOutputValueObjects();
 	void ReleaseSharedMemory(SVProductInfoStruct& rProduct);
 	void CommitSharedMemory( SVProductInfoStruct& rProduct);

@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ResultListCtrl.h"
-#include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVObjectLibrary/SVClsids.h"

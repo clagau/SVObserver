@@ -113,22 +113,21 @@ void TriggerDevice::Process(bool&)
 		{
 			triggerInfo.lTriggerCount = ++m_triggerCount;
 			DWORD sleepDuration{ 0 };
-			bool softwareTrigger{ false };
 			//If in the input data it has a valid time stamp value then it is more accurate then use it
-			SvTrig::IntVariantMap::const_iterator iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TimeStamp);
-			if (triggerInfo.m_Data.end() != iterData && VT_R8 == iterData->second.vt && 0.0 < iterData->second.dblVal)
+			const _variant_t& rTimeStamp = triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp];
+			if (VT_R8 == rTimeStamp.vt && 0.0 < rTimeStamp.dblVal)
 			{
-				triggerInfo.m_triggerTimeStamp = iterData->second.dblVal;
+				triggerInfo.m_triggerTimeStamp = rTimeStamp.dblVal;
 				//When ObjectID is present then PLC connected so make sure the acquisition is done after the trigger timestamp
-				iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
-				if (triggerInfo.m_Data.end() != iterData)
+				const _variant_t& rObjectID = triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
+				if (VT_UI4 == rObjectID.vt && rObjectID.ulVal > 0)
 				{
 					double timeDifference = triggerInfo.m_triggerTimeStamp - SvUl::GetTimeStamp();
 					bool isTimeInTheFuture = timeDifference > 0.0;
 					if (isTimeInTheFuture)
 					{
 						sleepDuration = static_cast<DWORD> (timeDifference);
-						//Add 1ms as time difference has a rest and we need to make sure the sleep duartion is longer
+						//Add 1ms as time difference has a rest and we need to make sure the sleep duration is longer
 						++sleepDuration;
 					}
 				}
@@ -139,11 +138,8 @@ void TriggerDevice::Process(bool&)
 				triggerInfo.m_triggerTimeStamp = SvUl::GetTimeStamp();
 			}
 
-			iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::SoftwareTrigger);
-			if (triggerInfo.m_Data.end() != iterData && VT_BOOL == iterData->second.vt)
-			{
-				softwareTrigger = iterData->second ? true : false;
-			}
+			const _variant_t& rSoftwareTrigger = triggerInfo.m_Data[SvTrig::TriggerDataEnum::SoftwareTrigger];
+			bool softwareTrigger = (VT_BOOL == rSoftwareTrigger.vt) ? (rSoftwareTrigger ? true : false) : false;
 
 			preProcessTriggers(triggerInfo);
 			m_pPpqTriggerCallback(std::move(triggerInfo));

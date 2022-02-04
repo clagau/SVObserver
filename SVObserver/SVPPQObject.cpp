@@ -42,8 +42,9 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVOLibrary/SVHardwareManifest.h"
-#include "Triggering/SVTriggerObject.h"
 #include "Triggering/SVTriggerClass.h"
+#include "Triggering/SVTriggerInfoStruct.h"
+#include "Triggering/SVTriggerObject.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVLogLibrary/Logging.h"
 
@@ -914,11 +915,6 @@ void SVPPQObject::GoOnline()
 	std::string FailureObjectName;
 
 	m_lastPPQPosition = 0L;
-#ifdef EnableTracking
-	m_PPQTracking.clear();
-	m_PPQTracking.m_QueueLength = m_PPQPositions.size();
-	m_PPQTracking.m_TimeLength = m_outputDelay + 50;
-#endif
 	RebuildOutputList();
 
 	// First, make sure the trigger toggle output is set to the right default
@@ -1096,121 +1092,6 @@ void SVPPQObject::GoOnline()
 bool SVPPQObject::GoOffline()
 {
 	if (!m_bOnline) { return false; }
-
-#ifdef EnableTracking
-	if (TheSVObserverApp().UpdateAndGetLogDataManager())
-	{
-		std::string l_FileName;
-
-		l_FileName = SvUl::Format(_T("C:\\SVObserver\\ProductIndexes_%ld-%s.log"),
-			SVObjectManagerClass::Instance().GetFileSequenceNumber(), GetName());
-
-		std::fstream l_Stream(l_FileName.c_str(), std::ios_base::trunc | std::ios_base::out);
-
-		if (l_Stream.is_open())
-		{
-			for (size_t i = 0; i < m_PPQPositions.size(); ++i)
-			{
-				std::string l_Info;
-
-				SVProductInfoStruct* l_pProduct = m_PPQPositions.GetProductAt(i);
-
-				if (nullptr != l_pProduct)
-				{
-					l_pProduct->DumpIndexInfo(l_Info);
-				}
-
-				l_Stream << _T("Position ") << i << _T(" : ");
-				l_Stream << l_Info.c_str();
-				l_Stream << std::endl;
-			}
-
-			l_Stream.close();
-		}
-
-		std::string l_Name = SvUl::Format(_T("C:\\SVObserver\\%s-Counts-%ld.csv"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
-
-		std::fstream l_TrackingStream(l_Name.c_str(), std::ios_base::trunc | std::ios_base::out);
-
-		if (l_TrackingStream.is_open())
-		{
-			l_TrackingStream << _T("Name,Count") << std::endl;
-
-			SVPPQTracking::SVPPQTrackingMap::iterator l_PPQIter = m_PPQTracking.m_Counts.begin();
-
-			while (l_PPQIter != m_PPQTracking.m_Counts.end())
-			{
-				l_TrackingStream << l_PPQIter->first.c_str() << _T(",");
-				l_TrackingStream << l_PPQIter->second;
-				l_TrackingStream << std::endl;
-
-				++l_PPQIter;
-			}
-
-			l_TrackingStream << std::endl;
-
-			l_TrackingStream << _T("Name");
-
-			for (size_t i = 0; i < m_PPQPositions.size(); ++i)
-			{
-				l_TrackingStream << _T(",") << i;
-			}
-
-			l_TrackingStream << std::endl;
-
-			SVPPQTracking::SVQueueTrackingMap::iterator l_QueueIter = m_PPQTracking.m_QueueCounts.begin();
-
-			while (l_QueueIter != m_PPQTracking.m_QueueCounts.end())
-			{
-				l_TrackingStream << l_QueueIter->first.c_str();
-
-				SVPPQTrackingElement& l_rElement = l_QueueIter->second;
-
-				for (size_t i = 0; i < l_rElement.m_TrackedCounts.size(); ++i)
-				{
-					l_TrackingStream << _T(",") << l_rElement.m_TrackedCounts[i];
-				}
-
-				l_TrackingStream << std::endl;
-
-				++l_QueueIter;
-			}
-
-			l_TrackingStream << std::endl;
-
-			// Write Outputs Time...
-			l_TrackingStream << _T("Time ms");
-
-			for (size_t i = 0; i < m_PPQTracking.m_TimeLength; ++i)
-			{
-				l_TrackingStream << _T(",") << i;
-			}
-
-			l_TrackingStream << std::endl;
-
-			l_QueueIter = m_PPQTracking.m_QueueWriteTimeCounts.begin();  // m_QueueCounts.begin();
-
-			while (l_QueueIter != m_PPQTracking.m_QueueWriteTimeCounts.end())
-			{
-				l_TrackingStream << l_QueueIter->first.c_str();
-
-				SVPPQTrackingElement& l_rElement = l_QueueIter->second;
-
-				for (size_t i = 0; i < l_rElement.m_TrackedCounts.size(); ++i)
-				{
-					l_TrackingStream << _T(",") << l_rElement.m_TrackedCounts[i];
-				}
-
-				l_TrackingStream << std::endl;
-
-				++l_QueueIter;
-			}
-			l_TrackingStream << std::endl;
-
-			l_TrackingStream.close();
-		}
-	}
-#endif EnableTracking
 
 	m_pTrigger->GoOffline();
 
@@ -1632,29 +1513,29 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 		if (0 == inspectedObjectID)
 		{
 			//Set the default inspected object ID which would be the input object ID
-			SvTrig::IntVariantMap::const_iterator iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
-			if (pProduct->m_triggerInfo.m_Data.end() != iterData)
+			const _variant_t& rObjectID = pProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
+			if (VT_UINT == rObjectID.vt)
 			{
-				inspectedObjectID = static_cast<DWORD> (iterData->second);
+				inspectedObjectID = static_cast<DWORD> (rObjectID);
 			}
 		}
 
 		DWORD triggerIndex {0};
 		DWORD triggerPerObjectID {0};
-		SvTrig::IntVariantMap::const_iterator  iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectType);
-		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
+		const _variant_t& rObjectType = pProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectType];
+		if (VT_UI1 == rObjectType.vt)
 		{
-			objectType = iterData->second;
+			objectType = rObjectType;
 		}
-		iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
-		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
+		const _variant_t& rTriggerIndex = pProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
+		if (VT_UI1 == rTriggerIndex.vt)
 		{
-			triggerIndex = static_cast<DWORD> (iterData->second);
+			triggerIndex = static_cast<DWORD> (rTriggerIndex);
 		}
-		iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerPerObjectID);
-		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
+		const _variant_t& rTriggerPerObjectID = pProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID];
+		if (VT_UI1 == rTriggerPerObjectID.vt)
 		{
-			triggerPerObjectID = static_cast<DWORD> (iterData->second);
+			triggerPerObjectID = static_cast<DWORD> (rTriggerPerObjectID);
 		}
 		//Only when both triggerIndex and triggerPerObjectID are valid and the same write data
 		writeOutputData = (0 != triggerIndex && 0 != triggerPerObjectID) ? (triggerIndex == triggerPerObjectID) : false;
@@ -1687,7 +1568,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 
 			if (triggerChannel >= 0 && rOutputValues.size() > 0)
 			{
-				SvTrig::IntVariantMap outputData;
+				SvTrig::TriggerData outputData;
 				outputData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
 				if (VT_EMPTY != objectType.vt)
 				{
@@ -1730,11 +1611,6 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 
 	if (bNak)
 	{
-		// Caution! enabling the logging here will cause thread contention because
-		// the tracking class is not lock-less. It needs more work before we can use it here.
-#ifdef EnableTracking
-		//m_PPQTracking.IncrementCount( _T( "Product NAK" ) );
-#endif
 		::InterlockedIncrement(&m_NAKCount);
 		::InterlockedIncrement(&m_NewNAKCount);
 	}
@@ -2110,13 +1986,6 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 						::OutputDebugString(SvUl::Format(_T("%s Add Process Inspection Set TRI=%d\n"), GetName(), pTempProduct->triggerCount()).c_str());
 #endif
-#ifdef EnableTracking
-						std::string l_Title = m_arInspections[i]->GetName();
-
-						l_Title += _T(" CP");
-
-						m_PPQTracking.IncrementCount(l_Title, offset);
-#endif
 					}
 				}
 				else
@@ -2194,9 +2063,6 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 			break;
 	}
 
-#ifdef EnableTracking
-	size_t l_ProductIndex = m_PPQPositions.size();
-#endif
 	// Begin checking inspections to start processing
 	for (size_t i = 0; i < count; ++i)
 	{
@@ -2211,9 +2077,6 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 			/// Inspection has not already been queued
 			if (true == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued)
 			{
-#ifdef EnableTracking
-				l_ProductIndex = m_PPQPositions.GetIndexByTriggerCount(pProduct->triggerCount());
-#endif
 				if (SvDef::Bursts == m_NAKMode)
 				{
 					if (0 == m_FirstNAKProcessCount || m_FirstNAKProcessCount < pTempProduct->triggerCount())
@@ -2262,13 +2125,6 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("SVPPQObject::StartInspection product not triggerd"), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
 		}
 		result = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->StartProcess(pProduct);
-
-#ifdef EnableTracking
-		std::string l_Title = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->GetName();
-		l_Title += _T(" Start");
-		m_PPQTracking.IncrementCount(l_Title, l_ProductIndex);
-#endif
-
 	}
 
 	return result;
@@ -2487,10 +2343,6 @@ bool SVPPQObject::SetProductComplete(long p_PPQIndex)
 	{
 		CommitSharedMemory(*pProduct);
 		l_Status = SetProductComplete(*pProduct);
-
-#ifdef EnableTracking
-		m_PPQTracking.IncrementCount(_T("Product Complete"), p_PPQIndex);
-#endif
 	}
 
 	return l_Status;
@@ -2510,17 +2362,6 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
 
-	// if bInspecting is false, this loop will fall through
-	// if we are maintaining source images it will also fall through
-	// we don't want to release all the source images unless all the IPs have started
-
-	if (false == getMaintainSourceImages())
-	{
-		for (auto& rValue : rProduct.m_svCameraInfos)
-		{
-			rValue.second.ClearCameraInfo();
-		}
-	}
 	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 	if (rProduct.IsProductActive())
 	{
@@ -2562,10 +2403,6 @@ bool SVPPQObject::SetProductIncomplete(long p_PPQIndex)
 	if (l_Status)
 	{
 		l_Status = SetProductIncomplete(*pProduct);
-
-#ifdef EnableTracking
-		m_PPQTracking.IncrementCount(_T("Product Incomplete"), p_PPQIndex);
-#endif
 	}
 
 	return l_Status;
@@ -2579,10 +2416,6 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 	// Release from Shared Memory
 	ReleaseSharedMemory(rProduct);
 
-	for (auto& rValue : rProduct.m_svCameraInfos)
-	{
-		rValue.second.ClearCameraInfo();
-	}
 	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 	if (rProduct.IsProductActive())
 	{
@@ -2654,7 +2487,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 			cameraPpqPos = l_svIter->second.m_CameraPPQIndex;
 		}
 
-		double startTime = rElement.m_Data.m_startFrameTime;
+		double startTime = rElement.m_Data.m_startFrameTimestamp;
 
 		if (cameraPpqPos < ppqSize)
 		{
@@ -2696,14 +2529,6 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 				SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
 				l_Status = E_FAIL;
-#ifdef EnableTracking
-
-				std::string l_Title = _T("Pending ");
-
-				l_Title += rElement.m_pCamera->GetName();
-
-				m_PPQTracking.IncrementCount(l_Title);
-#endif
 			}
 			else// if l_Position > than PPQ size.
 			{
@@ -2723,7 +2548,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 			if (IterCamera != pProduct->m_svCameraInfos.end())
 			{
-				double	priorCameraSF = IterCamera->second.m_StartFrameTimeStamp;
+				double	priorCameraSF = IterCamera->second.getCameraInfo().m_startFrameTimestamp;
 
 				// Attempting to make sure we don't have the previous trigger 
 				// count where the image has already been assigned (and 
@@ -2732,29 +2557,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 				// Queue notification.
 				if (priorCameraSF == 0.0)
 				{
-					double endTime = rElement.m_Data.m_endFrameTime;
-
-					IterCamera->second.Assign(startTime, endTime, rElement.m_Data.m_pImage);
-
-
-
-					if (nullptr == IterCamera->second.getImage())
-					{
-#ifdef EnableTracking
-						std::string l_Title = rElement.m_pCamera->GetName();
-
-						l_Title += _T(" Index NAK");
-
-						m_PPQTracking.IncrementCount(l_Title);
-						m_PPQTracking.IncrementCount(l_Title, l_ProductIndex);
-#endif
-					}
-					else
-					{
-#ifdef EnableTracking
-						m_PPQTracking.IncrementCount(rElement.m_pCamera->GetName(), l_ProductIndex);
-#endif
-					}
+					IterCamera->second.Assign(rElement.m_Data);
 
 					for (size_t i = (l_ProductIndex + 1); i < m_PPQPositions.size(); ++i)
 					{
@@ -2766,33 +2569,21 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 							if (IterCamera2 != l_pAcqProduct->m_svCameraInfos.end())
 							{
-								if (IterCamera2->second.m_CallbackTimeStamp != 0)
+								if (IterCamera2->second.getCameraInfo().m_endFrameTimestamp != 0.0)
 								{
 									break;
 								}
-								IterCamera2->second.m_CallbackTimeStamp = SvUl::GetTimeStamp();
 							}
-#ifdef EnableTracking
-							std::string l_Title = rElement.m_pCamera->GetName();
-
-							l_Title += _T(" NAK");
-
-							m_PPQTracking.IncrementCount(l_Title);
-							m_PPQTracking.IncrementCount(l_Title, l_ProductIndex);
-#endif
 
 							MarkProductInspectionsMissingAcquisiton(*l_pAcqProduct, rElement.m_pCamera);
 						}
 					}
 
-					IterCamera->second.m_CallbackTimeStamp = SvUl::GetTimeStamp();
-
 					m_oNotifyInspectionsSet.insert(pProduct->triggerCount());
 					m_AsyncProcedure.Signal(nullptr);
-				} // if (( priorCameraSF == 0 ) && (1 != productComplete))
+				}
 				else
 				{
-
 					// trying to use the wrong Trigger Count.  
 					// Trigger even for this camera image has not 
 					// occurred yet.
@@ -2800,14 +2591,8 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 					SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
 					l_Status = E_FAIL;
-
-#ifdef EnableTracking
-					std::string l_Title = _T("Pending ");
-					l_Title += rElement.m_pCamera->GetName();
-					m_PPQTracking.IncrementCount(l_Title);
-#endif
 				}
-			} // if( l_svIter1 != l_pProduct->m_svCameraInfos.end() )
+			}
 			else
 			{
 				l_Status = E_FAIL;
@@ -2854,7 +2639,7 @@ void SVPPQObject::cameraCallback(ULONG_PTR pCaller, const CameraInfo& rCameraInf
 			bool isCameraTriggerAndHwCameraWithImage = SvDef::TriggerType::CameraTrigger == pTrigger->getType() && false == pCamera->IsFileAcquisition() && nullptr != rCameraInfo.m_pImage;
 			if (isCameraTriggerAndHwCameraWithImage)
 			{
-				pTrigger->Fire(rCameraInfo.m_startFrameTime);
+				pTrigger->Fire(rCameraInfo.m_startFrameTimestamp);
 			}
 		}
 
@@ -3589,14 +3374,6 @@ HRESULT SVPPQObject::ProcessCompleteInspections(bool& rProcessed)
 					l_rPPQInspectInfo.ClearIndexes();
 
 					setOutputResults(inspectedID, l_pPPQProduct->m_outputsInfo.m_outputResult);
-#ifdef EnableTracking
-					std::string l_Title = l_rInspectInfo.m_pInspection->GetName();
-
-					l_Title += _T(" Complete");
-
-
-					m_PPQTracking.IncrementCount(l_Title, l_PPQIndex);
-#endif
 
 					// Inspection Process is done, let everyone know.
 					if (!SetInspectionComplete(*l_pPPQProduct, l_rInspectInfo.m_pInspection->getObjectId()))
@@ -3857,76 +3634,8 @@ SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(SvIe::SVVirtualCamera* p
 	, m_Data(rData)
 {
 }
-
 #pragma endregion SVCameraQueueElement Constructor
 
-
-#ifdef EnableTracking
-#pragma region SVPPQTrackingElement Constructor
-SVPPQObject::SVPPQTrackingElement::~SVPPQTrackingElement()
-{
-	clear();
-}
-#pragma endregion SVPPQTrackingElement Constructor
-
-void SVPPQObject::SVPPQTrackingElement::clear()
-{
-	if (!(m_TrackedCounts.empty()))
-	{
-		m_TrackedCounts.clear();
-	}
-}
-
-void SVPPQObject::SVPPQTrackingElement::IncrementCount(size_t p_Index, size_t p_VectorSize)
-{
-	if (p_Index < p_VectorSize)
-	{
-		if (m_TrackedCounts.size() != p_VectorSize)
-		{
-			m_TrackedCounts.resize(p_VectorSize, 0);
-		}
-
-		++(m_TrackedCounts[p_Index]);
-	}
-}
-
-#pragma region SVPPQTracking Constructor
-SVPPQObject::SVPPQTracking::~SVPPQTracking()
-{
-	clear();
-}
-#pragma endregion SVPPQTracking Constructor
-
-void SVPPQObject::SVPPQTracking::clear()
-{
-	m_QueueLength = 0;
-
-	if (!(m_Counts.empty()))
-	{
-		m_Counts.clear();
-	}
-
-	if (!(m_QueueCounts.empty()))
-	{
-		m_QueueCounts.clear();
-	}
-	if (!(m_QueueWriteTimeCounts.empty()))
-	{
-		m_QueueWriteTimeCounts.clear();
-	}
-}
-
-void SVPPQObject::SVPPQTracking::IncrementCount(const std::string& p_rName)
-{
-	++(m_Counts[p_rName]);
-}
-
-void SVPPQObject::SVPPQTracking::IncrementCount(const std::string& p_rName, size_t p_Index)
-{
-	m_QueueCounts[p_rName].IncrementCount(p_Index, m_QueueLength);
-}
-
-#endif //EnableTracking
 
 void SVPPQObject::ResetOutputValueObjects()
 {
@@ -4298,21 +4007,21 @@ void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVP
 	uint32_t newObjectID {0UL};
 	uint32_t prevObjectID {0UL};
 
-	SvTrig::IntVariantMap::const_iterator iterData = rCurrentProduct.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
-	if (rCurrentProduct.m_triggerInfo.m_Data.end() != iterData)
+	const _variant_t& rPrevObjectID = rCurrentProduct.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
+	if (VT_UINT == rPrevObjectID.vt)
 	{
-		prevObjectID = static_cast<uint32_t> (iterData->second);
+		prevObjectID = static_cast<uint32_t> (rPrevObjectID);
 	}
-	iterData = pNextProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
-	if (pNextProduct->m_triggerInfo.m_Data.end() != iterData)
+	const _variant_t& rNewObjectID = pNextProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
+	if (VT_UINT == rNewObjectID.vt)
 	{
-		newObjectID = static_cast<uint32_t> (iterData->second);
+		newObjectID = static_cast<uint32_t> (rNewObjectID);
 	}
 	if (newObjectID != 0 && newObjectID == prevObjectID)
 	{
 		//Object has more than 1 trigger per Object then relay NAK result to new product
-		iterData = pNextProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
-		if (pNextProduct->m_triggerInfo.m_Data.end() != iterData && 1u < static_cast<DWORD> (iterData->second))
+		const _variant_t& rTriggerIndex = pNextProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
+		if (VT_UI1 == rTriggerIndex.vt && 1u < static_cast<DWORD> (rTriggerIndex))
 		{
 			pNextProduct->m_prevTriggerNAK = true;
 		}

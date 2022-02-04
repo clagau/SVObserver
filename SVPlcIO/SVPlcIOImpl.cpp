@@ -111,31 +111,20 @@ unsigned long SVPlcIOImpl::GetOutputCount()
 	return cOutputCount;
 }
 
-HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTrig::IntVariantMap& rData)
+HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTrig::TriggerData& rData)
 {
 	ResultReport reportResult;
 
 	//PLC channel is zero based while SVObserver trigger index is one based!
 	reportResult.m_channel = static_cast<uint8_t> (triggerIndex - 1);
 	reportResult.m_timestamp = SvUl::GetTimeStamp();
-	auto iterData = rData.find(SvTrig::TriggerDataEnum::ObjectID);
-	if (rData.end() != iterData)
+
+	reportResult.m_objectID = (VT_EMPTY != rData[SvTrig::TriggerDataEnum::ObjectID].vt) ? static_cast<uint32_t> (rData[SvTrig::TriggerDataEnum::ObjectID]) : 0UL;
+	reportResult.m_objectType = (VT_EMPTY != rData[SvTrig::TriggerDataEnum::ObjectType].vt) ? static_cast<uint8_t> (rData[SvTrig::TriggerDataEnum::ObjectType]) : 0;
+	const _variant_t& rOutputData = rData[SvTrig::TriggerDataEnum::OutputData];
+	if((VT_UI1 | VT_ARRAY) == rOutputData.vt && rOutputData.parray->rgsabound[0].cElements == cResultSize)
 	{
-		reportResult.m_objectID = iterData->second;
-	}
-	iterData = rData.find(SvTrig::TriggerDataEnum::ObjectType);
-	if (rData.end() != iterData)
-	{
-		reportResult.m_objectType = iterData->second;
-	}
-	iterData = rData.find(SvTrig::TriggerDataEnum::OutputData);
-	if (rData.end() != iterData)
-	{
-		const _variant_t& rResult{iterData->second};
-		if((VT_UI1 | VT_ARRAY) ==  rResult.vt && rResult.parray->rgsabound[0].cElements == cResultSize)
-		{
-			memcpy(&reportResult.m_results[0], rResult.parray->pvData, cResultSize * sizeof(uint8_t));
-		}
+		memcpy(&reportResult.m_results[0], rOutputData.parray->pvData, cResultSize * sizeof(uint8_t));
 	}
 
 	Tec::writeResult(reportResult);
@@ -391,7 +380,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		//PLC channel is zero based while SVObserver trigger index is one based!
 		unsigned long triggerIndex = rTriggerReport.m_channel + 1;
 
-		SvTrig::IntVariantMap triggerData;
+		SvTrig::TriggerData triggerData;
 		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
 		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
 		triggerData[SvTrig::TriggerDataEnum::ObjectType] = _variant_t(rTriggerReport.m_objectType);

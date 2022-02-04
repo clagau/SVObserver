@@ -14,6 +14,7 @@
 #include "SVTestAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVCameraPage.h"
+#include "SVOLibrary/CameraInfo.h"
 #pragma endregion Includes
 
 SVTestAcquisitionClass::SVTestAcquisitionClass( SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer )
@@ -45,13 +46,13 @@ SvOi::ITRCImagePtr SVTestAcquisitionClass::GetNextBuffer()
 	return (nullptr != m_pDisplay) ?  m_pDisplay->m_CameraImage.GetNextBuffer() :  SvOi::ITRCImagePtr();
 }
 
-HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& rImage, const double , const double )
+HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(CameraInfo&& cameraInfo)
 {
 	HRESULT l_Status = S_OK;
 
 	if( nullptr != m_pDisplay )
 	{
-		l_Status = m_pDisplay->UpdateWithCompletedBuffer(rImage);
+		l_Status = m_pDisplay->UpdateWithCompletedBuffer(cameraInfo.m_pImage);
 	}
 	else
 	{

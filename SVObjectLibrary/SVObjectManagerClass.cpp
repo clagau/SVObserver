@@ -44,7 +44,6 @@ SVObjectManagerClass::SVObjectManagerClass()
 	, m_PendingImageIndicator(0)
 	, m_InspectionIndicator(0)
 	, m_LastFrameRate(10)
-	, m_FileSequenceNumber(0)
 {
 	m_TranslationMap[SvDef::FqnInspections] = SvDef::FqnConfiguration;
 	m_TranslationMap[SvDef::FqnPPQs] = SvDef::FqnConfiguration;
@@ -70,11 +69,6 @@ HRESULT SVObjectManagerClass::SetState(SVObjectManagerStateEnum State)
 {
 	::InterlockedExchange(&m_State, State);
 	::Sleep(100);
-
-	if (ReadOnly == m_State)
-	{
-		::InterlockedIncrement(&m_FileSequenceNumber);
-	}
 
 	return S_OK;
 }
@@ -963,11 +957,6 @@ long SVObjectManagerClass::GetNextFrameRate(long LastFrameRate)
 	::InterlockedExchange(&m_LastFrameRate, LastFrameRate);
 
 	return FrameRate;
-}
-
-long SVObjectManagerClass::GetFileSequenceNumber() const
-{
-	return m_FileSequenceNumber;
 }
 
 HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const

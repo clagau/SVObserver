@@ -110,6 +110,9 @@ constexpr const char* FqnCameraShutter = _T("Shutter");
 constexpr const char* FqnCameraGain = _T("Gain");
 constexpr const char* FqnCameraRegPath = _T("Reg Image Pathname");
 constexpr const char* FqnCameraRegFile = _T("Reg Image Filename");
+constexpr const char* FqnCameraFrameID = _T("Frame ID");
+constexpr const char* FqnCameraTimestamp = _T("Timestamp");
+constexpr const char* FqnCameraLineStatusAll = _T("Line Status All");
 //! PPQ FQN names
 constexpr const char* FqnPpqLength = _T("Length");
 constexpr const char* FqnPpqTriggerCount = _T("Trigger Count");
@@ -142,5 +145,6 @@ constexpr unsigned long VT_DPOINT = 81;
 
 constexpr const char* cIndexKeyword = _T("IDX");
 
+constexpr int cTriggerDataNumber = 8;
 #pragma endregion Declarations
 } //namespace SvDef

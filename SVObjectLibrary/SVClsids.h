@@ -64,6 +64,9 @@ namespace ObjectIdEnum
 	constexpr uint32_t RemoteInputId = 0x1000;
 	constexpr uint32_t AcquisitionId = 0x1100;
 	constexpr uint32_t PlcOutputId = 0x1200;
+	constexpr uint32_t CameraBaseFrameIDId = 0x1300;
+	constexpr uint32_t CameraBaseTimestampId = 0x1400;
+	constexpr uint32_t CameraBaseLineStatusAllId = 0x1500;
 
 	constexpr uint32_t FirstPossibleObjectId = 1000000; //First possible object id for automatic generated ids.
 }

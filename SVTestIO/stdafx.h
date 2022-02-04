@@ -51,6 +51,7 @@
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>
 
+#include <array>			//Used by static library
 #include <atomic>			//Used by static library
 #include <algorithm>
 #include <assert.h>

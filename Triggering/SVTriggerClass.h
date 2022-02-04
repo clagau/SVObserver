@@ -43,7 +43,7 @@ public:
 	explicit SVTriggerClass(LPCTSTR deviceName);
 	virtual ~SVTriggerClass() = default;
 
-	void __stdcall triggerCallback(const SvTrig::IntVariantMap& rTriggerData);
+	void __stdcall triggerCallback(SvTrig::TriggerData&& triggerData);
 
 	void addAcquisitionTrigger(AcquisitionParameter&& acqParameter);
 	void clearAcquisitionTriggers();
@@ -73,7 +73,7 @@ protected:
 
 private:
 	int m_digitizerNumber{ -1 };
-	long m_triggerIndex{ 0L };
+	uint8_t m_triggerIndex{ 0 };
 	SVIOTriggerLoadLibraryClass* m_pDLLTrigger{nullptr};
 	unsigned long m_triggerChannel {0UL};
 	bool m_pause {false};

@@ -578,7 +578,7 @@ bool SVOutputObjectList::OutputIsNotValid( std::string Name )
 }
 
 
-void SVOutputObjectList::WriteOutputData(unsigned long triggerChannel, const IntVariantMap& rData)
+void SVOutputObjectList::WriteOutputData(unsigned long triggerChannel, const TriggerData& rData)
 {
 	std::lock_guard<std::mutex> guard(m_protectOutputList);
 	SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputData(triggerChannel, rData);

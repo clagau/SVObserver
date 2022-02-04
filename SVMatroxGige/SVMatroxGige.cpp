@@ -12,15 +12,16 @@
 #include "StdAfx.h"
 //Moved to precompiled header: #include <map>
 #include "SVMatroxGige.h"
-#include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
+#include "SVOLibrary/CameraInfo.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVStatusLibrary/MessageManager.h"
+#include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
@@ -28,6 +29,11 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+constexpr LPCTSTR cChunkModeActive = _T("ChunkModeActive");
+constexpr LPCTSTR cChunkFrameID = _T("ChunkFrameID");
+constexpr LPCTSTR cChunkTimeStamp = _T("ChunkTimestamp");
+constexpr LPCTSTR cChunkLineStatusAll = _T("ChunkLineStatusAll");
 
 SVMatroxGige g_matroxAcqDevice;
 
@@ -535,26 +541,52 @@ void SVMatroxGige::ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookI
 
 					if (l_Code == S_OK && ModifiedBufferId)
 					{
+						CameraInfo cameraInfo;
 						//Save end frame time stamp before buffer copy
-						double endFrameTimeStamp = SvUl::GetTimeStamp();
-						double startFrameTimeStamp = pCamera->m_StartFrameTimeStamp;
+						cameraInfo.m_endFrameTimestamp = SvUl::GetTimeStamp();
+						cameraInfo.m_startFrameTimestamp = pCamera->m_StartFrameTimeStamp;
 
 						pCamera->m_StartFrameTimeStamp = 0.0;
 
 						if (nullptr != pCamera->m_pBufferInterface)
 						{
-							SvOi::ITRCImagePtr pImage = pCamera->m_pBufferInterface->GetNextBuffer();
-							if (nullptr != pImage)
+							cameraInfo.m_pImage = pCamera->m_pBufferInterface->GetNextBuffer();
+							if (nullptr != cameraInfo.m_pImage)
 							{
-								auto pImageHandle = pImage->getHandle();
+								auto pImageHandle = cameraInfo.m_pImage->getHandle();
 								if (nullptr != pImageHandle && !(pImageHandle->empty()))
 								{
 									SVMatroxBufferInterface::CopyBuffer(pImageHandle->GetBuffer(), ModifiedBufferId);
 								}
 							}
 
+							if (pCamera->m_chunkData)
+							{
+								_variant_t* pValue = &cameraInfo.m_cameraData[CameraDataEnum::ChunkFrameID];
+								pValue->vt = VT_I4;
+								HRESULT hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkFrameID, SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeInt32, *pValue);
+								if (S_OK != hResult)
+								{
+									pValue->Clear();
+								}
+								pValue = &cameraInfo.m_cameraData[CameraDataEnum::ChunkTimeStamp];
+								pValue->vt = VT_I4;
+								hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkTimeStamp, SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeInt32, *pValue);
+								if (S_OK != hResult)
+								{
+									pValue->Clear();
+								}
+								pValue = &cameraInfo.m_cameraData[CameraDataEnum::ChunkLineStatusAll];
+								pValue->vt = VT_I4;
+								hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkLineStatusAll, SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeInt32, *pValue);
+								if (S_OK != hResult)
+								{
+									pValue->Clear();
+								}
+							}
+
 							//Send this command also if buffer failed to trigger the PPQ-Thread to give it a change for cleanup.
-							pCamera->m_pBufferInterface->UpdateWithCompletedBuffer(pImage, startFrameTimeStamp, endFrameTimeStamp);
+							pCamera->m_pBufferInterface->UpdateWithCompletedBuffer(std::move(cameraInfo));
 						}
 					}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
@@ -815,6 +847,12 @@ HRESULT SVMatroxGige::StartDigitizer(SVMatroxGigeDigitizer& rCamera, const _vari
 	}
 	if (S_OK == hr)
 	{
+		_variant_t value;
+		value.vt = VT_BOOL;
+		if (S_OK == SVMatroxDigitizerInterface::GetFeature(*(rCamera.m_Digitizer.get()), cChunkModeActive, SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeBool, value))
+		{
+			rCamera.m_chunkData = value ? true : false;
+		}
 		// Start the Asynchronous Grab (using MdigProcess)
 		hr = rCamera.StartGrabArray(SVMatroxGige::DigitizerEndFrameCallback);
 	}

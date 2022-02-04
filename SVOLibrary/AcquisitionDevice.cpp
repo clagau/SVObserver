@@ -159,8 +159,8 @@ void AcquisitionDevice::Process( bool& )
 	}
 }
 
-void AcquisitionDevice::Notify(const CameraInfo& rCameraInfo)
+void AcquisitionDevice::Notify(CameraInfo&& cameraInfo)
 {
-	m_cameraQueue.AddTail(rCameraInfo);
+	m_cameraQueue.emplace_back(std::move(cameraInfo));
 	m_Thread.Signal(this);
 }

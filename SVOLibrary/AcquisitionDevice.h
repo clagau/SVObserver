@@ -14,9 +14,9 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 
-#include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "CameraInfo.h"
 #include "SVQueueObject.h"
+#include "CameraInfo.h"
+#include "SVSystemLibrary/SVAsyncProcedure.h"
 #pragma endregion Includes
 
 typedef std::function<void(ULONG_PTR, const CameraInfo&)> PpqCameraCallBack;
@@ -57,7 +57,7 @@ protected:
 
 	/* Device Callback Functions */
 
-	virtual void Notify(const CameraInfo&);
+	virtual void Notify(CameraInfo&&);
 
 private:
 	AcquisitionDevice() = default;

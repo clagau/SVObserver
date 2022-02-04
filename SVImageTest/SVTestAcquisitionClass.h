@@ -26,7 +26,7 @@ public:
 	SVTestAcquisitionSubsystem& m_rSubsystem;
 	SVDeviceParamCollection m_DeviceParams;
 	SVDeviceParamCollection m_CameraFileDeviceParams;
-	SVCameraPage* m_pDisplay;
+	SVCameraPage* m_pDisplay {nullptr};
 
 	SVTestAcquisitionClass( SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer );
 	virtual ~SVTestAcquisitionClass();
@@ -36,7 +36,7 @@ public:
 	virtual int GetBufferFormat() const override;
 
 	virtual SvOi::ITRCImagePtr GetNextBuffer() override;
-	virtual HRESULT UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& rImage, const double StartTick, const double StopTick = 0) override;
+	virtual HRESULT UpdateWithCompletedBuffer(CameraInfo&& cameraInfo) override;
 
 	virtual HRESULT ReadCameraFile( const std::string& rFilename );
 

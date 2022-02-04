@@ -160,8 +160,6 @@ public:
 
 	long GetNextFrameRate( long LastFrameRate );
 
-	long GetFileSequenceNumber() const;
-
 	HRESULT getTreeList(const std::string& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const;
 
 	// This method, Shutdown, is only meant to be called by the main application class and no other
@@ -252,7 +250,6 @@ protected:
 
 	long m_LastFrameRate;
 
-	long m_FileSequenceNumber;
 	uint32_t m_nextObjectId = ObjectIdEnum::FirstPossibleObjectId;	
 	uint32_t m_firstObjectId = ObjectIdEnum::FirstPossibleObjectId;
 };

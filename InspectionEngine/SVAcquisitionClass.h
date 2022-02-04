@@ -136,7 +136,7 @@ public:
 	virtual int GetBufferFormat() const override;
 
 	virtual SvOi::ITRCImagePtr GetNextBuffer() override;
-	virtual HRESULT UpdateWithCompletedBuffer( const SvOi::ITRCImagePtr& rImage, const double StartTick, const double StopTick) override;
+	virtual HRESULT UpdateWithCompletedBuffer(CameraInfo&& cameraInfo) override;
 	virtual void setNeededBuffers(int neededBuffers) override;
 
 	unsigned long m_hDigitizer;

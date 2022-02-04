@@ -1454,10 +1454,10 @@ void SVLptIOImpl::HandleIRQ()
 				((nTriggerBit & StatusReg) != (nTriggerBit & m_lLastTriggerState)) && 
 				 ((nTriggerBit & StatusReg) == (nTriggerBit & m_lLptTriggerEdge))) || m_bUseSingleTrigger)
 			{
-				SvTrig::IntVariantMap triggerData;
+				SvTrig::TriggerData triggerData;
 				triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
 				///Trigger channel 0 based
-				triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(i - 1);
+				triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(static_cast<uint8_t> (i - 1));
 
 				auto iter = m_triggerCallbackMap.find(i);
 				if (m_triggerCallbackMap.end() != iter)

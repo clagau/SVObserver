@@ -50,6 +50,7 @@
 #include <windows.h>
 
 #define _USE_MATH_DEFINES
+#include <array>
 #include <assert.h>
 #include <cmath>
 #include <concrt.h>			//Used by static library
