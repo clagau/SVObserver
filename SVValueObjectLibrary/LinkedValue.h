@@ -44,6 +44,9 @@ public:
 	HRESULT GetArrayValue(_variant_t& rValue);
 
 	virtual HRESULT SetDefaultValue(const _variant_t& rValue, bool bResetAll = true) override;
+	
+	void  SetAllowVoidReference(bool set);
+	bool  GetAllowVoidReference() const;
 
 	virtual HRESULT SetValue(const _variant_t& rValue, int Index = -1) override;
 	virtual HRESULT SetValueKeepType(LPCTSTR Value) override { return SetValueKeepType(Value, 0); }
@@ -123,6 +126,7 @@ protected:
 
 #pragma region Private Methods
 private:
+	
 	/// Update the input connection, dependent of the variant value.
 	/// \param pErrorMessages [in,out] Pointer to a error list, if pointer != nullptr an error message will be added if an error is happend.
 	/// \returns bool
@@ -178,11 +182,10 @@ private:
 	_variant_t m_directValue;
 	SVObjectReference m_indirectValueRef;
 	std::string m_formulaString{ "" };
-
 	SvOp::SVEquation m_equation;
-
 	std::vector<std::unique_ptr<LinkedValue>> m_children;
 	std::vector<uint32_t> m_childrenIds;
+	bool m_allowVoidReference {false};
 #pragma endregion Member Variables
 };
 

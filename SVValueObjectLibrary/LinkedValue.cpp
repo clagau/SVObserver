@@ -114,11 +114,15 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 	{
 		HRESULT hres(E_FAIL);
+		if (rValue.vt != m_directValue.vt)
+		{
+			m_directValue.Clear();
+		}
+
 		if (0 == (rValue.vt & VT_ARRAY))
 		{
-			SetArraySize(1); //@TODO[Arvid][10.00][15.07.2020] this was added for SVB-394. 
-							 //A more general solution for ensuring that array values are changed correctly to scalar ones should be found!
-			hres = __super::SetDefaultValue(rValue, bResetAll);//@TODO[Arvid][10.00][16.07.2020] SetDefaultValue() (and several others) always return S_OK. they should be of type void instead!
+			SetArraySize(1);
+			hres = __super::SetDefaultValue(rValue, bResetAll);
 		}
 		else
 		{
@@ -127,17 +131,21 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			if (bResetAll)
 			{
 				long lBound(0), uBound(0);
-				SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
-				SafeArrayGetLBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &lBound);
+				SafeArrayGetUBound(const_cast<SAFEARRAY*>(rValue.parray), 1, &uBound);
+				SafeArrayGetLBound(const_cast<SAFEARRAY*>(rValue.parray), 1, &lBound);
 				int32_t cnt_elements = uBound - lBound + 1;
 				if (getArraySize() != cnt_elements)
 				{
 					SetArraySize(cnt_elements);
 				}
 				hres = __super::setValue(rValue);
+
 			}
 		}
-		
+		if (bResetAll)
+		{
+			m_directValue = rValue;
+		}
 
 		///If the memory block size is wrong  then we need to reset the TR data
 		if (-1 != getMemOffset() && getMemSizeReserved() != getByteSize(false, false))
@@ -146,6 +154,17 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		return hres;
 	}
+	void  LinkedValue::SetAllowVoidReference(bool set)
+	{
+		m_allowVoidReference = set;
+	}
+	// cppcheck-suppress unusedFunction
+	bool  LinkedValue::GetAllowVoidReference() const
+	{
+		return m_allowVoidReference;
+
+	}
+
 
 	HRESULT LinkedValue::SetValueKeepType(LPCTSTR Value, int Index)
 	{
@@ -917,6 +936,10 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 		if (nullptr == m_LinkedObjectRef.getObject())
 		{
+			if (m_allowVoidReference)
+			{
+				return true;
+			}
 			if (nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
@@ -1321,6 +1344,11 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	variant_t LinkedValue::validateIndirectValue(const std::string& rIndirectIdString, variant_t defaultValue) const
 	{
+		if (rIndirectIdString == "VOID" && m_allowVoidReference)
+		{
+			variant_t value;
+			return {};
+		}
 		SVObjectReference refObject {rIndirectIdString};
 		if (refObject.getObject())
 		{

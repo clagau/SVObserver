@@ -1932,15 +1932,13 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask* pExternalToolT
 
 		if (bTypeIsArrayOrScalar)
 		{
-			bool bConvertValues {false == initializeAll && (rInputDef.getDefaultValue().vt & ~VT_ARRAY) != rInputValue.GetValueType()};
+			rInputValue.SetAllowVoidReference(false);
 			rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), initializeAll);
-			if (bConvertValues)
-			{
-				bConvertValues = false;
-			}
+			
 		}
 		else if (bTypeIsTable)
 		{
+			rInputValue.SetAllowVoidReference(true);
 			rInputValue.SetDefaultValue(_variant_t(), true);
 		}
 

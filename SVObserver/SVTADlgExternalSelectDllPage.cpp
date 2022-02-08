@@ -331,6 +331,7 @@ void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
 			data.m_directValue = _variant_t {};
 			data.m_Value = _variant_t {};
 			data.m_type = SvPb::IndirectValue;
+			data.m_indirectIdName = "VOID";
 		}
 		m_valueController.Set<SvOg::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, data);
 	}
@@ -440,7 +441,7 @@ bool SVTADlgExternalSelectDllPage::InitializeDll(bool setDefaultValues)
 		m_strStatus.Empty();
 	}
 	UpdateData(FALSE);
-
+	//must throw
 	auto [hrInitialize, statusMessagesResponse] = m_rExternalToolTaskController.initialize();
 
 	if (S_OK != hrInitialize)

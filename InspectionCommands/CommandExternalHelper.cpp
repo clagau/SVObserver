@@ -18,13 +18,20 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
+
+#ifdef _DEBUG
+#define TRACE_CATCH true
+#endif 
+
+
 
 namespace SvCmd
 {
 
-HRESULT InspectionCommandsCheckState( const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResp)
+HRESULT InspectionCommandsCheckState(const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResp)
 {
 	SvPb::InspectionCmdResponse response;
 	SvPb::InspectionCmdResponse* pResponse = (nullptr != pResp) ? pResp : &response;
@@ -46,7 +53,7 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 	SvPb::InspectionCmdResponse response;
 	SvPb::InspectionCmdResponse* pResponse = (nullptr != pResp) ? pResp : &response;
 	pResponse->set_hresult(E_FAIL);
-
+	
 	InspectionTask  CurrentTask;
 	ThreadPref  CurrentThread {ThreadPref::inspection};
 	std::chrono::milliseconds  CurrentTimout {std::chrono::milliseconds(120000)};
@@ -102,7 +109,58 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 		std::future_status status = futureResp.wait_for(CurrentTimout);
 		if (status == std::future_status::ready)
 		{
-			*pResponse = futureResp.get();
+			try
+			{
+				*pResponse = futureResp.get();
+			}
+			catch (const SvStl::MessageContainer& rExp)
+			{
+#ifdef TRACE_CATCH
+				std::string msg("catch messagecontainer in InspectionCommands: ");
+				msg += rExp.getMessage().getAdditionalText().c_str();
+				OutputDebugString(msg.c_str());
+#endif
+			throw (rExp);
+			}
+
+			catch (std::exception& ex)
+			{
+
+#ifdef TRACE_CATCH
+				std::string msg("catch Std:.exception in InspectionCommands: ");
+				msg += ex.what();
+				OutputDebugString(msg.c_str());
+#endif 
+				std::vector<std::string> msgList;
+				msgList.push_back(ex.what());
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, msgList, SvStl::SourceFileParams(StdMessageParams));
+				MesMan.Throw();
+			}
+			catch (HRESULT&  hr)
+			{
+#ifdef TRACE_CATCH
+				std::string msg("catch hr in InspectionCommands: ");
+				msg += std::to_string(hr);
+				OutputDebugString(msg.c_str());
+#endif 
+				std::vector<std::string> msgList;
+				msgList.push_back(std::to_string(hr).c_str());
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, msgList, SvStl::SourceFileParams(StdMessageParams));
+				MesMan.Throw();
+			}
+			catch (...)
+			{
+#ifdef TRACE_CATCH	
+				OutputDebugString("InspectionCommands:  catch ...");
+#endif 				
+				std::vector<std::string> msgList;
+				msgList.push_back("...");
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, msgList, SvStl::SourceFileParams(StdMessageParams));
+				MesMan.Throw();
+			}
 		}
 	}
 

@@ -151,32 +151,32 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 	inputDefEx[InputValue_DOUBLE_CENTER_X].Name = "CENTER_X";
 	inputDefEx[InputValue_DOUBLE_CENTER_X].HelpText = "x koordinate drehpunkt";
 	inputDefEx[InputValue_DOUBLE_CENTER_X].Group = "Abbildung";
-	inputDefEx[InputValue_DOUBLE_CENTER_X].vDefaultValue = 0;
+	inputDefEx[InputValue_DOUBLE_CENTER_X].vDefaultValue = 0.0;
 
 	inputDefEx[InputValue_DOUBLE_CENTER_Y].vt = VT_R8;
 	inputDefEx[InputValue_DOUBLE_CENTER_Y].Name = "CENTER_Y";
 	inputDefEx[InputValue_DOUBLE_CENTER_Y].HelpText = "Y Koordinate drehpunkt";
 	inputDefEx[InputValue_DOUBLE_CENTER_Y].Group = "Abbildung";
-	inputDefEx[InputValue_DOUBLE_CENTER_Y].vDefaultValue = 0;
+	inputDefEx[InputValue_DOUBLE_CENTER_Y].vDefaultValue = 0.0;
 
 
 	inputDefEx[InputValue_DOUBLE_OFFSET_X].vt = VT_R8;
 	inputDefEx[InputValue_DOUBLE_OFFSET_X].Name = "offset_X";
 	inputDefEx[InputValue_DOUBLE_OFFSET_X].HelpText = "x koordinate offset";
 	inputDefEx[InputValue_DOUBLE_OFFSET_X].Group = "Abbildung";
-	inputDefEx[InputValue_DOUBLE_OFFSET_X].vDefaultValue = 0;
+	inputDefEx[InputValue_DOUBLE_OFFSET_X].vDefaultValue = 0.0;
 
 	inputDefEx[InputValue_DOUBLE_OFFSET_Y].vt = VT_R8;
 	inputDefEx[InputValue_DOUBLE_OFFSET_Y].Name = "offste y";
 	inputDefEx[InputValue_DOUBLE_OFFSET_Y].HelpText = "Y Koordinate offset";
 	inputDefEx[InputValue_DOUBLE_OFFSET_Y].Group = "Abbildung";
-	inputDefEx[InputValue_DOUBLE_OFFSET_Y].vDefaultValue = 0;
+	inputDefEx[InputValue_DOUBLE_OFFSET_Y].vDefaultValue = 0.0;
 
 	inputDefEx[InputValue_DOUBLE_ANGEL].vt = VT_R8;
 	inputDefEx[InputValue_DOUBLE_ANGEL].Name = "ANGEL";
 	inputDefEx[InputValue_DOUBLE_ANGEL].HelpText = "DREHWINKEL";
 	inputDefEx[InputValue_DOUBLE_ANGEL].Group = "Abbildung";
-	inputDefEx[InputValue_DOUBLE_ANGEL].vDefaultValue = 0;
+	inputDefEx[InputValue_DOUBLE_ANGEL].vDefaultValue = 0.0;
 
 
 
