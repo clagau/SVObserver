@@ -1346,7 +1346,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		if (rIndirectIdString == "VOID" && m_allowVoidReference)
 		{
-			variant_t value;
 			return {};
 		}
 		SVObjectReference refObject {rIndirectIdString};
