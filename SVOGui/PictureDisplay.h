@@ -18,7 +18,7 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
 #include "CDSVPictureDisplay.h"
-#include "SVLibrary\DrawObject.h" // for ParamMap typedefs
+#include "DisplayHelper.h"
 #include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 

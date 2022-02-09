@@ -24,6 +24,9 @@
 #include "Doughnut.h"
 #include "GraphObject.h"
 #include "MarkerObject.h"
+#include "TriangleObject.h"
+#include "PolyPointsObject.h"
+#include "SegmentObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -741,22 +744,6 @@ bool SVDisplayPicture::Move( const CPoint &imagePoint, const CPoint &viewPoint )
 
 		switch( m_SelectType )
 		{
-		case HTTOP | HTX_INNER_EDGE: // fall through...
-		case HTTOPLEFT | HTX_INNER_EDGE: // fall through...
-		case HTLEFT | HTX_INNER_EDGE: // fall through...
-		case HTBOTTOMLEFT | HTX_INNER_EDGE: // fall through...
-		case HTBOTTOM | HTX_INNER_EDGE: // fall through...
-		case HTBOTTOMRIGHT | HTX_INNER_EDGE: // fall through...
-		case HTRIGHT | HTX_INNER_EDGE: // fall through...
-		case HTTOPRIGHT | HTX_INNER_EDGE:
-			{
-				if(bAlSize)
-				{
-					bSuccess = pObject->Move( m_SelectType, PointDiffImage, PointDiffView);
-				}
-				break;
-			}
-
 		case HTTOPLEFT:
 			{
 				BOOL bMove = bAlMoveAndSize;
@@ -1025,9 +1012,17 @@ bool SVDisplayPicture::Move( const CPoint &imagePoint, const CPoint &viewPoint )
 			}
 
 		default:
+		{
+			if (HTX_POINT == (HTX_POINT & m_SelectType) && 0 < allow)
 			{
-				break;
+				bSuccess = pObject->Move(m_SelectType, PointDiffImage, PointDiffView);
 			}
+			else if (bAlSize && 0 != ((HTX_INNER_EDGE | HTX_STOP_EDGE) & m_SelectType) )
+			{
+				bSuccess = pObject->Move(m_SelectType, PointDiffImage, PointDiffView);
+			}
+			break;
+		}
 		}
 
 		if( bSuccess )
@@ -1145,7 +1140,18 @@ void SVDisplayPicture::OnSize(UINT nType, int cx, int cy)
 
 void SVDisplayPicture::SelectCursor()
 {
-	switch ( 0xFF &  m_SelectType)
+	auto type = m_SelectType;
+
+	if (HTX_POINT_MOVE == (HTX_POINT_MOVE & m_SelectType))
+	{
+		type = HTOBJECT;
+	}
+	else if (HTX_POINT == (HTX_POINT & m_SelectType))
+	{
+		type = HTTOPLEFT;
+	}
+
+	switch ( 0xFF & type)
 	{
 	case HTTOPLEFT:
 		{
@@ -1405,6 +1411,15 @@ std::shared_ptr<DrawObject> SVDisplayPicture::createOverlay( const VariantParamM
 		break;
 	case MarkerROI:
 		pOverlay = std::shared_ptr<DrawObject>(new MarkerObject());
+		break;
+	case TriangleROI:
+		pOverlay = std::shared_ptr<DrawObject>(new TriangleObject());
+		break;
+	case PolyPointsROI:
+		pOverlay = std::shared_ptr<DrawObject>(new PolyPointsObject());
+		break;
+	case SegmentROI:
+		pOverlay = std::shared_ptr<DrawObject>(new SegmentObject());
 		break;
 	default:
 		assert(FALSE);

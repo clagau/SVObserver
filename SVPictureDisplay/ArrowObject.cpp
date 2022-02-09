@@ -31,12 +31,6 @@ ArrowObject::ArrowObject()
 ArrowObject::~ArrowObject()
 {
 }
-
-ArrowObject::ArrowObject( long x1, long y1, long x2, long y2, long Orientation, COLORREF color, long lAllowEdit ) : 
-	LineObject(x1, y1, x2, y2, color, lAllowEdit), 
-	m_eOrient(static_cast<SVOrientation>(Orientation))
-{
-}
 #pragma endregion Constructor
 
 // This will draw the Line and the Arrow head
@@ -57,75 +51,79 @@ void ArrowObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeigh
 	POINT l_ArrowEndPos;
 	POINT TmpPos;
 
-	switch( m_eOrient )
+	auto number = std::min<size_t>({m_StartPosX.size(), m_StartPosY.size(), m_EndPosX.size(), m_EndPosY.size()});
+	for (int i = 0; i < number; ++i)
 	{
-		case LeftToRight:
+		switch (m_eOrient)
 		{
-			// Right oriented arrow ...
-			l_ArrowStartPos.x = static_cast<long>( ( m_StartPos.x - p_Offset.x) * p_fZoomWidth );
-			l_ArrowStartPos.y = static_cast<long>( ( m_StartPos.y + ( m_EndPos.y - m_StartPos.y )/2 - p_Offset.y) * p_fZoomHeight );
-			l_ArrowEndPos.x =   static_cast<long>( ( m_EndPos.x - p_Offset.x) * p_fZoomWidth );
-			l_ArrowEndPos.y =   static_cast<long>( ( m_StartPos.y + ( m_EndPos.y - m_StartPos.y )/2 - p_Offset.y) * p_fZoomHeight );
-			rDC.MoveTo( l_ArrowStartPos );
-			rDC.LineTo( l_ArrowEndPos );
-			TmpPos.x = l_ArrowEndPos.x - SVArrowPixels;
-			TmpPos.y = l_ArrowEndPos.y - SVArrowPixels;
-			rDC.LineTo( TmpPos );
-			TmpPos.y = l_ArrowEndPos.y + SVArrowPixels;
-			rDC.MoveTo( l_ArrowEndPos );
-			rDC.LineTo( TmpPos );
-			break;
-		}
-		case RightToLeft:
-		{
-			// Left oriented arrow ...
-			l_ArrowStartPos.x = static_cast<long>( ( m_EndPos.x - p_Offset.x) * p_fZoomWidth );
-			l_ArrowStartPos.y = static_cast<long>( ( m_StartPos.y + ( m_EndPos.y - m_StartPos.y )/2 - p_Offset.y) * p_fZoomHeight );
-			l_ArrowEndPos.x =   static_cast<long>( ( m_StartPos.x - p_Offset.x) * p_fZoomWidth );
-			l_ArrowEndPos.y =   static_cast<long>( ( m_StartPos.y + ( m_EndPos.y - m_StartPos.y )/2 - p_Offset.y) * p_fZoomHeight );
-			rDC.MoveTo( l_ArrowStartPos );
-			rDC.LineTo( l_ArrowEndPos );
-			TmpPos.x = l_ArrowEndPos.x + SVArrowPixels;
-			TmpPos.y = l_ArrowEndPos.y + SVArrowPixels;
-			rDC.LineTo( TmpPos );
-			TmpPos.y = l_ArrowEndPos.y - SVArrowPixels;
-			rDC.MoveTo( l_ArrowEndPos );
-			rDC.LineTo( TmpPos );
-			break;
-		}
-		case BottomToTop:
-		{
-			// Top oriented arrow ...
-			l_ArrowStartPos.x = static_cast<long>( (m_StartPos.x + (m_EndPos.x - m_StartPos.x)/2 - p_Offset.x) * p_fZoomWidth );
-			l_ArrowStartPos.y = static_cast<long>( (m_EndPos.y - p_Offset.y) * p_fZoomHeight );
-			l_ArrowEndPos.x =   static_cast<long>( (m_StartPos.x + (m_EndPos.x - m_StartPos.x)/2 - p_Offset.x) * p_fZoomWidth );
-			l_ArrowEndPos.y =   static_cast<long>( (m_StartPos.y - p_Offset.y) * p_fZoomHeight );
-			rDC.MoveTo( l_ArrowStartPos );
-			rDC.LineTo( l_ArrowEndPos );
-			TmpPos.x = l_ArrowEndPos.x + SVArrowPixels;
-			TmpPos.y = l_ArrowEndPos.y + SVArrowPixels;
-			rDC.LineTo( TmpPos );
-			rDC.MoveTo( l_ArrowEndPos );
-			TmpPos.x = l_ArrowStartPos.x - SVArrowPixels;
-			rDC.LineTo( TmpPos );
-			break;
-		}
-		case TopToBottom:
-		{
-			// Bottom oriented arrow ...
-			l_ArrowStartPos.x = static_cast<long>( ( m_StartPos.x + (m_EndPos.x - m_StartPos.x)/2 - p_Offset.x) * p_fZoomWidth );
-			l_ArrowStartPos.y = static_cast<long>( ( m_StartPos.y - p_Offset.y) * p_fZoomHeight );
-			l_ArrowEndPos.x =   static_cast<long>( ( m_StartPos.x + (m_EndPos.x - m_StartPos.x)/2 - p_Offset.x) * p_fZoomWidth );
-			l_ArrowEndPos.y =   static_cast<long>( ( m_EndPos.y - p_Offset.y) * p_fZoomHeight );
-			rDC.MoveTo( l_ArrowStartPos );
-			rDC.LineTo( l_ArrowEndPos );
-			TmpPos.x = l_ArrowEndPos.x - SVArrowPixels;
-			TmpPos.y = l_ArrowEndPos.y - SVArrowPixels;
-			rDC.LineTo( TmpPos );
-			rDC.MoveTo( l_ArrowEndPos );
-			TmpPos.x = l_ArrowEndPos.x + SVArrowPixels;
-			rDC.LineTo( TmpPos );
-			break;
+			case LeftToRight:
+			{
+				// Right oriented arrow ...
+				l_ArrowStartPos.x = static_cast<long>((m_StartPosX[i] - p_Offset.x) * p_fZoomWidth);
+				l_ArrowStartPos.y = static_cast<long>((m_StartPosY[i] + (m_EndPosY[i] - m_StartPosY[i]) / 2 - p_Offset.y) * p_fZoomHeight);
+				l_ArrowEndPos.x = static_cast<long>((m_EndPosX[i] - p_Offset.x) * p_fZoomWidth);
+				l_ArrowEndPos.y = static_cast<long>((m_StartPosY[i] + (m_EndPosY[i] - m_StartPosY[i]) / 2 - p_Offset.y) * p_fZoomHeight);
+				rDC.MoveTo(l_ArrowStartPos);
+				rDC.LineTo(l_ArrowEndPos);
+				TmpPos.x = l_ArrowEndPos.x - SVArrowPixels;
+				TmpPos.y = l_ArrowEndPos.y - SVArrowPixels;
+				rDC.LineTo(TmpPos);
+				TmpPos.y = l_ArrowEndPos.y + SVArrowPixels;
+				rDC.MoveTo(l_ArrowEndPos);
+				rDC.LineTo(TmpPos);
+				break;
+			}
+			case RightToLeft:
+			{
+				// Left oriented arrow ...
+				l_ArrowStartPos.x = static_cast<long>((m_EndPosX[i] - p_Offset.x) * p_fZoomWidth);
+				l_ArrowStartPos.y = static_cast<long>((m_StartPosY[i] + (m_EndPosY[i] - m_StartPosY[i]) / 2 - p_Offset.y) * p_fZoomHeight);
+				l_ArrowEndPos.x = static_cast<long>((m_StartPosX[i] - p_Offset.x) * p_fZoomWidth);
+				l_ArrowEndPos.y = static_cast<long>((m_StartPosY[i] + (m_EndPosY[i] - m_StartPosY[i]) / 2 - p_Offset.y) * p_fZoomHeight);
+				rDC.MoveTo(l_ArrowStartPos);
+				rDC.LineTo(l_ArrowEndPos);
+				TmpPos.x = l_ArrowEndPos.x + SVArrowPixels;
+				TmpPos.y = l_ArrowEndPos.y + SVArrowPixels;
+				rDC.LineTo(TmpPos);
+				TmpPos.y = l_ArrowEndPos.y - SVArrowPixels;
+				rDC.MoveTo(l_ArrowEndPos);
+				rDC.LineTo(TmpPos);
+				break;
+			}
+			case BottomToTop:
+			{
+				// Top oriented arrow ...
+				l_ArrowStartPos.x = static_cast<long>((m_StartPosX[i] + (m_EndPosX[i] - m_StartPosX[i]) / 2 - p_Offset.x) * p_fZoomWidth);
+				l_ArrowStartPos.y = static_cast<long>((m_EndPosY[i] - p_Offset.y) * p_fZoomHeight);
+				l_ArrowEndPos.x = static_cast<long>((m_StartPosX[i] + (m_EndPosX[i] - m_StartPosX[i]) / 2 - p_Offset.x) * p_fZoomWidth);
+				l_ArrowEndPos.y = static_cast<long>((m_StartPosY[i] - p_Offset.y) * p_fZoomHeight);
+				rDC.MoveTo(l_ArrowStartPos);
+				rDC.LineTo(l_ArrowEndPos);
+				TmpPos.x = l_ArrowEndPos.x + SVArrowPixels;
+				TmpPos.y = l_ArrowEndPos.y + SVArrowPixels;
+				rDC.LineTo(TmpPos);
+				rDC.MoveTo(l_ArrowEndPos);
+				TmpPos.x = l_ArrowStartPos.x - SVArrowPixels;
+				rDC.LineTo(TmpPos);
+				break;
+			}
+			case TopToBottom:
+			{
+				// Bottom oriented arrow ...
+				l_ArrowStartPos.x = static_cast<long>((m_StartPosX[i] + (m_EndPosX[i] - m_StartPosX[i]) / 2 - p_Offset.x) * p_fZoomWidth);
+				l_ArrowStartPos.y = static_cast<long>((m_StartPosY[i] - p_Offset.y) * p_fZoomHeight);
+				l_ArrowEndPos.x = static_cast<long>((m_StartPosX[i] + (m_EndPosX[i] - m_StartPosX[i]) / 2 - p_Offset.x) * p_fZoomWidth);
+				l_ArrowEndPos.y = static_cast<long>((m_EndPosY[i] - p_Offset.y) * p_fZoomHeight);
+				rDC.MoveTo(l_ArrowStartPos);
+				rDC.LineTo(l_ArrowEndPos);
+				TmpPos.x = l_ArrowEndPos.x - SVArrowPixels;
+				TmpPos.y = l_ArrowEndPos.y - SVArrowPixels;
+				rDC.LineTo(TmpPos);
+				rDC.MoveTo(l_ArrowEndPos);
+				TmpPos.x = l_ArrowEndPos.x + SVArrowPixels;
+				rDC.LineTo(TmpPos);
+				break;
+			}
 		}
 	}
 	rDC.SelectObject( l_pOldPen );

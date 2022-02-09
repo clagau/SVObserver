@@ -14,6 +14,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/Color.h"
 #include "DisplayHelper.h"
+#include "DrawToolHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -21,15 +22,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-namespace
-{
-bool isChangable(const SvOg::ValueController& rValueController, SvPb::EmbeddedIdEnum embeddedId)
-{
-	auto data = rValueController.Get<SvOg::LinkedValueData>(embeddedId);
-	return SvPb::LinkedSelectedType::DirectValue == data.m_type;
-}
-}
 
 namespace SvOg
 {
@@ -989,62 +981,17 @@ void TADialogDrawPage::resetOverlay()
 		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData && pData->m_pValues)
 		{
-			//add new shape types
-			std::map<long, long> ParMap;
-			bool bMove = false;
-			bool bAll = false;
-			switch (pData->m_type)
+			auto parMap = createOverlayData(pData->m_type, *pData->m_pValues);
+			if (0 < parMap.size())
 			{
-				case DrawNodeType::Rectangle:
-				{
-					long x = pData->m_pValues->Get<LinkedValueData>(SvPb::LeftEId).m_Value;
-					long y = pData->m_pValues->Get<LinkedValueData>(SvPb::TopEId).m_Value;
-					long width = pData->m_pValues->Get<LinkedValueData>(SvPb::WidthEId).m_Value;
-					long height = pData->m_pValues->Get<LinkedValueData>(SvPb::HeightEId).m_Value;
-					ParMap[CDSVPictureDisplay::P_X1] = x;
-					ParMap[CDSVPictureDisplay::P_Y1] = y;
-					ParMap[CDSVPictureDisplay::P_X2] = x+width;
-					ParMap[CDSVPictureDisplay::P_Y2] = y+height;
-					ParMap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::RectangleROI;
-					bMove = isChangable(*pData->m_pValues, SvPb::LeftEId) && isChangable(*pData->m_pValues, SvPb::TopEId);
-					bAll = bMove && isChangable(*pData->m_pValues, SvPb::WidthEId) && isChangable(*pData->m_pValues, SvPb::HeightEId);
-					break;
-				}
-				case DrawNodeType::Oval:
-				{
-					long x = pData->m_pValues->Get<LinkedValueData>(SvPb::CenterXEId).m_Value;
-					long y = pData->m_pValues->Get<LinkedValueData>(SvPb::CenterYEId).m_Value;
-					long width = pData->m_pValues->Get<LinkedValueData>(SvPb::WidthEId).m_Value;
-					long height = pData->m_pValues->Get<LinkedValueData>(SvPb::HeightEId).m_Value;
-					ParMap[CDSVPictureDisplay::P_X1] = x - width / 2;
-					ParMap[CDSVPictureDisplay::P_Y1] = y - height / 2;
-					ParMap[CDSVPictureDisplay::P_X2] = x + static_cast<long>(ceil((width+1) / 2.0));
-					ParMap[CDSVPictureDisplay::P_Y2] = y + static_cast<long>(ceil((height+1) / 2.0));
-					ParMap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::EllipseROI;
-					bMove = isChangable(*pData->m_pValues, SvPb::CenterXEId) && isChangable(*pData->m_pValues, SvPb::CenterYEId);
-					bAll = bMove && isChangable(*pData->m_pValues, SvPb::WidthEId) && isChangable(*pData->m_pValues, SvPb::HeightEId);
-					break;
-				}
-				case DrawNodeType::Segment: //No Overlay by now
-				case DrawNodeType::Triangle: //No Overlay by now
-				case DrawNodeType::Lines: //No Overlay by now
-				case DrawNodeType::Points: //No Overlay by now
-				case DrawNodeType::Polygon: //No Overlay by now
-				case DrawNodeType::Text: //No Overlay by now
-				case DrawNodeType::BucketFill: //No Overlay by now
-				default:
-					return;
+				m_dialogImage.SetBoundaryCheck(false);
+				COleSafeArray saPar, saVal;
+				SvOg::DisplayHelper::CreateSafeArrayFromMap(parMap, saPar, saVal);
+				m_dialogImage.AddOverlay(0, static_cast<LPVARIANT>(saPar), static_cast<LPVARIANT>(saVal), &m_handleToOverlayObjects);
+				m_dialogImage.EditOverlay(0, m_handleToOverlayObjects, static_cast<LPVARIANT>(saPar), static_cast<LPVARIANT>(saVal));
+				saVal.Destroy();
+				saPar.Destroy();
 			}
-			ParMap[CDSVPictureDisplay::P_Color] = SvDef::Green;
-			ParMap[CDSVPictureDisplay::P_SelectedColor] = SvDef::Green;
-			ParMap[CDSVPictureDisplay::P_AllowEdit] = bAll ? CDSVPictureDisplay::AllowResizeAndMove : bMove ? CDSVPictureDisplay::AllowMove : CDSVPictureDisplay::AllowNone;
-
-			COleSafeArray saPar, saVal;
-			SvOg::DisplayHelper::CreateSafeArrayFromMap(ParMap, saPar, saVal);
-			m_dialogImage.AddOverlay(0, static_cast<LPVARIANT>(saPar), static_cast<LPVARIANT>(saVal), &m_handleToOverlayObjects);
-			m_dialogImage.EditOverlay(0, m_handleToOverlayObjects, static_cast<LPVARIANT>(saPar), static_cast<LPVARIANT>(saVal));
-			saVal.Destroy();
-			saPar.Destroy();
 		}
 	}
 }
@@ -1141,65 +1088,13 @@ void TADialogDrawPage::setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, ValueCo
 
 void TADialogDrawPage::ObjectChangedExDialogImage(long, long, VARIANT* ParameterList, VARIANT* ParameterValue)
 {
-	////////////////////////////////////////////////////////
-	// SET SHAPE PROPERTIES
-	VariantParamMap ParaMap;
-	SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
-	bool isResizeable = 0 != (static_cast<int>(ParaMap[CDSVPictureDisplay::P_AllowEdit]) & static_cast<int>(CDSVPictureDisplay::AllowResize));
-	bool isMoveable = 0 != (static_cast<int>(ParaMap[CDSVPictureDisplay::P_AllowEdit]) & static_cast<int>(CDSVPictureDisplay::AllowMove));
-
 	if (0 != m_currentItem)
 	{
 		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData && pData->m_pValues)
 		{
-			long width = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
-			long Height = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+			setOverlayProperties(pData->m_type, *pData->m_pValues, ParameterList, ParameterValue);
 
-			switch (pData->m_type)
-			{
-				case DrawNodeType::Rectangle:
-				{
-					if (isResizeable)
-					{
-						pData->m_pValues->Set(SvPb::WidthEId, width);
-						pData->m_pValues->Set(SvPb::HeightEId, Height);
-					}
-					if (isMoveable)
-					{
-						pData->m_pValues->Set(SvPb::LeftEId, ParaMap[CDSVPictureDisplay::P_X1].lVal);
-						pData->m_pValues->Set(SvPb::TopEId, ParaMap[CDSVPictureDisplay::P_Y1].lVal);
-					}
-					break;
-				}
-				case DrawNodeType::Oval:
-				{
-					if (isResizeable)
-					{
-						pData->m_pValues->Set(SvPb::WidthEId, width);
-						pData->m_pValues->Set(SvPb::HeightEId, Height);
-					}
-					if (isMoveable)
-					{
-						long CenterX = ParaMap[CDSVPictureDisplay::P_X1].lVal + width / 2;
-						long CenterY = ParaMap[CDSVPictureDisplay::P_Y1].lVal + Height / 2;
-						pData->m_pValues->Set(SvPb::CenterXEId, CenterX);
-						pData->m_pValues->Set(SvPb::CenterYEId, CenterY);
-					}
-					break;
-				}
-				case DrawNodeType::Segment: //No overlay by now
-				case DrawNodeType::Triangle: //No Overlay by now
-				case DrawNodeType::Lines: //No Overlay by now
-				case DrawNodeType::Points: //No Overlay by now
-				case DrawNodeType::Polygon: //No Overlay by now
-				case DrawNodeType::Text: //No Overlay by now
-				case DrawNodeType::BucketFill: //No Overlay by now
-				default:
-					break;
-			}
-
-			pData->m_pValues->Commit();
 			refresh();
 			setBOSACtrl();
 		}

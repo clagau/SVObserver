@@ -888,7 +888,7 @@ namespace SvOg
 	void SVPatternAnalyzerModelPage::setOverlay()
 	{
 		LongParamMap Parmap;
-		Parmap[ CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::RectangleROI;
+		Parmap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::RectangleROI;
 		Parmap[CDSVPictureDisplay::P_X1] = m_nXPos;
 		Parmap[CDSVPictureDisplay::P_Y1] = m_nYPos;
 		Parmap[CDSVPictureDisplay::P_X2] = m_nXPos + m_lModelWidth;

@@ -26,38 +26,23 @@ static char THIS_FILE[] = __FILE__;
 #pragma region Constructor
 LineObject::LineObject()
 {
-	m_StartPos.x = 0;
-	m_StartPos.y = 0;
-	m_EndPos.x = 0;
-	m_EndPos.y = 0;
 }
 
 LineObject::~LineObject()
 {
 }
 
-LineObject::LineObject( long x1, long y1, long x2, long y2, COLORREF color, long lAllowEdit )
-{
-	m_StartPos.x = x1;
-	m_StartPos.y = y1;
-	m_EndPos.x = x2;
-	m_EndPos.y = y2;
-	m_color = color;
-	m_SelectedColor = color;
-	SetEditAllowed(lAllowEdit);
-}
+//LineObject::LineObject( long x1, long y1, long x2, long y2, COLORREF color, long lAllowEdit )
+//{
+//	m_StartPosX.emplace_back(x1, y1);
+//	m_EndPos.emplace_back(x2, y2);
+//	m_color = color;
+//	m_SelectedColor = color;
+//	SetEditAllowed(lAllowEdit);
+//}
 #pragma region Constructor
 
 #pragma region Public Methods
-HRESULT LineObject::SetLine( long x1, long y1, long x2, long y2)
-{
-	m_StartPos.x = x1;
-	m_StartPos.y = y1;
-	m_EndPos.x = x2;
-	m_EndPos.y = y2;
-	return S_OK;
-}
-
 void LineObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeight, CDC& rDC, bool p_bSelected )
 {
 	CPen l_Pen;
@@ -71,14 +56,14 @@ void LineObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeight
 	}
 	int l_OldBKMode = rDC.SetBkMode( TRANSPARENT );
 	CPen* l_pOldPen = rDC.SelectObject( &l_Pen );
-	POINT l_newStartPos;
-	POINT l_newEndPos;
-	l_newStartPos.x = static_cast<long>( (m_StartPos.x - p_Offset.x) * p_fZoomWidth );
-	l_newStartPos.y = static_cast<long>( (m_StartPos.y - p_Offset.y) * p_fZoomHeight );
-	l_newEndPos.x = static_cast<long>( (m_EndPos.x - p_Offset.x) * p_fZoomWidth );
-	l_newEndPos.y = static_cast<long>( (m_EndPos.y - p_Offset.y) * p_fZoomHeight );
-	rDC.MoveTo( l_newStartPos );
-	rDC.LineTo( l_newEndPos );
+	auto number = std::min<size_t>({m_StartPosX.size(), m_StartPosY.size(), m_EndPosX.size(), m_EndPosY.size()});
+	for (int i = 0; i < number; ++i)
+	{
+		POINT newStartPos {static_cast<long>((m_StartPosX[i] - p_Offset.x) * p_fZoomWidth), static_cast<long>((m_StartPosY[i] - p_Offset.y) * p_fZoomHeight)};
+		POINT newEndPos {static_cast<long>((m_EndPosX[i] - p_Offset.x) * p_fZoomWidth), static_cast<long>((m_EndPosY[i] - p_Offset.y) * p_fZoomHeight)};
+		rDC.MoveTo(newStartPos);
+		rDC.LineTo(newEndPos);
+	}
 	rDC.SelectObject( l_pOldPen );
 	rDC.SetBkMode( l_OldBKMode );
 
@@ -87,161 +72,114 @@ void LineObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeight
 
 bool LineObject::IsValidObjectAtPoint( HTTYPE& SelType, const CPoint& imagePoint, const CPoint& viewPoint ) const
 {
-	bool bRet = false;
-
 	long l_lAllow = GetEditAllowed();
 
 	if( l_lAllow > 0 )
 	{
-		CRect l_rec( m_StartPos.x, m_StartPos.y, m_EndPos.x, m_EndPos.y);
-
-		//if rectangle width == 0, increase it by one
-		if (m_StartPos.x == m_EndPos.x)
+		auto number = std::min<size_t>({m_StartPosX.size(), m_StartPosY.size(), m_EndPosX.size(), m_EndPosY.size()});
+		for (int i = 0; i < number; ++i)
 		{
-			l_rec.right++;
-		}
-		//if rectangle heigth == 0, increase it by one
-		if (m_StartPos.y == m_EndPos.y)
-		{
-			l_rec.bottom++;
-		}
-
-		// Make sure we can deflate this rect.
-		if( l_rec.Width() > 2 * GRAB_SIZE && l_rec.Height() > 2 * GRAB_SIZE )
-		{
-			l_rec.DeflateRect( GRAB_SIZE, GRAB_SIZE );
-		}
-
-		// Check if we are inside
-		if( l_rec.PtInRect( imagePoint ) )
-		{
-			if( (l_lAllow & AllowMove) == AllowMove )	// Allowed to move...
+			if ((l_lAllow & AllowResizeAndMove) == AllowResizeAndMove)
 			{
-				SelType = HTOBJECT;
-				bRet = true;
-			}
-			else
-				if( (l_lAllow & AllowDelete) == AllowDelete)	// Allowed to delete but not move...
+				CRect rect {m_StartPosX[i] - GRAB_SIZE, m_StartPosY[i] - GRAB_SIZE, m_StartPosX[i] + GRAB_SIZE, m_StartPosY[i] + GRAB_SIZE};
+				if (rect.PtInRect(imagePoint))
 				{
-					SelType = HTSELECTED;
-					bRet = true;
+					SelType = HTX_POINT + i;
+					return true;
 				}
-		}
 
-		if( (l_lAllow & AllowResizeAndMove) == AllowResizeAndMove )	// Allowed to move and resize.
-		{
-			// check for upper left corner
-			if( bRet == false )
-			{
-				CRect l_UpperLeft;
-				l_UpperLeft.top = m_StartPos.y - GRAB_SIZE;
-				l_UpperLeft.left = m_StartPos.x - GRAB_SIZE;
-				l_UpperLeft.right = m_StartPos.x + GRAB_SIZE;
-				l_UpperLeft.bottom = m_StartPos.y + GRAB_SIZE;
-
-				if( l_UpperLeft.PtInRect( imagePoint ) )
+				rect = {m_EndPosX[i] - GRAB_SIZE, m_EndPosY[i] - GRAB_SIZE, m_EndPosX[i] + GRAB_SIZE, m_EndPosY[i] + GRAB_SIZE};
+				if (rect.PtInRect(imagePoint))
 				{
-					SelType = HTTOPLEFT;
-					bRet = true;
+					SelType = (HTX_POINT + i) | HTX_STOP_EDGE;
+					return true;
 				}
 			}
 
-			// check for upper right corner
-			if( bRet == false )
+			if (isPointOnLine({m_StartPosX[i], m_StartPosY[i]}, {m_EndPosX[i], m_EndPosY[i]}, imagePoint))
 			{
-				CRect l_UpperRight;
-				l_UpperRight.top = m_StartPos.y - GRAB_SIZE;
-				l_UpperRight.left = m_EndPos.x - GRAB_SIZE;
-				l_UpperRight.right = m_EndPos.x + GRAB_SIZE;
-				l_UpperRight.bottom = m_StartPos.y + GRAB_SIZE;
-
-				if( l_UpperRight.PtInRect( imagePoint ) )
-				{
-					SelType = HTTOPRIGHT;
-					bRet = true;
-				}
-			}
-
-			// check for bottom left corner
-			if( bRet == false )
-			{
-				CRect l_BottomLeft;
-				l_BottomLeft.top = m_EndPos.y - GRAB_SIZE;
-				l_BottomLeft.left = m_StartPos.x - GRAB_SIZE;
-				l_BottomLeft.right = m_StartPos.x + GRAB_SIZE;
-				l_BottomLeft.bottom = m_EndPos.y + GRAB_SIZE;
-
-				if( l_BottomLeft.PtInRect( imagePoint ) )
-				{
-					SelType = HTBOTTOMLEFT;
-					bRet = true;
-				}
-			}
-		}
-		if( (l_lAllow & AllowResize) == AllowResize )	// Only allowed to resize...
-		{
-			// check for bottom right corner
-			if( bRet == false )
-			{
-				CRect l_BottomRight;
-				l_BottomRight.top = m_EndPos.y - GRAB_SIZE;
-				l_BottomRight.left = m_EndPos.x - GRAB_SIZE;
-				l_BottomRight.right = m_EndPos.x + GRAB_SIZE;
-				l_BottomRight.bottom = m_EndPos.y + GRAB_SIZE;
-
-				if( l_BottomRight.PtInRect( imagePoint ) )
-				{
-					SelType = HTBOTTOMRIGHT;
-					bRet = true;
-				}
+				SelType = HTX_POINT_MOVE + i;
+				return true;
 			}
 		}
 	}
 
-	if( bRet == false )
-	{
-		bRet = IsValidChildObjectAtPoint( SelType, imagePoint, viewPoint );
-	}
-
-	return bRet;
+	return IsValidChildObjectAtPoint( SelType, imagePoint, viewPoint );
 }
 
 bool LineObject::Move(HTTYPE SelType, POINT imageMovePoint, const POINT &viewMovePoint)
 {
-	switch (SelType)
+	int pos = (SelType & ~HTX_ALL_FLAG);
+	auto number = std::min<size_t>({m_StartPosX.size(), m_StartPosY.size(), m_EndPosX.size(), m_EndPosY.size()});
+	if (0 <= pos && number > pos)
 	{
-	case HTBOTTOMLEFT:
-		m_EndPos.y += imageMovePoint.y;
-		m_StartPos.x += imageMovePoint.x;
-		MoveChild( HTBOTTOMLEFT, imageMovePoint, viewMovePoint );
-		return true;
-	case HTBOTTOMRIGHT:
-		m_EndPos.x += imageMovePoint.x;
-		m_EndPos.y += imageMovePoint.y;
-		MoveChild( HTBOTTOMRIGHT, imageMovePoint, viewMovePoint );
-		return true;
-	case HTTOPLEFT:
-		m_StartPos.x += imageMovePoint.x;
-		m_StartPos.y += imageMovePoint.y;
-		MoveChild( HTTOPLEFT, imageMovePoint, viewMovePoint );
-		return true;
-	case HTTOPRIGHT:
-		m_StartPos.y += imageMovePoint.y;
-		m_EndPos.x += imageMovePoint.x;
-		MoveChild( HTTOPRIGHT, imageMovePoint, viewMovePoint );
-		return true;
-	case HTOBJECT:
-		m_StartPos.x += imageMovePoint.x;
-		m_StartPos.y += imageMovePoint.y;
-		m_EndPos.x += imageMovePoint.x;
-		m_EndPos.y += imageMovePoint.y;
-		MoveChild( HTOBJECT, imageMovePoint, viewMovePoint );
-		return true;
-	default:
-		break;
+		auto flag = (SelType & HTX_ALL_FLAG);
+		switch (flag)
+		{
+			case HTX_POINT:
+				m_StartPosX[pos] += imageMovePoint.x;
+				m_StartPosY[pos] += imageMovePoint.y;
+				MoveChild(SelType, imageMovePoint, viewMovePoint);
+				return true;
+			case HTX_POINT | HTX_STOP_EDGE:
+				m_EndPosX[pos] += imageMovePoint.x;
+				m_EndPosY[pos] += imageMovePoint.y;
+				MoveChild(SelType, imageMovePoint, viewMovePoint);
+				return true;
+			case HTX_POINT_MOVE:
+				m_StartPosX[pos] += imageMovePoint.x;
+				m_StartPosY[pos] += imageMovePoint.y;
+				m_EndPosX[pos] += imageMovePoint.x;
+				m_EndPosY[pos] += imageMovePoint.y;
+				MoveChild(SelType, imageMovePoint, viewMovePoint);
+				return true;
+			default:
+				break;
+		}
 	}
 
 	return false;
+}
+
+std::vector<long> setPoints(const _variant_t& variantPoints)
+{
+	std::vector<long> retVec;
+	//the variant must be an array of long or double
+	if (VT_ARRAY == (variantPoints.vt & VT_ARRAY) && (VT_I4 == (variantPoints.vt & VT_I4) || VT_R8 == (variantPoints.vt & VT_R8)))
+	{
+		long length = variantPoints.parray->rgsabound[0].cElements;
+		if (0 < length)
+		{
+			void* data = nullptr;
+			SafeArrayAccessData(variantPoints.parray, &data);
+			if (VT_I4 == (variantPoints.vt & VT_I4))
+			{
+				long* dataLong = reinterpret_cast<long*>(data);
+				for (int i = 0; i < length; i++)
+				{
+					retVec.push_back(dataLong[i]);
+				}
+			}
+			else
+			{
+				double* dataDouble = reinterpret_cast<double*>(data);
+				for (int i = 0; i < length; i++)
+				{
+					retVec.push_back(static_cast<long>(dataDouble[i]));
+				}
+			}
+			SafeArrayUnaccessData(variantPoints.parray);
+		}
+		else
+		{
+			assert(false);
+		}
+	}
+	else
+	{
+		assert(false);
+	}
+	return retVec;
 }
 
 void LineObject::SetParameter(long parameterId, _variant_t parameterValue)
@@ -252,16 +190,44 @@ void LineObject::SetParameter(long parameterId, _variant_t parameterValue)
 		assert( LineROI == parameterValue.lVal );
 		break;
 	case P_X1:
-		m_StartPos.x = parameterValue.lVal;
+		if (VT_I4 == parameterValue.vt || VT_R8 == parameterValue.vt)
+		{
+			m_StartPosX.push_back(static_cast<long>(parameterValue));
+		}
+		else
+		{
+			m_StartPosX = setPoints(parameterValue);
+		}		
 		break;
 	case P_Y1:
-		m_StartPos.y = parameterValue.lVal;
+		if (VT_I4 == parameterValue.vt || VT_R8 == parameterValue.vt)
+		{
+			m_StartPosY.push_back(static_cast<long>(parameterValue));
+		}
+		else
+		{
+			m_StartPosY = setPoints(parameterValue);
+		}
 		break;
 	case P_X2:
-		m_EndPos.x = parameterValue.lVal;
+		if (VT_I4 == parameterValue.vt || VT_R8 == parameterValue.vt)
+		{
+			m_EndPosX.push_back(static_cast<long>(parameterValue));
+		}
+		else
+		{
+			m_EndPosX = setPoints(parameterValue);
+		}
 		break;
 	case P_Y2:
-		m_EndPos.y = parameterValue.lVal;
+		if (VT_I4 == parameterValue.vt || VT_R8 == parameterValue.vt)
+		{
+			m_EndPosY.push_back(static_cast<long>(parameterValue));
+		}
+		else
+		{
+			m_EndPosY = setPoints(parameterValue);
+		}
 		break;
 	default:
 		DrawObject::SetParameter(parameterId, parameterValue);
@@ -274,17 +240,40 @@ void LineObject::GetParameter(VariantParamMap& ParameterMap) const
 	DrawObject::GetParameter(ParameterMap);
 
 	ParameterMap[P_Type] = static_cast<long>(LineROI);
-	ParameterMap[P_X1] = static_cast<long>(m_StartPos.x);
-	ParameterMap[P_Y1] = static_cast<long>(m_StartPos.y);
-	ParameterMap[P_X2] = static_cast<long>(m_EndPos.x);
-	ParameterMap[P_Y2] = static_cast<long>(m_EndPos.y);
+	COleSafeArray arraySafe;
+	arraySafe.CreateOneDim(VT_I4, static_cast<DWORD>(m_StartPosX.size()), m_StartPosX.data());
+	ParameterMap[P_X1] = arraySafe;
+	arraySafe.CreateOneDim(VT_I4, static_cast<DWORD>(m_StartPosY.size()), m_StartPosY.data());
+	ParameterMap[P_Y1] = arraySafe;
+	arraySafe.CreateOneDim(VT_I4, static_cast<DWORD>(m_EndPosX.size()), m_EndPosX.data());
+	ParameterMap[P_X2] = arraySafe;
+	arraySafe.CreateOneDim(VT_I4, static_cast<DWORD>(m_EndPosY.size()), m_EndPosY.data());
+	ParameterMap[P_Y2] = arraySafe;
 }
 
 RECT LineObject::GetRectangle() const
 {
-	CRect lRect( m_StartPos, m_EndPos );
-
-	return lRect;
+	auto number = std::min<size_t>({m_StartPosX.size(), m_StartPosY.size(), m_EndPosX.size(), m_EndPosY.size()});
+	if (number > 0)
+	{
+		CRect retRec {std::min<long>(m_StartPosX[0], m_EndPosX[0]), std::min<long>(m_StartPosY[0], m_EndPosY[0]), std::max<long>(m_StartPosX[0], m_EndPosX[0]), std::max<long>(m_StartPosY[0], m_EndPosY[0])};
+		for (unsigned int i = 1; i < number; ++i)
+		{
+			retRec.left = std::min<long>(retRec.left, m_StartPosX[i]);
+			retRec.right = std::max<long>(retRec.right, m_StartPosX[i]);
+			retRec.left = std::min<long>(retRec.left, m_EndPosX[i]);
+			retRec.right = std::max<long>(retRec.right, m_EndPosX[i]);
+			retRec.top = std::min<long>(retRec.top, m_StartPosY[i]);
+			retRec.bottom = std::max<long>(retRec.bottom, m_StartPosY[i]);
+			retRec.top = std::min<long>(retRec.top, m_EndPosY[i]);
+			retRec.bottom = std::max<long>(retRec.bottom, m_EndPosY[i]);
+		}
+		return retRec;
+	}
+	else
+	{
+		return CRect(0, 0, 0, 0);
+	}
 }
 #pragma endregion Public Methods
 

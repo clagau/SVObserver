@@ -43,7 +43,10 @@ library SVPictureDisplayLib
 		[helpstring("Trapezoid")]	TrapezoidROI	= 6,
 		[helpstring("Graph")]		GraphROI		= 7,
 		[helpstring("Marker")]		MarkerROI		= 8,
-		[helpstring("Invalid")]		InvalidROIType	= 9
+		[helpstring("Invalid")]		InvalidROIType	= 9,
+		[helpstring("Triangle")]	TriangleROI     = 10,
+		[helpstring("PolyPoints")]	PolyPointsROI	= 11,
+		[helpstring("Segment")]		SegmentROI		= 12,
 
 	} ROIType;
 
@@ -80,6 +83,14 @@ library SVPictureDisplayLib
 	  	[helpstring("View Area, Scale to per Parameter")]			ViewArea_ScalePerParameter	= 2,
 		[helpstring("Display on Image, Scale to per Parameter")]	ImageArea_ScalePerParameter	= 3,
 	} ROISubType_Graph;
+
+	// subtype PolyPoints
+	typedef enum _ROISubType_PolyPoints
+	{
+		[helpstring("Display only points")]							SubType_Points = 0,
+		[helpstring("Polyline (points will be connected")]			SubType_Polyline = 1,
+		[helpstring("Polygon (same as Polyline but Last point will be conntected with first point")]	SubType_Polygon = 2,
+	} ROISubType_PolyPoints;
 
 	// subtype marker
 	typedef enum _ROISubType_Marker
@@ -125,6 +136,10 @@ library SVPictureDisplayLib
 		[helpstring("ROI SelectedColor")]		P_SelectedColor = 25,	
 		[helpstring("ROI SubType_X")]			P_SubType_X=26,
 		[helpstring("ROI SubType_Y")]			P_SubType_Y=27,
+		[helpstring("ROI X3 Position")]			P_X3 = 28,
+		[helpstring("ROI Y3 Position")]			P_Y3 = 29,
+		[helpstring("ROI Start Angle")]			P_StartAngle = 30,
+		[helpstring("ROI Stop Angle")]			P_StopAngle = 31,
 	} ParameterType;
 
 	// SVROI Object Interface

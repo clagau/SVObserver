@@ -67,6 +67,7 @@ long DrawObject::GetEditAllowed() const
 	return m_lEditAllowed;
 }
 
+// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 long DrawObject::AddDrawObjectChild(long p_lHandle, DrawObjectRef p_DrawObject )
 {
 	m_ChildDrawObjects.insert( std::make_pair( p_lHandle, p_DrawObject ) );
@@ -105,6 +106,28 @@ bool DrawObject::MoveChild(HTTYPE SelType, POINT imageMovePoint, const POINT &vi
 	return l_bRet;
 }
 
+bool DrawObject::isPointOnLine(CPoint p1, CPoint p2, CPoint imagePoint)
+{
+	auto [stopLineMinX, stopLineMaxX] = std::minmax<int>(p1.x, p2.x);
+	if (stopLineMinX - 1 < imagePoint.x && stopLineMaxX + 1 > imagePoint.x)
+	{
+		if (stopLineMaxX - stopLineMinX > 2)
+		{
+			double m = static_cast<double>(p1.y - p2.y) / (p1.x - p2.x);
+			double ytemp = m * (imagePoint.x - p1.x) + p1.y;
+			if (ytemp - 1 < imagePoint.y && ytemp + 1 > imagePoint.y)
+			{
+				return true;
+			}
+		}
+		else if (imagePoint.y >= std::min<int>(p1.y, p2.y) && imagePoint.y <= std::max<int>(p1.y, p2.y))
+		{	//if line to steep, do not calc m, but only check if point in rect of the two points
+			return true;
+		}
+	}
+	return false;
+}
+
 // Returns true if the handle was found and deleted.
 bool DrawObject::RemoveChild( long Handle )
 {
@@ -118,11 +141,13 @@ bool DrawObject::RemoveChild( long Handle )
 	return bRet;
 }
 
+// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 const DrawObjectList& DrawObject::GetChildList() const
 {
 	return m_ChildDrawObjects;
 }
 
+// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 HRESULT DrawObject::GetBoundingRect(RECT& rec) const
 {
 	CRect lRect;
@@ -244,11 +269,13 @@ std::unique_ptr<CRgn> DrawObject::GetHotSpot( CPoint pt1, CPoint pt2 ) const
 	return pRegion;
 }
 
+// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 void DrawObject::setImageSize( CSize val )
 {
 	m_imageSize = val;
 }
 
+// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 void DrawObject::setViewSize( CSize val )
 {
 	m_viewSize = val;

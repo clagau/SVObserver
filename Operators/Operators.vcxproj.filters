@@ -482,9 +482,6 @@
     <ClInclude Include="DrawTriangleTask.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="DrawPolygonTask.h">
-      <Filter>Quelldateien</Filter>
-    </ClInclude>
     <ClInclude Include="DrawBucketFillTask.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -495,6 +492,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="DrawTextTask.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawPolygonTask.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

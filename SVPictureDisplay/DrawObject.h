@@ -19,12 +19,16 @@
 
 #pragma region Declarations
 // HTTYPE is a DWORD lowByte are the defines in Winuser.h from HTNOWHERE to HTOBJECT
-//high Byte are HTX_INNER_EDGE,  HTX_OUTER_EDGE
+//high Byte are HTX_INNER_EDGE,  HTX_STOP_EDGE, HTX_POINT
 
 typedef DWORD HTTYPE;
 static const DWORD HTSELECTED = HTOBJECT + 10;
 static const DWORD HTX_INNER_EDGE = 0x200;
-static const DWORD HTX_OUTER_EDGE = 0x400;
+static const DWORD HTX_STOP_EDGE = 0x400;
+
+static const DWORD HTX_POINT = 0x800; //Which point is grabbed, are set by the lower bit.  (e.g. 0x801 == point[1] are used)
+static const DWORD HTX_POINT_MOVE = 0x900; //Which point is grabbed, are set by the lower bit.  (e.g. 0x901 == point[1] are used)
+static const DWORD HTX_ALL_FLAG = 0xF00; //For all High-value flags.
 
 #define GRAB_SIZE 8
 #define MIN_SIZE 4
@@ -155,6 +159,8 @@ protected:
 	void DrawChildren( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeight, CDC& rDC, bool p_bSelected );
 	bool IsValidChildObjectAtPoint( HTTYPE& p_rType, const CPoint& imagePoint, const CPoint& viewPoint ) const;
 	bool MoveChild(HTTYPE SelType, POINT imageMovePoint, const POINT &viewMovePoint);
+
+	static bool isPointOnLine(CPoint p1, CPoint p2, CPoint imagePoint);
 #pragma endregion Protected Methods
 
 #pragma region protected Member variables

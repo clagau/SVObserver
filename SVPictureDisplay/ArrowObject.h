@@ -26,7 +26,6 @@ class ArrowObject : public LineObject
 public:
 #pragma region Constructor
 	ArrowObject();
-	ArrowObject( long x1, long y1, long x2, long y2, long lOrientation, COLORREF color, long lAllowEdit );
 	virtual ~ArrowObject();
 #pragma endregion Constructor
 
@@ -38,7 +37,7 @@ public:
 
 #pragma region Member Variables
 private:
-	SVOrientation m_eOrient;
+	SVOrientation m_eOrient {None};
 #pragma endregion Member Variables
 };
 

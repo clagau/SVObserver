@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/DrawObject.h"
+#include "DrawObject.h"
 #pragma endregion Includes
 
 class LineObject : public DrawObject
@@ -20,12 +20,11 @@ class LineObject : public DrawObject
 public:
 #pragma region Constructor
 	LineObject();
-	LineObject( long x1, long y1, long x2, long y2, COLORREF color, long lAllowEdit );
+	//LineObject( long x1, long y1, long x2, long y2, COLORREF color, long lAllowEdit );
 	virtual ~LineObject();
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	HRESULT SetLine(long x1, long y1, long x2, long y2);
 	virtual void Draw( POINT p_dOffset, double p_fZoomWidth, double p_fZoomHeight, CDC& rDC, bool p_bSelected ) override;
 	virtual bool IsValidObjectAtPoint( HTTYPE& SelType, const CPoint& imagePoint, const CPoint& viewPoint ) const override;
 	virtual bool Move( HTTYPE SelType, POINT imageMovePoint, const POINT &viewMovePoint ) override;
@@ -36,8 +35,10 @@ public:
 
 #pragma region Member Variables
 protected:
-	POINT m_StartPos;
-	POINT m_EndPos;
+	std::vector<long> m_StartPosX;
+	std::vector<long> m_StartPosY;
+	std::vector<long> m_EndPosX;
+	std::vector<long> m_EndPosY;
 #pragma endregion Member Variables
 };
 

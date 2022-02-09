@@ -132,11 +132,14 @@
   <ItemGroup>
     <ClCompile Include="ArrowObject.cpp" />
     <ClCompile Include="Doughnut.cpp" />
+    <ClCompile Include="DrawObject.cpp" />
     <ClCompile Include="EllipseObject.cpp" />
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="LineObject.cpp" />
     <ClCompile Include="MarkerObject.cpp" />
+    <ClCompile Include="PolyPointsObject.cpp" />
     <ClCompile Include="RectangleObject.cpp" />
+    <ClCompile Include="SegmentObject.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -152,6 +155,7 @@
     <ClCompile Include="SVROIList.cpp" />
     <ClCompile Include="SymmetricTrapezoid.cpp" />
     <ClCompile Include="TextObject.cpp" />
+    <ClCompile Include="TriangleObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\SVPictureDisplay.rc2" />
@@ -173,12 +177,15 @@
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="ArrowObject.h" />
     <ClInclude Include="Doughnut.h" />
+    <ClInclude Include="DrawObject.h" />
     <ClInclude Include="EllipseObject.h" />
     <ClInclude Include="GraphObject.h" />
     <ClInclude Include="LineObject.h" />
     <ClInclude Include="MarkerObject.h" />
+    <ClInclude Include="PolyPointsObject.h" />
     <ClInclude Include="RectangleObject.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SegmentObject.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVDisplayPicture.h" />
     <ClInclude Include="SVPictureDialog.h" />
@@ -191,6 +198,7 @@
     <ClInclude Include="SVROIList.h" />
     <ClInclude Include="SymmetricTrapezoid.h" />
     <ClInclude Include="TextObject.h" />
+    <ClInclude Include="TriangleObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVPictureDisplay.rc" />

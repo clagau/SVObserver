@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/DrawObject.h"
+#include "DrawObject.h"
 #pragma endregion Includes
 
 class RectangleObject : public DrawObject

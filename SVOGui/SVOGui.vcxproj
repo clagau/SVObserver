@@ -133,6 +133,7 @@
     <ClCompile Include="Displayhelper.cpp" />
     <ClCompile Include="DrawTaskTree.cpp" />
     <ClCompile Include="DrawToolController.cpp" />
+    <ClCompile Include="DrawToolHelper.cpp" />
     <ClCompile Include="ExternalToolTaskController.cpp" />
     <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="GlobalConstantConflictDlg.cpp" />
@@ -227,6 +228,7 @@
     <ClInclude Include="DisplayHelper.h" />
     <ClInclude Include="DrawTaskTree.h" />
     <ClInclude Include="DrawToolController.h" />
+    <ClInclude Include="DrawToolHelper.h" />
     <ClInclude Include="DrawToolHelperStructs.h" />
     <ClInclude Include="ExternalToolTaskController.h" />
     <ClInclude Include="FormulaController.h" />

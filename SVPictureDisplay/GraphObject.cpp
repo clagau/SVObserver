@@ -241,7 +241,7 @@ void GraphObject::GetParameter(VariantParamMap& ParameterMap) const
 {
 	DrawObject::GetParameter(ParameterMap);
 
-	ParameterMap[P_Type] = static_cast<long>(LineROI);
+	ParameterMap[P_Type] = static_cast<long>(GraphROI);
 	ParameterMap[P_SubType_X] = static_cast<long>(m_subType_X);
 	ParameterMap[P_SubType_Y] = static_cast<long>(m_subType_Y);
 	ParameterMap[P_ARRAY_XY] = getPointsAsVariant();

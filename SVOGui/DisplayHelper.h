@@ -15,7 +15,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <comutil.h>
-#include "SVLibrary/DrawObject.h"
 #include "GridCtrlLibrary/GridCtrl.h"
 #pragma endregion Includes
 
@@ -23,6 +22,8 @@ namespace SvPb
 {
 class Image;
 }
+typedef std::map< long, long > LongParamMap;
+typedef std::map< long, _variant_t > VariantParamMap;
 
 namespace SvOg
 {

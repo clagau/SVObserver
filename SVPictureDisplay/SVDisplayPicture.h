@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVPictureDisplayIdl.h"
-#include "SVLibrary/DrawObject.h"
+#include "DrawObject.h"
 #include "SVOGui/ZoomHelper.h"
 #pragma endregion Includes
 

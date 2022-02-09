@@ -66,7 +66,10 @@ enum
     TrapezoidROI = 6,
     GraphROI = 7,
 	MarkerROI = 8,
-    InvalidROIType = 9
+    InvalidROIType = 9,
+	TriangleROI = 10,
+	PolyPointsROI = 11,
+	SegmentROI = 12,
 }_ROIType;
 enum AllowType
 {
@@ -92,6 +95,12 @@ enum
 	ViewArea_ScalePerParameter	= 2,
 	ImageArea_ScalePerParameter	= 3,
 } 	ROISubType_Graph;
+enum 
+{
+	SubType_Points = 0,
+	SubType_Polyline = 1,
+	SubType_Polygon = 2
+} 	ROISubType_PolyPoints;
 enum
 {
 	VerticalMarker		= 0,
@@ -132,7 +141,11 @@ enum
     P_Color = 24,
     P_SelectedColor = 25,
 	P_SubType_X	= 26,
-	P_SubType_Y	= 27
+	P_SubType_Y	= 27,
+	P_X3 = 28,
+	P_Y3 = 29,
+	P_StartAngle = 30,
+	P_StopAngle = 31,
 }_ParameterType;
 
 public:

@@ -13,7 +13,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/DrawObject.h"
+#include "DrawObject.h"
 #include "rectangleObject.h"
 #include "SVPictureDisplayIdl.h"
 #pragma endregion Includes
