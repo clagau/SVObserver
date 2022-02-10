@@ -383,7 +383,7 @@ message SetRejectStreamPauseStateRequest
 message LockAcquisitionStreamRequest
 {
 	// Scope of the lock to allow multiple different locks at the same time.
-	// For now we use the default value `0` only. There will be more in the future.
+	// For now we use the default value `1` only. There will be more in the future.
 	uint32 scope = 1;
 
 	// In case the lock is already locked, request a takeover otherwise fail.
@@ -417,10 +417,10 @@ message LockAcquisitionStreamResponse
 
 message LockAcquiredNotification
 {
-	uint32 lockId = 2;
-	string description = 3;
-	string user = 4;
-	string host = 5; // IP of the host that acquired the lock.
+	uint32 lockId = 1;
+	string description = 2;
+	string user = 3;
+	string host = 4; // IP of the host that acquired the lock.
 }
 
 message LockTakeoverNotification

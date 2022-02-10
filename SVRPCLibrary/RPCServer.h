@@ -40,6 +40,8 @@ class RPCServer : public SvHttp::EventHandler
 public:
 	explicit RPCServer(RequestHandlerBase* request_handler);
 
+	void disconnect_all_connections();
+
 protected:
 	virtual bool onHandshake(int id, const std::string&) override;
 	virtual void onConnect(int id, SvHttp::HttpServerConnection&) override;

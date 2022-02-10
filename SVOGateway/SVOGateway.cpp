@@ -55,13 +55,16 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	return bFound;
 }
 
-void StartWebServer(DWORD argc, LPTSTR  *argv)
+void StartWebServer(DWORD argc, LPTSTR* argv)
 {
 	SvLog::bootstrap_logging();
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 	try
 	{
+		std::mutex mutex;
+		std::condition_variable cv;
+		bool workDone = false;
 		SvOgw::Settings settings;
 		SvOgw::SettingsLoader settingsLoader;
 		settingsLoader.loadFromIni(settings);
@@ -116,9 +119,9 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		std::thread ServerThread([&] { IoService.run(); });
 
 		// automatically start/stop the server based on the connection status of SVObserver client
-		rpcClient.addStatusListener([&settings, &IoService, &pServer](SvRpc::ClientStatus status)
+		rpcClient.addStatusListener([&](SvRpc::ClientStatus status)
 		{
-			if (status == SvRpc::ClientStatus::Connected &&  nullptr == pServer)
+			if (status == SvRpc::ClientStatus::Connected && nullptr == pServer)
 			{
 				SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_SVObserverConnected);
 				SvStl::MessageManager Exception(SvStl::MsgType::Notify);
@@ -127,12 +130,24 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 				pServer = std::make_unique<SvHttp::HttpServer>(settings.httpSettings, IoService);
 				pServer->start();
 			}
-			else if (status == SvRpc::ClientStatus::Disconnected &&  pServer.get())
+			else if (status == SvRpc::ClientStatus::Disconnected && pServer.get())
 			{
 				SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_SVObserverDisconnected);
 				SvStl::MessageManager Exception(SvStl::MsgType::Notify);
 				Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_SVObserverDisconnected, SvStl::SourceFileParams(StdMessageParams));
 
+				IoService.post([&]{
+					rpcServer.disconnect_all_connections();
+					{
+						std::lock_guard<std::mutex> lock(mutex);
+						workDone = true;
+					}
+					cv.notify_one();
+				});
+				{
+					std::unique_lock<std::mutex> lock(mutex);
+					cv.wait(lock, [&]{ return workDone; });
+				}
 				pServer->stop();
 				pServer.reset(nullptr);
 			}

@@ -362,8 +362,9 @@ void RPCClient::cancel_all_pending_requests()
 			m_PendingRequests.erase(it);
 		}
 	}
-	catch (const std::exception&)
+	catch (const std::exception& e)
 	{
+		SV_LOG_GLOBAL(warning) << "Something went wrong during cancel_all_pending_requests: " << e.what();
 	}
 }
 
@@ -380,8 +381,9 @@ void RPCClient::cancel_all_pending_streams()
 			m_PendingStreams.erase(it);
 		}
 	}
-	catch (const std::exception&)
+	catch (const std::exception& e)
 	{
+		SV_LOG_GLOBAL(warning) << "Something went wrong during cancel_all_pending_streams: " << e.what();
 	}
 }
 
@@ -400,8 +402,9 @@ void RPCClient::on_response(SvPenv::Envelope&& Response)
 			cb.finish(std::move(Response));
 		}
 	}
-	catch (const std::exception&)
+	catch (const std::exception& e)
 	{
+		SV_LOG_GLOBAL(warning) << "Something went wrong during on_response: " << e.what();
 	}
 }
 
@@ -420,8 +423,9 @@ void RPCClient::on_error_response(SvPenv::Envelope&& Response)
 			cb.error(Response.error());
 		}
 	}
-	catch (const std::exception&)
+	catch (const std::exception& e)
 	{
+		SV_LOG_GLOBAL(warning) << "Something went wrong during on_error_response: " << e.what();
 	}
 }
 
@@ -440,8 +444,9 @@ void RPCClient::on_stream_response(SvPenv::Envelope&& Response)
 				ack_stream_response(txid, seqNr);
 			});
 		}
-		catch (const std::exception&)
+		catch (const std::exception& e)
 		{
+			SV_LOG_GLOBAL(warning) << "Something went wrong during on_stream_response: " << e.what();
 		}
 	}
 }
@@ -458,8 +463,9 @@ void RPCClient::on_stream_error_response(SvPenv::Envelope&& Response)
 			m_PendingStreams.erase(it);
 			cb.error(Response.error());
 		}
-		catch (const std::exception&)
+		catch (const std::exception& e)
 		{
+			SV_LOG_GLOBAL(warning) << "Something went wrong during on_stream_error_response: " << e.what();
 		}
 	}
 }
@@ -476,8 +482,9 @@ void RPCClient::on_stream_finish(SvPenv::Envelope&& Response)
 			m_PendingStreams.erase(it);
 			cb.finish();
 		}
-		catch (const std::exception&)
+		catch (const std::exception& e)
 		{
+			SV_LOG_GLOBAL(warning) << "Something went wrong during on_stream_finish: " << e.what();
 		}
 	}
 }
@@ -514,6 +521,7 @@ void RPCClient::send_envelope(SvPenv::Envelope&& Envelope)
 	}
 	else
 	{
+		SV_LOG_GLOBAL(warning) << "websocket client is not initialized!";
 		// TODO: check whether reconnecting right now and enqueue current envelope
 	}
 }

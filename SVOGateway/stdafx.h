@@ -53,6 +53,8 @@
 #include <string>
 #include <tchar.h>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 #include <vector>
 
 #pragma warning(push)

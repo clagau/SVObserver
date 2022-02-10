@@ -25,6 +25,14 @@ namespace SvRpc
 {
 RPCServer::RPCServer(RequestHandlerBase* pRequestHandler) : m_pRequestHandler(pRequestHandler) {}
 
+void RPCServer::disconnect_all_connections()
+{
+	for (const auto& conn : m_Connections)
+	{
+		onDisconnect(conn.first);
+	}
+}
+
 void RPCServer::onConnect(int id, SvHttp::HttpServerConnection& rConnection)
 {
 	SV_LOG_GLOBAL(info) << "[http] Client connected id: " << id;
