@@ -1813,35 +1813,36 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector* pErrorMessag
 				pErrorMessages->push_back(Msg);
 			}
 		}
-
-		int NumResults = m_Data.getNumResults();
-		if (S_OK == m_dll.GetResultValues(getObjectId(), NumResults, NumResults ? &(m_InspectionResultValues[0]) : nullptr))
+		else
 		{
-			if (isActiv)
+			int NumResults = m_Data.getNumResults();
+			if (S_OK == m_dll.GetResultValues(getObjectId(), NumResults, NumResults ? &(m_InspectionResultValues[0]) : nullptr))
 			{
-				for (int i = 0; i < NumResults; i++)
+				if (isActiv)
 				{
-					GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);
+					for (int i = 0; i < NumResults; i++)
+					{
+						GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);
 
-					// Clear OleVariant that was created in Dll.
-					m_InspectionResultValues[i].Clear();
+						// Clear OleVariant that was created in Dll.
+						m_InspectionResultValues[i].Clear();
+					}
+				}
+			}
+			int NumTableResults = m_Data.getNumTableResults();
+			if (S_OK == m_dll.getResultTables(getObjectId(), NumTableResults, NumTableResults ? &(m_InspectionResultTables[0]) : nullptr))
+			{
+				if (isActiv)
+				{
+					for (int i = 0; i < NumTableResults; i++)
+					{
+						GetResultTableObject(i)->setTableValues(m_InspectionResultTables[i]);
+						// Clear OleVariant that was created in Dll.
+						m_InspectionResultTables[i].Clear();
+					}
 				}
 			}
 		}
-		int NumTableResults = m_Data.getNumTableResults();
-		if (S_OK == m_dll.getResultTables(getObjectId(), NumTableResults, NumTableResults ? &(m_InspectionResultTables[0]) : nullptr))
-		{
-			if (isActiv)
-			{
-				for (int i = 0; i < NumTableResults; i++)
-				{
-					GetResultTableObject(i)->setTableValues(m_InspectionResultTables[i]);
-					// Clear OleVariant that was created in Dll.
-					m_InspectionResultTables[i].Clear();
-				}
-			}
-		}
-
 	}
 	catch (const SvStl::MessageContainer& e)
 	{
