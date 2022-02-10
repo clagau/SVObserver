@@ -26,13 +26,15 @@ public:
 	SVMathEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHEQUATION );
 	virtual ~SVMathEquation();
 
+	virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+
 protected:
 	void init();
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-protected:
-	SvVol::SVDoubleValueObjectClass result;			// resultant value
+private:
+	SvVol::SVDoubleValueObjectClass m_result;			// resultant value
 };
 
 } //namespace SvOp

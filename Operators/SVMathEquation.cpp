@@ -54,11 +54,25 @@ void SVMathEquation::init()
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SvPb::MathEquationResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_result, SvPb::MathEquationResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	result.SetDefaultValue( 0.0 );
-	result.setSaveValueFlag(false);
+	m_result.SetDefaultValue( 0.0 );
+	m_result.setSaveValueFlag(false);
+}
+
+bool SVMathEquation::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
+{
+	bool isOk = __super::ResetObject(pErrorMessages);
+
+	if (isOk)
+	{
+		if (HasCondition() && IsEnabled())
+		{
+			m_result.SetValue(getResult());
+		}
+	}
+	return isOk;
 }
 
 bool SVMathEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
@@ -66,7 +80,7 @@ bool SVMathEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStruct
 	m_isCreated = SVEquation::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	result.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_result.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -99,7 +113,7 @@ bool SVMathEquation::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainer
 			value = getResult();
 		}
 	}
-	result.SetValue(value);
+	m_result.SetValue(value);
 
 	return retVal;
 }
