@@ -565,65 +565,64 @@ void SVObjectClass::SetDisabled()
 {
 }
 
-bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject) const
+bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType) const
 {
-	const SVObjectClass* pObject = (nullptr != pTestObject) ? pTestObject : this;
 	switch (requiredType)
 	{
-	case SvPb::allValueObjects:
-		return (SvPb::SVValueObjectType == pObject->GetObjectType() || SvPb::SVBasicValueObjectType == pObject->GetObjectType());
-	case SvPb::allNumberValueObjects:
-	{
-		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
-		if (nullptr != pValueObject)
+		case SvPb::allValueObjects:
+			return (SvPb::SVValueObjectType == GetObjectType() || SvPb::SVBasicValueObjectType == GetObjectType());
+		case SvPb::allNumberValueObjects:
 		{
-			DWORD type = pValueObject->GetType();
-			constexpr std::array<DWORD, 11> filter{ VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL };
-			return (filter.end() != std::find(filter.begin(), filter.end(), type));
-		}
-		return false;
-	}
-	case SvPb::realNumberValueOjects:
-	{
-		if (SvPb::SVValueObjectType == pObject->GetObjectType())
-		{
-			constexpr std::array<SvPb::SVObjectSubTypeEnum, 11> filter{ SvPb::SVDWordValueObjectType, SvPb::SVLongValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::SVBoolValueObjectType, SvPb::SVByteValueObjectType, SvPb::SVInt64ValueObjectType, SvPb::DoubleSortValueObjectType };
-			return (filter.end() != std::find(filter.begin(), filter.end(), pObject->GetObjectSubType()));
-		}
-		else if (SvPb::SVBasicValueObjectType == pObject->GetObjectType())
-		{
-			auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
+			auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(this);
 			if (nullptr != pValueObject)
 			{
 				DWORD type = pValueObject->GetType();
-				constexpr std::array<DWORD, 11> filter{ VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL };
+				constexpr std::array<DWORD, 11> filter {VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL};
 				return (filter.end() != std::find(filter.begin(), filter.end(), type));
 			}
+			return false;
 		}
-		return false;
-	}
-	case SvPb::stringValueObjects:
-	{
-		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
-		if (nullptr != pValueObject)
+		case SvPb::realNumberValueOjects:
 		{
-			return (VT_BSTR == pValueObject->GetType());
+			if (SvPb::SVValueObjectType == GetObjectType())
+			{
+				constexpr std::array<SvPb::SVObjectSubTypeEnum, 11> filter {SvPb::SVDWordValueObjectType, SvPb::SVLongValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::SVBoolValueObjectType, SvPb::SVByteValueObjectType, SvPb::SVInt64ValueObjectType, SvPb::DoubleSortValueObjectType};
+				return (filter.end() != std::find(filter.begin(), filter.end(), GetObjectSubType()));
+			}
+			else if (SvPb::SVBasicValueObjectType == GetObjectType())
+			{
+				auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(this);
+				if (nullptr != pValueObject)
+				{
+					DWORD type = pValueObject->GetType();
+					constexpr std::array<DWORD, 11> filter {VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL};
+					return (filter.end() != std::find(filter.begin(), filter.end(), type));
+				}
+			}
+			return false;
 		}
-		return false;
-	}
-	case SvPb::tableObjects:
-		return (SvPb::TableObjectType == pObject->GetObjectType());
-	case SvPb::allImageObjects:
-		return (SvPb::SVImageObjectType == pObject->GetObjectType());
-	case SvPb::grayImageObjects:
-		return (SvPb::SVImageObjectType == pObject->GetObjectType() && SvPb::SVImageMonoType == pObject->GetObjectSubType());
-	case SvPb::colorImageObjects:
-		return (SvPb::SVImageObjectType == pObject->GetObjectType() && SvPb::SVImageColorType == pObject->GetObjectSubType());
-	case SvPb::toolObjects:
-		return (SvPb::SVToolObjectType == pObject->GetObjectType());
-	default:
-		return false;
-	}
+		case SvPb::stringValueObjects:
+		{
+			auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(this);
+			if (nullptr != pValueObject)
+			{
+				return (VT_BSTR == pValueObject->GetType());
+			}
+			return false;
+		}
+		case SvPb::tableObjects:
+			return (SvPb::TableObjectType == GetObjectType());
+		case SvPb::allImageObjects:
+			return (SvPb::SVImageObjectType == GetObjectType());
+		case SvPb::grayImageObjects:
+			return (SvPb::SVImageObjectType == GetObjectType() && SvPb::SVImageMonoType == GetObjectSubType());
+		case SvPb::colorImageObjects:
+			return (SvPb::SVImageObjectType == GetObjectType() && SvPb::SVImageColorType == GetObjectSubType());
+		case SvPb::toolObjects:
+			return (SvPb::SVToolObjectType == GetObjectType());
+		default:
+			return false;
+	}	
 }
 
 bool SVObjectClass::checkIfValidDependency(const SVObjectClass* pObject) const

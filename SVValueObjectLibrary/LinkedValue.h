@@ -77,7 +77,7 @@ public:
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
 
-	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject = nullptr) const;
+	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType) const;
 	virtual const SvOi::IObjectClass* getLinkedObject() const override;
 	virtual void fillLinkedData(SvPb::LinkedValue& rLinkedValue) const override;
 	virtual _variant_t validateValue(const SvPb::LinkedValue& rLinkedValue) const override;
@@ -95,7 +95,7 @@ public:
 
 	virtual bool isArray() const override;
 
-	virtual HRESULT getValue(double& rValue, int Index = -1) const override { return __super::getValue(rValue, Index);	};
+	virtual HRESULT getValue(double& rValue, int Index = -1) const override;
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override { return __super::getValue(rValue, Index); };
 	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")) const;
 

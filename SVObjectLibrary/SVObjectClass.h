@@ -201,7 +201,7 @@ public:
 	virtual bool replaceObject(SVObjectClass* , uint32_t ) { return false; };
 #pragma endregion Methods to replace processMessage
 
-	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject = nullptr) const;
+	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType) const;
 	bool checkIfValidDependency(const SVObjectClass* pObject) const;
 
 	size_t getObjectAttributesSetSize() const { return m_ObjectAttributesSet.size(); };

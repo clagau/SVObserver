@@ -398,17 +398,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	DWORD LinkedValue::GetType() const
 	{
-		DWORD result;
-		if (false == m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
-		{
-			LifeFlag circularCheck(m_CircularReference);
-			result = m_LinkedObjectRef.getValueObject()->GetType();
-		}
-		else
-		{
-			result = __super::GetType();
-		}
-		return result;
+		return GetDefaultType();
 	};
 
 	bool LinkedValue::isCircularReference() const
@@ -427,11 +417,28 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		return result;
 	}
 
-	bool LinkedValue::isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject) const
+	bool LinkedValue::isCorrectType(SvPb::ObjectSelectorType requiredType) const
 	{
 		try
 		{
-			return __super::isCorrectType(requiredType, (nullptr != pTestObject) ? pTestObject : dynamic_cast<const SVObjectClass*>(getLinkedObject()));
+			if (VT_EMPTY != GetDefaultType())
+			{
+				return __super::isCorrectType(requiredType);
+			}
+			else if (const auto* pValue = dynamic_cast<const SVObjectClass*>(getLinkedObject()) ; nullptr != pValue)
+			{
+				switch (requiredType)
+				{
+					case SvPb::allValueObjects:
+					case SvPb::allNumberValueObjects:
+					case SvPb::realNumberValueOjects:
+					case SvPb::stringValueObjects:
+						return false; //by ValueObjects the defaultType must not be VT_EMPTY
+					default:
+						return pValue->isCorrectType(requiredType);
+				}
+			}
+			return false;
 		}
 		catch (...)
 		{
@@ -517,6 +524,12 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				if (VT_BOOL == value.vt)
 				{
 					value.boolVal = value.boolVal ? 1 : 0;
+				}
+				if (VT_BSTR == value.vt && 0 != (defaultValue.vt & VT_BSTR))
+				{
+					SvStl::MessageManager Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.Throw();
 				}
 				if (S_OK != ::VariantChangeTypeEx(&value, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, ~(VT_ARRAY)&defaultValue.vt))
 				{
@@ -993,6 +1006,15 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 							SetArraySize(pValue->getArraySize());
 						}
 					}
+					if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(m_LinkedObjectRef.getObject()); nullptr != pValue && VT_BSTR == pValue->getDefaultValue().vt && 0 == (GetDefaultType() & VT_BSTR))
+					{
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+							pErrorMessages->push_back(Msg);
+						}
+						return false;
+					}
 					break;
 			}
 
@@ -1098,6 +1120,15 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		return result;
 	}
+
+	HRESULT LinkedValue::getValue(double& rValue, int Index/* = -1*/) const 
+	{ 
+		if (0 != (GetDefaultType() & VT_BSTR))
+		{
+			return E_FAIL;
+		}
+		return __super::getValue(rValue, Index); 
+	};
 
 	HRESULT LinkedValue::getValue(std::string& rValueString, int Index, const std::string& rFormatString) const
 	{
