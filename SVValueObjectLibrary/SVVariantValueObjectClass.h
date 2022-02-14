@@ -34,7 +34,7 @@ public:
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 	virtual HRESULT SetValue(const _variant_t& rValue, int Index = -1) override;
 	virtual HRESULT SetArrayValues(const ValueVector& rValues) override;
-
+	virtual HRESULT SetDefaultValue(const _variant_t& rValue, bool bResetAll = true) override;
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	virtual void updateMemBlockData() override;
 

@@ -164,6 +164,16 @@ HRESULT SVVariantValueObjectClass::SetArrayValues(const ValueVector& rValues)
 	return Result;
 }
 
+HRESULT SVVariantValueObjectClass::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
+{
+	HRESULT hres = __super::SetDefaultValue(rValue, bResetAll);
+	
+	if (-1 != getMemOffset() && getMemSizeReserved() != getByteSize(false, false))
+	{
+		setTrData(-1L, -1L, -1L);
+	}
+	return hres;
+}
 void SVVariantValueObjectClass::setMemBlockPointer(uint8_t* pMemBlockBase)
 {
 	int32_t memOffset = getMemOffset();

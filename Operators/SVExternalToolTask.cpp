@@ -249,6 +249,11 @@ void SVExternalToolTask::SetResultArraySize()
 			defaultValue.ChangeType(static_cast<VARTYPE> (TypeVT));
 			m_Data.m_aResultObjects[rn].SetDefaultValue(defaultValue);
 		}
+		else
+		{
+			_variant_t defaultBstr {""};
+			m_Data.m_aResultObjects[rn].SetDefaultValue(defaultBstr);
+		}
 
 		if (m_Data.m_ResultDefinitions[rn].getVT() & VT_ARRAY)
 		{
