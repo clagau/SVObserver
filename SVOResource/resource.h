@@ -29,6 +29,7 @@
 #define IDR_IPDOC_MENU                  1016
 #define IDR_IODOC_MENU                  1017
 #define IDR_FORMULA_VALIDATE_TOOLBAR    1018
+#define IDR_TREE_EXPAND_COLLAPS_NODES_MENU     1021
 #define IDR_TREE_ALL_SUB_NODES_MENU     1022
 #define IDR_TREE_ALL_TREE_MENU          1023
 #define IDR_TREE_ALL_VALUES_MENU        1024
@@ -1508,6 +1509,8 @@
 #define IDC_8_RADIO                     15105
 #define IDC_4_RADIO                     15106
 #define IDC_COMBO2_ENUM                 15107
+#define IDC_COLOR_BUTTON                15108
+#define IDC_COLOR_BUTTON2               15109
 #define IDC_CURRENT_VERSION_STATIC      15113
 #define IDC_AUTOTHRESHOLD_CHECK         15115
 #define IDC_AUTOTHRESHOLD_EDIT          15116

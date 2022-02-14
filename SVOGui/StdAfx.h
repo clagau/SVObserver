@@ -47,8 +47,16 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
+#include <algorithm>
+namespace Gdiplus
+{
+using std::min;
+using std::max;
+}
+
 #include <afx.h>
 #include <afxwin.h>
+#include <afxbutton.h>
 #include <afxtempl.h>
 #include <afxcmn.h>
 #include <afxctl.h>
@@ -56,7 +64,7 @@
 #include <afxdisp.h>        // MFC OLE-Automatisierungsklassen
 #include <WinDef.h>
 
-#include <algorithm>
+
 #include <array>
 #include <atlsafe.h>
 #include <comdef.h>

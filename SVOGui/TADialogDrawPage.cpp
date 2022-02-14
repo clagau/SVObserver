@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(TADialogDrawPage, CPropertyPage)
 	ON_WM_LBUTTONUP()
 	ON_CONTROL_RANGE(BN_CLICKED, IDC_CHECK1, IDC_CHECK5, OnButtonCheck)
 	ON_CONTROL_RANGE(BN_CLICKED, IDC_BUTTON1, IDC_BUTTON6, OnButtonButton)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_COLOR_BUTTON, IDC_COLOR_BUTTON2, OnColorButton)
 	ON_CONTROL_RANGE(BN_CLICKED, IDC_LINKED_VALUE_BUTTON1, IDC_LINKED_VALUE_BUTTON10, OnButtonLinkedValue)
 	ON_CONTROL_RANGE(EN_KILLFOCUS, IDC_EDIT1, IDC_EDIT10, OnKillFocusEdit)
 	ON_CBN_SELCHANGE(IDC_COMBO2, OnSelchangeCombo2)
@@ -126,6 +127,8 @@ void TADialogDrawPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON4, m_BSOAControls[BOSAEnum::Button4]);
 	DDX_Control(pDX, IDC_BUTTON5, m_BSOAControls[BOSAEnum::Button5]);
 	DDX_Control(pDX, IDC_BUTTON6, m_BSOAControls[BOSAEnum::Button6]);
+	DDX_Control(pDX, IDC_COLOR_BUTTON, m_colorButton);
+	DDX_Control(pDX, IDC_COLOR_BUTTON2, m_colorButton2);
 
 	for (auto& rValueData : m_editCtrlDataList)
 	{
@@ -360,6 +363,38 @@ void TADialogDrawPage::OnButtonButton(UINT nID)
 	}
 }
 
+void TADialogDrawPage::OnColorButton(UINT nID)
+{
+	int index(nID - IDC_COLOR_BUTTON);
+	if (0 <= index && 2 > index && 0 != m_currentItem)
+	{
+		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		if (nullptr != pData && nullptr != pData->m_pValues)
+		{
+			if (m_drawToolController.isColor())
+			{
+				SvPb::EmbeddedIdEnum redId = (0 == index) ? SvPb::Color1EId : SvPb::BackgroundColor1EId;
+				SvPb::EmbeddedIdEnum greenId = (0 == index) ? SvPb::Color2EId : SvPb::BackgroundColor2EId;
+				SvPb::EmbeddedIdEnum blueId = (0 == index) ? SvPb::Color3EId : SvPb::BackgroundColor3EId;
+				byte redValue = pData->m_pValues->Get<byte>(redId);
+				byte greenValue = pData->m_pValues->Get<byte>(greenId);
+				byte blueValue = pData->m_pValues->Get<byte>(blueId);
+				COLORREF color = RGB(redValue, greenValue, blueValue);
+				CColorDialog dlg(color, CC_FULLOPEN);
+				if (dlg.DoModal() == IDOK)
+				{
+					pData->m_pValues->Set(redId, GetRValue(dlg.GetColor()));
+					pData->m_pValues->Set(greenId, GetGValue(dlg.GetColor()));
+					pData->m_pValues->Set(blueId, GetBValue(dlg.GetColor()));
+					pData->m_pValues->Commit(PostAction::doReset | PostAction::doRunOnce, true);
+					refresh();
+					setBOSACtrl();
+				}
+			}
+		}
+	}
+}
+
 void TADialogDrawPage::OnButtonLinkedValue(UINT nID)
 {
 	int index(nID - IDC_LINKED_VALUE_BUTTON1);
@@ -391,6 +426,25 @@ void TADialogDrawPage::OnKillFocusEdit(UINT nID)
 			return;
 		}
 		setBOSAData();
+		if (0 != m_currentItem)
+		{
+			auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+			if (nullptr != pData && DrawNodeSubType::Color == pData->m_subType && nullptr != pData->m_pValues)
+			{
+				byte redValue = pData->m_pValues->Get<byte>(SvPb::Color1EId);
+				byte greenValue = pData->m_pValues->Get<byte>(SvPb::Color2EId);
+				byte blueValue = pData->m_pValues->Get<byte>(SvPb::Color3EId);
+				m_colorButton.SetFaceColor(RGB(redValue, greenValue, blueValue));
+
+				if (DrawNodeType::Text == pData->m_type)
+				{
+					redValue = pData->m_pValues->Get<byte>(SvPb::BackgroundColor1EId);
+					greenValue = pData->m_pValues->Get<byte>(SvPb::BackgroundColor2EId);
+					blueValue = pData->m_pValues->Get<byte>(SvPb::BackgroundColor3EId);
+					m_colorButton2.SetFaceColor(RGB(redValue, greenValue, blueValue));
+				}
+			}
+		}
 	}
 
 	refresh();
@@ -730,6 +784,11 @@ void TADialogDrawPage::setColorCtrl(TreeNodeData& rData)
 	assert(rData.m_pValues);
 	if (m_drawToolController.isColor())
 	{
+		byte redValue = rData.m_pValues->Get<byte>(SvPb::Color1EId);
+		byte greenValue = rData.m_pValues->Get<byte>(SvPb::Color2EId);
+		byte blueValue = rData.m_pValues->Get<byte>(SvPb::Color3EId);
+		m_colorButton.ShowWindow(SW_SHOW);
+		m_colorButton.SetFaceColor(RGB(redValue, greenValue, blueValue));
 		m_BSOAControls[BOSAEnum::Static2].ShowWindow(SW_SHOW);
 		m_BSOAControls[BOSAEnum::Static2].SetWindowText("Red:");
 		setValueCtrlData(SvPb::Color1EId, *rData.m_pValues, BOSAEnum::Edit2, 0, 255, "Red");
@@ -746,7 +805,7 @@ void TADialogDrawPage::setColorCtrl(TreeNodeData& rData)
 		m_BSOAControls[BOSAEnum::Static2].SetWindowText("Gray:");
 		setValueCtrlData(SvPb::Color1EId, *rData.m_pValues, BOSAEnum::Edit2, 0, 255, "Gray");
 	}
-
+	
 	if (DrawNodeType::Text == rData.m_type && nullptr != rData.m_pValues)
 	{
 		m_BSOAControls[BOSAEnum::Check2].ShowWindow(SW_SHOW);
@@ -758,6 +817,11 @@ void TADialogDrawPage::setColorCtrl(TreeNodeData& rData)
 			setValueCtrlData(SvPb::BackgroundColor1EId, *rData.m_pValues, BOSAEnum::Edit7, 0, 255, "Red");
 			if (m_drawToolController.isColor())
 			{
+				byte redValue = rData.m_pValues->Get<byte>(SvPb::BackgroundColor1EId);
+				byte greenValue = rData.m_pValues->Get<byte>(SvPb::BackgroundColor2EId);
+				byte blueValue = rData.m_pValues->Get<byte>(SvPb::BackgroundColor3EId);
+				m_colorButton2.ShowWindow(SW_SHOW);
+				m_colorButton2.SetFaceColor(RGB(redValue, greenValue, blueValue));
 				setValueCtrlData(SvPb::BackgroundColor2EId, *rData.m_pValues, BOSAEnum::Edit8, 0, 255, "Green");
 				setValueCtrlData(SvPb::BackgroundColor3EId, *rData.m_pValues, BOSAEnum::Edit9, 0, 255, "Blue");
 			}
@@ -1057,6 +1121,8 @@ void TADialogDrawPage::hideAllBOSACtrl()
 
 	m_comboBox2.ShowWindow(SW_HIDE);
 	m_comboBox2Enum.ShowWindow(SW_HIDE);
+	m_colorButton.ShowWindow(SW_HIDE);
+	m_colorButton2.ShowWindow(SW_HIDE);
 
 	for (auto& rCtrl : m_editCtrlDataList)
 	{

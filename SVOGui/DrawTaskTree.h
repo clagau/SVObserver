@@ -16,6 +16,8 @@ namespace SvOg
 {
 class DrawTaskTree : public CTreeCtrl
 {
+	DECLARE_MESSAGE_MAP()
+
 public:
 	explicit DrawTaskTree(uint32_t inspectionId);
 	virtual ~DrawTaskTree();
@@ -34,6 +36,11 @@ public:
 	bool OnDragTree(const NM_TREEVIEW& rNMHDR);
 	void OnMouseMove(UINT nFlags, CPoint point);
 	bool OnLButtonUp();
+	void OnRButtonDown(UINT Flags, CPoint Point);
+	void OnExpandAll();
+	void OnExpandSelectedItems();
+	void OnCollapseAll();
+	void OnCollapseTo2ndLevel();
 
 	HTREEITEM InsertNode(uint32_t objectId, DrawNodeType type, DrawNodeSubType subTye, HTREEITEM hParent, const std::string& rName, HTREEITEM hInsertAfter);
 	HTREEITEM InsertNode(TreeNodeData&& rData, HTREEITEM hParent, const std::string& rName, HTREEITEM hInsertAfter = TVI_LAST);
@@ -45,6 +52,7 @@ public:
 
 private:
 	HTREEITEM moveTreeItem(HTREEITEM hItem, HTREEITEM hItemTo, HTREEITEM hItemPos = TVI_LAST);
+	void expandAllChild(HTREEITEM Item, UINT nCode);
 
 	void addRectangleNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter);
 	void addOvalNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter);
@@ -62,7 +70,7 @@ private:
 	bool m_treeLabelEditing = false;
 	HTREEITEM         m_hDragItem;
 	HTREEITEM         m_hDragTarget;
-	//CImageList* m_pDragImgList;
+	HTREEITEM m_RButtonItem = nullptr;
 
 	std::vector<std::unique_ptr<TreeNodeData>> m_TreeDataVector;
 };

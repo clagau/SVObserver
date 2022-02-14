@@ -26,7 +26,6 @@ namespace SvOg
 	public:
 		TADialogDrawPage(uint32_t inspectionId, uint32_t taskObjectId);
 		virtual ~TADialogDrawPage();
-		//HRESULT SetInspectionData();
 
 		enum BOSAEnum
 		{
@@ -79,6 +78,7 @@ namespace SvOg
 		void OnSelchangedTree(NMHDR*, LRESULT* pResult);
 		void OnButtonCheck(UINT nID);
 		void OnButtonButton(UINT nID);
+		void OnColorButton(UINT nID);
 		void OnButtonLinkedValue(UINT nID);
 		void OnKillFocusEdit(UINT nID);
 		void OnSelchangeCombo2();
@@ -146,6 +146,9 @@ namespace SvOg
 
 		HTREEITEM m_currentItem = nullptr;
 		bool m_isDragging = false;
+
+		CMFCButton m_colorButton;
+		CMFCButton m_colorButton2;
 
 		//overlay
 		long m_handleToOverlayObjects = -1;

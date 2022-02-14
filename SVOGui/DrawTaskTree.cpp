@@ -20,6 +20,16 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
+BEGIN_MESSAGE_MAP(DrawTaskTree, CTreeCtrl)
+	//{{AFX_MSG_MAP(DrawTaskTree)
+	ON_WM_RBUTTONDOWN()
+	ON_COMMAND(ID_TREE_EXPANDALL, DrawTaskTree::OnExpandAll)
+	ON_COMMAND(ID_TREE_EXPANDTOCHECKEDITEMS, DrawTaskTree::OnExpandSelectedItems)
+	ON_COMMAND(ID_TREE_COLLAPSEALL, DrawTaskTree::OnCollapseAll)
+	ON_COMMAND(ID_TREE_COLLAPSETO2NDLEVEL, DrawTaskTree::OnCollapseTo2ndLevel)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
 extern const std::vector<std::pair<SvPb::ClassIdEnum, SvPb::SVObjectSubTypeEnum>> c_typeConvVec;
 
 DrawTaskTree::DrawTaskTree(uint32_t inspectionId)
@@ -113,17 +123,7 @@ bool DrawTaskTree::OnDragTree(const NM_TREEVIEW& rNMHDR)
 
 	SelectItem(hItem);
 
-	//m_pDragImgList = m_treeCtrl.CreateDragImage(hItem);
-	//if (!m_pDragImgList)
-	//{
-	//	return false;
-	//}
 	m_hDragItem = hItem;
-
-	//	m_pDragImgList->BeginDrag(0, CPoint(0, 0));
-	//	m_pDragImgList->DragEnter(this, pNMTreeView->ptDrag);
-
-
 	m_hDragTarget = NULL;
 	return true;
 }
@@ -141,15 +141,10 @@ void DrawTaskTree::OnMouseMove(UINT, CPoint point)
 		if (nullptr != pData && SvDef::InvalidObjectId != pData->m_objectId && DrawNodeType::BaseImage != pData->m_type && DrawNodeSubType::MainNode == pData->m_subType &&
 			hTarget != m_hDragTarget)
 		{                                                     // this test avoids flickering
-			//m_pDragImgList->DragShowNolock(false);
 			SelectDropTarget(hTarget);
-			//m_pDragImgList->DragShowNolock(true);
 			m_hDragTarget = hTarget;
 		}
 	}
-
-	// move image being dragged
-	//m_pDragImgList->DragMove(point);
 }
 
 bool DrawTaskTree::OnLButtonUp()
@@ -188,6 +183,67 @@ bool DrawTaskTree::OnLButtonUp()
 	}
 	
 	return false;
+}
+
+void DrawTaskTree::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	TVHITTESTINFO HitTestInfo;
+	HitTestInfo.pt = point;
+
+	HTREEITEM Item = HitTest(&HitTestInfo);
+
+	if (nullptr == Item && 0 == (HitTestInfo.flags & nFlags))
+	{
+		return;
+	}
+
+	CMenu Menu;
+	if (Menu.LoadMenu(IDR_TREE_EXPAND_COLLAPS_NODES_MENU))
+	{
+		if (CMenu * pPopupMenu = Menu.GetSubMenu(0); nullptr != pPopupMenu)
+		{
+			m_RButtonItem = Item;
+			ClientToScreen(&point);
+			pPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+		}
+	}
+}
+
+void DrawTaskTree::OnExpandAll()
+{
+	HTREEITEM Item = GetRootItem();
+	if (nullptr != Item)
+	{
+		Expand(Item, TVE_EXPAND);
+		expandAllChild(Item, TVE_EXPAND);
+	}
+}
+
+void DrawTaskTree::OnExpandSelectedItems()
+{
+	HTREEITEM Item = m_RButtonItem;
+	if (nullptr != Item)
+	{
+		Expand(Item, TVE_EXPAND);
+		expandAllChild(Item, TVE_EXPAND);
+	}
+}
+
+void DrawTaskTree::OnCollapseAll()
+{
+	HTREEITEM Item = GetRootItem();
+	if (nullptr != Item)
+	{
+		Expand(Item, TVE_COLLAPSE);
+		expandAllChild(Item, TVE_COLLAPSE);
+	}
+}
+
+void DrawTaskTree::OnCollapseTo2ndLevel()
+{
+	OnCollapseAll();
+	HTREEITEM Item = GetRootItem();
+	Expand(Item, TVE_EXPAND);
 }
 
 
@@ -396,6 +452,17 @@ HTREEITEM DrawTaskTree::moveTreeItem(HTREEITEM hItem, HTREEITEM hItemTo, HTREEIT
 	DeleteItem(hItem);
 
 	return hItemNew;
+}
+
+void DrawTaskTree::expandAllChild(HTREEITEM Item, UINT nCode)
+{
+	HTREEITEM hChild = GetNextItem(Item, TVGN_CHILD);
+	while (nullptr != hChild)
+	{
+		expandAllChild(hChild, nCode);
+		Expand(Item, nCode);
+		hChild = GetNextItem(hChild, TVGN_NEXT);
+	}
 }
 
 void DrawTaskTree::addRectangleNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter)
