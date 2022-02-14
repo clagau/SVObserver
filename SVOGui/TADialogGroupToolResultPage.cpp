@@ -335,6 +335,7 @@ namespace SvOg
 
 	void TADialogGroupToolResultPage::OnSelectionChanged(NMHDR*, LRESULT*)
 	{
+		setInspectionData(false);
 		UpdateEnableButtons();
 	}
 

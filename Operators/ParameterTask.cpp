@@ -277,7 +277,7 @@ namespace SvOp
 		//Sort values in embedded names and set values and rename.
 		for (int i = 0; pEmbeddedList->size() > i; ++i)
 		{
-			swapElements(*pEmbeddedList, i);
+			swapElements(*pEmbeddedList, i, *pResponse->mutable_errormessages());
 
 			bool isOk = (nullptr != m_objects[i]) && setElement(request.embeddedlist(i), i, defaults[i], pResponse->mutable_errormessages());
 			if (false == isOk && S_OK == cmd.hresult())
@@ -410,10 +410,11 @@ namespace SvOp
 			if (nullptr == pTable)
 			{
 				SvDef::StringVector msgList;
+				msgList.emplace_back(GetName());
 				msgList.emplace_back(name);
 				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTable));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -430,10 +431,11 @@ namespace SvOp
 			if (nullptr == pImage)
 			{
 				SvDef::StringVector msgList;
+				msgList.emplace_back(GetName());
 				msgList.emplace_back(name);
 				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_anImage));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -445,10 +447,11 @@ namespace SvOp
 				if (SvPb::InputTypeEnum::TypeGrayImage == type && pImage->GetObjectSubType() != SvPb::SVImageMonoType)
 				{
 					SvDef::StringVector msgList;
+					msgList.emplace_back(GetName());
 					msgList.emplace_back(name);
 					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aGrayImage));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -458,10 +461,11 @@ namespace SvOp
 				else if (SvPb::InputTypeEnum::TypeColorImage == type && pImage->GetObjectSubType() != SvPb::SVImageColorType)
 				{
 					SvDef::StringVector msgList;
+					msgList.emplace_back(GetName());
 					msgList.emplace_back(name);
 					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aColorImage));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -476,10 +480,11 @@ namespace SvOp
 			if (SvPb::SVToolObjectType != getObjectType(pObject))
 			{
 				SvDef::StringVector msgList;
+				msgList.emplace_back(GetName());
 				msgList.emplace_back(name);
 				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTool));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -491,9 +496,10 @@ namespace SvOp
 		default:
 		{
 			SvDef::StringVector msgList;
+			msgList.emplace_back(GetName());
 			msgList.emplace_back(name);
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
 			if (nullptr != pErrorMessages)
 			{
 				pErrorMessages->push_back(Msg.getMessageContainer());
@@ -537,8 +543,9 @@ namespace SvOp
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					SvDef::StringVector msgList;
+					msgList.emplace_back(GetName());
 					msgList.emplace_back(pObject->GetName());
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputValue, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputValue, msgList, SvStl::SourceFileParams(StdMessageParams), 0, pObject->getObjectId());
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -559,9 +566,10 @@ namespace SvOp
 			default:
 			{
 				SvDef::StringVector msgList;
+				msgList.emplace_back(GetName());
 				msgList.emplace_back(std::to_string(i));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -652,7 +660,7 @@ namespace SvOp
 				data.m_AdditionalTextList[0] = rRequestValue.name();
 			}
 			SvStl::MessageContainerVector messages;
-			messages.emplace_back(data, getObjectId(), false);
+			messages.emplace_back(data, rValueObject.getObjectId(), false);
 			addMessagesToProtobuf(pErrorMessage, messages);
 			return false;
 		}
@@ -696,7 +704,7 @@ namespace SvOp
 		}
 	}
 
-	void ParameterTask::swapElements(google::protobuf::RepeatedPtrField< SvPb::EmbeddedValueStruct >& rValues, int pos)
+	void ParameterTask::swapElements(google::protobuf::RepeatedPtrField< SvPb::EmbeddedValueStruct >& rValues, int pos, SvPb::MessageContainerVector& rMessageVec)
 	{
 		const auto& rValue = rValues[pos];
 		if (SvPb::NoEmbeddedId != rValue.oldembeddedid())
@@ -705,7 +713,24 @@ namespace SvOp
 			assert(pos <= oldPos && cMaxNumberOfObjects > oldPos);
 			if (pos < oldPos && cMaxNumberOfObjects > oldPos)
 			{
-				//swap in embeddedList to have some order in all lists
+				//swap objectIds in errormessages
+				uint32_t oldObjectId = (nullptr != m_objects[oldPos]) ? m_objects[oldPos]->getObjectId() : SvDef::InvalidObjectId;
+				uint32_t newObjectId = (nullptr != m_objects[pos]) ? m_objects[pos]->getObjectId() : SvDef::InvalidObjectId;
+				auto iterMessage = std::find_if(rMessageVec.mutable_messages()->begin(), rMessageVec.mutable_messages()->end(), [oldObjectId](const auto& rEntry) { return rEntry.objectid() == oldObjectId; });
+				if (rMessageVec.mutable_messages()->end() != iterMessage)
+				{
+					iterMessage->set_objectid(newObjectId);
+				}
+				else
+				{
+					iterMessage = std::find_if(rMessageVec.mutable_messages()->begin(), rMessageVec.mutable_messages()->end(), [newObjectId](const auto& rEntry) { return rEntry.objectid() == newObjectId; });
+					if (rMessageVec.mutable_messages()->end() != iterMessage)
+					{
+						iterMessage->set_objectid(oldObjectId);
+					}
+				}
+
+				//swap in embeddedList to have same order in all lists
 				swapValues(m_embeddedList, m_objects[pos].get(), m_objects[oldPos].get());
 				swapValues(m_embeddedList, m_TypeObjects[pos].get(), m_TypeObjects[oldPos].get());
 

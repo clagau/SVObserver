@@ -57,7 +57,7 @@ namespace SvOp
 		void setObject(int index);
 		bool checkValueAndGetDefault(const SvPb::EmbeddedValueStruct& rRequestValue, SvVol::LinkedValue& rValueObject, variant_t& rDefaultValue, SvPb::MessageContainerVector* pErrorMessage);
 		void setEmptyOldEmbeddedIdToFreeId(google::protobuf::RepeatedPtrField< SvPb::EmbeddedValueStruct >& rEmbeddedList, long newFreePos);
-		void swapElements(google::protobuf::RepeatedPtrField< SvPb::EmbeddedValueStruct >& rValues, int pos);
+		void swapElements(google::protobuf::RepeatedPtrField< SvPb::EmbeddedValueStruct >& rValues, int pos, SvPb::MessageContainerVector& rMessageVec);
 		bool setElement(const SvPb::EmbeddedValueStruct& rValue, int pos, const variant_t& rDefault, SvPb::MessageContainerVector* pErrorMessage);
 #pragma endregion Private Methods
 

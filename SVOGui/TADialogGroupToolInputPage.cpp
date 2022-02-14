@@ -443,6 +443,7 @@ namespace SvOg
 
 	void TADialogGroupToolInputPage::OnSelectionChanged(NMHDR*, LRESULT*)
 	{
+		setInspectionData(false);
 		UpdateEnableButtons();
 	}
 
