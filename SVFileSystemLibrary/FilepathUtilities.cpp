@@ -17,6 +17,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 
+
 #pragma endregion Includes
 
 bool isFilepathOnRegularPartition(const std::string& rFilePath);
@@ -300,4 +301,27 @@ bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories )
 
 	return false;
 }
+
+
+std::string readContentFromFileAndDelete(const std::string& rFileName)
+{
+	std::string content;
+	std::ifstream FileStream;
+
+	FileStream.open(rFileName.c_str(), std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
+	if (FileStream.is_open())
+	{
+		size_t FileSize(0);
+		FileSize = static_cast<size_t> (FileStream.tellg());
+		content.resize(FileSize);
+		FileStream.seekg(0, std::ios::beg);
+		FileStream.read(&content.at(0), FileSize);
+		FileStream.close();
+	}
+	::DeleteFile(rFileName.c_str());
+	content.append(_T("\0"));
+
+	return content;
+}
+
 

@@ -520,18 +520,10 @@ namespace SvStl
 
 	//Guido Ramseier error base
 	constexpr int Gra_ErrorBase = 25000;
-	constexpr int Err_25000_SetClipboardData = Gra_ErrorBase + 0;
-	constexpr int Err_25001_ClipboardMemory = Gra_ErrorBase + 1;
 	constexpr int Err_25002_ToolInvalid = Gra_ErrorBase + 2;
-	constexpr int Err_25003_GetClipboardData = Gra_ErrorBase + 3;
-	constexpr int Err_25004_ClipboardDataConversion = Gra_ErrorBase + 4;
 	constexpr int Err_25005_VersionMismatch = Gra_ErrorBase + 5;
 	constexpr int Err_25006_ColorToolInsert = Gra_ErrorBase + 6;
 	constexpr int Err_25007_NonColorToolInsert = Gra_ErrorBase + 7;
-	constexpr int Err_25008_ClipboardDataConversion = Gra_ErrorBase + 8;
-	constexpr int Err_25009_ClipboardDataConversion = Gra_ErrorBase + 9;
-	constexpr int Err_25010_ClipboardDataConversion = Gra_ErrorBase + 10;
-	constexpr int Err_25011_ClipboardDataConversion = Gra_ErrorBase + 11;
 	constexpr int Err_25013_NoMatroxDongle = Gra_ErrorBase + 13;
 	constexpr int Err_25014_GlobalConstantNumber = Gra_ErrorBase + 14;
 	constexpr int Err_25015_GlobalNameAlreadyUsed = Gra_ErrorBase + 15;

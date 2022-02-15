@@ -21,11 +21,30 @@ enum class NavElementType
 	EndDelimiterTool,
 	Empty
 };
+
+constexpr int cUndefinedIndentationValue = -1;
+
 struct NavigatorElement
 {
 	explicit NavigatorElement(LPCSTR displayName) :m_DisplayName(displayName)
 	{
 	};
+
+	bool mayHaveComment()
+	{
+		switch (m_Type)
+		{
+			case NavElementType::StartGrouping:
+			case NavElementType::EndGrouping:
+			case NavElementType::LoopTool:
+			case NavElementType::Tool:
+			case NavElementType::GroupTool:
+			case NavElementType::SubTool:
+				return true;
+		}
+
+		return false;
+	}
 
 	std::string m_DisplayName;
 	std::string m_Comment; //< for non tool element
@@ -34,6 +53,7 @@ struct NavigatorElement
 	NavElementType m_Type {NavElementType::Tool};
 	bool m_Collapsed {false};
 	bool m_Valid {true};
+	int m_indent {cUndefinedIndentationValue};
 };
 
 typedef std::shared_ptr<NavigatorElement> PtrNavigatorElement;

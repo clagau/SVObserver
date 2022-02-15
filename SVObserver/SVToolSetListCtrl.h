@@ -50,6 +50,7 @@ public:
 	void RebuildImages();
 
 	void SetSingleSelect();
+
 	void setObjectIds(uint32_t toolsetId, uint32_t inspectionId, bool CorrectGrouping);
 
 	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
@@ -58,21 +59,24 @@ public:
 
 	///Get Navigator Element Pointer for the index in the ListCtrl
 	PtrNavigatorElement GetNavigatorElement(int index) const;
-	
+	int GetNavigatorElementIndentation(int index) const;
+
+	NavigatorIndexAndElement Get1stSelNavIndexAndElement() const;
 	NavigatorIndexAndToolId Get1stSelIndexAndId() const;
 	std::vector<uint32_t> GetAllSelectedToolIds() const;
 
 	void SetSelectedToolId(uint32_t toolId);
 	
-	///Select the last element in the list if no Element was selected.
+	///Select the last element in the list if no element was selected.
 	void EnsureOneIsSelected();
 
 	void GetSelectedItemScreenPosition(POINT& rPoint) const;
+	void DeselectContentOfSelectedItems();
 
 	void SaveScrollPos();
 	void RestoreScrollPos();
 
-	bool AllowedToEdit() const;
+	bool mayBeEdited() const;
 
 	/// Display an error message box with the first error, if the tool has errors.
 	/// \param toolId [in] Id of the tool.
@@ -80,18 +84,19 @@ public:
 	bool displayErrorBox(uint32_t toolId) const;
 
 	bool isToolValid(uint32_t tool) const;
+
 protected:
 	ToolSetView* GetView();
 	const ToolSetView* GetView() const;
 	///Images for valid and not valid LoopTools are the same 
 	void CreateImageLists();
 
-	int InsertElement(int itemNo, int Indend, PtrNavigatorElement &rpNavigatorElement);
+	int InsertElement(int itemNo, int indent, PtrNavigatorElement &rpNavigatorElement);
 
 	///Insert Delimiter ItemNo is firstIndex in Listcontrol
 	/// indent is indentation 
 	///ownerId is Id for the ownwer 
-	int  InsertDelimiter(int itemNo, int Indend, NavElementType type, uint32_t ownerId);
+	int  InsertDelimiter(int itemNo, int indent, NavElementType type, uint32_t ownerId);
 
 	///Insert all Subtools ItemNo is firstIndex in Listcontrol
 	/// indent is indentation 
@@ -100,6 +105,8 @@ protected:
 
 	void CollapseItem(int item);
 	void ExpandItem(int item);
+
+	void DeselectContentOfItem(int index);
 
 	CImageList m_ImageList;
 	int m_iNone;

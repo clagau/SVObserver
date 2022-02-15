@@ -605,7 +605,7 @@ int TTabWnd::drawSelTabBottom(CDC *pDC, int x, CRect& client, TTabItem *pItem)
 	return textSize.cx + TAB_SPACE;
 }
 
-// Draws an unselected tab and returs its height
+// Draws an deselected tab and returns its height
 int TTabWnd::drawTabTop(CDC *pDC, int x, CRect&, TTabItem *pItem)
 {
 	assert(pItem);
@@ -660,7 +660,7 @@ int TTabWnd::drawTabTop(CDC *pDC, int x, CRect&, TTabItem *pItem)
 	return textSize.cx + TAB_SPACE;
 }
 
-// Draw an unselected tab at the bottom
+// Draw an deselected tab at the bottom
 int TTabWnd::drawTabBottom(CDC *pDC, int x, CRect& client, TTabItem *pItem)
 {
 	assert(pItem);

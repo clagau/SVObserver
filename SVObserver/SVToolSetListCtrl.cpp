@@ -253,12 +253,9 @@ void SVToolSetListCtrl::Rebuild( bool checkGrouping)
 
 		pView->RefreshTimestamp();
 	}
-
-
-
 }
 
-int SVToolSetListCtrl::InsertElement(int itemNo, int Indend, PtrNavigatorElement& rpNaviElement)
+int SVToolSetListCtrl::InsertElement(int itemNo, int indent, PtrNavigatorElement& rpNaviElement)
 {
 	int img = m_iNone;
 	switch (rpNaviElement->m_Type)
@@ -289,6 +286,9 @@ int SVToolSetListCtrl::InsertElement(int itemNo, int Indend, PtrNavigatorElement
 			img = (rpNaviElement->m_Valid) ? m_iNone : m_iInvalid;
 			break;
 	}
+
+	rpNaviElement->m_indent = indent;
+	
 	m_NavigatorElementVector.push_back(rpNaviElement);
 	LVITEM item;
 	memset(&item, 0, sizeof(item));
@@ -296,7 +296,7 @@ int SVToolSetListCtrl::InsertElement(int itemNo, int Indend, PtrNavigatorElement
 	item.iItem = itemNo;
 	item.iSubItem = 0;
 	item.iImage = img;
-	item.iIndent = Indend;
+	item.iIndent = indent;
 	item.lParam = LPARAM(m_NavigatorElementVector.size() - 1);//Index ;
 	int index = InsertItem(&item);
 	SetItemText(index, 0, rpNaviElement->m_DisplayName.c_str());
@@ -305,10 +305,10 @@ int SVToolSetListCtrl::InsertElement(int itemNo, int Indend, PtrNavigatorElement
 }
 
 
-int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int Indend, NavElementType type, uint32_t ownerId)
+int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int indent, NavElementType type, uint32_t ownerId)
 {
 
-	PtrNavigatorElement pNavElement;
+	PtrNavigatorElement pDelimiter;
 	std::string Delimiter(SvO::EndListDelimiter);
 	std::string LoopToolDelimiter(SvO::LoopToolDelimiter);
 	std::string Empty = SvUl::LoadStdString(IDS_EMPTY_STRING);
@@ -317,30 +317,31 @@ int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int Indend, NavElementType t
 	switch (type)
 	{
 		case NavElementType::Empty:
-			pNavElement = std::make_shared<NavigatorElement>(Empty.c_str());
-			pNavElement->m_Type = NavElementType::Empty;
-			pNavElement->m_OwnerId = ownerId;
-			Indend = 0;
+			pDelimiter = std::make_shared<NavigatorElement>(Empty.c_str());
+			pDelimiter->m_Type = NavElementType::Empty;
+			pDelimiter->m_OwnerId = ownerId;
+			indent = 0;
 			break;
 		case NavElementType::EndDelimiterTool:
-			pNavElement = std::make_shared<NavigatorElement>(LoopToolDelimiter.c_str());
-			pNavElement->m_Type = NavElementType::EndDelimiterTool;
-			pNavElement->m_OwnerId = ownerId;
+			pDelimiter = std::make_shared<NavigatorElement>(LoopToolDelimiter.c_str());
+			pDelimiter->m_Type = NavElementType::EndDelimiterTool;
+			pDelimiter->m_OwnerId = ownerId;
 			break;
 		case NavElementType::EndDelimiterToolSet:
-			pNavElement = std::make_shared<NavigatorElement>(Delimiter.c_str());
-			pNavElement->m_Type = NavElementType::EndDelimiterToolSet;
-			pNavElement->m_OwnerId = ownerId;
-			Indend = 0;
+			pDelimiter = std::make_shared<NavigatorElement>(Delimiter.c_str());
+			pDelimiter->m_Type = NavElementType::EndDelimiterToolSet;
+			pDelimiter->m_OwnerId = ownerId;
+			indent = 0;
 			break;
 		default:
 			return itemNo;
 			break;
 	}
-	if (!pNavElement)
+	if (!pDelimiter)
 		return itemNo;
 
-	m_NavigatorElementVector.push_back(pNavElement);
+	pDelimiter->m_indent = indent;
+	m_NavigatorElementVector.push_back(pDelimiter);
 
 
 	LVITEM item;
@@ -348,11 +349,11 @@ int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int Indend, NavElementType t
 	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
 	item.iItem = itemNo;
 	item.iSubItem = 0;
-	item.iIndent = Indend;
+	item.iIndent = indent;
 	item.lParam = LPARAM(m_NavigatorElementVector.size() - 1);//Index 
 	item.iImage = m_iNone;
 	int index = InsertItem(&item);
-	SetItemText(index, 0, pNavElement->m_DisplayName.c_str());
+	SetItemText(index, 0, pDelimiter->m_DisplayName.c_str());
 
 	return ++index;
 }
@@ -489,25 +490,25 @@ void SVToolSetListCtrl::RebuildImages()
 // OnKeyDown added to handle down arrow and up arrow, tool selection and scroll bars. 
 void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT, UINT)
 {
-	bool l_bUpdate = false;
-	int l_iNext = 0;
-	int l_iSelected = GetNextItem(-1, LVNI_SELECTED);
+	bool bUpdate = false;
+	int iNext = 0;
+	int iSelected = GetNextItem(-1, LVNI_SELECTED);
 
 	if (VK_DOWN == nChar)
 	{
 		int iCount = GetItemCount();
-		l_iNext = l_iSelected + 1;
-		if (l_iNext < iCount)
+		iNext = iSelected + 1;
+		if (iNext < iCount)
 		{
-			l_bUpdate = true;
+			bUpdate = true;
 		}
 	}
 	else if (VK_UP == nChar)
 	{
-		l_iNext = l_iSelected - 1;
-		if (l_iNext >= 0)
+		iNext = iSelected - 1;
+		if (iNext >= 0)
 		{
-			l_bUpdate = true;
+			bUpdate = true;
 		}
 	}
 	else
@@ -522,32 +523,32 @@ void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT, UINT)
 				if (VK_ADD == nChar || VK_RIGHT == nChar)
 				{
 					ExpandItem(item);
-					l_bUpdate = true;
-					l_iNext = l_iSelected;
+					bUpdate = true;
+					iNext = iSelected;
 				}
 				else if (VK_SUBTRACT == nChar || VK_LEFT == nChar)
 				{
 					// Collapse
 					CollapseItem(item);
-					l_bUpdate = true;
-					l_iNext = l_iSelected;
+					bUpdate = true;
+					iNext = iSelected;
 				}
 			}
 		}
 	}
 
-	if (l_bUpdate)
+	if (bUpdate)
 	{
-		ToolSetView* l_pParent = GetView();
-		if (l_pParent)
+		ToolSetView* pParent = GetView();
+		if (pParent)
 		{
-			SetItemState(l_iSelected, 0, LVIS_SELECTED); // un-select
-			SetItemState(l_iNext, LVIS_SELECTED, LVIS_SELECTED); // select
-			EnsureVisible(l_iNext, false);
+			SetItemState(iSelected, 0, LVIS_SELECTED); // deselect
+			SetItemState(iNext, LVIS_SELECTED, LVIS_SELECTED); // select
+			EnsureVisible(iNext, false);
 
 			if (SvOi::isOkToEdit())
 			{
-				l_pParent->PostMessage(WM_COMMAND, ID_RUN_ONCE);
+				pParent->PostMessage(WM_COMMAND, ID_RUN_ONCE);
 			}
 		}
 	}
@@ -588,18 +589,35 @@ PtrNavigatorElement SVToolSetListCtrl::GetNavigatorElement(int index) const
 	return PtrNavigatorElement(nullptr);
 }
 
+
+int SVToolSetListCtrl::GetNavigatorElementIndentation(int index) const
+{
+	auto pElement = GetNavigatorElement(index);
+
+	if (nullptr == pElement)
+	{
+		return cUndefinedIndentationValue;
+	}
+
+	return pElement->m_indent;
+}
+
+
 NavigatorIndexAndElementVector SVToolSetListCtrl::GetSelectedNavigatorIndexAndElementVector() const
 {
 	NavigatorIndexAndElementVector selectedElements;
 
 	int index = -1;
-	
-	do
+
+	while(true)
 	{
 		index = GetNextItem(index, LVNI_SELECTED);
-
+		if (index < 0)
+		{
+			break;
+		}
 		selectedElements.push_back({index, GetNavigatorElement(index)});
-	} while (index > -1);
+	}
 
 	return selectedElements;
 }
@@ -607,9 +625,9 @@ NavigatorIndexAndElementVector SVToolSetListCtrl::GetSelectedNavigatorIndexAndEl
 std::vector<uint32_t> SVToolSetListCtrl::GetAllSelectedToolIds() const
 {
 	std::vector<uint32_t> toolIds;
-	auto iaev = GetSelectedNavigatorIndexAndElementVector();
+	auto niaev = GetSelectedNavigatorIndexAndElementVector();
 
-	for (auto iae : iaev)
+	for (auto iae : niaev)
 	{
 		if (iae.second)
 		{
@@ -624,37 +642,66 @@ std::vector<uint32_t> SVToolSetListCtrl::GetAllSelectedToolIds() const
 }
 
 
-NavigatorIndexAndToolId SVToolSetListCtrl::Get1stSelIndexAndId() const 
+NavigatorIndexAndElement SVToolSetListCtrl::Get1stSelNavIndexAndElement() const
 {
-	auto iaev = GetSelectedNavigatorIndexAndElementVector();
+	auto niaev = GetSelectedNavigatorIndexAndElementVector();
 
-	if (iaev.empty())
+	if (niaev.empty())
 	{
-		return {-1,SvDef::InvalidObjectId};
+		return {-1, nullptr};
 	}
 
-	auto element = iaev[0].second;
+	return niaev[0];
+}
 
-	if (!element)
+
+NavigatorIndexAndToolId SVToolSetListCtrl::Get1stSelIndexAndId() const 
+{
+	auto niae = Get1stSelNavIndexAndElement();
+
+	auto element = niae.second;
+
+	if (nullptr == element)
 	{
-		return {iaev[0].first, SvDef::InvalidObjectId};
+		return {niae.first, SvDef::InvalidObjectId};
 	}
 	else
 	{
-		return {iaev[0].first, element->m_navigatorObjectId};
+		return {niae.first, element->m_navigatorObjectId};
 	}
 }
 
-bool SVToolSetListCtrl::AllowedToEdit() const
+
+
+void SVToolSetListCtrl::DeselectContentOfSelectedItems()
 {
-	auto iaev = GetSelectedNavigatorIndexAndElementVector();
-
-	if (iaev.empty())
+	int index = -1;
+	while (index = GetNextItem(index, LVNI_SELECTED), index > -1)
 	{
-		return false;
+		DeselectContentOfItem(index);
 	}
+}
 
-	auto element = iaev[0].second;
+
+void SVToolSetListCtrl::DeselectContentOfItem(int index)
+{
+	auto indentation = GetNavigatorElementIndentation(index);
+
+	if (cUndefinedIndentationValue == indentation)
+		return;
+
+	while (GetNavigatorElementIndentation(++index) > indentation)
+	{
+		SetItemState(index, 0, LVIS_SELECTED); // deselect
+	}
+}
+
+
+bool SVToolSetListCtrl::mayBeEdited() const
+{
+	auto niae = Get1stSelNavIndexAndElement();
+
+	auto element = niae.second;
 
 	if (!element)
 	{
@@ -685,6 +732,7 @@ void SVToolSetListCtrl::EnsureOneIsSelected()
 		Invalidate();
 	}
 }
+
 void SVToolSetListCtrl::SetSelectedToolId(uint32_t toolId)
 {
 	for (int i = 0; i < GetItemCount(); ++i)

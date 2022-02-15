@@ -13,6 +13,8 @@
 
 bool SVCheckPathDir(LPCTSTR PathName, bool CreateIfDoesNotExist );
 bool SVDeleteFiles(LPCTSTR PathName, bool IncludeSubDirectories );
+std::string readContentFromFileAndDelete(const std::string& rFileName);
+
 
 bool pathCanProbablyBeCreatedOrExistsAlready(const std::string& rFilePath);
 

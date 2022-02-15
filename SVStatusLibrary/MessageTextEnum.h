@@ -350,7 +350,7 @@ enum MessageTextEnum
 	Tid_Error_CannotOpenTADlg,
 	Tid_UnableStart_Utility,
 	Tid_SetClipboardDataFailed,
-	Tid_ClipboardDataConverionFailed,
+	Tid_ClipboardDataConversionFailed,
 	Tid_ClipboardMemoryFailed,
 	Tid_GetClipboardDataFailed,
 	Tid_ClipboardZipFailed,

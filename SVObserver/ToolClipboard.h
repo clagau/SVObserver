@@ -51,46 +51,30 @@ public:
 public:
 #pragma region Public Methods
 
-	HRESULT writeToClipboard(uint32_t toolId)
-	{
-		std::vector<uint32_t>rToolIds {toolId};
-		return writeToClipboard(rToolIds);
-	}
+	ToolClipboard();
 
 	//************************************
-	// Description: Write tool to the clipboard
-	// Parameter: toolId <in> Reference to the selected tool Id to write to the clipboard
+	// Writes zipped XML tool data to the clipboard
+	// Parameter: rToolIds <in> Reference to a vector with the selected tool IDs to write to the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT writeToClipboard(const std::vector<uint32_t>& rToolIds) const;
+	HRESULT writeXmlToolData(const std::vector<uint32_t>& rToolIds) const;
 
 	//************************************
-	// Description: Read tool from the clipboard
-	// Parameter: postId <in> Reference to the tool ID selected where the tool is to be inserted
-	// Parameter: ownerId <in> Reference to the owner ID 
-	// Parameter: rToolId <out> Reference to the tool ID generated from reading the clipboard
-	// Return: S_OK on success
+	// reads all XML tool data from the clipboard
+	// returns a string containing that information
 	//************************************
-	std::pair<HRESULT, uint32_t> readFromClipboard(uint32_t postId, uint32_t ownerId);
+	SvDef::StringVector readXmlToolData();
 
-	//************************************
-	// Description: Checks to see if the clipboard data is valid
-	// Return: True when valid
-	//************************************
-	static bool isClipboardDataValid();
+	std::pair<HRESULT, uint32_t> createToolFromXmlData(const std::string& XmlData, uint32_t postId, uint32_t ownerId);
 
 	const SvStl::MessageManager& getLastErrorMessage() const { return m_errorMessage; }
 #pragma endregion Public Methods
 
 protected:
 #pragma region Protected Methods
-	//************************************
-	// Description: This method writes the tool to a zip file
-	// Parameter: rFileName <in> Reference to the file name for the zip file
-	// Parameter: toolId <in> Reference to the selected tool ID to write to the clipboard
-	// Return: S_OK on success
-	//************************************
-	HRESULT streamToolToZip(const std::string& rFileName, uint32_t toolId) const;
+
+	std::string createToolDefinitionString(const std::vector<uint32_t>& rToolIds) const;
 
 	//************************************
 	// Description: This method writes the Base and Environment nodes
@@ -108,22 +92,15 @@ protected:
 	//************************************
 	// Description: This method finds the dependency files in the tool Xml string
 	// Parameter: rToolXmlString <in> Reference to the tool XML string to search
-	// Parameter: rDependencyFiles <out> Reference to the set of dependency files
+	// Return: vector of dependency filepaths
 	//************************************
-	void findDependencyFiles( const std::string& rToolXmlString, SvDef::StringVector& rDependencyFiles ) const;
+	SvDef::StringVector findDependencyFiles(const std::string& rToolXmlString) const;
 
 	//************************************
 	// Description: This method updates dependency files if required
-	// Parameter: rDependencyFiles <in> Reference to the set of dependency files
+	// Parameter: rDependencyFilepaths <in> Reference to a list of files
 	//************************************
-	void updateDependencyFiles( const SvDef::StringVector& rDependencyFiles ) const;
-
-	//************************************
-	// Description: This method gets the clipboard data and converts it into a string
-	// Parameter: rClipboardData <out> Reference to the string to hold the clipboard data
-	// Return: S_OK on success
-	//************************************
-	static HRESULT convertClipboardDataToString( std::string& rClipboardData );
+	void moveDependencyFilesToRunPath( const SvDef::StringVector& rDependencyFilepaths ) const;
 
 	//************************************
 	// Description: This method writes the string to a file
@@ -132,13 +109,6 @@ protected:
 	// Parameter: Text <in> data is text format
 	//************************************
 	void writeStringToFile( const std::string& rFileName, const std::string& rFileData, bool Text ) const;
-
-	//************************************
-	// Description: This method reads the file to a string
-	// Parameter: rFileName <in> Reference to the file name
-	// Parameter: rFileData <out> Reference to where the data is read in to
-	//************************************
-	void readFileToString( const std::string& rFileName, std::string& rFileData ) const;
 
 	//************************************
 	// Description: This method converts the XML to tree
@@ -196,12 +166,25 @@ protected:
 	// Return: S_OK on success
 	//************************************
 	std::pair<HRESULT, uint32_t> parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner);
+
+	SvDef::StringVector streamToolsToXmlFiles(const std::vector<uint32_t>& rToolIds) const;
+
+	std::string xmlFilePath(uint32_t index) const;
+	std::string xmlFileName(uint32_t index) const;
+
+
 #pragma endregion Protected Methods
 
 private:
 #pragma region Member Variables
 	mutable SVInspectionProcess* m_pInspection{nullptr};
 	mutable SvStl::MessageManager m_errorMessage{SvStl::MsgType::Log | SvStl::MsgType::Display};
+
+	std::string m_baseFilePath;
+	std::string m_zipFilePath;
 #pragma endregion Member Variables
 };
+
+std::string clipboardDataToString(); ///< gets the clipboard data and converts it into a string
+bool toolClipboardDataPresent(); ///<Checks to see if the clipboard data is valid
 

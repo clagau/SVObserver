@@ -51,6 +51,8 @@ public:
 	std::vector<uint32_t> GetAllSelectedToolIds() const;
 	
 	NavigatorIndexAndElement Get1stSelIndexAndElement() const;
+	NavigatorIndexAndElementVector GetSelectedNavigatorIndexAndElementVector() const { return m_toolSetListCtrl.GetSelectedNavigatorIndexAndElementVector(); }
+
 	///Get Navigator Element Pointer for the index in the ListCtrl
 	PtrNavigatorElement GetNavigatorElement(int index) const;
 	void HandleExpandCollapse(const std::string& rName, bool bCollapse);
@@ -117,6 +119,8 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
+	void loadAndAdaptMenu(const NavigatorIndexAndElementVector& rNiaev);
+
 #ifdef _DEBUG
 	virtual void AssertValid() const override;
 	virtual void Dump(CDumpContext& dc) const override;
@@ -132,14 +136,13 @@ protected:
 	void ToggleExpandCollapse(int item);
 	//************************************
 	//! Searches the name in the list of all tool and group names case insensitive 
-	//! \param rName [in ]
+	//! \param rName [in]
 	//! \param lpExclude [in] if not null and the name is found (case sensitive)  this is ignored 
 	//! \returns bool  bool true if the name is unique 
 	//************************************
 	bool CheckName(const std::string& rName, LPCTSTR lpExclude = nullptr) const;
 	/// Editing the comment of grouping start or grouping end
 	bool EditToolGroupingComment(const std::string& groupingName);
-	
 	
 	///returns true if the list in the view   is to old or too small
 	bool ToolSetListHasChanged();
@@ -160,7 +163,5 @@ private:
 	std::string m_duplicateName;			//Store Name for DuplicatenameMessage
 	bool m_showDuplicateNameMessage; //DuplictaNameMessage is shown after edeting the name 
 	double m_timestamp {0.0}; //< tick when the view  was rebuild
-	
-
 };
 

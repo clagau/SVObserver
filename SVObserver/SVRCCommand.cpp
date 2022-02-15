@@ -1587,26 +1587,26 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 	{
 		case SvPb::ClipboardActionEnum::Copy:
 		{
-			ToolClipboard clipboard;
+			ToolClipboard toolClipboard;
 			HRESULT result {S_OK};
 
 			{
 				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-				result = clipboard.writeToClipboard(rRequest.objectid());
+				result = toolClipboard.writeXmlToolData({rRequest.objectid()});
 			}
 			pResponse->set_hresult(result);
 			if (S_OK != result)
 			{
-				const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+				const auto& rMessage = toolClipboard.getLastErrorMessage().getMessageContainer();
 				convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
 			}
 			break;
 		}
 		case SvPb::ClipboardActionEnum::Paste:
 		{
-			if (ToolClipboard::isClipboardDataValid())
+			if (toolClipboardDataPresent())
 			{
-				ToolClipboard clipboard;
+				ToolClipboard toolClipboard;
 				uint32_t postID{ rRequest.objectid() };
 				SvOi::IObjectClass* pObject = SvOi::getObject(postID);
 				if (nullptr != pObject)
@@ -1617,7 +1617,12 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 
 					{
 						SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-						std::tie(result, toolID) = clipboard.readFromClipboard(postID, ownerID);
+						auto XmlData = toolClipboard.readXmlToolData();
+						if (false == XmlData.empty())
+						{
+							//@TODO [Arvid][10.20][14.2.2022] currently: only paste first tool
+							std::tie(result, toolID) = toolClipboard.createToolFromXmlData(XmlData[0], postID, ownerID);
+						}
 					}
 					pResponse->set_hresult(result);
 					if (S_OK == result)
@@ -1627,12 +1632,13 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 						SVIPDoc* pDoc = (nullptr != pInspection) ? GetIPDocByInspectionID(pInspection->getObjectId()) : nullptr;
 						if (nullptr != pDoc)
 						{
-							pDoc->updateToolsetView(toolID, postID, ownerID);
+							pDoc->updateToolsetView1(toolID, postID, ownerID);
+							pDoc->updateToolsetView2(toolID);
 						}
 					}
 					else
 					{
-						const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+						const auto& rMessage = toolClipboard.getLastErrorMessage().getMessageContainer();
 						convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
 					}
 				}
@@ -1647,12 +1653,12 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		}
 		case SvPb::ClipboardActionEnum::Cut:
 		{
-			ToolClipboard clipboard;
+			ToolClipboard toolClipboard;
 			HRESULT result {S_OK};
 
 			{
 				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-				result = clipboard.writeToClipboard(rRequest.objectid());
+				result = toolClipboard.writeXmlToolData({rRequest.objectid()});
 			}
 			pResponse->set_hresult(result);
 			if (S_OK == result)
@@ -1697,7 +1703,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 			}
 			else
 			{
-				const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+				const auto& rMessage = toolClipboard.getLastErrorMessage().getMessageContainer();
 				convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
 			}
 			break;

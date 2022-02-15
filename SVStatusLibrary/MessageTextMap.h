@@ -391,7 +391,7 @@ namespace SvStl
 		{Tid_Error_CannotOpenTADlg, _T("Unable to open Tool Adjustment Dialog!")},
 		{Tid_UnableStart_Utility, _T("Unable to start %s\n(%s).\n\nCheck Utility Properties.")},
 		{Tid_SetClipboardDataFailed, _T("Setting the data into the clipboard failed.")},
-		{Tid_ClipboardDataConverionFailed, _T("The clipboard data conversion failed.")},
+		{Tid_ClipboardDataConversionFailed, _T("The clipboard data conversion failed.")},
 		{Tid_ClipboardMemoryFailed, _T("Clipboard memory allocation failed.")},
 		{Tid_GetClipboardDataFailed, _T("Failed to retrieve the clipboard data.")},
 		{Tid_ClipboardZipFailed, _T("Failed to zip clipboard data.")},

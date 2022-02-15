@@ -52,6 +52,40 @@ enum ToolsetViewUpdateHints
 	ExpandCollapseHint = SVIPDoc::RefreshView + 1
 };
 
+namespace
+{
+std::pair<bool, bool> determineRequiredMenuModifications(uint32_t navigatorObjectID)
+{
+	bool isShiftToolWithReference = false;
+	bool hasRoi = true;
+
+	if (navigatorObjectID > SvDef::InvalidObjectId)
+	{
+		SvTo::SVToolClass* pSelectedTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(navigatorObjectID));
+		if (nullptr != pSelectedTool)
+		{
+			SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool*> (pSelectedTool);
+			if (nullptr != pShiftTool)
+			{
+				long shiftMode;
+				pShiftTool->m_evoShiftMode.GetValue(shiftMode);
+				if (shiftMode == SvTo::SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
+				{
+					isShiftToolWithReference = true;
+				}
+			}
+			if (!pSelectedTool->DoesObjectHaveExtents() || SvPb::TransformationToolClassId == pSelectedTool->GetClassID())
+			{
+				hasRoi = false;
+			}
+		}
+	}
+
+	return {isShiftToolWithReference, hasRoi};
+}
+}
+
+
 IMPLEMENT_DYNCREATE(ToolSetView, CFormView)
 #pragma endregion Declarations
 
@@ -103,15 +137,16 @@ NavigatorIndexAndToolId ToolSetView::Get1stSelIndexAndId() const
 
 NavigatorIndexAndElement ToolSetView::Get1stSelIndexAndElement() const
 {
-	auto iaev = m_toolSetListCtrl.GetSelectedNavigatorIndexAndElementVector();
+	auto niaev = m_toolSetListCtrl.GetSelectedNavigatorIndexAndElementVector();
 
-	if (iaev.empty())
+	if (niaev.empty())
 	{
 		return {-1, nullptr};
 	}
 	
-	return iaev[0];
+	return niaev[0];
 }
+
 
 PtrNavigatorElement ToolSetView::GetNavigatorElement(int item) const
 {
@@ -188,15 +223,14 @@ void ToolSetView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
-	// Only single selection for List control
-	m_toolSetListCtrl.SetSingleSelect();
-	
 	SVIPDoc* pCurrentDocument = GetIPDoc();
 
 	if (nullptr != pCurrentDocument)
 	{
 		m_toolSetListCtrl.ShowWindow(SW_SHOW);
 	}
+
+	m_toolSetListCtrl.SetSingleSelect(); // Only single selection for List control
 }
 
 int ToolSetView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -270,19 +304,21 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 			else if ((SVIPDoc::RefreshView == lHint) || ToolSetListHasChanged())
 			{
 				auto [selectedPos, selectedToolID] = Get1stSelIndexAndId();
-				
+
 				if (pCurrentDocument->GetToolSet() == 0 || pCurrentDocument->GetToolSet()->GetInspection() == 0)
 				{
 					return;
 				}
 				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->getObjectId(), pCurrentDocument->GetToolSet()->GetInspection()->getObjectId(), SVIPDoc::RefreshView == lHint);
+
 				SetSelectedToolId(selectedToolID);
-				if (selectedToolID == 0 && m_toolSetListCtrl.GetItemCount() > selectedPos)
+
+				if (selectedToolID == 0 && selectedPos >-1 && m_toolSetListCtrl.GetItemCount() > selectedPos)
 				{
 					//no tool selected but grouping or end of looptool
 					m_toolSetListCtrl.SetItemState(selectedPos, LVIS_SELECTED, LVIS_SELECTED);
 				}
-				
+
 				m_toolSetListCtrl.RebuildImages();
 			}
 			
@@ -348,6 +384,8 @@ void ToolSetView::OnClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 	CWaitCursor l_cwcMouse;
 
+	m_toolSetListCtrl.DeselectContentOfSelectedItems();
+
 	// Run the toolset once to update the images/results.
 	// 16 Dec 1999 - frb. (99)
 	// Post a message to do the run once so that the double click still works
@@ -373,102 +411,79 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* , LRESULT* pResult)
 		return;
 	}
 
-	bool hasComment(true);
+	NavigatorIndexAndElementVector niaev = m_toolSetListCtrl.GetSelectedNavigatorIndexAndElementVector();
 
-	auto [SelectedListIndex, pNavElement] = Get1stSelIndexAndElement();
-
-	if (!pNavElement)
+	if (true == niaev.empty())
 	{
 		return;
 	}
-	std::string Selection(pNavElement->m_DisplayName);
-	switch (pNavElement->m_Type)
-	{
 
-		case NavElementType::StartGrouping:
-		case NavElementType::EndGrouping:
-		case NavElementType::LoopTool:
-		case NavElementType::Tool:
-		case NavElementType::GroupTool:
-		case NavElementType::SubTool:
-			break;
-		case NavElementType::EndDelimiterToolSet:
-		case NavElementType::EndDelimiterTool:
-		case NavElementType::Empty:
-			Selection.clear();
-			hasComment = false;
-			break;
-	}
-	uint32_t  SelectedId(pNavElement->m_navigatorObjectId);
-	POINT l_Point;
-	BOOL l_bMenuLoaded = false;
-	m_toolSetListCtrl.GetSelectedItemScreenPosition(l_Point);
-	CMenu l_menu;
-	bool bRemoveAdjustToolPos = false;
+	loadAndAdaptMenu(niaev);
 
-	// Get the tool comment...
-	if (SvDef::InvalidObjectId != SelectedId)
-	{
-		SvTo::SVToolClass* pSelectedTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(SelectedId));
-		if (nullptr != pSelectedTool)
-		{
-			SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool*> (pSelectedTool);
-			if (nullptr != pShiftTool)
-			{
-				long l_shiftMode;
-				pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
-				if (l_shiftMode == SvTo::SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
-				{
-					l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_SHIFT);
-				}
-				else
-				{
-					l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU);
-				}
-			}
-			else
-			{
-				l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU);
-			}
-			//if the selected tool does not have an ROI remove the Adjust Tool Position menu item
-			if (!pSelectedTool->DoesObjectHaveExtents() || SvPb::TransformationToolClassId == pSelectedTool->GetClassID())
-			{
-				bRemoveAdjustToolPos = true;
-			}
-		}
-	}
-	else
-	{
-		if (-1 != SelectedListIndex)
-		{
-			l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU1);
-			// Remove Tool Comment menu item if Group is Not Selected 
-			if (hasComment == false)
-			{
-				l_menu.RemoveMenu(ID_SELECTTOOL_TOOLCOMMENT, MF_BYCOMMAND);
-			}
-		}
-	}
-
-	if (bRemoveAdjustToolPos)
-	{
-		l_menu.RemoveMenu(ID_EDIT_ADJUSTTOOLPOSITION, MF_BYCOMMAND);
-	}
-
-	if (TRUE == l_bMenuLoaded)
-	{
-		if (CMenu* l_pPopup = l_menu.GetSubMenu(0))
-		{
-			l_Point.y += 12;
-			l_Point.x += 20;
-			ClientToScreen(&l_Point);
-			l_pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, l_Point.x, l_Point.y, AfxGetMainWnd());
-		}
-	}
 	// Run the toolset once to update the images/results.
 	// 16 Dec 1999 - frb. (99)
 	pCurrentDocument->RunOnce();
 	*pResult = 0;
+}
+
+
+void ToolSetView::loadAndAdaptMenu(const NavigatorIndexAndElementVector& rNiaev)
+{
+	BOOL bMenuLoaded = false;
+	CMenu menu;
+
+	if (std::none_of(rNiaev.cbegin(), rNiaev.cend(), [](auto& rObject){return rObject.second->m_navigatorObjectId < 1; }))
+	{	//i.e. only "proper" tools are selected
+		switch (rNiaev.size()) //number of selected ToolSetViewEntries
+		{
+			case 0:
+				bMenuLoaded = menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_EMPTY);
+			case 1:
+			{
+				auto [isShiftToolWithReference, hasRoi] = determineRequiredMenuModifications(rNiaev[0].second->m_navigatorObjectId);
+
+				bMenuLoaded = menu.LoadMenu(isShiftToolWithReference ? IDR_TOOL_LIST_CONTEXT_MENU_SHIFT : IDR_TOOL_LIST_CONTEXT_MENU);
+				if (false == hasRoi)
+				{
+					menu.RemoveMenu(ID_EDIT_ADJUSTTOOLPOSITION, MF_BYCOMMAND); ///< if the selected tool does not have an ROI: remove the Adjust Tool Position menu item
+				}
+				break;
+			}
+			default:
+				bMenuLoaded = menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_MULTI);
+		}
+	}
+	else
+	{
+		if (1 == rNiaev.size())
+		{
+			bMenuLoaded = menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU1);
+			// Remove tool comment menu item unless group is selected 
+			if (rNiaev[0].second->mayHaveComment() == false)
+			{
+				menu.RemoveMenu(ID_SELECTTOOL_TOOLCOMMENT, MF_BYCOMMAND);
+			}
+		}
+		else
+		{
+			bMenuLoaded = menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_EMPTY);
+		}
+	}
+
+	if (FALSE == bMenuLoaded)
+	{
+		return;
+	}
+
+	POINT point;
+	m_toolSetListCtrl.GetSelectedItemScreenPosition(point);
+	if (CMenu* pPopup = menu.GetSubMenu(0))
+	{
+		point.y += 12;
+		point.x += 20;
+		ClientToScreen(&point);
+		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, AfxGetMainWnd());
+	}
 }
 
 void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
@@ -509,7 +524,7 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 	m_labelingIndex = m_toolSetListCtrl.GetNextItem(-1, LVNI_SELECTED);
 
 	// Check for the last item which is the string of 'dashes'.
-	if (-1 == m_labelingIndex || !m_toolSetListCtrl.AllowedToEdit())
+	if (-1 == m_labelingIndex || !m_toolSetListCtrl.mayBeEdited())
 	{
 		*pResult = true; // Abandon the label editing.
 		return;
@@ -1152,7 +1167,7 @@ bool ToolSetView::enterSelectedEntry()
 				SetSelectedToolId(toolId);
 			}
 			break;
-		case  NavElementType::EndGrouping:
+		case NavElementType::EndGrouping:
 		case NavElementType::StartGrouping:
 			EditToolGroupingComment(pNavElement->m_DisplayName);
 			break;
@@ -1265,5 +1280,5 @@ bool ToolSetView::CheckName(const std::string& rName, LPCTSTR pExclude) const
 void ToolSetView::RefreshTimestamp()
 {
 	m_timestamp = SvUl::GetTimeStamp();
-				  
 }
+

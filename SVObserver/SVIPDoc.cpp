@@ -1241,51 +1241,56 @@ void SVIPDoc::OnEditDelete()
 	{
 		return;
 	}
-	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelIndexAndElement().second;
 
-	if (!pNavElement)
+	auto niaev = pToolsetView->GetSelectedNavigatorIndexAndElementVector();
+
+	for (const auto& rIaev : niaev)
 	{
-		return;
-	}
-	switch (pNavElement->m_Type)
-	{
-		case NavElementType::SubLoopTool:
-		case NavElementType::SubTool:
+		
+		if (!rIaev.second)
+		{
+			continue;
+		}
+		switch (rIaev.second->m_Type)
+		{
+			case NavElementType::SubLoopTool:
+			case NavElementType::SubTool:
 
 
-			if (deleteTool(pNavElement.get()))
+				if (deleteTool(rIaev.second.get()))
+				{
+					UpdateAllViews(nullptr, RefreshDelete);
+					SetModifiedFlag();
+					RunOnce();
+				}
+				break;
+
+			case NavElementType::LoopTool:
+			case NavElementType::GroupTool:
+			case NavElementType::Tool:
 			{
-				UpdateAllViews(nullptr, RefreshDelete);
-				SetModifiedFlag();
-				RunOnce();
+				if (deleteTool(rIaev.second.get()))
+				{
+					m_toolGroupings.RemoveTool(rIaev.second->m_DisplayName);
+					RebuildResultsList();
+					//pInspection->RebuildInspectionInputList();
+					UpdateAllViews(nullptr, RefreshDelete);
+					SetModifiedFlag();
+					RunOnce(); // this will cause rebuild to be called so why are we calling rebuild above?
+				}
 			}
 			break;
 
-		case NavElementType::LoopTool:
-		case NavElementType::GroupTool:
-		case NavElementType::Tool:
-		{
-			if (deleteTool(pNavElement.get()))
+			case NavElementType::StartGrouping:
+			case NavElementType::EndGrouping:
 			{
-				m_toolGroupings.RemoveTool(pNavElement->m_DisplayName);
-				RebuildResultsList();
-				//pInspection->RebuildInspectionInputList();
+				m_toolGroupings.RemoveGroup(rIaev.second->m_DisplayName);
 				UpdateAllViews(nullptr, RefreshDelete);
 				SetModifiedFlag();
-				RunOnce(); // this will cause rebuild to be called so why are we calling rebuild above?
 			}
-		}
-		break;
+			break;
 
-		case NavElementType::StartGrouping:
-		case NavElementType::EndGrouping:
-		{
-			m_toolGroupings.RemoveGroup(pNavElement->m_DisplayName);
-			UpdateAllViews(nullptr, RefreshDelete);
-			SetModifiedFlag();
 		}
-		break;
-
 	}
 }
 
@@ -1294,13 +1299,10 @@ void SVIPDoc::OnEditCut()
 	ToolSetView* pToolsetView = GetToolSetView();
 	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
-		uint32_t toolid = pToolsetView->Get1stSelIndexAndId().second;
-		if (SvDef::InvalidObjectId != toolid)
-		{
-			ToolClipboard clipboard;
-			clipboard.writeToClipboard(toolid);
-			OnEditDelete();
-		}
+		auto toolids = pToolsetView->GetAllSelectedToolIds();
+		ToolClipboard toolClipboard;
+		toolClipboard.writeXmlToolData(toolids);
+		OnEditDelete();
 	}
 }
 
@@ -1314,17 +1316,9 @@ void SVIPDoc::OnEditCopy()
 	ToolSetView* pToolsetView = GetToolSetView();
 	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOL_IDS)
-		pToolsetView->GetAllSelectedToolIds();
-#endif
-		uint32_t toolid = pToolsetView->Get1stSelIndexAndId().second;
-		if (SvDef::InvalidObjectId != toolid)
-		{
-			ToolClipboard clipboard;
-			clipboard.writeToClipboard(toolid);
-		}
-
+		auto toolids = pToolsetView->GetAllSelectedToolIds();
+		ToolClipboard toolClipboard;
+		toolClipboard.writeXmlToolData(toolids);
 	}
 }
 
@@ -1426,18 +1420,35 @@ void SVIPDoc::OnEditPaste()
 			break;
 	}
 
-	ToolClipboard clipboard;
-	auto [result, toolId] = clipboard.readFromClipboard(postToolId, ownerId);
-
-	if (S_OK == result)
+	ToolClipboard toolClipboard;
+	try
 	{
+		auto XmlData = toolClipboard.readXmlToolData();
+		uint32_t finalToolId = SvDef::InvalidObjectId;
+		for (const auto& tooldata : XmlData)
+		{
+			auto [result, toolId] = toolClipboard.createToolFromXmlData(tooldata, postToolId, ownerId);
+			if (S_OK == result)
+			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLSET)
-		std::stringstream str;
-		str << "Pasting " << toolId << " after " << postToolId << ", owner = " << ownerId << "\n";
-		::OutputDebugString(str.str().c_str());
+				std::stringstream str;
+				str << "Pasting " << toolId << " after " << postToolId << ", owner = " << ownerId << "\n";
+				::OutputDebugString(str.str().c_str());
 #endif
 
-		updateToolsetView(toolId, postToolId, ownerId, pNavElement->m_DisplayName.c_str());
+				updateToolsetView1(toolId, postToolId, ownerId, pNavElement->m_DisplayName);
+				finalToolId = toolId;
+			}
+		}
+		if (0 != finalToolId)
+		{
+			updateToolsetView2(finalToolId, false == pNavElement->m_DisplayName.empty());
+		}
+	}
+	catch (const SvStl::MessageContainer& rSvE)
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		e.setMessage(rSvE.getMessage());
 	}
 }
 
@@ -1452,12 +1463,12 @@ void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
 		auto [SelectedListIndex, pNavElement] = pToolSetView->Get1stSelIndexAndElement();
 
 		//Only if tool list active and a selected index is valid
-		enabled = (nullptr != pNavElement && -1 != SelectedListIndex && ToolClipboard::isClipboardDataValid());
+		enabled = (nullptr != pNavElement && -1 != SelectedListIndex && toolClipboardDataPresent());
 	}
 	pCmdUI->Enable(enabled);
 }
 
-void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t ownerID, LPCSTR pSelectedName)
+void SVIPDoc::updateToolsetView1(uint32_t toolID, uint32_t postID, uint32_t ownerID, const std::string& rSelectedName)
 {
 	SVObjectClass* pObject(SVObjectManagerClass::Instance().GetObject(toolID));
 
@@ -1484,7 +1495,7 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		{
 			std::string name;
 
-			if (pSelectedName == nullptr)
+			if (rSelectedName.empty())
 			{
 				SVObjectClass* pObjectPost(SVObjectManagerClass::Instance().GetObject(postID));
 				if (nullptr != pObjectPost)
@@ -1494,12 +1505,11 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 			}
 			else
 			{
-				name = pSelectedName;
+				name = rSelectedName;
 			}
 			m_toolGroupings.AddTool(pTool->GetName(), name);
 
 		}
-
 		//@TODO[gra][8.10][13.12.2018]: This is a low risk fix to avoid other problems and should be solved in another way
 		//This reset is required when pasting an acquisition tool which otherwise adds a non existent camera to the PPQ
 		//The inspection pointer is still nullptr at this stage which avoids adding the camera to the PPQ in SVCameraImageTemplate::RebuildCameraImage
@@ -1507,7 +1517,6 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		{
 			pTool->resetAllObjects();
 		}
-
 		SVObjectLevelCreateStruct createStruct(*pInspection);
 		createStruct.m_pInspection = pInspection;
 
@@ -1521,16 +1530,21 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		{
 			pInspection->GetToolSet()->updateToolPosition();
 		}
-
-		RunOnce();
-		if (nullptr != pSelectedName)
-		{
-			UpdateAllViews(nullptr, SVIPDoc::RefreshView);
-		}
-		SetSelectedToolID(toolID);
-		SetModifiedFlag();
 	}
 }
+
+
+void SVIPDoc::updateToolsetView2(uint32_t toolID, bool updateAllViews)
+{
+	RunOnce();
+	if (updateAllViews)
+	{
+		UpdateAllViews(nullptr, SVIPDoc::RefreshView);
+	}
+	SetSelectedToolID(toolID);
+	SetModifiedFlag();
+}
+
 
 void SVIPDoc::OnShowFirstError()
 {

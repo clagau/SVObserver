@@ -4375,6 +4375,23 @@ BEGIN
     END
 END
 
+IDR_TOOL_LIST_CONTEXT_MENU_MULTI MENU
+BEGIN
+    POPUP "SelectTools"
+    BEGIN
+        MENUITEM "Cut Tools",                    ID_EDIT_CUT
+        MENUITEM "Copy Tools",                   ID_EDIT_COPY
+    END
+END
+
+IDR_TOOL_LIST_CONTEXT_MENU_EMPTY MENU
+BEGIN
+    POPUP "SelectTools"
+    BEGIN
+        MENUITEM "<No Matching Operations>",    ID_NO_MATCHING_OPERATIONS
+    END
+END
+
 IDR_TOOL_LIST_CONTEXT_MENU1 MENU
 BEGIN
     POPUP "SelectTool"
@@ -4393,11 +4410,11 @@ BEGIN
         MENUITEM "Cut Tool",                    ID_EDIT_CUT
         MENUITEM "Copy Tool",                   ID_EDIT_COPY
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
+        MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
         MENUITEM "Show First Error",            ID_SHOW_FIRST_ERROR
         MENUITEM SEPARATOR
         MENUITEM "Set Reference",               ID_SELECTTOOL_LEARN
         MENUITEM "Normalize",                   ID_SELECTTOOL_NORMALIZE
-        MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
     END
 END
 

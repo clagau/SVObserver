@@ -2053,7 +2053,7 @@ namespace SvGcl
 		{
 			POSITION pos;
 
-			// Unselect all previously selected cells
+			// Deselect all previously selected cells
 			for (pos = m_SelectedCellMap.GetStartPosition(); nullptr != pos; )
 			{
 				DWORD key;
@@ -4683,7 +4683,7 @@ namespace SvGcl
 	{
 		BOOL bSelected = IsCellSelected(nRow, nCol);
 
-		// If the cell is being unselected, remove it from the selected list
+		// If the cell is being deselected, remove it from the selected list
 		if (bSelected && !(state & GVIS_SELECTED))
 		{
 			CCellID cell;
@@ -6046,7 +6046,7 @@ namespace SvGcl
 		{
 			SetFocusCell(m_LeftClickDownCell.row, m_LeftClickDownCell.col);
 
-			// If control is pressed then unselect the cell or row (depending on the list mode)
+			// If control is pressed then deselect the cell or row (depending on the list mode)
 			if (nFlags & MK_CONTROL)
 			{
 				SetFocusCell(m_LeftClickDownCell);

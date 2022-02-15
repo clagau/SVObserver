@@ -113,7 +113,7 @@ bool makeZipFile( const std::string& rZipFileName, const SvDef::StringVector& rZ
 	return Result;
 }
 
-bool unzipAll( const std::string& rZipFileName, const std::string& rDestinationFolder, SvDef::StringVector& rUnzippedFiles )
+bool unzipAll( const std::string& rZipFileName, const std::string& rDestinationFolder, SvDef::StringVector& rUnzippedFiles)
 {
 	bool Result{false};
 

@@ -127,13 +127,13 @@ public:
 
 	const SVToolGrouping& GetToolGroupings() const;
 	SVToolGrouping& GetToolGroupings();
-	
-	
 
 	//Returns a Id of the ToolsetList.
 	uint32_t GetObjectIdFromToolToInsertBefore(const std::string& rName) const;
 
-	void updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t ownerID, LPCSTR pSelctedName = NULL);
+	//@TODO [Arvid][10.20][14.2.2022]: updateToolsetView() was split up during SVO-1213. The split-up functions should be renamed
+	void updateToolsetView1(uint32_t toolID, uint32_t postID, uint32_t ownerID, const std::string& rSelectedName = _T(""));
+	void updateToolsetView2(uint32_t toolID, bool updateAllViews= false);
 
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened. // @WARNING:  bad practice making members public
 
