@@ -151,6 +151,19 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 		return -1;
 	}
 
+	if (nullptr == ObjectReference.getObject())
+	{   //check if object can return a double. If not it is an invalid object and cannot be used.
+		return -1; 
+	}
+
+	double testValue = 0;
+	//check if object can return a double. If not it is an invalid object and cannot be used.
+	HRESULT isDoubleOk = ObjectReference.getObject()->getValue(testValue);
+	if (S_OK != isDoubleOk && SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE != isDoubleOk && E_BOUNDS != isDoubleOk)
+	{	//check if object can return a double. If not it is an invalid object and cannot be used.
+		return -1;
+	}
+
 	// Add to combined symbol table if not already there
 	// Objects will be deletet in ClearAll() called by the ~SVEquationSymbolTableClass:;
 	SVEquationSymbolStruct* pSymbolStruct = new SVEquationSymbolStruct();
