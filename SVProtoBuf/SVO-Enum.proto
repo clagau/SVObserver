@@ -299,6 +299,7 @@ enum SVObjectSubTypeEnum
 	SVCharValueObjectType					= 0x0000500A;
 	SVVariantValueObjectType				= 0x0000500B;
 	DoubleSortValueObjectType				= 0x0000500C;
+	SVTimerValueObjectType					= 0x0000500D;
 }
 
 enum LUTModeEnum
