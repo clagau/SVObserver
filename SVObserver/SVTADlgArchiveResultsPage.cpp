@@ -383,6 +383,11 @@ SvDef::StringPairVector SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs()
 		auto objectRefIdentifier = rEntry.GetObjectIdAndIndexOneBased();
 		auto completeName = rEntry.GetCompleteName(true);
 		
+		if (rEntry.getObject()->GetObjectSubType() == SvPb::SVTimerValueObjectType)
+		{
+			completeName = completeName + " (µs)";
+		}
+		
 		// and we want our header labels not too verbose.
 		SvUl::searchAndReplace(completeName, toolsetPrefix.c_str(), _T(""));
 

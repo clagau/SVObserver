@@ -64,6 +64,8 @@ void SVTimerValueObjectClass::setStandardFormatString()
 
 void SVTimerValueObjectClass::LocalInitialize()
 {
+	m_ObjectTypeInfo.m_SubType = SvPb::SVTimerValueObjectType;
+
 	m_Start = SvUl::GetTimeStamp();
 	SetTypeName(_T("Timer"));
 	setStandardFormatString();
