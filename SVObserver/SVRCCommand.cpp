@@ -736,14 +736,14 @@ void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<Sv
 		{
 			//check if shutdown.exe exists. If not, the shutdown won't be called
 			std::ifstream dllfile("SVShutdown.exe", std::ios::binary);
-			CWnd* pWnd = AfxGetApp()->m_pMainWnd;
-			if (0 > shutdownOption && !dllfile && nullptr == pWnd)
+			HWND hMainWnd = SVVisionProcessorHelper::Instance().getMainhWnd();
+			if (0 > shutdownOption && !dllfile && nullptr == hMainWnd)
 			{
 				result = E_FAIL;
 			}
 			else
 			{
-				PostMessage(pWnd->m_hWnd, SV_SHUTDOWN, shutdownOption, 0);
+				::PostMessage(hMainWnd, SV_SHUTDOWN, shutdownOption, 0);
 			}
 		}
 		catch (ATL::CAtlException& ex)
@@ -1061,10 +1061,10 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 					pDoc->RunOnce();
 					pDoc->SetModifiedFlag();
 
-					CWnd* pWnd = AfxGetApp()->m_pMainWnd;
-					if (nullptr != pWnd)
+					HWND hMainWnd = SVVisionProcessorHelper::Instance().getMainhWnd();
+					if (nullptr != hMainWnd)
 					{
-						pWnd->PostMessage(SV_UPDATE_IPDOC_VIEWS, static_cast<WPARAM> (inspectionID), static_cast<LPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshDelete));
+						::PostMessage(hMainWnd, SV_UPDATE_IPDOC_VIEWS, static_cast<WPARAM> (inspectionID), static_cast<LPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshDelete));
 					}
 					break;
 				}
@@ -1082,10 +1082,10 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 					pDoc->SetModifiedFlag();
 					pDoc->SetSelectedToolID(response.createobjectresponse().objectid());
 
-					CWnd* pWnd = AfxGetApp()->m_pMainWnd;
-					if (nullptr != pWnd)
+					HWND hMainWnd = SVVisionProcessorHelper::Instance().getMainhWnd();
+					if (nullptr != hMainWnd)
 					{
-						pWnd->PostMessage(SV_UPDATE_IPDOC_VIEWS, inspectionID, static_cast<WPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshView));
+						::PostMessage(hMainWnd, SV_UPDATE_IPDOC_VIEWS, inspectionID, static_cast<WPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshView));
 					}
 					break;
 				}
@@ -1692,10 +1692,10 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 							pDoc->SetModifiedFlag();
 						}
 					}
-					CWnd* pWnd = AfxGetApp()->m_pMainWnd;
-					if (nullptr != pWnd)
+					HWND hMainWnd = SVVisionProcessorHelper::Instance().getMainhWnd();
+					if (nullptr != hMainWnd)
 					{
-						pWnd->PostMessage(SV_UPDATE_IPDOC_VIEWS, inspectionID, static_cast<WPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshDelete));
+						::PostMessage(hMainWnd,SV_UPDATE_IPDOC_VIEWS, inspectionID, static_cast<WPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshDelete));
 					}
 				}
 			}
