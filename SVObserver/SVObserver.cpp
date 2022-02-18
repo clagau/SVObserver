@@ -1976,6 +1976,7 @@ void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
 void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart)
 {
 	double preTriggerTimeWidow {(0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow};
+	double postTriggerTimeWidow {(0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_postTriggerTimeWindow) ? SvDef::cDefaultPostTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_postTriggerTimeWindow};
 
 	long lSize = pConfig->GetPPQCount();
 
@@ -1986,7 +1987,7 @@ void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonit
 		//Returns true when pointer valid
 		if (nullptr != pPPQ)
 		{
-			pPPQ->setPreTriggerTimeWindow(preTriggerTimeWidow);
+			pPPQ->setTriggerTimeWindow(preTriggerTimeWidow, postTriggerTimeWidow);
 			///Set NAK Behavior
 			pPPQ->SetNAKMode(TheSVObserverApp().m_rInitialInfoSvo.m_NAKMode, TheSVObserverApp().m_rInitialInfoSvo.m_NAKParameter);
 

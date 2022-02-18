@@ -89,7 +89,8 @@ namespace SvLib
 		int m_NAKParameter{ SvDef::DefaultNakParameter };
 
 		///This value is the time window in ms for cases when the camera start frame arrives before the trigger in discrete IO mode
-		double m_preTriggerTimeWindow{0.0};
+		double m_preTriggerTimeWindow {0.0};
+		double m_postTriggerTimeWindow {0.0};
 
 		// The ForcedImageUpdateTimeInSeconds comes from the SVIM.ini file
 		// It is to be placed in the [Display] section and has the following syntax:

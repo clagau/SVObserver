@@ -205,7 +205,7 @@ public:
 
 	bool setRejectDepth(long depth, SvStl::MessageContainerVector *pErrorMessages =nullptr);
 
-	void setPreTriggerTimeWindow(double preTriggerTimeWindow) { m_PPQPositions.setPreTriggerTimeWindow(preTriggerTimeWindow); }
+	void setTriggerTimeWindow(double preTriggerTimeWindow, double postTriggerTimeWindow) { m_PPQPositions.setTriggerTimeWindow(preTriggerTimeWindow, postTriggerTimeWindow); }
 
 	const SVIOEntryHostStructPtrVector& getUsedOutputs() const { return m_UsedOutputs; }
 protected:

@@ -178,11 +178,10 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(double checkTime, int camera
 			{
 				bool hasCameraImage = (cameraID >= 0 && cameraID < SvDef::cMaximumCameras) ? (*iter)->m_hasCameraImage[cameraID] : false;
 				//If product already has camera image or product inactive then skip
-				if (!hasCameraImage && (*iter)->m_triggered && (*iter)->IsProductActive() && !(*iter)->m_dataComplete)
+				if ((*iter)->m_triggered && !(*iter)->m_dataComplete && (*iter)->IsProductActive() && !hasCameraImage)
 				{
 					double triggerTime {(*iter)->TimeStamp()};
-					double nextTriggerTime = (startPos == iter) ? 0.0 : (*(iter+1))->TimeStamp();
-					if(findTimeMatch(checkTime, triggerTime, nextTriggerTime, startPos == iter))
+					if(findTimeMatch(checkTime, triggerTime))
 					{
 						result = static_cast<long>(std::distance(iter, startPos));
 					}
@@ -202,15 +201,12 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(double checkTime, int camera
 }
 
 
-bool SVPPQShiftRegister::findTimeMatch(double checkTime, double triggerTime, double nextTriggerTime, bool isStartPos)  const
+bool SVPPQShiftRegister::findTimeMatch(double checkTime, double triggerTime)  const
 {
-	//If this is the start PPQ position then use the pre-trigger time!
-	double PreTriggerTime = isStartPos ? m_preTriggerTimeWindow : 0.0;
-
-	bool result = 0.0 < triggerTime && (triggerTime - PreTriggerTime) < checkTime;
-	if(result && nextTriggerTime > 0.0)
+	bool result = 0.0 < triggerTime && (triggerTime - m_preTriggerTimeWindow) < checkTime;
+	if(result && m_postTriggerTimeWindow > 0.0)
 	{
-		result = checkTime < nextTriggerTime;
+		result = checkTime < (triggerTime + m_postTriggerTimeWindow);
 	}
 
 	return result;

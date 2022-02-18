@@ -39,10 +39,10 @@ public:
 
 	long GetIndexByTriggerTimeStamp(double checkTime, int cameraID) const;
 
-	void setPreTriggerTimeWindow(double preTriggerTimeWindow) { m_preTriggerTimeWindow = preTriggerTimeWindow; }
+	void setTriggerTimeWindow(double preTriggerTimeWindow, double postTriggerTimeWindow) { m_preTriggerTimeWindow = preTriggerTimeWindow; m_postTriggerTimeWindow = postTriggerTimeWindow; }
 
 private:
-	bool findTimeMatch(double checkTime, double triggerTime, double nextTriggerTime, bool isStartPos) const;
+	bool findTimeMatch(double checkTime, double triggerTime) const;
 
 	typedef std::vector<SVProductInfoStruct*> SVProductVector;
 
@@ -51,5 +51,6 @@ private:
 	long m_HeadTriggerCount{ 0L };
 	long m_TailTriggerCount{ 0L };
 	double m_preTriggerTimeWindow{ 0.0 };	//This is to compensate that the trigger may be recorded after the start frame (in milliseconds)
+	double m_postTriggerTimeWindow {0.0};
 };
 
