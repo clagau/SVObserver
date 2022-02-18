@@ -325,3 +325,22 @@ std::string readContentFromFileAndDelete(const std::string& rFileName)
 }
 
 
+void writeStringToFile(const std::string& rFileName, const std::string& rFileData, bool Text)
+{
+	std::ofstream FileStream;
+
+	if (Text)
+	{
+		FileStream.open(rFileName.c_str());
+	}
+	else
+	{
+		FileStream.open(rFileName.c_str(), std::ofstream::binary);
+	}
+	if (FileStream.is_open())
+	{
+		FileStream.write(&rFileData.at(0), rFileData.size());
+		FileStream.close();
+	}
+}
+

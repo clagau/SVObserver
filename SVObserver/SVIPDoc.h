@@ -120,7 +120,7 @@ public:
 	bool IsToolPreviousToSelected(uint32_t toolID ) const;
 
 	std::string GetCompleteToolSetName() const;
-	std::string CheckName( const std::string& rToolName ) const;
+	std::string determineToolnameWithUniqueIndex( const std::string& rToolName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const;
 
 	//getToolsSetinfo using current thread
 	SvOi::ObjectInfoVector GetToolSetInfo() const;
@@ -131,9 +131,7 @@ public:
 	//Returns a Id of the ToolsetList.
 	uint32_t GetObjectIdFromToolToInsertBefore(const std::string& rName) const;
 
-	//@TODO [Arvid][10.20][14.2.2022]: updateToolsetView() was split up during SVO-1213. The split-up functions should be renamed
-	void updateToolsetView1(uint32_t toolID, uint32_t postID, uint32_t ownerID, const std::string& rSelectedName = _T(""));
-	void updateToolsetView2(uint32_t toolID, bool updateAllViews= false);
+	void updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uint32_t postID, uint32_t ownerID, const std::string& rSelectedName = _T(""));
 
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened. // @WARNING:  bad practice making members public
 
@@ -325,9 +323,6 @@ protected:
 	HRESULT UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
 
 	bool checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject );
-
-	mutable double m_ToolSetListTimestamp;
-	mutable double m_PPQListTimestamp;
 
 	bool m_bAllowRefresh;
 	SVProductDataQueue m_NewProductData;

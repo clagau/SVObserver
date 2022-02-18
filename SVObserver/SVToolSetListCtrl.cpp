@@ -54,7 +54,7 @@ SVToolSetListCtrl::~SVToolSetListCtrl()
 }
 #pragma endregion Constructor
 
-
+// cppcheck-suppress unusedFunction
 void SVToolSetListCtrl::SetSingleSelect()
 {
 	LONG style = GetWindowLong(m_hWnd, GWL_STYLE);
@@ -62,6 +62,12 @@ void SVToolSetListCtrl::SetSingleSelect()
 	SetWindowLong(m_hWnd, GWL_STYLE, style);
 }
 
+void SVToolSetListCtrl::SetMultipleSelect()
+{
+	LONG style = GetWindowLong(m_hWnd, GWL_STYLE);
+	style &= ~LVS_SINGLESEL;
+	SetWindowLong(m_hWnd, GWL_STYLE, style);
+}
 
 void SVToolSetListCtrl::setObjectIds(uint32_t toolsetId, uint32_t inspectionId, bool correctGrouping)
 {

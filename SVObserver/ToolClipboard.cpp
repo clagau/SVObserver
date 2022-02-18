@@ -115,7 +115,7 @@ HRESULT ToolClipboard::writeXmlToolData(const std::vector<uint32_t>& rToolIds) c
 }
 
 
-SvDef::StringVector ToolClipboard::readXmlToolData() 
+std::string ToolClipboard::readXmlToolData()
 {
 	CWaitCursor Wait;
 
@@ -134,21 +134,11 @@ SvDef::StringVector ToolClipboard::readXmlToolData()
 	::DeleteFile(m_zipFilePath.c_str() );
 	moveDependencyFilesToRunPath( containedFilepaths );
 
-	SvDef::StringVector xmlDataStrings;
-
-	uint16_t currentToolIndex = 0;
-
-	while (std::filesystem::exists(xmlFilePath(currentToolIndex)))
-	{
-		xmlDataStrings.push_back(readContentFromFileAndDelete(xmlFilePath(currentToolIndex)));
-		currentToolIndex++;
-	}
-			
-	return xmlDataStrings;
+	return readContentFromFileAndDelete(xmlFilePath());
 }
 
 
-std::pair<HRESULT, uint32_t>  ToolClipboard::createToolFromXmlData(const std::string& rXmlData, uint32_t postId, uint32_t ownerId)
+std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& rXmlData, uint32_t postId, uint32_t ownerId)
 {
 	std::string XmlData(rXmlData);
 
@@ -173,7 +163,7 @@ std::pair<HRESULT, uint32_t>  ToolClipboard::createToolFromXmlData(const std::st
 	}
 	if (S_OK == Result)
 	{
-		Result = replaceToolName(XmlData, Tree, pOwner);
+		Result = replaceDuplicateToolNames(XmlData, Tree, pOwner);
 	}
 	if (S_OK == Result)
 	{
@@ -186,17 +176,23 @@ std::pair<HRESULT, uint32_t>  ToolClipboard::createToolFromXmlData(const std::st
 	}
 	if (S_OK == Result)
 	{
-		return parseTreeToTool(Tree, pOwner);
+		auto toolIds = parseTreeToTool(Tree, pOwner);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLSET)
+		std::stringstream str;
+		str << "Pasting " << toolId << " after " << postToolId << ", owner = " << ownerId << "\n";
+		::OutputDebugString(str.str().c_str());
+#endif
+		return toolIds;
 	}
 
-	return {Result, SvDef::InvalidObjectId};
+	return {{}};
 }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 std::string ToolClipboard::createToolDefinitionString(const std::vector<uint32_t>& rToolIds) const
 {
-	SvDef::StringVector filepaths = streamToolsToXmlFiles(rToolIds);
+	SvDef::StringVector filepaths = streamToolsToXmlFile(rToolIds);
 
 	if (!SvUl::makeZipFile(m_zipFilePath, filepaths, _T(""), false))
 	{
@@ -214,11 +210,20 @@ std::string ToolClipboard::createToolDefinitionString(const std::vector<uint32_t
 	return zippedToolDataForAllTools;
 }
 
-SvDef::StringVector ToolClipboard::streamToolsToXmlFiles(const std::vector<uint32_t>& rToolIds) const
+SvDef::StringVector ToolClipboard::streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds) const
 {
 	SvDef::StringVector filepaths;
 
-	uint16_t currentToolIndex = 0;
+	std::ostringstream MemoryStream;
+	SvXml::SVObjectXMLWriter XmlWriter(MemoryStream);
+
+	std::string rootNodeName(SvXml::ToolCopyTag);
+	XmlWriter.WriteRootElement(rootNodeName.c_str());
+	XmlWriter.WriteSchema();
+	writeBaseAndEnvironmentNodes(XmlWriter);
+	XmlWriter.StartElement(SvXml::ToolsTag);
+
+	uint32_t toolIndex = 0;
 	for (auto toolId : rToolIds)
 	{
 		if (SvDef::InvalidObjectId != toolId)
@@ -234,36 +239,23 @@ SvDef::StringVector ToolClipboard::streamToolsToXmlFiles(const std::vector<uint3
 
 			m_pInspection = dynamic_cast<SVInspectionProcess*> (pTool->GetAncestor(SvPb::SVInspectionObjectType));
 
-			std::ostringstream MemoryStream;
-			SvXml::SVObjectXMLWriter XmlWriter(MemoryStream);
-
-			std::string rootNodeName(SvXml::ToolCopyTag);
-			XmlWriter.WriteRootElement(rootNodeName.c_str());
-			XmlWriter.WriteSchema();
-			writeBaseAndEnvironmentNodes(XmlWriter);
-
-			XmlWriter.StartElement(SvXml::ToolsTag);
-			writeSourceIds(XmlWriter, *pTool);
+			writeSourceIds(XmlWriter, *pTool, toolIndex++);
 			pTool->Persist(XmlWriter);
-
-			XmlWriter.EndAllElements();
-
-			auto DependencyFilepaths = findDependencyFiles(MemoryStream.str());
-
-			filepaths.insert(filepaths.end(), DependencyFilepaths.begin(), DependencyFilepaths.end());
-
-			writeStringToFile(xmlFilePath(currentToolIndex), MemoryStream.str(), true);
-
-			filepaths.emplace_back(xmlFilePath(currentToolIndex));
-
-			currentToolIndex++;
 		}
 	}
+
+	XmlWriter.EndAllElements();
+
+	auto DependencyFilepaths = findDependencyFiles(MemoryStream.str());
+
+	filepaths.insert(filepaths.end(), DependencyFilepaths.begin(), DependencyFilepaths.end());
+
+	writeStringToFile(xmlFilePath(), MemoryStream.str(), true);
+
+	filepaths.emplace_back(xmlFilePath());
+
 	return filepaths;
 }
-
-
-
 
 void ToolClipboard::writeBaseAndEnvironmentNodes(SvOi::IObjectWriter& rWriter) const
 {
@@ -286,7 +278,7 @@ void ToolClipboard::writeBaseAndEnvironmentNodes(SvOi::IObjectWriter& rWriter) c
 	rWriter.EndElement();
 }
 
-void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool ) const
+void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool, uint32_t toolIndex) const
 {
 	_variant_t Value;
 
@@ -307,7 +299,8 @@ void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolCla
 	Value.Clear();
 	std::string tmpString = rTool.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
 	Value = tmpString.c_str();
-	rWriter.WriteAttribute(SvXml::FullToolNameTag, Value);
+	auto numberedFullToolNameTag = SvXml::FullToolNameTag + SvUl::AsString(toolIndex);
+	rWriter.WriteAttribute(numberedFullToolNameTag.c_str(), Value);
 
 	std::set<uint32_t> imageIdVector;
 
@@ -398,7 +391,7 @@ void ToolClipboard::moveDependencyFilesToRunPath( const SvDef::StringVector& rDe
 	for(const auto& rEntry : rDependencyFilepaths)
 	{
 		//ignore the tool XML files themself: they are not dependency files
-		if( std::string::npos == rEntry.find(m_baseFilePath + SvO::ClipboardFileName))
+		if( std::string::npos == rEntry.find(m_baseFilePath))
 		{
 			_TCHAR Name[_MAX_FNAME];
 			_TCHAR Extension[_MAX_EXT];
@@ -418,25 +411,6 @@ void ToolClipboard::moveDependencyFilesToRunPath( const SvDef::StringVector& rDe
 				::MoveFile(rEntry.c_str(), DestinationFile.c_str());
 			}
 		}
-	}
-}
-
-void ToolClipboard::writeStringToFile( const std::string& rFileName, const std::string& rFileData, bool Text ) const
-{
-	std::ofstream FileStream;
-
-	if( Text )
-	{
-		FileStream.open( rFileName.c_str() );
-	}
-	else
-	{
-		FileStream.open( rFileName.c_str(), std::ofstream::binary );
-	}
-	if( FileStream.is_open() )
-	{
-		FileStream.write( &rFileData.at( 0 ), rFileData.size() );
-		FileStream.close();
 	}
 }
 
@@ -661,7 +635,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 	return result;
 }
 
-HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const
+HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const
 {
 	HRESULT Result( E_FAIL );
 
@@ -669,60 +643,21 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 
 	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
 	{
-		_variant_t fullToolName;
-		SvXml::SVNavigateTree::GetItem(rTree, SvXml::FullToolNameTag, ToolsItem, fullToolName);
-		std::string fullToolNameStr = SvUl::createStdString(fullToolName.bstrVal);
-		SVTreeType::SVBranchHandle ToolItem( nullptr );
+		SVTreeType::SVBranchHandle ToolItem = rTree.getFirstBranch(ToolsItem);
 
-		ToolItem = rTree.getFirstBranch(ToolsItem);
+		uint16_t toolIndex = 0;
 
-		if( rTree.isValidBranch( ToolItem ) )
+		std::map<std::string, int> HighestUsedIndexForBaseToolname;
+
+		while( rTree.isValidBranch( ToolItem ) )
 		{ 
-			_variant_t ObjectName;
-
-			SvXml::SVNavigateTree::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
-			std::string ToolName = SvUl::createStdString(ObjectName.bstrVal);
-			std::string NewName;
-
-			if (nullptr != pOwner && (SvPb::LoopToolObjectType == pOwner->GetObjectSubType() || SvPb::GroupToolObjectType == pOwner->GetObjectSubType()) )
-			{
-				NewName = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner)->MakeUniqueToolName(ToolName.c_str());
-			}
-			else
-			{
-				SVIPDoc* pDoc = (nullptr != m_pInspection) ? GetIPDocByInspectionID(m_pInspection->getObjectId()) : nullptr;
-				if (nullptr != pDoc)
-				{
-					// Check to make sure the tool name is unique
-					NewName = pDoc->CheckName(ToolName);
-				}
-			}
-			if (NewName != ToolName)
-			{
-				size_t pos = rXmlData.find(scObjectNameTag);
-
-				if (pos != std::string::npos)
-				{
-					pos += sizeof(scObjectNameTag);
-					pos = rXmlData.find(ToolName.c_str(), pos);
-					rXmlData.replace(pos, strlen(ToolName.c_str()), NewName.c_str());
-				}
-			}
-			if (!fullToolNameStr.empty())
-			{ //replace the dottedName in Equations with the new name.
-				fullToolNameStr += _T(".");
-				std::string fullToolNameNewStr = fullToolNameStr;
-				if (nullptr != pOwner)
-				{
-					fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewName + _T(".");
-				}
-				else
-				{
-					SvUl::searchAndReplace(fullToolNameNewStr, ToolName.c_str(), NewName.c_str());
-				}
-				SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
-			}
+			_variant_t fullToolName;
+			auto numberedFullToolNameTag = SvXml::FullToolNameTag + SvUl::AsString(toolIndex++);
+			SvXml::SVNavigateTree::GetItem(rTree, numberedFullToolNameTag.c_str(), ToolsItem, fullToolName);
+			std::string fullToolNameStr = SvUl::createStdString(fullToolName.bstrVal);
+			replaceOneToolName(rXmlData, rTree, pOwner, ToolItem, fullToolNameStr, &HighestUsedIndexForBaseToolname);
 			Result = S_OK;
+			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
 		}
 	}
 
@@ -734,6 +669,61 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 	}
 
 	return Result;
+}
+
+
+void ToolClipboard::replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rFullToolNameStr, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
+{
+	_variant_t ObjectName;
+
+	SvXml::SVNavigateTree::GetItem(rTree, scObjectNameTag, ToolItem, ObjectName);
+	std::string ToolName = SvUl::createStdString(ObjectName.bstrVal);
+	std::string NewName;
+
+	if (nullptr != pOwner && (SvPb::LoopToolObjectType == pOwner->GetObjectSubType() || SvPb::GroupToolObjectType == pOwner->GetObjectSubType()))
+	{
+		NewName = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner)->MakeUniqueToolName(ToolName.c_str());
+	}
+	else
+	{
+		SVIPDoc* pDoc = (nullptr != m_pInspection) ? GetIPDocByInspectionID(m_pInspection->getObjectId()) : nullptr;
+		if (nullptr != pDoc)
+		{
+			NewName = pDoc->determineToolnameWithUniqueIndex(ToolName, pHighestUsedIndexForBaseToolname);
+		}
+	}
+	if (NewName != ToolName)
+	{
+		// adding ">" and "<" enures that the correct occurrence of the Name in the XML string will be replaced
+		auto searchString = ">" + NewName + "<"; 
+		auto replacementString = ">" + ToolName + "<";
+
+		size_t pos = rXmlData.find(scObjectNameTag);
+
+		if (pos != std::string::npos)
+		{
+			pos += sizeof(scObjectNameTag);
+			pos = rXmlData.find(replacementString.c_str(), pos);
+			rXmlData.replace(pos, strlen(replacementString.c_str()), searchString.c_str());
+		}
+	}
+
+	std::string fullToolNameStr(rFullToolNameStr);
+	if (!fullToolNameStr.empty())
+	{ //replace the dottedName in Equations with the new name.
+		fullToolNameStr += _T(".");
+		std::string fullToolNameNewStr = fullToolNameStr;
+		if (nullptr != pOwner)
+		{
+			fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewName + _T(".");
+		}
+		else
+		{
+			SvUl::searchAndReplace(fullToolNameNewStr, ToolName.c_str(), NewName.c_str());
+		}
+		SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
+	}
+
 }
 
 HRESULT ToolClipboard::replaceUniqueIds( std::string& rXmlData, SVTreeType& rTree ) const
@@ -775,9 +765,12 @@ HRESULT ToolClipboard::replaceUniqueIds( std::string& rXmlData, SVTreeType& rTre
 	return Result;
 }
 
-std::pair<HRESULT, uint32_t> ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner)
+
+std::vector<uint32_t> ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner)
 {
 	SVTreeType::SVBranchHandle ToolsItem( nullptr );
+
+	std::vector<uint32_t> toolIds;
 
 	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
 	{
@@ -785,49 +778,62 @@ std::pair<HRESULT, uint32_t> ToolClipboard::parseTreeToTool(SVTreeType& rTree, S
 
 		ToolItem = rTree.getFirstBranch( ToolsItem );
 
-		if ( rTree.isValidBranch( ToolItem ) )
+		while( rTree.isValidBranch( ToolItem ) )
 		{
-			_variant_t UniqueID;
-
-			SvXml::SVNavigateTree::GetItem( rTree, scUniqueReferenceIDTag, ToolItem, UniqueID);
-
-			SVObjectClass* pOwnerTmp = pOwner;
-			if (nullptr == pOwnerTmp)
-			{
-				assert(false);
-				pOwnerTmp = (nullptr != m_pInspection) ? (static_cast<SVInspectionProcess*> (m_pInspection))->GetToolSet() : nullptr;
-			}
-			
-			if( nullptr != pOwnerTmp)
-			{
-				SVParserProgressDialog ParserProgressDialog( SvO::InsertingTool, AfxGetMainWnd() );
-				unsigned long parserHandle = SVObjectScriptParser::GetParserHandle();
-
-				SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle, pOwnerTmp->getObjectId(), pOwnerTmp, &ParserProgressDialog));
-				if( nullptr != pParser )
-				{
-					// Set the Parser Object
-					ParserProgressDialog.AddParser(parserHandle, pParser);
-					ParserProgressDialog.DoModal();
-					return {S_OK, calcObjectId(UniqueID)};
-				}
-			}
+			toolIds.push_back(parseOneToolFromTree(rTree, pOwner, ToolItem));
+			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
 		}
 	}
 
-	SvStl::MessageManager e(SvStl::MsgType::Data);
-	e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConversionFailed, SvStl::SourceFileParams(StdMessageParams));
-	e.Throw();
+	bool anyInvalidIds = std::any_of(toolIds.cbegin(), toolIds.cend(), [](const auto& toolID){return SvDef::InvalidObjectId == toolID; });
+
+	if (toolIds.empty() || anyInvalidIds)
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConversionFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+
+	return toolIds;
 }
 
-std::string ToolClipboard::xmlFilePath(uint32_t index) const
+
+uint32_t ToolClipboard::parseOneToolFromTree(SVTreeType& rTree, SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem)
 {
-	return m_baseFilePath + xmlFileName(index);
+	_variant_t UniqueID;
+
+	SvXml::SVNavigateTree::GetItem(rTree, scUniqueReferenceIDTag, ToolItem, UniqueID);
+
+	SVObjectClass* pOwnerTmp = pOwner;
+	if (nullptr == pOwnerTmp)
+	{
+		assert(false);
+		pOwnerTmp = (nullptr != m_pInspection) ? (static_cast<SVInspectionProcess*> (m_pInspection))->GetToolSet() : nullptr;
+	}
+
+	if (nullptr != pOwnerTmp)
+	{
+		SVParserProgressDialog ParserProgressDialog(SvO::InsertingTool, AfxGetMainWnd());
+		unsigned long parserHandle = SVObjectScriptParser::GetParserHandle();
+
+		SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle,
+			pOwnerTmp->getObjectId(), pOwnerTmp, &ParserProgressDialog));
+		if (nullptr != pParser)
+		{
+			// Set the Parser Object
+			ParserProgressDialog.AddParser(parserHandle, pParser);
+			ParserProgressDialog.DoModal();
+			return calcObjectId(UniqueID);
+		}
+	}
+
+	return SvDef::InvalidObjectId;
 }
 
-std::string ToolClipboard::xmlFileName(uint32_t index) const
+
+std::string ToolClipboard::xmlFilePath() const
 {
-	return SvO::ClipboardFileName + SvUl::AsString(index) + SvO::XmlExtension;
+	return m_baseFilePath + SvO::XmlExtension;
 }
 
 #pragma endregion Protected Methods

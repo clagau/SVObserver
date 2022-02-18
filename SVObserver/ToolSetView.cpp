@@ -230,7 +230,7 @@ void ToolSetView::OnInitialUpdate()
 		m_toolSetListCtrl.ShowWindow(SW_SHOW);
 	}
 
-	m_toolSetListCtrl.SetSingleSelect(); // Only single selection for List control
+	m_toolSetListCtrl.SetMultipleSelect(); // SVO-1213: multiple selection for List control allowed
 }
 
 int ToolSetView::OnCreate(LPCREATESTRUCT lpCreateStruct)

@@ -283,8 +283,6 @@ SVIPDoc::SVIPDoc()
 	, m_Images()
 	, m_AllViewsUpdated(0)
 	, m_pMDIChildWnd(nullptr)
-	, m_ToolSetListTimestamp(0)
-	, m_PPQListTimestamp(0)
 {
 	init();
 }
@@ -490,15 +488,9 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 	return l_bOk;
 }
 
-std::string SVIPDoc::CheckName(const std::string& rToolName) const
+std::string SVIPDoc::determineToolnameWithUniqueIndex(const std::string& rToolName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
 {
-	std::string NewName(rToolName);
-	if (!m_toolGroupings.IsNameUnique(rToolName.c_str()))
-	{
-		NewName = m_toolGroupings.MakeNumericUniqueName(rToolName.c_str()).c_str();
-	}
-
-	return NewName;
+	return m_toolGroupings.determineToolnameWithUniqueIndex(rToolName, pHighestUsedIndexForBaseToolname);
 }
 
 //******************************************************************************
@@ -1299,9 +1291,9 @@ void SVIPDoc::OnEditCut()
 	ToolSetView* pToolsetView = GetToolSetView();
 	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
-		auto toolids = pToolsetView->GetAllSelectedToolIds();
+		auto toolIDs = pToolsetView->GetAllSelectedToolIds();
 		ToolClipboard toolClipboard;
-		toolClipboard.writeXmlToolData(toolids);
+		toolClipboard.writeXmlToolData(toolIDs);
 		OnEditDelete();
 	}
 }
@@ -1316,9 +1308,9 @@ void SVIPDoc::OnEditCopy()
 	ToolSetView* pToolsetView = GetToolSetView();
 	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
-		auto toolids = pToolsetView->GetAllSelectedToolIds();
+		auto toolIDs = pToolsetView->GetAllSelectedToolIds();
 		ToolClipboard toolClipboard;
-		toolClipboard.writeXmlToolData(toolids);
+		toolClipboard.writeXmlToolData(toolIDs);
 	}
 }
 
@@ -1424,25 +1416,10 @@ void SVIPDoc::OnEditPaste()
 	try
 	{
 		auto XmlData = toolClipboard.readXmlToolData();
-		uint32_t finalToolId = SvDef::InvalidObjectId;
-		for (const auto& tooldata : XmlData)
+		auto pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, postToolId, ownerId);
+		if (!pastedToolIDs.empty())
 		{
-			auto [result, toolId] = toolClipboard.createToolFromXmlData(tooldata, postToolId, ownerId);
-			if (S_OK == result)
-			{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLSET)
-				std::stringstream str;
-				str << "Pasting " << toolId << " after " << postToolId << ", owner = " << ownerId << "\n";
-				::OutputDebugString(str.str().c_str());
-#endif
-
-				updateToolsetView1(toolId, postToolId, ownerId, pNavElement->m_DisplayName);
-				finalToolId = toolId;
-			}
-		}
-		if (0 != finalToolId)
-		{
-			updateToolsetView2(finalToolId, false == pNavElement->m_DisplayName.empty());
+			updateToolsetView(pastedToolIDs, postToolId, ownerId, pNavElement->m_DisplayName);
 		}
 	}
 	catch (const SvStl::MessageContainer& rSvE)
@@ -1468,80 +1445,91 @@ void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
 	pCmdUI->Enable(enabled);
 }
 
-void SVIPDoc::updateToolsetView1(uint32_t toolID, uint32_t postID, uint32_t ownerID, const std::string& rSelectedName)
-{
-	SVObjectClass* pObject(SVObjectManagerClass::Instance().GetObject(toolID));
 
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject);
+void SVIPDoc::updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uint32_t postID, uint32_t ownerID, const std::string& rSelectedName)
+{
+	bool anythingAdded = false;
+
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
-	if (nullptr != pTool && nullptr != pInspection)
+	if (nullptr == pInspection)
 	{
-		//Set the time stamp to 0 to force an update of the tool list
-		m_ToolSetListTimestamp = 0;
+		return;
+	}
 
-		SvPb::InspectionCmdRequest requestCmd;
-		auto* pRequest = requestCmd.mutable_moveobjectrequest();
-		pRequest->set_parentid(ownerID);
-		pRequest->set_objectid(toolID);
-		pRequest->set_movepreid(postID);
-		pRequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_TaskObjectList);
+	for (auto toolID : rPastedToolIDs)
+	{
+		SVObjectClass* pObject(SVObjectManagerClass::Instance().GetObject(toolID));
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject);
 
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
-		assert(S_OK == hr); UNREFERENCED_PARAMETER(hr);
-
-		SVObjectClass* pOwnerObject(SVObjectManagerClass::Instance().GetObject(ownerID));
-		if (pOwnerObject && SvPb::LoopToolObjectType != pOwnerObject->GetObjectSubType() && SvPb::GroupToolObjectType != pOwnerObject->GetObjectSubType())
+		if (nullptr != pTool)
 		{
-			std::string name;
+			SvPb::InspectionCmdRequest requestCmd;
+			auto* pRequest = requestCmd.mutable_moveobjectrequest();
+			pRequest->set_parentid(ownerID);
+			pRequest->set_objectid(toolID);
+			pRequest->set_movepreid(postID);
+			pRequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_TaskObjectList);
 
-			if (rSelectedName.empty())
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
+			assert(S_OK == hr); UNREFERENCED_PARAMETER(hr);
+
+			SVObjectClass* pOwnerObject(SVObjectManagerClass::Instance().GetObject(ownerID));
+			if (pOwnerObject && SvPb::LoopToolObjectType != pOwnerObject->GetObjectSubType() && SvPb::GroupToolObjectType != pOwnerObject->GetObjectSubType())
 			{
-				SVObjectClass* pObjectPost(SVObjectManagerClass::Instance().GetObject(postID));
-				if (nullptr != pObjectPost)
+				std::string name;
+
+				if (rSelectedName.empty())
 				{
-					name = pObjectPost->GetName();
+					SVObjectClass* pObjectPost(SVObjectManagerClass::Instance().GetObject(postID));
+					if (nullptr != pObjectPost)
+					{
+						name = pObjectPost->GetName();
+					}
 				}
+				else
+				{
+					name = rSelectedName;
+				}
+				m_toolGroupings.AddTool(pTool->GetName(), name);
 			}
-			else
-			{
-				name = rSelectedName;
-			}
-			m_toolGroupings.AddTool(pTool->GetName(), name);
+			anythingAdded = true;
 
-		}
-		//@TODO[gra][8.10][13.12.2018]: This is a low risk fix to avoid other problems and should be solved in another way
-		//This reset is required when pasting an acquisition tool which otherwise adds a non existent camera to the PPQ
-		//The inspection pointer is still nullptr at this stage which avoids adding the camera to the PPQ in SVCameraImageTemplate::RebuildCameraImage
-		if (SvPb::SVToolAcquisitionObjectType == pTool->GetObjectSubType())
-		{
+			//@TODO[gra][8.10][13.12.2018]: This is a low risk fix to avoid other problems and should be solved in another way
+			//This reset is required when pasting an acquisition tool which otherwise adds a non existent camera to the PPQ
+			//The inspection pointer is still nullptr at this stage which avoids adding the camera to the PPQ in SVCameraImageTemplate::RebuildCameraImage
+			if (SvPb::SVToolAcquisitionObjectType == pTool->GetObjectSubType())
+			{
+				pTool->resetAllObjects();
+			}
+			SVObjectLevelCreateStruct createStruct(*pInspection);
+			createStruct.m_pInspection = pInspection;
+
+			pInspection->ConnectObject(createStruct);
+			pInspection->connectAllInputs();
+
+			pInspection->createAllObjects();
+			//Reset only the inserted tool
 			pTool->resetAllObjects();
 		}
-		SVObjectLevelCreateStruct createStruct(*pInspection);
-		createStruct.m_pInspection = pInspection;
-
-		pInspection->ConnectObject(createStruct);
-		pInspection->connectAllInputs();
-
-		pInspection->createAllObjects();
-		//Reset only the inserted tool
-		pTool->resetAllObjects();
-		if (nullptr != pInspection->GetToolSet())
-		{
-			pInspection->GetToolSet()->updateToolPosition();
-		}
 	}
-}
 
+	if (false == anythingAdded)
+		return;
 
-void SVIPDoc::updateToolsetView2(uint32_t toolID, bool updateAllViews)
-{
+	if (nullptr != pInspection->GetToolSet())
+	{
+		pInspection->GetToolSet()->updateToolPosition();
+	}
 	RunOnce();
-	if (updateAllViews)
+
+	if (false == rSelectedName.empty())
 	{
 		UpdateAllViews(nullptr, SVIPDoc::RefreshView);
 	}
-	SetSelectedToolID(toolID);
+
+	SetSelectedToolID(rPastedToolIDs[0]);
+
 	SetModifiedFlag();
 }
 

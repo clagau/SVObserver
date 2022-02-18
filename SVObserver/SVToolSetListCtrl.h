@@ -50,6 +50,7 @@ public:
 	void RebuildImages();
 
 	void SetSingleSelect();
+	void SetMultipleSelect();
 
 	void setObjectIds(uint32_t toolsetId, uint32_t inspectionId, bool CorrectGrouping);
 

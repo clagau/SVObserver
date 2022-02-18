@@ -58,7 +58,7 @@ public:
 	//************************************
 	bool IsNameUnique(const std::string& rName, LPCTSTR pExclude = nullptr) const;
 
-	std::string MakeNumericUniqueName(const std::string& rName) const;
+	std::string determineToolnameWithUniqueIndex(const std::string& rName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname = nullptr) const;
 	std::string GetToolToInsertBefore(const std::string& rName) const;
 
 	void AddGroup(const std::string& rName, const std::string& rInsertBefore = std::string());

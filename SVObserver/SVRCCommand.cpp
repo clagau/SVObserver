@@ -1612,7 +1612,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 				if (nullptr != pObject)
 				{
 					uint32_t ownerID = pObject->GetParentID();
-					uint32_t toolID {0UL};
+					std::vector<uint32_t> pastedToolIDs;
 					HRESULT result {S_OK};
 
 					{
@@ -1620,8 +1620,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 						auto XmlData = toolClipboard.readXmlToolData();
 						if (false == XmlData.empty())
 						{
-							//@TODO [Arvid][10.20][14.2.2022] currently: only paste first tool
-							std::tie(result, toolID) = toolClipboard.createToolFromXmlData(XmlData[0], postID, ownerID);
+							pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, postID, ownerID);
 						}
 					}
 					pResponse->set_hresult(result);
@@ -1632,8 +1631,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 						SVIPDoc* pDoc = (nullptr != pInspection) ? GetIPDocByInspectionID(pInspection->getObjectId()) : nullptr;
 						if (nullptr != pDoc)
 						{
-							pDoc->updateToolsetView1(toolID, postID, ownerID);
-							pDoc->updateToolsetView2(toolID);
+							pDoc->updateToolsetView(pastedToolIDs, postID, ownerID);
 						}
 					}
 					else

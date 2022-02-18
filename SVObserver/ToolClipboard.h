@@ -64,9 +64,9 @@ public:
 	// reads all XML tool data from the clipboard
 	// returns a string containing that information
 	//************************************
-	SvDef::StringVector readXmlToolData();
+	std::string readXmlToolData();
 
-	std::pair<HRESULT, uint32_t> createToolFromXmlData(const std::string& XmlData, uint32_t postId, uint32_t ownerId);
+	std::vector<uint32_t> createToolsFromXmlData(const std::string& XmlData, uint32_t postId, uint32_t ownerId);
 
 	const SvStl::MessageManager& getLastErrorMessage() const { return m_errorMessage; }
 #pragma endregion Public Methods
@@ -87,7 +87,7 @@ protected:
 	// Parameter: rXmlWriter <in> Reference to the XML writer
 	// Parameter: rTool <in> Reference to the tool to save
 	//************************************
-	void writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool ) const;
+	void writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool, uint32_t toolIndex) const;
 
 	//************************************
 	// Description: This method finds the dependency files in the tool Xml string
@@ -101,14 +101,6 @@ protected:
 	// Parameter: rDependencyFilepaths <in> Reference to a list of files
 	//************************************
 	void moveDependencyFilesToRunPath( const SvDef::StringVector& rDependencyFilepaths ) const;
-
-	//************************************
-	// Description: This method writes the string to a file
-	// Parameter: rFileName <in> Reference to the file name
-	// Parameter: rFileData <in> Reference to where the file data is
-	// Parameter: Text <in> data is text format
-	//************************************
-	void writeStringToFile( const std::string& rFileName, const std::string& rFileData, bool Text ) const;
 
 	//************************************
 	// Description: This method converts the XML to tree
@@ -149,7 +141,9 @@ protected:
 	/// \param rTree [in] Reference to the tree generated from the clipboard
 	/// \param pOwner [in] The owner of the new object.
 	/// \returns HRESULT S_OK on success
-	HRESULT replaceToolName( std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner ) const;
+	HRESULT replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const;
+
+	void replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rFullToolNameStr, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const;
 
 	//************************************
 	// Description: This method replaces all the unique ids
@@ -162,15 +156,15 @@ protected:
 	//************************************
 	// Description: This method parses the tree and generates the tool
 	// Parameter : rTree <in> Reference to the tree to parse
-	// Parameter: rToolId <out> Reference to the tool ID generated
-	// Return: S_OK on success
+	// Return: rToolId: Reference to the tool ID generated
 	//************************************
-	std::pair<HRESULT, uint32_t> parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner);
+	std::vector<uint32_t> parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner);
 
-	SvDef::StringVector streamToolsToXmlFiles(const std::vector<uint32_t>& rToolIds) const;
+	uint32_t parseOneToolFromTree(SVTreeType& rTree, SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem);
 
-	std::string xmlFilePath(uint32_t index) const;
-	std::string xmlFileName(uint32_t index) const;
+	SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds) const;
+
+	std::string xmlFilePath() const;
 
 
 #pragma endregion Protected Methods

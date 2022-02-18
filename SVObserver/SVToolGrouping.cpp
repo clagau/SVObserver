@@ -149,30 +149,30 @@ bool SVToolGrouping::IsNameUnique(const std::string& rName, LPCTSTR pExclude) co
 	return bRetVal;
 }
 
-std::string SVToolGrouping::MakeNumericUniqueName(const std::string& rName) const
+std::string SVToolGrouping::determineToolnameWithUniqueIndex(const std::string& rName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
 {
 	std::string newName = rName;
-	std::string nameLower;
-	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
+	std::string lowercaseBaseName;
+	std::transform(rName.begin(), rName.end(), std::back_inserter(lowercaseBaseName), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 
 	//This strips any numbers at the end of the name
-	size_t last_char_pos = nameLower.find_last_not_of(_T("0123456789"));
+	size_t last_char_pos = lowercaseBaseName.find_last_not_of(_T("0123456789"));
 	if (last_char_pos != std::string::npos)
 	{
-		nameLower = nameLower.substr(0, last_char_pos + 1);
+		lowercaseBaseName = lowercaseBaseName.substr(0, last_char_pos + 1);
 	}
 
-	int num = 0;
+	int lowestUnusedToolnumber = 0;
 	// find all names that start with this name (case insensitive)
-	std::for_each(m_list.begin(), m_list.end(), [&nameLower, &num](const ToolGroup& rGroup)->void
+	std::for_each(m_list.begin(), m_list.end(), [&lowercaseBaseName, &lowestUnusedToolnumber](const ToolGroup& rGroup)->void
 	{
 		std::string itemNameLower;
 		std::transform(rGroup.first.begin(), rGroup.first.end(), std::back_inserter(itemNameLower), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
-		size_t pos = itemNameLower.find(nameLower);
+		size_t pos = itemNameLower.find(lowercaseBaseName);
 		if (0 == pos)
 		{
 			// check if the base name is augmented with numeric values
-			if (itemNameLower == nameLower)
+			if (itemNameLower == lowercaseBaseName)
 			{
 				// check for trailing digits
 				size_t last_char_pos = itemNameLower.find_last_not_of(_T("0123456789"));
@@ -182,16 +182,16 @@ std::string SVToolGrouping::MakeNumericUniqueName(const std::string& rName) cons
 					if (!val.empty())
 					{
 						int lastNum = atoi(val.c_str());
-						num = std::max(num, lastNum + 1);
+						lowestUnusedToolnumber = std::max(lowestUnusedToolnumber, lastNum + 1);
 					}
 					else
 					{
-						num = std::max(num, 1);
+						lowestUnusedToolnumber = std::max(lowestUnusedToolnumber, 1);
 					}
 				}
 				else
 				{
-					num = std::max(num, 1);
+					lowestUnusedToolnumber = std::max(lowestUnusedToolnumber, 1);
 				}
 			}
 			else
@@ -205,15 +205,29 @@ std::string SVToolGrouping::MakeNumericUniqueName(const std::string& rName) cons
 					{
 						// convert and set max
 						int lastNum = atoi(val.c_str());
-						num = std::max(num, lastNum + 1);
+						lowestUnusedToolnumber = std::max(lowestUnusedToolnumber, lastNum + 1);
 					}
 				}
 			}
 		}
 	});
 
+	if (nullptr != pHighestUsedIndexForBaseToolname)
+	{
+		auto iter = pHighestUsedIndexForBaseToolname->find(lowercaseBaseName);
+
+		if(iter != pHighestUsedIndexForBaseToolname->end())
+		{
+			if (lowestUnusedToolnumber <= iter->second)
+			{
+				lowestUnusedToolnumber = iter->second + 1;
+			}
+		}
+		(*pHighestUsedIndexForBaseToolname)[lowercaseBaseName] = lowestUnusedToolnumber;
+	}
+
 	// build new name
-	if (num)
+	if (lowestUnusedToolnumber)
 	{
 		std::stringstream ss;
 		// Get Base Name (can't end in a number)
@@ -223,7 +237,7 @@ std::string SVToolGrouping::MakeNumericUniqueName(const std::string& rName) cons
 		{
 			baseName = rName.substr(0, last_char_pos + 1);
 		}
-		ss << baseName << num;
+		ss << baseName << lowestUnusedToolnumber;
 		newName = ss.str().c_str();
 	}
 	return newName;
@@ -298,7 +312,7 @@ bool SVToolGrouping::AddEndGroup(const std::string& rGroupName, const std::strin
 		std::string endName = c_EndPrefix + rGroupName;
 		if (!IsNameUnique(endName))
 		{
-			endName = MakeNumericUniqueName(endName);
+			endName = determineToolnameWithUniqueIndex(endName);
 		}
 		if (!rInsertBefore.empty())
 		{

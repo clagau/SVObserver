@@ -14,7 +14,7 @@
 bool SVCheckPathDir(LPCTSTR PathName, bool CreateIfDoesNotExist );
 bool SVDeleteFiles(LPCTSTR PathName, bool IncludeSubDirectories );
 std::string readContentFromFileAndDelete(const std::string& rFileName);
-
+void writeStringToFile(const std::string& rFileName, const std::string& rFileData, bool Text);
 
 bool pathCanProbablyBeCreatedOrExistsAlready(const std::string& rFilePath);
 
