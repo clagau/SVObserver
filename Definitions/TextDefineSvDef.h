@@ -31,7 +31,7 @@ constexpr const char* SVO_PRODUCT_SVIM_X2_GD1A = _T("SVIM X2-GD1A");
 constexpr const char* SVO_PRODUCT_SVIM_X2_GD2A = _T("SVIM X2-GD2A");
 constexpr const char* SVO_PRODUCT_SVIM_X2_GD4A = _T("SVIM X2-GD4A");
 constexpr const char* SVO_PRODUCT_SVIM_X2_GD8A = _T("SVIM X2-GD8A");
-constexpr const char* SVO_PRODUCT_SVIM_NEO1 = _T("SVIM NEO1");
+constexpr const char* SVO_PRODUCT_SVIM_NEO = _T("SVIM NEO");
 
 constexpr const char* cBucketTag = _T("Array");			// for backwards compatibility
 constexpr const char* cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values

@@ -36,7 +36,7 @@ const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap
 	{SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct(false,     4,			3)},
 	{SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct(true,      8,			3)},
 	{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct(false,     8,			3)},
-	{ SVIM_PRODUCT_NEO1,  SVIMTypeInfoStruct(true,      8,			4) }
+	{ SVIM_PRODUCT_NEO,  SVIMTypeInfoStruct(true,      8,			4) }
 };
 
 SVHardwareManifest& SVHardwareManifest::Instance()
@@ -154,7 +154,7 @@ std::string SVHardwareManifest::BuildTriggerDeviceName(SVIMProductEnum productTy
 					Result = SVHardwareManifest::BuildIOBoardTriggerDeviceName(digitizerIndex);
 					break;
 				}
-				case SVIM_PRODUCT_NEO1:
+				case SVIM_PRODUCT_NEO:
 				{
 					Result = SVHardwareManifest::BuildHardwareTriggerDeviceName(digitizerIndex);
 					break;
@@ -214,7 +214,7 @@ bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType)
 		SVIM_PRODUCT_X2_GD2A,
 		SVIM_PRODUCT_X2_GD4A,
 		SVIM_PRODUCT_X2_GD8A,
-		SVIM_PRODUCT_NEO1,
+		SVIM_PRODUCT_NEO,
 	};
 
 	SVIMProductEnumSet::const_iterator it = list.find(productType);
@@ -288,7 +288,7 @@ bool SVHardwareManifest::isPlcSystem(SVIMProductEnum p_ProductType)
 {
 	static const SVIMProductEnumSet PlcList
 	{
-		SVIM_PRODUCT_NEO1,
+		SVIM_PRODUCT_NEO,
 	};
 
 	SVIMProductEnumSet::const_iterator it = PlcList.find(p_ProductType);
@@ -307,7 +307,7 @@ bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum p_ProductType)
 		SVIM_PRODUCT_X2_GD4A_COLOR,
 		SVIM_PRODUCT_X2_GD8A,
 		SVIM_PRODUCT_X2_GD8A_COLOR,
-		SVIM_PRODUCT_NEO1
+		SVIM_PRODUCT_NEO
 	};
 
 	SVIMProductEnumSet::const_iterator it = GigeList.find(p_ProductType);
@@ -326,7 +326,7 @@ bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum p_ProductType)
 		SVIM_PRODUCT_X2_GD4A_COLOR,
 		SVIM_PRODUCT_X2_GD8A,
 		SVIM_PRODUCT_X2_GD8A_COLOR,
-		SVIM_PRODUCT_NEO1
+		SVIM_PRODUCT_NEO
 	};
 
 	SVIMProductEnumSet::const_iterator it = DigitalList.find(p_ProductType);

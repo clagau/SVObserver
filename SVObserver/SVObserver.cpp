@@ -835,7 +835,7 @@ bool SVObserverApp::IsMatroxGige() const
 	bool result = (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD4A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A)
-		|| 0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1));
+		|| 0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO));
 	return result;
 }
 
@@ -914,9 +914,9 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	{
 		eType = SVIM_PRODUCT_X2_GD8A;
 	}
-	else if (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1))
+	else if (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO))
 	{
-		eType = SVIM_PRODUCT_NEO1;
+		eType = SVIM_PRODUCT_NEO;
 	}
 	return eType;
 }

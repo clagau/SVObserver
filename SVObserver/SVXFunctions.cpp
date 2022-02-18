@@ -396,8 +396,8 @@ namespace
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				SvDef::StringVector msgList;
-				msgList.emplace_back(isSvimPlc ? SvDef::SVO_PRODUCT_SVIM_NEO1 : SvDef::SVO_PRODUCT_SVIM_X2_GD8A);
-				msgList.emplace_back(isConfigPlc ? SvDef::SVO_PRODUCT_SVIM_NEO1 : SvDef::SVO_PRODUCT_SVIM_X2_GD8A);
+				msgList.emplace_back(isSvimPlc ? SvDef::SVO_PRODUCT_SVIM_NEO : SvDef::SVO_PRODUCT_SVIM_X2_GD8A);
+				msgList.emplace_back(isConfigPlc ? SvDef::SVO_PRODUCT_SVIM_NEO : SvDef::SVO_PRODUCT_SVIM_X2_GD8A);
 				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ModelTypeMismatch, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}

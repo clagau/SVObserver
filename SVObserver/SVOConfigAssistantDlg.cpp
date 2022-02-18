@@ -120,7 +120,7 @@ const SVOConfigAssistantDlg::SVProductStringVector SVOConfigAssistantDlg::m_Prod
 	{SVIM_PRODUCT_X2_GD4A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD4A) + std::string(c_Color)},
 	{SVIM_PRODUCT_X2_GD8A, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A)},
 	{SVIM_PRODUCT_X2_GD8A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A) + std::string(c_Color)},
-	{SVIM_PRODUCT_NEO1, std::string(SvDef::SVO_PRODUCT_SVIM_NEO1)}
+	{SVIM_PRODUCT_NEO, std::string(SvDef::SVO_PRODUCT_SVIM_NEO)}
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -406,7 +406,7 @@ void SVOConfigAssistantDlg::ReloadForCurrentSystem()
 			}
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_NEO1:
+			case SVIM_PRODUCT_NEO:
 			{
 				CreateDefaultForSVIMDigital(2, SvDef::cTriggerFixedName);
 				break;
@@ -705,7 +705,7 @@ std::string SVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) 
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_NEO1:
+			case SVIM_PRODUCT_NEO:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
@@ -727,7 +727,7 @@ std::string SVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) 
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_NEO1:
+			case SVIM_PRODUCT_NEO:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
