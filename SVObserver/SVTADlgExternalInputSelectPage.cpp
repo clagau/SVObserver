@@ -338,7 +338,7 @@ void SVTADlgExternalInputSelectPage::SelectObject(SVRPropertyItemEdit& rItem)
 	auto pDef = GetInputDefinitionPtr(&rItem);
 	if (pDef)
 	{
-		SvOg::ObjectSelectorData objSelectorData;
+		SvOg::ObjectSelectorData objSelectorData {m_ToolObjectID};
 		auto vtType = static_cast<VARTYPE>(pDef->vt());
 		switch (pDef->type())
 		{
@@ -363,7 +363,6 @@ void SVTADlgExternalInputSelectPage::SelectObject(SVRPropertyItemEdit& rItem)
 		}
 
 		objSelectorData.m_excludeSameLineageVector = { m_ToolObjectID };
-		objSelectorData.m_stopAtId = m_ToolObjectID;
 
 		auto [objectSelectType, _] = getTypeData(*pDef);
 		SvPb::EmbeddedIdEnum eId = SvPb::ExternalInputEId + pDef->linkedvalueindex();

@@ -209,7 +209,7 @@ namespace SvOg
 		}
 		case ValueButtonColumn:
 		{
-			ObjectSelectorData data;
+			ObjectSelectorData data {m_TaskObjectID};
 			LinkedValueSelectorTypesEnum possibleType = LinkedValueSelectorTypesEnum::None;
 			switch (m_resultData[pItem->iRow - 1].m_type)
 			{
@@ -272,7 +272,6 @@ namespace SvOg
 			}
 
 			data.m_excludeSameLineageVector = { m_TaskObjectID };
-			data.m_stopAtId = m_TaskObjectID;
 			LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1].m_name, m_resultData[pItem->iRow - 1].m_data, m_resultData[pItem->iRow - 1].m_data.m_defaultValue.vt, data, nullptr, possibleType);
 			if (IDOK == dlg.DoModal())
 			{

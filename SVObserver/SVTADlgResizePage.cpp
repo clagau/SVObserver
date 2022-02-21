@@ -138,7 +138,7 @@ BOOL SVTADlgResizePage::OnInitDialog()
 	HRESULT hr = S_OK;
 	m_ImageController.Init();
 
-	SvOg::ObjectSelectorData osData;
+	SvOg::ObjectSelectorData osData {m_toolID};
 	osData.m_attribute = SvPb::viewable;
 
 	m_contentScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[0], m_contentScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorContentEId, &m_resizeValueController, osData);
