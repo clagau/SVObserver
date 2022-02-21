@@ -83,10 +83,13 @@ void SVIOController::initializeOutputs()
 		}
 
 	}
-	if (nullptr != m_pModuleReady)
+	else
 	{
-		m_pModuleReady->clear();
-		m_pModuleReady.reset();
+		if (nullptr != m_pModuleReady)
+		{
+			m_pModuleReady->clear();
+			m_pModuleReady.reset();
+		}
 	}
 }
 
