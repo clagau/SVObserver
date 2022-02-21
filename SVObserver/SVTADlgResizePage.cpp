@@ -235,11 +235,11 @@ void SVTADlgResizePage::ResetAndFillOverscanModeComboBox()
 
 void SVTADlgResizePage::GetAndDisplayValuesFromTool()
 {
-	auto interpolationMode = static_cast<InterpolationMode>(m_resizeValueController.Get<long>(SvPb::ResizeInterpolationModeEId));
+	m_selectedInterpolationMode = static_cast<InterpolationMode>(m_resizeValueController.Get<long>(SvPb::ResizeInterpolationModeEId));
 
 	auto interpolationNameAndMode = std::find_if(c_interpolationNamesAndModes.begin(), c_interpolationNamesAndModes.end(),
-		[interpolationMode](const std::pair<std::string, InterpolationMode>& rPair)
-		{return rPair.second == interpolationMode; });
+		[&](const std::pair<std::string, InterpolationMode>& rPair)
+		{return rPair.second == m_selectedInterpolationMode; });
 
 	if (interpolationNameAndMode != c_interpolationNamesAndModes.end())
 	{
