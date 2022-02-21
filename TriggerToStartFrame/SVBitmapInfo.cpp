@@ -390,7 +390,7 @@ void SVBitmapInfo::Assign( long width, long height, int bitCount, const SVColorT
 	}
 }
 
-const SVBitmapInfo& SVBitmapInfo::operator=( const SVBitmapInfo& rObject )
+SVBitmapInfo& SVBitmapInfo::operator=( const SVBitmapInfo& rObject )
 {
 	if( this != &rObject )
 	{

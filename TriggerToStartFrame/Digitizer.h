@@ -207,16 +207,16 @@ typedef void (WINAPI* ImageCallback)(CameraInfo&& cameraInfo);
 class SVAcquisitionBuffer : public SVAcquisitionBufferInterface
 {
 public:
-	unsigned long GetBufferWidth() const { return 640; }
-	unsigned long GetBufferHeight() const { return 480; }
-	int GetBufferFormat() const { return 0; }
+	unsigned long GetBufferWidth() const override { return 640; }
+	unsigned long GetBufferHeight() const override { return 480; }
+	int GetBufferFormat() const override { return 0; }
 
-	ITRCImagePtr GetNextBuffer()
+	ITRCImagePtr GetNextBuffer() override
 	{
 		return ITRCImagePtr();
 	}
 
-	HRESULT UpdateWithCompletedBuffer(CameraInfo&& cameraInfo)
+	HRESULT UpdateWithCompletedBuffer(CameraInfo&& cameraInfo) override
 	{
 		if (nullptr != m_pCallBack)
 		{
@@ -224,7 +224,7 @@ public:
 		}
 		return S_OK;
 	}
-	void setNeededBuffers(int ) {}
+	void setNeededBuffers(int ) override {}
 
 	ImageCallback m_pCallBack {nullptr};
 };

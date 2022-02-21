@@ -91,12 +91,12 @@ void TriggerCorrelate()
 				double diff = cameraTriggerTimestamp - triggerTimestamp;
 				if (diff > g_timespanMinus && diff < g_timespanPlus)
 				{
-					printf("%u; %u; %f; %f; %f; %d\n", triggerCount, imageCount, triggerTimestamp, cameraTriggerTimestamp, diff, true);
+					printf("%lu; %lu; %f; %f; %f; %d\n", triggerCount, imageCount, triggerTimestamp, cameraTriggerTimestamp, diff, true);
 					cameraTriggerTimestamp = 0.0;
 				}
 				else if (diff > g_timespanPlus)
 				{
-					printf("%u; %u; %f; %f; %f; %d\n", triggerCount, imageCount, triggerTimestamp, cameraTriggerTimestamp, diff, false);
+					printf("%lu; %lu; %f; %f; %f; %d\n", triggerCount, imageCount, triggerTimestamp, cameraTriggerTimestamp, diff, false);
 				}
 				else if (diff < g_timespanMinus)
 				{
@@ -204,9 +204,6 @@ HRESULT PlcTriggerToStartFrame()
 			if (S_OK == result)
 			{
 				printf("Camera %d callback registered\n", triggerIndex);
-			}
-			if (S_OK == result)
-			{
 				result = PlcIoDll.Start(triggerIndex);
 				if (S_OK == result)
 				{
@@ -216,14 +213,13 @@ HRESULT PlcTriggerToStartFrame()
 				result = DigitizerDll.CreateBuffers(cameraHandle);
 				if (S_OK == result)
 				{
-					printf("Camera Buffers created for camera %d\n", cameraHandle);
-					result = S_OK;
+					printf("Camera Buffers created for camera %lu\n", cameraHandle);
 				}
 
 				result = DigitizerDll.Start(cameraHandle);
 				if (S_OK == result)
 				{
-					printf("Camera %d started\n", cameraHandle);
+					printf("Camera %lu started\n", cameraHandle);
 				}
 
 				_variant_t moduleReadyState {true};
@@ -290,10 +286,7 @@ HRESULT PlcTriggerToCameraTrigger()
 			if (S_OK == result)
 			{
 				printf("LPT Trigger %d callback registered\n", triggerIndex);
-			}
 
-			if (S_OK == result)
-			{
 				result = PlcIoDll.Start(triggerIndex);
 				if (S_OK == result)
 				{
@@ -395,14 +388,14 @@ int main(int argc, char* args[])
 			std::lock_guard<std::mutex> guard {g_cameraTriggerQueueMutex};
 			if (false == g_cameraTriggerQueue.empty())
 			{
-				printf("CameraQueue count = %llu\n", g_cameraTriggerQueue.size());
+				printf("CameraQueue count = %zu\n", g_cameraTriggerQueue.size());
 			}
 		}
 	}
 
 	if (S_OK != result)
 	{
-		printf("Error = 0%X08\n", result);
+		printf("Error = 0%X08\n", static_cast<unsigned int> (result));
 	}
 
 	return result;

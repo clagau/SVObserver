@@ -56,7 +56,7 @@ public:
 	void Assign( const BITMAPINFO& rObject );
 	void Assign( long width, long height, int bitCount, const SVColorTable& rColorTable );
 
-	const SVBitmapInfo& operator=( const SVBitmapInfo& rObject );
+	SVBitmapInfo& operator=( const SVBitmapInfo& rObject );
 
 	bool operator==( const SVBitmapInfo& rObject ) const;
 	bool operator==( const BITMAPINFO& rObject ) const;

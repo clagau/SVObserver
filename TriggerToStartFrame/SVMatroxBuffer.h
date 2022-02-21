@@ -26,12 +26,12 @@ protected:
 	SVMatroxBufferTemplate(const SVMatroxBufferTemplate& p_rObject) = delete;
 
 	// Do not implement this method
-	const SVMatroxBufferTemplate& operator=(const SVMatroxBufferTemplate& p_rObject) = delete;
+	SVMatroxBufferTemplate& operator=(const SVMatroxBufferTemplate& p_rObject) = delete;
 
 	void freeBuffer() {}
 
 private:
-	__int64 m_Identifier;
+	__int64 m_Identifier {0LL};
 };
 
 typedef std::shared_ptr< SVMatroxBufferTemplate > SVMatroxBufferPtr;
