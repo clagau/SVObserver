@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2020,2020 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+/// \copyright (c) 2020,2020 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file ConfigCommands.proto
 /// Protobuf file for all configuration commands handled by SVObserver
 /// These commands need not be synchronized with any inspections

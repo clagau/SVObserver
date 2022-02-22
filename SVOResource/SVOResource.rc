@@ -354,13 +354,13 @@ FONT 10, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CONTROL         IDB_KOERBER,IDC_LOGO,"Static",SS_BITMAP,184,5,49,25,WS_EX_TRANSPARENT
     GROUPBOX        "SVObserver",IDC_CURRENT_VERSION_STATIC,7,27,221,139
-    LTEXT           "Seidenader Maschinenbau GmbH",IDC_COUNTRY,14,58,208,8
+    LTEXT           "Körber Pharma Inspection GmbH",IDC_COUNTRY,14,58,208,8
     LTEXT           "Lilienthalstr. 8",IDC_ADDRESS,14,68,208,8
     LTEXT           "D-85570 Markt Schwaben, Germany",IDC_COUNTRY2,14,78,208,8
     LTEXT           "Phone:  +49  8121 802-0",IDC_PHONE,14,88,208,8
     LTEXT           "E-mail:  info-inspection@koerber-pharma.com",IDC_EMAIL,14,98,208,8
     LTEXT           "www.koerber-pharma.com",IDC_WEBSITE,14,108,208,8
-    LTEXT           "Seidenader Maschinenbau GmbH, Markt Schwaben\nAll Rights Reserved.",IDC_COPYRIGHT,14,144,208,16
+    LTEXT           "Körber Pharma Inspection GmbH, Markt Schwaben\nAll Rights Reserved.",IDC_COPYRIGHT,14,144,208,16
     GROUPBOX        "Additional Version Information",IDC_STATIC,7,168,221,62
     CONTROL         "",IDC_VERSION_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,10,177,215,49,WS_EX_DLGMODALFRAME | WS_EX_LEFTSCROLLBAR
     PUSHBUTTON      "OK",IDOK,238,216,32,14,WS_GROUP

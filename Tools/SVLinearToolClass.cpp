@@ -1,5 +1,5 @@
 // ******************************************************************************
-// * COPYRIGHT (c) 2002 by SVResearch, Harrisburg
+// * COPYRIGHT (c) 2002 by Körber Pharma Inspection GmbH. All Rights Reserved
 // * All Rights Reserved
 // ******************************************************************************
 // * .Module Name     : SVLinearToolClass

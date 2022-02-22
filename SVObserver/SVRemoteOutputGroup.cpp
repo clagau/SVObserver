@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2008 by SVResearch, Harrisburg
+//* COPYRIGHT (c) 2008 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVRemoteOutputGroup

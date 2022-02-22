@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2009 by SVResearch, Harrisburg
+//* COPYRIGHT (c) 2009 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVMatroxGigeAcquisitionClass

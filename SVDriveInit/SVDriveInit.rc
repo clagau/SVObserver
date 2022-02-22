@@ -103,7 +103,7 @@ BEGIN
     DEFPUSHBUTTON   "Update",IDOK,163,245,38,14
     PUSHBUTTON      "Exit",IDCANCEL,211,245,38,14
     CTEXT           "-",IDC_STATIC,56,30,8,12,NOT WS_GROUP
-    GROUPBOX        "Seidenader Vision Information",IDC_STATIC,7,81,242,95
+    GROUPBOX        "Körber Pharma Inspection Information",IDC_STATIC,7,81,242,95
     LTEXT           "Serial Number:",IDC_STATIC,20,97,47,8
     LTEXT           "Date",IDC_STATIC,20,137,46,8
     LTEXT           "Serviced By:",IDC_STATIC,20,157,41,8

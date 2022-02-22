@@ -3,7 +3,7 @@
 // Used by SVImageTest.rc
 //
 //******************************************************************************
-//* COPYRIGHT (c) 2006 by SVResearch, Harrisburg
+//* COPYRIGHT (c) 2006 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : Resource.h

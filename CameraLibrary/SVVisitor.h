@@ -1,5 +1,5 @@
 // ******************************************************************************
-// * COPYRIGHT (c) 2002 by SVResearch, Harrisburg
+// * COPYRIGHT (c) 2002 by Körber Pharma Inspection GmbH. All Rights Reserved
 // * All Rights Reserved
 // ******************************************************************************
 // * .Module Name     : Visitor
@@ -30,7 +30,7 @@
 // March 20: add default argument DefaultCatchAll to BaseVisitable
 // June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
 //
-// August 20, 2003: SVResearch - Eric Beyeler modified (stripped down) visitor classes
+// August 20, 2003: Körber Pharma Inspection GmbH - Eric Beyeler modified (stripped down) visitor classes
 //                               to the basics to compile with VC6.0 SP3
 //                             - set default return type to HRESULT
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
+//* COPYRIGHT (c) 2003 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVEditNumbers

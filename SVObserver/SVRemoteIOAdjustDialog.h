@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2010 by SVResearch, Harrisburg
+//* COPYRIGHT (c) 2010 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVRemoteIOAdjustDialog

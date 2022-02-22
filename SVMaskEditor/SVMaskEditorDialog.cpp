@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 1999 by SVResearch, Harrisburg
+//* COPYRIGHT (c) 1999 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVMaskEditorDialog
