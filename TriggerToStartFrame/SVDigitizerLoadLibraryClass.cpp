@@ -150,33 +150,6 @@ HRESULT SVDigitizerLoadLibraryClass::Close()
 	return l_hrOk;
 }
 
-// cppcheck-suppress unusedFunction
-bool SVDigitizerLoadLibraryClass::IsLoaded() const
-{
-	return (nullptr != m_handle);
-}
-
-// cppcheck-suppress unusedFunction
-_variant_t SVDigitizerLoadLibraryClass::GetLibraryName() const
-{
-	_variant_t result;
-
-	if (nullptr != m_handle)
-	{
-		WCHAR szPath[MAX_PATH];
-
-		if (::GetModuleFileNameW(m_handle, szPath, MAX_PATH))
-		{
-			WCHAR szFname[_MAX_FNAME];
-
-			_wsplitpath(szPath, nullptr, nullptr, szFname, nullptr);
-
-			result = szFname;
-		}
-	}
-	return result;
-}
-
 unsigned long SVDigitizerLoadLibraryClass::GetHandle(long index) const
 {
 	unsigned long result{ 0UL };

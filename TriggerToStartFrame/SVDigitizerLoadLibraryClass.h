@@ -51,9 +51,6 @@ public:
 	HRESULT Open(LPCTSTR p_szLibrary);
 	HRESULT Close();
 
-	bool IsLoaded() const;
-	_variant_t GetLibraryName() const;
-
 	unsigned long GetHandle(long index) const;
 	unsigned long GetCount() const;
 	_variant_t GetName(unsigned long digitizerHandle) const;

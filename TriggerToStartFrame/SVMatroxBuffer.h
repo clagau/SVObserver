@@ -62,7 +62,7 @@ public:
 
 	void swap( SVMatroxBuffer& p_rBuf );
 
-	const SVMatroxBuffer& operator=( const SVMatroxBuffer& p_rBuf );
+	SVMatroxBuffer& operator=( const SVMatroxBuffer& p_rBuf );
 
 	bool operator<( const SVMatroxBuffer& p_rBuf ) const;
 

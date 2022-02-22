@@ -380,7 +380,7 @@ int main(int argc, char* args[])
 			std::lock_guard<std::mutex> guard {g_triggerQueueMutex};
 			if (false == g_triggerQueue.empty())
 			{
-				printf("TriggerQueue count = %llu\n", g_triggerQueue.size());
+				printf("TriggerQueue count = %zu\n", g_triggerQueue.size());
 			}
 		}
 

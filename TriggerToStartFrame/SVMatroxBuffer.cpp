@@ -18,8 +18,8 @@ SVMatroxBuffer::SVMatroxBuffer()
 }
 
 SVMatroxBuffer::SVMatroxBuffer(const SVMatroxBuffer& p_rBuf)
+: m_BufferPtr{p_rBuf.m_BufferPtr}
 {
-	m_BufferPtr = p_rBuf.m_BufferPtr;
 }
 
 SVMatroxBuffer::~SVMatroxBuffer()
@@ -62,7 +62,7 @@ void SVMatroxBuffer::swap( SVMatroxBuffer& p_rBuf )
 	std::swap(m_BufferPtr, p_rBuf.m_BufferPtr);
 }
 
-const SVMatroxBuffer& SVMatroxBuffer::operator=( const SVMatroxBuffer& p_rBuf )
+SVMatroxBuffer& SVMatroxBuffer::operator=( const SVMatroxBuffer& p_rBuf )
 {
 	if( this != &p_rBuf )
 	{

@@ -45,7 +45,6 @@ public:
 	long GetHeight() const;
 	int GetBitCount() const;
 	unsigned long GetColorTableSize() const;
-	RGBQUAD* GetColorTable() const;
 	SVPaletteTable GetPaletteTable() const;
 
 	BITMAPINFO* GetBitmapInfo();

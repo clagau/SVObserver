@@ -267,21 +267,6 @@ unsigned long SVBitmapInfo::GetColorTableSize() const
 	return l_Size;
 }
 
-// cppcheck-suppress unusedFunction
-RGBQUAD* SVBitmapInfo::GetColorTable() const
-{
-	RGBQUAD* l_pColorTable = nullptr;
-
-	if( nullptr != m_pBuffer )
-	{
-		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
-
-		l_pColorTable = l_pBitmapInfo->bmiColors;
-	}
-
-	return l_pColorTable;
-}
-
 SVBitmapInfo::SVPaletteTable SVBitmapInfo::GetPaletteTable() const
 {
 	SVPaletteTable l_PaletteTable;
