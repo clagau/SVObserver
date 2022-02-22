@@ -77,7 +77,7 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 		}
 	}
 
-	if (SvPb::LinkedSelectedType::DirectValue == m_excludeLow.getSelectedType() && SvPb::LinkedSelectedType::DirectValue == m_excludeHigh.getSelectedType())
+	if (SvPb::LinkedSelectedOption::DirectValue == m_excludeLow.getSelectedOption() && SvPb::LinkedSelectedOption::DirectValue == m_excludeHigh.getSelectedOption())
 	{
 		//check if high greater than low
 		_variant_t TempValue;

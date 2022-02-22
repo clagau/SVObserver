@@ -484,7 +484,7 @@ namespace SvAo
 			auto excludeData = pFeatureTask->getExcludeData();
 			if (excludeData.m_isEnabled)
 			{
-				if (SvPb::LinkedSelectedType::DirectValue == excludeData.m_rLowerBoundValue.getSelectedType() && SvPb::LinkedSelectedType::DirectValue == excludeData.m_rUpperBoundValue.getSelectedType())
+				if (SvPb::LinkedSelectedOption::DirectValue == excludeData.m_rLowerBoundValue.getSelectedOption() && SvPb::LinkedSelectedOption::DirectValue == excludeData.m_rUpperBoundValue.getSelectedOption())
 				{ //check if lower < upper
 					double lower, upper;
 					excludeData.m_rLowerBoundValue.getValue(lower);
@@ -618,7 +618,7 @@ namespace SvAo
 
 	bool BlobFeatureList::rangeCheck(SvStl::MessageContainerVector* pErrorMessages, const BlobFeatureTask* pFeatureTask, const SvVol::LinkedValue& rHigherValue, const SvVol::LinkedValue& rLowerValue, SvStl::MessageTextEnum higherId, SvStl::MessageTextEnum lowerId)
 	{
-		if (SvPb::LinkedSelectedType::DirectValue == rHigherValue.getSelectedType() && SvPb::LinkedSelectedType::DirectValue == rLowerValue.getSelectedType())
+		if (SvPb::LinkedSelectedOption::DirectValue == rHigherValue.getSelectedOption() && SvPb::LinkedSelectedOption::DirectValue == rLowerValue.getSelectedOption())
 		{ //check if lower < upper
 			double higherValue, lowerValue;
 			rHigherValue.getValue(higherValue);

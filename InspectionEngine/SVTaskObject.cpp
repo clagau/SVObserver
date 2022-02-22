@@ -110,7 +110,7 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMes
 		if (nullptr != pObject && SvPb::LinkedValueClassId == pObject->GetClassID())
 		{
 			auto* pLinkedObject = dynamic_cast<SvVol::LinkedValue*>(pObject);
-			if (nullptr != pLinkedObject && SvPb::LinkedSelectedType::Formula == pLinkedObject->getSelectedType())
+			if (nullptr != pLinkedObject && SvPb::LinkedSelectedOption::Formula == pLinkedObject->getSelectedOption())
 			{
 				m_embeddedFormulaLinked.push_back(pLinkedObject);
 				Result = pLinkedObject->resetAllObjects(pErrorMessages) && Result;

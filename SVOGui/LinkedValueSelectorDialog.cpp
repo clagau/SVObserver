@@ -59,7 +59,7 @@ namespace SvOg
 		, m_validCheckCallback(validCallback)
 		, m_possibleTypes(possibleTypes)
 	{
-		m_type = m_data.m_type;
+		m_type = m_data.m_selectedOption;
 		assert(LinkedValueSelectorTypesEnum::None != m_possibleTypes);
 	}
 
@@ -137,7 +137,7 @@ namespace SvOg
 			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
 			break;
 		case LinkedValueSelectorTypesEnum::Indirect:
-			m_type = SvPb::LinkedSelectedType::IndirectValue;
+			m_type = SvPb::LinkedSelectedOption::IndirectValue;
 			GetDlgItem(IDC_VALUE)->ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
 			break;
@@ -200,10 +200,10 @@ namespace SvOg
 	void LinkedValueSelectorDialog::OnOK()
 	{
 		UpdateData();
-		m_data.m_type = m_type;
+		m_data.m_selectedOption = m_type;
 
 		//check and set directValue
-		if (false == checkAndSetDirectValue() && SvPb::LinkedSelectedType::DirectValue == m_data.m_type)
+		if (false == checkAndSetDirectValue() && SvPb::LinkedSelectedOption::DirectValue == m_data.m_selectedOption)
 		{
 			return;
 		}
@@ -211,7 +211,7 @@ namespace SvOg
 		//check and set indirect value
 		m_linkedTreeGenerator.checkModifiedItems();
 		m_data.m_indirectIdName = m_linkedTreeGenerator.getSingleObjectResult();
-		if (m_data.m_indirectIdName.empty() && SvPb::LinkedSelectedType::IndirectValue == m_data.m_type)
+		if (m_data.m_indirectIdName.empty() && SvPb::LinkedSelectedOption::IndirectValue == m_data.m_selectedOption)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(m_ObjectName);
@@ -235,7 +235,7 @@ namespace SvOg
 			}
 			else
 			{
-				if (SvPb::LinkedSelectedType::Formula == m_data.m_type)
+				if (SvPb::LinkedSelectedOption::Formula == m_data.m_selectedOption)
 				{
 					for (const auto& rMessage : ErrorMessages)
 					{
@@ -293,10 +293,10 @@ namespace SvOg
 		changeType(SvPb::Formula);
 	}
 
-	void LinkedValueSelectorDialog::changeType(SvPb::LinkedSelectedType newType)
+	void LinkedValueSelectorDialog::changeType(SvPb::LinkedSelectedOption newType)
 	{
 		UpdateData();
-		if (SvPb::LinkedSelectedType::Formula == m_type)
+		if (SvPb::LinkedSelectedOption::Formula == m_type)
 		{
 			auto equationText = m_pDlgFormulaPage->getEquationText();
 			double value{ 0 };
@@ -389,13 +389,13 @@ namespace SvOg
 		}
 
 		bool isSheet = false;
-		if (SvPb::LinkedSelectedType::IndirectValue == m_type)
+		if (SvPb::LinkedSelectedOption::IndirectValue == m_type)
 		{
 			m_dlgLinkedSheet.SetActivePage(0);
 			isSheet = true;
 		}
 
-		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes && SvPb::LinkedSelectedType::Formula == m_type)
+		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes && SvPb::LinkedSelectedOption::Formula == m_type)
 		{
 			m_dlgLinkedSheet.SetActivePage(1);
 			isSheet = true;
@@ -412,7 +412,7 @@ namespace SvOg
 				
 			if (false == isOk)
 			{
-				if (SvPb::LinkedSelectedType::DirectValue == m_data.m_type)
+				if (SvPb::LinkedSelectedOption::DirectValue == m_data.m_selectedOption)
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(m_ObjectName);
@@ -424,7 +424,7 @@ namespace SvOg
 				return false;
 			}
 			
-			if (SvPb::LinkedSelectedType::DirectValue == m_data.m_type && m_validCheckCallback)
+			if (SvPb::LinkedSelectedOption::DirectValue == m_data.m_selectedOption && m_validCheckCallback)
 			{
 				SvStl::MessageContainer messageContainer;
 				bool isValid = m_validCheckCallback(m_data.m_directValue, messageContainer);

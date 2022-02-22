@@ -48,7 +48,7 @@ HRESULT ToolAdjustToolSetPage::SetInspectionData()
 	//We need to set the main LinkedValue object
 	auto data = m_values.Get<LinkedValueData>(SvPb::InspectedObjectIDEId);
 	data.m_indirectIdName = m_inspectedObjectId_IdString;
-	data.m_type = SvPb::IndirectValue;
+	data.m_selectedOption = SvPb::IndirectValue;
 	m_values.Set<LinkedValueData>(SvPb::InspectedObjectIDEId, data);
 	m_values.Commit();
 

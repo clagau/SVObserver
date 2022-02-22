@@ -109,7 +109,7 @@ public:
 
 	bool runEmbedded(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages);
 
-	virtual SvPb::LinkedSelectedType getSelectedType() const override;
+	virtual SvPb::LinkedSelectedOption getSelectedOption() const override;
 
 	virtual HRESULT setIndirectStringForOldStruct(const std::vector<_variant_t>& rValueString) override;
 	virtual void setChildIds(const std::vector<uint32_t>& rObjectIds) override;
@@ -162,7 +162,7 @@ private:
 
 	bool setValueFromDouble(double value);
 
-	void setSelectedType(SvPb::LinkedSelectedType type);
+	void setSelectedOption(SvPb::LinkedSelectedOption type);
 
 	bool resetChildren(const SVObjectClass* const pLinkedObject, const std::vector<SvPb::EmbeddedIdEnum>& rEmbeddedIdList, SvStl::MessageContainerVector* pErrorMessages);
 	bool resetChild(int pos, SvOi::IValueObject* pValue, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct);
@@ -174,8 +174,8 @@ private:
 	bool m_checkForValidDependency = true; //Child-LinkedValue should not check for valid dependency because it was already checked by the parent and is an indirect link.
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
 	SVStringValueObjectClass m_Content;
-	SVEnumerateValueObjectClass m_TypeValue;
-	SvPb::LinkedSelectedType m_type = SvPb::None;
+	SVEnumerateValueObjectClass m_refOptionObject;
+	SvPb::LinkedSelectedOption m_refOption = SvPb::None;
 
 	std::string m_oldIndirectString; //! only used during load/create phase, if old config (older than 10.20) is load.
 

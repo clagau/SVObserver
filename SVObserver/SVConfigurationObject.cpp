@@ -4394,7 +4394,7 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 							}
 						}
-						if (l_AddParameter && ObjectRef.getValueObject() && SvPb::LinkedSelectedType::DirectValue != ObjectRef.getValueObject()->getSelectedType())
+						if (l_AddParameter && ObjectRef.getValueObject() && SvPb::LinkedSelectedOption::DirectValue != ObjectRef.getValueObject()->getSelectedOption())
 						{
 
 							p_rStatus[l_Iter->first] = SVMSG_OBJECT_CANNOT_BE_SET_INDIRECT_VALUE;

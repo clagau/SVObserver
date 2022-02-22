@@ -68,7 +68,7 @@ namespace SvOg
 	SvDef::StringPairVector getDependency(uint32_t valueId);
 	bool setValue(GroupResultData& data, const std::string& newStr)
 	{
-		if (SvPb::LinkedSelectedType::DirectValue == data.m_data.m_type && SvPb::isValueType(data.m_type))
+		if (SvPb::LinkedSelectedOption::DirectValue == data.m_data.m_selectedOption && SvPb::isValueType(data.m_type))
 		{
 			variant_t tmp{ newStr.c_str() };
 			SvStl::MessageContainer msgContainer;
@@ -343,7 +343,7 @@ namespace SvOg
 		if (m_resultData.size() < c_maxValues)
 		{
 			GroupResultData data;
-			data.m_data.m_type = SvPb::DirectValue;
+			data.m_data.m_selectedOption = SvPb::DirectValue;
 			data.m_data.m_defaultValue = SvPb::getDefaultString(data.m_type);
 			data.m_data.m_directValue = data.m_data.m_defaultValue;
 			if (0 < std::count_if(m_resultData.begin(), m_resultData.end(), [data](const auto& rEntry) { return rEntry.m_name == data.m_name; }))
@@ -561,7 +561,7 @@ namespace SvOg
 		if (SvPb::isValueType(m_resultData[pos].m_type))
 		{
 			valueString = static_cast<CString>(m_resultData[pos].m_data.m_Value);
-			isChangeable = SvPb::LinkedSelectedType::DirectValue == m_resultData[pos].m_data.m_type;
+			isChangeable = SvPb::LinkedSelectedOption::DirectValue == m_resultData[pos].m_data.m_selectedOption;
 			if (valueString.IsEmpty())
 			{
 				valueString = static_cast<CString>(m_resultData[pos].m_data.m_defaultValue);

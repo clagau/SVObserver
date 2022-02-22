@@ -195,7 +195,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	{
 		HRESULT Result( S_OK );
 		auto data = m_values.Get<LinkedValueData>(SvPb::RingBuffer_DepthEId);
-		if (SvPb::DirectValue == data.m_type)
+		if (SvPb::DirectValue == data.m_selectedOption)
 		{
 			SvStl::MessageContainer messageContainer;
 			bool isOk = checkDepthValue(data.m_Value, messageContainer);

@@ -386,7 +386,7 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 		else
 		{
 			auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
-			if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
+			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				_variant_t newVal;
 				pItem->GetItemValue(newVal);
@@ -998,7 +998,7 @@ void SVMaskShapeEditorDlg::setValueColumn(SvPb::EmbeddedIdEnum embeddedId, SVRPr
 
 	rEdit.SetBackColorReadOnly(false, SvDef::WhiteSmoke);
 	rEdit.SetItemValue(valueString);
-	rEdit.ReadOnly(SvPb::LinkedSelectedType::DirectValue != data.m_type, true);
+	rEdit.ReadOnly(SvPb::LinkedSelectedOption::DirectValue != data.m_selectedOption, true);
 	rEdit.OnRefresh();
 	m_Tree.UpdatedItems();
 }
@@ -1006,7 +1006,7 @@ void SVMaskShapeEditorDlg::setValueColumn(SvPb::EmbeddedIdEnum embeddedId, SVRPr
 bool SVMaskShapeEditorDlg::isChangable(SvPb::EmbeddedIdEnum embeddedId) const
 {
 	auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
-	return SvPb::LinkedSelectedType::DirectValue == data.m_type;
+	return SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption;
 }
 #pragma endregion Private Methods
 

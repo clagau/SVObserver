@@ -323,14 +323,14 @@ void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
 			data.m_defaultValue = value;
 			data.m_directValue = value;
 			data.m_Value = value;
-			data.m_type = SvPb::DirectValue;
+			data.m_selectedOption = SvPb::DirectValue;
 		}
 		else if (rInputDef.type() == SvPb::ExDllInterfaceType::TableArray || rInputDef.type() == SvPb::ExDllInterfaceType::TableNames)
 		{
 			data.m_defaultValue = _variant_t {};
 			data.m_directValue = _variant_t {};
 			data.m_Value = _variant_t {};
-			data.m_type = SvPb::IndirectValue;
+			data.m_selectedOption = SvPb::IndirectValue;
 			data.m_indirectIdName = "VOID";
 		}
 		m_valueController.Set<SvOg::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, data);

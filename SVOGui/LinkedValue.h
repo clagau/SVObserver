@@ -13,7 +13,7 @@ namespace SvOg
 {
 	struct LinkedValueData
 	{
-		SvPb::LinkedSelectedType m_type{ SvPb::LinkedSelectedType::DirectValue };
+		SvPb::LinkedSelectedOption m_selectedOption{ SvPb::LinkedSelectedOption::DirectValue };
 		variant_t m_Value;
 		variant_t m_defaultValue;
 		variant_t m_directValue;
@@ -23,7 +23,7 @@ namespace SvOg
 
 		bool operator==(const LinkedValueData& rValue) const //= default;
 		{
-			return m_type == rValue.m_type
+			return m_selectedOption == rValue.m_selectedOption
 				&& SvUl::isSameVar(m_Value, rValue.m_Value)
 				&& SvUl::isSameVar(m_defaultValue, rValue.m_defaultValue)
 				&& SvUl::isSameVar(m_directValue, rValue.m_directValue)

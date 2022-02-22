@@ -20,7 +20,7 @@ LinkedValueData convertLinkedValue(const SvPb::LinkedValue& rValue)
 	SvPb::ConvertProtobufToVariant(rValue.defaultvalue(), data.m_defaultValue);
 	SvPb::ConvertProtobufToVariant(rValue.directvalue(), data.m_directValue);
 	data.m_indirectIdName = rValue.indirectidstring();
-	data.m_type = rValue.type();
+	data.m_selectedOption = rValue.option();
 	data.m_formula = rValue.formula();
 	data.m_equationId = rValue.equationid();
 	return data;
@@ -29,7 +29,7 @@ LinkedValueData convertLinkedValue(const SvPb::LinkedValue& rValue)
 SvPb::LinkedValue convertLinkedValue(const LinkedValueData& rValue)
 {
 	SvPb::LinkedValue data;
-	data.set_type(static_cast<SvPb::LinkedSelectedType>(rValue.m_type));
+	data.set_option(static_cast<SvPb::LinkedSelectedOption>(rValue.m_selectedOption));
 	SvPb::ConvertVariantToProtobuf(rValue.m_directValue, data.mutable_directvalue());
 	data.set_indirectidstring(rValue.m_indirectIdName);
 	data.set_formula(rValue.m_formula);
@@ -55,7 +55,7 @@ void LinkedValue::setLinkedData(const LinkedValueData& data)
 
 bool LinkedValue::setValue(const variant_t& rValue)
 {
-	if (SvPb::LinkedSelectedType::DirectValue == m_data.m_type)
+	if (SvPb::LinkedSelectedOption::DirectValue == m_data.m_selectedOption)
 	{
 		m_data.m_directValue = rValue;
 		m_data.m_Value = rValue;

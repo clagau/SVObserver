@@ -103,7 +103,7 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 		if (S_OK == hResult)
 		{
 			auto data = m_values.Get<LinkedValueData>(SvPb::LinkedLoopsEId);
-			if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
+			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				long MaxLoopCount = m_values.Get<long>(SvPb::MaxLoopsEId);
 				long LoopCount = data.m_Value;

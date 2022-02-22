@@ -151,8 +151,8 @@ namespace SvOi
 		//! Update the memory block data
 		virtual void updateMemBlockData() = 0;
 
-		//! Return the SelectedType. If it not a LinkedValue, it returns SvPb::LinkedSelectedType::DirectValue.
-		virtual SvPb::LinkedSelectedType getSelectedType() const = 0;
+		//! Return the SelectedOption. If it not a LinkedValue, it returns SvPb::LinkedSelectedOption::DirectValue.
+		virtual SvPb::LinkedSelectedOption getSelectedOption() const = 0;
 
 		//! Sets a 'standard' format string to be used when the value of the object value needs to be output
 		virtual void setStandardFormatString() = 0;

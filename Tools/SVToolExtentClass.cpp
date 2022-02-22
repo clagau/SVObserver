@@ -374,7 +374,7 @@ bool SVToolExtentClass::isDirectValue(SvPb::SVExtentPropertyEnum extentProperty)
 			return true;
 		}
 
-		return (pLinkedObject->getSelectedType() == SvPb::DirectValue);
+		return (pLinkedObject->getSelectedOption() == SvPb::DirectValue);
 	}
 	return true;
 }

@@ -112,7 +112,7 @@ public:
 			{
 				const auto& rLinkedData = std::get<1>(rValue.second).getLinkedData();
 				auto* pValue = pEntry->mutable_values()->mutable_linkedvalue();
-				pValue->set_type(static_cast<SvPb::LinkedSelectedType>(rLinkedData.m_type));
+				pValue->set_option(rLinkedData.m_selectedOption);
 				SvPb::ConvertVariantToProtobuf(rLinkedData.m_directValue, pValue->mutable_directvalue());
 				pValue->set_indirectidstring(rLinkedData.m_indirectIdName);
 				pValue->set_formula(rLinkedData.m_formula);

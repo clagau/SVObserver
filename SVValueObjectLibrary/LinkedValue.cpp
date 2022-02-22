@@ -57,13 +57,13 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		m_CircularReference(false)
 	{
 		const LPCSTR g_strTypeEnums = _T("None=0,Value=1,Link=2,Formula=3");
-		m_TypeValue.SetEnumTypes(g_strTypeEnums);
+		m_refOptionObject.SetEnumTypes(g_strTypeEnums);
 
 		RegisterEmbeddedObject(&m_Content, SvPb::LinkedValueContentEId, IDS_OBJECTNAME_LINKEDVALUE_CONTENT, false, SvOi::SVResetItemNone);
-		RegisterEmbeddedObject(&m_TypeValue, SvPb::LinkedValueTypeEId, IDS_OBJECTNAME_LINKEDVALUE_TYPE, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_refOptionObject, SvPb::LinkedValueTypeEId, IDS_OBJECTNAME_LINKEDVALUE_OPTION, false, SvOi::SVResetItemNone);
 
 		m_Content.SetDefaultValue("", true);
-		m_TypeValue.SetDefaultValue(static_cast<long>(SvPb::LinkedSelectedType::None), true);
+		m_refOptionObject.SetDefaultValue(static_cast<long>(SvPb::LinkedSelectedOption::None), true);
 	}
 
 	LinkedValue::~LinkedValue()
@@ -168,7 +168,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	HRESULT LinkedValue::SetValueKeepType(LPCTSTR Value, int Index)
 	{
-		if (SvPb::LinkedSelectedType::DirectValue == getSelectedType())
+		if (SvPb::LinkedSelectedOption::DirectValue == getSelectedOption())
 		{
 			HRESULT hr = __super::SetValueKeepType(Value, Index);
 			if (S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr)
@@ -186,7 +186,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 	{
-		setSelectedType(rData.type());
+		setSelectedOption(rData.option());
 		SvPb::ConvertProtobufToVariant(rData.directvalue(), m_directValue);
 		m_indirectValueRef = SVObjectReference{rData.indirectidstring()};
 		m_formulaString = rData.formula();
@@ -207,7 +207,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool fixArrasize /*= false*/)
 	{
-		if (SvPb::LinkedSelectedType::DirectValue == getSelectedType())
+		if (SvPb::LinkedSelectedOption::DirectValue == getSelectedOption())
 		{
 			if (false == SvUl::isSameVar(rValue, m_directValue))
 			{
@@ -230,7 +230,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	bool LinkedValue::setDirectValue(const _variant_t& rValue)
 	{
-		setSelectedType(SvPb::LinkedSelectedType::DirectValue);
+		setSelectedOption(SvPb::LinkedSelectedOption::DirectValue);
 		m_directValue = rValue;
 		bool isOk = UpdateConnection();
 		assert(isOk);
@@ -246,7 +246,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	bool LinkedValue::setIndirectValue(const SVObjectReference& rReference)
 	{
 		m_indirectValueRef = rReference;
-		setSelectedType(SvPb::LinkedSelectedType::IndirectValue);
+		setSelectedOption(SvPb::LinkedSelectedOption::IndirectValue);
 		bool isOk = UpdateConnection();
 		assert(isOk);
 		return isOk;
@@ -255,7 +255,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	void LinkedValue::updateMemBlockData()
 	{
 		///When the linked value is an indirect value we need to always update it
-		if (SvPb::LinkedSelectedType::DirectValue != getSelectedType())
+		if (SvPb::LinkedSelectedOption::DirectValue != getSelectedOption())
 		{
 			setHasChanged(true);
 		}
@@ -364,12 +364,12 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	void LinkedValue::UpdateContent()
 	{
-		switch (getSelectedType())
+		switch (getSelectedOption())
 		{
-		case SvPb::LinkedSelectedType::DirectValue:
+		case SvPb::LinkedSelectedOption::DirectValue:
 			m_Content.SetValue(ConvertType2String(m_directValue));
 			break;
-		case SvPb::LinkedSelectedType::IndirectValue:
+		case SvPb::LinkedSelectedOption::IndirectValue:
 			if (nullptr != m_LinkedObjectRef.getObject())
 			{
 				m_Content.SetValue(m_LinkedObjectRef.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType, true));
@@ -379,7 +379,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				m_Content.SetValue("");
 			}
 			break;
-		case SvPb::LinkedSelectedType::Formula:
+		case SvPb::LinkedSelectedOption::Formula:
 			m_Content.SetValue(m_formulaString);
 			break;
 		default:
@@ -468,9 +468,9 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	void LinkedValue::fillLinkedData(SvPb::LinkedValue& rLinkedValue) const
 	{
-		rLinkedValue.set_type(getSelectedType());
+		rLinkedValue.set_option(getSelectedOption());
 		_variant_t varValue;
-		if (SvPb::LinkedSelectedType::IndirectValue != rLinkedValue.type() || nullptr != m_indirectValueRef.getFinalObject())
+		if (SvPb::LinkedSelectedOption::IndirectValue != rLinkedValue.option() || nullptr != m_indirectValueRef.getFinalObject())
 		{
 			HRESULT result = getValue(varValue);
 			if (S_OK != result)
@@ -492,20 +492,20 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		variant_t value;
 		variant_t defaultValue;
 		SvPb::ConvertProtobufToVariant(rLinkedValue.defaultvalue(), defaultValue);
-		switch (rLinkedValue.type())
+		switch (rLinkedValue.option())
 		{
-		case SvPb::LinkedSelectedType::DirectValue:
+		case SvPb::LinkedSelectedOption::DirectValue:
 		{
 			SvPb::ConvertProtobufToVariant(rLinkedValue.directvalue(), value);
 			__super::validateValue(value, defaultValue);
 			break;
 		}
-		case SvPb::LinkedSelectedType::IndirectValue:
+		case SvPb::LinkedSelectedOption::IndirectValue:
 		{
 			value = validateIndirectValue(rLinkedValue.indirectidstring(), defaultValue);
 			break;
 		}
-		case SvPb::LinkedSelectedType::Formula:
+		case SvPb::LinkedSelectedOption::Formula:
 		{
 			value = validateFormula(rLinkedValue.formula());
 			break;
@@ -594,9 +594,13 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	bool LinkedValue::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	{
 		bool ret = __super::CreateObject(rCreateStructure);
+
+		//@TODO[MZA][10.20][22.02.2022] remove it later. This code is only for one beta-version to correct objectName from old "type" to new "reference option"
+		m_refOptionObject.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_LINKEDVALUE_OPTION).c_str());
+
 		long lValue = 0;
-		m_TypeValue.GetValue(lValue);
-		m_type = static_cast<SvPb::LinkedSelectedType>(lValue);
+		m_refOptionObject.GetValue(lValue);
+		m_refOption = static_cast<SvPb::LinkedSelectedOption>(lValue);
 
 		m_equation.CreateObject(rCreateStructure);
 		if (nullptr == m_indirectValueRef.getObject() && SvDef::InvalidObjectId != m_indirectValueRef.getObjectId())
@@ -729,14 +733,14 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		bool Result = true;
-		switch (getSelectedType())
+		switch (getSelectedOption())
 		{
-		case SvPb::LinkedSelectedType::None:
+		case SvPb::LinkedSelectedOption::None:
 			m_children.clear();
 			m_childrenIds.clear();
 			Result = updateFromOldStruct(pErrorMessages);
 			break;
-		case SvPb::LinkedSelectedType::DirectValue:
+		case SvPb::LinkedSelectedOption::DirectValue:
 		{
 			m_children.clear();
 			m_childrenIds.clear();
@@ -750,12 +754,12 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			}
 			break;
 		}
-		case SvPb::LinkedSelectedType::IndirectValue:
+		case SvPb::LinkedSelectedOption::IndirectValue:
 		{
 			Result = updateLinkedValue(m_indirectValueRef, pErrorMessages) && Result;
 			break;
 		}
-		case SvPb::LinkedSelectedType::Formula:
+		case SvPb::LinkedSelectedOption::Formula:
 		{
 			m_children.clear();
 			m_childrenIds.clear();
@@ -856,7 +860,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		if (nullptr != LinkedObjectRef.getObject())	// input is another VO
 		{
-			setSelectedType(SvPb::LinkedSelectedType::IndirectValue);
+			setSelectedOption(SvPb::LinkedSelectedOption::IndirectValue);
 			if (VT_EMPTY == m_directValue.vt)
 			{
 				m_directValue = GetDefaultValue();
@@ -866,7 +870,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		else	// plain data
 		{
-			setSelectedType(SvPb::LinkedSelectedType::DirectValue);
+			setSelectedOption(SvPb::LinkedSelectedOption::DirectValue);
 			assert(Result);
 			if (Result)
 			{
@@ -1275,16 +1279,16 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	bool LinkedValue::runEmbedded(SvIe::RunStatus& /*rRunStatus*/, SvStl::MessageContainerVector* /*pErrorMessages*/)
 	{
-		if (SvPb::LinkedSelectedType::Formula == getSelectedType())
+		if (SvPb::LinkedSelectedOption::Formula == getSelectedOption())
 		{
 			return setValueFromDouble(m_equation.RunAndGetResult());
 		}
 		return true;
 	}
 
-	SvPb::LinkedSelectedType LinkedValue::getSelectedType() const
+	SvPb::LinkedSelectedOption LinkedValue::getSelectedOption() const
 	{
-		return m_type;
+		return m_refOption;
 	}
 
 	HRESULT LinkedValue::setIndirectStringForOldStruct(const std::vector<_variant_t>& rValueString)
@@ -1452,12 +1456,12 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		return (S_OK == __super::setValue(valueVar));
 	}
 
-	void LinkedValue::setSelectedType(SvPb::LinkedSelectedType type)
+	void LinkedValue::setSelectedOption(SvPb::LinkedSelectedOption option)
 	{
-		if (type != m_type)
+		if (option != m_refOption)
 		{
-			m_type = type;
-			m_TypeValue.SetValue(type);
+			m_refOption = option;
+			m_refOptionObject.SetValue(option);
 		}
 	}
 

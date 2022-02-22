@@ -160,7 +160,7 @@ namespace SvOg
 
 	bool setValue(GroupInputData& data, const std::string& newStr)
 	{
-		if (SvPb::LinkedSelectedType::DirectValue == data.m_data.m_type && SvPb::isValueType(data.m_type))
+		if (SvPb::LinkedSelectedOption::DirectValue == data.m_data.m_selectedOption && SvPb::isValueType(data.m_type))
 		{
 			variant_t tmp{ newStr.c_str() };
 			SvStl::MessageContainer msgContainer;
@@ -685,7 +685,7 @@ namespace SvOg
 		if (SvPb::isValueType(m_inputData[pos].m_type))
 		{
 			valueString = static_cast<CString>(m_inputData[pos].m_data.m_Value);
-			isChangeable = SvPb::LinkedSelectedType::DirectValue == m_inputData[pos].m_data.m_type;
+			isChangeable = SvPb::LinkedSelectedOption::DirectValue == m_inputData[pos].m_data.m_selectedOption;
 			if (valueString.IsEmpty())
 			{
 				valueString = static_cast<CString>(SvPb::getDefaultString(m_inputData[pos].m_type));

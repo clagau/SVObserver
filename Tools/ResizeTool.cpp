@@ -172,7 +172,7 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 			// m_ExtentWidthFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
 			// ensures proper behaviour with pre-10.10 configurations
 		{
-			if (SvPb::LinkedSelectedType::DirectValue == m_pEmbeddedExtents->m_ExtentWidthFactorFormat.getSelectedType()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
+			if (SvPb::LinkedSelectedOption::DirectValue == m_pEmbeddedExtents->m_ExtentWidthFactorFormat.getSelectedOption()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
 				// We are assuming that an non-empty linked name means that a dotted name is present.
 			{
 				m_pEmbeddedExtents->m_ExtentWidthFactorContent.getValue(widthScaleFactor);
@@ -186,7 +186,7 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 			//m_ExtentHeightFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
 			// ensures proper behaviour with pre-10.10 configurations
 		{
-			if (SvPb::LinkedSelectedType::DirectValue == m_pEmbeddedExtents->m_ExtentHeightFactorFormat.getSelectedType()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
+			if (SvPb::LinkedSelectedOption::DirectValue == m_pEmbeddedExtents->m_ExtentHeightFactorFormat.getSelectedOption()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
 				// We are assuming that an non-empty linked name means that a dotted name is present.
 			{
 				m_pEmbeddedExtents->m_ExtentHeightFactorContent.getValue(heightScaleFactor);

@@ -673,7 +673,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				ptCurPos.x = (nIndentLevel + 1) * m_shortTabPixels;
 				PrintValueObject(pDC, ptCurPos, sLabel.c_str(), "");
 				ptCurPos.x = (nIndentLevel + 2) * m_shortTabPixels;
-				PrintValueObject(pDC, ptCurPos, "Type", std::to_string(pLinkedValue->getSelectedType()).c_str());
+				PrintValueObject(pDC, ptCurPos, "Type", std::to_string(pLinkedValue->getSelectedOption()).c_str());
 				PrintValueObject(pDC, ptCurPos, "Content", pLinkedValue->getContentStr().c_str());
 			}
 			else

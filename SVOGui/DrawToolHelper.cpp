@@ -25,7 +25,7 @@ namespace
 bool isChangable(const SvOg::ValueController& rValueController, SvPb::EmbeddedIdEnum embeddedId)
 {
 	auto data = rValueController.Get<SvOg::LinkedValueData>(embeddedId);
-	return SvPb::LinkedSelectedType::DirectValue == data.m_type;
+	return SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption;
 }
 
 std::vector<double> createPointPairVec(SvPb::EmbeddedIdEnum xEid, SvPb::EmbeddedIdEnum yEid, const SvOg::ValueController& rControl)

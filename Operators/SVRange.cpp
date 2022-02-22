@@ -213,7 +213,7 @@ bool SVRange::checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange s
 		{RangeEnum::ERange::ER_WarnLow, SvStl::Tid_WarnLow}
 	};
 	bool Result = true;
-	if (SvPb::LinkedSelectedType::DirectValue == m_LinkedValues[firstType].getSelectedType() && SvPb::LinkedSelectedType::DirectValue == m_LinkedValues[secondType].getSelectedType())
+	if (SvPb::LinkedSelectedOption::DirectValue == m_LinkedValues[firstType].getSelectedOption() && SvPb::LinkedSelectedOption::DirectValue == m_LinkedValues[secondType].getSelectedOption())
 	{
 		//check if high greater than low
 		double excludeHigh = 0;

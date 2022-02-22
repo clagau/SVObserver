@@ -195,11 +195,11 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 
 	m_updateLowerState = getThresholdMode(m_svUseLowerThresholdSelectable, m_svUseLowerThresholdMaxMinusPercentDiff, m_svUseLowerThresholdMinPlusOffset, m_svUseLowerThresholdMaxMinusOffset);
 	UpdateThresholdValues(m_updateLowerState, m_svLowerThresholdSelected, m_svLowerMaxMinusPercentDiffValue, m_svLowerMinPlusOffsetValue, m_svLowerMaxMinusOffsetValue, m_lowerThreshold, m_svLowerThresholdValueObject);
-	m_needUpdateThresholdValueLower = (UpdateEnum::Selected != m_updateLowerState || SvPb::LinkedSelectedType::DirectValue != m_svLowerThresholdSelected.getSelectedType());
+	m_needUpdateThresholdValueLower = (UpdateEnum::Selected != m_updateLowerState || SvPb::LinkedSelectedOption::DirectValue != m_svLowerThresholdSelected.getSelectedOption());
 
 	m_updateUpperState = getThresholdMode(m_svUseUpperThresholdSelectable, m_svUseUpperThresholdMaxMinusPercentDiff, m_svUseUpperThresholdMinPlusOffset, m_svUseUpperThresholdMaxMinusOffset);
 	UpdateThresholdValues(m_updateUpperState, m_svUpperThresholdSelected, m_svUpperMaxMinusPercentDiffValue, m_svUpperMinPlusOffsetValue, m_svUpperMaxMinusOffsetValue, m_upperThreshold, m_svUpperThresholdValueObject);
-	m_needUpdateThresholdValueUpper = (UpdateEnum::Selected != m_updateUpperState || SvPb::LinkedSelectedType::DirectValue != m_svUpperThresholdSelected.getSelectedType());
+	m_needUpdateThresholdValueUpper = (UpdateEnum::Selected != m_updateUpperState || SvPb::LinkedSelectedOption::DirectValue != m_svUpperThresholdSelected.getSelectedOption());
 
 	if( S_OK != GetPixelDepth() )
 	{

@@ -147,7 +147,7 @@ public:
 	//************************************
 	inline LPCTSTR getDescription() const;
 
-	virtual SvPb::LinkedSelectedType getSelectedType() const override { return SvPb::LinkedSelectedType::DirectValue; };
+	virtual SvPb::LinkedSelectedOption getSelectedOption() const override { return SvPb::LinkedSelectedOption::DirectValue; };
 
 	virtual DWORD GetObjectColor() const override;
 

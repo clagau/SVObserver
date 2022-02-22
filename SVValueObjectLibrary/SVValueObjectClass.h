@@ -109,7 +109,7 @@ public:
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	///Only specialized versions, namely DoubleSortValue, SVStringValue and SVVariantValue need an implementation
 	virtual void updateMemBlockData() override {}
-	virtual SvPb::LinkedSelectedType getSelectedType() const override { return SvPb::LinkedSelectedType::DirectValue; };
+	virtual SvPb::LinkedSelectedOption getSelectedOption() const override { return SvPb::LinkedSelectedOption::DirectValue; };
 	virtual void setStandardFormatString() = 0;
 	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
 

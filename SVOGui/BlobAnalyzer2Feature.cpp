@@ -408,7 +408,7 @@ namespace SvOg
 				}
 				
 				assert(nullptr != pLinkedValue);
-				if (nullptr != pLinkedValue && SvPb::LinkedSelectedType::DirectValue == pLinkedValue->type())
+				if (nullptr != pLinkedValue && SvPb::LinkedSelectedOption::DirectValue == pLinkedValue->option())
 				{
 					variant_t tmp {cellText.c_str()};
 					SvStl::MessageContainer msgContainer;

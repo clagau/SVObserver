@@ -74,7 +74,7 @@ message StandardValue
 	Variant defaultValue = 2;
 }
 
-enum LinkedSelectedType
+enum LinkedSelectedOption
 {
 	None = 0;
 	DirectValue = 1;
@@ -84,7 +84,7 @@ enum LinkedSelectedType
 
 message LinkedValue
 {
-	LinkedSelectedType type = 1;
+	LinkedSelectedOption option = 1;
 	Variant value = 2;
 	Variant defaultValue = 3;
 	Variant directValue = 4;

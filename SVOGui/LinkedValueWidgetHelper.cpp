@@ -118,7 +118,7 @@ namespace SvOg
 		if (m_pValueController)
 		{
 			auto data = m_pValueController->Get<LinkedValueData>(m_embeddedId);
-			if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
+			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				CString tmpStr;
 				m_rValueEdit.GetWindowText(tmpStr);
@@ -188,13 +188,13 @@ namespace SvOg
 		{
 			auto data = m_pValueController->Get<LinkedValueData>(m_embeddedId);
 			bool enableFlag {false};
-			switch (data.m_type)
+			switch (data.m_selectedOption)
 			{
-				case SvPb::LinkedSelectedType::DirectValue:
+				case SvPb::LinkedSelectedOption::DirectValue:
 					enableFlag = m_isControllsEnable;
 					break;
-				case SvPb::LinkedSelectedType::IndirectValue:
-				case SvPb::LinkedSelectedType::Formula:
+				case SvPb::LinkedSelectedOption::IndirectValue:
+				case SvPb::LinkedSelectedOption::Formula:
 					break;
 				default:
 					m_rValueEdit.EnableWindow(false);

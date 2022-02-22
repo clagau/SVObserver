@@ -468,7 +468,7 @@ void SVTADlgExternalInputSelectPage::setValueColumn(SvPb::EmbeddedIdEnum eId, Sv
 	if (SvOg::LinkedValueSelectorTypesEnum::All == selectorTypes || SvOg::LinkedValueSelectorTypesEnum::DirectIndirect == selectorTypes)
 	{
 		valueString = SvUl::VariantToString(data.m_Value).c_str();
-		isReadOnly = (SvPb::LinkedSelectedType::DirectValue != data.m_type);
+		isReadOnly = (SvPb::LinkedSelectedOption::DirectValue != data.m_selectedOption);
 	}
 	else
 	{
@@ -495,7 +495,7 @@ bool SVTADlgExternalInputSelectPage::setStringToData(SVRPropertyItem& rItem)
 	SvPb::ExDllInterfaceType type = pDef->type();
 	SvPb::EmbeddedIdEnum eId = SvPb::ExternalInputEId + pDef->linkedvalueindex();
 	auto data = m_InputValues.Get<SvOg::LinkedValueData>(eId);
-	if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
+	if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 	{
 		_variant_t newVal;
 		rItem.GetItemValue(newVal);

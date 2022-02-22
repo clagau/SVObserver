@@ -1528,7 +1528,7 @@ void SVExternalToolTask::SetIndirectValueSaveFlag()
 	int size = static_cast<int>(std::min(m_Data.m_InputDefinitions.size(), m_Data.m_aInputObjects.size()));
 	for (int i = 0; i < size; i++)
 	{
-		if (SvPb::LinkedSelectedType::IndirectValue == m_Data.m_aInputObjects[i].getSelectedType())
+		if (SvPb::LinkedSelectedOption::IndirectValue == m_Data.m_aInputObjects[i].getSelectedOption())
 		{
 			//@TODO[MZA][10.20][22.07.2021] kann man das nicht besser machen?
 			m_Data.m_aInputObjects[i].setIndirectValueSaveFlag(true);

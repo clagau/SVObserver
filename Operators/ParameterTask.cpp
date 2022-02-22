@@ -630,7 +630,7 @@ namespace SvOp
 					break;
 				default: //variant must be empty
 					rDefaultValue.Clear();
-					if (SvPb::LinkedSelectedType::IndirectValue == rRequestValue.value().type())
+					if (SvPb::LinkedSelectedOption::IndirectValue == rRequestValue.value().option())
 					{
 						SVObjectReference refObject {rRequestValue.value().indirectidstring()};
 						SvStl::MessageContainerVector msgVector;

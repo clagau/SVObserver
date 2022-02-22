@@ -57,18 +57,18 @@ void traceScalefactorValues(uint32_t inspectionId, const std::string& rHeading, 
 
 		SvOg::LinkedValueData lvd = rVC.Get<SvOg::LinkedValueData>(eid);
 
-		if (lvd.m_type == SvPb::LinkedSelectedType::None)
+		if (lvd.m_selectedOption == SvPb::LinkedSelectedOption::None)
 		{
 			traceStream << "[None]";
 		}
 		else
 		{
-			if (lvd.m_type == SvPb::LinkedSelectedType::IndirectValue)
+			if (lvd.m_selectedOption == SvPb::LinkedSelectedOption::IndirectValue)
 			{
 				traceStream << SvCmd::getDottedName(inspectionId, lvd.m_indirectIdName);
 				traceStream << " -> ";
 			}
-			if (lvd.m_type == SvPb::LinkedSelectedType::Formula)
+			if (lvd.m_selectedOption == SvPb::LinkedSelectedOption::Formula)
 			{
 				traceStream << lvd.m_formula;
 				traceStream << " = ";

@@ -526,7 +526,7 @@ void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 	}
 
 	auto data = m_ValueController.Get<SvOg::LinkedValueData>(SvPb::ArchiveImageFileRootPart1EId);
-	data.m_type = SvPb::DirectValue;
+	data.m_selectedOption = SvPb::DirectValue;
 	data.m_directValue = firstPartOfImageArchivePathRoot;
 	data.m_Value = data.m_directValue;
 	m_ValueController.Set<SvOg::LinkedValueData>(SvPb::ArchiveImageFileRootPart1EId, data);

@@ -144,7 +144,7 @@ bool isFieldValid(const std::string& fieldName, const variant_t& rValue, SvStl::
 	void RangeController::IsFieldValid(RangeEnum::ERange fieldId) const
 	{
 		const LinkedValueData& rValue = Get(fieldId);
-		if (SvPb::LinkedSelectedType::DirectValue == rValue.m_type)
+		if (SvPb::LinkedSelectedOption::DirectValue == rValue.m_selectedOption)
 		{
 			SvStl::MessageContainer msgContainer;
 			if (false == isFieldValid(RangeEnum::ERange2String(fieldId), rValue.m_Value, msgContainer))

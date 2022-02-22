@@ -916,7 +916,7 @@ inline void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pOb
 		}
 		else if (SvVol::LinkedValue* pLinkedValue = dynamic_cast<SvVol::LinkedValue*>(pObj))
 		{
-			writer->WriteAttributeString(nullptr, L"Type", nullptr, utf16(std::to_string(pLinkedValue->getSelectedType())).c_str() );
+			writer->WriteAttributeString(nullptr, L"Type", nullptr, utf16(std::to_string(pLinkedValue->getSelectedOption())).c_str() );
 			writer->WriteAttributeString(nullptr, L"Content", nullptr, SvUl::to_utf16(pLinkedValue->getContentStr(), cp_dflt).c_str());
 		}
 		else

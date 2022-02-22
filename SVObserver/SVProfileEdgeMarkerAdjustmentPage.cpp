@@ -149,7 +149,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnHScroll( UINT nSBCode, UINT nPos, CScr
 		if (SvPb::NoEmbeddedId != embeddedId)
 		{
 			auto data = m_values.Get<SvOg::LinkedValueData>(embeddedId);
-			if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
+			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				byte value = static_cast<unsigned char>(m_normalizerController.calcRealValueFromLocalValues((double)UpperSliderCtrl.GetPos()));
 				data.m_Value = static_cast<long>(value);
@@ -166,7 +166,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnHScroll( UINT nSBCode, UINT nPos, CScr
 		if (SvPb::NoEmbeddedId != embeddedId)
 		{
 			auto data = m_values.Get<SvOg::LinkedValueData>(embeddedId);
-			if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
+			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				byte value = static_cast<unsigned char>(m_normalizerController.calcRealValueFromLocalValues((double)LowerSliderCtrl.GetPos()));
 				data.m_Value = static_cast<long>(value);
@@ -537,7 +537,7 @@ HRESULT SVProfileEdgeMarkerAdjustmentPage::UpdateSliderData()
 	{
 		auto data = m_values.Get<SvOg::LinkedValueData>(upperEmbeddedId);
 		upper = data.m_Value;
-		UpperSliderCtrl.EnableWindow(SvPb::LinkedSelectedType::DirectValue == data.m_type);
+		UpperSliderCtrl.EnableWindow(SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption);
 	}
 	else
 	{
@@ -549,7 +549,7 @@ HRESULT SVProfileEdgeMarkerAdjustmentPage::UpdateSliderData()
 	{
 		auto data = m_values.Get<SvOg::LinkedValueData>(lowerEmbeddedId);
 		lower = data.m_Value;
-		LowerSliderCtrl.EnableWindow(SvPb::LinkedSelectedType::DirectValue == data.m_type);
+		LowerSliderCtrl.EnableWindow(SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption);
 	}
 	else
 	{

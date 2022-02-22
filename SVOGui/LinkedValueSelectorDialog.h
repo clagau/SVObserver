@@ -75,14 +75,14 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		void changeType(SvPb::LinkedSelectedType newType);
+		void changeType(SvPb::LinkedSelectedOption newType);
 		void createObjectPage();
 		void createFormulaPage();
 		void updateShownControls();
 		bool checkAndSetDirectValue();
 
 	protected:
-		SvPb::LinkedSelectedType m_type;
+		SvPb::LinkedSelectedOption m_type;
 
 		//Value
 		CString m_directValue;

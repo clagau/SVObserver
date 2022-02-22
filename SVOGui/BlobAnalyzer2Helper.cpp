@@ -23,7 +23,7 @@ void setValueColumn(SvGcl::GridCtrl& rGrid, int pos, int colPos, const LinkedVal
 	}
 
 	rGrid.SetItemText(pos, colPos, valueString);
-	if (SvPb::LinkedSelectedType::DirectValue == rData.m_type)
+	if (SvPb::LinkedSelectedOption::DirectValue == rData.m_selectedOption)
 	{
 		rGrid.SetItemBkColour(pos, colPos, SvDef::White);
 		rGrid.SetItemState(pos, colPos, rGrid.GetItemState(pos, colPos) & (~GVIS_READONLY));
