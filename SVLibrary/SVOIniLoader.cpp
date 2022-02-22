@@ -172,7 +172,7 @@ void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 	m_rInitialInfo.m_NAKMode = static_cast<SvDef::NakGeneration>(SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvDef::NakGeneration::Bursts));
 	m_rInitialInfo.m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvDef::DefaultNakParameter);
 	m_rInitialInfo.m_preTriggerTimeWindow = SvimIni.GetValueDouble(SettingsTag, PreTriggerTimeWindowTag, 0.0);
-	m_rInitialInfo.m_postTriggerTimeWindow = SvimIni.GetValueDouble(SettingsTag, PreTriggerTimeWindowTag, 0.0);
+	m_rInitialInfo.m_postTriggerTimeWindow = SvimIni.GetValueDouble(SettingsTag, PostTriggerTimeWindowTag, 0.0);
 	m_rInitialInfo.m_archiveToolBufferSize = static_cast<long> (SvimIni.GetValueInt(SettingsTag, ArchiveBufferSizeTag, 0));
 	m_rInitialInfo.m_archiveToolAsyncBufferSize = static_cast<long> (SvimIni.GetValueInt(SettingsTag, ArchiveAsyncBufferSizeTag, 0));
 	m_rInitialInfo.m_dataValidDelay = static_cast<long> (SvimIni.GetValueInt(SettingsTag, DataValidDelayTag, 0));
