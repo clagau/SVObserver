@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2021,2021 by Seidenader Maschinenbau GmbH. All Rights Reserved
+// \copyright COPYRIGHT (c) 2021,2021 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file RegressionTestController.cpp
 /// This is the class for control the RegressionTest
 //******************************************************************************

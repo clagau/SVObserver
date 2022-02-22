@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2020/10/06,2020/10/06 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+// \copyright COPYRIGHT (c) 2020/10/06,2020/10/06 by Körber Pharma Inspection GmbH. All Rights Reserved 
 /// \file AuditFiles.cpp
 ///  CAuditfiles is a container for the external files used in Audittrail. In the Audittrail 
 /// some properties and  a hash code of external files will be included  

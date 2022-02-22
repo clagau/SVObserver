@@ -1,5 +1,5 @@
 ///******************************************************************************
-/// COPYRIGHT (c) 2015 by Seidenader, Markt Schwaben
+/// COPYRIGHT (c) 2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 ///*****************************************************************************
 /// IDependencyManager is the interface to obtain dependencies

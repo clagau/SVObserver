@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2016 by Seidenader Maschinenbau GmbH
+// \copyright COPYRIGHT (c) 2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 // All Rights Reserved
 //*****************************************************************************
 // stdafx.cpp : source file that includes just the standard includes

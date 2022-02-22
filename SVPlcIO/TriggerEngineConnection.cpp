@@ -1,4 +1,4 @@
-/// \copyright COPYRIGHT (c) 2017, 2017 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2017, 2017 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 /// \file TriggerEngineConnection.cpp
 /// \brief the interface to the TriggerEngine: implementation

@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) $YEAR$,$YEAR$ by Seidenader Maschinenbau GmbH
+/// \copyright (c) $YEAR$,$YEAR$ by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
 /// Class to generate a text form a ID (enum) and additional text list depending of language settings

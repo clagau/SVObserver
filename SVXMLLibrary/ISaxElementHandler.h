@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2015,2015 by Seidenader Maschinenbau GmbH
+/// \copyright (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
 ///  class IXMLElementHandler

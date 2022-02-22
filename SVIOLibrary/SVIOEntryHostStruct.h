@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2011 by Seidenader Vission, Inc.
+//* COPYRIGHT (c) 2011 by Körber Pharma Inspection GmbH. All Rights Reserved Vission, Inc.
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVIOEntryHostStruct

@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2008 by Seidenader Vision, Inc., Harrisburg
+//* COPYRIGHT (c) 2008 by Körber Pharma Inspection GmbH. All Rights Reserved, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVAcquisitionClass

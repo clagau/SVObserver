@@ -1,5 +1,5 @@
 //******************************************************************************
-/// COPYRIGHT (c) 2016 by Seidenader Maschinenbau GmbH
+/// COPYRIGHT (c) 2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 //******************************************************************************
 /// Class for End Radius Evaluation

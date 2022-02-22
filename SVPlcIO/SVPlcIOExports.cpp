@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2017,2017 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 /// \file SVPlcIOExports.cpp
 /// \brief Exported functions of the DLL

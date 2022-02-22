@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2021 by Seidenader Maschinenbau GmbH
+/// \copyright (c) 2021 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 /// \Author	Marc Ziegler
 //*****************************************************************************

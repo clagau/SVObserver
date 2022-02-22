@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2014 by Seidenader
+//* COPYRIGHT (c) 2014 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : Custom2Filter

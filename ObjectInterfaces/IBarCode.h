@@ -1,5 +1,5 @@
 //******************************************************************************
-/// COPYRIGHT (c) 2020 by Seidenader Maschinenbau GmbH
+/// COPYRIGHT (c) 2020 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 //******************************************************************************
 /// Interface class for the Bar Code class

@@ -1,4 +1,4 @@
-// \copyright COPYRIGHT (c) 2021,2021 by Seidenader Maschinenbau GmbH. All Rights Reserved
+// \copyright COPYRIGHT (c) 2021,2021 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file SVXFunctions.cpp
 /// Various functions concerned with SVX and SVZ files that were taken out of the SVObserverApp class 
 

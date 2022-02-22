@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 1997 by Seidenader Vision Inc., Harrisburg
+//* COPYRIGHT (c) 1997 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : stdafx

@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2020,2020 by Seidenader Maschinenbau GmbH. All Rights Reserved
+// \copyright COPYRIGHT (c) 2020,2020 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file BlobAnalyzer2FeatureSelector.h
 /// This is the class for the feature tab of Blob Analyzer 2
 //******************************************************************************

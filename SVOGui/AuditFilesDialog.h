@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2020/10/27,2020/10/27 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+// \copyright COPYRIGHT (c) 2020/10/27,2020/10/27 by Körber Pharma Inspection GmbH. All Rights Reserved 
 /// \file AuditFilesDialog.h
 /// Dialog for config external files in audidtrail 
 //******************************************************************************

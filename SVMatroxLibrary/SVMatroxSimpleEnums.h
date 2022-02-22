@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2016,2016 by Seidenader Maschinenbau GmbH
+/// \copyright (c) 2016,2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
 //Enums used in SVMatroxlibrary moved from SVMatroxEnum.h to reduce dependends between header files 

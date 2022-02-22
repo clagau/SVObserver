@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2013 by Seidenader, Markt Schwaben
+//* COPYRIGHT (c) 2013 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : RemoteCommand

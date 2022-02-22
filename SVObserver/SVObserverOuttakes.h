@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2020,2020 by Seidenader Maschinenbau GmbH. All Rights Reserved
+// \copyright COPYRIGHT (c) 2020,2020 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file SVObserverOuttakes.h
 /// contains functions that were taken out of SVObserver in SVO-3442. 
 /// These should be transferred to other source files when possible

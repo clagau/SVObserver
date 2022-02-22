@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2016,2016 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2016,2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
 /// Contains declarations of utility functions for image file operations

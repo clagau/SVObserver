@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2019,2019 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2019,2019 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 /// \file SimulatedTriggerSource.h
 /// This is the class used to simulate triggers without the Hilscher card

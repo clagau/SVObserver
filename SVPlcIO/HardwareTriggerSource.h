@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2017,2017 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 /// \file HardwareTriggerSource.h
 /// This is the class used for triggers set with the data from the Hilscher card

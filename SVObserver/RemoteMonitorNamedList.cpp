@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2014 by Seidenader Vision, Harrisburg
+//* COPYRIGHT (c) 2014 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : RemoteMonitorNamedList

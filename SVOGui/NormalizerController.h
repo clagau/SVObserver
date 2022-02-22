@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2015,2015 by Seidenader Maschinenbau GmbH. All Rights Reserved
+// \copyright COPYRIGHT (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file NormalizerController.h
 /// Defines the NormalizerController class.
 /// This class exchanges information between SVObserver and GUI, via Protobuf messages, fulfilling the following tasks:

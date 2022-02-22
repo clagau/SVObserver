@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2021/08/02,2021/08/02 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+// \copyright COPYRIGHT (c) 2021/08/02,2021/08/02 by Körber Pharma Inspection GmbH. All Rights Reserved 
 /// \file LookUp.h
 /// Class for managing a 2dim array using as LUT table for arithmetic image operation
 //******************************************************************************

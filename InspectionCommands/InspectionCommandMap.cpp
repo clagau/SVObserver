@@ -1,5 +1,5 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2020/09/04,2020/09/04 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+// \copyright COPYRIGHT (c) 2020/09/04,2020/09/04 by Körber Pharma Inspection GmbH. All Rights Reserved 
 /// \file InspectionCommandMap.cpp
 /// InspectionCommandMap is a map with all commands, which are used by InspectionCommands()
 /// The single commands can be defined by an functor  or by lambda functions.

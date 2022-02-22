@@ -1,5 +1,5 @@
 //******************************************************************************
-/// COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
+/// COPYRIGHT (c) 2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 //******************************************************************************
 /// EquationTestResult holds the result information of the Equaton test operation.

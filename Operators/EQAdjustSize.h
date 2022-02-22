@@ -1,5 +1,5 @@
 //******************************************************************************
-/// COPYRIGHT (c) 2015,2015 by Seidenader Maschinenbau GmbH
+/// COPYRIGHT (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
 /// Base class for Formulas for Tool Width,Height and Positions for ToolsSizeAdjust 

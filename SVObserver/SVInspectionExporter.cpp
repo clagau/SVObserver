@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2012 by Seidenader Vision, Inc. Harrisburg
+//* COPYRIGHT (c) 2012 by Körber Pharma Inspection GmbH. All Rights Reserved Harrisburg
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVInspectionExporter

@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2015, 2020 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2015, 2020 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 /// SVTADlgResizePage.cpp
 //*****************************************************************************

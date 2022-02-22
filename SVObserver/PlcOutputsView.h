@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2020,2020 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+/// \copyright (c) 2020,2020 by Körber Pharma Inspection GmbH. All Rights Reserved 
 /// \file PlcOutputsView
 /// This class is a list view for the PLC connected outputs
 //******************************************************************************

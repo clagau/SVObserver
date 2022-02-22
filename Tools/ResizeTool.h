@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2015, 2021 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2015, 2021 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
 /// Contains the Resize Tool class definition

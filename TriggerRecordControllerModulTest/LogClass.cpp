@@ -1,4 +1,4 @@
-/// \copyright COPYRIGHT (c) 2019 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2019 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file LogClass.cpp
 /// All Rights Reserved
 //*****************************************************************************

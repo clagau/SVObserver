@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// \copyright (c) 2017,2017 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
 /// This is the dialog to select the table to show in the result table view 

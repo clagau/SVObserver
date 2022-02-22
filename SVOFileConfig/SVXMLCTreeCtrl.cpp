@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2008 by Seidenader Maschinenbau GmbH, München
+//* COPYRIGHT (c) 2008 by Körber Pharma Inspection GmbH. All Rights Reserved, München
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVXMLCTreeCtrl

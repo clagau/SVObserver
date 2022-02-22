@@ -1,5 +1,5 @@
 //******************************************************************************
-/// COPYRIGHT (c) 2019 by Seidenader Maschinenbau GmbH
+/// COPYRIGHT (c) 2019 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file BandEnums.h
 /// All Rights Reserved
 //******************************************************************************

@@ -1,5 +1,5 @@
 ///******************************************************************************
-/// COPYRIGHT (c) 2015 by Seidenader, Markt Schwaben
+/// COPYRIGHT (c) 2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 ///*****************************************************************************
 /// IObjectManager is the interface to get/set the objects

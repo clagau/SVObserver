@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2016,2016 by Seidenader Maschinenbau GmbH
+/// \copyright (c) 2016,2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
 /// Class TreeToXml implement static functions to write an xml file from a SVtree 

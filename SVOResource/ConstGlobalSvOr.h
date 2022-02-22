@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2015 by Seidenader
+//* COPYRIGHT (c) 2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 //* This is the global constant file for the SVOResource project.

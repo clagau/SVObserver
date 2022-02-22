@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2016 by Seidenader, Markt Schwaben
+//* COPYRIGHT (c) 2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
 // This is the ObjectsListBox class for use by the GUI. It is a list box which is initialized by a name/objectId list.

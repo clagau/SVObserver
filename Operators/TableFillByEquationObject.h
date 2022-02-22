@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2016,2016 by Seidenader Maschinenbau GmbH
+/// \copyright (c) 2016,2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file TableFillObject.h
 /// All Rights Reserved 
 //*****************************************************************************

@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2018 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2018 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// \file Ranking2Filter.h
 /// All Rights Reserved
 //*****************************************************************************
