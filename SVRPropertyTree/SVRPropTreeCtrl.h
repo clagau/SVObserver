@@ -51,7 +51,7 @@ public:
 	void UpdateResize();
 
 	void UpdatePositions();
-
+	void ClearLastReadonlyActivated();
 protected:
 	void RecreateBackBuffer(int cx, int cy);
 	void CheckVisibleFocus();

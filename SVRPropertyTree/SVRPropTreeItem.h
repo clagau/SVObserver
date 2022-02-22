@@ -66,7 +66,8 @@ public:
 	COLORREF GetBackColor();
 	COLORREF SetForeColor(COLORREF rgb);
 	COLORREF SetBackColor(COLORREF rgb);
-
+	COLORREF SetBackColorReadOnly(bool refresh,COLORREF rgb);
+	
 	// Returns true if the item has a checkbox
 	bool IsCheckBox();
 
@@ -271,6 +272,8 @@ protected:
 
 	COLORREF m_rgbForeColor;
 	COLORREF m_rgbBackColor;
+	COLORREF m_rgbBackColorReadOnly ;
+
 	bool m_bCanHighlight;
 	bool m_bBold;
 	long m_lHeight;

@@ -727,6 +727,7 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 			// grey out property
 			pChild->SetCanHighlight( false );
 			pChild->SetForeColor( SvDef::LightGray );
+			pChild->SetBackColorReadOnly(false, SvDef::WhiteSmoke);
 			pChild->ReadOnly( true );
 		}
 		else
@@ -995,6 +996,7 @@ void SVMaskShapeEditorDlg::setValueColumn(SvPb::EmbeddedIdEnum embeddedId, SVRPr
 	auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
 	CString valueString = SvUl::VariantToString(data.m_Value).c_str();
 
+	rEdit.SetBackColorReadOnly(false, SvDef::WhiteSmoke);
 	rEdit.SetItemValue(valueString);
 	rEdit.ReadOnly(SvPb::LinkedSelectedType::DirectValue != data.m_type, true);
 	rEdit.OnRefresh();

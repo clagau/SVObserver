@@ -26,11 +26,12 @@
 // 
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
-
+// This code was modified by Koerber AG
 #include "stdafx.h"
 #include "SVRPropTree.h"
 
 #include "SVRPropTreeItem.h"
+#include "Definitions/Color.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // drawing helper functions
@@ -78,14 +79,14 @@ static void _DrawExpand(HDC hdc, LONG x, LONG y, bool bExpand, bool bFill)
 
 SVRPropertyItem::SVRPropertyItem() :
 	m_pProp(nullptr),
-	m_loc(0,0),
-	m_rc(0,0,0,0),
+	m_loc(0, 0),
+	m_rc(0, 0, 0, 0),
 	m_nCtrlID(0),
 	m_dwState(0),
 	m_bActivated(FALSE),
 	m_bCommitOnce(FALSE),
-	m_rcExpand(0,0,0,0),
-	m_rcCheckbox(0,0,0,0),
+	m_rcExpand(0, 0, 0, 0),
+	m_rcCheckbox(0, 0, 0, 0),
 	m_pParent(nullptr),
 	m_pSibling(nullptr),
 	m_pChild(nullptr),
@@ -93,6 +94,7 @@ SVRPropertyItem::SVRPropertyItem() :
 	m_bCanShrink(true),
 	m_rgbForeColor(::GetSysColor(COLOR_BTNTEXT)),
 	m_rgbBackColor(::GetSysColor(COLOR_WINDOW)),
+	m_rgbBackColorReadOnly(::GetSysColor(COLOR_WINDOW)), //(SvDef::WhiteSmoke) 
 	m_bCanHighlight(true),
 	m_bBold(false),
 	m_lHeight(SVRPropTree::PROPTREEITEM_DEFHEIGHT)
@@ -660,7 +662,15 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 
 
 	COLORREF rgbOldFore = pDC->SetTextColor( m_rgbForeColor );
-	COLORREF rgbOldBack = pDC->SetBkColor( m_rgbBackColor );
+	COLORREF rgbOldBack {0};
+	if (IsReadOnly())
+	{
+		rgbOldBack = pDC->SetBkColor(m_rgbBackColorReadOnly);
+	}
+	else
+	{
+		rgbOldBack = pDC->SetBkColor(m_rgbBackColor);
+	}
 
 
 	// Add Item to the list of visble items
@@ -675,7 +685,14 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 
 	CRect rect(m_rc);
 	rect.left -= 4;
-	pDC->FillSolidRect(&rect, m_rgbBackColor);
+	if ( IsReadOnly())
+	{
+		pDC->FillSolidRect(&rect, m_rgbBackColorReadOnly);
+	}
+	else
+	{
+		pDC->FillSolidRect(&rect, m_rgbBackColor);
+	}
 
 	// init temp drawing variables
 	nTotal = GetHeight();
@@ -1155,6 +1172,17 @@ COLORREF SVRPropertyItem::SetBackColor(COLORREF rgb)
 	COLORREF rgbPrev = m_rgbBackColor;
 	m_rgbBackColor = rgb;
 	m_pProp->RefreshItems(this);
+	return rgbPrev;
+}
+
+COLORREF SVRPropertyItem::SetBackColorReadOnly(bool refresh,COLORREF rgb)
+{
+	COLORREF rgbPrev = m_rgbBackColorReadOnly;
+	m_rgbBackColorReadOnly = rgb;
+	if(refresh)
+	{
+		m_pProp->RefreshItems(this);
+	}
 	return rgbPrev;
 }
 

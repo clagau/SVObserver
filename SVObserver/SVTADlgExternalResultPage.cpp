@@ -181,7 +181,7 @@ std::pair<std::map<std::string, SVRPropertyItem*>, int> SVTADlgExternalResultPag
 		std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.helptext().c_str());
 		pEdit->SetInfoText(sDescription.c_str());
 		pEdit->SetButtonText(_T("Range"));
-
+		pEdit->ReadOnly();
 		_variant_t temp = m_ValueController.Get<_variant_t>(SvPb::ExternalResultEId + i);
 		std::string sValue = SvUl::VariantToString(temp);
 

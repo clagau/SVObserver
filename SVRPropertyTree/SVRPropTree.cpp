@@ -399,6 +399,7 @@ void SVRPropTree::UpdatedItems()
 
 void SVRPropTree::DeleteAllItems()
 {
+	m_List.ClearLastReadonlyActivated(); // prevent potential crash
 	ClearVisibleList();	// prevent potential crash
 	Delete(nullptr);
 	UpdatedItems();

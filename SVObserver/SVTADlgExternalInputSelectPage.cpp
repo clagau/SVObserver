@@ -475,6 +475,7 @@ void SVTADlgExternalInputSelectPage::setValueColumn(SvPb::EmbeddedIdEnum eId, Sv
 		valueString = SvCmd::getDottedName(m_InspectionID, data.m_indirectIdName).c_str();
 	}
 
+	rEdit.SetBackColorReadOnly(false, SvDef::WhiteSmoke);
 	rEdit.SetItemValue(valueString);
 	rEdit.OnRefresh();
 	rEdit.ReadOnly(isReadOnly, true);

@@ -166,6 +166,10 @@ void SVRPropTreeCtrl::UpdatePositions()
 		nTotal += nHeight;
 	}
 }
+void SVRPropTreeCtrl::ClearLastReadonlyActivated()
+{
+	m_pLastReadonlyActivated = nullptr;
+};
 
 void SVRPropTreeCtrl::OnPaint() 
 {
