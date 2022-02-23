@@ -162,7 +162,7 @@ private:
 
 	bool setValueFromDouble(double value);
 
-	void setSelectedOption(SvPb::LinkedSelectedOption type);
+	void setSelectedOption(SvPb::LinkedSelectedOption option);
 
 	bool resetChildren(const SVObjectClass* const pLinkedObject, const std::vector<SvPb::EmbeddedIdEnum>& rEmbeddedIdList, SvStl::MessageContainerVector* pErrorMessages);
 	bool resetChild(int pos, SvOi::IValueObject* pValue, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct);

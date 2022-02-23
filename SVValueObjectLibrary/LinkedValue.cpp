@@ -595,9 +595,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		bool ret = __super::CreateObject(rCreateStructure);
 
-		//@TODO[MZA][10.20][22.02.2022] remove it later. This code is only for one beta-version to correct objectName from old "type" to new "reference option"
-		m_refOptionObject.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_LINKEDVALUE_OPTION).c_str());
-
 		long lValue = 0;
 		m_refOptionObject.GetValue(lValue);
 		m_refOption = static_cast<SvPb::LinkedSelectedOption>(lValue);
