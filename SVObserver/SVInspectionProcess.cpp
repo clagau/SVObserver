@@ -846,12 +846,12 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 
 	if (false == m_offlineRequest)
 	{
-		m_processActive = true;
 		{
 			std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
 			m_product = pProduct->copyInspectionToNewProduct(getObjectId());
 		}
 		SVObjectManagerClass::Instance().IncrementInspectionIndicator();
+		m_processActive = true;
 		result = m_AsyncProcedure.Signal(nullptr);
 	}
 	return result;

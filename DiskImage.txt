@@ -1,61 +1,27 @@
-﻿Notable changes from 10.01 to 10.10
+﻿Notable changes from 10.12 to 10.12.1
 
-Compatible Changes:  
-- SVO-2799 Create GroupTool
-- SVO-2800 Make GroupTool closeable
-- SVO-1155 Redo Resize Tool
-- SVO-3014 Use new SoC Hilscher functionality in PlcIO.dll 
-- SVO-3214 Software Trigger via SVRC
-- SVO-2912 Advanced Trigger Property Settings
-- SVO-65 Add additional feature to blob analyzer
-- SVO-2986 Exclude for custom feature
-- SVO-2759 Create basic version for Blob Analyzer 2
-- SVO-2763 Enhance DrawTab in BlobAnalyzer2
-- SVO-2761 Add Customfeature to BlobAnalyzer2
-- SVO-3062 Network/mapped drive in ArchiveTool
-- SVO-990 Add the indices of array members to their header strings in archive files
-- SVO-2977 Keep Images in Memory during File Acqisition (Feature for test purposes)
-- SVO-1081 Linear Tool: Pass Fail Ranges for Min/Max/Diff Value of the profile
-- SVO-2738 Audittrail for external files (Config Report)
-- SVO-1568 Feature Request Shape mask values controlled by formula
-- SVO-2462 Delete the temporary "Temp.svz" - file after the SIAC command PutSVIMConfig
-- SVO-511 Implement Phase 2 of Copy/Paste Functional Requirement
-- SVO-2416 WebApp: SVObserver - Zoom possibilities
-- SVO-2997 WebApp: allow re-ordering entries in ListView
-- SVO-3003 WebApp: Add user permission to UI components
-- SVO-2871 WebApp: Add Overlay for Mask
-- SVO-327 Simplify Formular Equation for array
-- SVO-741 Image tool ROI shall be fixed to position (0;0)
-- SVO-562 Spawn pre-batch and post-batch processes.
-- SVO-3127 Switch company logos in SVObserver to new Körber design
+Compatible Changes:
+- SVO-3554 Rename the model name from NEO1 to NEO
 
 Incompatible Changes:
 None
 
 Fixed Bugs:
-- SVO-2906 Teaming - LinkAggreagation - AddCameraTeam1.bat not working
-- SVO-3114 51517 SVO Hard Crash and/or mixed-up Global Constant values after setting Remote Inputs and Global Constants from remote
-- SVO-2713 Project 37317: SAMI reload leads to a sudden SVObserver crash
-- SVO-3106 Initialization values of Tool Set Image Size Parameters not properly set as Linked Values
-- SVO-2963 SVObserver Default Font
-- SVO-3025 Change default Printer Destination from "LPT1" to "File"
-- SVO-2462 Delete the temporary "Temp.svz" - file after the SIAC command PutSVIMConfig
+- SVO-3536 NAK without PPQ full (Issue at the Inspection Machine)
+- SVO-3553 NAK without PPQ full (Issue in NEO simulation mode)
 
 Notable SVIM Image Changes:
-- SVO-3075 No Default Image Viewer in Windows 10 with click functionality
-- SVO-3158 SVIM NEO RAM Drive to 8GB
-- SVO-3157 SVIM NEO Disk Partition
+- None
 
 Base Image Name:
-- X2C1010
-- NEO1010
+- NEO1012 When new image used
 
 SOFTWARE VERSIONS:
 
-SVObserver version 10.10
+SVObserver version 10.12.1
 SVRC Version 10.10
 SIAC Version 7.50
-SVOGateway Version 10.10
+SVOGateway Version 10.12.1
 
 SVLpt version 7.0.0.0 (11)
 

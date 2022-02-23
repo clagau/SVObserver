@@ -16,12 +16,15 @@
 
 namespace SvPlc
 {
-constexpr unsigned int cTimerResolution = 1;
 constexpr size_t cCycleParameterNumber = 8;
 constexpr uint8_t cPlcInvalid = 4;
 constexpr uint8_t cPlcBad = 5;
 constexpr uint8_t cPlcGood = 6;
 constexpr uint8_t cSingleObjectType = 1;
+constexpr uint32_t cNormalizePeriod = 500;
+constexpr ULONG cTimerResolution = 5000;
+constexpr double cSecondsPerMinute = 60.0;
+constexpr double cConversion_µs = 1000000.0;
 constexpr LPCTSTR cResultFilename = _T("Result");
 constexpr LPCTSTR cResultExtension = _T(".csv");
 constexpr LPCTSTR cResultHeader = _T("ObjectID; Trigger Timestamp; Result Timestamp; Results\r\n");
@@ -38,38 +41,50 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 {
 	if(0 != simTriggerData.m_initialDelay)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(simTriggerData.m_initialDelay));
+		std::this_thread::sleep_for(std::chrono::microseconds(simTriggerData.m_initialDelay));
 	}
+
+	//Normalize the period to the next 500µs
+	uint32_t period = simTriggerData.m_period + cNormalizePeriod - simTriggerData.m_period % cNormalizePeriod;
+	LARGE_INTEGER pauseTime;
+	pauseTime.QuadPart = -static_cast<int64_t>(period * 10);
+
 	uint8_t currentIndex {1};
 	uint32_t objectID {simTriggerData.m_objectID};
+	HANDLE timer = ::CreateWaitableTimer(NULL, FALSE, simTriggerData.m_name.c_str());
 
 	while(rRun)
 	{
-		if(currentIndex <= simTriggerData.m_triggerPerObjectID)
+		if(currentIndex <= simTriggerData.m_triggerPerObjectID && nullptr != timer)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(simTriggerData.m_period));
-			TriggerReport triggerReport;
-			triggerReport.m_triggerTimestamp = SvUl::GetTimeStamp();
-			triggerReport.m_channel = simTriggerData.m_channel;
-			triggerReport.m_objectID = objectID;
-			triggerReport.m_objectType = cSingleObjectType;
-			triggerReport.m_triggerPerObjectID = simTriggerData.m_triggerPerObjectID;
-			triggerReport.m_triggerIndex = currentIndex;
-			triggerReport.m_isValid = true;
+			if (0 != ::SetWaitableTimer(timer, &pauseTime, 0L, nullptr, nullptr, FALSE))
 			{
-				std::lock_guard<std::mutex> guard {gTriggerDataMutex};
-				gTriggerReport[triggerReport.m_channel] = std::move(triggerReport);
+				if (WaitForSingleObject(timer, INFINITE) == WAIT_OBJECT_0)
+				{
+					TriggerReport triggerReport;
+					triggerReport.m_triggerTimestamp = SvUl::GetTimeStamp();
+					triggerReport.m_channel = simTriggerData.m_channel;
+					triggerReport.m_objectID = objectID;
+					triggerReport.m_objectType = cSingleObjectType;
+					triggerReport.m_triggerPerObjectID = simTriggerData.m_triggerPerObjectID;
+					triggerReport.m_triggerIndex = currentIndex;
+					triggerReport.m_isValid = true;
+					{
+						std::lock_guard<std::mutex> guard {gTriggerDataMutex};
+						gTriggerReport[triggerReport.m_channel] = std::move(triggerReport);
+					}
+					gNewTrigger[simTriggerData.m_channel] = true;
+					currentIndex++;
+					::SetEvent(g_hSignalEvent);
+				}
 			}
-			gNewTrigger[simTriggerData.m_channel] = true;
-			currentIndex++;
-			::SetEvent(g_hSignalEvent);
 		}
 
 		if(currentIndex > simTriggerData.m_triggerPerObjectID)
 		{
 			if(0 != simTriggerData.m_objectDelay)
 			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(simTriggerData.m_objectDelay));
+				std::this_thread::sleep_for(std::chrono::microseconds(simTriggerData.m_objectDelay));
 			}
 			currentIndex = 1;
 			objectID++;
@@ -78,6 +93,10 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 				rRun = false;
 			}
 		}
+	}
+	if (nullptr != timer)
+	{
+		::CancelWaitableTimer(timer);
 	}
 }
 
@@ -92,6 +111,8 @@ HRESULT SimulatedTriggerSource::initialize()
 	HRESULT result{ S_OK };
 	if(false == m_plcSimulateFile.empty())
 	{
+		m_pSetTimerResolution = reinterpret_cast<NtSetTimerResolutionPtr>(GetProcAddress(GetModuleHandle("ntdll.dll"), "NtSetTimerResolution"));
+
 		std::ifstream cycleFile;
 		std::string fileLine;
 		cycleFile.open(m_plcSimulateFile.c_str(), std::ifstream::in | std::ifstream::binary);
@@ -140,7 +161,7 @@ HRESULT SimulatedTriggerSource::initialize()
 							result = E_INVALIDARG;
 							break;
 						}
-						double objectPeriod = 60.0 / machineSpeed * 1000.0;
+						double objectPeriod = cSecondsPerMinute / machineSpeed * cConversion_µs;
 						double mainTriggerPeriod = objectPeriod * (1.0 - objectDelayRatio) ;
 						triggerData.m_initialDelay = static_cast<uint32_t> (objectPeriod * intialDelayRatio);
 						triggerData.m_period = static_cast<uint32_t> (mainTriggerPeriod / triggerData.m_triggerPerObjectID);
@@ -194,6 +215,7 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 				}
 				m_channel[channel].m_runThread = true;
 				m_channel[channel].m_timerThread = std::thread(&ChannelTimer, std::ref(m_channel[channel].m_runThread), m_channel[channel].m_simulatedTriggerData);
+				::SetThreadPriority(m_channel[channel].m_timerThread.native_handle(), THREAD_PRIORITY_HIGHEST);
 			}
 		}
 		else
@@ -214,12 +236,17 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 	bool result = __super::setTriggerChannel(channel, active);
 	if(true == result)
 	{
-		::timeBeginPeriod(cTimerResolution);
+		if (nullptr != m_pSetTimerResolution)
+		{
+			m_pSetTimerResolution(cTimerResolution, true, &m_originalTimerResolution);
+		}
 	}
 	else
 	{
-		::timeEndPeriod(cTimerResolution);
-
+		if (nullptr != m_pSetTimerResolution)
+		{
+			m_pSetTimerResolution(m_originalTimerResolution, false, nullptr);
+		}
 
 		std::string resultFilename;
 		size_t pos = m_plcSimulateFile.rfind('\\');
