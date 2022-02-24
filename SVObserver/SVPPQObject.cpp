@@ -985,6 +985,7 @@ void SVPPQObject::GoOnline()
 	}// end if
 
 	bool bCameraGoOnline = true;
+	double maxShutterTime {0.0};
 	for (auto& rCameraPair : m_Cameras)
 	{
 		if (!rCameraPair.first->GoOnline())
@@ -992,6 +993,17 @@ void SVPPQObject::GoOnline()
 			FailureObjectName = rCameraPair.first->GetCompleteName();
 			bCameraGoOnline = false;
 			break;
+		}
+		SvVol::BasicValueObjectPtr pCameraShutter = rCameraPair.first->getCameraValue(SvDef::FqnCameraShutter);
+		if (nullptr != pCameraShutter)
+		{
+			double shutterTime {0.0};
+			pCameraShutter->getValue(shutterTime);
+			shutterTime /= 1000.0;
+			if (shutterTime > maxShutterTime)
+			{
+				maxShutterTime = shutterTime;
+			}
 		}
 	}// end for
 
@@ -1013,6 +1025,11 @@ void SVPPQObject::GoOnline()
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
 		throw Msg;
 	}// end if
+
+	if (maxShutterTime > 0.0)
+	{
+		m_PPQPositions.setMaxCameraShutterTime(maxShutterTime);
+	}
 
 	if (!m_pTrigger->GoOnline())
 	{
@@ -1119,6 +1136,7 @@ bool SVPPQObject::GoOffline()
 		m_uOutputTimer = 0;
 	}
 
+	m_PPQPositions.setMaxCameraShutterTime(0.0);
 	// Bring the threads back down to earth
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 

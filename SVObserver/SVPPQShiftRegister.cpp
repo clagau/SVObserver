@@ -206,7 +206,7 @@ bool SVPPQShiftRegister::findTimeMatch(double checkTime, double triggerTime)  co
 	bool result = 0.0 < triggerTime && (triggerTime - m_preTriggerTimeWindow) < checkTime;
 	if(result && m_postTriggerTimeWindow > 0.0)
 	{
-		result = checkTime < (triggerTime + m_postTriggerTimeWindow);
+		result = checkTime < (triggerTime + m_postTriggerTimeWindow + m_maxCameraShutterTime);
 	}
 
 	return result;

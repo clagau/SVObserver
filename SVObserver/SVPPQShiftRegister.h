@@ -40,6 +40,7 @@ public:
 	long GetIndexByTriggerTimeStamp(double checkTime, int cameraID) const;
 
 	void setTriggerTimeWindow(double preTriggerTimeWindow, double postTriggerTimeWindow) { m_preTriggerTimeWindow = preTriggerTimeWindow; m_postTriggerTimeWindow = postTriggerTimeWindow; }
+	void setMaxCameraShutterTime(double shutterTime) { m_maxCameraShutterTime = shutterTime; }
 
 private:
 	bool findTimeMatch(double checkTime, double triggerTime) const;
@@ -52,5 +53,6 @@ private:
 	long m_TailTriggerCount{ 0L };
 	double m_preTriggerTimeWindow{ 0.0 };	//This is to compensate that the trigger may be recorded after the start frame (in milliseconds)
 	double m_postTriggerTimeWindow {0.0};
+	double m_maxCameraShutterTime {0.0};
 };
 
