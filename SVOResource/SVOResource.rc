@@ -358,7 +358,7 @@ BEGIN
     LTEXT           "Lilienthalstr. 8",IDC_ADDRESS,14,68,208,8
     LTEXT           "D-85570 Markt Schwaben, Germany",IDC_COUNTRY2,14,78,208,8
     LTEXT           "Phone:  +49  8121 802-0",IDC_PHONE,14,88,208,8
-    LTEXT           "E-mail:  info-inspection@koerber-pharma.com",IDC_EMAIL,14,98,208,8
+    LTEXT           "E-mail:  support.ph.inspection@koerber.com",IDC_EMAIL,14,98,208,8
     LTEXT           "www.koerber-pharma.com",IDC_WEBSITE,14,108,208,8
     LTEXT           "Körber Pharma Inspection GmbH, Markt Schwaben\nAll Rights Reserved.",IDC_COPYRIGHT,14,144,208,16
     GROUPBOX        "Additional Version Information",IDC_STATIC,7,168,221,62
