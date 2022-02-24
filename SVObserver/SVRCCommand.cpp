@@ -623,7 +623,13 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 				result = E_INVALIDARG;
 			}
 			else
-			{
+			{	
+				std::filesystem::path pathWithoutFilename = std::filesystem::path(destinationPath).parent_path();
+				if (false == std::filesystem::exists(pathWithoutFilename))
+				{
+					std::filesystem::create_directories(pathWithoutFilename);
+				}
+
 				result = SVEncodeDecodeUtilities::StringContentToFile(destinationPath, rRequest.filedata());
 			}
 
