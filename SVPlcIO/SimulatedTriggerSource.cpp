@@ -24,7 +24,7 @@ constexpr uint8_t cSingleObjectType = 1;
 constexpr uint32_t cNormalizePeriod = 500;
 constexpr ULONG cTimerResolution = 5000;
 constexpr double cSecondsPerMinute = 60.0;
-constexpr double cConversion_µs = 1000000.0;
+constexpr double cConversionMicrosec = 1000000.0;
 constexpr LPCTSTR cResultFilename = _T("Result");
 constexpr LPCTSTR cResultExtension = _T(".csv");
 constexpr LPCTSTR cResultHeader = _T("ObjectID; Trigger Timestamp; Result Timestamp; Results\r\n");
@@ -161,7 +161,7 @@ HRESULT SimulatedTriggerSource::initialize()
 							result = E_INVALIDARG;
 							break;
 						}
-						double objectPeriod = cSecondsPerMinute / machineSpeed * cConversion_µs;
+						double objectPeriod = cSecondsPerMinute / machineSpeed * cConversionMicrosec;
 						double mainTriggerPeriod = objectPeriod * (1.0 - objectDelayRatio) ;
 						triggerData.m_initialDelay = static_cast<uint32_t> (objectPeriod * intialDelayRatio);
 						triggerData.m_period = static_cast<uint32_t> (mainTriggerPeriod / triggerData.m_triggerPerObjectID);
