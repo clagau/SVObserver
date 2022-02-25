@@ -896,7 +896,7 @@ HRESULT CDllTool::getTransformationDefinitions(std::array<TransformDefs, 1>& tra
 {
 	
 	transformdefs[0].imageinput = 0;
-	transformdefs[0].imageoutput = 0;
+	transformdefs[0].imageoutput = NUM_RESULT_IMAGES;// for all outputs images 
 	transformdefs[0].resultindex = RESULTVALUE_DOUBLE_ARRAY_FUNCTION;
 	return S_OK;
 

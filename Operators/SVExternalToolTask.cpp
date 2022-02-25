@@ -1057,7 +1057,7 @@ void SVExternalToolTask::initializeResultImages(std::vector<std::string>& rStatu
 	int ImageIn {-1}, ImageOut {-1}, ResultIndex {-1};
 	if (!useUnitImageMapping &&  m_dll.HasTransformationMatrix(ImageIn, ImageOut, ResultIndex))
 	{
-		if (m_Data.m_lNumResultImages > ImageOut && m_Data.m_lNumInputImages > ImageIn)
+		if (m_Data.m_lNumResultImages > 0 && m_Data.m_lNumInputImages > ImageIn)
 		{
 			if (ResultIndex < m_Data.m_ResultDefinitions.size() && m_Data.m_ResultDefinitions[ResultIndex].getVT() == (VT_ARRAY | VT_R8))
 			{
@@ -2057,10 +2057,22 @@ void SVExternalToolTask::getResults(SvOi::ITRCImagePtr pResultImageBuffers[])
 	if (m_Data.m_UseTransformationMatrix)
 	{
 		std::vector<double> TMatrix;
-		SvIe::SVImageClass* pImage = &(m_aResultImages[m_Data.m_OutputImageIndex]);
 		GetResultValueObject(m_Data.m_ResultIndexTransformationMatrix)->getValues(TMatrix);
-		pImage->setTransfermatrix(TMatrix);
-		//SvTo::SVToolClass*  pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
+		if (m_Data.m_OutputImageIndex >=  0 &&  m_Data.m_OutputImageIndex < m_Data.m_lNumResultImages)
+		{
+			SvIe::SVImageClass* pImage = &(m_aResultImages[m_Data.m_OutputImageIndex]);
+			pImage->setTransfermatrix(TMatrix);
+		}
+		else
+		{
+			//loop over all output images if index is not valid
+			for (int i = 0; i < m_Data.m_lNumResultImages; i++)
+			{
+				SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
+				pImage->setTransfermatrix(TMatrix);
+			}
+		}
+		
 		SvTo::SVToolClass* pTool = static_cast<SvTo::SVToolClass*>(GetTool());
 		if (pTool)
 		{
