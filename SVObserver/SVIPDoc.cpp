@@ -76,6 +76,7 @@
 #include "Triggering/SVTriggerObject.h"
 #include "ObjectInterfaces/ObjectInfo.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
+#include "SVVisionProcessorHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -204,7 +205,8 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOOPTOOL, OnUpdateAddToolWithSubTools)
 	ON_UPDATE_COMMAND_UI(ID_ADD_GROUPTOOL, OnUpdateAddToolWithSubTools)
 	ON_UPDATE_COMMAND_UI(ID_ADD_DRAWTOOL, OnUpdateAddGeneralTool)
-
+	ON_COMMAND(ID_SAVE_CONFIG_REPORT, OnSaveConfigReport)
+	ON_UPDATE_COMMAND_UI(ID_SAVE_CONFIG_REPORT, OnUpdateSaveConfigReport)
 
 END_MESSAGE_MAP()
 
@@ -3327,6 +3329,37 @@ void SVIPDoc::OnToolDependencies()
 }
 
 void SVIPDoc::OnUpdateToolDependencies(CCmdUI* PCmdUI)
+{
+	bool Enabled = TheSVObserverApp().OkToEdit();
+
+	PCmdUI->Enable(Enabled);
+}
+
+void SVIPDoc::OnSaveConfigReport()
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		if (pConfig->IsConfigurationLoaded())
+		{
+			bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+			constexpr const TCHAR* Filter = _T("Extensible Markup Language (*.xml)|*.xml||");
+			SvMc::SVFileDialog fileDlg(false, bFullAccess, _T("xml"), nullptr, 0, Filter, nullptr);
+			fileDlg.m_ofn.lpstrTitle = _T("Export Configuration Report");
+			if (fileDlg.DoModal() == IDOK)
+			{
+				std::string report;
+				SVVisionProcessorHelper::Instance().GetConfigurationPrintReport(report);
+				std::ofstream exportFile(fileDlg.GetPathName().GetString());
+				exportFile << report;
+			}
+		}
+	}
+}
+
+void SVIPDoc::OnUpdateSaveConfigReport(CCmdUI* PCmdUI)
 {
 	bool Enabled = TheSVObserverApp().OkToEdit();
 

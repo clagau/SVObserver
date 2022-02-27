@@ -2712,6 +2712,7 @@
 #define IDC_REMOVE_POST_FILE_EXEC       61487
 #define IDC_COLOR_CHECK                 61488
 #define IDS_OBJECTNAME_COLOR_IMAGE      61489
+#define ID_SAVE_CONFIG_REPORT			61490
 
 // Next default values for new objects
 // 
