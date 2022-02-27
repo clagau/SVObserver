@@ -22,8 +22,8 @@
 #pragma region Declarations
 const MIL_INT cFeatureControlType = M_FEATURE_VALUE;
 const MIL_INT cFeatureControlValueEnumType = M_TYPE_STRING;
-const MIL_INT cCameraVendorSizeType = M_CAMERA_VENDOR_SIZE;
-const MIL_INT cGCSerialNumberSizeType = M_GC_SERIAL_NUMBER_SIZE;
+const MIL_INT cCameraVendorSizeType = M_STRING_SIZE + M_CAMERA_VENDOR;
+const MIL_INT cGCSerialNumberSizeType = M_STRING_SIZE + M_GC_SERIAL_NUMBER;
 #pragma endregion Declarations
 
 /**
@@ -425,7 +425,7 @@ HRESULT SVMatroxDigitizerInterface::GetFormat(const SVMatroxDigitizer& Digitizer
 #endif
 	{
 		MIL_INT len;
-		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_FORMAT_SIZE, &len);
+		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_STRING_SIZE + M_FORMAT, &len);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == S_OK)
 		{

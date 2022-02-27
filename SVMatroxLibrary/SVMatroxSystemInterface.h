@@ -25,9 +25,7 @@ public:
 	static HRESULT Allocate(const std::string& SystemDescriptor, long long SystemNum, SVMatroxSystem& system);
 	static HRESULT Release(SVMatroxSystem& SystemId);
 
-	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& value);
-
-	static HRESULT Set(const SVMatroxSystem& SystemId, SVMatroxSystemControl::SVMatroxSystemControlEnum ControlType, long ControlValue);
+	static HRESULT Get(const SVMatroxSystem& SystemId, MIL_INT64 InquireType, long& value);
 
 	static HRESULT Destroy(SVMatroxSystem& p_rSystem);
 

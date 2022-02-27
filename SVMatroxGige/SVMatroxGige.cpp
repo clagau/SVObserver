@@ -738,7 +738,7 @@ HRESULT SVMatroxGige::CreateDigitizers(SVMatroxGigeSystem& system)
 	HRESULT result{ S_OK };
 
 	long l_DigCount = 0;
-	HRESULT l_Code = SVMatroxSystemInterface::Get(*(system.m_System.get()), SVMatroxSystemInquire::SVDigitizerNum, l_DigCount);
+	HRESULT l_Code = SVMatroxSystemInterface::Get(*(system.m_System.get()), M_DIGITIZER_NUM, l_DigCount);
 	if (l_Code == S_OK)
 	{
 		for (long i = 0; i < l_DigCount; i++)

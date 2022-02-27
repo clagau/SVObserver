@@ -107,63 +107,18 @@ HRESULT SVMatroxSystemInterface::Release(SVMatroxSystem& SystemId)
 //
 //*/
 //
-HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& InquireValue)
+HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, MIL_INT64 InquireType, long& InquireValue)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		long long l_MatroxType = 0;
-		HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemInquire::m_convertor, InquireType, l_MatroxType );
-		if (S_OK == hr)
-		{
-			MIL_INT l_Value = 0;
-			MsysInquire( SystemId.m_SystemIdentifier, l_MatroxType, &l_Value );
-			InquireValue = static_cast<long>( l_Value );
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			l_Code = hr;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
-}
-
-/**
-@SVOperationName Set
-
-@SVOperationDescription This method sets the Matrox System Control values.
-
-*/
-
-HRESULT SVMatroxSystemInterface::Set(const SVMatroxSystem& SystemId, SVMatroxSystemControl::SVMatroxSystemControlEnum ControlType, long ControlValue)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		__int64 l_MatroxType = 0;
-		HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemControl::m_convertor, ControlType, l_MatroxType);
-		if (S_OK == hr)
-		{
-			MsysControl( SystemId.m_SystemIdentifier, l_MatroxType, ControlValue );
-			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			// conversion error
-			l_Code = hr;
-		}
+		MIL_INT l_Value = 0;
+		MsysInquire( SystemId.m_SystemIdentifier, InquireType, &l_Value );
+		InquireValue = static_cast<long>( l_Value );
+		l_Code = SVMatroxApplicationInterface::GetLastStatus();
+		
 	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
