@@ -399,7 +399,7 @@ namespace SvOp
 		}
 	}
 
-	bool ParameterTask::checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::InputTypeEnum type, SvStl::MessageContainerVector* pErrorMessages)
+	bool ParameterTask::checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::InputTypeEnum type, SvStl::MessageContainerVector* pErrorMessages, uint32_t objectIdForErrorMessage)
 	{
 		bool bRet = true;
 		switch (type)
@@ -414,7 +414,7 @@ namespace SvOp
 				msgList.emplace_back(name);
 				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTable));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -435,7 +435,7 @@ namespace SvOp
 				msgList.emplace_back(name);
 				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_anImage));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -451,7 +451,7 @@ namespace SvOp
 					msgList.emplace_back(name);
 					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aGrayImage));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -465,7 +465,7 @@ namespace SvOp
 					msgList.emplace_back(name);
 					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aColorImage));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -484,7 +484,7 @@ namespace SvOp
 				msgList.emplace_back(name);
 				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTool));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -499,7 +499,7 @@ namespace SvOp
 			msgList.emplace_back(GetName());
 			msgList.emplace_back(name);
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
 			if (nullptr != pErrorMessages)
 			{
 				pErrorMessages->push_back(Msg.getMessageContainer());
@@ -560,7 +560,7 @@ namespace SvOp
 			case SvPb::InputTypeEnum::TypeImage:
 			case SvPb::InputTypeEnum::TypeStates:
 			{
-				bRet &= checkObject(pObject->GetName(), pObject, typeEnum, pErrorMessages);
+				bRet &= checkObject(pObject->GetName(), pObject, typeEnum, pErrorMessages, pObject->getObjectId());
 				break;
 			}
 			default:
@@ -569,7 +569,7 @@ namespace SvOp
 				msgList.emplace_back(GetName());
 				msgList.emplace_back(std::to_string(i));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, nullptr != pObject ? pObject->getObjectId() : getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, pObject->getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -634,18 +634,17 @@ namespace SvOp
 					{
 						SVObjectReference refObject {rRequestValue.value().indirectidstring()};
 						SvStl::MessageContainerVector msgVector;
-						if (false == checkObject(rRequestValue.name(), refObject.getObject(), type, &msgVector))
+						if (false == checkObject(rRequestValue.name(), refObject.getObject(), type, &msgVector, rValueObject.getObjectId()))
 						{
-							if (pErrorMessage)
+							if (pErrorMessage && 0 < msgVector.size())
 							{
-								pErrorMessage->CopyFrom(SvPb::convertMessageVectorToProtobuf(msgVector));
+								SvPb::convertMessageToProtobuf(msgVector[0], pErrorMessage->add_messages());
 							}
 							return false;
 						}
 					}
 					else
 					{
-						assert(false);
 						fillMessageToProtobuf(pErrorMessage, rValueObject.getObjectId(), SvStl::Tid_ValidateValue_LinkedObjectInvalid, SvStl::SourceFileParams(StdMessageParams));
 						return false;
 					}

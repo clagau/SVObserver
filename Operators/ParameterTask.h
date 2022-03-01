@@ -51,7 +51,7 @@ namespace SvOp
 		void init();
 		void BuildEmbeddedObjectList();
 		void registerParameter();
-		bool checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::InputTypeEnum type, SvStl::MessageContainerVector* pErrorMessages);
+		bool checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::InputTypeEnum type, SvStl::MessageContainerVector* pErrorMessages, uint32_t objectIdForErrorMessage);
 		bool checkValue(SvStl::MessageContainerVector* pErrorMessages);
 
 		void setObject(int index);
