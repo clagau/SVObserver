@@ -65,6 +65,8 @@ message SVRCMessages
 		LockAcquisitionStreamResponse lockAcquisitionStreamResponse = 1033;
 		LockTakeoverRequest lockTakeoverRequest = 1034;
 		LockTakeoverResponse lockTakeoverResponse = 1035;
+		LockTakeoverRejectedRequest lockTakeoverRejectedRequest = 1036;
+		LockTakeoverRejectedResponse lockTakeoverRejectedResponse = 1037;
 
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;

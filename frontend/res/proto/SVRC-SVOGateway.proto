@@ -203,12 +203,27 @@ message GetGatewayNotificationStreamResponse
 	oneof message
 	{
 		RejectStreamPauseNotification rejectStreamPaused = 1;
+		ConfigurationLockStatusNotification configurationLockStatus = 2;
 	}
 }
 
 message RejectStreamPauseNotification
 {
 	repeated uint32 pausedInspectionIds = 1;
+}
+
+enum LockStatus
+{
+	Unlocked = 0;
+	Locked = 1;
+}
+
+message ConfigurationLockStatusNotification
+{
+	LockStatus status = 1;
+	optional string owner = 2;
+	optional string description = 3;
+	optional string host = 4;
 }
 
 message GetGatewayMessageStreamRequest
@@ -389,29 +404,33 @@ message LockAcquisitionStreamRequest
 	// In case the lock is already locked, request a takeover otherwise fail.
 	bool requestTakeover = 2;
 
-	// Timeout in milliseconds to wait for lock to be released in case already locked.
-	// Use 0 to wait forever.
-	uint64 takeoverTimeout = 3;
+	// Optional message for the current lock owner that is shown when requesting the lock.
+	string takeoverMessage = 3;
 
-	// Optional message to present to the current lock owner when requesting the release.
-	string takeoverMessage = 4;
-
-	// Timeout in milliseconds when lock is automatically released again.
-	// 0 deactivates it.
-	uint64 lockExpire = 5;
-
-	// Optional description for why the lock is acquired.
-	string description = 6;
+	// Optional description why the lock is acquired.
+	string description = 4;
 }
 
 message LockAcquisitionStreamResponse
 {
 	oneof message
 	{
+		// Client is saved as the owner of shared memory block after successful lock acquisition.
+		// He can release shared memory lock on his side or pass config lock if takeover request is received.
 		LockAcquiredNotification lockAcquiredNotification = 1;
+
+		// Client sends a notification with information regarding takeover to other client who is the lock owner.
+		// Mentioned owner may then decide to hand over the lock or not.
 		LockTakeoverNotification lockTakeoverNotification = 2;
+
+		// Current owner releases the shared memory lock. In this case other clients can reacquire it.
 		LockReleasedNotification lockReleasedNotification = 3;
+
+		// Shared memory lock is already owned by other user.
 		LockAlreadyLockedNotification lockAlreadyLockedNotification = 4;
+
+		// Notification used to inform takeover candidate about reject decision from lock owner
+		LockTakeoverRejectedNotification lockTakeoverRejectedNotification = 5;
 	}
 }
 
@@ -439,6 +458,10 @@ message LockAlreadyLockedNotification
 	string host = 4; // IP of the host that acquired the lock.
 }
 
+message LockTakeoverRejectedNotification
+{
+}
+
 message LockTakeoverRequest
 {
 	uint32 lockId = 1;
@@ -449,20 +472,23 @@ message LockTakeoverResponse
 {
 }
 
+message LockTakeoverRejectedRequest
+{
+	uint32 takeoverId = 1;
+}
+
+message LockTakeoverRejectedResponse
+{
+}
+
 enum LockReleaseReason
 {
 	// Released by the owner.
 	ExplicitRelease = 0;
 
-	// Owner disconnected.
-	Disconnect = 1;
-
-	// Owner did not refresh the lock in time.
-	Timeout = 2;
-
 	// Something on SVObserver side changed that automatically released the lock
 	// (e.g. configuration closed).
-	SVObserver = 3;
+	SVObserver = 1;
 }
 
 message LockReleasedNotification
