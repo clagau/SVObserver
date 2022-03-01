@@ -17,6 +17,7 @@
 #include "SVSharedMemoryLibrary/ShareControl.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
+#include "SVSharedMemoryLibrary/LockAcquisitionStream.h"
 #include "SVSharedMemoryLibrary/SharedMemoryLock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #pragma endregion Includes
@@ -90,6 +91,7 @@ public:
 
 	void AcquireLockStream(const SvAuth::SessionContext&, const SvPb::LockAcquisitionStreamRequest&, SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>, SvRpc::ServerStreamContext::Ptr);
 	void TakeoverLock(const SvAuth::SessionContext&, const SvPb::LockTakeoverRequest&, SvRpc::Task<SvPb::LockTakeoverResponse>);
+	void RejectLockTakeover(const SvAuth::SessionContext&, const SvPb::LockTakeoverRejectedRequest&, SvRpc::Task<SvPb::LockTakeoverRejectedResponse>);
 
 	bool CheckRequestPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Task<SvPenv::Envelope>);
 	bool CheckStreamPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Observer<SvPenv::Envelope>, SvRpc::ServerStreamContext::Ptr);
@@ -146,6 +148,11 @@ private:
 	void check_trigger_record_pause_state_changed();
 	void on_trigger_record_pause_state_changed_impl(const std::vector<bool>&);
 	void send_trigger_record_pause_state_to_client(notification_stream_t&, const std::vector<bool>&);
+	void schedule_configuration_lock_status_update();
+	void on_configuration_lock_status_timer(const boost::system::error_code&);
+	void send_configuration_lock_status_if_changed();
+	void send_configuration_lock_status_update_to_clients();
+	void send_configuration_lock_status(notification_stream_t&, const std::shared_ptr<lock_acquisition_stream_t>&);
 
 private:
 	struct message_stream_t
@@ -157,41 +164,12 @@ private:
 	};
 
 private:
-	struct lock_acquisition_stream_t
-	{
-		lock_acquisition_stream_t(
-			const SvPb::LockAcquisitionStreamRequest&,
-			const SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>&,
-			const SvRpc::ServerStreamContext::Ptr&,
-			const SvAuth::SessionContext&);
-
-		static std::shared_ptr<lock_acquisition_stream_t> create(
-			const SvPb::LockAcquisitionStreamRequest&,
-			const SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>&,
-			const SvRpc::ServerStreamContext::Ptr&,
-			const SvAuth::SessionContext&);
-
-		static std::uint32_t ID_COUNTER;
-
-		std::uint32_t id;
-		SvPb::LockAcquisitionStreamRequest request;
-		SvRpc::Observer<SvPb::LockAcquisitionStreamResponse> observer;
-		SvRpc::ServerStreamContext::Ptr streamContext;
-		SvAuth::SessionContext sessionContext;
-		bool isLockOwner;
-	};
-
 	void acquire_lock(lock_acquisition_stream_t&);
 	void handle_lock_acquisition(lock_acquisition_stream_t&);
 	void notify_client_about_lock_acquisition(const lock_acquisition_stream_t&);
-	void schedule_auto_release_lock(lock_acquisition_stream_t&, const std::uint64_t);
-	void auto_release_lock(lock_acquisition_stream_t&);
 	void release_lock(lock_acquisition_stream_t&, const SvPb::LockReleaseReason);
 	void broadcast_release_notification(const lock_acquisition_stream_t& stream, SvPb::LockReleaseReason);
-	void handle_lock_takeover_request(lock_acquisition_stream_t&);
-	void notify_owner_about_lock_takeover(const lock_acquisition_stream_t&);
-	void schedule_cancel_for_lock_takeover(lock_acquisition_stream_t&, const std::uint64_t);
-	void cancel_lock_takeover(lock_acquisition_stream_t&);
+	void handle_lock_takeover_request(const lock_acquisition_stream_t&);
 	void schedule_disconnected_clients_check();
 	void on_disconnected_clients_check(const boost::system::error_code&);
 	void check_disconnected_clients();
@@ -215,11 +193,8 @@ private:
 	SvOi::RAIIPtr m_TrcNewInterestTrSubscriptionRAII;
 
 	SharedMemoryLock m_SharedMemoryLock;
-	std::string m_LockOwner;
-	boost::asio::deadline_timer m_AutoReleaseTimer;
-	boost::asio::deadline_timer m_LockTakeoverCancelTimer;
 	boost::asio::deadline_timer m_DisconnectCheckTimer;
-	std::vector<std::shared_ptr<lock_acquisition_stream_t>> m_LockAcquisitionStreams;
+	boost::asio::deadline_timer m_ConfigurationLockStatusTimer;
 
 	std::mutex m_NewTriggerMutex;
 	std::vector<SvOi::TrInterestEventData> m_NewTriggerQueue;

@@ -105,6 +105,7 @@ message SessionContext
 {
 	uint32 id = 1;
 	string username = 2;
+	string host = 3;
 }
 
 message UserDatabaseEntry

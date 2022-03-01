@@ -38,11 +38,6 @@
 
 constexpr const char* c_DefaultConfigurationName = _T("Configuration");
 
-SVRCCommand::SVRCCommand()
-	: m_SharedMemoryLock(true)
-{
-}
-
 void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	DWORD notAllowedStates = SV_STATE_UNAVAILABLE;

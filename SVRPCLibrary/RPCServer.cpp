@@ -38,6 +38,7 @@ void RPCServer::onConnect(int id, SvHttp::HttpServerConnection& rConnection)
 	SV_LOG_GLOBAL(info) << "[http] Client connected id: " << id;
 	m_Connections[id] = &rConnection;
 	m_ServerStreamContexts[id] = {};
+	m_SessionContexts[id].set_host(rConnection.getIpAddress());
 	// NOTE: m_SessionContexts[id] already initialized in onHandshake which is called before onConnect
 }
 

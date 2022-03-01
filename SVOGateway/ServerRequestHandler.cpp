@@ -251,6 +251,18 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccess* sma, SvAuth::Auth
 			{
 				sma->TakeoverLock(sessionContext, request, task);
 			});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kLockTakeoverRejectedRequest,
+		SvPb::LockTakeoverRejectedRequest,
+		SvPb::LockTakeoverRejectedResponse>([sma](
+			const SvAuth::SessionContext& sessionContext,
+			SvPb::LockTakeoverRejectedRequest&& request,
+			SvRpc::Task<SvPb::LockTakeoverRejectedResponse> task)
+			{
+				sma->RejectLockTakeover(sessionContext, request, task);
+			});
 }
 
 }
