@@ -115,9 +115,7 @@ IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest& rMessage)
 		case SvPb::GetAvailableObjectsRequest::kHasExtension:
 		{
 			return AllowedFunctionHelper::hasExtension;
-		
 		}
-		
 		default:
 		{
 			return AllowedFunctionHelper::IsValidObject();

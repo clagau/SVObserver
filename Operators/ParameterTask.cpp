@@ -25,8 +25,7 @@ namespace SvOp
 	namespace
 	{
 	constexpr long cMaxNumberOfObjects = 50;
-	constexpr const char* cObjectTypeEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5");
-	constexpr const char* cObjectTypeResultEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5,States=6");
+	constexpr const char* cObjectTypeEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5,States=6");
 	constexpr const char* cTypeNamePostfix = _T(" Type");
 	const std::array<std::string, 3> g_forbittenNames {"Number of Objects" /*IDS_OBJECTNAME_NUMBER_OF_OBJECTS*/, "State" /*IDS_OBJECTNAME_STATUS*/, "Color" /*IDS_OBJECTNAME_COLOR*/};
 
@@ -813,7 +812,7 @@ namespace SvOp
 
 	SV_IMPLEMENT_CLASS(ResultParameterTask, SvPb::ResultParameterTaskClassId);
 	ResultParameterTask::ResultParameterTask(SVObjectClass* pOwner, int StringResourceID)
-		: ParameterTask(SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, cObjectTypeResultEnum, pOwner, StringResourceID)
+		: ParameterTask(SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, cObjectTypeEnum, pOwner, StringResourceID)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
 		m_ObjectTypeInfo.m_SubType = SvPb::ParameterResultObjectType;
