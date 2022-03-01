@@ -11,7 +11,7 @@ Fixed Bugs:
 - SVO-3553 NAK without PPQ full (Issue in NEO simulation mode)
 
 Notable SVIM Image Changes:
-- None
+- SVO-3567 Change the Thread Priority in SVLpt.dll
 
 Base Image Name:
 - NEO1012 When new image used
@@ -23,7 +23,7 @@ SVRC Version 10.10
 SIAC Version 7.50
 SVOGateway Version 10.12.1
 
-SVLpt version 7.0.0.0 (11)
+SVLpt version 7.0.1.0 (11)
 
 MIL 10 R2 (build 2995) 64-bit
 [10.35.800]
