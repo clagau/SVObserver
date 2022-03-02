@@ -56,9 +56,9 @@ void SharedMemoryLock::createOrOpenSharedMemorySegment()
 			mSharedMemoryHandlerPtr = std::make_unique<shared_memory_object>(
 				open_only, mMemoryName.c_str(), read_write);
 		}
-		catch (const interprocess_exception& e)
+		catch (const interprocess_exception& ex)
 		{
-			SV_LOG_GLOBAL(error) << "Couldn't open shared memory named " << mMemoryName << ": " << e.what();
+			SV_LOG_GLOBAL(error) << "Couldn't open shared memory named " << mMemoryName << ": " << ex.what();
 			throw std::runtime_error("Shared memory error");
 		}
 	}
