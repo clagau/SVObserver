@@ -86,7 +86,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LockAcquisitionStream.cpp" />
     <ClCompile Include="MesManHelper.cpp" />
     <ClCompile Include="MLCpyContainer.cpp" />
     <ClCompile Include="MLProduct.cpp" />
@@ -109,7 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LastResponseData.h" />
-    <ClInclude Include="LockAcquisitionStream.h" />
     <ClInclude Include="MesManHelper.h" />
     <ClInclude Include="MLCpyContainer.h" />
     <ClInclude Include="MLInspectionInfo.h" />

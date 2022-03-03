@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "SharedMemoryLock.h"
 #include "SVLogLibrary/Logging.h"
-#include "SVSharedMemoryLibrary/LockAcquisitionStream.h"
 
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/log/attributes/mutable_constant.hpp>
@@ -16,21 +15,33 @@
 
 using namespace boost::interprocess;
 
+namespace
+{
+	const char* memoryName = "sv_shared_memory";
+}
+
 SharedMemory::SharedMemory()
 	: mLockState(LockState::Unlocked)
 	, mMutex()
 {
 }
 
-SharedMemoryLock::SharedMemoryLock(const std::string& name)
-	: mMemoryName(name)
-	, mSharedMemoryHandlerPtr(nullptr)
+SharedMemoryLock::SharedMemoryLock(const bool createFirst)
+	: mSharedMemoryHandlerPtr(nullptr)
 	, mMappedRegionPtr(nullptr)
 	, mSharedMemory(nullptr)
-	, mChanged(false)
 {
-	cleanSharedMemory(); // Clean potential garbage
-	createOrOpenSharedMemorySegment();
+	// SVObserver should be launched first to create space for shared memory.
+	// SVOGateway only tries to open existing shared memory!
+	if (createFirst)
+	{
+		cleanSharedMemory(); // Clean potential garbage
+		createSharedMemorySegment();
+	}
+	else
+	{
+		openSharedMemorySegment();
+	}
 }
 
 SharedMemoryLock::~SharedMemoryLock()
@@ -38,46 +49,50 @@ SharedMemoryLock::~SharedMemoryLock()
 	cleanSharedMemory();
 }
 
-void SharedMemoryLock::createOrOpenSharedMemorySegment()
+bool SharedMemoryLock::createSharedMemorySegment()
 {
-	bool isSharedMemoryCreated = false;
 	try
 	{
 		mSharedMemoryHandlerPtr = std::make_unique<shared_memory_object>(
-			create_only, mMemoryName.c_str(), read_write);
+			create_only, memoryName, read_write);
 		mSharedMemoryHandlerPtr->truncate(sizeof(SharedMemory));
-		isSharedMemoryCreated = true;
+
+		mMappedRegionPtr = std::make_unique<mapped_region>(*mSharedMemoryHandlerPtr, read_write);
+		void* const address = mMappedRegionPtr->get_address();
+		mSharedMemory = new (address) SharedMemory;
 	}
 	catch (const interprocess_exception& e)
 	{
-		SV_LOG_GLOBAL(info) << "Couldn't create shared memory: " << e.what();
-		try
-		{
-			mSharedMemoryHandlerPtr = std::make_unique<shared_memory_object>(
-				open_only, mMemoryName.c_str(), read_write);
-		}
-		catch (const interprocess_exception& ex)
-		{
-			SV_LOG_GLOBAL(error) << "Couldn't open shared memory named " << mMemoryName << ": " << ex.what();
-			throw std::runtime_error("Shared memory error");
-		}
+		SV_LOG_GLOBAL(error) << "Couldn't create " << memoryName << " shared memory. Reason: " << e.what();
+		return false;
 	}
 
-	mMappedRegionPtr = std::make_unique<mapped_region>(*mSharedMemoryHandlerPtr, read_write);
-	void* const address = mMappedRegionPtr->get_address();
-	if (isSharedMemoryCreated)
-	{
-		mSharedMemory = new (address) SharedMemory;
-		SV_LOG_GLOBAL(info) << "Shared memory " << mMemoryName << " created!";
-	}
-	else
-	{
-		mSharedMemory = static_cast<SharedMemory*>(address);
-		SV_LOG_GLOBAL(info) << "Shared memory " << mMemoryName << " opened!";
-	}
+	SV_LOG_GLOBAL(debug) << "Shared memory " << memoryName << " created!";
+	return true;
 }
 
-bool SharedMemoryLock::Acquire(const LockState lockState, const std::string& username)
+bool SharedMemoryLock::openSharedMemorySegment()
+{
+	try
+	{
+		mSharedMemoryHandlerPtr = std::make_unique<shared_memory_object>(
+			open_only, memoryName, read_write);
+
+		mMappedRegionPtr = std::make_unique<mapped_region>(*mSharedMemoryHandlerPtr, read_write);
+		void* const address = mMappedRegionPtr->get_address();
+		mSharedMemory = static_cast<SharedMemory*>(address);
+	}
+	catch (const interprocess_exception& e)
+	{
+		SV_LOG_GLOBAL(error) << "Couldn't open " << memoryName << " shared memory. Reason: " << e.what();
+		return false;
+	}
+
+	SV_LOG_GLOBAL(info) << "Shared memory " << memoryName << " opened!";
+	return true;
+}
+
+bool SharedMemoryLock::Acquire(const LockState lockState)
 {
 	if (mSharedMemory == nullptr)
 	{
@@ -94,14 +109,7 @@ bool SharedMemoryLock::Acquire(const LockState lockState, const std::string& use
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex, try_to_lock);
 	if (lock)
 	{
-		if (changeLockState(lockState))
-		{
-			mLockOwner = username;
-			mChanged = true;
-			return true;
-		}
-
-		return false;
+		return changeLockState(lockState);
 	}
 	else
 	{
@@ -138,7 +146,7 @@ bool SharedMemoryLock::changeLockState(const LockState lockState)
 	return true;
 }
 
-bool SharedMemoryLock::Takeover(const std::string& username)
+bool SharedMemoryLock::Takeover()
 {
 	if (mSharedMemory == nullptr)
 	{
@@ -147,8 +155,6 @@ bool SharedMemoryLock::Takeover(const std::string& username)
 	}
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	mLockOwner = username;
-	mChanged = true;
 	const LockState currentLockState = getLockState();
 
 	// This is a little hack because in SVObserver we're using IPC only,
@@ -173,77 +179,7 @@ void SharedMemoryLock::Release()
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	mSharedMemory->mLockState = LockState::Unlocked;
-	mLockOwner = "";
-	mChanged = true;
 	SV_LOG_GLOBAL(info) << "Release(): Shared memory lock released!";
-}
-
-bool SharedMemoryLock::ResetIfChanged()
-{
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	if (mChanged)
-	{
-		mChanged = false;
-		return true;
-	}
-
-	return mChanged;
-}
-
-void SharedMemoryLock::PushBackStream(const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
-{
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	mLockAcquisitionStreams.push_back(streamPtr);
-}
-
-std::shared_ptr<lock_acquisition_stream_t> SharedMemoryLock::GetLockOwnerStream() const
-{
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	auto lockOwnerStream = std::find_if(
-		mLockAcquisitionStreams.begin(),
-		mLockAcquisitionStreams.end(),
-		[](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
-	{
-		return streamPtr->isLockOwner;
-	});
-
-	if (lockOwnerStream == mLockAcquisitionStreams.end() ||
-		(*lockOwnerStream)->streamContext->isCancelled())
-	{
-		return nullptr;
-	}
-
-	return *lockOwnerStream;
-}
-
-std::shared_ptr<lock_acquisition_stream_t> SharedMemoryLock::GetStreamById(const std::uint32_t id) const
-{
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	auto stream = std::find_if(
-		mLockAcquisitionStreams.begin(),
-		mLockAcquisitionStreams.end(),
-		[id](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
-	{
-		return id == streamPtr->id;
-	});
-
-	if (stream == mLockAcquisitionStreams.end() ||
-		(*stream)->streamContext->isCancelled())
-	{
-		return nullptr;
-	}
-
-	return *stream;
-}
-
-std::vector<std::shared_ptr<lock_acquisition_stream_t>>& SharedMemoryLock::GetStreams()
-{
-	return mLockAcquisitionStreams;
-}
-
-std::string SharedMemoryLock::GetLockOwner() const
-{
-	return mLockOwner;
 }
 
 LockState SharedMemoryLock::getLockState() const
@@ -254,20 +190,13 @@ LockState SharedMemoryLock::getLockState() const
 void SharedMemoryLock::setLockState(const LockState lockState)
 {
 	mSharedMemory->mLockState = lockState;
-	SV_LOG_GLOBAL(debug) << mMemoryName << " shared memory locked!";
+	SV_LOG_GLOBAL(debug) << memoryName << " shared memory locked!";
 }
 
 void SharedMemoryLock::cleanSharedMemory()
 {
-	if (shared_memory_object::remove(mMemoryName.c_str()))
+	if (shared_memory_object::remove(memoryName))
 	{
-		SV_LOG_GLOBAL(info) << mMemoryName << " shared memory removed!";
-	}
-	else
-	{
-		SV_LOG_GLOBAL(warning) << mMemoryName
-			<< " shared memory can't be removed becasue it doesn't exist"
-			<< ", is already open"
-			<< " or memory segment is still mapped by other processes";
+		SV_LOG_GLOBAL(info) << memoryName << " shared memory removed!";
 	}
 }

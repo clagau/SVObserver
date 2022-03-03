@@ -117,11 +117,6 @@ SvSyl::SVFuture<void> HttpServerConnection::sendBinaryMessage(const std::vector<
 	return ws_send_message_impl(buf, true);
 }
 
-std::string HttpServerConnection::getIpAddress() const
-{
-	return m_Socket.remote_endpoint().address().to_string();
-}
-
 void HttpServerConnection::http_do_read()
 {
 	m_Request = {};

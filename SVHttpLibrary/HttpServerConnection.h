@@ -50,8 +50,6 @@ public:
 	SvSyl::SVFuture<void> sendTextMessage(const std::vector<char>&);
 	SvSyl::SVFuture<void> sendBinaryMessage(const std::vector<char>&);
 
-	std::string getIpAddress() const;
-
 private:
 	void close_impl();
 

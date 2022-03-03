@@ -34,6 +34,8 @@
 namespace SvOgw
 {
 
+std::uint32_t SharedMemoryAccess::lock_acquisition_stream_t::ID_COUNTER = 0;
+
 SharedMemoryAccess::SharedMemoryAccess(
 	boost::asio::io_service& rIoService,
 	const SvSml::ShareControlSettings& ControlParameter,
@@ -50,18 +52,21 @@ SharedMemoryAccess::SharedMemoryAccess(
 	, m_overlay_controller(rIoService, rpcClient)
 	, m_pShareControlInstance{std::make_unique<SvSml::ShareControl>(ControlParameter)}
 	, m_SharedMemoryLock()
+	, m_LockOwner()
+	, m_AutoReleaseTimer(rIoService)
+	, m_LockTakeoverCancelTimer(rIoService)
 	, m_DisconnectCheckTimer(rIoService)
-	, m_ConfigurationLockStatusTimer(rIoService)
 {
 	schedule_trigger_record_pause_state();
 	schedule_disconnected_clients_check();
-	schedule_configuration_lock_status_update();
 	subscribe_to_trc();
 }
 
 SharedMemoryAccess::~SharedMemoryAccess()
 {
 	m_pause_timer.cancel();
+	m_AutoReleaseTimer.cancel();
+	m_LockTakeoverCancelTimer.cancel();
 	m_DisconnectCheckTimer.cancel();
 	unsubscribe_from_trc();
 }
@@ -288,10 +293,6 @@ void SharedMemoryAccess::GetGatewayNotificationStream(
 
 	// send initial pause state to client
 	send_trigger_record_pause_state_to_client(*state, m_pause_state);
-
-	// send current configuration lock status to client
-	auto lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
-	send_configuration_lock_status(*state, lockOwnerStream);
 }
 
 void SharedMemoryAccess::GetGatewayMessageStream(
@@ -1162,70 +1163,6 @@ void SharedMemoryAccess::send_trigger_record_pause_state_to_client(notification_
 	client.observer.onNext(std::move(res));
 }
 
-void SharedMemoryAccess::schedule_configuration_lock_status_update()
-{
-	m_ConfigurationLockStatusTimer.expires_from_now(boost::posix_time::milliseconds(100));
-	auto waitFunctor = [this](const boost::system::error_code& rError) { return on_configuration_lock_status_timer(rError); };
-	m_ConfigurationLockStatusTimer.async_wait(waitFunctor);
-}
-
-void SharedMemoryAccess::on_configuration_lock_status_timer(const boost::system::error_code& error)
-{
-	if (error)
-	{
-		SV_LOG_GLOBAL(error) << "Configuration lock status polling error: " << error.message();
-		return;
-	}
-
-	send_configuration_lock_status_if_changed();
-	schedule_configuration_lock_status_update();
-}
-
-void SharedMemoryAccess::send_configuration_lock_status_if_changed()
-{
-	if (m_SharedMemoryLock.ResetIfChanged())
-	{
-		m_io_service.dispatch([this]()
-		{
-			send_configuration_lock_status_update_to_clients();
-		});
-	}
-}
-
-void SharedMemoryAccess::send_configuration_lock_status_update_to_clients()
-{
-	auto lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
-	for (auto it = m_notification_streams.begin(); it != m_notification_streams.end();)
-	{
-		if ((*it)->ctx->isCancelled())
-		{
-			it = m_notification_streams.erase(it);
-			continue;
-		}
-
-		send_configuration_lock_status(**it, lockOwnerStream);
-
-		++it;
-	}
-}
-
-void SharedMemoryAccess::send_configuration_lock_status(notification_stream_t& stream, const std::shared_ptr<lock_acquisition_stream_t>& lockOwnerStream)
-{
-	SvPb::GetGatewayNotificationStreamResponse response;
-	auto notification = response.mutable_configurationlockstatus();
-	notification->set_status(SvPb::LockStatus::Unlocked);
-
-	if (lockOwnerStream != nullptr)
-	{
-		notification->set_status(SvPb::LockStatus::Locked);
-		notification->set_owner(m_SharedMemoryLock.GetLockOwner());
-		notification->set_description(lockOwnerStream->request.description());
-		notification->set_host(lockOwnerStream->sessionContext.host());
-	}
-
-	stream.observer.onNext(std::move(response));
-}
-
 SharedMemoryAccess::message_stream_t::message_stream_t(
 	const SvPb::GetGatewayMessageStreamRequest& streamReq,
 	SvRpc::Observer<SvPb::GetGatewayMessageStreamResponse> observer,
@@ -1417,15 +1354,17 @@ void SharedMemoryAccess::AcquireLockStream(
 		return;
 	}
 
+	
 	streamPtr->streamContext->registerOnCancelHandler([this, streamPtr]
 	{
 		if (streamPtr->isLockOwner)
 		{
 			release_lock(*streamPtr, SvPb::LockReleaseReason::ExplicitRelease);
+			m_AutoReleaseTimer.cancel();
 		}
 	});
 
-	if (m_SharedMemoryLock.GetLockOwner() == streamPtr->sessionContext.username())
+	if (m_LockOwner == streamPtr->sessionContext.username())
 	{
 		SvPenv::Error error;
 		error.set_errorcode(SvPenv::ErrorCode::forbidden);
@@ -1434,55 +1373,70 @@ void SharedMemoryAccess::AcquireLockStream(
 		return;
 	}
 
-	m_io_service.dispatch([this, streamPtr] { m_SharedMemoryLock.PushBackStream(streamPtr); });
+	m_LockAcquisitionStreams.push_back(streamPtr);
 	acquire_lock(*streamPtr);
 }
 
 void SharedMemoryAccess::acquire_lock(lock_acquisition_stream_t& stream)
 {
-	const bool isAcquired = m_SharedMemoryLock.Acquire(
-		LockState::LockedBySVOGateway, stream.sessionContext.username());
+	const bool isAcquired = m_SharedMemoryLock.Acquire(LockState::LockedBySVOGateway);
 
 	if (isAcquired)
 	{
 		handle_lock_acquisition(stream);
-		return;
 	}
-
-	const bool isTakeoverRequest = stream.request.requesttakeover();
-
-	if (isTakeoverRequest)
+	else
 	{
-		handle_lock_takeover_request(stream);
-		return;
+		const bool isTakeoverRequest = stream.request.requesttakeover();
+
+		if (isTakeoverRequest)
+		{
+			handle_lock_takeover_request(stream);
+		}
+		else
+		{
+			auto lockOwnerStream = std::find_if(
+				m_LockAcquisitionStreams.begin(),
+				m_LockAcquisitionStreams.end(),
+				[](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+				{
+					return streamPtr->isLockOwner;
+				});
+
+			if (lockOwnerStream == m_LockAcquisitionStreams.end() ||
+				(*lockOwnerStream)->streamContext->isCancelled())
+			{
+				SvPenv::Error error;
+				error.set_errorcode(SvPenv::ErrorCode::notFound);
+				error.set_message("Couldn't find current lock owner");
+				stream.observer.error(error);
+				return;
+			}
+
+			SvPb::LockAcquisitionStreamResponse response;
+
+			auto notification = response.mutable_lockalreadylockednotification();
+			notification->set_lockid((*lockOwnerStream)->id);
+			notification->set_description((*lockOwnerStream)->request.description());
+			notification->set_user(m_LockOwner);
+			notification->set_host("SVOGateway");
+
+			stream.observer.onNext(std::move(response));
+		}
 	}
-
-	auto lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
-
-	if (lockOwnerStream == nullptr)
-	{
-		SvPenv::Error error;
-		error.set_errorcode(SvPenv::ErrorCode::notFound);
-		error.set_message("Couldn't find current lock owner");
-		stream.observer.error(error);
-		return;
-	}
-
-	SvPb::LockAcquisitionStreamResponse response;
-
-	auto notification = response.mutable_lockalreadylockednotification();
-	notification->set_lockid(lockOwnerStream->id);
-	notification->set_description(lockOwnerStream->request.description());
-	notification->set_user(m_SharedMemoryLock.GetLockOwner());
-	notification->set_host(lockOwnerStream->sessionContext.host());
-
-	stream.observer.onNext(std::move(response));
 }
 
 void SharedMemoryAccess::handle_lock_acquisition(lock_acquisition_stream_t& stream)
 {
 	stream.isLockOwner = true;
+	m_LockOwner = stream.sessionContext.username();
 	notify_client_about_lock_acquisition(stream);
+
+	const std::uint64_t expirationTimeout = stream.request.lockexpire();
+	if (expirationTimeout != 0)
+	{
+		schedule_auto_release_lock(stream, expirationTimeout);
+	}
 }
 
 void SharedMemoryAccess::notify_client_about_lock_acquisition(const lock_acquisition_stream_t& stream)
@@ -1492,16 +1446,34 @@ void SharedMemoryAccess::notify_client_about_lock_acquisition(const lock_acquisi
 	auto notification = response.mutable_lockacquirednotification();
 	notification->set_lockid(stream.id);
 	notification->set_description(stream.request.description());
-	notification->set_user(m_SharedMemoryLock.GetLockOwner());
-	notification->set_host(stream.sessionContext.host());
+	notification->set_user(m_LockOwner);
+	notification->set_host("SVOGateway");
 
 	stream.observer.onNext(std::move(response));
+}
+
+void SharedMemoryAccess::schedule_auto_release_lock(
+	lock_acquisition_stream_t& stream,
+	const std::uint64_t timeout)
+{
+	m_AutoReleaseTimer.expires_from_now(boost::posix_time::milliseconds(timeout));
+	m_AutoReleaseTimer.async_wait(boost::bind(&SharedMemoryAccess::auto_release_lock, this, boost::ref(stream)));
+}
+
+void SharedMemoryAccess::auto_release_lock(lock_acquisition_stream_t& stream)
+{
+	if (!(stream.streamContext->isCancelled()))
+	{
+		release_lock(stream, SvPb::LockReleaseReason::Timeout);
+	}
 }
 
 void SharedMemoryAccess::release_lock(lock_acquisition_stream_t& stream, const SvPb::LockReleaseReason reason)
 {
 	stream.isLockOwner = false;
 	m_SharedMemoryLock.Release();
+	m_LockOwner = "";
+
 	broadcast_release_notification(stream, reason);
 }
 
@@ -1515,7 +1487,7 @@ void SharedMemoryAccess::broadcast_release_notification(
 	notification->set_lockid(stream.id);
 	notification->set_reason(reason);
 
-	for (auto& streamPtr : m_SharedMemoryLock.GetStreams())
+	for (auto& streamPtr : m_LockAcquisitionStreams)
 	{
 		if (!(streamPtr->streamContext->isCancelled()))
 		{
@@ -1524,12 +1496,32 @@ void SharedMemoryAccess::broadcast_release_notification(
 			streamPtr->observer.onNext(std::move(responseCopy));
 		}
 	}
+
+	stream.streamContext->cancel();
 }
 
-void SharedMemoryAccess::handle_lock_takeover_request(const lock_acquisition_stream_t& stream)
+void SharedMemoryAccess::handle_lock_takeover_request(lock_acquisition_stream_t& stream)
 {
-	auto lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
-	if (lockOwnerStream == nullptr)
+	notify_owner_about_lock_takeover(stream);
+
+	const std::uint64_t takeoverTimeout = stream.request.takeovertimeout();
+	if (takeoverTimeout != 0)
+	{
+		schedule_cancel_for_lock_takeover(stream, takeoverTimeout);
+	}
+}
+
+void SharedMemoryAccess::notify_owner_about_lock_takeover(const lock_acquisition_stream_t& stream)
+{
+	auto lockOwnerStream = std::find_if(
+		m_LockAcquisitionStreams.begin(),
+		m_LockAcquisitionStreams.end(),
+		[](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+		{
+			return streamPtr->isLockOwner;
+		});
+	if (lockOwnerStream == m_LockAcquisitionStreams.end() ||
+		(*lockOwnerStream)->streamContext->isCancelled())
 	{
 		SvPenv::Error error;
 		error.set_errorcode(SvPenv::ErrorCode::notFound);
@@ -1545,9 +1537,26 @@ void SharedMemoryAccess::handle_lock_takeover_request(const lock_acquisition_str
 	notification->set_takeoverid(stream.id);
 	notification->set_message(stream.request.takeovermessage());
 	notification->set_user(stream.sessionContext.username());
-	notification->set_host(stream.sessionContext.host());
+	notification->set_host("SVOGateway");
 
-	lockOwnerStream->observer.onNext(std::move(response));
+	(*lockOwnerStream)->observer.onNext(std::move(response));
+}
+
+void SharedMemoryAccess::schedule_cancel_for_lock_takeover(
+	lock_acquisition_stream_t& stream,
+	const std::uint64_t timeout)
+{
+	m_LockTakeoverCancelTimer.expires_from_now(boost::posix_time::milliseconds(timeout));
+	m_LockTakeoverCancelTimer.async_wait(
+		boost::bind(&SharedMemoryAccess::cancel_lock_takeover, this, boost::ref(stream)));
+}
+
+void SharedMemoryAccess::cancel_lock_takeover(lock_acquisition_stream_t& stream)
+{
+	if (!(stream.isLockOwner) && !(stream.streamContext->isCancelled()))
+	{
+		stream.streamContext->cancel();
+	}
 }
 
 void SharedMemoryAccess::schedule_disconnected_clients_check()
@@ -1571,19 +1580,17 @@ void SharedMemoryAccess::on_disconnected_clients_check(const boost::system::erro
 		return;
 	}
 
-	m_io_service.dispatch([this] { check_disconnected_clients(); });
+	m_io_service.dispatch([this]() { check_disconnected_clients(); });
 	schedule_disconnected_clients_check();
 }
 
 void SharedMemoryAccess::check_disconnected_clients()
 {
-	auto& streams = m_SharedMemoryLock.GetStreams();
-	for (auto it = streams.begin(); it != streams.end();)
+	for (auto it = m_LockAcquisitionStreams.begin(); it != m_LockAcquisitionStreams.end();)
 	{
 		if ((*it)->streamContext->isCancelled())
 		{
-			SV_LOG_GLOBAL(debug) << "client " << (*it)->id << " erased from streams vector";
-			it = streams.erase(it);
+			it = m_LockAcquisitionStreams.erase(it);
 			continue;
 		}
 		++it;
@@ -1595,9 +1602,17 @@ void SharedMemoryAccess::TakeoverLock(
 	const SvPb::LockTakeoverRequest& request,
 	SvRpc::Task<SvPb::LockTakeoverResponse> task)
 {
-	auto lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
+	const std::uint32_t lockId = request.lockid();
+	auto lockOwnerStream = std::find_if(
+		m_LockAcquisitionStreams.begin(),
+		m_LockAcquisitionStreams.end(),
+		[lockId](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+		{
+			return streamPtr->isLockOwner && lockId == streamPtr->id;
+		});
 
-	if (lockOwnerStream == nullptr || lockOwnerStream->id != request.lockid())
+	if (lockOwnerStream == m_LockAcquisitionStreams.end() ||
+		(*lockOwnerStream)->streamContext->isCancelled())
 	{
 		SvPenv::Error error;
 		error.set_errorcode(SvPenv::ErrorCode::notFound);
@@ -1607,9 +1622,17 @@ void SharedMemoryAccess::TakeoverLock(
 		return;
 	}
 
-	auto takeoverCandidateStream = m_SharedMemoryLock.GetStreamById(request.takeoverid());
+	const std::uint32_t takeoverId = request.takeoverid();
+	auto takeoverCandidateStream = std::find_if(
+		m_LockAcquisitionStreams.begin(),
+		m_LockAcquisitionStreams.end(),
+		[takeoverId](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+		{
+			return takeoverId == streamPtr->id;
+		});
 
-	if (takeoverCandidateStream == nullptr)
+	if (takeoverCandidateStream == m_LockAcquisitionStreams.end() ||
+		(*takeoverCandidateStream)->streamContext->isCancelled())
 	{
 		SvPenv::Error error;
 		error.set_errorcode(SvPenv::ErrorCode::notFound);
@@ -1619,36 +1642,39 @@ void SharedMemoryAccess::TakeoverLock(
 		return;
 	}
 
-	lockOwnerStream->isLockOwner = false;
-	m_SharedMemoryLock.Takeover(takeoverCandidateStream->sessionContext.username());
-	handle_lock_acquisition(*takeoverCandidateStream);
+	(*lockOwnerStream)->isLockOwner = false;
+	(*lockOwnerStream)->streamContext->cancel();
+
+	m_SharedMemoryLock.Takeover();
+	handle_lock_acquisition(*(*takeoverCandidateStream));
+
+	m_LockTakeoverCancelTimer.cancel();
+
 	SvPb::LockTakeoverResponse response;
 	task.finish(std::move(response));
 }
 
-void SharedMemoryAccess::RejectLockTakeover(
-	const SvAuth::SessionContext&,
-	const SvPb::LockTakeoverRejectedRequest& request,
-	SvRpc::Task<SvPb::LockTakeoverRejectedResponse> task)
+SharedMemoryAccess::lock_acquisition_stream_t::lock_acquisition_stream_t(
+	const SvPb::LockAcquisitionStreamRequest& req,
+	const SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>& obs,
+	const SvRpc::ServerStreamContext::Ptr& streamCtx,
+	const SvAuth::SessionContext& sessionCtx)
+	: id(++ID_COUNTER)
+	, observer(obs)
+	, streamContext(streamCtx)
+	, sessionContext(sessionCtx)
+	, isLockOwner(false)
 {
-	auto takeoverStream = m_SharedMemoryLock.GetStreamById(request.takeoverid());
+	this->request.CopyFrom(req);
+}
 
-	if (takeoverStream == nullptr)
-	{
-		SvPenv::Error error;
-		error.set_errorcode(SvPenv::ErrorCode::notFound);
-		error.set_message("Couldn't find takeover candidate!");
-		task.error(error);
-
-		return;
-	}
-
-	SvPb::LockAcquisitionStreamResponse notificationResponse;
-	notificationResponse.mutable_locktakeoverrejectednotification();
-	takeoverStream->observer.onNext(std::move(notificationResponse));
-
-	SvPb::LockTakeoverRejectedResponse taskResponse;
-	task.finish(std::move(taskResponse));
+std::shared_ptr<SharedMemoryAccess::lock_acquisition_stream_t> SharedMemoryAccess::lock_acquisition_stream_t::create(
+	const SvPb::LockAcquisitionStreamRequest& request,
+	const SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>& observer,
+	const SvRpc::ServerStreamContext::Ptr& streamContext,
+	const SvAuth::SessionContext& sessionContext)
+{
+	return std::make_shared<lock_acquisition_stream_t>(request, observer, streamContext, sessionContext);
 }
 
 bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& rSessionContext, const SvPenv::Envelope& rEnvelope, SvRpc::Task<SvPenv::Envelope> task)
@@ -1770,112 +1796,111 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 	auto payloadType = rEnvelope.payloadtype();
 	switch (payloadType)
 	{
-		// read version information
-		case SvPb::SVRCMessages::kGetGatewayVersionRequest:
-		case SvPb::SVRCMessages::kGetSVObserverVersionRequest:
-		case SvPb::SVRCMessages::kGetWebAppVersionRequest:
-			return true; // always allowed
+	// read version information
+	case SvPb::SVRCMessages::kGetGatewayVersionRequest:
+	case SvPb::SVRCMessages::kGetSVObserverVersionRequest:
+	case SvPb::SVRCMessages::kGetWebAppVersionRequest:
+		return true; // always allowed
 
-		// read svobserver configuration information
-		case SvPb::SVRCMessages::kQueryListNameRequest:
-		case SvPb::SVRCMessages::kQueryListItemRequest:
-		case SvPb::SVRCMessages::kGetProductRequest:
-		case SvPb::SVRCMessages::kGetImageFromIdRequest:
-		case SvPb::SVRCMessages::kGetFailStatusRequest:
-		case SvPb::SVRCMessages::kGetTriggerItemsRequest:
-		case SvPb::SVRCMessages::kGetRejectRequest:
-		case SvPb::SVRCMessages::kGetProductStreamRequest:
-		case SvPb::SVRCMessages::kGetStateRequest:
-		case SvPb::SVRCMessages::kGetConfigRequest:
-		case SvPb::SVRCMessages::kGetOfflineCountRequest:
-		case SvPb::SVRCMessages::kGetProductFilterRequest:
-		case SvPb::SVRCMessages::kGetInspectionsRequest:
-		case SvPb::SVRCMessages::kGetProductDataRequest:
-		case SvPb::SVRCMessages::kGetInspectionNamesRequest:
-		case SvPb::SVRCMessages::kGetMonitorListPropertiesRequest:
-		case SvPb::SVRCMessages::kGetMaxRejectDepthRequest:
-		case SvPb::SVRCMessages::kGetConfigReportRequest:
-		case SvPb::SVRCMessages::kGetDataDefinitionListRequest:
-		case SvPb::SVRCMessages::kQueryMonitorListRequest:
-		case SvPb::SVRCMessages::kQueryMonitorListNamesRequest:
-		case SvPb::SVRCMessages::kGetObjectSelectorItemsRequest:
-		case SvPb::SVRCMessages::kGetTriggerStreamRequest:
-		case SvPb::SVRCMessages::kGetConfigurationTreeRequest:
-		case SvPb::SVRCMessages::kGetConfigurationInfoRequest:
-		case SvPb::SVRCMessages::kLockTakeoverRequest:
-		case SvPb::SVRCMessages::kLockTakeoverRejectedRequest:
-			return permissions.svobserver().configuration().read();
+	// read svobserver configuration information
+	case SvPb::SVRCMessages::kQueryListNameRequest:
+	case SvPb::SVRCMessages::kQueryListItemRequest:
+	case SvPb::SVRCMessages::kGetProductRequest:
+	case SvPb::SVRCMessages::kGetImageFromIdRequest:
+	case SvPb::SVRCMessages::kGetFailStatusRequest:
+	case SvPb::SVRCMessages::kGetTriggerItemsRequest:
+	case SvPb::SVRCMessages::kGetRejectRequest:
+	case SvPb::SVRCMessages::kGetProductStreamRequest:
+	case SvPb::SVRCMessages::kGetStateRequest:
+	case SvPb::SVRCMessages::kGetConfigRequest:
+	case SvPb::SVRCMessages::kGetOfflineCountRequest:
+	case SvPb::SVRCMessages::kGetProductFilterRequest:
+	case SvPb::SVRCMessages::kGetInspectionsRequest:
+	case SvPb::SVRCMessages::kGetProductDataRequest:
+	case SvPb::SVRCMessages::kGetInspectionNamesRequest:
+	case SvPb::SVRCMessages::kGetMonitorListPropertiesRequest:
+	case SvPb::SVRCMessages::kGetMaxRejectDepthRequest:
+	case SvPb::SVRCMessages::kGetConfigReportRequest:
+	case SvPb::SVRCMessages::kGetDataDefinitionListRequest:
+	case SvPb::SVRCMessages::kQueryMonitorListRequest:
+	case SvPb::SVRCMessages::kQueryMonitorListNamesRequest:
+	case SvPb::SVRCMessages::kGetObjectSelectorItemsRequest:
+	case SvPb::SVRCMessages::kGetTriggerStreamRequest:
+	case SvPb::SVRCMessages::kGetConfigurationTreeRequest:
+	case SvPb::SVRCMessages::kGetConfigurationInfoRequest:
+	case SvPb::SVRCMessages::kLockTakeoverRequest:
+		return permissions.svobserver().configuration().read();
 
-		case SvPb::SVRCMessages::kActivateMonitorListRequest:
-		case SvPb::SVRCMessages::kSetProductFilterRequest:
-		case SvPb::SVRCMessages::kRegisterMonitorListRequest:
-		case SvPb::SVRCMessages::kSetTriggerConfigRequest:
-			return permissions.svobserver().configuration().write();
+	case SvPb::SVRCMessages::kActivateMonitorListRequest:
+	case SvPb::SVRCMessages::kSetProductFilterRequest:
+	case SvPb::SVRCMessages::kRegisterMonitorListRequest:
+	case SvPb::SVRCMessages::kSetTriggerConfigRequest:
+		return permissions.svobserver().configuration().write();
 
-		case SvPb::SVRCMessages::kLoadConfigRequest:
-			return permissions.svobserver().configuration().read();
+	case SvPb::SVRCMessages::kLoadConfigRequest:
+		return permissions.svobserver().configuration().read();
 
-		case SvPb::SVRCMessages::kPutConfigRequest:
-			return permissions.svobserver().configuration().write();
+	case SvPb::SVRCMessages::kPutConfigRequest:
+		return permissions.svobserver().configuration().write();
 
-			// subscribe to notification streams
-		case SvPb::SVRCMessages::kGetGatewayNotificationStreamRequest:
-		case SvPb::SVRCMessages::kGetGatewayMessageStreamRequest:
-		case SvPb::SVRCMessages::kGetNotificationStreamRequest:
-		case SvPb::SVRCMessages::kGetMessageStreamRequest:
-		case SvPb::SVRCMessages::kLockAcquisitionStreamRequest:
-			return permissions.svobserver().notifications().subscribe();
+	// subscribe to notification streams
+	case SvPb::SVRCMessages::kGetGatewayNotificationStreamRequest:
+	case SvPb::SVRCMessages::kGetGatewayMessageStreamRequest:
+	case SvPb::SVRCMessages::kGetNotificationStreamRequest:
+	case SvPb::SVRCMessages::kGetMessageStreamRequest:
+	case SvPb::SVRCMessages::kLockAcquisitionStreamRequest:
+		return permissions.svobserver().notifications().subscribe();
 
-		case SvPb::SVRCMessages::kGetItemsRequest:
-			return permissions.svobserver().value().read();
+	case SvPb::SVRCMessages::kGetItemsRequest:
+		return permissions.svobserver().value().read();
 
-		case SvPb::SVRCMessages::kSetItemsRequest:
-			return permissions.svobserver().value().edit();
+	case SvPb::SVRCMessages::kSetItemsRequest:
+		return permissions.svobserver().value().edit();
 
-		case SvPb::SVRCMessages::kSetRejectStreamPauseStateRequest:
-			// TODO what about the read state? it is part of the notification :/
-			return permissions.svobserver().inspectionstate().edit();
+	case SvPb::SVRCMessages::kSetRejectStreamPauseStateRequest:
+		// TODO what about the read state? it is part of the notification :/
+		return permissions.svobserver().inspectionstate().edit();
 
-		case SvPb::SVRCMessages::kGetDeviceModeRequest:
-			// TODO there is also a mode change notification. should this be forbidden?
-			return permissions.svobserver().mode().read();
+	case SvPb::SVRCMessages::kGetDeviceModeRequest:
+		// TODO there is also a mode change notification. should this be forbidden?
+		return permissions.svobserver().mode().read();
 
-		case SvPb::SVRCMessages::kRunOnceRequest: // TODO is this correct?
-		case SvPb::SVRCMessages::kSetDeviceModeRequest:
-			return permissions.svobserver().mode().edit();
+	case SvPb::SVRCMessages::kRunOnceRequest: // TODO is this correct?
+	case SvPb::SVRCMessages::kSetDeviceModeRequest:
+		return permissions.svobserver().mode().edit();
 
-		case SvPb::SVRCMessages::kStoreClientLogsRequest:
-			return permissions.svobserver().clientlogs().store(); // TODO shall we really always allow all clients to store any logs?
+	case SvPb::SVRCMessages::kStoreClientLogsRequest:
+		return permissions.svobserver().clientlogs().store(); // TODO shall we really always allow all clients to store any logs?
 
-		case SvPb::SVRCMessages::kGetFileRequest:
-			return permissions.svobserver().file().read();
+	case SvPb::SVRCMessages::kGetFileRequest:
+		return permissions.svobserver().file().read();
 
-		case SvPb::SVRCMessages::kPutFileRequest:
-			return permissions.svobserver().file().write();
+	case SvPb::SVRCMessages::kPutFileRequest:
+		return permissions.svobserver().file().write();
 
-		case SvPb::SVRCMessages::kShutdownRequest:
-			return permissions.svobserver().machinestate().set();
+	case SvPb::SVRCMessages::kShutdownRequest:
+		return permissions.svobserver().machinestate().set();
 
-		case SvPb::SVRCMessages::kInspectionCmdRequest:
-		case SvPb::SVRCMessages::kConfigCommandRequest:
-			return permissions.svobserver().command().execute();
+	case SvPb::SVRCMessages::kInspectionCmdRequest:
+	case SvPb::SVRCMessages::kConfigCommandRequest:
+		return permissions.svobserver().command().execute();
 
-		case SvPb::SVRCMessages::kGetMyPermissionsRequest:
-			return true; // always allowed!
+	case SvPb::SVRCMessages::kGetMyPermissionsRequest:
+		return true; // always allowed!
 
-		case SvPb::SVRCMessages::kGetGroupDetailsRequest:
-			return permissions.usermanagement().userpermissions().read();
+	case SvPb::SVRCMessages::kGetGroupDetailsRequest:
+		return permissions.usermanagement().userpermissions().read();
 
-		case SvPb::SVRCMessages::kUpdateGroupPermissionsRequest:
-			return permissions.usermanagement().userpermissions().edit();
+	case SvPb::SVRCMessages::kUpdateGroupPermissionsRequest:
+		return permissions.usermanagement().userpermissions().edit();
 
-		default:
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), payloadType));
-			SV_LOG_GLOBAL(error) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_RequestPermissionsNotConfigured, msgList);
-			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
-			Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_RequestPermissionsNotConfigured, msgList, SvStl::SourceFileParams(StdMessageParams));
-			return false;
+	default:
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), payloadType));
+		SV_LOG_GLOBAL(error) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_RequestPermissionsNotConfigured, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_RequestPermissionsNotConfigured, msgList, SvStl::SourceFileParams(StdMessageParams));
+		return false;
 	}
 }
 
