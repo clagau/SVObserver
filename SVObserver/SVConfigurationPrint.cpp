@@ -2022,15 +2022,14 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		long lSize = static_cast< long >(inputEntryVector.size() );
 
 		// Print module input title...
-		DWORD dwMaxInput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
+		long maxInput {SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount()};
 
-		std::string Value = SvUl::Format(_T("%ld"), dwMaxInput);
+		std::string Value = SvUl::Format(_T("%ld"), maxInput);
 		ptCurPos.x = nIndentLevel * m_shortTabPixels;
 		PrintValueObject(pDC, ptCurPos, _T("Digital Inputs:"), Value.c_str() );
 
 		// Module Inputs
-		for (long i = 0; i < static_cast<long>(dwMaxInput); ++i)
+		for (long i = 0; i < (maxInput); ++i)
 		{
 			std::string Label = SvUl::Format( _T("Digital Input %d:"), i+1 );
 
@@ -2138,14 +2137,13 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	if (GetTheIODoc())
 	{
 		// Print Result Output title...
-		DWORD dwMaxOutput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
-		std::string Value = SvUl::Format( _T("%ld"), dwMaxOutput );
+		long maxOutput {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
+		std::string Value = SvUl::Format( _T("%ld"), maxOutput );
 		ptCurPos.x = nIndentLevel * m_shortTabPixels;
 		PrintValueObject( pDC, ptCurPos, _T("Result Outputs:"), Value.c_str() );
 
 		// Result Outputs
-		for (long i = 0; i < static_cast<long>(dwMaxOutput); ++i)
+		for (long i = 0; i < maxOutput; ++i)
 		{
 			std::string Label = SvUl::Format( _T("Digital Output %d"), i+1 );
 
@@ -2172,24 +2170,18 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 					DebugBreak();
 				}
 
-				// Get list of available outputs
-				SVIOEntryHostStructPtrVector ppIOEntries;
-				pPPQ->GetAllOutputs(ppIOEntries);
-
-				long lIOEntries = static_cast< long >( ppIOEntries.size() );
-
 				// Find each digital output
-				for (int k = 0; k < lIOEntries; k++)
+				for (const auto& pIOEntry : pPPQ->GetAllOutputs())
 				{
-					if ( ppIOEntries[ k ]->m_ObjectType != IO_DIGITAL_OUTPUT ) { continue; }
+					if ( pIOEntry->m_ObjectType != IO_DIGITAL_OUTPUT ) { continue; }
 
-					pDigOutput = dynamic_cast<SVDigitalOutputObject*> (SVObjectManagerClass::Instance().GetObject( ppIOEntries[k]->m_IOId ));
+					pDigOutput = dynamic_cast<SVDigitalOutputObject*> (SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ));
 
 					if (nullptr == pDigOutput ) { continue; }
 
 					if (i == pDigOutput->GetChannel())
 					{
-						PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, Label.c_str(), ppIOEntries[k]);
+						PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, Label.c_str(), pIOEntry);
 						continue;
 					}// end if
 				}// end for k

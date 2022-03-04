@@ -33,7 +33,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr const char* cDigitalInputName = ("Digital Input %d");
+constexpr const char* cDigitalInputName = ("Digital Input %ld");
 
 IMPLEMENT_DYNCREATE(SVDiscreteInputsView, CListView)
 
@@ -106,9 +106,8 @@ void SVDiscreteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 		SVIOEntryHostStructPtrVector inputEntryVector = pInputList->getInputList();
 
 		// Module Inputs
-		unsigned long maxInput{0UL};
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(maxInput);
-		for(int  i = 0; i < static_cast<int>(maxInput); ++i )
+		long maxInput {SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount()};
+		for(long  i = 0; i < maxInput; ++i )
 		{
 			// First column: Module I/O
 			std::string Item = SvUl::Format(cDigitalInputName, i + 1 );

@@ -49,11 +49,14 @@ protected:
 	afx_msg void OnBtnPlay();
 	afx_msg void OnBtnStop();
 	afx_msg void OnCheckPlayCond();
+	afx_msg void OnValidateMode();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
 	afx_msg void OnBtnSettings();
 	afx_msg void OnBtnExit();
+	afx_msg void OnBnClickedFormula();
+	afx_msg void OnBnClickedResultFile();
 	afx_msg LRESULT SetNextFiles(WPARAM, LPARAM);
 	afx_msg LRESULT SetPlayPauseBtn(WPARAM, LPARAM);
 	afx_msg LRESULT SetPreviousFrameBtn(WPARAM, LPARAM);
@@ -80,9 +83,6 @@ private:
 	//************************************
 	void setDelayTime( int position );
 
-	/// Perform if formula button was pressed.
-	void OnBnClickedButtonFormula();
-
 	/// Set the Equation text to the screen
 	void setEquationText();
 
@@ -105,29 +105,31 @@ private:
 	CButton	m_btnFrameBack;
 	CButton	m_btnBeginning;
 	CString	m_timeDelayText;
+	CString m_validateResultFile;
 	CString m_equationString;
 	//}}AFX_DATA
 
 	 // data members
-	HICON m_iconPlay;
-	HICON m_iconPause;
-	HICON m_iconModeContinue;
-	HICON m_iconModeRunToEnd;
-	HICON m_iconFrameUp;
-	HICON m_iconFrameBack;
-	HICON m_iconBeginning;
-	HICON m_iconStop;
+	HICON m_iconPlay {nullptr};
+	HICON m_iconPause {nullptr};
+	HICON m_iconModeContinue {nullptr};
+	HICON m_iconModeRunToEnd {nullptr};
+	HICON m_iconFrameUp {nullptr};
+	HICON m_iconFrameBack {nullptr};
+	HICON m_iconBeginning {nullptr};
+	HICON m_iconStop {nullptr};
 
-	RegressionPlayPause m_enumPlayPause;
-	RegressionPlayModeEnum m_enumMode;
+	RegressionPlayPause m_enumPlayPause {RegressionPlayPause::Pause};
+	RegressionPlayModeEnum m_enumMode {RegressionPlayModeEnum::RunToEnd};
 
-	CToolTipCtrl* m_ctlToolTip;
+	CToolTipCtrl* m_ctlToolTip {nullptr};
 
-	SVIPDoc* m_pIPDocParent;
-	BOOL m_bFirst;
-	BOOL m_bPlayByEquation;
-	int	m_timeDelayInMS;
-	uint32_t m_InspectionID;
+	SVIPDoc* m_pIPDocParent {nullptr};
+	BOOL m_bFirst {false};
+	BOOL m_bPlayByEquation {false};
+	BOOL m_isValidationMode {false};
+	int	m_timeDelayInMS {0};
+	uint32_t m_InspectionID {0UL};
 
 	RegressionTestController& m_rRegressionController;
 	SvOi::IFormulaControllerPtr m_pFormulaController;

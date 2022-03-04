@@ -449,7 +449,7 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 				{
 					folderList.emplace_back(fileFinder.GetFilePath().GetString());
 				}
-			}			
+			}
 		}
 		//StrCmpLogicalW is the sorting function used by Windows Explorer
 		auto FolderCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t{ rLhs.c_str() }, _bstr_t{ rRhs.c_str() }) < 0; };
@@ -511,7 +511,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 		if (nullptr != pPage)
 		{
 			RegressionTestStruct tmpStruct;
-			tmpStruct.iFileMethod = RegressionFileEnum::RegFileList;
+			tmpStruct.iFileMethod = RegressionFileEnum::RegSubDirectories;
 			pPage->SetRegressionData(&tmpStruct);
 		}
 	}	

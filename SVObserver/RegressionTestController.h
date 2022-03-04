@@ -31,8 +31,9 @@ class RegressionTestController
 public:
 	RegressionTestController() = default;
 	RegressionRunFileStruct RegressionTestSetFiles(RegressionTestStruct& rRegTestStruct, RegressionRuningState& runState);
-	DWORD runThread(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess& rIP, const SvTrig::ObjectIDParameters& rObjectIDParams);
+	DWORD runThread();
 
+	void initialize(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess* pInspectionProcess, const SvTrig::ObjectIDParameters& rObjectIDParams, SVObjectPtrVector&& OutputValueList);
 	void stopRunning();
 	void resetEquationText();
 	SvOi::IFormulaControllerPtr getPlayEquationController() const { return m_pPlayEquationController; };
@@ -47,24 +48,33 @@ public:
 	void setTimeoutPeriod(int p_TimeoutMS) { m_iTimeoutMS = p_TimeoutMS; };
 	bool isRunning() const { return m_isRunning; };
 	void setLoadEquationText(const std::string& rText) { m_LoadEquationText = rText; };
+	void setValidationMode(bool validationMode) { m_isValidationMode = validationMode; }
+	void setValidationFile(LPCTSTR filePath) { m_resultFileName = filePath; }
 
 private:
 	SvIe::SVVirtualCameraPtrVector GetCameras(const SVInspectionProcess& rIP) const;
 	bool runOnce(SVInspectionProcess& rIP);
-	void setPlayPause(HWND hRegressionWnd, RegressionRuningState& runState);
+	void setPlayPause(RegressionRuningState& runState);
 	bool setImagesForNextRun(SVInspectionProcess& rIP, RegressionRuningState& runState, std::back_insert_iterator<std::vector<RegressionRunFileStruct>> fileNameInserter);
 
 private:
+	HWND m_hMainWnd {nullptr};
+	HWND m_hRegressionWnd {nullptr};
+	SVInspectionProcess* m_pInspection {nullptr};
+	SVObjectPtrVector m_OutputValueList;
 	RegressionRunModeEnum m_RunMode {RegressionRunModeEnum::RegModePause};
 	RegressionPlayModeEnum m_RunPlayMode {RegressionPlayModeEnum::RunToEnd};
 	int m_iTimeoutMS = 0;
 	bool m_isRunning {false};
 	bool m_isStopping {false};
 	bool m_UsePlayCondition {false};
+	bool m_IsInitEquationText {false};
+	bool m_isValidationMode {false};
+	long m_triggerIndex {0L};
+	std::string m_resultFileName;
+	std::ofstream m_fileOutputResult;
 	SvOi::IFormulaControllerPtr m_pPlayEquationController;
 	std::string m_LoadEquationText;
-	bool m_IsInitEquationText {false};
-	long m_triggerIndex {0L};
 	SvTrig::ObjectIDParameters m_objectIDParams;
 	std::vector<RegressionTestStruct> m_regCameras;
 	std::vector<RegressionTestStruct> m_regImages;

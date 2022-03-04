@@ -174,8 +174,9 @@ public:
 	bool WriteOutputs(SVProductInfoStruct* pProduct);
 	bool ResetOutputs();
 	bool RebuildOutputList();
-	void GetAllOutputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
+	const SVIOEntryHostStructPtrVector& GetAllOutputs() const { return m_AllOutputs; }
 	void AddDefaultOutputs();
+	long getOutputCount();
 
 	void __stdcall cameraCallback(ULONG_PTR pCaller, const CameraInfo& rCameraInfo);
 

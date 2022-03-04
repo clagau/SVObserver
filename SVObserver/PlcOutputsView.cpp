@@ -72,7 +72,7 @@ BOOL PlcOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD
 	m_rCtrl.SetColumnWidth(0, 125);
 	m_rCtrl.SetColumnWidth(1, 125);
 	m_rCtrl.SetColumnWidth(2, 500);
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(m_maxOutputNumber);
+	m_maxOutputNumber = SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount();
 	return RetVal;
 }
 
@@ -105,6 +105,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 
 		// Check if any PPQs are here yet
 		if (0 == lPPQSize) { return; }
+		m_maxOutputNumber = SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount();
 
 		for (int i = 0; i < lPPQSize; ++i)
 		{
@@ -117,8 +118,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 			}
 			else
 			{
-				SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(m_maxOutputNumber);
-				for (unsigned long j=0; j < m_maxOutputNumber; ++j)
+				for (long j=0; j < m_maxOutputNumber; ++j)
 				{
 					int indexRow = j + m_maxOutputNumber * i;
 					std::string Item = SvUl::Format(_T("PLC Output %d"), j + 1);
@@ -130,12 +130,10 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 
 					m_rCtrl.SetItemText(indexRow, 1, pPPQ->GetName());
 					// Get list of available outputs
-					SVIOEntryHostStructPtrVector IOEntriesVector;
-					pPPQ->GetAllOutputs(IOEntriesVector);
 
-					for(const auto& pIOEntry : IOEntriesVector)
+					for(const auto& pIOEntry : pPPQ->GetAllOutputs())
 					{
-						if (pIOEntry->m_ObjectType != IO_PLC_OUTPUT) { continue; }
+						if (pIOEntry->m_ObjectType != SVIOObjectType::IO_PLC_OUTPUT) { continue; }
 
 						PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId));
 
@@ -167,7 +165,6 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 	{
 		if (item >= 0 && item < m_rCtrl.GetItemCount() && (flags & LVHT_ONITEM))
 		{
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(m_maxOutputNumber);
 			SVConfigurationObject* pConfig(nullptr);
 			SVOutputObjectList* pOutputList(nullptr);
 

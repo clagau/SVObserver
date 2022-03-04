@@ -2276,8 +2276,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 				{
 					if (SvPb::PlcOutputObjectType == static_cast<SvPb::SVObjectSubTypeEnum> (rImportOutput.m_subType))
 					{
-						unsigned long outputNr{ 0UL };
-						SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(outputNr);
+						long outputNr {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
 						SVOutputObjectList* pOutputList{ pConfig->GetOutputObjectList() };
 						if (nullptr != pOutputList)
 						{
@@ -3915,11 +3914,8 @@ void SVOConfigAssistantDlg::SetupTriggerStrobeMessage()
 void SVOConfigAssistantDlg::SetIOBoardCapabilities(const std::string& rIOBoard, SVIMProductEnum eSVIMType)
 {
 	SVIOBoardCapabilities svCapable;
-	unsigned long lCount;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(lCount);
-	svCapable.SetInputCount(lCount);
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(lCount);
-	svCapable.SetOutputCount(lCount);
+	svCapable.SetInputCount(SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount());
+	svCapable.SetOutputCount(SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount());
 
 	// Special code to determine the inverters 
 	// and triggers based on IO board

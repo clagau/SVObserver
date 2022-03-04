@@ -383,13 +383,12 @@ void SVIOTestDlg::OnButton1()
 {
 	nSeq = 0; 
 
-// TURN ON ALL OUPUTS
-	unsigned long numOutputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	// TURN ON ALL OUPUTS
+	long numOutputs {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
 	
-	for( DWORD dwChan = 0 ; dwChan < numOutputs; dwChan++)
+	for( long i = 0 ; i < numOutputs; ++i)
 	{
-		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, false );
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( i, false );
 	}
 }
 
@@ -397,12 +396,11 @@ void SVIOTestDlg::OnButton2()
 {
 	nSeq = 0; 
 
-// TURN OFF ALL OUPUTS
-	unsigned long numOutputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
-	for( DWORD dwChan = 0 ; dwChan < numOutputs ; dwChan++)
+	// TURN OFF ALL OUPUTS
+	long numOutputs {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
+	for (long i = 0; i < numOutputs; ++i)
 	{
-		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, true );
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( i, true );
 	}
 }
 
@@ -412,12 +410,11 @@ void SVIOTestDlg::OnTimer( UINT_PTR nIDEvent )
 	CStatic *pCStatic;
 
 	// Update Digital Input status Indicators
-	unsigned long numInputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(numInputs);
-	for (DWORD dwChan = 0 ; dwChan < numInputs ; dwChan++)
+	long numInputs {SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount()};
+	for (long inputIndex = 0 ; inputIndex < numInputs ; ++inputIndex)
 	{
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputValue(dwChan, bValue);
-		switch (dwChan)
+		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputValue(inputIndex, bValue);
+		switch (inputIndex)
 		{
 			case 0:
 				pCStatic = &m_input[1];
@@ -446,7 +443,7 @@ void SVIOTestDlg::OnTimer( UINT_PTR nIDEvent )
 			default:
 				pCStatic = &m_input[1];
 		}
-		if( (SVRABBIT_X2 == m_lSystemType || SVRABBIT_X3 == m_lSystemType) && (6 == dwChan || 7 == dwChan) )
+		if( (SVRABBIT_X2 == m_lSystemType || SVRABBIT_X3 == m_lSystemType) && (6 == inputIndex || 7 == inputIndex) )
 		{
 			pCStatic->SetIcon(AfxGetApp()->LoadIcon( IDI_ICON5));
 		}
@@ -483,8 +480,6 @@ void SVIOTestDlg::OnTimer( UINT_PTR nIDEvent )
 	}
 
 	// Sequence Outputs 0 - 7 and 8 - 15 
-	unsigned long numOutputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 
 	if (nSeq != 0)
 	{
@@ -506,6 +501,7 @@ void SVIOTestDlg::OnTimer( UINT_PTR nIDEvent )
 			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 , true);
 			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount, false);
 			
+			long numOutputs {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
 			// Outputs 8 - 15 (actually numOutputs now)
 			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 + 8, true);
 			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount + (numOutputs - 8) , false);
@@ -541,11 +537,10 @@ void SVIOTestDlg::OnSequence()
 {
 	nSeq = ~nSeq;
 	// TURN OFF ALL OUPUTS
-	unsigned long numOutputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
-	for(DWORD dwChan = 0 ; dwChan < numOutputs ; dwChan++)
+	long numOutputs {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
+	for (long i = 0; i < numOutputs; ++i)
 	{
-		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(dwChan, true);
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(i, true);
 	}
 }
 

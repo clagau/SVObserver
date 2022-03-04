@@ -52,7 +52,6 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 	m_TriggerCount = std::make_shared<SVIOEntryHostStruct>();
 	SVPPQObject* pPPQ( nullptr );
-	SVIOEntryHostStructPtrVector ppIOEntries;
 	
 	int iCurrentSel = 0;
 
@@ -87,14 +86,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 		std::string l_strPPQName( pPPQ->GetName() );
 		if( l_strPPQName == l_pRemoteGroup->GetPPQName() )
 		{
-			long lSize = 0;
-			// Get list of available outputs
-			pPPQ->GetAllOutputs(ppIOEntries);
-
-			lSize = static_cast<long>(ppIOEntries.size());
-
 			// Put the Trigger Count in the list.
-
 			SvVol::BasicValueObjectPtr pPpqTriggerCount = pPPQ->getPpqVaraible(SvDef::FqnPpqTriggerCount);
 			if (nullptr != pPpqTriggerCount)
 			{
@@ -106,13 +98,11 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 			SVObjectClass* pCurrentObject = SVObjectManagerClass::Instance().GetObject(m_InputObjectID);
 			// Init IO combo from m_ppIOEntries;
-			for( int i = 0; i < lSize; i++ )
+			for (const auto& pIOEntry : pPPQ->GetAllOutputs())
 			{
-				SVIOEntryHostStructPtr pIOEntry = ppIOEntries[i];
 				SVIOEntryHostStruct EntryStruct;
 				
 				int iIndex=0;
-
 				if(nullptr != pIOEntry)
 				{
 					if( nullptr != pIOEntry->getObject() && std::string::npos == pIOEntry->getObject()->GetCompleteName().find( _T( "PPQ" ) ) )

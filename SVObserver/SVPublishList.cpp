@@ -51,10 +51,9 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 	{
 		while (m_objectIdList.end() != iter)
 		{
-			SVIOEntryHostStructPtrVector ppPPQEntries;
-			pPPQ->GetAllOutputs(ppPPQEntries);
-			auto iterPPQ = std::find_if(ppPPQEntries.begin(), ppPPQEntries.end(), [iter](const auto pEntry) { return *iter == pEntry->getObject()->getObjectId(); });
-			if (ppPPQEntries.end() != iterPPQ)
+			const SVIOEntryHostStructPtrVector& rAllOutputs {pPPQ->GetAllOutputs()};
+			auto iterPPQ = std::find_if(rAllOutputs.begin(), rAllOutputs.end(), [iter](const auto pEntry) { return *iter == pEntry->getObject()->getObjectId(); });
+			if (rAllOutputs.end() != iterPPQ)
 			{
 				pPPQ->RemoveOutput(*iterPPQ);
 			}
@@ -132,11 +131,9 @@ void SVPublishList::Release(SvIe::SVTaskObjectClass*)
 	{
 		for (auto objectId : m_objectIdList)
 		{
-			// Now remove it from all of the PPQs
-			SVIOEntryHostStructPtrVector ppPPQEntries;
-			pPPQ->GetAllOutputs(ppPPQEntries);
-			auto iterPPQ = std::find_if(ppPPQEntries.begin(), ppPPQEntries.end(), [objectId](const auto pEntry) { return objectId == pEntry->getObject()->getObjectId(); });
-			if (ppPPQEntries.end() != iterPPQ)
+			const SVIOEntryHostStructPtrVector& rAllOutputs {pPPQ->GetAllOutputs()};
+			auto iterPPQ = std::find_if(rAllOutputs.begin(), rAllOutputs.end(), [objectId](const auto pEntry) { return objectId == pEntry->getObject()->getObjectId(); });
+			if (rAllOutputs.end() != iterPPQ)
 			{
 				pPPQ->RemoveOutput(*iterPPQ);
 			}
@@ -160,10 +157,9 @@ bool SVPublishList::RemovePublishedEntry(uint32_t id )
 		SVPPQObject* pPPQ = m_pInspection->GetPPQ();
 		if (nullptr != pPPQ)
 		{
-			SVIOEntryHostStructPtrVector ppPPQEntries;
-			pPPQ->GetAllOutputs(ppPPQEntries);
-			auto iterPPQ = std::find_if(ppPPQEntries.begin(), ppPPQEntries.end(), [id](const auto pEntry) { return id == pEntry->getObject()->getObjectId(); });
-			if (ppPPQEntries.end() != iterPPQ)
+			const SVIOEntryHostStructPtrVector& rAllOutputs {pPPQ->GetAllOutputs()};
+			auto iterPPQ = std::find_if(rAllOutputs.begin(), rAllOutputs.end(), [id](const auto pEntry) { return id == pEntry->getObject()->getObjectId(); });
+			if (rAllOutputs.end() != iterPPQ)
 			{
 				pPPQ->RemoveOutput(*iterPPQ);
 			}

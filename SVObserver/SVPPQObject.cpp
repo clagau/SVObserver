@@ -1356,15 +1356,12 @@ bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const std::string& 
 // m_AllInputs appears to be the available input list.
 void SVPPQObject::AddDefaultInputs()
 {
-	unsigned long ulCount = 0;
-	unsigned long l;
-
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(ulCount);
+	long inputCount {SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount()};
 
 	// Create all the default Digital Inputs
-	for (l = 0; l < ulCount; l++)
+	for (long l = 0; l < inputCount; l++)
 	{
-		std::string Name = SvUl::Format(_T("DIO.Input%d"), l + 1);
+		std::string Name = SvUl::Format(_T("DIO.Input%ld"), l + 1);
 		AddToAvailableInputs(IO_DIGITAL_INPUT, Name);
 	}// end for
 
@@ -1373,10 +1370,10 @@ void SVPPQObject::AddDefaultInputs()
 	SVInputObjectList* pInputObjectList(nullptr);
 	if (nullptr != pConfig) { pInputObjectList = pConfig->GetInputObjectList(); }
 
-	long count = (nullptr != pInputObjectList) ? pInputObjectList->getRemoteInputCount() : 0;
+	inputCount = (nullptr != pInputObjectList) ? pInputObjectList->getRemoteInputCount() : 0;
 
 	// Create all the default Remote Inputs
-	for (l = 0; l < static_cast<unsigned long>(count); l++)
+	for (long l = 0; l < inputCount; l++)
 	{
 		std::string Name = SvUl::Format(SvO::cRemoteInputNumberLabel, l + 1);
 		AddToAvailableInputs(IO_REMOTE_INPUT, Name);
@@ -1835,9 +1832,9 @@ void SVPPQObject::AddDefaultOutputs()
 	}
 }// end AddDefaultOutputs
 
-void SVPPQObject::GetAllOutputs(SVIOEntryHostStructPtrVector& ppIOEntries) const
+long SVPPQObject::getOutputCount()
 {
-	ppIOEntries = m_AllOutputs;
+	return SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount();
 }
 
 SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTriggerInfo)
@@ -3781,8 +3778,7 @@ bool SVPPQObject::SetupProductInfoStructs()
 	BuildCameraInfos(cameraInfos);
 	m_pMasterProductInfos = new SVProductInfoStruct[getPPQLength() + g_lPPQExtraBufferSize];
 
-	unsigned long outputSize {0UL};
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(outputSize);
+	long outputSize {getOutputCount()};
 	for (int j = 0; j < getPPQLength() + g_lPPQExtraBufferSize; j++)
 	{
 		m_pMasterProductInfos[j].m_pPPQ = this;

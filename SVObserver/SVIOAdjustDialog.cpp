@@ -187,37 +187,32 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 
 		for(int i = 0; i <  pConfig->GetPPQCount(); ++i )
 		{
-			SVIOEntryHostStructPtrVector IOEntryVector;
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
-			if( nullptr == pPPQ )
+			if (nullptr != pPPQ)
 			{
-				SvStl::MessageManager e(SvStl::MsgType::Log );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17030_ErrorGettingPPQ );
-				DebugBreak();
+				// Init IO combo from m_ppIOEntries;
+				for (const auto& pIOEntry : pPPQ->GetAllOutputs())
+				{
+					///For PLC Output only insert items from the same PPQ
+					if (nullptr != m_pPlcOutput && i != m_PpqIndex)
+					{
+						continue;
+					}
+					///Note entries with IO_INVALID_OBJECT have not yet been set and shall either become IO_DIGITAL_OUPUT or IO_PLC_OUTPUT
+					if (SvDef::InvalidObjectId == pIOEntry->m_IOId && pIOEntry->m_ObjectType == outputType && pIOEntry->isAimObjectBool())
+					{
+						std::string name {pIOEntry->getObject()->GetCompleteName()};
+						IOCombo.AddString(name.c_str());
+						m_Items[name] = pIOEntry;
+					}// end if
+				}// end for
+
 			}
 			else
 			{
-				// Get list of available outputs
-				pPPQ->GetAllOutputs(IOEntryVector);
+				SvStl::MessageManager e(SvStl::MsgType::Log );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17030_ErrorGettingPPQ );
 			}
-
-
-			// Init IO combo from m_ppIOEntries;
-			for(const auto& pIOEntry : IOEntryVector)
-			{
-				///For PLC Output only insert items from the same PPQ
-				if(nullptr != m_pPlcOutput && i != m_PpqIndex)
-				{
-					continue;
-				}
-				///Note entries with IO_INVALID_OBJECT have not yet been set and shall either become IO_DIGITAL_OUPUT or IO_PLC_OUTPUT
-				if(SvDef::InvalidObjectId == pIOEntry->m_IOId && pIOEntry->m_ObjectType == outputType && pIOEntry->isAimObjectBool())
-				{
-					std::string name {pIOEntry->getObject()->GetCompleteName()};
-					IOCombo.AddString(name.c_str());
-					m_Items[name] = pIOEntry;
-				}// end if
-			}// end for
 		}// end for
 	}// end if
 	else

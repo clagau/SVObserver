@@ -5561,15 +5561,15 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 			}
 		}
 	}
+
 	///Need to change the output type
 	for (auto& pPPQ : m_arPPQArray)
 	{
-		SVIOEntryHostStructPtrVector IOEntriesVector;
-		pPPQ->GetAllOutputs(IOEntriesVector);
+		SVIOEntryHostStructPtrVector IOEntriesVector {pPPQ->GetAllOutputs()};
 
 		for (auto& pIoEntry : IOEntriesVector)
 		{
-			pIoEntry->m_ObjectType = SVHardwareManifest::isPlcSystem(newConfigType) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
+			pIoEntry->m_ObjectType = isPlc ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
 		}
 	}
 }

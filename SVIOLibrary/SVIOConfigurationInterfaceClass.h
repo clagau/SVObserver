@@ -32,7 +32,7 @@ public:
 	HRESULT OpenDigital( LPCTSTR p_szName );
 	HRESULT CloseDigital();
 
-	HRESULT GetDigitalInputCount( unsigned long& rCount );
+	long GetDigitalInputCount();
 	HRESULT GetDigitalInputIsInverted( unsigned long channel, bool& rbValue );
 	HRESULT SetDigitalInputIsInverted( unsigned long channel, bool bValue );
 	HRESULT GetDigitalInputIsForced( unsigned long channel, bool& rbValue );
@@ -45,7 +45,7 @@ public:
 	void readDigitalInputBatch();
 	void clearDigitalInputBatch();
 
-	HRESULT GetDigitalOutputCount( unsigned long& rCount );
+	long GetDigitalOutputCount();
 	HRESULT GetDigitalOutputIsInverted( unsigned long channel, bool& rbValue );
 	HRESULT SetDigitalOutputIsInverted( unsigned long channel, bool bValue );
 	HRESULT GetDigitalOutputIsForced( unsigned long channel, bool& rbValue );

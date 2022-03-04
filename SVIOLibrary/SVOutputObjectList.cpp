@@ -24,7 +24,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-constexpr unsigned long cMaxPlcOutputs = 14;
 constexpr uint8_t cPlcInvalid = 4;
 constexpr uint8_t cPlcBad = 5;
 constexpr uint8_t cPlcGood = 6;
@@ -151,7 +150,7 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 		{
 			switch(pIOEntry->m_ObjectType)
 			{
-				case IO_DIGITAL_OUTPUT:
+				case SVIOObjectType::IO_DIGITAL_OUTPUT:
 				{
 					std::pair<uint32_t, _variant_t> OutputValue = getDigitalOutputValue(pIOEntry, rOutputResult, useDefaults, ACK, NAK);
 					if (SvDef::InvalidObjectId != OutputValue.first && VT_EMPTY != OutputValue.second.vt)
@@ -160,16 +159,16 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 					}
 					break;
 				}
-				case IO_PLC_OUTPUT:
+				case SVIOObjectType::IO_PLC_OUTPUT:
 				{
 					std::pair<uint32_t, _variant_t> OutputValue = getDigitalOutputValue(pIOEntry, rOutputResult, useDefaults, ACK, NAK);
 					if (VT_UI1 == OutputValue.second.vt)
 					{
 						///This is to get the correct index for the respective PPQ
-						long index = OutputValue.first % cMaxPlcOutputs;
+						long index = OutputValue.first % rOutputResult.size();
 						if(Result.size() > 0)
 						{
-							if(cMaxPlcOutputs > index)
+							if(rOutputResult.size() > index)
 							{
 								::SafeArrayPutElement(Result[0].second.parray, &index, static_cast<void*>(&OutputValue.second.bVal));
 							}
@@ -179,11 +178,11 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 							_variant_t outputResults;
 							SAFEARRAYBOUND arrayBound;
 							arrayBound.lLbound = 0;
-							arrayBound.cElements = cMaxPlcOutputs;
+							arrayBound.cElements =static_cast<ULONG> (rOutputResult.size());
 							outputResults.vt = VT_UI1 | VT_ARRAY;
 							outputResults.parray = ::SafeArrayCreate(VT_UI1, 1, &arrayBound);
-							memset(outputResults.parray->pvData, 0, cMaxPlcOutputs * sizeof(uint8_t));
-							if (cMaxPlcOutputs > index)
+							memset(outputResults.parray->pvData, 0, rOutputResult.size() * sizeof(uint8_t));
+							if (rOutputResult.size() > index)
 							{
 								::SafeArrayPutElement(outputResults.parray, &index, static_cast<void*>(&OutputValue.second.bVal));
 							}
@@ -192,7 +191,7 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 					}
 					break;
 				}
-				case IO_REMOTE_OUTPUT:
+				case SVIOObjectType::IO_REMOTE_OUTPUT:
 				{
 					if (nullptr != pIOEntry->getValueObject())
 					{
@@ -267,7 +266,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool ACK,
 	// We are only writing one output, don't worry if it is marked enabled for this call
 	if(nullptr != pIOEntry)
 	{
-		if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
+		if( SVIOObjectType::IO_DIGITAL_OUTPUT == pIOEntry->m_ObjectType)
 		{
 			std::pair<uint32_t, _variant_t> ValueOutput = getDigitalOutputValue(pIOEntry, std::vector<bool>{}, false, ACK, NAK);
 
@@ -277,7 +276,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool ACK,
 				Result = (S_OK == pOutput->Write(ValueOutput.second));
 			}
 		}// end if
-		else if( pIOEntry->m_ObjectType == IO_REMOTE_OUTPUT )
+		else if( SVIOObjectType::IO_REMOTE_OUTPUT == pIOEntry->m_ObjectType)
 		{
 			SVOutputObjectPtr pOutput;
 
@@ -363,13 +362,13 @@ SVIOEntryHostStructPtrVector SVOutputObjectList::getOutputList() const
 			switch (rOutput.second->GetObjectSubType())
 			{
 			case SvPb::SVDigitalOutputObjectType:
-				pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
+				pIOEntry->m_ObjectType = SVIOObjectType::IO_DIGITAL_OUTPUT;
 				break;
 			case SvPb::PlcOutputObjectType:
-				pIOEntry->m_ObjectType = IO_PLC_OUTPUT;
+				pIOEntry->m_ObjectType = SVIOObjectType::IO_PLC_OUTPUT;
 				break;
 			case SvPb::SVRemoteOutputObjectType:
-				pIOEntry->m_ObjectType = IO_REMOTE_OUTPUT;
+				pIOEntry->m_ObjectType = SVIOObjectType::IO_REMOTE_OUTPUT;
 				break;
 			default:
 				break;
@@ -654,11 +653,11 @@ std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const
 
 		if( pOutput->isCombined() )
 		{
-			if(IO_DIGITAL_OUTPUT == pIOEntry->m_ObjectType)
+			if(SVIOObjectType::IO_DIGITAL_OUTPUT == pIOEntry->m_ObjectType)
 			{
 				Value = pOutput->isAndACK() ? Value && ACK : Value || NAK;
 			}
-			else if(IO_PLC_OUTPUT == pIOEntry->m_ObjectType)
+			else if(SVIOObjectType::IO_PLC_OUTPUT == pIOEntry->m_ObjectType)
 			{
 				if(pOutput->isAndACK())
 				{
@@ -688,14 +687,14 @@ std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const
 			}
 		}
 		///Need to convert bool value to variant
-		if (VT_BOOL == Value.vt && IO_PLC_OUTPUT == pIOEntry->m_ObjectType)
+		if (VT_BOOL == Value.vt && SVIOObjectType::IO_PLC_OUTPUT == pIOEntry->m_ObjectType)
 		{
 			bool outputState = Value ? true : false;
 			Value.Clear();
 			Value = outputState ? cPlcGood : cPlcBad;
 		}
 		///Discrete outputs has the first value the objectID while for PLC outputs its the channel number
-		Result.first = IO_PLC_OUTPUT == pIOEntry->m_ObjectType ? pOutput->GetChannel() : pIOEntry->m_IOId;
+		Result.first = SVIOObjectType::IO_PLC_OUTPUT == pIOEntry->m_ObjectType ? pOutput->GetChannel() : pIOEntry->m_IOId;
 		Result.second = Value;
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OUTPUT_VALUES)

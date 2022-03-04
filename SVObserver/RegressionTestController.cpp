@@ -9,6 +9,7 @@
 #include "Definitions/SVUserMessage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 
+constexpr LPCTSTR cResultHeader = _T("File; Object ID; Trigger Index; Results\r\n");
 
 RegressionRunFileStruct RegressionTestController::RegressionTestSetFiles(RegressionTestStruct& rRegTestStruct, RegressionRuningState& runState)
 {
@@ -125,16 +126,24 @@ RegressionRunFileStruct RegressionTestController::RegressionTestSetFiles(Regress
 	return runFileStruct;
 }
 
-
-DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess& rIP, const SvTrig::ObjectIDParameters& rObjectIDParams)
+void  RegressionTestController::initialize(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess* pInspection, const SvTrig::ObjectIDParameters& rObjectIDParams, SVObjectPtrVector&& OutputValueList)
 {
+	m_hMainWnd = hMainWnd;
+	m_hRegressionWnd = hRegressionWnd;
+	m_pInspection = pInspection;
 	m_objectIDParams = rObjectIDParams;
+	m_OutputValueList = std::move(OutputValueList);
+}
+
+DWORD RegressionTestController::runThread()
+{
 	m_objectIDParams.m_currentObjectID = m_objectIDParams.m_startObjectID;
 	m_triggerIndex = 0;
 	m_isRunning = true;
 	m_RunMode = RegModePause;
 	m_isStopping = false;
 
+	SVToolSet* pToolset = m_pInspection->GetToolSet();
 	RegressionRuningState runState;
 
 	while (m_RunMode != RegModeStopExit)
@@ -161,14 +170,14 @@ DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SV
 			runState.bModeReset = true;
 		}
 
-		bool allSingleImage = setImagesForNextRun(rIP, runState, std::back_inserter(fileNameVec));
+		bool allSingleImage = setImagesForNextRun(*m_pInspection, runState, std::back_inserter(fileNameVec));
 
 		if (m_RunMode == RegModePlay && m_RunPlayMode != Continue)
 		{
 			if (allSingleImage) //all using single file
 			{
 				m_RunMode = RegModePause;
-				SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&m_RunMode), 0);
+				SendMessage(m_hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&m_RunMode), 0);
 				runState.bModeReset = true;
 				runState.bFirst = true;
 			}
@@ -177,10 +186,14 @@ DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SV
 				if (runState.bListDone)
 				{
 					m_RunMode = RegModePause;
-					SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&m_RunMode), 0);
+					SendMessage(m_hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&m_RunMode), 0);
 					runState.bModeReset = true;
 					runState.bFirst = true;
 					runState.bRunFlag = false;
+					if (m_fileOutputResult.is_open())
+					{
+						m_fileOutputResult.close();
+					}
 				}
 			}
 		}
@@ -199,18 +212,46 @@ DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SV
 		if (m_RunMode == RegModeBackToBeginningStop)
 		{
 			m_RunMode = RegModePause;
-			SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&m_RunMode), 0);
+			SendMessage(m_hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&m_RunMode), 0);
 		}
 
 		//send image info to the dialog...
 		if (runState.bRunFlag)
 		{
-			rIP.GetToolSet()->setObjectID(m_objectIDParams.m_currentObjectID);
-			rIP.GetToolSet()->setTriggerIndex(m_triggerIndex);
-			rIP.GetToolSet()->setTriggerPerObjectID(m_objectIDParams.m_triggerPerObjectID);
+			pToolset->setObjectID(m_objectIDParams.m_currentObjectID);
+			pToolset->setTriggerIndex(m_triggerIndex);
+			pToolset->setTriggerPerObjectID(m_objectIDParams.m_triggerPerObjectID);
 			runState.bRunFlag = false;
-			SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_FILENAMES, reinterpret_cast<LPARAM> (&fileNameVec), 0);
-			runOnce(rIP);
+			SendMessage(m_hRegressionWnd, WM_REGRESSION_TEST_SET_FILENAMES, reinterpret_cast<LPARAM> (&fileNameVec), 0);
+			runOnce(*m_pInspection);
+
+			if (runState.bFirst && m_isValidationMode && false == m_fileOutputResult.is_open() && false == m_resultFileName.empty())
+			{
+				m_fileOutputResult.open(m_resultFileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+				std::string data {cResultHeader};
+				m_fileOutputResult.write(data.c_str(), data.size());
+			}
+			if (m_isValidationMode && m_fileOutputResult.is_open() && m_triggerIndex == m_objectIDParams.m_triggerPerObjectID)
+			{
+				std::string firstFileName = (0 < fileNameVec.size()) ? fileNameVec[0].FileName : _T("");
+				std::string outputData {SvUl::Format(_T("%s; %lu; %ld; "), firstFileName.c_str(), m_objectIDParams.m_currentObjectID, m_triggerIndex)};
+
+				for (const auto& pObject : m_OutputValueList)
+				{
+					if (nullptr != pObject)
+					{
+						double value;
+						pObject->getValue(value);
+						outputData += (value > 0.0) ? _T("1 ") : _T("0 ");
+					}
+					else
+					{
+						outputData += _T("-1 ");
+					}
+				}
+				outputData += "\r\n";
+				m_fileOutputResult.write(outputData.c_str(), outputData.size());
+			}
 			fileNameVec.clear();
 		}
 
@@ -236,18 +277,23 @@ DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SV
 			runState.bFirst = false;
 		}
 
-		if (RegModePlay == m_RunMode && m_UsePlayCondition && rIP.shouldPauseRegressionTestByCondition())
+		if (RegModePlay == m_RunMode && m_UsePlayCondition && m_pInspection->shouldPauseRegressionTestByCondition())
 		{
-			setPlayPause(hRegressionWnd, runState);
+			setPlayPause(runState);
 		}
 	}//end of while loop
 
-	//let the IP know that the regression test is done.
-	PostMessage(hMainWnd, WM_COMMAND, WM_REGRESSION_TEST_COMPLETE, 0L);
-	//let the RegressionRunDlg know that it is to shut down...
-	SendMessage(hRegressionWnd, WM_REGRESSION_TEST_CLOSE_REGRESSION, 0, 0);
+	if (m_fileOutputResult.is_open())
+	{
+		m_fileOutputResult.close();
+	}
 
-	const auto& rCameraList = GetCameras(rIP);
+	//let the IP know that the regression test is done.
+	PostMessage(m_hMainWnd, WM_COMMAND, WM_REGRESSION_TEST_COMPLETE, 0L);
+	//let the RegressionRunDlg know that it is to shut down...
+	SendMessage(m_hRegressionWnd, WM_REGRESSION_TEST_CLOSE_REGRESSION, 0, 0);
+
+	const auto& rCameraList = GetCameras(*m_pInspection);
 	for (auto* pCamera : rCameraList)
 	{
 		SvVol::BasicValueObjectPtr pRegValue = pCamera->getCameraValue(SvDef::FqnCameraRegPath);
@@ -299,10 +345,10 @@ bool RegressionTestController::runOnce(SVInspectionProcess& rIP)
 	return (S_OK == SvCmd::RunOnceSynchronous(rIP.getObjectId()));
 }
 
-void RegressionTestController::setPlayPause(HWND hRegressionWnd, RegressionRuningState& runState)
+void RegressionTestController::setPlayPause(RegressionRuningState& runState)
 {
 	m_RunMode = RegModePause;
-	SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&m_RunMode), 0);
+	SendMessage(m_hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&m_RunMode), 0);
 	runState.bRunFlag = false;
 	if (m_RunPlayMode != Continue)
 	{
@@ -347,7 +393,7 @@ void RegressionTestController::setPlayPause(HWND hRegressionWnd, RegressionRunin
 
 bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, RegressionRuningState& runState, std::back_insert_iterator<std::vector<RegressionRunFileStruct>> fileNameInserter)
 {
-	if (RegressionRunModeEnum::RegModeBackToBeginningStop == m_RunMode)
+	if (false == m_isValidationMode && RegressionRunModeEnum::RegModeBackToBeginningStop == m_RunMode)
 	{
 		m_objectIDParams.m_currentObjectID = m_objectIDParams.m_startObjectID;
 		m_triggerIndex = 0;
@@ -393,28 +439,46 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 			}
 			rIP.AddInputImageRequestByCameraName(runFileStruct.ObjectName, runFileStruct.FileName);
 
-			if (RegressionRunModeEnum::RegModeSingleStepBack == m_RunMode)
+			if (true == m_isValidationMode)
 			{
-				--m_triggerIndex;
+				size_t pos2 = regFile.find_last_of('.');
+				size_t pos1 = regFile.find_last_of('_', pos2);
+				if (std::string::npos != pos1 && std::string::npos != pos2)
+				{
+					m_triggerIndex = std::stol(regFile.substr(pos1 + 1, pos2 - pos1 - 1));
+					pos2 = pos1 - 1;
+				}
+				pos1 = regFile.find_last_of('_', pos2);
+				if (std::string::npos != pos1 && std::string::npos != pos2)
+				{
+					m_objectIDParams.m_currentObjectID = std::stol(regFile.substr(pos1 + 1, pos2 - pos1));
+				}
 			}
 			else
 			{
-				++m_triggerIndex;
-			}
+				if (RegressionRunModeEnum::RegModeSingleStepBack == m_RunMode)
+				{
+					--m_triggerIndex;
+				}
+				else
+				{
+					++m_triggerIndex;
+				}
 
-			if (m_objectIDParams.m_triggerPerObjectID < m_triggerIndex)
-			{
-				++m_objectIDParams.m_currentObjectID;
-				m_triggerIndex = 1L;
-			}
-			else if (1L > m_triggerIndex)
-			{
-				--m_objectIDParams.m_currentObjectID;
-				m_triggerIndex = m_objectIDParams.m_triggerPerObjectID;
-			}
-			else if (0 == m_objectIDParams.m_startObjectID && 0 == m_objectIDParams.m_currentObjectID)
-			{
-				m_objectIDParams.m_currentObjectID = 1L;
+				if (m_objectIDParams.m_triggerPerObjectID < m_triggerIndex)
+				{
+					++m_objectIDParams.m_currentObjectID;
+					m_triggerIndex = 1L;
+				}
+				else if (1L > m_triggerIndex)
+				{
+					--m_objectIDParams.m_currentObjectID;
+					m_triggerIndex = m_objectIDParams.m_triggerPerObjectID;
+				}
+				else if (0 == m_objectIDParams.m_startObjectID && 0 == m_objectIDParams.m_currentObjectID)
+				{
+					m_objectIDParams.m_currentObjectID = 1L;
+				}
 			}
 		}
 	}//end for i to num cameras...

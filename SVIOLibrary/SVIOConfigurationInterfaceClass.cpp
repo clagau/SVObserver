@@ -80,11 +80,9 @@ HRESULT SVIOConfigurationInterfaceClass::CloseDigital()
 	return m_DigitalBoard.Close();
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputCount( unsigned long& rCount )
+long SVIOConfigurationInterfaceClass::GetDigitalInputCount()
 {
-	rCount = static_cast<unsigned long> (m_DigitalInputs.size());
-
-	return S_OK;
+	return static_cast<long> (m_DigitalInputs.size());
 }
 
 HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputIsInverted( unsigned long channel, bool& rValue )
@@ -239,11 +237,9 @@ void SVIOConfigurationInterfaceClass::clearDigitalInputBatch()
 	m_isBatchInputRead = false;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputCount( unsigned long& rCount )
+long SVIOConfigurationInterfaceClass::GetDigitalOutputCount()
 {
-	rCount = static_cast<unsigned long> (m_DigitalOutputs.size());
-
-	return S_OK;
+	return static_cast<long> (m_DigitalOutputs.size());
 }
 
 HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputIsInverted( unsigned long channel, bool& rValue )

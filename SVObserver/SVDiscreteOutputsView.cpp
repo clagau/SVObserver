@@ -36,7 +36,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr const char* cDigitalOutputName = ("Digital Output %d");
+constexpr const char* cDigitalOutputName = ("Digital Output %ld");
 
 IMPLEMENT_DYNCREATE(SVDiscreteOutputsView, CListView)
 
@@ -123,9 +123,8 @@ void SVDiscreteOutputsView::OnUpdate( CView* , LPARAM , CObject*  )
 		if( 0 == lPPQSize ) { return; }
 
 		// Result Outputs
-		DWORD maxOutput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( maxOutput );
-		for(int i = 0; i < static_cast<int>(maxOutput); ++i)
+		long maxOutput {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
+		for(long i = 0; i < maxOutput; ++i)
 		{
 			// First column: Result I/O
 			std::string Item = SvUl::Format(cDigitalOutputName, i + 1);
@@ -141,29 +140,26 @@ void SVDiscreteOutputsView::OnUpdate( CView* , LPARAM , CObject*  )
 			for(int j = 0; j < lPPQSize; ++j)
 			{
 				SVPPQObject* pPPQ = pConfig->GetPPQ(j);
-				if( nullptr == pPPQ )
+				if (nullptr != pPPQ)
+				{
+					// Find each digital output
+					for (const auto& pIOEntry : pPPQ->GetAllOutputs())
+					{
+						if (pIOEntry->m_ObjectType != SVIOObjectType::IO_DIGITAL_OUTPUT)
+						{
+							continue;
+						}
+
+						if (setListItem(i, pIOEntry))
+						{
+							break;
+						}
+					}
+				}
+				else
 				{
 					SvStl::MessageManager e(SvStl::MsgType::Log );
 					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17011_ErrorGettingPPQ );
-					DebugBreak();
-				}
-
-				SVIOEntryHostStructPtrVector IOEntriesVector;
-				// Get list of available outputs
-				pPPQ->GetAllOutputs(IOEntriesVector);
-
-				// Find each digital output
-				for(const auto& pIOEntry : IOEntriesVector)
-				{
-					if( pIOEntry->m_ObjectType != IO_DIGITAL_OUTPUT )
-					{
-						continue;
-					}
-
-					if (setListItem(i, pIOEntry))
-					{ 
-						break;
-					}
 				}
 			}
 		}

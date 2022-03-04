@@ -54,6 +54,7 @@
 #include "Operators/SVConditional.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
+#include "SVIOLibrary/SVOutputObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
@@ -2212,11 +2213,49 @@ void SVIPDoc::RunRegressionTest()
 			// check to see if it is able to go into Regression mode
 
 			// check to see if the list of files are the same...
-			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg = new SVRegressionRunDlg(m_regTest, m_InspectionID);
-			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->SetIPDocParent(this);
-			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->Create(IDD_DIALOG_REGRESSIONTEST_RUN);
-			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->ShowWindow(SW_SHOW);
+			SVMainFrame* pMainFrame = static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd);
+			HWND hRegressionWnd(nullptr);
+			if (nullptr != pMainFrame)
+			{
+				pMainFrame->m_pregTestDlg = new SVRegressionRunDlg(m_regTest, m_InspectionID);
+				pMainFrame->m_pregTestDlg->SetIPDocParent(this);
+				pMainFrame->m_pregTestDlg->Create(IDD_DIALOG_REGRESSIONTEST_RUN);
+				pMainFrame->m_pregTestDlg->ShowWindow(SW_SHOW);
+				hRegressionWnd = pMainFrame->m_pregTestDlg->GetSafeHwnd();
+			}
 
+
+			if (nullptr == pInspection->GetPPQ() || nullptr == pInspection->GetPPQ()->GetTrigger())
+			{
+				return;
+			}
+			const SvTrig::ObjectIDParameters& rObjectIDParam = pInspection->GetPPQ()->GetTrigger()->getObjectIDParameters();
+
+			long outputCount {pInspection->GetPPQ()->getOutputCount()};
+			SVObjectPtrVector outputList;
+			outputList.resize(outputCount);
+
+			for (const SVIOEntryHostStructPtr pOutputEntry : pInspection->GetPPQ()->getUsedOutputs())
+			{
+				if (m_InspectionID == pOutputEntry->m_inspectionId)
+				{
+					SVOutputObject* pOutput = dynamic_cast<SVOutputObject*> (SVObjectManagerClass::Instance().GetObject(pOutputEntry->m_IOId));
+					if (nullptr != pOutput)
+					{
+						int outputIndex = pOutput->GetChannel();
+						if (SVIOObjectType::IO_PLC_OUTPUT == pOutputEntry->m_ObjectType)
+						{
+							outputIndex %= outputCount;
+						}
+						if (outputIndex < outputCount)
+						{
+							outputList[outputIndex] = pOutputEntry->getObject();
+						}
+					}
+				}
+			}
+
+			m_regTest.initialize(pMainFrame->GetSafeHwnd(), hRegressionWnd, pInspection, rObjectIDParam, std::move(outputList));
 			DWORD dwThreadID;
 			m_RegressionTestHandle = ::CreateThread(nullptr, 0, SVRegressionTestRunThread, (LPVOID)this, 0, &dwThreadID);
 		}
@@ -3459,20 +3498,8 @@ void SVIPDoc::OnViewResetCountsCurrentIP()
 DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 {
 	SVIPDoc* pIPDoc = reinterpret_cast<SVIPDoc*> (lpParam);
-	SVMainFrame* pMainFrm(dynamic_cast<SVMainFrame*> (AfxGetApp()->m_pMainWnd));
-	HWND hRegressionWnd(nullptr);
 
-	if (nullptr != pMainFrm && nullptr != pMainFrm->m_pregTestDlg)
-	{
-		hRegressionWnd = pMainFrm->m_pregTestDlg->GetSafeHwnd();
-	}
-	auto* pIp = pIPDoc->GetInspectionProcess();
-	if (nullptr == pIp || nullptr == hRegressionWnd || nullptr == pIp->GetPPQ() || nullptr == pIp->GetPPQ()->GetTrigger())
-	{
-		return static_cast<DWORD> (E_FAIL);
-	}
-
-	return pIPDoc->m_regTest.runThread(pMainFrm->GetSafeHwnd(), hRegressionWnd, *pIp, pIp->GetPPQ()->GetTrigger()->getObjectIDParameters());
+	return pIPDoc->m_regTest.runThread();
 }
 
 void SVIPDoc::RegressionTestComplete()

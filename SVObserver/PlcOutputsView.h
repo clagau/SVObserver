@@ -31,6 +31,6 @@ private:
 	CImageList m_ImageList;
 	CImageList m_StateImageList;
 	std::map<unsigned long, SVIOEntryHostStructPtr> m_Items;
-	unsigned long m_maxOutputNumber{0UL};
+	long m_maxOutputNumber {0L};
 #pragma endregion Member variables
 };

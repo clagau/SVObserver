@@ -18,7 +18,7 @@
 #include "SVInspectionProcess.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionExitDlg.h"
-
+#include "SVMFCControls/SVFileDialog.h"
 #include "SVOGui/SVFormulaEditorSheet.h"
 #pragma endregion Includes
 
@@ -28,32 +28,39 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+BEGIN_MESSAGE_MAP(SVRegressionRunDlg, CDialog)
+	ON_BN_CLICKED(IDC_BTN_BEGINNING, OnBtnBeginning)
+	ON_BN_CLICKED(IDC_BTN_FRAME_BACK, OnBtnFrameBack)
+	ON_BN_CLICKED(IDC_BTN_FRAME_UP, OnBtnFrameUp)
+	ON_BN_CLICKED(IDC_BTN_MODE, OnBtnMode)
+	ON_BN_CLICKED(IDC_BTN_PLAY, OnBtnPlay)
+	ON_BN_CLICKED(IDC_BTN_STOP, OnBtnStop)
+	ON_BN_CLICKED(IDC_REG_VALIDATE_MODE, OnValidateMode)
+	ON_BN_CLICKED(IDC_CHECK_PLAY_COND, OnCheckPlayCond)
+	ON_WM_HSCROLL()
+	ON_WM_SHOWWINDOW()
+	ON_WM_CLOSE()
+	ON_BN_CLICKED(IDC_BTN_SETTINGS, OnBtnSettings)
+	ON_WM_KEYDOWN()
+	ON_MESSAGE(WM_REGRESSION_TEST_SET_FILENAMES, SetNextFiles)
+	ON_MESSAGE(WM_REGRESSION_TEST_SET_PLAYPAUSE, SetPlayPauseBtn)
+	ON_MESSAGE(WM_REGRESSION_TEST_SET_PREVIOUS, SetPreviousFrameBtn)
+	ON_MESSAGE(WM_REGRESSION_TEST_CLOSE_REGRESSION, CloseRegressionTest)
+	ON_BN_CLICKED(IDC_BTN_EXIT, OnBtnExit)
+	ON_BN_CLICKED(IDC_BTN_REG_TEST_PAUSE_EQUATION, OnBnClickedFormula)
+	ON_BN_CLICKED(IDC_BTN_SELECT_RESULT_FILE, OnBnClickedResultFile)
+END_MESSAGE_MAP()
+
 #pragma region Constructor
 SVRegressionRunDlg::SVRegressionRunDlg(RegressionTestController& rRegessionController, uint32_t inspectionID, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVRegressionRunDlg::IDD, pParent)
 	, m_rRegressionController(rRegessionController)
 	, m_pFormulaController(rRegessionController.getPlayEquationController())
-	, m_iconPlay(nullptr)
-	, m_iconPause(nullptr)
-	, m_iconStop(nullptr)
-	, m_iconModeContinue(nullptr)
-	, m_iconModeRunToEnd(nullptr)
-	, m_iconFrameUp(nullptr)
-	, m_iconFrameBack(nullptr)
 	, m_timeDelayText( _T( " 0.0" ) ) // Lead with a space for all values less than 10.
-	, m_bFirst(false)
-	, m_ctlToolTip(nullptr)
-	, m_enumMode(RunToEnd)
-	, m_enumPlayPause(Pause)
-	, m_iconBeginning(nullptr)
-	, m_pIPDocParent(nullptr)
-	, m_timeDelayInMS(0)
 	, m_InspectionID(inspectionID)
 	, m_bPlayByEquation(rRegessionController.usePlayCondition())
 {
 	m_sliderDelayTime.SetInvertVerticalArrowKeys(true);
-	//{{AFX_DATA_INIT(SVRegressionRunDlg)
-	//}}AFX_DATA_INIT
 }
 
 SVRegressionRunDlg::~SVRegressionRunDlg()
@@ -80,39 +87,14 @@ void SVRegressionRunDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDT_DELAY_TIME, m_timeDelayText);
 	DDX_Check(pDX, IDC_CHECK_PLAY_COND, m_bPlayByEquation);
 	DDX_Text(pDX, IDC_EDIT_PAUSE_EQUATION, m_equationString);
+	DDX_Check(pDX, IDC_REG_VALIDATE_MODE, m_isValidationMode);
+	DDX_Text(pDX, IDC_VALIDATE_RESULT_FILE, m_validateResultFile);
 	//}}AFX_DATA_MAP
 }
-
-BEGIN_MESSAGE_MAP(SVRegressionRunDlg, CDialog)
-	//{{AFX_MSG_MAP(SVRegressionRunDlg)
-	ON_BN_CLICKED(IDC_BTN_BEGINNING, OnBtnBeginning)
-	ON_BN_CLICKED(IDC_BTN_FRAME_BACK, OnBtnFrameBack)
-	ON_BN_CLICKED(IDC_BTN_FRAME_UP, OnBtnFrameUp)
-	ON_BN_CLICKED(IDC_BTN_MODE, OnBtnMode)
-	ON_BN_CLICKED(IDC_BTN_PLAY, OnBtnPlay)
-	ON_BN_CLICKED(IDC_BTN_STOP, OnBtnStop)
-	ON_BN_CLICKED(IDC_CHECK_PLAY_COND, OnCheckPlayCond)
-	ON_WM_HSCROLL()
-	ON_WM_SHOWWINDOW()
-	ON_WM_CLOSE()
-	ON_BN_CLICKED(IDC_BTN_SETTINGS, OnBtnSettings)
-	ON_WM_KEYDOWN()
-	ON_MESSAGE(WM_REGRESSION_TEST_SET_FILENAMES, SetNextFiles)
-	ON_MESSAGE(WM_REGRESSION_TEST_SET_PLAYPAUSE, SetPlayPauseBtn)
-	ON_MESSAGE(WM_REGRESSION_TEST_SET_PREVIOUS, SetPreviousFrameBtn)
-	ON_MESSAGE(WM_REGRESSION_TEST_CLOSE_REGRESSION, CloseRegressionTest)
-	ON_BN_CLICKED(IDC_BTN_EXIT, OnBtnExit)
-	ON_BN_CLICKED(IDC_BTN_REG_TEST_PAUSE_EQUATION, OnBnClickedButtonFormula)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// SVRegressionRunDlg message handlers
 
 BOOL SVRegressionRunDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	BOOL bRet;
 	CWinApp* app = AfxGetApp();
 
 	if ( nullptr != app )
@@ -151,13 +133,13 @@ BOOL SVRegressionRunDlg::OnInitDialog()
 		m_ctlToolTip->SetDelayTime( 10,    TTDT_INITIAL );
 		m_ctlToolTip->SetDelayTime( 250,   TTDT_RESHOW );
 
-		bRet = m_ctlToolTip->AddTool(&m_btnSettings, IDS_REGTEST_SETTING);
-		bRet = m_ctlToolTip->AddTool(&m_btnStopExit, IDS_REGTEST_STOP);
-		bRet = m_ctlToolTip->AddTool(&m_btnPlayPause, IDS_REGTEST_PLAY);
-		bRet = m_ctlToolTip->AddTool(&m_btnMode, IDS_REGTEST_MODE_RUNTOEND);
-		bRet = m_ctlToolTip->AddTool(&m_btnFrameUp, IDS_REGTEST_FRAME_UP);
-		bRet = m_ctlToolTip->AddTool(&m_btnFrameBack, IDS_REGTEST_FRAME_BACK);
-		bRet = m_ctlToolTip->AddTool(&m_btnBeginning, IDS_REGTEST_BEGINNING);
+		m_ctlToolTip->AddTool(&m_btnSettings, IDS_REGTEST_SETTING);
+		m_ctlToolTip->AddTool(&m_btnStopExit, IDS_REGTEST_STOP);
+		m_ctlToolTip->AddTool(&m_btnPlayPause, IDS_REGTEST_PLAY);
+		m_ctlToolTip->AddTool(&m_btnMode, IDS_REGTEST_MODE_RUNTOEND);
+		m_ctlToolTip->AddTool(&m_btnFrameUp, IDS_REGTEST_FRAME_UP);
+		m_ctlToolTip->AddTool(&m_btnFrameBack, IDS_REGTEST_FRAME_BACK);
+		m_ctlToolTip->AddTool(&m_btnBeginning, IDS_REGTEST_BEGINNING);
 
 		m_sliderDelayTime.SetRange( 0, 100, TRUE );
 		m_sliderDelayTime.SetPageSize( 1 );
@@ -338,6 +320,12 @@ void SVRegressionRunDlg::OnCheckPlayCond()
 {
 	UpdateData(true); // get data from dialog
 	m_rRegressionController.usePlayCondition(m_bPlayByEquation?true:false);
+}
+
+void SVRegressionRunDlg::OnValidateMode()
+{
+	UpdateData(true); // get data from dialog
+	m_rRegressionController.setValidationMode(m_isValidationMode ? true : false);
 }
 
 void SVRegressionRunDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -620,7 +608,7 @@ void SVRegressionRunDlg::setDelayTime( int position )
 	m_rRegressionController.setTimeoutPeriod(m_timeDelayInMS);
 }
 
-void SVRegressionRunDlg::OnBnClickedButtonFormula()
+void SVRegressionRunDlg::OnBnClickedFormula()
 {
 	BOOL updateState = UpdateData(TRUE);
 	if (updateState)
@@ -631,6 +619,21 @@ void SVRegressionRunDlg::OnBnClickedButtonFormula()
 		dlg.DoModal();
 		setEquationText();
 	}
+}
+
+void SVRegressionRunDlg::OnBnClickedResultFile()
+{
+	constexpr LPCTSTR cResultFileFilter = _T("CSV Files (*.csv)|*.csv||");
+	SvMc::SVFileDialog dlg(false, true, _T("csv"), nullptr, 0, cResultFileFilter, nullptr);
+	dlg.m_ofn.lpstrTitle = _T("Select File");
+
+	m_validateResultFile.Empty();
+	if (dlg.DoModal() == IDOK)
+	{
+		m_validateResultFile = dlg.GetPathName();
+	}
+	m_rRegressionController.setValidationFile(m_validateResultFile.GetString());
+	UpdateData(false);
 }
 
 void SVRegressionRunDlg::setEquationText()

@@ -44,6 +44,6 @@ namespace SvO
 	const TCHAR* const cTrue = _T( "True" );
 	const TCHAR* const cFalse = _T( "False" );
 
-	const TCHAR* const cRemoteInputNumberLabel = _T("Remote Input %d");
+	const TCHAR* const cRemoteInputNumberLabel = _T("Remote Input %ld");
 
 } //namespace SvO

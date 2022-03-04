@@ -514,18 +514,16 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 
 	if (nullptr != pConfig && nullptr != pApp && GetTheIODoc())
 	{
-		SVIOEntryHostStructPtrVector ppIOEntries;
 		long lPPQSize = pConfig->GetPPQCount();
 
 		// Print Result Output title...
-		DWORD dwMaxOutput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(dwMaxOutput);
+		long maxOutput {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
 		writer->WriteStartElement(nullptr, L"ResultOutputs", nullptr);
 		wchar_t buff[64];
-		writer->WriteAttributeString(nullptr, L"NumberOfOutputs", nullptr, _itow(dwMaxOutput, buff, 10));
+		writer->WriteAttributeString(nullptr, L"NumberOfOutputs", nullptr, _itow(maxOutput, buff, 10));
 
 		// Result Outputs
-		for (long i = 0; i < (long)dwMaxOutput; ++i)
+		for (long i = 0; i < maxOutput; ++i)
 		{
 			SVIOEntryHostStructPtr pModuleReady = pConfig->GetModuleReady();
 
@@ -549,21 +547,15 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 				SVPPQObject* pPPQ = pConfig->GetPPQ(j);
 				if (nullptr != pPPQ)
 				{
-					// Get list of available outputs
-					long	lIOEntries = 0;
-					pPPQ->GetAllOutputs(ppIOEntries);
-
-					lIOEntries = static_cast<long>(ppIOEntries.size());
-
 					// Find each digital output
-					for (int k = 0; k < lIOEntries; k++)
+					for (const auto& pIoEntry : pPPQ->GetAllOutputs())
 					{
-						if (ppIOEntries[k]->m_ObjectType != IO_DIGITAL_OUTPUT)
+						if (pIoEntry->m_ObjectType != IO_DIGITAL_OUTPUT)
 						{
 							continue;
 						}
 
-						pDigOutput = dynamic_cast<SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(ppIOEntries[k]->m_IOId));
+						pDigOutput = dynamic_cast<SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(pIoEntry->m_IOId));
 
 						if (!pDigOutput)
 						{
@@ -574,7 +566,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 						{
 							writer->WriteStartElement(nullptr, L"DigitalOutput", nullptr);
 							writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
-							WriteIOEntryObject(writer, ppIOEntries[k]);
+							WriteIOEntryObject(writer, pIoEntry);
 							writer->WriteEndElement();
 							continue;
 						}// end if
@@ -605,15 +597,14 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 			long lSize = static_cast<long>(inputEntryVector.size());
 
 			// Print module input title...
-			DWORD dwMaxInput = 0;
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(dwMaxInput);
+			long maxInput {SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount()};
 
 			writer->WriteStartElement(nullptr, L"DigitalInputs", nullptr);
 			wchar_t				buff[64];
-			writer->WriteAttributeString(nullptr, L"NumberOfInputs", nullptr, _itow(dwMaxInput, buff, 10));
+			writer->WriteAttributeString(nullptr, L"NumberOfInputs", nullptr, _itow(maxInput, buff, 10));
 
 			// Module Inputs
-			for (long i = 0; i < (long)dwMaxInput; ++i)
+			for (long i = 0; i < maxInput; ++i)
 			{
 				writer->WriteStartElement(nullptr, L"DigitalInput", nullptr);
 				writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
