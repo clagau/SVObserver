@@ -411,9 +411,7 @@ bool TableCopyObject::ResetNewColumns(int valueListPos, int arraySize, SvStl::Me
 void TableCopyObject::sendChangedEmbeddedIDToUser(SvPb::EmbeddedIdEnum oldEmbeddedId, SvPb::EmbeddedIdEnum newEmbeddedId)
 {
 	std::set<uint32_t> dependencyList;
-	std::set<uint32_t> SourceSet;
-	SourceSet.insert(getObjectId());
-	SvOi::getToolDependency(std::inserter(dependencyList, dependencyList.begin()), SourceSet);
+	SvOi::getToolDependency(std::inserter(dependencyList, dependencyList.begin()), {getObjectId()});
 	for (auto id : dependencyList)
 	{
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(SvOi::getObject(id));

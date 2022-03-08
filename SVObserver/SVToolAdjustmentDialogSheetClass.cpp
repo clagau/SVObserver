@@ -567,10 +567,8 @@ bool SVToolAdjustmentDialogSheetClass::ResetTools(SvOi::IObjectClass* pObject)
 			resetResult = pObject->resetAllObjects();
 		}
 		//Reset all tools dependent on this tool
-		std::set<uint32_t> ToolSet;
-		ToolSet.insert(pObject->getObjectId());
 		std::set<uint32_t> ToolDependencySet;
-		SvOi::getToolDependency(std::inserter(ToolDependencySet, ToolDependencySet.end()), ToolSet);
+		SvOi::getToolDependency(std::inserter(ToolDependencySet, ToolDependencySet.end()),{pObject->getObjectId()});
 		for (auto const& rEntry : ToolDependencySet)
 		{
 			SvOi::IObjectClass* pTool = SvOi::getObject(rEntry);

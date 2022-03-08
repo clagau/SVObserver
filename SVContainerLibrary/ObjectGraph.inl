@@ -138,78 +138,38 @@ namespace SvCl
 	}
 
 	template< typename VertexName, typename EdgeType >
-	HRESULT ObjectGraph<VertexName, EdgeType>::getDependents(const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rEdgeType, bool InvertEdge, bool DepthFirstSearch ) const
+	HRESULT ObjectGraph<VertexName, EdgeType>::getDependents(const VertexSet& rVertexSet, DependencyInserter inserter, const EdgeType& rEdgeType, bool invertEdge) const
 	{
-		HRESULT Result = S_OK;
-
-		typedef boost::filtered_graph< DependencyGraph, filter_edge_type<EdgeTypeMapConst, EdgeType> > EdgeTypeFilteredGraph;
-		typedef dependency_visitor<VertexName, DependencyInserter, boost::dfs_visitor<>> DfsVisitor;
-		typedef dependency_visitor<VertexName, DependencyInserter, boost::bfs_visitor<>> BfsVisitor;
-
 		EdgeTypeMapConst ConstEdgeTypeMap( boost::get( edge_type_t(), m_Graph ) );
 		filter_edge_type<EdgeTypeMapConst, EdgeType> FilterEdgeType( &ConstEdgeTypeMap, &rEdgeType );
-		const EdgeTypeFilteredGraph FilteredGraph( m_Graph, FilterEdgeType );
+		const EdgeTypeFilteredGraph filteredGraph( m_Graph, FilterEdgeType );
 
-		if(InvertEdge)
-		{
-			const boost::reverse_graph<EdgeTypeFilteredGraph> ReverseGraph( FilteredGraph );
+		getAdjacentDependency(filteredGraph, inserter, rVertexSet, invertEdge);
 
-			for (const VertexName& rVertexName : rVertexSet)
-			{
-				const VertexData StartVertex = getVertex(rVertexName);
-				if (DepthFirstSearch)
-				{
-					boost::depth_first_search(ReverseGraph, boost::visitor(DfsVisitor(rVertexName, Inserter)).root_vertex(StartVertex));
-				}
-				else
-				{
-					boost::breadth_first_search(ReverseGraph, StartVertex, boost::visitor(BfsVisitor(rVertexName, Inserter)));
-				}
-			}
-		}
-		else
-		{
-			for (const VertexName& rVertexName : rVertexSet)
-			{
-				const VertexData StartVertex = getVertex(rVertexName);
-				if (DepthFirstSearch)
-				{
-					boost::depth_first_search(FilteredGraph, boost::visitor(DfsVisitor(rVertexName, Inserter)).root_vertex(StartVertex));
-				}
-				else
-				{
-					boost::breadth_first_search(FilteredGraph, StartVertex, boost::visitor(BfsVisitor(rVertexName, Inserter)));
-				}
-			}
-		}
-
-		return Result;
+		return S_OK;
 	}
 
 	template< typename VertexName, typename EdgeType >
-	HRESULT ObjectGraph<VertexName, EdgeType>::getChildDependents( const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rChildEdgeType, const EdgeType& rEdgeType, bool InvertEdge ) const
+	ObjectGraph<VertexName, EdgeType>::VertexSet ObjectGraph<VertexName, EdgeType>::getAllDependents( const VertexSet& rVertexSet, const EdgeType& rEdgeType) const
 	{
-		HRESULT Result = S_OK;
+		VertexSet result;
+
+		EdgeTypeMapConst ConstEdgeTypeMap(boost::get(edge_type_t(), m_Graph));
+		filter_edge_type<EdgeTypeMapConst, EdgeType> FilterEdgeType(&ConstEdgeTypeMap, &rEdgeType);
+		const EdgeTypeFilteredGraph filteredGraph(m_Graph, FilterEdgeType);
 
 		DependencySet ChildDependencies;
+		depthFirstSearch(filteredGraph, std::inserter(ChildDependencies, ChildDependencies.end()), rVertexSet);
 
-		//Search first using Depth First Search
-		getDependents(rVertexSet, std::inserter( ChildDependencies, ChildDependencies.end() ), rChildEdgeType, false, true);
-
-		VertexSet Children;
 		//Insert the main Vertex in the dependency check and all dependencies found
-		Children.insert(rVertexSet.begin(), rVertexSet.end());
+		result.insert(rVertexSet.begin(), rVertexSet.end());
 		typename DependencySet::const_iterator Iter( ChildDependencies.begin() );
 		for( ; ChildDependencies.end() != Iter; ++Iter )
 		{
-			Children.insert( Iter->first );
-			Children.insert( Iter->second );
+			result.insert( Iter->first );
+			result.insert( Iter->second );
 		}
-
-		//Now search using Breadth First Search as it should only be one Vertex away
-		getDependents(Children, Inserter, rEdgeType, InvertEdge);
-
-		return Result;
+		return result;
 	}
 
 	template< typename VertexName, typename EdgeType >
@@ -324,6 +284,49 @@ namespace SvCl
 		else
 		{
 			boost::get( edge_type_t(), m_Graph)[rEdge] += rEdgeType;
+		}
+	}
+
+	template< typename VertexName, typename EdgeType >
+	void ObjectGraph<VertexName, EdgeType>::depthFirstSearch(const EdgeTypeFilteredGraph& rGraph, DependencyInserter inserter, const VertexSet& rVertexSet) const
+	{
+		typedef dependency_visitor<VertexName, DependencyInserter, boost::dfs_visitor<>> DfsVisitor;
+
+		for (const auto rVertexName : rVertexSet)
+		{
+			const VertexData startVertex = getVertex(rVertexName);
+			boost::depth_first_search(rGraph, boost::visitor(DfsVisitor(rVertexName, inserter)).root_vertex(startVertex));
+		}
+	}
+
+	template< typename VertexName, typename EdgeType >
+	void ObjectGraph<VertexName, EdgeType>::breadthFirstSearch(const EdgeTypeFilteredGraph& rGraph, DependencyInserter inserter, const VertexSet& rVertexSet) const
+	{
+		typedef dependency_visitor<VertexName, DependencyInserter, boost::bfs_visitor<>> BfsVisitor;
+		for (const auto rVertexName : rVertexSet)
+		{
+			const VertexData startVertex = getVertex(rVertexName);
+			boost::breadth_first_search(rGraph, startVertex, boost::visitor(BfsVisitor(rVertexName, inserter)));
+		}
+	}
+
+	template< typename VertexName, typename EdgeType >
+	void ObjectGraph<VertexName, EdgeType>::getAdjacentDependency(const EdgeTypeFilteredGraph& rGraph, DependencyInserter inserter, const VertexSet& rVertexSet, bool invertEdge) const
+	{
+		for (const VertexName& rVertexName : rVertexSet)
+		{
+			const VertexData startVertex = getVertex(rVertexName);
+			EdgeVector edgesFound;
+			invertEdge ? inedge_connection(rGraph, startVertex, std::back_inserter(edgesFound)) : outedge_connection(rGraph, startVertex, std::back_inserter(edgesFound));
+			for (const auto& rEdge : edgesFound)
+			{
+				VertexData PartnerVertex = invertEdge ? boost::source(rEdge, rGraph) : boost::target(rEdge, rGraph);
+				const VertexName& rPartnerName = boost::get(boost::get(boost::vertex_name, rGraph), PartnerVertex);
+				if (rVertexName != rPartnerName)
+				{
+					*inserter = {rVertexName, rPartnerName};
+				}
+			}
 		}
 	}
 } //namespace SvCl

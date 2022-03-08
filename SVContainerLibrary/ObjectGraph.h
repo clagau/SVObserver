@@ -14,6 +14,9 @@
 
 namespace SvCl
 {
+template< typename EdgeTypeMapConst, typename EdgeType >
+class filter_edge_type;
+
 class IGraphNameLookup;
 
 	#pragma region Declarations
@@ -51,10 +54,11 @@ class IGraphNameLookup;
 		using EdgeTypeMap = typename boost::property_map<DependencyGraph, edge_type_t>::type ;
 		using EdgeTypeMapConst = typename boost::property_map<DependencyGraph, edge_type_t>::const_type;
 
-		using EdgeVector = std::vector<EdgeData> ;
+		using EdgeVector = std::vector<EdgeData>;
 	
 		using VertexNameDataMap = std::map<VertexName, VertexData>;
-	#pragma endregion Declarations
+		using EdgeTypeFilteredGraph = boost::filtered_graph<DependencyGraph, filter_edge_type<typename EdgeTypeMapConst, typename EdgeType>>;
+#pragma endregion Declarations
 
 	#pragma region Constructor
 	public:
@@ -102,18 +106,14 @@ class IGraphNameLookup;
 		//! \param Inserter [in] inserter to fill the dependency list
 		//! \param rEdgeType [in] reference to the edge type
 		//! \param InvertEdge [in] flag to invert the edges of the graph
-		//! \param DepthFirstSearch [in] flag to use Depth First Search instead of the Breadth First Search
 		//! \returns S_OK on success
-		HRESULT getDependents( const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rEdgeType, bool InvertEdge=false, bool DepthFirstSearch=false ) const;
+		HRESULT getDependents( const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rEdgeType, bool invertEdge=false) const;
 
 		//! Obtains a list of dependencies with the defined edge type
 		//! \param rVertexSet [in] reference to the vertex set
-		//! \param Inserter [in] inserter to fill the dependency list
-		//! \param rChildEdgeType [in] reference to the child edge type
 		//! \param rEdgeType [in] reference to the edge type
-		//! \param InvertEdge [in] flag to invert the edges of the graph
-		//! \returns S_OK on success
-		HRESULT getChildDependents(const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rChildEdgeType, const EdgeType& rEdgeType, bool InvertEdge=false ) const;
+		//! \returns the vertex set of all dependents
+		VertexSet getAllDependents(const VertexSet& rVertexSet, const EdgeType& rEdgeType) const;
 
 		//! Determines if the graph is cyclic
 		//! \returns true if the graph is cyclic
@@ -161,7 +161,12 @@ class IGraphNameLookup;
 		//! \param RemoveType [in] true when the edge type needs to be removed else add it
 		//! \returns true on success
 		void updateEdgeType( const EdgeData& rEdge, const EdgeType& rEdgeType, bool RemoveType );
-	#pragma endregion Private Methods
+
+		void depthFirstSearch(const EdgeTypeFilteredGraph& rGraph, DependencyInserter Inserter, const VertexSet& rVertexSet) const;
+		void breadthFirstSearch(const EdgeTypeFilteredGraph& rGraph, DependencyInserter Inserter, const VertexSet& rVertexSet) const;
+
+		void getAdjacentDependency(const EdgeTypeFilteredGraph& rGraph, DependencyInserter Inserter, const VertexSet& rVertexSet, bool invertEdge) const;
+#pragma endregion Private Methods
 
 	#pragma region Member Variables
 	private:

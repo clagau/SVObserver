@@ -69,11 +69,8 @@ namespace SvCl
 				const VertexName& rPartnerName = boost::get( boost::get( boost::vertex_name, rGraph ), PartnerVertex );
 				if( rSrcName != rPartnerName )
 				{
-					typedef std::pair< VertexName, VertexName > Dependency;
-
 					m_DestinationSet.insert( rPartnerName );
-					Dependency Dependent( rSrcName, rPartnerName );
-					*m_Inserter = Dependent;
+					*m_Inserter = {rSrcName, rPartnerName};
 				}
 			}
 		}
