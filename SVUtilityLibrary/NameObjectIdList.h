@@ -18,7 +18,6 @@ namespace SvUl
 	typedef std::vector<NameObjectIdPair> NameObjectIdList;
 	typedef std::pair<std::string, SvPb::ClassIdEnum> NameClassIdPair;
 	typedef std::vector<NameClassIdPair> NameClassIdList;
-	typedef std::map<std::string, NameObjectIdPair> InputNameObjectIdPairList;
 
 	template<typename T>
 	uint32_t FindObjectId(const T& rList, const std::string& rName)

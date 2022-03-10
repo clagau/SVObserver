@@ -58,6 +58,7 @@ void SVUserMaskOperatorClass::init()
 
 	m_userMaskImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_userMaskImageInput, _T( "UserMaskImage" ), SvPb::UserMaskImageInputEId);
+	m_userMaskImageInput.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 
 	// RRRRGGGGHHHHHH who created this stupid object structure????

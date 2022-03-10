@@ -37,7 +37,6 @@ SVToolAdjustmentDialogSizePage::SVToolAdjustmentDialogSizePage(uint32_t inspecti
 	, m_ipId(inspectionId)
 	, m_toolId(taskObjectId)
 	, m_ToolSizeHelper(inspectionId, taskObjectId)
-	, m_ImageController {inspectionId, taskObjectId, SvPb::SVNotSetSubObjectType,false}
 {}
 
 SVToolAdjustmentDialogSizePage::~SVToolAdjustmentDialogSizePage()
@@ -86,7 +85,7 @@ END_MESSAGE_MAP()
 BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	m_ImageController.Init();
+	//m_ImageController.Init();
 	m_ToolSizeHelper.InitValues();
 
 	for (const auto type : SvDef::AllToolSizeAdjustEnum)

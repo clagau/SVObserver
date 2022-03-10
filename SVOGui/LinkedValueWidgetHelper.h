@@ -15,7 +15,7 @@ namespace SvOg
 	class LinkedValueWidgetHelper
 	{
 	public:
-		LinkedValueWidgetHelper(CEdit& rValueEdit, CButton& rSelectButton, uint32_t inspectionId, uint32_t taskId, SvPb::EmbeddedIdEnum embeddedId, SvOg::ValueController* pValueController, const ObjectSelectorData& selectorData = {}, ValidCheckCallback validCallback = nullptr, ConvertValueCallback convertCallback = nullptr);
+		LinkedValueWidgetHelper(CEdit& rValueEdit, CButton& rSelectButton, uint32_t inspectionId, uint32_t taskId, SvPb::EmbeddedIdEnum embeddedId, SvOg::ValueController* pValueController, ValidCheckCallback validCallback = nullptr, ConvertValueCallback convertCallback = nullptr);
 
 		void setValueController(SvOg::ValueController* pValueController);
 
@@ -46,7 +46,6 @@ namespace SvOg
 		SvPb::EmbeddedIdEnum m_embeddedId;
 		SvOg::ValueController* m_pValueController;
 		bool m_isControllsEnable{ true };
-		ObjectSelectorData m_selectorData;
 		ValidCheckCallback m_validCheckCallback;
 		ConvertValueCallback m_convertValueCallback;
 	};

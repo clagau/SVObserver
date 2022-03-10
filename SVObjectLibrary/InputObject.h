@@ -12,12 +12,13 @@
 //Moved to precompiled header: #include <vector>
 #include "SVObjectClass.h"
 #include "SVOResource/resource.h"
+#include "ObjectInterfaces/IInputObject.h"
 #pragma endregion Includes
 
 
 namespace SvOl
 {
-class InputObject : public SVObjectClass
+class InputObject : public SVObjectClass, public SvOi::IInputObject
 {
 	SV_DECLARE_CLASS
 
@@ -31,6 +32,7 @@ class InputObject : public SVObjectClass
 	void SetInputObjectType(SvPb::SVObjectTypeEnum ObjectType = SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVNotSetSubObjectType, SvPb::EmbeddedIdEnum	embeddedID = SvPb::NoEmbeddedId);
 	void SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& rTypeInfo );
 
+	virtual HRESULT checkAndSetInput(uint32_t connnectedInput) override;
 	void SetInputObject(uint32_t objectID);
 	void SetInputObject(SVObjectClass* p_pObject );
 	void SetInputObject(const SVObjectReference& p_rObject );
@@ -40,9 +42,16 @@ class InputObject : public SVObjectClass
 	virtual void disconnectAllInputs() override;
 
 	virtual UINT SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type) override;
+	virtual std::tuple<SvDef::SVObjectTypeInfoStruct, uint32_t, SvOi::InputAllowedMode, uint32_t> getAvailableObjectParameter() const override;
+	virtual SvPb::GetInputDataResponse getInputData(SvPb::SVObjectTypeEnum desiredFirstObjectTypeForConnectedName, bool excludeFirstObjectNameInConntectedName) const override;
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter) override;
+	void setDottedNameOfLoadedInput(const std::string& rName) { m_DottedNameOfFailedLoadInput = rName; };
 
+	void setStartSearchId(uint32_t startSearchId) { m_startSearchId = startSearchId; };
+	void setAllowedMode(SvOi::InputAllowedMode mode) { m_allowedMode = mode; };
+	
 	template <typename T>
 	T* getInput(bool bRunMode = false) const
 	{
@@ -78,7 +87,11 @@ private:
 	//	To connect ( hook ) on input, the method ConnectObjectInput to
 	//  the object that needs the input ID! And use a pointer of this structure 
 	//	( of the input ) as a message parameter.
-	SVObjectInfoStruct m_InputObjectInfo;	// this is the Object, this Object is using
+	SVObjectInfoStruct m_InputObjectInfo;	// this is the Object that this Object is using
 	bool m_IsConnected = false;
+
+	uint32_t m_startSearchId = SvDef::InvalidObjectId; //if Invalid, it will be changed to the inspectionId
+	SvOi::InputAllowedMode m_allowedMode = SvOi::InputAllowedMode::Default;
+	std::string m_DottedNameOfFailedLoadInput;
 };
 } //namespace SvOl

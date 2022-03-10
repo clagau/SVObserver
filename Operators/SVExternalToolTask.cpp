@@ -73,6 +73,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
 		m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 		registerInputObject(&m_Data.m_aInputImageInfo[i], l_Name, SvPb::ImageInputEId + i);
+		m_Data.m_aInputImageInfo[i].setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 	}
 	RegisterEmbeddedObject(&m_Data.m_voDllPath, SvPb::DllFileNameEId, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_Data.m_UseUnitMapping, SvPb::UseUnitMappingEId, "Use Unit Mapping", false, SvOi::SVResetItemTool);
@@ -343,6 +344,10 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 
 	if (ok && nullptr != rCreateStructure.m_pTool)
 	{
+		for (int i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
+		{
+			m_Data.m_aInputObjects[i].setExcludeSameLineageListForObjectSelector({rCreateStructure.m_pTool});
+		}
 		if (nullptr != GetInspection() && nullptr != GetTool())
 		{
 			try
@@ -1938,12 +1943,13 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask* pExternalToolT
 
 		if (bTypeIsArrayOrScalar)
 		{
+			rInputValue.setValueType((VT_BSTR == (VT_BSTR & rInputDef.getVt())) ? SvPb::TypeText : SvPb::TypeDecimal);
 			rInputValue.SetAllowVoidReference(false);
 			rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), initializeAll);
-			
 		}
 		else if (bTypeIsTable)
 		{
+			rInputValue.setValueType(SvPb::TypeTable);
 			rInputValue.SetAllowVoidReference(true);
 			rInputValue.SetDefaultValue(_variant_t(), true);
 		}

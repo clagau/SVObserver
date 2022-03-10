@@ -13,6 +13,7 @@
 #include "SVObjectLibrary.h"
 #include "SVObjectManagerClass.h"
 #include "ObjectInterfaces/IObjectWriter.h"
+#include "ObjectInterfaces/ITaskObject.h"
 #include "SVToolsetScriptTags.h"
 #pragma endregion Includes
 
@@ -65,6 +66,23 @@ void InputObject::SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& rType
 {
 	m_IsConnected = false;
 	m_InputObjectInfo.SetObject( rTypeInfo );
+}
+
+HRESULT InputObject::checkAndSetInput(uint32_t connnectedInput)
+{
+	SVObjectReference refObject {connnectedInput};
+	if (nullptr != refObject.getFinalObject())
+	{
+		const auto& connectedTypeInfo = refObject.getFinalObject()->getObjectTypeInfo();
+		if ((SvPb::NoEmbeddedId == m_InputObjectInfo.m_ObjectTypeInfo.m_EmbeddedID || connectedTypeInfo.m_EmbeddedID == m_InputObjectInfo.m_ObjectTypeInfo.m_EmbeddedID) &&
+			(SvPb::SVNotSetObjectType == m_InputObjectInfo.m_ObjectTypeInfo.m_ObjectType || connectedTypeInfo.m_ObjectType == m_InputObjectInfo.m_ObjectTypeInfo.m_ObjectType) &&
+			(SvPb::SVNotSetSubObjectType == m_InputObjectInfo.m_ObjectTypeInfo.m_SubType || connectedTypeInfo.m_SubType == m_InputObjectInfo.m_ObjectTypeInfo.m_SubType))
+		{
+			SetInputObject(refObject);
+			return S_OK;
+		}
+	}
+	return E_FAIL;
 }
 
 void InputObject::SetInputObject(uint32_t objectID )
@@ -159,6 +177,54 @@ UINT InputObject::SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttribute
 	return retValue;
 }
 
+std::tuple<SvDef::SVObjectTypeInfoStruct, uint32_t, SvOi::InputAllowedMode, uint32_t> InputObject::getAvailableObjectParameter() const
+{
+	uint32_t startSearchId = m_startSearchId;
+	if (SvDef::InvalidObjectId == startSearchId)
+	{
+		auto* pInsp = GetAncestor(SvPb::SVInspectionObjectType);
+		if (nullptr != pInsp)
+		{
+			startSearchId = pInsp->getObjectId();
+		}
+	}
+	if (SvOi::InputAllowedMode::IsBeforeTool == m_allowedMode)
+	{
+		auto* pTool = GetAncestor(SvPb::SVToolObjectType);
+		if (nullptr != pTool)
+		{
+			return {m_InputObjectInfo.m_ObjectTypeInfo, startSearchId, m_allowedMode, pTool->getObjectId()};
+		}
+	}
+
+	return {m_InputObjectInfo.m_ObjectTypeInfo, startSearchId, m_allowedMode, SvDef::InvalidObjectId};
+}
+
+SvPb::GetInputDataResponse InputObject::getInputData(SvPb::SVObjectTypeEnum desiredFirstObjectTypeForConnectedName, bool excludeFirstObjectNameInConntectedName) const
+{
+	SvPb::GetInputDataResponse retValue;
+	retValue.mutable_data()->set_inputid(getObjectId());
+	retValue.mutable_data()->set_inputname(GetName());
+	if (nullptr != m_InputObjectInfo.getObject())
+	{
+		std::string name;
+		if (excludeFirstObjectNameInConntectedName)
+		{
+			name = m_InputObjectInfo.getObject()->GetObjectNameBeforeObjectType(desiredFirstObjectTypeForConnectedName);
+		}
+		else
+		{
+			name = m_InputObjectInfo.getObject()->GetObjectNameToObjectType(desiredFirstObjectTypeForConnectedName);
+		}
+		retValue.mutable_data()->set_connected_objectdottedname(name);
+	}
+	retValue.mutable_data()->set_connected_objectid(m_InputObjectInfo.getObjectId());
+	retValue.mutable_typeinfo()->set_objecttype(m_InputObjectInfo.m_ObjectTypeInfo.m_ObjectType);
+	retValue.mutable_typeinfo()->set_subtype(m_InputObjectInfo.m_ObjectTypeInfo.m_SubType);
+	retValue.mutable_typeinfo()->set_embeddedid(m_InputObjectInfo.m_ObjectTypeInfo.m_EmbeddedID);
+	return retValue;
+}
+
 void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
 {
 	//@TODO[MZA][10.10][10.12.2020] wie kann man das wieder reinnehmen?
@@ -178,8 +244,34 @@ void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
 
 	_variant_t value = convertObjectIdToVariant( connectId );
 	rWriter.WriteAttribute(scConntectedIDTag, value);
+	auto* pConnectObject = GetInputObjectInfo().getObject();
+	if (nullptr != pConnectObject)
+	{
+		value = pConnectObject->GetObjectNameToObjectType().c_str();
+		rWriter.WriteAttribute(scConntectedDotnameTag, value);
+	}
 
 	rWriter.EndElement();
+}
+
+void InputObject::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+{
+	if (false == IsConnected() && SvPb::noAttributes != ObjectAttributesAllowed())
+	{
+		SvPb::FixedInputData data;
+		data.set_name(GetObjectNameToObjectType());
+		data.set_objectid(getObjectId());
+		data.set_parentid(GetParentID());
+		data.set_oldinputvalue(m_DottedNameOfFailedLoadInput);
+		data.set_islinkedvalue(false);
+		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+		inserter = data;
+		auto* pOwner = dynamic_cast<SvOi::ITaskObject*>(GetParent());
+		if (nullptr != pOwner)
+		{
+			pOwner->connectInput(this);
+		}
+	}
 }
 
 void InputObject::correctDependencies()

@@ -321,6 +321,7 @@ void RingBufferTool::BuildInputObjectList ()
 	// Source Image (SVNotSetSubObjectType means both mono and color type)
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVNotSetSubObjectType);
 	registerInputObject( &m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
+	m_InputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 }
 
 

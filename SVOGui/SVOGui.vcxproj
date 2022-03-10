@@ -139,6 +139,7 @@
     <ClCompile Include="GlobalConstantConflictDlg.cpp" />
     <ClCompile Include="GlobalConstantDlg.cpp" />
     <ClCompile Include="ImageController.cpp" />
+    <ClCompile Include="InputConflictDlg.cpp" />
     <ClCompile Include="LinkedValue.cpp" />
     <ClCompile Include="LinkedValueSelectorDialog.cpp" />
     <ClCompile Include="LinkedValueWidgetHelper.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="GlobalConstantDlg.h" />
     <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="ImageController.h" />
+    <ClInclude Include="InputConflictDlg.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="LinkedValue.h" />
     <ClInclude Include="LinkedValueSelectorDialog.h" />

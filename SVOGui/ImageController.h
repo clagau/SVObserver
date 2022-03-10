@@ -28,7 +28,7 @@ namespace SvOg
 
 		mutable SvUl::NameObjectIdList m_availableList;
 		mutable SvDef::StringVector m_specialImageList;;
-		mutable SvUl::InputNameObjectIdPairList m_connectedList;
+		mutable SvPb::InputDataList m_connectedList;
 		mutable CComPtr<IPictureDisp> m_picture;
 
 	public:
@@ -42,7 +42,7 @@ namespace SvOg
 
 		const SvUl::NameObjectIdList& GetAvailableImageList() const;
 		const SvDef::StringVector& GetSpecialImageList() const;
-		const SvUl::InputNameObjectIdPairList& GetInputImageList(uint32_t childObjectID = SvDef::InvalidObjectId, size_t maxImages = 0) const;
+		const SvPb::InputDataList& GetInputImageList(uint32_t childObjectID = SvDef::InvalidObjectId, size_t maxImages = 0) const;
 		SvUl::NameObjectIdList GetResultImages() const;
 
 		IPictureDisp* GetImage(const std::string& name) const;

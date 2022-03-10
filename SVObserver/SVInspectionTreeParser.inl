@@ -619,7 +619,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType:
 					}
 					else
 					{
-						hr = SVObjectBuilder::OverwriteInputObject(embeddedId, SvDef::InvalidObjectId, {}, connectId, ownerID); //not use old name, keep the initialized name
+						hr = SVObjectBuilder::OverwriteInputObject(embeddedId, SvDef::InvalidObjectId, {}, connectId, {}, ownerID); //not use old name, keep the initialized name
 					}
 				}
 			}
@@ -634,7 +634,9 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType:
 				uint32_t objectID{ calcObjectId(value) };
 				GetItemValue(scConntectedIDTag, hInput, value);
 				uint32_t connectId = calcObjectId(value);
-				hr = SVObjectBuilder::OverwriteInputObject(embeddedId, objectID, SvUl::createStdString(objectName), connectId, ownerID);
+				GetItemValue(scConntectedDotnameTag, hInput, value);
+				std::string connectedDotname {(VT_BSTR == value.vt) ? SvUl::createStdString(value) : ""};
+				hr = SVObjectBuilder::OverwriteInputObject(embeddedId, objectID, SvUl::createStdString(objectName), connectId, connectedDotname, ownerID);
 			}
 			
 			hInput = m_rTree.getNextBranch(hInputs, hInput);

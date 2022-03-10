@@ -15,4 +15,9 @@
 #pragma warning( disable : 4800 )
 #pragma warning( disable : 5054 )
 #include "InspectionCommands.pb.h"
+
+namespace SvPb
+{
+using InputDataList = google::protobuf::RepeatedPtrField<SvPb::InputData>;
+}
 #pragma warning( pop )

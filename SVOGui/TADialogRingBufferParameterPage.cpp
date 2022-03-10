@@ -108,10 +108,10 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 		m_values.Init();
 
-		m_DepthWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditRingDepth, m_ButtonRingDepth, m_InspectionID, m_TaskObjectID, SvPb::RingBuffer_DepthEId, &m_values, ObjectSelectorData{m_TaskObjectID}, checkDepthValue);
+		m_DepthWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditRingDepth, m_ButtonRingDepth, m_InspectionID, m_TaskObjectID, SvPb::RingBuffer_DepthEId, &m_values, checkDepthValue);
 		for (int i=0; i < m_ImageIndexWidget.size(); ++i)
 		{
-			m_ImageIndexWidget[i] = std::make_unique<LinkedValueWidgetHelper>(m_EditImageIndex[i], m_ButtonImageIndex[i], m_InspectionID, m_TaskObjectID, SvPb::RingBufferIndexEId + i, &m_values, ObjectSelectorData {m_TaskObjectID});
+			m_ImageIndexWidget[i] = std::make_unique<LinkedValueWidgetHelper>(m_EditImageIndex[i], m_ButtonImageIndex[i], m_InspectionID, m_TaskObjectID, SvPb::RingBufferIndexEId + i, &m_values);
 		}
 
 		return TRUE;

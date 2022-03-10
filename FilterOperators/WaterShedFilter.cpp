@@ -61,6 +61,7 @@ void WatershedFilter::init()
 
 	m_MarkerImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_MarkerImageInput, SvDef::WatershedMarkerImageConnectionName, SvPb::MarkerImageInputEId);
+	m_MarkerImageInput.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 }
 
 bool WatershedFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

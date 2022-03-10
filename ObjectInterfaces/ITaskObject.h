@@ -11,7 +11,6 @@
 #include "SVProtoBuf/SVRC.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/NameObjectIdList.h"
 #include "SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
@@ -42,7 +41,7 @@ namespace SvOi
 		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
 		/// \param shouldExcludeFirstObjectType [in] Remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". This parameter will not used for image objects.
 		/// \param maxNumbers [in] Define after how many inputs the search stops. 0 means all.
-		virtual void GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) = 0;
+		virtual void GetInputs(SvPb::InputDataList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) = 0;
 
 		/// Connects an input to an object.
 		/// \param rInputName [in] Name of the input.
@@ -115,5 +114,7 @@ namespace SvOi
 		virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rRequest) const = 0;
 
 		virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) = 0;
+
+		virtual void connectInput(SvOi::IObjectClass* pInput) = 0;
 	};
 } //namespace SvOi

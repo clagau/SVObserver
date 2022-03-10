@@ -70,7 +70,7 @@ BOOL TADialogLinearResultRangesPage::OnInitDialog()
 		auto valueObject = getMatchedInputsObjectsForResult(result.taskobjectid(), valueObjectIdEmbeddedIdMap);
 		if (valueObject.size() == 1) 
 		{
-			m_ValueEmbeddedIdResultMap.insert_or_assign(valueObjectIdEmbeddedIdMap[valueObject[0].objectid()], result.taskobjectid());
+			m_ValueEmbeddedIdResultMap.insert_or_assign(valueObjectIdEmbeddedIdMap[valueObject[0].connected_objectid()], result.taskobjectid());
 		}
 	}
 	
@@ -171,10 +171,10 @@ std::vector<SvPb::TaskObjectInfo> TADialogLinearResultRangesPage::getResults(uin
 	return results;
 }
 
-std::vector<SvPb::InputNameObjectNameIdPair> TADialogLinearResultRangesPage::getMatchedInputsObjectsForResult(uint32_t resultId, 
+SvPb::InputDataList TADialogLinearResultRangesPage::getMatchedInputsObjectsForResult(uint32_t resultId, 
 	const std::map<uint32_t, SvPb::EmbeddedIdEnum>& valueObjects)
 {
-	std::vector<SvPb::InputNameObjectNameIdPair> results;
+	SvPb::InputDataList results;
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getinputsrequest();
@@ -185,11 +185,14 @@ std::vector<SvPb::InputNameObjectNameIdPair> TADialogLinearResultRangesPage::get
 	auto hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getinputsresponse())
 	{
-		std::copy_if(responseCmd.getinputsresponse().list().begin(), responseCmd.getinputsresponse().list().end(), std::back_inserter(results),
-			[&valueObjects](SvPb::InputNameObjectNameIdPair input) {
-				auto iter = valueObjects.find(input.objectid());
-				return (valueObjects.end() != iter);
-			});
+		for (const auto& rData : responseCmd.getinputsresponse().list())
+		{
+			if (valueObjects.end() != valueObjects.find(rData.connected_objectid()))
+			{
+				auto* pData = results.Add();
+				pData->CopyFrom(rData);
+			}
+		}
 	}
 
 	return results;

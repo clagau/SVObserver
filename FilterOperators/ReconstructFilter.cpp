@@ -130,4 +130,5 @@ void ReconstructFilter::init()
 
 	m_SeedImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject(&m_SeedImageInput, SvDef::SeedImageConnectionName, SvPb::SeedImageInputEId);
+	m_SeedImageInput.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 }

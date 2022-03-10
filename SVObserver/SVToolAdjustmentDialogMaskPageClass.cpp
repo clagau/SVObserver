@@ -610,12 +610,12 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria()
 
 void SVToolAdjustmentDialogMaskPageClass::RetreiveCurrentlySelectedImageNames()
 {
-	const SvUl::InputNameObjectIdPairList& rImageList = m_ImageController.GetInputImageList(m_maskController.GetInstanceID(), 1);
+	const auto& rImageList = m_ImageController.GetInputImageList(m_maskController.GetInstanceID(), 1);
 
-	SvUl::InputNameObjectIdPairList::const_iterator it = rImageList.begin();
+	auto it = rImageList.begin();
 	if (it != rImageList.end())
 	{
-		m_imageInputName = it->first;
-		m_imageName = it->second.first;
+		m_imageInputName = it->inputname();
+		m_imageName = it->connected_objectdottedname();
 	}
 }

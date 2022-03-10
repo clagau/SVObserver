@@ -517,6 +517,7 @@ namespace SvStl
 		{Tid_UpdateTRCBuffersFailed, _T("Update TRC-Buffers failed.")},
 		{Tid_InvalidOwner, _T("Invalid Owner.")},
 		{Tid_WrongType, _T("Wrong type.")},
+		{Tid_WrongValueType, _T("Wrong value type: Required Type is %s.")},
 		{Tid_InvalidOrRecursiveLinkedObject, _T("Invalid or recursive linked object.")},
 		{Tid_WrongInspection, _T("Object is not from the same Inspection.")},
 		{Tid_NoShapeHelper, _T("No shape helper found.")},
@@ -644,6 +645,8 @@ namespace SvStl
 		{Tid_anImage, _T("an image")},
 		{Tid_aGrayImage, _T("a gray image")},
 		{Tid_aColorImage, _T("a color image")},
+		{Tid_aDecimalValue, _T("a decimal value")},
+		{Tid_aTextValue, _T("a text value")},
 
 		{Tid_ForbittenNameForParameterName, _T("The name \"%s\" is already used for another object in this parameter task.")},
 		{Tid_DuplicateParameterName, _T("It is not allowed to have duplicated parameter names:\n %s") },

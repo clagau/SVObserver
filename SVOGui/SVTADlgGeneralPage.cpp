@@ -369,6 +369,7 @@ namespace SvOg
 
 	void SVTADlgGeneralPage::initToolForOverlayColor()
 	{
+		uint32_t inputObjectId = SvDef::InvalidObjectId;
 		uint32_t selectedId = SvDef::InvalidObjectId;
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
@@ -379,8 +380,9 @@ namespace SvOg
 		if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
 		{
 			auto inputValues = responseCmd.getinputsresponse().list(0);
-			selectedId = inputValues.objectid();
+			selectedId = inputValues.connected_objectid();
 			m_inputName_toolForColorOverlay = inputValues.inputname();
+			inputObjectId = inputValues.inputid();
 		}
 		else
 		{
@@ -388,10 +390,9 @@ namespace SvOg
 		}
 
 		auto* pAvailableRequest = requestCmd.mutable_getavailableobjectsrequest();
-		pAvailableRequest->set_objectid(m_InspectionID);
-		pAvailableRequest->mutable_typeinfo()->set_objecttype(SvPb::SVToolObjectType);
-		pAvailableRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
-		pAvailableRequest->set_importantobjectforstopatborder(m_TaskObjectID);
+		auto* pInputSearchParameter = pAvailableRequest->mutable_input_search();
+		pInputSearchParameter->set_input_connected_objectid(inputObjectId);
+		pAvailableRequest->set_desired_first_object_type_for_name(SvPb::SVToolSetObjectType);
 
 		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())

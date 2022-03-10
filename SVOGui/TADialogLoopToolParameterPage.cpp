@@ -73,8 +73,8 @@ BOOL TADialogLoopToolParameterPage::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	m_values.Init();
 	m_MaxLoopCount = m_values.Get<long>(SvPb::MaxLoopsEId);
-	m_LoopsValueWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLoopsValue, m_ButtonLoopsValue, m_InspectionID, m_TaskObjectID, SvPb::LinkedLoopsEId, &m_values, ObjectSelectorData{m_TaskObjectID});
-	m_BreakConditionWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditBreakCondition, m_ButtonBreakCondition, m_InspectionID, m_TaskObjectID, SvPb::LoopBreakEId, &m_values, ObjectSelectorData {m_TaskObjectID});
+	m_LoopsValueWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLoopsValue, m_ButtonLoopsValue, m_InspectionID, m_TaskObjectID, SvPb::LinkedLoopsEId, &m_values);
+	m_BreakConditionWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditBreakCondition, m_ButtonBreakCondition, m_InspectionID, m_TaskObjectID, SvPb::LoopBreakEId, &m_values);
 	UpdateData(FALSE);
 	return TRUE;
 }

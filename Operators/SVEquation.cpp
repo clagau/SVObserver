@@ -346,6 +346,13 @@ double SVEquation::GetYACCResult() const
 	return m_Yacc.equationResult;
 }
 
+void SVEquation::fillSelectorListForEquation(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter) const
+{
+	auto* pInspection = GetInspectionInterface();
+	auto* pStartObject = SvOi::getObject(getFirstClosedParent(SvDef::InvalidObjectId));
+	SvOi::fillSelectorList(treeInserter, pInspection, pStartObject, SvPb::LinkedValueTypeEnum::TypeDecimal, true);
+}
+
 const std::string& SVEquation::GetEquationText() const
 {
 	return m_equationStruct.GetEquationText();

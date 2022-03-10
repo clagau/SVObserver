@@ -172,6 +172,7 @@ public:
 	virtual void SetEquationText(const std::string& text) override;
 	virtual SvOi::EquationTestResult Test( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual double GetYACCResult() const override;
+	virtual void fillSelectorListForEquation(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter) const override;
 #pragma endregion IEquation
 
 	/// Run equation and return the result

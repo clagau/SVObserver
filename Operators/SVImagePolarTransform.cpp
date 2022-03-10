@@ -58,6 +58,7 @@ SVImagePolarTransform::SVImagePolarTransform( SVObjectClass* POwner, int StringR
 	// Image
 	m_inputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_inputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
+	m_inputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_centerX, SvPb::OutputCenterXEId, IDS_OBJECTNAME_CENTER_X, false, SvOi::SVResetItemTool);

@@ -49,6 +49,12 @@ message GetObjectSelectorItemsRequest
 	}
 }
 
+//@TODO This use the same response than the first version GetObjectSelectorItemsRequest. In a later version (maybe 10.30) it should be combined.
+message GetObjectSelectorItems2Request
+{
+	uint32 objectID = 1;			//The object instance ID from a LinkedValue or Equation
+}
+
 message GetObjectSelectorItemsResponse
 {
 	TreeItem tree = 1;					//The object selector tree as recursive structure

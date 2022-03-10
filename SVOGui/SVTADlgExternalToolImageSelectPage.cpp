@@ -188,10 +188,10 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 		//to obtain such a list
 		ImageController justForInputImageListGeneration(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
 		justForInputImageListGeneration.Init();
-		const SvUl::InputNameObjectIdPairList NameObjectIdPairs = justForInputImageListGeneration.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
+		const auto& rNameObjectIdPairs = justForInputImageListGeneration.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
 
 		int i = 0;
-		for (SvUl::InputNameObjectIdPairList::const_iterator it = NameObjectIdPairs.begin();it != NameObjectIdPairs.end();++it)
+		for (const auto& rData: rNameObjectIdPairs)
 		{
 			ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(imageInfoList[i].maybecolor(), imageInfoList[i].maybeblackandwhite()));
 			ImgCtrl.Init();
@@ -212,14 +212,14 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 					int index = pCombo->AddString(availIt->first.c_str());
 					size_t imageIndex = std::distance(availImages.begin(), availIt);
 					pCombo->SetItemData(index, imageIndex);
-					if (availIt->first == it->second.first)
+					if (availIt->first == rData.connected_objectdottedname())
 					{
 						curSel = static_cast<int>(imageIndex);
 					}
 				}
 				pCombo->SetItemValue(curSel);
 
-				m_imageInputList.insert(std::make_pair(ctrlID, it->first));
+				m_imageInputList.insert(std::make_pair(ctrlID, rData.inputname()));
 			}
 			m_ImageDisplay.AddTab( Temp.c_str() );
 		}
@@ -230,11 +230,11 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 	void SVTADlgExternalToolImageSelectPage::setImages(ImageController &imgCtrl)
 	{
 		imgCtrl.ToolRunOnce();
-		const SvUl::InputNameObjectIdPairList& NameObjectIdPairs = imgCtrl.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
+		const auto& rInputDataList = imgCtrl.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
 		int imageIndex = 0;
-		for (auto& rNameObjectIdPair : NameObjectIdPairs)
+		for (const auto& rInputData : rInputDataList)
 		{
-			m_ImageDisplay.setImage(imgCtrl.GetImage(rNameObjectIdPair.second.second), imageIndex);
+			m_ImageDisplay.setImage(imgCtrl.GetImage(rInputData.connected_objectid()), imageIndex);
 			m_ImageDisplay.SetZoom(imageIndex++, -1.0);
 		}
 		m_ImageDisplay.Refresh();

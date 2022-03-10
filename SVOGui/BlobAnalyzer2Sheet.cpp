@@ -74,13 +74,14 @@ namespace SvOg
 	void BlobAnalyzer2Sheet::addPages()
 	{
 		AddPage(new BlobAnalyzer2General(m_InspectionID, m_toolId, m_TaskObjectID));
-		AddPage(new BlobAnalyzer2Feature(m_InspectionID, m_toolId, m_TaskObjectID));
-		AddPage(new BlobAnalyzer2Range(m_InspectionID, m_toolId, m_TaskObjectID));
+		AddPage(new BlobAnalyzer2Feature(m_InspectionID, m_TaskObjectID));
+		AddPage(new BlobAnalyzer2Range(m_InspectionID, m_TaskObjectID));
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-		pRequest->set_objectid(m_TaskObjectID);
-		pRequest->mutable_typeinfo()->set_objecttype(SvPb::BlobDrawObjectType);
+		auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+		pTreeSearchParameter->set_search_start_id(m_TaskObjectID);
+		pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::BlobDrawObjectType);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())

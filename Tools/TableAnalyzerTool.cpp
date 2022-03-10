@@ -310,6 +310,7 @@ void TableAnalyzerTool::BuildInputObjectList()
 	// Source Table.
 	m_sourceTableInput.SetInputObjectType(SvPb::TableObjectType);
 	registerInputObject(&m_sourceTableInput, SvDef::cInputTag_SourceTable, SvPb::SourceTableInputEId);
+	m_sourceTableInput.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 }
 
 int TableAnalyzerTool::calcNewColumnPosition(const SVTaskObjectClass* pAnalyzer)

@@ -110,6 +110,7 @@ void SVUnaryImageOperatorList::init()
 	// Identify our input type needs
 	m_inputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject(&m_inputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
+	m_inputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	// Set available Filters
 	// Populate the available filter list

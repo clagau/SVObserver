@@ -1463,7 +1463,7 @@ enum ExDllInterfaceType
 	Invalid = 4;
 }
 
-enum InputTypeEnum
+enum LinkedValueTypeEnum
 {
 	TypeDecimal = 0;
 	TypeText = 1;

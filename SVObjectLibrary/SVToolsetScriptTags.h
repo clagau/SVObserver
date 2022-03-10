@@ -22,6 +22,7 @@ namespace
 	const TCHAR* const scObjectNameTag(_T( "ObjectName" ));
 	const TCHAR* const scUniqueReferenceIDTag(_T( "UniqueReferenceID" ));
 	const TCHAR* const scConntectedIDTag(_T("ConnectedID"));
+	const TCHAR* const scConntectedDotnameTag(_T("ConnectedDotname"));
 	const TCHAR* const scEmbeddedIDTag(_T( "EmbeddedID" ));
 	const TCHAR* const scClassIDTag(_T( "ClassID" ));
 	const TCHAR* const scFriendsTag(_T( "Friends" ));

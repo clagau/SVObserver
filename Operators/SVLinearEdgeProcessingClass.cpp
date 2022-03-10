@@ -42,6 +42,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_InputImage, _T( "LinearEdgeProcessingImage" ), SvPb::ImageInputEId);
+	m_InputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	m_InputMinThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdMinEId);
 	registerInputObject( &m_InputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ), SvPb::MinThresholdInputEId);

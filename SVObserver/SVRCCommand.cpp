@@ -1626,7 +1626,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 						auto XmlData = toolClipboard.readXmlToolData();
 						if (false == XmlData.empty())
 						{
-							pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, postID, ownerID);
+							pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerID);
 						}
 					}
 					pResponse->set_hresult(result);

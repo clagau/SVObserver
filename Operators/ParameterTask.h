@@ -51,7 +51,7 @@ namespace SvOp
 		void init();
 		void BuildEmbeddedObjectList();
 		void registerParameter();
-		bool checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::InputTypeEnum type, SvStl::MessageContainerVector* pErrorMessages, uint32_t objectIdForErrorMessage);
+		bool checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::LinkedValueTypeEnum type, SvStl::MessageContainerVector* pErrorMessages, uint32_t objectIdForErrorMessage);
 		bool checkValue(SvStl::MessageContainerVector* pErrorMessages);
 
 		void setObject(int index);
@@ -78,6 +78,8 @@ namespace SvOp
 
 		InputParameterTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_INPUT_PARAMETER_TASK);
 		virtual ~InputParameterTask();
+
+		virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const override;
 	};
 
 	class ResultParameterTask : public ParameterTask

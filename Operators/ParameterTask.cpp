@@ -181,8 +181,8 @@ namespace SvOp
 
 	bool ParameterTask::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	{
-		m_isCreated = __super::CreateObject(rCreateStructure);
 		registerParameter();
+		m_isCreated = __super::CreateObject(rCreateStructure);
 		return m_isCreated;
 	}
 
@@ -355,23 +355,36 @@ namespace SvOp
 				defaultStringValueAttributes |= SvPb::remotelySetable;
 				defaultValueValueAttributes |= SvPb::remotelySetable;
 			}
-			SvPb::InputTypeEnum typeEnum{ type };
+			SvPb::LinkedValueTypeEnum typeEnum{ type };
 			switch (typeEnum)
 			{
-			case SvPb::InputTypeEnum::TypeDecimal:
+			case SvPb::LinkedValueTypeEnum::TypeDecimal:
 				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->setValueType(SvPb::TypeDecimal);
 				break;
-			case SvPb::InputTypeEnum::TypeText:
+			case SvPb::LinkedValueTypeEnum::TypeText:
 				m_objects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->setValueType(SvPb::TypeText);
 				break;
-			case SvPb::InputTypeEnum::TypeTable:
-			case SvPb::InputTypeEnum::TypeStates:
+			case SvPb::LinkedValueTypeEnum::TypeTable:
 				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes | SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->setValueType(SvPb::TypeTable);
 				break;
-			case SvPb::InputTypeEnum::TypeGrayImage:
-			case SvPb::InputTypeEnum::TypeColorImage:
-			case SvPb::InputTypeEnum::TypeImage:
+			case SvPb::LinkedValueTypeEnum::TypeStates:
+				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes | SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->setValueType(SvPb::TypeStates);
+				break;
+			case SvPb::LinkedValueTypeEnum::TypeGrayImage:
 				m_objects[i]->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->setValueType(SvPb::TypeGrayImage);
+				break;
+			case SvPb::LinkedValueTypeEnum::TypeColorImage:
+				m_objects[i]->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->setValueType(SvPb::TypeColorImage);
+				break;
+			case SvPb::LinkedValueTypeEnum::TypeImage:
+				m_objects[i]->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->setValueType(SvPb::TypeImage);
 				break;
 			default:
 				assert(false);
@@ -398,12 +411,12 @@ namespace SvOp
 		}
 	}
 
-	bool ParameterTask::checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::InputTypeEnum type, SvStl::MessageContainerVector* pErrorMessages, uint32_t objectIdForErrorMessage)
+	bool ParameterTask::checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::LinkedValueTypeEnum type, SvStl::MessageContainerVector* pErrorMessages, uint32_t objectIdForErrorMessage)
 	{
 		bool bRet = true;
 		switch (type)
 		{
-		case SvPb::InputTypeEnum::TypeTable:
+		case SvPb::LinkedValueTypeEnum::TypeTable:
 		{
 			const SvOp::TableObject* pTable = convertObject<SvOp::TableObject>(pObject);
 			if (nullptr == pTable)
@@ -422,9 +435,9 @@ namespace SvOp
 			}
 			break;
 		}
-		case SvPb::InputTypeEnum::TypeGrayImage:
-		case SvPb::InputTypeEnum::TypeColorImage:
-		case SvPb::InputTypeEnum::TypeImage:
+		case SvPb::LinkedValueTypeEnum::TypeGrayImage:
+		case SvPb::LinkedValueTypeEnum::TypeColorImage:
+		case SvPb::LinkedValueTypeEnum::TypeImage:
 		{
 			const SvIe::SVImageClass* pImage = convertObject<SvIe::SVImageClass>(pObject);
 			if (nullptr == pImage)
@@ -443,7 +456,7 @@ namespace SvOp
 			}
 			else
 			{
-				if (SvPb::InputTypeEnum::TypeGrayImage == type && pImage->GetObjectSubType() != SvPb::SVImageMonoType)
+				if (SvPb::LinkedValueTypeEnum::TypeGrayImage == type && pImage->GetObjectSubType() != SvPb::SVImageMonoType)
 				{
 					SvDef::StringVector msgList;
 					msgList.emplace_back(GetName());
@@ -457,7 +470,7 @@ namespace SvOp
 					}
 					bRet = false;
 				}
-				else if (SvPb::InputTypeEnum::TypeColorImage == type && pImage->GetObjectSubType() != SvPb::SVImageColorType)
+				else if (SvPb::LinkedValueTypeEnum::TypeColorImage == type && pImage->GetObjectSubType() != SvPb::SVImageColorType)
 				{
 					SvDef::StringVector msgList;
 					msgList.emplace_back(GetName());
@@ -474,7 +487,7 @@ namespace SvOp
 			}
 			break;
 		}
-		case SvPb::InputTypeEnum::TypeStates:
+		case SvPb::LinkedValueTypeEnum::TypeStates:
 		{
 			if (SvPb::SVToolObjectType != getObjectType(pObject))
 			{
@@ -530,11 +543,11 @@ namespace SvOp
 			auto* pObject = m_objects[i].get();
 			long type;
 			m_TypeObjects[i]->GetValue(type);
-			SvPb::InputTypeEnum typeEnum{ type };
+			SvPb::LinkedValueTypeEnum typeEnum{ type };
 			switch (typeEnum)
 			{
-			case SvPb::InputTypeEnum::TypeDecimal:
-			case SvPb::InputTypeEnum::TypeText:
+			case SvPb::LinkedValueTypeEnum::TypeDecimal:
+			case SvPb::LinkedValueTypeEnum::TypeText:
 			{
 				_variant_t value;
 				HRESULT hr = pObject->GetValue(value);
@@ -553,11 +566,11 @@ namespace SvOp
 				}
 				break;
 			}
-			case SvPb::InputTypeEnum::TypeTable:
-			case SvPb::InputTypeEnum::TypeGrayImage:
-			case SvPb::InputTypeEnum::TypeColorImage:
-			case SvPb::InputTypeEnum::TypeImage:
-			case SvPb::InputTypeEnum::TypeStates:
+			case SvPb::LinkedValueTypeEnum::TypeTable:
+			case SvPb::LinkedValueTypeEnum::TypeGrayImage:
+			case SvPb::LinkedValueTypeEnum::TypeColorImage:
+			case SvPb::LinkedValueTypeEnum::TypeImage:
+			case SvPb::LinkedValueTypeEnum::TypeStates:
 			{
 				bRet &= checkObject(pObject->GetName(), pObject, typeEnum, pErrorMessages, pObject->getObjectId());
 				break;
@@ -590,6 +603,7 @@ namespace SvOp
 			CreateChildObject(m_objects[index].get());
 			m_objects[index]->setSaveDefaultValueFlag(true);
 			RegisterEmbeddedObject(m_objects[index].get(), m_startEmbeddedIdValue + index, name.c_str(), false, SvOi::SVResetItemTool);
+			m_objects[index]->setExcludeSameLineageListForObjectSelector({SvPb::ParameterResultObjectType == m_ObjectTypeInfo.m_SubType ? this : GetAncestor(SvPb::SVToolObjectType)});
 		}
 
 		if (nullptr == m_TypeObjects[index])
@@ -607,9 +621,10 @@ namespace SvOp
 		try
 		{
 			auto type = rRequestValue.type();
+			rValueObject.setValueType(type);
 			switch (type)
 			{
-				case SvPb::InputTypeEnum::TypeDecimal:
+				case SvPb::LinkedValueTypeEnum::TypeDecimal:
 					SvPb::ConvertProtobufToVariant(rRequestValue.value().defaultvalue(), rDefaultValue);
 					if (VT_R8 != rDefaultValue.vt)
 					{
@@ -618,7 +633,7 @@ namespace SvOp
 					}
 					rValueObject.validateValue(rRequestValue.value());
 					break;
-				case SvPb::InputTypeEnum::TypeText:
+				case SvPb::LinkedValueTypeEnum::TypeText:
 					SvPb::ConvertProtobufToVariant(rRequestValue.value().defaultvalue(), rDefaultValue);
 					if (VT_BSTR != rDefaultValue.vt)
 					{
@@ -644,6 +659,7 @@ namespace SvOp
 					}
 					else
 					{
+						//assert(false);
 						fillMessageToProtobuf(pErrorMessage, rValueObject.getObjectId(), SvStl::Tid_ValidateValue_LinkedObjectInvalid, SvStl::SourceFileParams(StdMessageParams));
 						return false;
 					}
@@ -778,6 +794,7 @@ namespace SvOp
 				GetInspection()->OnObjectRenamed(*m_objects[pos], oldName);
 				GetInspection()->OnObjectRenamed(*m_TypeObjects[pos], oldName + cTypeNamePostfix);
 			}
+			m_objects[pos]->setValueType(rValue.type());
 			m_objects[pos]->SetDefaultValue(rDefault);
 			m_objects[pos]->setValue(rValue.value());
 		}
@@ -808,6 +825,16 @@ namespace SvOp
 
 	InputParameterTask::~InputParameterTask()
 	{
+	}
+
+	uint32_t InputParameterTask::getFirstClosedParent(uint32_t stopSearchAtObjectId) const
+	{
+		if (getObjectId() == stopSearchAtObjectId || nullptr == m_pOwner || m_pOwner->getObjectId() == stopSearchAtObjectId || nullptr == m_pOwner->GetParent())
+		{
+			return SvDef::InvalidObjectId;
+		}
+		//for Input-Values of GroupTool, should not stop at GroupTool-broder.
+		return m_pOwner->GetParent()->getFirstClosedParent(stopSearchAtObjectId);
 	}
 
 	SV_IMPLEMENT_CLASS(ResultParameterTask, SvPb::ResultParameterTaskClassId);

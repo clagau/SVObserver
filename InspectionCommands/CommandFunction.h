@@ -81,6 +81,9 @@ SvPb::InspectionCmdResponse setAuxImageObject(SvPb::SetAuxImageObjectRequest req
 // Get the connected input of this object.
 SvPb::InspectionCmdResponse getInputs(SvPb::GetInputsRequest request);
 
+// Get the connected input of this object.
+SvPb::InspectionCmdResponse getInputData(const SvPb::GetInputDataRequest& request);
+
 // Connect an object to an input.
 SvPb::InspectionCmdResponse connectToObject(SvPb::ConnectToObjectRequest request);
 
@@ -142,6 +145,7 @@ SvPb::InspectionCmdResponse usePropagateSizeAndPosition(SvPb::UsePropagateSizeAn
 SvPb::InspectionCmdResponse getOverlayStruct(SvPb::GetOverlayStructRequest request);
 
 SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest request);
+SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItems2Request request);
 SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsRequest request);
 
 SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest request);

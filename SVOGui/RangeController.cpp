@@ -164,7 +164,7 @@ bool isFieldValid(const std::string& fieldName, const variant_t& rValue, SvStl::
 			{
 				return isFieldValid(fieldName, rValue, rMsgContainer);
 			};
-			return std::make_unique<LinkedValueWidgetHelper>(rValueEdit, rSelectButton, m_InspectionID, m_TaskObjectID, iter->second, &m_RangeValues, ObjectSelectorData{m_TaskObjectID}, validCheck, convertInString);
+			return std::make_unique<LinkedValueWidgetHelper>(rValueEdit, rSelectButton, m_InspectionID, m_TaskObjectID, iter->second, &m_RangeValues, validCheck, convertInString);
 		}
 		else
 		{

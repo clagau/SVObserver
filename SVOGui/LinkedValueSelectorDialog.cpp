@@ -48,19 +48,29 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	LinkedValueSelectorDialog::LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ObjectSelectorData objectSelectorData/* = {}*/, ValidCheckCallback validCallback /*= nullptr*/, LinkedValueSelectorTypesEnum possibleTypes /*= LinkedValueSelectorTypesEnum::All*/)
+	LinkedValueSelectorDialog::LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ValidCheckCallback validCallback /*= nullptr*/)
 		: CDialog(LinkedValueSelectorDialog::IDD)
 		, m_inspectionId(inspectionId)
 		, m_objectId(objectId)
 		, m_data(data)
 		, m_vtType(vtType)
 		, m_ObjectName(rName)
-		, m_objectSelectorData(objectSelectorData)
 		, m_validCheckCallback(validCallback)
-		, m_possibleTypes(possibleTypes)
 	{
 		m_type = m_data.m_selectedOption;
-		assert(LinkedValueSelectorTypesEnum::None != m_possibleTypes);
+		if (VT_EMPTY == m_vtType)
+		{
+			m_possibleTypes = LinkedValueSelectorTypesEnum::Indirect;
+		}
+		else if (VT_ARRAY == (m_vtType & VT_ARRAY) || VT_BSTR == m_vtType || SvDef::InvalidObjectId == m_data.m_equationId)
+		{
+			m_possibleTypes = LinkedValueSelectorTypesEnum::DirectIndirect;
+		}
+		else
+		{
+			m_possibleTypes = LinkedValueSelectorTypesEnum::All;
+			m_FormulaController = std::make_shared<FormulaController>(m_inspectionId, m_objectId, m_data.m_equationId);
+		}
 	}
 
 	LinkedValueSelectorDialog::~LinkedValueSelectorDialog()
@@ -98,37 +108,6 @@ namespace SvOg
 	{
 		CDialog::OnInitDialog();
 
-		//check if type fit to the other settings
-		switch (m_possibleTypes)
-		{
-		case LinkedValueSelectorTypesEnum::All:
-			if (VT_EMPTY == m_vtType)
-			{
-				assert(false);
-				m_possibleTypes = LinkedValueSelectorTypesEnum::Indirect;
-			}
-			else if(SvDef::InvalidObjectId == m_data.m_equationId)
-			{
-				assert(false);
-				m_possibleTypes = LinkedValueSelectorTypesEnum::DirectIndirect;
-			}
-			else
-			{
-				m_FormulaController = std::make_shared<FormulaController>(m_inspectionId, m_objectId, m_data.m_equationId, m_objectSelectorData.m_stopAtId);
-			}
-			break;
-		case LinkedValueSelectorTypesEnum::DirectIndirect:
-			if (VT_EMPTY == m_vtType)
-			{
-				assert(false);
-				m_possibleTypes = LinkedValueSelectorTypesEnum::Indirect;
-			}
-			break;
-		default:
-			//nothing to check
-			break;
-		}
-			
 		switch (m_possibleTypes)
 		{
 		case LinkedValueSelectorTypesEnum::All:
@@ -322,18 +301,7 @@ namespace SvOg
 	void LinkedValueSelectorDialog::createObjectPage()
 	{
 		SvPb::InspectionCmdRequest requestCmd;
-		if (m_objectSelectorData.m_excludeSameLineageVector.empty())
-		{
-			*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-				m_objectSelectorData.m_searchArea, m_inspectionId, m_objectSelectorData.m_attribute, SvDef::InvalidObjectId, m_objectSelectorData.m_wholeArray,
-				m_objectSelectorData.m_type, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_objectSelectorData.m_stopAtId);
-		}
-		else
-		{
-			*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-				m_objectSelectorData.m_searchArea, m_inspectionId, m_objectSelectorData.m_attribute, SvDef::InvalidObjectId, m_objectSelectorData.m_wholeArray,
-				m_objectSelectorData.m_type, m_objectSelectorData.m_excludeSameLineageVector, m_objectSelectorData.m_stopAtId);
-		}
+		requestCmd.mutable_getobjectselectoritems2request()->set_objectid(m_objectId);
 		SvPb::InspectionCmdResponse responseCmd;
 		SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 

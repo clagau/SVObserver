@@ -254,6 +254,14 @@ std::map<DWORD, FktPtrs > InspectionCommandMap =
 	)
 	},
 
+	{SvPb::InspectionCmdRequest::kGetInputDataRequest,
+	std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{120}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getInputData(rRequest.getinputdatarequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+	)
+	},
 
 	{ SvPb::InspectionCmdRequest::kConnectToObjectRequest,
 	std::make_tuple(
@@ -477,6 +485,15 @@ std::make_tuple(
 [] {return ThreadPref::inspection; },
 [] {return std::chrono::seconds{120}; } ,
 [](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectSelectorItems(rRequest.getobjectselectoritemsrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kGetObjectSelectorItems2Request,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectSelectorItems(rRequest.getobjectselectoritems2request()); },
 [](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
 )
 },

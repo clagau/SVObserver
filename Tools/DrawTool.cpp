@@ -262,6 +262,7 @@ void DrawTool::BuildInputObjectList ()
 	// Source Image (SVNotSetSubObjectType means both mono and color type)
 	m_InputBGImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVNotSetSubObjectType);
 	registerInputObject( &m_InputBGImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
+	m_InputBGImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 }
 
 

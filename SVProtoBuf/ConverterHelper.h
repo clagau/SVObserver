@@ -43,16 +43,16 @@ SvStl::MessageContainerVector convertProtobufToMessageVector(const MessageContai
 template<typename TreeItem>
 void convertVectorToTree(const std::vector<TreeItem>& rItemVector, TreeItem* pTree);
 
-/// Return the default string for the InputTypeEnum-value
+/// Return the default string for the LinkedValueTypeEnum-value
 /// \param type [in]
 /// \returns variant_t
-variant_t getDefaultString(SvPb::InputTypeEnum type);
+variant_t getDefaultString(SvPb::LinkedValueTypeEnum type);
 
-/// Return a bool if a InputTypeEnum is a value type.
+/// Return a bool if a LinkedValueTypeEnum is a value type.
 /// \param type [in]
 /// \returns bool
-constexpr bool isValueType(SvPb::InputTypeEnum type) 
+constexpr bool isValueType(SvPb::LinkedValueTypeEnum type)
 {
-	return (SvPb::InputTypeEnum::TypeDecimal == type || SvPb::InputTypeEnum::TypeText == type);
+	return (SvPb::LinkedValueTypeEnum::TypeDecimal == type || SvPb::LinkedValueTypeEnum::TypeText == type);
 }
 } //namespace SvPb

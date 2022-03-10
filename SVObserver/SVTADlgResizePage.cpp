@@ -138,14 +138,11 @@ BOOL SVTADlgResizePage::OnInitDialog()
 	HRESULT hr = S_OK;
 	m_ImageController.Init();
 
-	SvOg::ObjectSelectorData osData {m_toolID};
-	osData.m_attribute = SvPb::viewable;
+	m_contentScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[0], m_contentScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorContentEId, &m_resizeValueController);
+	m_contentScaleWidgets[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[1], m_contentScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorContentEId, &m_resizeValueController);
 
-	m_contentScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[0], m_contentScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorContentEId, &m_resizeValueController, osData);
-	m_contentScaleWidgets[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[1], m_contentScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorContentEId, &m_resizeValueController, osData);
-
-	m_formatScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_formatScaleEdit[0], m_formatScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorFormatEId, &m_resizeValueController, osData);
-	m_formatScaleWidgets[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_formatScaleEdit[1], m_formatScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorFormatEId, &m_resizeValueController, osData);
+	m_formatScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_formatScaleEdit[0], m_formatScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorFormatEId, &m_resizeValueController);
+	m_formatScaleWidgets[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_formatScaleEdit[1], m_formatScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorFormatEId, &m_resizeValueController);
 	
 	if (nullptr == m_ParentDialog)
 	{

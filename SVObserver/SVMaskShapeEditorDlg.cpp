@@ -442,18 +442,11 @@ void SVMaskShapeEditorDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plRe
 	{
 		int iPropertyID = pEditItem->GetCtrlID();
 		auto embeddedId = GetPropertyEmbeddedId(iPropertyID);
-
-		SvOg::ObjectSelectorData objSelectorData {m_TaskObjectID};
-		objSelectorData.m_attribute = SvPb::archivable;
-		objSelectorData.m_searchArea = {SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems};
-
 		auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
 
 		SvOg::LinkedValueSelectorDialog dlg(m_InspectionID, m_ShapeHelperValues.GetObjectID(embeddedId),
 			m_ShapeHelperValues.GetName(embeddedId),
-			data,
-			data.m_defaultValue.vt,
-			objSelectorData);
+			data, data.m_defaultValue.vt);
 		if (IDOK == dlg.DoModal())
 		{
 			m_ShapeHelperValues.Set(embeddedId, dlg.getData());

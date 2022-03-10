@@ -83,6 +83,7 @@ void ResizeTool::BuildInputObjectList()
 	// Source Image
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject(&m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
+	m_InputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 }
 
 void ResizeTool::BuildEmbeddedObjectList()

@@ -80,11 +80,11 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 	// This requires that the input name sorts in descending natural order
 	// and that the images we are concerned with are first in the list
 	std::string selectedImageName;
-	const SvUl::InputNameObjectIdPairList& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
+	const auto& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
 	if (rImageList.size())
 	{
-		m_inputName = rImageList.begin()->first;
-		selectedImageName = rImageList.begin()->second.first;
+		m_inputName = rImageList.begin()->inputname();
+		selectedImageName = rImageList.begin()->connected_objectdottedname();
 	}
 
 	m_availableSourceImageListBox.Init(rAvailableImageList, selectedImageName, NoImageTag);

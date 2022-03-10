@@ -1122,6 +1122,17 @@ bool SVObjectClass::allowExtensionCopy() const
 	return false;
 }
 
+void SVObjectClass::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+{
+	for (auto* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->fixInvalidInputs(inserter);
+		}
+	}
+}
+
 void SVObjectClass::sendChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId)
 {
 	if (m_notificationList.size())

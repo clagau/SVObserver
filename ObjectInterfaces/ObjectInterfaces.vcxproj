@@ -97,6 +97,7 @@
     <ClInclude Include="IExternalToolTask.h" />
     <ClInclude Include="IExternalToolTaskDataAdmin.h" />
     <ClInclude Include="IFormulaController.h" />
+    <ClInclude Include="IInputObject.h" />
     <ClInclude Include="IInputValueDefinition.h" />
     <ClInclude Include="IInspectionProcess.h" />
     <ClInclude Include="ILinkedObject.h" />

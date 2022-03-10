@@ -317,6 +317,7 @@ void SVColorToolClass::LocalInitialize()
 
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);
 	registerInputObject(&m_InputImage, SvDef::cColorToolInputImage, SvPb::ImageInputEId);
+	m_InputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	// Register Embedded Objects
 	RegisterEmbeddedImage(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);

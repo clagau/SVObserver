@@ -186,8 +186,8 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 	Init();
 	m_values.Init();
 
-	m_GainWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditGainValue, m_ButtonGainLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolGainId, &m_values, ObjectSelectorData {m_TaskObjectID});
-	m_OffsetWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditOffsetValue, m_ButtonOffsetLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolOffsetId, &m_values, ObjectSelectorData {m_TaskObjectID});
+	m_GainWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditGainValue, m_ButtonGainLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolGainId, &m_values);
+	m_OffsetWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditOffsetValue, m_ButtonOffsetLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolOffsetId, &m_values);
 	const SvUl::NameObjectIdList& rAvailableImageList = GetAvailableImageList();
 	RetreiveCurrentlySelectedImageNames();
 	RetreiveResultImageNames();
@@ -317,18 +317,18 @@ void SVToolAdjustmentDialogTwoImagePageClass::setImages()
 
 void SVToolAdjustmentDialogTwoImagePageClass::RetreiveCurrentlySelectedImageNames()
 {
-	const SvUl::InputNameObjectIdPairList& rImageList = GetInputImageList(SvDef::InvalidObjectId, NumberOfImagesRequired);
+	const auto& rImageList = GetInputImageList(SvDef::InvalidObjectId, NumberOfImagesRequired);
 
 	// This requires that the input name sorts in descending natural order
 	// and that the images we are concerned with are first in the list
 	if (rImageList.size() && rImageList.size() > 1)
 	{
-		SvUl::InputNameObjectIdPairList::const_iterator it = rImageList.begin();
-		m_firstInputName = it->first;
-		m_firstImageName = it->second.first;
+		auto it = rImageList.begin();
+		m_firstInputName = it->inputname();
+		m_firstImageName = it->connected_objectdottedname();
 		++it;
-		m_secondInputName = it->first;
-		m_secondImageName = it->second.first;
+		m_secondInputName = it->inputname();
+		m_secondImageName = it->connected_objectdottedname();
 	}
 }
 

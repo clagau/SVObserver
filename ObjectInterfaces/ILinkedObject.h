@@ -34,6 +34,8 @@ namespace SvOi
 		/// \param rLinkedValue [in,out] protobuf message
 		virtual void fillLinkedData(SvPb::LinkedValue& rLinkedValue) const = 0;
 
+		virtual void fillSelectorListForLink(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter) const = 0;
+
 		//! Validate the value. If value invalid an exception message will be thrown.
 		//! \param rValue [in] The value to validate
 		//! /// \returns _variant_t Return the current value if this value will be set.

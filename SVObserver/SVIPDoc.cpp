@@ -59,6 +59,7 @@
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOGui/InputConflictDlg.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
 #include "SVOGui/SVAdjustToolSizePositionDlg.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
@@ -1241,7 +1242,7 @@ void SVIPDoc::OnEditDelete()
 
 	for (const auto& rIaev : niaev)
 	{
-		
+
 		if (!rIaev.second)
 		{
 			continue;
@@ -1352,6 +1353,32 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 	pCmdUI->Enable(Enabled);
 }
 
+void fixInputs(uint32_t inspectionId, const std::vector<uint32_t>& rToolIds)
+{
+	std::vector<SvPb::FixedInputData> fixedDataVector;
+	for (auto toolId : rToolIds)
+	{
+		SVObjectClass* pToolObject(SVObjectManagerClass::Instance().GetObject(toolId));
+		if (nullptr != pToolObject)
+		{
+			pToolObject->fixInvalidInputs(std::back_inserter(fixedDataVector));
+		}
+	}
+	if (false == fixedDataVector.empty())
+	{
+		SvOg::InputConflictDlg ConflictDlg(inspectionId, fixedDataVector);
+		ConflictDlg.DoModal();
+		for (auto toolId : rToolIds)
+		{
+			auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
+			if (nullptr != pTool)
+			{
+				pTool->resetAllObjects();
+			}
+		}
+	}
+}
+
 void SVIPDoc::OnEditPaste()
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_READY) || !SVSVIMStateClass::CheckState(SV_STATE_EDIT))
@@ -1419,7 +1446,7 @@ void SVIPDoc::OnEditPaste()
 	try
 	{
 		auto XmlData = toolClipboard.readXmlToolData();
-		auto pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, postToolId, ownerId);
+		auto pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerId);
 		if (!pastedToolIDs.empty())
 		{
 			updateToolsetView(pastedToolIDs, postToolId, ownerId, pNavElement->m_DisplayName);
@@ -1518,12 +1545,16 @@ void SVIPDoc::updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uin
 	}
 
 	if (false == anythingAdded)
+	{
 		return;
+	}
 
 	if (nullptr != pInspection->GetToolSet())
 	{
 		pInspection->GetToolSet()->updateToolPosition();
 	}
+	fixInputs(m_InspectionID, rPastedToolIDs);
+
 	RunOnce();
 
 	if (false == rSelectedName.empty())
@@ -1811,9 +1842,10 @@ void SVIPDoc::OnResultsTablePicker()
 			SvPb::InspectionCmdRequest requestCmd;
 			SvPb::InspectionCmdResponse responseCmd;
 			auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-			pRequest->set_objectid(GetInspectionID());
-			pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
-			pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
+			auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+			pTreeSearchParameter->set_search_start_id(GetInspectionID());
+			pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::TableObjectType);
+			pRequest->set_desired_first_object_type_for_name(SvPb::SVToolSetObjectType);
 
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
@@ -3222,7 +3254,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 		{
 			uint32_t viewImageUniqueId = pImageView->GetImage()->getObjectId();
 			if (std::any_of(outputList.begin(), outputList.end(), [viewImageUniqueId](const auto* pObject)
-				{ return nullptr != pObject && viewImageUniqueId == pObject->getObjectId(); }))
+			{ return nullptr != pObject && viewImageUniqueId == pObject->getObjectId(); }))
 			{
 				// Close Display resources...
 				pImageView->DetachFromImage();
@@ -3480,7 +3512,7 @@ void SVIPDoc::OnViewResetCountsCurrentIP()
 {
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT))
 	{
- 		SVInspectionProcess* pInspection = GetInspectionProcess();
+		SVInspectionProcess* pInspection = GetInspectionProcess();
 
 		// @TODO:  What should we do if there's an error?  (Method is void.)
 		if (nullptr != pInspection && nullptr != pInspection->GetToolSet())
@@ -4070,10 +4102,11 @@ bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	pRequest->set_objectid(m_InspectionID);
-	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
-	pRequest->mutable_typeinfo()->set_subtype(ImageSubType);
-	pRequest->mutable_isbeforetoolmethod()->set_toolid(GetSelectedToolID());
+	auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+	pTreeSearchParameter->set_search_start_id(m_InspectionID);
+	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVImageObjectType);
+	pTreeSearchParameter->mutable_type_info()->set_subtype(ImageSubType);
+	pTreeSearchParameter->mutable_isbeforetoolmethod()->set_toolid(GetSelectedToolID());
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	SvUl::NameObjectIdList availableList;
@@ -4141,7 +4174,7 @@ SVIPDoc* GetIPDocByInspectionID(uint32_t inspectionID)
 
 void ResetAllIPDocModifyFlag(BOOL bModified)
 {
-	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition(); 
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	if (pos)
 	{
 		do

@@ -76,6 +76,8 @@ public:
 	virtual HRESULT updateImageExtent(bool /*init*/) { return S_OK; }
 	virtual HRESULT GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const;
 
+	virtual void connectInput(SvOi::IObjectClass* pInput) override;
+	void connectInput(SvOl::InputObject& rObject);
 	virtual bool connectAllInputs() override;
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
@@ -84,6 +86,7 @@ public:
 	virtual void getInputs(std::back_insert_iterator<std::vector<SvOl::InputObject*>> inserter) const;
 
 	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
+	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter) override;
 	std::vector<SvOi::IObjectClass*> getOutputListFiltered(UINT uiAttributes = SvPb::noAttributes, bool bAND = true) const; /* true means AND, false means OR */
 	void GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvPb::noAttributes, bool bAND = true) const; /* true means AND, false means OR */
 
@@ -134,7 +137,7 @@ public:
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) override;
 	
 #pragma region virtual method (ITaskObject)
-	virtual void GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) override;
+	virtual void GetInputs(SvPb::InputDataList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) override;
 	virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType, bool shouldResetObject = false) override;
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override { return m_ResetErrorMessages; };
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override { return m_RunErrorMessages; };

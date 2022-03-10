@@ -71,6 +71,7 @@ namespace SvAo
 
 		m_grayImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 		registerInputObject(&m_grayImageInput, SvDef::GrayImageConnectionName, SvPb::GrayImageInputEId);
+		m_grayImageInput.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 		m_maxBlobDataArraySize.SetDefaultValue(100, true);
 		m_isGrayImageValue.SetDefaultValue(BOOL(false), true);

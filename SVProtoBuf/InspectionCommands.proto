@@ -20,23 +20,24 @@ import "PatternUtils.proto";
 //***************************************************************************
 // Help Structs
 //***************************************************************************
-message InputNameObjectNameIdPair
+message InputData
 {
-	uint32 objectId = 1; //ID of the object.
-	bytes objectName = 2; //name of the object.
-	bytes inputName = 3; //input name.
+	uint32 connected_objectId = 1; //ID of the connected object.
+	string connected_objectDottedName = 2; //name of the connected object.
+	string inputName = 3; //input name.
+	uint32 inputId = 4; //ID of the object.
 }
 
 message ObjectNameIdPair
 {
 	uint32 objectId = 1; //ID of the object.
-	bytes objectName = 2; //name of the object.
+	string objectName = 2; //name of the object.
 }
 
 message NameClassIdPair
 {
 	ClassIdEnum classId = 1; //classId of the object.
-	bytes objectName = 2; //name of the object.
+	string objectName = 2; //name of the object.
 }
 
 message SVObjectTypeInfoStruct
@@ -58,14 +59,14 @@ message TaskObjectInfo
 
 message NameValuePair
 {
-	bytes name = 1;
+	string name = 1;
 	int32 value = 2;
 } 
 
 message NameNamePair
 {
-	bytes nameFrom = 1;
-	bytes nameTo = 2;
+	string nameFrom = 1;
+	string nameTo = 2;
 } 
 
 message StandardValue
@@ -88,8 +89,8 @@ message LinkedValue
 	Variant value = 2;
 	Variant defaultValue = 3;
 	Variant directValue = 4;
-	bytes indirectIDString = 6;
-	bytes formula = 7;
+	string indirectIDString = 6;
+	string formula = 7;
 	uint32 equationId = 8;
 }
 
@@ -102,7 +103,6 @@ message ValueObjectValues
 		StandardValue value = 3;
 		LinkedValue linkedValue = 4;
 	}
-	
 }
 
 message SetValueObjectValues
@@ -116,7 +116,7 @@ message SetValueObjectValues
 message ExtentParameter
 {
 	SVExtentPropertyEnum type = 1;
-	bytes name = 2;
+	string name = 2;
 	double value = 3;
 	bool isSetByReset = 4;
 	bool FilteredOutFlag = 5;
@@ -152,6 +152,35 @@ message SetExtentProperty
 message SetExtentList
 {
 	repeated ExtentParameter extentList = 1;
+}
+
+message FixedInputData
+{
+	string name = 1; //dotted name of the Object, until Tool Set.
+	uint32 objectId = 2;
+	uint32 parentId = 3;
+	EmbeddedIdEnum embeddedId = 4;
+	string oldInputValue = 5; //The old value, if it is a indirectValue it is the dotted name.
+	bool isLinkedValue = 6; //True means it is a linkedValue, else it is a InputObject.
+}
+
+message TreeSearchParameters 
+{
+	uint32 search_start_id  = 1; //Normally the (downward) search starts here.
+	uint32 pre_search_start_id = 2; //If this is set (!= SvDef::InvalidObjectId), look for the starting point upward from here to searchStartId. If a border (e.g. Closed GroupTool) is hit before searchStartId is reached the search is started from that border.
+	SVObjectTypeInfoStruct type_info = 3;
+
+	oneof allowedMode  //Default is to accept all non-hidden valid objects. In this case do not set a oneof-message.
+	{
+		IsBeforeToolMethod isBeforeToolMethod = 5; //Same as default, but stop searching if required tool reached.
+		DefaultPlusHidden defaultPlusHidden = 6;
+		HasExtension hasExtension = 7;
+	}	
+}
+
+message InputSearchParameters
+{
+	uint32 input_connected_objectId = 1; // this is the ID of the object receiving input. Object must be of type InputConnectedType.
 }
 
 //***************************************************************************
@@ -210,7 +239,7 @@ message GetObjectParametersRequest
 message GetObjectParametersResponse
 {
 	bool isValid = 1; //flag if valid, will only set for TaskObject (not for ValueObject)
-	bytes name = 2;
+	string name = 2;
 	uint32 allowedAttributes = 3;
 	SVObjectTypeInfoStruct typeInfo = 4;
 }
@@ -228,7 +257,7 @@ message GetObjectNameRequest
 
 message GetObjectNameResponse
 {
-	bytes name = 1;
+	string name = 1;
 }
 
 // This is the message to return the equation string
@@ -305,7 +334,7 @@ message TaskObjectListResponse
 message GetImageRequest
 {
 	uint32 imageId = 1;  //ID of the image
-	bytes imageName = 2; //Name of the image at parent object
+	string imageName = 2; //Name of the image at parent object
 	uint32 parentId = 3; //ID of the parent
 	EmbeddedIdEnum embeddedId = 4;
 } 
@@ -357,52 +386,59 @@ message GetInputsRequest
 {
 	uint32 objectId = 1;  //ID of the tool
 	SVObjectTypeInfoStruct typeInfo = 2;
-	SVObjectTypeEnum objectTypeToInclude = 3; //define until which type the name should displayed (not used for image objects, it has the own name conventions)
-	bool shouldExcludeFirstObjectName = 4; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
+	SVObjectTypeEnum desired_first_object_type_for_connected_name = 3; //define up to which type the connected dotted name should be displayed (not used for image objects, it has the own name conventions)
+	bool exclude_first_object_name_in_conntected_name = 4; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
 	int32 maxRequested = 5; //only used for image object, it define after how many founded entry it stops. 0 means all.
 }
 
 message GetInputsResponse
 {
-	repeated InputNameObjectNameIdPair list = 1;
+	repeated InputData list = 1;
+}
+
+message GetInputDataRequest
+{
+	uint32 objectId = 1;  //ID of the input object
+	SVObjectTypeEnum desired_first_object_type_for_connected_name = 2; //define up to which type the connected dotted name should be displayed (not used for image objects, it has the own name conventions)
+	bool exclude_first_object_name_in_conntected_name = 3; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
+}
+
+message GetInputDataResponse
+{
+	InputData data = 1;
+	SVObjectTypeInfoStruct typeInfo = 2;
 }
 
 message ConnectToObjectRequest
 {
-	uint32 objectId = 1;
-	bytes inputName = 2;
-	uint32 newConnectedId = 3;
-	SVObjectTypeEnum objectType = 4;
+	uint32 objectId = 1; //Must be a TaskObject (in this case inputname must be set) or InputObject (in this case inputName and objectType will be ignored)
+	string inputName = 2; //The name of the input (must be child from the TaskObject). Will be ignored if object is a InputObject.
+	uint32 newConnectedId = 3; //The Id of the to connected object
+	SVObjectTypeEnum objectType = 4; //Will be ignored if object is a InputObject.
 }
 
 message SaveImageRequest
 {
 	uint32 objectId = 1;
-	bytes imageName = 2;
+	string imageName = 2;
 }
 
 message SetObjectNameRequest
 {
 	uint32 objectId = 1;
-	bytes objectName = 2;
+	string objectName = 2;
 }
 
 message GetAvailableObjectsRequest
 {
-	uint32 objectId = 1;
-	SVObjectTypeInfoStruct typeInfo = 2;
-	SVObjectTypeEnum objectTypeToInclude = 3; //default = SVNotSetObjectType
-	bool shouldExcludeFirstObjectName = 4;
+	SVObjectTypeEnum desired_first_object_type_for_name = 1; //Define up to which type the dotted name should be displayed. default = SVNotSetObjectType
+	bool exclude_first_object_name_in_name = 2; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". 
 
-	oneof allowedMode  //default is check of valid object and not hidden. In this case do not set a oneof-message.
+	oneof SearchType
 	{
-		IsBeforeToolMethod isBeforeToolMethod=5; //same then default, but stop searching if required tool reached.
-		DefaultPlusHidden defaultPlusHidden=6;
-		HasExtension hasExtension =8;
-
-	}	
-
-	uint32 importantObjectForStopAtBorder = 7; //If this value set (!= SvDef::InvalidObjectId), than it look from this up to parent if any Border (e.g. Closed GroupTool) is available and set this than as starting position and also stop at a closed GroupTool.
+		TreeSearchParameters tree_search = 3;
+		InputSearchParameters input_search=4;
+	}
 }
 
 message GetAvailableObjectsResponse
@@ -418,19 +454,19 @@ message GetSpecialImageListRequest
 
 message GetSpecialImageListResponse
 {
-	repeated bytes specialImageNames = 1;
+	repeated string specialImageNames = 1;
 }
 
 message ExportMaskRequest
 {
 	uint32 objectId = 1;
-	bytes fileName = 2;
+	string fileName = 2;
 }
 
 message ImportMaskRequest
 {
 	uint32 objectId = 1;
-	bytes fileName = 2;
+	string fileName = 2;
 }
 
 message GetObjectIdRequest
@@ -457,7 +493,7 @@ message CreateObjectRequest
 {
 	message FriendTask
 	{
-		bytes name = 1; //the name of the new object
+		string name = 1; //the name of the new object
 		uint32 preId = 2; //Add new object before the object with this ID. If object not found (e.g. SvDef::InvalidObjectId), it will be added at the end.
 	}
 
@@ -475,7 +511,7 @@ message CreateObjectRequest
 message CreateObjectResponse
 {
 	uint32 objectId = 1;
-	bytes name = 2;
+	string name = 2;
 }
 
 message GetCreatableObjectsRequest
@@ -508,7 +544,7 @@ message GetPPQNameRequest
 
 message GetPPQNameResponse
 {
-	bytes ppqName = 1;
+	string ppqName = 1;
 }
 
 //Request the Enumerations(name/value) from a SVEnumerateValueObject
@@ -650,7 +686,7 @@ message SetDefaultInputsRequest
 message BarCodeTypeParameter
 {
 	int32 type = 1;
-	bytes name = 2;
+	string name = 2;
 	repeated int32 PossibleECCTypes = 3;
 	int32 DefaultEccType = 4;
 	repeated int32 PossibleENCTypes = 5;
@@ -726,7 +762,7 @@ message GetBlobAnalyzerInfoResponse
 message FeatureData
 {
 	uint32 type = 1;
-	bytes name = 2;
+	string name = 2;
 	bool is_custom = 3;
 	bool is_gray = 4;
 	bool is_sort = 5;
@@ -785,7 +821,7 @@ message GetAvailableFeaturesRequest
 message AvailableFeature
 {
 	uint32 id = 1;
-	bytes name = 2;
+	string name = 2;
 	bool isNecessary = 3;
 	bool isGray = 4;
 }
@@ -1000,9 +1036,9 @@ message ValidateValueObjectResponse
 
 message EmbeddedValueStruct
 {
-	bytes name = 1;
+	string name = 1;
 	EmbeddedIdEnum oldEmbeddedId = 2; 	
-	InputTypeEnum type = 3;
+	LinkedValueTypeEnum type = 3;
 
 	LinkedValue value = 4;
 }
@@ -1104,6 +1140,8 @@ message InspectionCmdRequest
 		GetInvalidDependenciesRequest getInvalidDependenciesRequest = 69;
 		GetObjectNameRequest getObjectNameRequest = 70;
 		ValidateLinkedValueRequest validateLinkedValueRequest = 71;
+		GetInputDataRequest getInputDataRequest = 72;
+		GetObjectSelectorItems2Request getObjectSelectorItems2Request = 73;
 		}
 }
 
@@ -1164,5 +1202,6 @@ message InspectionCmdResponse
 		ResetAllObjectsResponse resetAllObjectsResponse = 51;
 		GetObjectNameResponse getObjectNameResponse = 52;
 		ValidateLinkedValueResponse validateLinkedValueResponse = 53;
+		GetInputDataResponse getInputDataResponse = 54;
 		}
 }

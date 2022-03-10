@@ -87,11 +87,12 @@ bool  ToolSizeController::InitToolList()
 	SvPb::InspectionCmdResponse responseCmd;
 
 	auto* pAvailableRequest = requestCmd.mutable_getavailableobjectsrequest();
-	pAvailableRequest->set_objectid(m_ipId);
-	pAvailableRequest->mutable_typeinfo()->set_objecttype(SvPb::SVToolObjectType);
-	pAvailableRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
-	pAvailableRequest->set_importantobjectforstopatborder(m_toolId);
-	pAvailableRequest->mutable_hasextension();
+	auto* pTreeSearchParameter = pAvailableRequest->mutable_tree_search();
+	pTreeSearchParameter->set_search_start_id(m_ipId);
+	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVToolObjectType);
+	pTreeSearchParameter->mutable_hasextension();
+	pTreeSearchParameter->set_pre_search_start_id(m_toolId);
+	pAvailableRequest->set_desired_first_object_type_for_name(SvPb::SVToolSetObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())

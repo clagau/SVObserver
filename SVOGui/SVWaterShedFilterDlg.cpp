@@ -144,11 +144,11 @@ namespace SvOg
 			m_SVSourceImageCombo.AddString(it->first.c_str());
 		}
 		
-		const SvUl::InputNameObjectIdPairList& connectedImageList = GetInputImageList(m_filterID);
+		const auto& connectedImageList = GetInputImageList(m_filterID);
 		std::string currentMarkerImageName; 
-		if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvDef::WatershedMarkerImageConnectionName)
+		if (0 < connectedImageList.size() && connectedImageList.begin()->inputname() == SvDef::WatershedMarkerImageConnectionName)
 		{
-			currentMarkerImageName = connectedImageList.begin()->second.first;
+			currentMarkerImageName = connectedImageList.begin()->connected_objectdottedname();
 		}
 		m_SVSourceImageCombo.SelectString(-1, currentMarkerImageName.c_str());
 

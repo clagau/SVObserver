@@ -209,70 +209,7 @@ namespace SvOg
 		}
 		case ValueButtonColumn:
 		{
-			ObjectSelectorData data {m_TaskObjectID};
-			LinkedValueSelectorTypesEnum possibleType = LinkedValueSelectorTypesEnum::None;
-			switch (m_resultData[pItem->iRow - 1].m_type)
-			{
-			case SvPb::InputTypeEnum::TypeDecimal:
-			{
-				possibleType = LinkedValueSelectorTypesEnum::All;
-				data.m_type = SvPb::allNumberValueObjects;
-				data.m_attribute = SvPb::selectableForEquation;
-				data.m_searchArea = { SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems };
-				break;
-			}
-			case SvPb::InputTypeEnum::TypeText:
-			{
-				possibleType = LinkedValueSelectorTypesEnum::DirectIndirect;
-				data.m_type = SvPb::allValueObjects;
-				data.m_attribute = SvPb::ObjectAttributes::viewable;
-				data.m_searchArea = { SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems };
-				break;
-			}
-			case SvPb::InputTypeEnum::TypeTable:
-			{
-				possibleType = LinkedValueSelectorTypesEnum::Indirect;
-				data.m_type = SvPb::tableObjects;
-				data.m_attribute = SvPb::ObjectAttributes::taskObject;
-				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
-				break;
-			}
-			case SvPb::InputTypeEnum::TypeGrayImage:
-			{
-				possibleType = LinkedValueSelectorTypesEnum::Indirect;
-				data.m_type = SvPb::grayImageObjects;
-				data.m_attribute = SvPb::ObjectAttributes::archivableImage;
-				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
-				break;
-			}
-			case SvPb::InputTypeEnum::TypeColorImage:
-			{
-				possibleType = LinkedValueSelectorTypesEnum::Indirect;
-				data.m_type = SvPb::colorImageObjects;
-				data.m_attribute = SvPb::ObjectAttributes::archivableImage;
-				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
-				break;
-			}
-			case SvPb::InputTypeEnum::TypeImage:
-			{
-				possibleType = LinkedValueSelectorTypesEnum::Indirect;
-				data.m_type = SvPb::allImageObjects;
-				data.m_attribute = SvPb::ObjectAttributes::archivableImage;
-				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
-				break;
-			}
-			case SvPb::InputTypeEnum::TypeStates:
-			{
-				possibleType = LinkedValueSelectorTypesEnum::Indirect;
-				data.m_type = SvPb::toolObjects;
-				data.m_attribute = SvPb::ObjectAttributes::taskObject;
-				data.m_searchArea = {SvPb::SearchArea::toolsetItems};
-				break;
-			}
-			}
-
-			data.m_excludeSameLineageVector = { m_TaskObjectID };
-			LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1].m_name, m_resultData[pItem->iRow - 1].m_data, m_resultData[pItem->iRow - 1].m_data.m_defaultValue.vt, data, nullptr, possibleType);
+			LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1].m_name, m_resultData[pItem->iRow - 1].m_data, m_resultData[pItem->iRow - 1].m_data.m_defaultValue.vt);
 			if (IDOK == dlg.DoModal())
 			{
 				m_resultData[pItem->iRow - 1].m_data = dlg.getData();
@@ -318,7 +255,7 @@ namespace SvOg
 			case TypeColumn:
 			{
 				const auto& type = getType(cellText);
-				m_resultData[pItem->iRow - 1].m_type = static_cast<SvPb::InputTypeEnum>(type.second);
+				m_resultData[pItem->iRow - 1].m_type = static_cast<SvPb::LinkedValueTypeEnum>(type.second);
 				FillGridControl();
 				break;
 			}
@@ -626,7 +563,7 @@ namespace SvOg
 			GroupResultData data;
 			data.m_name = m_Values.GetName(SvPb::ResultObjectValueEId + i);
 			data.m_oldEmbeddedId = SvPb::ResultObjectValueEId + i;
-			data.m_type = static_cast<SvPb::InputTypeEnum>(m_Values.Get<int>(SvPb::ResultObjectTypeEId + i));
+			data.m_type = static_cast<SvPb::LinkedValueTypeEnum>(m_Values.Get<int>(SvPb::ResultObjectTypeEId + i));
 			data.m_data = m_Values.Get<LinkedValueData>(SvPb::ResultObjectValueEId + i);
 			auto valueId = m_Values.GetObjectID(SvPb::ResultObjectValueEId + i);
 			data.m_dependencies = getDependency(valueId);

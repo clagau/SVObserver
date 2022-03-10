@@ -294,12 +294,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_wndAvailableArchiveImageMemory.ShowWindow( lMode == SvTo::SVArchiveGoOffline );
 
-	SvOg::ObjectSelectorData osData {m_taskId};
-	osData.m_attribute = SvPb::viewable;
-	osData.m_type = SvPb::allValueObjects;
-	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController, osData);
-	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController, osData);
-	m_ImageFilepathrootWidgetHelpers[2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot3, m_ImageFilepathroot3Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart3EId, &m_ValueController, osData);
+	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController);
+	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
+	m_ImageFilepathrootWidgetHelpers[2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot3, m_ImageFilepathroot3Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart3EId, &m_ValueController);
 	m_alternativeImagePaths.init();
 
 
@@ -755,14 +752,11 @@ void SVTADlgArchiveImagePage::OnKillFocusImageFilepathroot3()
 
 void SVTADlgArchiveImagePage::AlternativeImagePathController::init()
 {
-	SvOg::ObjectSelectorData osData {m_taskId};
-	osData.m_attribute = SvPb::viewable;
-	osData.m_type = SvPb::allNumberValueObjects;
-	m_WidgetHelpers[LinkedValueEnums::DirectorynameIndex] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditDirectorynameIndex, m_ButtonDirectorynameIndex, m_inspectionId, m_taskId, SvPb::DirectorynameIndexEId, &m_rValueController, osData);
-	m_WidgetHelpers[LinkedValueEnums::FilenameIndex1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex1, m_ButtonFilenameIndex1, m_inspectionId, m_taskId, SvPb::FilenameIndex1EId, &m_rValueController, osData);
-	m_WidgetHelpers[LinkedValueEnums::FilenameIndex2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex2, m_ButtonFilenameIndex2, m_inspectionId, m_taskId, SvPb::FilenameIndex2EId, &m_rValueController, osData);
-	m_WidgetHelpers[LinkedValueEnums::SubfolderSelection] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderSelection, m_ButtonSubfolderSelection, m_inspectionId, m_taskId, SvPb::SubfolderSelectionEId, &m_rValueController, osData);
-	m_WidgetHelpers[LinkedValueEnums::SubfolderLocation] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderLocation, m_ButtonSubfolderLocation, m_inspectionId, m_taskId, SvPb::SubfolderLocationEId, &m_rValueController, osData);
+	m_WidgetHelpers[LinkedValueEnums::DirectorynameIndex] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditDirectorynameIndex, m_ButtonDirectorynameIndex, m_inspectionId, m_taskId, SvPb::DirectorynameIndexEId, &m_rValueController);
+	m_WidgetHelpers[LinkedValueEnums::FilenameIndex1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex1, m_ButtonFilenameIndex1, m_inspectionId, m_taskId, SvPb::FilenameIndex1EId, &m_rValueController);
+	m_WidgetHelpers[LinkedValueEnums::FilenameIndex2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex2, m_ButtonFilenameIndex2, m_inspectionId, m_taskId, SvPb::FilenameIndex2EId, &m_rValueController);
+	m_WidgetHelpers[LinkedValueEnums::SubfolderSelection] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderSelection, m_ButtonSubfolderSelection, m_inspectionId, m_taskId, SvPb::SubfolderSelectionEId, &m_rValueController);
+	m_WidgetHelpers[LinkedValueEnums::SubfolderLocation] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderLocation, m_ButtonSubfolderLocation, m_inspectionId, m_taskId, SvPb::SubfolderLocationEId, &m_rValueController);
 }
 
 void SVTADlgArchiveImagePage::AlternativeImagePathController::DoDataExchange(CDataExchange* pDX)

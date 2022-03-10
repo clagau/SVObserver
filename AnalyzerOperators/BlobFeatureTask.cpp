@@ -9,6 +9,7 @@
 #include "BlobFeatureTask.h"
 #include "Operators/IndexEquation.h"
 #include "SVProtoBuf/SVO-Enum.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
@@ -85,7 +86,7 @@ namespace SvAo
 		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnHigh], SvPb::RangeClassWarnHighEId, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone);
 		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailLow], SvPb::RangeClassFailLowEId, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone);
 		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnLow], SvPb::RangeClassWarnLowEId, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone);
-		
+				
 		m_featureTypeValue.SetDefaultValue(0, true);
 		m_isCustomFeature.SetDefaultValue(BOOL(false), true);
 
@@ -113,6 +114,13 @@ namespace SvAo
 	bool BlobFeatureTask::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	{
 		bool l_bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
+
+		m_ExcludeLowerBoundValue.setExcludeSameLineageListForObjectSelector({rCreateStructure.m_pTool});
+		m_ExcludeUpperBoundValue.setExcludeSameLineageListForObjectSelector({rCreateStructure.m_pTool});
+		m_RangeValues[RangeEnum::ER_FailHigh].setExcludeSameLineageListForObjectSelector({rCreateStructure.m_pTool});
+		m_RangeValues[RangeEnum::ER_WarnHigh].setExcludeSameLineageListForObjectSelector({rCreateStructure.m_pTool});
+		m_RangeValues[RangeEnum::ER_FailLow].setExcludeSameLineageListForObjectSelector({rCreateStructure.m_pTool});
+		m_RangeValues[RangeEnum::ER_WarnLow].setExcludeSameLineageListForObjectSelector({rCreateStructure.m_pTool});
 
 		updateEquation();
 

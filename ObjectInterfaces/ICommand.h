@@ -9,7 +9,19 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
+
+namespace SvOi
+{
+	class IInspectionProcess;
+	class IObjectClass;
+}
+
+namespace SvPb
+{
+	class TreeItem;
+}
 
 namespace SvOi
 {
@@ -44,5 +56,7 @@ public:
 	T m_InspectionTask;
 
 };
+
+void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IInspectionProcess* pInspection, SvOi::IObjectClass* pStartObject, SvPb::LinkedValueTypeEnum valueType, bool wholeArray = false, std::vector<SvOi::IObjectClass*> excludeSameLineageList = {});
 
 } //namespace SvOi

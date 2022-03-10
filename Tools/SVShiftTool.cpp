@@ -458,6 +458,7 @@ void SVShiftTool::LocalInitialize()
 	// Identify our input type needs (SVNotSetSubObjectType means both mono and color type)
 	m_ImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVNotSetSubObjectType);
 	registerInputObject( &m_ImageInput, SvDef::SourceImageInputName, SvPb::ImageInputEId);
+	m_ImageInput.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	m_TranslationXInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationXResultEId);
 	registerInputObject( &m_TranslationXInput, _T( "ShiftToolTranslationX" ), SvPb::TranslationXInputEId);

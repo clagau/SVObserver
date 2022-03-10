@@ -35,16 +35,10 @@ void setValueColumn(SvGcl::GridCtrl& rGrid, int pos, int colPos, const LinkedVal
 	}
 }
 
-void startObjectSelector(SvGcl::GridCtrl& rGrid, const std::string& rName, int rowPos, int colPos, uint32_t ipId, uint32_t toolId, uint32_t objectId, SvPb::LinkedValue& rData)
+void startObjectSelector(SvGcl::GridCtrl& rGrid, const std::string& rName, int rowPos, int colPos, uint32_t ipId, uint32_t objectId, SvPb::LinkedValue& rData)
 {
-	ObjectSelectorData selectorData {toolId};
-	LinkedValueSelectorTypesEnum possibleType = LinkedValueSelectorTypesEnum::All;
-	selectorData.m_type = SvPb::allNumberValueObjects;
-	selectorData.m_attribute = SvPb::selectableForEquation;
-	selectorData.m_searchArea = {SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems};
-	selectorData.m_excludeSameLineageVector = {toolId};
 	auto featureData = convertLinkedValue(rData);
-	LinkedValueSelectorDialog dlg(ipId, objectId, rName, featureData, VT_R8, selectorData, nullptr, possibleType);
+	LinkedValueSelectorDialog dlg(ipId, objectId, rName, featureData, VT_R8);
 	if (IDOK == dlg.DoModal())
 	{
 		setValueColumn(rGrid, rowPos, colPos, dlg.getData());

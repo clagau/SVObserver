@@ -139,6 +139,27 @@ void SVTaskObjectClass::getOutputList(std::back_insert_iterator<std::vector<SvOi
 	__super::getOutputList(inserter);
 }
 
+void SVTaskObjectClass::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+{
+	for (size_t i = 0; i < m_friendList.size(); ++i)
+	{
+		if (nullptr != m_friendList[i])
+		{
+			m_friendList[i]->fixInvalidInputs(inserter);
+		}
+	}
+
+	for (auto* pObject : m_inputs)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->fixInvalidInputs(inserter);
+		}
+	}
+
+	__super::fixInvalidInputs(inserter);
+}
+
 std::vector<SvOi::IObjectClass*> SVTaskObjectClass::getOutputListFiltered(UINT uiAttributes, bool bAND) const
 {
 	std::vector<SvOi::IObjectClass*> outputList;
@@ -312,7 +333,7 @@ void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvO
 }
 
 #pragma region virtual method (ITaskObject)
-void SVTaskObjectClass::GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo, SvPb::SVObjectTypeEnum objectTypeToInclude, bool shouldExcludeFirstObjectName, int maxNumbers)
+void SVTaskObjectClass::GetInputs(SvPb::InputDataList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo, SvPb::SVObjectTypeEnum objectTypeToInclude, bool shouldExcludeFirstObjectName, int maxNumbers)
 {
 	std::vector<SvOl::InputObject*> inputList;
 	getInputs(std::back_inserter(inputList));
@@ -353,7 +374,11 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameObjectIdPairList& rList, const 
 				}
 				objectID = pObject->getObjectId();
 			}
-			rList.insert(std::make_pair(pInput->GetName(), std::make_pair(name, objectID)));
+			auto* pData = rList.Add();
+			pData->set_inputname(pInput->GetName());
+			pData->set_inputid(pInput->getObjectId());
+			pData->set_connected_objectid(objectID);
+			pData->set_connected_objectdottedname(name);
 			if (0 < maxNumbers && rList.size() >= maxNumbers)
 			{
 				return;
@@ -669,6 +694,89 @@ HRESULT SVTaskObjectClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum, SVExtentP
 	return S_FALSE;
 }
 
+void SVTaskObjectClass::connectInput(SvOi::IObjectClass* pInput)
+{
+	auto* pInputObject = dynamic_cast<SvOl::InputObject*>(pInput);
+	if (nullptr != pInputObject)
+	{
+		connectInput(*pInputObject);
+	}
+}
+
+void SVTaskObjectClass::connectInput(SvOl::InputObject& rInput)
+{
+	// Is not yet connected...
+	if (!rInput.IsConnected())
+	{
+		// if Connect to Default
+		if (SvDef::InvalidObjectId == rInput.GetInputObjectInfo().getObjectId())
+		{
+			// Input Object is not set...Try to get one...
+			SvDef::SVObjectTypeInfoStruct info = rInput.GetInputObjectInfo().m_ObjectTypeInfo;
+			// At least one item from the SvDef::SVObjectTypeInfoStruct is required, but not all
+			if (SvPb::NoEmbeddedId != info.m_EmbeddedID || SvPb::SVNotSetObjectType != info.m_ObjectType || SvPb::SVNotSetSubObjectType != info.m_SubType)
+			{
+				SVObjectClass* pOwner = GetParent();
+				SVObjectClass* pRequestor = this;
+				bool bSuccess = false;
+
+				// Ask first friends...
+				for (size_t j = 0; j < m_friendList.size(); ++j)
+				{
+					if (nullptr != m_friendList[j])
+					{
+						const auto* pObject = SVObjectManagerClass::Instance().getFirstObject(m_friendList[j]->getObjectId(), info);
+						if (nullptr != pObject)
+						{
+							// Connect input ...
+							rInput.SetInputObject(pObject->getObjectId());
+							bSuccess = true;
+							break;
+						}
+					}
+				}
+
+				// Then ask owner...
+				if (!bSuccess)
+				{
+					//GetInspection is still nullptr because in SVToolSet::createAllObjectsFromChild SetDefaultInputs is called before CreateObject !
+					//To still get the appropriate inspection we call GetAncestor
+					SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetAncestor(SvPb::SVInspectionObjectType));
+					while (pOwner)
+					{
+						bool isColorInspection = (nullptr != pInspection) ? pInspection->IsColorCamera() : false;
+						const SvOi::IObjectClass* pObject {nullptr};
+						// if color system & pOwner == SVToolSet
+						if (isColorInspection && SvPb::SVToolSetObjectType == pOwner->GetObjectType() && SvPb::SVImageObjectType == info.m_ObjectType && SvPb::SVImageMonoType == info.m_SubType)
+						{
+							SvOi::IToolSet* pToolSet(dynamic_cast<SvOi::IToolSet*> (pOwner));
+							if (nullptr != pToolSet)
+							{
+								pObject = pToolSet->getBand0Image();
+							}
+						}
+						else
+						{
+							pObject = pOwner->getFirstObject(info, true, pRequestor);
+						}
+						if (pObject)
+						{
+							// Connect input ...
+							rInput.SetInputObject(pObject->getObjectId());
+							break;
+						}
+						else
+						{
+							pOwner = pOwner->GetParent();
+							pRequestor = pRequestor->GetParent();
+						}
+					}// end while (pOwner)
+				}// end if (! bSuccess)
+			}
+		}// end if (SvDef::InvalidObjectId == pInInfo->InputObjectInfo.UniqueObjectID )
+	}
+}
+
 bool SVTaskObjectClass::connectAllInputs()
 {
 	bool Result(true);
@@ -687,76 +795,7 @@ bool SVTaskObjectClass::connectAllInputs()
 	{
 		if (nullptr != pInput)
 		{
-			// Is not yet connected...
-			if (!pInput->IsConnected())
-			{
-				// if Connect to Default
-				if (SvDef::InvalidObjectId == pInput->GetInputObjectInfo().getObjectId())
-				{
-					// Input Object is not set...Try to get one...
-					SvDef::SVObjectTypeInfoStruct info = pInput->GetInputObjectInfo().m_ObjectTypeInfo;
-					// At least one item from the SvDef::SVObjectTypeInfoStruct is required, but not all
-					if (SvPb::NoEmbeddedId != info.m_EmbeddedID || SvPb::SVNotSetObjectType != info.m_ObjectType || SvPb::SVNotSetSubObjectType != info.m_SubType)
-					{
-						SVObjectClass* pOwner = GetParent();
-						SVObjectClass* pRequestor = this;
-						bool bSuccess = false;
-
-						// Ask first friends...
-						for (size_t j = 0; j < m_friendList.size(); ++j)
-						{
-							if (nullptr != m_friendList[j])
-							{
-								const auto* pObject = SVObjectManagerClass::Instance().getFirstObject(m_friendList[j]->getObjectId(), info);
-								if (nullptr != pObject)
-								{
-									// Connect input ...
-									pInput->SetInputObject(pObject->getObjectId());
-									bSuccess = true;
-									break;
-								}
-							}
-						}
-
-						// Then ask owner...
-						if (!bSuccess)
-						{
-							//GetInspection is still nullptr because in SVToolSet::createAllObjectsFromChild SetDefaultInputs is called before CreateObject !
-							//To still get the appropriate inspection we call GetAncestor
-							SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetAncestor(SvPb::SVInspectionObjectType));
-							while (pOwner)
-							{
-								bool isColorInspection = (nullptr != pInspection) ? pInspection->IsColorCamera() : false;
-								const SvOi::IObjectClass* pObject {nullptr};
-								// if color system & pOwner == SVToolSet
-								if (isColorInspection && SvPb::SVToolSetObjectType == pOwner->GetObjectType() && SvPb::SVImageObjectType == info.m_ObjectType && SvPb::SVImageMonoType == info.m_SubType)
-								{
-									SvOi::IToolSet* pToolSet(dynamic_cast<SvOi::IToolSet*> (pOwner));
-									if (nullptr != pToolSet)
-									{
-										pObject = pToolSet->getBand0Image();
-									}
-								}
-								else
-								{
-									pObject = pOwner->getFirstObject(info, true, pRequestor);
-								}
-								if (pObject)
-								{
-									// Connect input ...
-									pInput->SetInputObject(pObject->getObjectId());
-									break;
-								}
-								else
-								{
-									pOwner = pOwner->GetParent();
-									pRequestor = pRequestor->GetParent();
-								}
-							}// end while (pOwner)
-						}// end if (! bSuccess)
-					}
-				}// end if (SvDef::InvalidObjectId == pInInfo->InputObjectInfo.UniqueObjectID )
-			}
+			connectInput(*pInput);
 		}
 		else
 		{

@@ -17,6 +17,11 @@ namespace SvStl
 	class MessageContainer;
 	typedef std::vector<MessageContainer> MessageContainerVector;
 }
+
+namespace SvPb
+{
+class TreeItem;
+}
 #pragma endregion Declarations
 
 namespace SvOi
@@ -29,5 +34,6 @@ namespace SvOi
 		virtual void SetEquationText(const std::string& text) = 0;
 		virtual EquationTestResult Test( SvStl::MessageContainerVector *pErrorMessages=nullptr ) = 0;
 		virtual double GetYACCResult() const = 0;
+		virtual void fillSelectorListForEquation(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter) const = 0;
 	};
 } //namespace SvOi

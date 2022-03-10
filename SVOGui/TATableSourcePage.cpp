@@ -66,15 +66,14 @@ BOOL TATableSourcePage::OnInitDialog()
 	auto* pRequest = requestCmd.mutable_getinputsrequest();
 	pRequest->set_objectid(m_TaskObjectID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
-	pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
-	pRequest->set_shouldexcludefirstobjectname(true);
+	pRequest->set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType);
+	pRequest->set_exclude_first_object_name_in_conntected_name(true);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvUl::InputNameObjectIdPairList connectedList;
 	if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
 	{
 		m_inputName = responseCmd.getinputsresponse().list(0).inputname();
-		selectedTableName = responseCmd.getinputsresponse().list(0).objectname();
+		selectedTableName = responseCmd.getinputsresponse().list(0).connected_objectdottedname();
 	}
 	else
 	{	//this block should not reached, but if no input found, use default inputName and try with them to solve the problem. 
@@ -120,12 +119,14 @@ HRESULT TATableSourcePage::RetrieveAvailableList()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	pRequest->set_objectid(m_InspectionID);
-	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
-	pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
-	pRequest->set_shouldexcludefirstobjectname(true);
-	pRequest->mutable_isbeforetoolmethod()->set_toolid(m_TaskObjectID);
-	pRequest->set_importantobjectforstopatborder(m_TaskObjectID);
+	auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+	pTreeSearchParameter->set_search_start_id(m_InspectionID);
+	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::TableObjectType);
+	pTreeSearchParameter->mutable_isbeforetoolmethod()->set_toolid(m_TaskObjectID);
+	pTreeSearchParameter->set_pre_search_start_id(m_TaskObjectID);
+	pRequest->set_desired_first_object_type_for_name(SvPb::SVToolSetObjectType);
+	pRequest->set_exclude_first_object_name_in_name(true);
+
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	SvUl::NameObjectIdList availableList;

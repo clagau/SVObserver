@@ -293,7 +293,7 @@ HRESULT SVObjectBuilder::SetEmbeddedLinkedChildIds(uint32_t uniqueID, const std:
 	return hr;
 }
 
-HRESULT SVObjectBuilder::OverwriteInputObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t connectID, uint32_t ownerUniqueID)
+HRESULT SVObjectBuilder::OverwriteInputObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t connectID, const std::string& rConnectedDotname, uint32_t ownerUniqueID)
 {
 	HRESULT hr = S_OK;
 
@@ -318,6 +318,7 @@ HRESULT SVObjectBuilder::OverwriteInputObject(SvPb::EmbeddedIdEnum embeddedID, u
 				if (pInput)
 				{
 					pInput->SetInputObject(connectID);
+					pInput->setDottedNameOfLoadedInput(rConnectedDotname);
 				}
 			}
 		}

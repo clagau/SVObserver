@@ -568,10 +568,10 @@ void TADialogDrawPage::setAddTaskCtrl(const TreeNodeData& rData)
 
 std::pair<std::string, std::string> TADialogDrawPage::getBGImageNamePair()
 {
-	const SvUl::InputNameObjectIdPairList& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
+	const auto& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
 	if (rImageList.size())
 	{
-		return {rImageList.begin()->first, rImageList.begin()->second.first};
+		return {rImageList.begin()->inputname(), rImageList.begin()->connected_objectdottedname()};
 	}
 	return {};
 }
@@ -608,7 +608,7 @@ void TADialogDrawPage::setBaseImageGeneralCtrl()
 				auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[BOSAEnum::Edit3]);
 				auto* pButton = static_cast<CButton*>(&m_BSOAControls[BOSAEnum::LinkedValueButton3]);
 				assert(pEdit && pButton);
-				ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionXEId, m_pValues.get(), ObjectSelectorData {m_TaskObjectID});
+				ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionXEId, m_pValues.get());
 			}
 
 			nId = static_cast<UINT>(m_BSOAControls[BOSAEnum::Edit4].GetDlgCtrlID());
@@ -619,7 +619,7 @@ void TADialogDrawPage::setBaseImageGeneralCtrl()
 				auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[BOSAEnum::Edit4]);
 				auto* pButton = static_cast<CButton*>(&m_BSOAControls[BOSAEnum::LinkedValueButton4]);
 				assert(pEdit && pButton);
-				ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionYEId, m_pValues.get(), ObjectSelectorData {m_TaskObjectID});
+				ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionYEId, m_pValues.get());
 			}
 		}
 		else
@@ -668,8 +668,8 @@ void TADialogDrawPage::setBaseImageSizeCtrl()
 void TADialogDrawPage::setSizeCtrl(TreeNodeData& rData)
 {
 	assert(rData.m_pValues);
-	setControl(BOSAEnum::Static2, "Width:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::WidthEId, ObjectSelectorData {rData.m_objectId}, rData);
-	setControl(BOSAEnum::Static3, "Height:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::HeightEId, ObjectSelectorData {rData.m_objectId}, rData);
+	setControl(BOSAEnum::Static2, "Width:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::WidthEId, rData);
+	setControl(BOSAEnum::Static3, "Height:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::HeightEId, rData);
 	UpdateData(false);
 }
 
@@ -682,7 +682,7 @@ void TADialogDrawPage::setGeneralCtrl(TreeNodeData& rData)
 		{
 			case DrawNodeType::Text:
 			{
-				setControl(BOSAEnum::Static1, "Text:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::TextEId, ObjectSelectorData {rData.m_objectId}, rData);
+				setControl(BOSAEnum::Static1, "Text:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::TextEId, rData);
 				auto list = rData.m_pValues->GetEnumTypes(SvPb::FontSizeEId);
 				if (0 < list.size())
 				{
@@ -693,8 +693,8 @@ void TADialogDrawPage::setGeneralCtrl(TreeNodeData& rData)
 					m_comboBox2Enum.SetCurSelItemData(CurrentSelection);
 					m_comboBox2Enum.ShowWindow(SW_SHOW);
 				}
-				setControl(BOSAEnum::Static3, "Font Scale X:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::FontScaleXEId, ObjectSelectorData {rData.m_objectId}, rData);
-				setControl(BOSAEnum::Static4, "Font Scale Y:", BOSAEnum::Edit4, BOSAEnum::LinkedValueButton4, SvPb::FontScaleYEId, ObjectSelectorData {rData.m_objectId}, rData);
+				setControl(BOSAEnum::Static3, "Font Scale X:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::FontScaleXEId, rData);
+				setControl(BOSAEnum::Static4, "Font Scale Y:", BOSAEnum::Edit4, BOSAEnum::LinkedValueButton4, SvPb::FontScaleYEId, rData);
 				break;
 			}
 			default:
@@ -721,12 +721,12 @@ void TADialogDrawPage::setPositionCtrl(TreeNodeData& rData)
 	{
 		case DrawNodeType::Oval:
 		case DrawNodeType::Segment:
-			setControl(BOSAEnum::Static2, "CenterX:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::CenterXEId, ObjectSelectorData {rData.m_objectId}, rData);
-			setControl(BOSAEnum::Static3, "CenterY:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::CenterYEId, ObjectSelectorData {rData.m_objectId}, rData);
+			setControl(BOSAEnum::Static2, "CenterX:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::CenterXEId, rData);
+			setControl(BOSAEnum::Static3, "CenterY:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::CenterYEId, rData);
 			break;
 		default:
-			setControl(BOSAEnum::Static2, "Left:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::LeftEId, ObjectSelectorData {rData.m_objectId}, rData);
-			setControl(BOSAEnum::Static3, "Top:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::TopEId, ObjectSelectorData {rData.m_objectId}, rData);
+			setControl(BOSAEnum::Static2, "Left:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::LeftEId, rData);
+			setControl(BOSAEnum::Static3, "Top:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::TopEId, rData);
 			break;
 	}
 	UpdateData(false);
@@ -735,41 +735,38 @@ void TADialogDrawPage::setPositionCtrl(TreeNodeData& rData)
 void TADialogDrawPage::setPointsCtrl(TreeNodeData& rData)
 {
 	assert(rData.m_pValues);
-	ObjectSelectorData selectorData {rData.m_objectId};
 	switch (rData.m_type)
 	{
 		case DrawNodeType::Triangle:
 		{
-			setControl(BOSAEnum::Static1, "Point 1:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, selectorData, rData);
-			setControl(BOSAEnum::Static2, "Point 2:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::X2EId, selectorData, rData);
-			setControl(BOSAEnum::Static3, "Point 3:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::X3EId, selectorData, rData);
-			setControl(BOSAEnum::Edit6, BOSAEnum::LinkedValueButton6, SvPb::Y1EId, selectorData, rData);
-			setControl(BOSAEnum::Edit7, BOSAEnum::LinkedValueButton7, SvPb::Y2EId, selectorData, rData);
-			setControl(BOSAEnum::Edit8, BOSAEnum::LinkedValueButton8, SvPb::Y3EId, selectorData, rData);
+			setControl(BOSAEnum::Static1, "Point 1:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, rData);
+			setControl(BOSAEnum::Static2, "Point 2:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::X2EId, rData);
+			setControl(BOSAEnum::Static3, "Point 3:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::X3EId, rData);
+			setControl(BOSAEnum::Edit6, BOSAEnum::LinkedValueButton6, SvPb::Y1EId, rData);
+			setControl(BOSAEnum::Edit7, BOSAEnum::LinkedValueButton7, SvPb::Y2EId, rData);
+			setControl(BOSAEnum::Edit8, BOSAEnum::LinkedValueButton8, SvPb::Y3EId, rData);
 		}
 		break;
 		case DrawNodeType::Lines:
 		{
-			selectorData.m_wholeArray = true;
-			setControl(BOSAEnum::Static1, "Points 1:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, selectorData, rData);
-			setControl(BOSAEnum::Static2, "Points 2:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::X2EId, selectorData, rData);
-			setControl(BOSAEnum::Edit6, BOSAEnum::LinkedValueButton6, SvPb::Y1EId, selectorData, rData);
-			setControl(BOSAEnum::Edit7, BOSAEnum::LinkedValueButton7, SvPb::Y2EId, selectorData, rData);
+			setControl(BOSAEnum::Static1, "Points 1:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, rData);
+			setControl(BOSAEnum::Static2, "Points 2:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::X2EId, rData);
+			setControl(BOSAEnum::Edit6, BOSAEnum::LinkedValueButton6, SvPb::Y1EId, rData);
+			setControl(BOSAEnum::Edit7, BOSAEnum::LinkedValueButton7, SvPb::Y2EId, rData);
 		}
 		break;
 		case DrawNodeType::Points:
 		case DrawNodeType::Polygon:
 		{
-			selectorData.m_wholeArray = true;
-			setControl(BOSAEnum::Static1, "Points X:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, selectorData, rData);
-			setControl(BOSAEnum::Static2, "Points Y:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::Y1EId, selectorData, rData);
+			setControl(BOSAEnum::Static1, "Points X:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, rData);
+			setControl(BOSAEnum::Static2, "Points Y:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::Y1EId, rData);
 		}
 		break;
 		case DrawNodeType::Text:
 		case DrawNodeType::BucketFill:
 		{
-			setControl(BOSAEnum::Static1, "Point:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, selectorData, rData);
-			setControl(BOSAEnum::Edit6, BOSAEnum::LinkedValueButton6, SvPb::Y1EId, selectorData, rData);
+			setControl(BOSAEnum::Static1, "Point:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, rData);
+			setControl(BOSAEnum::Edit6, BOSAEnum::LinkedValueButton6, SvPb::Y1EId, rData);
 		}
 		break;
 		default:
@@ -834,9 +831,9 @@ void TADialogDrawPage::setAngleCtrl(TreeNodeData& rData)
 	assert(rData.m_pValues);
 	assert(SvOg::DrawNodeType::Segment == rData.m_type);
 
-	setControl(BOSAEnum::Static2, "Start Angle:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::StartAngleEId, ObjectSelectorData {rData.m_objectId}, rData);
-	setControl(BOSAEnum::Static3, "Stop Angle:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::EndAngleEId, ObjectSelectorData {rData.m_objectId}, rData);
-	setControl(BOSAEnum::Static4, "XAxis Angle:", BOSAEnum::Edit4, BOSAEnum::LinkedValueButton4, SvPb::XAxisAngleEId, ObjectSelectorData {rData.m_objectId}, rData);
+	setControl(BOSAEnum::Static2, "Start Angle:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::StartAngleEId, rData);
+	setControl(BOSAEnum::Static3, "Stop Angle:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::EndAngleEId, rData);
+	setControl(BOSAEnum::Static4, "XAxis Angle:", BOSAEnum::Edit4, BOSAEnum::LinkedValueButton4, SvPb::XAxisAngleEId, rData);
 }
 
 void TADialogDrawPage::OnSelchangeCombo2()
@@ -1091,8 +1088,9 @@ void TADialogDrawPage::loadNode(HTREEITEM item, uint32_t objectId)
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	pRequest->set_objectid(objectId);
-	pRequest->mutable_typeinfo()->set_objecttype(SvPb::DrawTaskType);
+	auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+	pTreeSearchParameter->set_search_start_id(objectId);
+	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::DrawTaskType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
@@ -1167,7 +1165,7 @@ void TADialogDrawPage::ObjectChangedExDialogImage(long, long, VARIANT* Parameter
 	}
 }
 
-void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, const ObjectSelectorData& rSelectorData, TreeNodeData& rData)
+void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData)
 {
 	auto nId = static_cast<UINT>(m_BSOAControls[editEnum].GetDlgCtrlID());
 	auto ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nId](const auto& rEntry){ return rEntry.m_nIDC == nId; });
@@ -1177,14 +1175,14 @@ void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogD
 		auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[editEnum]);
 		auto* pButton = static_cast<CButton*>(&m_BSOAControls[buttonEnum]);
 		assert(pEdit && pButton);
-		ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, rData.m_objectId, embeddedId, rData.m_pValues.get(), rSelectorData);
+		ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, rData.m_objectId, embeddedId, rData.m_pValues.get());
 	}
 }
 
-void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, const ObjectSelectorData& rSelectorData, TreeNodeData& rData)
+void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData)
 {
 	m_BSOAControls[staticEnum].ShowWindow(SW_SHOW);
 	m_BSOAControls[staticEnum].SetWindowText(staticText);
-	setControl(editEnum, buttonEnum, embeddedId, rSelectorData, rData);
+	setControl(editEnum, buttonEnum, embeddedId, rData);
 }
 } //namespace SvOg

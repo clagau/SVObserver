@@ -131,8 +131,8 @@ namespace SvOg
 		void setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, ValueController& rValueController, TADialogDrawPage::BOSAEnum ctrlEnum, int min, int max, const std::string& fieldName, bool readOnly = false);
 		std::pair<std::string, std::string> getBGImageNamePair();
 		void ObjectChangedExDialogImage(long, long, VARIANT* ParameterList, VARIANT* ParameterValue);
-		void setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, const ObjectSelectorData& rSelectorData, TreeNodeData& rData);
-		void setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, const ObjectSelectorData& rSelectorData, TreeNodeData& rData);
+		void setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData);
+		void setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData);
 	
 	private:
 		uint32_t m_InspectionID;

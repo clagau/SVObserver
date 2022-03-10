@@ -51,7 +51,7 @@ private:
 	bool setRanges(SvPb::EmbeddedIdEnum embeddedId);
 	uint32_t getOperatorListObjectId();
 	std::vector<SvPb::TaskObjectInfo> getResults(uint32_t operatorListObjectId);
-	std::vector<SvPb::InputNameObjectNameIdPair> getMatchedInputsObjectsForResult(uint32_t resultId, const std::map<uint32_t, SvPb::EmbeddedIdEnum>& valueObjects);
+	SvPb::InputDataList getMatchedInputsObjectsForResult(uint32_t resultId, const std::map<uint32_t, SvPb::EmbeddedIdEnum>& valueObjects);
 private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;

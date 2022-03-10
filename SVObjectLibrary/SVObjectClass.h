@@ -167,6 +167,7 @@ public:
 	virtual bool allowExtensionCopy() const override;
 #pragma endregion virtual method (IObjectClass)
 
+	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter);
 	const SvDef::SVObjectTypeInfoStruct& getObjectTypeInfo() const { return m_ObjectTypeInfo; };
 
 #pragma region Methods to replace processMessage

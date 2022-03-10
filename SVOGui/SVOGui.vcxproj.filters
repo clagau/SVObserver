@@ -279,6 +279,9 @@
     <ClCompile Include="DrawToolHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="InputConflictDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -573,6 +576,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="DrawToolHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="InputConflictDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -51,14 +51,13 @@ namespace SvOg
 	CBitmap LinkedValueWidgetHelper::ms_downArrowBitmap;
 	bool LinkedValueWidgetHelper::ms_downArrowBitmapWasLoaded = false;
 
-	LinkedValueWidgetHelper::LinkedValueWidgetHelper(CEdit& rValueEdit, CButton& rSelectButton, uint32_t inspectionId, uint32_t taskId, SvPb::EmbeddedIdEnum embeddedId, SvOg::ValueController* pValueController, const ObjectSelectorData& selectorData/* = {}*/, ValidCheckCallback validCallback/* = nullptr*/, ConvertValueCallback convertCallback/* = nullptr*/)
+	LinkedValueWidgetHelper::LinkedValueWidgetHelper(CEdit& rValueEdit, CButton& rSelectButton, uint32_t inspectionId, uint32_t taskId, SvPb::EmbeddedIdEnum embeddedId, SvOg::ValueController* pValueController, ValidCheckCallback validCallback/* = nullptr*/, ConvertValueCallback convertCallback/* = nullptr*/)
 		: m_rValueEdit(rValueEdit)
 		, m_rSelectButton(rSelectButton)
 		, m_inspectionId(inspectionId)
 		, m_taskId(taskId)
 		, m_embeddedId(embeddedId)
 		, m_pValueController(pValueController)
-		, m_selectorData(selectorData)
 		, m_validCheckCallback(validCallback)
 		, m_convertValueCallback(convertCallback)
 	{
@@ -86,7 +85,7 @@ namespace SvOg
 		if (m_pValueController)
 		{
 			auto data = m_pValueController->Get<LinkedValueData>(m_embeddedId);
-			LinkedValueSelectorDialog dlg(m_inspectionId, m_pValueController->GetObjectID(m_embeddedId), m_pValueController->GetName(m_embeddedId), data, data.m_defaultValue.vt, m_selectorData, m_validCheckCallback);
+			LinkedValueSelectorDialog dlg(m_inspectionId, m_pValueController->GetObjectID(m_embeddedId), m_pValueController->GetName(m_embeddedId), data, data.m_defaultValue.vt, m_validCheckCallback);
 			if (IDOK == dlg.DoModal())
 			{
 				data = dlg.getData();

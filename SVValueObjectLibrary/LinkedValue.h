@@ -80,11 +80,14 @@ public:
 	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType) const;
 	virtual const SvOi::IObjectClass* getLinkedObject() const override;
 	virtual void fillLinkedData(SvPb::LinkedValue& rLinkedValue) const override;
+	virtual void fillSelectorListForLink(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter) const override;
 	virtual _variant_t validateValue(const SvPb::LinkedValue& rLinkedValue) const override;
 
 	virtual void disconnectObjectInput(uint32_t objectId) override;
 	virtual void disconnectAllInputs() override;
 	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
+	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter) override;
+
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed = false, bool firstObject = false) const override;
 	/// Disconnected the input connection and set it to nullptr.
 	void DisconnectInput();
@@ -113,6 +116,9 @@ public:
 
 	virtual HRESULT setIndirectStringForOldStruct(const std::vector<_variant_t>& rValueString) override;
 	virtual void setChildIds(const std::vector<uint32_t>& rObjectIds) override;
+
+	void setValueType(SvPb::LinkedValueTypeEnum type);
+	void setExcludeSameLineageListForObjectSelector(std::vector<SvOi::IObjectClass*> value) { m_excludeSameLineageList = std::move(value); };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -136,6 +142,7 @@ private:
 
 	void setDefaultDefaultIfEmpty(_variant_t& value);
 
+	bool checkLinkedObjectRef(SvStl::MessageContainerVector* pErrorMessages = nullptr) const;
 	bool updateLinkedValue(SVObjectReference& LinkedObjectRef, SvStl::MessageContainerVector* pErrorMessages);
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
@@ -166,6 +173,10 @@ private:
 
 	bool resetChildren(const SVObjectClass* const pLinkedObject, const std::vector<SvPb::EmbeddedIdEnum>& rEmbeddedIdList, SvStl::MessageContainerVector* pErrorMessages);
 	bool resetChild(int pos, SvOi::IValueObject* pValue, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct);
+
+	void tryToFixIndirectInput(SvDef::SVObjectTypeInfoStruct info);
+	void tryToFixInput();
+	void addFixedData(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter, const std::string& rOldInput);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -186,6 +197,8 @@ private:
 	std::vector<std::unique_ptr<LinkedValue>> m_children;
 	std::vector<uint32_t> m_childrenIds;
 	bool m_allowVoidReference {false};
+	SvPb::LinkedValueTypeEnum m_valueType {SvPb::LinkedValueTypeEnum::TypeDecimal};
+	std::vector<SvOi::IObjectClass*> m_excludeSameLineageList; //used for fillSelectorListForLink, if empty AttributesAllowedFilter-mode used.
 #pragma endregion Member Variables
 };
 

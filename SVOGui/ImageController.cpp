@@ -34,13 +34,14 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-		pRequest->set_objectid(m_InspectionID);
-		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
-		pRequest->mutable_typeinfo()->set_subtype(m_ImageSubType);
-		pRequest->set_importantobjectforstopatborder(m_TaskObjectID);
+		auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+		pTreeSearchParameter->set_search_start_id(m_InspectionID);
+		pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVImageObjectType);
+		pTreeSearchParameter->mutable_type_info()->set_subtype(m_ImageSubType);
+		pTreeSearchParameter->set_pre_search_start_id(m_TaskObjectID);
 		if (m_OnlyAboveImages)
 		{
-			pRequest->mutable_isbeforetoolmethod()->set_toolid(m_TaskObjectID);
+			pTreeSearchParameter->mutable_isbeforetoolmethod()->set_toolid(m_TaskObjectID);
 		}
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
@@ -82,10 +83,11 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-		pRequest->set_objectid(m_TaskObjectID);
-		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
-		pRequest->mutable_defaultplushidden();
-		pRequest->set_importantobjectforstopatborder(m_TaskObjectID);
+		auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+		pTreeSearchParameter->set_search_start_id(m_TaskObjectID);
+		pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVImageObjectType);
+		pTreeSearchParameter->mutable_defaultplushidden();
+		pTreeSearchParameter->set_pre_search_start_id(m_TaskObjectID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
@@ -96,7 +98,7 @@ namespace SvOg
 		return {};
 	}
 
-	const SvUl::InputNameObjectIdPairList& ImageController::GetInputImageList(uint32_t instanceID, size_t maxImages) const
+	const SvPb::InputDataList& ImageController::GetInputImageList(uint32_t instanceID, size_t maxImages) const
 	{
 		uint32_t objectID = m_TaskObjectID;
 		if (SvDef::InvalidObjectId != instanceID)
@@ -109,18 +111,13 @@ namespace SvOg
 		pRequest->set_objectid(objectID);
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pRequest->set_maxrequested(static_cast<int32_t>(maxImages));
-		pRequest->set_shouldexcludefirstobjectname(true); //used only for LinkedValue-names
-		pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType); //used only for LinkedValue-names
+		pRequest->set_exclude_first_object_name_in_conntected_name(true); //used only for LinkedValue-names
+		pRequest->set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType); //used only for LinkedValue-names
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getinputsresponse())
 		{
-			m_connectedList.clear();
-			for (auto item : responseCmd.getinputsresponse().list())
-			{
-				SvUl::NameObjectIdPair tmp {item.objectname(), item.objectid()};
-				m_connectedList[item.inputname()] = tmp;
-			}
+			m_connectedList = responseCmd.getinputsresponse().list();
 		}
 
 		return m_connectedList;

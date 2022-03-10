@@ -38,13 +38,8 @@ namespace SvOg
 {
 #pragma region Constructor
 FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectID, uint32_t equationID)
-	: FormulaController(inspectionID, taskObjectID, equationID, taskObjectID)
-{}
-
-FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectID, uint32_t equationID, uint32_t stopAtId)
 	: m_InspectionID {inspectionID}
 	, m_TaskObjectID {taskObjectID}
-	, m_StopAtID {stopAtId}
 	, m_EquationID {equationID}
 	, m_EnableID {SvPb::ToolEnabledEId}
 	, m_isConditional {false}
@@ -57,7 +52,6 @@ FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectI
 FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 	: m_InspectionID {inspectionID}
 	, m_TaskObjectID {taskObjectID}
-	, m_StopAtID {taskObjectID}
 	, m_EnableID {SvPb::ToolEnabledEId}
 	, m_Info {rInfo}
 	, m_isConditional {SvPb::SVConditionalObjectType == rInfo.m_SubType}
@@ -146,11 +140,8 @@ HRESULT FormulaController::SetEquationName(const std::string& rNewName)
 void FormulaController::BuildSelectableItems()
 {
 	SvPb::InspectionCmdRequest requestCmd;
+	requestCmd.mutable_getobjectselectoritems2request()->set_objectid(m_EquationID);
 	SvPb::InspectionCmdResponse responseCmd;
-	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems},
-		m_InspectionID, SvPb::selectableForEquation, SvDef::InvalidObjectId, true, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_StopAtID);
-
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (responseCmd.has_getobjectselectoritemsresponse())
 	{

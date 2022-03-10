@@ -2916,6 +2916,7 @@ LPCTSTR SVInspectionProcess::GetToolsetImage()
 	return m_ToolSetCameraName.c_str();
 }
 
+// cppcheck-suppress unusedFunction; used in SVCommand.cpp SVCommand::SVSetSourceImage
 SvIe::SVCameraImageTemplate* SVInspectionProcess::GetToolSetMainImage()
 {
 	SvIe::SVCameraImageTemplate* pImage = nullptr;

@@ -2901,6 +2901,16 @@ BEGIN
     LTEXT           "Please select which Global Constant value should be used:\r\n1. The current value from the loaded configuration or\r\n2.The value being imported from the inspection",IDC_STATIC,7,413,630,30
 END
 
+IDD_INPUT_CONFLICT DIALOGEX 0, 0, 800, 450
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Input Conflict"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+CONTROL         "Conflict Table", IDC_GLOBAL_CONFLICT_GRID, "MfcGridCtrl", WS_TABSTOP, 7, 7, 786, 402
+DEFPUSHBUTTON   "OK", IDOK, 743, 429, 50, 14
+//LTEXT           "Please select which Global Constant value should be used:\r\n1. The current value from the loaded configuration or\r\n2.The value being imported from the inspection", IDC_STATIC, 7, 413, 630, 30
+END
+
 IDD_RANKING2_FILTER DIALOGEX 0, 0, 480, 290
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Ranking2 Filter"
@@ -4156,7 +4166,7 @@ BEGIN
         MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Save &Image...\tCtrl+M",      ID_FILE_SAVE_IMAGE,MFT_STRING,MFS_ENABLED
-        MENUITEM "Save Tool Dependencies...\tCtrl+Shift+D",ID_TOOL_DEPENDENCIES,MFT_STRING,MFS_ENABLED
+        MENUITEM "Save Tool Dependencies...\tCtrl+Shift+D", ID_TOOL_DEPENDENCIES,MFT_STRING,MFS_ENABLED
         MENUITEM "Save Configuration Report... \tCtrl+Shift+C", ID_SAVE_CONFIG_REPORT, MFT_STRING, MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Recent File",                 ID_FILE_MRU_FILE1,MFT_STRING,MFS_GRAYED

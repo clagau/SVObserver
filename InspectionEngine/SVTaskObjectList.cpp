@@ -71,6 +71,18 @@ void SVTaskObjectListClass::getOutputList(std::back_insert_iterator<std::vector<
 	}
 }
 
+void SVTaskObjectListClass::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+{
+	__super::fixInvalidInputs(inserter);
+
+	for (auto pObject : m_TaskObjectVector)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->fixInvalidInputs(inserter);
+		}
+	}
+}
 
 void SVTaskObjectListClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {

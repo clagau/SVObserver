@@ -375,9 +375,10 @@ void TADialogTableDefinesPage::FillGridControl()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	pRequest->set_objectid(m_TaskObjectID);
-	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVEquationObjectType);
-	pRequest->mutable_typeinfo()->set_subtype(SvPb::TableColumnEquationObjectType);
+	auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+	pTreeSearchParameter->set_search_start_id(m_TaskObjectID);
+	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVEquationObjectType);
+	pTreeSearchParameter->mutable_type_info()->set_subtype(SvPb::TableColumnEquationObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())

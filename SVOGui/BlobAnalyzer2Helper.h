@@ -14,5 +14,5 @@ class GridCtrl;
 namespace SvOg
 {
 void setValueColumn(SvGcl::GridCtrl& rGrid, int pos, int colPos, const LinkedValueData& rData);
-void startObjectSelector(SvGcl::GridCtrl& rGrid, const std::string& rName, int rowPos, int colPos, uint32_t ipId, uint32_t toolId, uint32_t objectId, SvPb::LinkedValue& rData);
+void startObjectSelector(SvGcl::GridCtrl& rGrid, const std::string& rName, int rowPos, int colPos, uint32_t ipId, uint32_t objectId, SvPb::LinkedValue& rData);
 }

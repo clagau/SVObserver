@@ -87,10 +87,9 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	BlobAnalyzer2Feature::BlobAnalyzer2Feature(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId)
+	BlobAnalyzer2Feature::BlobAnalyzer2Feature(uint32_t inspectionId, uint32_t taskObjectId)
 		: CPropertyPage(BlobAnalyzer2Feature::IDD)
 		, m_InspectionID(inspectionId)
-		, m_toolID(toolId)
 		, m_TaskObjectID(taskObjectId)
 		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
@@ -358,7 +357,7 @@ namespace SvOg
 			{
 				auto iter = g_columnFeatureDefArray.find(UpperBoundColumn);
 				auto name = g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "ObjectSelector";
-				startObjectSelector(m_Grid, name, pItem->iRow, UpperBoundColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].upper_bound_id(), *m_featureData[pItem->iRow - 1].mutable_upper_bound());
+				startObjectSelector(m_Grid, name, pItem->iRow, UpperBoundColumn, m_InspectionID, m_featureData[pItem->iRow - 1].upper_bound_id(), *m_featureData[pItem->iRow - 1].mutable_upper_bound());
 			}
 			break;
 		case LowerBoundButtonColumn:
@@ -366,7 +365,7 @@ namespace SvOg
 			{
 				auto iter = g_columnFeatureDefArray.find(LowerBoundColumn);
 				auto name = g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "ObjectSelector";
-				startObjectSelector(m_Grid, name, pItem->iRow, LowerBoundColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].lower_bound_id(), *m_featureData[pItem->iRow - 1].mutable_lower_bound());
+				startObjectSelector(m_Grid, name, pItem->iRow, LowerBoundColumn, m_InspectionID, m_featureData[pItem->iRow - 1].lower_bound_id(), *m_featureData[pItem->iRow - 1].mutable_lower_bound());
 			}
 			break;
 		default:

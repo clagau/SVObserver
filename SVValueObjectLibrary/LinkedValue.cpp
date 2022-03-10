@@ -230,11 +230,19 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	bool LinkedValue::setDirectValue(const _variant_t& rValue)
 	{
-		setSelectedOption(SvPb::LinkedSelectedOption::DirectValue);
-		m_directValue = rValue;
-		bool isOk = UpdateConnection();
-		assert(isOk);
-		return isOk;
+		if (SvPb::LinkedValueTypeEnum::TypeDecimal == m_valueType || SvPb::LinkedValueTypeEnum::TypeText == m_valueType)
+		{
+			setSelectedOption(SvPb::LinkedSelectedOption::DirectValue);
+			m_directValue = rValue;
+			bool isOk = UpdateConnection();
+			assert(isOk);
+			return isOk;
+		}
+		else
+		{
+			assert(false);
+			return false;
+		}
 	}
 
 	bool LinkedValue::setIndirectValue(const std::string& rValueString)
@@ -487,6 +495,13 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		rLinkedValue.set_equationid(m_equation.getObjectId());
 	}
 
+	void LinkedValue::fillSelectorListForLink(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter) const
+	{
+		auto* pInspection =  dynamic_cast<SvOi::IInspectionProcess*>(GetAncestor(SvPb::SVInspectionObjectType));
+		auto* pStartObject = SvOi::getObject(getFirstClosedParent(SvDef::InvalidObjectId));
+		SvOi::fillSelectorList(treeInserter, pInspection, pStartObject, m_valueType, 0 != (GetDefaultType() & VT_ARRAY), m_excludeSameLineageList);
+	}
+
 	_variant_t LinkedValue::validateValue(const SvPb::LinkedValue& rLinkedValue) const
 	{
 		variant_t value;
@@ -496,8 +511,17 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 		case SvPb::LinkedSelectedOption::DirectValue:
 		{
-			SvPb::ConvertProtobufToVariant(rLinkedValue.directvalue(), value);
-			__super::validateValue(value, defaultValue);
+			if (SvPb::LinkedValueTypeEnum::TypeDecimal == m_valueType || SvPb::LinkedValueTypeEnum::TypeText == m_valueType)
+			{
+				SvPb::ConvertProtobufToVariant(rLinkedValue.directvalue(), value);
+				__super::validateValue(value, defaultValue);
+			}
+			else
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+				Exception.Throw();
+			}
 			break;
 		}
 		case SvPb::LinkedSelectedOption::IndirectValue:
@@ -514,7 +538,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
 			Exception.Throw();
-			break;
 		}
 
 		if (VT_EMPTY != defaultValue.vt && value.vt != defaultValue.vt)
@@ -704,6 +727,29 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				inserter = rUniqueObject.get();
 			}
 		}
+	}
+
+	void LinkedValue::tryToFixIndirectInput(SvDef::SVObjectTypeInfoStruct info)
+	{
+		SVObjectClass* pOwner = GetParent();
+		SVObjectClass* pRequestor = this;
+
+		pOwner = (nullptr != pOwner && nullptr != pOwner->GetParent()) ? pOwner->GetParent() : pOwner;
+		while (pOwner)
+		{
+			auto* pObject = pOwner->getFirstObject(info, true, pRequestor);
+			if (pObject)
+			{
+				// Connect input ...
+				setIndirectValue(SVObjectReference{pObject->getObjectId()});
+				break;
+			}
+			else
+			{
+				pOwner = pOwner->GetParent();
+				pRequestor = pRequestor->GetParent();
+			}
+		}// end while (pOwner)
 	}
 
 	void LinkedValue::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed, bool firstObject) const
@@ -927,27 +973,8 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 	}
 
-	bool LinkedValue::updateLinkedValue(SVObjectReference& LinkedObjectRef, SvStl::MessageContainerVector* pErrorMessages)
+	bool LinkedValue::checkLinkedObjectRef(SvStl::MessageContainerVector* pErrorMessages) const
 	{
-		bool Result{ true };
-
-		//disconnect old object and connect new object if old and new different.
-		if (LinkedObjectRef.getObject() != m_LinkedObjectRef.getObject())
-		{
-			//First disconnect and then set the new Linked object
-			DisconnectInput();
-			m_LinkedObjectRef = LinkedObjectRef;
-			if (nullptr != m_LinkedObjectRef.getObject()
-				&& m_checkForValidDependency) // children of a linkedValue (for tableObject) should not be connected because their parent already connected.
-			{
-				m_LinkedObjectRef.getObject()->connectObject(getObjectId());
-			}
-		}
-		else
-		{
-			m_LinkedObjectRef = LinkedObjectRef;
-		}
-
 		if (nullptr == m_LinkedObjectRef.getObject())
 		{
 			if (m_allowVoidReference)
@@ -971,6 +998,153 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			return false;
 		}
 
+		//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
+		//! That is why check that the linked value of an object is in the same inspection
+		auto* pLinkedObject = m_LinkedObjectRef.getFinalObject();
+		if (nullptr == pLinkedObject)
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+		const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
+		bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType) == pLinkedObjectInspection;
+		//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
+		if (nullptr != pLinkedObjectInspection && !isSameInpection)
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+
+		switch (m_valueType)
+		{
+			case SvPb::TypeDecimal:
+			case SvPb::TypeText:
+				if (SvPb::SVValueObjectType != pLinkedObject->GetObjectType() && SvPb::SVBasicValueObjectType != pLinkedObject->GetObjectType())
+				{
+					if (nullptr != pErrorMessages)
+					{
+						SvDef::StringVector msgList;
+						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvPb::TypeDecimal == m_valueType ? SvStl::Tid_aDecimalValue : SvStl::Tid_aTextValue));
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+					return false;
+				}
+				break;
+			case SvPb::TypeTable:
+				if (SvPb::TableObjectType != pLinkedObject->GetObjectType())
+				{
+					if (nullptr != pErrorMessages)
+					{
+						SvDef::StringVector msgList;
+						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTable));
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+					return false;
+				}
+				break;
+			case SvPb::TypeGrayImage:
+				if (SvPb::SVImageObjectType != pLinkedObject->GetObjectType() || SvPb::SVImageMonoType != pLinkedObject->GetObjectSubType())
+				{
+					if (nullptr != pErrorMessages)
+					{
+						SvDef::StringVector msgList;
+						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aGrayImage));
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+					return false;
+				}
+				break;
+			case SvPb::TypeColorImage:
+				if (SvPb::SVImageObjectType != pLinkedObject->GetObjectType() || SvPb::SVImageColorType != pLinkedObject->GetObjectSubType())
+				{
+					if (nullptr != pErrorMessages)
+					{
+						SvDef::StringVector msgList;
+						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aColorImage));
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+					return false;
+				}
+				break;
+			case SvPb::TypeImage:
+				if (SvPb::SVImageObjectType != pLinkedObject->GetObjectType())
+				{
+					if (nullptr != pErrorMessages)
+					{
+						SvDef::StringVector msgList;
+						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_anImage));
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+					return false;
+				}
+				break;
+			case SvPb::TypeStates:
+				if (SvPb::SVToolObjectType != pLinkedObject->GetObjectType())
+				{
+					if (nullptr != pErrorMessages)
+					{
+						SvDef::StringVector msgList;
+						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTool));
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+					return false;
+				}
+				break;
+			default:
+				break;
+		}
+
+		if (m_checkForValidDependency && false == checkIfValidDependency(m_LinkedObjectRef.getObject()))
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+		return true;
+	}
+
+	bool LinkedValue::updateLinkedValue(SVObjectReference& LinkedObjectRef, SvStl::MessageContainerVector* pErrorMessages)
+	{
+		//disconnect old object and connect new object if old and new different.
+		if (LinkedObjectRef.getObject() != m_LinkedObjectRef.getObject())
+		{
+			//First disconnect and then set the new Linked object
+			DisconnectInput();
+			m_LinkedObjectRef = LinkedObjectRef;
+			if (nullptr != m_LinkedObjectRef.getObject()
+				&& m_checkForValidDependency) // children of a linkedValue (for tableObject) should not be connected because their parent already connected.
+			{
+				m_LinkedObjectRef.getObject()->connectObject(getObjectId());
+			}
+		}
+		else
+		{
+			m_LinkedObjectRef = LinkedObjectRef;
+		}
+
+		if (false == checkLinkedObjectRef(pErrorMessages))
+		{
+			return false;
+		}
+
+		bool Result {true};
 		auto* pLinkedObject = m_LinkedObjectRef.getFinalObject();
 		if (nullptr != pLinkedObject)
 		{
@@ -1017,31 +1191,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 						return false;
 					}
 					break;
-			}
-
-			//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
-			//! That is why check that the linked value of an object is in the same inspection
-			const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
-			bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType) == pLinkedObjectInspection;
-			//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
-			if (nullptr != pLinkedObjectInspection && !isSameInpection)
-			{
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					pErrorMessages->push_back(Msg);
-				}
-				return false;
-			}
-
-			if (m_checkForValidDependency && false == checkIfValidDependency(m_LinkedObjectRef.getObject()))
-			{
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					pErrorMessages->push_back(Msg);
-				}
-				return false;
 			}
 		}			
 		return Result;
@@ -1303,6 +1452,35 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		m_childrenIds = rObjectIds;
 	}
 
+	void LinkedValue::setValueType(SvPb::LinkedValueTypeEnum type)
+	{
+		m_valueType = type;
+		auto defaultVt = GetDefaultType();
+		switch (m_valueType)
+		{
+			case SvPb::TypeDecimal:
+				if (VT_BSTR == defaultVt || ((VT_BSTR | VT_ARRAY) == defaultVt) || VT_EMPTY == defaultVt)
+				{
+					SetDefaultValue(0.);
+				}
+				break;
+			case SvPb::TypeText:
+				if (VT_BSTR != defaultVt && ((VT_BSTR | VT_ARRAY) != defaultVt))
+				{
+					SetDefaultValue({""});
+				}
+				break;
+			case SvPb::TypeTable:
+			case SvPb::TypeGrayImage:
+			case SvPb::TypeColorImage:
+			case SvPb::TypeImage:
+			case SvPb::TypeStates:
+			default:
+				SetDefaultValue({}, false);
+				break;
+		}
+	}
+
 	bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		bool Result = SVVariantValueObjectClass::ResetObject(pErrorMessages);
@@ -1415,31 +1593,40 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	variant_t LinkedValue::validateFormula(const std::string& rFormula) const
 	{
-		std::string oldString;
-		//save old string
-		oldString = m_equation.GetEquationText();
-		//To Test formula and get result the formula-text has to be set. But after the test the old formula will be set back.
-		//So it is "const" if you look from outside. For this reason the const_cast is done and acceptable here.
-		const_cast<SvOp::SVEquation*>(&m_equation)->SetEquationText(rFormula);
+		if (SvPb::LinkedValueTypeEnum::TypeDecimal == m_valueType)
+		{
+			std::string oldString;
+			//save old string
+			oldString = m_equation.GetEquationText();
+			//To Test formula and get result the formula-text has to be set. But after the test the old formula will be set back.
+			//So it is "const" if you look from outside. For this reason the const_cast is done and acceptable here.
+			const_cast<SvOp::SVEquation*>(&m_equation)->SetEquationText(rFormula);
 
-		SvStl::MessageContainerVector messageContainers;
-		SvOi::EquationTestResult testResult = const_cast<SvOp::SVEquation*>(&m_equation)->Test(&messageContainers);
-		variant_t value = m_equation.GetYACCResult();
-		const_cast<SvOp::SVEquation*>(&m_equation)->SetEquationText(oldString);
-		if (false == testResult.bPassed)
+			SvStl::MessageContainerVector messageContainers;
+			SvOi::EquationTestResult testResult = const_cast<SvOp::SVEquation*>(&m_equation)->Test(&messageContainers);
+			variant_t value = m_equation.GetYACCResult();
+			const_cast<SvOp::SVEquation*>(&m_equation)->SetEquationText(oldString);
+			if (false == testResult.bPassed)
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
+				if (messageContainers.size())
+				{
+					Exception.setMessage(messageContainers[0].getMessage());
+				}
+				else
+				{
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_FormulaFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+				}
+				Exception.Throw();
+			}
+			return value;
+		}
+		else
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			if (messageContainers.size())
-			{
-				Exception.setMessage(messageContainers[0].getMessage());
-			}
-			else
-			{
-				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_FormulaFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
-			}
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
 			Exception.Throw();
 		}
-		return value;
 	}
 
 	bool LinkedValue::setValueFromDouble(double value)
@@ -1507,6 +1694,104 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			return m_children[pos]->resetAllObjects(pErrorMessages);
 		}
 		return true;
+	}
+
+	void LinkedValue::addFixedData(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter, const std::string& rOldInput)
+	{
+		SvPb::FixedInputData data;
+		data.set_name(GetObjectNameToObjectType());
+		data.set_objectid(getObjectId());
+		data.set_parentid(GetParentID());
+		data.set_embeddedid(GetEmbeddedID());
+		data.set_oldinputvalue(rOldInput);
+		data.set_islinkedvalue(true);
+		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+		inserter = data;
+	}
+
+	void LinkedValue::tryToFixInput()
+	{
+		switch (m_valueType)
+		{
+			case SvPb::TypeDecimal:
+			case SvPb::TypeText:
+			{
+				variant_t oldValue;
+				if (S_OK == m_LinkedObjectRef.getValue(oldValue) && oldValue.vt == GetDefaultType())
+				{
+					setDirectValue(oldValue);
+				}
+				else if (m_directValue.vt == GetDefaultType())
+				{
+					setSelectedOption(SvPb::DirectValue);
+				}
+				else
+				{
+					setDirectValue(getDefaultValue());
+				}
+				break;
+			}
+			case SvPb::TypeTable:
+				tryToFixIndirectInput(SvPb::TableObjectType);
+				break;
+			case SvPb::TypeGrayImage:
+				tryToFixIndirectInput({SvPb::SVImageObjectType, SvPb::SVImageMonoType});
+				break;
+			case SvPb::TypeColorImage:
+				tryToFixIndirectInput({SvPb::SVImageObjectType, SvPb::SVImageColorType});
+				break;
+			case SvPb::TypeImage:
+				tryToFixIndirectInput(SvPb::SVImageObjectType);
+				break;
+			case SvPb::TypeStates:
+				tryToFixIndirectInput(SvPb::SVToolObjectType);
+				break;
+			default:
+				break;
+		}
+	}
+
+	void LinkedValue::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+	{
+		__super::fixInvalidInputs(inserter);
+
+		switch (getSelectedOption())
+		{
+			case SvPb::LinkedSelectedOption::DirectValue:
+			{
+				break;
+			}
+			case SvPb::LinkedSelectedOption::IndirectValue:
+			{
+				SvStl::MessageContainerVector errorMessages;
+				bool isOk = checkLinkedObjectRef(&errorMessages);
+				if (false == isOk)
+				{
+					std::string oldValueString;
+					m_Content.getValue(oldValueString);
+					addFixedData(inserter, oldValueString);
+					SVObjectReference objectRef {GetObjectReferenceForDottedName(oldValueString)};
+					if (nullptr == objectRef.getObject() || false == setIndirectValue(objectRef))
+					{
+						tryToFixInput();
+					}
+				}
+				break;
+			}
+			case SvPb::LinkedSelectedOption::Formula:
+			{
+				SvOi::EquationTestResult testResult = m_equation.Test();
+				if (false == testResult.bPassed)
+				{
+					addFixedData(inserter, m_equation.GetEquationText());
+					tryToFixInput();
+				}
+				break;
+			}
+			case SvPb::LinkedSelectedOption::None:
+			default:
+				break;
+		}
 	}
 #pragma endregion Private Methods
 

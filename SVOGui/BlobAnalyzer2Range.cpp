@@ -77,10 +77,9 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	BlobAnalyzer2Range::BlobAnalyzer2Range(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId)
+	BlobAnalyzer2Range::BlobAnalyzer2Range(uint32_t inspectionId, uint32_t taskObjectId)
 		: CPropertyPage(BlobAnalyzer2Range::IDD)
 		, m_InspectionID(inspectionId)
-		, m_toolID(toolId)
 		, m_TaskObjectID(taskObjectId)
 		, m_NumberRangeController(inspectionId, m_TaskObjectID)
 	{
@@ -214,28 +213,28 @@ namespace SvOg
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
 				Title += RangeEnum::ERange2String(RangeEnum::ER_FailHigh);
-				startObjectSelector(m_Grid, Title, pItem->iRow, FailHighColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].range_fail_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_high());
+				startObjectSelector(m_Grid, Title, pItem->iRow, FailHighColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_fail_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_high());
 			}
 			break;
 		case WarnHighButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
 				Title += RangeEnum::ERange2String(RangeEnum::ER_WarnHigh);
-				startObjectSelector(m_Grid, Title, pItem->iRow, WarnHighColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].range_warn_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_high());
+				startObjectSelector(m_Grid, Title, pItem->iRow, WarnHighColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_warn_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_high());
 			}
 			break;
 		case WarnLowButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
 				Title += RangeEnum::ERange2String(RangeEnum::ER_WarnLow);
-				startObjectSelector(m_Grid, Title, pItem->iRow, WarnLowColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].range_warn_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_low());
+				startObjectSelector(m_Grid, Title, pItem->iRow, WarnLowColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_warn_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_low());
 			}
 			break;
 		case FailLowButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
 				Title += RangeEnum::ERange2String(RangeEnum::ER_FailLow);
-				startObjectSelector(m_Grid, Title, pItem->iRow, FailLowButtonColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].range_fail_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_low());
+				startObjectSelector(m_Grid, Title, pItem->iRow, FailLowButtonColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_fail_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_low());
 			}
 			break;
 		default:

@@ -351,6 +351,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	// Identify our input image...
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
+	m_InputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	// Register Embedded Objects
 	RegisterEmbeddedImage( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );

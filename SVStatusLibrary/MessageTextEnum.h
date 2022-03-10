@@ -476,6 +476,7 @@ enum MessageTextEnum
 	Tid_UpdateTRCBuffersFailed,
 	Tid_InvalidOwner,
 	Tid_WrongType,
+	Tid_WrongValueType,
 	Tid_InvalidOrRecursiveLinkedObject,
 	Tid_WrongInspection,
 	Tid_NoShapeHelper,
@@ -606,6 +607,8 @@ enum MessageTextEnum
 	Tid_anImage,
 	Tid_aGrayImage,
 	Tid_aColorImage,
+	Tid_aDecimalValue,
+	Tid_aTextValue,
 	
 	Tid_ForbittenNameForParameterName,
 	Tid_DuplicateParameterName,

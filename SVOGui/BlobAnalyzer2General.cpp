@@ -124,11 +124,11 @@ namespace SvOg
 		m_useGrayImage = m_Values.Get<bool>(SvPb::IsGrayImageEId);
 
 		const SvUl::NameObjectIdList& rAvailableImageList = m_AnalyzerImageController.GetAvailableImageList();
-		const SvUl::InputNameObjectIdPairList& rImageList = m_AnalyzerImageController.GetInputImageList(SvDef::InvalidObjectId, 3);
+		const auto& rImageList = m_AnalyzerImageController.GetInputImageList(SvDef::InvalidObjectId, 3);
 		if (rImageList.size())
 		{
-			m_inputGrayName = rImageList.begin()->first;
-			m_selectedGrayName = rImageList.begin()->second.first;
+			m_inputGrayName = rImageList.begin()->inputname();
+			m_selectedGrayName = rImageList.begin()->connected_objectdottedname();
 		}
 		else
 		{

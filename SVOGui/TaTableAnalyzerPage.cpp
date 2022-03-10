@@ -125,11 +125,9 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 
 	m_availableAnaylzerCB.Init(availableList, _T(""), Analyzer_NoAnalyzerAvailable);
 
-	SvOg::ObjectSelectorData osData;
-	osData.m_stopAtId = m_TaskObjectID;
-	m_ExcludeHighWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeHigh, m_ButtonExcludeHigh, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeHighEId, nullptr, ObjectSelectorData {m_TaskObjectID});
-	m_ExcludeLowWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeLow, m_ButtonExcludeLow, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeLowEId, nullptr, ObjectSelectorData {m_TaskObjectID});
-	m_LimitWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLimitValue, m_ButtonLimitValue, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerLimitValueEId, nullptr, ObjectSelectorData {m_TaskObjectID});
+	m_ExcludeHighWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeHigh, m_ButtonExcludeHigh, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeHighEId, nullptr);
+	m_ExcludeLowWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeLow, m_ButtonExcludeLow, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeLowEId, nullptr);
+	m_LimitWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLimitValue, m_ButtonLimitValue, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerLimitValueEId, nullptr);
 
 	setSourceTableObjectId();
 	RetrieveAvailableColumnList();
@@ -448,9 +446,10 @@ HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	pRequest->set_objectid(m_TaskObjectID);
-	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVValueObjectType);
-	pRequest->mutable_typeinfo()->set_subtype(SvPb::DoubleSortValueObjectType);
+	auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+	pTreeSearchParameter->set_search_start_id(m_TaskObjectID);
+	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVValueObjectType);
+	pTreeSearchParameter->mutable_type_info()->set_subtype(SvPb::DoubleSortValueObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
@@ -461,7 +460,7 @@ HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 	m_availableSourceColumn.clear();
 	if (SvDef::InvalidObjectId != m_sourceTableObjectId)
 	{
-		pRequest->set_objectid(m_sourceTableObjectId);
+		pTreeSearchParameter->set_search_start_id(m_sourceTableObjectId);
 		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 		{
@@ -580,11 +579,10 @@ void TaTableAnalyzerPage::setColumnSelectionCB(bool useSourceAvailable)
 	pRequest->mutable_typeinfo()->set_subtype(SvPb::DoubleSortValueObjectType);
 	
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvUl::InputNameObjectIdPairList connectedList;
 	if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
 	{
 		m_inputName = responseCmd.getinputsresponse().list(0).inputname();
-		selectedTableName = responseCmd.getinputsresponse().list(0).objectname();
+		selectedTableName = responseCmd.getinputsresponse().list(0).connected_objectdottedname();
 	}
 
 	if (useSourceAvailable)
@@ -750,8 +748,9 @@ SvUl::NameObjectIdList TaTableAnalyzerPage::getTableAnalyzer()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	pRequest->set_objectid(m_TaskObjectID);
-	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableAnalyzerType);
+	auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+	pTreeSearchParameter->set_search_start_id(m_TaskObjectID);
+	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::TableAnalyzerType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
@@ -768,14 +767,13 @@ void TaTableAnalyzerPage::setSourceTableObjectId()
 	auto* pRequest = requestCmd.mutable_getinputsrequest();
 	pRequest->set_objectid(m_TaskObjectID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
-	pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
-	pRequest->set_shouldexcludefirstobjectname(true);
+	pRequest->set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType);
+	pRequest->set_exclude_first_object_name_in_conntected_name(true);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvUl::InputNameObjectIdPairList connectedList;
 	if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
 	{
-		m_sourceTableObjectId = responseCmd.getinputsresponse().list(0).objectid();
+		m_sourceTableObjectId = responseCmd.getinputsresponse().list(0).connected_objectid();
 	}
 	else
 	{

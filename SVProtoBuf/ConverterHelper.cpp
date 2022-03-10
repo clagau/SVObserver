@@ -460,13 +460,13 @@ void convertVectorToTree(const std::vector<typename TreeItem>& rItemVector, type
 template void convertVectorToTree<SvPb::TreeItem>(const std::vector<SvPb::TreeItem>& rItemVector, SvPb::TreeItem* pTree);
 template void convertVectorToTree<SvPb::ConfigTreeItem>(const std::vector<SvPb::ConfigTreeItem>& rItemVector, SvPb::ConfigTreeItem* pTree);
 
-variant_t getDefaultString(SvPb::InputTypeEnum type)
+variant_t getDefaultString(SvPb::LinkedValueTypeEnum type)
 {
 	switch (type)
 	{
-	case SvPb::InputTypeEnum::TypeDecimal: //decimal
+	case SvPb::LinkedValueTypeEnum::TypeDecimal: //decimal
 		return 0.0;
-	case SvPb::InputTypeEnum::TypeText:
+	case SvPb::LinkedValueTypeEnum::TypeText:
 		return "";
 	default: //do nothing
 		return {};

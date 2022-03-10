@@ -58,11 +58,11 @@ namespace SvOg
 
 	void SVTADlgTransformImagePage::CheckSourceImage()
 	{
-		const SvUl::InputNameObjectIdPairList& images = getImageController().GetInputImageList();
+		const auto& images = getImageController().GetInputImageList();
 		if (images.size())
 		{
 			// Check if Main Image Type
-			const SvPb::SVImageTypeEnum& rImageType = getImageController().GetImageType(images.begin()->second.second);
+			const SvPb::SVImageTypeEnum& rImageType = getImageController().GetImageType(images.begin()->connected_objectid());
 			if (SvPb::SVImageTypeMain == rImageType)
 			{
 				m_useExtentsOnly = false;

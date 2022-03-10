@@ -141,5 +141,8 @@
     <ClInclude Include="ITriggerRecordRW.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="IInputObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

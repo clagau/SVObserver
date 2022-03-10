@@ -53,6 +53,7 @@
 #include "ObjectInterfaces\ILinkedObject.h"
 #include "ObjectInterfaces\ISVLinearAnalyzer.h"
 #include <atltypes.h>
+#include "ObjectInterfaces\IInputObject.h"
 
 #pragma endregion Includes
 
@@ -552,16 +553,24 @@ SvPb::InspectionCmdResponse getInputs(SvPb::GetInputsRequest request)
 	if (nullptr != pTaskObject)
 	{
 		SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
-		SvUl::InputNameObjectIdPairList list;
-		pTaskObject->GetInputs(list, typeInfo, request.objecttypetoinclude(), request.shouldexcludefirstobjectname(), request.maxrequested());
 		SvPb::GetInputsResponse* pResponse = cmdResponse.mutable_getinputsresponse();
-		for (auto& item : list)
-		{
-			auto* pEntry = pResponse->add_list();
-			pEntry->set_inputname(item.first.c_str());
-			pEntry->set_objectname(item.second.first);
-			pEntry->set_objectid(item.second.second);
-		}
+		pTaskObject->GetInputs(*pResponse->mutable_list(), typeInfo, request.desired_first_object_type_for_connected_name(), request.exclude_first_object_name_in_conntected_name(), request.maxrequested());
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getInputData(const SvPb::GetInputDataRequest& request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	auto* pInputObject = dynamic_cast<SvOi::IInputObject*> (SvOi::getObject(request.objectid()));
+	if (nullptr != pInputObject)
+	{
+		cmdResponse.mutable_getinputdataresponse()->CopyFrom(pInputObject->getInputData(request.desired_first_object_type_for_connected_name(), request.exclude_first_object_name_in_conntected_name()));
 	}
 	else
 	{
@@ -574,10 +583,14 @@ SvPb::InspectionCmdResponse connectToObject(SvPb::ConnectToObjectRequest request
 {
 	SvPb::InspectionCmdResponse result;
 
-	SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
-	if(nullptr != pObject)
+	auto* pObject = SvOi::getObject(request.objectid());
+	if(SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject); nullptr != pTaskObject)
 	{
-		result.set_hresult(pObject->ConnectToObject(request.inputname(), request.newconnectedid(), request.objecttype(), true));
+		result.set_hresult(pTaskObject->ConnectToObject(request.inputname(), request.newconnectedid(), request.objecttype(), true));
+	}
+	else if (auto* pInputObject = dynamic_cast<SvOi::IInputObject*>(pObject); nullptr != pInputObject)
+	{
+		result.set_hresult(pInputObject->checkAndSetInput(request.newconnectedid()));
 	}
 	else
 	{
@@ -620,92 +633,61 @@ SvPb::InspectionCmdResponse setObjectName(SvPb::SetObjectNameRequest request)
 
 SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest request)
 {
-	SvPb::InspectionCmdResponse cmdResponse;
-
-	SvOi::IObjectClass* pImportantObject = SvOi::getObject(request.importantobjectforstopatborder());
-	uint32_t startingObjectId{ request.objectid() };
-	bool isStopAtBorder{ nullptr != pImportantObject };
-	if (isStopAtBorder)
+	switch (request.SearchType_case())
 	{
-		auto tmpId = pImportantObject->getFirstClosedParent(startingObjectId);
-		if (SvDef::InvalidObjectId != tmpId)
+		case SvPb::GetAvailableObjectsRequest::kTreeSearch:
 		{
-			startingObjectId = tmpId;
+			const auto& parameter = request.tree_search();
+			auto [startingObjectId, isStopAtBorder] = correctStartId(parameter.pre_search_start_id(), parameter.search_start_id());
+
+			return getAvailableObjects(startingObjectId, {parameter.type_info().objecttype(), parameter.type_info().subtype(), parameter.type_info().embeddedid()}, 
+				parameter.has_defaultplushidden(), isStopAtBorder, request.desired_first_object_type_for_name(), request.exclude_first_object_name_in_name(),
+				getAllowedFunc(parameter));
 		}
-	}
-
-	SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
-	SvPb::SVObjectTypeEnum objectTypeToInclude = request.objecttypetoinclude();
-	std::vector<SvOi::IObjectClass*> list;
-	SvOi::fillObjectList(std::back_inserter(list), typeInfo, startingObjectId, request.has_defaultplushidden(), isStopAtBorder);
-
-	IsAllowedFunc isAllowed = getAllowedFunc(request);
-	if (isAllowed)// required, even if it does nothing...
-	{
-		bool bStop = false;
-		for(const auto* pObject: list)
+		case SvPb::GetAvailableObjectsRequest::kInputSearch:
 		{
-			if (nullptr != pObject)
+			const auto& parameter = request.input_search();
+			auto* pInputObject = dynamic_cast<SvOi::IInputObject*>(SvOi::getObject(parameter.input_connected_objectid()));
+			if (nullptr != pInputObject)
 			{
-
-				if (isAllowed(pObject, bStop))
+				auto [infoType, preStartingObjectId, allowedId, toolId] = pInputObject->getAvailableObjectParameter();
+				auto [startingObjectId, isStopAtBorder] = correctStartId(parameter.input_connected_objectid(), preStartingObjectId);
+				SvPb::TreeSearchParameters treeParameter;
+				switch (allowedId)
 				{
-					std::string name;
-					switch (typeInfo.m_ObjectType)
+					case SvOi::InputAllowedMode::IsBeforeTool:
 					{
-						case SvPb::SVImageObjectType:
-						{
-							const SvOi::ISVImage* pImage = dynamic_cast<const SvOi::ISVImage*>(pObject);
-							if (pImage)
-							{
-								name = pImage->getDisplayedName();
-							}
-							else
-							{
-								name = pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
-							}
-						}
-						break;
-						default:
-						{
-							if (SvPb::SVNotSetObjectType == objectTypeToInclude)
-							{
-								name = pObject->GetName();
-							}
-							else
-							{
-								if (request.shouldexcludefirstobjectname())
-								{
-									name = pObject->GetObjectNameBeforeObjectType(objectTypeToInclude);
-								}
-								else
-								{
-									name = pObject->GetObjectNameToObjectType(objectTypeToInclude);
-								}
-							}
-						}
+						treeParameter.mutable_isbeforetoolmethod()->set_toolid(toolId);
 						break;
 					}
-					SvPb::GetAvailableObjectsResponse* pResponse = cmdResponse.mutable_getavailableobjectsresponse();
-					if (!name.empty())
-					{
-						auto* pEntry = pResponse->add_list();
-						pEntry->set_objectname(name.c_str());
-						pEntry->set_objectid(pObject->getObjectId());
-					}
+					case SvOi::InputAllowedMode::DefaultPlusHidden:
+						treeParameter.mutable_defaultplushidden();
+						break;
+					case SvOi::InputAllowedMode::HasExtension:
+						treeParameter.mutable_hasextension();
+						break;
+					default:
+						break;
 				}
+				return getAvailableObjects(startingObjectId, infoType,
+					SvOi::InputAllowedMode::DefaultPlusHidden == allowedId, isStopAtBorder, request.desired_first_object_type_for_name(), request.exclude_first_object_name_in_name(),
+					getAllowedFunc(treeParameter));
 			}
-			if (bStop)
+			else
 			{
+				SvPb::InspectionCmdResponse cmdResponse;
+				cmdResponse.set_hresult(E_NOINTERFACE);
 				return cmdResponse;
 			}
 		}
+		default:
+		{
+			SvPb::InspectionCmdResponse cmdResponse;
+			cmdResponse.set_hresult(E_NOINTERFACE);
+			return cmdResponse;
+		}
 	}
-	else
-	{
-		cmdResponse.set_hresult(E_NOINTERFACE);
-	}
-	return cmdResponse;
+	
 }
 
 SvPb::InspectionCmdResponse getSpecialImageList(SvPb::GetSpecialImageListRequest request)
@@ -968,54 +950,62 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 	SvPb::InspectionCmdResponse cmdResponse;
 
 	SvOi::ITaskObject* pTaskObj = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
-	auto EmbeddedVector = pTaskObj->getEmbeddedList();
-
-	SvPb::GetEmbeddedValuesResponse* pResponse = cmdResponse.mutable_getembeddedvaluesresponse();
-	for (auto const& rEntry : EmbeddedVector)
+	assert(nullptr != pTaskObj);
+	if (nullptr != pTaskObj)
 	{
-		SvOi::IObjectClass* pObject = SvOi::getObject(rEntry);
-		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
-		SvOi::ILinkedObject* pLinkedObject = dynamic_cast<SvOi::ILinkedObject*> (pObject);
-		if (nullptr != pValueObject)
+		auto EmbeddedVector = pTaskObj->getEmbeddedList();
+
+		SvPb::GetEmbeddedValuesResponse* pResponse = cmdResponse.mutable_getembeddedvaluesresponse();
+		for (auto const& rEntry : EmbeddedVector)
 		{
-			if (nullptr == pLinkedObject)
+			SvOi::IObjectClass* pObject = SvOi::getObject(rEntry);
+			SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
+			SvOi::ILinkedObject* pLinkedObject = dynamic_cast<SvOi::ILinkedObject*> (pObject);
+			if (nullptr != pValueObject)
 			{
-				_variant_t DefaultValue{ pValueObject->getDefaultValue() };
-				_variant_t Value;
-				HRESULT result = pValueObject->getValue(Value);
-				if (S_OK == result)
+				if (nullptr == pLinkedObject)
 				{
-					auto* pElement = pResponse->add_list();
-					pElement->set_objectid(rEntry);
-					pElement->set_embeddedid(pObject->GetEmbeddedID());
-					auto* pValue = pElement->mutable_value();
-					ConvertVariantToProtobuf(Value, pValue->mutable_value());
-					ConvertVariantToProtobuf(DefaultValue, pValue->mutable_defaultvalue());
-				}
-				else if (E_BOUNDS == result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result || SVMSG_SVO_105_CIRCULAR_REFERENCE == result)
-				{
-					Value.Clear();
-					auto* pElement = pResponse->add_list();
-					pElement->set_objectid(rEntry);
-					pElement->set_embeddedid(pObject->GetEmbeddedID());
-					auto* pValue = pElement->mutable_value();
-					ConvertVariantToProtobuf(Value, pValue->mutable_value());
-					ConvertVariantToProtobuf(DefaultValue, pValue->mutable_defaultvalue());
+					_variant_t DefaultValue {pValueObject->getDefaultValue()};
+					_variant_t Value;
+					HRESULT result = pValueObject->getValue(Value);
+					if (S_OK == result)
+					{
+						auto* pElement = pResponse->add_list();
+						pElement->set_objectid(rEntry);
+						pElement->set_embeddedid(pObject->GetEmbeddedID());
+						auto* pValue = pElement->mutable_value();
+						ConvertVariantToProtobuf(Value, pValue->mutable_value());
+						ConvertVariantToProtobuf(DefaultValue, pValue->mutable_defaultvalue());
+					}
+					else if (E_BOUNDS == result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result || SVMSG_SVO_105_CIRCULAR_REFERENCE == result)
+					{
+						Value.Clear();
+						auto* pElement = pResponse->add_list();
+						pElement->set_objectid(rEntry);
+						pElement->set_embeddedid(pObject->GetEmbeddedID());
+						auto* pValue = pElement->mutable_value();
+						ConvertVariantToProtobuf(Value, pValue->mutable_value());
+						ConvertVariantToProtobuf(DefaultValue, pValue->mutable_defaultvalue());
+					}
+					else
+					{
+						cmdResponse.set_hresult(result);
+					}
 				}
 				else
 				{
-					cmdResponse.set_hresult(result);
+					auto* pElement = pResponse->add_list();
+					pElement->set_objectid(rEntry);
+					pElement->set_embeddedid(pObject->GetEmbeddedID());
+					auto* pValue = pElement->mutable_linkedvalue();
+					pLinkedObject->fillLinkedData(*pValue);
 				}
 			}
-			else
-			{
-				auto* pElement = pResponse->add_list();
-				pElement->set_objectid(rEntry);
-				pElement->set_embeddedid(pObject->GetEmbeddedID());
-				auto* pValue = pElement->mutable_linkedvalue();
-				pLinkedObject->fillLinkedData(*pValue);
-			}
 		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_FAIL);
 	}
 
 	return cmdResponse;
@@ -1165,10 +1155,9 @@ SvPb::InspectionCmdResponse getToolSizeAdjustParameter(SvPb::GetToolSizeAdjustPa
 	if (nullptr == pTask && nullptr != pTool)
 	{
 		SvPb::GetAvailableObjectsRequest getObjectsRequest;
-
-		getObjectsRequest.set_objectid(request.objectid());
-		getObjectsRequest.mutable_typeinfo()->set_objecttype(SvPb::SVToolSizeAdjustTaskType);
-		getObjectsRequest.mutable_typeinfo()->set_subtype(SvPb::SVNotSetSubObjectType);
+		auto* pTreeSearchParameter = getObjectsRequest.mutable_tree_search();
+		pTreeSearchParameter->set_search_start_id(request.objectid());
+		pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVToolSizeAdjustTaskType);
 		cmdResponse = getAvailableObjects(getObjectsRequest);
 		const SvPb::GetAvailableObjectsResponse& rObjectResponse = cmdResponse.getavailableobjectsresponse();
 		if (S_OK == cmdResponse.hresult() && 0 < rObjectResponse.list_size())
@@ -1363,6 +1352,36 @@ SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItemsR
 		fillSelectorList(std::back_inserter(resultItemVector), request, request.areas(i));
 	}
 	*pResponse->mutable_tree()->mutable_children() = {resultItemVector.begin(), resultItemVector.end()};
+
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItems2Request request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+	auto* pObject = SvOi::getObject(request.objectid());
+	if (nullptr != pObject)
+	{
+		std::vector<SvPb::TreeItem> resultItemVector;
+		if (auto* pLinkedValue = dynamic_cast<SvOi::ILinkedObject*>(pObject); nullptr != pLinkedValue)
+		{
+			pLinkedValue->fillSelectorListForLink(std::back_inserter(resultItemVector));
+		}
+		else if (auto* pEquation = dynamic_cast<SvOi::IEquation*>(pObject); nullptr != pEquation)
+		{
+			pEquation->fillSelectorListForEquation(std::back_inserter(resultItemVector));
+		}
+		else
+		{
+			cmdResponse.set_hresult(E_POINTER);
+			return cmdResponse;
+		}
+		*cmdResponse.mutable_getobjectselectoritemsresponse()->mutable_tree()->mutable_children() = {resultItemVector.begin(), resultItemVector.end()};
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
 
 	return cmdResponse;
 }

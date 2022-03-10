@@ -10,7 +10,6 @@
 #include "ObjectInterfaces/IFormulaController.h"
 #include "ObjectSelectorLibrary/ObjectSelectorPpg.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVProtoBuf/SVO-Enum.h"
 #include "DataController.h"
 #pragma endregion Includes
 
@@ -19,19 +18,6 @@ namespace SvOg
 	class SVFormulaEditorPageClass;
 	using ValidCheckCallback = std::function<bool(const variant_t&, SvStl::MessageContainer&)>;
 	using ConvertValueCallback = std::function<CString(const variant_t&)>;
-
-	struct ObjectSelectorData
-	{
-		ObjectSelectorData() {};
-		explicit ObjectSelectorData(uint32_t stopAtId) : m_stopAtId(stopAtId) {};
-
-		std::vector<SvPb::SearchArea> m_searchArea{ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::toolsetItems };
-		SvPb::ObjectSelectorType m_type{ SvPb::allNumberValueObjects };
-		SvPb::ObjectAttributes m_attribute = SvPb::selectableForEquation;
-		std::vector<uint32_t> m_excludeSameLineageVector;
-		uint32_t m_stopAtId = SvDef::InvalidObjectId;
-		bool m_wholeArray = false;
-	};
 
 	enum class LinkedValueSelectorTypesEnum
 	{
@@ -48,7 +34,7 @@ namespace SvOg
 		enum {	IDD = IDD_LINKEDVALUE_SELECTOR_DIALOG	};
 		//}}AFX_DATA
 	public:
-		LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ObjectSelectorData objectSelectorData = {}, ValidCheckCallback validCallback = nullptr, LinkedValueSelectorTypesEnum possibleTypes = LinkedValueSelectorTypesEnum::All);
+		LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ValidCheckCallback validCallback = nullptr);
 		
 		virtual ~LinkedValueSelectorDialog();
 
@@ -101,7 +87,6 @@ namespace SvOg
 		CPropertySheet m_dlgLinkedSheet;
 		SvOsl::ObjectTreeGenerator m_linkedTreeGenerator;
 		std::unique_ptr<SvOsl::ObjectSelectorPpg> m_pDlgLinkedPage;
-		ObjectSelectorData m_objectSelectorData;
 
 		//For Formula
 		std::unique_ptr<SVFormulaEditorPageClass> m_pDlgFormulaPage;

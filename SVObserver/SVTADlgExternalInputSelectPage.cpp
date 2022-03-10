@@ -40,60 +40,45 @@ enum { IDC_INPUT_LIST_TREE = 99 };
 
 enum { MAX_ITEMS_FOR_AUTO_EXPAND = 8 };
 
-std::pair<SvOg::LinkedValueSelectorTypesEnum, std::string> getTypeData(const SvPb::InputValueDefinition& rDefinition)
+LPCTSTR getTypeString(const SvPb::InputValueDefinition& rDefinition)
 {
-	std::pair<SvOg::LinkedValueSelectorTypesEnum, std::string> result = { SvOg::LinkedValueSelectorTypesEnum::All, "" };
-	
 	switch (rDefinition.vt())
 	{
-	case VT_BOOL: result.second = _T("Bool");
-		break;
+	case VT_BOOL: 
+		return _T("Bool");
 
-	case VT_I4:   result.second = _T("Long");
-		break;
+	case VT_I4:   
+		return _T("Long");
 
-	case VT_R8:   result.second = _T("Double");
-		break;
+	case VT_R8:   
+		return _T("Double");
 
 	case VT_BSTR: 
-		result.first = SvOg::LinkedValueSelectorTypesEnum::DirectIndirect;
-		result.second = _T("String");
-		break;
+		return _T("String");
 
 	case VT_R8 | VT_ARRAY:
 		if (rDefinition.type() == SvPb::ExDllInterfaceType::TableArray)
 		{
-			result.first = SvOg::LinkedValueSelectorTypesEnum::Indirect;
-			result.second = _T("Table or Table Element");
+			return _T("Table or Table Element");
 		}
 		else
 		{
-			result.first = SvOg::LinkedValueSelectorTypesEnum::DirectIndirect;
-			result.second = _T("Double array");
+			return _T("Double array");
 		}
-		break;
 
 	case VT_I4 | VT_ARRAY:
 		if (rDefinition.type() == SvPb::ExDllInterfaceType::TableArray)
 		{
-			result.first = SvOg::LinkedValueSelectorTypesEnum::Indirect;
-			result.second = _T("Table or Table Element");
+			return _T("Table or Table Element");
 		}
 		else
 		{
-			result.first = SvOg::LinkedValueSelectorTypesEnum::DirectIndirect;
-			result.second = _T("Long Array");
+			return _T("Long Array");
 		}
-		break;
-
 
 	default:
-		result.first = SvOg::LinkedValueSelectorTypesEnum::None;
-		result.second = _T("???");
-		break;
+		return _T("???");
 	}
-
-	return result;
 }
 
 //IMPLEMENT_DYNCREATE(SVTADlgExternalInputSelectPage, CPropertyPage)
@@ -279,14 +264,10 @@ void SVTADlgExternalInputSelectPage::AddItemToTree(const SvPb::InputValueDefinit
 
 	pEdit->SetLabelText(Label.c_str());
 
-	auto [objectSelectType, typeString] = getTypeData(rDefinition);
-
-	std::string Description = rDefinition.helptext();
-
-	Description = _T(" (Type: ") + typeString + _T(")  ") + Description;
+	std::string Description = std::string {" (Type: "} + getTypeString(rDefinition) + _T(")  ") + rDefinition.helptext();
 	pEdit->SetInfoText(Description.c_str());
 
-	setValueColumn(SvPb::ExternalInputEId + LVIndex, objectSelectType, *pEdit);
+	setValueColumn(SvPb::ExternalInputEId + LVIndex, rDefinition.type(), *pEdit);
 }
 
 
@@ -338,43 +319,16 @@ void SVTADlgExternalInputSelectPage::SelectObject(SVRPropertyItemEdit& rItem)
 	auto pDef = GetInputDefinitionPtr(&rItem);
 	if (pDef)
 	{
-		SvOg::ObjectSelectorData objSelectorData {m_ToolObjectID};
-		auto vtType = static_cast<VARTYPE>(pDef->vt());
-		switch (pDef->type())
-		{
-			case SvPb::ExDllInterfaceType::TableArray:
-				objSelectorData.m_type = SvPb::tableObjects;
-				objSelectorData.m_attribute = SvPb::taskObject;
-				objSelectorData.m_searchArea = {SvPb::SearchArea::toolsetItems};
-				vtType = VT_EMPTY;
-				break;
-			case SvPb::ExDllInterfaceType::Array:
-				objSelectorData.m_type = (pDef->vt() & VT_BSTR) == 0 ? SvPb::allNumberValueObjects : SvPb::allValueObjects;
-				objSelectorData.m_attribute = SvPb::archivable;
-				objSelectorData.m_searchArea = {SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems};
-				objSelectorData.m_wholeArray = true;
-				break;
-			default:
-				objSelectorData.m_type = (pDef->vt() & VT_BSTR) == 0 ? SvPb::allNumberValueObjects : SvPb::allValueObjects;
-				objSelectorData.m_attribute = SvPb::archivable;
-				objSelectorData.m_searchArea = {SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems};
-				objSelectorData.m_wholeArray = false;
-				break;
-		}
-
-		objSelectorData.m_excludeSameLineageVector = { m_ToolObjectID };
-
-		auto [objectSelectType, _] = getTypeData(*pDef);
+		VARTYPE vtType = (SvPb::ExDllInterfaceType::TableArray == pDef->type()) ? VT_EMPTY : static_cast<VARTYPE>(pDef->vt());
 		SvPb::EmbeddedIdEnum eId = SvPb::ExternalInputEId + pDef->linkedvalueindex();
 		SvOg::LinkedValueSelectorDialog dlg(m_InspectionID, m_InputValues.GetObjectID(eId), 
 			m_InputValues.GetName(eId),
 			m_InputValues.Get<SvOg::LinkedValueData>(eId),
-			vtType,
-			objSelectorData, nullptr, objectSelectType);
+			vtType);
 		if (IDOK == dlg.DoModal())
 		{
 			m_InputValues.Set(eId, dlg.getData());
-			setValueColumn(eId, objectSelectType, rItem);
+			setValueColumn(eId, pDef->type(), rItem);
 		}
 	}
 }
@@ -460,19 +414,24 @@ BOOL SVTADlgExternalInputSelectPage::OnKillActive()
 	return CPropertyPage::OnKillActive();
 }
 
-void SVTADlgExternalInputSelectPage::setValueColumn(SvPb::EmbeddedIdEnum eId, SvOg::LinkedValueSelectorTypesEnum selectorTypes, SVRPropertyItemEdit& rEdit)
+void SVTADlgExternalInputSelectPage::setValueColumn(SvPb::EmbeddedIdEnum eId, SvPb::ExDllInterfaceType type, SVRPropertyItemEdit& rEdit)
 {
 	auto data = m_InputValues.Get<SvOg::LinkedValueData>(eId);
 	bool isReadOnly{ true };
 	CString valueString;
-	if (SvOg::LinkedValueSelectorTypesEnum::All == selectorTypes || SvOg::LinkedValueSelectorTypesEnum::DirectIndirect == selectorTypes)
+	switch (type)
 	{
-		valueString = SvUl::VariantToString(data.m_Value).c_str();
-		isReadOnly = (SvPb::LinkedSelectedOption::DirectValue != data.m_selectedOption);
-	}
-	else
-	{
-		valueString = SvCmd::getDottedName(m_InspectionID, data.m_indirectIdName).c_str();
+		case SvPb::TableArray:
+		case SvPb::TableNames:
+		case SvPb::Invalid:
+			valueString = SvCmd::getDottedName(m_InspectionID, data.m_indirectIdName).c_str();
+			break;
+		case SvPb::Scalar:
+		case SvPb::Array:
+		default:
+			valueString = SvUl::VariantToString(data.m_Value).c_str();
+			isReadOnly = (SvPb::LinkedSelectedOption::DirectValue != data.m_selectedOption);
+			break;
 	}
 
 	rEdit.SetBackColorReadOnly(false, SvDef::WhiteSmoke);

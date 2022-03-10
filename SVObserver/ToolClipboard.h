@@ -66,7 +66,7 @@ public:
 	//************************************
 	std::string readXmlToolData();
 
-	std::vector<uint32_t> createToolsFromXmlData(const std::string& XmlData, uint32_t postId, uint32_t ownerId);
+	std::vector<uint32_t> createToolsFromXmlData(const std::string& XmlData, uint32_t ownerId);
 
 	const SvStl::MessageManager& getLastErrorMessage() const { return m_errorMessage; }
 #pragma endregion Public Methods
@@ -123,7 +123,7 @@ protected:
 	/// \param postId [in] The id of the object currently selected where the new object should be inserted
 	/// \param ownerId [in] The id of the owner of the new object.
 	/// \returns HRESULT S_OK on success
-	HRESULT readTool(std::string& rXmlData, SVTreeType& rTree, uint32_t postId, uint32_t ownerId) const;
+	HRESULT readTool(std::string& rXmlData, SVTreeType& rTree, uint32_t ownerId) const;
 
 	/// This method validates the tools IDs
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
@@ -133,7 +133,7 @@ protected:
 	/// \param toolClassId [in] The class Id of the tool
 	/// \param rInputImages [in] The input images of the tool
 	/// \returns HRESULT S_OK on success
-	HRESULT validateIds(std::string& rXmlData, uint32_t postId, uint32_t ownerId, uint32_t inspectionId, SvPb::ClassIdEnum toolClassId, std::set<uint32_t> rInputImages) const;
+	HRESULT validateIds(std::string& rXmlData, uint32_t ownerId, SvPb::ClassIdEnum toolClassId) const;
 
 	//************************************
 	/// This method replaces the tool name and the dotted name (e.g. in Equation)
