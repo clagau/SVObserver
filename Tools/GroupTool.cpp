@@ -160,8 +160,6 @@ namespace SvTo
 	{
 		__super::resetCounters();
 
-		// THB Step through the list of child tools and call reset counters for all of them
-		
 		for (SVTaskObjectClass* tool : m_TaskObjectVector)
 		{
 			if (tool != nullptr)
