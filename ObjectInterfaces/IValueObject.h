@@ -185,5 +185,7 @@ namespace SvOi
 
 	typedef std::set<IValueObject*> IValueObjectPtrSet;
 	typedef std::vector<std::variant<SetValueStruct, SetLinkedStruct> > SetValueStructVector;
-
+	constexpr size_t IVal = 0;
+	constexpr size_t ILink = 1;
+	
 } //namespace SvOi

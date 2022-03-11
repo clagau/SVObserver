@@ -135,9 +135,11 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 
 HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant, bool simpleType /*= false*/)
 {
+	
 	HRESULT Result {S_OK};
 
 	rVariant.vt = static_cast<VARTYPE> (rPbVariant.type());
+	//@TODO[MEC][10.20][02.03.2022] use case	from message instead 
 	switch (rPbVariant.type())
 	{
 		case VT_BOOL:

@@ -387,10 +387,35 @@ void SVTaskObjectClass::GetInputs(SvPb::InputDataList& rList, const SvDef::SVObj
 	}
 }
 
-SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet)
+SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet, SvOi::ResetParameter* pPar)
 {
 	SvStl::MessageContainerVector messages;
 	HRESULT Result(S_OK);
+	if (nullptr != pPar)
+	{
+		pPar->result = SvPb::RT_None;
+	}
+	SvOi::SVResetItemEnum ToReset {SvOi::SVResetItemNone};
+	bool checkReset {false};
+	if (nullptr != pPar)
+	{
+		switch (pPar->target)
+		{
+			case SvPb::RT_IP:
+				ToReset = SvOi::SVResetItemIP; //0
+				break;
+			case SvPb::RT_Tool:
+				ToReset = SvOi::SVResetItemTool; //1 
+				break;
+			case SvPb::RT_OWNER:
+				ToReset = SvOi::SVResetItemOwner; //2 
+				break;
+			case SvPb::RT_FromObject:
+				checkReset = true;
+				break;
+		}
+	}
+	
 
 	for (auto const& rEntry : rValueVector)
 	{
@@ -398,9 +423,9 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 		{
 			switch (rEntry.index())
 			{
-				case 0:
+				case SvOi::IVal:
 				{
-					auto& rData = std::get<0>(rEntry);
+					auto& rData = std::get<SvOi::IVal>(rEntry);
 					if (nullptr != rData.m_pValueObject)
 					{
 						rData.m_pValueObject->validateValue(rData.m_Value, rData.m_DefaultValue);
@@ -410,10 +435,17 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						throw Msg;
 					}
+					
+					SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(rData.m_pValueObject);
+					if (pObj && pObj->GetParentID() != getObjectId())
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddetValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						throw Msg;
+					}
 					break;
 				}
-				case 1:
-					auto & rData = std::get<1>(rEntry);
+				case SvOi::ILink:
+					auto& rData = std::get<SvOi::ILink>(rEntry);
 					if (nullptr != rData.m_pValueObject)
 					{
 						rData.m_pValueObject->validateValue(rData.m_linkedData);
@@ -423,6 +455,15 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						throw Msg;
 					}
+					//SvOi::IObjectClass* pObj = (SvOi::IObjectClass*)(rData.m_pValueObject);
+					SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(rData.m_pValueObject);
+					if (pObj && pObj->GetParentID() != getObjectId())
+					{
+							
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddetValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						throw Msg;
+					}
+					
 					break;
 			}
 
@@ -438,15 +479,61 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 	{
 		for (auto const& rEntry : rValueVector)
 		{
+			SvOi::IValueObject* pValueObject = nullptr;
 			switch (rEntry.index())
 			{
-				case 0:
-					Result = setEmbeddedValue(std::get<0>(rEntry), std::back_inserter(messages));
+				case SvOi::IVal:
+					Result = setEmbeddedValue(std::get<SvOi::IVal>(rEntry), std::back_inserter(messages));
+					if (checkReset)
+					{
+						pValueObject = std::get<SvOi::IVal>(rEntry).m_pValueObject;
+					}
 					break;
-				case 1:
-					Result = setEmbeddedValue(std::get<1>(rEntry), std::back_inserter(messages));
+				case SvOi::ILink:
+					Result = setEmbeddedValue(std::get<SvOi::ILink>(rEntry), std::back_inserter(messages));
+					if (checkReset)
+					{
+						pValueObject = dynamic_cast<SvOi::IValueObject*>(std::get<SvOi::ILink>(rEntry).m_pValueObject);
+					}
+
 					break;
 			}
+
+			if (checkReset && nullptr != pValueObject)
+			{
+				auto ResetItem = pValueObject->getResetItem();
+
+				ToReset = (ResetItem < ToReset) ? ResetItem : ToReset;
+				if (ToReset == SvOi::SVResetItemIP)
+				{
+					checkReset = false;
+				}
+
+			}
+		}
+	}
+
+	if (shouldSet && S_OK == Result && pPar)
+	{
+
+		switch (ToReset)
+		{
+			case SvOi::SVResetItemIP:
+				GetInspection()->resetAllObjects();
+				pPar->result = SvPb::RT_IP;
+				break;
+			case SvOi::SVResetItemTool:
+				GetTool()->resetAllObjects();
+				pPar->result = SvPb::RT_Tool;
+				break;
+			case SvOi::SVResetItemOwner:
+				resetAllObjects();
+				pPar->result = SvPb::RT_OWNER;
+				break;
+
+			default:
+				pPar->result = SvPb::RT_None;
+				break;
 		}
 	}
 
@@ -1446,7 +1533,7 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 	// cppcheck-suppress nullPointer
 	if (nullptr != p_Image && nullptr != GetImageExtentPtr() && GetImageExtentPtr()->hasFigure())
 	{
-	// cppcheck-suppress nullPointer
+		// cppcheck-suppress nullPointer
 		const SVImageExtentClass& rImageExtents = *GetImageExtentPtr();
 		SVExtentMultiLineStruct l_MultiLine;
 		UpdateOverlayIDs(l_MultiLine);

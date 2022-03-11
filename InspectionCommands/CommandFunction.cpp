@@ -62,7 +62,7 @@ namespace SvCmd
 SvPb::InspectionCmdResponse InspectionRunOnce(SvPb::InspectionRunOnceRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
-	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(request.inspectionid()));
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(request.inspectionid()));
 	if (nullptr != pInspection)
 	{
 		cmdResponse.set_hresult(pInspection->RunOnce());
@@ -100,7 +100,7 @@ SvPb::InspectionCmdResponse DeleteObject(SvPb::DeleteObjectRequest request)
 		SvOi::IObjectClass* pParent = SvOi::getObject(pObject->GetParentID());
 		auto* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*> (pParent);
 		auto* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
-		if(nullptr != pTaskObject && nullptr != pTaskObjectList)
+		if (nullptr != pTaskObject && nullptr != pTaskObjectList)
 		{
 			pTaskObjectList->DestroyChild(*pTaskObject, flag);
 			pParent->resetAllObjects();
@@ -117,7 +117,7 @@ SvPb::InspectionCmdResponse GetMessageList(SvPb::GetMessageListRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(request.objectid()));
+	SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(request.objectid()));
 	if (pTask)
 	{
 		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
@@ -140,7 +140,7 @@ SvPb::InspectionCmdResponse ResetObject(SvPb::ResetObjectRequest request)
 	{
 		SvStl::MessageContainerVector messageContainers;
 		HRESULT result = pObject->resetAllObjects(&messageContainers) ? S_OK : E_FAIL;
-		cmdResponse.set_hresult(result); 
+		cmdResponse.set_hresult(result);
 		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
 		pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 	}
@@ -198,7 +198,7 @@ SvPb::InspectionCmdResponse CreateModel(SvPb::CreateModelRequest request)
 		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, request.patternanalyzerid());
 	}
 
-	if(S_OK != cmdResponse.hresult())
+	if (S_OK != cmdResponse.hresult())
 	{
 		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
 		SvPb::convertMessageToProtobuf(message, pResponse->mutable_errormessages()->add_messages());
@@ -211,7 +211,7 @@ SvPb::InspectionCmdResponse getObjectParameters(SvPb::GetObjectParametersRequest
 	SvPb::InspectionCmdResponse cmdResponse;
 
 	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
-	if(nullptr != pObject)
+	if (nullptr != pObject)
 	{
 		SvPb::GetObjectParametersResponse* pObjParamResponse = cmdResponse.mutable_getobjectparametersresponse();
 		pObjParamResponse->set_name(pObject->GetName());
@@ -252,7 +252,7 @@ SvPb::InspectionCmdResponse ValidateAndSetEquation(SvPb::ValidateAndSetEquationR
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *> (SvOi::getObject(request.objectid()));
+	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation*> (SvOi::getObject(request.objectid()));
 	if (nullptr != pEquation)
 	{
 		std::string oldString;
@@ -261,7 +261,7 @@ SvPb::InspectionCmdResponse ValidateAndSetEquation(SvPb::ValidateAndSetEquationR
 		pEquation->SetEquationText(request.equationtext());
 		SvStl::MessageContainerVector messageContainers;
 		SvOi::EquationTestResult testResult = pEquation->Test(&messageContainers);
-		
+
 		SvPb::ValidateAndSetEquationResponse* pResponse = cmdResponse.mutable_validateandsetequationresponse();
 		pResponse->mutable_messages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 		int retValue = 0;
@@ -292,7 +292,7 @@ SvPb::InspectionCmdResponse getObjectsForMonitorList(SvPb::GetObjectsForMonitorL
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(request.objectid()));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
 	if (nullptr != pTool)
 	{
 		SvStl::MessageContainerVector messageContainers;
@@ -348,7 +348,7 @@ SvPb::InspectionCmdResponse MoveObject(SvPb::MoveObjectRequest request)
 					cmdResponse.set_hresult(E_FAIL);
 				}
 			}
-				break;
+			break;
 			default:
 				cmdResponse.set_hresult(E_FAIL);
 				break;
@@ -369,7 +369,7 @@ SvPb::InspectionCmdResponse GetTaskObjectsList(SvPb::TaskObjectListRequest reque
 	SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(request.taskobjectid()));
 	if (nullptr != pTaskObjectList)
 	{
-		SvPb::TaskObjectListResponse* pResponse = cmdResponse.mutable_taskobjectlistresponse(); 
+		SvPb::TaskObjectListResponse* pResponse = cmdResponse.mutable_taskobjectlistresponse();
 		pTaskObjectList->GetTaskObjectListInfo(*pResponse);
 	}
 	else
@@ -467,8 +467,8 @@ SvPb::InspectionCmdResponse areAuxiliaryExtentsAvailable(SvPb::AreAuxiliaryExten
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(request.objectid()));
-	if(nullptr != pTool)
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
+	if (nullptr != pTool)
 	{
 		SvPb::AreAuxiliaryExtentsAvailableResponse* pResponse = cmdResponse.mutable_areauxiliaryextentsavailableresponse();
 		pResponse->set_areavailable(pTool->areAuxExtentsAvailable());
@@ -507,8 +507,8 @@ SvPb::InspectionCmdResponse getAuxImageObject(SvPb::GetAuxImageObjectRequest req
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(request.objectid()));
-	if(nullptr != pTool)
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
+	if (nullptr != pTool)
 	{
 		auto sourceImage = pTool->getAuxSourceImage();
 		SvPb::GetAuxImageObjectResponse* pResponse = cmdResponse.mutable_getauximageobjectresponse();
@@ -584,7 +584,7 @@ SvPb::InspectionCmdResponse connectToObject(SvPb::ConnectToObjectRequest request
 	SvPb::InspectionCmdResponse result;
 
 	auto* pObject = SvOi::getObject(request.objectid());
-	if(SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject); nullptr != pTaskObject)
+	if (SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject); nullptr != pTaskObject)
 	{
 		result.set_hresult(pTaskObject->ConnectToObject(request.inputname(), request.newconnectedid(), request.objecttype(), true));
 	}
@@ -603,7 +603,7 @@ SvPb::InspectionCmdResponse saveImage(SvPb::SaveImageRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ISVImage * pObject = dynamic_cast<SvOi::ISVImage *>(SvOi::getObject(request.objectid()));
+	SvOi::ISVImage* pObject = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(request.objectid()));
 	if (pObject)
 	{
 		cmdResponse.set_hresult(pObject->Save(request.imagename()));
@@ -640,7 +640,7 @@ SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest
 			const auto& parameter = request.tree_search();
 			auto [startingObjectId, isStopAtBorder] = correctStartId(parameter.pre_search_start_id(), parameter.search_start_id());
 
-			return getAvailableObjects(startingObjectId, {parameter.type_info().objecttype(), parameter.type_info().subtype(), parameter.type_info().embeddedid()}, 
+			return getAvailableObjects(startingObjectId, {parameter.type_info().objecttype(), parameter.type_info().subtype(), parameter.type_info().embeddedid()},
 				parameter.has_defaultplushidden(), isStopAtBorder, request.desired_first_object_type_for_name(), request.exclude_first_object_name_in_name(),
 				getAllowedFunc(parameter));
 		}
@@ -687,7 +687,7 @@ SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest
 			return cmdResponse;
 		}
 	}
-	
+
 }
 
 SvPb::InspectionCmdResponse getSpecialImageList(SvPb::GetSpecialImageListRequest request)
@@ -715,7 +715,7 @@ SvPb::InspectionCmdResponse exportMask(SvPb::ExportMaskRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(request.objectid()));
+	SvOi::IMask* pObject = dynamic_cast<SvOi::IMask*>(SvOi::getObject(request.objectid()));
 	if (nullptr != pObject)
 	{
 		cmdResponse.set_hresult(pObject->Export(request.filename()));
@@ -731,7 +731,7 @@ SvPb::InspectionCmdResponse importMask(SvPb::ImportMaskRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(request.objectid()));
+	SvOi::IMask* pObject = dynamic_cast<SvOi::IMask*>(SvOi::getObject(request.objectid()));
 	if (pObject)
 	{
 		cmdResponse.set_hresult(pObject->Import(request.filename()));
@@ -759,7 +759,7 @@ SvPb::InspectionCmdResponse getObjectId(SvPb::GetObjectIdRequest request)
 		{
 			auto& rInfoStruct = request.info().infostruct();
 			SvDef::SVObjectTypeInfoStruct typeInfo {rInfoStruct.objecttype(), rInfoStruct.subtype(), rInfoStruct.embeddedid()};
-			pObject = SvOi::FindObject(request.info().ownerid() , typeInfo);
+			pObject = SvOi::FindObject(request.info().ownerid(), typeInfo);
 			break;
 		}
 		default:break;
@@ -780,7 +780,7 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject{nullptr};
+	SvOi::IObjectClass* pObject {nullptr};
 	switch (request.message_case())
 	{
 		case SvPb::CreateObjectRequest::kFriend:
@@ -906,7 +906,7 @@ SvPb::InspectionCmdResponse getPPQName(SvPb::GetPPQNameRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(request.inspectionid()));
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(request.inspectionid()));
 	if (nullptr != pInspection)
 	{
 		SvOi::IObjectClass* pPPQ = pInspection->GetPPQInterface();
@@ -1007,7 +1007,6 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 	{
 		cmdResponse.set_hresult(E_FAIL);
 	}
-
 	return cmdResponse;
 }
 
@@ -1028,37 +1027,37 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 				auto& rValues = rItem.values();
 				switch (rValues.valueData_case())
 				{
-				case SvPb::ValueObjectValues::kValue:
-					if (nullptr == pLinkedObject)
-					{
-						variant_t value;
-						SvPb::ConvertProtobufToVariant(rValues.value().value(), value);
-						// Default value has no array index
-						_variant_t defaultValue;
-						SvPb::ConvertProtobufToVariant(rValues.value().defaultvalue(), defaultValue);
-						ChangedValues.push_back(SvOi::SetValueStruct{ pValueObject, value, defaultValue, rItem.arrayindex() });
-					}
-					else
-					{
+					case SvPb::ValueObjectValues::kValue:
+						if (nullptr == pLinkedObject)
+						{
+							variant_t value;
+							SvPb::ConvertProtobufToVariant(rValues.value().value(), value);
+							// Default value has no array index
+							_variant_t defaultValue;
+							SvPb::ConvertProtobufToVariant(rValues.value().defaultvalue(), defaultValue);
+							ChangedValues.push_back(SvOi::SetValueStruct {pValueObject, value, defaultValue, rItem.arrayindex()});
+						}
+						else
+						{
+							assert(false);
+							cmdResponse.set_hresult(E_FAIL);
+						}
+						break;
+					case SvPb::ValueObjectValues::kLinkedValue:
+						if (nullptr != pLinkedObject)
+						{
+							ChangedValues.push_back(SvOi::SetLinkedStruct {pLinkedObject, rValues.linkedvalue()});
+						}
+						else
+						{
+							assert(false);
+							cmdResponse.set_hresult(E_FAIL);
+						}
+						break;
+					default:
 						assert(false);
 						cmdResponse.set_hresult(E_FAIL);
-					}
-					break;
-				case SvPb::ValueObjectValues::kLinkedValue:
-					if (nullptr != pLinkedObject)
-					{
-						ChangedValues.push_back(SvOi::SetLinkedStruct{ pLinkedObject, rValues.linkedvalue() });
-					}
-					else
-					{
-						assert(false);
-						cmdResponse.set_hresult(E_FAIL);
-					}
-					break;
-				default:
-					assert(false);
-					cmdResponse.set_hresult(E_FAIL);
-					break;
+						break;
 				}
 			}
 			else
@@ -1069,13 +1068,23 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 	}
 
 	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
+
 	if (nullptr != pTaskObject)
 	{
-		SvStl::MessageContainerVector messageContainers = pTaskObject->validateAndSetEmbeddedValues(ChangedValues, true);
+		SvOi::ResetParameter resetParameter(request.resettype());
+		SvStl::MessageContainerVector messageContainers = pTaskObject->validateAndSetEmbeddedValues(ChangedValues, true, &resetParameter);
+
+#ifdef USE_EMBEDDED_VALUE_RESPONSE
+		SvPb::SetEmbeddedValuesResponse* pResponse = cmdResponse.mutable_setembeddedvaluesresponse();
+		pResponse->set_resettype(resetParameter.result);
+#else
 		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
+#endif 	
+
 		if (0 != messageContainers.size())
 		{
 			pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
+
 			cmdResponse.set_hresult(E_FAIL);
 		}
 	}
@@ -1177,7 +1186,7 @@ SvPb::InspectionCmdResponse getToolSizeAdjustParameter(SvPb::GetToolSizeAdjustPa
 	{
 		cmdResponse.set_hresult(E_POINTER);
 	}
-	if(nullptr != pTool)
+	if (nullptr != pTool)
 	{
 		pResponse->set_enableautosize(pTool->getAutoSizeEnabled());
 		pResponse->set_canresizetoparent(pTool->canResizeToParent());
@@ -1227,7 +1236,7 @@ SvPb::InspectionCmdResponse setExtentParameter(SvPb::SetExtentParameterRequest r
 
 	if (nullptr != pTool && nullptr != pParameter)
 	{
-		HRESULT result{S_OK};
+		HRESULT result {S_OK};
 		switch (request.message_case())
 		{
 			case SvPb::SetExtentParameterRequest::kUpdateFromOutputSpace:
@@ -1389,48 +1398,48 @@ SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItems2
 void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const SvPb::GetObjectSelectorItemsRequest& request, SvPb::SearchArea area)
 {
 	SvOi::IObjectClass* pImportantObject = SvOi::getObject(request.importantobjectforstopatborder());
-	bool noBlockBecauseOfClosedGroup{ nullptr == pImportantObject || SvDef::InvalidObjectId == pImportantObject->getFirstClosedParent(SvDef::InvalidObjectId) };
+	bool noBlockBecauseOfClosedGroup {nullptr == pImportantObject || SvDef::InvalidObjectId == pImportantObject->getFirstClosedParent(SvDef::InvalidObjectId)};
 	switch (area)
 	{
-	case SvPb::globalConstantItems:
-	{
-		if (noBlockBecauseOfClosedGroup)
+		case SvPb::globalConstantItems:
 		{
-			SvOi::fillRootChildSelectorList(treeInserter, _T(""), request.attribute(), request.type());
-		}
-		else
-		{
-			SvOi::fillRootChildSelectorList(treeInserter, SvDef::FqnEnvironment, request.attribute(), request.type());
-		}
-		return;
-	}
-	case SvPb::ppqItems:
-	{
-		if (noBlockBecauseOfClosedGroup)
-		{
-			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
-			if (nullptr != pInspection)
+			if (noBlockBecauseOfClosedGroup)
 			{
-				pInspection->fillPPQSelectorList(treeInserter, request.attribute(), request.type());
+				SvOi::fillRootChildSelectorList(treeInserter, _T(""), request.attribute(), request.type());
 			}
-		}
-		return;
-	}
-	case SvPb::cameraObject:
-	{
-		if (noBlockBecauseOfClosedGroup)
-		{
-			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
-			if (nullptr != pInspection)
+			else
 			{
-				pInspection->fillCameraSelectorList(treeInserter, request.attribute(), request.type());
+				SvOi::fillRootChildSelectorList(treeInserter, SvDef::FqnEnvironment, request.attribute(), request.type());
 			}
+			return;
 		}
-		return;
-	}
-	case SvPb::toolsetItems:
-	default:
-		break;
+		case SvPb::ppqItems:
+		{
+			if (noBlockBecauseOfClosedGroup)
+			{
+				SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
+				if (nullptr != pInspection)
+				{
+					pInspection->fillPPQSelectorList(treeInserter, request.attribute(), request.type());
+				}
+			}
+			return;
+		}
+		case SvPb::cameraObject:
+		{
+			if (noBlockBecauseOfClosedGroup)
+			{
+				SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
+				if (nullptr != pInspection)
+				{
+					pInspection->fillCameraSelectorList(treeInserter, request.attribute(), request.type());
+				}
+			}
+			return;
+		}
+		case SvPb::toolsetItems:
+		default:
+			break;
 	}
 
 	uint32_t id = (SvDef::InvalidObjectId != request.instanceid()) ? request.instanceid() : request.inspectionid();
@@ -1448,13 +1457,13 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> tre
 		}
 
 		//If instance ID is set to the inspection ID then we need the name including the inspection name
-		SvPb::SVObjectTypeEnum 	objectTypeToName{SvPb::SVNotSetObjectType};
-		if(request.inspectionid() == request.instanceid())
+		SvPb::SVObjectTypeEnum 	objectTypeToName {SvPb::SVNotSetObjectType};
+		if (request.inspectionid() == request.instanceid())
 		{
 			objectTypeToName = SvPb::SVInspectionObjectType;
 		}
 
-		bool isStopAtBorder{ nullptr != pImportantObject };
+		bool isStopAtBorder {nullptr != pImportantObject};
 		if (isStopAtBorder)
 		{
 			auto* pTmpObject = SvOi::getObject(pImportantObject->getFirstClosedParent(pObject->getObjectId()));
@@ -1468,7 +1477,7 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> tre
 		if (nullptr != pObject)
 		{
 			IsObjectInfoAllowed pFunc = getObjectSelectorFilterFunc(request);
-			if(nullptr != pFunc)
+			if (nullptr != pFunc)
 			{
 				pObject->fillSelectorList(treeInserter, pFunc, request.attribute(), request.wholearray(), objectTypeToName, request.type(), isStopAtBorder, true);
 			}
@@ -1482,7 +1491,7 @@ SvPb::InspectionCmdResponse getNormalizerValues(SvPb::GetNormalizerValuesRequest
 
 	SvOi::ISVLinearAnalyzer* pAnalyzer = dynamic_cast<SvOi::ISVLinearAnalyzer*>(SvOi::getObject(request.linearanalyzerid()));
 
-	if(nullptr != pAnalyzer )
+	if (nullptr != pAnalyzer)
 	{
 		auto tempResponse = pAnalyzer->getNormalizerValues();
 		SvPb::GetNormalizerValuesResponse* pResponse = cmdResponse.mutable_getnormalizervaluesresponse();
@@ -1535,7 +1544,7 @@ SvPb::InspectionCmdResponse getImageInfo(SvPb::GetImageInfoRequest request)
 
 	SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(request.imageid()));
 
-	if (nullptr != pImage )
+	if (nullptr != pImage)
 	{
 		SvPb::GetImageInfoResponse* pResponse = cmdResponse.mutable_getimageinforesponse();
 		pResponse->set_imagetype(pImage->GetImageType());
@@ -1553,7 +1562,7 @@ SvPb::InspectionCmdResponse getBlobAnalyzerInfo(SvPb::GetBlobAnalyzerInfoRequest
 	SvPb::InspectionCmdResponse cmdResponse;
 
 	SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*>(SvOi::getObject(request.taskobjectid()));
-	
+
 	if (nullptr != pBlobAnalyzer)
 	{
 		SvPb::GetBlobAnalyzerInfoResponse* pResponse = cmdResponse.mutable_getblobanalyzerinforesponse();
@@ -1569,7 +1578,7 @@ SvPb::InspectionCmdResponse getBlobAnalyzerInfo(SvPb::GetBlobAnalyzerInfoRequest
 			pResponse->set_resultblobid(resultBlob->getObjectId());
 			pResponse->set_resultblobclassid(resultBlob->GetClassID());
 		}
-		
+
 		auto featureList = pBlobAnalyzer->getFeatureList(request.featureenabled());
 		for (auto const& feature : featureList)
 		{
@@ -1594,7 +1603,7 @@ SvPb::InspectionCmdResponse computeOverscanRect(SvPb::ComputeOverscanRectRequest
 	SvPb::InspectionCmdResponse cmdResponse;
 
 
-	auto rect = RECT{ 0 };
+	auto rect = RECT {0};
 	if (SvPb::OverscanRectKindEnum::InnerRect == request.rectkind())
 	{
 		rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(request.point().x(), request.point().y()),
@@ -1606,9 +1615,10 @@ SvPb::InspectionCmdResponse computeOverscanRect(SvPb::ComputeOverscanRectRequest
 			CSize(request.size().sizex(), request.size().sizey()));
 	}
 	else
-	{ }
-	
-		
+	{
+	}
+
+
 	SvPb::ComputeOverscanRectResponse* pResponse = cmdResponse.mutable_computeoverscanrectresponse();
 	pResponse->mutable_overscanrect()->set_left(rect.left);
 	pResponse->mutable_overscanrect()->set_right(rect.right);
@@ -1642,7 +1652,7 @@ SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest
 
 	auto* pResponseTmp = cmdResponse.mutable_getbarcodetypeinfosresponse();
 	auto tmp = SvOi::getBarCodeTypeInfo();
-	pResponseTmp->Swap(&tmp);	
+	pResponseTmp->Swap(&tmp);
 	return cmdResponse;
 }
 
@@ -1811,13 +1821,13 @@ SvPb::InspectionCmdResponse getInputValuesDefinitionExternalTool(SvPb::GetInputV
 	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
 
-	if (nullptr != pExternalToolTask )
+	if (nullptr != pExternalToolTask)
 	{
 		SvPb::GetInputValuesDefinitionExternalToolResponse* pResponse = cmdResponse.mutable_getinputvaluesdefinitionexternaltoolresponse();
 		assert(pResponse != nullptr);
 
 		pResponse->set_numinputvalues(pExternalToolTask->getExternalToolDataAdmin().getNumInputValues());
-		
+
 		auto inputDefinitions = pExternalToolTask->getExternalToolDataAdmin().getInputValuesDefinition();
 		for (auto& item : inputDefinitions)
 		{
@@ -1888,7 +1898,7 @@ SvPb::InspectionCmdResponse setPropTreeStateExternalTool(SvPb::SetPropTreeStateE
 	{
 		cmdResponse.set_hresult(E_POINTER);
 	}
-	return cmdResponse;	
+	return cmdResponse;
 }
 
 SvPb::InspectionCmdResponse validateValueParameterExternalTool(SvPb::ValidateValueParameterExternalToolRequest request)
@@ -1916,7 +1926,7 @@ SvPb::InspectionCmdResponse validateValueParameterExternalTool(SvPb::ValidateVal
 			if (dllMessageString.empty())
 			{
 				dllMessageString = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_ExternalDllSomethingWrongWithInputValue);
-			}		
+			}
 			msgList.push_back(dllMessageString);
 			SvStl::MessageContainer msg;
 			msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, request.taskobjectid());
@@ -2025,7 +2035,7 @@ SvPb::InspectionCmdResponse getResultRangeObject(SvPb::GetResultRangeObjectReque
 			pResponse->set_objectid(iObjectClass->getObjectId());
 		}
 		else
-		{ 
+		{
 			pResponse->set_classid(SvPb::ClassIdEnum::NoObjectClassId);
 			pResponse->set_objectid(0);
 		}
@@ -2093,15 +2103,15 @@ SvPb::InspectionCmdResponse getObjectName(SvPb::GetObjectNameRequest request)
 		auto* pResponse = cmdResponse.mutable_getobjectnameresponse();
 		switch (request.type_case())
 		{
-		case SvPb::GetObjectNameRequest::kBeforeType:
-			pResponse->set_name(pObject->GetObjectNameBeforeObjectType(request.beforetype()));
-			break;
-		case SvPb::GetObjectNameRequest::kToType:
-			pResponse->set_name(pObject->GetObjectNameBeforeObjectType(request.totype()));
-			break;
-		default:
-			pResponse->set_name(pObject->GetName());
-			break;
+			case SvPb::GetObjectNameRequest::kBeforeType:
+				pResponse->set_name(pObject->GetObjectNameBeforeObjectType(request.beforetype()));
+				break;
+			case SvPb::GetObjectNameRequest::kToType:
+				pResponse->set_name(pObject->GetObjectNameBeforeObjectType(request.totype()));
+				break;
+			default:
+				pResponse->set_name(pObject->GetName());
+				break;
 		}
 	}
 	else

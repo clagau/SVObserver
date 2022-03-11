@@ -438,7 +438,7 @@ message GetAvailableObjectsRequest
 	{
 		TreeSearchParameters tree_search = 3;
 		InputSearchParameters input_search=4;
-	}
+	}	
 }
 
 message GetAvailableObjectsResponse
@@ -570,8 +570,17 @@ message GetEmbeddedValuesResponse
 
 message SetEmbeddedValuesRequest
 {
-	uint32 objectId = 1;
+	uint32 objectId = 1;  //TaskObjectId 
 	repeated SetValueObjectValues list = 2;
+	ResetType  resetType = 3;
+}
+
+//not Used yet
+message SetEmbeddedValuesResponse
+{
+	MessageContainerVector errorMessages = 1;
+	ResetType  resetType = 3;
+
 }
 
 message ValidateLinkedValueRequest
@@ -1203,5 +1212,6 @@ message InspectionCmdResponse
 		GetObjectNameResponse getObjectNameResponse = 52;
 		ValidateLinkedValueResponse validateLinkedValueResponse = 53;
 		GetInputDataResponse getInputDataResponse = 54;
+		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 55;
 		}
 }

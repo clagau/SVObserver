@@ -1472,3 +1472,12 @@ enum LinkedValueTypeEnum
 	TypeImage = 5;
 	TypeStates = 6;
 };
+enum ResetType
+{
+	RT_None =0 ;
+	RT_FromObject =1;  //use resettype from embeddet variable only used in Request not in Response
+	RT_OWNER = 2;
+	RT_Tool = 3;
+	RT_IP  = 4;
+};
+

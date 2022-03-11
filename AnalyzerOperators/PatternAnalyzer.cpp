@@ -898,7 +898,7 @@ bool PatternAnalyzer::getSpecialImage(const std::string& rName, SvOi::SVImageBuf
 	return false;
 }
 
-SvStl::MessageContainerVector PatternAnalyzer::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet)
+SvStl::MessageContainerVector PatternAnalyzer::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet, SvOi::ResetParameter* pPar)
 {
 	SvStl::MessageContainerVector messages;
 	long dontCareWidth = 0;
@@ -919,7 +919,7 @@ SvStl::MessageContainerVector PatternAnalyzer::validateAndSetEmbeddedValues(cons
 	if (messages.empty())
 	{
 		m_bReloadModelFromFile = isModelFileNameToSet;
-		return __super::validateAndSetEmbeddedValues(rValueVector, shouldSet);
+		return __super::validateAndSetEmbeddedValues(rValueVector, shouldSet,pPar);
 	}
 	return messages;
 }
