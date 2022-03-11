@@ -268,7 +268,6 @@ bool SVChildrenSetupDialog::CreateSelectedResults(SvIe::SVClassInfoStruct& rChil
 }
 
 
-
 void SVChildrenSetupDialog::OnRemoveButton()
 {
 	if( m_pAvailableChildrenList && m_pParentObject )
@@ -436,7 +435,12 @@ BOOL SVChildrenSetupDialog::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject
 	// show dependents dialog
 	if (pTaskObject)
 	{
-		INT_PTR rc = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), pTaskObject->getObjectId());
+		std::set<uint32_t> rIdsOfObjectsDependedOn({pTaskObject->getObjectId()});
+
+		std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
+		std::string DisplayText = SvUl::Format(FormatText.c_str(), pTaskObject->GetName(), pTaskObject->GetName(), pTaskObject->GetName(), pTaskObject->GetName());
+
+		INT_PTR rc = SvOg::showDependentsDialogIfNecessary(rIdsOfObjectsDependedOn, DisplayText);
 
 		bRetVal = ( IDCANCEL == rc ) ? false : true;
 	}

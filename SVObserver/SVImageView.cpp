@@ -377,7 +377,7 @@ BOOL SVImageView::OnCommand( WPARAM wParam, LPARAM lParam )
 
 			if( nullptr != l_psvIPDoc )
 			{
-				SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
+				SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->Get1stSelectedToolID() ) );
 				if( pTool )
 				{
 					SvDef::SVObjectTypeInfoStruct l_svInfo;
@@ -570,7 +570,7 @@ void SVImageView::OnContextMenu( CWnd* , CPoint point )
 
 				if( nullptr != l_psvIPDoc )
 				{
-					SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID()));
+					SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->Get1stSelectedToolID()));
 					if( pTool )
 					{
 						CPoint l_point;
@@ -813,7 +813,7 @@ void SVImageView::OnLButtonDblClk( UINT nFlags, CPoint point )
 
 		if (false == ImageIsEmpty() && nullptr != l_psvIPDoc)
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID()));
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->Get1stSelectedToolID()));
 
 			if( pTool )
 			{
@@ -843,7 +843,7 @@ void SVImageView::OnRButtonDblClk( UINT nFlags, CPoint point )
 		
 		if( nullptr != l_psvIPDoc && false == ImageIsEmpty())
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->GetSelectedToolID()));
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->Get1stSelectedToolID()));
 			if(nullptr !=  pTool)
 			{
 				// Try to call SetupDialog for first found Analyzer...
@@ -1316,7 +1316,7 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& rMultiLine )
 
 	if( nullptr != GetIPDoc() )
 	{
-		l_SelectedID = GetIPDoc()->GetSelectedToolID();
+		l_SelectedID = GetIPDoc()->Get1stSelectedToolID();
 	}
 
 	switch( rMultiLine.m_ToolSetDrawFlag )
@@ -1438,7 +1438,7 @@ void SVImageView::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiL
 
 		if( nullptr != GetIPDoc() )
 		{
-			l_SelectedID = GetIPDoc()->GetSelectedToolID();
+			l_SelectedID = GetIPDoc()->Get1stSelectedToolID();
 		}
 
 		// Draw tool title...
@@ -1656,7 +1656,7 @@ BOOL SVImageView::GetObjectAtPoint( POINT point )
 
 	if( nullptr != GetIPDoc() )
 	{
-		pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID()));
+		pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( GetIPDoc()->Get1stSelectedToolID()));
 	}
 
 	if( nullptr != pTool && pTool->isInputImage( m_ImageIdPair.m_imageId ) )

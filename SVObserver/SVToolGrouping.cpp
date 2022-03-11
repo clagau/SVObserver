@@ -151,7 +151,6 @@ bool SVToolGrouping::IsNameUnique(const std::string& rName, LPCTSTR pExclude) co
 
 std::string SVToolGrouping::determineToolnameWithUniqueIndex(const std::string& rName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
 {
-	std::string newName = rName;
 	std::string lowercaseBaseName;
 	std::transform(rName.begin(), rName.end(), std::back_inserter(lowercaseBaseName), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 
@@ -227,20 +226,23 @@ std::string SVToolGrouping::determineToolnameWithUniqueIndex(const std::string& 
 	}
 
 	// build new name
-	if (lowestUnusedToolnumber)
+	std::stringstream ss;
+	// Get Base Name (can't end in a number)
+	std::string baseName = rName;
+	last_char_pos = rName.find_last_not_of(_T("0123456789"));
+	if (last_char_pos != std::string::npos)
 	{
-		std::stringstream ss;
-		// Get Base Name (can't end in a number)
-		std::string baseName = rName;
-		last_char_pos = rName.find_last_not_of(_T("0123456789"));
-		if (last_char_pos != std::string::npos)
-		{
-			baseName = rName.substr(0, last_char_pos + 1);
-		}
-		ss << baseName << lowestUnusedToolnumber;
-		newName = ss.str().c_str();
+		baseName = rName.substr(0, last_char_pos + 1);
 	}
-	return newName;
+
+	ss << baseName;
+
+	if (lowestUnusedToolnumber) // do not add a zero to the base tool name
+	{
+		ss << lowestUnusedToolnumber;
+	}
+
+	return ss.str().c_str();
 }
 
 std::string SVToolGrouping::GetToolToInsertBefore(const std::string& rName) const

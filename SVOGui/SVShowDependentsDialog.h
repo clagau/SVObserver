@@ -34,13 +34,10 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		explicit SVShowDependentsDialog( const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
+		explicit SVShowDependentsDialog( const std::set<uint32_t>& rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
 		explicit SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText = nullptr, CWnd* pParent = nullptr);
 	#pragma endregion Constructor
 
-	public:
-		static INT_PTR StandardDialog(const std::string& rName, uint32_t taskObjectID);
-	
 	protected:
 		virtual BOOL OnInitDialog() override;
 		virtual void DoDataExchange(CDataExchange* pDX) override;
@@ -52,7 +49,7 @@ namespace SvOg
 		//! Sets which controls are resized when the dialog is resized
 		void setResizeControls();
 
-		void RetreiveList(const std::set<uint32_t>& m_rSourceSet, SvPb::SVObjectTypeEnum objectType);
+		void FillDependencyList(const std::set<uint32_t>& m_rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType);
 		void addColumnHeadings();
 		void addItems();
 		void setColumnWidths();
@@ -69,4 +66,6 @@ namespace SvOg
 		DialogType m_DialogType;
 		SvDef::StringSet m_SourceNames;
 	};
+
+	INT_PTR showDependentsDialogIfNecessary(const std::set<uint32_t>& rTaskIds, const std::string& rDisplayString);
 } //namespace SvOg

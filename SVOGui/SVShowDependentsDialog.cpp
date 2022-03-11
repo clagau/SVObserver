@@ -17,7 +17,6 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -38,12 +37,13 @@ END_MESSAGE_MAP()
 const int DependentColumnNumber = 2;
 const TCHAR* const ColumnHeadings[] = {_T("Client"), _T("Supplier")};
 
-SVShowDependentsDialog::SVShowDependentsDialog(const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/)
+SVShowDependentsDialog::SVShowDependentsDialog(const std::set<uint32_t>& rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
 	, m_DisplayText((nullptr != DisplayText) ? DisplayText : std::string())
 	, m_DialogType(Type)
 {
-	RetreiveList(rSourceSet, objectType);
+	FillDependencyList(rIdsOfObjectsDependedOn, objectType);
+	//ABXX hier Liste verkleinern?
 }
 
 SVShowDependentsDialog::SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText /*= nullptr*/, CWnd* pParent /*= nullptr*/)
@@ -52,25 +52,6 @@ SVShowDependentsDialog::SVShowDependentsDialog(SvDef::StringPairVector dependenc
 	, m_DisplayText((nullptr != DisplayText) ? DisplayText : std::string())
 	, m_DialogType(Show)
 {
-}
-
-/*static*/ INT_PTR SVShowDependentsDialog::StandardDialog(const std::string& rName, uint32_t taskObjectID)
-{
-	INT_PTR Result(IDOK);
-
-	if (SvDef::InvalidObjectId != taskObjectID)
-	{
-		std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
-		std::string DisplayText = SvUl::Format(FormatText.c_str(), rName.c_str(), rName.c_str(), rName.c_str(), rName.c_str());
-
-		std::set<uint32_t> SourceSet;
-		SourceSet.insert(taskObjectID);
-		SVShowDependentsDialog Dlg(SourceSet, SvPb::SVToolObjectType, DisplayText.c_str());
-
-		Result = Dlg.DoModal();
-	}
-
-	return Result;
 }
 
 void SVShowDependentsDialog::DoDataExchange(CDataExchange* pDX)
@@ -224,11 +205,11 @@ void SVShowDependentsDialog::setResizeControls()
 	m_Resizer.Add(this, IDCANCEL, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
 }
 
-void SVShowDependentsDialog::RetreiveList(const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum objectType)
+void SVShowDependentsDialog::FillDependencyList(const std::set<uint32_t>& rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType)
 {
-	for (auto Iter = rSourceSet.begin(); rSourceSet.end() != Iter; ++Iter)
+	for (auto id : rIdsOfObjectsDependedOn)
 	{
-		SvOi::IObjectClass* pSourceObject = SvOi::getObject(*Iter);
+		SvOi::IObjectClass* pSourceObject = SvOi::getObject(id);
 		if (nullptr != pSourceObject)
 		{
 			std::string Name;
@@ -258,7 +239,7 @@ void SVShowDependentsDialog::RetreiveList(const std::set<uint32_t>& rSourceSet, 
 	m_dependencyList.clear();
 	SvOi::ToolDependencyEnum ToolDependency = (DeleteConfirm == m_DialogType) ? SvOi::ToolDependencyEnum::Client : SvOi::ToolDependencyEnum::ClientAndSupplier;
 
-	SvOi::getToolDependency(std::back_inserter(m_dependencyList), rSourceSet, objectType, ToolDependency);
+	SvOi::getToolDependency(std::back_inserter(m_dependencyList), rIdsOfObjectsDependedOn, objectType, ToolDependency);
 }
 
 void SVShowDependentsDialog::addColumnHeadings()
@@ -299,4 +280,11 @@ void SVShowDependentsDialog::setColumnWidths()
 		}
 	}
 }
+
+INT_PTR showDependentsDialogIfNecessary(const std::set<uint32_t>& rIdsOfObjectsDependedOn, const std::string& rDisplayString)
+{
+	SVShowDependentsDialog Dlg(rIdsOfObjectsDependedOn, SvPb::SVToolObjectType, rDisplayString.c_str());
+	return Dlg.DoModal();
+}
+
 } //namespace SvOg

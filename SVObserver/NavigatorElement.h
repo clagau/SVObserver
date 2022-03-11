@@ -57,5 +57,3 @@ struct NavigatorElement
 };
 
 typedef std::shared_ptr<NavigatorElement> PtrNavigatorElement;
-using NavigatorIndexAndElement = std::pair<int, PtrNavigatorElement>;
-using NavigatorIndexAndElementVector = std::vector<NavigatorIndexAndElement>;

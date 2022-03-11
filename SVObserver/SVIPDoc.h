@@ -114,7 +114,9 @@ public:
 	RegressionRunModeEnum GetRegressionRunMode();
 	void SetRegressionTimeoutPeriod(int p_TimeoutMS);
 
-	uint32_t GetSelectedToolID() const;
+	uint32_t Get1stSelectedToolID() const;
+	std::set<uint32_t> GetSelectedToolIds() const; ///< returns a std::set because showDependentsDialogIfNecessary() requires one
+
 	void SetSelectedToolID(uint32_t toolID );
 
 	bool IsToolPreviousToSelected(uint32_t toolID ) const;
@@ -294,7 +296,7 @@ protected:
 	void SetMDIChild( CMDIChildWnd* p_pMDIChildWnd );
 
 	bool AddTool(SvPb::ClassIdEnum classId);
-	bool deleteTool(NavigatorElement* pNaviElement);
+	bool deleteTool(SvTo::SVToolClass* pTool);
 
 	bool AddToolGrouping(bool bStartGroup = true);
 
@@ -323,8 +325,6 @@ protected:
 
 	HRESULT UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
 	HRESULT UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
-
-	bool checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject );
 
 	bool m_bAllowRefresh;
 	SVProductDataQueue m_NewProductData;
@@ -384,3 +384,5 @@ void SetAllIPDocumentsOnline();
 
 
 CDocTemplate* CreateIpDocMultiDocTemplate();
+bool mayDeleteCurrentlySelectedTools(const std::set<uint32_t>& rIdsOfObjectsDependedOn);
+SvTo::SVToolClass* getCorrespondingToolPointer(NavigatorElement* pNaviElement, uint32_t inspectionID);

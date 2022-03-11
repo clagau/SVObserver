@@ -93,7 +93,7 @@ union SVViewUnion
 {
 	CView* pView {nullptr};	//Note for union only one field can be initialized
 	SVImageViewScroll* pImageScroll;
-	ToolSetView* pToolSetView;
+	ToolSetView* pToolsetView;
 	ResultTabbedView* pResultView;
 };
 
@@ -262,7 +262,7 @@ LPCTSTR getViewClassName(CView* pView)
 
 std::unique_ptr<SVToolAdjustmentDialogSheetClass> GetToolAdjustmentSheet(SVIPDoc* pSVIPDoc, int tab)
 {
-	auto taskObjectID = pSVIPDoc->GetSelectedToolID();
+	auto taskObjectID = pSVIPDoc->Get1stSelectedToolID();
 
 	SvOi::IObjectClass* pTaskObject = SvOi::getObject(taskObjectID);
 
@@ -510,7 +510,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 	}
 	pToolsetView->getListCtrl().EnsureOneIsSelected();
 
-	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelIndexAndElement().second;
+	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelNavigatorElement();
 
 	if (!pNavElement)
 	{
@@ -623,7 +623,7 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 	}
 	pToolsetView->getListCtrl().EnsureOneIsSelected();
 
-	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelIndexAndElement().second;
+	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelNavigatorElement();
 
 	if (!pNavElement)
 	{
@@ -1226,7 +1226,7 @@ void SVIPDoc::OnEditDelete()
 		return;
 	}
 
-	// Don't allow while inspecting
+	// Don't allow deletion of tools while inspecting
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		return;
@@ -1238,41 +1238,52 @@ void SVIPDoc::OnEditDelete()
 		return;
 	}
 
-	auto niaev = pToolsetView->GetSelectedNavigatorIndexAndElementVector();
-
-	for (const auto& rIaev : niaev)
+	if (false == mayDeleteCurrentlySelectedTools(GetSelectedToolIds()))
 	{
+		return;
+	}
 
-		if (!rIaev.second)
+	for (const auto ptrNavElem : pToolsetView->GetSelectedNavigatorElements())
+	{
+		if (!ptrNavElem)
 		{
 			continue;
 		}
-		switch (rIaev.second->m_Type)
+		switch (ptrNavElem->m_Type)
 		{
 			case NavElementType::SubLoopTool:
 			case NavElementType::SubTool:
+			{
+				auto pTool = getCorrespondingToolPointer(ptrNavElem.get(), m_InspectionID);
 
-
-				if (deleteTool(rIaev.second.get()))
+				if(nullptr != pTool)
 				{
-					UpdateAllViews(nullptr, RefreshDelete);
-					SetModifiedFlag();
-					RunOnce();
+					if (deleteTool(pTool))
+					{
+						UpdateAllViews(nullptr, RefreshDelete);
+						SetModifiedFlag();
+						RunOnce();
+					}
 				}
 				break;
+			}
 
 			case NavElementType::LoopTool:
 			case NavElementType::GroupTool:
 			case NavElementType::Tool:
 			{
-				if (deleteTool(rIaev.second.get()))
+				auto pTool = getCorrespondingToolPointer(ptrNavElem.get(), m_InspectionID);
+
+				if (nullptr != pTool)
 				{
-					m_toolGroupings.RemoveTool(rIaev.second->m_DisplayName);
-					RebuildResultsList();
-					//pInspection->RebuildInspectionInputList();
-					UpdateAllViews(nullptr, RefreshDelete);
-					SetModifiedFlag();
-					RunOnce(); // this will cause rebuild to be called so why are we calling rebuild above?
+					if (deleteTool(pTool))
+					{
+						m_toolGroupings.RemoveTool(ptrNavElem->m_DisplayName);
+						RebuildResultsList();
+						UpdateAllViews(nullptr, RefreshDelete);
+						SetModifiedFlag();
+						RunOnce();
+					}
 				}
 			}
 			break;
@@ -1280,7 +1291,7 @@ void SVIPDoc::OnEditDelete()
 			case NavElementType::StartGrouping:
 			case NavElementType::EndGrouping:
 			{
-				m_toolGroupings.RemoveGroup(rIaev.second->m_DisplayName);
+				m_toolGroupings.RemoveGroup(ptrNavElem->m_DisplayName);
 				UpdateAllViews(nullptr, RefreshDelete);
 				SetModifiedFlag();
 			}
@@ -1329,7 +1340,7 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 	{
 		if (!pToolsetView->IsLabelEditing())
 		{
-			auto [SelectedListIndex, pNavElement] = pToolsetView->Get1stSelIndexAndElement();
+			auto pNavElement = pToolsetView->Get1stSelNavigatorElement();
 
 			if (pNavElement)
 			{
@@ -1341,10 +1352,7 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 					case NavElementType::Tool:
 					case NavElementType::LoopTool:
 					case NavElementType::GroupTool:
-						if (-1 != SelectedListIndex)
-						{
 							Enabled = true;
-						}
 						break;
 				}
 			}
@@ -1392,7 +1400,8 @@ void SVIPDoc::OnEditPaste()
 	{
 		return;
 	}
-	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelIndexAndElement().second;
+
+	auto pNavElement = pToolsetView->Get1stSelNavigatorElement();
 
 	SVToolSet* pToolSet(pInspection->GetToolSet());
 	if (nullptr == pNavElement || nullptr == pToolSet)
@@ -1461,16 +1470,16 @@ void SVIPDoc::OnEditPaste()
 
 void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
 {
-	ToolSetView* pToolSetView = GetToolSetView();
+	ToolSetView* pToolsetView = GetToolSetView();
 	SVToolSet* pToolSet = GetToolSet();
-	bool enabled = TheSVObserverApp().OkToEdit() && nullptr != pToolSet && nullptr != pToolSetView && false == pToolSetView->IsLabelEditing();
+	bool enabled = TheSVObserverApp().OkToEdit() && nullptr != pToolSet && nullptr != pToolsetView && false == pToolsetView->IsLabelEditing();
 
 	if (enabled)
 	{
-		auto [SelectedListIndex, pNavElement] = pToolSetView->Get1stSelIndexAndElement();
+		auto pNavElement = pToolsetView->Get1stSelNavigatorElement();
 
 		//Only if tool list active and a selected index is valid
-		enabled = (nullptr != pNavElement && -1 != SelectedListIndex && toolClipboardDataPresent());
+		enabled = (nullptr != pNavElement && toolClipboardDataPresent());
 	}
 	pCmdUI->Enable(enabled);
 }
@@ -1570,18 +1579,18 @@ void SVIPDoc::updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uin
 
 void SVIPDoc::OnShowFirstError()
 {
-	ToolSetView* pToolSetView = GetToolSetView();
-	if (nullptr != pToolSetView)
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr != pToolsetView)
 	{
-		pToolSetView->displayFirstCurrentToolError();
+		pToolsetView->displayFirstCurrentToolError();
 	}
 }
 
 void SVIPDoc::OnUpdateShowFirstError(CCmdUI* pCmdUI)
 {
 	BOOL Enabled = false;
-	ToolSetView* pToolSetView = GetToolSetView();
-	if (nullptr != pToolSetView && pToolSetView->hasCurrentToolErrors())
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr != pToolsetView && pToolsetView->hasCurrentToolErrors())
 	{
 		Enabled = true;
 	}
@@ -1591,20 +1600,20 @@ void SVIPDoc::OnUpdateShowFirstError(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnAddParameterToMonitorList()
 {
-	ToolSetView* pToolSetView = GetToolSetView();
+	ToolSetView* pToolsetView = GetToolSetView();
 	std::string ppqName = GetInspectionProcess()->GetPPQ()->GetName();
-	if (nullptr != pToolSetView)
+	if (nullptr != pToolsetView)
 	{
-		pToolSetView->addParameter2MonitorList(ppqName.c_str());
+		pToolsetView->addParameter2MonitorList(ppqName.c_str());
 	}
 }
 
 void SVIPDoc::OnUpdateAddParameterToMonitorList(CCmdUI* pCmdUI)
 {
 	BOOL Enabled = false;
-	ToolSetView* pToolSetView = GetToolSetView();
+	ToolSetView* pToolsetView = GetToolSetView();
 	std::string ppqName = GetInspectionProcess()->GetPPQ()->GetName();
-	if (nullptr != pToolSetView && pToolSetView->isAddParameter2MonitorListPossible(ppqName.c_str()))
+	if (nullptr != pToolsetView && pToolsetView->isAddParameter2MonitorListPossible(ppqName.c_str()))
 	{
 		Enabled = true;
 	}
@@ -1614,20 +1623,20 @@ void SVIPDoc::OnUpdateAddParameterToMonitorList(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnRemoveParameterToMonitorList()
 {
-	ToolSetView* pToolSetView = GetToolSetView();
+	ToolSetView* pToolsetView = GetToolSetView();
 	std::string ppqName = GetInspectionProcess()->GetPPQ()->GetName();
-	if (nullptr != pToolSetView)
+	if (nullptr != pToolsetView)
 	{
-		pToolSetView->removeParameter2MonitorList(ppqName.c_str());
+		pToolsetView->removeParameter2MonitorList(ppqName.c_str());
 	}
 }
 
 void SVIPDoc::OnUpdateRemoveParameterToMonitorList(CCmdUI* pCmdUI)
 {
 	BOOL Enabled = false;
-	ToolSetView* pToolSetView = GetToolSetView();
+	ToolSetView* pToolsetView = GetToolSetView();
 	std::string ppqName = GetInspectionProcess()->GetPPQ()->GetName();
-	if (nullptr != pToolSetView && pToolSetView->isRemoveParameter2MonitorListPossible(ppqName.c_str()))
+	if (nullptr != pToolsetView && pToolsetView->isRemoveParameter2MonitorListPossible(ppqName.c_str()))
 	{
 		Enabled = true;
 	}
@@ -1654,7 +1663,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 	// Check current user access...
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(Get1stSelectedToolID()));
 		if (nullptr != pTool)
 		{
 			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
@@ -2177,20 +2186,6 @@ void SVIPDoc::RebuildResultsList()
 	}
 }
 
-bool SVIPDoc::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject)
-{
-	bool bRetVal = false;
-
-	if (pTaskObject)
-	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-		INT_PTR dlgResult = SvOg::SVShowDependentsDialog::StandardDialog(pTaskObject->GetName(), pTaskObject->getObjectId());
-
-		bRetVal = (IDOK == dlgResult);
-	}
-	return bRetVal;
-}
-
 void SVIPDoc::RunRegressionTest()
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_REMOTE_CMD))
@@ -2683,7 +2678,7 @@ void SVIPDoc::SaveViews(SvOi::IObjectWriter& rWriter)
 				}
 				else if (cToolSetViewName == viewClassName)
 				{
-					View.pToolSetView->GetParameters(rWriter);
+					View.pToolsetView->GetParameters(rWriter);
 				}
 				else if (cResultTabbedViewName == viewClassName)
 				{
@@ -2716,10 +2711,10 @@ void SVIPDoc::SaveViewPlacements(SvOi::IObjectWriter& rWriter)
 	ZeroMemory(&wndpl, sizeof(WINDOWPLACEMENT));
 	wndpl.length = sizeof(WINDOWPLACEMENT);
 
-	View.pToolSetView = dynamic_cast<ToolSetView*>(getView());
-	if (View.pToolSetView && View.pToolSetView->GetSafeHwnd())
+	View.pToolsetView = dynamic_cast<ToolSetView*>(getView());
+	if (View.pToolsetView && View.pToolsetView->GetSafeHwnd())
 	{
-		CSplitterWnd* pWndSplitter = dynamic_cast<CSplitterWnd*>(View.pToolSetView->GetParent());
+		CSplitterWnd* pWndSplitter = dynamic_cast<CSplitterWnd*>(View.pToolsetView->GetParent());
 		if (pWndSplitter && pWndSplitter->GetSafeHwnd())
 		{
 			CSplitterWnd* pWndSplitter2 = dynamic_cast<CSplitterWnd*>(pWndSplitter->GetParent());
@@ -2913,10 +2908,10 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 			//
 			// The first view is the Tool Set view.
 			//
-			View.pToolSetView = dynamic_cast<ToolSetView*>(getView());
-			if (View.pToolSetView && View.pToolSetView->GetSafeHwnd())
+			View.pToolsetView = dynamic_cast<ToolSetView*>(getView());
+			if (View.pToolsetView && View.pToolsetView->GetSafeHwnd())
 			{
-				CSplitterWnd* pWndSplitter = dynamic_cast<CSplitterWnd*>(View.pToolSetView->GetParent());
+				CSplitterWnd* pWndSplitter = dynamic_cast<CSplitterWnd*>(View.pToolsetView->GetParent());
 				if (pWndSplitter && pWndSplitter->GetSafeHwnd())
 				{
 					//
@@ -2995,7 +2990,7 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 								}
 								else if (cToolSetViewName == viewClassName)
 								{
-									bOk = View.pToolSetView->SetParameters(rTree, htiItem);
+									bOk = View.pToolsetView->SetParameters(rTree, htiItem);
 								}
 								else if (cResultTabbedViewName == viewClassName)
 								{
@@ -3049,7 +3044,7 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 								}
 								else if (cToolSetViewName == viewClassName)
 								{
-									bOk = View.pToolSetView->CheckParameters(rTree, htiItem);
+									bOk = View.pToolsetView->CheckParameters(rTree, htiItem);
 								}
 								else if (cResultTabbedViewName == viewClassName)
 								{
@@ -3203,45 +3198,10 @@ SvIe::SVVirtualCameraPtrVector SVIPDoc::GetCameras() const
 	return cameraVector;
 }
 
-bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
+
+bool SVIPDoc::deleteTool(SvTo::SVToolClass* pTool)
 {
-	SVInspectionProcess* pInspection(GetInspectionProcess());
-	if (nullptr == pInspection)
-	{
-		return false;
-	}
-	if (NavElementType::SubTool == pNaviElement->m_Type || NavElementType::SubLoopTool == pNaviElement->m_Type)
-	{
-		SvPb::InspectionCmdRequest requestCmd;
-		SvPb::InspectionCmdResponse responseCmd;
-		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
-		pRequest->set_objectid(pNaviElement->m_OwnerId);
-
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
-		{
-			if (SvPb::SVToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().objecttype() ||
-				(SvPb::LoopToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype() && SvPb::GroupToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype()))
-			{
-				return false;
-			}
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(pNaviElement->m_navigatorObjectId));
-	if (nullptr == pTool)
-	{
-		return false;
-	}
-	if (false == checkOkToDelete(pTool))
-	{
-		return false;
-	}
-	CWaitCursor l_cwcMouse;
+	CWaitCursor waitCursor;
 
 	// remove image from affected displays
 	std::vector<SvOi::IObjectClass*> outputList;
@@ -3292,7 +3252,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 
 void SVIPDoc::OnEditAdjustToolPosition()
 {
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(Get1stSelectedToolID()));
 
 	if (nullptr != pTool)
 	{
@@ -3315,16 +3275,16 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 	{
 		return pCmdUI->Enable(false);
 	}
-	ToolSetView* pToolSetView = GetToolSetView();
+	ToolSetView* pToolsetView = GetToolSetView();
 	SVToolSet* pToolSet = GetToolSet();
-	if (nullptr == pToolSet && nullptr == pToolSetView || pToolSetView->IsLabelEditing())
+	if (nullptr == pToolSet && nullptr == pToolsetView || pToolsetView->IsLabelEditing())
 	{
 		return pCmdUI->Enable(false);
 	}
 
-	auto [SelectedListIndex, pNavElement] = pToolSetView->Get1stSelIndexAndElement();
+	auto pNavElement = pToolsetView->Get1stSelNavigatorElement();
 
-	if (!pNavElement || SelectedListIndex == -1)
+	if (!pNavElement || nullptr == pNavElement)
 	{
 		return pCmdUI->Enable(false);
 	}
@@ -3360,14 +3320,8 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnShowToolRelations()
 {
-	uint32_t selectedToolID = GetSelectedToolID();
-	if (SvDef::InvalidObjectId != selectedToolID)
-	{
-		std::set<uint32_t> DependencySet;
-		DependencySet.insert(selectedToolID);
-		SvOg::SVShowDependentsDialog Dlg(DependencySet, SvPb::SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show);
-		Dlg.DoModal();
-	}
+	SvOg::SVShowDependentsDialog Dlg(GetSelectedToolIds(), SvPb::SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show);
+	Dlg.DoModal();
 }
 
 void SVIPDoc::OnUpdateShowToolRelations(CCmdUI* pCmdUI)
@@ -3393,8 +3347,8 @@ void SVIPDoc::OnToolDependencies()
 			CWaitCursor MouseBusy;
 			std::set<uint32_t> ToolIDSet;
 			pToolSet->GetToolIds(std::inserter(ToolIDSet, ToolIDSet.end()));
-			SvDef::StringPairVector m_dependencyList;
-			SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, fileDlg.GetPathName().GetString());
+			SvDef::StringPairVector dependencyList;
+			SvOi::getToolDependency(std::back_inserter(dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, fileDlg.GetPathName().GetString());
 		}
 	}
 }
@@ -3571,12 +3525,27 @@ bool SVIPDoc::IsRegressionTestRunning()
 	return m_regTest.isRunning();
 }
 
-uint32_t SVIPDoc::GetSelectedToolID() const
+std::set<uint32_t> SVIPDoc::GetSelectedToolIds() const
+{
+	std::set<uint32_t> ids;
+	ToolSetView* pView = GetToolSetView();
+	if (pView)
+	{
+		for (auto id : pView->GetAllSelectedToolIds())
+		{
+			ids.insert(id);
+		}
+	}
+
+	return ids;
+}
+
+uint32_t SVIPDoc::Get1stSelectedToolID() const
 {
 	ToolSetView* pView = GetToolSetView();
 	if (pView)
 	{
-		return pView->Get1stSelIndexAndId().second;
+		return pView->Get1stSelToolId();
 	}
 	else
 	{
@@ -3589,7 +3558,7 @@ void SVIPDoc::SetSelectedToolID(uint32_t toolID)
 	ToolSetView* pView = GetToolSetView();
 	if (pView)
 	{
-		pView->SetSelectedToolId(toolID);
+		pView->selectTool(toolID);
 	}
 }
 
@@ -4093,8 +4062,6 @@ uint32_t SVIPDoc::GetObjectIdFromToolToInsertBefore(const std::string& rName) co
 }
 
 
-
-
 bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
 {
 	bool Result {false};
@@ -4106,7 +4073,7 @@ bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
 	pTreeSearchParameter->set_search_start_id(m_InspectionID);
 	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVImageObjectType);
 	pTreeSearchParameter->mutable_type_info()->set_subtype(ImageSubType);
-	pTreeSearchParameter->mutable_isbeforetoolmethod()->set_toolid(GetSelectedToolID());
+	pTreeSearchParameter->mutable_isbeforetoolmethod()->set_toolid(Get1stSelectedToolID());
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	SvUl::NameObjectIdList availableList;
@@ -4384,4 +4351,43 @@ void SetAllIPDocumentsOnline()
 		} while (pos);
 	}
 }
+
+bool mayDeleteCurrentlySelectedTools(const std::set<uint32_t>& rIdsOfObjectsDependedOn)
+{
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+
+	std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
+	std::string DisplayText = SvUl::Format(FormatText.c_str(), "the selected tools'", "the selected tools", "the selected tools", "the selected tools");
+
+	return IDOK == SvOg::showDependentsDialogIfNecessary(rIdsOfObjectsDependedOn, DisplayText);
+}
+
+
+SvTo::SVToolClass* getCorrespondingToolPointer(NavigatorElement* pNaviElement, uint32_t inspectionID)
+{
+	if (NavElementType::SubTool == pNaviElement->m_Type || NavElementType::SubLoopTool == pNaviElement->m_Type)
+	{
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+		pRequest->set_objectid(pNaviElement->m_OwnerId);
+
+		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
+		{
+			if (SvPb::SVToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().objecttype() ||
+				(SvPb::LoopToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype() && SvPb::GroupToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype()))
+			{
+				return nullptr;
+			}
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
+	return dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(pNaviElement->m_navigatorObjectId));
+}
+
 

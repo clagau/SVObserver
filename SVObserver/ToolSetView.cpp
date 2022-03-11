@@ -105,9 +105,9 @@ ToolSetView::~ToolSetView()
 }
 #pragma endregion Constructor
 
-void ToolSetView::SetSelectedToolId(uint32_t toolId)
+void ToolSetView::selectTool(uint32_t toolId)
 {
-	m_toolSetListCtrl.SetSelectedToolId(toolId);
+	m_toolSetListCtrl.selectTool(toolId);
 }
 
 std::vector<uint32_t> ToolSetView::GetAllSelectedToolIds() const
@@ -115,13 +115,16 @@ std::vector<uint32_t> ToolSetView::GetAllSelectedToolIds() const
 	return m_toolSetListCtrl.GetAllSelectedToolIds();
 }
 
-
-NavigatorIndexAndToolId ToolSetView::Get1stSelIndexAndId() const
+int ToolSetView::Get1stSelIndex() const
 {
-	NavigatorIndexAndToolId niati = m_toolSetListCtrl.Get1stSelIndexAndId();
+	return m_toolSetListCtrl.Get1stSelIndex();
+}
+
+uint32_t ToolSetView::Get1stSelToolId() const
+{
+	auto id = m_toolSetListCtrl.Get1stSelToolId();
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLSET)
-	uint32_t id = niati.second;
 	static uint32_t s_lastId = 0;
 	if (s_lastId != id)
 	{
@@ -132,20 +135,27 @@ NavigatorIndexAndToolId ToolSetView::Get1stSelIndexAndId() const
 	}
 #endif
 
-	return niati;
+	return id;
 }
 
-NavigatorIndexAndElement ToolSetView::Get1stSelIndexAndElement() const
+PtrNavigatorElement ToolSetView::Get1stSelNavigatorElement() const
 {
-	auto niaev = m_toolSetListCtrl.GetSelectedNavigatorIndexAndElementVector();
+	auto selectedElements = m_toolSetListCtrl.GetSelectedNavigatorElements();
 
-	if (niaev.empty())
+	if (selectedElements.empty())
 	{
-		return {-1, nullptr};
+		return nullptr;
 	}
-	
-	return niaev[0];
+
+	return selectedElements[0];
 }
+
+
+std::vector<PtrNavigatorElement> ToolSetView::GetSelectedNavigatorElements() const 
+{
+	return m_toolSetListCtrl.GetSelectedNavigatorElements();
+}
+
 
 
 PtrNavigatorElement ToolSetView::GetNavigatorElement(int item) const
@@ -303,7 +313,7 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 			}
 			else if ((SVIPDoc::RefreshView == lHint) || ToolSetListHasChanged())
 			{
-				auto [selectedPos, selectedToolID] = Get1stSelIndexAndId();
+				auto selectedToolID = Get1stSelToolId();
 
 				if (pCurrentDocument->GetToolSet() == 0 || pCurrentDocument->GetToolSet()->GetInspection() == 0)
 				{
@@ -311,12 +321,16 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 				}
 				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->getObjectId(), pCurrentDocument->GetToolSet()->GetInspection()->getObjectId(), SVIPDoc::RefreshView == lHint);
 
-				SetSelectedToolId(selectedToolID);
+				selectTool(selectedToolID);
 
-				if (selectedToolID == 0 && selectedPos >-1 && m_toolSetListCtrl.GetItemCount() > selectedPos)
+				if (selectedToolID == 0)
 				{
-					//no tool selected but grouping or end of looptool
-					m_toolSetListCtrl.SetItemState(selectedPos, LVIS_SELECTED, LVIS_SELECTED);
+					auto selectedPos = Get1stSelIndex();
+					if (selectedPos > -1 && m_toolSetListCtrl.GetItemCount() > selectedPos)
+					{
+						//no tool selected but grouping or end of looptool
+						m_toolSetListCtrl.SetItemState(selectedPos, LVIS_SELECTED, LVIS_SELECTED);
+					}
 				}
 
 				m_toolSetListCtrl.RebuildImages();
@@ -411,14 +425,14 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* , LRESULT* pResult)
 		return;
 	}
 
-	NavigatorIndexAndElementVector niaev = m_toolSetListCtrl.GetSelectedNavigatorIndexAndElementVector();
+	auto selectedElements = m_toolSetListCtrl.GetSelectedNavigatorElements();
 
-	if (true == niaev.empty())
+	if (true == selectedElements.empty())
 	{
 		return;
 	}
 
-	loadAndAdaptMenu(niaev);
+	loadAndAdaptMenu(selectedElements);
 
 	// Run the toolset once to update the images/results.
 	// 16 Dec 1999 - frb. (99)
@@ -427,20 +441,20 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* , LRESULT* pResult)
 }
 
 
-void ToolSetView::loadAndAdaptMenu(const NavigatorIndexAndElementVector& rNiaev)
+void ToolSetView::loadAndAdaptMenu(const std::vector<PtrNavigatorElement>& rSelectedElements)
 {
 	BOOL bMenuLoaded = false;
 	CMenu menu;
 
-	if (std::none_of(rNiaev.cbegin(), rNiaev.cend(), [](auto& rObject){return rObject.second->m_navigatorObjectId < 1; }))
+	if (std::none_of(rSelectedElements.cbegin(), rSelectedElements.cend(), [](auto& rObject){return rObject->m_navigatorObjectId < 1; }))
 	{	//i.e. only "proper" tools are selected
-		switch (rNiaev.size()) //number of selected ToolSetViewEntries
+		switch (rSelectedElements.size()) //number of selected ToolSetViewEntries
 		{
 			case 0:
 				bMenuLoaded = menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_EMPTY);
 			case 1:
 			{
-				auto [isShiftToolWithReference, hasRoi] = determineRequiredMenuModifications(rNiaev[0].second->m_navigatorObjectId);
+				auto [isShiftToolWithReference, hasRoi] = determineRequiredMenuModifications(rSelectedElements[0]->m_navigatorObjectId);
 
 				bMenuLoaded = menu.LoadMenu(isShiftToolWithReference ? IDR_TOOL_LIST_CONTEXT_MENU_SHIFT : IDR_TOOL_LIST_CONTEXT_MENU);
 				if (false == hasRoi)
@@ -455,11 +469,11 @@ void ToolSetView::loadAndAdaptMenu(const NavigatorIndexAndElementVector& rNiaev)
 	}
 	else
 	{
-		if (1 == rNiaev.size())
+		if (1 == rSelectedElements.size())
 		{
 			bMenuLoaded = menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU1);
 			// Remove tool comment menu item unless group is selected 
-			if (rNiaev[0].second->mayHaveComment() == false)
+			if (rSelectedElements[0]->mayHaveComment() == false)
 			{
 				menu.RemoveMenu(ID_SELECTTOOL_TOOLCOMMENT, MF_BYCOMMAND);
 			}
@@ -489,7 +503,7 @@ void ToolSetView::loadAndAdaptMenu(const NavigatorIndexAndElementVector& rNiaev)
 void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	//check if on black icon clicked and if display the error message instead of TA-dialog
-	uint32_t toolId = m_toolSetListCtrl.Get1stSelIndexAndId().second;
+	uint32_t toolId = m_toolSetListCtrl.Get1stSelToolId();
 	if (SvDef::InvalidObjectId != toolId)
 	{
 		NMITEMACTIVATE* pActivate = reinterpret_cast<NMITEMACTIVATE *>(pNMHDR);
@@ -671,7 +685,7 @@ bool ToolSetView::EditToolGroupingComment(const std::string& groupingName)
 
 bool ToolSetView::IsSubToolSelected() const
 {
-	PtrNavigatorElement  pNavElement = Get1stSelIndexAndElement().second;
+	PtrNavigatorElement  pNavElement = Get1stSelNavigatorElement();
 
 	if (!pNavElement)
 	{
@@ -691,7 +705,7 @@ bool ToolSetView::IsSubToolSelected() const
 void ToolSetView::OnSelectComment()
 {
 
-	PtrNavigatorElement  pNavElement = Get1stSelIndexAndElement().second;
+	PtrNavigatorElement  pNavElement = Get1stSelNavigatorElement();
 
 	if (!pNavElement)
 	{
@@ -749,7 +763,7 @@ void ToolSetView::EditToolComment(uint32_t toolId)
 
 void ToolSetView::OnSelectToolSetReference()
 {
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(m_toolSetListCtrl.Get1stSelIndexAndId().second));
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(m_toolSetListCtrl.Get1stSelToolId()));
 
 	if (nullptr != pTool)
 	{
@@ -763,7 +777,7 @@ void ToolSetView::OnSelectToolSetReference()
 
 void ToolSetView::OnSelectToolNormalize()
 {
-	uint32_t toolId = m_toolSetListCtrl.Get1stSelIndexAndId().second;
+	uint32_t toolId = m_toolSetListCtrl.Get1stSelToolId();
 	if (SvDef::InvalidObjectId != toolId)
 	{
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(toolId));
@@ -829,7 +843,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 		return;
 	}
 
-	PtrNavigatorElement  pNavElement = Get1stSelIndexAndElement().second;
+	PtrNavigatorElement  pNavElement = Get1stSelNavigatorElement();
 
 	if (!pNavElement)
 	{
@@ -1101,7 +1115,7 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 	{
 		return false;
 	}
-	PtrNavigatorElement pNavElement = Get1stSelIndexAndElement().second;
+	PtrNavigatorElement pNavElement = Get1stSelNavigatorElement();
 
 	if (!pNavElement)
 	{
@@ -1145,7 +1159,7 @@ bool ToolSetView::enterSelectedEntry()
 		return false;
 	}
 
-	PtrNavigatorElement pNavElement = Get1stSelIndexAndElement().second;
+	PtrNavigatorElement pNavElement = Get1stSelNavigatorElement();
 
 	if (!pNavElement)
 	{
@@ -1164,7 +1178,7 @@ bool ToolSetView::enterSelectedEntry()
 			if (SvDef::InvalidObjectId != toolId)
 			{
 				pCurrentDocument->OnEditTool();
-				SetSelectedToolId(toolId);
+				selectTool(toolId);
 			}
 			break;
 		case NavElementType::EndGrouping:
@@ -1173,7 +1187,7 @@ bool ToolSetView::enterSelectedEntry()
 			break;
 		default:
 			// Deselect all...
-			m_toolSetListCtrl.SetSelectedToolId(SvDef::InvalidObjectId);
+			m_toolSetListCtrl.selectTool(SvDef::InvalidObjectId);
 			break;
 	}
 	return true;
@@ -1181,7 +1195,7 @@ bool ToolSetView::enterSelectedEntry()
 
 bool ToolSetView::hasCurrentToolErrors()
 {
-	uint32_t toolId = m_toolSetListCtrl.Get1stSelIndexAndId().second;
+	uint32_t toolId = m_toolSetListCtrl.Get1stSelToolId();
 	if (SvDef::InvalidObjectId != toolId)
 	{
 		return !m_toolSetListCtrl.isToolValid(toolId);
@@ -1191,7 +1205,7 @@ bool ToolSetView::hasCurrentToolErrors()
 
 void ToolSetView::displayFirstCurrentToolError()
 {
-	uint32_t toolId = m_toolSetListCtrl.Get1stSelIndexAndId().second;
+	uint32_t toolId = m_toolSetListCtrl.Get1stSelToolId();
 	if (SvDef::InvalidObjectId != toolId)
 	{
 		m_toolSetListCtrl.displayErrorBox(toolId);
@@ -1200,7 +1214,7 @@ void ToolSetView::displayFirstCurrentToolError()
 
 bool ToolSetView::isAddParameter2MonitorListPossible(LPCTSTR ppqName) const
 {
-	uint32_t toolId = m_toolSetListCtrl.Get1stSelIndexAndId().second;
+	uint32_t toolId = m_toolSetListCtrl.Get1stSelToolId();
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -1213,7 +1227,7 @@ bool ToolSetView::isAddParameter2MonitorListPossible(LPCTSTR ppqName) const
 
 bool ToolSetView::isRemoveParameter2MonitorListPossible(LPCTSTR ppqName) const
 {
-	uint32_t toolId = m_toolSetListCtrl.Get1stSelIndexAndId().second;
+	uint32_t toolId = m_toolSetListCtrl.Get1stSelToolId();
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -1238,7 +1252,7 @@ bool ToolSetView::areParametersInMonitorList(LPCTSTR ppqName, uint32_t toolId) c
 
 void ToolSetView::addParameter2MonitorList(LPCTSTR ppqName)
 {
-	uint32_t toolId = m_toolSetListCtrl.Get1stSelIndexAndId().second;
+	uint32_t toolId = m_toolSetListCtrl.Get1stSelToolId();
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -1255,7 +1269,7 @@ void ToolSetView::addParameter2MonitorList(LPCTSTR ppqName)
 
 void ToolSetView::removeParameter2MonitorList(LPCTSTR ppqName)
 {
-	uint32_t toolId = m_toolSetListCtrl.Get1stSelIndexAndId().second;
+	uint32_t toolId = m_toolSetListCtrl.Get1stSelToolId();
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 

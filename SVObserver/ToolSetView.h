@@ -45,13 +45,16 @@ public:
 	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 	void SetViewSize(CSize &Size);
 	bool IsLabelEditing() const;
-	void SetSelectedToolId(uint32_t toolId);
+	void selectTool(uint32_t toolId);
 
-	NavigatorIndexAndToolId Get1stSelIndexAndId() const;
 	std::vector<uint32_t> GetAllSelectedToolIds() const;
+	uint32_t Get1stSelToolId() const;
+	int Get1stSelIndex() const;
+
 	
-	NavigatorIndexAndElement Get1stSelIndexAndElement() const;
-	NavigatorIndexAndElementVector GetSelectedNavigatorIndexAndElementVector() const { return m_toolSetListCtrl.GetSelectedNavigatorIndexAndElementVector(); }
+	PtrNavigatorElement Get1stSelNavigatorElement() const;
+
+	std::vector<PtrNavigatorElement> GetSelectedNavigatorElements() const;
 
 	///Get Navigator Element Pointer for the index in the ListCtrl
 	PtrNavigatorElement GetNavigatorElement(int index) const;
@@ -119,7 +122,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	void loadAndAdaptMenu(const NavigatorIndexAndElementVector& rNiaev);
+	void loadAndAdaptMenu(const std::vector<PtrNavigatorElement>& rSelectedElements);
 
 #ifdef _DEBUG
 	virtual void AssertValid() const override;

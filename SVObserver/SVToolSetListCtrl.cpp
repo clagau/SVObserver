@@ -609,37 +609,38 @@ int SVToolSetListCtrl::GetNavigatorElementIndentation(int index) const
 }
 
 
-NavigatorIndexAndElementVector SVToolSetListCtrl::GetSelectedNavigatorIndexAndElementVector() const
+std::vector<PtrNavigatorElement> SVToolSetListCtrl::GetSelectedNavigatorElements() const
 {
-	NavigatorIndexAndElementVector selectedElements;
+	std::vector<PtrNavigatorElement> selectedElements;
 
 	int index = -1;
 
-	while(true)
+	while (true)
 	{
 		index = GetNextItem(index, LVNI_SELECTED);
 		if (index < 0)
 		{
 			break;
 		}
-		selectedElements.push_back({index, GetNavigatorElement(index)});
+		selectedElements.push_back(GetNavigatorElement(index));
 	}
 
 	return selectedElements;
 }
 
+
 std::vector<uint32_t> SVToolSetListCtrl::GetAllSelectedToolIds() const
 {
 	std::vector<uint32_t> toolIds;
-	auto niaev = GetSelectedNavigatorIndexAndElementVector();
+	auto selectedElements = GetSelectedNavigatorElements();
 
-	for (auto iae : niaev)
+	for (auto pElement : selectedElements)
 	{
-		if (iae.second)
+		if (pElement)
 		{
-			if(iae.second->m_navigatorObjectId)
+			if(pElement->m_navigatorObjectId)
 			{
-				toolIds.push_back(iae.second->m_navigatorObjectId);
+				toolIds.push_back(pElement->m_navigatorObjectId);
 			}
 		}
 	}
@@ -648,32 +649,43 @@ std::vector<uint32_t> SVToolSetListCtrl::GetAllSelectedToolIds() const
 }
 
 
-NavigatorIndexAndElement SVToolSetListCtrl::Get1stSelNavIndexAndElement() const
+PtrNavigatorElement SVToolSetListCtrl::Get1stSelNavigatorElement() const
 {
-	auto niaev = GetSelectedNavigatorIndexAndElementVector();
+	auto elements = GetSelectedNavigatorElements();
 
-	if (niaev.empty())
+	if (elements.empty())
 	{
-		return {-1, nullptr};
+		return nullptr;
 	}
 
-	return niaev[0];
+	return elements[0];
 }
 
 
-NavigatorIndexAndToolId SVToolSetListCtrl::Get1stSelIndexAndId() const 
+int SVToolSetListCtrl::Get1stSelIndex() const
 {
-	auto niae = Get1stSelNavIndexAndElement();
+	return GetNextItem(-1, LVNI_SELECTED);
+}
 
-	auto element = niae.second;
+
+uint32_t SVToolSetListCtrl::Get1stSelToolId() const
+{
+	auto elements = GetSelectedNavigatorElements();
+
+	if (elements.empty())
+	{
+		return SvDef::InvalidObjectId;
+	}
+
+	auto element = elements[0];
 
 	if (nullptr == element)
 	{
-		return {niae.first, SvDef::InvalidObjectId};
+		return SvDef::InvalidObjectId;
 	}
 	else
 	{
-		return {niae.first, element->m_navigatorObjectId};
+		return element->m_navigatorObjectId;
 	}
 }
 
@@ -705,9 +717,7 @@ void SVToolSetListCtrl::DeselectContentOfItem(int index)
 
 bool SVToolSetListCtrl::mayBeEdited() const
 {
-	auto niae = Get1stSelNavIndexAndElement();
-
-	auto element = niae.second;
+	auto element = Get1stSelNavigatorElement();
 
 	if (!element)
 	{
@@ -739,7 +749,7 @@ void SVToolSetListCtrl::EnsureOneIsSelected()
 	}
 }
 
-void SVToolSetListCtrl::SetSelectedToolId(uint32_t toolId)
+void SVToolSetListCtrl::selectTool(uint32_t toolId)
 {
 	for (int i = 0; i < GetItemCount(); ++i)
 	{

@@ -44,7 +44,7 @@ namespace SvOl
 
 	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, LPCTSTR fileName /*= nullptr*/) const
 	{
-		//! Note before calling this method the graph index must be updated this is done in the interface!
+		//! Note: Before calling this method the graph index must be updated. This is done in the interface.
 		std::vector<Dependency> DependencyVector;
 		Dependencies ObjectDependencies;
 

@@ -4394,7 +4394,9 @@ BEGIN
     BEGIN
         MENUITEM "Cut Tools",                    ID_EDIT_CUT
         MENUITEM "Copy Tools",                   ID_EDIT_COPY
-    END
+        MENUITEM SEPARATOR
+        MENUITEM "Dependencies", ID_SHOW_RELATIONS
+        END
 END
 
 IDR_TOOL_LIST_CONTEXT_MENU_EMPTY MENU
