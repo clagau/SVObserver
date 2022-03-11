@@ -497,8 +497,15 @@ namespace SvOg
 		m_resultData[pos].m_data.m_defaultValue = SvPb::getDefaultString(m_resultData[pos].m_type);
 		if (SvPb::isValueType(m_resultData[pos].m_type))
 		{
-			valueString = static_cast<CString>(m_resultData[pos].m_data.m_Value);
-			isChangeable = SvPb::LinkedSelectedOption::DirectValue == m_resultData[pos].m_data.m_selectedOption;
+			if (SvPb::LinkedSelectedOption::DirectValue == m_resultData[pos].m_data.m_selectedOption)
+			{
+				isChangeable = true;
+				valueString = static_cast<CString>(m_resultData[pos].m_data.m_directValue);
+			}
+			else
+			{
+				valueString = static_cast<CString>(m_resultData[pos].m_data.m_Value);
+			}
 			if (valueString.IsEmpty())
 			{
 				valueString = static_cast<CString>(m_resultData[pos].m_data.m_defaultValue);

@@ -347,7 +347,6 @@ enum ObjectSelectorType
 {
 	allValueObjects = 0;			//All valueObjects
 	allNumberValueObjects = 1;		//All ValueObjects which can be converted to a integer or double
-	realNumberValueOjects = 2;		//All number valueObjects, but not e.g. timer or enums
 	stringValueObjects = 3;
 	tableObjects = 4;				//Inspection  table Objects 
 	allImageObjects = 5;

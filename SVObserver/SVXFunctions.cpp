@@ -331,13 +331,7 @@ namespace
 
 	std::pair<bool, HRESULT> doStuffAfterConfigurationLoad(SVConfigurationObject* pConfig, SVTreeType& rXMLTree, SvOi::TRC_RAIIPtr globalInitRAII, SVIMProductEnum SVIMType)
 	{
-		HRESULT hr = pConfig->LoadRemoteMonitorList(rXMLTree);
-		if (hr & SvDef::svErrorCondition)
-		{
-			return {false, hr};
-		}
-
-		hr = pConfig->LoadGlobalConstants(rXMLTree);
+		HRESULT hr = pConfig->LoadGlobalConstants(rXMLTree);
 		if (hr & SvDef::svErrorCondition)
 		{
 			return {false, hr};
@@ -377,6 +371,12 @@ namespace
 		{
 			//Set ObjectAttributes also after RebuildInputOutputLists, because the LinkedValue-Children will be create in this function.
 			pConfig->SetObjectAttributes(objectAttributeList);
+		}
+
+		hr = pConfig->LoadRemoteMonitorList(rXMLTree);
+		if (hr & SvDef::svErrorCondition)
+		{
+			return {false, hr};
 		}
 
 		if (pConfig->IsConfigurationLoaded())

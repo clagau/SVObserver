@@ -582,25 +582,6 @@ bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType) const
 			}
 			return false;
 		}
-		case SvPb::realNumberValueOjects:
-		{
-			if (SvPb::SVValueObjectType == GetObjectType())
-			{
-				constexpr std::array<SvPb::SVObjectSubTypeEnum, 11> filter {SvPb::SVDWordValueObjectType, SvPb::SVLongValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::SVBoolValueObjectType, SvPb::SVByteValueObjectType, SvPb::SVInt64ValueObjectType, SvPb::DoubleSortValueObjectType};
-				return (filter.end() != std::find(filter.begin(), filter.end(), GetObjectSubType()));
-			}
-			else if (SvPb::SVBasicValueObjectType == GetObjectType())
-			{
-				auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(this);
-				if (nullptr != pValueObject)
-				{
-					DWORD type = pValueObject->GetType();
-					constexpr std::array<DWORD, 11> filter {VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL};
-					return (filter.end() != std::find(filter.begin(), filter.end(), type));
-				}
-			}
-			return false;
-		}
 		case SvPb::stringValueObjects:
 		{
 			auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(this);

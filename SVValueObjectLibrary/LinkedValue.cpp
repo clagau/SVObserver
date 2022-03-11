@@ -439,7 +439,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				{
 					case SvPb::allValueObjects:
 					case SvPb::allNumberValueObjects:
-					case SvPb::realNumberValueOjects:
 					case SvPb::stringValueObjects:
 						return false; //by ValueObjects the defaultType must not be VT_EMPTY
 					default:
@@ -548,7 +547,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				{
 					value.boolVal = value.boolVal ? 1 : 0;
 				}
-				if (VT_BSTR == value.vt && 0 != (defaultValue.vt & VT_BSTR))
+				if (VT_BSTR == value.vt && SvUl::VTGroups::Text != SvUl::getVTGroup(defaultValue.vt).first)
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
 					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
@@ -1181,7 +1180,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 							SetArraySize(pValue->getArraySize());
 						}
 					}
-					if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(m_LinkedObjectRef.getObject()); nullptr != pValue && VT_BSTR == pValue->getDefaultValue().vt && 0 == (GetDefaultType() & VT_BSTR))
+					if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(m_LinkedObjectRef.getObject()); nullptr != pValue && SvUl::VTGroups::Text == SvUl::getVTGroup(pValue->getDefaultValue().vt).first && SvUl::VTGroups::Text != SvUl::getVTGroup(GetDefaultType()).first)
 					{
 						if (nullptr != pErrorMessages)
 						{
@@ -1273,7 +1272,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	HRESULT LinkedValue::getValue(double& rValue, int Index/* = -1*/) const 
 	{ 
-		if (0 != (GetDefaultType() & VT_BSTR))
+		if (SvUl::VTGroups::Numbers != SvUl::getVTGroup(GetDefaultType()).first)
 		{
 			return E_FAIL;
 		}

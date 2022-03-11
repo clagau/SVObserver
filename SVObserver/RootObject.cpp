@@ -433,7 +433,6 @@ void SvOi::fillRootChildSelectorList(std::back_insert_iterator<std::vector<SvPb:
 			typeOk = true;
 			break;
 		case SvPb::allNumberValueObjects:
-		case SvPb::realNumberValueOjects:
 		{
 			constexpr std::array<DWORD, 11> filter{ VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL };
 			typeOk = (filter.end() != std::find(filter.begin(), filter.end(), rpObject->GetType()));

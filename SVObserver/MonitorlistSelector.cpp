@@ -97,21 +97,21 @@ int  MonitorlistSelector::DisplayDialog()
 			{
 				SvPb::InspectionCmdRequest requestCmd;
 				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{ SvPb::SearchArea::toolsetItems }, pInspection->getObjectId(), SvPb::archivableImage, pInspection->getObjectId(), false, SvPb::allImageObjects);
+					{ SvPb::SearchArea::toolsetItems }, pInspection->getObjectId(), SvPb::archivableImage, pInspection->getObjectId(), false, SvPb::allImageObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, pInspection->getObjectId());
 				SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 			}
 			else if(m_eListType == PRODUCT_OBJECT_LIST)
 			{
 				SvPb::InspectionCmdRequest requestCmd;
 				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::viewable, pInspection->getObjectId());
+					{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::viewable, pInspection->getObjectId(), false, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, pInspection->getObjectId());
 				SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 			}
 			else
 			{
 				SvPb::InspectionCmdRequest requestCmd;
 				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::viewable, pInspection->getObjectId(), false, SvPb::realNumberValueOjects);
+					{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::viewable, pInspection->getObjectId(), false, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, pInspection->getObjectId());
 				SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 			}
 		}

@@ -429,8 +429,8 @@ void SVTADlgExternalInputSelectPage::setValueColumn(SvPb::EmbeddedIdEnum eId, Sv
 		case SvPb::Scalar:
 		case SvPb::Array:
 		default:
-			valueString = SvUl::VariantToString(data.m_Value).c_str();
-			isReadOnly = (SvPb::LinkedSelectedOption::DirectValue != data.m_selectedOption);
+		valueString = SvUl::VariantToString(data.m_Value).c_str();
+		isReadOnly = (SvPb::LinkedSelectedOption::DirectValue != data.m_selectedOption);
 			break;
 	}
 
