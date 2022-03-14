@@ -242,7 +242,7 @@ std::string SVToolGrouping::determineToolnameWithUniqueIndex(const std::string& 
 		ss << lowestUnusedToolnumber;
 	}
 
-	return ss.str().c_str();
+	return ss.str();
 }
 
 std::string SVToolGrouping::GetToolToInsertBefore(const std::string& rName) const
