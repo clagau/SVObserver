@@ -665,6 +665,10 @@ HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCo
 	{
 		hr = SVAcquisitionClass::SetDeviceParameters( rDeviceParams );
 	}
+	if( S_OK == hr )
+	{
+		hr = InitializeDevice( rDeviceParams );
+	}
 	if (S_OK == hr)
 	{
 		if (-1 != m_sequenceCameraFileIndex && m_sequenceCameraFileIndex < static_cast<int> (mFiles.size()))
@@ -673,10 +677,6 @@ HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCo
 			fileName.SetString(mFiles[m_sequenceCameraFileIndex].GetFullFileName().c_str());
 			hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SvDef::SVCameraSequenceFile, fileName);
 		}
-	}
-	if( S_OK == hr )
-	{
-		hr = InitializeDevice( rDeviceParams );
 	}
 
 	return hr;
