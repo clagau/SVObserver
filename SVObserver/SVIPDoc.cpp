@@ -1384,6 +1384,13 @@ void fixInputs(uint32_t inspectionId, const std::vector<uint32_t>& rToolIds)
 				pTool->resetAllObjects();
 			}
 		}
+		//@TODO[MZA][10.20][14.03.2022] Wird ein WindowTool von einer Inspection zu einer anderen Inspection kopiert, wird durch ein Reset die Images nicht richtig angepasst.
+		//Deshalb muss man noch ein Reset machen. Wenn das Reset verbessert wird, könnte das zweite Reset vielleicht überflüssig.
+		auto* pInsp = SVObjectManagerClass::Instance().GetObject(inspectionId);
+		if (nullptr != pInsp)
+		{
+			pInsp->resetAllObjects();
+		}
 	}
 }
 

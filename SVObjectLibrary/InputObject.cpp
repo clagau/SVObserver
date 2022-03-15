@@ -266,10 +266,19 @@ void InputObject::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::F
 		data.set_islinkedvalue(false);
 		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = data;
-		auto* pOwner = dynamic_cast<SvOi::ITaskObject*>(GetParent());
-		if (nullptr != pOwner)
+
+		SVObjectReference objectRef {GetObjectReferenceForDottedName(m_DottedNameOfFailedLoadInput)};
+		SetInputObject(objectRef);
+		validateInput();
+
+		if (false == IsConnected())
 		{
-			pOwner->connectInput(this);
+			auto* pOwner = dynamic_cast<SvOi::ITaskObject*>(GetParent());
+			if (nullptr != pOwner)
+			{
+				pOwner->connectInput(this);
+				validateInput();
+			}
 		}
 	}
 }
