@@ -89,8 +89,12 @@ namespace SvOl
 				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
 				if (nullptr != pToolSupplier && nullptr != pToolClient)
 				{
+					bool isClientInSourceSet = rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId());
+					isClientInSourceSet |= (pTopToolClient != nullptr) ? rSourceSet.end() != rSourceSet.find(pTopToolClient->getObjectId()) : false;
+					bool isSupplierInSourceSet = rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId());
+					isSupplierInSourceSet |= (pTopToolSupplier != nullptr) ? rSourceSet.end() != rSourceSet.find(pTopToolSupplier->getObjectId()) : false;
 					//If same Tool filter out directly
-					if (pToolSupplier == pToolClient || pTopToolSupplier == pToolClient)
+					if (isClientInSourceSet && isSupplierInSourceSet)
 					{
 						return false;
 					}
