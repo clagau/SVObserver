@@ -184,6 +184,9 @@ BOOL SVObserverApp::InitInstance()
 {
 	CWinApp::InitInstance();
 
+	// Registry Key...
+	SetRegistryKey(_T("SVR Gesellschaft für Bildverarbeitung mbH"));
+
 	HINSTANCE ResourceInstance(nullptr);
 	//Load resource dll explicitly
 	HRESULT retValue = SvUl::LoadDll::Instance().getDll(SvUl::SVOResourceDll, ResourceInstance);
@@ -294,9 +297,6 @@ BOOL SVObserverApp::InitInstance()
 #endif //_DEBUG                  // 23 Mar 1999 - frb.
 
 	AfxEnableControlContainer();
-
-	// Registry Key...
-	SetRegistryKey(_T("SVR Gesellschaft für Bildverarbeitung mbH"));
 
 	LoadStdProfileSettings(7);  // Standard-INI-Dateioptionen einlesen (einschließlich MRU)
 

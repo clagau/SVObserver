@@ -341,15 +341,7 @@ bool RootObject::createRootChildren()
 			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		// Load special profile settings
-		bool StartLastConfiguration(false);
-		if (AfxGetApp()->GetProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), 0))
-		{
-			StartLastConfiguration = true;
-		}
-		else
-		{
-			StartLastConfiguration = false;
-		}
+		bool StartLastConfiguration = (1 == AfxGetApp()->GetProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), 0));
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
 		if (nullptr != pValueObject)
 		{
