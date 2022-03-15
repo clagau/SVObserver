@@ -671,7 +671,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCo
 	}
 	if (S_OK == hr)
 	{
-		if (-1 != m_sequenceCameraFileIndex && m_sequenceCameraFileIndex < static_cast<int> (mFiles.size()))
+		if (IsDigitizerSubsystemValid() && -1 != m_sequenceCameraFileIndex && m_sequenceCameraFileIndex < static_cast<int> (mFiles.size()))
 		{
 			_variant_t fileName;
 			fileName.SetString(mFiles[m_sequenceCameraFileIndex].GetFullFileName().c_str());
