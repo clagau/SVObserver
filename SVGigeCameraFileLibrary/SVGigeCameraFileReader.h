@@ -19,7 +19,6 @@
 class SVDeviceParamCollection;
 class SVLongValueDeviceParam;
 
-
 class SVGigeCameraFileReader
 {
 public:
@@ -30,7 +29,6 @@ public:
 	HRESULT ReadCameraFileImpl( SVDeviceParamCollection& rParams );
 
 	const std::string& GetFeatureOverrides() const {return m_FeatureOverrides;}
-
 
 private:
 	HRESULT ReadCustomParams(const std::string& filename, SVDeviceParamCollection& rParams);

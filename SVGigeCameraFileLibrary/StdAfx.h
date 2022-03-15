@@ -47,6 +47,7 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <array>
 #include <atomic>			//Used by status library
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
@@ -57,6 +58,7 @@
 #include <iterator>
 #include <map>
 #include <memory>
+#include <mil.h>
 #include <mutex>			//Used by static library
 #pragma warning(push)
 #pragma warning(disable : 4996)

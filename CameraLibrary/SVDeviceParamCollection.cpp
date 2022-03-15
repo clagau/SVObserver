@@ -92,7 +92,7 @@ HRESULT SVDeviceParamCollection::CreateParameter( SVDeviceParamEnum e, const VAR
 	}
 	else
 	{
-		SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
+		SetParameter( e, std::unique_ptr<SVDeviceParam>(SVDeviceParam::Create(e)).get());
 		SVDeviceParam* pParam = GetParameter( e );
 		if ( pParam )
 		{
@@ -133,7 +133,7 @@ HRESULT SVDeviceParamCollection::SetParameterDefaults()
 
 		// for Legacy Code in SVConfigurationObject and SVOConfigAssistantDlg
 		// Create the BoolDeviceParam for DeviceParamAcquisitionStrobeEdge
-		SetParameter( DeviceParamAcquisitionStrobeEdge, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( DeviceParamAcquisitionStrobeEdge )) );
+		SetParameter( DeviceParamAcquisitionStrobeEdge, std::unique_ptr<SVDeviceParam>(SVDeviceParam::Create(DeviceParamAcquisitionStrobeEdge)).get());
 		SVBoolValueDeviceParam* pEdge = GetParameter( DeviceParamAcquisitionStrobeEdge ).DerivedValue(pEdge);
 
 		SVBoolValueDeviceParam::OptionType l_Option;
@@ -169,7 +169,7 @@ HRESULT SVDeviceParamCollection::SetParameterDefaults()
 
 		// for Legacy Code in SVConfigurationObject and SVOConfigAssistantDlg
 		// Create the BoolDeviceParam for DeviceParamAcquisitionTriggerEdge
-		SetParameter( DeviceParamAcquisitionTriggerEdge, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( DeviceParamAcquisitionTriggerEdge )) );
+		SetParameter( DeviceParamAcquisitionTriggerEdge, std::unique_ptr<SVDeviceParam>(SVDeviceParam::Create(DeviceParamAcquisitionTriggerEdge)).get());
 		SVBoolValueDeviceParam* pEdge = GetParameter( DeviceParamAcquisitionTriggerEdge ).DerivedValue(pEdge);
 
 		SVBoolValueDeviceParam::OptionType l_Option;

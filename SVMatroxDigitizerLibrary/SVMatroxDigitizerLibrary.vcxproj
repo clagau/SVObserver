@@ -92,7 +92,6 @@
     </ClCompile>
     <ClCompile Include="SVMatroxDigitizer.cpp" />
     <ClCompile Include="SVMatroxDigitizerControlEnums.cpp" />
-    <ClCompile Include="SVMatroxDigitizerFeatureEnums.cpp" />
     <ClCompile Include="SVMatroxDigitizerGrabEnums.cpp" />
     <ClCompile Include="SVMatroxDigitizerHookEnums.cpp" />
     <ClCompile Include="SVMatroxDigitizerInquireEnums.cpp" />

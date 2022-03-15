@@ -32,16 +32,16 @@ public:
 		ReadWrite
 	};
 
-	SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType);
-	SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access);
-	SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector);
-	SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector, const SVGigeFeatureStringEnumList& p_stringEnums);
+	SVGigeFeature(const std::string& p_name, SVFeatureTypeEnum p_featureType);
+	SVGigeFeature(const std::string& p_name, SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access);
+	SVGigeFeature(const std::string& p_name, SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector);
+	SVGigeFeature(const std::string& p_name, SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector, const SVGigeFeatureStringEnumList& p_stringEnums);
 	SVGigeFeature(const SVGigeFeature& rFeature);
 	
 	SVGigeFeature& operator=(const SVGigeFeature& rFeature);
 	
 	const std::string& GetName() const;
-	SVMatroxDigitizerFeature::SVFeatureTypeEnum GetType() const;
+	SVFeatureTypeEnum GetType() const;
 	bool IsSupported() const;
 	bool IsReadOnly() const;
 
@@ -53,7 +53,7 @@ public:
 
 private:
 	std::string m_name;
-	SVMatroxDigitizerFeature::SVFeatureTypeEnum m_featureType;
+	SVFeatureTypeEnum m_featureType;
 	FeatureSupportedEnum m_supported;
 	FeatureAccessEnum m_access;
 	SVGigeFeatureSelector m_selector;

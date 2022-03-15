@@ -12,8 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <utility>
 #pragma endregion Includes
 
 /**
@@ -25,21 +23,33 @@
 
 */
 
-struct SVMatroxDigitizerFeature
+// Feature Type
+enum SVFeatureTypeEnum
 {
-	// Feature Type
-	enum SVFeatureTypeEnum
-	{
-		SVTypeCommand,				// M_TYPE_COMMAND
-		SVTypeInt32,				// M_TYPE_MIL_INT32
-		SVTypeDouble,				// M_TYPE_DOUBLE
-		SVTypeString,				// M_TYPE_STRING
-		SVTypeIntegerEnumeration,	// M_TYPE_INTEGER_ENUMERATION - by mil9, M_TYPE_MIL_INT32 by mil10, maybe can replaced SVTypeInt32 for MIL10
-		SVTypeStringEnumeration,	// M_TYPE_STRING_ENUMERATION - by mil9, M_TYPE_STRING by mil10, maybe can replaced by SVTypeString for MIL10
-		SVTypeBool,					// M_TYPE_BOOLEAN
-	};
-	// define convertor for from/to SVEnum/Matrox types
-	typedef std::vector<std::pair<SVFeatureTypeEnum, long long>> SVFeatureTypeEnumPair;
-	static SVFeatureTypeEnumPair m_FeatureTypeEnumConvertor;
+	SVTypeCommand,				// M_TYPE_COMMAND
+	SVTypeInt32,				// M_TYPE_MIL_INT32
+	SVTypeDouble,				// M_TYPE_DOUBLE
+	SVTypeString,				// M_TYPE_STRING
+	SVTypeStringEnumeration,	// M_TYPE_STRING_ENUMERATION
+	SVTypeBool,					// M_TYPE_BOOLEAN
 };
 
+constexpr std::array<std::pair<SVFeatureTypeEnum, LPCTSTR>, 6> cFeatureTypeStringEnums =
+{{
+	{SVFeatureTypeEnum::SVTypeCommand, _T("SVTypeCommand")},
+	{SVFeatureTypeEnum::SVTypeInt32, _T("SVTypeInt32")},
+	{SVFeatureTypeEnum::SVTypeDouble, _T("SVTypeDouble")},
+	{SVFeatureTypeEnum::SVTypeString, _T("SVTypeString")},
+	{SVFeatureTypeEnum::SVTypeStringEnumeration, _T("SVTypeStringEnumeration")},
+	{SVFeatureTypeEnum::SVTypeBool, _T("SVTypeBool")}
+}};
+
+constexpr std::array<std::pair<SVFeatureTypeEnum, long long>, 6> cFeatureTypeEnumConvertor = 
+{{
+	{SVFeatureTypeEnum::SVTypeCommand,	M_TYPE_COMMAND},
+	{SVFeatureTypeEnum::SVTypeInt32, M_TYPE_MIL_INT32},
+	{SVFeatureTypeEnum::SVTypeDouble, M_TYPE_DOUBLE},
+	{SVFeatureTypeEnum::SVTypeString, M_TYPE_STRING},
+	{SVFeatureTypeEnum::SVTypeStringEnumeration, M_TYPE_STRING},
+	{SVFeatureTypeEnum::SVTypeBool,	M_TYPE_BOOLEAN}
+}};

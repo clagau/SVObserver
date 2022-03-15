@@ -66,7 +66,8 @@ constexpr int GrayScaleBitDepth = 8;
 constexpr const char*  c_Color = _T(" Color");
 
 // Defines for Camera File extensions
-constexpr const char*  cGigeCameraFileDefExt = _T(".ogc");
+constexpr const char* cGigeCameraFileExt = _T(".ogc");
+constexpr const char* cSequenceCameraFileExt = _T(".seq");
 
 constexpr const char* SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
 constexpr const char* SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
@@ -1420,7 +1421,7 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
 
-					if ( 0 == SvUl::CompareNoCase(std::string(svFile.GetExtension()), std::string(cGigeCameraFileDefExt)) )
+					if ( 0 == SvUl::CompareNoCase(std::string(svFile.GetExtension()), std::string(cGigeCameraFileExt)) )
 					{
 						svFiles.push_back(svFile);
 					}
@@ -1452,9 +1453,17 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				DigName = BuildDigName(*pCameraObj);
 				svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
-				if ( 0 == SvUl::CompareNoCase( svFile.GetExtension(), std::string(cGigeCameraFileDefExt) ) )
+				if ( 0 == SvUl::CompareNoCase(svFile.GetExtension(), cGigeCameraFileExt) )
 				{
 					svFiles.push_back(svFile);
+				}
+				if (false == pCameraObj->GetSequenceCameraFile().empty())
+				{
+					svFile.SetFullFileName(pCameraObj->GetSequenceCameraFile().c_str());
+					if (0 == SvUl::CompareNoCase(svFile.GetExtension(), cSequenceCameraFileExt))
+					{
+						svFiles.push_back(svFile);
+					}
 				}
 
 				SVLightReference* psvLight {nullptr};
@@ -2492,50 +2501,37 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	m_UsedTriggers.clear();
 	m_UsedInspections.clear();
 
-	long lCfgCameraCnt;
-	long lCfgTriggerCnt;
-	long lCfgInspectCnt;
-	long lCfgPPQCnt;
-	std::string CameraName;
-	std::string TriggerName;
-	std::string PPQName;
-	int iDigNumber;
-	int CameraID;
-	int iChannel;
-	std::string CameraFileName;
-
-	SvTrig::SVTriggerObject* pcfgTrigger( nullptr );
-	SVInspectionProcess* pcfgInspection( nullptr );
-	SVPPQObject* pcfgPPQ( nullptr );
-
 	m_lConfigurationType = pConfig->GetProductType();
 	//load camera information
-	lCfgCameraCnt = pConfig->GetCameraCount();
-	for (long lCam = 0; lCam < lCfgCameraCnt; ++lCam)
+	for (long lCam = 0; lCam < pConfig->GetCameraCount(); ++lCam)
 	{
 		SvIe::SVVirtualCamera* pcfgCamera = pConfig->GetCamera(lCam);
 		if ( nullptr != pcfgCamera )
 		{
-			CameraName = pcfgCamera->GetName();
+			std::string CameraName = pcfgCamera->GetName();
 			if ( nullptr != pcfgCamera->GetAcquisitionDevice())
 			{
-				iDigNumber = pcfgCamera->GetAcquisitionDevice()->DigNumber();
-				iChannel = pcfgCamera->GetAcquisitionDevice()->Channel();
-				CameraID = pcfgCamera->getCameraID();
+				int iDigNumber = pcfgCamera->GetAcquisitionDevice()->DigNumber();
+				int iChannel = pcfgCamera->GetAcquisitionDevice()->Channel();
+				int CameraID = pcfgCamera->getCameraID();
 
-				CameraFileName.clear();
-				
-				long lSize;
+				long lSize {0L};
+				std::string CameraFileName;
+				std::string sequenceCameraFile;
 				SVFileNameClass oCamFile;
 				pcfgCamera->GetAcquisitionDevice()->GetFileNameArraySize( lSize );
-				for ( long lFile = 0; lFile < lSize && CameraFileName.empty(); lFile++)
+				for ( long lFile = 0; lFile < lSize; lFile++)
 				{
 					pcfgCamera->GetAcquisitionDevice()->GetFileName( lFile, oCamFile );
 					std::string Extension = oCamFile.GetExtension();				
 
-					if ( 0 == SvUl::CompareNoCase( Extension, std::string(cGigeCameraFileDefExt) ) && CameraFileName.empty() )
+					if (0 == SvUl::CompareNoCase(Extension, std::string(cGigeCameraFileExt)) && CameraFileName.empty())
 					{
 						CameraFileName = oCamFile.GetFullFileName();
+					}
+					if (0 == SvUl::CompareNoCase(Extension, std::string(cSequenceCameraFileExt)) && sequenceCameraFile.empty())
+					{
+						sequenceCameraFile = oCamFile.GetFullFileName();
 					}
 				}
 
@@ -2564,6 +2560,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 					pCameraObj->SetFileImageSizeEditModeFileBased(pcfgCamera->IsFileImageSizeEditModeFileBased());
 					pCameraObj->SetFileImageSize(pcfgCamera->GetFileImageSize());
 					pCameraObj->SetIsColor( pcfgCamera->IsColor() );
+					pCameraObj->SetSequenceCameraFile(sequenceCameraFile);
 				}
 			}
 		}
@@ -2575,15 +2572,14 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	//end of load camera section
 
 	//load trigger section...
-	lCfgTriggerCnt = pConfig->GetTriggerCount();
-	for (long lTrg = 0; lTrg < lCfgTriggerCnt; ++lTrg)
+	for (long lTrg = 0; lTrg < pConfig->GetTriggerCount(); ++lTrg)
 	{
-		pcfgTrigger = pConfig->GetTrigger(lTrg);
+		SvTrig::SVTriggerObject*  pcfgTrigger = pConfig->GetTrigger(lTrg);
 		bRet = (nullptr != pcfgTrigger) && bRet;
 		if ( nullptr != pcfgTrigger && nullptr != pcfgTrigger->getDevice() )
 		{
-			TriggerName = pcfgTrigger->GetName();
-			iDigNumber = pcfgTrigger->getDevice()->getDigitizerNumber();
+			std::string TriggerName = pcfgTrigger->GetName();
+			int iDigNumber = pcfgTrigger->getDevice()->getDigitizerNumber();
 			if (iDigNumber < 0)
 			{
 				// use the numeric at the end of the name (it's one based and we want zero based)
@@ -2616,10 +2612,9 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	
 	//load inspection section...
 	CString sDisable;
-	lCfgInspectCnt = pConfig->GetInspectionCount();
-	for (long lIns = 0; lIns < lCfgInspectCnt; ++lIns)
+	for (long lIns = 0; lIns < pConfig->GetInspectionCount(); ++lIns)
 	{
-		pcfgInspection = pConfig->GetInspection(lIns);
+		SVInspectionProcess* pcfgInspection = pConfig->GetInspection(lIns);
 		if ( nullptr != pcfgInspection )
 		{
 			std::string InspectionName = pcfgInspection->GetName();
@@ -2666,14 +2661,12 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	//end of inspection section...
 	
 	//load PPQ section...
-	lCfgPPQCnt = pConfig->GetPPQCount();
-
-	for (long lPpq = 0; lPpq < lCfgPPQCnt; ++lPpq)
+	for (long lPpq = 0; lPpq < pConfig->GetPPQCount(); ++lPpq)
 	{
-		pcfgPPQ = pConfig->GetPPQ(lPpq);
+		SVPPQObject* pcfgPPQ = pConfig->GetPPQ(lPpq);
 		if ( nullptr != pcfgPPQ )
 		{
-			PPQName = pcfgPPQ->GetName();
+			std::string PPQName = pcfgPPQ->GetName();
 			m_PPQList.AddPPQToList(PPQName.c_str());
 			long lppqIns;
 			pcfgPPQ->GetInspectionCount(lppqIns);
@@ -2690,7 +2683,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 
 			for (long lpIns = 0; lpIns <lppqIns; ++lpIns)
 			{
-				pcfgInspection = nullptr;
+				SVInspectionProcess* pcfgInspection {nullptr};
 				bRet = pcfgPPQ->GetInspection(lpIns,pcfgInspection) && bRet;
 				if ( nullptr != pcfgInspection )
 				{
@@ -2699,7 +2692,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 				}
 			}
 
-			pcfgTrigger = pcfgPPQ->GetTrigger();
+			SvTrig::SVTriggerObject* pcfgTrigger = pcfgPPQ->GetTrigger();
 			if ( (nullptr != pcfgTrigger ) && (nullptr != pcfgTrigger->getDevice()) )
 			{
 				m_PPQList.AttachTriggerToPPQ(PPQName.c_str(), pcfgTrigger->GetName());
@@ -4049,6 +4042,11 @@ void SVOConfigAssistantDlg::OnBnClickedCancel()
 				{
 					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 					svFiles.push_back(svFile);
+					if (false == pCameraObj->GetSequenceCameraFile().empty())
+					{
+						svFile.SetFullFileName(pCameraObj->GetSequenceCameraFile().c_str());
+						svFiles.push_back(svFile);
+					}
 					psvDevice->LoadFiles(svFiles);
 					
 					psvDevice->SetDeviceParameters(pCameraObj->GetCameraDeviceParams());

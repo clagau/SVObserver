@@ -11,8 +11,8 @@
 
 #include "SVMatroxErrorEnum.h"
 
-template<typename SVEnumType>
-HRESULT ConvertEnumToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType Type, long long& rMatroxType)
+template<typename PairContainer, typename SVEnumType>
+HRESULT ConvertEnumToMatroxType(const PairContainer& rEnumPairList, SVEnumType Type, long long& rMatroxType)
 {
 	for(const auto& rEntry : rEnumPairList)
 	{
@@ -25,8 +25,8 @@ HRESULT ConvertEnumToMatroxType(const std::vector<std::pair<SVEnumType, long lon
 	return SVMEE_INTERNAL_CONVERSION_ERROR;
 }
 
-template<typename SVEnumType>
-HRESULT ConvertEnumFromMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, long long MatroxType, SVEnumType& rType)
+template<typename PairContainer, typename SVEnumType>
+HRESULT ConvertEnumFromMatroxType(const PairContainer& rEnumPairList, long long MatroxType, SVEnumType& rType)
 {
 	for (const auto& rEntry : rEnumPairList)
 	{

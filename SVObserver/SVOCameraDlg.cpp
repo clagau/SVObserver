@@ -23,7 +23,6 @@
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -281,12 +280,15 @@ void SVOCameraDlg::OnBtnPropVc()
 							SVFileNameClass svFile;
 							svFile.SetFullFileName(pCameraObj->GetCameraFile().c_str());
 							svFiles.push_back(svFile);
+							if (false == pCameraObj->GetSequenceCameraFile().empty())
+							{
+								svFile.SetFullFileName(pCameraObj->GetSequenceCameraFile().c_str());
+								svFiles.push_back(svFile);
+							}
 							if (S_OK != psvDevice->LoadFiles(svFiles))
 							{
 								SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-								SvDef::StringVector msgList;
-								msgList.push_back(pCameraObj->GetCameraFile());
-								Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
+								Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileInvalid, {pCameraObj->GetCameraFile()}, SvStl::SourceFileParams(StdMessageParams));
 								pCameraObj->SetCameraFile(std::string());
 								m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
 							}

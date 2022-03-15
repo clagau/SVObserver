@@ -23,8 +23,6 @@
 #include "SVGigeCameraDBContent.h"
 #pragma endregion Includes
 
-typedef std::wstring WString;
-
 // Element Tags
 enum ElementTagEnums
 {
@@ -40,140 +38,118 @@ enum ElementTagEnums
 };
 
 // Element Map
-typedef std::map<WString, ElementTagEnums> ElementMap;
-static const ElementMap cElements
-{
-	{L"SVGigeParameterMap",				GigeParameterMap},			// Gige Parameter Map (root tag)
-	{L"SVGigeParameter",				GigeParameter},				// Gige Parameter 
-	{L"SVGigeDeviceParameterStruct",	GigeDeviceParameterStruct},	// Gige Device Parameter
-	{L"SVGigeParameterAccessor",		GigeParameterAccessor},		// Gige Parameter Accessor
-	{L"SVGigeAccessor",					GigeAccessor},				// Gige Accessor optional
-	{L"SVGigeFeature",					GigeFeature},				// Gige Feature
-	{L"SVGigeFeatureSelector",			GigeFeatureSelector},		// Gige Feature Selector (optional)
-	{L"SVGigeFeatureStringEnumList",	GigeFeatureStringEnumList},	// Gige Feature StringEnum List (only for string list)
-	{L"SVGigeFeatureStringEnum",		GigeFeatureStringEnum}		// Gige Feature StringEnum (list entry)
-};
+constexpr std::array<std::pair<ElementTagEnums, LPCTSTR>, 9> cElements =
+{{
+	{ElementTagEnums::GigeParameterMap, _T("SVGigeParameterMap")},					// Gige Parameter Map (root tag)
+	{ElementTagEnums::GigeParameter, _T("SVGigeParameter")},						// Gige Parameter 
+	{ElementTagEnums::GigeDeviceParameterStruct, _T("SVGigeDeviceParameterStruct")},// Gige Device Parameter
+	{ElementTagEnums::GigeParameterAccessor, _T("SVGigeParameterAccessor")},		// Gige Parameter Accessor
+	{ElementTagEnums::GigeAccessor, _T("SVGigeAccessor")},							// Gige Accessor optional
+	{ElementTagEnums::GigeFeature, _T("SVGigeFeature")},							// Gige Feature
+	{ElementTagEnums::GigeFeatureSelector, _T("SVGigeFeatureSelector")},			// Gige Feature Selector (optional)
+	{ElementTagEnums::GigeFeatureStringEnumList, _T("SVGigeFeatureStringEnumList")},// Gige Feature StringEnum List (only for string list)
+	{ElementTagEnums::GigeFeatureStringEnum, _T("SVGigeFeatureStringEnum")}			// Gige Feature StringEnum (list entry)
+}};
 
 // GigeParameterEnum Map
-typedef std::map<WString, SvDef::SVGigeParameterEnum> GigeParameterEnumMap;
-static const GigeParameterEnumMap cGigeParameterEnums
-{
-	{L"SVGigeParameterExposureMode",			SvDef::SVGigeParameterExposureMode},
-	{L"SVGigeParameterXOffset",					SvDef::SVGigeParameterXOffset},
-	{L"SVGigeParameterYOffset",					SvDef::SVGigeParameterYOffset},
-	{L"SVGigeParameterXSize",					SvDef::SVGigeParameterXSize},
-	{L"SVGigeParameterYSize",					SvDef::SVGigeParameterYSize},
-	{L"SVGigeParameterColorFormat",				SvDef::SVGigeParameterColorFormat},
-	{L"SVGigeParameterBayerPattern",			SvDef::SVGigeParameterBayerPattern},
-	{L"SVGigeParameterFeatureBrightness",		SvDef::SVGigeParameterFeatureBrightness},
-	{L"SVGigeParameterFeatureAutoExposure",		SvDef::SVGigeParameterFeatureAutoExposure},
-	{L"SVGigeParameterFeatureSharpness",		SvDef::SVGigeParameterFeatureSharpness},
-	{L"SVGigeParameterFeatureWhiteBalanceU",	SvDef::SVGigeParameterFeatureWhiteBalanceU},
-	{L"SVGigeParameterFeatureWhiteBalanceV",	SvDef::SVGigeParameterFeatureWhiteBalanceV},
-	{L"SVGigeParameterFeatureHue",				SvDef::SVGigeParameterFeatureHue},
-	{L"SVGigeParameterFeatureSaturation",		SvDef::SVGigeParameterFeatureSaturation},
-	{L"SVGigeParameterFeatureGamma",			SvDef::SVGigeParameterFeatureGamma},
-	{L"SVGigeParameterFeatureShutter",			SvDef::SVGigeParameterFeatureShutter},
-	{L"SVGigeParameterFeatureGain",				SvDef::SVGigeParameterFeatureGain},
-	{L"SVGigeParameterTriggerSource",			SvDef::SVGigeParameterTriggerSource},
-	{L"SVGigeParameterTriggerEdge",				SvDef::SVGigeParameterTriggerEdge},
-	{L"SVGigeParameterTriggerInvert",			SvDef::SVGigeParameterTriggerInvert},
-	{L"SVGigeParameterTriggerLine",				SvDef::SVGigeParameterTriggerLine},
-	{L"SVGigeParameterTriggerDelay",			SvDef::SVGigeParameterTriggerDelay},
-	{L"SVGigeParameterTriggerEnable",			SvDef::SVGigeParameterTriggerEnable},
-	{L"SVGigeParameterStrobeSource",			SvDef::SVGigeParameterStrobeSource},
-	{L"SVGigeParameterStrobeEdge",				SvDef::SVGigeParameterStrobeEdge},
-	{L"SVGigeParameterStrobeInvert",			SvDef::SVGigeParameterStrobeInvert},
-	{L"SVGigeParameterStrobeDelay",				SvDef::SVGigeParameterStrobeDelay},
-	{L"SVGigeParameterStrobeDuration",			SvDef::SVGigeParameterStrobeDuration},
-	{L"SVGigeParameterStrobeLine",				SvDef::SVGigeParameterStrobeLine},
-	{L"SVGigeParameterStrobeEnable",			SvDef::SVGigeParameterStrobeEnable},
-	{L"SVGigeParameterLutEnable",				SvDef::SVGigeParameterLutEnable},
-	{L"SVGigeParameterLutArray",				SvDef::SVGigeParameterLutArray},
-	{L"SVGigeParameterLineInput",				SvDef::SVGigeParameterLineInput},
-	{L"SVGigeParameterInputEvent",				SvDef::SVGigeParameterInputEvent},
-	{L"SVGigeParameterInputEventName",			SvDef::SVGigeParameterInputEventName},
-	{L"SVGigeParameterHorizontalBinning",		SvDef::SVGigeParameterHorizontalBinning},
-	{L"SVGigeParameterVerticalBinning",			SvDef::SVGigeParameterVerticalBinning},
-	{L"SVGigeParameterCameraDefaultSettings",	SvDef::SVGigeParameterCameraDefaultSettings},
-	{L"SVGigeParameterCustom1",					SvDef::SVGigeParameterCustom1},
-	{L"SVGigeParameterCustom2",					SvDef::SVGigeParameterCustom2},
-	{L"SVGigeParameterCustom3",					SvDef::SVGigeParameterCustom3},
-	{L"SVGigeParameterCustom4",					SvDef::SVGigeParameterCustom4},
-	{L"SVGigeParameterCustom5",					SvDef::SVGigeParameterCustom5},
-	{L"SVGigeParameterCustom6",					SvDef::SVGigeParameterCustom6},
-	{L"SVGigeParameterCustom7",					SvDef::SVGigeParameterCustom7},
-	{L"SVGigeParameterCustom8",					SvDef::SVGigeParameterCustom8},
-	{L"SVGigeParameterCustom9",					SvDef::SVGigeParameterCustom9},
-	{L"SVGigeParameterCustom10",				SvDef::SVGigeParameterCustom10},
-	{L"SVGigeParameterCustom11",				SvDef::SVGigeParameterCustom11},
-	{L"SVGigeParameterCustom12",				SvDef::SVGigeParameterCustom12},
-	{L"SVGigeParameterCustom13",				SvDef::SVGigeParameterCustom13},
-	{L"SVGigeParameterCustom14",				SvDef::SVGigeParameterCustom14},
-	{L"SVGigeParameterCustom15",				SvDef::SVGigeParameterCustom15},
-	{L"SVGigeParameterCustom16",				SvDef::SVGigeParameterCustom16},
-	{L"SVGigeParameterCustom17",				SvDef::SVGigeParameterCustom17},
-	{L"SVGigeParameterCustom18",				SvDef::SVGigeParameterCustom18},
-	{L"SVGigeParameterCustom19",				SvDef::SVGigeParameterCustom19},
-	{L"SVGigeParameterCustom20",				SvDef::SVGigeParameterCustom20},
-	{L"SVGigeParameterCustom21",				SvDef::SVGigeParameterCustom21},
-	{L"SVGigeParameterCustom22",				SvDef::SVGigeParameterCustom22},
-	{L"SVGigeParameterCustom23",				SvDef::SVGigeParameterCustom23},
-	{L"SVGigeParameterCustom24",				SvDef::SVGigeParameterCustom24},
-	{L"SVGigeParameterCustom25",				SvDef::SVGigeParameterCustom25},
-	{L"SVGigeParameterCustom26",				SvDef::SVGigeParameterCustom26},
-	{L"SVGigeParameterCustom27",				SvDef::SVGigeParameterCustom27},
-	{L"SVGigeParameterCustom28",				SvDef::SVGigeParameterCustom28},
-	{L"SVGigeParameterCustom29",				SvDef::SVGigeParameterCustom29},
-	{L"SVGigeParameterCustom30",				SvDef::SVGigeParameterCustom30}
-};
+constexpr std::array<std::pair<SvDef::SVGigeParameterEnum, LPCTSTR>, 68> cGigeParameterEnums =
+{{
+	{SvDef::SVGigeParameterExposureMode, "SVGigeParameterExposureMode"},
+	{SvDef::SVGigeParameterXOffset, "SVGigeParameterXOffset"},
+	{SvDef::SVGigeParameterYOffset, "SVGigeParameterYOffset"},
+	{SvDef::SVGigeParameterXSize, "SVGigeParameterXSize"},
+	{SvDef::SVGigeParameterYSize, "SVGigeParameterYSize"},
+	{SvDef::SVGigeParameterColorFormat, "SVGigeParameterColorFormat"},
+	{SvDef::SVGigeParameterBayerPattern, "SVGigeParameterBayerPattern"},
+	{SvDef::SVGigeParameterFeatureBrightness, "SVGigeParameterFeatureBrightness"},
+	{SvDef::SVGigeParameterFeatureAutoExposure, "SVGigeParameterFeatureAutoExposure",		},
+	{SvDef::SVGigeParameterFeatureSharpness, "SVGigeParameterFeatureSharpness"},
+	{SvDef::SVGigeParameterFeatureWhiteBalanceU, "SVGigeParameterFeatureWhiteBalanceU"},
+	{SvDef::SVGigeParameterFeatureWhiteBalanceV, "SVGigeParameterFeatureWhiteBalanceV"},
+	{SvDef::SVGigeParameterFeatureHue, "SVGigeParameterFeatureHue"},
+	{SvDef::SVGigeParameterFeatureSaturation, "SVGigeParameterFeatureSaturation"},
+	{SvDef::SVGigeParameterFeatureGamma, "SVGigeParameterFeatureGamma"},
+	{SvDef::SVGigeParameterFeatureShutter, "SVGigeParameterFeatureShutter"},
+	{SvDef::SVGigeParameterFeatureGain, "SVGigeParameterFeatureGain"},
+	{SvDef::SVGigeParameterTriggerSource, "SVGigeParameterTriggerSource"},
+	{SvDef::SVGigeParameterTriggerEdge, "SVGigeParameterTriggerEdge"},
+	{SvDef::SVGigeParameterTriggerInvert, "SVGigeParameterTriggerInvert"},
+	{SvDef::SVGigeParameterTriggerLine, "SVGigeParameterTriggerLine"},
+	{SvDef::SVGigeParameterTriggerDelay, "SVGigeParameterTriggerDelay"},
+	{SvDef::SVGigeParameterTriggerEnable, "SVGigeParameterTriggerEnable"},
+	{SvDef::SVGigeParameterStrobeSource, "SVGigeParameterStrobeSource"},
+	{SvDef::SVGigeParameterStrobeEdge, "SVGigeParameterStrobeEdge"},
+	{SvDef::SVGigeParameterStrobeInvert, "SVGigeParameterStrobeInvert"},
+	{SvDef::SVGigeParameterStrobeDelay, "SVGigeParameterStrobeDelay"},
+	{SvDef::SVGigeParameterStrobeDuration, "SVGigeParameterStrobeDuration"},
+	{SvDef::SVGigeParameterStrobeLine, "SVGigeParameterStrobeLine"},
+	{SvDef::SVGigeParameterStrobeEnable, "SVGigeParameterStrobeEnable"},
+	{SvDef::SVGigeParameterLutEnable, "SVGigeParameterLutEnable"},
+	{SvDef::SVGigeParameterLutArray, "SVGigeParameterLutArray"},
+	{SvDef::SVGigeParameterLineInput, "SVGigeParameterLineInput"},
+	{SvDef::SVGigeParameterInputEvent, "SVGigeParameterInputEvent"},
+	{SvDef::SVGigeParameterInputEventName, "SVGigeParameterInputEventName"},
+	{SvDef::SVGigeParameterHorizontalBinning, "SVGigeParameterHorizontalBinning"},
+	{SvDef::SVGigeParameterVerticalBinning, "SVGigeParameterVerticalBinning"},
+	{SvDef::SVGigeParameterCameraDefaultSettings, "SVGigeParameterCameraDefaultSettings"},
+	{SvDef::SVGigeParameterCustom1, "SVGigeParameterCustom1"},
+	{SvDef::SVGigeParameterCustom2, "SVGigeParameterCustom2"},
+	{SvDef::SVGigeParameterCustom3, "SVGigeParameterCustom3"},
+	{SvDef::SVGigeParameterCustom4, "SVGigeParameterCustom4"},
+	{SvDef::SVGigeParameterCustom5, "SVGigeParameterCustom5"},
+	{SvDef::SVGigeParameterCustom6, "SVGigeParameterCustom6"},
+	{SvDef::SVGigeParameterCustom7, "SVGigeParameterCustom7"},
+	{SvDef::SVGigeParameterCustom8, "SVGigeParameterCustom8"},
+	{SvDef::SVGigeParameterCustom9, "SVGigeParameterCustom9"},
+	{SvDef::SVGigeParameterCustom10, "SVGigeParameterCustom10"},
+	{SvDef::SVGigeParameterCustom11, "SVGigeParameterCustom11"},
+	{SvDef::SVGigeParameterCustom12, "SVGigeParameterCustom12"},
+	{SvDef::SVGigeParameterCustom13, "SVGigeParameterCustom13"},
+	{SvDef::SVGigeParameterCustom14, "SVGigeParameterCustom14"},
+	{SvDef::SVGigeParameterCustom15, "SVGigeParameterCustom15"},
+	{SvDef::SVGigeParameterCustom16, "SVGigeParameterCustom16"},
+	{SvDef::SVGigeParameterCustom17, "SVGigeParameterCustom17"},
+	{SvDef::SVGigeParameterCustom18, "SVGigeParameterCustom18"},
+	{SvDef::SVGigeParameterCustom19, "SVGigeParameterCustom19"},
+	{SvDef::SVGigeParameterCustom20, "SVGigeParameterCustom20"},
+	{SvDef::SVGigeParameterCustom21, "SVGigeParameterCustom21"},
+	{SvDef::SVGigeParameterCustom22, "SVGigeParameterCustom22"},
+	{SvDef::SVGigeParameterCustom23, "SVGigeParameterCustom23"},
+	{SvDef::SVGigeParameterCustom24, "SVGigeParameterCustom24"},
+	{SvDef::SVGigeParameterCustom25, "SVGigeParameterCustom25"},
+	{SvDef::SVGigeParameterCustom26, "SVGigeParameterCustom26"},
+	{SvDef::SVGigeParameterCustom27, "SVGigeParameterCustom27"},
+	{SvDef::SVGigeParameterCustom28, "SVGigeParameterCustom28"},
+	{SvDef::SVGigeParameterCustom29, "SVGigeParameterCustom29"},
+	{SvDef::SVGigeParameterCustom30, "SVGigeParameterCustom30"}
+}};
 
 
 // VariantTypeEnum Map
-typedef std::map<WString, VARENUM> VariantTypeEnumMap;
-static const VariantTypeEnumMap cVariantTypeEnum
-{
-	{
-	{L"VT_I1",		VT_I1},
-	{L"VT_I2",		VT_I2},
-	{L"VT_I4",		VT_I4},
-	{L"VT_UI1",		VT_UI1},
-	{L"VT_UI2",		VT_UI2},
-	{L"VT_UI4",		VT_UI4},
-	{L"VT_R4",		VT_R4},
-	{L"VT_R8",		VT_R8},
-	{L"VT_BSTR",	VT_BSTR}
-	}
-};
+constexpr std::array<std::pair<VARENUM, LPCTSTR>, 9> cVariantTypeEnum =
+{{
+	{VARENUM::VT_I1, "VT_I1"},
+	{VARENUM::VT_I2, "VT_I2"},
+	{VARENUM::VT_I4, "VT_I4"},
+	{VARENUM::VT_UI1, "VT_UI1"},
+	{VARENUM::VT_UI2, "VT_UI2"},
+	{VARENUM::VT_UI4, "VT_UI4"},
+	{VARENUM::VT_R4, "VT_R4"},
+	{VARENUM::VT_R8, "VT_R8"},
+	{VARENUM::VT_BSTR, "VT_BSTR"}
+}};	 
+	 
+constexpr std::array<std::pair<SVGigeFeature::FeatureSupportedEnum, LPCTSTR>, 2> cFeatureSupportedStringEnums
+{{
+	{SVGigeFeature::FeatureSupportedEnum::NotSupported, _T("NotSupported")},
+	{SVGigeFeature::FeatureSupportedEnum::Supported, _T("Supported")}
+}};
 
-// FeatureTypeStringEnum Map
-typedef std::map<WString, SVMatroxDigitizerFeature::SVFeatureTypeEnum> FeatureTypeStringEnumMap;
-static const FeatureTypeStringEnumMap cFeatureTypeStringEnums
-{
-	{L"SVTypeCommand",				SVMatroxDigitizerFeature::SVTypeCommand},
-	{L"SVTypeInt32",				SVMatroxDigitizerFeature::SVTypeInt32},
-	{L"SVTypeDouble",				SVMatroxDigitizerFeature::SVTypeDouble},
-	{L"SVTypeString",				SVMatroxDigitizerFeature::SVTypeString},
-	{L"SVTypeIntegerEnumeration",	SVMatroxDigitizerFeature::SVTypeIntegerEnumeration},
-	{L"SVTypeStringEnumeration",	SVMatroxDigitizerFeature::SVTypeStringEnumeration},
-	{L"SVTypeBool",					SVMatroxDigitizerFeature::SVTypeBool}
-};
-
-// FeatureSupportedStringEnum Map
-typedef std::map<WString, SVGigeFeature::FeatureSupportedEnum> FeatureSupportedStringEnumMap;
-static const FeatureSupportedStringEnumMap cFeatureSupportedStringEnums
-{
-	{L"NotSupported",	SVGigeFeature::NotSupported},
-	{L"Supported",		SVGigeFeature::Supported}
-};
-
-// FeatureAccessStringEnum Map
-typedef std::map<WString, SVGigeFeature::FeatureAccessEnum> FeatureAccessStringEnumMap;
-static const FeatureAccessStringEnumMap FeatureAccessStringEnums
-{
-	{L"ReadOnly",	SVGigeFeature::ReadOnly},
-	{L"ReadWrite",	SVGigeFeature::ReadWrite}
-};
+constexpr std::array<std::pair<SVGigeFeature::FeatureAccessEnum, LPCTSTR>, 2> cFeatureAccessStringEnums
+{{
+	{SVGigeFeature::ReadOnly, _T("ReadOnly")},
+	{SVGigeFeature::ReadWrite, _T("ReadWrite")}
+}};
 
 SVGigeCameraDBContent::SVGigeCameraDBContent()
 : m_errorCode(S_OK), m_GigeParameterEnum(SvDef::SVGigeParameterFeatureOverrides)
@@ -185,48 +161,43 @@ SVGigeCameraDBContent::~SVGigeCameraDBContent()
 }
 
 // cppcheck-suppress unusedFunction
-HRESULT SVGigeCameraDBContent::startElement(unsigned short* , int , unsigned short* pwchLocalName, int cchLocalName, unsigned short* , int , MSXML2::ISAXAttributes* pAttributes)
+HRESULT SVGigeCameraDBContent::startElement(unsigned short* , int , unsigned short* pwchLocalName, int , unsigned short* , int , MSXML2::ISAXAttributes* pAttributes)
 {
 	HRESULT hr = S_OK;
 
-	WString elementName(reinterpret_cast<wchar_t *>(pwchLocalName), cchLocalName);
+	std::string elementName {_bstr_t(reinterpret_cast<wchar_t*>(pwchLocalName))};
 	
-	ElementMap::const_iterator it = cElements.find(elementName);
-	if (it != cElements.end())
+	ElementTagEnums enumValue {ElementTagEnums::GigeParameterMap};
+	bool bRetVal = StringToEnum::GetEnum(cElements, elementName.c_str(), enumValue);
+	if (bRetVal)
 	{
-		switch (it->second)
+		switch (enumValue)
 		{
-			case GigeParameterMap:
-				break;
-
-			case GigeParameter:
+			case ElementTagEnums::GigeParameter:
 				GetGigeParameterAttributes(pAttributes);
 				break;
 
-			case GigeDeviceParameterStruct:
+			case ElementTagEnums::GigeDeviceParameterStruct:
 				GetGigeDeviceParameterStructAttributes(pAttributes);
 				break;
 
-			case GigeParameterAccessor:
-				break;
-
-			case GigeAccessor:
+			case ElementTagEnums::GigeAccessor:
 				GetGigeAccessorAttributes(pAttributes);
 				break;
 
-			case GigeFeature:
+			case ElementTagEnums::GigeFeature:
 				GetGigeFeatureAttributes(pAttributes);
 				break;
 
-			case GigeFeatureSelector:
+			case ElementTagEnums::GigeFeatureSelector:
 				GetGigeFeatureSelectorAttributes(pAttributes);
 				break;
 
-			case GigeFeatureStringEnumList:
+			case ElementTagEnums::GigeFeatureStringEnum:
+				GetGigeFeatureStringEnumAttributes(pAttributes);
 				break;
 
-			case GigeFeatureStringEnum:
-				GetGigeFeatureStringEnumAttributes(pAttributes);
+			default:
 				break;
 		}
 	}
@@ -234,22 +205,17 @@ HRESULT SVGigeCameraDBContent::startElement(unsigned short* , int , unsigned sho
 }
  
 // cppcheck-suppress unusedFunction
-HRESULT SVGigeCameraDBContent::endElement(unsigned short* , int , unsigned short* pwchLocalName, int cchLocalName, unsigned short* , int )
+HRESULT SVGigeCameraDBContent::endElement(unsigned short* , int , unsigned short* pwchLocalName, int , unsigned short* , int )
 {
-	WString elementName(reinterpret_cast<wchar_t *>(pwchLocalName), cchLocalName);
-	
-	ElementMap::const_iterator it = cElements.find(elementName);
-	if (it != cElements.end())
+	std::string elementName {_bstr_t(reinterpret_cast<wchar_t*>(pwchLocalName))};
+
+	ElementTagEnums enumValue {ElementTagEnums::GigeParameterMap};
+	bool bRetVal = StringToEnum::GetEnum(cElements, elementName.c_str(), enumValue);
+	if (bRetVal)
 	{
-		switch (it->second)
+		switch (enumValue)
 		{
-			case GigeParameterMap:
-				break;
-
-			case GigeParameter:
-				break;
-
-			case GigeDeviceParameterStruct:
+			case ElementTagEnums::GigeDeviceParameterStruct:
 				{
 					// Construct
 					SVGigeDeviceParameterStruct gigeDeviceParameterStruct(m_GigeDeviceParameterInfo.m_GigeDeviceParameterName, 
@@ -264,19 +230,7 @@ HRESULT SVGigeCameraDBContent::endElement(unsigned short* , int , unsigned short
 				}
 				break;
 
-			case GigeParameterAccessor:
-				break;
-
-			case GigeAccessor:
-				break;
-
-			case GigeFeature:
-				break;
-
-			case GigeFeatureSelector:
-				break;
-
-			case GigeFeatureStringEnumList:
+			default:
 				break;
 		}
 	}
@@ -305,8 +259,9 @@ void SVGigeCameraDBContent::GetGigeParameterAttributes(MSXML2::ISAXAttributes* p
 
 		if (wcsncmp(name, L"SVGigeParameterEnum", nameSize) == 0)
 		{
+			std::string textValue {_bstr_t(value)};
 			SvDef::SVGigeParameterEnum enumValue{ SvDef::SVGigeParameterEnum::SVGigeParameterStart };
-			bool bRetVal = StringToEnum<SvDef::SVGigeParameterEnum, GigeParameterEnumMap, LPCWSTR>::GetEnum(cGigeParameterEnums, value, enumValue); 
+			bool bRetVal = StringToEnum::GetEnum(cGigeParameterEnums, textValue.c_str(), enumValue);
 			if (bRetVal)
 			{
 				m_GigeParameterEnum = enumValue;
@@ -387,8 +342,9 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 		}
 		else if (wcsncmp(name, L"FeatureType", nameSize) == 0)
 		{
-			SVMatroxDigitizerFeature::SVFeatureTypeEnum enumValue{ SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeCommand};
-			bool bRetVal = StringToEnum<SVMatroxDigitizerFeature::SVFeatureTypeEnum, FeatureTypeStringEnumMap, LPCWSTR>::GetEnum(cFeatureTypeStringEnums, value, enumValue);
+			std::string textValue {_bstr_t(value)};
+			SVFeatureTypeEnum enumValue{ SVFeatureTypeEnum::SVTypeCommand};
+			bool bRetVal = StringToEnum::GetEnum(cFeatureTypeStringEnums, textValue.c_str(), enumValue);
 			if (bRetVal)
 			{
 				m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_GigeFeatureType = enumValue;
@@ -396,8 +352,9 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 		}
 		else if (wcsncmp(name, L"FeatureSupportedEnum", nameSize) == 0)
 		{
+			std::string textValue {_bstr_t(value)};
 			SVGigeFeature::FeatureSupportedEnum enumValue;
-			bool bRetVal = StringToEnum<SVGigeFeature::FeatureSupportedEnum, FeatureSupportedStringEnumMap, LPCWSTR>::GetEnum(cFeatureSupportedStringEnums, value, enumValue);
+			bool bRetVal = StringToEnum::GetEnum(cFeatureSupportedStringEnums, textValue.c_str(), enumValue);
 			if (bRetVal)
 			{
 				m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_FeatureSupported = enumValue;
@@ -405,8 +362,9 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 		}
 		else if (wcsncmp(name, L"FeatureAccessEnum", nameSize) == 0)
 		{
+			std::string textValue {_bstr_t(value)};
 			SVGigeFeature::FeatureAccessEnum enumValue;
-			bool bRetVal = StringToEnum<SVGigeFeature::FeatureAccessEnum, FeatureAccessStringEnumMap, LPCWSTR>::GetEnum(FeatureAccessStringEnums , value, enumValue);
+			bool bRetVal = StringToEnum::GetEnum(cFeatureAccessStringEnums, textValue.c_str(), enumValue);
 			if (bRetVal)
 			{
 				m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_FeatureAccess = enumValue;
@@ -592,18 +550,22 @@ VARTYPE SVGigeCameraDBContent::GetVarType(wchar_t* vartypeString) const
 			else
 				break;
 		}
-		VariantTypeEnumMap::const_iterator it = cVariantTypeEnum.find(vartypeString);
-		if (it != cVariantTypeEnum.end())
+		std::string varName {_bstr_t(vartypeString)};
+		VARENUM enumValue {VT_EMPTY};
+		bool bRetVal = StringToEnum::GetEnum(cVariantTypeEnum, varName.c_str(), enumValue);
+		if (bRetVal)
 		{
-			varType = static_cast<VARTYPE> (it->second | VT_ARRAY);
+			varType = static_cast<VARTYPE> (enumValue | VT_ARRAY);
 		}
 	}
 	else
 	{
-		VariantTypeEnumMap::const_iterator it = cVariantTypeEnum.find(vartypeString);
-		if (it != cVariantTypeEnum.end())
+		std::string varName {_bstr_t(vartypeString)};
+		VARENUM enumValue {VT_EMPTY};
+		bool bRetVal = StringToEnum::GetEnum(cVariantTypeEnum, varName.c_str(), enumValue);
+		if (bRetVal)
 		{
-			varType = static_cast<VARTYPE> (it->second);
+			varType = static_cast<VARTYPE> (enumValue);
 		}
 	}
 	return varType;

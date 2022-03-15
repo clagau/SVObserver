@@ -25,7 +25,8 @@ public:
     SVOCameraObj* operator =(const SVOCameraObj *source);
 
     const std::string& GetCameraDisplayName() const;
-    const std::string& GetCameraFile() const;
+	const std::string& GetCameraFile() const { return m_CameraFile; }
+	const std::string& GetSequenceCameraFile() const { return m_sequenceCameraFile; }
 	int GetDigNumber() const;
 	int GetCameraID() const;
     int GetBandNumber() const;
@@ -41,6 +42,7 @@ public:
 	void SetCameraFileChanged();
 	bool GetCameraFileChanged();
     void SetBandNumber(int BandNumber);
+	void SetSequenceCameraFile(const std::string& rFileName) { m_sequenceCameraFile = rFileName; }
 	void SetCameraFileParams(const SVDeviceParamCollection& rParams);
 	void SetCameraDeviceParams(const SVDeviceParamCollection& rParams);
     bool IsCameraObjOk() const;
@@ -76,6 +78,7 @@ private:  //data members
     std::string m_CameraFile;
     bool m_CameraFileSet;
 	bool m_CameraFileChanged;
+	std::string m_sequenceCameraFile;
 	SVDeviceParamCollection m_CameraDeviceParams;
 	SVDeviceParamCollection m_CameraFileParams;
 

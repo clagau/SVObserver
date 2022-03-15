@@ -48,15 +48,16 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <array>
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <map>
 #include <memory>
+#include <mil.h>
 #include <set>				//Used by static library
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
 
-#include <mil.h>
 #pragma endregion Precompiled Headers

@@ -10,20 +10,20 @@
 //******************************************************************************
 #pragma once
 
-template<typename Type, typename LookupTable, typename StringType>
-class StringToEnum
+namespace StringToEnum
 {
-public:
-	static bool GetEnum(LookupTable table, StringType value, Type& enumValue)
+template<typename LookupTable, typename EnumType>
+bool GetEnum(const LookupTable& rtable, LPCTSTR value, EnumType& enumValue)
+{
+	bool  bRetVal = false;
+	std::string compareText {value};
+	auto iter = std::find_if(rtable.cbegin(), rtable.cend(), [compareText](const auto& rEntry) { return compareText == rEntry.second; });
+	if (iter != rtable.cend())
 	{
-		bool  bRetVal = false;
-		typename LookupTable::const_iterator it = table.find(value);
-		if (it != table.end())
-		{
-			enumValue = it->second;
-			bRetVal = true;
-		}
-		return bRetVal;
+		enumValue = iter->first;
+		bRetVal = true;
 	}
-};
+	return bRetVal;
+}
+}
 

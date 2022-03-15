@@ -72,7 +72,7 @@ HRESULT SVGigeParameterAccessor::GetFeature(SVMatroxDigitizerPtr Digitizer, cons
 		if (rFeature.HasSelector())
 		{
 			const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-			hr = SVMatroxDigitizerInterface::SetFeature( *(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
+			hr = SVMatroxDigitizerInterface::SetFeature( *(Digitizer.get()), std::string(selector.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
 		}
 		// Translate Strings
 		if (rFeature.HasTranslation())
@@ -106,7 +106,7 @@ HRESULT SVGigeParameterAccessor::SetFeature(SVMatroxDigitizerPtr Digitizer, cons
 		if (rFeature.HasSelector())
 		{
 			const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-			hr = SVMatroxDigitizerInterface::SetFeature( *(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
+			hr = SVMatroxDigitizerInterface::SetFeature( *(Digitizer.get()), std::string(selector.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
 		}
 
 		// Translate Strings

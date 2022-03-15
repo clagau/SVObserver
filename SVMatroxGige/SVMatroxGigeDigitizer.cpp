@@ -132,7 +132,7 @@ const SVGigeDeviceParameterStruct& SVMatroxGigeDigitizer::GetFeature(SvDef::SVGi
 			SVGigeFeature
 			(
 				"", 
-				SVMatroxDigitizerFeature::SVTypeBool, 
+				SVFeatureTypeEnum::SVTypeBool,
 				SVGigeFeature::NotSupported, 
 				SVGigeFeature::ReadOnly
 			)

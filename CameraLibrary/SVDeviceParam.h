@@ -213,7 +213,6 @@ private:
 	const SVDeviceParam& operator = (const SVDeviceParam& rRhs );
 };
 
-typedef TTemporaryPointerWrapper<SVDeviceParam> SVDeviceParamTempWrapper;
 typedef TValueSemantics<SVDeviceParam> SVDeviceParamWrapper;
 
 

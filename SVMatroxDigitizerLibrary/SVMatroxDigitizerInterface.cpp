@@ -819,7 +819,7 @@ HRESULT SVMatroxDigitizerInterface::EnableCorruptedFrameMonitoring(const SVMatro
 */
 HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& DigitizerID,
                                   const std::string& FeatureName,
-                                  SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
+                                  SVFeatureTypeEnum FeatureType,
                                   variant_t& FeatureValue)
 {
 	HRESULT l_Code( S_OK );
@@ -828,7 +828,7 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 #endif
 	{
 		__int64 l_matroxFeatureType = 0;
-		HRESULT hr = ConvertEnumToMatroxType(SVMatroxDigitizerFeature::m_FeatureTypeEnumConvertor, FeatureType, l_matroxFeatureType);
+		HRESULT hr = ConvertEnumToMatroxType(cFeatureTypeEnumConvertor, FeatureType, l_matroxFeatureType);
 		if (S_OK == hr)
 		{
 			char featureNameStr[256];
@@ -968,7 +968,7 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 */
 HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& DigitizerID,
                                  const std::string& FeatureName,
-                                 SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
+                                 SVFeatureTypeEnum FeatureType,
                                  const variant_t& FeatureValue)
 {
 	HRESULT l_Code( S_OK );
@@ -978,12 +978,12 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 	{
 		__int64 l_matroxFeatureType = 0;
 		MIL_INT64 controlType = cFeatureControlType;
-		if (SVMatroxDigitizerFeature::SVTypeCommand == FeatureType)
+		if (SVFeatureTypeEnum::SVTypeCommand == FeatureType)
 		{
 			controlType = M_FEATURE_EXECUTE;
 		}
 
-		HRESULT hr = ConvertEnumToMatroxType(SVMatroxDigitizerFeature::m_FeatureTypeEnumConvertor, FeatureType, l_matroxFeatureType);
+		HRESULT hr = ConvertEnumToMatroxType(cFeatureTypeEnumConvertor, FeatureType, l_matroxFeatureType);
 		if (S_OK == hr)
 		{
 			char featureNameStr[256];

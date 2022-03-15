@@ -37,10 +37,12 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <array>
 #include <comdef.h>
 #include <functional>
 #include <map>
 #include <memory>
+#include <mil.h>
 #include <string>
 #include <tchar.h>
 #include <vector>

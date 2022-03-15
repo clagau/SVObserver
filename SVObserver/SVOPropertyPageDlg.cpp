@@ -39,7 +39,6 @@
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "Triggering/SVTriggerConstants.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
@@ -87,6 +86,7 @@ constexpr std::array<const char*, 3> cTriggerType
 };
 
 constexpr const char* cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
+constexpr const char* cSequenceCameraFileFilter = _T("SequenceCamera Files (*.seq)|*.seq||");
 
 class SVCameraDeviceImageFormatUpdater : public ISVCameraDeviceImageFormatUpdater
 {
@@ -188,7 +188,7 @@ void SVOPropertyPageDlg::SetupCamera()
 	SetTitle( m_CameraObj.GetCameraDisplayName().c_str() );
 	if( !m_CameraObj.IsFileAcquisition() )
 	{
-		if( 0 < m_CameraObj.GetCameraFile().size() )
+		if(false == m_CameraObj.GetCameraFile().empty())
 		{
 			GetDlgItem( IDOK)->SetWindowText( _T("Reset"));
 			m_InitialCameraFileName = m_CameraObj.GetCameraFile();
@@ -207,12 +207,9 @@ void SVOPropertyPageDlg::SetupCamera()
 		SVFileNameClass FileName;
 		FileName.SetFileType(SV_CAMERA_FILE_TYPE);
 
-		// There is only GigE at this time
-		LPCTSTR fileFilter = cGigeCameraFileFilter;
-		
 		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
-				fileFilter, FileName.GetDefaultPathName().c_str(), TRUE), pRoot);
+			cGigeCameraFileFilter, FileName.GetDefaultPathName().c_str(), TRUE), pRoot);
 		if (pFile)
 		{
 			pFile->SetCtrlID(PROP_AD_FILE_NAME);
@@ -220,7 +217,16 @@ void SVOPropertyPageDlg::SetupCamera()
 			pFile->SetInfoText( _T("Select camera file for the currently selected Camera.") );
 			pFile->SetItemValue( m_CameraObj.GetCameraFile().c_str() );
 		}
-		
+		pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
+			cSequenceCameraFileFilter, FileName.GetDefaultPathName().c_str(), TRUE), pRoot);
+		if (pFile)
+		{
+			pFile->SetCtrlID(PROP_SEQUENCE_CAMERA_FILE_NAME);
+			pFile->SetLabelText(_T("Sequence Camera Filename"));
+			pFile->SetInfoText(_T("Optional: Select sequence camera file for additional camera settings."));
+			pFile->SetItemValue(m_CameraObj.GetSequenceCameraFile().c_str());
+		}
+
 		// Show or Hide Real/File camera props
 		ShowCameraProperties();
 
@@ -662,10 +668,12 @@ void SVOPropertyPageDlg::ShowCameraProperties()
 		m_Tree.FindItem(PROP_FILECAMERA_FILENAME)->HideItem(false);
 		
 		m_Tree.FindItem(PROP_AD_FILE_NAME)->HideItem(true);
+		m_Tree.FindItem(PROP_SEQUENCE_CAMERA_FILE_NAME)->HideItem(true);
 	}
 	else
 	{
 		m_Tree.FindItem(PROP_AD_FILE_NAME)->HideItem(false);
+		m_Tree.FindItem(PROP_SEQUENCE_CAMERA_FILE_NAME)->HideItem(false);
 
 		m_Tree.FindItem(PROP_FILECAMERA_MODE)->HideItem(true);
 		m_Tree.FindItem(PROP_FILECAMERA_DIRECTORY)->HideItem(true);
@@ -1351,9 +1359,7 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					if (!FileName.empty() && 0 != _access(FileName.c_str(), 0))
 					{
 						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						SvDef::StringVector msgList;
-						msgList.push_back(FileName);
-						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileNameInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
+						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileNameInvalid, {FileName}, SvStl::SourceFileParams(StdMessageParams));
 						m_Tree.FindItem(PROP_AD_FILE_NAME)->SetItemValue(m_CameraObj.GetCameraFile().c_str());
 						break;
 					}
@@ -1370,6 +1376,23 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 							GetDlgItem(IDOK)->SetWindowText(_T("Reset"));
 						}
 					}
+					break;
+				}
+
+				case PROP_SEQUENCE_CAMERA_FILE_NAME:
+				{
+					std::string FileName;
+					m_Tree.FindItem(PROP_SEQUENCE_CAMERA_FILE_NAME)->GetItemValue(FileName);
+					FileName = SvUl::Trim(FileName.c_str());
+					//! Check if file exists
+					if (!FileName.empty() && 0 != _access(FileName.c_str(), 0))
+					{
+						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FileNameInvalid, {FileName}, SvStl::SourceFileParams(StdMessageParams));
+						m_Tree.FindItem(PROP_SEQUENCE_CAMERA_FILE_NAME)->SetItemValue(m_CameraObj.GetSequenceCameraFile().c_str());
+						break;
+					}
+					m_CameraObj.SetSequenceCameraFile(FileName);
 					break;
 				}
 

@@ -24,9 +24,6 @@
     <ClCompile Include="SVMatroxDigitizerControlEnums.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxDigitizerFeatureEnums.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxDigitizerGrabEnums.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

@@ -675,5 +675,6 @@ enum MessageTextEnum
 	
 	Tid_IsColorCheckForGrayscaleImage,
 	Tid_WrongParentForEmbeddetValue,
+	Tid_FileNameInvalid,
 };
 } //namespace SvStl

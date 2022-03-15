@@ -35,7 +35,7 @@ public:
 	virtual HRESULT Destroy() override;
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const override;
-	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray ) override;
+	virtual HRESULT LoadFiles(const SVFileNameArrayClass &rArray ) override;
 	virtual HRESULT ReadCameraFile( const std::string& filename, SVDeviceParamCollection& rParams ) override;
 
 	virtual HRESULT CreateLightReference( int iBands ) override;
@@ -79,8 +79,8 @@ protected:
 	HRESULT GetCameraImageInfo(SVImageInfoClass &pImageInfo);
 	HRESULT DestroyLocal();
 
-	long mlLastIndex;
-	long mlHandleIndexCount;
+	long mlLastIndex {-1L};
+	long mlHandleIndexCount {-1L};
 
 	enum
 	{
@@ -89,8 +89,17 @@ protected:
 	};
 
 private:
-	bool mbIsCamFilesLoaded;
-	bool mbIsStarted;
+	HRESULT SetGigeFeatureOverrides(const std::string& featureOverrides);
+	// Callbacks
+	static HRESULT CALLBACK StartTrashCallback(void* pvOwner, void* pvDevice);
+	static HRESULT CALLBACK StopTrashCallback(void* pvOwner, void* pvDevice);
+	static HRESULT CALLBACK StartAcquireCallback(void* pvOwner, void* pvDevice);
+	static HRESULT CALLBACK StopAcquireCallback(void* pvOwner, void* pvDevice);
+	static HRESULT CALLBACK AcquisitionCallbackProc(void* pvOwner, void* pvCaller, void* pvRequest);
+
+	bool mbIsCamFilesLoaded {false};
+	bool mbIsStarted {false};
+	int m_sequenceCameraFileIndex {-1};
 
 	enum
 	{
@@ -99,16 +108,7 @@ private:
 		DEFAULT_BRIGHTNESS        = 0
 	};
 
-	// Callbacks
-	static HRESULT CALLBACK StartTrashCallback( void *pvOwner, void *pvDevice );
-	static HRESULT CALLBACK StopTrashCallback( void *pvOwner, void *pvDevice );
-	static HRESULT CALLBACK StartAcquireCallback( void *pvOwner, void *pvDevice );
-	static HRESULT CALLBACK StopAcquireCallback( void *pvOwner, void *pvDevice );
-	static HRESULT CALLBACK AcquisitionCallbackProc( void *pvOwner, void *pvCaller, void *pvRequest );
-
 	SVMatroxGigeCameraProxy m_cameraProxy;
-
-	HRESULT SetGigeFeatureOverrides(const std::string& featureOverrides);
 };
 
 } //namespace SvIe

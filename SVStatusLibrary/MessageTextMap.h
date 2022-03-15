@@ -701,18 +701,18 @@ namespace SvStl
 		{ Tid_Gateway_ReadValueFailed , _T("Error reading value with id %s") },
 		{ Tid_Gateway_ReadImageFailed , _T("Error reading image with id %s for inspection %s") },
 		
-		{Tid_ShareControl_NoImageForId, _T("No Image for id found") },
+		{ Tid_ShareControl_NoImageForId, _T("No Image for id found") },
 
 		{ Tid_SVRC_AccessDenied, _T("SVRC Access denied: Current state = %s, Check state = %s") },
-		{Tid_InvalidValues, _T("Invalid input values")},
-		{Tid_InvalidParameterValue, _T("%s: Invalid value. The value must between %s and %s.")},
+		{ Tid_InvalidValues, _T("Invalid input values") },
+		{ Tid_InvalidParameterValue, _T("%s: Invalid value. The value must between %s and %s.") },
 		
-		{Tid_ProductMissingNak, _T("NAK has been caused by a missing PPQ product")},
-		{Tid_ImageMissingNak, _T("NAK has been caused by a missing camera image")},
-		{Tid_InputMissingNak, _T("NAK has been caused by a missing input")},
-		{Tid_ProductIncompleteNak, _T("NAK caused by product incomplete (usually PPQ full)")},
-		{Tid_IsColorCheckForGrayscaleImage, _T("Color image checkbox selected, but image is grayscale")},
-		{Tid_WrongParentForEmbeddetValue, _T("wrong Parent for Embeddet Value ")}
-			
+		{ Tid_ProductMissingNak, _T("NAK has been caused by a missing PPQ product") },
+		{ Tid_ImageMissingNak, _T("NAK has been caused by a missing camera image") },
+		{ Tid_InputMissingNak, _T("NAK has been caused by a missing input") },
+		{ Tid_ProductIncompleteNak, _T("NAK caused by product incomplete (usually PPQ full)") },
+		{ Tid_IsColorCheckForGrayscaleImage, _T("Color image checkbox selected, but image is grayscale") },
+		{ Tid_WrongParentForEmbeddetValue, _T("wrong Parent for Embeddet Value ") },
+		{ Tid_FileNameInvalid, _T("File name is invalid %s") },
 };
 } //namespace SvStl

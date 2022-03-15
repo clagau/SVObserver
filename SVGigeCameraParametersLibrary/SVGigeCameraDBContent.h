@@ -41,7 +41,7 @@ private:
 	struct SVGigeFeatureInfo
 	{
 		std::string m_GigeFeatureName;
-		SVMatroxDigitizerFeature::SVFeatureTypeEnum m_GigeFeatureType;
+		SVFeatureTypeEnum m_GigeFeatureType;
 		SVGigeFeature::FeatureSupportedEnum m_FeatureSupported;
 		SVGigeFeature::FeatureAccessEnum m_FeatureAccess;
 

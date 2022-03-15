@@ -69,7 +69,7 @@ public:
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const;
 	virtual HRESULT GetFileName( long lIndex, SVFileNameClass &rFileName ) const;
-	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray );
+	virtual HRESULT LoadFiles(const SVFileNameArrayClass &rArray );
 	virtual HRESULT UnloadFiles();
 	virtual HRESULT ReadCameraFile( const std::string& filename,  SVDeviceParamCollection& rParams );
 
@@ -139,8 +139,8 @@ public:
 	virtual HRESULT UpdateWithCompletedBuffer(CameraInfo&& cameraInfo) override;
 	virtual void setNeededBuffers(int neededBuffers) override;
 
-	unsigned long m_hDigitizer;
-	BSTR m_LastImage;
+	unsigned long m_hDigitizer {0UL};
+	BSTR m_LastImage {nullptr};
 
 protected:
 	static DWORD WINAPI SingleGrabHelperFn(LPVOID lpParameter);
@@ -168,16 +168,16 @@ protected:
 	SVFileNameArrayClass mFiles;
 
 	std::string m_DigName;
-	int miChannel; //&&& Var needs to be set
-	int miDigNumber; // &&& Var needs to be set
-	int miBandSize;
-	int miBandMaxSize;
+	int miChannel {0};
+	int miDigNumber {0};
+	int miBandSize {0};
+	int miBandMaxSize {0};
 
-	long mlStartFrameIndex;
+	long mlStartFrameIndex {-1L};
 	long mlDMStartFrameIndex;
 
-	bool mbIsBufferCreated;
-	bool mbTempOnline;
+	bool mbIsBufferCreated {false};
+	bool mbTempOnline {false};
 	SvOi::SVImageBufferHandlePtr m_SingleGrabHandle;
 	SVDigitizerProcessingClass& m_rDigitizerProc;
 
@@ -185,10 +185,10 @@ private:
 	SVAcquisitionClass();
 
 	bool m_LUTAndLRSet;
-	SvOi::ITriggerRecordControllerRW* m_pTRC;
+	SvOi::ITriggerRecordControllerRW* m_pTRC {nullptr};
 	SVMatroxBufferCreateStruct m_bufferStruct;
-	uint32_t m_objectId = SvDef::InvalidObjectId;
-	int m_neededBuffer = 10;
+	uint32_t m_objectId {SvDef::InvalidObjectId};
+	int m_neededBuffer {10};
 };
 
 typedef std::shared_ptr< SVAcquisitionClass > SVAcquisitionClassPtr;

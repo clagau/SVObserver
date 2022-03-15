@@ -95,11 +95,6 @@ bool SVOCameraObj::GetCameraFileChanged()
     return m_CameraFileChanged;
 }
 
-const std::string& SVOCameraObj::GetCameraFile() const
-{
-    return m_CameraFile;
-}
-
 bool SVOCameraObj::IsCameraObjOk() const
 {
 	bool ok = true;
@@ -162,6 +157,7 @@ SVOCameraObj& SVOCameraObj::operator =(const SVOCameraObj& rRhs)
     m_CameraFile = rRhs.m_CameraFile;
     m_CameraFileSet = rRhs.m_CameraFileSet;
     m_CameraFileChanged = rRhs.m_CameraFileChanged;
+	m_sequenceCameraFile = rRhs.m_sequenceCameraFile;
 	m_CameraFileParams = rRhs.m_CameraFileParams;
 	m_CameraDeviceParams = rRhs.m_CameraDeviceParams;
 
@@ -185,6 +181,7 @@ SVOCameraObj* SVOCameraObj::operator =(const SVOCameraObj* pRhs)
     m_CameraFile = pRhs->m_CameraFile;
     m_CameraFileSet = pRhs->m_CameraFileSet;
     m_CameraFileChanged = pRhs->m_CameraFileChanged;
+	m_sequenceCameraFile = pRhs->m_sequenceCameraFile;
 	m_CameraFileParams = pRhs->m_CameraFileParams;
 	m_CameraDeviceParams = pRhs->m_CameraDeviceParams;
 

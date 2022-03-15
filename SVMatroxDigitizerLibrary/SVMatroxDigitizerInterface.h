@@ -86,12 +86,12 @@ public:
 	// Gige Feature Getter/Setter
 	static HRESULT GetFeature(const SVMatroxDigitizer& DigitizerID,
 									const std::string& FeatureName,
-									SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
+									SVFeatureTypeEnum FeatureType,
 									variant_t& FeatureValue);
 
 	static HRESULT SetFeature(const SVMatroxDigitizer& DigitizerID,
                                  const std::string& FeatureName,
-                                 SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
+                                 SVFeatureTypeEnum FeatureType,
                                  const variant_t& FeatureValue);
 
 	// Grab 

@@ -315,7 +315,20 @@ HRESULT SVMatroxGige::CameraSetParameter(unsigned long digitizerHandle, int para
 			}
 			case SvDef::SVTriggerType:
 			{
-				rCamera.m_params.TriggerType = static_cast<SvDef::TriggerType> (rValue.lVal);
+				if (VT_I4 == rValue.vt)
+				{
+					rCamera.m_params.TriggerType = static_cast<SvDef::TriggerType> (rValue.lVal);
+					result = S_OK;
+				}
+				break;
+			}
+			case SvDef::SVCameraSequenceFile:
+			{
+				if (VT_BSTR == rValue.vt)
+				{
+					std::string fileName {_bstr_t(rValue.bstrVal)};
+					result = ReadCameraSequenceFile(rCamera, fileName);
+				}
 				break;
 			}
 
@@ -463,7 +476,7 @@ HRESULT SVMatroxGige::InternalTrigger( unsigned long digitizerHandle)
 	{
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(digitizerHandle);
 		
-		hr = SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerSoftware", SVMatroxDigitizerFeature::SVTypeCommand, _variant_t());
+		hr = SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerSoftware", SVFeatureTypeEnum::SVTypeCommand, _variant_t());
 	}
 	return hr;
 }
@@ -564,21 +577,21 @@ void SVMatroxGige::ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookI
 							{
 								_variant_t* pValue = &cameraInfo.m_cameraData[CameraDataEnum::ChunkFrameID];
 								pValue->vt = VT_I4;
-								HRESULT hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkFrameID, SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeInt32, *pValue);
+								HRESULT hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkFrameID, SVFeatureTypeEnum::SVTypeInt32, *pValue);
 								if (S_OK != hResult)
 								{
 									pValue->Clear();
 								}
 								pValue = &cameraInfo.m_cameraData[CameraDataEnum::ChunkTimeStamp];
 								pValue->vt = VT_I4;
-								hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkTimeStamp, SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeInt32, *pValue);
+								hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkTimeStamp, SVFeatureTypeEnum::SVTypeInt32, *pValue);
 								if (S_OK != hResult)
 								{
 									pValue->Clear();
 								}
 								pValue = &cameraInfo.m_cameraData[CameraDataEnum::ChunkLineStatusAll];
 								pValue->vt = VT_I4;
-								hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkLineStatusAll, SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeInt32, *pValue);
+								hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkLineStatusAll, SVFeatureTypeEnum::SVTypeInt32, *pValue);
 								if (S_OK != hResult)
 								{
 									pValue->Clear();
@@ -849,7 +862,7 @@ HRESULT SVMatroxGige::StartDigitizer(SVMatroxGigeDigitizer& rCamera, const _vari
 	{
 		_variant_t value;
 		value.vt = VT_BOOL;
-		if (S_OK == SVMatroxDigitizerInterface::GetFeature(*(rCamera.m_Digitizer.get()), cChunkModeActive, SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeBool, value))
+		if (S_OK == SVMatroxDigitizerInterface::GetFeature(*(rCamera.m_Digitizer.get()), cChunkModeActive, SVFeatureTypeEnum::SVTypeBool, value))
 		{
 			rCamera.m_chunkData = value ? true : false;
 		}
@@ -1242,6 +1255,122 @@ HRESULT SVMatroxGige::FindCamera(const SVMatroxGigeSystem& rSystem, long deviceN
 		}
 	}
 	return hr;
+}
+
+HRESULT SVMatroxGige::ReadCameraSequenceFile(SVMatroxGigeDigitizer& rCamera, const std::string& rFile)
+{
+	HRESULT result {E_FAIL};
+
+	struct SequenceCameraParameter
+	{
+		std::string m_name;
+		SVFeatureTypeEnum m_featureType {SVFeatureTypeEnum::SVTypeCommand};
+		_variant_t m_value;
+		int m_lineNumber {0};
+	};
+
+	std::vector<SequenceCameraParameter> sequenceParaList;;
+
+	std::ifstream sequenceFile;
+	sequenceFile.open(rFile.c_str(), std::ifstream::in | std::ifstream::binary);
+	if (false == sequenceFile.is_open())
+	{
+		return ERROR_FILE_NOT_FOUND;
+	}
+
+	enum SequenceEntryPos
+	{
+		ParameterName,
+		FeatureType,
+		Value,
+	};
+
+	sequenceParaList.reserve(100);
+	std::string fileLine;
+	int lineNumber {0};
+	while (false == sequenceFile.eof())
+	{
+		std::getline(sequenceFile, fileLine);
+		++lineNumber;
+		fileLine.erase(std::remove_if(fileLine.begin(), fileLine.end(), ::isspace), fileLine.end());
+		//filter comments
+		if (false == fileLine.empty() && 0 != fileLine.find("//"))
+		{
+			std::stringstream stringStream(fileLine);
+			std::string value;
+			SequenceCameraParameter sequenceCameraPara;
+			sequenceCameraPara.m_lineNumber = lineNumber;
+			int entryNr {0};
+			while (std::getline(stringStream, value, ';'))
+			{
+				switch (entryNr)
+				{
+					case SequenceEntryPos::ParameterName:
+					{
+						sequenceCameraPara.m_name = value;
+						break;
+					}
+					case SequenceEntryPos::FeatureType:
+					{
+						const auto iter = std::find_if(cFeatureTypeStringEnums.cbegin(), cFeatureTypeStringEnums.cend(), [&value](const auto& rEntry) { return rEntry.second == value; });
+						if (cFeatureTypeStringEnums.end() != iter)
+						{
+							sequenceCameraPara.m_featureType = iter->first;
+						}
+						break;
+					}
+					case SequenceEntryPos::Value:
+					{
+						switch (sequenceCameraPara.m_featureType)
+						{
+							case SVFeatureTypeEnum::SVTypeInt32:
+							{
+								sequenceCameraPara.m_value = std::stol(value);
+								break;
+							}
+							case SVFeatureTypeEnum::SVTypeDouble:
+							{
+								sequenceCameraPara.m_value = std::stod(value);
+								break;
+							}
+							case SVFeatureTypeEnum::SVTypeBool:
+							{
+								sequenceCameraPara.m_value = std::stoi(value);
+								break;
+							}
+							default:
+							{
+								sequenceCameraPara.m_value.SetString(value.c_str());
+								break;
+							}
+						}
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+				++entryNr;
+			}
+			sequenceParaList.push_back(sequenceCameraPara);
+		}
+	}
+	sequenceFile.close();
+
+	for (const auto& rSequenceCameraParam : sequenceParaList)
+	{
+		result = SVMatroxDigitizerInterface::SetFeature(*(rCamera.m_Digitizer.get()), rSequenceCameraParam.m_name, rSequenceCameraParam.m_featureType, rSequenceCameraParam.m_value);
+		if (S_OK != result)
+		{
+			std::string additionalInfo {SvUl::Format(_T("Feature: % s, Line % d"), rSequenceCameraParam.m_name.c_str(), rSequenceCameraParam.m_lineNumber)};
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NAK_Error_MissingEndFrame, {additionalInfo}, SvStl::SourceFileParams(StdMessageParams));
+			break;
+		}
+	}
+
+	return result;
 }
 
 // Callback used for MdigHook - Start Frame

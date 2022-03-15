@@ -58,11 +58,13 @@
 #include <ctime>			//Used by static library
 #include <comdef.h>
 #include <deque>
+#include <fstream>
 #include <functional>		//Used by static library
 #include <iterator>			//Used by static library
 #include <list>				//Used by static library
 #include <map>
 #include <memory>
+#include <mil.h>
 #include <numeric>
 #include <set>				//Used by static library
 #include <stack>

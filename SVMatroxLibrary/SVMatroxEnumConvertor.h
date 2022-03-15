@@ -22,11 +22,11 @@ The ConvertEnumFromMatroxType method converts a simple Matrox Type (Enum) to a S
 The ConvertBitSetFromMatroxType method converts a complex Matrox Type (BitSet) to a SVEnumType Bit Combination. 
 */
 
-template<typename SVEnumType>
-HRESULT ConvertEnumToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType type, long long& rMatroxType);
+template<typename PairContainer, typename SVEnumType>
+HRESULT ConvertEnumToMatroxType(const PairContainer& rEnumPairList, SVEnumType type, long long& rMatroxType);
 
-template<typename SVEnumType>
-HRESULT ConvertEnumFromMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, long long MatroxType, SVEnumType& type);
+template<typename PairContainer, typename SVEnumType>
+HRESULT ConvertEnumFromMatroxType(const PairContainer& rEnumPairList, long long MatroxType, SVEnumType& type);
 
 #include "SVMatroxEnumConvertor.inl"
 

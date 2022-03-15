@@ -64,6 +64,7 @@ namespace SvDef
 		SVGigeParameterIPAddress,				// 104 - Read Only parameter
 		SVGigeParameterCameraDefaultSettings,	// 105
 		SVTriggerType,							// 106 - Trigger type setting for the camera
+		SVCameraSequenceFile,							// 107 - Internal use only
 
 		SVGigeParameterCustomBase = 200,		// 200 - Starting Point for Custom Parameters
 		SVGigeParameterCustom1 = SVGigeParameterCustomBase,

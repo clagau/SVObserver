@@ -13,22 +13,22 @@
 #include "SVGigeFeature.h"
 #pragma endregion Includes
 
-SVGigeFeature::SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType)
+SVGigeFeature::SVGigeFeature(const std::string& p_name, SVFeatureTypeEnum p_featureType)
 : m_name(p_name), m_featureType(p_featureType), m_supported(SVGigeFeature::Supported), m_access(SVGigeFeature::ReadWrite)
 {
 }
 
-SVGigeFeature::SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access)
+SVGigeFeature::SVGigeFeature(const std::string& p_name, SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access)
 : m_name(p_name), m_featureType(p_featureType), m_supported(p_supported), m_access(p_access)
 {
 }
 
-SVGigeFeature::SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector)
+SVGigeFeature::SVGigeFeature(const std::string& p_name, SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector)
 : m_name(p_name), m_featureType(p_featureType), m_supported(p_supported), m_access(p_access), m_selector(p_selector)
 {
 }
 
-SVGigeFeature::SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector, const SVGigeFeatureStringEnumList& p_stringEnums)
+SVGigeFeature::SVGigeFeature(const std::string& p_name, SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector, const SVGigeFeatureStringEnumList& p_stringEnums)
 : m_name(p_name), m_featureType(p_featureType), m_supported(p_supported), m_access(p_access), m_selector(p_selector), m_stringEnums(p_stringEnums)
 {
 }
@@ -57,7 +57,7 @@ const std::string& SVGigeFeature::GetName() const
 	return m_name;
 }
 
-SVMatroxDigitizerFeature::SVFeatureTypeEnum SVGigeFeature::GetType() const
+SVFeatureTypeEnum SVGigeFeature::GetType() const
 {
 	return m_featureType;
 }

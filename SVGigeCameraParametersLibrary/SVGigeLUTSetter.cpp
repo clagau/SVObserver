@@ -25,7 +25,7 @@ HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerPtr Digitizer, const SVGige
 	{
 		// Set the Selector
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
 		hr = l_Code;
 
 		if (l_Code == S_OK)
@@ -64,7 +64,7 @@ HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerPtr Digitizer, const SVGige
 										_variant_t lutIndex(i);
 
 										// Set LUT Index
-										l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string("LUTIndex"), SVMatroxDigitizerFeature::SVTypeInt32, lutIndex);
+										l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string("LUTIndex"), SVFeatureTypeEnum::SVTypeInt32, lutIndex);
 										hr = l_Code;
 
 										if (l_Code == S_OK)

@@ -44,10 +44,10 @@ struct SVGigeTriggerLineSet
 	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
-			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Input"));
+			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, _variant_t("Input"));
 		}
 		return l_Code;
 	}
@@ -61,7 +61,7 @@ struct SVGigeTriggerInvertGetter
 		//
 		// Determine which Line is the Trigger...
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
 			_variant_t value(false);
@@ -105,10 +105,10 @@ struct SVGigeStrobeLineSetter
 	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
-			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Output"));
+			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, _variant_t("Output"));
 		}
 		return l_Code;
 	}
@@ -138,7 +138,7 @@ struct SVGigeStrobeInvertSetter
 	{
 		// Get which line is the Strobe (LineMode = Output)
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
 			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
@@ -167,10 +167,10 @@ struct SVGigeInputLineSetter
 	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
-			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Input"));
+			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVFeatureTypeEnum::SVTypeStringEnumeration, _variant_t("Input"));
 		}
 		return l_Code;
 	}
@@ -202,7 +202,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{	
-						_T("ExposureMode"),  SVMatroxDigitizerFeature::SVTypeStringEnumeration, 
+						_T("ExposureMode"),  SVFeatureTypeEnum::SVTypeStringEnumeration, 
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -220,7 +220,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				std::string( _T("Bayer Pattern") ), VT_I4,
 				SVGigeParameterAccessor
 				{
-					SVGigeFeature{ _T(""), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+					SVGigeFeature{ _T(""), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite},
 					SVGigeEmptyGetter(),
 					SVGigeEmptySetter()
@@ -237,7 +237,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				std::string( _T("X Offset") ), VT_I4,
 				SVGigeParameterAccessor
 				{ 
-					SVGigeFeature{ _T("OffsetX"), SVMatroxDigitizerFeature::SVTypeInt32 }
+					SVGigeFeature{ _T("OffsetX"), SVFeatureTypeEnum::SVTypeInt32 }
 				}
 			}
 		},
@@ -251,7 +251,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				std::string( _T("Y Offset") ), VT_I4,
 				SVGigeParameterAccessor
 				{
-					SVGigeFeature{ _T("OffsetY"), SVMatroxDigitizerFeature::SVTypeInt32}
+					SVGigeFeature{ _T("OffsetY"), SVFeatureTypeEnum::SVTypeInt32}
 				}
 			}
 		},
@@ -265,7 +265,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				std::string( _T("X Size") ), VT_I4,
 				SVGigeParameterAccessor
 				{
-					SVGigeFeature{_T("Width"), SVMatroxDigitizerFeature::SVTypeInt32}
+					SVGigeFeature{_T("Width"), SVFeatureTypeEnum::SVTypeInt32}
 				}
 			}
 		},
@@ -279,7 +279,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				std::string( _T("Y Size") ), VT_I4,
 				SVGigeParameterAccessor
 				{
-					SVGigeFeature{_T("Height"), SVMatroxDigitizerFeature::SVTypeInt32}
+					SVGigeFeature{_T("Height"), SVFeatureTypeEnum::SVTypeInt32}
 				}
 			}
 		},
@@ -295,7 +295,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{ 
-						_T("PixelFormat"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("PixelFormat"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector(),
 						SVGigeFeatureStringEnumList
@@ -326,7 +326,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("BlackLevelRaw"), SVMatroxDigitizerFeature::SVTypeInt32,
+						_T("BlackLevelRaw"), SVFeatureTypeEnum::SVTypeInt32,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -349,7 +349,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("ExposureTimeAuto"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("ExposureTimeAuto"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -369,7 +369,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{ 
-						_T(""), SVMatroxDigitizerFeature::SVTypeInt32,
+						_T(""), SVFeatureTypeEnum::SVTypeInt32,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -389,7 +389,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T(""), SVMatroxDigitizerFeature::SVTypeInt32,
+						_T(""), SVFeatureTypeEnum::SVTypeInt32,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(), 
@@ -409,7 +409,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T(""), SVMatroxDigitizerFeature::SVTypeInt32, 
+						_T(""), SVFeatureTypeEnum::SVTypeInt32, 
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(), 
@@ -429,7 +429,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T(""), SVMatroxDigitizerFeature::SVTypeInt32,
+						_T(""), SVFeatureTypeEnum::SVTypeInt32,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -449,7 +449,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{ 
-						_T(""), SVMatroxDigitizerFeature::SVTypeInt32,
+						_T(""), SVFeatureTypeEnum::SVTypeInt32,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -469,7 +469,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("Gamma"), SVMatroxDigitizerFeature::SVTypeDouble
+						_T("Gamma"), SVFeatureTypeEnum::SVTypeDouble
 					}
 				}
 			}
@@ -486,7 +486,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("ExposureTimeAbs"), SVMatroxDigitizerFeature::SVTypeDouble
+						_T("ExposureTimeAbs"), SVFeatureTypeEnum::SVTypeDouble
 					}
 				}
 			}
@@ -503,7 +503,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("GainAbs"), SVMatroxDigitizerFeature::SVTypeDouble, 
+						_T("GainAbs"), SVFeatureTypeEnum::SVTypeDouble, 
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -526,7 +526,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("TriggerSource"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("TriggerSource"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -555,7 +555,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("TriggerActivation"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("TriggerActivation"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{	
@@ -583,7 +583,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("LineInvertor"), SVMatroxDigitizerFeature::SVTypeBool,
+						_T("LineInvertor"), SVFeatureTypeEnum::SVTypeBool,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -603,7 +603,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("LineMode"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -629,7 +629,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 					SVGigeFeature
 					{
 						_T("TriggerDelayAbs"), 
-						SVMatroxDigitizerFeature::SVTypeDouble
+						SVFeatureTypeEnum::SVTypeDouble
 					}
 				}
 			}
@@ -646,7 +646,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("TriggerMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("TriggerMode"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -674,7 +674,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("StrobeSource"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("StrobeSource"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -694,7 +694,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("StrobePolarity"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("StrobePolarity"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -714,7 +714,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("LineInvertor"), SVMatroxDigitizerFeature::SVTypeBool,
+						_T("LineInvertor"), SVFeatureTypeEnum::SVTypeBool,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -734,7 +734,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("StrobeDelayAbs"), SVMatroxDigitizerFeature::SVTypeDouble,
+						_T("StrobeDelayAbs"), SVFeatureTypeEnum::SVTypeDouble,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -754,7 +754,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("StrobeDurationAbs"), SVMatroxDigitizerFeature::SVTypeDouble,
+						_T("StrobeDurationAbs"), SVFeatureTypeEnum::SVTypeDouble,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -774,7 +774,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("LineMode"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -799,7 +799,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("StrobeEnable"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("StrobeEnable"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -819,7 +819,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("BinningHorizontal"), SVMatroxDigitizerFeature::SVTypeInt32,
+						_T("BinningHorizontal"), SVFeatureTypeEnum::SVTypeInt32,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -839,7 +839,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("BinningVertical"), SVMatroxDigitizerFeature::SVTypeInt32,
+						_T("BinningVertical"), SVFeatureTypeEnum::SVTypeInt32,
 						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
 					},
 					SVGigeEmptyGetter(),
@@ -860,7 +860,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 					SVGigeFeature
 					{
 						_T("GevSCPSPacketSize"), 
-						SVMatroxDigitizerFeature::SVTypeInt32
+						SVFeatureTypeEnum::SVTypeInt32
 					}
 				}
 			}
@@ -877,7 +877,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{ 
-						_T("LUTEnable"), SVMatroxDigitizerFeature::SVTypeBool,
+						_T("LUTEnable"), SVFeatureTypeEnum::SVTypeBool,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -900,7 +900,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{ 
-						_T("LUTValue"), SVMatroxDigitizerFeature::SVTypeInt32,
+						_T("LUTValue"), SVFeatureTypeEnum::SVTypeInt32,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -925,7 +925,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("LineMode"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -949,7 +949,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("EventNotification"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("EventNotification"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector
 						{
@@ -978,7 +978,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("DeviceVendorName"), SVMatroxDigitizerFeature::SVTypeString,
+						_T("DeviceVendorName"), SVFeatureTypeEnum::SVTypeString,
 						SVGigeFeature::Supported, SVGigeFeature::ReadOnly
 					}
 				}
@@ -996,7 +996,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("DeviceModelName"), SVMatroxDigitizerFeature::SVTypeString,
+						_T("DeviceModelName"), SVFeatureTypeEnum::SVTypeString,
 						SVGigeFeature::Supported, SVGigeFeature::ReadOnly
 					}
 				}
@@ -1014,7 +1014,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("DeviceID"), SVMatroxDigitizerFeature::SVTypeString,
+						_T("DeviceID"), SVFeatureTypeEnum::SVTypeString,
 						SVGigeFeature::Supported, SVGigeFeature::ReadOnly
 					},
 					SVGigeReadSerialNumber(),
@@ -1034,7 +1034,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("DeviceID"), SVMatroxDigitizerFeature::SVTypeString,
+						_T("DeviceID"), SVFeatureTypeEnum::SVTypeString,
 						SVGigeFeature::Supported, SVGigeFeature::ReadOnly
 					},
 					SVGigeReadIPAddress(),
@@ -1054,7 +1054,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 				{
 					SVGigeFeature
 					{
-						_T("UserSetDefaultSelector"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						_T("UserSetDefaultSelector"), SVFeatureTypeEnum::SVTypeStringEnumeration,
 						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 						SVGigeFeatureSelector(),
 						SVGigeFeatureStringEnumList

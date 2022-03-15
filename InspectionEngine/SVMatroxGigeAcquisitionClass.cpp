@@ -41,13 +41,6 @@ static char THIS_FILE[] = __FILE__;
 SVMatroxGigeAcquisitionClass::SVMatroxGigeAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
 {
-	mbIsCamFilesLoaded = false;
-	mbIsStarted = false;
-	mbTempOnline = false;
-	mlLastIndex = -1;
-
-	mlHandleIndexCount = -1;
-
 	m_cameraProxy.SetOwner(this);
 }
 
@@ -126,44 +119,50 @@ HRESULT SVMatroxGigeAcquisitionClass::GetFileNameArraySize( long &rlSize ) const
 // Called from SVOCameraDlg::OnBtnPropVc
 // Called from SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration
 // Called from SVOPropertyPageDlg::AdjustCameraImageFormat
-HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
+HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(const SVFileNameArrayClass& rFiles)
 {
 	m_DeviceParams.Clear();
+	m_sequenceCameraFileIndex = -1;
 
 	HRESULT hr = SVAcquisitionClass::LoadFiles( rFiles );
 	if ( S_OK == hr )
 	{
-		assert( 1 == mFiles.size() );	// only one file
-		if ( 1 == mFiles.size() )
+		for (int i=0; i < static_cast<int> (mFiles.size()); ++i)
 		{
-			std::string sFile (mFiles[0].GetFullFileName());
-
-			SVGigeCameraFileReader reader(sFile, IsColor());
-
-			hr = reader.ReadCameraFileImpl( m_CameraFileDeviceParams );
-
-			// Set Gige Feature Overrides
-			if (S_OK == hr)
+			std::string sFile (mFiles[i].GetFullFileName());
+			if (mFiles[i].GetExtension() == ".ogc")
 			{
-				hr = SetGigeFeatureOverrides(reader.GetFeatureOverrides());
-			}
+				SVGigeCameraFileReader reader(sFile, IsColor());
 
-			SVDeviceParamCollection DeviceParams(m_CameraFileDeviceParams);
-			const SVGigeCameraStructVector& rCameras = SVGigeCameraManager::Instance().GetCameraOrder();
-			for( SVGigeCameraStructVector::const_iterator Iter( rCameras.begin() ); rCameras.end() != Iter; ++Iter )
-			{
-				if( Iter->m_DigitizerID == DigNumber() )
+				hr = reader.ReadCameraFileImpl(m_CameraFileDeviceParams);
+
+				// Set Gige Feature Overrides
+				if (S_OK == hr)
 				{
-					DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Iter->m_SerialNum.c_str() ) );
-					SVStringValueDeviceParam IP_Address( DeviceParamIPAddress );
-					IP_Address = Iter->m_IPAddress.c_str();
-					DeviceParams.SetParameter( DeviceParamIPAddress, IP_Address );
-					break;
+					hr = SetGigeFeatureOverrides(reader.GetFeatureOverrides());
 				}
-			}
-			SetDeviceParameters( DeviceParams );
 
-			GetCameraImageInfo( msvImageInfo );
+				SVDeviceParamCollection DeviceParams(m_CameraFileDeviceParams);
+				const SVGigeCameraStructVector& rCameras = SVGigeCameraManager::Instance().GetCameraOrder();
+				for (SVGigeCameraStructVector::const_iterator Iter(rCameras.begin()); rCameras.end() != Iter; ++Iter)
+				{
+					if (Iter->m_DigitizerID == DigNumber())
+					{
+						DeviceParams.SetParameter(DeviceParamSerialNumberString, SVStringValueDeviceParam(Iter->m_SerialNum.c_str()));
+						SVStringValueDeviceParam IP_Address(DeviceParamIPAddress);
+						IP_Address = Iter->m_IPAddress.c_str();
+						DeviceParams.SetParameter(DeviceParamIPAddress, IP_Address);
+						break;
+					}
+				}
+				SetDeviceParameters(DeviceParams);
+
+				GetCameraImageInfo(msvImageInfo);
+			}
+			else if (mFiles[i].GetExtension() == ".seq")
+			{
+				m_sequenceCameraFileIndex = i;
+			}
 		}
 	}
 
@@ -666,6 +665,15 @@ HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCo
 	{
 		hr = SVAcquisitionClass::SetDeviceParameters( rDeviceParams );
 	}
+	if (S_OK == hr)
+	{
+		if (-1 != m_sequenceCameraFileIndex && m_sequenceCameraFileIndex < static_cast<int> (mFiles.size()))
+		{
+			_variant_t fileName;
+			fileName.SetString(mFiles[m_sequenceCameraFileIndex].GetFullFileName().c_str());
+			hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SvDef::SVCameraSequenceFile, fileName);
+		}
+	}
 	if( S_OK == hr )
 	{
 		hr = InitializeDevice( rDeviceParams );
@@ -751,7 +759,6 @@ HRESULT SVMatroxGigeAcquisitionClass::IsValidCameraFileParameters( SVDeviceParam
 	return m_cameraProxy.IsValidCameraFileParameters( rDeviceParams, m_hDigitizer, m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str()));
 }
 
-
 HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const std::string& featureOverrides)
 {
 	HRESULT hr = S_OK;
@@ -790,5 +797,4 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 	}
 	return hr;
 }
-
 } //namespace SvIe

@@ -47,13 +47,6 @@ SVAcquisitionClass::SVAcquisitionClass(const SVAcquisitionConstructParams& p_rPa
 	, m_rDigitizerProc(SVDigitizerProcessingClass::Instance())
 {
 	m_objectId = getNextAcquisitionId();
-	mbIsBufferCreated = false;
-	mbTempOnline = false;
-	m_LastImage = nullptr;
-
-	mlStartFrameIndex = -1;
-
-	m_hDigitizer = 0;
 
 	msvImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
 
@@ -272,7 +265,7 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
+HRESULT SVAcquisitionClass::LoadFiles(const SVFileNameArrayClass &rArray)
 {
 	for (long l = static_cast<long> (mFiles.size() - 1); -1 < l; l--)
 	{
@@ -282,9 +275,9 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 	mFiles = rArray;
 	m_CameraFileDeviceParams.Clear();
 	bool LogOnly(SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD));
-	for (long l = 0; l < static_cast<long> (mFiles.size()); l++)
+	for (long l = 0; l < static_cast<long> (mFiles.size()); ++l)
 	{
-		if (!SVFileNameManagerClass::Instance().AddItem(&(mFiles[l])))
+		if (false == SVFileNameManagerClass::Instance().AddItem(&(mFiles[l])))
 		{
 			if (LogOnly)
 			{
@@ -308,7 +301,6 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 		}
 	}
 
-	rArray = mFiles;
 	return S_OK;
 }
 

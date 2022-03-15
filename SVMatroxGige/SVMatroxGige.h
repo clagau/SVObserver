@@ -100,6 +100,8 @@ private:
 
 	HRESULT FindCamera(const SVMatroxGigeSystem& rSystem, long deviceNumber, unsigned long& rHandle);
 
+	HRESULT ReadCameraSequenceFile(SVMatroxGigeDigitizer& rCamera, const std::string& rFile);
+
 	// Matrox Hooks
 	static __int64 __stdcall DigitizerStartFrameCallback( __int64 HookType, __int64 EventId, void* pContext );
 	static __int64 __stdcall DigitizerEndFrameCallback( __int64 HookType, __int64 EventId, void* pContext );
