@@ -105,6 +105,9 @@
     <ClCompile Include="DrawTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ArchiveDataAsynchron.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArchiveMethodEnum.h">
@@ -198,6 +201,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="DrawTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchiveDataAsynchron.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

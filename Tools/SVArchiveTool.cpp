@@ -32,6 +32,7 @@
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
+#include "ArchiveDataAsynchron.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -51,8 +52,8 @@ SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
 
 
-SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
-              :SVToolClass(ToolExtType::None,POwner, StringResourceID)
+SVArchiveTool::SVArchiveTool(SVObjectClass* POwner, int StringResourceID)
+	:SVToolClass(ToolExtType::None, POwner, StringResourceID)
 {
 	initializeArchiveTool();
 }
@@ -60,6 +61,7 @@ SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
 
 SVArchiveTool::~SVArchiveTool()
 {
+	ArchiveDataAsynchron::Instance().GoOffline();
 	SVArchiveImageThreadClass::Instance().GoOffline();
 	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
 	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
@@ -71,15 +73,15 @@ void SVArchiveTool::initializeArchiveTool()
 {
 	m_currentImagePathRoot = "";
 
-	m_ResultCollection.SetArchiveTool( this );
-	m_ImageCollection.SetArchiveTool( this );
+	m_ResultCollection.SetArchiveTool(this);
+	m_ImageCollection.SetArchiveTool(this);
 
 	// Set up your type...
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVToolArchiveObjectType;
 
-	
-	
+
+
 	// Register Embedded Objects
 	RegisterEmbeddedObject(
 		&m_stringFileArchivePath,
@@ -261,14 +263,14 @@ void SVArchiveTool::initializeArchiveTool()
 }
 
 
-bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
-	if ( bOk )
+	if (bOk)
 	{
 		long Method = SVArchiveInvalidMethod;
-		m_evoArchiveMethod.GetValue( Method );
+		m_evoArchiveMethod.GetValue(Method);
 		m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
 	}
 
@@ -333,24 +335,24 @@ bool SVArchiveTool::InitializeAndValidate()
 }
 
 
-bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool result = SVToolClass::ResetObject(pErrorMessages);
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
 		m_lastBufferMap.clear();
 	}
-	
+
 	long l_lArchiveMethod = 0;
-	m_evoArchiveMethod.GetValue( l_lArchiveMethod );
-	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( l_lArchiveMethod );
+	m_evoArchiveMethod.GetValue(l_lArchiveMethod);
+	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>(l_lArchiveMethod);
 
 	// Put the archive tool text in the thread affinity list.
-	if(m_eArchiveMethod == SVArchiveAsynchronous )
+	if (m_eArchiveMethod == SVArchiveAsynchronous)
 	{	// IsAllowed will return S_FALSE if the thread is not found with SVNone.
-		if( S_FALSE == SVThreadManager::Instance().IsAllowed(_T( "Archive Tools(Asynchronous)") , SVNone))
+		if (S_FALSE == SVThreadManager::Instance().IsAllowed(_T("Archive Tools(Asynchronous)"), SVNone))
 		{	// Add thread to list with null handle so the user can set affinity before the thread is created.
-			SVThreadManager::Instance().Add( nullptr, _T("Archive Tools(Asynchronous)"), SVAffinityUser );
+			SVThreadManager::Instance().Add(nullptr, _T("Archive Tools(Asynchronous)"), SVAffinityUser);
 		}
 	}
 
@@ -360,7 +362,7 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-	if ( pInspection && pInspection->IsResetStateSet( SvDef::SVResetStateArchiveToolCreateFiles ) )
+	if (pInspection && pInspection->IsResetStateSet(SvDef::SVResetStateArchiveToolCreateFiles))
 	{
 		m_bInitializedForRun = initializeOnRun(pErrorMessages);
 		result = result && m_bInitializedForRun;
@@ -396,36 +398,36 @@ void SVArchiveTool::InitialiseTriggercountObject()
 
 // Create a file to store selected results in text format.
 //
-bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages)
+bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector* pErrorMessages)
 {
 	//
 	// CFile object.
 	//
 	std::string FileArchivePath;
 
-	GetArchiveResultFilepath( FileArchivePath );
+	GetArchiveResultFilepath(FileArchivePath);
 
-	if( FileArchivePath.empty() )
+	if (FileArchivePath.empty())
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_PathEmpty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() ); 
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_PathEmpty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
 	}
 
 	ArchiveToolHelper athFile;
-	athFile.Init( FileArchivePath );
+	athFile.Init(FileArchivePath);
 
 	if (athFile.isUsingKeywords())
 	{
-		if(athFile.areTokensValid())
+		if (athFile.areTokensValid())
 		{
-			FileArchivePath = athFile.TranslatePath( FileArchivePath);
+			FileArchivePath = athFile.TranslatePath(FileArchivePath);
 		}
 	}
-	
+
 	//
 	// Make sure the file is closed. Before creating/opening a new one.
 	//
@@ -433,20 +435,20 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	{
 		m_fileArchive.close();
 	}
-	
-	if ( ! FileArchivePath.empty() )
-	{
-		SVFileNameClass svFileName( FileArchivePath.c_str() );
 
-		if ( _access( svFileName.GetPathName().c_str(), 0 ) != 0 )
+	if (!FileArchivePath.empty())
+	{
+		SVFileNameClass svFileName(FileArchivePath.c_str());
+
+		if (_access(svFileName.GetPathName().c_str(), 0) != 0)
 		{
-			if (!SVFileNameManagerClass::Instance().CreatePath( svFileName.GetPathName().c_str() ) )
+			if (!SVFileNameManagerClass::Instance().CreatePath(svFileName.GetPathName().c_str()))
 			{
 				if (nullptr != pErrorMessages)
 				{
 					SvDef::StringVector msgList;
-					msgList.push_back( FileArchivePath );
-					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10036, getObjectId() ); 
+					msgList.push_back(FileArchivePath);
+					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10036, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				return false;
@@ -459,24 +461,24 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	//
 	DWORD appendOption;
 	m_dwAppendArchiveFile.GetValue(appendOption);
-	
+
 	std::ofstream::openmode fileMode = std::ofstream::in | std::ofstream::out | std::ofstream::binary;
 	fileMode |= appendOption ? std::ofstream::app : std::ofstream::trunc;
-	
-	m_fileArchive.open( FileArchivePath.c_str(), fileMode);
 
-	if(!m_fileArchive.is_open())
+	m_fileArchive.open(FileArchivePath.c_str(), fileMode);
+
+	if (!m_fileArchive.is_open())
 	{
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back( FileArchivePath );
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10036, getObjectId() ); 
+			msgList.push_back(FileArchivePath);
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10036, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
 	}
-	
+
 	//
 	// Write a date and time stamp to the archive file.
 	//
@@ -488,7 +490,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	// Format date and time as DD/MM/YYYY HH:MM:SS
 	//
 	std::string TimeStamp = stringStream.str() + _T("\r\n");
-	
+
 	//
 	// Write the result to the archive file.
 	//
@@ -498,67 +500,67 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 		m_fileArchive.write(TimeStamp.c_str(), TimeStamp.size());
 
 		BOOL bUseHeaders = false;
-		HRESULT hr = m_bvoUseHeaders.GetValue( bUseHeaders );
-		if( S_OK == hr && bUseHeaders )
+		HRESULT hr = m_bvoUseHeaders.GetValue(bUseHeaders);
+		if (S_OK == hr && bUseHeaders)
 		{
 			// Write Header
 			SvDef::StringVector HeaderVector;
-			m_HeaderLabelNames.GetArrayValues( HeaderVector );
+			m_HeaderLabelNames.GetArrayValues(HeaderVector);
 			std::string strHeader;
-			for( SvDef::StringVector::iterator it = HeaderVector.begin() ; it != HeaderVector.end() ; ++it)
+			for (SvDef::StringVector::iterator it = HeaderVector.begin(); it != HeaderVector.end(); ++it)
 			{
 				strHeader += *it;
-				if( it+1 != HeaderVector.end())
+				if (it + 1 != HeaderVector.end())
 				{
-					strHeader+= _T(",");
+					strHeader += _T(",");
 				}
 			}
-			if( !strHeader.empty() )
+			if (!strHeader.empty())
 			{
 				strHeader += _T("\r\n");
-				m_fileArchive.write( strHeader.c_str(), strHeader.size());
+				m_fileArchive.write(strHeader.c_str(), strHeader.size());
 			}
 		}
-	} 
+	}
 	catch (...)
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_WriteToFileFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() ); 
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_WriteToFileFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
 	}
-		
+
 	return true;
 }
 
-void local_remove_items( SvDef::StringVector& rVec, SvVol::SVStringValueObjectClass& rvo )
+void local_remove_items(SvDef::StringVector& rVec, SvVol::SVStringValueObjectClass& rvo)
 {
 	SvDef::StringVector NameVector;
 	SvDef::StringVector::iterator iterRemoved;
 
-	if ( !rVec.empty() )
+	if (!rVec.empty())
 	{
-		rvo.GetArrayValues( NameVector );
+		rvo.GetArrayValues(NameVector);
 
-		for ( iterRemoved = rVec.begin(); iterRemoved != rVec.end(); ++iterRemoved )
+		for (iterRemoved = rVec.begin(); iterRemoved != rVec.end(); ++iterRemoved)
 		{
 			SvDef::StringVector::iterator iterName;
-			iterName = std::find(NameVector.begin(), NameVector.end(), *iterRemoved );
-			if ( iterName != NameVector.end() )
+			iterName = std::find(NameVector.begin(), NameVector.end(), *iterRemoved);
+			if (iterName != NameVector.end())
 			{
-				NameVector.erase( iterName );
+				NameVector.erase(iterName);
 			}
 		}
 
-		rvo.SetArraySize( static_cast< int >( NameVector.size() ) );
-		rvo.SetArrayValues( NameVector );
+		rvo.SetArraySize(static_cast<int>(NameVector.size()));
+		rvo.SetArrayValues(NameVector);
 	}
 }
 
 
-bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessages)
+bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (m_ImageCollection.GetSize() > 0) //if no images are to be archived we do not need to run through the checking of disk space
 	{
@@ -577,22 +579,24 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
 
 	m_ImageCollection.ResetImageCounts();
-	
+
 	//
 	// Validate the image objects to be archived.
 	//
 	m_ImageCollection.ValidateImageObjects();
-	
-	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
+
+	ArchiveDataAsynchron::Instance().GoOnline();
+	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous)
 	{
-		if ( !AllocateImageBuffers(pErrorMessages) )
+		if (!AllocateImageBuffers(pErrorMessages))
 		{
 			return false;
 		}
 
-		if (m_eArchiveMethod == SVArchiveAsynchronous )
+		if (m_eArchiveMethod == SVArchiveAsynchronous)
 		{
 			/*HRESULT hrThreadOnline =*/ SVArchiveImageThreadClass::Instance().GoOnline();
+			
 		}
 	}
 
@@ -600,18 +604,18 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 	// Validate the results objects to be archived in text format.
 	//
 	int nCountResults = m_ResultCollection.ValidateResultsObjects();
+
 	
-	m_ArchiveStringBuffer.clear();
 
 	//
 	// Don't create/open the results archive file if no results to
 	// archive.
 	//
-	if ( ! nCountResults )
+	if (!nCountResults)
 	{
 		return true;
 	}
-	
+
 	//
 	// Create a file to store results in text format.
 	//
@@ -621,26 +625,26 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 	}
 
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-	if (nullptr != pInspection && pInspection->IsResetStateSet(SvDef::SVResetStateArchiveToolCreateFiles ))	// If going online
+	if (nullptr != pInspection && pInspection->IsResetStateSet(SvDef::SVResetStateArchiveToolCreateFiles))	// If going online
 	{
 		//
 		// Create and open the results to text Archive file.
 		//
 		return CreateTextArchiveFile(pErrorMessages);
 	}
-	
+
 	return true;
 }
 
-bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages)
+bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMessages)
 {
 	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
 	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
-	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
+	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous)
 	{
 		// async doesn't really allocate any buffers but it does preparation work (initm_ImageInfo)
 		DWORD dwMaxImages;
-		m_dwArchiveMaxImagesCount.GetValue( dwMaxImages );
+		m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 		if (m_eArchiveMethod == SVArchiveAsynchronous)
 		{
 			SvLib::SVOINIClass SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
@@ -655,10 +659,13 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 		if (SVArchiveAsynchronous == m_eArchiveMethod)
 		{
 			long imageCount = std::accumulate(bufferMap.begin(), bufferMap.end(), 0, [](long sum, std::pair<SVMatroxBufferCreateStruct, long> val) { return sum + val.second; });
-			SVArchiveImageThreadClass::Instance().setMaxNumberOfBuffer(toolPos, dwMaxImages*imageCount);
+			if (imageCount > 0)
+			{
+				SVArchiveImageThreadClass::Instance().setMaxNumberOfBuffer(toolPos, dwMaxImages * imageCount);
+			}
 		}
 
-		assert( S_OK == hrAllocate );
+		assert(S_OK == hrAllocate);
 		if (S_OK == hrAllocate)
 		{
 			if (m_lastBufferMap != bufferMap || m_lastMaxImages != dwMaxImages)
@@ -677,7 +684,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 
 					for (const auto& iter : bufferMap)
 					{
-						long bufferNumber = iter.second*dwMaxImages;
+						long bufferNumber = iter.second * dwMaxImages;
 						__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
 						hrAllocate = SVMemoryManager::Instance().ReservePoolMemory(memoryPoolName, this, l_lImageBufferSize);
 						if (S_OK != hrAllocate)
@@ -719,13 +726,13 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 			if (nullptr != pErrorMessages)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back( SvUl::Format(_T("%x"), hrAllocate) );
-				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_AllocImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() ); 
+				msgList.push_back(SvUl::Format(_T("%x"), hrAllocate));
+				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_AllocImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
 		}
-		
+
 	}
 	return true;
 }
@@ -733,20 +740,21 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 
 /////////////////////////////////////////////////////////////////////////////
 //
-bool SVArchiveTool::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVArchiveTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
-	if( ValidateOnRun(pErrorMessages) && __super::onRun( rRunStatus, pErrorMessages ) )
+	
+	if (ValidateOnRun(pErrorMessages) && __super::onRun(rRunStatus, pErrorMessages))
 	{
 		//
 		// If this is not a test mode or run mode (online) no work is required.
 		// Usually a condition where user is 'moving' a tool that causes the
 		// toolset to 'run'.
 		//
-		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) )
+		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_STOPING))
 		{
 			return true;
 		}
-		
+
 		if (!m_bInitializedForRun)
 		{
 			rRunStatus.SetFailed();
@@ -766,36 +774,12 @@ bool SVArchiveTool::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerV
 		if (!Archive.empty())
 		{
 			Archive += _T("\r\n");
-
-			if (true)	// always do this for now (never buffer text) see FR00100.007.0460.xxx
+			if (m_fileArchive.is_open())
 			{
-				//
-				// Write the result to the archive file.
-				// The file may not be open at this time if a test 'run'
-				// is active for one cycle.
-				//
-				if (m_fileArchive.is_open())
-				{
-					try
-					{
-						m_fileArchive.write(Archive.c_str(), Archive.size());
-					}
-					catch (...)
-					{
-						if (nullptr != pErrorMessages)
-						{
-							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-							pErrorMessages->push_back(Msg);
-						}
-						rRunStatus.SetFailed();
-						return false;
-					}
-				}
-			}// end if ( !bBufferText || m_eArchiveMethod != SVArchiveGoOffline )
-			else if (m_eArchiveMethod == SVArchiveGoOffline)
-			{
-				QueueArchiveString(Archive);
+				ArchiveDataAsynchron::ArchiveData data(std::move(Archive), &m_fileArchive);
+				ArchiveDataAsynchron::Instance().QueueData(data);
 			}
+
 		}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
@@ -810,17 +794,12 @@ bool SVArchiveTool::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerV
 
 		return true;
 	}
-	
+
 	rRunStatus.SetInvalid();
 	return false;
 }
 
-HRESULT SVArchiveTool::QueueArchiveString( const std::string& rArchiveString )
-{
-	HRESULT hr = S_OK;
-	m_ArchiveStringBuffer.push_back( rArchiveString );
-	return hr;
-}
+
 
 // Called by SVToolAdjustmentArchivePage::OnInitDialog().
 //
@@ -904,7 +883,7 @@ std::vector<std::string> SVArchiveTool::getToolAdjustNameList() const
 		_T("Conditional"),
 		_T("Comment"),
 	};
-	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+	return {cToolAdjustNameList.begin(), cToolAdjustNameList.end()};
 }
 
 bool SVArchiveTool::GetArchiveResultFilepath(std::string& rName)
@@ -942,28 +921,9 @@ bool SVArchiveTool::SetFileArchivePath(LPCTSTR lpszName)
 HRESULT SVArchiveTool::WriteBuffers()
 {
 	HRESULT hr = S_OK;
-
-	// write text
-	if (m_fileArchive.is_open())
-	{
-		try
-		{
-			SvDef::StringVector::iterator iter;
-			for ( iter = m_ArchiveStringBuffer.begin(); iter != m_ArchiveStringBuffer.end(); ++iter )
-			{
-				m_fileArchive.write( iter->c_str(), iter->size());
-			}
-		} 
-		catch (...)
-		{
-			hr = E_FAIL;
-		}
-	}
-
 	// write images
-
 	HRESULT hrImages = m_ImageCollection.WriteImageQueue();
-	if ( S_OK == hr )
+	if (S_OK == hr)
 	{
 		hr = hrImages;
 	}
@@ -991,26 +951,26 @@ const std::string SVArchiveTool::alternativeImageDirectory(const std::string& rI
 
 	std::string namedDirectoryname = SvUl::Format("%s%06ld", baseDirectoryname.c_str(), DirectorynameIndex);
 
-	auto concatDir = [](const std::string& rA, const std::string& rB) {return rA + "\\" + rB;};
+	auto concatDir = [](const std::string& rA, const std::string& rB) {return rA + "\\" + rB; };
 
 	if (SubfolderSelection != 0)
 	{
 		std::string categoryDirectoryName = "Warn";
 		switch (SubfolderSelection)
 		{
-		case 1:
-			categoryDirectoryName = "Pass";
-			break;
-		case 2:
-			categoryDirectoryName = "Fail";
-			break;
+			case 1:
+				categoryDirectoryName = "Pass";
+				break;
+			case 2:
+				categoryDirectoryName = "Fail";
+				break;
 		}
 
 		bool namedDirectoryInCategoryDirectory = (SubfolderLocation != 0);
 
-		if(namedDirectoryInCategoryDirectory)
+		if (namedDirectoryInCategoryDirectory)
 		{
-			imageDirectoryPath = concatDir(rImagePathRoot,concatDir(categoryDirectoryName,namedDirectoryname));
+			imageDirectoryPath = concatDir(rImagePathRoot, concatDir(categoryDirectoryName, namedDirectoryname));
 		}
 		else
 		{
@@ -1031,15 +991,15 @@ std::string SVArchiveTool::getNextImageFileName()
 	std::string baseFilename;
 	m_baseFilename.GetValue(baseFilename);
 
-		double index;
-		m_FilenameIndex1.getValue(index);
-		uint32_t Index1 = static_cast<uint32_t> (index);
+	double index;
+	m_FilenameIndex1.getValue(index);
+	uint32_t Index1 = static_cast<uint32_t> (index);
 
 	std::string centerFilename;
 	m_centerFilename.GetValue(centerFilename);
 
-		m_FilenameIndex2.getValue(index);
-		uint32_t Index2 = static_cast<uint32_t> (index);
+	m_FilenameIndex2.getValue(index);
+	uint32_t Index2 = static_cast<uint32_t> (index);
 
 	return SvUl::Format(_T("%s%08ld%s%04ld.bmp"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2);
 }
@@ -1049,7 +1009,7 @@ long SVArchiveTool::CalculateImageMemory(SvIe::SVImageClass* pImage)
 {
 	assert(nullptr != pImage);
 	long lImageSize = 0;
-	if (nullptr != pImage )
+	if (nullptr != pImage)
 	{
 		SVImageInfoClass info = pImage->GetImageInfo();
 		lImageSize = info.GetBufferSize();
@@ -1057,13 +1017,13 @@ long SVArchiveTool::CalculateImageMemory(SvIe::SVImageClass* pImage)
 	return lImageSize;
 }
 
-long SVArchiveTool::CalculateImageMemory( std::vector<SvIe::SVImageClass*> imagePtrVector )
+long SVArchiveTool::CalculateImageMemory(std::vector<SvIe::SVImageClass*> imagePtrVector)
 {
 	long lTotalMemory = 0;
-	for ( size_t i=0; i < imagePtrVector.size(); i++ )
+	for (size_t i = 0; i < imagePtrVector.size(); i++)
 	{
 		SvIe::SVImageClass* pImage = imagePtrVector[i];
-		lTotalMemory += CalculateImageMemory( pImage );
+		lTotalMemory += CalculateImageMemory(pImage);
 
 	}
 	return lTotalMemory;
@@ -1093,45 +1053,47 @@ void SVArchiveTool::disconnectObjectInput(uint32_t objectId)
 
 void SVArchiveTool::goingOffline()
 {
-	if (m_eArchiveMethod == SVArchiveAsynchronous )
+	ArchiveDataAsynchron::Instance().GoOffline();
+	if (m_eArchiveMethod == SVArchiveAsynchronous)
 	{
 		SVArchiveImageThreadClass::Instance().GoOffline();
+	
 	}
 
-	if (m_eArchiveMethod == SVArchiveGoOffline )
+	if (m_eArchiveMethod == SVArchiveGoOffline)
 	{
 		WriteBuffers();
 	}
 
 	// Close the text to archive file if necessary
-	if(m_fileArchive.is_open())
+	if (m_fileArchive.is_open())
 	{
 		m_fileArchive.close();
 	}
 }
 
-void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const std::string& rOldName )
+void SVArchiveTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	enum class ReplaceType { Search, Full, First};
+	enum class ReplaceType { Search, Full, First };
 	std::string newPrefix;
 	std::string oldPrefix;
 
 	ReplaceType replaceType {ReplaceType::Search};
 	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
-	if(SvPb::SVInspectionObjectType == type)
+	if (SvPb::SVInspectionObjectType == type)
 	{
 		newPrefix = rRenamedObject.GetName();
 		oldPrefix = rOldName;
 		replaceType = ReplaceType::First;
 	}
-	else if(SvPb::SVBasicValueObjectType == type)
+	else if (SvPb::SVBasicValueObjectType == type)
 	{
 		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType, false);
 		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName();
 		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName;
 		replaceType = ReplaceType::Full;
 	}
-	else if(SvPb::SVValueObjectType == type)
+	else if (SvPb::SVValueObjectType == type)
 	{
 		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, false);
 		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName();
@@ -1145,11 +1107,11 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
 		replaceType = ReplaceType::Search;
 	}
-	
+
 
 	int iSize = m_svoArchiveResultNames.getResultSize();
 
-	for (int i = 0; i < iSize; i++ )
+	for (int i = 0; i < iSize; i++)
 	{
 		std::string Name;
 		m_svoArchiveResultNames.GetValue(Name, i);
@@ -1163,7 +1125,7 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 				if (0 == Name.compare(0, oldPrefix.length(), oldPrefix))
 				{
 					Name.replace(0, oldPrefix.length(), newPrefix);
-				}				
+				}
 				break;
 			case ReplaceType::Full:
 			{
@@ -1179,9 +1141,9 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 					SvUl::searchAndReplace(Name, oldPrefix.c_str(), newPrefix.c_str());
 				}
 			}
-			break;			
+			break;
 		}
-		m_svoArchiveResultNames.SetValue( Name, i );
+		m_svoArchiveResultNames.SetValue(Name, i);
 	}
 
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
@@ -1256,7 +1218,7 @@ bool SVArchiveTool::ensureArchiveImageDirectoryExists()
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
-	
+
 	return ok;
 }
 
@@ -1268,7 +1230,7 @@ bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl:
 		return false;
 	}
 
-	if(!ensureArchiveImageDirectoryExists())
+	if (!ensureArchiveImageDirectoryExists())
 	{
 		return false;
 	}
@@ -1318,11 +1280,11 @@ bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl:
 	return true;
 }
 
-bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages)	// called each onRun
+bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector* pErrorMessages)	// called each onRun
 {
 	bool bOk = true;
 
-	if ( (0 == m_uiValidateCount % 10))
+	if ((0 == m_uiValidateCount % 10))
 	{
 		if (m_ImageCollection.GetSize() > 0) //If no images are to be archived we do not need to run through the checking of disk space.
 		{

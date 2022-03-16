@@ -34,7 +34,7 @@ void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectRef
 
 	auto* pObject = m_svObjectReference.getFinalObject();
 
-	if(nullptr != dynamic_cast <SvIe::SVImageClass*> (pObject))
+	if (nullptr != dynamic_cast <SvIe::SVImageClass*> (pObject))
 	{
 		BuildImageFileName();
 		BuildDefaultImageFilePaths();
@@ -99,8 +99,7 @@ void SVArchiveRecord::BuildDefaultImageFilePaths()
 	}
 }
 
-
-HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths)
+bool SVArchiveRecord::CountImages()
 {
 	DWORD		dwMaxImages = 0;
 	DWORD		dwStopAtMaxCount = 0;
@@ -112,7 +111,7 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 	{
 		if (dwStopAtMaxCount)
 		{
-			return -1902; //@TODO[Arvid] What does this magic number mean?
+			return false;
 		}
 
 		m_lCountImages = 0; // reset to overwrite existing image file.
@@ -123,28 +122,49 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 
 	m_lCountImages++;
 
+	return true;
+}
+
+HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile)
+{
+	
+	if (false == CountImages())
+	{
+		return  -1902;
+	}
+	
+
 	if (m_FileNames.size() <= m_lLastIndex)
 	{
 		return E_FAIL;
 	}
 
 	SVFileNameClass svFileName;
-	if (useAlternativeImagePaths)
-	{
-		std::string imageDirectoryPath = m_pArchiveTool->alternativeImageDirectory(m_ImagePathRoot);
-		std::filesystem::create_directories(imageDirectoryPath);
-		svFileName.SetPathName(imageDirectoryPath.c_str());
-		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName().c_str());
-		m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName()); 
-	}
-	//otherwise the file name already set elsewhere will be used
-
 	rImageFile = m_FileNames[m_lLastIndex];
 
 	return S_OK;
 }
 
-HRESULT SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName)
+
+
+HRESULT SVArchiveRecord::GetNextAlternativeImageFilePath(std::string& rImageFile, std::string& rImageDirectoryPath)
+{
+	if (false == CountImages())
+	{
+		return  -1902;
+	}
+	SVFileNameClass svFileName;
+	
+	rImageDirectoryPath = m_pArchiveTool->alternativeImageDirectory(m_ImagePathRoot);
+	//std::filesystem::create_directories(imageDirectoryPath);
+	svFileName.SetPathName(rImageDirectoryPath.c_str());
+	svFileName.SetFileName(m_pArchiveTool->getNextImageFileName().c_str());
+	rImageFile = (svFileName.GetFullFileName());
+
+	return S_OK;
+}
+
+HRESULT SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName, const std::string& rImageDirectoryPath)
 {
 	assert(nullptr != rImage && !rImage->isEmpty());
 	HRESULT Result = S_OK;
@@ -152,7 +172,7 @@ HRESULT SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::strin
 	if (m_eArchiveMethod == SVArchiveAsynchronous)
 	{
 		// the QueueImage function will copy the buffer, so pass in the original here
-		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, m_ImageInfo, m_toolPos);
+		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName,rImageDirectoryPath, m_ImageInfo, m_toolPos);
 		SVArchiveImageThreadClass::Instance().QueueImage(info);
 	}
 	else
@@ -224,7 +244,7 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 	{
 		if (nullptr != m_ImageStoreVector[i] && !m_ImageStoreVector[i]->isEmpty())
 		{
-			WriteImage(m_ImageStoreVector[i]->getHandle()->GetBuffer(), m_FileNames[i]);
+			WriteImageToFile(m_ImageStoreVector[i]->getHandle()->GetBuffer(), m_FileNames[i]);
 			m_ImageStoreVector[i] = nullptr;
 		}
 		else
@@ -239,7 +259,7 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 {
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getFinalObject());
-	
+
 	if (nullptr == pImage)
 	{
 		return S_OK; //nothing to do
@@ -265,8 +285,18 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 	//
 	BOOL useAlternativeImagePaths = FALSE;
 	m_pArchiveTool->m_useAlternativeImagePaths.GetValue(useAlternativeImagePaths);
-
-	HRESULT hr = GetNextImageFilePath(ImageFilePath, useAlternativeImagePaths==TRUE);
+	HRESULT hr {S_OK};
+	std::string imageDirectoryPath;
+	if (!useAlternativeImagePaths)
+	{
+		hr = GetNextImageFilePath(ImageFilePath);
+	}
+	else
+	{
+		hr = GetNextAlternativeImageFilePath(ImageFilePath, imageDirectoryPath);
+	}
+	
+	//std::filesystem::create_directories(imageDirectoryPath);
 
 	if (hr & 0xc000) //@TODO[Arvid] What does this magic number mean?
 	{
@@ -277,6 +307,10 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 	{
 		try
 		{
+			if (useAlternativeImagePaths)
+			{
+				std::filesystem::create_directories(imageDirectoryPath);
+			}
 			SVMatroxBufferInterface::Export(pImageBuffer->getHandle()->GetBuffer(), ImageFilePath, SVFileBitmap);
 		}
 		catch (...)
@@ -286,14 +320,14 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 	}
 	else	// SVArchiveGoOffline or SVArchiveAsynchronous
 	{
-		QueueImage(pImageBuffer, ImageFilePath);
+		QueueImage(pImageBuffer, ImageFilePath, imageDirectoryPath);
 	}
 
 	return S_OK;
 }
 
 
-/*static*/ HRESULT SVArchiveRecord::WriteImage(const SVMatroxBuffer& milBuffer, const std::string& rFileName)
+/*static*/ HRESULT SVArchiveRecord::WriteImageToFile(const SVMatroxBuffer& milBuffer, const std::string& rFileName)
 {
 	HRESULT Result = S_OK;
 

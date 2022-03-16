@@ -42,14 +42,18 @@ public:
 	void InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectReference refObject);
 
 	void BuildDefaultImageFilePaths(); ///> assemble the filepaths that will be used _unless_ the "Alternative Image Paths" is checked
-	HRESULT	GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths);
+	HRESULT	GetNextImageFilePath(std::string& rImageFile);
+
+
+	HRESULT  GetNextAlternativeImageFilePath(std::string&  ImageFilePath, std::string&  imageDirectoryPath);
 	void BuildImageFileName();            // For images only
 
 	HRESULT AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
-	HRESULT QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName );
+	HRESULT QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName, const std::string& rImageDirectoryPath);
+	
 	HRESULT WriteImageQueue();
 	HRESULT WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord);
-	static HRESULT WriteImage( const SVMatroxBuffer& buf, const std::string& rFileName );
+	static HRESULT WriteImageToFile( const SVMatroxBuffer& buf, const std::string& rFileName );
 
 	void SetArchiveTool( SVArchiveTool* pArchiveTool );
 
@@ -61,6 +65,7 @@ public:
 #pragma endregion Public Methods
 
 private:
+	bool CountImages();
 #pragma region Private Members
 	SVObjectReference   m_svObjectReference;
 	std::string         m_ImageObjectName;				// images only

@@ -439,7 +439,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 					SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(rData.m_pValueObject);
 					if (pObj && pObj->GetParentID() != getObjectId())
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddetValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddedValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						throw Msg;
 					}
 					break;
@@ -460,7 +460,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 					if (pObj && pObj->GetParentID() != getObjectId())
 					{
 							
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddetValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddedValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						throw Msg;
 					}
 					

@@ -86,6 +86,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArchiveDataAsynchron.cpp" />
     <ClCompile Include="ArchiveToolHelper.cpp" />
     <ClCompile Include="DrawTool.cpp" />
     <ClCompile Include="GroupTool.cpp" />
@@ -121,6 +122,7 @@
     <ClCompile Include="TableTool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArchiveDataAsynchron.h" />
     <ClInclude Include="ArchiveMethodEnum.h" />
     <ClInclude Include="ArchiveToolHelper.h" />
     <ClInclude Include="DrawTool.h" />

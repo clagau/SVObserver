@@ -27,6 +27,7 @@ public:
 		// passed into the thread class
 		SvOi::ITRCImagePtr m_pImageBuffer = nullptr;
 		std::string m_FileName;
+		std::string m_ImageDirectoryPath;
 		SVImageInfoClass info;
 		int m_toolPos= -1;
 
@@ -37,8 +38,8 @@ public:
 
 		BufferInfo(const BufferInfo& rhs) = default;
 
-		BufferInfo(SvOi::ITRCImagePtr pImageBuffer, const std::string& rFileName, SVImageInfoClass p_info, int pos)
-			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), info(p_info), m_toolPos(pos) {}
+		BufferInfo(SvOi::ITRCImagePtr pImageBuffer, const std::string& rFileName, const std::string& rImageDirectoryPath, SVImageInfoClass p_info, int pos)
+			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), m_ImageDirectoryPath(rImageDirectoryPath), info(p_info), m_toolPos(pos) {}
 
 		BufferInfo& operator = (const BufferInfo& rhs) = default;
 	};
@@ -73,7 +74,7 @@ private:
 
 	std::deque<BufferInfo> m_Queue;
 	volatile HANDLE    m_hExitEvent;
-	std::unordered_map<int, int> m_maxBufferNumber;
+	std::unordered_map<int, int> m_maxBufferNumber; //@TODO[MEC][10.20][14.03.2022] max buffer number per tool psition differnt inspections?
 	std::unordered_map<int, int> m_currentBufferNumber;
 	long m_MaxNumberOfBuffer = 1;
 #pragma endregion Private Members

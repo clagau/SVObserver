@@ -175,10 +175,17 @@ void SVArchiveImageThreadClass::PopAndWrite()
 
 	if (nullptr != info.m_pImageBuffer && !info.m_pImageBuffer->isEmpty())
 	{
+		if (false == info.m_ImageDirectoryPath.empty())
+		{
+			std::filesystem::create_directories(info.m_ImageDirectoryPath);
+			//@TODO[MEC][10.20][14.03.2022] possible optimation is to save information if path exist
+		}
 		const SVMatroxBuffer& buf = info.m_pImageBuffer->getHandle()->GetBuffer();
-		SVArchiveRecord::WriteImage(buf, info.m_FileName);
-		std::lock_guard<std::mutex> lock(m_mtxQueue);
-		--m_currentBufferNumber[info.m_toolPos];
+		SVArchiveRecord::WriteImageToFile(buf, info.m_FileName);
+		{
+			std::lock_guard<std::mutex> lock(m_mtxQueue);
+			--m_currentBufferNumber[info.m_toolPos];
+		}
 	}
 	else
 	{

@@ -674,7 +674,9 @@ enum MessageTextEnum
 	Tid_ProductIncompleteNak,
 	
 	Tid_IsColorCheckForGrayscaleImage,
-	Tid_WrongParentForEmbeddetValue,
+	Tid_WrongParentForEmbeddedValue,
 	Tid_FileNameInvalid,
+	Tid_ErrorWrite,
+	Tid_ErrorArchiveQueueFull,
 };
 } //namespace SvStl

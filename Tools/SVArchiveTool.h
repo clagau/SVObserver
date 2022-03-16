@@ -99,8 +99,6 @@ protected:
 	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool useOverlayColorTool() const override { return false; };
 
-	HRESULT QueueArchiveString( const std::string& rArchiveString );
-
 	//
 	// Data elements.
 	//
@@ -128,7 +126,7 @@ private:
 	/// This variable holds an array of result names with an Zero based Index (In the svx files these names have also a zero based index). 
 	SvVol::SVStringValueObjectClass m_svoArchiveResultNames;
 	
-	SvDef::StringVector m_ArchiveStringBuffer;
+	
 
 	//
 	// A flag used to indicate a first call to onRun() after a
