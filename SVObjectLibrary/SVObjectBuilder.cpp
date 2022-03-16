@@ -46,7 +46,8 @@ static const ObjectTypeTable cTypeTable
 	{SvPb::SVDPointValueObjectType, SV_DPOINT_Type},
 	{SvPb::SVCharValueObjectType, SV_BYTE_Type},
 	{SvPb::SVVariantValueObjectType, SV_VARIANT_Type},
-	{SvPb::SVInt64ValueObjectType, SV_INT64_Type}
+	{SvPb::SVInt64ValueObjectType, SV_INT64_Type},
+	{SvPb::SVTimerValueObjectType, SV_INT64_Type}
 };
 
 template<typename Separator>
