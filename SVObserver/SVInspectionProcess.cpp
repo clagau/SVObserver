@@ -157,7 +157,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 			{
 				const CameraInfo& rCameraInfo = iterCamera->second.getCameraInfo();
 				triggerToAcqTime = (rCameraInfo.m_startFrameTimestamp - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
-				acqTime = (rCameraInfo.m_endFrameTimestamp - rCameraInfo.m_endFrameTimestamp) * SvUl::c_MicrosecondsPerMillisecond;
+				acqTime = (rCameraInfo.m_endFrameTimestamp - rCameraInfo.m_startFrameTimestamp) * SvUl::c_MicrosecondsPerMillisecond;
 
 				if (VT_EMPTY != rCameraInfo.m_cameraData[CameraDataEnum::ChunkFrameID].vt)
 				{
