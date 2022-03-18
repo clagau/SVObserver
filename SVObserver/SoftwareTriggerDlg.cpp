@@ -24,6 +24,19 @@ constexpr const char* cPause = _T("Pause");
 
 bool SoftwareTriggerDlg::m_created {false};
 
+BEGIN_MESSAGE_MAP(SoftwareTriggerDlg, CDialog)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TRIGGER_TABS, &SoftwareTriggerDlg::OnTcnSelchangeTriggerTabs)
+	ON_EN_CHANGE(IDC_USEC_EDIT, &SoftwareTriggerDlg::OnEnChangeUsecEdit)
+	ON_BN_CLICKED(IDOK, &SoftwareTriggerDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_SINGLETRIGGER, &SoftwareTriggerDlg::OnSingleTrigger)
+	ON_WM_CREATE()
+	ON_MESSAGE(WM_TRIGGER_CHANGE, &SoftwareTriggerDlg::OnTriggerChange)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINMSEC, &SoftwareTriggerDlg::OnDeltaposSpin)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINSEC, &SoftwareTriggerDlg::OnDeltaposSpin)
+	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(IDC_PAUSEBUTTON, &SoftwareTriggerDlg::OnBnClickedPausebutton)
+	ON_WM_DESTROY()
+END_MESSAGE_MAP()
 
 SoftwareTriggerDlg::SoftwareTriggerDlg(CWnd* pParent /*=nullptr*/): 
 	CDialog(SoftwareTriggerDlg::IDD, pParent),
@@ -49,25 +62,6 @@ void SoftwareTriggerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PAUSEBUTTON, m_pauseBtn);
 	DDX_Control(pDX, IDC_SINGLETRIGGER, m_singleTriggerBtn);
 }
-
-
-BEGIN_MESSAGE_MAP(SoftwareTriggerDlg, CDialog)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TRIGGER_TABS, &SoftwareTriggerDlg::OnTcnSelchangeTriggerTabs)
-	ON_EN_CHANGE(IDC_USEC_EDIT, &SoftwareTriggerDlg::OnEnChangeUsecEdit)
-	ON_BN_CLICKED(IDOK, &SoftwareTriggerDlg::OnBnClickedOk)
-	ON_BN_CLICKED(IDC_SINGLETRIGGER, &SoftwareTriggerDlg::OnSingleTrigger)
-	ON_WM_CREATE()
-	ON_MESSAGE(WM_TRIGGER_CHANGE, &SoftwareTriggerDlg::OnTriggerChange)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINMSEC, &SoftwareTriggerDlg::OnDeltaposSpin)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINSEC, &SoftwareTriggerDlg::OnDeltaposSpin)
-	ON_EN_KILLFOCUS(IDC_USEC_EDIT, &SoftwareTriggerDlg::OnEnKillfocusUsecEdit)
-	ON_WM_CTLCOLOR()
-	ON_BN_CLICKED(IDC_PAUSEBUTTON, &SoftwareTriggerDlg::OnBnClickedPausebutton)
-	ON_WM_DESTROY()
-END_MESSAGE_MAP()
-
-
-// SoftwareTriggerDlg message handlers
 
 int SoftwareTriggerDlg::SelectTrigger()
 {
@@ -113,25 +107,29 @@ void SoftwareTriggerDlg::OnTcnSelchangeTriggerTabs(NMHDR *, LRESULT *pResult)
 	*pResult = SelectTrigger();
 }
 
-bool SoftwareTriggerDlg::EditOK()
+bool SoftwareTriggerDlg::EditOK(int value)
 {
-	CString Text;
-	m_intervalEdit.GetWindowText(Text);
-	int Value = _ttoi(Text);
-	return (SvTrig::MinTimerPeriod_ms <= Value && Value <= SvTrig::MaxTimerPeriod_ms);
+	return (SvTrig::MinTimerPeriod_ms <= value && value <= SvTrig::MaxTimerPeriod_ms && false == m_editFlag);
 }
 
 void SoftwareTriggerDlg::OnEnChangeUsecEdit()
 {
+	m_warnColor = false;
 	CString Text;
 	m_intervalEdit.GetWindowText(Text);
-	int Value = _ttoi(Text);
-	if( EditOK() )
+	int value = _ttoi(Text);
+	if( EditOK(value) )
 	{
-		m_pSpins->SetValue( Value );
-		m_knobCtrl.SetValue( Value );
-		SetFrequency( Value );
-		SetTriggerPeriod( Value );
+		EditFlag lockEdit {m_editFlag};
+		m_pSpins->SetValue( value );
+		m_knobCtrl.SetValue( value );
+		SetFrequency( value );
+		SetTriggerPeriod( value );
+	}
+	else if(value < SvTrig::MinTimerPeriod_ms || value > SvTrig::MaxTimerPeriod_ms)
+	{
+		m_warnColor = true;
+		Invalidate(true);
 	}
 }
 
@@ -152,14 +150,22 @@ int SoftwareTriggerDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-LRESULT SoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM)
+LRESULT SoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM lParam)
 {
-	int Value = static_cast< int >( wParam );
-	std::string Text = SvUl::Format( _T("%d"), Value );
-	m_intervalEdit.SetWindowText( Text.c_str() );
-	m_pSpins->SetValue( Value );
-	SetFrequency( Value );
-	SetTriggerPeriod( Value );
+	int value = static_cast< int >( wParam );
+	if (EditOK(value))
+	{
+		EditFlag lockEdit {m_editFlag};
+		std::string Text = SvUl::Format(_T("%d"), value);
+		m_intervalEdit.SetWindowText(Text.c_str());
+		m_pSpins->SetValue(value);
+		SetFrequency(value);
+		//Set the period only after the mouse button is released
+		if (1 == lParam)
+		{
+			SetTriggerPeriod(value);
+		}
+	}
 	return TRUE;
 }
 
@@ -170,24 +176,23 @@ void SoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 	if (l_spin)
 	{
-		int Value = pNMUpDown->iDelta;
-		if (!l_spin->Increment(Value))
+		int value = pNMUpDown->iDelta;
+		if (!l_spin->Increment(value))
 		{
 			*pResult = 1;
 		}
 		else
 		{
-			Value = m_pSpins->GetValue();
-			int tmp = m_knobCtrl.SetValue(Value);		
-			if (tmp != Value)
+			value = m_pSpins->GetValue();
+			if (EditOK(value))
 			{
-				m_pSpins->SetValue(tmp);
-				Value = tmp;
+				EditFlag lockEdit {m_editFlag};
+				m_knobCtrl.SetValue(value);
+				std::string Text = SvUl::Format(_T("%d"), value);
+				m_intervalEdit.SetWindowText(Text.c_str());
+				SetFrequency(value);
+				SetTriggerPeriod(value);
 			}
-			std::string Text = SvUl::Format( _T("%d"), Value );
-			m_intervalEdit.SetWindowText( Text.c_str() );
-			SetFrequency( Value );
-			SetTriggerPeriod( Value );
 		}
 	}
 }
@@ -284,17 +289,10 @@ void SoftwareTriggerDlg::SetFrequency( int Value )
 	m_ppmLabel.SetWindowText( Text.c_str() );
 }
 
-void SoftwareTriggerDlg::OnEnKillfocusUsecEdit()
-{
-	int Value = m_knobCtrl.GetValue();
-	std::string Text = SvUl::Format( _T("%d"), Value );
-	m_intervalEdit.SetWindowText( Text.c_str() );
-}
-
 HBRUSH SoftwareTriggerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
-	if (nCtlColor == CTLCOLOR_EDIT && !EditOK())
+	if (nCtlColor == CTLCOLOR_EDIT && m_warnColor)
 	{
 		pDC->SetBkColor(COLOR_WARN);
 		return (HBRUSH)m_pBrush->GetSafeHandle();

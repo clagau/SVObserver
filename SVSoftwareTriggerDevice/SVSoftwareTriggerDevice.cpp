@@ -178,6 +178,7 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 		if(validChannel && m_timerList[triggerChannel].m_newSetting)
 		{
 			::timeKillEvent(m_timerList[triggerChannel].m_timerID);
+			m_timerList[triggerChannel].m_timerID = 0;
 			m_timerList[triggerChannel].m_newSetting = false;
 			if(false == m_timerList[triggerChannel].m_pause && 0 != m_timerList[triggerChannel].m_period)
 			{
@@ -238,9 +239,9 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod(unsigned long triggerIndex, lo
 		TimerInfo& rTimer = m_timerList[triggerChannel];
 		rTimer.m_period = static_cast<uint16_t> (period);
 		rTimer.m_triggerIndex = triggerIndex;
-		if (true == m_moduleReady)
+		if (true == m_moduleReady && false == rTimer.m_pause)
 		{
-			if(false == rTimer.m_pause && 0 != rTimer.m_period)
+			if(0 == rTimer.m_timerID && 0 != rTimer.m_period)
 			{
 				rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
 			}
@@ -262,7 +263,7 @@ void SVSoftwareTriggerDevice::SetTriggerPause(unsigned long triggerIndex, bool p
 	rTimer.m_triggerIndex = triggerIndex;
 	if (true == m_moduleReady)
 	{
-		if (false == rTimer.m_pause && 0 != rTimer.m_period)
+		if (false == rTimer.m_pause && 0 == rTimer.m_timerID && 0 != rTimer.m_period)
 		{
 			rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
 		}

@@ -104,8 +104,12 @@ namespace SvMc
 		}
 	}
 
-	void SVKnobControl::OnLButtonUp(UINT , CPoint )
+	void SVKnobControl::OnLButtonUp(UINT , CPoint)
 	{
+		if (m_dragging)
+		{
+			GetParent()->PostMessage(WM_TRIGGER_CHANGE, (WPARAM)int_value(m_currentValue), 1);
+		}
 		ClipCursor(nullptr);
 		m_dragging = false;
 		ReleaseCapture();

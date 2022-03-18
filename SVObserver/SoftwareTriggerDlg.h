@@ -34,6 +34,23 @@ struct Def
 };
 }
 
+//RAII struct to set and reset flag
+struct EditFlag
+{
+	explicit EditFlag(bool& flag) :	
+		m_rFlag(flag)
+	{
+		m_rFlag = true;
+	}
+	~EditFlag()
+	{
+		m_rFlag = false;
+	}
+private:
+	bool& m_rFlag;
+};
+
+
 class SVSpinGroup
 {
 public:
@@ -68,7 +85,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void SetTriggerPeriod(int val);
-	bool EditOK();
+	bool EditOK(int value);
 	void SetFrequency(int Value);
 
 	DECLARE_MESSAGE_MAP()
@@ -83,7 +100,6 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnTriggerChange(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEnKillfocusUsecEdit();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedPausebutton();
 	afx_msg void OnSingleTrigger();
@@ -113,6 +129,8 @@ private:
 	SVSpinGroup* m_pSpins {nullptr};
 	CBrush* m_pBrush {nullptr};
 	static bool m_created;
+	bool m_editFlag {false};
+	bool m_warnColor {false};
 
 	std::array<bool, cMaxTriggerCount> m_triggerPauseState = {false, false, false, false};
 };
