@@ -146,9 +146,9 @@ void SVArchiveTool::initializeArchiveTool()
 	m_dwArchiveStopAtMaxImages.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(
-		&m_useAlternativeImagePaths,
+		&m_useAlternativeImagePath,
 		SvPb::UseAlternativeImagePathsEId,
-		IDC_USE_ALTERNATIVE_IMAGE_PATHS,
+		IDC_USE_ALTERNATIVE_IMAGE_PATH,
 		false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(
@@ -1180,10 +1180,10 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 
 std::string SVArchiveTool::archiveImageDirectory()
 {
-	BOOL useAlternativeImagePaths = FALSE;
-	m_useAlternativeImagePaths.GetValue(useAlternativeImagePaths);
+	BOOL useAlternativeImagePath = FALSE;
+	m_useAlternativeImagePath.GetValue(useAlternativeImagePath);
 
-	std::string imageDirectoryPath = useAlternativeImagePaths ? alternativeImageDirectory(m_currentImagePathRoot) : m_currentImagePathRoot;
+	std::string imageDirectoryPath = useAlternativeImagePath ? alternativeImageDirectory(m_currentImagePathRoot) : m_currentImagePathRoot;
 
 	return imageDirectoryPath;
 }
@@ -1193,8 +1193,8 @@ bool SVArchiveTool::ensureArchiveImageDirectoryExists()
 {
 	bool ok = false;
 
-	BOOL useAlternativeImagePaths = FALSE;
-	m_useAlternativeImagePaths.GetValue(useAlternativeImagePaths);
+	BOOL useAlternativeImagePath = FALSE;
+	m_useAlternativeImagePath.GetValue(useAlternativeImagePath);
 
 	auto imageDirectoryPath = archiveImageDirectory();
 

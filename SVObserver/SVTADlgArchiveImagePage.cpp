@@ -58,7 +58,7 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_SELECTION, OnKillFocusSubfolderSelection)
 	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_LOCATION, OnButtonSubfolderLocation)
 	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_LOCATION, OnKillFocusSubfolderLocation)
-	ON_BN_CLICKED(IDC_USE_ALTERNATIVE_IMAGE_PATHS, OnButtonUseAlternativeImagePaths)
+	ON_BN_CLICKED(IDC_USE_ALTERNATIVE_IMAGE_PATH, OnButtonUseAlternativeImagePath)
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT1, OnButtonImageFilepathroot1)
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT2, OnButtonImageFilepathroot2)
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT3, OnButtonImageFilepathroot3)
@@ -199,12 +199,12 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT2, m_ImageFilepathroot2Button);
 	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT3, m_ImageFilepathroot3);
 	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT3, m_ImageFilepathroot3Button);
-
+	DDX_Control(pDX, IDC_USE_ALTERNATIVE_IMAGE_PATH, m_useAlternativeImagePathButton);
 	DDX_Control(pDX, IDC_CHECK_STOP_AT_MAX, m_StopAtMaxImagesButton);
-	DDX_Check(pDX, IDC_USE_ALTERNATIVE_IMAGE_PATHS, m_useAlternativeImagePaths);
+
 	DDX_CBIndex(pDX, IDC_WHEN_TO_ARCHIVE, m_WhenToArchiveIndex);
 
-	BOOL stopAtMaxIsMandatory = m_useAlternativeImagePaths && (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod);
+	BOOL stopAtMaxIsMandatory = m_useAlternativeImagePathButton.GetCheck() && (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod);
 
 	m_StopAtMaxImagesButton.EnableWindow(!stopAtMaxIsMandatory);
 
@@ -213,13 +213,22 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 		m_StopAtMaxImagesButton.SetCheck(TRUE);
 	}
 
-	m_EditMaxImages.EnableWindow((!m_useAlternativeImagePaths || m_StopAtMaxImagesButton.GetCheck()));
+	auto numberOfImages = m_ItemsSelected.GetItemCount();
+	m_useAlternativeImagePathButton.EnableWindow(numberOfImages < 2);
+	auto groupBoxText = (numberOfImages < 2 ? "Alternative Image Path" : "Alternative Image Path (only for single image)");
+	GetDlgItem(IDC_ALTERNATIVE_IMAGE_PATH)->SetWindowText(groupBoxText);
+	if (numberOfImages > 1)
+	{
+		m_useAlternativeImagePathButton.SetCheck(false);
+	}
+
+	m_EditMaxImages.EnableWindow((!m_useAlternativeImagePathButton.GetCheck() || m_StopAtMaxImagesButton.GetCheck()));
 }
 
 
 bool SVTADlgArchiveImagePage::validateArchiveImageFilepath()
 {
-	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
+	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePathButton.GetCheck() ? true : false);
 	m_ValueController.Commit(SvOg::PostAction::doNothing); //changes need to be committed before paths can be built
 
 	if (!m_pTool->updateCurrentImagePathRoot(true))
@@ -301,7 +310,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 
 	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
-	m_useAlternativeImagePaths = m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId);
+	m_useAlternativeImagePathButton.SetCheck(m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId));
 	
 	SVObjectReferenceVector imageVector{m_pTool->getImageArchiveList()};
 	m_ImagesToBeArchived.swap(imageVector);
@@ -326,7 +335,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_Init = false;
 	UpdateData(FALSE);
 
-	OnButtonUseAlternativeImagePaths();
+	OnButtonUseAlternativeImagePath();
 
 	return TRUE;
 }
@@ -345,6 +354,8 @@ void SVTADlgArchiveImagePage::OnRemoveAllItems()
 {
 	m_ImagesToBeArchived.clear();
 	ReadSelectedObjects();
+	UpdateData(FALSE);
+
 }
 
 void SVTADlgArchiveImagePage::OnRemoveItem()
@@ -367,6 +378,8 @@ void SVTADlgArchiveImagePage::OnRemoveItem()
 	}
 
 	ReadSelectedObjects();
+
+	UpdateData(FALSE);
 }
 
 void SVTADlgArchiveImagePage::MemoryUsage()
@@ -403,6 +416,15 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 	std::string Prefix = SvUl::Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), SvUl::LoadedStrings::g_ToolSetName.c_str() );
 
 	int Index = 0;
+
+	if (m_useAlternativeImagePathButton.GetCheck() && m_ImagesToBeArchived.size() > 1)
+	{
+		// keep only the last element of m_ImagesToBeArchived
+		m_ImagesToBeArchived.erase(m_ImagesToBeArchived.begin(), --m_ImagesToBeArchived.end());
+		// the others would not be archived anyway since an alternative image path has been configured
+	}
+
+
 	for (auto const& rEntry : m_ImagesToBeArchived)
 	{
 		std::string Name{ rEntry.GetCompleteName(true) };
@@ -472,11 +494,18 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 		m_ImagesToBeArchived.clear();
 		for (auto const& rEntry : rSelectedList)
 		{
+			if (m_useAlternativeImagePathButton.GetCheck() && m_ImagesToBeArchived.size() > 0)
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Display);
+				Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_OnlyOneArchiveImageWhenAlternativeImagePath, SvStl::SourceFileParams(StdMessageParams));
+				break;
+			}
 			SVObjectReference ObjectRef(rEntry);
 			m_ImagesToBeArchived.push_back(ObjectRef);
 		}
 
 		ReadSelectedObjects();
+		UpdateData(FALSE);
 	}
 }
 
@@ -713,11 +742,11 @@ __int64 SVTADlgArchiveImagePage::CalculateFreeMem()
 	return FreeMem;
 }
 
-afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePaths()
+afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePath()
 {
 	UpdateData(TRUE);
 	
-	m_alternativeImagePaths.OnButtonUseAlternativeImagePaths(m_useAlternativeImagePaths);
+	m_alternativeImagePaths.OnButtonUseAlternativeImagePath(m_useAlternativeImagePathButton.GetCheck());
 }
 
 void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()
@@ -793,7 +822,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::OnKillFocus(Linked
 	}
 }
 
-afx_msg void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButtonUseAlternativeImagePaths(BOOL enable) 
+afx_msg void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButtonUseAlternativeImagePath(BOOL enable) 
 {
 	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
 	{

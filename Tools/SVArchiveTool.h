@@ -88,7 +88,7 @@ public:
 
 	SVArchiveMethodEnum m_eArchiveMethod;
 	SvVol::SVBoolValueObjectClass m_bvoUseHeaders;
-	SvVol::SVBoolValueObjectClass m_useAlternativeImagePaths;
+	SvVol::SVBoolValueObjectClass m_useAlternativeImagePath;
 	
 	SvVol::SVStringValueObjectClass	m_HeaderLabelNames;
 	SvVol::SVStringValueObjectClass	m_HeaderObjectIDs;

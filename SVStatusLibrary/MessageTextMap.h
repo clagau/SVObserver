@@ -114,6 +114,8 @@ namespace SvStl
 		{Tid_ArchiveTool_WriteToFileFailed, _T("Write to Archive File failed")},
 		{Tid_ArchiveTool_AllocImageFailed, _T("Allocate Image Buffer failed: %s")},
 		{Tid_ArchiveTool_NotEnoughBuffer, _T("All ArchiveTool need more memory than available.")},
+		{Tid_OnlyOneArchiveImageWhenAlternativeImagePath, _T("Only one Archive Image allowed when Alternative Image Path is selected")},
+
 		{Tid_BarCode_UnableToRead, _T("Bar Code Analyzer was unable to read\nthe match string from file. Check the\nanalyzer settings for proper match string.")},
 		{Tid_BarCode_UnableToSave, _T("Bar Code Analyzer was unable to save\nthe match string to file. Check the\nanalyzer settings for proper match string.")},
 		{Tid_BlobAnalyzer_ResultCreationFailed, _T("Creation of Blob Analyzer Result Failed")},

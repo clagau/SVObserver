@@ -103,6 +103,7 @@ enum MessageTextEnum
 	Tid_ArchiveTool_WriteToFileFailed,
 	Tid_ArchiveTool_AllocImageFailed,
 	Tid_ArchiveTool_NotEnoughBuffer,
+	Tid_OnlyOneArchiveImageWhenAlternativeImagePath,
 	Tid_BarCode_UnableToRead,
 	Tid_BarCode_UnableToSave,
 	Tid_BlobAnalyzer_ResultCreationFailed,

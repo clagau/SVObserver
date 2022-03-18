@@ -74,7 +74,7 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 		
 		void init();
 		void DoDataExchange(CDataExchange* pDX);
-		afx_msg void OnButtonUseAlternativeImagePaths(BOOL enable);
+		afx_msg void OnButtonUseAlternativeImagePath(BOOL enable);
 
 		void OnButton(LinkedValueEnums widgetEnum);
 		void OnKillFocus(LinkedValueEnums widgetEnum);
@@ -132,7 +132,7 @@ protected:
 	afx_msg void OnSelchangeWhenToArchive();
 
 	afx_msg void OnChangeEditMaxImages();
-	afx_msg void OnButtonUseAlternativeImagePaths(); ///< enables or disables the GUI elements that define alternative image paths depending on m_useAlternativeImagePaths
+	afx_msg void OnButtonUseAlternativeImagePath(); ///< enables or disables the GUI elements that define alternative image paths depending on m_useAlternativeImagePath
 
 	afx_msg void OnButtonImageFilepathroot1();
 	afx_msg void OnButtonImageFilepathroot2();
@@ -184,7 +184,7 @@ private:
 	CButton m_ImageFilepathroot3Button;
 	CEdit	m_ImageFilepathroot3;
 	CButton m_StopAtMaxImagesButton;
-	BOOL	m_useAlternativeImagePaths = FALSE;
+	CButton m_useAlternativeImagePathButton;
 	uint32_t m_inspectionId;
 	uint32_t m_taskId;
 

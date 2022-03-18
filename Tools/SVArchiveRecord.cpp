@@ -283,11 +283,11 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 	//
 	// Write the MIL image to a file in BMP form.
 	//
-	BOOL useAlternativeImagePaths = FALSE;
-	m_pArchiveTool->m_useAlternativeImagePaths.GetValue(useAlternativeImagePaths);
+	BOOL useAlternativeImagePath = FALSE;
+	m_pArchiveTool->m_useAlternativeImagePath.GetValue(useAlternativeImagePath);
 	HRESULT hr {S_OK};
 	std::string imageDirectoryPath;
-	if (!useAlternativeImagePaths)
+	if (!useAlternativeImagePath)
 	{
 		hr = GetNextImageFilePath(ImageFilePath);
 	}
@@ -307,7 +307,7 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 	{
 		try
 		{
-			if (useAlternativeImagePaths)
+			if (useAlternativeImagePath)
 			{
 				std::filesystem::create_directories(imageDirectoryPath);
 			}
