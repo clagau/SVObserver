@@ -20,7 +20,6 @@
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 
