@@ -90,6 +90,8 @@ bool DrawTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 		if (m_useBGImage)
 		{
+			m_InputBGImage.validateInput();
+			m_InputBGImage.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 			SvIe::SVImageClass* pInputImage = m_InputBGImage.getInput<SvIe::SVImageClass>(true);
 			if (nullptr != pInputImage)
 			{
@@ -110,6 +112,10 @@ bool DrawTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 					pErrorMessages->push_back(Msg);
 				}
 			}
+		}
+		else
+		{
+			m_InputBGImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		}
 
 		m_isColorImageObject.GetValue(boolTmp);
@@ -263,6 +269,7 @@ void DrawTool::BuildInputObjectList ()
 	m_InputBGImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVNotSetSubObjectType);
 	registerInputObject( &m_InputBGImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 	m_InputBGImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
+	m_InputBGImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 }
 
 
@@ -273,7 +280,7 @@ void DrawTool::BuildEmbeddedObjectList ()
 	RegisterEmbeddedObject(&m_isColorImageObject, SvPb::IsColorImageEId, IDS_IS_COLOR_IMAGE, false, SvOi::SVResetItemOwner);
 	m_isColorImageObject.SetDefaultValue(BOOL(false), true);
 	RegisterEmbeddedObject(&m_autoFitSizeObject, SvPb::AutoFitSizeEId, IDS_USE_AUTOFIT, false, SvOi::SVResetItemOwner);
-	m_autoFitSizeObject.SetDefaultValue(BOOL(true), true);
+	m_autoFitSizeObject.SetDefaultValue(BOOL(false), true);
 
 	RegisterEmbeddedObject(&m_BackgroundImageX, SvPb::PositionXEId, IDS_POSITION_X, false, SvOi::SVResetItemTool);
 	variant_t vtTemp {0l};

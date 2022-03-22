@@ -103,12 +103,15 @@ void SVArchiveTool::initializeArchiveTool()
 
 	RegisterEmbeddedObject(&m_imageFileRootPath1, SvPb::ArchiveImageFileRootPart1EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART1, true, SvOi::SVResetItemTool);
 	m_imageFileRootPath1.SetDefaultValue(_variant_t(""), true);
+	m_imageFileRootPath1.setValueType(SvPb::TypeText);
 
 	RegisterEmbeddedObject(&m_imageFileRootPath2, SvPb::ArchiveImageFileRootPart2EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART2, true, SvOi::SVResetItemTool);
 	m_imageFileRootPath2.SetDefaultValue(_variant_t(""), true);
+	m_imageFileRootPath2.setValueType(SvPb::TypeText);
 
 	RegisterEmbeddedObject(&m_imageFileRootPath3, SvPb::ArchiveImageFileRootPart3EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3, true, SvOi::SVResetItemTool);
 	m_imageFileRootPath3.SetDefaultValue(_variant_t(""), true);
+	m_imageFileRootPath3.setValueType(SvPb::TypeText);
 
 	RegisterEmbeddedObject(
 		&m_dwAppendArchiveFile,

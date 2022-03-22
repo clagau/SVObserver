@@ -679,5 +679,8 @@ enum MessageTextEnum
 	Tid_FileNameInvalid,
 	Tid_ErrorWrite,
 	Tid_ErrorArchiveQueueFull,
+
+	Tid_Value_MustThan,
+	Tid_Greater
 };
 } //namespace SvStl

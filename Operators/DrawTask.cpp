@@ -129,9 +129,12 @@ void DrawTask::buildEmbeddedObjectList(const SvOi::NameValueVector& rDrawAreaLis
 	RegisterEmbeddedObject(&m_Color3Object, SvPb::Color3EId, IDS_COLOR3, false, SvOi::SVResetItemOwner);
 	m_Color3Object.SetDefaultValue(0, false);
 
-	RegisterEmbeddedObject(&m_drawAreaObject, SvPb::DrawAreaEId, IDS_OBJECT_DRAW_AREA, false, SvOi::SVResetItemOwner);
-	m_drawAreaObject.SetEnumTypes(rDrawAreaList);
-	m_drawAreaObject.SetDefaultValue(defaultDrawArea);
+	if (false == rDrawAreaList.empty())
+	{
+		RegisterEmbeddedObject(&m_drawAreaObject, SvPb::DrawAreaEId, IDS_OBJECT_DRAW_AREA, false, SvOi::SVResetItemOwner);
+		m_drawAreaObject.SetEnumTypes(rDrawAreaList);
+		m_drawAreaObject.SetDefaultValue(defaultDrawArea);
+	}
 }
 #pragma endregion Private Methods
 } //namespace SvOp

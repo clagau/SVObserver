@@ -28,13 +28,13 @@ SV_IMPLEMENT_CLASS(DrawPointsTask, SvPb::DrawPointsClassId);
 
 #pragma region Constructor
 DrawPointsTask::DrawPointsTask(LPCTSTR ObjectName)
-	: DrawTask(ObjectName, {gNormalAreaPair}, 6)
+	: DrawTask(ObjectName, {})
 {
 	Initialize();
 }
 
 DrawPointsTask::DrawPointsTask(SVObjectClass* POwner, int StringResourceID)
-	: DrawTask(POwner, StringResourceID, {gNormalAreaPair}, 6)
+	: DrawTask(POwner, StringResourceID, {})
 {
 	Initialize();
 }

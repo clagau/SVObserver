@@ -256,10 +256,16 @@ std::map<long, variant_t> createOverlayData(DrawNodeType type, const ValueContro
 		{
 			long charSize = (rValueController.Get<long>(SvPb::FontSizeEId) + 1) * 4;
 			long textSize = static_cast<long>(SvUl::createStdString(rValueController.Get<LinkedValueData>(SvPb::TextEId).m_Value).size());
+			double scaleX = rValueController.Get<LinkedValueData>(SvPb::FontScaleXEId).m_Value;
+			double scaleY = rValueController.Get<LinkedValueData>(SvPb::FontScaleYEId).m_Value;
+			if (0 >= scaleX || 0 >= scaleY)
+			{
+				return {};
+			}
 			parMap[CDSVPictureDisplay::P_X1] = rValueController.Get<LinkedValueData>(SvPb::X1EId).m_Value;
 			parMap[CDSVPictureDisplay::P_Y1] = rValueController.Get<LinkedValueData>(SvPb::Y1EId).m_Value;
-			parMap[CDSVPictureDisplay::P_X2] = static_cast<long>(parMap[CDSVPictureDisplay::P_X1]) + charSize * textSize;
-			parMap[CDSVPictureDisplay::P_Y2] = static_cast<long>(parMap[CDSVPictureDisplay::P_Y1]) + 2 * charSize;
+			parMap[CDSVPictureDisplay::P_X2] = static_cast<long>(static_cast<long>(parMap[CDSVPictureDisplay::P_X1]) + charSize * textSize * scaleX);
+			parMap[CDSVPictureDisplay::P_Y2] = static_cast<long>(static_cast<long>(parMap[CDSVPictureDisplay::P_Y1]) + 2 * charSize * scaleY);
 			parMap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::RectangleROI;
 			bMove = isChangable(rValueController, SvPb::X1EId) && isChangable(rValueController, SvPb::Y1EId);
 			bAll = false;

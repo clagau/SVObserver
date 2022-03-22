@@ -55,7 +55,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 
 						if (1. != scaleX || 1. != scaleY)
 						{
-							textStr += SvUl::Format("(%d/%d)", scaleX, scaleY);
+							textStr += SvUl::Format("(%.2f/%.2f)", scaleX, scaleY);
 						}
 
 						_variant_t textVar = rData.m_pValues->Get<LinkedValueData>(SvPb::TextEId).m_Value;
@@ -92,7 +92,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					long width = m_rValues.Get<long>(SvPb::ExtentWidthEId);
 					long height = m_rValues.Get<long>(SvPb::ExtentHeightEId);
 					textStr += SvUl::Format(": %d / %d", width, height);
-					if (isAutoFit())
+					if (isAutoFit() && useBackgroundImage())
 					{
 						textStr += "; Autofit";
 					}
@@ -176,7 +176,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 						auto x2Values = SvUl::SafeArrayToVector<double>(rX2ValueData.m_Value.parray);
 						auto y2Values = SvUl::SafeArrayToVector<double>(rY2ValueData.m_Value.parray);
 						auto numbers = std::min({xValues.size(), yValues.size(),x2Values.size(), y2Values.size()});
-						textStr += SvUl::Format(": %d Points", numbers);
+						textStr += SvUl::Format(": %d Lines", numbers);
 					}
 					break;
 				}

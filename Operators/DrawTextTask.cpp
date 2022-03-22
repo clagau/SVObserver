@@ -27,13 +27,13 @@ SV_IMPLEMENT_CLASS(DrawTextTask, SvPb::DrawTextClassId);
 
 #pragma region Constructor
 DrawTextTask::DrawTextTask(LPCTSTR ObjectName)
-	: DrawTask(ObjectName, {gNormalAreaPair}, 1)
+	: DrawTask(ObjectName, {})
 {
 	Initialize();
 }
 
 DrawTextTask::DrawTextTask(SVObjectClass* POwner, int StringResourceID)
-	: DrawTask(POwner, StringResourceID, {gNormalAreaPair}, 1)
+	: DrawTask(POwner, StringResourceID, {})
 {
 	Initialize();
 }
@@ -44,6 +44,45 @@ DrawTextTask::~DrawTextTask()
 #pragma endregion Constructor
 
 #pragma region Public Methods
+bool DrawTextTask::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
+{
+	bool Result = __super::ResetObject(pErrorMessages);
+
+	if (SvPb::LinkedSelectedOption::DirectValue == m_fontScaleX.getSelectedOption())
+	{
+		double scale;
+		m_fontScaleX.getValue(scale);
+		if (0 >= scale)
+		{
+			Result = false;
+			if (pErrorMessages)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(m_fontScaleX.GetName());
+				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Greater));
+				msgList.push_back("0");
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Value_MustThan, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+		}
+		m_fontScaleY.getValue(scale);
+		if (0 >= scale)
+		{
+			Result = false;
+			if (pErrorMessages)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(m_fontScaleY.GetName());
+				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Greater));
+				msgList.push_back("0");
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Value_MustThan, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+		}
+	}
+
+	return Result;
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -128,6 +167,7 @@ void DrawTextTask::BuildEmbeddedObjectList()
 	m_yValue.SetDefaultValue(10, true);
 	RegisterEmbeddedObject(&m_text, SvPb::TextEId, IDS_OBJECTNAME_DRAW_TEXT, true, SvOi::SVResetItemOwner);
 	m_text.SetDefaultValue("", true);
+	m_text.setValueType(SvPb::TypeText);
 	
 	RegisterEmbeddedObject(&m_fontSizeEnumObject, SvPb::FontSizeEId, IDS_OBJECTNAME_FONTSIZE, true, SvOi::SVResetItemOwner);
 	m_fontSizeEnumObject.SetEnumTypes(g_SizeEnumList);

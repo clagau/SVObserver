@@ -163,8 +163,11 @@ BOOL TADialogDrawPage::OnInitDialog()
 
 	auto hItem = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::MainNode}, TVI_ROOT, "Base Image");
 	m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::GeneralData, m_pValues}, hItem, "");
-	m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::SizeData, m_pValues}, hItem, "");
-	auto hLastInterNode = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::Color, m_pValues}, hItem, "");
+	auto hLastInterNode = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::SizeData, m_pValues}, hItem, "");
+	if (false == m_drawToolController.isAutoFit() || false == m_drawToolController.useBackgroundImage())
+	{
+		hLastInterNode = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::Color, m_pValues}, hItem, "");
+	}
 	auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(hItem));
 	if (nullptr != pData)
 	{
@@ -258,6 +261,7 @@ void TADialogDrawPage::OnButtonCheck(UINT nID)
 							m_drawToolController.setIsColor( reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check1])->GetCheck() );
 							m_drawToolController.setUseBackgroundImage( reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check2])->GetCheck() );
 							m_drawToolController.setAutoFit(reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check5])->GetCheck());
+							setOrRemoveColorItemForBase();
 							hideAllBOSACtrl();
 							setBaseImageGeneralCtrl();
 							m_drawToolController.setBaseImageGeneralData();
@@ -265,6 +269,7 @@ void TADialogDrawPage::OnButtonCheck(UINT nID)
 						case DrawNodeSubType::SizeData:
 							m_drawToolController.setAutoFit(reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check1])->GetCheck());
 							m_drawToolController.setBaseImageSizeData();
+							setOrRemoveColorItemForBase();
 							setBaseImageSizeCtrl();
 							break;
 						default:
@@ -582,6 +587,7 @@ void TADialogDrawPage::setBaseImageGeneralCtrl()
 	m_BSOAControls[BOSAEnum::Check1].SetWindowText("Color Image");
 	reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check1])->SetCheck(m_drawToolController.isColor());
 	m_BSOAControls[BOSAEnum::Check2].ShowWindow(SW_SHOW);
+	m_BSOAControls[BOSAEnum::Check2].SetWindowText("Use Source Image");
 	reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check2])->SetCheck(m_drawToolController.useBackgroundImage());
 
 	if (m_drawToolController.useBackgroundImage())
@@ -693,8 +699,24 @@ void TADialogDrawPage::setGeneralCtrl(TreeNodeData& rData)
 					m_comboBox2Enum.SetCurSelItemData(CurrentSelection);
 					m_comboBox2Enum.ShowWindow(SW_SHOW);
 				}
-				setControl(BOSAEnum::Static3, "Font Scale X:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::FontScaleXEId, rData);
-				setControl(BOSAEnum::Static4, "Font Scale Y:", BOSAEnum::Edit4, BOSAEnum::LinkedValueButton4, SvPb::FontScaleYEId, rData);
+				auto validCheck = [](const variant_t& rValue, SvStl::MessageContainer& rMsgContainer)
+				{
+					if (static_cast<double>(rValue) > 0)
+					{
+						return true;
+					}
+					else
+					{
+						SvDef::StringVector msgList;
+						msgList.push_back("Font Scale");
+						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Greater));
+						msgList.push_back("0");
+						rMsgContainer.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Value_MustThan, msgList, SvStl::SourceFileParams(StdMessageParams));
+						return false;
+					}
+				};
+				setControl(BOSAEnum::Static3, "Font Scale X:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::FontScaleXEId, rData, validCheck);
+				setControl(BOSAEnum::Static4, "Font Scale Y:", BOSAEnum::Edit4, BOSAEnum::LinkedValueButton4, SvPb::FontScaleYEId, rData, validCheck);
 				break;
 			}
 			default:
@@ -811,7 +833,6 @@ void TADialogDrawPage::setColorCtrl(TreeNodeData& rData)
 		reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check2])->SetCheck(isTransparent);
 		if (false == isTransparent)
 		{
-			setValueCtrlData(SvPb::BackgroundColor1EId, *rData.m_pValues, BOSAEnum::Edit7, 0, 255, "Red");
 			if (m_drawToolController.isColor())
 			{
 				byte redValue = rData.m_pValues->Get<byte>(SvPb::BackgroundColor1EId);
@@ -819,8 +840,13 @@ void TADialogDrawPage::setColorCtrl(TreeNodeData& rData)
 				byte blueValue = rData.m_pValues->Get<byte>(SvPb::BackgroundColor3EId);
 				m_colorButton2.ShowWindow(SW_SHOW);
 				m_colorButton2.SetFaceColor(RGB(redValue, greenValue, blueValue));
+				setValueCtrlData(SvPb::BackgroundColor1EId, *rData.m_pValues, BOSAEnum::Edit7, 0, 255, "Red");
 				setValueCtrlData(SvPb::BackgroundColor2EId, *rData.m_pValues, BOSAEnum::Edit8, 0, 255, "Green");
 				setValueCtrlData(SvPb::BackgroundColor3EId, *rData.m_pValues, BOSAEnum::Edit9, 0, 255, "Blue");
+			}
+			else
+			{
+				setValueCtrlData(SvPb::BackgroundColor1EId, *rData.m_pValues, BOSAEnum::Edit7, 0, 255, "Gray");
 			}
 		}
 	}
@@ -1165,7 +1191,7 @@ void TADialogDrawPage::ObjectChangedExDialogImage(long, long, VARIANT* Parameter
 	}
 }
 
-void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData)
+void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData, ValidCheckCallback validCallback /*= nullptr*/)
 {
 	auto nId = static_cast<UINT>(m_BSOAControls[editEnum].GetDlgCtrlID());
 	auto ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nId](const auto& rEntry){ return rEntry.m_nIDC == nId; });
@@ -1175,14 +1201,72 @@ void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogD
 		auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[editEnum]);
 		auto* pButton = static_cast<CButton*>(&m_BSOAControls[buttonEnum]);
 		assert(pEdit && pButton);
-		ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, rData.m_objectId, embeddedId, rData.m_pValues.get());
+		ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, rData.m_objectId, embeddedId, rData.m_pValues.get(), validCallback);
 	}
 }
 
-void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData)
+void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData, ValidCheckCallback validCallback /*= nullptr*/)
 {
 	m_BSOAControls[staticEnum].ShowWindow(SW_SHOW);
 	m_BSOAControls[staticEnum].SetWindowText(staticText);
-	setControl(editEnum, buttonEnum, embeddedId, rData);
+	setControl(editEnum, buttonEnum, embeddedId, rData, validCallback);
+}
+
+void TADialogDrawPage::setOrRemoveColorItemForBase()
+{
+	HTREEITEM hBaseItem = m_treeCtrl.GetNextItem(nullptr, TVGN_ROOT);
+	auto* pBaseData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(hBaseItem));
+	assert(nullptr != hBaseItem && nullptr != pBaseData && DrawNodeType::BaseImage == pBaseData->m_type);
+	if (nullptr == pBaseData || DrawNodeType::BaseImage != pBaseData->m_type)
+	{
+		return;
+	}
+
+	auto currentItem = pBaseData->m_lastInternItem;
+	auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(currentItem));
+	assert(nullptr != pData);
+	if (nullptr == pData)
+	{
+		return;
+	}
+	bool isLastItem = DrawNodeSubType::Color == pData->m_subType;
+	bool existColorItem = isLastItem;
+	while (nullptr != currentItem && false == existColorItem)
+	{
+		currentItem = m_treeCtrl.GetNextItem(currentItem, TVGN_PREVIOUS);
+		if (nullptr != currentItem)
+		{
+			pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(currentItem));
+			existColorItem = (nullptr != pData && DrawNodeSubType::Color == pData->m_subType);
+		}
+	}
+
+	bool addItem = (false == m_drawToolController.isAutoFit() || false == m_drawToolController.useBackgroundImage());
+	if (addItem)
+	{
+		if (existColorItem)
+		{
+			return;
+		}
+		else
+		{
+			pBaseData->m_lastInternItem = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::Color, m_pValues}, hBaseItem, "", pBaseData->m_lastInternItem);
+		}
+	}
+	else
+	{
+		if (existColorItem)
+		{
+			if (isLastItem)
+			{
+				pBaseData->m_lastInternItem = m_treeCtrl.GetNextItem(pBaseData->m_lastInternItem, TVGN_PREVIOUS);
+			}
+			m_treeCtrl.DeleteItem(currentItem);
+		}
+		else
+		{
+			return;
+		}
+	}
 }
 } //namespace SvOg

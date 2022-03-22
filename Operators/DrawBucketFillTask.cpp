@@ -27,13 +27,13 @@ SV_IMPLEMENT_CLASS(DrawBucketFillTask, SvPb::DrawBucketFillClassId);
 
 #pragma region Constructor
 DrawBucketFillTask::DrawBucketFillTask(LPCTSTR ObjectName)
-	: DrawTask(ObjectName, {gInsideAreaPair}, 1)
+	: DrawTask(ObjectName, {})
 {
 	Initialize();
 }
 
 DrawBucketFillTask::DrawBucketFillTask(SVObjectClass* POwner, int StringResourceID)
-	: DrawTask(POwner, StringResourceID, {gInsideAreaPair}, 1)
+	: DrawTask(POwner, StringResourceID, {})
 {
 	Initialize();
 }

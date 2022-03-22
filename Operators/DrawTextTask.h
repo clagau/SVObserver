@@ -29,6 +29,7 @@ public:
 
 #pragma region Public Methods
 public:
+	virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
