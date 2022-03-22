@@ -256,6 +256,7 @@ void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
 
 void InputObject::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
 {
+	validateInput();
 	if (false == IsConnected() && SvPb::noAttributes != ObjectAttributesAllowed())
 	{
 		SvPb::FixedInputData data;

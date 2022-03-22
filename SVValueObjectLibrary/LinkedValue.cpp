@@ -1753,6 +1753,19 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		SVObjectClass* pOwner = GetParent();
 		SVObjectClass* pRequestor = this;
+		if (0 < m_excludeSameLineageList.size())
+		{
+			auto* pTmpOwner = pOwner;
+			while (nullptr != pTmpOwner)
+			{
+				if (std::ranges::any_of(m_excludeSameLineageList, [pTmpOwner](const auto* pObject) { return pTmpOwner == pObject; }))
+				{
+					pOwner = pTmpOwner;
+					pRequestor = pTmpOwner;
+				}
+				pTmpOwner = pTmpOwner->GetParent();
+			}
+		}
 
 		pOwner = (nullptr != pOwner && nullptr != pOwner->GetParent()) ? pOwner->GetParent() : pOwner;
 		while (pOwner)
