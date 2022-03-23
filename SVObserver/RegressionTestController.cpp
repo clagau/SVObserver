@@ -259,12 +259,10 @@ DWORD RegressionTestController::runThread()
 		{
 			if (m_RunMode == RegModePlay)
 			{
-				int iMS = m_iTimeoutMS;
-				if (iMS < MinRegressionTime)
+				if (m_iTimeoutMS > 0)
 				{
-					iMS = MinRegressionTime;
+					Sleep(m_iTimeoutMS);
 				}
-				Sleep(iMS);
 			}
 			else
 			{
@@ -445,13 +443,13 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 				size_t pos1 = regFile.find_last_of('_', pos2);
 				if (std::string::npos != pos1 && std::string::npos != pos2)
 				{
-					m_triggerIndex = std::stol(regFile.substr(pos1 + 1, pos2 - pos1 - 1));
+					m_triggerIndex = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1 - 1));
 					pos2 = pos1 - 1;
 				}
 				pos1 = regFile.find_last_of('_', pos2);
 				if (std::string::npos != pos1 && std::string::npos != pos2)
 				{
-					m_objectIDParams.m_currentObjectID = std::stol(regFile.substr(pos1 + 1, pos2 - pos1));
+					m_objectIDParams.m_currentObjectID = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1));
 				}
 			}
 			else

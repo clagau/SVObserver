@@ -14,11 +14,6 @@
 
 class RegressionTestController
 {
-	enum
-	{
-		MinRegressionTime = 40,
-	};
-
 	struct RegressionRuningState
 	{
 		bool bFirst = true;
