@@ -7,7 +7,6 @@
 #include "SVProtoBuf/SVRC.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
-#include "SVSharedMemoryLibrary/SharedMemoryLock.h"
 #pragma endregion Includes
 
 struct lock_acquisition_stream_t
