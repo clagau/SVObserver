@@ -29,7 +29,8 @@ namespace SvOg
 		constexpr int cHeaderSize = 1;
 		constexpr int cTypeColumnSize = 100;
 		constexpr int cNameColumnSize = 150;
-		constexpr int cIndirectNameColumnSize = 320;
+		constexpr int cResultColumnSize = 80;
+		constexpr int cIndirectNameColumnSize = 285;
 		constexpr int cBoxColumnSize = 25;
 
 		struct ColumnDef
@@ -45,6 +46,7 @@ namespace SvOg
 			DependencyColumn = 0,
 			NameColumn,
 			TypeColumn,
+			ResultColumn,
 			ValueColumn,
 			ValueButtonColumn,
 		};
@@ -53,6 +55,7 @@ namespace SvOg
 			{DependencyColumn, ColumnDef{"", 15}},
 			{NameColumn, ColumnDef{"Name", cNameColumnSize}},
 			{TypeColumn, {"Type", cTypeColumnSize }},
+			{ResultColumn, {"Result", cResultColumnSize }},
 			{ValueColumn, {"Value", cIndirectNameColumnSize }},
 			{ValueButtonColumn, {"", cBoxColumnSize}},
 		};
@@ -475,6 +478,16 @@ namespace SvOg
 				pCell->SetText(typePairs[0].first.c_str());
 			}
 
+			if (SvPb::isValueType(m_resultData[i].m_type))
+			{
+				m_Grid.SetItemText(row, ResultColumn, static_cast<CString>(m_resultData[i].m_data.m_Value));
+			}
+			else
+			{
+				m_Grid.SetItemText(row, ResultColumn, "");
+			}
+			m_Grid.SetItemState(row, ResultColumn, m_Grid.GetItemState(row, ResultColumn) | GVIS_READONLY);
+
 			setValueColumn(i);
 
 			SvGcl::GV_ITEM buttonItem;
@@ -494,27 +507,22 @@ namespace SvOg
 		bool isChangeable{ false };
 		CString valueString;
 
-		m_resultData[pos].m_data.m_defaultValue = SvPb::getDefaultString(m_resultData[pos].m_type);
-		if (SvPb::isValueType(m_resultData[pos].m_type))
+		switch (m_resultData[pos].m_data.m_selectedOption)
 		{
-			if (SvPb::LinkedSelectedOption::DirectValue == m_resultData[pos].m_data.m_selectedOption)
-			{
+			case SvPb::DirectValue:
 				isChangeable = true;
 				valueString = static_cast<CString>(m_resultData[pos].m_data.m_directValue);
-			}
-			else
-			{
-				valueString = static_cast<CString>(m_resultData[pos].m_data.m_Value);
-			}
-			if (valueString.IsEmpty())
-			{
-				valueString = static_cast<CString>(m_resultData[pos].m_data.m_defaultValue);
-			}
+				break;
+			case SvPb::IndirectValue:
+				valueString = SvCmd::getDottedName(m_InspectionID, m_resultData[pos].m_data.m_indirectIdName).c_str();
+				break;
+			case SvPb::Formula:
+				valueString = m_resultData[pos].m_data.m_formula.c_str();
+				break;
+			default:
+				break;
 		}
-		else
-		{
-			valueString = SvCmd::getDottedName(m_InspectionID, m_resultData[pos].m_data.m_indirectIdName).c_str();
-		}
+		m_resultData[pos].m_data.m_defaultValue = SvPb::getDefaultString(m_resultData[pos].m_type);
 		m_Grid.SetItemText(pos + 1, ValueColumn, valueString);
 		if (isChangeable)
 		{
