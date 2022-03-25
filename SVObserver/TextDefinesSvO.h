@@ -32,7 +32,6 @@ namespace SvO
 	const TCHAR* const OutputObjectList =  _T( "Output Object List" );
 
 	const TCHAR* const NoneString= 	_T("<none>");
-	const TCHAR* const FbwfDllName= _T("fbwflib.dll");///< the name of the DLL providing the file based write filter functionality
 	const TCHAR* const AvailableArchiveImageMemory  = _T( "Available Archive Image Memory:  %8.1f MB" );
 
 	const TCHAR* const cInspectionProcessTag = _T( "SVInspectionProcess" );

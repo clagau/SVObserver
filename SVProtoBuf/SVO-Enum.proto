@@ -1138,8 +1138,6 @@ enum EmbeddedIdEnum
 	EnvironmentModeValueUidEId = 468;
 	EnvironmentModeUidEId = 469;
 	EnvironmentAutoSaveUidEId = 470;
-	EnvironmentDiskProtectionUidEId = 471;
-	EnvironmentStartLastConfiEIdEId = 472;
 	TableAnaylzerSortIsASCEId = 474;
 	TableAnaylzerExcludeHighEId = 475;
 	TableAnaylzerExcludeHigh_LinkEId = 476; //obsolete, but needed for loading configs older than 10.20

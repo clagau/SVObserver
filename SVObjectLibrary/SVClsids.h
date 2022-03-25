@@ -36,7 +36,6 @@ namespace ObjectIdEnum
 	constexpr uint32_t EnvironmentModeValueId = 15;
 	constexpr uint32_t EnvironmentModeId = 16;
 	constexpr uint32_t EnvironmentAutoSaveId = 17;
-	constexpr uint32_t EnvironmentDiskProtectionId = 18;
 	constexpr uint32_t EnvironmentStartLastConfigId = 19;
 	constexpr uint32_t EnvironmentConfigurationNameId = 20;
 	constexpr uint32_t EnvironmentConfigurationFileNameId = 21;

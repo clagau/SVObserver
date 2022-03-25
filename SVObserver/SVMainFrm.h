@@ -226,8 +226,6 @@ private:
 	afx_msg void OnUpdateExtrasStartLastConfiguration(CCmdUI* PCmdUI);
 	afx_msg void OnExtrasEnableAutoSave();
 	afx_msg void OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI);
-	afx_msg void OnExtrasEnableFbwf();
-	afx_msg void OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI);
 
 	afx_msg void OnUpdateStatusInfo(CCmdUI* pCmdUI);
 	afx_msg void OnViewPPQBar();

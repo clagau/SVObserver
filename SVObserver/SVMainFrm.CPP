@@ -203,8 +203,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_START_LAST_CONFIG, OnUpdateExtrasStartLastConfiguration)
 	ON_COMMAND(ID_EXTRAS_ENABLEAUTOSAVE, OnExtrasEnableAutoSave)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEAUTOSAVE, OnUpdateExtrasEnableAutoSave)
-	ON_COMMAND(ID_EXTRAS_ENABLEDISKPROTECTION , OnExtrasEnableFbwf)
-	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEDISKPROTECTION, OnUpdateExtrasEnableFbwf)
 	
 	ON_WM_SIZE()
 	ON_WM_SIZING()
@@ -214,7 +212,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_USER, OnUpdateStatusInfo)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_MODE, OnUpdateStatusInfo)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_GIGE_LICENSE_ERROR, OnUpdateStatusInfo)
-	ON_UPDATE_COMMAND_UI(ID_INDICATOR_FBWF, OnUpdateStatusInfo)
 
 	//ON_UPDATE_COMMAND_UI(ID_INDICATOR_FREE_MEMORY, OnUpdateStatusInfo)
 	// Globale Hilfebefehle
@@ -1853,16 +1850,6 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 			}
 			break;
 		}
-		case ID_INDICATOR_FBWF:
-			{
-				auto &ai(ExtrasEngine::Instance());
-				
-				m_wndStatusBar.SetFbwfInfo(pCmdUI->m_nIndex, ai.IsFbwfAvailable(), ai.IsFbwfActive(), ai.IsFbwfChanging());
-
-				pCtrl->SetText( m_wndStatusBar.m_strFbwfText, pCmdUI->m_nIndex, SBT_OWNERDRAW );
-			}
-			break;
-
 		default:
 			{
 				// Do nothing.
@@ -2339,26 +2326,6 @@ void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 
 	pCmdUI->Enable( bEnable );
 	pCmdUI->SetCheck( ExtrasEngine::Instance().IsAutoSaveEnabled());
-}
-
-void SVMainFrame::OnExtrasEnableFbwf()
-{
-	if( S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION) )
-	{
-		bool Value {false};
-		RootObject::getRootChildValue(SvDef::FqnEnvironmentDiskProtection, Value);
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentDiskProtection, !Value);
-	}
-}
-
-void SVMainFrame::OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI)
-{
-	//temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
-	//bool bEnable = TheSecurityManager().SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
-	bool bEnable = false;
-	pCmdUI->Enable(bEnable);
-
-	pCmdUI->SetCheck( ExtrasEngine::Instance().IsFbwfSelected());
 }
 
 BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)

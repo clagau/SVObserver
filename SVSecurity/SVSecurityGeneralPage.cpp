@@ -142,7 +142,6 @@ void SVSecurityGeneralPage::OnNoSecurityBtn()
 	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP,      _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN,        _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION,_T("Everybody") );
-	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION,   _T("Everybody") );
 
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_FILE_MENU_NEW,                   FALSE );
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION,  FALSE);
@@ -174,7 +173,6 @@ void SVSecurityGeneralPage::OnNoSecurityBtn()
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP,     FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN,       FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION,FALSE);
-	m_pAccess->SetForcedPrompt( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION,  FALSE);
 }
 
 void SVSecurityGeneralPage::OnTraditionalSecurityBtn() 
@@ -218,7 +216,6 @@ void SVSecurityGeneralPage::OnTraditionalSecurityBtn()
 	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP,    _T("Supervisor Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN,      _T("Supervisor Group,Vision Worker Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION, _T("Supervisor Group,Vision Worker Group") );
-	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION, _T("Supervisor Group,Vision Worker Group") );
 
 	m_pAccess->SetUseLogon( true );
 }

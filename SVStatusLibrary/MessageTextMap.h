@@ -87,10 +87,6 @@ namespace SvStl
 		{Tid_MsgPPQPOsitionIsMissing, _T("a PPQ Position is missing")},
 		{Tid_MsgRemoteIndexIsMissing, _T("a Remote Index is missing")},
 
-		{Tid_ActivatingDiskProtection, _T("Activating disk protection.\nAfter the next restart C:\\ will be protected")},
-		{Tid_DeactivatingDiskProtection, _T("Deactivating disk protection.\nAfter the next restart C:\\ will not be protected")},
-		{Tid_DiskProtectionRemainsActive, _T("Disk protection will remain active.\n")},
-		{Tid_DiskProtectionRemainsInactive, _T("Disk protection will remain inactive.")},
 		{Tid_CouldNotExecuteFormatString, _T("could not execute '%s'")},
 
 		//RangeValue

@@ -106,11 +106,7 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 		}
 
 		//When certain objects are changed need to do post processing
-		if (ObjectIdEnum::EnvironmentDiskProtectionId == pSender->getObjectId())
-		{
-			ExtrasEngine::Instance().ChangeFbwfState();
-		}
-		else if (ObjectIdEnum::EnvironmentStartLastConfigId == pSender->getObjectId())
+	if (ObjectIdEnum::EnvironmentStartLastConfigId == pSender->getObjectId())
 		{
 			//Save Start Last Configuration in registry
 			double Value {0.0};
@@ -330,14 +326,6 @@ bool RootObject::createRootChildren()
 		{
 			//Need to set the attributes to settable remotely and online but should not be selectable
 			pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-		}
-		bool DiskProtectionEnabled = ExtrasEngine::Instance().ReadCurrentFbwfSettings();
-		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentDiskProtection, DiskProtectionEnabled);
-		if (nullptr != pValueObject)
-		{
-			//Need to set the attributes to settable remotely but should not be selectable
-			pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		// Load special profile settings

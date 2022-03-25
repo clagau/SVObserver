@@ -43,7 +43,6 @@ SVShowDependentsDialog::SVShowDependentsDialog(const std::set<uint32_t>& rIdsOfO
 	, m_DialogType(Type)
 {
 	FillDependencyList(rIdsOfObjectsDependedOn, objectType);
-	//ABXX hier Liste verkleinern?
 }
 
 SVShowDependentsDialog::SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText /*= nullptr*/, CWnd* pParent /*= nullptr*/)

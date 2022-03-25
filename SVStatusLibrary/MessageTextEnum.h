@@ -76,10 +76,6 @@ enum MessageTextEnum
 	Tid_MsgPPQPOsitionIsMissing,
 	Tid_MsgRemoteIndexIsMissing,
 
-	Tid_ActivatingDiskProtection,
-	Tid_DeactivatingDiskProtection,
-	Tid_DiskProtectionRemainsActive,
-	Tid_DiskProtectionRemainsInactive,
 	Tid_CouldNotExecuteFormatString,
 
 	//RangeValue

@@ -6,11 +6,8 @@
 /// in the Mainframe Pull-down Menu "Extras".
 /// Currently: 
 ///		- Control of automatic backups of the current configuration
-///		- Control of the File Based Write Filter
 //******************************************************************************
 #pragma once
-
-typedef ULONG	(__stdcall *FbwfIsFilterEnabledPtr) (PULONG currentSession, PULONG nextSession);
 
 class ExtrasEngine
 {
@@ -44,18 +41,6 @@ public:
 	bool IsAutoSaveEnabled() const;
 	void SetAutoSaveEnabled(bool enabled);
 
-	/// Changes the FBWF status that will be active after the next reboot (and displays appropriate message boxes)
-	void ChangeFbwfState();
-
-	//! Reads the current Fbwf settings
-	//! \returns true if Fbwf is active
-	bool ReadCurrentFbwfSettings();
-
-	bool IsFbwfAvailable() const {return m_FbwfAvailable;}
-	bool IsFbwfActive()    const {return m_FbwfActive;}
-	bool IsFbwfSelected()  const;
-	bool IsFbwfChanging()  const {return m_FbwfActiveChanging;}
-
 	//************************************
 	/// performs an automatic configuration backup if enabled and required (when always is false, 
 	/// only if IsAutoSaveTimestampOlderThanDeltaTime() returns true)
@@ -83,18 +68,10 @@ private:
 
 #pragma region Member Variables
 
-public: 
-	static HINSTANCE ms_FbwfDllInstance; ///< the handle to the DLL where m_pfnFbwfIsFilterEnabled will be looked for
-private:
 	static const int ms_defaultDeltaTimeInMinutes=10;///< the minimum (for most purposes) autosave interval in seconds, m_AutoSaveDeltaTime_s is derived from it
 	
-	FbwfIsFilterEnabledPtr m_pfnFbwfIsFilterEnabled; ///< the function pointer modelled on FbwfIsFilterEnabled() in fbwfapi.h
 	double m_AutoSaveDeltaTime_s; ///< the minimum (for most purposes) autosave interval in seconds
 	time_t  m_lastAutoSaveTimestamp; ///< when was the latest automatic configuration backup done?
-
-	bool m_FbwfAvailable;		///< is FBWF functionality available (i..e installed and DLL found)? 
-	bool m_FbwfActive;			///< is FBWF functionality currently active?
-	bool m_FbwfActiveChanging;	///< will FBWF functionality be active after the next reboot?
 
 #pragma endregion Member Variables
 };

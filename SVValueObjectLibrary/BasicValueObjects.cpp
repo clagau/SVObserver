@@ -46,7 +46,6 @@ const BasicValueObjects::DottedNameObjectIdMap BasicValueObjects::m_StaticUnique
 	{std::string(SvDef::FqnEnvironmentModeIsEdit),				ObjectIdEnum::EnvironmentModeIsEditId},
 	{std::string(SvDef::FqnEnvironmentModeValue),				ObjectIdEnum::EnvironmentModeValueId},
 	{std::string(SvDef::FqnEnvironmentAutoSave),				ObjectIdEnum::EnvironmentAutoSaveId},
-	{std::string(SvDef::FqnEnvironmentDiskProtection),			ObjectIdEnum::EnvironmentDiskProtectionId},
 	{std::string(SvDef::FqnEnvironmentStartLastConfig),			ObjectIdEnum::EnvironmentStartLastConfigId},
 	{std::string(SvDef::FqnEnvironmentConfigurationName),		ObjectIdEnum::EnvironmentConfigurationNameId},
 	{std::string(SvDef::FqnEnvironmentConfigurationFileName),	ObjectIdEnum::EnvironmentConfigurationFileNameId},

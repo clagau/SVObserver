@@ -88,7 +88,6 @@ constexpr const char* FqnEnvironmentSerialNumber = _T("Environment.Serial Number
 constexpr const char* FqnEnvironmentWin = _T("Environment.Windows");
 constexpr const char* FqnEnvironmentWinKey = _T("Environment.Windows.Win Key");
 constexpr const char* FqnEnvironmentAutoSave = _T("Environment.Auto Save");
-constexpr const char* FqnEnvironmentDiskProtection = _T("Environment.Disk Protection");
 constexpr const char* FqnEnvironmentStartLastConfig = _T("Environment.Start Last Configuration");
 constexpr const char* FqnEnvironmentImageUpdate = _T("Environment.View.Image Display Update");
 constexpr const char* FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");

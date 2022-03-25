@@ -201,9 +201,6 @@ BOOL SVObserverApp::InitInstance()
 
 	SvStl::MessageManager::setShowDisplayFunction(SvMc::DisplayMessageBox::showDialog);
 
-	// load File based write filter DLL. SVObserver will function normally (except for FBWF functionally, of course) if "fbwflib.dll" is not found
-	SvUl::LoadDll::Instance().getDll(SvO::FbwfDllName, ExtrasEngine::ms_FbwfDllInstance);
-
 	//Set the resource instance to the resource dll
 	AfxSetResourceHandle(ResourceInstance);
 
@@ -1679,7 +1676,6 @@ HRESULT SVObserverApp::InitializeSecurity()
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP, _T(""));
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN, _T(""));
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION, _T(""));
-		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION, _T(""));
 		TheSecurityManager().SVProtectData(SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER); // Sets Flag that will prevent data from being changed.
 	}
 
