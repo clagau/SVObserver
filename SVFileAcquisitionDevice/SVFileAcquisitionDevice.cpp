@@ -387,9 +387,9 @@ _variant_t SVFileAcquisitionDevice::CameraGetParameterList(unsigned long cameraI
 	return result;
 }
 
-HRESULT SVFileAcquisitionDevice::InternalTrigger(unsigned long cameraIndex)
+HRESULT SVFileAcquisitionDevice::InternalTrigger(unsigned long cameraIndex, LPCTSTR pAcquisitionFile)
 {
-	return FireOneShot(cameraIndex);
+	return FireOneShot(cameraIndex, pAcquisitionFile);
 }
 
 HRESULT SVFileAcquisitionDevice::CameraProcessStartFrame(unsigned long cameraIndex)
@@ -464,13 +464,13 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame(unsigned long cameraIndex
 	return result;
 }
 
-HRESULT SVFileAcquisitionDevice::FireOneShot(unsigned long cameraIndex)
+HRESULT SVFileAcquisitionDevice::FireOneShot(unsigned long cameraIndex, LPCTSTR pAcquisitionFile)
 {
 	HRESULT result{ E_FAIL };
 
 	if (cameraIndex < MaxFileCameras)
 	{
-		result = m_cameras[cameraIndex].DoOneShot();
+		result = m_cameras[cameraIndex].DoOneShot(pAcquisitionFile);
 	}
 	return result;
 }

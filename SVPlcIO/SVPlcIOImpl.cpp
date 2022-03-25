@@ -387,6 +387,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		triggerData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_objectID);
 		triggerData[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
 		triggerData[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
+		triggerData[SvTrig::TriggerDataEnum::AcquisitionFile].SetString(rTriggerReport.m_acquisitionFile.c_str());
 
 		auto iter = m_triggerCallbackMap.find(triggerIndex);
 		if (m_triggerCallbackMap.end() != iter)

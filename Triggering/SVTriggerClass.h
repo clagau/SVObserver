@@ -69,7 +69,7 @@ public:
 	bool getPause() const { return m_pause; }
 protected:
 	virtual void preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo) override;
-	virtual void postProcessTriggers(DWORD sleepDuration, bool softwareTrigger) override;
+	virtual void postProcessTriggers(DWORD sleepDuration, bool softwareTrigger, LPCTSTR pAcquisitionFile) override;
 
 private:
 	int m_digitizerNumber{ -1 };

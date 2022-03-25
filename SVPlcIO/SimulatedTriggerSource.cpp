@@ -11,12 +11,13 @@
 #include "PowerLinkConnection.h"
 #include "SimulatedTriggerSource.h"
 #include "SVUtilityLibrary/SVClock.h"
+#include "SVUtilityLibrary/FileHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvPlc
 {
-constexpr size_t cCycleParameterNumber = 8;
+constexpr size_t cCycleParameterNumber = 9;
 constexpr uint8_t cPlcInvalid = 4;
 constexpr uint8_t cPlcBad = 5;
 constexpr uint8_t cPlcGood = 6;
@@ -27,7 +28,7 @@ constexpr double cSecondsPerMinute = 60.0;
 constexpr double cConversionMicrosec = 1000000.0;
 constexpr LPCTSTR cResultFilename = _T("Result");
 constexpr LPCTSTR cResultExtension = _T(".csv");
-constexpr LPCTSTR cResultHeader = _T("ObjectID; Trigger Timestamp; Result Timestamp; Results\r\n");
+constexpr LPCTSTR cResultHeader = _T("ObjectID; Results; Acquisition File\r\n");
 constexpr LPCTSTR cObjectGood = _T("ObjectGood=");
 constexpr LPCTSTR cObjectBad = _T("ObjectBad=");
 constexpr LPCTSTR cObjectInvalid = _T("ObjectInvalid=");
@@ -37,58 +38,88 @@ std::mutex gTriggerDataMutex;
 std::array<TriggerReport, cNumberOfChannels> gTriggerReport;
 std::array<std::atomic_bool, cNumberOfChannels> gNewTrigger {false, false, false, false};
 
-void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
+void ChannelTimer(std::atomic_bool& rRun, const SimulatedTriggerData& rSimTriggerData)
 {
-	if(0 != simTriggerData.m_initialDelay)
+	if(0 != rSimTriggerData.m_initialDelay)
 	{
-		std::this_thread::sleep_for(std::chrono::microseconds(simTriggerData.m_initialDelay));
+		std::this_thread::sleep_for(std::chrono::microseconds(rSimTriggerData.m_initialDelay));
 	}
 
 	//Normalize the period to the next 500µs
-	uint32_t period = simTriggerData.m_period + cNormalizePeriod - simTriggerData.m_period % cNormalizePeriod;
+	uint32_t period = rSimTriggerData.m_period + cNormalizePeriod - rSimTriggerData.m_period % cNormalizePeriod;
 	LARGE_INTEGER pauseTime;
 	pauseTime.QuadPart = -static_cast<int64_t>(period * 10);
 
-	uint8_t currentIndex {1};
-	uint32_t objectID {simTriggerData.m_objectID};
-	HANDLE timer = ::CreateWaitableTimer(NULL, FALSE, simTriggerData.m_name.c_str());
+	uint32_t currentIndex {0UL};
+	uint8_t currentTriggerIndex {1};
+	uint32_t objectID {rSimTriggerData.m_objectID};
+	HANDLE timer = ::CreateWaitableTimer(NULL, FALSE, rSimTriggerData.m_name.c_str());
 
 	while(rRun)
 	{
-		if(currentIndex <= simTriggerData.m_triggerPerObjectID && nullptr != timer)
+		if(currentTriggerIndex <= rSimTriggerData.m_triggerPerObjectID && nullptr != timer )
 		{
 			if (0 != ::SetWaitableTimer(timer, &pauseTime, 0L, nullptr, nullptr, FALSE))
 			{
 				if (WaitForSingleObject(timer, INFINITE) == WAIT_OBJECT_0)
 				{
+					std::string acquisitionFile;
+					if (currentIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
+					{
+						acquisitionFile = rSimTriggerData.m_LoadImageList[currentIndex];
+					}
+					if (false == acquisitionFile.empty())
+					{
+						size_t pos2 = acquisitionFile.find_last_of('.');
+						size_t pos1 = acquisitionFile.find_last_of('_', pos2);
+						uint8_t triggerIndex {0};
+						if (std::string::npos != pos1 && std::string::npos != pos2)
+						{
+							triggerIndex = static_cast<uint8_t> (std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1 - 1)));
+							pos2 = pos1 - 1;
+						}
+						pos1 = acquisitionFile.find_last_of('_', pos2);
+						if (std::string::npos != pos1 && std::string::npos != pos2 && 0 != triggerIndex)
+						{
+							objectID = std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1));
+							currentTriggerIndex = triggerIndex;
+						}
+					}
+
 					TriggerReport triggerReport;
 					triggerReport.m_triggerTimestamp = SvUl::GetTimeStamp();
-					triggerReport.m_channel = simTriggerData.m_channel;
+					triggerReport.m_channel = rSimTriggerData.m_channel;
 					triggerReport.m_objectID = objectID;
 					triggerReport.m_objectType = cSingleObjectType;
-					triggerReport.m_triggerPerObjectID = simTriggerData.m_triggerPerObjectID;
-					triggerReport.m_triggerIndex = currentIndex;
+					triggerReport.m_triggerPerObjectID = rSimTriggerData.m_triggerPerObjectID;
+					triggerReport.m_triggerIndex = currentTriggerIndex;
 					triggerReport.m_isValid = true;
+					triggerReport.m_acquisitionFile = acquisitionFile;
 					{
 						std::lock_guard<std::mutex> guard {gTriggerDataMutex};
 						gTriggerReport[triggerReport.m_channel] = std::move(triggerReport);
 					}
-					gNewTrigger[simTriggerData.m_channel] = true;
-					currentIndex++;
+					gNewTrigger[rSimTriggerData.m_channel] = true;
+					++currentTriggerIndex;
+					++currentIndex;
 					::SetEvent(g_hSignalEvent);
 				}
 			}
 		}
 
-		if(currentIndex > simTriggerData.m_triggerPerObjectID)
+		if(currentTriggerIndex > rSimTriggerData.m_triggerPerObjectID)
 		{
-			if(0 != simTriggerData.m_objectDelay)
+			if(0 != rSimTriggerData.m_objectDelay)
 			{
-				std::this_thread::sleep_for(std::chrono::microseconds(simTriggerData.m_objectDelay));
+				std::this_thread::sleep_for(std::chrono::microseconds(rSimTriggerData.m_objectDelay));
 			}
-			currentIndex = 1;
+			currentTriggerIndex = 1;
 			objectID++;
-			if(simTriggerData.m_objectNumber > 0 && objectID >= simTriggerData.m_objectID + simTriggerData.m_objectNumber)
+			if(rSimTriggerData.m_objectNumber > 0 && objectID >= rSimTriggerData.m_objectID + rSimTriggerData.m_objectNumber)
+			{
+				rRun = false;
+			}
+			if (0 < rSimTriggerData.m_LoadImageList.size() && currentIndex >= rSimTriggerData.m_LoadImageList.size())
 			{
 				rRun = false;
 			}
@@ -122,60 +153,36 @@ HRESULT SimulatedTriggerSource::initialize()
 		}
 		if (S_OK == result)
 		{
+			std::vector<std::vector<std::string>> cycleParamList;
+			cycleParamList.reserve(cNumberOfChannels);
 			///Header
 			std::getline(cycleFile, fileLine);
 			while (false == cycleFile.eof())
 			{
 				std::getline(cycleFile, fileLine);
-				if (false == fileLine.empty())
+				if (true == fileLine.empty() || 0 == fileLine.find(_T("//")))
 				{
-					std::vector<std::string> cycleParameters;
-					std::stringstream stringStream(fileLine);
-					std::string value;
-					while (std::getline(stringStream, value, ';'))
-					{
-						cycleParameters.push_back(value);
-					}
+					continue;
+				}
+				std::vector<std::string> cycleParam;
+				cycleParam.reserve(cCycleParameterNumber);
+				std::stringstream stringStream(fileLine);
+				std::string value;
+				while (std::getline(stringStream, value, ';'))
+				{
+					cycleParam.emplace_back(std::move(value));
+				}
 
-					if (cCycleParameterNumber == cycleParameters.size())
-					{
-						SimulatedTriggerData triggerData;
-						triggerData.m_name = cycleParameters[0];
-						///Convert Trigger index (1 based) to trigger channel (0 based)
-						uint8_t triggerIndex = static_cast<uint8_t> (std::stoul(cycleParameters[1]));
-						if (0 == triggerIndex)
-						{
-							result = E_INVALIDARG;
-							break;
-						}
-						triggerData.m_channel = triggerIndex - 1;
-						triggerData.m_objectNumber = std::stoul(cycleParameters[2]);
-						triggerData.m_objectID = std::stoul(cycleParameters[3]);
-						triggerData.m_triggerPerObjectID = static_cast<uint8_t> (std::stoul(cycleParameters[4].c_str()));
-						double intialDelayRatio = std::stod(cycleParameters[5]) / 100.0;
-						double machineSpeed = std::stod(cycleParameters[6]);
-						double objectDelayRatio = std::stod(cycleParameters[7]) / 100.0;
-
-						if (0.0 == machineSpeed || objectDelayRatio > 1.0 || intialDelayRatio > 1.0)
-						{
-							result = E_INVALIDARG;
-							break;
-						}
-						double objectPeriod = cSecondsPerMinute / machineSpeed * cConversionMicrosec;
-						double mainTriggerPeriod = objectPeriod * (1.0 - objectDelayRatio) ;
-						triggerData.m_initialDelay = static_cast<uint32_t> (objectPeriod * intialDelayRatio);
-						triggerData.m_period = static_cast<uint32_t> (mainTriggerPeriod / triggerData.m_triggerPerObjectID);
-						triggerData.m_objectDelay = static_cast<uint32_t> (objectPeriod * objectDelayRatio);
-
-						if (triggerData.m_channel < cNumberOfChannels)
-						{
-							m_channel[triggerData.m_channel].m_simulatedTriggerData = std::move(triggerData);
-						}
-					}
+				if (cCycleParameterNumber == cycleParam.size())
+				{
+					cycleParamList.emplace_back(std::move(cycleParam));
 				}
 			}
+			cycleFile.close();
+
+			result = initChannel(cycleParamList);
 		}
-		cycleFile.close();
+
 	}
 	else
 	{
@@ -214,7 +221,7 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 					}
 				}
 				m_channel[channel].m_runThread = true;
-				m_channel[channel].m_timerThread = std::thread(&ChannelTimer, std::ref(m_channel[channel].m_runThread), m_channel[channel].m_simulatedTriggerData);
+				m_channel[channel].m_timerThread = std::thread(&ChannelTimer, std::ref(m_channel[channel].m_runThread), std::ref(m_channel[channel].m_simulatedTriggerData));
 				::SetThreadPriority(m_channel[channel].m_timerThread.native_handle(), THREAD_PRIORITY_HIGHEST);
 			}
 		}
@@ -305,14 +312,14 @@ void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelO
 	{
 		++m_ObjectsGood[channel];
 	}
-	double triggerTimestamp{0.0};
+	std::string  acuisitionFile;
 	{
 		std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
-		const auto iter = m_channel[channel].m_objectIDTimeMap.find(channelOut.m_objectID);
-		if (m_channel[channel].m_objectIDTimeMap.end() != iter)
+		const auto iter = m_channel[channel].m_objectIDFileMap.find(channelOut.m_objectID);
+		if (m_channel[channel].m_objectIDFileMap.end() != iter)
 		{
-			triggerTimestamp = iter->second;
-			m_channel[channel].m_objectIDTimeMap.erase(iter);
+			acuisitionFile = iter->second;
+			m_channel[channel].m_objectIDFileMap.erase(iter);
 		}
 	}
 
@@ -321,7 +328,7 @@ void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelO
 	{
 		resultString += std::to_string(rResult) + ' ';
 	}
-	std::string fileData = SvUl::Format(_T("%4lu; %.3f; %.3f; %s\r\n"), channelOut.m_objectID, triggerTimestamp, SvUl::GetTimeStamp(), resultString.c_str());
+	std::string fileData = SvUl::Format(_T("%4lu; %s; %s\r\n"), channelOut.m_objectID, resultString.c_str(), acuisitionFile.c_str());
 	
 	{
 		std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
@@ -348,9 +355,56 @@ void SimulatedTriggerSource::createTriggerReport(uint8_t channel)
 		if(triggerReport.m_triggerIndex == triggerReport.m_triggerPerObjectID)
 		{
 			std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
-			m_channel[channel].m_objectIDTimeMap[triggerReport.m_objectID] = triggerReport.m_triggerTimestamp;
+			m_channel[channel].m_objectIDFileMap[triggerReport.m_objectID] = triggerReport.m_acquisitionFile;
 		}
 	}
 }
 
+HRESULT SimulatedTriggerSource::initChannel(const std::vector<std::vector<std::string>>& rCycleParamList)
+{
+	if (0ULL == rCycleParamList.size())
+	{
+		return E_INVALIDARG;
+	}
+
+	for (const auto rCycleParam : rCycleParamList)
+	{
+		SimulatedTriggerData triggerData;
+		triggerData.m_name = rCycleParam[FileParamColumnPos::triggerName];
+		///Convert Trigger index (1 based) to trigger channel (0 based)
+		uint8_t triggerIndex = static_cast<uint8_t> (std::stoul(rCycleParam[FileParamColumnPos::triggerIndex]));
+		if (0 == triggerIndex)
+		{
+			return E_INVALIDARG;
+		}
+		triggerData.m_channel = triggerIndex - 1;
+		triggerData.m_objectNumber = std::stol(rCycleParam[FileParamColumnPos::objectNumber]);
+		triggerData.m_objectID = std::stoul(rCycleParam[FileParamColumnPos::objectID]);
+		triggerData.m_triggerPerObjectID = static_cast<uint8_t> (std::stoul(rCycleParam[FileParamColumnPos::triggerPerObjectID].c_str()));
+		double intialDelayRatio = std::stod(rCycleParam[FileParamColumnPos::initialDelay]) / 100.0;
+		double machineSpeed = std::stod(rCycleParam[FileParamColumnPos::machineSpeed]);
+		double objectDelayRatio = std::stod(rCycleParam[FileParamColumnPos::objectDelay]) / 100.0;
+
+		if (0.0 == machineSpeed || objectDelayRatio > 1.0 || intialDelayRatio > 1.0)
+		{
+			return E_INVALIDARG;
+		}
+		double objectPeriod = cSecondsPerMinute / machineSpeed * cConversionMicrosec;
+		double mainTriggerPeriod = objectPeriod * (1.0 - objectDelayRatio);
+		triggerData.m_initialDelay = static_cast<uint32_t> (objectPeriod * intialDelayRatio);
+		triggerData.m_period = static_cast<uint32_t> (mainTriggerPeriod / triggerData.m_triggerPerObjectID);
+		triggerData.m_objectDelay = static_cast<uint32_t> (objectPeriod * objectDelayRatio);
+
+		if (false == rCycleParam[8].empty())
+		{
+			triggerData.m_LoadImageList = SvUl::getFileList(rCycleParam[8].c_str(), _T(".bmp"), false);
+		}
+
+		if (triggerData.m_channel < cNumberOfChannels)
+		{
+			m_channel[triggerData.m_channel].m_simulatedTriggerData = std::move(triggerData);
+		}
+	}
+	return S_OK;
+}
 } //namespace SvPlc

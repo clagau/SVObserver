@@ -30,7 +30,7 @@ typedef HRESULT (WINAPI *SVDigitizerRegisterBufferInterfacePtr)(unsigned long, S
 typedef HRESULT (WINAPI *SVDigitizerStartPtr)(unsigned long);
 typedef HRESULT (WINAPI *SVDigitizerStopPtr)(unsigned long);
 typedef HRESULT (WINAPI *SVDigitizerUnregisterBufferInterfacePtr)(unsigned long);
-typedef HRESULT (WINAPI *SVDigitizerInternalTriggerPtr)(unsigned long);
+typedef HRESULT (WINAPI *SVDigitizerInternalTriggerPtr)(unsigned long, LPCTSTR);
 typedef HRESULT (WINAPI *SVDigitizerDestroyBuffersPtr)(unsigned long);
 typedef _variant_t (WINAPI *SVDigitizerParameterGetNamePtr)(unsigned long, unsigned long);
 typedef _variant_t (WINAPI *SVDigitizerParameterGetValuePtr)(unsigned long, int);
@@ -64,7 +64,7 @@ public:
 	HRESULT Start(unsigned long digitizerHandle);
 	HRESULT Stop(unsigned long digitizerHandle);
 
-	HRESULT InternalTrigger(unsigned long digitizerHandle) const;
+	HRESULT InternalTrigger(unsigned long digitizerHandle, LPCTSTR pAcquisitionFile) const;
 
 	_variant_t ParameterGetName(unsigned long digitizerHandle, int parameterID) const;
 	_variant_t ParameterGetValue(unsigned long digitizerHandle, int parameterID) const;

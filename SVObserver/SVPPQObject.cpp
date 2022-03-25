@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MonitorListAttributeStruct.h"
+#include "RootObject.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
 #include "SVGlobal.h"
@@ -25,9 +26,11 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -826,8 +829,11 @@ void SVPPQObject::PrepareGoOnline(bool isTestMode)
 		throw Msg;
 	}
 
+	bool cameraFileAcquisition {false};
+	RootObject::getRootChildValue(SvDef::FqnEnvironmentFileAcquisition, cameraFileAcquisition);
 	for (SVCameraInfoMap::iterator l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter)
 	{
+		l_svIter->first->setAcquisitionDevice(cameraFileAcquisition);
 		if (!(l_svIter->second.m_CameraPPQIndex >= 0 && l_svIter->first->CanGoOnline()))
 		{
 			SvDef::StringVector msgList;
@@ -1031,6 +1037,8 @@ void SVPPQObject::GoOnline()
 		m_PPQPositions.setMaxCameraShutterTime(maxShutterTime);
 	}
 
+	AttachAcqToTriggers();
+
 	if (!m_pTrigger->GoOnline())
 	{
 		FailureObjectName = m_pTrigger->GetCompleteName();
@@ -1119,7 +1127,8 @@ bool SVPPQObject::GoOffline()
 		l_svIter->first->GoOffline();
 	}// end for
 
-
+	bool cameraFileAcquisition {false};
+	RootObject::setRootChildValue(SvDef::FqnEnvironmentFileAcquisition, cameraFileAcquisition);
 
 	for (auto pInspection : m_arInspections)
 	{
@@ -4058,6 +4067,48 @@ void SVPPQObject::setOutputResults(uint32_t inspectedID, std::vector<bool>& rOut
 					_variant_t outputValue;
 					pIOEntry->getValueObject()->getValue(outputValue);
 					rOutputResult.at(outputIndex) = outputValue ? true : false;
+				}
+			}
+		}
+	}
+}
+
+void SVPPQObject::AttachAcqToTriggers()
+{
+	if (nullptr != m_pTrigger)
+	{
+		SvTrig::SVTriggerClass* pTriggerDevice = m_pTrigger->getDevice();
+		if (nullptr != pTriggerDevice)
+		{
+			pTriggerDevice->clearAcquisitionTriggers();
+			int iDigNum = pTriggerDevice->getDigitizerNumber();
+			bool isSoftwareTrigger = SvDef::TriggerType::SoftwareTrigger == m_pTrigger->getType();
+			auto* pTriggerDll = pTriggerDevice->getDLLTrigger();
+			if (nullptr != pTriggerDll)
+			{
+				if (isSoftwareTrigger)
+				{
+					unsigned long triggerHandle = pTriggerDll->GetHandle(iDigNum);
+					_variant_t value = m_pTrigger->GetSoftwareTriggerPeriod();
+					pTriggerDll->SetParameterValue(triggerHandle, SVIOParameterEnum::TriggerPeriod, value);
+				}
+				SvIe::SVVirtualCameraPtrVector cameraVector = GetVirtualCameras();
+				for (auto* pCamera : cameraVector)
+				{
+					bool isFileAcquisition = pCamera->IsFileAcquisition();
+					SvIe::SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
+					if (nullptr != pAcq)
+					{
+						SvTrig::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
+						if (pAcqDLL)
+						{
+							SvTrig::AcquisitionParameter acquisitionParameter;
+							acquisitionParameter.m_pDllDigitizer = pAcqDLL;
+							acquisitionParameter.m_triggerChannel = pAcq->m_hDigitizer;
+							acquisitionParameter.m_active = isSoftwareTrigger || isFileAcquisition;
+							pTriggerDevice->addAcquisitionTrigger(std::move(acquisitionParameter));
+						}
+					}
 				}
 			}
 		}

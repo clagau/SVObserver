@@ -23,6 +23,7 @@ enum TriggerDataEnum : int
 	TriggerChannel,
 	ObjectType,
 	SoftwareTrigger,
+	AcquisitionFile,
 	TriggerDataNumber
 };
 

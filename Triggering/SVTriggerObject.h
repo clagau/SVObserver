@@ -37,7 +37,7 @@ namespace SvTrig
 		bool Destroy();
 
 		// Runtime Functions
-		bool CanGoOnline(bool isTestMode);
+		bool CanGoOnline(bool setSoftwareTrigger);
 		bool GoOnline();
 		bool GoOffline();
 

@@ -59,6 +59,7 @@
 #include <comutil.h>
 #include <direct.h>
 #include <iostream>
+#include <filesystem>
 #include <functional>
 #include <guiddef.h>
 #include <io.h>

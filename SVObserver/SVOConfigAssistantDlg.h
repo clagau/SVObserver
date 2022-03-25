@@ -103,8 +103,6 @@ public:
 	bool IsOriginalInspectionInList(LPCTSTR InspectionName) const;
 	bool IsPPQInList(LPCTSTR PPQName) const;
 
-	std::string BuildDigName( const SVOCameraObj& rCameraObj ) const;
-
 	bool RenameInspection(LPCTSTR InspectionName, LPCTSTR NewName);
 
 	int GetCameraListCount() const;

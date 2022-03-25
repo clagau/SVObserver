@@ -72,7 +72,7 @@ public:
 	bool RegisterCallback(ULONG_PTR pPPQ, PpqCameraCallBack pPpqCameraCallback);
 	bool UnregisterCallback(ULONG_PTR pPPQ);
 
-    SVAcquisitionClassPtr GetAcquisitionDevice() const { return m_pDevice; }
+    SVAcquisitionClassPtr GetAcquisitionDevice() const { return m_pCurrentDevice; }
 	
     HRESULT SetLightReference( SVLightReference& rArray );
 	HRESULT GetLightReference( SVLightReference& rArray ) const;
@@ -132,7 +132,9 @@ public:
 	void addNeededBuffer(uint32_t id, int neededBufferSize);
 	void removeNeededBufferEntry(uint32_t id);
 
-	inline bool canExternalSoftwareTrigger() const { return m_canExternalSoftwareTrigger; };
+	bool canExternalSoftwareTrigger() const { return m_canExternalSoftwareTrigger; };
+
+	void setAcquisitionDevice(bool fileAcquisition);
 #pragma endregion Public Methods
 
 private:
@@ -146,7 +148,9 @@ protected:
 	long mlBandLink{ 0L };
 
 private:
-	SVAcquisitionClassPtr m_pDevice;
+	SVAcquisitionClassPtr m_pCurrentDevice;
+	SVAcquisitionClassPtr m_pMainDevice;
+	SVAcquisitionClassPtr m_pFileDevice;
 	SvVol::BasicValueObjects m_CameraValues;
 	bool m_bFileAcquisition{ false };
 	bool m_IsColor{ false };

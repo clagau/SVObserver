@@ -48,6 +48,8 @@ namespace ObjectIdEnum
 	constexpr uint32_t ModuleReadyId = 28;
 	constexpr uint32_t ConfigObjectId = 30;
 	constexpr uint32_t RemoteDataControllerObjectId = 31;
+	constexpr uint32_t EnvironmentSoftwareTriggerId = 32;
+	constexpr uint32_t EnvironmentFileAcquisitionId = 33;
 
 
 	// Unique base ID for following variables always have 0x100 ids free

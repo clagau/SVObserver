@@ -13,16 +13,18 @@
 namespace SvPlc
 {
 using NtSetTimerResolutionPtr = long(__stdcall*)(IN ULONG RequestedResolution, IN BOOLEAN Set, OUT PULONG ActualResolution);
+
 struct SimulatedTriggerData
 {
 	std::string m_name;
 	uint8_t m_channel {0};
-	uint32_t m_objectNumber {0UL};
+	long m_objectNumber {0L};
 	uint32_t m_objectID {0UL};
 	uint8_t m_triggerPerObjectID {0};
 	uint32_t m_initialDelay {0UL};
 	uint32_t m_period {0UL};
 	uint32_t m_objectDelay {0UL};
+	std::vector<std::string> m_LoadImageList;
 };
 
 struct ChannelData
@@ -30,13 +32,24 @@ struct ChannelData
 	std::thread m_timerThread;
 	std::atomic_bool m_runThread{false};
 	SimulatedTriggerData m_simulatedTriggerData;
-	std::map<uint32_t, double> m_objectIDTimeMap;
+	std::map<uint32_t, std::string> m_objectIDFileMap;
 	std::ofstream m_resultFile;
 };
 
 /// a simplified simulation of HardwareTriggerSource
 class SimulatedTriggerSource : public TriggerSource
 {
+	enum FileParamColumnPos
+	{
+		triggerName=0,
+		triggerIndex,
+		objectNumber,
+		objectID,
+		triggerPerObjectID,
+		initialDelay,
+		machineSpeed,
+		objectDelay,
+	};
 public:
 	explicit SimulatedTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rSimulateFile);
 	virtual ~SimulatedTriggerSource() = default;
@@ -48,6 +61,8 @@ public:
 	virtual void createTriggerReport(uint8_t channel) override;
 
 private:
+	HRESULT initChannel(const std::vector<std::vector<std::string>>& rCycleParamList);
+
 	std::array<ChannelData, cNumberOfChannels> m_channel;
 	std::string m_plcSimulateFile;
 	NtSetTimerResolutionPtr m_pSetTimerResolution {nullptr};

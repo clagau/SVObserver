@@ -27,7 +27,7 @@ void PostponedInternalTrigger(SVDigitizerLoadLibraryClass* pAcqusitionDll, unsig
 	if (nullptr != pAcqusitionDll)
 	{
 		Sleep(sleepDuration);
-		pAcqusitionDll->InternalTrigger(digitizerHandle);
+		pAcqusitionDll->InternalTrigger(digitizerHandle, nullptr);
 	}
 }
 
@@ -210,7 +210,7 @@ void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInf
 	}
 }
 
-void SVTriggerClass::postProcessTriggers(DWORD sleepDuration, bool softwareTrigger)
+void SVTriggerClass::postProcessTriggers(DWORD sleepDuration, bool softwareTrigger, LPCTSTR pAcquisitionFile)
 {
 	for (const auto& rAcquisitionParameter : m_acqTriggerParameters)
 	{
@@ -219,7 +219,7 @@ void SVTriggerClass::postProcessTriggers(DWORD sleepDuration, bool softwareTrigg
 		{
 			if (0 == sleepDuration)
 			{
-				rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel);
+				rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel, pAcquisitionFile);
 			}
 			else
 			{

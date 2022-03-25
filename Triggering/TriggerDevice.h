@@ -60,7 +60,7 @@ protected:
 	void Process(bool& rWaitForEvents);
 
 	virtual void preProcessTriggers(SVTriggerInfoStruct&) {}
-	virtual void postProcessTriggers(DWORD, bool) {}
+	virtual void postProcessTriggers(DWORD, bool, LPCTSTR) {}
 
 private:
 	TriggerDevice() = default;

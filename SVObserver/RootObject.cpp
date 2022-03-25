@@ -164,6 +164,20 @@ bool RootObject::createConfigurationObject(std::recursive_mutex* pMutex)
 		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	}
 
+	pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentSoftwareTrigger, false);
+	if (nullptr != pValueObject)
+	{
+		//Need to set the attributes to settable remotely but should not be selectable
+		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	}
+	pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentFileAcquisition, false);
+	if (nullptr != pValueObject)
+	{
+		//Need to set the attributes to settable remotely but should not be selectable
+		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	}
 	return true;
 }
 

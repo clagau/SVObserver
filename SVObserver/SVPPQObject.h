@@ -433,6 +433,8 @@ private:
 	void setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const;
 	void setOutputResults(uint32_t inspectedID, std::vector<bool>& rOutputResult) const;
 
+	void AttachAcqToTriggers();
+
 	PpqCameraCallBack m_cameraCallback;
 	SvTrig::PpqTriggerCallBack m_triggerCallback;
 	SvVol::BasicValueObjects	m_PpqValues;

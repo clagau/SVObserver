@@ -39,6 +39,7 @@
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "Triggering/SVTriggerConstants.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/AcquisitionName.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
@@ -1921,7 +1922,7 @@ HRESULT SVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, SV
 	bool bChangedAcqFormat = false;
 	SVImageInfoClass l_ImageInfo;
 
-	std::string DeviceName = m_pAssistant->BuildDigName( m_CameraObj );
+	std::string DeviceName = SvUl::getAcquisitionName(m_CameraObj.GetDigNumber(), m_CameraObj.IsFileAcquisition());
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 

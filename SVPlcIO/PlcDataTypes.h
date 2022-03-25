@@ -29,6 +29,7 @@ struct TriggerReport
 	uint8_t m_triggerPerObjectID{ 0 };
 	double m_triggerTimestamp{ 0.0 };
 	bool m_isValid{false};
+	std::string m_acquisitionFile;
 };
 
 struct ResultReport

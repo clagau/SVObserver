@@ -58,6 +58,8 @@ private:
 	bool m_UsePreLoadImages{ true };
 	int m_MaxPreloadFileNumber{ 50 };
 	int m_PreloadTimeDelay{ -1 };
+	mutable std::mutex m_fileCameraMutex;
+	std::string m_acquisitionFile;
 
 	std::vector<MIL_ID> m_images;
 public:
@@ -99,15 +101,14 @@ public:
 
 	bool IsRunning() const;
 
-	HRESULT DoOneShot();
+	HRESULT DoOneShot(LPCTSTR pAcquisitionFile);
 
 	HRESULT CopyImage(SvOi::ITRCImage* pImagePtr);
 
 	HRESULT loadImage(std::string fileName);
-
+	std::string getAcquisitionFile() const;
 
 	double m_StartTimeStamp{0.0};
 	SVAcquisitionBufferInterface* m_pBufferInterface{nullptr};
-	
 };
 

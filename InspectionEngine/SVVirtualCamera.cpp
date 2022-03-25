@@ -22,6 +22,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "Triggering/SVTriggerClass.h"
+#include "SVUtilityLibrary/AcquisitionName.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -43,9 +44,9 @@ bool SVVirtualCamera::GetImageInfo(SVImageInfoClass *pImageInfo)
 {
 	bool bOk = false;
 
-	if(nullptr != m_pDevice)
+	if(nullptr != m_pCurrentDevice)
 	{
-		bOk = S_OK == m_pDevice->GetImageInfo( pImageInfo );
+		bOk = S_OK == m_pCurrentDevice->GetImageInfo( pImageInfo );
 		if ( nullptr != pImageInfo )
 		{
 			bOk = S_OK == pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, mlBandLink );
@@ -72,19 +73,26 @@ bool SVVirtualCamera::Create( LPCTSTR DeviceName )
 {
 	bool bOk = true;
 
-	if(nullptr != m_pDevice )
+	if(nullptr != m_pCurrentDevice )
 	{
 		bOk = Destroy();
 	}
 
 	SVDigitizerProcessingClass::Instance().SetDigitizerColor( DeviceName, m_IsColor );
-	m_pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName );
+	m_pMainDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName );
+	m_pCurrentDevice = m_pMainDevice;
 
-	bOk = (nullptr != m_pDevice) && bOk;
+	if (false == m_bFileAcquisition)
+	{
+		std::string fileDeviceName = SvUl::getAcquisitionName(m_CameraID, true);
+		m_pFileDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(fileDeviceName.c_str());
+	}
+
+	bOk = (nullptr != m_pCurrentDevice) && bOk;
 
 	if ( bOk )
 	{
-		SetBandLink( m_pDevice->Channel() );
+		SetBandLink( m_pCurrentDevice->Channel() );
 
 		m_ObjectTypeInfo.m_ObjectType = SvPb::SVVirtualCameraType;
 
@@ -124,35 +132,47 @@ HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjec
 
 bool SVVirtualCamera::CanGoOnline() const
 {
-	return m_pDevice && m_pDevice->IsValid();
+	return m_pCurrentDevice && m_pCurrentDevice->IsValid();
 }// end CanGoOnline
 
 bool SVVirtualCamera::GoOnline()
 {
-	return (nullptr != m_pDevice) && ( S_OK == m_pDevice->Start() );
+	return (nullptr != m_pCurrentDevice) && ( S_OK == m_pCurrentDevice->Start() );
 }
 
 bool SVVirtualCamera::GoOffline()
 {
-	return (nullptr != m_pDevice) && ( S_OK == m_pDevice->Stop() );
+	bool result = (nullptr != m_pCurrentDevice) && (S_OK == m_pCurrentDevice->Stop());
+	setAcquisitionDevice(false);
+	return result;
 }
 
 bool SVVirtualCamera::RegisterCallback(ULONG_PTR pPPQ, PpqCameraCallBack pPpqCameraCallback)
 {
-	if (nullptr != m_pDevice)
+	bool result {false};
+	if (nullptr != m_pMainDevice)
 	{
-		return (S_OK == m_pDevice->RegisterCallback(reinterpret_cast<ULONG_PTR> (this), pPPQ, pPpqCameraCallback));
+		result = (S_OK == m_pMainDevice->RegisterCallback(reinterpret_cast<ULONG_PTR> (this), pPPQ, pPpqCameraCallback));
 	}
-	return false;
+	if (nullptr != m_pFileDevice)
+	{
+		m_pFileDevice->RegisterCallback(reinterpret_cast<ULONG_PTR> (this), pPPQ, pPpqCameraCallback);
+	}
+	return result;
 }
 
 bool SVVirtualCamera::UnregisterCallback(ULONG_PTR pPPQ)
 {
-	if (nullptr != m_pDevice)
+	bool result {false};
+	if (nullptr != m_pMainDevice)
 	{
-		return (S_OK == m_pDevice->UnregisterCallback(pPPQ));
+		result = (S_OK == m_pMainDevice->UnregisterCallback(pPPQ));
 	}
-	return false;
+	if (nullptr != m_pFileDevice)
+	{
+		m_pFileDevice->UnregisterCallback(pPPQ);
+	}
+	return result;
 }
 
 void SVVirtualCamera::addNeededBuffer(uint32_t id, int neededBufferSize)
@@ -171,12 +191,23 @@ void SVVirtualCamera::removeNeededBufferEntry(uint32_t id)
 	}
 }
 
+void SVVirtualCamera::setAcquisitionDevice(bool fileAcquisition)
+{
+	m_pCurrentDevice = fileAcquisition ? m_pFileDevice : m_pMainDevice;
+	if (fileAcquisition && nullptr != m_pFileDevice && nullptr != m_pMainDevice)
+	{
+		SVImageInfoClass imageInfo;
+		m_pMainDevice->GetImageInfo(&imageInfo);
+		m_pFileDevice->CreateBuffers(imageInfo);
+	}
+}
+
 void SVVirtualCamera::setNeededBuffer()
 {
 	const auto maxElement = std::max_element(m_neededBufferMap.begin(), m_neededBufferMap.end(), [](const auto& rEntry1, const auto& rEntry2) { return rEntry1.second < rEntry2.second; });
-	if (m_neededBufferMap.end() != maxElement && nullptr != m_pDevice)
+	if (m_neededBufferMap.end() != maxElement && nullptr != m_pCurrentDevice)
 	{
-		m_pDevice->setNeededBuffers(maxElement->second);
+		m_pCurrentDevice->setNeededBuffers(maxElement->second);
 	}
 }
 
@@ -184,9 +215,11 @@ bool SVVirtualCamera::DestroyLocal()
 {
 	bool bOk = GoOffline();
 
-	bOk &= (S_OK == m_pDevice->UnregisterCallback(0UL));
+	bOk &= (S_OK == UnregisterCallback(0UL));
 
-	m_pDevice = nullptr;
+	m_pCurrentDevice = nullptr;
+	m_pMainDevice = nullptr;
+	m_pFileDevice = nullptr;
 	mlBandLink = 0;
 
 	return bOk;
@@ -202,9 +235,9 @@ HRESULT SVVirtualCamera::GetBandSize(int& riBandSize) const
 {
 	HRESULT hr = S_OK;
 	
-	if (nullptr != m_pDevice )
+	if (nullptr != m_pCurrentDevice )
 	{
-		riBandSize = m_pDevice->BandSize();
+		riBandSize = m_pCurrentDevice->BandSize();
 	}
 	else
 	{
@@ -297,9 +330,9 @@ HRESULT SVVirtualCamera::GetLut( SVLut& lut ) const
 
 SvOi::ITRCImagePtr SVVirtualCamera::ReserveNextImageHandle(  ) const
 {
-	if(nullptr != m_pDevice)
+	if(nullptr != m_pCurrentDevice)
 	{
-		return m_pDevice->GetNextBuffer();
+		return m_pCurrentDevice->GetNextBuffer();
 	}
 
 	return nullptr;
@@ -307,7 +340,8 @@ SvOi::ITRCImagePtr SVVirtualCamera::ReserveNextImageHandle(  ) const
 
 bool SVVirtualCamera::IsFileAcquisition() const
 {
-	return m_bFileAcquisition;
+	bool isFileAcq = (nullptr != m_pCurrentDevice && nullptr != m_pFileDevice) ? m_pCurrentDevice == m_pFileDevice : false;
+	return m_bFileAcquisition || isFileAcq;
 }
 
 void SVVirtualCamera::SetFileAcquisitionMode(bool bFileAcquisition)
@@ -419,14 +453,14 @@ HRESULT SVVirtualCamera::updateCameraParameters()
 {
 	HRESULT Result = S_OK;
 
-	if(nullptr == m_pDevice)
+	if(nullptr == m_pCurrentDevice)
 	{
 		Result = E_FAIL;
 		return Result;
 	}
 
 	SVDeviceParamCollection CameraParameters;
-	Result = m_pDevice->GetDeviceParameters( CameraParameters );
+	Result = m_pCurrentDevice->GetDeviceParameters( CameraParameters );
 	if(S_OK == Result)
 	{
 		SVDeviceParam* pDeviceParam = CameraParameters.GetParameter( DeviceParamSerialNumberString );
@@ -481,12 +515,12 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 {
 	HRESULT Result = E_FAIL;
 
-	if(nullptr ==  m_pDevice)
+	if(nullptr ==  m_pCurrentDevice)
 	{
 		return Result;
 	}
 
-	if( S_OK == m_pDevice->GetDeviceParameters( rCameraParameters ) )
+	if( S_OK == m_pCurrentDevice->GetDeviceParameters( rCameraParameters ) )
 	{
 		SVDeviceParamCollection	ChangedCameraParameters;
 		SVDeviceParam* pDeviceParam = rCameraParameters.GetParameter( DeviceParamGain );
@@ -517,7 +551,7 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 
 		if( S_OK == Result )
 		{
-			m_pDevice->SetDeviceParameters( ChangedCameraParameters );
+			m_pCurrentDevice->SetDeviceParameters( ChangedCameraParameters );
 		}
 	}
 

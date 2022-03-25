@@ -23,6 +23,7 @@
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/AcquisitionName.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -239,7 +240,7 @@ void SVOCameraDlg::OnBtnPropVc()
 				*pCameraObj = rTmpObj;
 				m_pParent->SetModified(true);
 				m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
-				std::string DigName = m_pParent->BuildDigName( *pCameraObj );
+				std::string DigName = SvUl::getAcquisitionName(pCameraObj->GetDigNumber(), pCameraObj->IsFileAcquisition());
 				SvIe::SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
 			}
 			else
@@ -271,7 +272,7 @@ void SVOCameraDlg::OnBtnPropVc()
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
 						int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
 						pCameraObj->SetDigNumber( Digitizer );
-						std::string DigName = m_pParent->BuildDigName( *pCameraObj );
+						std::string DigName = SvUl::getAcquisitionName(pCameraObj->GetDigNumber(), pCameraObj->IsFileAcquisition());
 						SvIe::SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
 						SvIe::SVAcquisitionClassPtr psvDevice(SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigName.c_str()));
 						if (nullptr != psvDevice)

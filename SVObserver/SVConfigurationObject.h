@@ -251,7 +251,6 @@ public:
 
 	static bool GetInspection(LPCTSTR InspectionName, SVInspectionProcess*& prInspection);
 
-	HRESULT AttachAcqToTriggers();
 	HRESULT ValidateOutputList();
 
 	//! Method makes changes to the loaded configuration as required to upgrade it to the newer version

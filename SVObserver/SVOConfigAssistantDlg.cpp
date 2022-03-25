@@ -48,11 +48,12 @@
 #include "SVOGui\GlobalConstantConflictDlg.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/AcquisitionName.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -68,11 +69,6 @@ constexpr const char*  c_Color = _T(" Color");
 // Defines for Camera File extensions
 constexpr const char* cGigeCameraFileExt = _T(".ogc");
 constexpr const char* cSequenceCameraFileExt = _T(".seq");
-
-constexpr const char* SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
-constexpr const char* SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
-
-constexpr const char* cSvimDigName    ( _T(".Dig_") );
 
 constexpr const char* ERR_STR                 ( _T( "**ERROR**   " ) );
 constexpr const char* WARNING_STR             ( _T( "**WARNING** " ) );
@@ -693,58 +689,6 @@ bool SVOConfigAssistantDlg::RemovePPQFromList(LPCTSTR PPQ)
 	return m_PPQList.RemovePPQFromList(PPQ);
 }
 
-std::string SVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) const
-{
-	std::string Result;
-	int iDigNumber = rCameraObj.GetDigNumber();
-
-	if (rCameraObj.IsFileAcquisition())
-	{
-		switch( m_lConfigurationType )
-		{
-			case SVIM_PRODUCT_X2_GD1A:
-			case SVIM_PRODUCT_X2_GD2A:
-			case SVIM_PRODUCT_X2_GD4A:
-			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_NEO:
-			case SVIM_PRODUCT_X2_GD1A_COLOR:
-			case SVIM_PRODUCT_X2_GD2A_COLOR:
-			case SVIM_PRODUCT_X2_GD4A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			{
-				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, cSvimDigName, iDigNumber);
-				break;
-			}
-
-			default:
-				break;
-		} 
-	}
-	else
-	{
-		switch( m_lConfigurationType )
-		{
-			case SVIM_PRODUCT_X2_GD1A:
-			case SVIM_PRODUCT_X2_GD2A:
-			case SVIM_PRODUCT_X2_GD4A:
-			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_NEO:
-			case SVIM_PRODUCT_X2_GD1A_COLOR:
-			case SVIM_PRODUCT_X2_GD2A_COLOR:
-			case SVIM_PRODUCT_X2_GD4A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			{
-				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, cSvimDigName, iDigNumber);
-				break;
-			}
-
-			default:
-				break;
-		} 
-	}
-	return Result;
-}
-
 bool SVOConfigAssistantDlg::IsDigitizerUsed(LPCTSTR DigString)
 {
 	bool Result( false );
@@ -756,7 +700,8 @@ bool SVOConfigAssistantDlg::IsDigitizerUsed(LPCTSTR DigString)
 	{
 		if( nullptr != m_CameraList.GetCameraObjectByPosition(i) )
 		{
-			CameraDig = BuildDigName( *m_CameraList.GetCameraObjectByPosition(i) );
+			const SVOCameraObj& rCameraObj = *m_CameraList.GetCameraObjectByPosition(i);
+			CameraDig = SvUl::getAcquisitionName(rCameraObj.GetDigNumber(), rCameraObj.IsFileAcquisition());
 
 			if( DigString == CameraDig )
 			{
@@ -1381,7 +1326,7 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 			{
 				//File acquisition should set the digitizer number always to the camera ID
 				pCameraObj->SetDigNumber(pCameraObj->GetCameraID());
-				DigName = BuildDigName(*pCameraObj);
+				DigName = SvUl::getAcquisitionName(pCameraObj->GetDigNumber(), pCameraObj->IsFileAcquisition());
 				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 				if ( nullptr != psvDevice )
 				{
@@ -1450,7 +1395,7 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				{
 					pCameraObj->SetDigNumber(Digitizer);
 				}
-				DigName = BuildDigName(*pCameraObj);
+				DigName = SvUl::getAcquisitionName(pCameraObj->GetDigNumber(), pCameraObj->IsFileAcquisition());
 				svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
 				if ( 0 == SvUl::CompareNoCase(svFile.GetExtension(), cGigeCameraFileExt) )
@@ -1702,7 +1647,7 @@ bool SVOConfigAssistantDlg::SendCameraDataToConfiguration()
 					pCamera->SetFileImageSize(pCameraObj->GetFileImageSize());
 					pCamera->SetIsColor( pCameraObj->IsColor() );
 
-					std::string DeviceName = BuildDigName( *pCameraObj );
+					std::string DeviceName = SvUl::getAcquisitionName(pCameraObj->GetDigNumber(), pCameraObj->IsFileAcquisition());
 
 					bRet = pCamera->Create( DeviceName.c_str() ) && bRet;
 
@@ -2411,11 +2356,6 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 	bRet = SendInspectionDataToConfiguration();
 
 	bRet = SendPPQAttachmentsToConfiguration(aPPQsToDelete);
-
-	// EB 20031203
-	// a temp solution
-	// the better solution is to have the acqs subscribe and the triggers provide
-	pConfig->AttachAcqToTriggers();
 
 	//POST/PRE Execution
 	//Save & copy filepath
@@ -3588,7 +3528,7 @@ HRESULT SVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFi
 	std::string CameraName( rCameraObj.GetCameraDisplayName() );
 	RemoveFileAcquisitionMessages( CameraName.c_str() );
 
-	std::string DigName = BuildDigName( rCameraObj );
+	std::string DigName = SvUl::getAcquisitionName(rCameraObj.GetDigNumber(), rCameraObj.IsFileAcquisition());
 	SvIe::SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), rCameraObj.IsColor() );
 
 	if( rCameraObj.IsFileAcquisition())
@@ -4037,7 +3977,8 @@ void SVOConfigAssistantDlg::OnBnClickedCancel()
 
 			if( nullptr != pCameraObj )
 			{
-				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( BuildDigName( *pCameraObj ).c_str() );
+				std::string deviceName = SvUl::getAcquisitionName(pCameraObj->GetDigNumber(), pCameraObj->IsFileAcquisition());
+				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(deviceName.c_str());
 				if( nullptr != psvDevice )
 				{
 					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );

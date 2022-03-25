@@ -160,6 +160,7 @@
     <ClCompile Include="AuditFiles.cpp" />
     <ClCompile Include="BitmapHelper.cpp" />
     <ClCompile Include="DirectoryUtilities.cpp" />
+    <ClCompile Include="FileHelper.cpp" />
     <ClCompile Include="InStreamWrapper.cpp" />
     <ClCompile Include="LoadDll.cpp" />
     <ClCompile Include="ModuleInfo.cpp" />
@@ -183,11 +184,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="7zTypes.h" />
+    <ClInclude Include="AcquisitionName.h" />
     <ClInclude Include="ArchiveExtractCallback.h" />
     <ClInclude Include="ArchiveUpdateCallback.h" />
     <ClInclude Include="AuditFiles.h" />
     <ClInclude Include="BitmapHelper.h" />
     <ClInclude Include="DirectoryUtilities.h" />
+    <ClInclude Include="FileHelper.h" />
     <ClInclude Include="GlobalConstantData.h" />
     <ClInclude Include="IArchive.h" />
     <ClInclude Include="ICoder.h" />

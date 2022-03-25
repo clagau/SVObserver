@@ -91,10 +91,11 @@ constexpr const char* FqnEnvironmentAutoSave = _T("Environment.Auto Save");
 constexpr const char* FqnEnvironmentStartLastConfig = _T("Environment.Start Last Configuration");
 constexpr const char* FqnEnvironmentImageUpdate = _T("Environment.View.Image Display Update");
 constexpr const char* FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");
+constexpr const char* FqnEnvironmentSoftwareTrigger = _T("Environment.Software Trigger");
+constexpr const char* FqnEnvironmentFileAcquisition = _T("Environment.File Acquisition");
 
 constexpr const char* FqnEnvironmentConfigurationName = _T("Environment.Configuration Name");
 constexpr const char* FqnEnvironmentConfigurationFileName = _T("Environment.Configuration Filename");
-
 constexpr const char* FqnEnvironmentCurrentDate = _T("Environment.Current Date");
 constexpr const char* FqnEnvironmentCurrentTime = _T("Environment.Current Time");
 
@@ -147,6 +148,6 @@ constexpr unsigned long VT_DPOINT = 81;
 
 constexpr const char* cIndexKeyword = _T("IDX");
 
-constexpr int cTriggerDataNumber = 8;
+constexpr int cTriggerDataNumber = 9;
 #pragma endregion Declarations
 } //namespace SvDef

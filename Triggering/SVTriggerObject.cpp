@@ -76,9 +76,9 @@ namespace SvTrig
 		return false;
 	}
 
-	bool SVTriggerObject::CanGoOnline(bool isTestMode)
+	bool SVTriggerObject::CanGoOnline(bool setSoftwareTrigger)
 	{
-		if (isTestMode && nullptr != m_pSoftwareTrigger)
+		if (setSoftwareTrigger && nullptr != m_pSoftwareTrigger)
 		{
 			m_pSoftwareTrigger->clearAcquisitionTriggers();
 			if (nullptr != m_pMainTrigger)
@@ -98,7 +98,7 @@ namespace SvTrig
 		///This needs to be done before the cameras are started
 		if (nullptr != m_pCurrentTrigger)
 		{
-			m_pCurrentTrigger->setTriggerType(isTestMode);
+			m_pCurrentTrigger->setTriggerType(setSoftwareTrigger);
 			m_pCurrentTrigger->setPause(false);
 		}
 		return nullptr != m_pCurrentTrigger;

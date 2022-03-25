@@ -91,8 +91,6 @@ bool SVFileCamera::IsSingleIterationLoadMode() const
 	return (m_fileData.mode == SingleIterationMode);
 }
 
-
-
 HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHandler& endFrameHandler, unsigned long p_ulIndex)
 {
 	HRESULT hr = S_FALSE;
@@ -185,17 +183,22 @@ bool SVFileCamera::IsRunning() const
 
 std::string SVFileCamera::GetNextFilename()
 {
-	const SVFileInfo& fileInfo = m_loadSequence.GetNext();
-	return fileInfo.filename;
+	std::string result = m_acquisitionFile.empty() ? m_loadSequence.GetNext().filename : m_acquisitionFile;
+	m_acquisitionFile.clear();
+	return result;
 }
 MIL_ID SVFileCamera::GetNextImageId()
 {
 	return m_loadedImageSequence.GetNext();
 }
 
-HRESULT SVFileCamera::DoOneShot()
+HRESULT SVFileCamera::DoOneShot(LPCTSTR pAcquisitionFile)
 {
-	return m_thread.Signal((void*)this);
+	{
+		std::lock_guard<std::mutex> guard(m_fileCameraMutex);
+		m_acquisitionFile = pAcquisitionFile;
+	}
+	return m_thread.Signal(reinterpret_cast<void*> (this));
 }
 
 HRESULT SVFileCamera::CopyImage(SvOi::ITRCImage* pImage)
@@ -206,15 +209,16 @@ HRESULT SVFileCamera::CopyImage(SvOi::ITRCImage* pImage)
 
 void SVFileCamera::OnAPCEvent(ULONG_PTR data)
 {
-	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*>(data);
+	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*> (data);
 	if (nullptr != pCamera)
 	{
+		std::string acuisitionFile = pCamera->getAcquisitionFile();
 		// fire StartFrame event
 		pCamera->m_startFrameEvent.Fire(pCamera->m_index);
 #ifdef TRACE_LOADTIME
 		double Duration = SvUl::GetTimeStamp();
 #endif
-		if (pCamera->m_UsePreLoadImages)
+		if (pCamera->m_UsePreLoadImages && acuisitionFile.empty())
 		{
 			pCamera->m_image = pCamera->GetNextImageId();
 			if (pCamera->m_PreloadTimeDelay > 0)
@@ -285,5 +289,15 @@ HRESULT SVFileCamera::loadImage(std::string fileName)
 		return S_OK;
 	}
 	return E_FAIL;
+}
+
+std::string SVFileCamera::getAcquisitionFile() const
+{
+	std::string result;
+	{
+		std::lock_guard<std::mutex> guard(m_fileCameraMutex);
+		result = m_acquisitionFile;
+	}
+	return result;
 }
 

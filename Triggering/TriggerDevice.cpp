@@ -113,6 +113,7 @@ void TriggerDevice::Process(bool&)
 		{
 			triggerInfo.lTriggerCount = ++m_triggerCount;
 			DWORD sleepDuration{ 0 };
+			std::string acquisitionFile;
 			//If in the input data it has a valid time stamp value then it is more accurate then use it
 			const _variant_t& rTimeStamp = triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp];
 			if (VT_R8 == rTimeStamp.vt && 0.0 < rTimeStamp.dblVal)
@@ -131,6 +132,11 @@ void TriggerDevice::Process(bool&)
 						++sleepDuration;
 					}
 				}
+				const _variant_t& rAcquisitionFile = triggerInfo.m_Data[SvTrig::TriggerDataEnum::AcquisitionFile];
+				if (VT_BSTR == rAcquisitionFile.vt)
+				{
+					acquisitionFile = _bstr_t(rAcquisitionFile.bstrVal);
+				}
 			}
 			else
 			{
@@ -143,7 +149,7 @@ void TriggerDevice::Process(bool&)
 
 			preProcessTriggers(triggerInfo);
 			m_pPpqTriggerCallback(std::move(triggerInfo));
-			postProcessTriggers(sleepDuration, softwareTrigger);
+			postProcessTriggers(sleepDuration, softwareTrigger, acquisitionFile.c_str());
 		}
 		done = (1 > m_triggerQueue.size());
 	}

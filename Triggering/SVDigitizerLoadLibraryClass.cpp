@@ -311,13 +311,13 @@ namespace SvTrig
 		return result;
 	}
 
-	HRESULT SVDigitizerLoadLibraryClass::InternalTrigger(unsigned long digitizerHandle) const
+	HRESULT SVDigitizerLoadLibraryClass::InternalTrigger(unsigned long digitizerHandle, LPCTSTR pAcquisitionFile) const
 	{
 		HRESULT result{ E_FAIL };
 
 		if (nullptr != m_pInternalTrigger)
 		{
-			result = m_pInternalTrigger(digitizerHandle);
+			result = m_pInternalTrigger(digitizerHandle, pAcquisitionFile);
 		}
 		return result;
 	}
