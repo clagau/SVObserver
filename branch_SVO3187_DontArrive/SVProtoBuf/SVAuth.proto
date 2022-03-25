@@ -1,0 +1,119 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Körber Pharma Inspection GmbH. All Rights Reserved
+/// \file SVAuth.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for all authentication related messages
+//******************************************************************************
+
+syntax = "proto3";
+package SvAuth;
+
+option java_package = "de.sdm.svrc.proto.v1010";
+
+enum JwtAlgorithm {
+	HS256 = 0;
+	RS256 = 1;
+}
+
+message JwtHeader
+{
+	string typ = 1; // token type
+	string cty = 2; // content type
+	string alg = 3; // algorithm
+}
+
+message JwtStandardFields
+{
+	string iss = 1; // token issuer
+	string sub = 2; // subject
+	string aud = 3; // audience
+	uint64 exp = 4; // expiration time
+	uint64 nbf = 5; // not before time
+	uint64 iat = 6; // issued at time
+	string jti = 7; // unique token id (a.k.a nonce) to prevent
+}
+
+// JSON Web Key
+// See https://tools.ietf.org/html/rfc7517#section-4
+message Jwk
+{
+	string kty = 1; // key type
+	string use = 2; // how the key was meant to be used. For the example above sig represents signature
+	string key_ops = 3; // key operations
+	string alg = 4; // algorithm for the key
+	string kid = 5; // unique identifier for the key
+	string x5u = 6; // X.509 URL
+	repeated string x5c = 7; // x509 certificate chain
+	string x5t = 8; // thumbprint of the x.509 cert (SHA-1)
+	string e = 9; // exponent for a standard pem
+	string n = 10; // modulus for a standard pem
+}
+
+// JSON Web Key Set
+// See https://tools.ietf.org/html/rfc7517#section-5
+message Jwks
+{
+	repeated Jwk keys = 1;
+}
+
+// TODO we need some globally unique user identifier.
+//      is user name enough already? do we have some user id? maybe two things?
+message AccessTokenClaims
+{
+	string name = 1;
+}
+
+message AuthTokenClaims
+{
+	string username = 1;
+	string fullname = 2;
+	string email = 3;
+	uint32 level = 4;
+}
+
+message LoginRequest
+{
+	string username = 1;
+	string password = 2;
+}
+
+message LoginResponse
+{
+	string accessToken = 2;
+}
+
+message AuthRequest
+{
+	string accessToken = 1;
+}
+
+message AuthResponse
+{
+	string authToken = 1;
+}
+
+message LogoutRequest
+{
+}
+
+message LogoutResponse
+{
+}
+
+message SessionContext
+{
+	uint32 id = 1;
+	string username = 2;
+	string host = 3;
+}
+
+message UserDatabaseEntry
+{
+	string username = 1;
+	string password = 2;
+	string email = 3;
+	uint32 level = 4;
+	string firstname = 5;
+	string lastname = 6;
+}

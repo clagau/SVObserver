@@ -1,0 +1,172 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "1 TYPELIB ""SVPictureDisplay.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_SVPICTUREDISPLAY    BITMAP                  "SVPictureDisplayCtrl.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROPPAGE_SVPICTUREDISPLAY DIALOGEX 0, 0, 250, 62
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "TODO: Place controls to manipulate properties of SVPictureDisplay Control on this dialog.",IDC_STATIC,7,25,229,16
+END
+
+IDD_PICT_DIALOG DIALOGEX 0, 0, 304, 270
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE
+EXSTYLE WS_EX_TRANSPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Zoom +",IDC_ZOOM_PLUS,17,7,25,20,BS_ICON
+    PUSHBUTTON      "Zoom -",IDC_ZOOM_MINUS,48,7,25,20,BS_ICON
+    PUSHBUTTON      "FIT",IDC_ZOOM_FIT,81,7,25,20,BS_ICON
+    PUSHBUTTON      "1:1",IDC_ZOOM_ONE,116,7,25,20,BS_ICON
+    LTEXT           "",IDC_PICT_DISPLAY,15,31,247,207,SS_NOTIFY | WS_BORDER | NOT WS_GROUP | WS_TABSTOP,WS_EX_DLGMODALFRAME
+    SCROLLBAR       IDC_VERTICAL_SCROLL,265,32,10,200,SBS_VERT | WS_DISABLED
+    SCROLLBAR       IDC_HORIZ_SCROLL,17,242,259,8,WS_DISABLED
+    PUSHBUTTON      "",IDC_SAVE_BUTTON,149,7,25,20,BS_ICON | NOT WS_VISIBLE
+    CONTROL         "",IDC_SLIDER_ZOOM,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,220,7,25,20
+    CTEXT           "100%",IDC_STATIC_ZOOM,184,7,26,21,SS_CENTERIMAGE
+END
+
+IDD_PICTURE_TABS DIALOGEX 0, 0, 323, 308
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TAB1,"SysTabControl32",TCS_BOTTOM | WS_TABSTOP,7,7,309,294
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_PROPPAGE_SVPICTUREDISPLAY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_PICT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 297
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 263
+    END
+
+    IDD_PICTURE_TABS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 316
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ZOOM_FIT_ICON       ICON                    "res\\ZoomFit.ico"
+IDI_ZOOM_OUT_ICON       ICON                    "res\\ZoomOut.ico"
+IDI_ZOOM_IN_ICON        ICON                    "res\\ZoomIn.ico"
+IDI_ZOOM_ONE_ICON       ICON                    "res\\Zoom100.ico"
+IDI_SAVE_ICON           ICON                    "res\\SaveIcon.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_SVPICTUREDISPLAY    "SVPictureDisplay Control"
+    IDS_SVPICTUREDISPLAY_PPG "SVPictureDisplay Property Page"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SVPICTUREDISPLAY_PPG_CAPTION "General"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "SVPictureDisplay.tlb"
+
+#include "res\SVPictureDisplay.rc2"  // non-Microsoft Visual C++ edited resources
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

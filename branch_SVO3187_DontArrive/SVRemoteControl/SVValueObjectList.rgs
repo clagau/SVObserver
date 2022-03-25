@@ -1,0 +1,27 @@
+HKCR
+{
+	SVRemoteControl.SVValueObjectList.1 = s 'SVValueObjectList Class'
+	{
+		CLSID = s '{FBEC601D-59CE-4011-8F3A-FB0B15C07F01}'
+	}
+	SVRemoteControl.SVValueObjectList = s 'SVValueObjectList Class'
+	{
+		CLSID = s '{FBEC601D-59CE-4011-8F3A-FB0B15C07F01}'
+		CurVer = s 'SVRemoteControl.SVValueObjectList.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {FBEC601D-59CE-4011-8F3A-FB0B15C07F01} = s 'SVValueObjectList Class'
+		{
+			ProgID = s 'SVRemoteControl.SVValueObjectList.1'
+			VersionIndependentProgID = s 'SVRemoteControl.SVValueObjectList'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{46406B18-E3C7-449D-898F-E857B6A9D945}'
+		}
+	}
+}

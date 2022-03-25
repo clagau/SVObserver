@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0356D2CD-7DE8-4237-BC08-22C6935B955B}</ProjectGuid>
+    <Keyword>Win64Proj</Keyword>
+    <RootNamespace>Tools</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WIN64;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ArchiveDataAsynchron.cpp" />
+    <ClCompile Include="ArchiveToolHelper.cpp" />
+    <ClCompile Include="DrawTool.cpp" />
+    <ClCompile Include="GroupTool.cpp" />
+    <ClCompile Include="LoopTool.cpp" />
+    <ClCompile Include="ResizeTool.cpp" />
+    <ClCompile Include="RingBufferTool.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SVAcquisitionTool.cpp" />
+    <ClCompile Include="SVArchiveImageThreadClass.cpp" />
+    <ClCompile Include="SVArchiveRecord.cpp" />
+    <ClCompile Include="SVArchiveRecordsArray.cpp" />
+    <ClCompile Include="SVArchiveTool.cpp" />
+    <ClCompile Include="SVColorTool.cpp" />
+    <ClCompile Include="SVCylindricalWarpTool.cpp" />
+    <ClCompile Include="SVExternalTool.cpp" />
+    <ClCompile Include="SVImageTool.cpp" />
+    <ClCompile Include="SVLinearToolClass.cpp" />
+    <ClCompile Include="SVLoadImageTool.cpp" />
+    <ClCompile Include="SVMathTool.cpp" />
+    <ClCompile Include="SVPerspectiveTool.cpp" />
+    <ClCompile Include="SVPolarTransformationTool.cpp" />
+    <ClCompile Include="SVShiftTool.cpp" />
+    <ClCompile Include="SVStatTool.cpp" />
+    <ClCompile Include="SVTool.cpp" />
+    <ClCompile Include="SVToolExtentClass.cpp" />
+    <ClCompile Include="SVToolExtentPropertiesClass.cpp" />
+    <ClCompile Include="SVTransformationTool.cpp" />
+    <ClCompile Include="SVWindowTool.cpp" />
+    <ClCompile Include="TableAnalyzerTool.cpp" />
+    <ClCompile Include="TableTool.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ArchiveDataAsynchron.h" />
+    <ClInclude Include="ArchiveMethodEnum.h" />
+    <ClInclude Include="ArchiveToolHelper.h" />
+    <ClInclude Include="DrawTool.h" />
+    <ClInclude Include="GroupTool.h" />
+    <ClInclude Include="LoopTool.h" />
+    <ClInclude Include="ResizeTool.h" />
+    <ClInclude Include="RingBufferTool.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVAcquisitionTool.h" />
+    <ClInclude Include="SVArchiveImageThreadClass.h" />
+    <ClInclude Include="SVArchiveRecord.h" />
+    <ClInclude Include="SVArchiveRecordsArray.h" />
+    <ClInclude Include="SVArchiveTool.h" />
+    <ClInclude Include="SVColorTool.h" />
+    <ClInclude Include="SVCylindricalWarpTool.h" />
+    <ClInclude Include="SVExternalTool.h" />
+    <ClInclude Include="SVImageTool.h" />
+    <ClInclude Include="SVLinearToolClass.h" />
+    <ClInclude Include="SVLoadImageTool.h" />
+    <ClInclude Include="SVMathTool.h" />
+    <ClInclude Include="SVPerspectiveTool.h" />
+    <ClInclude Include="SVPolarTransformationTool.h" />
+    <ClInclude Include="SVShiftTool.h" />
+    <ClInclude Include="SVStatTool.h" />
+    <ClInclude Include="SVTool.h" />
+    <ClInclude Include="SVToolExtentClass.h" />
+    <ClInclude Include="SVToolExtentPropertiesClass.h" />
+    <ClInclude Include="SVTransformationTool.h" />
+    <ClInclude Include="SVWindowTool.h" />
+    <ClInclude Include="TableAnalyzerTool.h" />
+    <ClInclude Include="TableTool.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

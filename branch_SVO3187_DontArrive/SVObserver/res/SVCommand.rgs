@@ -1,0 +1,25 @@
+HKCR
+{
+	SVObserver.SVCommand.1 = s 'SVCommand Class'
+	{
+		CLSID = s '{AF992A35-F07B-11D4-A927-00106F0309AB}'
+	}
+	SVObserver.SVCommand = s 'SVCommand Class'
+	{
+		CLSID = s '{AF992A35-F07B-11D4-A927-00106F0309AB}'
+		CurVer = s 'SVObserver.SVCommand.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {AF992A35-F07B-11D4-A927-00106F0309AB} = s 'SVCommand Class'
+		{
+			ProgID = s 'SVObserver.SVCommand.1'
+			VersionIndependentProgID = s 'SVObserver.SVCommand'
+			ForceRemove 'Programmable'
+			LocalServer32 = s '%MODULE%'
+			val AppID = s '{08B70D3F-F12C-11D4-A927-00106F0309AB}'
+			'TypeLib' = s '{F4C4D492-D660-11D0-9B52-00805F717DCE}'
+		}
+	}
+}
+

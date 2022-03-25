@@ -1,0 +1,734 @@
+<?xml version="1.0"?>
+<asphereDatabase version="1.0">
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#dsa-sha1"/><Reference URI="file:/D:/HMI_Development/trunk/sdmHMI/sdmVIS/framework/data/UserSettings.zip"><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>Vio8GMUdsZPUHCsuBmoc1me/kg9isEXtzRF8lO6WwpY=</DigestValue></Reference></SignedInfo><SignatureValue>UMTdNNFoXGM8KpOiz6mmqC4PcVYCH/in+xNaDupe8oEcdL1VtGlLQw==</SignatureValue><KeyInfo><KeyValue><DSAKeyValue><P>/X9TgR11EilS30qcLuzk5/YRt1I870QAwx4/gLZRJmlFXUAiUftZPY1Y+r/F9bow9subVWzXgTuA
+HTRv8mZgt2uZUKWkn5/oBHsQIsJPu6nX/rfGG/g7V+fGqKYVDwT7g/bTxR7DAjVUE1oWkTL2dfOu
+K2HXKu/yIgMZndFIAcc=</P><Q>l2BQjxUjC8yykrmCouuEC/BYHPU=</Q><G>9+GghdabPd7LvKtcNrhXuXmUr7v6OuqC+VdMCz0HgmdRWVeOutRZT+ZxBxCBgLRJFnEj6EwoFhO3
+zwkyjMim4TwWeotUfI0o4KOuHiuzpnWRbqN/C/ohNWLx+2J6ASQ7zKTxvqhRkImog9/hWuWfBpKL
+Zl6Ae1UlZAFMO/7PSSo=</G><Y>5mlfjZ7pgWKGxAvQJ9MIqYClDhYPmsHqqjVh2y5sHUvHZ15cHb9jHrdUoiUE+RSO9IjsAPn9NeTq
+smaHlm0/Xtrf+72slFKt5nuDqx2ypN+H21UZnBD6+ClMP3f3yHVLALa2lnzfj4g13KRkK367eAoj
+XIr4Aq6bFk3+cFhcHMs=</Y></DSAKeyValue></KeyValue></KeyInfo></Signature>
+    <userDatabase autoLogoutTimeout="1200000" saveFilePath="data/UserSettings.zip" securityLevel="1" bootupUser="logout" loggedOutUser="logout">
+        <authQualityCheckers>
+            <passwordQualityChecker minUsrLen="5" minPwdLen="1" minCnts4Usr="0,0,0,0" minCnts4Pwd="0,0,0,0" reuseDepth="0"/>
+        </authQualityCheckers>
+        <users>
+            <user name="asphere" desc="default user for visualisation" level="1">
+                <passwordAuth expireDate="0" expirePeriod="0" changeDate="1340782582062" temporary="false" userName="asphere" passwordCoded="oF/0ikW9htSoVpyyJGFO/g=="/>
+                <workEnvironment>
+                    <properties/>
+                    <permissions/>
+                </workEnvironment>
+            </user>
+            <user name="logout" textKey="noUser" level="100">
+                <passwordAuth expireDate="0" expirePeriod="0" changeDate="1337687324015" temporary="false" userName="logout"/>
+                <workEnvironment>
+                    <properties/>
+                    <permissions/>
+                </workEnvironment>
+            </user>
+            <user name="sdmAdmin" level="2">
+                <passwordAuth expireDate="0" expirePeriod="0" changeDate="1426855081822" temporary="false" userName="sdmAdmin" passwordCoded="8TT9S0shUCTTszs3Emk6qA=="/>
+                <workEnvironment>
+                    <properties>
+                        <property name="breakEndTime" value="1478245695080" desc="Time until the end of the rest time"/>
+                        <property name="loginDuration" value="0" desc="Duration of the most current login."/>
+                        <property name="logoutTime" value="1478245695080" desc="Time of last logout for blocktime."/>
+                    </properties>
+                    <permissions/>
+                </workEnvironment>
+            </user>
+            <user name="user1" level="45">
+                <passwordAuth expireDate="0" expirePeriod="0" changeDate="1363765159542" temporary="false" userName="user1" passwordCoded="rY/K0jbE/t1AF4/7q4yypQ=="/>
+                <workEnvironment>
+                    <properties/>
+                    <permissions/>
+                </workEnvironment>
+            </user>
+            <user name="user2" level="35">
+                <passwordAuth expireDate="0" expirePeriod="0" changeDate="1363765191654" temporary="false" userName="user2" passwordCoded="S70dpVqOQJpmNPeAy8fndA=="/>
+                <workEnvironment>
+                    <properties>
+                        <property name="breakEndTime" value="1475076691313" desc="Time until the end of the rest time"/>
+                        <property name="loginDuration" value="0" desc="Duration of the most current login."/>
+                        <property name="logoutTime" value="1475076700105" desc="Time of last logout for blocktime."/>
+                    </properties>
+                    <permissions/>
+                </workEnvironment>
+            </user>
+            <user name="user3" level="25">
+                <passwordAuth expireDate="0" expirePeriod="0" changeDate="1363765204550" temporary="false" userName="user3" passwordCoded="WZFLlI6MtNHADmmCIlkjYA=="/>
+                <workEnvironment>
+                    <properties/>
+                    <permissions/>
+                </workEnvironment>
+            </user>
+            <user name="user4" level="15">
+                <passwordAuth expireDate="0" expirePeriod="0" changeDate="1363765251091" temporary="false" userName="user4" passwordCoded="17IXZ+Ms0x2N017uTzPtzQ=="/>
+                <workEnvironment>
+                    <properties/>
+                    <permissions/>
+                </workEnvironment>
+            </user>
+            <user name="user5" level="5">
+                <passwordAuth expireDate="0" expirePeriod="0" changeDate="1363765287195" temporary="false" userName="user5" passwordCoded="Vao3XnqGJqVysucHMR0dgg=="/>
+                <workEnvironment>
+                    <properties>
+                        <property name="breakEndTime" value="1458660228558" desc="Time until the end of the rest time"/>
+                        <property name="loginDuration" value="0" desc="Duration of the most current login."/>
+                        <property name="logoutTime" value="1458660228558" desc="Time of last logout for blocktime."/>
+                    </properties>
+                    <permissions/>
+                </workEnvironment>
+            </user>
+        </users>
+        <userGroups>
+            <userGroup name="common" desc="0" level="128">
+                <users/>
+                <workEnvironment>
+                    <properties/>
+                    <permissions>
+                        <permission name="cmn.printScreenButton" actions="-inpCmt,-secAck,-addUser" textKey="printScreenButton"/>
+                        <permission name="cmn.viewHelpButton" actions="-inpCmt,-secAck,-addUser"/>
+                        <permission name="dlg..dryRun" actions="-write" textKey="machineMode.dryRun"/>
+                        <permission name="dlg..format" actions="-write" textKey="machineMode.formatChange"/>
+                        <permission name="dlg..loop" actions="-write" textKey="machineMode.loop"/>
+                        <permission name="dlg..maintenace" actions="-write" textKey="machineMode.maintenance"/>
+                        <permission name="loop.loop.*" actions="-write"/>
+                        <permission name="messages.actual.singleAlarms.*" actions="-write"/>
+                        <permission name="production.overview.1.4.*" actions="-write"/>
+                        <permission name="production.overview.1.5.*" actions="-write"/>
+                        <permission name="production.overview.2.*" actions="-write"/>
+                        <permission name="production.overview.3.*" actions="-write"/>
+                        <permission name="production.overview.4.*" actions="-write"/>
+                        <permission name="production.overview.5.*" actions="-write"/>
+                        <permission name="production.overview.6.*" actions="-write"/>
+                        <permission name="production.overview.7.*" actions="-write"/>
+                        <permission name="production.overview.8.*" actions="-write"/>
+                        <permission name="production.overview.9.*" actions="-write"/>
+                        <permission name="recipe.recipeManager.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.UserManagement.changePasswordButton" actions="-inpCmt,-secAck,-addUser" textKey="user.changePwd"/>
+                        <permission name="service.backup.*" actions="-write"/>
+                        <permission name="service.diagnose.*" actions="-write"/>
+                        <permission name="service.diagnose.LED.*" actions="-write"/>
+                        <permission name="service.diagnose.LED.LED_cbLEDs" actions="-inpCmt,-secAck,-addUser,-write" textKey="LED-Module.BoxHeader.led"/>
+                        <permission name="service.diagnose.PLC-HV.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabDetail.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabEnvironmentValues.*" actions="-inpCmt,-secAck,-addUser,-write"/>
+                        <permission name="service.diagnose.PLC.tabInspection.*" actions="-inpCmt,-secAck,-addUser,-write"/>
+                        <permission name="service.diagnose.PLC.tabOverview.*" actions="-inpCmt,-secAck,-addUser,-write"/>
+                        <permission name="service.diagnose.PLC.tabPVI.*" actions="-write"/>
+                        <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"/>
+                        <permission name="service.diagnose.Vision.*" actions="-write"/>
+                        <permission name="svobserver.clientlogs.store"/>
+                        <permission name="svobserver.command.execute"/>
+                        <permission name="svobserver.configuration.read"/>
+                        <permission name="svobserver.configuration.write"/>
+                        <permission name="svobserver.file.read"/>
+                        <permission name="svobserver.file.write"/>
+                        <permission name="svobserver.inspectionstate.edit"/>
+                        <permission name="svobserver.inspectionstate.read"/>
+                        <permission name="svobserver.machinestate.set"/>
+                        <permission name="svobserver.mode.edit"/>
+                        <permission name="svobserver.mode.read"/>
+                        <permission name="svobserver.notifications.subscribe"/>
+                        <permission name="svobserver.tool.add"/>
+                        <permission name="svobserver.tool.edit"/>
+                        <permission name="svobserver.tool.read"/>
+                        <permission name="svobserver.tool.remove"/>
+                        <permission name="svobserver.value.edit"/>
+                        <permission name="svobserver.value.read"/>
+                        <permission name="webapp.configuration.save"/>
+                        <permission name="webapp.logs.read"/>
+                        <permission name="webapp.view[type=AnyView].add"/>
+                        <permission name="webapp.view[type=AnyView].edit"/>
+                        <permission name="webapp.view[type=AnyView].read"/>
+                        <permission name="webapp.view[type=AnyView].remove"/>
+                        <permission name="webapp.viewset.add"/>
+                        <permission name="webapp.viewset.edit"/>
+                        <permission name="webapp.viewset.read"/>
+                        <permission name="webapp.viewset.remove"/>
+                    </permissions>
+                </workEnvironment>
+            </userGroup>
+            <userGroup name="group1" desc="1" textKey="user.group1" level="45">
+                <users>
+                    <refName>user1</refName>
+                </users>
+                <workEnvironment>
+                    <properties/>
+                    <permissions>
+                        <permission name="cmn.QuitAll" actions="+write" textKey="MessagingPages.Buttons.quitAllMsg"/>
+                        <permission name="cmn.printScreenButton" actions="+write" textKey="printScreenButton"/>
+                        <permission name="cmn.viewHelpButton" actions="+write"/>
+                        <permission name="dlg..automatic" actions="+write" textKey="machineMode.automatic"/>
+                        <permission name="dlg..cleaning" actions="+write" textKey="machineMode.cleaning"/>
+                        <permission name="dlg..dryRun" actions="-write" textKey="machineMode.dryRun"/>
+                        <permission name="dlg..format" actions="-write" textKey="machineMode.formatChange"/>
+                        <permission name="dlg..loop" actions="-write" textKey="machineMode.loop"/>
+                        <permission name="dlg..machineClearance" actions="+write" textKey="machineMode.machineClearance"/>
+                        <permission name="dlg..maintenace" actions="-write" textKey="machineMode.maintenance"/>
+                        <permission name="dlg..manual" actions="-write" textKey="machineMode.manual"/>
+                        <permission name="dlg.LoginDialog.shutdownHMI" actions="-write"/>
+                        <permission name="help.brHelp.*" actions="+write"/>
+                        <permission name="help.manual.*" actions="+write"/>
+                        <permission name="help.supportFolder.*" actions="+write"/>
+                        <permission name="help.wiringDiagram.*" actions="+write"/>
+                        <permission name="loop.loop.*" actions="-write"/>
+                        <permission name="loop.testRun.*" actions="+write"/>
+                        <permission name="messages.actual.*" actions="+write"/>
+                        <permission name="messages.actual.singleAlarms.*" actions="-write"/>
+                        <permission name="messages.auditTrail.*" actions="+write"/>
+                        <permission name="messages.history.*" actions="+write"/>
+                        <permission name="production.batch.*" actions="+write"/>
+                        <permission name="production.batchPage.*" actions="+write"/>
+                        <permission name="production.oee.*" actions="+write"/>
+                        <permission name="production.overview.*" actions="+write"/>
+                        <permission name="production.overview.1.2.*" actions="+write"/>
+                        <permission name="production.overview.1.3.*" actions="-write"/>
+                        <permission name="production.overview.1.4.*" actions="-write"/>
+                        <permission name="production.overview.1.5.*" actions="-write"/>
+                        <permission name="production.overview.10.*" actions="-write"/>
+                        <permission name="production.overview.2.*" actions="-write"/>
+                        <permission name="production.overview.3.*" actions="-write"/>
+                        <permission name="production.overview.4.*" actions="-write"/>
+                        <permission name="production.overview.5.*" actions="-write"/>
+                        <permission name="production.overview.6.*" actions="-write"/>
+                        <permission name="production.overview.7.*" actions="-write"/>
+                        <permission name="production.overview.8.*" actions="-write"/>
+                        <permission name="production.overview.9.*" actions="-write"/>
+                        <permission name="production.reports.*" actions="+write"/>
+                        <permission name="recipe.recipeManager.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.UserManagement.changePasswordButton" actions="+write" textKey="user.changePwd"/>
+                        <permission name="service.backup.*" actions="-write"/>
+                        <permission name="service.diagnose.*" actions="-write"/>
+                        <permission name="service.diagnose.LED.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC-HV.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.oeeOperatingTimes.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabBandR.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabDetail.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabInspection.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabPVI.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabSafty.*" actions="-write"/>
+                        <permission name="service.diagnose.Rotation.*" actions="-write"/>
+                        <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"/>
+                        <permission name="service.diagnose.Vision.*" actions="-write"/>
+                        <permission name="svobserver.clientlogs.store"/>
+                        <permission name="svobserver.command.execute"/>
+                        <permission name="svobserver.configuration.read"/>
+                        <permission name="svobserver.configuration.write"/>
+                        <permission name="svobserver.file.read"/>
+                        <permission name="svobserver.file.write"/>
+                        <permission name="svobserver.inspectionstate.edit"/>
+                        <permission name="svobserver.inspectionstate.read"/>
+                        <permission name="svobserver.machinestate.set"/>
+                        <permission name="svobserver.mode.edit"/>
+                        <permission name="svobserver.mode.read"/>
+                        <permission name="svobserver.notifications.subscribe"/>
+                        <permission name="svobserver.tool.add"/>
+                        <permission name="svobserver.tool.edit"/>
+                        <permission name="svobserver.tool.read"/>
+                        <permission name="svobserver.tool.remove"/>
+                        <permission name="svobserver.value.edit"/>
+                        <permission name="svobserver.value.read"/>
+                        <permission name="webapp.configuration.save"/>
+                        <permission name="webapp.logs.read"/>
+                        <permission name="webapp.view[type=AnyView].add"/>
+                        <permission name="webapp.view[type=AnyView].edit"/>
+                        <permission name="webapp.view[type=AnyView].read"/>
+                        <permission name="webapp.view[type=AnyView].remove"/>
+                        <permission name="webapp.viewset.add"/>
+                        <permission name="webapp.viewset.edit"/>
+                        <permission name="webapp.viewset.read"/>
+                        <permission name="webapp.viewset.remove"/>
+                    </permissions>
+                </workEnvironment>
+            </userGroup>
+            <userGroup name="group2" desc="2" textKey="user.group2" level="35">
+                <users>
+                    <refName>user2</refName>
+                </users>
+                <workEnvironment>
+                    <properties/>
+                    <permissions>
+                        <permission name="cmn.QuitAll" actions="+write" textKey="MessagingPages.Buttons.quitAllMsg"/>
+                        <permission name="cmn.printScreenButton" actions="+write" textKey="printScreenButton"/>
+                        <permission name="cmn.viewHelpButton" actions="+write"/>
+                        <permission name="dlg..automatic" actions="+write" textKey="machineMode.automatic"/>
+                        <permission name="dlg..cleaning" actions="+write" textKey="machineMode.cleaning"/>
+                        <permission name="dlg..dryRun" actions="+write" textKey="machineMode.dryRun"/>
+                        <permission name="dlg..format" actions="+write" textKey="machineMode.formatChange"/>
+                        <permission name="dlg..loop" actions="-write" textKey="machineMode.loop"/>
+                        <permission name="dlg..machineClearance" actions="+write" textKey="machineMode.machineClearance"/>
+                        <permission name="dlg..maintenace" actions="-write" textKey="machineMode.maintenance"/>
+                        <permission name="dlg..manual" actions="-write" textKey="machineMode.manual"/>
+                        <permission name="dlg.LoginDialog.shutdownHMI" actions="-write"/>
+                        <permission name="help.brHelp.*" actions="+write"/>
+                        <permission name="help.manual.*" actions="+write"/>
+                        <permission name="help.supportFolder.*" actions="+write"/>
+                        <permission name="help.wiringDiagram.*" actions="+write"/>
+                        <permission name="loop.loop.*" actions="-write"/>
+                        <permission name="loop.testRun.*" actions="+write"/>
+                        <permission name="messages.actual.*" actions="+write"/>
+                        <permission name="messages.actual.singleAlarms.*" actions="+write"/>
+                        <permission name="messages.auditTrail.*" actions="+write"/>
+                        <permission name="messages.history.*" actions="+write"/>
+                        <permission name="production.batch.*" actions="+write"/>
+                        <permission name="production.batchPage.*" actions="+write"/>
+                        <permission name="production.oee.*" actions="+write"/>
+                        <permission name="production.overview.*" actions="+write"/>
+                        <permission name="production.overview.1.2.*" actions="+write"/>
+                        <permission name="production.overview.1.3.*" actions="-write"/>
+                        <permission name="production.overview.1.4.*" actions="-write"/>
+                        <permission name="production.overview.1.5.*" actions="-write"/>
+                        <permission name="production.overview.10.*" actions="-write"/>
+                        <permission name="production.overview.2.*" actions="-write"/>
+                        <permission name="production.overview.3.*" actions="-write"/>
+                        <permission name="production.overview.4.*" actions="-write"/>
+                        <permission name="production.overview.5.*" actions="-write"/>
+                        <permission name="production.overview.6.*" actions="-write"/>
+                        <permission name="production.overview.7.*" actions="-write"/>
+                        <permission name="production.overview.8.*" actions="-write"/>
+                        <permission name="production.overview.9.*" actions="-write"/>
+                        <permission name="production.reports.*" actions="+write"/>
+                        <permission name="recipe.recipeManager.*" actions="-write"/>
+                        <permission name="recipe.recipeManager.pdfPreview.*" actions="+write"/>
+                        <permission name="service.UserManagementFolder.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.UserManagement.changePasswordButton" actions="+write" textKey="user.changePwd"/>
+                        <permission name="service.backup.*" actions="-write"/>
+                        <permission name="service.diagnose.*" actions="+write"/>
+                        <permission name="service.diagnose.LED.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC-HV.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.oeeOperatingTimes.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabBandR.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabDetail.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabInspection.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabPVI.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabSafty.*" actions="-write"/>
+                        <permission name="service.diagnose.Rotation.*" actions="+write"/>
+                        <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"/>
+                        <permission name="service.diagnose.Vision.*" actions="-write"/>
+                        <permission name="svobserver.clientlogs.store"/>
+                        <permission name="svobserver.command.execute"/>
+                        <permission name="svobserver.configuration.read"/>
+                        <permission name="svobserver.configuration.write"/>
+                        <permission name="svobserver.file.read"/>
+                        <permission name="svobserver.file.write"/>
+                        <permission name="svobserver.inspectionstate.edit"/>
+                        <permission name="svobserver.inspectionstate.read"/>
+                        <permission name="svobserver.machinestate.set"/>
+                        <permission name="svobserver.mode.edit"/>
+                        <permission name="svobserver.mode.read"/>
+                        <permission name="svobserver.notifications.subscribe"/>
+                        <permission name="svobserver.tool.add"/>
+                        <permission name="svobserver.tool.edit"/>
+                        <permission name="svobserver.tool.read"/>
+                        <permission name="svobserver.tool.remove"/>
+                        <permission name="svobserver.value.edit"/>
+                        <permission name="svobserver.value.read"/>
+                        <permission name="webapp.configuration.save"/>
+                        <permission name="webapp.logs.read"/>
+                        <permission name="webapp.view[type=AnyView].add"/>
+                        <permission name="webapp.view[type=AnyView].edit"/>
+                        <permission name="webapp.view[type=AnyView].read"/>
+                        <permission name="webapp.view[type=AnyView].remove"/>
+                        <permission name="webapp.viewset.add"/>
+                        <permission name="webapp.viewset.edit"/>
+                        <permission name="webapp.viewset.read"/>
+                        <permission name="webapp.viewset.remove"/>
+                    </permissions>
+                </workEnvironment>
+            </userGroup>
+            <userGroup name="group3" desc="3" textKey="user.group3" level="25">
+                <users>
+                    <refName>user3</refName>
+                </users>
+                <workEnvironment>
+                    <properties/>
+                    <permissions>
+                        <permission name="cmn.QuitAll" actions="+write" textKey="MessagingPages.Buttons.quitAllMsg"/>
+                        <permission name="cmn.printScreenButton" actions="+write" textKey="printScreenButton"/>
+                        <permission name="cmn.viewHelpButton" actions="+write"/>
+                        <permission name="dlg..automatic" actions="+write" textKey="machineMode.automatic"/>
+                        <permission name="dlg..cleaning" actions="+write" textKey="machineMode.cleaning"/>
+                        <permission name="dlg..dryRun" actions="+write" textKey="machineMode.dryRun"/>
+                        <permission name="dlg..format" actions="+write" textKey="machineMode.formatChange"/>
+                        <permission name="dlg..loop" actions="-write" textKey="machineMode.loop"/>
+                        <permission name="dlg..machineClearance" actions="+write" textKey="machineMode.machineClearance"/>
+                        <permission name="dlg..maintenace" actions="+write" textKey="machineMode.maintenance"/>
+                        <permission name="dlg..manual" actions="+write" textKey="machineMode.manual"/>
+                        <permission name="dlg.LoginDialog.shutdownHMI" actions="-write"/>
+                        <permission name="help.brHelp.*" actions="+write"/>
+                        <permission name="help.manual.*" actions="+write"/>
+                        <permission name="help.supportFolder.*" actions="+write"/>
+                        <permission name="help.wiringDiagram.*" actions="+write"/>
+                        <permission name="loop.loop.*" actions="-write"/>
+                        <permission name="loop.testRun.*" actions="+write"/>
+                        <permission name="messages.actual.*" actions="+write"/>
+                        <permission name="messages.actual.singleAlarms.*" actions="+write"/>
+                        <permission name="messages.auditTrail.*" actions="+write"/>
+                        <permission name="messages.history.*" actions="+write"/>
+                        <permission name="production.batch.*" actions="+write"/>
+                        <permission name="production.batchPage.*" actions="+write"/>
+                        <permission name="production.oee.*" actions="+write"/>
+                        <permission name="production.overview.*" actions="+write"/>
+                        <permission name="production.overview.1.2.*" actions="+write"/>
+                        <permission name="production.overview.1.3.*" actions="+write"/>
+                        <permission name="production.overview.1.4.*" actions="+write"/>
+                        <permission name="production.overview.1.5.*" actions="+write"/>
+                        <permission name="production.overview.10.*" actions="+write"/>
+                        <permission name="production.overview.2.*" actions="+write"/>
+                        <permission name="production.overview.3.*" actions="+write"/>
+                        <permission name="production.overview.4.*" actions="+write"/>
+                        <permission name="production.overview.5.*" actions="+write"/>
+                        <permission name="production.overview.6.*" actions="+write"/>
+                        <permission name="production.overview.7.*" actions="+write"/>
+                        <permission name="production.overview.8.*" actions="+write"/>
+                        <permission name="production.overview.9.*" actions="+write"/>
+                        <permission name="production.reports.*" actions="+write"/>
+                        <permission name="recipe.recipeManager.*" actions="-write"/>
+                        <permission name="recipe.recipeManager.pdfPreview.*" actions="+write"/>
+                        <permission name="service.UserManagementFolder.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.UserManagement.changePasswordButton" actions="+write" textKey="user.changePwd"/>
+                        <permission name="service.backup.*" actions="-write"/>
+                        <permission name="service.diagnose.*" actions="+write"/>
+                        <permission name="service.diagnose.LED.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC-HV.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.oeeOperatingTimes.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabBandR.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabDetail.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabInspection.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabPVI.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabSafty.*" actions="-write"/>
+                        <permission name="service.diagnose.Rotation.*" actions="+write"/>
+                        <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"/>
+                        <permission name="service.diagnose.Vision.*" actions="+write"/>
+                        <permission name="svobserver.clientlogs.store"/>
+                        <permission name="svobserver.command.execute"/>
+                        <permission name="svobserver.configuration.read"/>
+                        <permission name="svobserver.configuration.write"/>
+                        <permission name="svobserver.file.read"/>
+                        <permission name="svobserver.file.write"/>
+                        <permission name="svobserver.inspectionstate.edit"/>
+                        <permission name="svobserver.inspectionstate.read"/>
+                        <permission name="svobserver.machinestate.set"/>
+                        <permission name="svobserver.mode.edit"/>
+                        <permission name="svobserver.mode.read"/>
+                        <permission name="svobserver.notifications.subscribe"/>
+                        <permission name="svobserver.tool.add"/>
+                        <permission name="svobserver.tool.edit"/>
+                        <permission name="svobserver.tool.read"/>
+                        <permission name="svobserver.tool.remove"/>
+                        <permission name="svobserver.value.edit"/>
+                        <permission name="svobserver.value.read"/>
+                        <permission name="webapp.configuration.save"/>
+                        <permission name="webapp.logs.read"/>
+                        <permission name="webapp.view[type=AnyView].add"/>
+                        <permission name="webapp.view[type=AnyView].edit"/>
+                        <permission name="webapp.view[type=AnyView].read"/>
+                        <permission name="webapp.view[type=AnyView].remove"/>
+                        <permission name="webapp.viewset.add"/>
+                        <permission name="webapp.viewset.edit"/>
+                        <permission name="webapp.viewset.read"/>
+                        <permission name="webapp.viewset.remove"/>
+                    </permissions>
+                </workEnvironment>
+            </userGroup>
+            <userGroup name="group4" desc="4" textKey="user.group4" level="15">
+                <users>
+                    <refName>user4</refName>
+                </users>
+                <workEnvironment>
+                    <properties/>
+                    <permissions>
+                        <permission name="cmn.QuitAll" actions="+write" textKey="MessagingPages.Buttons.quitAllMsg"/>
+                        <permission name="cmn.printScreenButton" actions="+write" textKey="printScreenButton"/>
+                        <permission name="cmn.viewHelpButton" actions="+write"/>
+                        <permission name="dlg..automatic" actions="+write" textKey="machineMode.automatic"/>
+                        <permission name="dlg..cleaning" actions="+write" textKey="machineMode.cleaning"/>
+                        <permission name="dlg..dryRun" actions="+write" textKey="machineMode.dryRun"/>
+                        <permission name="dlg..format" actions="+write" textKey="machineMode.formatChange"/>
+                        <permission name="dlg..loop" actions="+write" textKey="machineMode.loop"/>
+                        <permission name="dlg..machineClearance" actions="+write" textKey="machineMode.machineClearance"/>
+                        <permission name="dlg..maintenace" actions="+write" textKey="machineMode.maintenance"/>
+                        <permission name="dlg..manual" actions="+write" textKey="machineMode.manual"/>
+                        <permission name="dlg.LoginDialog.shutdownHMI" actions="+write"/>
+                        <permission name="help.brHelp.*" actions="+write"/>
+                        <permission name="help.manual.*" actions="+write"/>
+                        <permission name="help.supportFolder.*" actions="+write"/>
+                        <permission name="help.wiringDiagram.*" actions="+write"/>
+                        <permission name="loop.loop.*" actions="+write"/>
+                        <permission name="loop.testRun.*" actions="+write"/>
+                        <permission name="messages.actual.*" actions="+write"/>
+                        <permission name="messages.actual.singleAlarms.*" actions="+write"/>
+                        <permission name="messages.auditTrail.*" actions="+write"/>
+                        <permission name="messages.history.*" actions="+write"/>
+                        <permission name="production.batch.*" actions="+write"/>
+                        <permission name="production.batchPage.*" actions="+write"/>
+                        <permission name="production.oee.*" actions="+write"/>
+                        <permission name="production.overview.*" actions="+write"/>
+                        <permission name="production.overview.1.2.*" actions="+write"/>
+                        <permission name="production.overview.1.3.*" actions="+write"/>
+                        <permission name="production.overview.1.4.*" actions="+write"/>
+                        <permission name="production.overview.1.5.*" actions="+write"/>
+                        <permission name="production.overview.10.*" actions="+write"/>
+                        <permission name="production.overview.2.*" actions="+write"/>
+                        <permission name="production.overview.3.*" actions="+write"/>
+                        <permission name="production.overview.4.*" actions="+write"/>
+                        <permission name="production.overview.5.*" actions="+write"/>
+                        <permission name="production.overview.6.*" actions="+write"/>
+                        <permission name="production.overview.7.*" actions="+write"/>
+                        <permission name="production.overview.8.*" actions="+write"/>
+                        <permission name="production.overview.9.*" actions="+write"/>
+                        <permission name="production.reports.*" actions="+write"/>
+                        <permission name="recipe.recipeManager.*" actions="+write"/>
+                        <permission name="recipe.recipeManager.pdfPreview.*" actions="+write"/>
+                        <permission name="service.UserManagementFolder.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.UserManagement.changePasswordButton" actions="+write" textKey="user.changePwd"/>
+                        <permission name="service.backup.*" actions="+write"/>
+                        <permission name="service.diagnose.*" actions="+write"/>
+                        <permission name="service.diagnose.LED.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC-HV.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.oeeOperatingTimes.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabBandR.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.tabDetail.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabInspection.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.tabPVI.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabSafty.*" actions="+write"/>
+                        <permission name="service.diagnose.Rotation.*" actions="+write"/>
+                        <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="+write"/>
+                        <permission name="service.diagnose.Vision.*" actions="+write"/>
+                        <permission name="svobserver.clientlogs.store"/>
+                        <permission name="svobserver.command.execute"/>
+                        <permission name="svobserver.configuration.read"/>
+                        <permission name="svobserver.configuration.write"/>
+                        <permission name="svobserver.file.read"/>
+                        <permission name="svobserver.file.write"/>
+                        <permission name="svobserver.inspectionstate.edit"/>
+                        <permission name="svobserver.inspectionstate.read"/>
+                        <permission name="svobserver.machinestate.set"/>
+                        <permission name="svobserver.mode.edit"/>
+                        <permission name="svobserver.mode.read"/>
+                        <permission name="svobserver.notifications.subscribe"/>
+                        <permission name="svobserver.tool.add"/>
+                        <permission name="svobserver.tool.edit"/>
+                        <permission name="svobserver.tool.read"/>
+                        <permission name="svobserver.tool.remove"/>
+                        <permission name="svobserver.value.edit"/>
+                        <permission name="svobserver.value.read"/>
+                        <permission name="webapp.configuration.save"/>
+                        <permission name="webapp.logs.read"/>
+                        <permission name="webapp.view[type=AnyView].add"/>
+                        <permission name="webapp.view[type=AnyView].edit"/>
+                        <permission name="webapp.view[type=AnyView].read"/>
+                        <permission name="webapp.view[type=AnyView].remove"/>
+                        <permission name="webapp.viewset.add"/>
+                        <permission name="webapp.viewset.edit"/>
+                        <permission name="webapp.viewset.read"/>
+                        <permission name="webapp.viewset.remove"/>
+                    </permissions>
+                </workEnvironment>
+            </userGroup>
+            <userGroup name="group5" desc="5" textKey="user.group5" level="5">
+                <users>
+                    <refName>user5</refName>
+                </users>
+                <workEnvironment>
+                    <properties/>
+                    <permissions>
+                        <permission name="cmn.QuitAll" actions="+write" textKey="MessagingPages.Buttons.quitAllMsg"/>
+                        <permission name="cmn.printScreenButton" actions="+write" textKey="printScreenButton"/>
+                        <permission name="cmn.viewHelpButton" actions="+write"/>
+                        <permission name="dlg..automatic" actions="+write" textKey="machineMode.automatic"/>
+                        <permission name="dlg..cleaning" actions="+write" textKey="machineMode.cleaning"/>
+                        <permission name="dlg..dryRun" actions="+write" textKey="machineMode.dryRun"/>
+                        <permission name="dlg..format" actions="+write" textKey="machineMode.formatChange"/>
+                        <permission name="dlg..loop" actions="+write" textKey="machineMode.loop"/>
+                        <permission name="dlg..machineClearance" actions="+write" textKey="machineMode.machineClearance"/>
+                        <permission name="dlg..maintenace" actions="+write" textKey="machineMode.maintenance"/>
+                        <permission name="dlg..manual" actions="+write" textKey="machineMode.manual"/>
+                        <permission name="dlg.LoginDialog.shutdownHMI" actions="+write"/>
+                        <permission name="help.brHelp.*" actions="+write"/>
+                        <permission name="help.manual.*" actions="+write"/>
+                        <permission name="help.supportFolder.*" actions="+write"/>
+                        <permission name="help.wiringDiagram.*" actions="+write"/>
+                        <permission name="loop.loop.*" actions="+write"/>
+                        <permission name="loop.testRun.*" actions="+write"/>
+                        <permission name="messages.actual.*" actions="+write"/>
+                        <permission name="messages.actual.singleAlarms.*" actions="+write"/>
+                        <permission name="messages.auditTrail.*" actions="+write"/>
+                        <permission name="messages.history.*" actions="+write"/>
+                        <permission name="production.batch.*" actions="+write"/>
+                        <permission name="production.batchPage.*" actions="+write"/>
+                        <permission name="production.oee.*" actions="+write"/>
+                        <permission name="production.overview.*" actions="+write"/>
+                        <permission name="production.overview.1.2.*" actions="+write"/>
+                        <permission name="production.overview.1.3.*" actions="+write"/>
+                        <permission name="production.overview.1.4.*" actions="+write"/>
+                        <permission name="production.overview.1.5.*" actions="+write"/>
+                        <permission name="production.overview.10.*" actions="+write"/>
+                        <permission name="production.overview.2.*" actions="+write"/>
+                        <permission name="production.overview.3.*" actions="+write"/>
+                        <permission name="production.overview.4.*" actions="+write"/>
+                        <permission name="production.overview.5.*" actions="+write"/>
+                        <permission name="production.overview.6.*" actions="+write"/>
+                        <permission name="production.overview.7.*" actions="+write"/>
+                        <permission name="production.overview.8.*" actions="+write"/>
+                        <permission name="production.overview.9.*" actions="+write"/>
+                        <permission name="production.reports.*" actions="+write"/>
+                        <permission name="recipe.recipeManager.*" actions="+write"/>
+                        <permission name="recipe.recipeManager.pdfPreview.*" actions="+write"/>
+                        <permission name="service.UserManagementFolder.*" actions="+write"/>
+                        <permission name="service.UserManagementFolder.UserManagement.changePasswordButton" actions="+write" textKey="user.changePwd"/>
+                        <permission name="service.backup.*" actions="+write"/>
+                        <permission name="service.diagnose.*" actions="+write"/>
+                        <permission name="service.diagnose.LED.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC-HV.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.oeeOperatingTimes.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.tabBandR.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.tabDetail.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.tabInspection.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.tabPVI.*" actions="+write"/>
+                        <permission name="service.diagnose.PLC.tabSafty.*" actions="+write"/>
+                        <permission name="service.diagnose.Rotation.*" actions="+write"/>
+                        <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="+write"/>
+                        <permission name="service.diagnose.Vision.*" actions="+write"/>
+                        <permission name="svobserver.clientlogs.store"/>
+                        <permission name="svobserver.command.execute"/>
+                        <permission name="svobserver.configuration.read"/>
+                        <permission name="svobserver.configuration.write"/>
+                        <permission name="svobserver.file.read"/>
+                        <permission name="svobserver.file.write"/>
+                        <permission name="svobserver.inspectionstate.edit"/>
+                        <permission name="svobserver.inspectionstate.read"/>
+                        <permission name="svobserver.machinestate.set"/>
+                        <permission name="svobserver.mode.edit"/>
+                        <permission name="svobserver.mode.read"/>
+                        <permission name="svobserver.notifications.subscribe"/>
+                        <permission name="svobserver.tool.add"/>
+                        <permission name="svobserver.tool.edit"/>
+                        <permission name="svobserver.tool.read"/>
+                        <permission name="svobserver.tool.remove"/>
+                        <permission name="svobserver.value.edit"/>
+                        <permission name="svobserver.value.read"/>
+                        <permission name="webapp.configuration.save"/>
+                        <permission name="webapp.logs.read"/>
+                        <permission name="webapp.view[type=AnyView].add"/>
+                        <permission name="webapp.view[type=AnyView].edit"/>
+                        <permission name="webapp.view[type=AnyView].read"/>
+                        <permission name="webapp.view[type=AnyView].remove"/>
+                        <permission name="webapp.viewset.add"/>
+                        <permission name="webapp.viewset.edit"/>
+                        <permission name="webapp.viewset.read"/>
+                        <permission name="webapp.viewset.remove"/>
+                    </permissions>
+                </workEnvironment>
+            </userGroup>
+            <userGroup name="logout" desc="0" textKey="user.logout" level="100">
+                <users>
+                    <refName>logout</refName>
+                </users>
+                <workEnvironment>
+                    <properties/>
+                    <permissions>
+                        <permission name="cmn.printScreenButton" actions="-write" textKey="printScreenButton"/>
+                        <permission name="cmn.viewHelpButton" actions="-write"/>
+                        <permission name="help.brHelp.*" actions="-write"/>
+                        <permission name="loop.testRun.*" actions="-write"/>
+                        <permission name="production.batchPage.*" actions="-write"/>
+                        <permission name="production.overview.*" actions="-write"/>
+                        <permission name="production.overview.1.2.*" actions="-write"/>
+                        <permission name="recipe.recipeManager.pdfPreview.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.UserManagement.changePasswordButton" actions="-write" textKey="user.changePwd"/>
+                        <permission name="service.diagnose.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.oeeOperatingTimes.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabBandR.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabDetail.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabInspection.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabSafty.*" actions="-write"/>
+                        <permission name="service.diagnose.Rotation.*" actions="-write"/>
+                        <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"/>
+                        <permission name="service.diagnose.Vision.*" actions="-write"/>
+                    </permissions>
+                </workEnvironment>
+            </userGroup>
+            <userGroup name="sdm" desc="0" level="2">
+                <users>
+                    <refName>sdmAdmin</refName>
+                </users>
+                <workEnvironment>
+                    <properties/>
+                    <permissions>
+                        <permission name="dlg..dryRun" actions="-write" textKey="machineMode.dryRun"/>
+                        <permission name="dlg..format" actions="-write" textKey="machineMode.formatChange"/>
+                        <permission name="dlg..loop" actions="-write" textKey="machineMode.loop"/>
+                        <permission name="dlg..maintenace" actions="-write" textKey="machineMode.maintenance"/>
+                        <permission name="loop.loop.*" actions="-write"/>
+                        <permission name="messages.actual.singleAlarms.*" actions="-write"/>
+                        <permission name="production.overview.1.2.resetTrendCounter" actions="-write" textKey="AvisNavigation.CounterPage.resetTrendCounter"/>
+                        <permission name="production.overview.1.4.*" actions="-write"/>
+                        <permission name="production.overview.1.5.*" actions="-write"/>
+                        <permission name="production.overview.2.*" actions="-write"/>
+                        <permission name="production.overview.3.*" actions="-write"/>
+                        <permission name="production.overview.4.*" actions="-write"/>
+                        <permission name="production.overview.5.*" actions="-write"/>
+                        <permission name="production.overview.6.*" actions="-write"/>
+                        <permission name="production.overview.7.*" actions="-write"/>
+                        <permission name="production.overview.8.*" actions="-write"/>
+                        <permission name="production.overview.9.*" actions="-write"/>
+                        <permission name="recipe.recipeManager.*" actions="-write"/>
+                        <permission name="service.UserManagementFolder.*" actions="-write"/>
+                        <permission name="service.backup.*" actions="-write"/>
+                        <permission name="service.diagnose.*" actions="-write"/>
+                        <permission name="service.diagnose.LED.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC-HV.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabDetail.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabInspection.*" actions="-write"/>
+                        <permission name="service.diagnose.PLC.tabPVI.*" actions="-write"/>
+                        <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"/>
+                        <permission name="service.diagnose.Vision.*" actions="-write"/>
+                        <permission name="svobserver.clientlogs.store"/>
+                        <permission name="svobserver.command.execute"/>
+                        <permission name="svobserver.configuration.read"/>
+                        <permission name="svobserver.configuration.write"/>
+                        <permission name="svobserver.file.read"/>
+                        <permission name="svobserver.file.write"/>
+                        <permission name="svobserver.inspectionstate.edit"/>
+                        <permission name="svobserver.inspectionstate.read"/>
+                        <permission name="svobserver.machinestate.set"/>
+                        <permission name="svobserver.mode.edit"/>
+                        <permission name="svobserver.mode.read"/>
+                        <permission name="svobserver.notifications.subscribe"/>
+                        <permission name="svobserver.tool.add"/>
+                        <permission name="svobserver.tool.edit"/>
+                        <permission name="svobserver.tool.read"/>
+                        <permission name="svobserver.tool.remove"/>
+                        <permission name="svobserver.value.edit"/>
+                        <permission name="svobserver.value.read"/>
+                        <permission name="usermanagement.userpermissions.edit"/>
+                        <permission name="usermanagement.userpermissions.read"/>
+                        <permission name="webapp.configuration.save"/>
+                        <permission name="webapp.logs.read"/>
+                        <permission name="webapp.view[type=AnyView].add"/>
+                        <permission name="webapp.view[type=AnyView].edit"/>
+                        <permission name="webapp.view[type=AnyView].read"/>
+                        <permission name="webapp.view[type=AnyView].remove"/>
+                        <permission name="webapp.viewset.add"/>
+                        <permission name="webapp.viewset.edit"/>
+                        <permission name="webapp.viewset.read"/>
+                        <permission name="webapp.viewset.remove"/>
+                    </permissions>
+                </workEnvironment>
+            </userGroup>
+        </userGroups>
+    </userDatabase>
+</asphereDatabase>

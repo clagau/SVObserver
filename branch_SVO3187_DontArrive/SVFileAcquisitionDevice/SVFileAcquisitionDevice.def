@@ -1,0 +1,27 @@
+; SVFileAcquiasitionDevice.def : Declares the module parameters for the DLL.
+
+EXPORTS
+	SVCreate @1
+	SVDestroy @2
+
+	SVDigitizerGetCount @100
+	SVDigitizerGetHandle @101
+	SVDigitizerGetName @102
+	SVDigitizerGetBufferWidth @111
+	SVDigitizerGetBufferHeight @112
+	SVDigitizerGetBufferFormat @113
+	SVDigitizerCreateBuffers @120
+	SVDigitizerDestroyBuffers @121
+	SVDigitizerRegisterBufferInterface @125
+	SVDigitizerUnregisterBufferInterface @126
+	SVDigitizerStart @130
+	SVDigitizerStop @131
+	
+	SVDigitizerInternalTrigger @133
+	
+	SVDigitizerSetParameters @150
+
+	SVDigitizerParameterGetList @160
+	SVDigitizerParameterGetName @161
+	SVDigitizerParameterGetValue @162
+	SVDigitizerParameterSetValue @163

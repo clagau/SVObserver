@@ -1,0 +1,60 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file Envelope.proto
+/// All Rights Reserved
+//*****************************************************************************
+/// Protobuf file for the main envelope message for Web Socket communication
+//******************************************************************************
+
+syntax = "proto3";
+package SvPenv;
+
+import "google/protobuf/any.proto";
+
+
+// Intentionally modeled after HTTP status codes
+// See https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+enum ErrorCode
+{
+	unknown = 0;
+	badRequest = 400;
+	unauthorized = 401;
+	forbidden = 403;
+	notFound = 404;
+	locked = 423;
+	internalError = 500;
+	notImplemented = 501;
+	badGateway = 502;
+	serviceUnavailable = 503;
+	timeout = 504;
+}
+
+message Error
+{
+	ErrorCode errorCode = 1;
+	string message = 2;
+	google.protobuf.Any payload = 3;
+}
+
+enum MessageType
+{
+	request = 0;
+	response = 1;
+	errorResponse = 2;
+	streamRequest = 3;
+	streamResponse = 4;
+	streamErrorResponse = 5;
+	streamFinish = 6;
+	streamCancel = 7;
+	streamAck = 8;
+}
+
+message Envelope
+{
+	uint64 transactionId = 1;
+	MessageType type = 2;
+	Error error = 3;
+	google.protobuf.Any payload = 4;
+	uint32 payloadType = 5;
+	uint64 sequenceNumber = 6;
+}

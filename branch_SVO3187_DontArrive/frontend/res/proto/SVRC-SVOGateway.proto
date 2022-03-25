@@ -1,0 +1,498 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file SVRC-SVOGateway.proto
+/// All Rights Reserved
+//*****************************************************************************
+/// Protobuf file for all SVRC commands handled by the SVOGateway
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+option java_package = "de.sdm.svrc.proto.v1010";
+
+import "Variant.proto";
+import "SVRC-Enum.proto";
+import "BasicStructure.proto";
+import "Overlay.proto";
+
+//Retrieves the Gateway version
+message GetGatewayVersionRequest
+{
+}
+
+message GetWebAppVersionRequest
+{
+}
+
+message WindowsError
+{
+	sint32 hResult = 1;	//The request result (0 = no error)
+}
+
+//one Item in the list
+//there is a 1:1 relationship between name and (offset, image Store).
+//Therefore, if this message is used as a parameter in a request, only the name or the IDs must be filled in.
+//type and size are additional information
+//Value product item structure
+message ValueItem
+{
+	 string name = 1;				//The value name
+	 sint32 type = 2;				//The value type
+	 sint32 size = 3;				//The value size
+	 uint32 storeId = 4;			//The store ID location
+	 uint32 offset = 5;				//The value offset
+}
+
+//Image product item structure
+message ImageItem
+{
+	string name = 1;				//The image name
+	sint32 height = 2;				//The image height
+	sint32 width = 3;				//The image width
+	uint32 storeId = 4;				//The store ID location
+	uint32 imageId = 5;				//The image ID
+}
+
+//This structure stores the position of an image in shared memory
+message ImageId
+{
+	sint32 inspectionId = 1;	//The inspection store id
+	sint32 imageIndex = 2;		//The image pos
+	sint32 trId = 3;			//The trigger record id
+}
+
+message Product
+{
+	uint32 trigger = 1;				//The trigger count value
+	repeated Variant values = 2;	//The list of values
+	repeated ImageId images = 3;	//The list of images
+	repeated string imageNames = 4;	//The list of image names
+	repeated string valueNames = 5;	//The list of value names
+	State status = 6;				//The status of the product (error number)
+}
+
+message InspectionResult
+{
+	string id = 1;
+	uint32 trigger = 2;
+	string name = 3;
+	bool isReject = 4;
+	repeated Variant values = 5;
+	repeated uint32 valueIds = 6;
+	repeated string valueNames = 7;
+	repeated uint32 imageIds = 8;
+	repeated string imageNames = 9;
+	repeated Image images = 10;
+}
+
+//Retrieves the inspection details of the currently loaded configuration on the SVIM
+message GetInspectionsRequest
+{
+}
+
+message InspectionDetails
+{
+	uint32 id = 1;
+	string name = 2;
+}
+
+message GetInspectionsResponse
+{
+	repeated InspectionDetails inspections = 1;
+}
+
+//Queries all active monitorlist
+message QueryListNameRequest
+{
+}
+
+//a list with all active monitorlist.
+//The monitor lists contain all metadata for the existing data and images in the shared memory.
+//There can be a maximum of one active monitor list per PPQ.
+message QueryListNameResponse
+{
+	repeated string listName = 1;	//The list of active montor names
+}
+
+//Query the Definition of the list.
+message QueryListItemRequest
+{
+	string listName = 1;			//The monitor list name (if empty all active monitor list names shall be returned)
+	ListType type = 2;				//The monitor list type
+	bool queryImages = 3;			//True to query images
+	bool queryValues = 4;			//True to query values
+}
+
+message QueryListItemResponse
+{
+	repeated ValueItem  valueDefList = 1;	//The value list returned
+	repeated ImageItem  imageDefList = 2;	//The image list returned
+}
+
+//if the Trigger is -1, the values for the last trigger are returned
+//if  TriggerCount = -1 and the last trigger is the PreviousTrigger the status in the response is unchanged
+//and no values are retrieved
+message GetProductRequest
+{
+	sint32 triggerCount = 1;		//The trigger counter value
+	sint32 peviousTrigger = 2;		//The previous trigger
+	string listName = 3;			//The monitor list name
+	bool nameInResponse = 4;		//True to retrieve the item names in the response
+}
+
+// In product response is an array of image ids
+// It is ensured that these images are available at least until GetProduct is called again
+message GetProductResponse
+{
+	Product productItem = 1;		//The product to be retrieved
+}
+
+//request the image for an Id from GetProduct or GetRejectResponse
+message GetImageFromIdRequest
+{
+	ImageId id = 1;					//The image ID
+}
+
+message GetImageFromIdResponse
+{
+	Image imageData = 1;			//The image data retrieved
+}
+
+//If the Response are values from the LastRejectTriggers
+//the response has the state unchanged
+message GetFailStatusRequest
+{
+	string listName = 1;				//The monitor list name
+	bool nameInResponse = 2;			//When true returns the names in the reponse
+	repeated int32 previousRejects = 3;	//The previous reject ID's
+}
+
+message GetFailStatusResponse
+{
+	repeated Product products = 1;	//The list of fail status products
+	State status = 2;				//The status of the request
+}
+
+///Request Values or Images for triggercount =-1 the last value is retrieved
+//If the Response are values from the LastTriggercount
+//the response has the state unchanged
+message GetTriggerItemsRequest
+{
+	uint32 trigger = 1;
+	uint32 previousTrigger = 2;
+	repeated ValueItem  valueList = 3;
+	repeated ImageItem  imageList = 4;
+}
+
+message GetTriggerItemsResponse
+{
+	uint32 triggerCount = 1;
+	repeated Variant values = 2;
+	repeated Image images = 3;
+}
+
+//This registers which notifications are streamed by SVOGateway
+message GetGatewayNotificationStreamRequest
+{
+}
+
+//The notification response is one of the values depending which notification type is being streamed
+message GetGatewayNotificationStreamResponse
+{
+	oneof message
+	{
+		RejectStreamPauseNotification rejectStreamPaused = 1;
+		ConfigurationLockStatusNotification configurationLockStatus = 2;
+	}
+}
+
+message RejectStreamPauseNotification
+{
+	repeated uint32 pausedInspectionIds = 1;
+}
+
+enum LockStatus
+{
+	Unlocked = 0;
+	Locked = 1;
+}
+
+message ConfigurationLockStatusNotification
+{
+	LockStatus status = 1;
+	optional string owner = 2;
+	optional string description = 3;
+	optional string host = 4;
+}
+
+message GetGatewayMessageStreamRequest
+{
+	repeated MessageSeverity severityList = 1;	//The severity types to receive if empty all are received
+}
+
+message GetGatewayMessageStreamResponse
+{
+	MessageType type = 1;		//The message type start end or log
+	MessageContainerVector messageList = 2;
+}
+
+//Similar to GetProductRequest for rejects
+message GetRejectRequest
+{
+	sint32 triggerCount = 1;		//The trigger counter value
+	sint32 peviousTrigger = 2;		//The previous trigger
+	string listName = 3;			//The monitor list name
+	bool nameInResponse = 4;		//True to retrieve the item names in the response
+}
+
+message GetRejectResponse
+{
+	Product productItem = 1;		//The product to be retrieved
+}
+
+enum LogSeverity
+{
+	fatal = 0;
+	error = 1;
+	warning = 2;
+	info = 3;
+	debug = 4;
+	trace = 5;
+}
+
+message LogEntry
+{
+	LogSeverity severity = 1;
+	string message = 2;
+}
+
+message StoreClientLogsRequest
+{
+	string client = 1;
+	repeated LogEntry logs = 2;
+}
+
+message GetProductDataRequest
+{
+	// The inspection id in which context the stream is running.
+	// When requesting values or images that don't belong to this
+	// inspection, the stream will fail.
+	uint32 inspectionId = 1;
+
+	sint32 trigger = 2;
+
+	// List of ObjectIds of values the client is subscribing to.
+	// The very first response will contain the names as well.
+	repeated uint32 valueIds = 3;
+
+	// List of ObjectIds of images the client is subscribing to.
+	// The very first response will contain the names as well.
+	repeated uint32 imageIds = 4;
+
+	// Format the images should be encoded with. Stream will fail
+	// and close if the requested format is not available.
+	ImageFormatEnum imageFormat = 5;
+
+	// If set to true, the response will include overlay information
+	// for images.
+	bool includeOverlays = 6;
+}
+
+message GetProductDataResponse
+{
+	// The trigger count the data set belongs to.
+	sint32 trigger = 1;
+
+	// List of values in the same order as specified in the request.
+	repeated Variant values = 2;
+
+	// List of images in the same order as specified in the request.
+	repeated Image images = 3;
+
+	// List of overlays. The array corresponds to entries in `images`.
+	repeated OverlayDesc overlays = 4;
+}
+
+// Request a stream of data related to an product in
+// context of one inspection.
+message GetProductStreamRequest
+{
+	// The inspection id in which context the stream is running.
+	// When requesting values or images that don't belong to this
+	// inspection, the stream will fail.
+	uint32 inspectionId = 1;
+
+	// The trigger count at which this stream should start.
+	// In case a stream is running, but the subscriber is interested
+	// in more/less/different values or images, he can unsubscibe and
+	// re-subscribe with the new configuration and state here the
+	// trigger count the stream should continue at. Subscriber can
+	// specify last seen trigger + 1 here. If value is not provided,
+	// is 0 or negative, the stream will start with the latest value.
+	sint32 startAtTriggerCount = 2;
+
+	// Specify whether only rejects or all products of the inspection
+	// should be streamed.
+	bool rejectsOnly = 3;
+
+	// When returned product is a reject, it is possible to specify
+	// true here so information about which values lead to the fail
+	// status is returned as well.
+	bool includeFailStatusValues = 4;
+
+	// List of ObjectIds of values the client is subscribing to.
+	// The very first response will contain the names as well.
+	repeated uint32 valueIds = 5;
+	repeated uint32 rejectValueIds = 9;
+
+	// List of ObjectIds of images the client is subscribing to.
+	// The very first response will contain the names as well.
+	repeated uint32 imageIds = 6;
+	repeated uint32 rejectImageIds = 10;
+
+	// Format the images should be encoded with. Stream will fail
+	// and close if the requested format is not available.
+	ImageFormatEnum imageFormat = 7;
+
+	// If set to true, the response will include overlay information
+	// for images.
+	bool includeOverlays = 8;
+}
+
+// Stream response for the GetProductStreamRequest request above.
+// The values and imaegs are in the same order as in the request.
+message GetProductStreamResponse
+{
+	// The trigger count the data set belongs to.
+	sint32 trigger = 1;
+
+	// Specifies whether the data belongs to a rejected product.
+	bool isReject = 2;
+
+	// List of values in the same order as specified in the request.
+	repeated Variant values = 3;
+	repeated Variant rejectValues = 7;
+
+	// List of values responsible for the reject.
+	repeated Variant failStatusValues = 4;
+
+	// List of images in the same order as specified in the request.
+	repeated Image images = 5;
+	repeated Image rejectImages = 8;
+
+	// List of overlays. The array corresponds to entries in `images`.
+	repeated OverlayDesc overlays = 6;
+	repeated OverlayDesc rejectOverlays = 9;
+}
+
+message SetRejectStreamPauseStateRequest
+{
+	// set to false to continue the stream
+	bool pause = 1;
+
+	// Inspection that should be paused. If empty, all inspections are paused.
+	uint32 inspectionId = 2;
+}
+
+message LockAcquisitionStreamRequest
+{
+	// Scope of the lock to allow multiple different locks at the same time.
+	// For now we use the default value `1` only. There will be more in the future.
+	uint32 scope = 1;
+
+	// In case the lock is already locked, request a takeover otherwise fail.
+	bool requestTakeover = 2;
+
+	// Optional message for the current lock owner that is shown when requesting the lock.
+	string takeoverMessage = 3;
+
+	// Optional description why the lock is acquired.
+	string description = 4;
+}
+
+message LockAcquisitionStreamResponse
+{
+	oneof message
+	{
+		// Client is saved as the owner of shared memory block after successful lock acquisition.
+		// He can release shared memory lock on his side or pass config lock if takeover request is received.
+		LockAcquiredNotification lockAcquiredNotification = 1;
+
+		// Client sends a notification with information regarding takeover to other client who is the lock owner.
+		// Mentioned owner may then decide to hand over the lock or not.
+		LockTakeoverNotification lockTakeoverNotification = 2;
+
+		// Current owner releases the shared memory lock. In this case other clients can reacquire it.
+		LockReleasedNotification lockReleasedNotification = 3;
+
+		// Shared memory lock is already owned by other user.
+		LockAlreadyLockedNotification lockAlreadyLockedNotification = 4;
+
+		// Notification used to inform takeover candidate about reject decision from lock owner
+		LockTakeoverRejectedNotification lockTakeoverRejectedNotification = 5;
+	}
+}
+
+message LockAcquiredNotification
+{
+	uint32 lockId = 1;
+	string description = 2;
+	string user = 3;
+	string host = 4; // IP of the host that acquired the lock.
+}
+
+message LockTakeoverNotification
+{
+	uint32 takeoverId = 1;
+	string message = 2;
+	string user = 3;
+	string host = 4; // IP of the host that acquired the lock.
+}
+
+message LockAlreadyLockedNotification
+{
+	uint32 lockId = 1;
+	string description = 2;
+	string user = 3;
+	string host = 4; // IP of the host that acquired the lock.
+}
+
+message LockTakeoverRejectedNotification
+{
+}
+
+message LockTakeoverRequest
+{
+	uint32 lockId = 1;
+	uint32 takeoverId = 2;
+}
+
+message LockTakeoverResponse
+{
+}
+
+message LockTakeoverRejectedRequest
+{
+	uint32 takeoverId = 1;
+}
+
+message LockTakeoverRejectedResponse
+{
+}
+
+enum LockReleaseReason
+{
+	// Released by the owner.
+	ExplicitRelease = 0;
+
+	// Something on SVObserver side changed that automatically released the lock
+	// (e.g. configuration closed).
+	SVObserver = 1;
+}
+
+message LockReleasedNotification
+{
+	uint32 lockId = 1;
+	LockReleaseReason reason = 2;
+}

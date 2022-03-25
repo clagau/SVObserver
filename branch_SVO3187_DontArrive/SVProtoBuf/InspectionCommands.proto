@@ -1,0 +1,1217 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Körber Pharma Inspection GmbH. All Rights Reserved
+/// \file InspectionCommands.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for all inspection commands handled by SVObserver
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+option java_package = "de.sdm.svrc.proto.v1010";
+
+import "Variant.proto";
+import "BasicStructure.proto";
+import "SVO-Enum.proto";
+import "GetObjectSelector.proto";
+import "Overlay.proto";
+import "PatternUtils.proto";
+//***************************************************************************
+// Help Structs
+//***************************************************************************
+message InputData
+{
+	uint32 connected_objectId = 1; //ID of the connected object.
+	string connected_objectDottedName = 2; //name of the connected object.
+	string inputName = 3; //input name.
+	uint32 inputId = 4; //ID of the object.
+}
+
+message ObjectNameIdPair
+{
+	uint32 objectId = 1; //ID of the object.
+	string objectName = 2; //name of the object.
+}
+
+message NameClassIdPair
+{
+	ClassIdEnum classId = 1; //classId of the object.
+	string objectName = 2; //name of the object.
+}
+
+message SVObjectTypeInfoStruct
+{
+	SVObjectTypeEnum objectType = 1;	// Main Type
+	SVObjectSubTypeEnum subType = 2;	// Sub Type  
+	EmbeddedIdEnum embeddedID = 3;
+}
+
+//info for one taskobject 
+message TaskObjectInfo
+{
+	string displayname =1;
+	uint32  taskObjectId = 2;  //ID of the object
+	SVObjectTypeEnum objecttype = 3; 
+	SVObjectSubTypeEnum objectsubtype = 4;
+	bool isvalid = 5; 
+}
+
+message NameValuePair
+{
+	string name = 1;
+	int32 value = 2;
+} 
+
+message NameNamePair
+{
+	string nameFrom = 1;
+	string nameTo = 2;
+} 
+
+message StandardValue
+{
+	Variant value = 1;
+	Variant defaultValue = 2;
+}
+
+enum LinkedSelectedOption
+{
+	None = 0;
+	DirectValue = 1;
+	IndirectValue = 2;
+	Formula = 3;
+}
+
+message LinkedValue
+{
+	LinkedSelectedOption option = 1;
+	Variant value = 2;
+	Variant defaultValue = 3;
+	Variant directValue = 4;
+	string indirectIDString = 6;
+	string formula = 7;
+	uint32 equationId = 8;
+}
+
+message ValueObjectValues
+{
+	uint32 objectId = 1;
+	EmbeddedIdEnum embeddedId = 2;
+	oneof valueData
+	{
+		StandardValue value = 3;
+		LinkedValue linkedValue = 4;
+	}
+}
+
+message SetValueObjectValues
+{
+	ValueObjectValues values = 1;
+	bool isModified = 2;
+	bool isDefaultModified = 3;
+	int32 arrayIndex = 4;
+}
+
+message ExtentParameter
+{
+	SVExtentPropertyEnum type = 1;
+	string name = 2;
+	double value = 3;
+	bool isSetByReset = 4;
+	bool FilteredOutFlag = 5;
+}
+
+message IsBeforeToolMethod
+{ 
+	uint32 toolId = 1;
+}
+
+message DefaultPlusHidden
+{
+}
+
+message HasExtension
+{
+}
+
+
+message UpdateFromOutpuSpace
+{
+	SVExtentLocationPropertyEnum action = 1;
+	int32 dx = 2;
+	int32 dy = 3;
+}
+
+message SetExtentProperty
+{
+	SVExtentPropertyEnum propertyFlag = 1;
+	double value = 2;
+}
+
+message SetExtentList
+{
+	repeated ExtentParameter extentList = 1;
+}
+
+message FixedInputData
+{
+	string name = 1; //dotted name of the Object, until Tool Set.
+	uint32 objectId = 2;
+	uint32 parentId = 3;
+	EmbeddedIdEnum embeddedId = 4;
+	string oldInputValue = 5; //The old value, if it is a indirectValue it is the dotted name.
+	bool isLinkedValue = 6; //True means it is a linkedValue, else it is a InputObject.
+}
+
+message TreeSearchParameters 
+{
+	uint32 search_start_id  = 1; //Normally the (downward) search starts here.
+	uint32 pre_search_start_id = 2; //If this is set (!= SvDef::InvalidObjectId), look for the starting point upward from here to searchStartId. If a border (e.g. Closed GroupTool) is hit before searchStartId is reached the search is started from that border.
+	SVObjectTypeInfoStruct type_info = 3;
+
+	oneof allowedMode  //Default is to accept all non-hidden valid objects. In this case do not set a oneof-message.
+	{
+		IsBeforeToolMethod isBeforeToolMethod = 5; //Same as default, but stop searching if required tool reached.
+		DefaultPlusHidden defaultPlusHidden = 6;
+		HasExtension hasExtension = 7;
+	}	
+}
+
+message InputSearchParameters
+{
+	uint32 input_connected_objectId = 1; // this is the ID of the object receiving input. Object must be of type InputConnectedType.
+}
+
+//***************************************************************************
+// InspectionCommands - can be send with method InspectionCommands
+//***************************************************************************
+// This message do a runOnce for an inspection or taskObject
+message InspectionRunOnceRequest
+{
+	uint32 inspectionID = 1; //ID of the inspection.
+}
+
+// This is the message to delete an object.
+message DeleteObjectRequest
+{
+	uint32 objectID = 1; //ID of the object which should be deleted.
+
+	enum FlagEnum
+	{
+		Flag_None = 0;
+		Flag_SetDefaultInputs = 1;
+		Flag_ResetInspection = 2;
+		Flag_SetDefaultInputs_And_ResetInspection = 3;
+	}
+
+	FlagEnum flag = 2; //Define if after destroying object the default inputs are set and/or inspection are reset.
+}
+
+// This is the message to get the last (Error)MessageList from an taskObject
+message GetMessageListRequest
+{
+	uint32 objectId = 1; //ID of the task-object.
+}
+
+// This is the message to reset an object
+message ResetObjectRequest
+{
+	uint32 objectId = 1; //ID of the task-object.
+}
+
+//This is the message to create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
+message CreateModelRequest
+{
+	uint32 patternAnalyzerID = 1; //ID of the pattern-analyzer
+	sint32 posX = 2; //x-Pos in the source image.
+	sint32 posY = 3; //y-Pos in the source image.
+	sint32 modelWidth = 4; //wanted model width.
+	sint32 modelHeight = 5; //wanted model height.
+	string FileName = 6; //filename where the model should be saved.
+}
+
+message GetObjectParametersRequest
+{
+	uint32 objectId = 1; //ID of the object.
+}
+
+message GetObjectParametersResponse
+{
+	bool isValid = 1; //flag if valid, will only set for TaskObject (not for ValueObject)
+	string name = 2;
+	uint32 allowedAttributes = 3;
+	SVObjectTypeInfoStruct typeInfo = 4;
+}
+
+//This is the message to return the object-dotted-name to a defined position.
+message GetObjectNameRequest
+{
+	uint32 objectId = 1; //ID of the object.
+	oneof type
+	{
+		SVObjectTypeEnum BeforeType = 2;
+		SVObjectTypeEnum ToType = 3;
+	}
+}
+
+message GetObjectNameResponse
+{
+	string name = 1;
+}
+
+// This is the message to return the equation string
+message GetEquationRequest
+{
+	uint32 objectId = 1; //ID of the equation-object.
+}
+
+// This is the message response-message from GetEquationRequest
+message GetEquationResponse
+{
+	string equationText = 1; //string of the equation
+}
+
+//This message validate and if required set an equation
+message ValidateAndSetEquationRequest
+{
+	uint32 objectId = 1; //ID of the equation-object.
+	string equationText = 2; //string of the equation.
+	bool bSetValue = 3; //flag if value should be set.
+}
+
+// This is the message response-message from ValidateAndSetEquationRequest
+message ValidateAndSetEquationResponse
+{
+	sint32 validateStatus = 1; //return validateSuccessful if text is valid, else it return the position of the first error in the text.
+	double result = 2; //if validateStatus is validateSuccessful, this variable contain the result of the equation.
+	MessageContainerVector Messages = 3; //list of error messages
+}
+
+// This is the message to get a list of object which should be added to the monitorlist.
+message GetObjectsForMonitorListRequest
+{
+	uint32 objectId = 1; //ID of the tool.
+}
+
+// This is the message response-message from GetObjectsForMonitorListRequest
+message GetObjectsForMonitorListResponse
+{
+	repeated ObjectNameIdPair list = 1;
+	MessageContainerVector Messages = 2; //list of messages
+}
+
+// This message moved an object in a taskObject- or friend-list to another position.
+message MoveObjectRequest
+{
+	enum ListEnum
+	{
+		TaskObjectList = 0;
+		FriendList = 1;
+	}
+
+	uint32 parentId = 1; //ID of the parent object, which contain the list (for taskObjectList it must be a ITaskObjectList-Object)
+	uint32 objectId = 2; //ID of the object, which should be moved (must be a taskObject)
+	uint32 movePreId = 3; //ID of the object, before which the other object should be moved. If it is SvDef::InvalidObjectId, the object will be moved to the end.
+	ListEnum listMode = 4;
+}
+
+// Request TaskObjectInfo for all taskobject in the taskobjectlist
+message TaskObjectListRequest
+{
+	uint32 taskObjectId = 1;  //ID of the object
+}
+
+message TaskObjectListResponse
+{
+	repeated TaskObjectInfo taskobjectinfos = 1; 
+}
+
+//get an image. Three cases possible (try from first to last case):
+// 1. if imageId is set (!= 0), use them and ignore the other parameter
+// 2. if embeddedId and parentId is set, use them and ignore the other parameter. The parentId must have an image with embeddedId.
+// 3. else try to get image with name and parent
+message GetImageRequest
+{
+	uint32 imageId = 1;  //ID of the image
+	string imageName = 2; //Name of the image at parent object
+	uint32 parentId = 3; //ID of the parent
+	EmbeddedIdEnum embeddedId = 4;
+} 
+
+message GetImageResponse
+{
+	Image imageData = 1;
+	MessageContainerVector Messages = 2; //list of error messages
+}
+
+//get an image(if imageId is set, return this, else try to get image with name and parent)
+message AreAuxiliaryExtentsAvailableRequest
+{
+	uint32 objectId = 1;  //ID of the tool
+} 
+
+message AreAuxiliaryExtentsAvailableResponse
+{
+	bool areAvailable = 1;
+}
+
+message GetAvailableAuxImagesRequest
+{
+	uint32 objectId = 1;  //ID of the tool
+}
+
+message GetAvailableAuxImagesResponse
+{
+	repeated ObjectNameIdPair list = 1;
+}
+
+message GetAuxImageObjectRequest
+{
+	uint32 objectId = 1;  //ID of the tool
+}
+
+message GetAuxImageObjectResponse
+{
+	ObjectNameIdPair auxObject = 1;
+}
+
+message SetAuxImageObjectRequest
+{
+	uint32 objectId = 1;  //ID of the tool
+	uint32 sourceImageId = 2;  //ID of the source image
+}
+
+message GetInputsRequest
+{
+	uint32 objectId = 1;  //ID of the tool
+	SVObjectTypeInfoStruct typeInfo = 2;
+	SVObjectTypeEnum desired_first_object_type_for_connected_name = 3; //define up to which type the connected dotted name should be displayed (not used for image objects, it has the own name conventions)
+	bool exclude_first_object_name_in_conntected_name = 4; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
+	int32 maxRequested = 5; //only used for image object, it define after how many founded entry it stops. 0 means all.
+}
+
+message GetInputsResponse
+{
+	repeated InputData list = 1;
+}
+
+message GetInputDataRequest
+{
+	uint32 objectId = 1;  //ID of the input object
+	SVObjectTypeEnum desired_first_object_type_for_connected_name = 2; //define up to which type the connected dotted name should be displayed (not used for image objects, it has the own name conventions)
+	bool exclude_first_object_name_in_conntected_name = 3; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
+}
+
+message GetInputDataResponse
+{
+	InputData data = 1;
+	SVObjectTypeInfoStruct typeInfo = 2;
+}
+
+message ConnectToObjectRequest
+{
+	uint32 objectId = 1; //Must be a TaskObject (in this case inputname must be set) or InputObject (in this case inputName and objectType will be ignored)
+	string inputName = 2; //The name of the input (must be child from the TaskObject). Will be ignored if object is a InputObject.
+	uint32 newConnectedId = 3; //The Id of the to connected object
+	SVObjectTypeEnum objectType = 4; //Will be ignored if object is a InputObject.
+}
+
+message SaveImageRequest
+{
+	uint32 objectId = 1;
+	string imageName = 2;
+}
+
+message SetObjectNameRequest
+{
+	uint32 objectId = 1;
+	string objectName = 2;
+}
+
+message GetAvailableObjectsRequest
+{
+	SVObjectTypeEnum desired_first_object_type_for_name = 1; //Define up to which type the dotted name should be displayed. default = SVNotSetObjectType
+	bool exclude_first_object_name_in_name = 2; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". 
+
+	oneof SearchType
+	{
+		TreeSearchParameters tree_search = 3;
+		InputSearchParameters input_search=4;
+	}	
+}
+
+message GetAvailableObjectsResponse
+{
+	repeated ObjectNameIdPair list = 1;
+	MessageContainerVector Messages = 2; //list of messages
+}
+
+message GetSpecialImageListRequest
+{
+	uint32 taskObjectId = 1;
+}
+
+message GetSpecialImageListResponse
+{
+	repeated string specialImageNames = 1;
+}
+
+message ExportMaskRequest
+{
+	uint32 objectId = 1;
+	string fileName = 2;
+}
+
+message ImportMaskRequest
+{
+	uint32 objectId = 1;
+	string fileName = 2;
+}
+
+message GetObjectIdRequest
+{
+	message InfoStruct
+	{
+		uint32 ownerId = 1;
+		SVObjectTypeInfoStruct infoStruct = 2;
+	}
+
+	oneof message
+	{
+		string name = 1;
+		InfoStruct info = 2;
+	}
+}
+
+message GetObjectIdResponse
+{
+	uint32 objectId = 1;
+}
+
+message CreateObjectRequest
+{
+	message FriendTask
+	{
+		string name = 1; //the name of the new object
+		uint32 preId = 2; //Add new object before the object with this ID. If object not found (e.g. SvDef::InvalidObjectId), it will be added at the end.
+	}
+
+	uint32 ownerId = 1;
+	ClassIdEnum classId = 2;
+
+	oneof message
+	{
+		FriendTask friend = 3;	//Add the new object to the friend list.
+		uint32 taskObjectInsertBeforeId = 4; //Add the new object to the taskObject-list before the object with this ID. if SvDef::InvalidObjectId, add at the end.
+		int32 taskObjectPos = 5; //Add the new object to the taskObject list at the pos. int32 taskObjectPos = 4; //Add the new object to the taskObject list at the pos. 
+	}
+}
+
+message CreateObjectResponse
+{
+	uint32 objectId = 1;
+	string name = 2;
+}
+
+message GetCreatableObjectsRequest
+{
+	uint32 objectId = 1;
+	SVObjectTypeInfoStruct typeInfo = 2;
+}
+
+message GetCreatableObjectsResponse
+{
+	repeated NameClassIdPair list = 1;
+}
+
+//Return if the inspection should be reset. By now it is only used for the filter, because some filters must be reset the whole inspection after changes.
+message ShouldInspectionResetRequest
+{
+	uint32 objectId = 1;
+}
+
+message ShouldInspectionResetResponse
+{
+	bool shouldReset = 1;
+}
+
+//Get the ppq-name of the inspection
+message GetPPQNameRequest
+{
+	uint32 inspectionId = 1;
+}
+
+message GetPPQNameResponse
+{
+	string ppqName = 1;
+}
+
+//Request the Enumerations(name/value) from a SVEnumerateValueObject
+message GetValueObjectEnumsRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetValueObjectEnumsResponse
+{
+	repeated NameValuePair list = 1;
+}
+
+message GetEmbeddedValuesRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetEmbeddedValuesResponse
+{
+	repeated ValueObjectValues list = 1;
+}
+
+message SetEmbeddedValuesRequest
+{
+	uint32 objectId = 1;  //TaskObjectId 
+	repeated SetValueObjectValues list = 2;
+	ResetType  resetType = 3;
+}
+
+//not Used yet
+message SetEmbeddedValuesResponse
+{
+	MessageContainerVector errorMessages = 1;
+	ResetType  resetType = 3;
+
+}
+
+message ValidateLinkedValueRequest
+{
+	ValueObjectValues data = 1;
+}
+
+message ValidateLinkedValueResponse
+{
+	Variant value = 1;
+	MessageContainer errorMessage = 2;
+}
+
+message GetOutputRectangleRequest
+{
+	uint32 imageId = 1;
+}
+
+message GetOutputRectangleResponse
+{
+	int32 left = 1;
+	int32 top = 2;
+	int32 right = 3;
+	int32 bottom = 4;
+}
+
+message GetToolSizeAdjustParameterRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetToolSizeAdjustParameterResponse
+{
+	bool isFullSizeAllowed = 1;
+	bool isAdjustSizeAllowed = 2;
+	bool isAdjustPositionAllowed = 3;
+	EAutoSize enableAutoSize = 4;
+	bool canResizeToParent = 5;
+}
+
+message GetExtentParameterRequest
+{
+	uint32 objectId = 1; //id of the tool
+	bool shouldFromParent = 2; 
+}
+
+message GetExtentParameterResponse
+{
+	repeated ExtentParameter parameters = 1;
+	SVExtentTranslationEnum translationType = 2;
+}
+
+message SetExtentParameterRequest
+{
+	uint32 objectId = 1; //id of the tool
+	oneof message
+	{
+		UpdateFromOutpuSpace updateFromOutputSpace = 2;
+		SetExtentProperty setProperty = 3;
+		SetExtentList extentList = 4;
+		bool setToParent = 5;
+	}
+}
+
+message SetExtentParameterResponse
+{
+	repeated ExtentParameter parameters = 1;
+	SVExtentTranslationEnum translationType = 2;
+}
+
+message IsAllowedLocationRequest
+{
+	uint32 objectId = 1; //id of the tool
+	SVExtentLocationPropertyEnum location = 2;
+	SVExtentDirectionsEnum direction = 3;
+}
+
+message IsAllowedLocationResponse
+{
+	bool IsAllowed = 1;
+}
+
+message PropagateSizeAndPositionRequest
+{
+	uint32 objectId = 1; //id of the inspection
+}
+
+message UsePropagateSizeAndPositionRequest
+{
+	uint32 objectId = 1; //id of the inspection
+}
+
+message UsePropagateSizeAndPositionResponse
+{
+	bool isUsed = 1;
+}
+
+message GetOverlayStructRequest
+{
+	uint32 imageId = 1; //id of the image
+}
+
+message GetOverlayStructResponse
+{
+	OverlayDesc overlays = 1;
+}
+message SetDefaultInputsRequest
+{
+	uint32 objectId = 1; //ID of the inspection object.
+}
+
+message BarCodeTypeParameter
+{
+	int32 type = 1;
+	string name = 2;
+	repeated int32 PossibleECCTypes = 3;
+	int32 DefaultEccType = 4;
+	repeated int32 PossibleENCTypes = 5;
+	int32 DefaultEncType = 6;
+}
+message GetNormalizerValuesRequest
+{
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (LinearAnalyzer)
+}
+message GetNormalizerValuesResponse
+{
+	double normalRangeMax = 1;
+	double normalRangeMin = 2;
+	double normalRangeStepWidth = 3;
+	double normalRangeBaseSize = 4;
+	double realRangeMax = 5;
+	double realRangeMin = 6;
+	double realRangeStepWidth = 7;
+	double realRangeBaseSize = 8;	
+}
+message SetNormalizerRangesRequest
+{
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (LinearAnalyzer)
+	double normalMax = 2;
+	double normalMin = 3;
+	double normalStepWidth = 4;
+	double realMax = 5;
+	double realMin = 6;
+	double realStepWidth = 7;
+}
+
+message GetBarCodeTypeInfosRequest
+{
+}
+
+message GetBarCodeTypeInfosResponse
+{
+	repeated NameValuePair ECCNames = 1;
+	repeated NameValuePair ENCNames = 2;
+	repeated BarCodeTypeParameter typeParameters = 3;
+}
+
+//Request Information from an ISVImage based on image id
+message GetImageInfoRequest
+{
+	uint32 imageId = 1; //id of the image
+}
+//Contains Information from an ISVImage 
+//Currently, only SVImageType, other info can be added here!
+message GetImageInfoResponse
+{
+	SVImageTypeEnum imageType = 1; 
+}
+
+//request information from a IBlobAnalyzer object
+message GetBlobAnalyzerInfoRequest
+{
+	uint32 taskObjectId = 1;
+	uint32 feature = 2;
+	bool featureEnabled = 3;
+}
+
+//Contains information from an IBlobAnalyzer
+message GetBlobAnalyzerInfoResponse
+{
+	uint32 resultObjectId = 1;
+	ClassIdEnum resultObjectClassId = 2;
+	uint32 resultBlobId = 3;
+	ClassIdEnum resultBlobClassId = 4;
+	repeated NameValuePair list = 5;
+}
+
+message FeatureData
+{
+	uint32 type = 1;
+	string name = 2;
+	bool is_custom = 3;
+	bool is_gray = 4;
+	bool is_sort = 5;
+	bool is_Ascent = 6;
+	bool is_Exclude = 7;
+	bool is_Exclude_Inner = 8;
+	LinkedValue lower_bound = 9;
+	uint32 lower_bound_id = 10;
+	LinkedValue upper_bound = 11;
+	uint32 upper_bound_id = 12;
+	bool is_range = 13;
+	LinkedValue range_fail_high = 14;
+	uint32 range_fail_high_id = 15;
+	LinkedValue range_warn_high = 16;
+	uint32 range_warn_high_id = 17;
+	LinkedValue range_warn_low = 18;
+	uint32 range_warn_low_id = 19;
+	LinkedValue range_fail_low = 20;
+	uint32 range_fail_low_id = 21;
+	uint32 equationId = 22;
+}
+
+//List of Feature-Data for Blob Analyzer 2
+message GetFeaturesRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetFeaturesResponse
+{
+	repeated FeatureData list = 1;
+}
+
+message SetFeaturesRequest
+{
+	uint32 objectId = 1;
+	repeated FeatureData list = 2;
+}
+
+message FeatureSetError
+{
+	int32 row = 1;
+	int32 fieldId = 2; //this is the id of the FeatureData message
+}
+
+message SetFeaturesResponse
+{
+	repeated FeatureSetError error_list = 1;
+	MessageContainerVector Messages = 2;
+}
+
+message GetAvailableFeaturesRequest
+{
+}
+
+message AvailableFeature
+{
+	uint32 id = 1;
+	string name = 2;
+	bool isNecessary = 3;
+	bool isGray = 4;
+}
+
+message GetAvailableFeaturesResponse
+{
+	repeated AvailableFeature list = 1;
+}
+
+message GetToolsWithReplaceableSourceImageRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetToolsWithReplaceableSourceImageResponse
+{
+	repeated ObjectNameIdPair list = 1;
+}
+
+/////////////////////
+//ExternalTool Commands
+
+message InputValueDefinition
+{
+	sint32 vt = 1;
+	sint32 linkedValueIndex = 2;
+	ExDllInterfaceType type = 3;
+	string groupName = 4;
+	string displayName = 5;
+	string helpText = 6;
+	Variant defaultValue = 7;
+}
+
+message PropTreeState
+{
+	string name = 1;
+	bool state = 2;
+}
+
+message ResultValueDefinition
+{
+	sint32 vt = 1;
+	ExDllInterfaceType type = 2;
+	string groupName = 3;
+	string displayName = 4;
+	string helpText = 5;
+	bool useDisplayNames = 6;
+}
+
+message TableResultDefinition
+{
+	string groupName = 1;
+	string displayName = 2;
+	string helpText = 3;
+	bool useDisplayNames = 4;
+}
+// Currently only one field. To add more information if needed.
+message TableObject
+{
+	string name = 1;
+}
+
+message ImageInfo
+{
+	bool mayBeColor = 1;
+	bool mayBeBlackAndWhite = 2;
+	string displayName = 3;
+}
+
+message InitializeExternalToolTaskRequest
+{
+	uint32 objectId = 1;
+	bool inCreationProcess = 2;
+	bool initializeAll = 3;
+}
+
+message InitializeExternalToolTaskResponse
+{
+	repeated string statusMessages = 1;
+}
+
+//ToDo: Extend this command for all tools (currently used for ExternalTool)
+message ResetAllObjectsRequest
+{
+	uint32 objectId = 1;
+}
+
+message ResetAllObjectsResponse
+{
+	MessageContainerVector errorMessages = 1;
+}
+
+message ClearDataExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message SetAllAttributesExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+
+message GetInputValuesDefinitionExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetInputValuesDefinitionExternalToolResponse
+{
+	sint32 numInputValues = 1;
+	repeated InputValueDefinition inputValuesDefinition = 2;
+}
+
+message GetPropTreeStateExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetPropTreeStateExternalToolResponse
+{
+	repeated PropTreeState propTreeState = 1;
+}
+
+message GetDllMessageStringResponse
+{
+	string errorMessage = 1;
+}
+
+message SetPropTreeStateExternalToolRequest
+{
+	uint32 objectId = 1;
+	repeated PropTreeState propTreeState = 2;
+}
+
+message ValidateValueParameterExternalToolRequest
+{
+	uint32 taskObjectId = 1;
+	sint32 index = 2;
+	Variant newValue = 3;
+	uint32 exDllInterfaceType = 4;
+}
+
+message ValidateValueParameterExternalToolResponse
+{
+	MessageContainerVector errorMessages = 1;
+}
+
+message GetDllMessageStringRequest
+{
+	uint32 objectId = 1;
+	sfixed32 hResultError = 2;
+}
+
+message GetResultValuesDefinitionExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetResultValuesDefinitionExternalToolResponse
+{
+	sint32 numResultValues = 1;
+	repeated ResultValueDefinition resultValuesDefinition = 2;
+}
+
+
+message GetTableResultsExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetTableResultsExternalToolResponse
+{
+	repeated TableResultDefinition tableResultsDefinition = 1;
+	repeated TableObject tableObjects = 2;
+}
+
+message GetResultRangeObjectRequest
+{
+	uint32 objectId = 1;
+	sint32 index = 2;
+}
+
+message GetResultRangeObjectResponse
+{
+	ClassIdEnum classId = 1;
+	uint32 objectId = 2;
+}
+
+message GetImageInfoExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetImageInfoExternalToolResponse
+{
+	repeated ImageInfo imageInfoList = 1;
+}
+
+message ValidateValueObjectRequest
+{
+	string dottedName = 1;
+	uint32 objectId = 2;
+	InputValueDefinition valueDefinition = 3;
+}
+
+message ValidateValueObjectResponse
+{
+	bool objectExists = 1;
+	bool isvalid = 2;
+}
+
+message EmbeddedValueStruct
+{
+	string name = 1;
+	EmbeddedIdEnum oldEmbeddedId = 2; 	
+	LinkedValueTypeEnum type = 3;
+
+	LinkedValue value = 4;
+}
+
+message SetAndSortEmbeddedValueRequest
+{
+	uint32 ownerId = 1;
+	repeated EmbeddedValueStruct embeddedList = 2;
+}
+
+message SetAndSortEmbeddedValueResponse
+{
+	int32 errorRow = 1;
+	MessageContainerVector errormessages = 2;
+}
+
+message GetInvalidDependenciesRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetInvalidDependenciesResponse
+{
+	repeated NameNamePair invalidDependencies = 1;
+}
+
+message InspectionCmdRequest
+{
+	uint32 inspectionID = 1;			//The inspection ID to perform the command on
+
+	oneof message
+	{
+		InspectionRunOnceRequest inspectionRunOnceRequest = 2;
+		DeleteObjectRequest deleteObjectRequest = 3;
+		GetMessageListRequest  getMessageListRequest = 4;
+		ResetObjectRequest  resetObjectRequest = 5;
+		CreateModelRequest  createModelRequest = 6;
+		GetObjectParametersRequest getObjectParametersRequest = 7;
+		GetEquationRequest getEquationRequest = 8;
+		ValidateAndSetEquationRequest  validateAndSetEquationRequest = 9;
+		GetObjectsForMonitorListRequest getObjectsForMonitorListRequest = 10;
+		MoveObjectRequest moveObjectRequest = 11;
+		TaskObjectListRequest taskObjectListRequest = 12;
+		GetImageRequest getImageRequest = 13;
+		AreAuxiliaryExtentsAvailableRequest areAuxiliaryExtentsAvailableRequest = 14;
+		GetAvailableAuxImagesRequest getAvailableAuxImagesRequest = 15;
+		GetAuxImageObjectRequest getAuxImageObjectRequest = 16;
+		SetAuxImageObjectRequest setAuxImageObjectRequest = 17;
+		GetInputsRequest getInputsRequest = 18;
+		ConnectToObjectRequest connectToObjectRequest = 19;
+		SaveImageRequest saveImageRequest = 20;
+		SetObjectNameRequest setObjectNameRequest = 21;
+		GetAvailableObjectsRequest getAvailableObjectsRequest = 22;
+		GetSpecialImageListRequest getSpecialImageListRequest = 23;
+		ExportMaskRequest exportMaskRequest = 24;
+		ImportMaskRequest importMaskRequest = 25;
+		GetObjectIdRequest getObjectIdRequest = 26;
+		CreateObjectRequest createObjectRequest = 27;
+		GetCreatableObjectsRequest getCreatableObjectsRequest = 28;
+		ShouldInspectionResetRequest shouldInspectionResetRequest = 29;
+		GetPPQNameRequest getPPQNameRequest = 30;
+		GetValueObjectEnumsRequest getValueObjectEnumsRequest = 31;
+		GetEmbeddedValuesRequest getEmbeddedValuesRequest = 32;
+		SetEmbeddedValuesRequest setEmbeddedValuesRequest = 33;
+		GetOutputRectangleRequest getOutputRectangleRequest = 34;
+		GetObjectSelectorItemsRequest getObjectSelectorItemsRequest = 35;
+		GetToolSizeAdjustParameterRequest getToolSizeAdjustParameterRequest = 36;
+		GetExtentParameterRequest getExtentParameterRequest = 37;
+		SetExtentParameterRequest setExtentParameterRequest = 38;
+		IsAllowedLocationRequest isAllowedLocationRequest = 39;
+		PropagateSizeAndPositionRequest propagateSizeAndPositionRequest = 40;
+		UsePropagateSizeAndPositionRequest usePropagateSizeAndPositionRequest = 41;
+		GetOverlayStructRequest getOverlayStructRequest = 42;
+		SetDefaultInputsRequest  setDefaultInputsRequest = 43;
+		GetBarCodeTypeInfosRequest getBarCodeTypeInfosRequest = 44;
+		GetNormalizerValuesRequest getNormalizerValuesRequest = 45;
+		SetNormalizerRangesRequest setNormalizerRangesRequest = 46;
+		GetImageInfoRequest getImageInfoRequest = 47;
+		GetBlobAnalyzerInfoRequest getBlobAnalyzerInfoRequest = 48;
+		ComputeOverscanRectRequest computeOverscanRectRequest = 49;
+		GetFeaturesRequest getFeaturesRequest = 50;
+		SetFeaturesRequest setFeaturesRequest = 51;
+		GetAvailableFeaturesRequest getAvailableFeaturesRequest = 52;
+		GetToolsWithReplaceableSourceImageRequest getToolsWithReplaceableSourceImageRequest = 53;
+		InitializeExternalToolTaskRequest initializeExternalToolTaskRequest = 54;
+		ResetAllObjectsRequest resetAllObjectsRequest = 55;
+		ClearDataExternalToolRequest clearDataExternalToolRequest = 56;
+		SetAllAttributesExternalToolRequest setAllAttributesExternalToolRequest = 57;
+		GetInputValuesDefinitionExternalToolRequest getInputValuesDefinitionExternalToolRequest = 58;
+		GetPropTreeStateExternalToolRequest getPropTreeStateExternalToolRequest = 59;
+		SetPropTreeStateExternalToolRequest setPropTreeStateExternalToolRequest = 60;
+		ValidateValueParameterExternalToolRequest validateValueParameterExternalToolRequest = 61;
+		GetDllMessageStringRequest getDllMessageStringRequest = 62;
+		GetResultValuesDefinitionExternalToolRequest getResultValuesDefinitionExternalToolRequest = 63;
+		GetTableResultsExternalToolRequest getTableResultsExternalToolRequest = 64;
+		GetResultRangeObjectRequest getResultRangeObjectRequest = 65;
+		GetImageInfoExternalToolRequest getImageInfoExternalToolRequest = 66;
+		SetAndSortEmbeddedValueRequest setAndSortEmbeddedValueRequest = 68;
+		GetInvalidDependenciesRequest getInvalidDependenciesRequest = 69;
+		GetObjectNameRequest getObjectNameRequest = 70;
+		ValidateLinkedValueRequest validateLinkedValueRequest = 71;
+		GetInputDataRequest getInputDataRequest = 72;
+		GetObjectSelectorItems2Request getObjectSelectorItems2Request = 73;
+		}
+}
+
+message InspectionCmdResponse
+{
+	sfixed32 hResult = 1;				//The request result (0 = no error)
+		
+	oneof message
+	{
+		StandardResponse standardResponse = 2;
+		GetObjectParametersResponse getObjectParametersResponse = 3;
+		GetEquationResponse  getEquationResponse = 4;
+		ValidateAndSetEquationResponse  validateAndSetEquationResponse = 5;
+		GetObjectsForMonitorListResponse getObjectsForMonitorListResponse = 6;
+		TaskObjectListResponse taskObjectListResponse = 7;
+		GetImageResponse getImageResponse = 8;
+		AreAuxiliaryExtentsAvailableResponse areAuxiliaryExtentsAvailableResponse = 9;
+		GetAvailableAuxImagesResponse getAvailableAuxImagesResponse = 10;
+		GetAuxImageObjectResponse getAuxImageObjectResponse = 11;
+		GetInputsResponse getInputsResponse = 12;
+		GetAvailableObjectsResponse getAvailableObjectsResponse = 13;
+		GetSpecialImageListResponse getSpecialImageListResponse = 14;
+		GetObjectIdResponse getObjectIdResponse = 15;
+		CreateObjectResponse createObjectResponse = 16;
+		GetCreatableObjectsResponse getCreatableObjectsResponse = 17;
+		ShouldInspectionResetResponse shouldInspectionResetResponse = 18;
+		GetPPQNameResponse getPPQNameResponse = 19;
+		GetValueObjectEnumsResponse getValueObjectEnumsResponse = 20;
+		GetEmbeddedValuesResponse getEmbeddedValuesResponse = 21;
+		GetOutputRectangleResponse getOutputRectangleResponse = 22;
+		GetObjectSelectorItemsResponse getObjectSelectorItemsResponse = 23;
+		GetToolSizeAdjustParameterResponse getToolSizeAdjustParameterResponse = 24;
+		GetExtentParameterResponse getExtentParameterResponse = 25;
+		SetExtentParameterResponse setExtentParameterResponse = 26;
+		IsAllowedLocationResponse isAllowedLocationResponse = 27;
+		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 28;
+		GetOverlayStructResponse getOverlayStructResponse = 29;
+		GetBarCodeTypeInfosResponse getBarCodeTypeInfosResponse = 30;
+		GetNormalizerValuesResponse getNormalizerValuesResponse = 31;
+		GetImageInfoResponse getImageInfoResponse = 32;
+		GetBlobAnalyzerInfoResponse getBlobAnalyzerInfoResponse = 33;
+		ComputeOverscanRectResponse computeOverscanRectResponse = 34;
+		GetFeaturesResponse getFeaturesResponse = 35;
+		SetFeaturesResponse setFeaturesResponse = 36;
+		GetAvailableFeaturesResponse getAvailableFeaturesResponse = 37;
+		GetToolsWithReplaceableSourceImageResponse getToolsWithReplaceableSourceImageResponse = 38;
+		GetInputValuesDefinitionExternalToolResponse getInputValuesDefinitionExternalToolResponse = 39;
+		GetPropTreeStateExternalToolResponse getPropTreeStateExternalToolResponse = 40;
+		GetDllMessageStringResponse getDllMessageStringResponse = 41;
+		GetResultValuesDefinitionExternalToolResponse getResultValuesDefinitionExternalToolResponse = 42;
+		GetTableResultsExternalToolResponse getTableResultsExternalToolResponse = 43;
+		GetResultRangeObjectResponse getResultRangeObjectResponse = 44;
+		InitializeExternalToolTaskResponse initializeExternalToolTaskResponse = 45;
+		GetImageInfoExternalToolResponse getImageInfoExternalToolResponse = 46;
+		SetAndSortEmbeddedValueResponse setAndSortEmbeddedValueResponse = 48;
+		GetInvalidDependenciesResponse getInvalidDependenciesResponse = 49;
+		ValidateValueParameterExternalToolResponse validateValueParameterExternalToolResponse = 50;
+		ResetAllObjectsResponse resetAllObjectsResponse = 51;
+		GetObjectNameResponse getObjectNameResponse = 52;
+		ValidateLinkedValueResponse validateLinkedValueResponse = 53;
+		GetInputDataResponse getInputDataResponse = 54;
+		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 55;
+		}
+}

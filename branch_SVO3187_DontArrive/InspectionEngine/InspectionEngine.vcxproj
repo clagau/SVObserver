@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{DCBB3468-F35F-4455-912D-854D2CC7D599}</ProjectGuid>
+    <Keyword>Win64Proj</Keyword>
+    <RootNamespace>InspectionEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WIN64;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="ResultViewItemDef.h" />
+    <ClInclude Include="RunStatus.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVAcquisitionClass.h" />
+    <ClInclude Include="SVAcquisitionDevice.h" />
+    <ClInclude Include="SVBarCodeBuffer.h" />
+    <ClInclude Include="SVCameraImageTemplate.h" />
+    <ClInclude Include="SVCameraInfoStruct.h" />
+    <ClInclude Include="SVClassInfoStruct.h" />
+    <ClInclude Include="SVDataBuffer.h" />
+    <ClInclude Include="SVDigitizerProcessingClass.h" />
+    <ClInclude Include="SVExtentPropertyInfoStruct.h" />
+    <ClInclude Include="SVFileAcquisitionClass.h" />
+    <ClInclude Include="SVGigeCameraManager.h" />
+    <ClInclude Include="SVGlobalHandles.h" />
+    <ClInclude Include="SVImageBuffer.h" />
+    <ClInclude Include="SVImageClass.h" />
+    <ClInclude Include="SVImageProcessingClass.h" />
+    <ClInclude Include="SVIPResultData.h" />
+    <ClInclude Include="SVIPResultItemData.h" />
+    <ClInclude Include="SVIPResultItemDefinition.h" />
+    <ClInclude Include="SVMainImageClass.h" />
+    <ClInclude Include="SVMatroxGigeAcquisitionClass.h" />
+    <ClInclude Include="SVMatroxGigeCameraProxy.h" />
+    <ClInclude Include="SVObjectAppClass.h" />
+    <ClInclude Include="SVTaskObject.h" />
+    <ClInclude Include="SVTaskObjectList.h" />
+    <ClInclude Include="SVVirtualCamera.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ResultViewItemDef.cpp" />
+    <ClCompile Include="RunStatus.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SVAcquisitionClass.cpp" />
+    <ClCompile Include="SVAcquisitionDevice.cpp" />
+    <ClCompile Include="SVBarCodeBuffer.cpp" />
+    <ClCompile Include="SVCameraImageTemplate.cpp" />
+    <ClCompile Include="SVCameraInfoStruct.cpp" />
+    <ClCompile Include="SVClassInfoStruct.cpp" />
+    <ClCompile Include="SVDataBuffer.cpp" />
+    <ClCompile Include="SVDigitizerProcessingClass.cpp" />
+    <ClCompile Include="SVFileAcquisitionClass.cpp" />
+    <ClCompile Include="SVGigeCameraManager.cpp" />
+    <ClCompile Include="SVImageBuffer.cpp" />
+    <ClCompile Include="SVImageClass.cpp" />
+    <ClCompile Include="SVImageProcessingClass.cpp" />
+    <ClCompile Include="SVIPResultData.cpp" />
+    <ClCompile Include="SVIPResultItemData.cpp" />
+    <ClCompile Include="SVIPResultItemDefinition.cpp" />
+    <ClCompile Include="SVMainImageClass.cpp" />
+    <ClCompile Include="SVMatroxGigeAcquisitionClass.cpp" />
+    <ClCompile Include="SVMatroxGigeCameraProxy.cpp" />
+    <ClCompile Include="SVObjectAppClass.cpp" />
+    <ClCompile Include="SVTaskObject.cpp" />
+    <ClCompile Include="SVTaskObjectList.cpp" />
+    <ClCompile Include="SVVirtualCamera.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

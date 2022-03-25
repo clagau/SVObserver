@@ -1,0 +1,80 @@
+syntax = "proto3";
+package SvPb;
+
+option java_package = "de.sdm.svrc.proto.v1010";
+
+import "Variant.proto";
+import "SVO-Enum.proto";
+
+message ImageDefinition
+{
+	uint32 objectID = 1;				//ID of the image.
+	bytes type = 2;					//should from struct SVMatroxBufferCreateStruct
+	int32 structID = 3;
+}
+
+message ChildImageDefinition
+{
+	uint32 objectID = 1;			//ID of the image.
+	bytes type = 2;					//should from struct SVMatroxBufferCreateChildStruct
+	int32 structID = 3;				//not used yet
+	uint32 parentImageID = 4;		//ID of the parent image.
+}
+
+message ImageList
+{
+	repeated ImageDefinition list = 1;
+	repeated ChildImageDefinition childList = 2;
+}
+
+message ImageStructData
+{
+	bytes type = 1; //should from struct SVMatroxBufferCreateStruct
+	int32 structID = 2;
+	int32 numberOfBuffersRequired = 3; //number of required buffers
+	int32 numberOfBuffers = 4; //number of buffer avaiable
+	int32 offset = 5;
+	bytes memoryName = 6; //This is the name of the sharedMemory block.
+	bytes imageProps = 7; //should from struct MatroxImageProps (used for sharedMemory)
+}
+
+message ImageStructList
+{
+	repeated ImageStructData list = 1;
+}
+
+message ValueObjectDefinition
+{
+	uint32 objectID = 1;				//ID of the value object
+	string name = 2;				//Value object name
+	SVObjectSubTypeEnum type = 3;	//Value object type
+	string typeString = 4;			//Value object type string
+	fixed32 vtType = 5;				//Value object VT type
+	sfixed32 arraySize = 6;			//Array size for single value = 1
+	sfixed32 memOffset = 7;			//Memory offset of the value object in SM
+}
+
+message DataDefinitionList
+{
+	repeated ValueObjectDefinition list = 1;	//The list of data definitions
+}
+
+message DataList
+{
+	repeated Variant valueList = 1;	//The list of dat values
+}
+
+message InspectionList
+{
+	repeated Inspection list = 1;
+}
+
+message Inspection
+{
+	uint32 id = 1;
+	int32 numberOfRecords = 2;
+	uint32 sizeOfSM = 3;
+	bytes nameOfSM = 4;
+	int32 numberRecordsOfInterest = 5;
+	string name = 6;
+}

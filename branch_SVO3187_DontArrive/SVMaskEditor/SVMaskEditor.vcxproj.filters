@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{56451510-19a9-4db5-9980-782ecf6dd014}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{f035078d-2024-458e-8c9a-d3a1d3f51fb4}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{d4477bd3-eeb1-46f0-b7cf-75028dd21d37}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditor.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditorDialog.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditorWnd.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditorCtrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditorPropPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVScrollWnd1Ctrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVScrollWnd1PropPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SVMaskEditor.def">
+      <Filter>Quelldateien</Filter>
+    </None>
+    <None Include="res\bitmap1.bmp">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\ellipse_.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\filled_e.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\filled_r.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\ico00001.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\pen_icon.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\polygon_.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\polyline.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\rect_ico.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="SVMaskEditor.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="SVMaskEditorCtl.bmp">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\svr.bmp">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="SVScrollWnd1Ctl.bmp">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\SVMaskEditor.rc2">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="SVMaskEditor.odl">
+      <Filter>Quelldateien</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SVMaskEditor.rc">
+      <Filter>Quelldateien</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditor.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditorDialog.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditorWnd.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditorCtrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditorPropPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVScrollWnd1Ctrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVScrollWnd1PropPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resource.h">
+      <Filter>Headerdateien</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

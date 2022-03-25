@@ -1,0 +1,57 @@
+//*****************************************************************************
+/// \copyright (c) 2020,2020 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+/// \file ConfigCommands.proto
+/// Protobuf file for all configuration commands handled by SVObserver
+/// These commands need not be synchronized with any inspections
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+option java_package = "de.sdm.svrc.proto.v1010";
+
+import "BasicStructure.proto";
+
+enum ClipboardActionEnum
+{
+	Copy = 0;
+	Paste = 1;
+	Cut = 2;
+}
+
+//***************************************************************************
+// ConfigCommands
+//***************************************************************************
+message ClipboardRequest
+{
+	ClipboardActionEnum action  = 1;
+	uint32 objectID = 2;					//The object ID to perform the command on
+}
+
+message ConfigDataRequest
+{
+}
+
+message ConfigDataResponse
+{
+	string configFileLoaded = 1;			//The path to the loaded configuration file
+	uint32 lastModified = 2;				//The last modified time stamp
+}
+
+message ConfigCommandRequest
+{
+	oneof message
+	{
+		ClipboardRequest clipboardRequest = 1;
+		ConfigDataRequest configDataRequest = 2;
+	}
+}
+
+message ConfigCommandResponse
+{
+	oneof message
+	{
+		StandardResponse standardResponse = 1;
+		ConfigDataResponse configDataResponse = 2;
+	}
+}

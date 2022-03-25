@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0F85D18D-A756-4009-B7DF-A035ABD9A162}</ProjectGuid>
+    <RootNamespace>SVOGui</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <WarningLevel>Level4</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
+      <AdditionalOptions>/Zm500 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WIN64;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>false</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <WarningLevel>Level4</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
+      <AdditionalOptions>/Zm500 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AuditFilesDialog.cpp" />
+    <ClCompile Include="AuxiliaryExtentsController.cpp" />
+    <ClCompile Include="BlobAnalyzer2Draw.cpp" />
+    <ClCompile Include="BlobAnalyzer2Feature.cpp" />
+    <ClCompile Include="BlobAnalyzer2FeatureSelector.cpp" />
+    <ClCompile Include="BlobAnalyzer2Helper.cpp" />
+    <ClCompile Include="BlobAnalyzer2Range.cpp" />
+    <ClCompile Include="BlobAnalyzer2Sheet.cpp" />
+    <ClCompile Include="BlobAnalyzer2General.cpp" />
+    <ClCompile Include="BlobReconstructFilterDlg.cpp" />
+    <ClCompile Include="CDSVPictureDisplay.cpp" />
+    <ClCompile Include="Custom2FilterDlg.cpp" />
+    <ClCompile Include="Displayhelper.cpp" />
+    <ClCompile Include="DrawTaskTree.cpp" />
+    <ClCompile Include="DrawToolController.cpp" />
+    <ClCompile Include="DrawToolHelper.cpp" />
+    <ClCompile Include="ExternalToolTaskController.cpp" />
+    <ClCompile Include="FormulaController.cpp" />
+    <ClCompile Include="GlobalConstantConflictDlg.cpp" />
+    <ClCompile Include="GlobalConstantDlg.cpp" />
+    <ClCompile Include="ImageController.cpp" />
+    <ClCompile Include="InputConflictDlg.cpp" />
+    <ClCompile Include="LinkedValue.cpp" />
+    <ClCompile Include="LinkedValueSelectorDialog.cpp" />
+    <ClCompile Include="LinkedValueWidgetHelper.cpp" />
+    <ClCompile Include="MaskController.cpp" />
+    <ClCompile Include="NormalizerController.cpp" />
+    <ClCompile Include="PictureDisplay.cpp" />
+    <ClCompile Include="RangeController.cpp" />
+    <ClCompile Include="Ranking2FilterDlg.cpp" />
+    <ClCompile Include="ReconstructFilterDlg.cpp" />
+    <ClCompile Include="ResultTableSelectionDlg.cpp" />
+    <ClCompile Include="SelectToolForNewSourceImageDialog.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SVAdjustToolSizePositionDlg.cpp" />
+    <ClCompile Include="SVBarCodeAttributesDialog.cpp" />
+    <ClCompile Include="SVBarCodeDataMatrixDialog.cpp" />
+    <ClCompile Include="SVBarCodeGeneralDialog.cpp" />
+    <ClCompile Include="SVBarCodeProperties.cpp" />
+    <ClCompile Include="SVBarCodeStringMatchDialog.cpp" />
+    <ClCompile Include="SVBlobAnalyzerDialog.cpp" />
+    <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp" />
+    <ClCompile Include="SVCustomFilterDlg.cpp" />
+    <ClCompile Include="SVCylindricalWarpDlg.cpp" />
+    <ClCompile Include="SVDlgImage.cpp" />
+    <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp" />
+    <ClCompile Include="SVFillBlobDlg.cpp" />
+    <ClCompile Include="SVFormulaEditorPage.cpp" />
+    <ClCompile Include="SVFormulaEditorSheet.cpp" />
+    <ClCompile Include="SVLicenseMgrModelessDlg.cpp" />
+    <ClCompile Include="SVLuminanceAnalyzerDlg.cpp" />
+    <ClCompile Include="SVOCVGeneralDlg.cpp" />
+    <ClCompile Include="SVOCVMatchDlg.cpp" />
+    <ClCompile Include="SVOCVSheet.cpp" />
+    <ClCompile Include="SVPatternAnalyzerModelPage.cpp" />
+    <ClCompile Include="SVPerspectiveWarpPage.cpp" />
+    <ClCompile Include="SVRankingFilterDlg.cpp" />
+    <ClCompile Include="SVSaveToolSetImageDialog.cpp" />
+    <ClCompile Include="SVShowDependentsDialog.cpp" />
+    <ClCompile Include="SVTADlgColorToolPage.cpp" />
+    <ClCompile Include="SVTADlgExternalToolImageSelectPage.cpp" />
+    <ClCompile Include="SVTADlgFileImageSourcePage.cpp" />
+    <ClCompile Include="SVTADlgGeneralPage.cpp" />
+    <ClCompile Include="SVTADlgPassFailPage.cpp" />
+    <ClCompile Include="SVTADlgTransformImagePage.cpp" />
+    <ClCompile Include="SVTextEditDialog.cpp" />
+    <ClCompile Include="SVThickeningFilterDlg.cpp" />
+    <ClCompile Include="SVThinningFilterDlg.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogCommentPage.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogFilterPageClass.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogImagePageClass.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogLinearSpecialPage.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogTwoImagePage.cpp" />
+    <ClCompile Include="SVToolAdjustmentLUTPage.cpp" />
+    <ClCompile Include="SVWaterShedFilterDlg.cpp" />
+    <ClCompile Include="TADialogDrawPage.cpp" />
+    <ClCompile Include="TADialogGroupToolResultPage.cpp" />
+    <ClCompile Include="TADialogLoopToolParameterPage.cpp" />
+    <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
+    <ClCompile Include="TADialogTableDefinesPage.cpp" />
+    <ClCompile Include="TADialogTableParameterPage.cpp" />
+    <ClCompile Include="TADialogGroupToolInputPage.cpp" />
+    <ClCompile Include="TATableAnalyzerPage.cpp" />
+    <ClCompile Include="TATableSourcePage.cpp" />
+    <ClCompile Include="ToolAdjustToolSetPage.cpp" />
+    <ClCompile Include="ToolSizeController.cpp" />
+    <ClCompile Include="ValueEditWidgetHelper.cpp" />
+    <ClCompile Include="ZoomHelper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AuditFilesDialog.h" />
+    <ClInclude Include="AuxiliaryExtentsController.h" />
+    <ClInclude Include="BlobAnalyzer2Draw.h" />
+    <ClInclude Include="BlobAnalyzer2Feature.h" />
+    <ClInclude Include="BlobAnalyzer2FeatureSelector.h" />
+    <ClInclude Include="BlobAnalyzer2General.h" />
+    <ClInclude Include="BlobAnalyzer2Helper.h" />
+    <ClInclude Include="BlobAnalyzer2Range.h" />
+    <ClInclude Include="BlobReconstructFilterDlg.h" />
+    <ClInclude Include="BlobAnalyzer2Sheet.h" />
+    <ClInclude Include="BoundValue.h" />
+    <ClInclude Include="CDSVPictureDisplay.h" />
+    <ClInclude Include="Custom2FilterDlg.h" />
+    <ClInclude Include="DataController.h" />
+    <ClInclude Include="DisplayHelper.h" />
+    <ClInclude Include="DrawTaskTree.h" />
+    <ClInclude Include="DrawToolController.h" />
+    <ClInclude Include="DrawToolHelper.h" />
+    <ClInclude Include="DrawToolHelperStructs.h" />
+    <ClInclude Include="ExternalToolTaskController.h" />
+    <ClInclude Include="FormulaController.h" />
+    <ClInclude Include="GlobalConstantConflictDlg.h" />
+    <ClInclude Include="GlobalConstantDlg.h" />
+    <ClInclude Include="GuiValueHelper.h" />
+    <ClInclude Include="ImageController.h" />
+    <ClInclude Include="InputConflictDlg.h" />
+    <ClInclude Include="ISVPropertyPageDialog.h" />
+    <ClInclude Include="LinkedValue.h" />
+    <ClInclude Include="LinkedValueSelectorDialog.h" />
+    <ClInclude Include="LinkedValueWidgetHelper.h" />
+    <ClInclude Include="MaskController.h" />
+    <ClInclude Include="NormalizerController.h" />
+    <ClInclude Include="PictureDisplay.h" />
+    <ClInclude Include="RangeController.h" />
+    <ClInclude Include="Ranking2FilterDlg.h" />
+    <ClInclude Include="ReconstructFilterDlg.h" />
+    <ClInclude Include="ResultTableSelectionDlg.h" />
+    <ClInclude Include="Sci_Position.h" />
+    <ClInclude Include="SciLexer.h" />
+    <ClInclude Include="Scintilla.h" />
+    <ClInclude Include="SelectToolForNewSourceImageDialog.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVAdjustToolSizePositionDlg.h" />
+    <ClInclude Include="SVBarCodeAttributesDialog.h" />
+    <ClInclude Include="SVBarCodeDataMatrixDialog.h" />
+    <ClInclude Include="SVBarCodeGeneralDialog.h" />
+    <ClInclude Include="SVBarCodeProperties.h" />
+    <ClInclude Include="SVBarCodeStringMatchDialog.h" />
+    <ClInclude Include="SVBlobAnalyzerDialog.h" />
+    <ClInclude Include="SVBlobFeaturePropertiesDlg.h" />
+    <ClInclude Include="SVCustomFilterDlg.h" />
+    <ClInclude Include="SVCylindricalWarpDlg.h" />
+    <ClInclude Include="SVDlgImage.h" />
+    <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h" />
+    <ClInclude Include="SVFillBlobDlg.h" />
+    <ClInclude Include="SVFormulaEditorPage.h" />
+    <ClInclude Include="SVFormulaEditorSheet.h" />
+    <ClInclude Include="SVLicenseMgrModelessDlg.h" />
+    <ClInclude Include="SVLuminanceAnalyzerDlg.h" />
+    <ClInclude Include="SVOCVGeneralDlg.h" />
+    <ClInclude Include="SVOCVMatchDlg.h" />
+    <ClInclude Include="SVOCVSheet.h" />
+    <ClInclude Include="SVPatternAnalyzerModelPage.h" />
+    <ClInclude Include="SVPerspectiveWarpPage.h" />
+    <ClInclude Include="SVRankingFilterDlg.h" />
+    <ClInclude Include="SVSaveToolSetImageDialog.h" />
+    <ClInclude Include="SVShowDependentsDialog.h" />
+    <ClInclude Include="SVTADlgColorToolPage.h" />
+    <ClInclude Include="SVTADlgExternalToolImageSelectPage.h" />
+    <ClInclude Include="SVTADlgFileImageSourcePage.h" />
+    <ClInclude Include="SVTADlgGeneralPage.h" />
+    <ClInclude Include="SVTADlgPassFailPage.h" />
+    <ClInclude Include="SVTADlgTransformImagePage.h" />
+    <ClInclude Include="SVTextEditDialog.h" />
+    <ClInclude Include="SVThickeningFilterDlg.h" />
+    <ClInclude Include="SVThinningFilterDlg.h" />
+    <ClInclude Include="SVToolAdjustmentDialogCommentPage.h" />
+    <ClInclude Include="SVToolAdjustmentDialogFilterPageClass.h" />
+    <ClInclude Include="SVToolAdjustmentDialogImagePageClass.h" />
+    <ClInclude Include="SVToolAdjustmentDialogLinearSpecialPage.h" />
+    <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
+    <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h" />
+    <ClInclude Include="SVToolAdjustmentLUTPage.h" />
+    <ClInclude Include="SVWaterShedFilterDlg.h" />
+    <ClInclude Include="TADialogDrawPage.h" />
+    <ClInclude Include="TADialogGroupToolResultPage.h" />
+    <ClInclude Include="TADialogLoopToolParameterPage.h" />
+    <ClInclude Include="TADialogRingBufferParameterPage.h" />
+    <ClInclude Include="TADialogTableDefinesPage.h" />
+    <ClInclude Include="TADialogTableParameterPage.h" />
+    <ClInclude Include="TADialogGroupToolInputPage.h" />
+    <ClInclude Include="TATableAnalyzerPage.h" />
+    <ClInclude Include="TATableSourcePage.h" />
+    <ClInclude Include="ToolAdjustToolSetPage.h" />
+    <ClInclude Include="TextDefinesSvOg.h" />
+    <ClInclude Include="ToolSizeController.h" />
+    <ClInclude Include="ValueEditWidgetHelper.h" />
+    <ClInclude Include="ValuesAccessor.h" />
+    <ClInclude Include="ZoomHelper.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

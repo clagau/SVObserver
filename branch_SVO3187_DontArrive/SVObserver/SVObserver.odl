@@ -1,0 +1,544 @@
+// SVObserver.odl : type library source for SVObserver.exe
+import "oaidl.idl";
+import "ocidl.idl";
+
+// This file will be processed by the MIDL compiler to produce the
+// type library (SVObserver.tlb).
+
+[ 
+	uuid(F4C4D492-D660-11D0-9B52-00805F717DCE), 
+	version(3.0),
+	helpstring("SVObserver Application Type Library")
+]
+library SVObserver
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	typedef
+	[
+		uuid(64A937A8-3849-49d6-8D90-9881ADF31200),
+    helpstring("SVRemoteCommandDataType Enum"),
+	]
+	enum SVRemoteCommandDataTypes
+	{
+   [helpstring("Unknown")] Unknown = 0,
+   [helpstring("Container")] Container = 1,
+   [helpstring("Value")] Value = 2,
+   [helpstring("Block")] Block = 4,
+   [helpstring("Image")] Image = 8
+	} SVRemoteCommandDataTypeEnum;
+
+	[
+		object,
+		uuid(E5D2A74A-64BF-43d6-BF7A-08C679963B3C),
+		dual,
+		helpstring("ISVRemoteCommandData Interface"),
+		pointer_default(unique)
+	]
+	interface ISVRemoteCommandData : IDispatch
+	{
+		[id(0x8000000), helpstring("method GetDataInformation")] HRESULT GetDataInformation([out] VARIANT* p_pInformation);
+
+		[id(0x8000001), helpstring("method GetDataType")] HRESULT GetDataType([in] BSTR p_Name, [out] long* p_pDataType);
+
+		[id(0x8000002), helpstring("method ConstructCommandData")] HRESULT ConstructCommandData([out] ISVRemoteCommandData** p_ppCommandData);
+
+		[id(0x8000003), helpstring("method GetContainer")] HRESULT GetContainer([in] BSTR p_Name, [out] ISVRemoteCommandData** p_ppContainer );
+		[id(0x8000004), helpstring("method SetContainer")] HRESULT SetContainer([in] BSTR p_Name, [in] ISVRemoteCommandData* p_pContainer );
+
+		[id(0x8000005), helpstring("method GetValue")] HRESULT GetValue([in] BSTR p_Name, [out] VARIANT* p_pValue );
+		[id(0x8000006), helpstring("method SetValue")] HRESULT SetValue([in] BSTR p_Name, [in] VARIANT p_Value );
+
+		[id(0x8000007), helpstring("method GetBlock")] HRESULT GetBlock([in] BSTR p_Name, [out] IStream** p_ppStream );
+		[id(0x8000008), helpstring("method SetBlock")] HRESULT SetBlock([in] BSTR p_Name, [in] IStream* p_pStream );
+
+		[id(0x8000009), helpstring("method GetImage")] HRESULT GetImage([in] BSTR p_Name, [out] IStream** p_ppStream );
+		[id(0x800000A), helpstring("method SetImage")] HRESULT SetImage([in] BSTR p_Name, [in] IStream* p_pStream );
+
+	}
+
+	[
+		object,
+		uuid(78D7E76E-D052-4c4e-9AEA-097E67EEB4C3),
+		dual,
+		helpstring("ISVRemoteCommand Interface"),
+		pointer_default(unique)
+	]
+	interface ISVRemoteCommand : IDispatch
+	{
+		[id(0x7000000), helpstring("method GetCommandType")] HRESULT GetCommandType([out] long* p_CommandType);
+
+		[id(0x7000001), helpstring("method ConstructCommandData")] HRESULT ConstructCommandData([out] ISVRemoteCommandData** p_ppCommandData);
+
+		[id(0x7000002), helpstring("method GetAttributes")] HRESULT GetAttributes([out] ISVRemoteCommandData** p_ppAttributes);
+		[id(0x7000003), helpstring("method SetAttributes")] HRESULT SetAttributes([in] ISVRemoteCommandData* p_pAttributes);
+
+		[id(0x7000004), helpstring("method Execute")] HRESULT Execute();
+
+		[id(0x7000005), helpstring("method GetResults")] HRESULT GetResults([out] ISVRemoteCommandData** p_ppResults);
+	}
+
+	[
+		object,
+		uuid(08B70D4A-F12C-11D4-A927-00106F0309AB),
+		dual,
+		helpstring("ISVCommand Interface"),
+		pointer_default(unique)
+	]
+	interface ISVCommand : IDispatch
+	{
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020000), helpstring("method GetSVIMState")] HRESULT GetSVIMState([out] BSTR *pszXMLData, [out] BSTR *pXMLError);
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020001), helpstring("method PutSVIMConfig")] HRESULT PutSVIMConfig([in] BSTR szXMLData, [out] BSTR *pXMLError);
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020002), helpstring("method GetSVIMConfig")] HRESULT GetSVIMConfig([out] BSTR *pszXMLData, [out] BSTR *pXMLError);
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020003), helpstring("method LoadSVIMConfig")] HRESULT LoadSVIMConfig([in] BSTR szXMLData, [out] BSTR *pXMLError);
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020004), helpstring("method GetSVIMInspectionResults")] HRESULT GetSVIMInspectionResults([in,out] BSTR *pszXMLData, [out] BSTR *pXMLError);
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020005), helpstring("method GetSVIMConfigName")] HRESULT GetSVIMConfigName([out] BSTR *pszXMLData, [out] BSTR *pXMLError);
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020006), helpstring("method PutSVIMFile")] HRESULT PutSVIMFile([in] BSTR szXMLData, [out] BSTR *pXMLError);
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020007), helpstring("method GetSVIMFile")] HRESULT GetSVIMFile([in,out] BSTR * pszXMLData, [out] BSTR* pXMLError);
+		///Depreciated Function returns E_NOTIMPL 
+		[id(0x60020008), helpstring("method SetSVIMState")] HRESULT SetSVIMState([in] BSTR szXMLData, [out] BSTR *pXMLError);
+
+		//Unpacks the configuration file supplied from PutSVIMFile and initiates loading it into SVObserver.
+		//
+		//Parameters:
+		//
+		//bstrConfigFilename - A BSTR containing the filename of the configuration file
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020009), helpstring("method SVPutSVIMConfig")] HRESULT SVPutSVIMConfig([in] long lOffset, [in] long lBlockSize, [in] BSTR *bstrFileData, [in] BOOL bLastFlag);
+
+		//Retrieves the name of the currently loaded configuration from SVObserver.
+		//
+		//Parameters:
+		//
+		//bstrConfigFilename - Pointer to a BSTR that will receive the fully qualified name of the configuration.
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x6002000a), helpstring("method SVGetSVIMConfigName")] HRESULT SVGetSVIMConfigName([out] BSTR *bstrConfigFilename);
+
+		//Retrieve a file from the SVIM.
+		//
+		//Parameters:
+		//
+		//bstrSourceFile - a BSTR containing the name of the file to retreive from the SVIM.
+		//
+		//lOffset - BYTE offset from the beginning of the file for this block
+		//
+		//lBlockSize - Size for this block of data
+		//
+		//bstrFileData - Pointer to a BSTR that will receive the file data block
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x6002000b), helpstring("method SVGetSVIMFile")] HRESULT SVGetSVIMFile([in] BSTR bstrSourceFile, [in] long lOffset, [in,out] long *lBlockSize, [out] BSTR *bstrFileData, [out] long *lLastPacketFlag);
+
+		//Saves a file on the SVIM.
+		//
+		//Parameters:
+		//
+		//bstrDestFile - a BSTR containing the name of the file to write to the SVIM.
+		//
+		//lOffset - BYTE offset from the beginning of the file for this block
+		//
+		//lBlockSize - Size for this block of data
+		//
+		//bstrFileData - a BSTR that contains the file data block
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x6002000c), helpstring("method SVPutSVIMFile")] HRESULT SVPutSVIMFile([in] BSTR bstrDestFile, [in] long lOffset, [in] long lBlockSize, [in] BSTR *bstrFileData);
+
+		//Sets the SVIM state to online of offline
+		//
+		//Parameters:
+		//
+		//bSVIMState - boolean that indicates if the SVIM is to be set Online (TRUE) or Offline (FALSE).
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x6002000d), helpstring("method SVSetSVIMState")] HRESULT SVSetSVIMState([in] unsigned long ulSVIMState);
+
+		//Packs the configuration into the configuration file supplied to be read with GetSVIMFile
+		//
+		//Parameters:
+		//
+		//bstrConfigFilename - A BSTR containing the filename of the configuration file
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x6002000e), helpstring("method SVGetSVIMConfig")] HRESULT SVGetSVIMConfig([in] long lOffset, [in,out] long *lBlockSize, [out] BSTR *bstrFileData, [out] BOOL *bLastFlag);
+
+		//Causes SVObserver to load the specified configuration.
+		//
+		//Parameters:
+		//
+		//bstrConfigFilename - A BSTR containing the filename of the configuration file
+		//
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x6002000f), helpstring("method SVLoadSVIMConfig")] HRESULT SVLoadSVIMConfig([in] BSTR bstrConfigFilename);
+
+		//Retrieve the current inspection results from SVObserver
+		//
+		//Parameters:
+		//
+		//bstrInspection - BSTR that contains the name of the inpection document to get results from.
+		//
+		//bstrXMLResults - Pointer to a BSTR that will receive the inspection results as well-formed XML.
+		//
+		//bstrXMLError - Pointer to a BSTR that will receive error information as well-formed XML
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		 [id(0x60020010), helpstring("method SVGetSVIMInspectionResults")] HRESULT SVGetSVIMInspectionResults([in] BSTR bstrInspection, [out] BSTR *bstrXMLResults);
+
+		//Retrieves the current operating state of the SVIM.
+		//
+		//Parameters:
+		//
+		//ulState - Pointer to a unsigned long where the SVIM state will be stored
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020011), helpstring("method SVGetSVIMState")] HRESULT SVGetSVIMState([out] unsigned long *ulState);
+
+
+		//Retrieves the current server version of the COM subsystem of SVObserver
+		//
+		//Parameters:
+		//
+		//ulVersion - Pointer to an unsigned long where the server version value will be stored
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020012), helpstring("method SVGetSVIMVersion")] HRESULT SVGetSVIMVersion([out] unsigned long *ulVersion);
+
+		//Retrieves the current number of times that SVObserver has gone offline
+		//Remote users can use this to determine if the SVIM has potentially been modified
+		//Then they can call SVGetSVIMConfigPrint and compare the configuration to a known one
+		//
+		//Parameters:
+		//
+		//ulVersion - Pointer to an unsigned long where the offline count will be stored
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020013), helpstring("method SVGetSVIMOfflineCount")] HRESULT SVGetSVIMOfflineCount([out] unsigned long *ulOfflineCount);
+
+		//Retrieves the current configuration print data for the loaded configuration
+		//
+		//Parameters:
+		//
+		//lOffset - BYTE offset from the beginning of the file for this block
+		//
+		//lBlockSize - Size for this block of data
+		//
+		//bstrConfigPrint - Pointer to a BSTR where the config print data will be stored
+		//
+		//bLastFlag - BOOLEAN to determine last block of file
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+
+		[id(0x60020014), helpstring("method SVGetSVIMConfigPrint")] HRESULT SVGetSVIMConfigPrint([in] long lOffset, [in,out] long *lBlockSize, [out] BSTR *bstrConfigPrint, [out] BOOL *bLastFlag);
+
+		//Retrieves a list of images from the last inspection(s) that was run
+		//
+		//Parameters:
+		//
+		//saImageNames - A SAFEARRAY of BSTRs that contains a list of the names of the images to get
+		//
+		//saImages - A Pointer to a SAFEARRAY of BSTRs that contains a list of the bits of the images
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020015), helpstring("method SVGetImageList")] HRESULT SVGetImageList([in] SAFEARRAY(BSTR) saImageNames, [in] long lCompression, [in,out] SAFEARRAY(BSTR)* psaImages, [in,out] SAFEARRAY(BSTR)* psaOverlays, [in,out] SAFEARRAY(LONG)* psaStatus, [in,out] SAFEARRAY(LONG)* psaProcCounts);
+
+		[id(0x60020016), helpstring("method SVRegisterStream (out of order)")] HRESULT SVRegisterStream([in]SAFEARRAY(BSTR) saNames, [in]VARIANT vInterface, [in,out] SAFEARRAY(long) *psaStatus);
+
+		[id(0x60020017), helpstring("method SVUnRegisterStream (out of order)")] HRESULT SVUnRegisterStream([in] VARIANT vInterface);
+
+		[id(0x60020018), helpstring("method SVGetProductDataList")] HRESULT SVGetProductDataList([in] long lProcessCount, [in] SAFEARRAY(BSTR) saNames, [in,out] SAFEARRAY(BSTR)* psaData, [in,out] SAFEARRAY(LONG)* psaStatus);
+
+		[id(0x60020019), helpstring("method SVGetProductImageList")] HRESULT SVGetProductImageList([in] long lProcessCount, [in] SAFEARRAY(BSTR) saNames, [in] long lCompression, [in,out] SAFEARRAY(BSTR)* psaImages, [in,out] SAFEARRAY(BSTR)* psaOverlays, [in,out] SAFEARRAY(LONG)* psaStatus);
+
+		[id(0x6002001a), helpstring("method SVGetDataList")] HRESULT SVGetDataList([in]SAFEARRAY(BSTR) saNames, [in,out]SAFEARRAY(BSTR)* psaValues, [in,out]SAFEARRAY(long) *psaStatus, [in,out] SAFEARRAY(LONG)* psaProcCounts);
+
+		[id(0x6002001b), helpstring("method SVRunOnce")] HRESULT SVRunOnce ([in]BSTR bstrNameOfIPToRun);
+
+		[id(0x6002001c), helpstring("method SVSetSourceImage")]HRESULT SVSetSourceImage ([in]BSTR bstrImageName, [in]BSTR bstrImage);
+
+		[id(0x6002001d), helpstring("method SVSetInputs")]HRESULT SVSetInputs ([in]SAFEARRAY(BSTR) saNames, [in]SAFEARRAY(BSTR) saValues, [in,out] SAFEARRAY(long)* psaStatus);
+
+		[id(0x6002001e), helpstring("method SVGetLUT")] HRESULT SVGetLUT([in] BSTR bstrCameraName, [in, out] SAFEARRAY(ULONG)* paulLUTTable);
+
+		[id(0x6002001f), helpstring("method SVSetLUT")] HRESULT SVSetLUT([in] BSTR bstrCameraName, [in] SAFEARRAY(ULONG) aulLUTTable);
+
+		[id(0x60020020), helpstring("method SVSetImageList")] HRESULT SVSetImageList([in] SAFEARRAY(BSTR) saNames, [in] SAFEARRAY(BSTR) saImages, [in,out] SAFEARRAY(long)* psaStatus);
+
+		[id(0x60020021), helpstring("method SVSetToolParameterList")] HRESULT SVSetToolParameterList([in] SAFEARRAY(BSTR) saNames, [in] SAFEARRAY(BSTR) saValues, [in,out] SAFEARRAY(long)* psaStatus);
+
+		[id(0x60020022), helpstring("method SVLockImage (out of order)")] HRESULT SVLockImage([in] long lindex, [in] long lProcessCount, [in] BSTR strName);
+
+		[id(0x60020023), helpstring("method SVGetLockedImage (out of order)")] HRESULT SVGetLockedImage([in] long lindex, [in] long lCompression, [in,out] BSTR *bsImage, [in,out] BSTR *bsOverlay);
+
+		[id(0x60020024), helpstring("method SVUnlockImage (out of order)")] HRESULT SVUnlockImage([in] long lindex);
+
+		[id(0x60020025), helpstring("method SVUnlockAllImages (out of order)")] HRESULT SVUnlockAllImages();
+
+		//Retrieves a count of the number of Remote Inputs that are available
+		//
+		//Parameters:
+		//
+		//lCount - A Pointer to a long that will contain the returned count
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020026), helpstring("method SVGetRemoteInputCount")] HRESULT SVGetRemoteInputCount([out] long *lCount);
+
+		//Sets a Remote Input at the specified index to the specified value
+		//
+		//Parameters:
+		//
+		//lIndex - A long that contains the index of the Remote Input to set
+		//
+		//bstrValue - A BSTR that contains the value to set in the Remote Input
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020027), helpstring("method SVSetRemoteInput")] HRESULT SVSetRemoteInput([in] long lIndex, [in] VARIANT vtValue);
+
+		// New functions to support Matrox Font Aalyzers - // Stage 1 runtime only, no setup.
+		[id(0x60020028), helpstring("method SVConnectFont (out of order)")] HRESULT SVConnectFont([in,out]long* lFontIdentifier);
+
+		[id(0x60020029), helpstring("method SVDisconnectFont (out of order)")] HRESULT SVDisconnectFont([in]long lFontIdentifier);
+
+		[id(0x6002002a), helpstring("method SVGetCellSize (out of order)")] HRESULT SVGetCellSize([in]long lFontIdentifier, [in,out]long* plWidth, [in,out]long* plHeight, [in,out]long* plSpacing);
+
+		[id(0x6002002b), helpstring("method SVSetCellSize (out of order)")] HRESULT SVSetCellSize([in]long lFontIdentifier, [in]long lWidth, [in]long lHeight);
+
+		[id(0x6002002c), helpstring("method SVGetSearchSettings (out of order)")] HRESULT SVGetSearchSettings([in]long lFontIdentifier, [in,out]long* plLength, [in,out]double* pdStringAcceptance, [in,out]double* pdCharacterAcceptance, [in,out]BSTR* pbstrInvalidCharacter, [in,out]BSTR* pbstrSearchSpeed);
+
+		[id(0x6002002d), helpstring("method SVSetSearchSettings (out of order)")] HRESULT SVSetSearchSettings([in]long lFontIdentifier, [in]long lLength, [in]double dStringAcceptance, [in]double dCharacterAcceptance, [in]BSTR bstrInvalidCharacter, [in]BSTR bstrSearchSpeed);
+
+		[id(0x6002002e), helpstring("method SVGetPositionVariance (out of order)")] HRESULT SVGetPositionVariance([in]long lFontIdentifier, [in,out]double* pdXDirection, [in,out]double* pdYDirection);
+	 
+		[id(0x6002002f), helpstring("method SVSetPositionVariance (out of order)")] HRESULT SVSetPositionVariance([in]long lFontIdentifier, [in]double dXDirection, [in]double dYDirection);
+
+		[id(0x60020030), helpstring("method SVGetSearchAngleSettings (out of order)")] HRESULT SVGetSearchAngleSettings([in]long lFontIdentifier, [in,out]double* pdSearchAngle, [in,out]long* plInterpolation, [in,out]double* pdDeltaPositive, [in,out]double* pdDeltaNegative);
+
+		[id(0x60020031), helpstring("method SVSetSearchAngleSettings (out of order)")] HRESULT SVSetSearchAngleSettings([in]long lFontIdentifier, [in]double dSearchAngle, [in]long lInterpolation, [in]double dDeltaPositive, [in]double dDeltaNegative);
+
+		[id(0x60020032), helpstring("method SVGetCharacterEnhancementSettings (out of order)")] HRESULT SVGetCharacterEnhancementSettings([in]long lFontIdentifier, [in,out]long* plMorphIterations, [in,out]double* pdThickenCharacters, [in,out]long* plBrokenCharacters, [in,out]long* plTouchingCharacters);
+
+		[id(0x60020033), helpstring("method SVSetCharacterEnhancementSettings (out of order)")] HRESULT SVSetCharacterEnhancementSettings([in]long lFontIdentifier, [in]long lMorphIterations, [in]double dThickenCharacters, [in]long lBrokenCharacters, [in]long lTouchingCharacters);
+
+		[id(0x60020034), helpstring("method SVLoadFont (out of order)")] HRESULT SVLoadFont([in]long lFontIdentifier, [in]BSTR bstrFontFile, [in]BSTR bstrFontControls, [in]BSTR bstrFontConstraints);
+
+		[id(0x60020035), helpstring("method SVSaveFont (out of order)")] HRESULT SVSaveFont([in]long lFontIdentifier, [in,out]BSTR* bstrFontFile, [in,out]BSTR* bstrFontControls, [in,out]BSTR* bstrFontConstraints);
+
+		[id(0x60020036), helpstring("method SVCalibrateFont (out of order)")] HRESULT SVCalibrateFont([in]long lFontIdentifier, [in]BSTR bstrCalibrateString, [in]BSTR bstrCalibrateImage, [in]double dXMinSize, [in]double dXMaxSize, [in]double dXStepSize, [in]double dYMinSize, [in]double dYMaxSize, [in]double dYStepSize);
+
+		[id(0x60020037), helpstring("method SVReadString (out of order)")] HRESULT SVReadString([in]long lFontIdentifier, [in,out]BSTR* bstrFoundString, [in]BSTR bstrReadImage, [in,out]double* dMatchScore);
+
+		[id(0x60020038), helpstring("method SVVerifyString (out of order)")] HRESULT SVVerifyString([in]long lFontIdentifier, [in]BSTR bstrVerifyString, [in]BSTR bstrVerifyImage, [in,out]double* dMatchScore);
+
+		[id(0x60020039), helpstring("method SVGetConstraints (out of order)")] HRESULT SVGetConstraints([in]long lFontIdentifier, [in,out]long* plPosition, [in,out]long* plType, [in,out]BSTR* pbstrValues);
+
+		[id(0x6002003a), helpstring("method SVSetConstraints (out of order)")] HRESULT SVSetConstraints([in]long lFontIdentifier, [in]long lPosition, [in]long lType, [in]BSTR bstrValues);
+
+		[id(0x6002003b), helpstring("method SVCreateNew (out of order)")] HRESULT SVCreateNew([in]long lFontIdentifier, [in]BSTR bstrImage);
+
+		[id(0x6002003c), helpstring("method SVSetTrainingImage (out of order)")] HRESULT SVSetTrainingImage([in]long lFontIdentifier, [in]BSTR bstrImage);
+
+		[id(0x6002003d), helpstring("method SVAddCharacter (out of order)")] HRESULT SVAddCharacter([in]long lFontIdentifier, [in]long lXPosition, [in]long lYPosition, [in]long lHeight, [in]long lWidth, [in]BSTR bstrLabel, [out]long *lCharID);
+
+		[id(0x6002003e), helpstring("method SVAddCharacters (out of order)")] HRESULT SVAddCharacters([in]long lFontIdentifier, [in]BSTR bstrLabelList);
+
+		[id(0x6002003f), helpstring("method SVDeleteCharacters (out of order)")] HRESULT SVDeleteCharacters([in]long lFontIdentifier, [in]SAFEARRAY(long) psaCharIds);
+
+		[id(0x60020040), helpstring("method SVThresholdImage (out of order)")] HRESULT SVThresholdImage([in]long lFontIdentifier, [in]BSTR bstrImage, [in]long lThreshold, [in,out]BSTR* pbstrThresholdImage);
+
+		[id(0x60020041), helpstring("method SVGetFontCharacterCount (out of order)")] HRESULT SVGetFontCharacterCount([in]long lFontIdentifier, [in,out]long* plCharacterCount);
+
+		[id(0x60020042), helpstring("method SVGetFontCharacter (out of order)")] HRESULT SVGetFontCharacter([in]long lFontIdentifier, [in]long lID, [in,out]BSTR* pbstrLabelImage);
+
+		[id(0x60020043), helpstring("method SVGetStringLength (out of order)")] HRESULT SVGetStringLength([in]long p_lFontIdentifier, [in,out]double* p_pdLength );
+
+		[id(0x60020044), helpstring("method SVSetStringLength (out of order)")] HRESULT SVSetStringLength([in]long p_lFontIdentifier, [in]double p_dLength );
+
+		//Sets the current operating Mode of the SVIM.
+		//
+		//Parameters:
+		//
+		//ulSVIMMode - an unsigned long with the new SVIM Mode
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020045), helpstring("method SVSetSVIMMode")] HRESULT SVSetSVIMMode([in] unsigned long ulSVIMMode);
+
+		//Gets the current operating Mode of the SVIM.
+		//
+		//Parameters:
+		//
+		//ulSVIMMode - a pointer to an unsigned long where the SVIM Mode will be stored.
+		//
+		//Return Values:
+		//
+		//S_OK indicates success.
+		[id(0x60020046), helpstring("method SVGetSVIMMode")] HRESULT SVGetSVIMMode([out] unsigned long *ulSVIMMode);
+
+
+		///////////////////////////////////////////////////////////////////////////////////////
+		// Conditional History functions
+
+		[id(0x60020047), helpstring("method SVSetConditionalHistoryProperties")]
+		HRESULT SVSetConditionalHistoryProperties([in] BSTR bstrInspectionName, [in]     SAFEARRAY(BSTR)  saNames,  [in]     SAFEARRAY(BSTR)  saValues,  [in,out] SAFEARRAY(long)* psaStatus);
+
+		[id(0x60020048), helpstring("method SVGetConditionalHistoryProperties")]
+		HRESULT SVGetConditionalHistoryProperties([in] BSTR bstrInspectionName, [in,out] SAFEARRAY(BSTR)* psaNames, [in,out] SAFEARRAY(BSTR)* psaValues, [in,out] SAFEARRAY(long)* psaStatus);
+
+		[id(0x60020049), helpstring("method SVSetConditionalHistoryList")]
+		HRESULT SVSetConditionalHistoryList([in] BSTR bstrInspectionName, [in] SAFEARRAY(BSTR) saValueNames, [in] SAFEARRAY(BSTR) saImageNames, [in] SAFEARRAY(BSTR) saConditionalNames, [in,out] SAFEARRAY(long)* psaValueStatus, [in,out] SAFEARRAY(long)* psaImageStatus, [in,out] SAFEARRAY(long)* psaConditionalStatus);
+
+		[id(0x6002004A), helpstring("method SVGetConditionalHistoryList")]
+		HRESULT SVGetConditionalHistoryList([in] BSTR bstrInspectionName, [in,out] SAFEARRAY(BSTR)* psaValueNames, [in,out] SAFEARRAY(BSTR)* psaImageNames, [in,out] SAFEARRAY(BSTR)* psaConditionalNames, [in,out] SAFEARRAY(long)* psaValueStatus, [in,out] SAFEARRAY(long)* psaImageStatus, [in,out] SAFEARRAY(long)* psaConditionalStatus );
+		
+		[id(0x6002004B), helpstring("method SVGetConditionalHistoryAndClear")]
+		HRESULT SVGetConditionalHistoryAndClear(
+			[in] BSTR bstrInspectionName, [in] long lCompression,
+			[in,out] SAFEARRAY(BSTR)* psaImageNames, [in,out] SAFEARRAY(BSTR)* psaImages, [in,out] SAFEARRAY(BSTR)* psaOverlays,
+			[in,out] SAFEARRAY(BSTR)* psaValueNames, [in,out] SAFEARRAY(BSTR)* psaValues,
+			[in,out] SAFEARRAY(BSTR)* psaConditionalNames, [in,out] SAFEARRAY(BSTR)* psaConditionalValues,
+			[in,out] SAFEARRAY(LONG)* psaImageStatus, [in,out] SAFEARRAY(LONG)* psaValueStatus, [in,out] SAFEARRAY(LONG)* psaConditionalStatus,
+			[in,out] SAFEARRAY(LONG)* psaProcessCount);
+
+		[id(0x6002004C), helpstring("method SVGetMostRecentConditionalHistory")]
+		HRESULT SVGetMostRecentConditionalHistory(
+			[in] BSTR bstrInspectionName, [in] long lCompression,
+			[in,out] SAFEARRAY(BSTR)* psaImageNames, [in,out] SAFEARRAY(BSTR)* psaImages, [in,out] SAFEARRAY(BSTR)* psaOverlays,
+			[in,out] SAFEARRAY(BSTR)* psaValueNames, [in,out] SAFEARRAY(BSTR)* psaValues,
+			[in,out] SAFEARRAY(BSTR)* psaConditionalNames, [in,out] SAFEARRAY(BSTR)* psaConditionalValues,
+			[in,out] SAFEARRAY(LONG)* psaImageStatus, [in,out] SAFEARRAY(LONG)* psaValueStatus, [in,out] SAFEARRAY(LONG)* psaConditionalStatus,
+			[in,out] long* plProcessCount);
+
+		////////////////////////////////////////////////////////////////////////////////////////
+
+		////////New Font Methods////////////////////////////////////////////////////////////////
+		[id(0x6002004D), helpstring("method SVLoadFontImage (out of order)")]
+		HRESULT SVLoadFontImage([in]long lFontIdentifier, [in]BSTR bstrVerifyString);
+		[id(0x6002004E), helpstring("method SVGetFontCharacterList (out of order)")]
+		HRESULT SVGetFontCharacterList([in] long lFontIdentifier, [out]BSTR *bstrCharacterList, [in,out] SAFEARRAY(long)* psaCharIds);
+		[id(0x6002004F), helpstring("method SVGetExpectedTargetCharacterSize (out of order)")]
+		HRESULT SVGetExpectedTargetCharacterSize([in] long p_lFontIdentifier, [out]long *plWidth, [out]long *plHeight);
+		[id(0x60020050), helpstring("method SVGetFontCharacterSize (out of order)")]
+		HRESULT SVGetFontCharacterSize([in] long p_lFontIdentifier, [out]long *plWidth, [out]long *plHeight);
+		// **********************************************************************************
+		//////// *********** Transfer Definition List Functions ************** //////////////
+		[id(0x60020051), helpstring("method SVGetTransferValueDefinitionList")]
+		HRESULT SVGetTransferValueDefinitionList( [in]BSTR bstrInspectionName, 
+												  [in, out] long* plVersion,
+												  [in, out]VARIANT* psaData);
+
+		[id(0x60020052), helpstring("method SVGetTransferImageDefinitionList")]
+		HRESULT SVGetTransferImageDefinitionList( [in]BSTR bstrInspectionName, 
+												  [in, out]long* plVersion,
+												  [in, out]VARIANT* psaData);
+
+		[id(0x60020053), helpstring("method SVConstructCommand (out of order)")]
+		HRESULT SVConstructCommand( [in]long p_CommandType, [out]ISVRemoteCommand** p_ppCommand );
+
+		[id(0x60020054), helpstring("method SVIsAvailiable")] 
+		HRESULT SVIsAvailiable();
+
+		/////////////////////////////////////////////////////////////////////////////////////
+		// **********************************************************************************
+	};
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+	[
+		uuid(339F864A-8868-4432-8B6B-930A25F15CE0),
+		helpstring("_ISVCommandEvents Interface"),
+		oleautomation
+	]
+	interface _ISVCommandEvents : IUnknown
+	{
+		[helpstring("method StreamingData")] HRESULT StreamingData([in] SAFEARRAY(LONG) saProcessCount, [in] SAFEARRAY(BSTR) saNames, [in] SAFEARRAY(BSTR) saValues);
+		[helpstring("method TestConnection")] HRESULT TestConnection();
+	};
+
+	[
+		uuid(303A838C-F63D-40ba-8B34-599F292F500F),
+		helpstring("_ISVCommandObserverEvents Interface"),
+		oleautomation
+	]
+	interface _ISVCommandObserverEvents : IUnknown
+	{
+		[id(0x71000001), helpstring("method IsValidObserver")]
+		HRESULT IsValidObserver([in] VARIANT p_NotificationType);
+
+		[id(0x71000002), helpstring("method NotifyObserver")]
+		HRESULT NotifyObserver([in] ISVRemoteCommandData* p_pResults);
+	};
+
+	[
+		uuid(055EC4AE-9258-4f12-B251-E975374021C4),
+		helpstring("SVRemoteCommandData Class")
+	]
+	coclass SVRemoteCommandData
+	{
+		[default] interface ISVRemoteCommandData;
+	};
+
+	[
+		uuid(32E71194-EDC0-4f65-8237-84EF98C5BEEB),
+		helpstring("SVRemoteCommand Class")
+	]
+	coclass SVRemoteCommand
+	{
+		[default] interface ISVRemoteCommand;
+
+	};
+
+	[
+		uuid(AF992A35-F07B-11D4-A927-00106F0309AB),
+		helpstring("SVCommand Class")
+	]
+	coclass SVCommand
+	{
+		[default] interface ISVCommand;
+		[default, source] interface _ISVCommandEvents;
+		[source] interface _ISVCommandObserverEvents;
+
+	};
+
+};

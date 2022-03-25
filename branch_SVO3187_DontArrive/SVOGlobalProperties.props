@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <PROTOBUF_VER>protobuf-3.17.0</PROTOBUF_VER>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;$(PATH_3RDPARTY)\Matrox\MIL10SP2102_64bit\Include;$(PATH_3RDPARTY)\protobuf\protobuf-3.17.0\include;$(PATH_3RDPARTY)\boost_1_76_0;$(PATH_3RDPARTY)\tcl_5.3.2;$(PATH_3RDPARTY)\rapidjson-1.1.0\include;$(PATH_3RDPARTY)\openssl-1.1.0i\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>TRACE_FAILURE;SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\Matrox\MIL10SP2102_64bit\Lib;$(PATH_3RDPARTY)\boost_1_76_0\stage\x64;$(PATH_3RDPARTY)\protobuf\protobuf-3.17.0\lib\Debug;$(PATH_3RDPARTY)\openssl-1.1.0i\lib\debug\x64;C:\Program Files (x86)\Visual Leak Detector\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\Matrox\MIL10SP2102_64bit\Lib;$(PATH_3RDPARTY)\boost_1_76_0\stage\x64;$(PATH_3RDPARTY)\protobuf\protobuf-3.17.0\lib\Release;$(PATH_3RDPARTY)\openssl-1.1.0i\lib\release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Link>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\boost_1_76_0\stage\win32;$(PATH_3RDPARTY)\protobuf\protobuf-3.17.0\lib32\Release;$(PATH_3RDPARTY)\openssl-1.1.0i\lib\release\win32;$(LibraryPath)</AdditionalLibraryDirectories>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>TRACE_FAILURE;SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Link>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\boost_1_76_0\stage\win32;$(PATH_3RDPARTY)\protobuf\protobuf-3.17.0\lib32\Debug;$(PATH_3RDPARTY)\openssl-1.1.0i\lib\debug\win32;$(LibraryPath)</AdditionalLibraryDirectories>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>TRACE_FAILURE;SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="PROTOBUF_VER">
+      <Value>$(PROTOBUF_VER)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

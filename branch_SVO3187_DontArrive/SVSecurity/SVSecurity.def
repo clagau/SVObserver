@@ -1,0 +1,6 @@
+; SVSecurity.def : Declares the module parameters for the DLL.
+
+LIBRARY      "SVSecurity"
+
+EXPORTS
+    ; Explicit exports can go here
