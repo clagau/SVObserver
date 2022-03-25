@@ -1,1 +1,0 @@
-define({r:0.5,st:'Stem',n:1,t:[0],m:[],u:['../Content/General structure/General structure.htm'],s:['$','entité','ownership','visual'],p:[['$',43],['and',39],['box',32],['contributions',61],['during',17],['gdftrace',45],['indemnity',60],['limited',44],['notices',41],['overlay',32],['reconnaît',44],['software',4],['the',32],['top',17],['with',44]]});

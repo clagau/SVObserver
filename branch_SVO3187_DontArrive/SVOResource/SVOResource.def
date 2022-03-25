@@ -1,6 +1,0 @@
-; SVOResource.def : Deklariert die Modulparameter für die DLL.
-
-LIBRARY
-
-EXPORTS
-    ; Explizite Exporte können hier eingefügt werden.

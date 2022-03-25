@@ -1,1 +1,0 @@
-c:\SVObserver\bin\SVFinishSetup2.cmd
