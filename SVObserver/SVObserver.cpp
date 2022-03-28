@@ -1389,7 +1389,7 @@ void SVObserverApp::Start(DWORD desiredState)
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-	if (pConfig != nullptr)
+	if (pConfig != nullptr  && SV_STATE_RUNNING == desiredState)
 	{
 		executePreOrPostExecutionFile(pConfig->getPreRunExecutionFilePath());
 	}
