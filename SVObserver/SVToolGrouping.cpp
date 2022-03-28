@@ -155,7 +155,7 @@ std::string SVToolGrouping::determineToolnameWithUniqueIndex(const std::string& 
 	std::transform(rName.begin(), rName.end(), std::back_inserter(lowercaseBaseName), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 
 	//This strips any numbers at the end of the name
-	size_t last_char_pos = lowercaseBaseName.find_last_not_of(_T("0123456789"));
+	size_t last_char_pos = lowercaseBaseName.find_last_not_of(_T("0123456789")); 
 	if (last_char_pos != std::string::npos)
 	{
 		lowercaseBaseName = lowercaseBaseName.substr(0, last_char_pos + 1);

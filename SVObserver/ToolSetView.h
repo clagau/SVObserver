@@ -143,7 +143,7 @@ protected:
 	//! \param lpExclude [in] if not null and the name is found (case sensitive)  this is ignored 
 	//! \returns bool  bool true if the name is unique 
 	//************************************
-	bool CheckName(const std::string& rName, LPCTSTR lpExclude = nullptr) const;
+	bool CheckToolName(const std::string& rToolName, LPCTSTR lpExclude = nullptr) const;
 	/// Editing the comment of grouping start or grouping end
 	bool EditToolGroupingComment(const std::string& groupingName);
 	

@@ -70,7 +70,7 @@ public:
 	void EnsureOneIsSelected();
 
 	void GetSelectedItemScreenPosition(POINT& rPoint) const;
-	void DeselectContentOfSelectedItems();
+	void UndoSubSelectionsAllItems();
 
 	void SaveScrollPos();
 	void RestoreScrollPos();
@@ -105,7 +105,7 @@ protected:
 	void CollapseItem(int item);
 	void ExpandItem(int item);
 
-	void DeselectContentOfItem(int index);
+	void UndoSubSelections(int index);
 
 	CImageList m_ImageList;
 	int m_iNone;

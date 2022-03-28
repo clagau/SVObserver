@@ -97,6 +97,8 @@ namespace SvXml
 		//************************************
 		virtual SVBranchHandle findBranch( const SVBranchHandle pParent, LPCTSTR Name ) override;
 
+		std::vector<SVBranchHandle> getSubbranches(const SVBranchHandle pParent);
+
 		//************************************
 		//! Method to check if branch is valid
 		//! \param pParent [in] handle to the parent branch

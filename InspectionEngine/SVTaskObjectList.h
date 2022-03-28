@@ -71,11 +71,10 @@ public:
 
 	virtual void SetDisabled() override;
 
-	const std::string checkName( LPCTSTR ToolName ) const;
+	std::string createUniqueToolName(const std::string& rToolName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname = nullptr) const;
 	//insensitive compare with name in m_TaskObjectVector
-	bool IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const;
+	bool IsNameUnique(LPCSTR  pName, LPCTSTR pExclude = nullptr) const;
 
-	const std::string  MakeUniqueToolName(LPCTSTR ToolName) const;
 	virtual void setEditModeFreezeFlag(bool flag) override;
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) override;
 	virtual void goingOffline() override;

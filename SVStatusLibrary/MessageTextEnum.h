@@ -476,6 +476,7 @@ enum MessageTextEnum
 	Tid_WrongValueType,
 	Tid_InvalidOrRecursiveLinkedObject,
 	Tid_WrongInspection,
+	Tid_Invalid_Inspection,
 	Tid_NoShapeHelper,
 	Tid_NoCameraToMainImage,
 	Tid_NotImageTypePhysical,

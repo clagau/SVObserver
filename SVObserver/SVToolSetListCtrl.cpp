@@ -690,18 +690,17 @@ uint32_t SVToolSetListCtrl::Get1stSelToolId() const
 }
 
 
-
-void SVToolSetListCtrl::DeselectContentOfSelectedItems()
+void SVToolSetListCtrl::UndoSubSelectionsAllItems()
 {
 	int index = -1;
 	while (index = GetNextItem(index, LVNI_SELECTED), index > -1)
 	{
-		DeselectContentOfItem(index);
+		UndoSubSelections(index);
 	}
 }
 
 
-void SVToolSetListCtrl::DeselectContentOfItem(int index)
+void SVToolSetListCtrl::UndoSubSelections(int index)
 {
 	auto indentation = GetNavigatorElementIndentation(index);
 

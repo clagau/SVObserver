@@ -205,6 +205,7 @@ namespace  SvXml
 	/// These are tool copy / paste tags
 	constexpr const char* ToolCopyTag = _T( "Tool-Copy" );
 	constexpr const char* ToolsTag = _T( "Tools" );
+	constexpr const char* ClassIdTag = _T("ClassID");
 	constexpr const char* ToolTypeTag = _T( "ToolType" );
 	constexpr const char* InputImageTag = _T("InputImage%d");
 	constexpr const char* FullToolNameTag = _T("FullToolName");

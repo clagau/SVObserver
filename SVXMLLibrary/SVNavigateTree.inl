@@ -95,10 +95,16 @@ namespace  SvXml
 	}
 
 	template< typename SVTreeType >
-	bool SVNavigateTree::GetItemBranch( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVBranchHandle& rpBranch )
+	bool SVNavigateTree::GetItemBranch(SVTreeType& rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVBranchHandle& rpBranch)
 	{
-		rpBranch = rTree.findBranch( pParent, Name );
+		rpBranch = rTree.findBranch(pParent, Name);
 		return (nullptr != rpBranch);
+	}
+
+	template< typename SVTreeType >
+	std::vector<typename SVTreeType::SVBranchHandle> SVNavigateTree::findSubbranches(SVTreeType& rTree, typename SVTreeType::SVBranchHandle pParent)
+	{
+		return rTree.getSubbranches(pParent);
 	}
 
 	template< typename SVTreeType >

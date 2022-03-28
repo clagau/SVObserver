@@ -398,7 +398,7 @@ void ToolSetView::OnClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 	CWaitCursor l_cwcMouse;
 
-	m_toolSetListCtrl.DeselectContentOfSelectedItems();
+	m_toolSetListCtrl.UndoSubSelectionsAllItems();
 
 	// Run the toolset once to update the images/results.
 	// 16 Dec 1999 - frb. (99)
@@ -412,6 +412,8 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* , LRESULT* pResult)
 	{
 		return;
 	}
+
+	m_toolSetListCtrl.UndoSubSelectionsAllItems();
 
 	// Get the tool selected from tool list and make it the currently selected tool.
 	SVIPDoc* pCurrentDocument = GetIPDoc();
@@ -868,7 +870,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 			case NavElementType::StartGrouping:
 			case NavElementType::EndGrouping:
 			{
-				if (!CheckName(NewText, m_LabelSaved.c_str()))
+				if (!CheckToolName(NewText, m_LabelSaved.c_str()))
 				{
 					m_duplicateName = NewText;
 					m_showDuplicateNameMessage = true;
@@ -880,7 +882,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 			case NavElementType::SubLoopTool:
 				IsSubTool = true;
 				pLoopGroupTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(pNavElement->m_OwnerId));
-				if (nullptr == pLoopGroupTool || (SvPb::GroupToolObjectType != pLoopGroupTool->GetObjectSubType() && SvPb::LoopToolObjectType != pLoopGroupTool->GetObjectSubType()))
+				if (nullptr == pLoopGroupTool || (false == pLoopGroupTool->isLoopOrGroupTool()))
 				{
 					pLoopGroupTool = nullptr;
 				}
@@ -900,7 +902,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 				}
 				else if (!IsSubTool)
 				{
-					IsNameOk = CheckName(NewText, m_LabelSaved.c_str());
+					IsNameOk = CheckToolName(NewText, m_LabelSaved.c_str());
 				}
 				if (IsNameOk)
 				{
@@ -1279,14 +1281,14 @@ void ToolSetView::removeParameter2MonitorList(LPCTSTR ppqName)
 	}
 }
 
-bool ToolSetView::CheckName(const std::string& rName, LPCTSTR pExclude) const
+bool ToolSetView::CheckToolName(const std::string& rToolName, LPCTSTR pExclude) const
 {
 	bool bNameOk = true;
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
 	{
 		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		bNameOk = rGroupings.IsNameUnique(rName, pExclude);
+		bNameOk = rGroupings.IsNameUnique(rToolName, pExclude);
 	}
 	return bNameOk;
 }

@@ -219,8 +219,8 @@ int  SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, SVTaskObjectCl
 		return -1;
 	}
 
-	// Check for Unique names ??
-	const std::string NewName(checkName(pTaskObject->GetName()));
+	// Check for unique names ??
+	auto NewName = createUniqueToolName(pTaskObject->GetName());
 	if (NewName != pTaskObject->GetName())
 	{
 		pTaskObject->SetName(NewName.c_str());
@@ -269,8 +269,8 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 		return -1;
 	}
 
-	// Check for Unique names 
-	const std::string NewName( checkName( pTaskObject->GetName() ) );
+	// Check for unique names 
+	auto NewName = createUniqueToolName(pTaskObject->GetName());
 	if( NewName != pTaskObject->GetName() )
 	{
 		pTaskObject->SetName( NewName.c_str() );
@@ -338,42 +338,23 @@ bool SVTaskObjectListClass::IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const
 	return bRetVal;
 }
 
-const std::string  SVTaskObjectListClass::MakeUniqueToolName(LPCTSTR ToolName) const
-{
-	bool found(false);
-	for (const auto pObj : m_TaskObjectVector)
-	{
-		if (nullptr != pObj)
-		{
-			if (0 == _tcscmp(pObj->GetName(), ToolName))
-			{
-				found = true;
-				break;
-			}
-
-		}
-	 }
-	if (!found)
-	{
-		return ToolName;
-	}
-	
-	std::string ToolNameCore = ToolName;
-
-	//This strips any numbers at the end of the name
-	 auto pos = ToolNameCore.find_last_not_of(_T("0123456789"));
-	if (pos  != std::string::npos)
-	{
-		ToolNameCore = ToolNameCore.substr(0, pos + 1);
-	}
-	return checkName(ToolNameCore.c_str());
-
-}
-
-const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
+std::string SVTaskObjectListClass::createUniqueToolName(const std::string& rToolName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
 {
 	std::string objectName;
-	std::string newName( ToolName );
+
+	//This strips any numbers at the end of the name
+	auto pos = rToolName.find_last_not_of(_T("0123456789"));
+
+	pos += (pos == std::string::npos) ? 0 : 1;
+
+	std::string ToolNameCore = rToolName.substr(0, pos);
+
+	int minNewIndex = 0;
+
+	if (nullptr != pHighestUsedIndexForBaseToolname)
+	{
+		minNewIndex = (*pHighestUsedIndexForBaseToolname)[ToolNameCore];
+	}
 
 	int ToolIndex( 0 );
 	for( auto* pObject : m_TaskObjectVector)
@@ -381,7 +362,7 @@ const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 		if( nullptr != pObject )
 		{
 			objectName = pObject->GetName();
-			if ( std::string::npos != objectName.find( ToolName ))
+			if ( std::string::npos != objectName.find(ToolNameCore.c_str() ))
 			{
 				// see if the name ends in a number
 				int lastNum{0};
@@ -418,12 +399,23 @@ const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 		}
 	}
 	// Set the name
-	if( 0 != ToolIndex )
+
+	if (ToolIndex < minNewIndex)
 	{
-		newName = SvUl::Format( _T("%s%d"), ToolName, ToolIndex );
+		ToolIndex = minNewIndex;
 	}
 
-	return newName;
+	if (nullptr != pHighestUsedIndexForBaseToolname)
+	{
+		pHighestUsedIndexForBaseToolname->operator[](ToolNameCore) = ToolIndex + 1;
+	}
+
+	if( 0 != ToolIndex )
+	{
+		return SvUl::Format( _T("%s%d"), ToolNameCore.c_str(), ToolIndex );
+	}
+
+	return ToolNameCore;
 }
 
 void SVTaskObjectListClass::setEditModeFreezeFlag(bool flag)

@@ -1521,7 +1521,7 @@ void SVIPDoc::updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uin
 			assert(S_OK == hr); UNREFERENCED_PARAMETER(hr);
 
 			SVObjectClass* pOwnerObject(SVObjectManagerClass::Instance().GetObject(ownerID));
-			if (pOwnerObject && SvPb::LoopToolObjectType != pOwnerObject->GetObjectSubType() && SvPb::GroupToolObjectType != pOwnerObject->GetObjectSubType())
+			if (pOwnerObject && false == pOwnerObject->isLoopOrGroupTool())
 			{
 				std::string name;
 
@@ -4383,7 +4383,7 @@ SvTo::SVToolClass* getCorrespondingToolPointer(NavigatorElement* pNaviElement, u
 		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
 			if (SvPb::SVToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().objecttype() ||
-				(SvPb::LoopToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype() && SvPb::GroupToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype()))
+				(responseCmd.getobjectparametersresponse().typeinfo().subtype() && SvPb::GroupToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype()))
 			{
 				return nullptr;
 			}

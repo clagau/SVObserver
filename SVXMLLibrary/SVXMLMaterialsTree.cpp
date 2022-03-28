@@ -179,24 +179,24 @@ namespace SvXml
 		return nullptr;
 	}
 
-	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::findBranch( const SVBranchHandle pParent, LPCTSTR Name )
+	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::findBranch(const SVBranchHandle pParent, LPCTSTR Name)
 	{
-		SVBranchHandle pResult( nullptr );
+		SVBranchHandle pResult(nullptr);
 
-		SVBranchHandle pBranch( pParent );
+		SVBranchHandle pBranch(pParent);
 
-		if( nullptr == pBranch )
+		if (nullptr == pBranch)
 		{
 			pBranch = getRoot();
 		}
 
 		m_pCurrentLeaf = m_Tree.end();
-		if( setChildren( pBranch ) )
+		if (setChildren(pBranch))
 		{
-			for( SVBranches::iterator Iter( m_ChildBranches.begin() ); nullptr == pResult && m_ChildBranches.end() != Iter; ++Iter )
+			for (SVBranches::iterator Iter(m_ChildBranches.begin()); nullptr == pResult && m_ChildBranches.end() != Iter; ++Iter)
 			{
 				//Find the current child branch
-				if( (*Iter)->get()->first == Name )
+				if ((*Iter)->get()->first == Name)
 				{
 					pResult = *Iter;
 				}
@@ -204,6 +204,27 @@ namespace SvXml
 		}
 
 		return pResult;
+	}
+
+
+	// cppcheck-suppress unusedFunction
+	std::vector<SVXMLMaterialsTree::SVBranchHandle> SVXMLMaterialsTree::getSubbranches(const SVBranchHandle pParent)
+	{
+		SVBranchHandle pBranch(pParent);
+
+		if (nullptr == pBranch)
+		{
+			pBranch = getRoot();
+		}
+
+		m_pCurrentLeaf = m_Tree.end();
+
+		if (setChildren(pBranch))
+		{
+			return m_ChildBranches;
+		}
+
+		return {};
 	}
 
 	bool SVXMLMaterialsTree::isValidBranch( const SVBranchHandle pParent )

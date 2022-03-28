@@ -40,6 +40,9 @@ namespace  SvXml
 		static bool GetItemBranch( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVBranchHandle& rpItem );
 
 		template< typename SVTreeType >
+		static std::vector<typename SVTreeType::SVBranchHandle> findSubbranches(SVTreeType& rTree, typename SVTreeType::SVBranchHandle pParent);
+
+		template< typename SVTreeType >
 		static bool GetItemLeaf( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle& rpItem );
 
 		template< typename SVTreeType >

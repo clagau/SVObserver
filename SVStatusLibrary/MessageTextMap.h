@@ -518,6 +518,7 @@ namespace SvStl
 		{Tid_WrongValueType, _T("Wrong value type: Required Type is %s.")},
 		{Tid_InvalidOrRecursiveLinkedObject, _T("Invalid or recursive linked object.")},
 		{Tid_WrongInspection, _T("Object is not from the same Inspection.")},
+		{Tid_Invalid_Inspection, _T("Invalid Inspection.")},
 		{Tid_NoShapeHelper, _T("No shape helper found.")},
 		{Tid_NoCameraToMainImage, _T("No camera to main image found.")},
 		{Tid_NotImageTypePhysical, _T("The image type must be physical.")},

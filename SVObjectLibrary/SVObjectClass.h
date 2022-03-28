@@ -131,6 +131,7 @@ public:
 	virtual void goingOffline() {};
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) {};
 	virtual bool isValidDependency(const std::pair<std::string, std::string>&) const { return true; };
+	bool isLoopOrGroupTool() const { return ((SvPb::LoopToolObjectType == GetObjectSubType() || SvPb::GroupToolObjectType == GetObjectSubType())); }
 
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
