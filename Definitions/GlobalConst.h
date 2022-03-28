@@ -93,6 +93,7 @@ constexpr const char* FqnEnvironmentImageUpdate = _T("Environment.View.Image Dis
 constexpr const char* FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");
 constexpr const char* FqnEnvironmentSoftwareTrigger = _T("Environment.Software Trigger");
 constexpr const char* FqnEnvironmentFileAcquisition = _T("Environment.File Acquisition");
+constexpr const char* FqnEnvironmentCameraSoftwareTrigger = _T("Environment.Camera Software Trigger");
 
 constexpr const char* FqnEnvironmentConfigurationName = _T("Environment.Configuration Name");
 constexpr const char* FqnEnvironmentConfigurationFileName = _T("Environment.Configuration Filename");

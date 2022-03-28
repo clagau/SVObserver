@@ -49,6 +49,7 @@ class SimulatedTriggerSource : public TriggerSource
 		initialDelay,
 		machineSpeed,
 		objectDelay,
+		validationFolder,
 	};
 public:
 	explicit SimulatedTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rSimulateFile);

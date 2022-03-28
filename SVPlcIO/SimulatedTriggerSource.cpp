@@ -395,9 +395,11 @@ HRESULT SimulatedTriggerSource::initChannel(const std::vector<std::vector<std::s
 		triggerData.m_period = static_cast<uint32_t> (mainTriggerPeriod / triggerData.m_triggerPerObjectID);
 		triggerData.m_objectDelay = static_cast<uint32_t> (objectPeriod * objectDelayRatio);
 
-		if (false == rCycleParam[8].empty())
+		std::string validationFolder = SvUl::Trim(rCycleParam[FileParamColumnPos::validationFolder].c_str());
+
+		if (false == validationFolder.empty())
 		{
-			triggerData.m_LoadImageList = SvUl::getFileList(rCycleParam[8].c_str(), _T(".bmp"), false);
+			triggerData.m_LoadImageList = SvUl::getFileList(validationFolder.c_str(), _T(".bmp"), false);
 		}
 
 		if (triggerData.m_channel < cNumberOfChannels)

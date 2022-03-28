@@ -50,6 +50,7 @@ namespace ObjectIdEnum
 	constexpr uint32_t RemoteDataControllerObjectId = 31;
 	constexpr uint32_t EnvironmentSoftwareTriggerId = 32;
 	constexpr uint32_t EnvironmentFileAcquisitionId = 33;
+	constexpr uint32_t EnvironmentCameraSoftwareTriggerId = 34;
 
 
 	// Unique base ID for following variables always have 0x100 ids free

@@ -53,6 +53,7 @@ const BasicValueObjects::DottedNameObjectIdMap BasicValueObjects::m_StaticUnique
 	{std::string(SvDef::FqnEnvironmentCurrentTime),				ObjectIdEnum::EnvironmentCurrentTimeId},
 	{std::string(SvDef::FqnEnvironmentSoftwareTrigger),			ObjectIdEnum::EnvironmentSoftwareTriggerId},
 	{std::string(SvDef::FqnEnvironmentFileAcquisition),			ObjectIdEnum::EnvironmentFileAcquisitionId},
+	{std::string(SvDef::FqnEnvironmentCameraSoftwareTrigger),	ObjectIdEnum::EnvironmentCameraSoftwareTriggerId},
 };
 #pragma endregion Declarations
 

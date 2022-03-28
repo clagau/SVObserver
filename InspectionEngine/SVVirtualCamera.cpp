@@ -21,6 +21,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #include "Triggering/SVTriggerClass.h"
 #include "SVUtilityLibrary/AcquisitionName.h"
 #pragma endregion Includes
@@ -200,6 +201,20 @@ void SVVirtualCamera::setAcquisitionDevice(bool fileAcquisition)
 		m_pMainDevice->GetImageInfo(&imageInfo);
 		m_pFileDevice->CreateBuffers(imageInfo);
 	}
+}
+
+HRESULT SVVirtualCamera::setParameterValue(int parameterID, _variant_t value)
+{
+	HRESULT result {E_FAIL};
+	if (nullptr != m_pCurrentDevice)
+	{
+		SvTrig::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(m_pCurrentDevice->DigName().c_str());
+		if (nullptr != pAcqDLL)
+		{
+			result = pAcqDLL->ParameterSetValue(m_pCurrentDevice->m_hDigitizer, parameterID, value);
+		}
+	}
+	return result;
 }
 
 void SVVirtualCamera::setNeededBuffer()

@@ -135,6 +135,8 @@ public:
 	bool canExternalSoftwareTrigger() const { return m_canExternalSoftwareTrigger; };
 
 	void setAcquisitionDevice(bool fileAcquisition);
+
+	HRESULT setParameterValue(int parameterID, _variant_t value);
 #pragma endregion Public Methods
 
 private:

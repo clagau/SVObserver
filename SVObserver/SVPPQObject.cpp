@@ -25,6 +25,7 @@
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/SVGigeEnums.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "ObjectInterfaces/IObjectWriter.h"
@@ -820,7 +821,7 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 
 	calcUseProcessingOffset4InterestFlag();
 
-	if (!m_pTrigger->CanGoOnline(setSoftwareTrigger))
+	if (false == m_pTrigger->CanGoOnline(setSoftwareTrigger))
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(m_pTrigger->GetCompleteName());
@@ -829,12 +830,19 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 		throw Msg;
 	}
 
+	bool cameraSoftwareTrigger {false};
+	RootObject::getRootChildValue(SvDef::FqnEnvironmentCameraSoftwareTrigger, cameraSoftwareTrigger);
 	bool cameraFileAcquisition {false};
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentFileAcquisition, cameraFileAcquisition);
 	for (SVCameraInfoMap::iterator l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter)
 	{
+		if (cameraSoftwareTrigger)
+		{
+			_variant_t value {static_cast<long> (SvDef::TriggerType::SoftwareTrigger)};
+			l_svIter->first->setParameterValue(SvDef::SVTriggerType, value);
+		}
 		l_svIter->first->setAcquisitionDevice(cameraFileAcquisition);
-		if (!(l_svIter->second.m_CameraPPQIndex >= 0 && l_svIter->first->CanGoOnline()))
+		if (false == (l_svIter->second.m_CameraPPQIndex >= 0 && l_svIter->first->CanGoOnline()))
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(l_svIter->first->GetCompleteName());
@@ -4092,6 +4100,9 @@ void SVPPQObject::AttachAcqToTriggers()
 					_variant_t value = m_pTrigger->GetSoftwareTriggerPeriod();
 					pTriggerDll->SetParameterValue(triggerHandle, SVIOParameterEnum::TriggerPeriod, value);
 				}
+
+				bool cameraSoftwareTrigger {false};
+				RootObject::getRootChildValue(SvDef::FqnEnvironmentCameraSoftwareTrigger, cameraSoftwareTrigger);
 				SvIe::SVVirtualCameraPtrVector cameraVector = GetVirtualCameras();
 				for (auto* pCamera : cameraVector)
 				{
@@ -4105,7 +4116,7 @@ void SVPPQObject::AttachAcqToTriggers()
 							SvTrig::AcquisitionParameter acquisitionParameter;
 							acquisitionParameter.m_pDllDigitizer = pAcqDLL;
 							acquisitionParameter.m_triggerChannel = pAcq->m_hDigitizer;
-							acquisitionParameter.m_active = isSoftwareTrigger || isFileAcquisition;
+							acquisitionParameter.m_active = isSoftwareTrigger || isFileAcquisition || cameraSoftwareTrigger;
 							pTriggerDevice->addAcquisitionTrigger(std::move(acquisitionParameter));
 						}
 					}
