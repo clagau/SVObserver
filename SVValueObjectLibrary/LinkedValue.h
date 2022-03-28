@@ -2,6 +2,7 @@
 /// \copyright (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 /// \Author	Marc Ziegler
+/// \file LinkedValue.h
 //*****************************************************************************
 /// This class should managed value object which are linked to other value objects (or only a valid value).
 //******************************************************************************

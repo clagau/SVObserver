@@ -17,6 +17,7 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVObjectLibrary/ObjectUtilities.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "InspectionEngine/RunStatus.h"
 #include "Definitions/StringTypeDef.h"
@@ -711,34 +712,7 @@ bool SVEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 void SVEquation::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	std::string newPrefix;
-	std::string oldPrefix;
-
-	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
-	if (SvPb::SVInspectionObjectType == type)
-	{
-		//InspectionName is not part in Equation, so nothing to do.
-		return;
-	}
-	else if (SvPb::SVBasicValueObjectType == type)
-	{
-		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType, false);
-		newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
-		oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
-	}
-	else if (SvPb::SVValueObjectType == type)
-	{
-		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, false);
-		newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
-		oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
-	}
-	else
-	{
-		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, false);
-		newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T(".");
-		oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
-	}
-	 
+	auto [newPrefix, oldPrefix] = SvOl::createPrefixNameForEquation(rRenamedObject, rOldName);
 
 	std::string equationBuff = GetEquationText();
 

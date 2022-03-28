@@ -2,6 +2,8 @@
 /// \copyright (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 /// \Author	Marc Ziegler
+/// \file LinkedValue.cpp
+
 //*****************************************************************************
 /// This class should managed value object which are linked to other value objects (or only a valid value).
 //******************************************************************************
@@ -16,11 +18,13 @@
 #include "ObjectInterfaces/ITableObject.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
+#include "SVObjectLibrary/ObjectUtilities.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
-#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVProtoBuf/ConverterHelper.h"
+
 #pragma endregion Includes
 
 namespace SvVol
@@ -432,13 +436,17 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 	}
 
-	void LinkedValue::OnObjectRenamed(const SVObjectClass&, const std::string&)
+	void LinkedValue::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 	{ 
+		auto [newPrefix, oldPrefix] = SvOl::createPrefixNameForEquation(rRenamedObject, rOldName);
+
+		SvUl::searchAndReplace(m_formulaString, oldPrefix.c_str(), newPrefix.c_str());
+
 		if (0 < ObjectAttributesAllowed())
 		{
 			UpdateContent();
 		}
-	};
+	}
 
 	bool LinkedValue::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	{
