@@ -814,13 +814,13 @@ void SVPPQObject::RebuildProductCameraInfoStructs()
 	}// end for
 }
 
-void SVPPQObject::PrepareGoOnline(bool isTestMode)
+void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 {
 	SvSml::SharedMemWriter::Instance().clearInspectionIdsVector(GetName());
 
 	calcUseProcessingOffset4InterestFlag();
 
-	if (!m_pTrigger->CanGoOnline(isTestMode))
+	if (!m_pTrigger->CanGoOnline(setSoftwareTrigger))
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(m_pTrigger->GetCompleteName());

@@ -48,7 +48,7 @@ public:
 	void addAcquisitionTrigger(AcquisitionParameter&& acqParameter);
 	void clearAcquisitionTriggers();
 	const std::vector<AcquisitionParameter>& getAcquisitionTriggers()const  { return m_acqTriggerParameters; }
-	void setTriggerType(bool isTestMode) const;
+	void setTriggerType(bool softwareTrigger) const;
 
 	virtual HRESULT RegisterCallback(PpqTriggerCallBack pPpqTriggerCallback) override;
 	virtual HRESULT UnregisterCallback() override;

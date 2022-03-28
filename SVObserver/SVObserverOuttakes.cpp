@@ -7,6 +7,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ExtrasEngine.h"
+#include "RootObject.h"
 #include "SVArchiveWritingDlg.h"
 #include "SVConfigurationObject.h"
 #include "SVDirectX.h"
@@ -227,6 +228,8 @@ void StopSvo()
 	{
 		GetSvoMainFrame()->PostMessage(WM_COMMAND, MAKEWPARAM(ID_MODE_RUN, 0), 0);
 	}
+
+	RootObject::setRootChildValue(SvDef::FqnEnvironmentSoftwareTrigger, false);
 
 	if (pArchiveWriteDlg)
 	{

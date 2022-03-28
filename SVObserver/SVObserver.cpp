@@ -87,7 +87,7 @@ constexpr double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage of 
 
 #pragma endregion Declarations
 
-void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart);
+void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result);
 
 class CSVObserverModule : public CAtlMfcModule
 {
@@ -1380,6 +1380,11 @@ void SVObserverApp::Start(DWORD desiredState)
 	{
 		return;
 	}
+	if (SV_STATE_TEST == desiredState)
+	{
+		bool softwareTrigger {true};
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentSoftwareTrigger, softwareTrigger);
+	}
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1407,8 +1412,7 @@ void SVObserverApp::Start(DWORD desiredState)
 		throw Exception;
 	}
 
-	bool isLocalStart {false == SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)};
-	PrepareForStart(pConfig, desiredState, isLocalStart);
+	PrepareForStart(pConfig);
 
 	//SvSml::SharedMemWriter::Instance().RebuildMonitorEntryMap();
 
@@ -1428,8 +1432,6 @@ void SVObserverApp::Start(DWORD desiredState)
 		Exception.setMessage(SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, SvStl::Tid_GoOnlineTime, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 		SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
-
-		EnableTriggerSettings(isLocalStart && SoftwareTriggerDlg::Instance().HasTriggers());
 
 		SetThreadPriority(THREAD_PRIORITY_BELOW_NORMAL);
 	}// end if
@@ -1463,7 +1465,7 @@ bool SVObserverApp::InitialChecks(DWORD desiredState)
 }
 
 
-void SVObserverApp::PrepareForStart(SVConfigurationObject* pConfig, DWORD desiredState, bool isLocalStart)
+void SVObserverApp::PrepareForStart(SVConfigurationObject* pConfig)
 {
 	try
 	{
@@ -1486,7 +1488,7 @@ void SVObserverApp::PrepareForStart(SVConfigurationObject* pConfig, DWORD desire
 
 		SvSml::SharedMemWriter::Instance().CreateManagment();
 
-		CreateImageStores(pConfig, ppqMonitorList, Result, desiredState, isLocalStart);
+		CreateImageStores(pConfig, ppqMonitorList, Result);
 
 		SvSml::SharedMemWriter::Instance().WriteMonitorList();
 
@@ -1969,13 +1971,14 @@ void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
 
 //this function is here because it requires a PPQMonitorListParameter - and spurious CheckInclude issues appear if it is in SVObserverOuttakes, fo rexample
 // cppcheck-suppress constParameter ; cppCheck doesn't know rPpqMonitorList[] is not a const function
-void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart)
+void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result)
 {
 	double preTriggerTimeWidow {(0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow};
 	double postTriggerTimeWidow {(0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_postTriggerTimeWindow) ? SvDef::cDefaultPostTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_postTriggerTimeWindow};
 
 	long lSize = pConfig->GetPPQCount();
 
+	bool isLocalStart {false == SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)};
 	///In this loop the ImageStores are created 
 	for (long l = 0; S_OK == Result && l < lSize; l++)
 	{
@@ -1991,14 +1994,17 @@ void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonit
 			const MonitorListAttributeStruct& rActiveList = rPpqMonitorList[pPPQ->GetName()];
 			pPPQ->SetMonitorList(rActiveList);
 			pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
-			bool isTestMode {SV_STATE_TEST == desiredState};
-			pPPQ->PrepareGoOnline(isTestMode);
+
+			bool softwareTrigger {false};
+			RootObject::getRootChildValue(SvDef::FqnEnvironmentSoftwareTrigger, softwareTrigger);
+			pPPQ->PrepareGoOnline(softwareTrigger);
 
 			SvTrig::SVTriggerObject* pTrigger {pPPQ->GetTrigger()};
-			if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType() || isTestMode)
+			if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 			{
-				SoftwareTriggerDlg::Instance().AddTrigger(pTrigger, isTestMode && isLocalStart);
+				SoftwareTriggerDlg::Instance().AddTrigger(pTrigger, softwareTrigger && isLocalStart);
 			}
 		}
 	}
+	EnableTriggerSettings(isLocalStart && SoftwareTriggerDlg::Instance().HasTriggers());
 }

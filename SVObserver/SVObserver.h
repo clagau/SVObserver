@@ -121,7 +121,7 @@ public:
 
 	void Start(DWORD desiredState);///< In error cases this method throws an exception.
 	bool InitialChecks(DWORD desiredState);
-	void PrepareForStart(SVConfigurationObject* pConfig, DWORD desiredState, bool isLocalStart);
+	void PrepareForStart(SVConfigurationObject* pConfig);
 	HRESULT PrepareCamerasAndMemory();
 	void RunInspections(SVConfigurationObject* pConfig, DWORD desiredState);
 
