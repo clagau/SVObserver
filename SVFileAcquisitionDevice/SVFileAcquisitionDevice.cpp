@@ -423,7 +423,6 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame(unsigned long cameraIndex
 		{
 			CameraInfo cameraInfo;
 			cameraInfo.m_startFrameTimestamp = rCamera.m_StartTimeStamp;
-			cameraInfo.m_endFrameTimestamp =  SvUl::GetTimeStamp();
 			cameraInfo.m_pImage = rCamera.m_pBufferInterface->GetNextBuffer();
 
 			if (nullptr != cameraInfo.m_pImage && nullptr != cameraInfo.m_pImage->getHandle())
@@ -450,6 +449,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame(unsigned long cameraIndex
 				result = E_FAIL;
 			}
 
+			cameraInfo.m_endFrameTimestamp = SvUl::GetTimeStamp();
 			//Send this command also if buffer failed to trigger the PPQ-Thread to give it a change for cleanup.
 			rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(std::move(cameraInfo));
 		}
