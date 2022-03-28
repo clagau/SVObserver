@@ -480,7 +480,7 @@ bool SVThresholdClass::Rebuild()
 		// &&&
 		SvIe::SVDataBufferInfoClass svData;
 
-		long l_lPixelDepth = getOutputImage()->getPixelDepth();
+		long l_lPixelDepth = (nullptr != getOutputImage()) ? getOutputImage()->getPixelDepth() : 0;
 
 		if( l_lPixelDepth < 0 )
 		{

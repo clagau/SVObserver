@@ -24,6 +24,7 @@
 #include "RunStatus.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
+#include "ObjectInterfaces/ITool.h"
 #include "ObjectInterfaces/IToolSet.h"
 #include "SVObjectLibrary/DependencyManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -795,6 +796,16 @@ void SVTaskObjectClass::connectInput(SvOl::InputObject& rInput)
 	// Is not yet connected...
 	if (!rInput.IsConnected())
 	{
+		long toolPositionMustLowerThan = std::numeric_limits<long>::max();
+		if (SvOi::InputAllowedMode::IsBeforeTool == rInput.getAllowedMode())
+		{
+			auto* pInputTool = dynamic_cast<SvOi::ITool*>(GetAncestor(SvPb::SVToolObjectType));
+			if (nullptr != pInputTool)
+			{
+				toolPositionMustLowerThan = pInputTool->getToolPosition();
+			}
+		}
+
 		// if Connect to Default
 		if (SvDef::InvalidObjectId == rInput.GetInputObjectInfo().getObjectId())
 		{
@@ -807,18 +818,25 @@ void SVTaskObjectClass::connectInput(SvOl::InputObject& rInput)
 				SVObjectClass* pRequestor = this;
 				bool bSuccess = false;
 
-				// Ask first friends...
-				for (size_t j = 0; j < m_friendList.size(); ++j)
+				if (nullptr == GetToolInterface() || toolPositionMustLowerThan > GetToolInterface()->getToolPosition())
 				{
-					if (nullptr != m_friendList[j])
+					// Ask first friends...
+					for (size_t j = 0; j < m_friendList.size(); ++j)
 					{
-						const auto* pObject = SVObjectManagerClass::Instance().getFirstObject(m_friendList[j]->getObjectId(), info);
-						if (nullptr != pObject)
+						if (nullptr != m_friendList[j])
 						{
-							// Connect input ...
-							rInput.SetInputObject(pObject->getObjectId());
-							bSuccess = true;
-							break;
+							const auto* pObject = SVObjectManagerClass::Instance().getFirstObject(m_friendList[j]->getObjectId(), info);
+							if (nullptr != pObject)
+							{
+								// Connect input ...
+								rInput.SetInputObject(pObject->getObjectId());
+								rInput.validateInput();
+								if (rInput.IsConnected())
+								{
+									bSuccess = true;
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -850,12 +868,16 @@ void SVTaskObjectClass::connectInput(SvOl::InputObject& rInput)
 						{
 							// Connect input ...
 							rInput.SetInputObject(pObject->getObjectId());
-							break;
 						}
-						else
+
+						if (false == rInput.IsConnected())
 						{
 							pOwner = pOwner->GetParent();
 							pRequestor = pRequestor->GetParent();
+						}
+						else
+						{
+							break;
 						}
 					}// end while (pOwner)
 				}// end if (! bSuccess)

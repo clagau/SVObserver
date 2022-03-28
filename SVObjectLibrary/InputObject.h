@@ -10,7 +10,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVObjectClass.h"
+#include "SVObjectAppClass.h"
 #include "SVOResource/resource.h"
 #include "ObjectInterfaces/IInputObject.h"
 #pragma endregion Includes
@@ -18,7 +18,7 @@
 
 namespace SvOl
 {
-class InputObject : public SVObjectClass, public SvOi::IInputObject
+class InputObject : public SVObjectAppClass, public SvOi::IInputObject
 {
 	SV_DECLARE_CLASS
 
@@ -51,6 +51,7 @@ class InputObject : public SVObjectClass, public SvOi::IInputObject
 
 	void setStartSearchId(uint32_t startSearchId) { m_startSearchId = startSearchId; };
 	void setAllowedMode(SvOi::InputAllowedMode mode) { m_allowedMode = mode; };
+	SvOi::InputAllowedMode getAllowedMode() const { return m_allowedMode; };
 	
 	template <typename T>
 	T* getInput(bool bRunMode = false) const
@@ -81,6 +82,7 @@ class InputObject : public SVObjectClass, public SvOi::IInputObject
 
 private:
 	void correctDependencies();
+	bool checkIfAllowedObject();
 
 private:
 	// Who is my input object...

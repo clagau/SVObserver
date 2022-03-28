@@ -92,7 +92,7 @@ int SVEquationSymbolTableClass::FindSymbol(LPCTSTR name)
 void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 {
 	SVObjectClass* pInspection(nullptr);
-	SvIe::SVObjectAppClass* pAppClass = dynamic_cast<SvIe::SVObjectAppClass*>(pRequestor);
+	SvOl::SVObjectAppClass* pAppClass = dynamic_cast<SvOl::SVObjectAppClass*>(pRequestor);
 	if (nullptr != pAppClass)
 	{
 		m_ownerId = pAppClass->getObjectId();

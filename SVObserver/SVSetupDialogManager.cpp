@@ -164,7 +164,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(uint32_t objectId, 
 HRESULT SVSetupDialogManager::BlobAnalyzer2SetupDialog(uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT status = E_FAIL;
-	auto* pAnalyzer = dynamic_cast<SvIe::SVObjectAppClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
+	auto* pAnalyzer = dynamic_cast<SvOl::SVObjectAppClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer && nullptr != pAnalyzer->GetInspection() && nullptr != pAnalyzer->GetTool())
 	{

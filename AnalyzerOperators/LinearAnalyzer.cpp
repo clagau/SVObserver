@@ -36,7 +36,6 @@ LinearAnalyzer::LinearAnalyzer( SVObjectClass* POwner, int StringResourceID )
 
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_InputImage, _T( "LinearAnalyzerImage" ), SvPb::ImageInputEId);
-	m_InputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	m_InputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
 	registerInputObject( &m_InputProfileOrientation, _T( "LinearAnalyzerOrientation" ), SvPb::ProfileOrientationInputEId);

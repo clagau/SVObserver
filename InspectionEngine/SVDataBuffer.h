@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectAppClass.h"
+#include "SVObjectLibrary/SVObjectAppClass.h"
 #include "SVGlobalHandles.h"
 #pragma endregion Includes
 
@@ -49,7 +49,7 @@ public:
 // .Description : This class capsules a Data Buffer like the 
 //              : Image Result Buffers in MIL ( refer to MimAllocResult() )
 ////////////////////////////////////////////////////////////////////////////////
-class SVDataBufferClass : public SVObjectAppClass
+class SVDataBufferClass : public SvOl::SVObjectAppClass
 {
 	SV_DECLARE_CLASS
 

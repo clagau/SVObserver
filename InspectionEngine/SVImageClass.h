@@ -17,7 +17,7 @@
 #include "ObjectInterfaces/ISVImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVObjectAppClass.h"
+#include "SVObjectLibrary/SVObjectAppClass.h"
 #include "ObjectInterfaces/ITRCImage.h"
 #include "ObjectInterfaces/ITriggerRecordRW.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
@@ -33,7 +33,7 @@ namespace SvIe
 #define S_NoParent                                ((HRESULT)80000L)
 
 
-class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
+class SVImageClass : public SvOl::SVObjectAppClass, public SvOi::ISVImage
 {
 	SV_DECLARE_CLASS
 

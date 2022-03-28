@@ -14,6 +14,7 @@
 #include "SVObjectManagerClass.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "ObjectInterfaces/ITaskObject.h"
+#include "ObjectInterfaces/ITool.h"
 #include "SVToolsetScriptTags.h"
 #pragma endregion Includes
 
@@ -29,14 +30,14 @@ namespace SvOl
 	SV_IMPLEMENT_CLASS(InputObject, SvPb::InputConnectedClassId);
 
 	InputObject::InputObject(LPCSTR objectName)
-		: SVObjectClass(objectName)
+		: SVObjectAppClass(objectName)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::InputConnectedType;
 		SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 	InputObject::InputObject(SVObjectClass* pOwner, int stringResourceID)
-		: SVObjectClass(pOwner, stringResourceID)
+		: SVObjectAppClass(pOwner, stringResourceID)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::InputConnectedType;
 		SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
@@ -130,7 +131,7 @@ void InputObject::SetInputObject( const SVObjectReference& rObject )
 void InputObject::validateInput()
 {
 	// Check if the input object is still valid otherwise the pointer is invalid
-	if (IsConnected() && (false == m_InputObjectInfo.CheckExistence() || false == checkIfValidDependency(m_InputObjectInfo.getObject())))
+	if (IsConnected() && (false == m_InputObjectInfo.CheckExistence() || false == checkIfAllowedObject() || false == checkIfValidDependency(m_InputObjectInfo.getObject())))
 	{
 		SetInputObject(nullptr);
 	}
@@ -296,6 +297,37 @@ void InputObject::correctDependencies()
 		{
 			SVObjectManagerClass::Instance().connectDependency(m_InputObjectInfo.getObject()->getObjectId(), getObjectId(), SvOl::JoinType::Dependent);
 		}
+	}
+}
+
+bool InputObject::checkIfAllowedObject()
+{
+	switch (m_allowedMode)
+	{
+		case SvOi::InputAllowedMode::IsBeforeTool:
+		{
+			auto* pTool = GetToolInterface();
+			if (nullptr == pTool)
+			{
+				return true;
+			}
+			auto* pObject = getInputObject<SVObjectClass>();
+			if (nullptr != pObject)
+			{
+				auto* pObjectTool = dynamic_cast<SvOi::ITool*>(pObject->GetAncestor(SvPb::SVToolObjectType));
+				if (nullptr != pObjectTool)
+				{
+					auto toolPos = pTool->getToolPosition();
+					auto toolObjectPos = pObjectTool->getToolPosition();
+					//If toolPos < 0 then toolPos is not set yet. Ignore then the check.
+					return (0 > toolPos || toolObjectPos < toolPos);
+				}
+				return true;
+			}
+			return false;
+		}
+		default:
+			return true;
 	}
 }
 } //namespace SvOl

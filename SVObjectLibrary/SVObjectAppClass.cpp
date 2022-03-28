@@ -19,7 +19,7 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #pragma endregion Includes
 
-namespace SvIe
+namespace SvOl
 {
 
 #pragma region Declarations
@@ -156,4 +156,4 @@ bool SVObjectAppClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 	return rChildObject.createAllObjects(createStruct);
 }
 
-} //namespace SvIe
+} //namespace SvOl

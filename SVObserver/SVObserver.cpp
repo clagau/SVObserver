@@ -1078,7 +1078,7 @@ HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, uint32_t o
 {
 	HRESULT l_Status = S_OK;
 
-	SvIe::SVObjectAppClass* l_pObject = dynamic_cast<SvIe::SVObjectAppClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
+	SvOl::SVObjectAppClass* l_pObject = dynamic_cast<SvOl::SVObjectAppClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != l_pObject)
 	{

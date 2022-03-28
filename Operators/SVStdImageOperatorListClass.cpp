@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(SVStdImageOperatorListClass, SvPb::StdImageOperatorListClassId)
 
 SVStdImageOperatorListClass::SVStdImageOperatorListClass(SVObjectClass* POwner, int StringResourceID)
-	:SVUnaryImageOperatorList(POwner, StringResourceID)
+	:SVUnaryImageOperatorList(true, POwner, StringResourceID)
 {
 	init();
 }

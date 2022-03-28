@@ -74,7 +74,6 @@ void SVOCVAnalyzerResult::clearAll()
 	// Identify our input type needs
 	m_inputObject.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_inputObject, _T( "OCVAnalyzerResultImage" ), SvPb::ResultInputEId );
-	m_inputObject.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(

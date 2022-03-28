@@ -26,8 +26,8 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS( SVInPlaceImageOperatorListClass, SvPb::InPlaceImageOperatorListClassId)
 
-SVInPlaceImageOperatorListClass::SVInPlaceImageOperatorListClass( SVObjectClass* POwner, int StringResourceID )
-							    :SVUnaryImageOperatorList( POwner, StringResourceID ) 
+SVInPlaceImageOperatorListClass::SVInPlaceImageOperatorListClass( SVObjectClass* pOwner, int StringResourceID )
+							    :SVUnaryImageOperatorList(false, pOwner, StringResourceID )
 {
 	init();
 }

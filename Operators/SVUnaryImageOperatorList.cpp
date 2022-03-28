@@ -29,10 +29,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVUnaryImageOperatorList::SVUnaryImageOperatorList( SVObjectClass* POwner, int StringResourceID )
+SVUnaryImageOperatorList::SVUnaryImageOperatorList(bool onlyImageBefore, SVObjectClass* POwner, int StringResourceID )
 							  :SVTaskObjectListClass( POwner, StringResourceID ) 
 {
-	init();
+	init(onlyImageBefore);
 }
 
 SVUnaryImageOperatorList::~SVUnaryImageOperatorList() 
@@ -102,7 +102,7 @@ bool SVUnaryImageOperatorList::isInputImage(uint32_t imageId) const
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-void SVUnaryImageOperatorList::init()
+void SVUnaryImageOperatorList::init(bool onlyImageBefore)
 {
 	// Identify our output type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
@@ -110,7 +110,10 @@ void SVUnaryImageOperatorList::init()
 	// Identify our input type needs
 	m_inputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject(&m_inputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
-	m_inputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
+	if (onlyImageBefore)
+	{
+		m_inputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
+	}
 
 	// Set available Filters
 	// Populate the available filter list

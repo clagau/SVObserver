@@ -54,6 +54,9 @@
     <ClCompile Include="InputObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVObjectAppClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DependencyManager.h">
@@ -123,6 +126,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="InputObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObjectAppClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -50,7 +50,7 @@ public:
 	friend class SVUnaryImageOperatorClass;
 
 public:
-	SVUnaryImageOperatorList( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
+	SVUnaryImageOperatorList(bool onlyImageBefore = true, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
 	virtual ~SVUnaryImageOperatorList();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
@@ -64,7 +64,7 @@ protected:
 	virtual bool isInputImage(uint32_t imageId) const override;
 
 private:
-	void init();
+	void init(bool onlyImageBefore);
 
 protected:
 	SvOl::InputObject m_inputImage;

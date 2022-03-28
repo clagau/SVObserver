@@ -17,7 +17,7 @@
 #include "SVProtoBuf/SVO-Enum.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "SVObjectAppClass.h"
+#include "SVObjectLibrary/SVObjectAppClass.h"
 #include "SVValueObjectLibrary/SVDWordValueObjectClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVStatusLibrary/MessageContainer.h"
@@ -47,7 +47,7 @@ namespace SvIe
 	class RunStatus;
 	struct SVExtentPropertyInfoStruct;
 
-class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
+class SVTaskObjectClass : public SvOl::SVObjectAppClass, public SvOi::ITaskObject
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS

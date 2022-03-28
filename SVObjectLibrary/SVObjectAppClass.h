@@ -23,7 +23,7 @@ class IInspectionProcess;
 class ITool;
 }
 
-namespace SvIe
+namespace SvOl
 {
 
 class SVObjectAppClass : public SVObjectClass, public SvOi::IObjectAppClass
@@ -72,4 +72,4 @@ private:
 	SvOi::ITool* m_pToolInterface;
 };
 
-} //namespace SvIe
+} //namespace SvOl
