@@ -222,7 +222,6 @@ public:
 	afx_msg void OnSaveConfigReport();
 	afx_msg void OnUpdateSaveConfigReport(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddGeneralTool(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddGeneralImageMonoTypeTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddCylindricalWarpTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
