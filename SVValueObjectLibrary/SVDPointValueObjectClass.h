@@ -32,7 +32,11 @@ public:
 	virtual ~SVDPointValueObjectClass();
 
 	void setStandardFormatString() override {} //not currently used in this class
-
+	
+	virtual bool  SetMinMaxValues(SVPoint<double> , SVPoint<double> )override { return false; };
+	virtual bool  GetMinMaxValues(SVPoint<double>& , SVPoint<double>& ) const override{ return false; };
+	virtual bool  setMinMaxValues(const _variant_t& , const _variant_t& ) override { return false; };
+	virtual bool getMinMaxValues(_variant_t& , _variant_t& ) const override { return false; };
 
 protected:
 	virtual double ValueType2Double(const SVPoint<double>&) const override { return 0.0; }

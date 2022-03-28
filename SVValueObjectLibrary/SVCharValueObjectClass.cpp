@@ -136,6 +136,7 @@ void SVCharValueObjectClass::LocalInitialize()
 	SetTypeName( _T("Char") );
 	setStandardFormatString();
 	init();
+	SetMinMaxValues(CHAR_MIN, CHAR_MAX);
 }
 
 } //namespace SvVol

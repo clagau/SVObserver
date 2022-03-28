@@ -59,6 +59,10 @@ public:
 	//! For these methods see IValueObject documentation
 	virtual HRESULT setDefaultValue(const _variant_t& ) override { return E_NOTIMPL; }
 	virtual _variant_t getDefaultValue() const override { return _variant_t(); };
+
+	virtual bool  setMinMaxValues(const _variant_t& , const _variant_t& )override { return false; }
+	virtual bool getMinMaxValues(_variant_t& , _variant_t& ) const override { return false; }
+
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false ) override;
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>& ) const override { return E_NOTIMPL; }

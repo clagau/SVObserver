@@ -131,6 +131,7 @@
     <ClCompile Include="SVPointValueObjectClass.cpp" />
     <ClCompile Include="SVStringValueObjectClass.cpp" />
     <ClCompile Include="SVTimerValueObjectClass.cpp" />
+    <ClCompile Include="SVValueObjectclass.cpp" />
     <ClCompile Include="SVVariantValueObjectClass.cpp" />
   </ItemGroup>
   <ItemGroup>

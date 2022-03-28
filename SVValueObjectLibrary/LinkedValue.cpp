@@ -538,6 +538,17 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		rLinkedValue.set_indirectidstring(m_indirectValueRef.GetObjectIdAndIndexOneBased().c_str());
 		rLinkedValue.set_formula(m_formulaString.c_str());
 		rLinkedValue.set_equationid(m_equation.getObjectId());
+		
+		rLinkedValue.clear_min_max();
+		
+		_variant_t MinValue, MaxValue;
+		if (getMinMaxValues(MinValue, MaxValue))
+		{
+			auto minmax = rLinkedValue.mutable_min_max();
+			
+			ConvertVariantToProtobuf(MinValue, minmax->mutable_minvalue());
+			ConvertVariantToProtobuf(MaxValue, minmax->mutable_maxvalue());
+		}
 	}
 
 	void LinkedValue::fillSelectorListForLink(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter) const

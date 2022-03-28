@@ -968,6 +968,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 					_variant_t DefaultValue {pValueObject->getDefaultValue()};
 					_variant_t Value;
 					HRESULT result = pValueObject->getValue(Value);
+					
 					if (S_OK == result)
 					{
 						auto* pElement = pResponse->add_list();
@@ -976,6 +977,15 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 						auto* pValue = pElement->mutable_value();
 						ConvertVariantToProtobuf(Value, pValue->mutable_value());
 						ConvertVariantToProtobuf(DefaultValue, pValue->mutable_defaultvalue());
+						pValue->clear_min_max();
+						_variant_t MinValue, MaxValue;
+						if (pValueObject->getMinMaxValues(MinValue, MaxValue))
+						{
+							auto minmax = pValue->mutable_min_max();
+
+							ConvertVariantToProtobuf(MinValue, minmax->mutable_minvalue());
+							ConvertVariantToProtobuf(MaxValue, minmax->mutable_maxvalue());
+						}
 					}
 					else if (E_BOUNDS == result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result || SVMSG_SVO_105_CIRCULAR_REFERENCE == result)
 					{
@@ -999,6 +1009,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 					pElement->set_embeddedid(pObject->GetEmbeddedID());
 					auto* pValue = pElement->mutable_linkedvalue();
 					pLinkedObject->fillLinkedData(*pValue);
+					
 				}
 			}
 		}

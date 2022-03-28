@@ -162,7 +162,7 @@ void SVByteValueObjectClass::LocalInitialize()
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer8") );
 	init();
-
+	SetMinMaxValues(0, UCHAR_MAX);
 	SetOutputFormat( OutputFormat_hex );
 }
 

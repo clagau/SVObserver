@@ -97,7 +97,18 @@ void PrintTreeItems(const SvPb::ConfigTreeItem& rTreeItem, std::string& rData, c
 		PrintTreeItems(rTreeItem.children(i), rData, rSpacing + _T("\t"));
 	}
 }
+DWORD GetObjectId(const std::string& dottedName, SvRpc::RPCClient& rClient)
+{
+	//No Inspection id necessary!!
+	auto Timeout = boost::posix_time::seconds(60);
+	SvPb::InspectionCmdRequest requestCmd;
+	auto* pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
+	pGetObjectID_Req->set_name(dottedName.c_str());
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(rClient);
+	auto responseCmd = client.request(std::move(requestCmd), Timeout).get();
+	return responseCmd.getobjectidresponse().objectid();
 
+}
 int main(int argc, char* argv[])
 {
 	SvHttp::WebsocketClientSettings ClientSettings;
@@ -178,7 +189,7 @@ int main(int argc, char* argv[])
 					<< " s  software trigger" << std::endl
 					<< " set_v  {value} {n, o, i, t }  inspection command set embedded value" << std::endl
 					<< " set_l  {value} {n, o, i, t }  inspection command set embedded linked value" << std::endl
-					<< " get   {v ,l }  inspection command get embedded value" << std::endl;
+					<< " get   {BAR ,BA, AR }  inspection command get embedded value" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -464,50 +475,30 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "set_v")
 			{
-				///set embeddet values
-				///GetObjectID
-				SvPb::InspectionCmdRequest requestCmd;
-				auto* pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
-				auto responseCmd = client.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdInspection = responseCmd.getobjectidresponse().objectid();
 
-				/*requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client2(*pRpcClient);
-				auto responseCmd2 = client2.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdTool = responseCmd2.getobjectidresponse().objectid();*/
+				///set embedded values
+					///GetObjectID
+				DWORD OIDArchiveTool = GetObjectId("Inspections.Inspection_1.Tool Set.Archive Tool", *pRpcClient);
+				DWORD OIDArchiveToolMaxImageCount = GetObjectId("Inspections.Inspection_1.Tool Set.Archive Tool.Archive Max Images Count", *pRpcClient);
+				DWORD ObjectIdInspection = GetObjectId("Inspections.Inspection_1", *pRpcClient);
+				//DWORD ObjectIdAnalyzer = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer", *pRpcClient);
+				//DWORD ObjectIdMaxNumberofBlobs = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Max Number of Blobs", *pRpcClient);
 
-				requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client3(*pRpcClient);
-				auto responseCmd3 = client3.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdAnalyzer = responseCmd3.getobjectidresponse().objectid();
-
-				requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Max Number of Blobs");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client4(*pRpcClient);
-				auto responseCmd4 = client4.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdMaxNumberofBlobs = responseCmd4.getobjectidresponse().objectid();
+				SvPb::InspectionCmdRequest requestCmd = SvPb::InspectionCmdRequest {};
 
 				///Run SetEmbeddedValuesRequest
 				requestCmd = SvPb::InspectionCmdRequest {};
 				requestCmd.set_inspectionid(ObjectIdInspection);
 				SvPb::SetEmbeddedValuesRequest* pEmbeddevalueRequest = requestCmd.mutable_setembeddedvaluesrequest();
-				pEmbeddevalueRequest->set_objectid(ObjectIdAnalyzer);
+				//pEmbeddevalueRequest->set_objectid(ObjectIdAnalyzer);
+				pEmbeddevalueRequest->set_objectid(OIDArchiveTool);
 
 				SvPb::SetValueObjectValues* pSetValueObjectValues = pEmbeddevalueRequest->add_list();
 				pSetValueObjectValues->set_ismodified(true);
 				pSetValueObjectValues->set_isdefaultmodified(false);
 				SvPb::ValueObjectValues* pvalueOpbectvalues = pSetValueObjectValues->mutable_values();
-				pvalueOpbectvalues->set_objectid(ObjectIdMaxNumberofBlobs);
+				//pvalueOpbectvalues->set_objectid(ObjectIdMaxNumberofBlobs);
+				pvalueOpbectvalues->set_objectid(OIDArchiveToolMaxImageCount);
 				SvPb::StandardValue* pVvalue = pvalueOpbectvalues->mutable_value();
 				SvPb::Variant* pVariant = pVvalue->mutable_value();
 				int val = 24;
@@ -529,12 +520,17 @@ int main(int argc, char* argv[])
 				}
 				pEmbeddevalueRequest->set_resettype(rt);
 
-				pVariant->set_lval(val);
-				pVariant->set_type(VT_I4);
+				//pVariant->set_lval(val);
+				//pVariant->set_type(VT_I4);
+				pVariant->set_ulval(val);
+				pVariant->set_type(VT_UI4);
 				SvPb::Variant* pDVariant = pVvalue->mutable_defaultvalue();
-				pDVariant->set_lval(24);
-				pDVariant->set_type(VT_I4);
+				//pDVariant->set_lval(24);
+				//pDVariant->set_type(VT_I4);
+				pDVariant->set_ulval(88);
+				pDVariant->set_type(VT_UI4);
 
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
 				SvPb::InspectionCmdResponse cmdresp = client.request(std::move(requestCmd), Timeout).get();
 				HRESULT hres = cmdresp.hresult();
 				SV_LOG_GLOBAL(info) << cmdresp.DebugString() << std::endl;
@@ -542,55 +538,19 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "set_l")
 			{
-				///set embeddet  values ranges
-				///GetObjectID
-				SvPb::InspectionCmdRequest requestCmd;
-				auto* pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
-				auto responseCmd = client.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdInspection = responseCmd.getobjectidresponse().objectid();
 
-				requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Result Area.Range");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client2(*pRpcClient);
-				auto responseCmd2 = client2.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdBlobAnalyzerResultAreaRange = responseCmd2.getobjectidresponse().objectid();
-
-				///
-				//requestCmd = SvPb::InspectionCmdRequest {};
-				//requestCmd.set_inspectionid(ObjectIdInspection);
-				//pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				//pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool");
-				////SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client2(*pRpcClient);
-				//auto respCmd = client.request(std::move(requestCmd), Timeout).get();
-				//auto ObjectIdTool = respCmd.getobjectidresponse().objectid();
-				
-				
-				
-				/*requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Result Area.Range.Fail High");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client3(*pRpcClient);
-				auto responseCmd3 = client3.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdBlobAnalyzerResultAreaRangeFailHigh = responseCmd2.getobjectidresponse().objectid();*/
-
-				requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Result Area.Range.Warn High");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client4(*pRpcClient);
-				auto responseCmd4 = client.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdBlobAnalyzerResultAreaRangeWarnHigh = responseCmd4.getobjectidresponse().objectid();
-
-
+				DWORD ObjectIdInspection = GetObjectId("Inspections.Inspection_1", *pRpcClient);
+				// DWORD ObjectIdTool = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool", *pRpcClient);
+				//	DWORD ObjectIdAnalyzer = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer", *pRpcClient);
+				//	DWORD ObjectIdMaxNumberofBlobs = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Max Number of Blobs", *pRpcClient);
+				DWORD ObjectIdBlobAnalyzerResultAreaRange = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Result Area.Range", *pRpcClient);
+				// DWORD ObjectIdBlobAnalyzerResultAreaRangeFailHigh = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Result Area.Range.Fail High", *pRpcClient);
+				DWORD ObjectIdBlobAnalyzerResultAreaRangeWarnHigh = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Result Area.Range.Warn High", *pRpcClient);
 
 
 				///Run SetEmbeddedValuesRequest
-				requestCmd = SvPb::InspectionCmdRequest {};
+
+				SvPb::InspectionCmdRequest requestCmd = SvPb::InspectionCmdRequest {};
 				requestCmd.set_inspectionid(ObjectIdInspection);
 				SvPb::SetEmbeddedValuesRequest* pEmbeddevalueRequest = requestCmd.mutable_setembeddedvaluesrequest();
 				pEmbeddevalueRequest->set_objectid(ObjectIdBlobAnalyzerResultAreaRange);
@@ -633,7 +593,7 @@ int main(int argc, char* argv[])
 				pDVariant->set_dblval(24);
 				pDVariant->set_type(VT_R8);
 				pLvalue->set_option(SvPb::DirectValue);
-
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
 				SvPb::InspectionCmdResponse cmdresp = client.request(std::move(requestCmd), Timeout).get();
 				HRESULT hres = cmdresp.hresult();
 				SV_LOG_GLOBAL(info) << cmdresp.DebugString() << std::endl;
@@ -642,65 +602,33 @@ int main(int argc, char* argv[])
 
 			else if (words[0] == "get")
 			{
-				///get  embeddet values
-				///GetObjectID
-				SvPb::InspectionCmdRequest requestCmd;
-				auto* pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
-				auto responseCmd = client.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdInspection = responseCmd.getobjectidresponse().objectid();
 
-				/*requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client2(*pRpcClient);
-				auto responseCmd2 = client2.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdTool = responseCmd2.getobjectidresponse().objectid();*/
-
-				requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client3(*pRpcClient);
-				auto responseCmd3 = client3.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdAnalyzer = responseCmd3.getobjectidresponse().objectid();
-
-				/*requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Max Number of Blobs");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client4(*pRpcClient);
-				auto responseCmd4 = client4.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdMaxNumberofBlobs = responseCmd4.getobjectidresponse().objectid()*/;
-
-
-				requestCmd = SvPb::InspectionCmdRequest {};
-				requestCmd.set_inspectionid(ObjectIdInspection);
-				pGetObjectID_Req = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID_Req->set_name("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Result Area.Range");
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client5(*pRpcClient);
-				auto responseCmd5 = client.request(std::move(requestCmd), Timeout).get();
-				auto ObjectIdBlobAnalyzerResultAreaRange = responseCmd5.getobjectidresponse().objectid();
-
-
+				DWORD ObjectIdInspection = GetObjectId("Inspections.Inspection_1", *pRpcClient);
+				//	DWORD ObjectIdTool = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool", *pRpcClient);
+				DWORD ObjectIdAnalyzer = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer", *pRpcClient);
+				//	DWORD ObjectIdMaxNumberofBlobs = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Max Number of Blobs", *pRpcClient);
+				DWORD ObjectIdBlobAnalyzerResultAreaRange = GetObjectId("Inspections.Inspection_1.Tool Set.Window Tool.Blob Analyzer.Result Area.Range", *pRpcClient);
+				DWORD OIDArchiveTool = GetObjectId("Inspections.Inspection_1.Tool Set.Archive Tool", *pRpcClient);
 
 				///Run GetEmbeddedValuesRequest 
-				requestCmd = SvPb::InspectionCmdRequest {};
+				SvPb::InspectionCmdRequest requestCmd = SvPb::InspectionCmdRequest {};
 				requestCmd.set_inspectionid(ObjectIdInspection);
 				SvPb::GetEmbeddedValuesRequest* pEmbeddevalueRequest = requestCmd.mutable_getembeddedvaluesrequest();
 
-				if (words.size() > 1 && words[1] == "l")
+				if (words.size() > 1 && words[1] == "BAR")
 				{
 					pEmbeddevalueRequest->set_objectid(ObjectIdBlobAnalyzerResultAreaRange);
 				}
-				else
+				else if (words.size() > 1 && words[1] == "BA")
 				{
 					pEmbeddevalueRequest->set_objectid(ObjectIdAnalyzer);
 				}
+				else
+				{
+					pEmbeddevalueRequest->set_objectid(OIDArchiveTool);
+				}
 
-
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
 				SvPb::InspectionCmdResponse cmdresp = client.request(std::move(requestCmd), Timeout).get();
 				HRESULT hres = cmdresp.hresult();
 

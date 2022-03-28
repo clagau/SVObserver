@@ -160,6 +160,7 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ARCHIVE_MAX_IMAGES_COUNT,
 		false, SvOi::SVResetItemNone);
 	m_dwArchiveMaxImagesCount.SetOutputFormat(SvVol::OutputFormat_int);
+	m_dwArchiveMaxImagesCount.SetMinMaxValues(1, 10000000);
 
 	RegisterEmbeddedObject(
 		&m_evoArchiveMethod,

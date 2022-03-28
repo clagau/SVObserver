@@ -150,6 +150,7 @@ void SVDWordValueObjectClass::LocalInitialize()
 	SetTypeName( _T("Integer32Hex") );
 	setStandardFormatString();
 	init();
+	SetMinMaxValues(0, ULONG_MAX);
 }
 
 } //namespace SvVol

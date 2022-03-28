@@ -717,6 +717,7 @@ namespace SvStl
 		{Tid_ErrorArchiveQueueFull, _T("Error writing Archive Queue is full!")},
 			
 		{Tid_Value_MustThan, _T("%s must be %s than %s.")},
-		{Tid_Greater, _T("greater")}
+		{Tid_Greater, _T("greater")},
+		{Tid_ValidateValue_MinMaxInvalid, _T("Validate Value failed: Not between min and max")},
 };
 } //namespace SvStl

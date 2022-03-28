@@ -32,6 +32,11 @@ public:
 
 	virtual ~SVStringValueObjectClass() = default;
 
+	virtual bool  SetMinMaxValues(std::string , std::string  ) override { return false; };
+	virtual bool  GetMinMaxValues(std::string& , std::string& ) const override { return false; };
+	virtual bool  setMinMaxValues(const _variant_t& , const _variant_t& ) override { return false; };
+	virtual bool getMinMaxValues(_variant_t& , _variant_t& ) const override{ return false; };
+	
 	void setStandardFormatString() override {} //not currently used in this class
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
@@ -42,6 +47,7 @@ public:
 	virtual void updateMemBlockData() override;
 
 	void SetMaxByteSize(int maxSize = getMaxTextSize()) { m_maxByteSize = maxSize; }
+
 
 protected:
 	virtual std::string* reserveLocalMemory() override;

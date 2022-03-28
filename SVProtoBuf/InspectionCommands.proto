@@ -69,10 +69,19 @@ message NameNamePair
 	string nameTo = 2;
 } 
 
+message MinMax
+{
+	Variant minValue =1;
+	Variant maxValue =2;
+}
+
+
 message StandardValue
 {
 	Variant value = 1;
 	Variant defaultValue = 2;
+	MinMax min_max =3;
+
 }
 
 enum LinkedSelectedOption
@@ -92,6 +101,8 @@ message LinkedValue
 	string indirectIDString = 6;
 	string formula = 7;
 	uint32 equationId = 8;
+	MinMax min_max = 9;
+	
 }
 
 message ValueObjectValues

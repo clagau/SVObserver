@@ -255,6 +255,22 @@ HRESULT SVValueObjectClass<T>::SetDefaultValue(const T& rValue, bool bResetAll)
 	}
 	return Result;
 }
+template <typename T> bool SVValueObjectClass<T>::SetMinMaxValues(T minvalue, T maxvalue)
+{
+	m_MaxValue = maxvalue;
+	m_MinValue = minvalue;
+	m_UseMaxMinValue = true;
+	return true;
+}
+template <typename T> bool SVValueObjectClass<T>::GetMinMaxValues(T& minvalue, T& maxvalue)const
+{
+	if (m_UseMaxMinValue)
+	{
+		maxvalue = m_MaxValue;
+		minvalue = m_MinValue;
+	}
+	return m_UseMaxMinValue;
+}
 
 template <typename T>
 HRESULT SVValueObjectClass<T>::SetArrayValues(const ValueVector& rValues)
@@ -406,6 +422,21 @@ void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter) const
 	{
 		rWriter.EndElement();
 	}
+}
+
+template <typename T> bool  SVValueObjectClass<T>::setMinMaxValues(const _variant_t& Min, const _variant_t& Max)
+{
+	return SetMinMaxValues( Variant2ValueType(Min), Variant2ValueType(Max));
+}
+template <typename T> bool SVValueObjectClass<T>::getMinMaxValues(_variant_t& min, _variant_t& max) const
+{
+	if (false == m_UseMaxMinValue)
+	{
+		return false;
+	}
+	max = ValueType2Variant(&m_MaxValue);
+	min = ValueType2Variant(&m_MinValue);
+	return true;
 }
 
 template <typename T>
@@ -608,6 +639,19 @@ void SVValueObjectClass<T>::validateValue(const _variant_t& rValue, const _varia
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
 		Exception.Throw();
 	}
+	if (m_UseMaxMinValue)
+	{
+		for (auto val : valueVector)
+		{
+			if (!CheckMaxMin(val))
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_MinMaxInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+				Exception.Throw();
+			}
+		}
+	}
+	 
 }
 
 #pragma endregion virtual method
@@ -961,9 +1005,22 @@ std::string SVValueObjectClass<T>::getFixedWidthFormatString(uint32_t , uint32_t
 	//used if that class does not overload getFixedWidthFormatString()
 }
 
+template <typename T> bool SVValueObjectClass<T>::CheckMaxMin( T val ) const
+{
+	if (m_UseMaxMinValue)
+	{
 
-
-
+		return (val  <= m_MaxValue && (val  >= m_MinValue));
+	}
+	else
+	{
+		return true;
+	}
+}
+//specialization necessary because of lack of comparison operator for this types
+template <> bool SVValueObjectClass<_variant_t>::CheckMaxMin(_variant_t) const;
+template <> bool SVValueObjectClass<SVPoint<double>>::CheckMaxMin(SVPoint<double>) const;
+template <> bool SVValueObjectClass<SVPoint<long>>::CheckMaxMin(SVPoint<long>) const;
 
 #pragma endregion Protected Methods
 

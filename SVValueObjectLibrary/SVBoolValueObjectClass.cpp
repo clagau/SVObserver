@@ -128,7 +128,7 @@ void SVBoolValueObjectClass::LocalInitialize()
 	m_ObjectTypeInfo.m_SubType = SvPb::SVBoolValueObjectType;
 	DefaultValue() = false;
 	SetTypeName( _T("Bool") );
-
+	SetMinMaxValues(FALSE,TRUE);
 	init();
 }
 

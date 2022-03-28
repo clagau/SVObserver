@@ -48,6 +48,10 @@ namespace SvOi
 		//! \returns S_OK if succeeded
 		virtual HRESULT setDefaultValue(const _variant_t& rValue) = 0;
 
+
+		virtual bool  setMinMaxValues(const _variant_t& Min, const _variant_t& Max) = 0;
+		virtual bool getMinMaxValues(_variant_t& min, _variant_t& max) const = 0;
+
 		//! Gets the default value for the Value object
 		//! \returns the default value as a variant
 		virtual _variant_t getDefaultValue() const = 0;
@@ -159,6 +163,8 @@ namespace SvOi
 
 		// Creates a format string yielding a fixed length output string to be used when the value of the object value needs to be output
 		virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) = 0;
+
+	
 
 	};
 
