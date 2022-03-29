@@ -328,7 +328,7 @@ void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelO
 	{
 		resultString += std::to_string(rResult) + ' ';
 	}
-	std::string fileData = SvUl::Format(_T("%4lu; %s; %s\r\n"), channelOut.m_objectID, resultString.c_str(), acuisitionFile.c_str());
+	std::string fileData = SvUl::Format(_T("%lu;%s;%s\r\n"), channelOut.m_objectID, resultString.c_str(), acuisitionFile.c_str());
 	
 	{
 		std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };

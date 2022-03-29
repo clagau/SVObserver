@@ -9,7 +9,10 @@
 #include "Definitions/SVUserMessage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 
-constexpr LPCTSTR cResultHeader = _T("File; Object ID; Trigger Index; Results\r\n");
+constexpr LPCTSTR cResultHeader = _T("ObjectID; Results; Acquisition File\r\n");
+constexpr char cPlcBad = '5';
+constexpr char cPlcGood = '6';
+constexpr char cNotUsed = '0';
 
 RegressionRunFileStruct RegressionTestController::RegressionTestSetFiles(RegressionTestStruct& rRegTestStruct, RegressionRuningState& runState)
 {
@@ -234,22 +237,22 @@ DWORD RegressionTestController::runThread()
 			if (m_isValidationMode && m_fileOutputResult.is_open() && m_triggerIndex == m_objectIDParams.m_triggerPerObjectID)
 			{
 				std::string firstFileName = (0 < fileNameVec.size()) ? fileNameVec[0].FileName : _T("");
-				std::string outputData {SvUl::Format(_T("%s; %lu; %ld; "), firstFileName.c_str(), m_objectIDParams.m_currentObjectID, m_triggerIndex)};
-
+				std::string outputData;
 				for (const auto& pObject : m_OutputValueList)
 				{
 					if (nullptr != pObject)
 					{
 						double value;
 						pObject->getValue(value);
-						outputData += (value > 0.0) ? _T("1 ") : _T("0 ");
+						outputData += (value > 0.0) ? cPlcGood : cPlcBad;
 					}
 					else
 					{
-						outputData += _T("-1 ");
+						outputData += cNotUsed;
 					}
+					outputData += ' ';
 				}
-				outputData += "\r\n";
+				outputData =  SvUl::Format(_T("%lu;%s;%s\r\n"), m_objectIDParams.m_currentObjectID, outputData.c_str(), firstFileName.c_str());
 				m_fileOutputResult.write(outputData.c_str(), outputData.size());
 			}
 			fileNameVec.clear();
