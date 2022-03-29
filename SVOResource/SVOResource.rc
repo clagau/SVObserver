@@ -4173,9 +4173,9 @@ BEGIN
     END
     POPUP "&Edit",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        MENUITEM "&Cut Tool\tCtrl+X",           ID_EDIT_CUT,MFT_STRING,MFS_ENABLED
-        MENUITEM "&Copy Tool\tCtrl+C",          ID_EDIT_COPY,MFT_STRING,MFS_ENABLED
-        MENUITEM "&Paste Tool\tCtrl+V",         ID_EDIT_PASTE,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Cut\tCtrl+X",                ID_EDIT_CUT,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE,MFT_STRING,MFS_ENABLED
         MENUITEM "&Delete\tDEL",                ID_EDIT_DELETE,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Edit &I/O List\tCtrl+I",      ID_EDIT_EDITIOLIST,MFT_STRING,MFS_ENABLED
@@ -4373,9 +4373,9 @@ BEGIN
     BEGIN
         MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
         MENUITEM SEPARATOR
-        MENUITEM "Cut Tool",                    ID_EDIT_CUT
-        MENUITEM "Copy Tool",                   ID_EDIT_COPY
-        MENUITEM "Paste Tool",                  ID_EDIT_PASTE
+        MENUITEM "Cut",                         ID_EDIT_CUT
+        MENUITEM "Copy",                        ID_EDIT_COPY
+        MENUITEM "Paste",                       ID_EDIT_PASTE
         MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
         MENUITEM "Show First Error",            ID_SHOW_FIRST_ERROR
         MENUITEM "Add to monitorlist",          ID_ADD_TOOL_PARA_TO_MONITORLIST
@@ -4389,10 +4389,10 @@ IDR_TOOL_LIST_CONTEXT_MENU_MULTI MENU
 BEGIN
     POPUP "SelectTools"
     BEGIN
-        MENUITEM "Cut Tools",                    ID_EDIT_CUT
-        MENUITEM "Copy Tools",                   ID_EDIT_COPY
+        MENUITEM "Cut",                         ID_EDIT_CUT
+        MENUITEM "Copy",                        ID_EDIT_COPY
         MENUITEM SEPARATOR
-        MENUITEM "Dependencies", ID_SHOW_RELATIONS
+        MENUITEM "Dependencies",                ID_SHOW_RELATIONS
         END
 END
 
@@ -4409,7 +4409,7 @@ BEGIN
     POPUP "SelectTool"
     BEGIN
         MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
-        MENUITEM "Paste Tool",                  ID_EDIT_PASTE
+        MENUITEM "Paste",                       ID_EDIT_PASTE
     END
 END
 
@@ -4419,9 +4419,9 @@ BEGIN
     BEGIN
         MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
         MENUITEM SEPARATOR
-        MENUITEM "Cut Tool",                    ID_EDIT_CUT
-        MENUITEM "Copy Tool",                   ID_EDIT_COPY
-        MENUITEM "Paste Tool",                  ID_EDIT_PASTE
+        MENUITEM "Cut",                         ID_EDIT_CUT
+        MENUITEM "Copy",                        ID_EDIT_COPY
+        MENUITEM "Paste",                       ID_EDIT_PASTE
         MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
         MENUITEM "Show First Error",            ID_SHOW_FIRST_ERROR
         MENUITEM SEPARATOR

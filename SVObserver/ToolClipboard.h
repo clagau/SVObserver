@@ -141,7 +141,7 @@ protected:
 	/// \returns HRESULT S_OK on success
 	HRESULT replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const;
 
-	void replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rFullToolNameStr, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const;
+	void replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const;
 
 	//************************************
 	// Description: This method replaces all the unique ids

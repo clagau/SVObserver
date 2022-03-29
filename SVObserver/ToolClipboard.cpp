@@ -333,7 +333,7 @@ SvDef::StringVector ToolClipboard::findDependencyFiles(const std::string& rToolX
 	{
 		ToolXmlString.replace(StartPos, sizeof("\\\\") - 1, "\\"); // this makes the search string work 
 			// regardless of whether single or double backslashes are present in file paths 
-			// and ensures dependecy filepaths contain single backslashes
+			// and ensures dependency filepaths contain single backslashes
 			// (fixes SVO-3548)
 		StartPos = ToolXmlString.find("\\\\");
 	}
@@ -503,7 +503,7 @@ void ToolClipboard::validateIds(std::string& rXmlData, uint32_t ownerId, SvPb::C
 	}
 }
 
-HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const
+HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const //ABXX kleiner?
 {
 	HRESULT Result(E_FAIL);
 
@@ -513,17 +513,11 @@ HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeTy
 	{
 		SVTreeType::SVBranchHandle ToolItem = rTree.getFirstBranch(ToolsItem);
 
-		uint16_t toolIndex = 0;
-
 		std::map<std::string, int> HighestUsedIndexForBaseToolname;
 
 		while (rTree.isValidBranch(ToolItem))
 		{
-			_variant_t fullToolName;
-			auto numberedFullToolNameTag = SvXml::FullToolNameTag + SvUl::AsString(toolIndex++);
-			SvXml::SVNavigateTree::GetItem(rTree, numberedFullToolNameTag.c_str(), ToolsItem, fullToolName);
-			std::string fullToolNameStr = SvUl::createStdString(fullToolName.bstrVal);
-			replaceOneToolName(rXmlData, rTree, pOwner, ToolItem, fullToolNameStr, &HighestUsedIndexForBaseToolname);
+			replaceOneToolName(rXmlData, rTree, pOwner, ToolItem, &HighestUsedIndexForBaseToolname);
 			Result = S_OK;
 			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
 		}
@@ -540,7 +534,7 @@ HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeTy
 }
 
 
-void ToolClipboard::replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rFullToolNameStr, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
+void ToolClipboard::replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
 {
 	_variant_t ObjectName;
 
@@ -585,23 +579,6 @@ void ToolClipboard::replaceOneToolName(std::string& rXmlData, SVTreeType& rTree,
 			rXmlData.replace(pos, strlen(replacementString.c_str()), searchString.c_str());
 		}
 	}
-
-	std::string fullToolNameStr(rFullToolNameStr);
-	if (!fullToolNameStr.empty())
-	{ //replace the dottedName in Equations with the new name.
-		fullToolNameStr += _T(".");
-		std::string fullToolNameNewStr = fullToolNameStr;
-		if (nullptr != pOwner)
-		{
-			fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewName + _T(".");
-		}
-		else
-		{
-			SvUl::searchAndReplace(fullToolNameNewStr, ToolName.c_str(), NewName.c_str());
-		}
-		SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
-	}
-
 }
 
 HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SVTreeType& rTree) const
