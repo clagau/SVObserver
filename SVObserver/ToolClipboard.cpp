@@ -503,7 +503,7 @@ void ToolClipboard::validateIds(std::string& rXmlData, uint32_t ownerId, SvPb::C
 	}
 }
 
-HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const //ABXX kleiner?
+HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const
 {
 	HRESULT Result(E_FAIL);
 
