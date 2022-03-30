@@ -186,30 +186,9 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ENABLE_HEADERS,
 		false, SvOi::SVResetItemNone);
 
-	// Register Embedded Objects
-	RegisterEmbeddedObject(
-		&m_baseFilename,
-		SvPb::BaseFilenameEId,
-		IDS_BASE_FILENAME,
-		false, SvOi::SVResetItemNone);
-
-	RegisterEmbeddedObject(
-		&m_centerFilename,
-		SvPb::CenterFilenameEId,
-		IDS_CENTER_FILENAME,
-		false, SvOi::SVResetItemNone);
-
-	RegisterEmbeddedObject(
-		&m_baseDirectoryname,
-		SvPb::BaseDirectorynameEId,
-		IDS_BASE_DIRECTORYNAME,
-		false, SvOi::SVResetItemNone);
-
-	RegisterEmbeddedObject(&m_FilenameIndex1, SvPb::FilenameIndex1EId, IDS_OBJECTNAME_FILENAME_INDEX1, true, SvOi::SVResetItemTool);
-	m_FilenameIndex1.SetDefaultValue(_variant_t(0UL), true);
-
-	RegisterEmbeddedObject(&m_FilenameIndex2, SvPb::FilenameIndex2EId, IDS_OBJECTNAME_FILENAME_INDEX2, true, SvOi::SVResetItemTool);
-	m_FilenameIndex2.SetDefaultValue(_variant_t(0UL), true);
+	RegisterEmbeddedObject(&m_baseDirectoryname, SvPb::BaseDirectorynameEId, IDS_BASE_DIRECTORYNAME, true, SvOi::SVResetItemTool);
+	m_baseDirectoryname.SetDefaultValue(_bstr_t(""), true);
+	m_baseDirectoryname.setValueType(SvPb::TypeText);
 
 	RegisterEmbeddedObject(&m_DirectorynameIndex, SvPb::DirectorynameIndexEId, IDS_OBJECTNAME_DIRECTORYNAME_INDEX, true, SvOi::SVResetItemTool);
 	m_DirectorynameIndex.SetDefaultValue(_variant_t(0UL), true);
@@ -219,6 +198,20 @@ void SVArchiveTool::initializeArchiveTool()
 
 	RegisterEmbeddedObject(&m_SubfolderLocation, SvPb::SubfolderLocationEId, IDS_OBJECTNAME_SUBFOLDER_LOCATION, true, SvOi::SVResetItemTool);
 	m_SubfolderLocation.SetDefaultValue(_variant_t(0UL), true);
+
+	RegisterEmbeddedObject(&m_baseFilename, SvPb::BaseFilenameEId, IDS_BASE_FILENAME, true, SvOi::SVResetItemTool);
+	m_baseFilename.SetDefaultValue(_bstr_t(""), true);
+	m_baseFilename.setValueType(SvPb::TypeText);
+
+	RegisterEmbeddedObject(&m_FilenameIndex1, SvPb::FilenameIndex1EId, IDS_OBJECTNAME_FILENAME_INDEX1, true, SvOi::SVResetItemTool);
+	m_FilenameIndex1.SetDefaultValue(_variant_t(0UL), true);
+
+	RegisterEmbeddedObject(&m_centerFilename, SvPb::CenterFilenameEId, IDS_CENTER_FILENAME, true, SvOi::SVResetItemTool);
+	m_centerFilename.SetDefaultValue(_bstr_t(""), true);
+	m_centerFilename.setValueType(SvPb::TypeText);
+
+	RegisterEmbeddedObject(&m_FilenameIndex2, SvPb::FilenameIndex2EId, IDS_OBJECTNAME_FILENAME_INDEX2, true, SvOi::SVResetItemTool);
+	m_FilenameIndex2.SetDefaultValue(_variant_t(0UL), true);
 
 	// no need to register image buffer
 
@@ -948,8 +941,9 @@ const std::string SVArchiveTool::alternativeImageDirectory(const std::string& rI
 	m_SubfolderLocation.GetValue(temporaryVariant);
 	uint32_t SubfolderLocation = static_cast<uint32_t>(temporaryVariant);
 
-	std::string baseDirectoryname;
-	m_baseDirectoryname.GetValue(baseDirectoryname);
+	m_baseDirectoryname.GetValue(temporaryVariant);
+	std::string baseDirectoryname = SvUl::createStdString(temporaryVariant);
+
 
 	std::string imageDirectoryPath = rImagePathRoot;
 
@@ -992,15 +986,16 @@ const std::string SVArchiveTool::alternativeImageDirectory(const std::string& rI
 
 std::string SVArchiveTool::getNextImageFileName()
 {
-	std::string baseFilename;
-	m_baseFilename.GetValue(baseFilename);
+	_variant_t temporaryVariant;
+	m_baseFilename.GetValue(temporaryVariant);
+	std::string baseFilename = SvUl::createStdString(temporaryVariant);
 
 	double index;
 	m_FilenameIndex1.getValue(index);
 	uint32_t Index1 = static_cast<uint32_t> (index);
 
-	std::string centerFilename;
-	m_centerFilename.GetValue(centerFilename);
+	m_centerFilename.GetValue(temporaryVariant);
+	std::string centerFilename = SvUl::createStdString(temporaryVariant);
 
 	m_FilenameIndex2.getValue(index);
 	uint32_t Index2 = static_cast<uint32_t> (index);
@@ -1184,10 +1179,10 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 
 std::string SVArchiveTool::archiveImageDirectory()
 {
-	BOOL useAlternativeImagePath = FALSE;
-	m_useAlternativeImagePath.GetValue(useAlternativeImagePath);
+	BOOL useAlternativeImagePaths = FALSE;
+	m_useAlternativeImagePath.GetValue(useAlternativeImagePaths);
 
-	std::string imageDirectoryPath = useAlternativeImagePath ? alternativeImageDirectory(m_currentImagePathRoot) : m_currentImagePathRoot;
+	std::string imageDirectoryPath = useAlternativeImagePaths ? alternativeImageDirectory(m_currentImagePathRoot) : m_currentImagePathRoot;
 
 	return imageDirectoryPath;
 }
@@ -1197,8 +1192,8 @@ bool SVArchiveTool::ensureArchiveImageDirectoryExists()
 {
 	bool ok = false;
 
-	BOOL useAlternativeImagePath = FALSE;
-	m_useAlternativeImagePath.GetValue(useAlternativeImagePath);
+	BOOL useAlternativeImagePaths = FALSE;
+	m_useAlternativeImagePath.GetValue(useAlternativeImagePaths);
 
 	auto imageDirectoryPath = archiveImageDirectory();
 

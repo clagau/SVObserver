@@ -210,9 +210,6 @@
     <ClCompile Include="ZoomHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ValueEditWidgetHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="NormalizerController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -504,9 +501,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ToolAdjustToolSetPage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ValueEditWidgetHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="NormalizerController.h">

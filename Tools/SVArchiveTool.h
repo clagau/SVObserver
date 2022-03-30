@@ -154,9 +154,9 @@ private:
 	SvVol::LinkedValue m_SubfolderSelection;
 	SvVol::LinkedValue m_SubfolderLocation;
 
-	SvVol::SVStringValueObjectClass m_baseDirectoryname;
-	SvVol::SVStringValueObjectClass m_baseFilename;
-	SvVol::SVStringValueObjectClass m_centerFilename;
+	SvVol::LinkedValue m_baseDirectoryname;
+	SvVol::LinkedValue m_baseFilename;
+	SvVol::LinkedValue m_centerFilename;
 
 	bool m_removeEntriesIfDisconnected = true;
 };

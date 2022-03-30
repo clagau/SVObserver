@@ -19,7 +19,6 @@
 #include "Tools/ArchiveMethodEnum.h"
 #include "SVOGui/DataController.h"
 #include "SVOGui/LinkedValueWidgetHelper.h"
-#include "SVOGui/ValueEditWidgetHelper.h"
 #pragma endregion Includes
 
 
@@ -43,44 +42,38 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 {
 	enum { IDD = IDD_TA_ARCHIVE_IMAGE_PAGE };
 
-	class AlternativeImagePathController ///< provides access to widgets and IDs for alternative image path configuration
+	class AipCtr ///< (AlternativeImagePathController) provides access to widgets and IDs for alternative image path configuration
+				/// short class name: used only locally
 	{
 		enum TupleContent : size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
-		explicit AlternativeImagePathController(SvOg::ValueController& rValueController, uint32_t inspectionId, uint32_t taskId) :
+		explicit AipCtr(SvOg::ValueController& rValueController, uint32_t inspectionId, uint32_t taskId) :
 			m_inspectionId{inspectionId},
 			m_taskId{taskId},
-			m_rValueController(rValueController),
-			m_vecValueAndGuiInfo
-		{
-			{ m_EditBaseDirectoryname, SvPb::BaseDirectorynameEId, rValueController},
-			{ m_EditBaseFilename, SvPb::BaseFilenameEId, rValueController},
-			{ m_EditCenterFilename, SvPb::CenterFilenameEId, rValueController}
-		}
+			m_rValueController(rValueController)
 		{}
 
-		enum LinkedValueEnums
+		enum Lve ///< (LinkedValueEnums) short name: used only locally
 		{
+			BaseDirectoryname,
 			DirectorynameIndex,
-			FilenameIndex1,
-			FilenameIndex2,
 			SubfolderSelection,
 			SubfolderLocation,
+			BaseFilename,
+			FilenameIndex1,
+			CenterFilename,
+			FilenameIndex2,
 			__Num__
 		};
 
-		void EditboxesToTextValues();
-		void TextValuesToEditboxes();
-		
 		void init();
 		void DoDataExchange(CDataExchange* pDX);
 		afx_msg void OnButtonUseAlternativeImagePath(BOOL enable);
 
-		void OnButton(LinkedValueEnums widgetEnum);
-		void OnKillFocus(LinkedValueEnums widgetEnum);
+		void OnButton(Lve widgetEnum);
+		void OnKillFocus(Lve widgetEnum);
 
-		std::vector<SvOg::ValueEditWidgetHelper> m_vecValueAndGuiInfo; //used to iterate over widgets and IDs
-		std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, LinkedValueEnums::__Num__> m_WidgetHelpers;
+		std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, Lve::__Num__> m_WidgetHelpers;
 
 	private:
 
@@ -89,19 +82,21 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 		uint32_t m_taskId;
 
 		CEdit	m_EditBaseDirectoryname;
+		CButton m_ButtonBaseDirectoryname;
 		CEdit	m_EditDirectorynameIndex;
 		CButton m_ButtonDirectorynameIndex;
-		CEdit	m_EditBaseFilename;
-		CEdit	m_EditFilenameIndex1;
-		CButton m_ButtonFilenameIndex1;
-		CEdit	m_EditCenterFilename;
-		CEdit	m_EditFilenameIndex2;
-		CButton m_ButtonFilenameIndex2;
 		CEdit	m_EditSubfolderSelection;
 		CButton m_ButtonSubfolderSelection;
 		CEdit	m_EditSubfolderLocation;
 		CButton m_ButtonSubfolderLocation;
-
+		CEdit	m_EditBaseFilename;
+		CButton m_ButtonBaseFilename;
+		CEdit	m_EditFilenameIndex1;
+		CButton m_ButtonFilenameIndex1;
+		CEdit	m_EditCenterFilename;
+		CButton m_ButtonCenterFilename;
+		CEdit	m_EditFilenameIndex2;
+		CButton m_ButtonFilenameIndex2;
 	};
 
 #pragma region Constructor
@@ -146,16 +141,10 @@ protected:
 	void ShowObjectSelector();
 	bool validateArchiveImageFilepath();  ///< makes sure that the directory as defined in the Archive Tool Adjustment Dialog is available
 
-	void OnButtonFilenameIndex1()		{m_alternativeImagePaths.OnButton(AlternativeImagePathController::LinkedValueEnums::FilenameIndex1);}
-	void OnButtonFilenameIndex2()		{m_alternativeImagePaths.OnButton(AlternativeImagePathController::LinkedValueEnums::FilenameIndex2);}
-	void OnButtonDirectorynameIndex()	{m_alternativeImagePaths.OnButton(AlternativeImagePathController::LinkedValueEnums::DirectorynameIndex);}
-	void OnButtonSubfolderSelection()	{m_alternativeImagePaths.OnButton(AlternativeImagePathController::LinkedValueEnums::SubfolderSelection);}
-	void OnButtonSubfolderLocation()	{m_alternativeImagePaths.OnButton(AlternativeImagePathController::LinkedValueEnums::SubfolderLocation);}
-	void OnKillFocusFilenameIndex1() { m_alternativeImagePaths.OnKillFocus(AlternativeImagePathController::LinkedValueEnums::FilenameIndex1); }
-	void OnKillFocusFilenameIndex2() { m_alternativeImagePaths.OnKillFocus(AlternativeImagePathController::LinkedValueEnums::FilenameIndex2); }
-	void OnKillFocusDirectorynameIndex() { m_alternativeImagePaths.OnKillFocus(AlternativeImagePathController::LinkedValueEnums::DirectorynameIndex); }
-	void OnKillFocusSubfolderSelection() { m_alternativeImagePaths.OnKillFocus(AlternativeImagePathController::LinkedValueEnums::SubfolderSelection); }
-	void OnKillFocusSubfolderLocation() { m_alternativeImagePaths.OnKillFocus(AlternativeImagePathController::LinkedValueEnums::SubfolderLocation); }
+	template<AipCtr::Lve lve>
+	void OnButton() { m_alternativeImagePaths.OnButton(lve); }
+	template<AipCtr::Lve lve>
+	void OnKillFocus() { m_alternativeImagePaths.OnKillFocus(lve); }
 
 	bool checkImageMemory(uint32_t imageId, bool bNewState);
 	__int64 CalculateToolMemoryUsage();
@@ -179,10 +168,11 @@ private:
 	SvMc::EditNumbers	m_EditMaxImages;
 	CEdit	m_ImageFilepathroot1;
 	CEdit	m_ImageFilepathroot2;
+	CEdit	m_ImageFilepathroot3;
 	CButton m_ImageFilepathroot1Button;
 	CButton m_ImageFilepathroot2Button;
 	CButton m_ImageFilepathroot3Button;
-	CEdit	m_ImageFilepathroot3;
+
 	CButton m_StopAtMaxImagesButton;
 	CButton m_useAlternativeImagePathButton;
 	uint32_t m_inspectionId;
@@ -204,7 +194,7 @@ private:
 	std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, 3> m_ImageFilepathrootWidgetHelpers;
 	
 	bool m_Init = false;
-	AlternativeImagePathController m_alternativeImagePaths;
+	AipCtr m_alternativeImagePaths;
 
 #pragma endregion Private Members
 };

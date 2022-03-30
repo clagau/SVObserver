@@ -48,16 +48,23 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_CBN_SELCHANGE(IDC_WHEN_TO_ARCHIVE, OnSelchangeWhenToArchive)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
 	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX, OnStopAtMaxClicked)
-	ON_BN_CLICKED(IDC_BUTTON_FILENAME_INDEX1, OnButtonFilenameIndex1)
-	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_INDEX1, OnKillFocusFilenameIndex1)
-	ON_BN_CLICKED(IDC_BUTTON_FILENAME_INDEX2, OnButtonFilenameIndex2)
-	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_INDEX2, OnKillFocusFilenameIndex2)
-	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_INDEX, OnButtonDirectorynameIndex)
-	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_INDEX, OnKillFocusDirectorynameIndex)
-	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_SELECTION, OnButtonSubfolderSelection)
-	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_SELECTION, OnKillFocusSubfolderSelection)
-	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_LOCATION, OnButtonSubfolderLocation)
-	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_LOCATION, OnKillFocusSubfolderLocation)
+	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_BASE, OnButton<	AipCtr::Lve::BaseDirectoryname>)
+	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_BASE, OnKillFocus<AipCtr::Lve::BaseDirectoryname>)
+	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_INDEX, OnButton<	AipCtr::Lve::DirectorynameIndex>)
+	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_INDEX, OnKillFocus<AipCtr::Lve::DirectorynameIndex>)
+	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_SELECTION, OnButton<	AipCtr::Lve::SubfolderSelection>)
+	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_SELECTION, OnKillFocus<AipCtr::Lve::SubfolderSelection>)
+	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_LOCATION, OnButton<	AipCtr::Lve::SubfolderLocation>)
+	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_LOCATION, OnKillFocus<AipCtr::Lve::SubfolderLocation>)
+	ON_BN_CLICKED(IDC_BUTTON_FILENAME_BASE, OnButton<	AipCtr::Lve::BaseFilename>)
+	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_BASE, OnKillFocus<AipCtr::Lve::BaseFilename>)
+	ON_BN_CLICKED(	IDC_BUTTON_FILENAME_INDEX1,		OnButton<	AipCtr::Lve::FilenameIndex1>)
+	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_INDEX1,		OnKillFocus<AipCtr::Lve::FilenameIndex1>)
+	ON_BN_CLICKED(IDC_BUTTON_FILENAME_CENTER, OnButton<	AipCtr::Lve::CenterFilename>)
+	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_CENTER, OnKillFocus<AipCtr::Lve::CenterFilename>)
+	ON_BN_CLICKED(	IDC_BUTTON_FILENAME_INDEX2,		OnButton<	AipCtr::Lve::FilenameIndex2>)
+	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_INDEX2,		OnKillFocus<AipCtr::Lve::FilenameIndex2>)
+
 	ON_BN_CLICKED(IDC_USE_ALTERNATIVE_IMAGE_PATH, OnButtonUseAlternativeImagePath)
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT1, OnButtonImageFilepathroot1)
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT2, OnButtonImageFilepathroot2)
@@ -127,8 +134,6 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 			}
 		}
 	}
-
-	m_alternativeImagePaths.EditboxesToTextValues();
 
 	//update the image path
 
@@ -327,8 +332,6 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	{
 		m_InitialArchiveImageMemoryUsageExcludingThisTool -= m_ToolImageMemoryUsage;
 	}
-
-	m_alternativeImagePaths.TextValuesToEditboxes();
 
 	ReadSelectedObjects();
 
@@ -779,34 +782,40 @@ void SVTADlgArchiveImagePage::OnKillFocusImageFilepathroot3()
 	m_ImageFilepathrootWidgetHelpers[2]->EditboxToValue();
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePathController::init()
+void SVTADlgArchiveImagePage::AipCtr::init()
 {
-	m_WidgetHelpers[LinkedValueEnums::DirectorynameIndex] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditDirectorynameIndex, m_ButtonDirectorynameIndex, m_inspectionId, m_taskId, SvPb::DirectorynameIndexEId, &m_rValueController);
-	m_WidgetHelpers[LinkedValueEnums::FilenameIndex1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex1, m_ButtonFilenameIndex1, m_inspectionId, m_taskId, SvPb::FilenameIndex1EId, &m_rValueController);
-	m_WidgetHelpers[LinkedValueEnums::FilenameIndex2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex2, m_ButtonFilenameIndex2, m_inspectionId, m_taskId, SvPb::FilenameIndex2EId, &m_rValueController);
-	m_WidgetHelpers[LinkedValueEnums::SubfolderSelection] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderSelection, m_ButtonSubfolderSelection, m_inspectionId, m_taskId, SvPb::SubfolderSelectionEId, &m_rValueController);
-	m_WidgetHelpers[LinkedValueEnums::SubfolderLocation] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderLocation, m_ButtonSubfolderLocation, m_inspectionId, m_taskId, SvPb::SubfolderLocationEId, &m_rValueController);
+	m_WidgetHelpers[Lve::BaseDirectoryname] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditBaseDirectoryname, m_ButtonBaseDirectoryname, m_inspectionId, m_taskId, SvPb::BaseDirectorynameEId, &m_rValueController);
+	m_WidgetHelpers[Lve::DirectorynameIndex] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditDirectorynameIndex, m_ButtonDirectorynameIndex, m_inspectionId, m_taskId, SvPb::DirectorynameIndexEId, &m_rValueController);
+	m_WidgetHelpers[Lve::SubfolderSelection] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderSelection, m_ButtonSubfolderSelection, m_inspectionId, m_taskId, SvPb::SubfolderSelectionEId, &m_rValueController);
+	m_WidgetHelpers[Lve::SubfolderLocation] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderLocation, m_ButtonSubfolderLocation, m_inspectionId, m_taskId, SvPb::SubfolderLocationEId, &m_rValueController);
+	m_WidgetHelpers[Lve::BaseFilename] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditBaseFilename, m_ButtonBaseFilename, m_inspectionId, m_taskId, SvPb::BaseFilenameEId, &m_rValueController);
+	m_WidgetHelpers[Lve::FilenameIndex1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex1, m_ButtonFilenameIndex1, m_inspectionId, m_taskId, SvPb::FilenameIndex1EId, &m_rValueController);
+	m_WidgetHelpers[Lve::CenterFilename] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditCenterFilename, m_ButtonCenterFilename, m_inspectionId, m_taskId, SvPb::CenterFilenameEId, &m_rValueController);
+	m_WidgetHelpers[Lve::FilenameIndex2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex2, m_ButtonFilenameIndex2, m_inspectionId, m_taskId, SvPb::FilenameIndex2EId, &m_rValueController);
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePathController::DoDataExchange(CDataExchange* pDX)
+void SVTADlgArchiveImagePage::AipCtr::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_EDIT_FILENAME_INDEX1, m_EditFilenameIndex1);
-	DDX_Control(pDX, IDC_BUTTON_FILENAME_INDEX1, m_ButtonFilenameIndex1);
-	DDX_Control(pDX, IDC_EDIT_FILENAME_INDEX2, m_EditFilenameIndex2);
-	DDX_Control(pDX, IDC_BUTTON_FILENAME_INDEX2, m_ButtonFilenameIndex2);
 	DDX_Control(pDX, IDC_EDIT_DIRECTORYNAME_BASE, m_EditBaseDirectoryname);
+	DDX_Control(pDX, IDC_BUTTON_DIRECTORYNAME_BASE, m_ButtonBaseDirectoryname);
+	DDX_Control(pDX, IDC_EDIT_DIRECTORYNAME_INDEX, m_EditDirectorynameIndex);
+	DDX_Control(pDX, IDC_BUTTON_DIRECTORYNAME_INDEX, m_ButtonDirectorynameIndex);
 	DDX_Control(pDX, IDC_EDIT_SUBFOLDER_SELECTION, m_EditSubfolderSelection);
 	DDX_Control(pDX, IDC_BUTTON_SUBFOLDER_SELECTION, m_ButtonSubfolderSelection);
 	DDX_Control(pDX, IDC_EDIT_SUBFOLDER_LOCATION, m_EditSubfolderLocation);
 	DDX_Control(pDX, IDC_BUTTON_SUBFOLDER_LOCATION, m_ButtonSubfolderLocation);
 	DDX_Control(pDX, IDC_EDIT_FILENAME_BASE, m_EditBaseFilename);
+	DDX_Control(pDX, IDC_BUTTON_FILENAME_BASE, m_ButtonBaseFilename);
+	DDX_Control(pDX, IDC_EDIT_FILENAME_INDEX1, m_EditFilenameIndex1);
+	DDX_Control(pDX, IDC_BUTTON_FILENAME_INDEX1, m_ButtonFilenameIndex1);
 	DDX_Control(pDX, IDC_EDIT_FILENAME_CENTER, m_EditCenterFilename);
-	DDX_Control(pDX, IDC_EDIT_DIRECTORYNAME_INDEX, m_EditDirectorynameIndex);
-	DDX_Control(pDX, IDC_BUTTON_DIRECTORYNAME_INDEX, m_ButtonDirectorynameIndex);
+	DDX_Control(pDX, IDC_BUTTON_FILENAME_CENTER, m_ButtonCenterFilename);
+	DDX_Control(pDX, IDC_EDIT_FILENAME_INDEX2, m_EditFilenameIndex2);
+	DDX_Control(pDX, IDC_BUTTON_FILENAME_INDEX2, m_ButtonFilenameIndex2);
 }
 
 
-void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButton(LinkedValueEnums widgetEnum)
+void SVTADlgArchiveImagePage::AipCtr::OnButton(Lve widgetEnum)
 {
 	if (widgetEnum < m_WidgetHelpers.size() && m_WidgetHelpers[widgetEnum])
 	{
@@ -814,7 +823,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButton(LinkedVal
 	}
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePathController::OnKillFocus(LinkedValueEnums widgetEnum)
+void SVTADlgArchiveImagePage::AipCtr::OnKillFocus(Lve widgetEnum)
 {
 	if (widgetEnum < m_WidgetHelpers.size() && m_WidgetHelpers[widgetEnum])
 	{
@@ -822,34 +831,13 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::OnKillFocus(Linked
 	}
 }
 
-afx_msg void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButtonUseAlternativeImagePath(BOOL enable) 
+afx_msg void SVTADlgArchiveImagePage::AipCtr::OnButtonUseAlternativeImagePath(BOOL enable) 
 {
-	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
-	{
-		uiInfo.EnableGuiElements(enable);
-	}
-
 	for (auto& pWidget : m_WidgetHelpers)
 	{
 		if (pWidget)
 		{
 			pWidget->EnableGuiElements(enable);
 		}
-	}
-}
-
-void SVTADlgArchiveImagePage::AlternativeImagePathController::EditboxesToTextValues()
-{
-	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
-	{
-		uiInfo.EditboxToValue();
-	}
-}
-
-void SVTADlgArchiveImagePage::AlternativeImagePathController::TextValuesToEditboxes()
-{
-	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
-	{
-		uiInfo.ValueToEditbox();
 	}
 }
