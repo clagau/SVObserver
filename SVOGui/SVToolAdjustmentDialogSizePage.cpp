@@ -73,6 +73,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSizePage, CPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_TA_SIZE_MODE_POSITIONX, &SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboPositionX)
 	ON_CBN_SELCHANGE(IDC_COMBO_TA_SIZE_MODE_WIDTH, &SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboWidthMode)
 	ON_CBN_SELCHANGE(IDC_COMBO_TA_SIZE_MODE_HEIGHT, &SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboHeightMode)
+	ON_CBN_SELCHANGE(IDC_COMBO_IMAGE_LIST, &SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboImageList)
 	ON_BN_CLICKED(IDC_BUTTON_TA_WIDTH_FORMULA, &SVToolAdjustmentDialogSizePage::OnBnClickedButtonTaWidthFormula)
 	ON_BN_CLICKED(IDC_BUTTON_POSITION_Y, &SVToolAdjustmentDialogSizePage::OnBnClickedButtonPositionY)
 	ON_BN_CLICKED(IDC_BUTTON_POSITION_FORMULA_X, &SVToolAdjustmentDialogSizePage::OnBnClickedButtonPositionFormulaX)
@@ -104,8 +105,8 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		selectedToolName = rAvailableToolList.begin()->first;
 	}
 
-	m_ComboBoxImages.Init(rAvailableToolList, selectedToolName, NoToolTag);
-
+	m_ComboBoxImages.Init(rAvailableToolList, std::string(), NoToolTag);
+	m_Button_FormulaFrom.EnableWindow(false);
 	if (isOk)
 	{
 		Refresh(false);
@@ -276,6 +277,12 @@ void SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboPositionY()
 {
 	OnSelchangeCombo(SvDef::ToolSizeAdjustEnum::TSPositionY);
 }
+void SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboImageList()
+{
+	std::string toolname;
+	m_Button_FormulaFrom.EnableWindow(GetToolNameFromImageList(toolname));
+}
+
 
 void SVToolAdjustmentDialogSizePage::OnBnClickedButtonTaWidthFormula()
 {
@@ -297,39 +304,43 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonTaHeight()
 	return OnBnClickedButtonFormula(SvDef::ToolSizeAdjustEnum::TSHeight);
 }
 
-
-void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormulaFrom()
+bool SVToolAdjustmentDialogSizePage::GetToolNameFromImageList(std::string& rtoolname)
 {
-	bool ready {false};
-
-	UpdateData(TRUE); // get data from dialog
+	bool ret {false};
 	int index = m_ComboBoxImages.GetCurSel();
 	if (LB_ERR != index)
 	{
-
-		CString toolName;
-		m_ComboBoxImages.GetLBText(index, toolName);
-		if (!toolName.IsEmpty() && toolName != NoToolTag)
+		CString cstoolname;
+		m_ComboBoxImages.GetLBText(index, cstoolname);
+		if (!cstoolname.IsEmpty() && cstoolname != NoToolTag)
 		{
-			std::string stoolName(toolName);
-
-			SizeValues values;
-			for (auto en : SvDef::AllToolSizeAdjustEnum)
-			{
-				values[en] = "\"" + stoolName + "." +
-					SvUl::LoadStdString(m_ToolSizeHelper.IDS_Objectnames[en])
-					+ "\"";
-			}
-			m_ToolSizeHelper.SetAllToolSizeMode(SvDef::TSFormula, false);
-			ready = m_ToolSizeHelper.SetFormulas(true, true, values);
-			
+			rtoolname = cstoolname.GetString();
+			ret = true;
 		}
 	}
-	if (!ready)
+	return ret;
+}
+
+void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormulaFrom()
+{
+	
+	UpdateData(TRUE); // get data from dialog
+	std::string toolName;
+	if (GetToolNameFromImageList(toolName))
 	{
+		SizeValues values;
+		for (auto en : SvDef::AllToolSizeAdjustEnum)
+		{
+			values[en] = "\"" + toolName + "." +
+				SvUl::LoadStdString(m_ToolSizeHelper.IDS_Objectnames[en])
+				+ "\"";
+		}
 		m_ToolSizeHelper.SetAllToolSizeMode(SvDef::TSFormula, false);
-		m_ToolSizeHelper.SetFormulas(true, true);
+		m_ToolSizeHelper.SetFormulas(true, true, values);
 	}
+
+
+
 	Refresh(false);
 }
 
@@ -370,6 +381,8 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 
 BOOL SVToolAdjustmentDialogSizePage::OnSetActive()
 {
+	m_ComboBoxImages.SetCurSel(-1);
+	m_Button_FormulaFrom.EnableWindow(false);
 	Refresh(false);
 	return CPropertyPage::OnSetActive();
 }

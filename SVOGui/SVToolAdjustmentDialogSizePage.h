@@ -34,6 +34,7 @@ public:
 	afx_msg void OnCbnSelchangeComboPositionY();
 	afx_msg void OnCbnSelchangeComboWidthMode();
 	afx_msg void OnCbnSelchangeComboHeightMode();
+	afx_msg void  OnCbnSelchangeComboImageList();
 	afx_msg void OnBnClickedButtonTaWidthFormula();
 	afx_msg void OnBnClickedButtonPositionY();
 	afx_msg void OnBnClickedButtonPositionFormulaX();
@@ -45,6 +46,7 @@ public:
 
 
 protected:
+	bool GetToolNameFromImageList(std::string& rToolname);
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void Refresh( bool bSave = true );
 	void OnSelchangeCombo(SvDef::ToolSizeAdjustEnum  mode);
