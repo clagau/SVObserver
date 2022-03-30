@@ -129,7 +129,6 @@ else
   }
 }
 
-D:\Utilities\BGInfo\bginfoIP.bat
 start-process "C:\SVObserver\bin\SVObserver.exe"
 start-process "C:\SVObserver\bin\SyncSystemTime.bat" -WindowStyle Minimized
 invoke-expression -Command "C:\SVObserver\bin\GetTimezoneFromHMI.ps1"
