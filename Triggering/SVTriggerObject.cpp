@@ -80,15 +80,8 @@ namespace SvTrig
 	{
 		if (setSoftwareTrigger && nullptr != m_pSoftwareTrigger)
 		{
-			m_pSoftwareTrigger->clearAcquisitionTriggers();
 			if (nullptr != m_pMainTrigger)
 			{
-				for (const auto& rAcquisitionParam : m_pMainTrigger->getAcquisitionTriggers())
-				{
-					AcquisitionParameter acquisitionParam{ rAcquisitionParam };
-					acquisitionParam.m_active = true;
-					m_pSoftwareTrigger->addAcquisitionTrigger(std::move(acquisitionParam));
-				}
 				m_pSoftwareTrigger->setObjectIDParameters(m_pMainTrigger->getObjectIDParameters());
 				m_pSoftwareTrigger->setTriggerCount(m_pMainTrigger->getTriggerCount());
 			}
@@ -98,7 +91,6 @@ namespace SvTrig
 		///This needs to be done before the cameras are started
 		if (nullptr != m_pCurrentTrigger)
 		{
-			m_pCurrentTrigger->setTriggerType(setSoftwareTrigger);
 			m_pCurrentTrigger->setPause(false);
 		}
 		return nullptr != m_pCurrentTrigger;

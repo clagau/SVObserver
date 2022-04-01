@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <fstream>
 #include "SVDigitizerLoadLibraryClass.h"
 #include "SVTriggerClass.h"
-#include "Definitions/SVGigeEnums.h"
 #include "SVIOTriggerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVTriggerConstants.h"
@@ -71,19 +70,6 @@ void SVTriggerClass::clearAcquisitionTriggers()
 	m_acqTriggerParameters.clear();
 }
 	
-void SVTriggerClass::setTriggerType(bool softwareTrigger) const
-{
-	SvDef::TriggerType triggerType{softwareTrigger ? SvDef::TriggerType::SoftwareTrigger : m_type };
-	for (const auto& rAcquisitionParameter : m_acqTriggerParameters)
-	{
-		if (nullptr != rAcquisitionParameter.m_pDllDigitizer)
-		{
-			_variant_t value{ static_cast<long> (triggerType) };
-			rAcquisitionParameter.m_pDllDigitizer->ParameterSetValue(rAcquisitionParameter.m_triggerChannel, SvDef::SVTriggerType, value);
-		}
-	}
-}
-
 HRESULT SVTriggerClass::RegisterCallback(PpqTriggerCallBack pPpqTriggerCallback)
 {
 	HRESULT result = TriggerDevice::RegisterCallback(pPpqTriggerCallback);

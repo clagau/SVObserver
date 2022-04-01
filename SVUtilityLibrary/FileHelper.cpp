@@ -28,10 +28,12 @@ std::vector<std::string> getFileList(LPCTSTR pPath, LPCTSTR pExtension, bool rec
 			filteredList.reserve(dirList->file_size());
 			if (nullptr == pExtension)
 			{
+				// cppcheck-suppress danglingTemporaryLifetime
 				std::copy(std::filesystem::begin(dirList), std::filesystem::end(dirList), std::back_inserter(filteredList));
 			}
 			else
 			{
+				// cppcheck-suppress danglingTemporaryLifetime
 				std::copy_if(std::filesystem::begin(dirList), std::filesystem::end(dirList), std::back_inserter(filteredList), [&pExtension](const auto& rEntry)
 				{
 					return (rEntry.is_regular_file() && MakeLower(rEntry.path().extension().string().c_str()) == pExtension);
@@ -44,10 +46,12 @@ std::vector<std::string> getFileList(LPCTSTR pPath, LPCTSTR pExtension, bool rec
 			filteredList.reserve(dirList->file_size());
 			if (nullptr == pExtension)
 			{
+				// cppcheck-suppress danglingTemporaryLifetime
 				std::copy(std::filesystem::begin(dirList), std::filesystem::end(dirList), std::back_inserter(filteredList));
 			}
 			else
 			{
+				// cppcheck-suppress danglingTemporaryLifetime
 				std::copy_if(std::filesystem::begin(dirList), std::filesystem::end(dirList), std::back_inserter(filteredList), [&pExtension](const auto& rEntry)
 				{
 					return (rEntry.is_regular_file() && MakeLower(rEntry.path().extension().string().c_str()) == pExtension);
@@ -55,9 +59,9 @@ std::vector<std::string> getFileList(LPCTSTR pPath, LPCTSTR pExtension, bool rec
 			}
 		}
 		result.reserve(filteredList.size());
-		// cppcheck-suppress useStlAlgorithm
 		for (const auto& rEntry : filteredList)
 		{
+			// cppcheck-suppress useStlAlgorithm
 			result.push_back(rEntry.path().string());
 		}
 		//StrCmpLogicalW is the sorting function used by Windows Explorer

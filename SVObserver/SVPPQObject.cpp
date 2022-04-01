@@ -829,19 +829,21 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
 		throw Msg;
 	}
-
+	
 	bool cameraSoftwareTrigger {false};
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentCameraSoftwareTrigger, cameraSoftwareTrigger);
 	bool cameraFileAcquisition {false};
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentFileAcquisition, cameraFileAcquisition);
+	setSoftwareTrigger |= cameraSoftwareTrigger;
+	setSoftwareTrigger |= SvDef::TriggerType::SoftwareTrigger == m_pTrigger->getType();
 	for (SVCameraInfoMap::iterator l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter)
 	{
-		if (cameraSoftwareTrigger)
+		l_svIter->first->setAcquisitionDevice(cameraFileAcquisition);
+		if (setSoftwareTrigger)
 		{
 			_variant_t value {static_cast<long> (SvDef::TriggerType::SoftwareTrigger)};
 			l_svIter->first->setParameterValue(SvDef::SVTriggerType, value);
 		}
-		l_svIter->first->setAcquisitionDevice(cameraFileAcquisition);
 		if (false == (l_svIter->second.m_CameraPPQIndex >= 0 && l_svIter->first->CanGoOnline()))
 		{
 			SvDef::StringVector msgList;
@@ -851,6 +853,7 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 			throw Msg;
 		}
 	}
+	AttachAcqToTriggers(setSoftwareTrigger);
 
 	// Reset the PPQ
 	for (size_t i = 0; i < m_PPQPositions.size(); ++i)
@@ -1044,8 +1047,6 @@ void SVPPQObject::GoOnline()
 	{
 		m_PPQPositions.setMaxCameraShutterTime(maxShutterTime);
 	}
-
-	AttachAcqToTriggers();
 
 	if (!m_pTrigger->GoOnline())
 	{
@@ -4081,7 +4082,7 @@ void SVPPQObject::setOutputResults(uint32_t inspectedID, std::vector<bool>& rOut
 	}
 }
 
-void SVPPQObject::AttachAcqToTriggers()
+void SVPPQObject::AttachAcqToTriggers(bool setSoftwareTrigger)
 {
 	if (nullptr != m_pTrigger)
 	{
@@ -4090,11 +4091,10 @@ void SVPPQObject::AttachAcqToTriggers()
 		{
 			pTriggerDevice->clearAcquisitionTriggers();
 			int iDigNum = pTriggerDevice->getDigitizerNumber();
-			bool isSoftwareTrigger = SvDef::TriggerType::SoftwareTrigger == m_pTrigger->getType();
 			auto* pTriggerDll = pTriggerDevice->getDLLTrigger();
 			if (nullptr != pTriggerDll)
 			{
-				if (isSoftwareTrigger)
+				if (setSoftwareTrigger)
 				{
 					unsigned long triggerHandle = pTriggerDll->GetHandle(iDigNum);
 					_variant_t value = m_pTrigger->GetSoftwareTriggerPeriod();
@@ -4116,7 +4116,7 @@ void SVPPQObject::AttachAcqToTriggers()
 							SvTrig::AcquisitionParameter acquisitionParameter;
 							acquisitionParameter.m_pDllDigitizer = pAcqDLL;
 							acquisitionParameter.m_triggerChannel = pAcq->m_hDigitizer;
-							acquisitionParameter.m_active = isSoftwareTrigger || isFileAcquisition || cameraSoftwareTrigger;
+							acquisitionParameter.m_active = setSoftwareTrigger || isFileAcquisition;
 							pTriggerDevice->addAcquisitionTrigger(std::move(acquisitionParameter));
 						}
 					}
