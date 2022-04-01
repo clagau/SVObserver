@@ -224,6 +224,19 @@ BOOL SVObserverApp::InitInstance()
 		return false;
 	}
 
+	// The start window	
+	SVStartWindow sWin;
+#ifndef _DEBUG
+	if (sWin.Create(IDD_START))
+	{
+		sWin.ShowWindow(SW_SHOW);
+	}
+	else
+	{
+		return FALSE;
+	}
+#endif //_DEBUG
+
 	//Initializing  must be before first use of  MessageNotification::FireNotify which is i.e called from CheckDrive 
 	startInstances();
 	SVDirectX::Instance().Initialize();
@@ -281,17 +294,6 @@ BOOL SVObserverApp::InitInstance()
 #endif
 
 	SetThreadPriority(THREAD_PRIORITY_NORMAL);
-
-	// The start window	
-	SVStartWindow sWin;
-#ifndef _DEBUG                    // 23 Mar 1999 - frb.
-	if (sWin.Create(IDD_START))
-	{
-		sWin.ShowWindow(SW_SHOW);
-	}
-	else
-		return FALSE;
-#endif //_DEBUG                  // 23 Mar 1999 - frb.
 
 	AfxEnableControlContainer();
 
@@ -392,19 +394,14 @@ BOOL SVObserverApp::InitInstance()
 	EnableShellOpen();
 	RegisterShellFileTypes(TRUE);
 
-	// Close Start Window
-	sWin.DestroyWindow();
-
 	SVMemoryManager::Instance().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME,
 		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, getIniInfoHandler().GetInitialInfo().m_archiveToolBufferSize, getIniInfoHandler().GetInitialInfo().m_archiveToolAsyncBufferSize);
 
-	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
-#ifdef _DEBUG
-	//pMainFrame->ShowWindow(SW_SHOWNORMAL);           // 29 Mar 1999 - frb.
-	pMainFrame->ShowWindow(SW_SHOWMAXIMIZED);  //m_nCmdShow
-#else
-	pMainFrame->ShowWindow(SW_SHOWMAXIMIZED);  //m_nCmdShow
-#endif
+// Close Start Window
+	sWin.DestroyWindow();
+
+
+	pMainFrame->ShowWindow(SW_SHOWMAXIMIZED);
 	pMainFrame->UpdateWindow();
 
 	//
