@@ -965,21 +965,22 @@ void SVObserverApp::ResetAllCounts()
 
 HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
-	HRESULT l_hr = S_OK;
+	HRESULT result {S_OK};
 
+	long originalState = SVSVIMStateClass::GetState();
 	SvPb::DeviceModeType Mode = SvPb::DeviceModeType_IsValid(lNewMode) ? static_cast<SvPb::DeviceModeType> (lNewMode) : SvPb::DeviceModeType::unknownMode;
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING))
 	{
-		l_hr = SVMSG_50_MODE_CHANGING_ERROR;
+		result = SVMSG_50_MODE_CHANGING_ERROR;
 	}
 	else if (SVSVIMStateClass::CheckState(SV_STATE_LOADING))
 	{
-		l_hr = SVMSG_51_MODE_CONFIGURATION_LOADING_ERROR;
+		result = SVMSG_51_MODE_CONFIGURATION_LOADING_ERROR;
 	}
 	else if (SVSVIMStateClass::CheckState(SV_STATE_EDITING))
 	{
-		l_hr = SVMSG_52_MODE_GUI_IN_USE_ERROR;
+		result = SVMSG_52_MODE_GUI_IN_USE_ERROR;
 	}
 	else if (SvPb::DeviceModeType::runMode == Mode)
 	{
@@ -998,12 +999,12 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 			{
 				SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 				Exception.setMessage(rExp.getMessage());
-				l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
+				result = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
 			}
 		}
 		else
 		{
-			l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
+			result = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
 		}
 	}
 	else if (SvPb::DeviceModeType::stopMode == Mode)
@@ -1025,7 +1026,7 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 		// in two steps.  If running then return request rejected.
 		if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 		{
-			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+			result = SVMSG_SVIMCMD_REQUEST_REJECTED;
 		}
 		else if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 		{
@@ -1034,17 +1035,26 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 
 		if (false == SVSVIMStateClass::CheckState(SV_STATE_TEST) && SVSVIMStateClass::CheckState(SV_STATE_READY))
 		{
-			Start(SV_STATE_TEST);
+			try
+			{
+				Start(SV_STATE_TEST);
+			}
+			catch (const SvStl::MessageContainer& rExp)
+			{
+				SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
+				Exception.setMessage(rExp.getMessage());
+				result = E_FAIL;
+			}
 		}
 		else
 		{
-			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+			result = SVMSG_SVIMCMD_REQUEST_REJECTED;
 		}
 	}
 	else if (SvPb::DeviceModeType::regressionMode == Mode)
 	{
 		// Later Currently not supported through the Control
-		l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+		result = SVMSG_SVIMCMD_REQUEST_REJECTED;
 	}
 	else if (SvPb::DeviceModeType::editMode == Mode)
 	{
@@ -1059,16 +1069,20 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 		}
 		else
 		{
-			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+			result = SVMSG_SVIMCMD_REQUEST_REJECTED;
 		}
 	}
 	else
 	{
-		l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+		result = SVMSG_SVIMCMD_REQUEST_REJECTED;
+	}
+	if (S_OK != result)
+	{
+		SVSVIMStateClass::changeState(static_cast<DWORD> (originalState), 0);
 	}
 
 	PostMessage(m_pMainWnd->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0);
-	return l_hr;
+	return result;
 }
 
 HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, uint32_t objectId)
