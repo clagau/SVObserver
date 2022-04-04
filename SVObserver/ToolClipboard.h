@@ -87,7 +87,7 @@ protected:
 	// Parameter: rXmlWriter <in> Reference to the XML writer
 	// Parameter: rTool <in> Reference to the tool to save
 	//************************************
-	void writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool) const;
+	void writeToolParameter(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool, int pos) const;
 
 	//************************************
 	// Description: This method finds the dependency files in the tool Xml string
@@ -141,7 +141,7 @@ protected:
 	/// \returns HRESULT S_OK on success
 	HRESULT replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const;
 
-	void replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const;
+	void replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, std::map<std::string, int>* pHighestUsedIndexForBaseToolname, const std::string& rOldFullToolName) const;
 
 	//************************************
 	// Description: This method replaces all the unique ids

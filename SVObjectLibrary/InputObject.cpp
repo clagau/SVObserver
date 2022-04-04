@@ -25,6 +25,16 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+namespace
+{
+bool checkType(const SvDef::SVObjectTypeInfoStruct& rRequiredType, const SvDef::SVObjectTypeInfoStruct& rTestType)
+{
+	return ((SvPb::NoEmbeddedId == rRequiredType.m_EmbeddedID || rTestType.m_EmbeddedID == rRequiredType.m_EmbeddedID) &&
+			(SvPb::SVNotSetObjectType == rRequiredType.m_ObjectType || rTestType.m_ObjectType == rRequiredType.m_ObjectType) &&
+			(SvPb::SVNotSetSubObjectType == rRequiredType.m_SubType || rTestType.m_SubType == rRequiredType.m_SubType));
+}
+}
+
 namespace SvOl
 {
 	SV_IMPLEMENT_CLASS(InputObject, SvPb::InputConnectedClassId);
@@ -74,10 +84,7 @@ HRESULT InputObject::checkAndSetInput(uint32_t connnectedInput)
 	SVObjectReference refObject {connnectedInput};
 	if (nullptr != refObject.getFinalObject())
 	{
-		const auto& connectedTypeInfo = refObject.getFinalObject()->getObjectTypeInfo();
-		if ((SvPb::NoEmbeddedId == m_InputObjectInfo.m_ObjectTypeInfo.m_EmbeddedID || connectedTypeInfo.m_EmbeddedID == m_InputObjectInfo.m_ObjectTypeInfo.m_EmbeddedID) &&
-			(SvPb::SVNotSetObjectType == m_InputObjectInfo.m_ObjectTypeInfo.m_ObjectType || connectedTypeInfo.m_ObjectType == m_InputObjectInfo.m_ObjectTypeInfo.m_ObjectType) &&
-			(SvPb::SVNotSetSubObjectType == m_InputObjectInfo.m_ObjectTypeInfo.m_SubType || connectedTypeInfo.m_SubType == m_InputObjectInfo.m_ObjectTypeInfo.m_SubType))
+		if (checkType(m_InputObjectInfo.m_ObjectTypeInfo, refObject.getFinalObject()->getObjectTypeInfo()))
 		{
 			SetInputObject(refObject);
 			return S_OK;
@@ -131,7 +138,11 @@ void InputObject::SetInputObject( const SVObjectReference& rObject )
 void InputObject::validateInput()
 {
 	// Check if the input object is still valid otherwise the pointer is invalid
-	if (IsConnected() && (false == m_InputObjectInfo.CheckExistence() || false == checkIfAllowedObject() || false == checkIfValidDependency(m_InputObjectInfo.getObject())))
+	if (IsConnected() && 
+			(false == m_InputObjectInfo.CheckExistence() || 
+			false == checkIfAllowedObject() || 
+			false == checkIfValidDependency(m_InputObjectInfo.getObject()))
+		)
 	{
 		SetInputObject(nullptr);
 	}
@@ -257,29 +268,35 @@ void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
 
 void InputObject::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
 {
-	validateInput();
-	if (false == IsConnected() && SvPb::noAttributes != ObjectAttributesAllowed())
+	if (SvPb::noAttributes != ObjectAttributesAllowed())
 	{
-		SvPb::FixedInputData data;
-		data.set_name(GetObjectNameToObjectType());
-		data.set_objectid(getObjectId());
-		data.set_parentid(GetParentID());
-		data.set_oldinputvalue(m_DottedNameOfFailedLoadInput);
-		data.set_islinkedvalue(false);
-		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
-		inserter = data;
-
-		SVObjectReference objectRef {GetObjectReferenceForDottedName(m_DottedNameOfFailedLoadInput)};
-		SetInputObject(objectRef);
 		validateInput();
-
 		if (false == IsConnected())
 		{
-			auto* pOwner = dynamic_cast<SvOi::ITaskObject*>(GetParent());
-			if (nullptr != pOwner)
+			SvPb::FixedInputData data;
+			data.set_name(GetObjectNameToObjectType());
+			data.set_objectid(getObjectId());
+			data.set_parentid(GetParentID());
+			data.set_oldinputvalue(m_DottedNameOfFailedLoadInput);
+			data.set_islinkedvalue(false);
+			// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+			inserter = data;
+
+			SVObjectReference objectRef {GetObjectReferenceForDottedName(m_DottedNameOfFailedLoadInput)};
+			if (nullptr != objectRef.getFinalObject() && checkType(m_InputObjectInfo.m_ObjectTypeInfo, objectRef.getFinalObject()->getObjectTypeInfo()))
 			{
-				pOwner->connectInput(this);
+				SetInputObject(objectRef);
 				validateInput();
+			}
+
+			if (false == IsConnected())
+			{
+				auto* pOwner = dynamic_cast<SvOi::ITaskObject*>(GetParent());
+				if (nullptr != pOwner)
+				{
+					pOwner->connectInput(this);
+					validateInput();
+				}
 			}
 		}
 	}

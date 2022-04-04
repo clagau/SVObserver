@@ -45,7 +45,7 @@ void ImageAnalyzer::init()
 	// Set Input requirement
 	m_inputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_inputImage, SvDef::ImageAnalyzerImageName, SvPb::ImageInputEId);
-	m_inputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
+	m_inputImage.SetObjectAttributesAllowed(0, SvOi::OverwriteAttribute);
 }
 
 ImageAnalyzer::~ImageAnalyzer()
