@@ -29,7 +29,6 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVSystemLibrary/SVThreadManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "ArchiveDataAsynchron.h"
@@ -343,15 +342,6 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	long l_lArchiveMethod = 0;
 	m_evoArchiveMethod.GetValue(l_lArchiveMethod);
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>(l_lArchiveMethod);
-
-	// Put the archive tool text in the thread affinity list.
-	if (m_eArchiveMethod == SVArchiveAsynchronous)
-	{	// IsAllowed will return S_FALSE if the thread is not found with SVNone.
-		if (S_FALSE == SVThreadManager::Instance().IsAllowed(_T("Archive Tools(Asynchronous)"), SVNone))
-		{	// Add thread to list with null handle so the user can set affinity before the thread is created.
-			SVThreadManager::Instance().Add(nullptr, _T("Archive Tools(Asynchronous)"), SVAffinityUser);
-		}
-	}
 
 	if (false == InitializeAndValidate())
 	{

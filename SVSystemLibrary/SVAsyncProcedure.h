@@ -29,7 +29,7 @@ public:
 	SVAsyncProcedure();
 	~SVAsyncProcedure();
 
-	HRESULT Create(PAPCFUNC apcHandler, const ProcessThread& rProceesThread, LPCTSTR tag, SVThreadAttribute eAttribute );
+	HRESULT Create(PAPCFUNC apcHandler, const ProcessThread& rProceesThread, LPCTSTR tag);
 	void Destroy();
 
 	unsigned long GetThreadID() const;

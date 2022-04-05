@@ -89,7 +89,6 @@ protected:
 	void PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, LPCTSTR lpszValue);
 	void PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
-	void PrintThreadAffinity(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);

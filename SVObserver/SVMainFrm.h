@@ -135,8 +135,6 @@ private:
 	afx_msg void OnAuditTrailDefaultFiles();
 	afx_msg void OnAuditTrailAdditionalFiles();
 
-	afx_msg void OnThreadAffinitySetup();
-
 	void OnRCOpenCurrentSVX();
 	void OnMemLeakDetection();
 
@@ -144,7 +142,6 @@ private:
 
 	afx_msg void OnSVOFilePrintSetup();
 
-	afx_msg void OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAuditTrailDefaultFiles(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAuditTrailAdditionalFiles(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateModeRun(CCmdUI* PCmdUI);

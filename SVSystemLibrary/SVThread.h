@@ -11,8 +11,12 @@
 #pragma once
 
 #pragma region Includes
-#include "SVThreadManager.h"
 #pragma endregion Includes
+
+namespace SvStl
+{
+struct SourceFileParams;
+}
 
 namespace SvSyl
 {
@@ -28,7 +32,7 @@ public:
 
 #pragma region Public Methods
 public:
-	HRESULT Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThreadAttribute eAttribute );
+	HRESULT Create(const ProcessThread& rProcessThread, LPCTSTR tag);
 	void Destroy();
 
 	unsigned long GetThreadID() const;
@@ -48,6 +52,7 @@ public:
 #pragma region Private Methods
 private:
 	static DWORD WINAPI ThreadProc( LPVOID lpParam );
+	static void SetThreadError(DWORD MessageCode, LPCTSTR Message, SvStl::SourceFileParams SourceFile);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

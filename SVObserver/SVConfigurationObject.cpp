@@ -56,7 +56,6 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVSystemLibrary/SVThreadManager.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -926,40 +925,6 @@ void SVConfigurationObject::LoadEnvironment(SVTreeType& rTree, bool& Configurati
 		UpdateFlag = Value;
 	}
 	RootObject::setRootChildValue(SvDef::FqnEnvironmentResultUpdate, UpdateFlag);
-
-	// Thread Affinity Setup
-	SVTreeType::SVBranchHandle hThreadSetup(nullptr);
-	int iThreadNum = 1;
-	bool bThreadOk = true;
-	while (bThreadOk)
-	{
-		std::string ThreadTag = SvUl::Format(_T("%s_%d"), SvXml::CTAG_THREAD_SETUP, iThreadNum);
-		bThreadOk = SvXml::SVNavigateTree::GetItemBranch(rTree, ThreadTag.c_str(), hChild, hThreadSetup);
-		if (bThreadOk)
-		{
-			bThreadOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_THREAD_AFFINITY, hThreadSetup, Value);
-			long lAffinity = Value;
-			bThreadOk &= SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_THREAD_NAME, hThreadSetup, Value);
-			std::string Name = SvUl::createStdString(Value);
-			if (bThreadOk)
-			{
-				SVThreadManager::Instance().Setup(Name.c_str(), lAffinity);
-			}
-			else
-			{
-				bThreadOk = false;
-			}
-		}
-		iThreadNum++;
-	}
-
-	// Thread Manager Enable
-	BOOL bThreadMgrEnable = false;
-	if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_THREAD_MGR_ENABLE, hChild, Value))
-	{
-		bThreadMgrEnable = Value;
-	}
-	SVThreadManager::Instance().SetThreadAffinityEnabled(bThreadMgrEnable);
 
 	if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NEXT_OBJECT_ID, hChild, Value))
 	{
@@ -2650,8 +2615,6 @@ bool SVConfigurationObject::DestroyConfiguration()
 
 	SvIe::SVDigitizerProcessingClass::Instance().ClearDevices();
 
-	SVThreadManager::Instance().Clear();
-
 	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
 	if (nullptr != pTrcRW)
 	{
@@ -2778,26 +2741,6 @@ void SVConfigurationObject::SaveEnvironment(SvOi::IObjectWriter& rWriter) const
 	rWriter.WriteAttribute(SvXml::CTAG_IMAGE_DISPLAY_UPDATE, svValue);
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentResultUpdate, svValue);
 	rWriter.WriteAttribute(SvXml::CTAG_RESULT_DISPLAY_UPDATE, svValue);
-
-	// Thread Manager Enable.
-	BOOL bEnable = SVThreadManager::Instance().GetThreadAffinityEnabled();
-	svValue = bEnable;
-	rWriter.WriteAttribute(SvXml::CTAG_THREAD_MGR_ENABLE, svValue);
-
-	SVThreadManager::ThreadList threads;
-	SVThreadManager::Instance().GetThreadInfo(threads, SVThreadAttribute::SVAffinityUser);
-	int iCount = 1;
-	for (SVThreadManager::ThreadList::const_iterator it = threads.begin(); it != threads.end(); ++it)
-	{
-		std::string Branch = SvUl::Format(_T("%s_%d"), SvXml::CTAG_THREAD_SETUP, iCount);
-		rWriter.StartElement(Branch.c_str());
-		svValue = it->m_strName.c_str();
-		rWriter.WriteAttribute(SvXml::CTAG_THREAD_NAME, svValue);
-		svValue = it->m_lAffinity;
-		rWriter.WriteAttribute(SvXml::CTAG_THREAD_AFFINITY, svValue);
-		rWriter.EndElement();
-		iCount++;
-	}
 
 	rWriter.WriteAttribute(SvXml::CTAG_NEXT_OBJECT_ID, SVObjectManagerClass::Instance().getCurrentNextObjectId());
 	

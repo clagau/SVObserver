@@ -1751,7 +1751,6 @@ void SVObserverApp::startInstances()
 	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
 	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, std::move(pSettings));
 
-	SVThreadManager::Instance();
 	HINSTANCE hZipInstance {nullptr};
 	SvUl::LoadDll::Instance().getDll(SvUl::ZipDll, hZipInstance);
 

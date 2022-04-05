@@ -9,7 +9,6 @@
 #include "SVArchiveRecord.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMessage/SVMessage.h"
-#include "SVSystemLibrary/SVThreadManager.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
@@ -59,8 +58,6 @@ HRESULT SVArchiveImageThreadClass::GoOnline()
 		m_hThread = ::CreateThread( nullptr, 0, SVArchiveImageThreadClass::ThreadEntry, this, 0, &m_dwThreadId );
 
 		::SetThreadPriority( m_hThread, THREAD_PRIORITY_LOWEST );
-		
-		SVThreadManager::Instance().Add( m_hThread, "Archive Tools(Asynchronous)", SVAffinityUser );
 	}
 	return S_OK;
 }
@@ -74,7 +71,6 @@ HRESULT SVArchiveImageThreadClass::GoOffline()
 		::SetEvent( m_hExitEvent );
 		::CloseHandle( m_hAppThread );
 		::CloseHandle( m_hThread );	// can be done on a live thread
-		SVThreadManager::Instance().Remove( m_hThread );
 		m_dwThreadId = 0;
 		m_hAppThread = nullptr;
 		m_hThread = nullptr;

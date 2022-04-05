@@ -174,7 +174,6 @@ BOOL SVDisplayObject::Create()
 	m_hDisplayThread = ::CreateThread(nullptr, 0, SVDisplayThreadFunc, (LPVOID)this, 0, &dwThreadID );
 	if( !m_hDisplayThread )
 		return FALSE;
-	SVThreadManager::Instance().Add( m_hDisplayThread,"Display", SVAffinityUser);
 
 	return TRUE;
 }// end Create
@@ -208,7 +207,6 @@ BOOL SVDisplayObject::Destroy()
 		m_hStartEvent = nullptr;
 
 		CloseHandle( m_hDisplayThread );
-		SVThreadManager::Instance().Remove(m_hDisplayThread );
 		m_hDisplayThread = nullptr;
 	}
 	return true;

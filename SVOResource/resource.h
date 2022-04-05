@@ -1078,7 +1078,6 @@
 #define IDR_MONITOR_SUB_LIST            11106
 #define IDR_MONITOR_LIST_ITEM           11107
 #define IDR_TOOLBAR_ZOOM                11108
-#define IDD_THREAD_INFO                 11109
 #define IDS_CLASSNAME_CUSTOM2FILTER     11110
 #define IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL 11111
 #define IDD_RANGE_X_DIALOG              11112
@@ -2291,7 +2290,6 @@
 #define IDC_IMPORT_FILTER               16045
 #define IDC_EXPORT_FILTER               16046
 #define IDC_BLOB_COLOR                  16047
-#define IDC_THREAD_LIST                 16048
 #define IDC_SAVE                        16049
 #define IDC_GRID_CONTROL                16050
 #define IDC_EDIT_FILTER_NAME            16051
@@ -2299,7 +2297,6 @@
 #define IDC_COMBO_FILTER_CHECK          16053
 #define IDC_COMBO_FILTER_TYPE           16054
 #define IDC_RESET_BUTTON                16055
-#define IDC_THREAD_MANAGER_ENABLE       16056
 #define IDC_EDIT_FAILHIGH               16057
 #define IDC_EDIT_WARNHIGH               16058
 #define IDC_EDIT_WARNLOW                16059
@@ -2644,7 +2641,6 @@
 #define ID_TOOLBAR_ZOOM                 20342
 #define ID_ZOOMTOOLBAR                  20343
 #define ID_OK                           20344
-#define ID_EXTRAS_THREAD_AFFINITY       20345
 #define ID_EXTRAS_ENABLEAUTOSAVE        20346
 #define ID_EDIT_EDITTOOLTAB1            20347
 #define ID_ADD_RESIZETOOL               20348

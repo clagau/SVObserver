@@ -39,9 +39,6 @@
     <ClCompile Include="SVThread.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVThreadManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVLockableClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -78,9 +75,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVThread.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVThreadManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVLockableClass.h">

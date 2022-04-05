@@ -150,7 +150,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	m_loadSequence.Init(m_fileList.begin(), m_fileList.end(), !IsSingleIterationLoadMode());
 
 	auto threadEvent = [this](bool& rProcessed) {return OnThreadEvent(rProcessed); };
-	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, threadEvent, m_name.c_str(), SVAffinityAcq);
+	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, threadEvent, m_name.c_str());
 	return hr;
 }
 

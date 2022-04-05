@@ -107,7 +107,7 @@ HRESULT AcquisitionDevice::UnregisterCallback(ULONG_PTR pPPQ)
 HRESULT AcquisitionDevice::Start()
 {
 	auto threadProcess = [this](bool& rProcessed) {return Process(rProcessed); };
-	HRESULT result = m_Thread.Create(&AcquisitionDevice::APCProc, threadProcess, m_DeviceName.c_str(), SVAffinityAcq);
+	HRESULT result = m_Thread.Create(&AcquisitionDevice::APCProc, threadProcess, m_DeviceName.c_str());
 
 	if (S_OK == result)
 	{

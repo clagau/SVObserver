@@ -1089,7 +1089,7 @@ void SVPPQObject::GoOnline()
 
 	// Create the PPQ's threads
 	auto threadProcess = [this](bool& rProcessed) {ThreadProcess(rProcessed); };
-	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, threadProcess, GetName(), SVAffinityPPQ))
+	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, threadProcess, GetName()))
 	{
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreatePPQThread, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
 		throw Msg;

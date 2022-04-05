@@ -482,7 +482,7 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 	m_NotifyWithLastInspected = false;
 
 	auto threadProcess = [this](bool& rProcessed) {ThreadProcess(rProcessed); };
-	if (S_OK != m_AsyncProcedure.Create(&SVInspectionProcess::APCThreadProcess, threadProcess, GetName(), SVThreadAttribute::SVAffinityUser))
+	if (S_OK != m_AsyncProcedure.Create(&SVInspectionProcess::APCThreadProcess, threadProcess, GetName()))
 	{
 		return false;
 	}

@@ -14,8 +14,10 @@
 
 #include "SVThread.h"
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageData.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 // This const defines how long the destroy should wait at most to complete the shutdown
@@ -35,7 +37,7 @@ SVThread::~SVThread()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT SVThread::Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThreadAttribute eAttribute )
+HRESULT SVThread::Create(const ProcessThread& rProcessThread, LPCTSTR tag)
 {
 	HRESULT Result = S_OK;
 
@@ -44,7 +46,7 @@ HRESULT SVThread::Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThr
 	if (nullptr == m_pProcessThread || true == m_tag.empty())
 	{
 		Result = SVMSG_THREAD_CREATION_ERROR;
-		SVThreadManager::setThreadError(static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams));
+		SetThreadError(static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams));
 		return E_FAIL;
 	}
 
@@ -54,7 +56,7 @@ HRESULT SVThread::Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThr
 		if (nullptr == m_hShutdown)
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
-			SVThreadManager::setThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+			SetThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 
@@ -64,7 +66,7 @@ HRESULT SVThread::Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThr
 		if( nullptr == m_hThreadComplete )
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
-			SVThreadManager::setThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+			SetThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 
@@ -75,7 +77,7 @@ HRESULT SVThread::Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThr
 		if (nullptr == m_hThread)
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
-			SVThreadManager::setThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+			SetThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 		else
 		{
@@ -88,8 +90,6 @@ HRESULT SVThread::Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThr
 				Exception.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CreateThread, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 			
-			SVThreadManager::Instance().Add(m_hThread, tag, eAttribute); // keep track of thread.
-
 			if( S_OK == Result )
 			{
 				unsigned long l_WaitStatus = ::WaitForSingleObject( m_hThreadComplete, 0 );
@@ -104,7 +104,7 @@ HRESULT SVThread::Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThr
 				if( l_WaitStatus != WAIT_TIMEOUT )
 				{
 					Result = SVMSG_THREAD_CREATION_ERROR;
-					SVThreadManager::setThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+					SetThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 		}
@@ -127,7 +127,7 @@ HRESULT SVThread::Restart()
 	{
 		Destroy();
 
-		return Create(m_pProcessThread, m_tag.c_str(), SVNone);
+		return Create(m_pProcessThread, m_tag.c_str());
 	}
 
 	return S_OK;
@@ -143,7 +143,7 @@ void SVThread::Destroy()
 
 			if( ::WaitForSingleObject( m_hThreadComplete, cTimeoutShutdownThread) != WAIT_OBJECT_0 )
 			{
-				SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+				SetThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 
 				::TerminateThread(m_hThread, static_cast<DWORD> (E_FAIL));
 
@@ -156,14 +156,13 @@ void SVThread::Destroy()
 		{
 			if( ::WaitForSingleObject( m_hThread, 0 ) == WAIT_TIMEOUT )
 			{
-				SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+				SetThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 
 				::TerminateThread(m_hThread, static_cast<DWORD> (E_FAIL));
 			}
 		}
 
 		::CloseHandle( m_hThread );
-		SVThreadManager::Instance().Remove( m_hThread );
 		m_hThread = nullptr;
 	}
 
@@ -220,7 +219,6 @@ bool SVThread::IsActive() const
 	bRetVal = bRetVal && (::WaitForSingleObject(m_hThread,0) == WAIT_TIMEOUT) ;
 	return bRetVal;
 }
-
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -288,10 +286,22 @@ DWORD WINAPI SVThread::ThreadProc(LPVOID pParam)
 	{
 		std::string UnknownThread;
 		UnknownThread = SvStl::MessageData::convertId2AdditionalText( SvStl::Tid_UnknowThread );
-		SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), UnknownThread.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+		SetThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), UnknownThread.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 	}
 
 	return static_cast<DWORD> (result);
+}
+
+void SVThread::SetThreadError(DWORD MessageCode, LPCTSTR Message, SvStl::SourceFileParams SourceFile)
+{
+	DWORD errorCode = GetLastError();
+	SvDef::StringVector msgList;
+	msgList.push_back(SvUl::Format(_T("%d"), errorCode));
+	msgList.push_back(SvUl::Format(_T("0X%08X"), errorCode));
+	msgList.push_back(std::string(Message));
+
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
+	Exception.setMessage(MessageCode, SvStl::Tid_OS_Error_Message, msgList, SourceFile, SvStl::Err_25030_Thread);
 }
 #pragma endregion Private Methods
 } //namespace SvSyl

@@ -29,12 +29,12 @@ SVAsyncProcedure::~SVAsyncProcedure()
 	Destroy();
 }
 
-HRESULT SVAsyncProcedure::Create(PAPCFUNC apcHandler, const ProcessThread& rProceesThread, LPCTSTR tag, SVThreadAttribute eAttribute )
+HRESULT SVAsyncProcedure::Create(PAPCFUNC apcHandler, const ProcessThread& rProceesThread, LPCTSTR tag)
 {
 	m_tag = tag;
 	m_apcHandler = apcHandler;
 
-	HRESULT hr = m_thread.Create(rProceesThread, m_tag.c_str(), eAttribute);
+	HRESULT hr = m_thread.Create(rProceesThread, m_tag.c_str());
 	return hr;
 }
 

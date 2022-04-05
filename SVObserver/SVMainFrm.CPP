@@ -35,7 +35,6 @@
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVPPQObject.h"
 #include "SVRegressionRunDlg.h"
-#include "SVThreadInfoDlg.h"
 #include "SVUtilities.h"
 #include "SoftwareTriggerDlg.h"
 #include "Definitions/Color.h"
@@ -108,7 +107,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_EXTRAS_SECURITY_SETUP, OnExtrasSecuritySetup)
 	ON_COMMAND(ID_AUDITTRAIL_DEFAULTFILES, OnAuditTrailDefaultFiles)
 	ON_COMMAND(ID_AUDITTRAIL_ADDITIONALFILES, OnAuditTrailAdditionalFiles)
-	ON_COMMAND(ID_EXTRAS_THREAD_AFFINITY, OnThreadAffinitySetup)
 	ON_COMMAND_RANGE(ID_EXTRAS_UTILITIES_BASE, ID_EXTRAS_UTILITIES_LIMIT, OnRunUtility)
 
 	ON_COMMAND(ID_RC_GO_OFFLINE, OnRCGoOffline)
@@ -162,7 +160,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULTS_PICKER, OnUpdatePublishedResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnUpdatePublishedImagesPicker)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITREMOTEINPUTS, OnUpdateEditRemoteInputs)
-	ON_UPDATE_COMMAND_UI(ID_EXTRAS_THREAD_AFFINITY, OnUpdateThreadAffinitySetup)
 
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LIGHTREFERENCE, OnUpdateExtrasLightReference)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_TESTOUTPUTS, OnUpdateExtrasTestOutputs)
@@ -1030,13 +1027,6 @@ void SVMainFrame::OnAuditTrailAdditionalFiles()
 	}
 }
 
-void SVMainFrame::OnThreadAffinitySetup()
-{
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-	SVThreadInfoDlg dlg;
-	dlg.DoModal();
-}
-
 void SVMainFrame::OnRunUtility(UINT uiId)
 {
 	SVUtilities util;
@@ -1205,13 +1195,6 @@ void SVMainFrame::OnTriggerSettings()
 	SoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
 }
 
-void SVMainFrame::OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI)
-{
-	long lPipeCount = 0;
-	SVThreadManager::Instance().GetPipeCount(lPipeCount);
-	PCmdUI->Enable(lPipeCount >= 8 && !SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
-}
-
 void SVMainFrame::OnUpdateAuditTrailDefaultFiles(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(true);
@@ -1325,15 +1308,7 @@ void SVMainFrame::OnUpdateExtrasLogin(CCmdUI* PCmdUI)
 		pMenu->RemoveMenu(ID_EXTRAS_LOGIN, MF_BYCOMMAND);
 		pMenu->RemoveMenu(ID_EXTRAS_LOGOUT, MF_BYCOMMAND);
 	}
-	if (SVThreadManager::Instance().IsThreadManagerInstalled() == 0)
-	{
-		CMenu* pMenu;
-		CWnd* pWindow = AfxGetMainWnd();
-		pMenu = pWindow->GetMenu();
-		pMenu->RemoveMenu(ID_EXTRAS_THREAD_AFFINITY, MF_BYCOMMAND);
-	}
 }
-
 
 
 void SVMainFrame::OnUpdateEditDelete(CCmdUI* PCmdUI)

@@ -97,7 +97,6 @@
     <ClCompile Include="SVLockableClass.cpp" />
     <ClCompile Include="SVSAXContentHandlerImpl.cpp" />
     <ClCompile Include="SVThread.cpp" />
-    <ClCompile Include="SVThreadManager.cpp" />
     <ClCompile Include="SVVersionInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -112,7 +111,6 @@
     <ClInclude Include="SVSAXErrorHandlerImpl.h" />
     <ClInclude Include="SVSequencer.h" />
     <ClInclude Include="SVThread.h" />
-    <ClInclude Include="SVThreadManager.h" />
     <ClInclude Include="SVVersionInfo.h" />
   </ItemGroup>
   <ItemGroup>

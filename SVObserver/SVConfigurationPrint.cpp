@@ -54,7 +54,6 @@
 #include "Operators/SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVSystemLibrary/SVThreadManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
@@ -1295,7 +1294,6 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	ptCurPos.y += PrintString(pDC, ptTemp, _T("\nConfiguration Settings"));
 	
 	ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
-	PrintThreadAffinity(pDC, ptCurPos, nIndentLevel);
 	PrintTriggerSummary(pDC, ptCurPos, nIndentLevel);
 	PrintCameraSummary(pDC, ptCurPos, nIndentLevel);
 	PrintInspectionSummary(pDC, ptCurPos, nIndentLevel);
@@ -2080,38 +2078,6 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		}
 	}
 }  // end function void SVObserverApp::PrintModuleIOP( CDC* pDC, ... )
-
-void SVConfigurationPrint::PrintThreadAffinity(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
-{
-	CString value;
-		
-	// Thread Enable
-	ptCurPos.y += PrintString(pDC,ptCurPos,_T("\n"));
-	BOOL bEnabled = SVThreadManager::Instance().GetThreadAffinityEnabled();
-	value = bEnabled ? _T("Enabled") : _T("Disabled");
-	ptCurPos.x   = nIndentLevel * m_shortTabPixels;
-	PrintValueObject(pDC, ptCurPos, _T("Thread Setup :"), value);
-
-	// Set Thread Affinities
-	ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-	SVThreadManager::ThreadList Threads;
-	/*HRESULT hRet = */SVThreadManager::Instance().GetThreadInfo(Threads, SVAffinityUser );
-	for( SVThreadManager::ThreadList::const_iterator it = Threads.begin() ; it != Threads.end() ; ++it)
-	{
-		std::string strName;
-		std::string strValue;
-		if( it->m_lAffinity > 0 )
-		{
-			strValue = SvUl::Format( "%d", it->m_lAffinity);
-		}
-		else
-		{
-			strValue = "Not Set";
-		}
-		strName = SvUl::Format("Name: %s:", it->m_strName.c_str() );
-		PrintValueObject(pDC, ptCurPos, strName.c_str(), strValue.c_str());
-	}
-}  // end function void SVObserverApp::PrintThreadAffinity( CDC* pDC, ... )
 
 void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {

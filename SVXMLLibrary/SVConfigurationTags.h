@@ -172,11 +172,6 @@ namespace  SvXml
 	constexpr const char* CTAG_STARTGROUP_COMMENT             = _T("StartGroupComment");
 	constexpr const char* CTAG_ENDGROUP_COMMENT               = _T("EndGroupComment");
 
-	constexpr const char* CTAG_THREAD_SETUP                   = _T("Thread Setup");
-	constexpr const char* CTAG_THREAD_NAME                    = _T("Thread Name");
-	constexpr const char* CTAG_THREAD_AFFINITY                = _T("Thread Affinity");
-	constexpr const char* CTAG_THREAD_MGR_ENABLE              = _T("Thread Mgr Enable");
-
 	constexpr const char* CTAG_NEXT_OBJECT_ID					= _T("Next ObjectId");
 
 	constexpr const char* CTAG_VIEWEDTABLE					= _T("ViewedTable");
