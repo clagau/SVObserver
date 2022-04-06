@@ -266,7 +266,7 @@ void SVVariantValueObjectClass::updateMemBlockData()
 			if (0 < dataByteSize)
 			{
 				///Memory block reserved for value object is to small. This should not happen!
-				assert(false);
+				//assert(false);
 				#ifdef _DEBUG
 				OutputDebugString("Memory block reserved for value object is to small. This should not happen!");
 				#endif 

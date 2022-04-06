@@ -36,7 +36,7 @@ public:
 
 	HRESULT setExternalToolTaskId();
 
-	std::pair<HRESULT, SvPb::InitializeExternalToolTaskResponse> initialize();
+	std::pair<HRESULT, SvPb::InitializeExternalToolTaskResponse> initialize(bool initializeall);
 	std::pair<bool, std::string> resetAllObjects(bool showFirstError);
 	HRESULT runOnce();
 

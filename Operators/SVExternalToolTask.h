@@ -117,11 +117,11 @@ public:
 	void CreateArrayInTable();
 	void SetResultArraySize();
 	virtual bool CloseObject() override;
-	HRESULT Initialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess = false, bool initializeAll = false);
+	
 	
 #pragma region IExternalToolTask methods
 	virtual SvOi::IExternalToolTaskDataAdmin& getExternalToolDataAdmin() override;
-	virtual HRESULT triggerInitialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess = false, bool initializeAll = false) override;
+	virtual HRESULT Initialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess = false, bool initializeAll = false)override;
 	virtual void SetAllAttributes() override;
 	virtual HRESULT ClearData() override;
 	virtual HRESULT validateValueParameter(uint32_t laskObjectId, long index, _variant_t newVal, SvPb::ExDllInterfaceType ediType) override;

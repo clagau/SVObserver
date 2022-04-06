@@ -153,7 +153,7 @@ void SVTADlgExternalSelectDllPage::OnOK()
 
 	try
 	{
-		m_rExternalToolTaskController.initialize();
+		m_rExternalToolTaskController.initialize(false);
 
 		m_rExternalToolTaskController.resetAllObjects(false); //first error will be displayed anyway when containing sheet is closed
 	}
@@ -442,7 +442,7 @@ bool SVTADlgExternalSelectDllPage::InitializeDll(bool setDefaultValues)
 	}
 	UpdateData(FALSE);
 	//must throw
-	auto [hrInitialize, statusMessagesResponse] = m_rExternalToolTaskController.initialize();
+	auto [hrInitialize, statusMessagesResponse] = m_rExternalToolTaskController.initialize(setDefaultValues);
 
 	if (S_OK != hrInitialize)
 	{

@@ -617,10 +617,6 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 	return hr;
 }
 
-HRESULT SVExternalToolTask::triggerInitialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess, bool initializeAll)
-{
-	return Initialize(rStatusMsgs, inCreationProcess, initializeAll);
-}
 
 HRESULT SVExternalToolTask::validateValueParameter(uint32_t taskObjectId, long index, _variant_t val, SvPb::ExDllInterfaceType ediType)
 {
@@ -1946,6 +1942,12 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask* pExternalToolT
 			rInputValue.setValueType((VT_BSTR == (VT_BSTR & rInputDef.getVt())) ? SvPb::TypeText : SvPb::TypeDecimal);
 			rInputValue.SetAllowVoidReference(false);
 			rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), initializeAll);
+			if (initializeAll)
+			{
+			
+				rInputValue.setDirectValue(rInputDef.getDefaultValue());
+
+			}
 		}
 		else if (bTypeIsTable)
 		{

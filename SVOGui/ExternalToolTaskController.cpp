@@ -46,14 +46,14 @@ HRESULT ExternalToolTaskController::setExternalToolTaskId()
 	return hr;
 }
 
-std::pair<HRESULT, SvPb::InitializeExternalToolTaskResponse> ExternalToolTaskController::initialize()
+std::pair<HRESULT, SvPb::InitializeExternalToolTaskResponse> ExternalToolTaskController::initialize(bool initializeall)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_initializeexternaltooltaskrequest();
 	pRequest->set_objectid(m_objectId);
 	pRequest->set_increationprocess(false);
-	pRequest->set_initializeall(false);
+	pRequest->set_initializeall(initializeall);
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 
 	SvPb::InitializeExternalToolTaskResponse response;

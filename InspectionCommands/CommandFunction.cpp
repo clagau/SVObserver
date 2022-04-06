@@ -1747,7 +1747,7 @@ SvPb::InspectionCmdResponse initializeExternalToolTask(SvPb::InitializeExternalT
 
 		assert(pResponse != nullptr);
 		std::vector<std::string> statusMessages;
-		cmdResponse.set_hresult(pExternalToolTask->triggerInitialize(statusMessages, request.increationprocess(), request.initializeall()));
+	cmdResponse.set_hresult(pExternalToolTask->Initialize(statusMessages, request.increationprocess(), request.initializeall()));
 
 		for (const auto& message : statusMessages)
 		{

@@ -221,6 +221,8 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		if (bResetAll)
 		{
+			//@TODO[MEC][10.20][06.04.2022] Check if next line is usefull
+			//m_refOption = SvPb::DirectValue; ?
 			m_directValue = rValue;
 		}
 
