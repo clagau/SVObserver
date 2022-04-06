@@ -492,9 +492,9 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 	return l_bOk;
 }
 
-std::string SVIPDoc::determineToolnameWithUniqueIndex(const std::string& rToolName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
+std::string SVIPDoc::getUniqueName(const std::string& rToolName) const
 {
-	return m_toolGroupings.determineToolnameWithUniqueIndex(rToolName, pHighestUsedIndexForBaseToolname);
+	return m_toolGroupings.getUniqueName(rToolName);
 }
 
 //******************************************************************************
@@ -510,7 +510,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 	}
 	pToolsetView->getListCtrl().EnsureOneIsSelected();
 
-	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelNavigatorElement();
+	PtrNavigatorElement pNavElement = pToolsetView->Get1stSelNavigatorElement();
 
 	if (!pNavElement)
 	{

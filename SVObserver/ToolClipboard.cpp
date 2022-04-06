@@ -475,8 +475,6 @@ HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeTy
 	{
 		SVTreeType::SVBranchHandle ToolItem = rTree.getFirstBranch(ToolsItem);
 
-		std::map<std::string, int> HighestUsedIndexForBaseToolname;
-
 		int toolIndex = 0;
 		while (rTree.isValidBranch(ToolItem))
 		{
@@ -486,7 +484,7 @@ HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeTy
 			variant_t value;
 			rTree.getLeafData(fullToolNameHandle, value);
 
-			replaceOneToolName(rXmlData, rTree, pOwner, ToolItem, &HighestUsedIndexForBaseToolname, SvUl::createStdString(value));
+			replaceToolNameIfDuplicate(rXmlData, rTree, pOwner, ToolItem, SvUl::createStdString(value));
 			Result = S_OK;
 			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
 		}
@@ -502,41 +500,18 @@ HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeTy
 	return Result;
 }
 
-
-void ToolClipboard::replaceOneToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, std::map<std::string, int>* pHighestUsedIndexForBaseToolname, const std::string& rOldFullToolName) const
+void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const
 {
 	_variant_t ObjectName;
-
 	SvXml::SVNavigateTree::GetItem(rTree, scObjectNameTag, ToolItem, ObjectName);
 	std::string ToolName = SvUl::createStdString(ObjectName.bstrVal);
-	std::string NewName;
 
-	if (nullptr != pOwner && (pOwner->isLoopOrGroupTool()))
-	{
-		auto pTaskObjectList = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner);
+	std::string NewToolName = getUniqueToolName(ToolName, pOwner);
 
-		if (pTaskObjectList->IsNameUnique(ToolName.c_str()))
-		{
-			NewName = ToolName;
-		}
-
-		else
-		{
-			NewName = pTaskObjectList->createUniqueToolName(ToolName, pHighestUsedIndexForBaseToolname);
-		}
-	}
-	else
+	if (NewToolName != ToolName)
 	{
-		SVIPDoc* pDoc = (nullptr != m_pInspection) ? GetIPDocByInspectionID(m_pInspection->getObjectId()) : nullptr;
-		if (nullptr != pDoc)
-		{
-			NewName = pDoc->determineToolnameWithUniqueIndex(ToolName, pHighestUsedIndexForBaseToolname);
-		}
-	}
-	if (NewName != ToolName)
-	{
-		// adding ">" and "<" ensures that the correct occurrence of the Name in the XML string will be replaced
-		auto searchString = ">" + NewName + "<";
+		// adding ">" and "<" ensures that the correct occurrence of the name in the XML string will be replaced
+		auto searchString = ">" + NewToolName + "<";
 		auto replacementString = ">" + ToolName + "<";
 
 		size_t pos = rXmlData.find(scObjectNameTag);
@@ -547,23 +522,44 @@ void ToolClipboard::replaceOneToolName(std::string& rXmlData, SVTreeType& rTree,
 			pos = rXmlData.find(replacementString.c_str(), pos);
 			rXmlData.replace(pos, strlen(replacementString.c_str()), searchString.c_str());
 		}
-	}
 
-	if(false == rOldFullToolName.empty())
-	{ //replace the dottedName in Equations with the new name.
-		std::string fullToolNameStr = rOldFullToolName + _T(".");
-		std::string fullToolNameNewStr = fullToolNameStr;
-		if (nullptr != pOwner)
-		{
-			fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewName + _T(".");
+		if (false == rOldFullToolName.empty())
+		{ //replace the dottedName in Equations with the new name.
+			std::string fullToolNameStr = rOldFullToolName + _T(".");
+			std::string fullToolNameNewStr = fullToolNameStr;
+			if (nullptr != pOwner)
+			{
+				fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewToolName + _T(".");
+			}
+			else
+			{
+				SvUl::searchAndReplace(fullToolNameNewStr, ToolName.c_str(), NewToolName.c_str());
+			}
+			SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
 		}
-		else
-		{
-			SvUl::searchAndReplace(fullToolNameNewStr, ToolName.c_str(), NewName.c_str());
-		}
-		SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
 	}
 }
+
+std::string ToolClipboard::getUniqueToolName(std::string& rToolName, const SVObjectClass* pOwner) const
+{
+	if (nullptr != pOwner && (pOwner->isLoopOrGroupTool()))
+	{
+		auto pTaskObjectList = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner);
+
+		return pTaskObjectList->getUniqueName(rToolName);
+	}
+	else
+	{
+		SVIPDoc* pDoc = (nullptr != m_pInspection) ? GetIPDocByInspectionID(m_pInspection->getObjectId()) : nullptr;
+		if (nullptr != pDoc)
+		{
+			return pDoc->getUniqueName(rToolName);
+		}
+	}
+
+	return rToolName;
+}
+
 
 HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SVTreeType& rTree) const
 {

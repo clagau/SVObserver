@@ -149,7 +149,28 @@ bool SVToolGrouping::IsNameUnique(const std::string& rName, LPCTSTR pExclude) co
 	return bRetVal;
 }
 
-std::string SVToolGrouping::determineToolnameWithUniqueIndex(const std::string& rName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
+
+std::string SVToolGrouping::getUniqueName(const std::string& rName, bool adaptEndNumbers) const
+{
+	if (adaptEndNumbers)
+	{
+		return getUniqueNumberedName(rName);
+	}
+
+	uint16_t copyIndex = 0;
+
+	auto Name = SvUl::copiedName(rName, copyIndex);
+
+	while (true == std::any_of(m_list.begin(), m_list.end(), [Name](ToolGroup x){ return x.first == Name; }))
+	{
+		Name = SvUl::copiedName(rName, ++copyIndex);
+	}
+
+	return Name;
+}
+
+
+std::string SVToolGrouping::getUniqueNumberedName(const std::string& rName) const
 {
 	std::string lowercaseBaseName;
 	std::transform(rName.begin(), rName.end(), std::back_inserter(lowercaseBaseName), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
@@ -210,20 +231,6 @@ std::string SVToolGrouping::determineToolnameWithUniqueIndex(const std::string& 
 			}
 		}
 	});
-
-	if (nullptr != pHighestUsedIndexForBaseToolname)
-	{
-		auto iter = pHighestUsedIndexForBaseToolname->find(lowercaseBaseName);
-
-		if(iter != pHighestUsedIndexForBaseToolname->end())
-		{
-			if (lowestUnusedToolnumber <= iter->second)
-			{
-				lowestUnusedToolnumber = iter->second + 1;
-			}
-		}
-		(*pHighestUsedIndexForBaseToolname)[lowercaseBaseName] = lowestUnusedToolnumber;
-	}
 
 	// build new name
 	std::stringstream ss;
@@ -314,7 +321,7 @@ bool SVToolGrouping::AddEndGroup(const std::string& rGroupName, const std::strin
 		std::string endName = c_EndPrefix + rGroupName;
 		if (!IsNameUnique(endName))
 		{
-			endName = determineToolnameWithUniqueIndex(endName);
+			endName = getUniqueName(endName, true);
 		}
 		if (!rInsertBefore.empty())
 		{

@@ -71,7 +71,8 @@ public:
 
 	virtual void SetDisabled() override;
 
-	std::string createUniqueToolName(const std::string& rToolName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname = nullptr) const;
+	std::string getUniqueName(const std::string& rToolName, bool adaptEndNumbers = false) const;
+
 	//insensitive compare with name in m_TaskObjectVector
 	bool IsNameUnique(LPCSTR  pName, LPCTSTR pExclude = nullptr) const;
 
@@ -132,6 +133,8 @@ protected:
 	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual bool resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+
+	std::string getUniqueNumberedName(const std::string& rToolName) const;
 
 	/// Call method ConnectObject at the child object with a create struct defined in this method.
 	/// \param rChildObject [in] Child object

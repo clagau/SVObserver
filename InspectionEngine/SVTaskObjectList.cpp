@@ -25,6 +25,7 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion
 
+
 namespace SvIe
 {
 
@@ -220,7 +221,7 @@ int  SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, SVTaskObjectCl
 	}
 
 	// Check for unique names ??
-	auto NewName = createUniqueToolName(pTaskObject->GetName());
+	auto NewName = getUniqueName(pTaskObject->GetName(), true);
 	if (NewName != pTaskObject->GetName())
 	{
 		pTaskObject->SetName(NewName.c_str());
@@ -270,7 +271,7 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 	}
 
 	// Check for unique names 
-	auto NewName = createUniqueToolName(pTaskObject->GetName());
+	auto NewName = getUniqueName(pTaskObject->GetName(), true);
 	if( NewName != pTaskObject->GetName() )
 	{
 		pTaskObject->SetName( NewName.c_str() );
@@ -338,85 +339,38 @@ bool SVTaskObjectListClass::IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const
 	return bRetVal;
 }
 
-std::string SVTaskObjectListClass::createUniqueToolName(const std::string& rToolName, std::map<std::string, int>* pHighestUsedIndexForBaseToolname) const
+
+std::string SVTaskObjectListClass::getUniqueName(const std::string& rName, bool adaptEndNumbers) const
 {
-	std::string objectName;
+	constexpr uint16_t c_arbitraryMaxCopyIndex = 1000;
 
-	//This strips any numbers at the end of the name
-	auto pos = rToolName.find_last_not_of(_T("0123456789"));
-
-	pos += (pos == std::string::npos) ? 0 : 1;
-
-	std::string ToolNameCore = rToolName.substr(0, pos);
-
-	int minNewIndex = 0;
-
-	if (nullptr != pHighestUsedIndexForBaseToolname)
+	if (IsNameUnique(rName.c_str()))
 	{
-		minNewIndex = (*pHighestUsedIndexForBaseToolname)[ToolNameCore];
+		return rName;
 	}
 
-	int ToolIndex( 0 );
-	for( auto* pObject : m_TaskObjectVector)
+	if (adaptEndNumbers)
 	{
-		if( nullptr != pObject )
+		// we want to find a unique name by adapting the last number in the name
+		return getUniqueNumberedName(rName);
+	}
+
+	// we want to find a unique name by getting a "copied name" in the style of Windows Explorer
+	uint16_t copyIndex=0;
+	
+	while (copyIndex++ < c_arbitraryMaxCopyIndex)
+	{
+		auto newName = SvUl::copiedName(rName, copyIndex);
+
+		if (true == IsNameUnique(newName.c_str()))
 		{
-			objectName = pObject->GetName();
-			if ( std::string::npos != objectName.find(ToolNameCore.c_str() ))
-			{
-				// see if the name ends in a number
-				int lastNum{0};
-				bool digit{false};
-
-				for (int i = static_cast<int> (objectName.size()) - 1; i >= 0; i--)
-				{
-					if (isdigit(objectName[i]))
-					{
-						digit = true;
-					}
-					else // found a non digit - stop looking for a digit
-					{
-						// if any digits were found - convert to a number
-						if (digit)
-						{	
-							// convert to a number
-							std::string numStr = SvUl::Right( objectName, (objectName.size() - 1) - i);
-							lastNum = atoi(numStr.c_str());
-						}
-						break;
-					}
-				}
-
-				if (digit)
-				{
-					ToolIndex = std::max(ToolIndex, lastNum + 1);
-				}
-				else
-				{
-					ToolIndex = std::max(ToolIndex, 1);
-				}
-			}
+			return newName;
 		}
 	}
-	// Set the name
 
-	if (ToolIndex < minNewIndex)
-	{
-		ToolIndex = minNewIndex;
-	}
-
-	if (nullptr != pHighestUsedIndexForBaseToolname)
-	{
-		pHighestUsedIndexForBaseToolname->operator[](ToolNameCore) = ToolIndex + 1;
-	}
-
-	if( 0 != ToolIndex )
-	{
-		return SvUl::Format( _T("%s%d"), ToolNameCore.c_str(), ToolIndex );
-	}
-
-	return ToolNameCore;
+	return _T("<invalid copied name>");
 }
+
 
 void SVTaskObjectListClass::setEditModeFreezeFlag(bool flag)
 {
@@ -987,6 +941,71 @@ bool SVTaskObjectListClass::resetAllOutputListObjects( SvStl::MessageContainerVe
 	}
 	return Result;
 }
+
+std::string SVTaskObjectListClass::getUniqueNumberedName(const std::string& rName) const
+{
+	std::string objectName;
+
+	//This strips any numbers at the end of the name
+	auto pos = rName.find_last_not_of(_T("0123456789"));
+
+	pos += (pos == std::string::npos) ? 0 : 1;
+
+	std::string ToolNameCore = rName.substr(0, pos);
+
+	int ToolIndex(0);
+
+	for (auto* pObject : m_TaskObjectVector)
+	{
+		if (nullptr != pObject)
+		{
+			objectName = pObject->GetName();
+			if (std::string::npos != objectName.find(ToolNameCore.c_str()))
+			{
+				// see if the name ends in a number
+				int lastNum {0};
+				bool digit {false};
+
+				for (int i = static_cast<int> (objectName.size()) - 1; i >= 0; i--)
+				{
+					if (isdigit(objectName[i]))
+					{
+						digit = true;
+					}
+					else // found a non digit - stop looking for a digit
+					{
+						// if any digits were found - convert to a number
+						if (digit)
+						{
+							// convert to a number
+							std::string numStr = SvUl::Right(objectName, (objectName.size() - 1) - i);
+							lastNum = atoi(numStr.c_str());
+						}
+						break;
+					}
+				}
+
+				if (digit)
+				{
+					ToolIndex = std::max(ToolIndex, lastNum + 1);
+				}
+				else
+				{
+					ToolIndex = std::max(ToolIndex, 1);
+				}
+			}
+		}
+	}
+
+	if (0 != ToolIndex)
+	{
+		return SvUl::Format(_T("%s%d"), ToolNameCore.c_str(), ToolIndex);
+	}
+
+	return ToolNameCore;
+}
+
+
 
 bool SVTaskObjectListClass::isInputImage(uint32_t imageId) const
 {

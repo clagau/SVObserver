@@ -293,7 +293,7 @@ namespace SvUl
 
 	std::string to_utf8(const std::string& rAnsi)
 	{
-		return SvUl::to_utf8(SvUl::to_utf16(rAnsi, CP_ACP));
+		return to_utf8(to_utf16(rAnsi, CP_ACP));
 	}
 
 	std::wstring to_utf16(const std::string& rString, int cp)
@@ -338,8 +338,8 @@ namespace SvUl
 			{
 				std::string first;
 				std::string second;
-				first = SvUl::Format(_T("\\%03o"), l_ch);
-				second = SvUl::Format(_T("%c"), l_ch);
+				first = Format(_T("\\%03o"), l_ch);
+				second = Format(_T("%c"), l_ch);
 				FoundStrings[index] = StringPair(first, second);
 				bAdded = true;
 			}
@@ -364,7 +364,7 @@ namespace SvUl
 
 				start = it->first + it->second.second.size();
 			}
-			NewString += SvUl::Mid(rString, start);
+			NewString += Mid(rString, start);
 			rString = NewString;
 		}
 		return bAdded;
@@ -403,8 +403,8 @@ namespace SvUl
 				std::string first;
 				std::string second;
 				int ctrlValue = (rString[index + 1] - _T('0')) * 64 + (rString[index + 2] - _T('0')) * 8 + (rString[index + 3] - _T('0'));
-				first = SvUl::Format(_T("\\%03o"), ctrlValue);
-				second = SvUl::Format(_T("%c"), ctrlValue);
+				first = Format(_T("\\%03o"), ctrlValue);
+				second = Format(_T("%c"), ctrlValue);
 				FoundStrings[static_cast<int> (index)] = StringPair(first, second);
 				index += 3;
 			}
@@ -425,10 +425,25 @@ namespace SvUl
 				NewString += it->second.second;
 				start = it->first + it->second.first.size();
 			}
-			NewString += SvUl::Mid(rString, start);
+			NewString += Mid(rString, start);
 			rString = NewString;
 			bRemoved = true;
 		}
 		return bRemoved;
+	}
+
+	std::string copiedName(const std::string& rOriginalName, uint16_t copyIndex)
+	{
+		if (0 == copyIndex)
+		{
+			return rOriginalName;
+		}
+
+		if (1 == copyIndex)
+		{
+			return rOriginalName + _T(" - Copy");
+		}
+
+		return rOriginalName + _T(Format(" - Copy (%u)", copyIndex));
 	}
 } // namespace SvUl

@@ -173,6 +173,9 @@ namespace SvUl
 	inline std::string AsString(unsigned long Value) { return Format(_T("%u"), Value); };
 	inline std::string AsString(double Value) { return Format(_T("%f"), Value); };
 
+	//provides "copied Name" strings like the Windows File Explorer does
+	std::string copiedName(const std::string& rOriginalName, uint16_t copyIndex);
+
 	namespace LoadedStrings
 	{
 		//SVOResource/resource.h can not be included, because some apps have its own resource.h and this would lead to macro redefinition
