@@ -128,6 +128,7 @@ void ChannelTimer(std::atomic_bool& rRun, const SimulatedTriggerData& rSimTrigge
 	if (nullptr != timer)
 	{
 		::CancelWaitableTimer(timer);
+		::CloseHandle(timer);
 	}
 }
 
