@@ -1340,21 +1340,29 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 	{
 		if (!pToolsetView->IsLabelEditing())
 		{
-			auto pNavElement = pToolsetView->Get1stSelNavigatorElement();
-
-			if (pNavElement)
+			Enabled = true;
+			uint16_t numberOfSelectedTools = 0;
+			for(auto pNavElement: pToolsetView->GetSelectedNavigatorElements())
 			{
-				switch (pNavElement->m_Type)
+				if (pNavElement)
 				{
-					case NavElementType::EndDelimiterTool:
-						break;
-					case NavElementType::SubTool:
-					case NavElementType::Tool:
-					case NavElementType::LoopTool:
-					case NavElementType::GroupTool:
-							Enabled = true;
-						break;
+					switch (pNavElement->m_Type)
+					{
+						case NavElementType::SubTool:
+						case NavElementType::Tool:
+						case NavElementType::LoopTool:
+						case NavElementType::GroupTool:
+							numberOfSelectedTools++;
+							break;
+						default:
+							Enabled = false;
+							break;
+					}
 				}
+			}
+			if (0 == numberOfSelectedTools)
+			{
+				Enabled = false;
 			}
 		}
 	}

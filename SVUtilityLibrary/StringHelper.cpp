@@ -441,9 +441,9 @@ namespace SvUl
 
 		if (1 == copyIndex)
 		{
-			return rOriginalName + _T(" - Copy");
+			return rOriginalName + _T("_Copy");
 		}
 
-		return rOriginalName + _T(Format(" - Copy (%u)", copyIndex));
+		return rOriginalName + _T(Format("_Copy%u", copyIndex));
 	}
 } // namespace SvUl
