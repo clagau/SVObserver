@@ -1236,6 +1236,7 @@ enum EmbeddedIdEnum
 	FontScaleXEId = 585;
 	FontScaleYEId = 586;
 	XAxisAngleEId = 587;
+	IsColorImageCheckEId = 588;
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
@@ -1318,8 +1319,6 @@ enum EmbeddedIdEnum
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	ImageInputEId = 150000;
-
-	IsColorImageCheckEId = 150001;
 }
 
 
