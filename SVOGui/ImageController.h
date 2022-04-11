@@ -43,6 +43,7 @@ namespace SvOg
 		const SvUl::NameObjectIdList& GetAvailableImageList() const;
 		const SvDef::StringVector& GetSpecialImageList() const;
 		const SvPb::InputDataList& GetInputImageList(uint32_t childObjectID = SvDef::InvalidObjectId, size_t maxImages = 0) const;
+		SvPb::InputData GetInputData(SvPb::EmbeddedIdEnum embeddedId, uint32_t instanceID = SvDef::InvalidObjectId) const;
 		SvUl::NameObjectIdList GetResultImages() const;
 
 		IPictureDisp* GetImage(const std::string& name) const;
@@ -51,10 +52,9 @@ namespace SvOg
 		IPictureDisp* GetImage(SvPb::EmbeddedIdEnum embeddedId, long& rWidth, long& rHeight) const;
 		IPictureDisp* GetImage(uint32_t imageID) const;
 		IPictureDisp* GetImage(uint32_t imageID, long& rWidth, long& rHeight) const;
-
-		
-		
+				
 		HRESULT ConnectToImage(const std::string& inputName, const std::string& name, uint32_t instanceID = SvDef::InvalidObjectId) const;
+		HRESULT ConnectToImage(SvPb::EmbeddedIdEnum embeddedId, const std::string& name, uint32_t instanceID = SvDef::InvalidObjectId) const;
 		HRESULT SaveImage(const std::string& rImageName, const std::string& rFilename);
 		bool IsToolValid() const;
 		HRESULT ResetTask(SvStl::MessageContainerVector& messages) const;

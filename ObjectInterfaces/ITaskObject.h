@@ -49,15 +49,16 @@ public:
 	/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
 	/// \param shouldExcludeFirstObjectType [in] Remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". This parameter will not used for image objects.
 	/// \param maxNumbers [in] Define after how many inputs the search stops. 0 means all.
-		virtual void GetInputs(SvPb::InputDataList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) = 0;
+	virtual void GetInputs(SvPb::InputDataList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) = 0;
 
 	/// Connects an input to an object.
 	/// \param rInputName [in] Name of the input.
 	/// \param newID [in] id of the new object connected to the input
 	/// \param objectType [in] Type of the new object (this type will be checked if it fit), if not set, it will not check and also tried to connected.
 	/// \returns HRESULT
-	virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType, bool shouldResetObject = false) = 0;
-
+	virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID) = 0;
+	virtual HRESULT connectToObject(const SvPb::ConnectToObjectRequest& rConnectData) = 0;
+	
 	/// Gets the list of error messages happen in offline modus and will be reset if object is reset.
 	/// \return a const reference to the message list
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const = 0;
@@ -123,6 +124,8 @@ public:
 
 	virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) = 0;
 
-		virtual void connectInput(SvOi::IObjectClass* pInput) = 0;
+	virtual void connectInput(SvOi::IObjectClass* pInput) = 0;
+
+	virtual void getInputData(const SvPb::GetInputDataRequest& request, SvPb::InspectionCmdResponse& rCmdResponse) const = 0;
 };
 } //namespace SvOi

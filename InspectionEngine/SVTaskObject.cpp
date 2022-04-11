@@ -661,6 +661,33 @@ void SVTaskObjectClass::moveFriendObject(uint32_t objectToMoveId, uint32_t preOb
 		}
 	}
 }
+
+void SVTaskObjectClass::getInputData(const SvPb::GetInputDataRequest& request, SvPb::InspectionCmdResponse& rCmdResponse) const
+{
+	for (size_t j = 0; j < m_friendList.size(); ++j)
+	{
+		if (nullptr != m_friendList[j])
+		{
+			m_friendList[j]->getInputData(request, rCmdResponse);
+			if (rCmdResponse.has_getinputdataresponse())
+			{
+				return;
+			}
+		}
+	}
+
+	SvPb::EmbeddedIdEnum eId = request.embeddedid();
+	auto it = std::find_if(m_inputs.begin(), m_inputs.end(), [eId](const auto* pEntry) { return eId == pEntry->GetEmbeddedID(); });
+	if (it != m_inputs.end() && nullptr != *it)
+	{
+		rCmdResponse.mutable_getinputdataresponse()->CopyFrom((*it)->getInputData(request.desired_first_object_type_for_connected_name(), request.exclude_first_object_name_in_conntected_name()));
+		rCmdResponse.set_hresult(S_OK);
+	}
+	else
+	{
+		rCmdResponse.set_hresult(E_POINTER);
+	}
+}
 #pragma endregion virtual method (ITaskObject)
 
 void SVTaskObjectClass::DestroyFriend(SVObjectClass* pObject)
@@ -921,13 +948,13 @@ SvStl::MessageContainerVector SVTaskObjectClass::getErrorMessages() const
 	return list;
 };
 
-HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType /*= SvPb::SVNotSetObjectType*/, bool shouldResetObject /*= false*/)
+HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32_t newID)
 {
 	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
 		if (nullptr != m_friendList[j])
 		{
-			HRESULT result = m_friendList[j]->ConnectToObject(rInputName, newID, objectType, shouldResetObject);
+			HRESULT result = m_friendList[j]->ConnectToObject(rInputName, newID);
 			if (S_OK == result)
 			{
 				return result;
@@ -942,9 +969,62 @@ HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32
 		SVObjectClass* pNewObject = SVObjectManagerClass::Instance().GetObject(newID);
 		if (nullptr != pNewObject)
 		{
-			if (SvPb::SVNotSetObjectType == objectType || pNewObject->GetObjectType() == objectType)
+			(*it)->SetInputObject(newID);
+		}
+		else
+		{
+			result = E_POINTER;
+		}
+	}
+	else
+	{
+		result = E_INVALIDARG;
+	}
+	return result;
+}
+
+HRESULT SVTaskObjectClass::connectToObject(const SvPb::ConnectToObjectRequest& rConnectData)
+{
+	for (size_t j = 0; j < m_friendList.size(); ++j)
+	{
+		if (nullptr != m_friendList[j])
+		{
+			HRESULT result = m_friendList[j]->connectToObject(rConnectData);
+			if (S_OK == result)
 			{
-				(*it)->SetInputObject(newID);
+				return result;
+			}
+		}
+	}
+
+	HRESULT result = S_OK;
+	SvOl::InputObject* pInput {nullptr};
+	if (SvPb::NoEmbeddedId != rConnectData.embeddedid())
+	{
+		auto eId = rConnectData.embeddedid();
+		auto it = std::find_if(m_inputs.begin(), m_inputs.end(), [eId](const auto* pEntry) { return eId == pEntry->GetEmbeddedID(); });
+		if (it != m_inputs.end() && nullptr != *it)
+		{
+			pInput = *it;
+		}
+	}
+	else
+	{
+		auto inputName = rConnectData.inputname();
+		auto it = std::find_if(m_inputs.begin(), m_inputs.end(), [inputName](const auto* pEntry) { return inputName == pEntry->GetName(); });
+		if (it != m_inputs.end() && nullptr != *it)
+		{
+			pInput = *it;
+		}
+	}
+	if (nullptr != pInput)
+	{
+		SVObjectClass* pNewObject = SVObjectManagerClass::Instance().GetObject(rConnectData.newconnectedid());
+		if (nullptr != pNewObject)
+		{
+			if (SvPb::SVNotSetObjectType == rConnectData.objecttype() || pNewObject->GetObjectType() == rConnectData.objecttype())
+			{
+				pInput->SetInputObject(pNewObject);
 			}
 			else
 			{
@@ -954,9 +1034,9 @@ HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32
 					try
 					{
 						auto* pObject = pLinkedValue->getLinkedObject();
-						if (nullptr != pObject && pObject->GetObjectType() == objectType)
+						if (nullptr != pObject && pObject->GetObjectType() == rConnectData.objecttype())
 						{
-							(*it)->SetInputObject(newID);
+							pInput->SetInputObject(pNewObject);
 						}
 						else
 						{
@@ -975,7 +1055,7 @@ HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32
 					result = E_POINTER;
 				}
 			}
-			if (shouldResetObject && S_OK == result)
+			if (S_OK == result)
 			{
 				SVObjectClass* pTool = GetTool();
 				if (nullptr != pTool)

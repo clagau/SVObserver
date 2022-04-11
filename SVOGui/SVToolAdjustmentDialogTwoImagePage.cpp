@@ -29,7 +29,6 @@ constexpr const char* FirstImageTag = _T("First Image");
 constexpr const char* SecondImageTag = _T("Second Image");
 constexpr const char* ResultImageTag = _T("Result Image");
 constexpr const char* NoImageTag = _T("(No Image Available)"); // maybe move this to the control class?
-static const int NumberOfImagesRequired = 2;
 
 enum ImageTabsEnum
 {
@@ -258,7 +257,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelchangeCombo1()
 	if (!Name.IsEmpty() && Name != NoImageTag)
 	{
 		m_firstImageName = Name;
-		ConnectToImage(m_firstInputName, m_firstImageName);
+		ConnectToImage(SvPb::ImageArithmeticAImageInputEId, m_firstImageName);
 		refresh();
 	}
 }
@@ -272,7 +271,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelChangeCombo2()
 	if (!Name.IsEmpty() && Name != NoImageTag)
 	{
 		m_secondImageName = Name;
-		ConnectToImage(m_secondInputName, m_secondImageName);
+		ConnectToImage(SvPb::ImageArithmeticBImageInputEId, m_secondImageName);
 		refresh();
 	}
 }
@@ -317,19 +316,10 @@ void SVToolAdjustmentDialogTwoImagePageClass::setImages()
 
 void SVToolAdjustmentDialogTwoImagePageClass::RetreiveCurrentlySelectedImageNames()
 {
-	const auto& rImageList = GetInputImageList(SvDef::InvalidObjectId, NumberOfImagesRequired);
-
-	// This requires that the input name sorts in descending natural order
-	// and that the images we are concerned with are first in the list
-	if (rImageList.size() && rImageList.size() > 1)
-	{
-		auto it = rImageList.begin();
-		m_firstInputName = it->inputname();
-		m_firstImageName = it->connected_objectdottedname();
-		++it;
-		m_secondInputName = it->inputname();
-		m_secondImageName = it->connected_objectdottedname();
-	}
+	const auto& rInputImage1Data = GetInputData(SvPb::ImageArithmeticAImageInputEId);
+	m_firstImageName = rInputImage1Data.connected_objectdottedname();
+	const auto& rInputImage2Data = GetInputData(SvPb::ImageArithmeticBImageInputEId);
+	m_secondImageName = rInputImage2Data.connected_objectdottedname();
 }
 
 void SVToolAdjustmentDialogTwoImagePageClass::RetreiveResultImageNames()

@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ReconstructFilterDlg.h"
-#include "Definitions\TextDefineSvDef.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -94,11 +93,8 @@ BOOL ReconstructFilterDlg::OnInitDialog()
 		m_SeedImageCombo.AddString(it->first.c_str());
 	}
 
-	const auto& connectedImageList = m_imageController.GetInputImageList(m_filterID);
-	if (0 < connectedImageList.size() && connectedImageList.begin()->inputname() == SvDef::SeedImageConnectionName)
-	{
-		m_seedImageName = connectedImageList.begin()->connected_objectdottedname();
-	}
+	const auto& rInputData = m_imageController.GetInputData(SvPb::SeedImageInputEId, m_filterID);
+	m_seedImageName = rInputData.connected_objectdottedname();
 	m_SeedImageCombo.SelectString(-1, m_seedImageName.c_str());
 
 	m_pictureDisplay.AddTab("Seed image");
@@ -132,7 +128,7 @@ void ReconstructFilterDlg::OnSelchangeImageCombo()
 
 	if (!currentImageName.IsEmpty())
 	{
-		m_imageController.ConnectToImage(SvDef::SeedImageConnectionName, std::string(currentImageName), m_filterID);
+		m_imageController.ConnectToImage(SvPb::SeedImageInputEId, std::string(currentImageName), m_filterID);
 		m_seedImageName = currentImageName;
 
 		SvPb::InspectionCmdRequest requestCmd;

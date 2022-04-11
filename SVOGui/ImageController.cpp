@@ -123,6 +123,32 @@ namespace SvOg
 		return m_connectedList;
 	}
 
+	// cppcheck-suppress unusedFunction symbolName=GetInputData ; This method is used sometimes, this cppcheck-error is an error itself.
+	SvPb::InputData ImageController::GetInputData(SvPb::EmbeddedIdEnum embeddedId, uint32_t instanceID) const
+	{
+		uint32_t objectID = m_TaskObjectID;
+		if (SvDef::InvalidObjectId != instanceID)
+		{
+			objectID = instanceID;
+		}
+
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pDataRequest = requestCmd.mutable_getinputdatarequest();
+		pDataRequest->set_objectid(objectID);
+		pDataRequest->set_embeddedid(embeddedId);
+		pDataRequest->set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType);
+		pDataRequest->set_exclude_first_object_name_in_conntected_name(true);
+		responseCmd.Clear();
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getinputdataresponse())
+		{
+			return responseCmd.getinputdataresponse().data();
+		}
+		assert(false);
+		return {};
+	}
+
 	class ByName
 	{
 		std::string m_name;
@@ -278,6 +304,29 @@ namespace SvOg
 			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 		}
 		return hr; 
+	}
+
+	HRESULT ImageController::ConnectToImage(SvPb::EmbeddedIdEnum embeddedId, const std::string& name, uint32_t instanceID) const
+	{
+		HRESULT hr = E_INVALIDARG;
+		uint32_t objectID = m_TaskObjectID;
+		if (SvDef::InvalidObjectId != instanceID)
+		{
+			objectID = instanceID;
+		}
+		SvUl::NameObjectIdList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
+		if (it != m_availableList.end())
+		{
+			SvPb::InspectionCmdRequest requestCmd;
+			auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
+			pRequest->set_objectid(objectID);
+			pRequest->set_embeddedid(embeddedId);
+			pRequest->set_newconnectedid(it->second);
+			pRequest->set_objecttype(SvPb::SVImageObjectType);
+
+			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
+		}
+		return hr;
 	}
 
 	HRESULT ImageController::SaveImage(const std::string& rImageName, const std::string& rFilename)

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVWatershedFilterDlg.h"
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
-#include "Definitions/TextDefineSVDef.h"
 #pragma region Includes
 
 #ifdef _DEBUG
@@ -144,13 +143,8 @@ namespace SvOg
 			m_SVSourceImageCombo.AddString(it->first.c_str());
 		}
 		
-		const auto& connectedImageList = GetInputImageList(m_filterID);
-		std::string currentMarkerImageName; 
-		if (0 < connectedImageList.size() && connectedImageList.begin()->inputname() == SvDef::WatershedMarkerImageConnectionName)
-		{
-			currentMarkerImageName = connectedImageList.begin()->connected_objectdottedname();
-		}
-		m_SVSourceImageCombo.SelectString(-1, currentMarkerImageName.c_str());
+		const auto& rInputData = GetInputData(SvPb::MarkerImageInputEId, m_filterID);
+		m_SVSourceImageCombo.SelectString(-1, rInputData.connected_objectdottedname().c_str());
 
 		UpdateData( FALSE ); // set data to dialog
 
@@ -195,7 +189,7 @@ namespace SvOg
 
 		if( !currentImageName.IsEmpty() )
 		{
-			ConnectToImage(SvDef::WatershedMarkerImageConnectionName, std::string(currentImageName), m_filterID);
+			ConnectToImage(SvPb::MarkerImageInputEId, std::string(currentImageName), m_filterID);
 		}
 	}
 }  //namespace SvOg

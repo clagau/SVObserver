@@ -547,13 +547,9 @@ namespace SvOg
 	// SVPatternAnalyzerModelPage message handlers
 	void SVPatternAnalyzerModelPage::InitializeData()
 	{
-		const auto& rImageList = GetInputImageList();
-		const auto Iter = std::ranges::find_if(rImageList, [](const auto& rEntry) { return rEntry.inputname() == SvDef::ImageAnalyzerImageName; });
-		if (rImageList.cend() != Iter)
-		{
-			m_AnalyzerImageID = Iter->connected_objectid();
-			GetImage(m_AnalyzerImageID, m_sourceImageWidth, m_sourceImageHeight);
-		}	
+		const auto& rInputData = GetInputData(SvPb::ImageInputEId, m_AnalyzerID);
+		m_AnalyzerImageID = rInputData.connected_objectid();
+		GetImage(m_AnalyzerImageID, m_sourceImageWidth, m_sourceImageHeight);
 	
 		// Model Selection values
 		m_values.Init();

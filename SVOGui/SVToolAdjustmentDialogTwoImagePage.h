@@ -96,9 +96,7 @@ private:
 
 	bool m_IgnoreNotification {false};
 
-	std::string m_firstInputName;
 	std::string m_firstImageName;
-	std::string m_secondInputName;
 	std::string m_secondImageName;
 	std::string m_resultImageName;
 	uint32_t m_resultImageID;

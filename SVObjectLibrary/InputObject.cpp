@@ -16,6 +16,7 @@
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVToolsetScriptTags.h"
+#include "ObjectInterfaces/ISVImage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -220,13 +221,20 @@ SvPb::GetInputDataResponse InputObject::getInputData(SvPb::SVObjectTypeEnum desi
 	if (nullptr != m_InputObjectInfo.getObject())
 	{
 		std::string name;
-		if (excludeFirstObjectNameInConntectedName)
+		if (auto* pImage = dynamic_cast <SvOi::ISVImage*>(m_InputObjectInfo.getObject()); nullptr != pImage)
 		{
-			name = m_InputObjectInfo.getObject()->GetObjectNameBeforeObjectType(desiredFirstObjectTypeForConnectedName);
+			name = pImage->getDisplayedName();
 		}
 		else
 		{
-			name = m_InputObjectInfo.getObject()->GetObjectNameToObjectType(desiredFirstObjectTypeForConnectedName);
+			if (excludeFirstObjectNameInConntectedName)
+			{
+				name = m_InputObjectInfo.getObject()->GetObjectNameBeforeObjectType(desiredFirstObjectTypeForConnectedName);
+			}
+			else
+			{
+				name = m_InputObjectInfo.getObject()->GetObjectNameToObjectType(desiredFirstObjectTypeForConnectedName);
+			}
 		}
 		retValue.mutable_data()->set_connected_objectdottedname(name);
 	}

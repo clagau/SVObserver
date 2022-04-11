@@ -409,7 +409,8 @@ message GetInputsResponse
 
 message GetInputDataRequest
 {
-	uint32 objectId = 1;  //ID of the input object
+	uint32 objectId = 1; //Must be a TaskObject (in this case inputname must be set) or InputObject (in this case inputName and objectType will be ignored)
+	EmbeddedIdEnum embeddedId = 4; //The embeddedId of the input (must be child from the TaskObject). Will be ignored if object is a InputObject.
 	SVObjectTypeEnum desired_first_object_type_for_connected_name = 2; //define up to which type the connected dotted name should be displayed (not used for image objects, it has the own name conventions)
 	bool exclude_first_object_name_in_conntected_name = 3; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
 }
@@ -423,7 +424,8 @@ message GetInputDataResponse
 message ConnectToObjectRequest
 {
 	uint32 objectId = 1; //Must be a TaskObject (in this case inputname must be set) or InputObject (in this case inputName and objectType will be ignored)
-	string inputName = 2; //The name of the input (must be child from the TaskObject). Will be ignored if object is a InputObject.
+	EmbeddedIdEnum embeddedId = 5; //The embeddedId of the input (must be child from the TaskObject). Will be ignored if object is a InputObject.
+	string inputName = 2; //The name of the input (must be child from the TaskObject). Will be ignored if object is a InputObject or embeddedId is set (!=NoEmveddedId).
 	uint32 newConnectedId = 3; //The Id of the to connected object
 	SVObjectTypeEnum objectType = 4; //Will be ignored if object is a InputObject.
 }

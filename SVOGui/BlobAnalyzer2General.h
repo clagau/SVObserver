@@ -76,7 +76,6 @@ namespace SvOg
 		// Data Element(s):
 		//******************************************************************************
 	private:
-		std::string m_inputGrayName;
 		std::string m_selectedGrayName;
 		const uint32_t m_InspectionID;
 		const uint32_t m_toolId;

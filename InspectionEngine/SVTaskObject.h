@@ -78,6 +78,7 @@ public:
 
 	virtual void connectInput(SvOi::IObjectClass* pInput) override;
 	void connectInput(SvOl::InputObject& rObject);
+
 	virtual bool connectAllInputs() override;
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
@@ -138,7 +139,8 @@ public:
 	
 #pragma region virtual method (ITaskObject)
 	virtual void GetInputs(SvPb::InputDataList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) override;
-	virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType, bool shouldResetObject = false) override;
+	virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID) override;
+	virtual HRESULT connectToObject(const SvPb::ConnectToObjectRequest& rConnectData) override;
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override { return m_ResetErrorMessages; };
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override { return m_RunErrorMessages; };
 	virtual SvStl::MessageContainerVector getErrorMessages() const override;
@@ -159,6 +161,7 @@ public:
 	virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override {};
 	virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) override { assert(false); return {}; };
+	virtual void getInputData(const SvPb::GetInputDataRequest& request, SvPb::InspectionCmdResponse& rCmdResponse) const override;
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage

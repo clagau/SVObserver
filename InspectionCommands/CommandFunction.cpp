@@ -567,8 +567,12 @@ SvPb::InspectionCmdResponse getInputData(const SvPb::GetInputDataRequest& reques
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	auto* pInputObject = dynamic_cast<SvOi::IInputObject*> (SvOi::getObject(request.objectid()));
-	if (nullptr != pInputObject)
+	auto* pObject = SvOi::getObject(request.objectid());
+	if (SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject); nullptr != pTaskObject)
+	{
+		pTaskObject->getInputData(request, cmdResponse);
+	}
+	else if (auto* pInputObject = dynamic_cast<SvOi::IInputObject*>(pObject); nullptr != pInputObject)
 	{
 		cmdResponse.mutable_getinputdataresponse()->CopyFrom(pInputObject->getInputData(request.desired_first_object_type_for_connected_name(), request.exclude_first_object_name_in_conntected_name()));
 	}
@@ -586,7 +590,7 @@ SvPb::InspectionCmdResponse connectToObject(SvPb::ConnectToObjectRequest request
 	auto* pObject = SvOi::getObject(request.objectid());
 	if (SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject); nullptr != pTaskObject)
 	{
-		result.set_hresult(pTaskObject->ConnectToObject(request.inputname(), request.newconnectedid(), request.objecttype(), true));
+		result.set_hresult(pTaskObject->connectToObject(request));
 	}
 	else if (auto* pInputObject = dynamic_cast<SvOi::IInputObject*>(pObject); nullptr != pInputObject)
 	{
@@ -2130,8 +2134,5 @@ SvPb::InspectionCmdResponse getObjectName(SvPb::GetObjectNameRequest request)
 		cmdResponse.set_hresult(E_POINTER);
 	}
 	return cmdResponse;
-
 }
-
-
 } //namespace SvCmd

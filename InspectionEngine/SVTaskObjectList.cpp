@@ -112,9 +112,9 @@ void SVTaskObjectListClass::fillObjectList(std::back_insert_iterator<std::vector
 	}
 }
 
-HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType /*= SvPb::SVNotSetObjectType*/, bool shouldResetObject /*= false*/)
+HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, uint32_t newID)
 {
-	HRESULT result = __super::ConnectToObject(rInputName, newID, objectType, shouldResetObject);
+	HRESULT result = __super::ConnectToObject(rInputName, newID);
 	if (S_OK == result)
 	{
 		return S_OK;
@@ -124,7 +124,7 @@ HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, ui
 	{
 		if (m_TaskObjectVector[i])
 		{
-			result = m_TaskObjectVector[i]->ConnectToObject(rInputName, newID, objectType, shouldResetObject);
+			result = m_TaskObjectVector[i]->ConnectToObject(rInputName, newID);
 			if (S_OK == result)
 			{
 				return S_OK;
@@ -133,6 +133,50 @@ HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, ui
 	}
 
 	return result;
+}
+
+HRESULT SVTaskObjectListClass::connectToObject(const SvPb::ConnectToObjectRequest& rConnectData)
+{
+	HRESULT result = __super::connectToObject(rConnectData);
+	if (S_OK == result)
+	{
+		return S_OK;
+	}
+
+	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
+	{
+		if (m_TaskObjectVector[i])
+		{
+			result = m_TaskObjectVector[i]->connectToObject(rConnectData);
+			if (S_OK == result)
+			{
+				return S_OK;
+			}
+		}
+	}
+
+	return result;
+}
+
+void SVTaskObjectListClass::getInputData(const SvPb::GetInputDataRequest& request, SvPb::InspectionCmdResponse& rCmdResponse) const
+{
+	__super::getInputData(request, rCmdResponse);
+	if (rCmdResponse.has_getinputdataresponse())
+	{
+		return;
+	}
+
+	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
+	{
+		if (m_TaskObjectVector[i])
+		{
+			m_TaskObjectVector[i]->getInputData(request, rCmdResponse);
+			if (rCmdResponse.has_getinputdataresponse())
+			{
+				return;
+			}
+		}
+	}
 }
 
 void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter) const

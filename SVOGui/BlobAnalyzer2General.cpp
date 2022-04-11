@@ -124,17 +124,8 @@ namespace SvOg
 		m_useGrayImage = m_Values.Get<bool>(SvPb::IsGrayImageEId);
 
 		const SvUl::NameObjectIdList& rAvailableImageList = m_AnalyzerImageController.GetAvailableImageList();
-		const auto& rImageList = m_AnalyzerImageController.GetInputImageList(SvDef::InvalidObjectId, 3);
-		if (rImageList.size())
-		{
-			m_inputGrayName = rImageList.begin()->inputname();
-			m_selectedGrayName = rImageList.begin()->connected_objectdottedname();
-		}
-		else
-		{
-			m_selectedGrayName.clear();
-		}
-
+		const auto& rImageList = m_AnalyzerImageController.GetInputData(SvPb::GrayImageInputEId);
+		m_selectedGrayName = rImageList.connected_objectdottedname();
 		m_availableGrayImageListBox.Init(rAvailableImageList, m_selectedGrayName, NoImageTag);
 		setImages();
 		
@@ -161,7 +152,7 @@ namespace SvOg
 				m_selectedGrayName = imageName;
 				//setImage must be before ConnectToImage because ConnectToImage does a reset and then it cannot get the image.
 				setImages();
-				m_AnalyzerImageController.ConnectToImage(m_inputGrayName, m_selectedGrayName);
+				m_AnalyzerImageController.ConnectToImage(SvPb::GrayImageInputEId, m_selectedGrayName);
 				refresh();
 				SvStl::MessageContainerVector errorMessages;
 				HRESULT result = m_AnalyzerImageController.ResetTask(errorMessages);
