@@ -132,6 +132,9 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, const SVInspectio
 			pGlobalConstant->getValue(Value);
 			rWriter.WriteAttribute(SvXml::CTAG_VALUE, Value);
 			Value.Clear();
+			Value = convertObjectIdToVariant(pGlobalConstant->getObjectId());
+			rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
+			Value.Clear();
 			std::string Description(pGlobalConstant->getDescription());
 			//This is needed to remove any CR LF in the description
 			SvUl::AddEscapeSpecialCharacters(Description, true);

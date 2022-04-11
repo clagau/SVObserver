@@ -212,6 +212,12 @@ static bool importGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::vector<
 					rGlobalData.m_Value = Value;
 				}
 				Value.Clear();
+				Result = SvXml::SVNavigateTree::GetItem(rTree, scUniqueReferenceIDTag, hItemChild, Value);
+				if (Result)
+				{
+					rGlobalData.m_objectId = calcObjectId(Value);
+				}
+				Value.Clear();
 				Result = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_DESCRIPTION, hItemChild, Value);
 				if (Result)
 				{
@@ -278,15 +284,16 @@ static void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std
 	}
 }
 
-static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalConflictPairVector& rGlobalConflicts )
+static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& rXmlString, SvXml::SaxXMLHandler<SVTreeType>& rSaxHandler, SvUl::GlobalConflictPairVector& rGlobalConflicts)
 {
 	std::vector<SvUl::GlobalConstantData> importedGlobals;
 	importGlobalConstants(rTree, importedGlobals);
 
-	//search for GlobalConst in LinkedValues in InspectionTree
+	//search for GlobalConst in LinkedValues in InspectionTree (only for exported inspection older than version 10.20)
 	std::vector< std::pair<std::string, SVTreeType::SVBranchHandle>> globalElementList;
 	getLinkedValueUsingGlobalConst(rTree, std::back_inserter(globalElementList));
 
+	bool mustReload = false;
 	for (auto& rGlobalImport : importedGlobals)
 	{
 		SvVol::BasicValueObjectPtr pGlobalConstant = RootObject::getRootChildObjectValue(rGlobalImport.m_DottedName.c_str() );
@@ -296,13 +303,17 @@ static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalC
 			pGlobalConstant = RootObject::setRootChildValue(rGlobalImport.m_DottedName.c_str(), rGlobalImport.m_Value);
 			if (nullptr != pGlobalConstant)
 			{
+				if (SvDef::InvalidObjectId != rGlobalImport.m_objectId)
+				{
+					SVObjectManagerClass::Instance().ChangeUniqueObjectID(pGlobalConstant.get(), rGlobalImport.m_objectId);
+				}
 				pGlobalConstant->setDescription(rGlobalImport.m_Description.c_str());
 				if (rGlobalImport.m_Value.vt == VT_BSTR)
 				{
 					pGlobalConstant->SetObjectAttributesAllowed(SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute);
 				}
+				rGlobalImport.m_objectId = pGlobalConstant->getObjectId();
 			}
-			rGlobalImport.m_objectId = pGlobalConstant->getObjectId();
 		}
 		else
 		{
@@ -318,11 +329,31 @@ static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalC
 				rPair.first.m_Selected = true;
 				rPair.second = rGlobalImport;
 			}
+
+			if (SvDef::InvalidObjectId != rGlobalImport.m_objectId)
+			{
+				std::string oldIdString = convertObjectIdToString(rGlobalImport.m_objectId);
+				std::string newIdString = convertObjectIdToString(pGlobalConstant->getObjectId());
+				SvUl::searchAndReplace(rXmlString, oldIdString.c_str(), newIdString.c_str());
+				mustReload = true;
+			}
 			rGlobalImport.m_objectId = pGlobalConstant->getObjectId();
 		}
+	}
+	if (mustReload)
+	{
+		//The next two lines don't work (crash during the parser) and I don't know why. For this reason I do the lines below.
+		//rTree.Clear();
+		//rSaxHandler.BuildFromXMLString(&rTree, _variant_t(rXmlString.c_str()));
+		SvXml::SVXMLMaterialsTree tmp;
+		rSaxHandler.BuildFromXMLString(&tmp, _variant_t(rXmlString.c_str()));
+		rTree = tmp;
+	}
 
-		//override objectId for GlobalConst in LinkedValues
-		for (auto& rGlobalElementPair : globalElementList)
+	//override objectId for GlobalConst in LinkedValues (only for exported inspection older than version 10.20)
+	for (auto& rGlobalElementPair : globalElementList)
+	{
+		for (auto& rGlobalImport : importedGlobals)
 		{
 			if (rGlobalElementPair.first == rGlobalImport.m_DottedName)
 			{
@@ -352,7 +383,7 @@ static void ImportObjectAttributes(SvXml::SVXMLMaterialsTree& rTree, ObjectAttri
 	}
 }
 
-HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp)
+HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SVIProgress& rProgress, int& currentOp)
 {
 	HRESULT hr = S_OK;
 
@@ -368,11 +399,6 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 	InputListInserter inputInserter(inspectionInfo.m_inputList, inspectionInfo.m_inputList.end());
 	OutputListInserter outputInserter(inspectionInfo.m_outputList, inspectionInfo.m_outputList.end());
 	ImportPPQInputsOutputs(rXmlTree, inputInserter, outputInserter);
-
-	rProgress.UpdateText(_T("Importing Global Constants..."));
-	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
-
-	checkGlobalConstants(rXmlTree, rGlobalConflicts);
 
 	rProgress.UpdateText(_T("Importing object attributes..."));
 	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
@@ -510,11 +536,11 @@ HRESULT SVInspectionImporter::Import(const std::string& filename, const std::str
 
 	rProgress.UpdateText(_T("Loading Inspection XML..."));
 	SvXml::SVXMLMaterialsTree XmlTree;
-	HRESULT hr = loadAndReplaceData(inFileName, inspectionName, XmlTree);
+	HRESULT hr = loadAndReplaceData(inFileName, inspectionName, XmlTree, rGlobalConflicts);
 	if (S_OK == hr)
 	{
 		rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
-		result = LoadInspectionXml(XmlTree, zipFilename, inspectionName, cameraName, inspectionInfo, rGlobalConflicts, rProgress, currentOp);
+		result = LoadInspectionXml(XmlTree, zipFilename, inspectionName, cameraName, inspectionInfo, rProgress, currentOp);
 
 		rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 		rProgress.UpdateText(_T("Import Complete."));
@@ -568,7 +594,7 @@ HRESULT SVInspectionImporter::GetProperties(const std::string& rFileName, long& 
 	return Result;
 }
 
-HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, const std::string& rNewInspectionName, SvXml::SVXMLMaterialsTree& rTree)
+HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, const std::string& rNewInspectionName, SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalConflictPairVector& rGlobalConflicts)
 {
 	SvXml::SVXMLMaterialsTree XmlTree;
 	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
@@ -632,5 +658,15 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		}
 	}
 
-	return SaxHandler.BuildFromXMLString(&rTree, _variant_t(xmlString.c_str()));
+	hr = SaxHandler.BuildFromXMLString(&rTree, _variant_t(xmlString.c_str()));
+
+	if (S_OK == hr)
+	{
+		checkGlobalConstants(rTree, xmlString, SaxHandler, rGlobalConflicts);
+		return S_OK;
+	}
+	else
+	{
+		return hr;
+	}
 }

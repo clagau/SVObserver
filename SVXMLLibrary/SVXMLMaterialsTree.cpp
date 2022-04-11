@@ -84,7 +84,7 @@ namespace SvXml
 		return Result;
 	}
 
-	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::getParentBranch( const SVBranchHandle pChild )
+	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::getParentBranch( const SVBranchHandle pChild ) const
 	{
 		SVBranchHandle pResult( nullptr );
 
@@ -227,7 +227,7 @@ namespace SvXml
 		return {};
 	}
 
-	bool SVXMLMaterialsTree::isValidBranch( const SVBranchHandle pParent )
+	bool SVXMLMaterialsTree::isValidBranch( const SVBranchHandle pParent ) const
 	{
 		return (nullptr != pParent);
 	}

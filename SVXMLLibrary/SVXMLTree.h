@@ -83,7 +83,7 @@ namespace SvXml
 		//! \param pBranch [in] handle to the branch to check
 		//! \returns handle to the parent branch
 		//************************************
-		virtual SVBranchHandle getParentBranch( const SVBranchHandle pChild ) = 0;
+		virtual SVBranchHandle getParentBranch( const SVBranchHandle pChild ) const = 0;
 
 		//************************************
 		//! Method to get the first child branch
@@ -114,7 +114,7 @@ namespace SvXml
 		//! \param pParent [in] handle to the parent branch
 		//! \returns true if valid
 		//************************************
-		virtual bool isValidBranch( const SVBranchHandle pParent ) = 0;
+		virtual bool isValidBranch( const SVBranchHandle pParent ) const = 0;
 
 		//************************************
 		//! Method to create a new child branch

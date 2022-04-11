@@ -63,7 +63,7 @@ bool SVXMLCTreeCtrl::hasBranches( const SVBranchHandle pBranch )
 	return (nullptr != pChild);
 }
 
-SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getParentBranch( const SVBranchHandle pChild )
+SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getParentBranch( const SVBranchHandle pChild ) const
 {
 	SVBranchHandle pResult( nullptr );
 
@@ -145,7 +145,7 @@ SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::findBranch( const SVBranchHandle 
 	return pResult;
 }
 
-bool SVXMLCTreeCtrl::isValidBranch( const SVBranchHandle pParent )
+bool SVXMLCTreeCtrl::isValidBranch( const SVBranchHandle pParent ) const
 {
 	return (nullptr != pParent);
 }

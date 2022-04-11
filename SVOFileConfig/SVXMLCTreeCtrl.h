@@ -82,7 +82,7 @@ public:
 	//! \param pBranch [in] handle to the branch to check
 	//! \returns handle to the parent branch
 	//************************************
-	virtual SVBranchHandle getParentBranch( const SVBranchHandle pChild ) override;
+	virtual SVBranchHandle getParentBranch( const SVBranchHandle pChild ) const override;
 
 	//************************************
 	//! Method to get the first child branch
@@ -113,7 +113,7 @@ public:
 	//! \param pParent [in] handle to the parent branch
 	//! \returns true if valid
 	//************************************
-	virtual bool isValidBranch( const SVBranchHandle pBranch ) override;
+	virtual bool isValidBranch( const SVBranchHandle pBranch ) const override;
 
 	//************************************
 	//! Method to create a new child branch
