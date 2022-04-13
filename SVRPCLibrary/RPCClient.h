@@ -101,14 +101,18 @@ private:
 	void emit_status_change(ClientStatus);
 
 private:
+	std::mutex m_ConnectMutex;
+	std::mutex m_StatusCallbackMutex;
+	std::atomic_uint64_t m_StatusCallbackIdx {0};
+	std::map<uint64_t, std::function<void(ClientStatus)>> m_StatusCallbacks;
+
 	// TODO: switch to boost::asio::thread_pool when upgrading to boost 1.66.0
 	boost::asio::io_context m_IoContex;
 	std::unique_ptr<boost::asio::io_context::work> m_IoWork;
-	std::thread m_IoThread;
 	std::atomic_bool m_IsStopping {false};
 	SvHttp::WebsocketClientFactory m_WebsocketClientFactory;
 	std::shared_ptr<SvHttp::WebsocketClient> m_WebsocketClient;
-	std::mutex m_ConnectMutex;
+	
 	std::condition_variable m_ConnectCV;
 	std::vector<std::shared_ptr<SvSyl::SVPromise<void>>> m_ConnectPromises;
 	std::atomic_bool m_IsConnected {false};
@@ -119,9 +123,8 @@ private:
 	using DeadlineTimerPtr = std::shared_ptr<boost::asio::deadline_timer>;
 	std::map<uint64_t, DeadlineTimerPtr> m_PendingRequestsTimer;
 	std::map<uint64_t, Observer<SvPenv::Envelope>> m_PendingStreams;
-	std::mutex m_StatusCallbackMutex;
-	std::atomic_uint64_t m_StatusCallbackIdx {0};
-	std::map<uint64_t, std::function<void(ClientStatus)>> m_StatusCallbacks;
+	
+	std::thread m_IoThread;
 };
 
 } // namespace SvRpc
