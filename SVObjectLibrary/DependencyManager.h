@@ -42,8 +42,9 @@ namespace SvOl
 	//! \param rSourceSet [in] reference to the source set of IDs
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	//! \param ToolDependency [in] The tool dependency types to get
+	//! \param only [in] if true only returns external dependencies
 	//! \param FileName [in] Optional file name to save the graph file 
-	void getToolDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, LPCTSTR fileName = nullptr) const;
+	void getToolDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, bool onlyExternal = true, LPCTSTR fileName = nullptr) const;
 
 	//! Return the tool dependency of the given sources
 	//! \param Inserter [in] Iterator to insert the tool ID

@@ -3378,7 +3378,7 @@ void SVIPDoc::OnToolDependencies()
 			std::set<uint32_t> ToolIDSet;
 			pToolSet->GetToolIds(std::inserter(ToolIDSet, ToolIDSet.end()));
 			SvDef::StringPairVector dependencyList;
-			SvOi::getToolDependency(std::back_inserter(dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, fileDlg.GetPathName().GetString());
+			SvOi::getToolDependency(std::back_inserter(dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, false, fileDlg.GetPathName().GetString());
 		}
 	}
 }
