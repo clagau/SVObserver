@@ -12,6 +12,7 @@
 #include "StdAfx.h"
 //Moved to precompiled header: #include <map>
 #include "SVMatroxGige.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
 #include "SVOLibrary/CameraInfo.h"
@@ -584,10 +585,18 @@ void SVMatroxGige::ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookI
 								}
 								pValue = &cameraInfo.m_cameraData[CameraDataEnum::ChunkTimeStamp];
 								pValue->vt = VT_I4;
+								//Note the timestamp needs to be fetched using VT_I4 but is of type unsigned so convert it to VT_UI4
 								hResult = SVMatroxDigitizerInterface::GetFeature(*(pCamera->m_Digitizer.get()), cChunkTimeStamp, SVFeatureTypeEnum::SVTypeInt32, *pValue);
 								if (S_OK != hResult)
 								{
 									pValue->Clear();
+								}
+								else
+								{
+									if(S_OK != ::VariantChangeTypeEx(pValue, pValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_UI4))
+									{
+										pValue->Clear();
+									}
 								}
 								pValue = &cameraInfo.m_cameraData[CameraDataEnum::ChunkLineStatusAll];
 								pValue->vt = VT_I4;

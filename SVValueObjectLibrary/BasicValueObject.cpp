@@ -176,34 +176,27 @@ namespace SvVol
 			}
 			break;
 			case VT_BOOL:
-			{
-				rValueString = m_Value.boolVal ? _T("True") : _T("False");
-			}
-			break;
-			//The old BOOL converts to VT_IINT so this is also of type boolean
+			//The old BOOL converts to VT_INT so this is also of type boolean
 			case VT_INT:
 			{
-				rValueString = m_Value.intVal == 1 ? _T("True") : _T("False");
+				rValueString = static_cast<int> (m_Value) == 0 ? _T("False") : _T("True");
 			}
 			break;
 			case VT_I4:
-			{
-				rValueString = SvUl::Format(_T("%d"), m_Value.lVal);
-			}
-			break;
 			case VT_I8:
 			{
-				rValueString = SvUl::Format(_T("%d"), m_Value.llVal);
+				rValueString = SvUl::Format(_T("%lld"), static_cast<long long> (m_Value));
+			}
+			case VT_UI4:
+			case VT_UI8:
+			{
+				rValueString = SvUl::Format(_T("%llu"), static_cast<unsigned long long> (m_Value));
 			}
 			break;
 			case VT_R4:
-			{
-				rValueString = SvUl::Format(_T("%f"), m_Value.fltVal);
-			}
-			break;
 			case VT_R8:
 			{
-				rValueString = SvUl::Format(_T("%f"), m_Value.dblVal);
+				rValueString = SvUl::Format(_T("%f"), static_cast<double> (m_Value));
 			}
 			break;
 			default:
@@ -238,6 +231,12 @@ namespace SvVol
 			break;
 		case VT_I8:
 			result = sizeof(VARIANT::llVal);
+			break;
+		case VT_UI4:
+			result = sizeof(VARIANT::ulVal);
+			break;
+		case VT_UI8:
+			result = sizeof(VARIANT::ullVal);
 			break;
 		case VT_INT:
 			result = sizeof(VARIANT::intVal);
@@ -305,6 +304,8 @@ namespace SvVol
 				case VT_BOOL:
 				case VT_I4:
 				case VT_I8:
+				case VT_UI4:
+				case VT_UI8:
 				case VT_INT:
 				case VT_R4:
 				case VT_R8:
@@ -344,6 +345,8 @@ namespace SvVol
 			case VT_INT:
 			case VT_I4:
 			case VT_I8:
+			case VT_UI4:
+			case VT_UI8:
 				rValue = static_cast<BOOL> (m_Value);
 				break;
 			case VT_R4:
@@ -389,11 +392,13 @@ namespace SvVol
 		}
 		break;
 		case VT_I4:
+		case VT_UI4:
 		{
 			Result = _T("Integer32");
 		}
 		break;
 		case VT_I8:
+		case VT_UI8:
 		{
 			Result = _T("Integer64");
 		}

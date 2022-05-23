@@ -172,7 +172,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 					SvVol::BasicValueObjectPtr pTimestamp = m_pToolSetCamera->getCameraValue(SvDef::FqnCameraTimestamp);
 					if (nullptr != pTimestamp)
 					{
-						pTimestamp->setValue(rCameraInfo.m_cameraData[CameraDataEnum::ChunkTimeStamp].lVal);
+						pTimestamp->setValue(rCameraInfo.m_cameraData[CameraDataEnum::ChunkTimeStamp].ulVal);
 					}
 				}
 				if (VT_EMPTY != rCameraInfo.m_cameraData[CameraDataEnum::ChunkLineStatusAll].vt)

@@ -457,7 +457,7 @@ void SVVirtualCamera::createCameraParameters()
 	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraFrameID, 0L, this, SvPb::SVCameraObjectType);
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseFrameIDId + m_CameraID);
 
-	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraTimestamp, 0L, this, SvPb::SVCameraObjectType);
+	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraTimestamp, 0UL, this, SvPb::SVCameraObjectType);
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseTimestampId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraLineStatusAll, 0L, this, SvPb::SVCameraObjectType);
