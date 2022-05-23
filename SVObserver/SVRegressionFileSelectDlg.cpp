@@ -43,7 +43,7 @@ SVRegressionFileSelectDlg::SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName, b
 	, m_isCamera(isCamera)
 	, m_toolId(toolId)
 	, m_RegTestFiles(_T(""))
-	, m_iSelectFileRadio(RegressionFileEnum::RegNone)
+	, m_iSelectFileRadio(RegressionFileEnum::RegSubDirectories)
 	, m_pParent(nullptr)
 {
 	

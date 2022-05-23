@@ -505,16 +505,6 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 			}
 		}
 	}
-	else //No list set yet, set in first tab the mode to RegFileList
-	{
-		pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(0));
-		if (nullptr != pPage)
-		{
-			RegressionTestStruct tmpStruct;
-			tmpStruct.iFileMethod = RegressionFileEnum::RegSubDirectories;
-			pPage->SetRegressionData(&tmpStruct);
-		}
-	}	
 
 	if (0 < SvOg::getToolsWithReplaceableSourceImage(m_InspectionID).list_size())
 	{
