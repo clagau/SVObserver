@@ -1556,14 +1556,13 @@ void SVIPDoc::updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uin
 			{
 				pTool->resetAllObjects();
 			}
-			SVObjectLevelCreateStruct createStruct(*pInspection);
+			SVObjectLevelCreateStruct createStruct(nullptr != pOwnerObject ? *pOwnerObject : *pInspection);
 			createStruct.m_pInspection = pInspection;
-			if (nullptr != pOwnerObject&& SvPb::SVToolObjectType == pOwnerObject->GetObjectType())
+			if (nullptr != pOwnerObject && SvPb::SVToolObjectType == pOwnerObject->GetObjectType())
 			{
 				createStruct.m_pTool = pOwnerObject;
 			}
 
-			pTool->ConnectObject(createStruct);
 			pTool->connectAllInputs();
 			pTool->createAllObjects(createStruct);
 			//Reset only the inserted tool
