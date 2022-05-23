@@ -171,11 +171,15 @@ protected:
 
 private:
 #pragma region Member Variables
+	//@TODO [Arvid][10.20][20.05.2022]; why so many mutables? this clipboard should be properly designed! not everything should be crammed into one class.
 	mutable SVInspectionProcess* m_pInspection{nullptr};
 	mutable SvStl::MessageManager m_errorMessage{SvStl::MsgType::Log | SvStl::MsgType::Display};
+	mutable std::vector<std::string> m_additionalNames;
 
 	std::string m_baseFilePath;
 	std::string m_zipFilePath;
+
+
 #pragma endregion Member Variables
 };
 

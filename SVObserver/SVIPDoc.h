@@ -122,7 +122,7 @@ public:
 	bool IsToolPreviousToSelected(uint32_t toolID ) const;
 
 	std::string GetCompleteToolSetName() const;
-	std::string getUniqueName( const std::string& rToolName) const;
+	std::string makeNameUnique(const std::string& rToolName, const std::vector<std::string>& rAdditionalNames) const;
 
 	//getToolsSetinfo using current thread
 	SvOi::ObjectInfoVector GetToolSetInfo() const;

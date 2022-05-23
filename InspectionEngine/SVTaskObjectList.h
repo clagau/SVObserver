@@ -26,6 +26,7 @@ namespace SvIe
 namespace SvIe
 {
 
+typedef std::vector<SVTaskObjectClass*> SVTaskObjectPtrVector;
 
 class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass
 {
@@ -33,8 +34,6 @@ class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObject
 	//SV_DECLARE_CLASS
 
 public:
-	typedef std::vector<SVTaskObjectClass*> SVTaskObjectPtrVector;
-
 #pragma region Constructor
 	explicit SVTaskObjectListClass(LPCSTR LPSZObjectName);
 	SVTaskObjectListClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
@@ -61,21 +60,18 @@ public:
 	//Add a task Object to the taskObject list before the object with rObjectBeforeID.
 	//return the index of the new element 
 	virtual int  InsertBefore(uint32_t rObjectBeforeID, SVTaskObjectClass* pTaskObject);
-	SVTaskObjectClass* GetAt( int nIndex ) const;
 	void RemoveAt( int nIndex);
 	/// Add a task object to the task object list
 	/// \param pTaskObject [in] Pointer of the task object
 	/// \returns int Position of the new task in the list.
-	int Add( SVTaskObjectClass* pTaskObject, bool atBegin = false );
+	int Add(SVTaskObjectClass* pTaskObject, bool atBegin = false, bool useExplorerStyle = true);
 	HRESULT RemoveChild( SVTaskObjectClass* pChildObject );	
 
 	virtual void SetDisabled() override;
 
-	std::string getUniqueName(const std::string& rToolName, bool adaptEndNumbers = false) const;
+	std::string makeNameUnique(const std::string& rToolName, const std::vector<std::string>& rAdditionalNames, bool useExplorerStyle = true) const;
 
-	//insensitive compare with name in m_TaskObjectVector
-	bool IsNameUnique(LPCSTR  pName, LPCTSTR pExclude = nullptr) const;
-
+	bool IsNameUnique(const std::string& rName, const std::string& rExclude = _T("")) const;
 	virtual void setEditModeFreezeFlag(bool flag) override;
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) override;
 	virtual void goingOffline() override;
@@ -117,6 +113,8 @@ public:
 
 	bool getAvailableObjects(SVClassInfoStructVector* pList, const SvDef::SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+
+	auto TaskObject(size_t i) const { return m_TaskObjectVector[i]; }
 #pragma endregion Methods to replace processMessage
 
 	SVTaskObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner);
@@ -135,8 +133,6 @@ protected:
 	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual bool resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-
-	std::string getUniqueNumberedName(const std::string& rToolName) const;
 
 	/// Call method ConnectObject at the child object with a create struct defined in this method.
 	/// \param rChildObject [in] Child object
@@ -164,6 +160,8 @@ protected:
 
 	double m_LastListUpdateTimestamp;
 	SVTaskObjectPtrVector m_TaskObjectVector;
+	auto numberOfTaskObjects() const { return m_TaskObjectVector.size(); }
+
 #pragma endregion Member Variables
 };
 

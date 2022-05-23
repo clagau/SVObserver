@@ -53,7 +53,6 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Public Methods
 
-
 ToolClipboard::ToolClipboard() : m_baseFilePath(SvStl::GlobalPath::Inst().GetTempPath().c_str())
 {
 	m_baseFilePath += _T("\\");
@@ -138,7 +137,7 @@ std::string ToolClipboard::readXmlToolData()
 }
 
 
-std::vector<uint32_t>  ToolClipboard::createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId)
+std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId)
 {
 	std::string XmlData(rXmlData);
 
@@ -508,6 +507,12 @@ void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SVTreeType
 
 	std::string NewToolName = getUniqueToolName(ToolName, pOwner);
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLCLIPBOARD)
+	std::stringstream ss;
+	ss << _T("ToolClipboard::replaceToolNameIfDuplicate(): ") << ToolName << _T(" -> ") << NewToolName << "\n";
+	::OutputDebugString(ss.str().c_str());
+#endif
+
 	if (NewToolName != ToolName)
 	{
 		// adding ">" and "<" ensures that the correct occurrence of the name in the XML string will be replaced
@@ -524,7 +529,7 @@ void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SVTreeType
 		}
 
 		if (false == rOldFullToolName.empty())
-		{ //replace the dottedName in Equations with the new name.
+		{ //replace the dottedName in equations with the new name.
 			std::string fullToolNameStr = rOldFullToolName + _T(".");
 			std::string fullToolNameNewStr = fullToolNameStr;
 			if (nullptr != pOwner)
@@ -542,22 +547,28 @@ void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SVTreeType
 
 std::string ToolClipboard::getUniqueToolName(std::string& rToolName, const SVObjectClass* pOwner) const
 {
+	std::string uniqueName = rToolName;
+
 	if (nullptr != pOwner && (pOwner->isLoopOrGroupTool()))
 	{
 		auto pTaskObjectList = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner);
-
-		return pTaskObjectList->getUniqueName(rToolName);
+		uniqueName = pTaskObjectList->makeNameUnique(rToolName, m_additionalNames);
 	}
 	else
 	{
 		SVIPDoc* pDoc = (nullptr != m_pInspection) ? GetIPDocByInspectionID(m_pInspection->getObjectId()) : nullptr;
 		if (nullptr != pDoc)
 		{
-			return pDoc->getUniqueName(rToolName);
+			uniqueName = pDoc->makeNameUnique(rToolName, m_additionalNames);
 		}
 	}
 
-	return rToolName;
+	if (uniqueName != rToolName)
+	{//i.e. newly created. It's OK to have just one vector for this since a Clipboard will be eine only "in one Place"
+		m_additionalNames.push_back(uniqueName);
+	}
+
+	return uniqueName;
 }
 
 

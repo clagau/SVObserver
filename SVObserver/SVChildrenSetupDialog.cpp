@@ -97,9 +97,9 @@ void SVChildrenSetupDialog::redrawLists()
 			{
 				for( int i = 0; i < m_pParentObject->GetSize(); i++ )
 				{
-					if( m_pParentObject->GetAt( i ) )
+					if( m_pParentObject->TaskObject( i ) )
 					{
-						m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( i, m_pParentObject->GetAt( i )->GetName() ), reinterpret_cast<DWORD_PTR>(m_pParentObject->GetAt( i )) );
+						m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( i, m_pParentObject->TaskObject( i )->GetName() ), reinterpret_cast<DWORD_PTR>(m_pParentObject->TaskObject( i )) );
 					}
 					else
 					{

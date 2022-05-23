@@ -27,6 +27,9 @@ constexpr unsigned long cBufferSize = 2000;
 
 namespace SvUl
 {
+	std::string makeNameUniqueQuasiExplorerStyle(const std::string& rName, const std::vector<std::string>& rNamesToAvoid);
+	std::string makeNameUniqueByNumbering(const std::string& rName, const std::vector<std::string>& rNamesToAvoid);
+
 	std::string createStdString( const wchar_t* pString )
 	{
 		std::string retVal(_T(""));
@@ -432,6 +435,7 @@ namespace SvUl
 		return bRemoved;
 	}
 
+	//provides "copied Name" strings similar to way the Windows File Explorer uses
 	std::string copiedName(const std::string& rOriginalName, uint16_t copyIndex)
 	{
 		if (0 == copyIndex)
@@ -446,4 +450,124 @@ namespace SvUl
 
 		return rOriginalName + _T(Format("_Copy%u", copyIndex));
 	}
+
+
+	std::string makeNameUnique(const std::string& rOriginalName, const std::vector<std::string>& rNamesToAvoid, bool useExplorerStyle)
+	{
+		if (false == isStringInList(rOriginalName, rNamesToAvoid))
+		{
+			return rOriginalName;
+		}
+		if (useExplorerStyle)
+		{
+			// we want to find a unique name by getting a "copied name" similar to the style of Windows Explorer
+			return makeNameUniqueQuasiExplorerStyle(rOriginalName, rNamesToAvoid);
+		}
+
+		// we want to find a unique name by adapting the last number in the name
+		return makeNameUniqueByNumbering(rOriginalName, rNamesToAvoid);
+	}
+
+
+	std::string makeNameUniqueByNumbering(const std::string& rInitialName, const std::vector<std::string>& rNamesToAvoid)
+	{
+		//This strips any numbers at the end of the name
+		auto pos = rInitialName.find_last_not_of(_T("0123456789"));
+
+		pos += (pos == std::string::npos) ? 0 : 1;
+
+		std::string ToolNameCore = rInitialName.substr(0, pos);
+
+		int ToolIndex(0);
+
+		for (const auto& rName : rNamesToAvoid)
+		{
+			if (std::string::npos != rName.find(ToolNameCore.c_str()))
+			{
+				// see if the name ends in a number
+				int lastNum {0};
+				bool digit {false};
+
+				for (int i = static_cast<int> (rName.size()) - 1; i >= 0; i--)
+				{
+					if (isdigit(rName[i]))
+					{
+						digit = true;
+					}
+					else // found a non-digit - stop looking for a digit
+					{
+						// if any digits were found - convert to a number
+						if (digit)
+						{
+							// convert to a number
+							std::string numStr = Right(rName, (rName.size() - 1) - i);
+							lastNum = atoi(numStr.c_str());
+						}
+						break;
+					}
+				}
+
+				if (digit)
+				{
+					ToolIndex = std::max(ToolIndex, lastNum + 1);
+				}
+				else
+				{
+					ToolIndex = std::max(ToolIndex, 1);
+				}
+			}
+		}
+
+		if (0 != ToolIndex)
+		{
+			return Format(_T("%s%d"), ToolNameCore.c_str(), ToolIndex);
+		}
+
+		return ToolNameCore;
+	}
+
+
+	std::string makeNameUniqueQuasiExplorerStyle(const std::string& rName, const std::vector<std::string>& rNamesToAvoid)
+	{
+		constexpr uint16_t c_arbitraryMaxCopyIndex = 1000;
+
+		uint16_t copyIndex = 0;
+
+		do
+		{
+			auto newName = copiedName(rName, copyIndex);
+
+			if (false == isStringInList(newName, rNamesToAvoid))
+			{
+				return newName;
+			}
+		} while (copyIndex++ < c_arbitraryMaxCopyIndex);
+
+		return _T("<invalid copied name>");
+	}
+
+
+	bool isStringInList(const std::string& rToBeFound, const std::vector<std::string>& rStringsToBeSearched, const std::string& rExclude)
+	{
+		auto found = std::any_of(rStringsToBeSearched.begin(), rStringsToBeSearched.end(),
+			[rToBeFound, rExclude](const std::string& rCurrentName)->bool
+		{
+			if (_T("") == rCurrentName)
+			{
+				return false;
+			}
+			if (_T("") != rExclude)
+			{
+				if (0 == _stricmp(rExclude.c_str(), rCurrentName.c_str()))
+				{
+					return  false;
+				}
+			}
+			auto equal = (0 == _stricmp(rToBeFound.c_str(), rCurrentName.c_str()));
+			return equal;
+		});
+
+		return found;
+	}
+
 } // namespace SvUl

@@ -313,7 +313,7 @@ void SVToolSet::updateToolPosition()
 	for (long i(0), position(1); i < GetSize(); i++)
 	{
 		//! For object values use one based index
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetAt(i));
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (TaskObject(i));
 		if (nullptr != pTool)
 		{
 			position = pTool->setToolPosition(position);
@@ -429,7 +429,7 @@ SvOi::IObjectClass* SVToolSet::getBand0Image() const
 {
 	SvOi::IObjectClass* pResult(nullptr);
 
-	for (SVTaskObjectPtrVector::const_iterator Iter(m_TaskObjectVector.begin()); Iter != m_TaskObjectVector.end(); ++Iter)
+	for (SvIe::SVTaskObjectPtrVector::const_iterator Iter(m_TaskObjectVector.begin()); Iter != m_TaskObjectVector.end(); ++Iter)
 	{
 		SvTo::SVColorToolClass* pColorTool = dynamic_cast<SvTo::SVColorToolClass*>(*Iter);
 		if (nullptr != pColorTool)
@@ -539,12 +539,12 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 			// Run your children...
 			for (int i = 0; i < GetSize(); i++)
 			{
-				if (GetAt(i))
+				if (TaskObject(i))
 				{
 					toolRunStatus.ResetRunStateAndToolSetTimes();
 					toolRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
-					bRetVal = GetAt(i)->Run(toolRunStatus, &m_RunErrorMessages) && bRetVal;
+					bRetVal = TaskObject(i)->Run(toolRunStatus, &m_RunErrorMessages) && bRetVal;
 
 					// Update the Run Status
 					rRunStatus.updateState(toolRunStatus, false);

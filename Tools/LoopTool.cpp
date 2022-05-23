@@ -278,9 +278,9 @@ bool LoopTool::RunAllChildren(SvIe::RunStatus& rRunStatus, SvStl::MessageContain
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		// Run your children...
-		for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
+		for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 		{
-			SVTaskObjectClass* pTaskObject = m_TaskObjectVector[i];
+			SVTaskObjectClass* pTaskObject = TaskObject(i);
 			if (nullptr != pTaskObject)
 			{
 				ChildRunStatus.ResetRunStateAndToolSetTimes();

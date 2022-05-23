@@ -1831,7 +1831,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 
 				for (long l = 0; l < l_iSize; l++)
 				{
-					SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (m_pCurrentToolset->GetAt(l));
+					SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (m_pCurrentToolset->TaskObject(l));
 
 					if (nullptr != pTool)
 					{
@@ -3180,7 +3180,7 @@ HRESULT SVInspectionProcess::propagateSizeAndPosition()
 	{
 		for (int index = 0; index < pToolSet->GetSize(); index++)
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->GetAt(index));
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->TaskObject(index));
 			if (nullptr != pTool)
 			{
 				result = pTool->propagateSizeAndPosition() || result;
@@ -3205,7 +3205,7 @@ bool SVInspectionProcess::usePropagateSizeAndPosition() const
 	{
 		for (int index = 0; index < pToolSet->GetSize(); index++)
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->GetAt(index));
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->TaskObject(index));
 			if (nullptr != pTool)
 			{
 				if (pTool->usePropagateSizeAndPosition())
@@ -3300,7 +3300,7 @@ void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInse
 	{
 		for (int i = 0; i < pToolSet->GetSize(); i++)
 		{
-			SvIe::SVTaskObjectClass* pTaskObject(pToolSet->GetAt(i));
+			SvIe::SVTaskObjectClass* pTaskObject(pToolSet->TaskObject(i));
 			if (nullptr != pTaskObject)
 			{
 				const SvStl::MessageContainerVector& rToolMessages(pTaskObject->getErrorMessages());

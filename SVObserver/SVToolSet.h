@@ -83,7 +83,7 @@ public:
 	template<typename ObjectIdInserter>
 	void GetToolIds(ObjectIdInserter Inserter) const
 	{
-		for (SVTaskObjectPtrVector::const_iterator Iter = m_TaskObjectVector.begin(); Iter != m_TaskObjectVector.end(); ++Iter)
+		for (SvIe::SVTaskObjectPtrVector::const_iterator Iter = m_TaskObjectVector.begin(); Iter != m_TaskObjectVector.end(); ++Iter)
 		{
 			SVTaskObjectClass* pTask = (*Iter);
 

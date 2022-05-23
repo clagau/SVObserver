@@ -144,7 +144,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 
 	assert(m_pResult);
 	//The "number of Rows"-Result must be the last task, because the other tasks can change the value.
-	if (m_pResult && m_TaskObjectVector[m_TaskObjectVector.size()-1] != m_pResult)
+	if (m_pResult && TaskObject(numberOfTaskObjects() - 1) != m_pResult)
 	{
 		moveTaskObject(m_pResult->getObjectId());
 	}

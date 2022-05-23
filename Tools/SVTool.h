@@ -75,8 +75,6 @@ public:
 	SvVol::LinkedValue m_ExtentWidthFactorFormat;
 	SvVol::LinkedValue m_ExtentHeightFactorFormat;
 
-	
-
 	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceX;
 	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceY;
 	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceAngle;

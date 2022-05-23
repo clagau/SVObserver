@@ -225,12 +225,12 @@ uint32_t getObjectAfterThis(uint32_t toolId)
 	{
 		for (int i = 0; i < pParent->GetSize(); i++)
 		{
-			const SvIe::SVTaskObjectClass* pCurrentTool = pParent->GetAt(i);
+			const SvIe::SVTaskObjectClass* pCurrentTool = pParent->TaskObject(i);
 			if (pCurrentTool && pCurrentTool->getObjectId() == toolId)
 			{
 				if (i + 1 < pParent->GetSize())
 				{
-					return pParent->GetAt(i)->getObjectId();
+					return pParent->TaskObject(i)->getObjectId();
 				}
 				return SvDef::InvalidObjectId;
 			}
@@ -492,9 +492,9 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 	return l_bOk;
 }
 
-std::string SVIPDoc::getUniqueName(const std::string& rToolName) const
+std::string SVIPDoc::makeNameUnique(const std::string& rToolName, const std::vector<std::string>& rAdditionalNames) const
 {
-	return m_toolGroupings.getUniqueName(rToolName);
+	return m_toolGroupings.makeNameUnique(rToolName, rAdditionalNames);
 }
 
 //******************************************************************************
@@ -1446,7 +1446,7 @@ void SVIPDoc::OnEditPaste()
 			std::string toolName = m_toolGroupings.GetToolToInsertBefore(pNavElement->m_DisplayName);
 			for (int i = 0; i < pToolSet->GetSize(); i++)
 			{
-				const SvIe::SVTaskObjectClass* pTool = pToolSet->GetAt(i);
+				const SvIe::SVTaskObjectClass* pTool = pToolSet->TaskObject(i);
 				if (pTool && pTool->GetName() == toolName)
 				{
 					postToolId = pTool->getObjectId();
@@ -1473,6 +1473,19 @@ void SVIPDoc::OnEditPaste()
 		auto pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerId);
 		if (!pastedToolIDs.empty())
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLCLIPBOARD)
+			std::stringstream ss;
+			ss << _T("Toolids in SVIPDoc::OnEditPaste(): ");
+
+			for (auto id : pastedToolIDs)
+			{
+				ss << id << _T(" ");
+
+
+			}
+			ss << _T("\n");
+			::OutputDebugString(ss.str().c_str());
+#endif
 			updateToolsetView(pastedToolIDs, postToolId, ownerId, pNavElement->m_DisplayName);
 		}
 	}
@@ -4058,7 +4071,7 @@ uint32_t SVIPDoc::GetObjectIdFromToolToInsertBefore(const std::string& rName) co
 				// FindTool by Name in SVTaskObjectList
 				for (int i = 0; i < pToolSet->GetSize() && !bFound; i++)
 				{
-					const SvIe::SVTaskObjectClass* pTool = pToolSet->GetAt(i);
+					const SvIe::SVTaskObjectClass* pTool = pToolSet->TaskObject(i);
 					if (pTool && pTool->GetName() == ToolName)
 					{
 						result = pTool->getObjectId();

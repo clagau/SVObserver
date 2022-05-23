@@ -453,12 +453,12 @@ bool SVLinearImageOperatorList::RunLocalRotation(SvIe::RunStatus &rRunStatus, Sv
 		{
 			ChildRunStatus.ResetRunStateAndToolSetTimes();
 
-			SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass *>(GetAt(i));
+			SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass *>(TaskObject(i));
 			if (nullptr != pOperator && nullptr != pOutputBuffer && !pOutputBuffer->isEmpty())
 			{
 				pOperator->Run(false, pOutputBuffer->getHandle(), pOutputBuffer->getHandle(), ChildRunStatus);
 			}
-			else if (nullptr != dynamic_cast<SvOp::SVResult*>(GetAt(i)))
+			else if (nullptr != dynamic_cast<SvOp::SVResult*>(TaskObject(i)))
 			{
 				//There also SVResult objects at this level, they have to be ignored for now!
 				continue;

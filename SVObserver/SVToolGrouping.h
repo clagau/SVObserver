@@ -39,14 +39,13 @@ public:
 	ToolGroupData(Type rType, const std::string& rName, const std::string& rEndName, bool bCollapsed) : m_type(rType), m_name(rName), m_endName(rEndName), m_bCollapsed(bCollapsed) {}
 };
 
+typedef std::pair<std::string, ToolGroupData> ToolGroup;
+typedef std::list<ToolGroup> ToolGroupList;
+
 class SVToolGrouping
 {
-	typedef std::pair<std::string, ToolGroupData> ToolGroup;
-	typedef std::list<ToolGroup> ToolGroupList;
-	ToolGroupList m_list;
-
 public:
-	
+	ToolGroupList m_ToolGroups;
 	bool Correct(const SvOi::ObjectInfoVector&  toolsetinfo, int& rNchanged);
 
 	std::string GetDefaultName() const;
@@ -56,9 +55,9 @@ public:
 	//! \param pExclude [in] if not null and the name is found (case sensitive)  this is ignored 
 	//! \returns bool true if the name is unique 
 	//************************************
-	bool IsNameUnique(const std::string& rName, LPCTSTR pExclude = nullptr) const;
+	bool IsNameUnique(const std::string& rName, const std::string& rExclude = _T("")) const;
 
-	std::string getUniqueName(const std::string& rName, bool adaptEndNumbers = false) const;
+	std::string makeNameUnique(const std::string& rOriginalName, const std::vector<std::string>& rAdditionalNames, bool useExplorerStyle = true) const;
 	std::string GetToolToInsertBefore(const std::string& rName) const;
 
 	void AddGroup(const std::string& rName, const std::string& rInsertBefore = std::string());
@@ -107,10 +106,8 @@ public:
 	//************************************
 	void SetComment(const std::string& rName, const std::string& rComment);
 
-	void clear() { m_list.clear(); }
+	void clear() { m_ToolGroups.clear(); }
 private:
-	std::string getUniqueNumberedName(const std::string& rName) const;
-
 	HRESULT LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVToolGrouping& rGroupings);
 };
 
