@@ -1,0 +1,22 @@
+*.bak
+#ignore all protobuf files
+*.pb.cc
+*.pb.h
+#ignore all user project files
+*.user
+.git/
+.vs/
+Debug/
+Release/
+#ignore specific files
+SVMessage/SVMessage.h
+SVMessage/SVMessage.rc
+SVMessage/USEnglish.bin
+SVObserver/SVObserver_i.c
+SVObserver/SVObserver_i.h
+SVParserScripts/lex.yy.cc
+SVParserScripts/y.output
+SVParserScripts/y.tab.c
+SVParserScripts/y.tab.h
+SVPictureDisplay/SVPictureDisplay_i.c
+SVPictureDisplay/SVPictureDisplayidl.h
