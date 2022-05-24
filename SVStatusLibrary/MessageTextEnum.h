@@ -680,5 +680,7 @@ enum MessageTextEnum
 	Tid_Value_MustThan,
 	Tid_Greater,
 	Tid_ValidateValue_MinMaxInvalid,
+	Tid_ObjectNotFound,
+	Tid_NameContainsInvalidChars,
 };
 } //namespace SvStl

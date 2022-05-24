@@ -87,13 +87,20 @@ void DrawTaskTree::OnEndLabelEdit(NMHDR*, LRESULT* pResult)
 	}
 
 	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_setobjectnamerequest();
 	pRequest->set_objectid(pData->m_objectId);
 	pRequest->set_objectname(newName.c_str());
 
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK != hr)
 	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Display);
+		SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+		if (0 < tmpMessages.size())
+		{
+			Msg.setMessage(tmpMessages[0].getMessage());
+		}
 		return;
 	}
 

@@ -62,16 +62,27 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			//remove all entries from m_ValueList which are not in sourceTable and not in the m_NewValueList
 			RemoveUnusedColumn();
 
-			//Reset the column of the sourceColumn
-			int valueListPos = ResetCopyColumn();
-
-			//Reset the column of the newColumn list.
-			int arraySize = 1;
-			if (0 < SourceValues.size())
+			try
 			{
-				arraySize = SourceValues[0]->getArraySize();
+				//Reset the column of the sourceColumn
+				int valueListPos = ResetCopyColumn();
+
+				//Reset the column of the newColumn list.
+				int arraySize = 1;
+				if (0 < SourceValues.size())
+				{
+					arraySize = SourceValues[0]->getArraySize();
+				}
+				retValue = ResetNewColumns(valueListPos, arraySize, pErrorMessages);
 			}
-			retValue = ResetNewColumns(valueListPos, arraySize, pErrorMessages);
+			catch (const SvStl::MessageContainer& rSvE)
+			{
+				retValue = false;
+				if (nullptr != pErrorMessages)
+				{
+					pErrorMessages->push_back(rSvE);
+				}
+			}
 		}
 		else
 		{

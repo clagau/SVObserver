@@ -246,18 +246,27 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 					if (m_gridList.size() >= pItem->iRow)
 					{
 						SvPb::InspectionCmdRequest requestCmd;
+						SvPb::InspectionCmdResponse responseCmd;
 						auto* pRequest = requestCmd.mutable_setobjectnamerequest();
 						pRequest->set_objectid(m_gridList[pItem->iRow - 1].second);
 						pRequest->set_objectname(newName.c_str());
 
-						HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
+						HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 						if (S_OK != hr)
 						{
 							bAcceptChange = false;
-							SvDef::StringVector msgList;
-							msgList.push_back(SvUl::Format(_T("%d"), hr));
 							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-							Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+							SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+							if (0 < tmpMessages.size())
+							{
+								Msg.setMessage(tmpMessages[0].getMessage());
+							}
+							else
+							{
+								SvDef::StringVector msgList;
+								msgList.push_back(SvUl::Format(_T("%d"), hr));
+								Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+							}
 						}
 						else
 						{

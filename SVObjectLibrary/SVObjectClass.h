@@ -102,7 +102,7 @@ public:
 	virtual bool isInputImage(uint32_t ) const { return false; };
 
 	virtual void ResetName();
-	virtual void SetObjectName( LPCTSTR ObjectName );
+	void SetObjectName( LPCTSTR ObjectName );
 
 	void SetObjectEmbedded(SvPb::EmbeddedIdEnum embeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName);
 
@@ -154,7 +154,7 @@ public:
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
-	virtual void SetName( LPCTSTR Name ) override;
+	virtual SvStl::MessageContainerVector verifyAndSetName(const std::string& newName) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 	virtual HRESULT getValue(double& , int = 0) const override { return E_NOTIMPL; };
@@ -168,6 +168,7 @@ public:
 	virtual bool allowExtensionCopy() const override;
 #pragma endregion virtual method (IObjectClass)
 
+	virtual void SetName(LPCTSTR Name);
 	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter);
 	const SvDef::SVObjectTypeInfoStruct& getObjectTypeInfo() const { return m_ObjectTypeInfo; };
 

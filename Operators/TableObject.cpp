@@ -177,13 +177,17 @@ SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(SvPb::EmbeddedIdEnum
 		}
 		if (nullptr != pValueObject)
 		{
-			std::string OldName = pValueObject->GetName();
-			if (OldName != newName)
+			auto errorMessages = pValueObject->verifyAndSetName(newName);
+			if (errorMessages.empty())
 			{
-				pValueObject->SetName(newName.c_str());
-				GetInspection()->OnObjectRenamed(*pValueObject, OldName);
+				pValueObject->SetArraySize(arraysize);
 			}
-			pValueObject->SetArraySize(arraysize);
+			else
+			{
+				SvStl::MessageManager e(SvStl::MsgType::Log);
+				e.setMessage(errorMessages[0].getMessage());
+				return nullptr;
+			}
 		}
 		return pValueObject;
 	}
@@ -299,13 +303,17 @@ void TableObject::UpdateColumnValueObject(int pos, std::string objectName, int m
 	SvVol::DoubleSortValueObject* pValueObject = m_ValueList[pos].get();
 	if (nullptr != pValueObject)
 	{
-		if (pValueObject->GetName() != objectName)
+		auto errorMessages = pValueObject->verifyAndSetName(objectName);
+		if (errorMessages.empty())
 		{
-			std::string OldName = pValueObject->GetName();
-			pValueObject->SetName(objectName.c_str());
-			GetInspection()->OnObjectRenamed(*pValueObject, OldName);
+			pValueObject->SetArraySize(maxArray);
 		}
-		pValueObject->SetArraySize(maxArray);
+		else
+		{
+			SvStl::MessageManager e(SvStl::MsgType::Data);
+			e.setMessage(errorMessages[0].getMessage());
+			e.Throw();
+		}
 	}
 	else
 	{

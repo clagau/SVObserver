@@ -1170,6 +1170,7 @@ message InspectionCmdRequest
 message InspectionCmdResponse
 {
 	sfixed32 hResult = 1;				//The request result (0 = no error)
+	MessageContainerVector errorMessage = 1000;
 		
 	oneof message
 	{

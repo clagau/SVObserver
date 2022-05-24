@@ -36,6 +36,23 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
+namespace
+{
+bool verifyNewName(const std::string& rNewName, uint32_t objectId, std::back_insert_iterator<SvStl::MessageContainerVector> inserter)
+{
+	uint32_t objectID;
+	if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(rNewName, objectID))
+	{
+		SvStl::MessageContainer message;
+		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RenameError_DuplicateName, {rNewName}, SvStl::SourceFileParams(StdMessageParams), 0, objectId);
+		inserter = message;
+		return false;
+	}
+	return true;
+}
+}
+
+
 SV_IMPLEMENT_CLASS(SVObjectClass, SvPb::NoObjectClassId)
 
 //This is the default constructor for this object.  This constructor initializes the name objects, clears all owner information, and calls the init method.
@@ -322,9 +339,25 @@ SvUl::NameClassIdList SVObjectClass::GetCreatableObjects(const SvDef::SVObjectTy
 	return {};
 }
 
-void SVObjectClass::SetName(LPCTSTR Name)
+SvStl::MessageContainerVector SVObjectClass::verifyAndSetName(const std::string& rNewName)
 {
-	m_Name = Name;
+	SvStl::MessageContainerVector errorMessage;
+	if (GetName() != rNewName)
+	{
+		auto fullNewName = GetObjectNameToObjectType(SvPb::SVInspectionObjectType, false) + "." + rNewName;
+		if (false == verifyNewName(fullNewName, getObjectId(), std::back_inserter(errorMessage)))
+		{
+			return errorMessage;
+		}
+		std::string oldName = GetName();
+		SetName(rNewName.c_str());
+		auto* pInsp = GetAncestor(SvPb::SVInspectionObjectType);
+		if (nullptr != pInsp)
+		{
+			pInsp->OnObjectRenamed(*this, oldName);
+		}
+	}
+	return errorMessage;
 }
 
 SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool , const SvOi::IObjectClass* pRequestor) const
@@ -1101,6 +1134,11 @@ HRESULT SVObjectClass::UnregisterSubObject(SVObjectClass*)
 bool SVObjectClass::allowExtensionCopy() const 
 {
 	return false;
+}
+
+void SVObjectClass::SetName(LPCTSTR Name)
+{
+	m_Name = Name;
 }
 
 void SVObjectClass::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)

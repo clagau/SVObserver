@@ -622,14 +622,34 @@ SvPb::InspectionCmdResponse saveImage(SvPb::SaveImageRequest request)
 SvPb::InspectionCmdResponse setObjectName(SvPb::SetObjectNameRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
+	std::string newName = request.objectname();
+	SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+	if (newName != request.objectname())
+	{
+		SvStl::MessageContainer message;
+		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NameContainsInvalidChars, SvStl::SourceFileParams(StdMessageParams));
+		SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
+		cmdResponse.set_hresult(E_FAIL);
+		return cmdResponse;
+	}
 
 	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	if (nullptr != pObject)
 	{
-		pObject->SetName(request.objectname().c_str());
+		auto errorMessages = pObject->verifyAndSetName(newName);
+		if (false == errorMessages.empty())
+		{
+			cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(errorMessages));
+			cmdResponse.set_hresult(E_FAIL);
+		}
 	}
 	else
 	{
+		SvDef::StringVector msgList;
+		msgList.emplace_back(std::to_string(request.objectid()));
+		SvStl::MessageContainer message;
+		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ObjectNotFound, msgList, SvStl::SourceFileParams(StdMessageParams));
+		SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
 		cmdResponse.set_hresult(E_POINTER);
 	}
 	return cmdResponse;

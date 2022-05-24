@@ -720,5 +720,7 @@ namespace SvStl
 		{Tid_Value_MustThan, _T("%s must be %s than %s.")},
 		{Tid_Greater, _T("greater")},
 		{Tid_ValidateValue_MinMaxInvalid, _T("Validate Value failed: Not between min and max")},
+		{Tid_ObjectNotFound, _T("Object with the id %s not found.")},
+		{Tid_NameContainsInvalidChars, _T("Name contains invalid special characters.")}
 };
 } //namespace SvStl

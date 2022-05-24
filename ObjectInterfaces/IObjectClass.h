@@ -140,10 +140,10 @@ namespace SvOi
 		//************************************
 		virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const = 0;
 
-		/*
-		Set user changeable name.
-		*/
-		virtual void SetName( LPCTSTR StrString ) = 0;
+		/// Verify the new name and if correct it set the name and notify also the other objects.
+		/// \param newName [in]
+		/// \returns SvStl::MessageContainerVector ErrorMessage-Vector: If setting error-free, vector is empty.
+		virtual SvStl::MessageContainerVector verifyAndSetName(const std::string& newName) = 0;
 
 		/// Return the first object which the required object type.
 		/// \param rObjectTypeInfo [in] The required object type.

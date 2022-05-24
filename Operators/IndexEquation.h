@@ -33,7 +33,7 @@ public:
 #pragma region Public Methods
 public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
-	virtual void SetName(LPCTSTR Name) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 
 	void setResultColumn(SvVol::DoubleSortValuePtr pResultColumn) { m_pResultColumn = pResultColumn; };
 	void setIndexObject(SvVol::SVLongValueObjectClass* pIndex) { m_pIndex = pIndex; };

@@ -53,16 +53,16 @@ bool IndexEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-void IndexEquation::SetName(LPCTSTR Name)
+void IndexEquation::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	__super::SetName(Name);
-
-	if (nullptr != m_pResultColumn)
+	__super::OnObjectRenamed(rRenamedObject, rOldName);
+	if (&rRenamedObject == this && nullptr != m_pResultColumn)
 	{
+		//Do not use method verifyAndSetName, because name have to be set even if names double. The check will be done by TableTool and leads to an error.
 		std::string OldName = m_pResultColumn->GetName();
-		if (OldName != Name)
+		if (OldName != GetName())
 		{
-			m_pResultColumn->SetName(Name);
+			m_pResultColumn->SetName(GetName());
 			GetInspection()->OnObjectRenamed(*m_pResultColumn, OldName);
 		}
 	}
