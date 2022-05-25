@@ -442,17 +442,31 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 
 			if (true == m_isValidationMode)
 			{
+				m_triggerIndex = -1;
+				m_objectIDParams.m_currentObjectID = -1;
 				size_t pos2 = regFile.find_last_of('.');
 				size_t pos1 = regFile.find_last_of('_', pos2);
 				if (std::string::npos != pos1 && std::string::npos != pos2)
 				{
-					m_triggerIndex = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1 - 1));
+					try
+					{
+						m_triggerIndex = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1 - 1));
+					}
+					catch (const std::exception&)
+					{
+					}
 					pos2 = pos1 - 1;
 				}
 				pos1 = regFile.find_last_of('_', pos2);
 				if (std::string::npos != pos1 && std::string::npos != pos2)
 				{
-					m_objectIDParams.m_currentObjectID = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1));
+					try
+					{
+						m_objectIDParams.m_currentObjectID = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1));
+					}
+					catch (const std::exception&)
+					{
+					}
 				}
 			}
 			else
