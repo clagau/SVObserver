@@ -489,16 +489,25 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 
 			double ExtentValue = item.value();
 			double DisplayedValue = ExtentValue;
-			bool isequal(true);
+			bool isequal {true};
+			bool validString {true};
 			if (shouldCreate == false && overwrite == false)
 			{
 				std::string strValue;
 				pEdit->GetItemValue(strValue);
-				DisplayedValue = std::stod(strValue);
+				try
+				{
+					DisplayedValue = std::stod(strValue);
+				}
+				catch (std::exception )
+				{
+					validString = false;
+				}
+
 				isequal = ApproxEqual(DisplayedValue, ExtentValue);
 			}
 			std::string LabelText;
-			if (isequal == false)
+			if (!validString ||  isequal == false )
 			{
 				//char BlackDot[] = {'\x95', ' ', '\0'};
 				//LabelText = std::string(BlackDot) + item.name().c_str();
@@ -517,19 +526,22 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 			pEdit->SetBold(false);
 			pEdit->SetHeight(16);
 
-			std::string Value;
-			if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyNoDecimalPlaces) != 0)
+			std::string Value {"???"};
+			if (validString)
 			{
-				Value = SvUl::Format(_T("%d"), static_cast<int> (DisplayedValue));
+				if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyNoDecimalPlaces) != 0)
+				{
+					Value = SvUl::Format(_T("%d"), static_cast<int> (DisplayedValue));
 
-			}
-			else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentProperty2DecimalPlaces) != 0)
-			{
-				Value = SvUl::Format(_T("%.2f"), DisplayedValue);
-			}
-			else
-			{
-				Value = SvUl::AsString(DisplayedValue);
+				}
+				else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentProperty2DecimalPlaces) != 0)
+				{
+					Value = SvUl::Format(_T("%.2f"), DisplayedValue);
+				}
+				else
+				{
+					Value = SvUl::AsString(DisplayedValue);
+				}
 			}
 			
 			if (IsReadonly(item, Modes))

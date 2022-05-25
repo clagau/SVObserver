@@ -1511,7 +1511,8 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				assert(false);
+				//@todo[mec] Sometimes the error case is used to check for valid user input 
+				//assert(false);
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
