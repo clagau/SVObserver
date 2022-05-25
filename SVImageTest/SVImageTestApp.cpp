@@ -29,22 +29,26 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+const TCHAR* const cCameraMapping = _T("Camera Mapping");
+const TCHAR* const cGigeCameraCount = _T("GigeCameraCount");
+
 CWnd g_ImageTestDesktopWindow;
 
 bool IsGigeDigitizer(LPCTSTR ProductName)
 {
 	std::string Name = ProductName;
-	bool l_bOk = ( 0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD1A ) ) ||
-					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD2A ) ) ||
-					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD4A ) ) ||
-					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A ) ) ) ? true : false;
+	bool l_bOk = ( 0 == SvUl::CompareNoCase(Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD1A)) ||
+					0 == SvUl::CompareNoCase(Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD2A)) ||
+					0 == SvUl::CompareNoCase(Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD4A)) ||
+					0 == SvUl::CompareNoCase(Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A)) ||
+					0 == SvUl::CompareNoCase(Name, std::string(SvDef::SVO_PRODUCT_SVIM_NEO)) ) ? true : false;
 
 	return l_bOk;
 }
 
 bool SVImageTestApp::IsGigeSystem() const
 {
-	return IsGigeDigitizer(m_iniLoader.GetInitialInfo().m_ProductName.c_str());
+	return IsGigeDigitizer(m_productName.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -62,7 +66,7 @@ END_MESSAGE_MAP()
 // SVImageTestApp construction
 
 SVImageTestApp::SVImageTestApp()
-: m_pSubsystem(nullptr), m_iniLoader(m_iniFileInfo)
+: m_iniLoader(m_iniFileInfo)
 {
 	m_svimIniFile = SvStl::GlobalPath::Inst().GetSVIMIniPath();
 	m_hardwareIniFile = SvStl::GlobalPath::Inst().GetHardwareIniPath();
@@ -93,9 +97,6 @@ BOOL SVImageTestApp::InitInstance()
 	//  of your final executable, you should remove from the following
 	//  the specific initialization routines you do not need.
 
-	// Startup Matrox App
-	SVMatroxApplicationInterface::Startup();
-
 	// Used to hold a cwnd that is attached to the desktop.
 	if( nullptr == g_ImageTestDesktopWindow.GetSafeHwnd() )
 	{
@@ -106,6 +107,24 @@ BOOL SVImageTestApp::InitInstance()
 	m_iniLoader.LoadIniFiles(m_svimIniFile.c_str(), m_oemIniFile.c_str(), m_hardwareIniFile.c_str());
 	if (m_iniLoader.isModelNumberDecodable())
 	{
+		m_productName = m_iniLoader.GetInitialInfo().m_ProductName;
+
+		int CameraCount = GetPrivateProfileInt(cCameraMapping, cGigeCameraCount, cCameraCount, SvStl::GlobalPath::Inst().GetSVIMIniPath());
+
+		for (int i = 0; i < CameraCount; i++)
+		{
+			std::string CameraName;
+			TCHAR pBuffer[128];
+			memset(pBuffer, 0, 128);
+
+			CameraName = SvUl::Format(_T("%s%d"), SvDef::cCameraFixedName, i + 1);
+			GetPrivateProfileString(cCameraMapping, CameraName.c_str(), "", pBuffer, 128, SvStl::GlobalPath::Inst().GetSVIMIniPath());
+			if (i < 4)
+			{
+				m_CameraIpAddress[i] = pBuffer;
+			}
+		}
+
 		if ( nullptr == LoadDigitizer() )
 		{
 			AfxMessageBox("Dll Not Connected");
@@ -115,6 +134,10 @@ BOOL SVImageTestApp::InitInstance()
 			CSVImageTestDlg dlg;
 
 			dlg.m_pSubsystem = m_pSubsystem;
+			if (0 == SvUl::CompareNoCase(m_productName, std::string(SvDef::SVO_PRODUCT_SVIM_NEO)))
+			{
+				dlg.h_plcIODll = ::LoadLibrary(m_iniLoader.GetInitialInfo().m_CameraTriggerDLL.c_str());
+			}
 
 			m_pMainWnd = &dlg;
 			dlg.DoModal();
@@ -134,9 +157,6 @@ int SVImageTestApp::ExitInstance()
 
 	//Delete all global objects allocated by libprotobuf.
 	google::protobuf::ShutdownProtobufLibrary();
-
-	// Shutdown Matrox App
-	SVMatroxApplicationInterface::Shutdown();
 
 	if( nullptr != g_ImageTestDesktopWindow.GetSafeHwnd() )
 	{

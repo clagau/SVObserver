@@ -23,8 +23,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CAboutDlg dialog used for App About
+constexpr long cGigeParameterIPAddress = 104;
+
 
 class CAboutDlg : public CDialog
 {
@@ -49,6 +49,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
+BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
+END_MESSAGE_MAP()
+
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 {
 	//{{AFX_DATA_INIT(CAboutDlg)
@@ -62,35 +65,21 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-	//{{AFX_MSG_MAP(CAboutDlg)
-		// No message handlers
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CSVImageTestDlg dialog
-
 void CSVImageTestDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVImageTestDlg)
 	DDX_Control(pDX, IDC_LIST1, m_clbCameras);
 	DDX_Text(pDX, IDC_MODELNOEDIT, m_modelNo);
 	DDV_MaxChars(pDX, m_modelNo, 12);
-	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CSVImageTestDlg, CDialog)
-	//{{AFX_MSG_MAP(CSVImageTestDlg)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_REFRESH, OnRefresh)
-	ON_BN_CLICKED(IDC_UPDATEMODELNO, OnUpdateModelNumber)
 	ON_BN_CLICKED(IDC_START_ALL_CAMERAS, OnStartAllCameras)
 	ON_BN_CLICKED(IDC_STOP_ALL_CAMERAS, OnStopAllCameras)
-	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 BOOL CSVImageTestDlg::OnInitDialog()
@@ -120,12 +109,14 @@ BOOL CSVImageTestDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	for( int i = 0; i < 4; ++i )
+	int cameraIndex {0};
+	for(auto& rCamera : m_Cameras)
 	{
+		++cameraIndex;
 		CString l_WindowText;
-		l_WindowText.Format( _T( "Camera %d" ), i+1 );
-		m_Camera[ i ].SetTabText( l_WindowText );
-		m_CameraSheet.AddPage( m_Camera + i );
+		l_WindowText.Format( _T( "Camera %d" ), cameraIndex);
+		rCamera.SetTabText( l_WindowText );
+		m_CameraSheet.AddPage(&rCamera);
 	}
 
 	m_CameraSheet.Create(this, WS_CHILD | WS_VISIBLE, 0);
@@ -138,16 +129,27 @@ BOOL CSVImageTestDlg::OnInitDialog()
 	m_CameraSheet.SetWindowPos( nullptr, rcSheet.left-7, rcSheet.top-7, 0, 0, 
 			SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE );
 
-	for( int j = 0; j < 4; ++j )
+	for( int j = 0; j < cCameraCount; ++j )
 	{
 		m_CameraSheet.SetActivePage( 3 - j );
 	}
 
-	SVImageTestApp* pApp = (SVImageTestApp *)AfxGetApp();
-	m_modelNo = pApp->m_iniLoader.ModelNumberString();
+	m_pApp = dynamic_cast<SVImageTestApp*> (AfxGetApp());
+	if (nullptr != m_pApp)
+	{
+		m_modelNo = m_pApp->m_iniLoader.ModelNumberString();
+	}
 
 	UpdateData( FALSE );
-	
+
+	if (nullptr != h_plcIODll)
+	{
+		SVCameraPage::m_pCreate = (SVCreatePtr)::GetProcAddress(h_plcIODll, "SVCreate");
+		SVCameraPage::m_pDestroy = (SVDestroyPtr)::GetProcAddress(h_plcIODll, "SVDestroy");
+		SVCameraPage::m_pStart = (SVTriggerStartPtr)::GetProcAddress(h_plcIODll, "SVTriggerStart");
+		SVCameraPage::m_pStop = (SVTriggerStopPtr)::GetProcAddress(h_plcIODll, "SVTriggerStop");
+	}
+
 	OnRefresh();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -169,7 +171,6 @@ void CSVImageTestDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // If you add a minimize button to your dialog, you will need the code below
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
-
 void CSVImageTestDlg::OnPaint() 
 {
 	if (IsIconic())
@@ -208,37 +209,41 @@ void CSVImageTestDlg::OnRefresh()
 
 	if ( nullptr != m_pSubsystem )
 	{
+		ClearCameras();
 		unsigned long count = m_pSubsystem->m_svDigitizers.GetCount();
 
-		for ( unsigned long i = 0; i < 4; i++ )
+		for (unsigned long i = 0; i < cCameraCount; i++)
 		{
-			if( nullptr != m_Camera[ i ].m_pAcquisition )
+			if (i < count)
 			{
-				delete m_Camera[ i ].m_pAcquisition;
+				SVTestAcquisitionClass* pAcquisition = m_pSubsystem->GetAcquisitionDevice(i);
 
-				m_Camera[ i ].m_pAcquisition = nullptr;
-				m_Camera[ i ].m_lSelectedCamera = -1;
-			}
-
-			if( i < count )
-			{
-				m_Camera[ i ].m_pAcquisition = m_pSubsystem->GetAcquisitionDevice( i );
-
-				if( nullptr != m_Camera[ i ].m_pAcquisition )
+				if( nullptr != pAcquisition )
 				{
-					unsigned long digitizerHandle = m_Camera[i].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(i);
-					_variant_t name = m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetName(digitizerHandle);
-
+					unsigned long digitizerHandle = pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(i);
+					_variant_t name = pAcquisition->m_rSubsystem.m_svDigitizers.GetName(digitizerHandle);
 					CString cameraName = name.bstrVal;
 					m_clbCameras.AddString(cameraName);
 
-					m_Camera[ i ].SelectCamera( i );
-					m_Camera[ i ].EnableWindow( true );
+					if (nullptr != m_pApp)
+					{
+						_variant_t value = pAcquisition->m_rSubsystem.m_svDigitizers.ParameterGetValue(digitizerHandle, cGigeParameterIPAddress);
+						std::string ipAddress {_bstr_t(value.bstrVal)};
+						for (int j = 0; j < 4; ++j)
+						{
+							if (m_pApp->m_CameraIpAddress[j] == ipAddress)
+							{
+								m_Cameras[j].m_pAcquisition = pAcquisition;
+								m_Cameras[j].SelectCamera(i);
+								m_Cameras[j].EnableWindow(true);
+							}
+						}
+					}
 				}
 			}
 			else
 			{
-				m_Camera[ i ].EnableWindow( false );
+				m_Cameras[i].EnableWindow( false );
 			}
 		}
 
@@ -259,55 +264,9 @@ void CSVImageTestDlg::OnStopAllCameras()
 	StopAllCameras();
 }
 
-void CSVImageTestDlg::OnUpdateModelNumber() 
-{
-	SVImageTestApp* pApp = (SVImageTestApp *)AfxGetApp();	
-	CString l_modelNumber = m_modelNo;
-	UpdateData();
-	pApp->m_iniLoader.DecodeModelNumber( static_cast<LPCTSTR> (m_modelNo) );
-	if (pApp->m_iniLoader.isModelNumberDecodable())
-	{
-		StopAllCameras();
-
-		ResetCameraList();
-		
-		for ( unsigned long i = 0; i < 4; i++ )
-		{
-			if( nullptr != m_Camera[ i ].m_pAcquisition )
-			{
-				delete m_Camera[ i ].m_pAcquisition;
-
-				m_Camera[ i ].m_pAcquisition = nullptr;
-				m_Camera[ i ].m_lSelectedCamera = -1;
-			}
-		}
-
-		// update settings from hardware.ini
-		pApp->m_iniLoader.LoadHardwareIni(pApp->m_hardwareIniFile.c_str());
-		pApp->UnLoadDigitizer();
-		m_pSubsystem = pApp->LoadDigitizer();
-
-		OnRefresh();
-	}
-	else
-	{
-		AfxMessageBox("Invalid Model Number", MB_OK);
-		m_modelNo = l_modelNumber;
-	}
-}
-
 void CSVImageTestDlg::OnCancel() 
 {
-	for ( unsigned long i = 0; i < 4; i++ )
-	{
-		if( nullptr != m_Camera[ i ].m_pAcquisition )
-		{
-			delete m_Camera[ i ].m_pAcquisition;
-
-			m_Camera[ i ].m_pAcquisition = nullptr;
-			m_Camera[ i ].m_lSelectedCamera = -1;
-		}
-	}
+	ClearCameras();
 
 	CDialog::OnCancel();
 }
@@ -333,25 +292,40 @@ void CSVImageTestDlg::ResetCameraList()
 	m_clbCameras.ResetContent();
 }
 
+void CSVImageTestDlg::ClearCameras()
+{
+	for (auto& rCamera : m_Cameras)
+	{
+		if (nullptr != rCamera.m_pAcquisition)
+		{
+			delete rCamera.m_pAcquisition;
+
+			rCamera.m_pAcquisition = nullptr;
+			rCamera.m_lSelectedCamera = -1;
+		}
+	}
+}
+
 void CSVImageTestDlg::StartAllCameras()
 {
-	for ( unsigned long i = 0; i < 4; i++ )
+	for ( unsigned long i = 0; i < cCameraCount; i++ )
 	{
-		if( nullptr != m_Camera[ i ].m_pAcquisition && ! m_Camera[ i ].m_bStarted )
+		if( nullptr != m_Cameras[i].m_pAcquisition && ! m_Cameras[i].m_bStarted )
 		{
-			m_Camera[ i ].StartAcquire();
+			m_Cameras[i].StartAcquire();
 		}
 	}
 }
 
 void CSVImageTestDlg::StopAllCameras()
 {
-	for ( unsigned long i = 0; i < 4; i++ )
+	for ( unsigned long i = 0; i < cCameraCount; i++ )
 	{
-		if( nullptr != m_Camera[ i ].m_pAcquisition && m_Camera[ i ].m_bStarted )
+		if( nullptr != m_Cameras[i].m_pAcquisition && m_Cameras[i].m_bStarted )
 		{
-			m_Camera[ i ].StopAcquire();
+			m_Cameras[i].StopAcquire();
 		}
 	}
 }
+
 

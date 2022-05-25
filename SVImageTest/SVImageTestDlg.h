@@ -55,19 +55,21 @@ public:
 	virtual ~CSVImageTestDlg();
 
 	SVTestAcquisitionSubsystem* m_pSubsystem;
+	HMODULE h_plcIODll {nullptr};
 
 protected:
 	void StartAllCameras();
 	void StopAllCameras();
 	void StopDevice();
 	void ResetCameraList();
+	void ClearCameras();
 
 	HICON m_hIcon;
 
 	bool m_bStarted;
 	CPropertySheet m_CameraSheet;
-	SVCameraPage m_Camera[ 4 ];
-
+	std::array<SVCameraPage, cCameraCount> m_Cameras;
+	SVImageTestApp* m_pApp {nullptr};
 };
 
 

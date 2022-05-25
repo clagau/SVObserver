@@ -16,6 +16,7 @@
 #include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
 
+class SVDeviceParam;
 class SVTestAcquisitionClass;
 
 //defines for the properties for each dlg
@@ -75,6 +76,7 @@ private:
 	SVDeviceParamCollection& GetCameraFileParamsNonConst();
 	const SVDeviceParamCollection& GetCameraDeviceParams();
 	SVDeviceParamCollection& GetCameraDeviceParamsNonConst();
+	void SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SVDeviceParam* pDeviceParam, const SVDeviceParam* pFileParam);
 
 	bool IsGigeSystem() const;
 };

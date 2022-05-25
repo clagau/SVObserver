@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVImageTestApp.h"
 #include "SVCameraPage.h"
-#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "Definitions/SVGigeEnums.h"
 #include "Definitions/TriggerType.h"
@@ -41,6 +40,13 @@ const static int AcqImageBufferCnt = 10;
 SVCameraFormatsDeviceParam gDummySVCameraFormatsDeviceParam;
 SVLutDeviceParam gDummySVLutDeviceParam;
 SVLightReferenceDeviceParam gDummySVLightReferenceDeviceParam;
+
+SVCreatePtr SVCameraPage::m_pCreate {nullptr};
+SVDestroyPtr SVCameraPage::m_pDestroy {nullptr};
+SVTriggerStartPtr SVCameraPage::m_pStart {nullptr};
+SVTriggerStopPtr SVCameraPage::m_pStop {nullptr};
+bool SVCameraPage::m_plcStarted {false};
+
 
 /////////////////////////////////////////////////////////////////////////////
 // SVCameraPage property page
@@ -82,10 +88,10 @@ HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SvOi::ITRCImagePtr& )
 {
 	std::string Count;
 
-	Count = SvUl::Format( _T("%d"), m_lStartCount );
+	Count = SvUl::Format( _T("%d"), ++m_lStartCount );
 	m_StartFrameCount.SetWindowText( Count.c_str() );
 
-	Count = SvUl::Format( _T("%d"), m_lEndCount );
+	Count = SvUl::Format( _T("%d"), ++m_lEndCount );
 	m_EndFrameCount.SetWindowText( Count.c_str() );
 
 	m_CameraImage.Invalidate();
@@ -109,16 +115,7 @@ void SVCameraPage::OnAdvancedButtonClick()
 		{
 			// refresh parameters ?
 			SVDeviceParamCollection deviceParams;
-			m_pAcquisition->GetDeviceParameters(deviceParams);
-
-			HRESULT hr = m_pAcquisition->SetDeviceParameters(deviceParams);
-			if (S_OK != hr)
-			{
-				if (SVMSG_SVO_20_INCORRECT_CAMERA_FILE == hr)
-				{
-					AfxMessageBox("Error - Camera File does not Match Camera", MB_OK);
-				}
-			}
+			m_pAcquisition->GetDeviceParameters(m_cameraFileParams);
 		}
 	}
 }
@@ -189,8 +186,6 @@ void SVCameraPage::OnProperitiesButtonClick()
 
 void SVCameraPage::OnStartStopButtonClick() 
 {
-	UpdateData();
-
 	if( ! m_bStarted )
 	{
 		StartAcquire();
@@ -283,10 +278,9 @@ void SVCameraPage::LoadSVCameraFiles()
 		{
 			// do camera file test/validation?
 
-			SVDeviceParamCollection cameraFileParams;
-			m_pAcquisition->GetCameraFileParameters(cameraFileParams);
+			m_pAcquisition->GetCameraFileParameters(m_cameraFileParams);
 
-			if (S_OK != m_pAcquisition->IsValidCameraFileParameters(cameraFileParams))
+			if (S_OK != m_pAcquisition->IsValidCameraFileParameters(m_cameraFileParams))
 			{
 				AfxMessageBox("Error - Incorrect Camera File", MB_OK);
 			}
@@ -333,16 +327,33 @@ void SVCameraPage::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDevice
 
 void SVCameraPage::StartAcquire()
 {
+	UpdateData(true);
+	HRESULT hr = m_pAcquisition->SetDeviceParameters(m_cameraFileParams);
+	if (S_OK != hr)
+	{
+		if (SVMSG_SVO_20_INCORRECT_CAMERA_FILE == hr)
+		{
+			AfxMessageBox("Error - Camera File does not Match Camera", MB_OK);
+			return;
+		}
+	}
 	if (m_bUseSoftwareTrigger)
 	{
 		unsigned long digitizerHandle = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(m_lSelectedCamera);
-
-		_variant_t value{ static_cast<long> (SvDef::TriggerType::SoftwareTrigger) };
+		_variant_t value {static_cast<long> (SvDef::TriggerType::SoftwareTrigger)};
 		m_pAcquisition->m_rSubsystem.m_svDigitizers.ParameterSetValue(digitizerHandle, SvDef::SVTriggerType, value);
-
 		if (m_timerID == 0)
 		{
 			m_timerID = SetTimer(1, m_triggerPeriod, nullptr);
+		}
+	}
+	else
+	{
+		if (nullptr != m_pCreate && nullptr != m_pStart && false == m_plcStarted)
+		{
+			m_pCreate();
+			m_pStart(1);
+			m_plcStarted = true;
 		}
 	}
 
@@ -357,6 +368,7 @@ void SVCameraPage::StartAcquire()
 
 void SVCameraPage::StopAcquire()
 {
+	UpdateData(true);
 	m_pAcquisition->StopAcquire();
 
 	m_bStarted = false;
@@ -367,6 +379,12 @@ void SVCameraPage::StopAcquire()
 	{
 		::KillTimer(m_hWnd, m_timerID);
 		m_timerID = 0;
+	}
+	if (nullptr != m_pDestroy && nullptr != m_pStop && true == m_plcStarted)
+	{
+		m_pStop(1);
+		m_pDestroy();
+		m_plcStarted = false;
 	}
 }
 

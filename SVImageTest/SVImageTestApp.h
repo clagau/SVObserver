@@ -32,6 +32,8 @@ public:
 	std::string m_svimIniFile;
 	std::string m_hardwareIniFile;
 	std::string m_oemIniFile;
+	std::string m_productName;
+	std::string m_CameraIpAddress[cCameraCount];
 
 	bool IsGigeSystem() const;
 
@@ -57,6 +59,6 @@ public:
 private:
 	SvLib::InitialInformation m_iniFileInfo;
 
-	SVTestAcquisitionSubsystem* m_pSubsystem;
+	SVTestAcquisitionSubsystem* m_pSubsystem {nullptr};
 };
 

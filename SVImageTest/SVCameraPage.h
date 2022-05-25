@@ -14,12 +14,18 @@
 #pragma region Includes
 #include "resource.h"
 #include "DisplayPicture.h"
-#include "ObjectInterfaces\ITRCImage.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
 class SVCameraPage;
 class SVDeviceParamCollection;
 class SVTestAcquisitionClass;
+
+typedef HRESULT(WINAPI* SVCreatePtr)();
+typedef HRESULT(WINAPI* SVDestroyPtr)();
+typedef HRESULT(WINAPI* SVTriggerStartPtr)(unsigned long);
+typedef HRESULT(WINAPI* SVTriggerStopPtr)(unsigned long);
 
 struct SVCameraPageBufferInfoStruct
 {
@@ -98,6 +104,11 @@ public:
 	long m_lEndCount;
 	bool m_bStarted;
 
+	static SVCreatePtr m_pCreate;
+	static SVDestroyPtr m_pDestroy;
+	static SVTriggerStartPtr m_pStart;
+	static SVTriggerStopPtr m_pStop;
+
 	SVCameraPageBufferInfoStruct m_svInfoArray[10];
 
 private:
@@ -111,4 +122,6 @@ private:
 	void EnableViewCameraFileButton();
 
 	UINT_PTR m_timerID;
+	SVDeviceParamCollection m_cameraFileParams;
+	static bool m_plcStarted;
 };

@@ -69,5 +69,6 @@
 #include <vector>			//Used by static library
 
 #include <boost/algorithm/string.hpp>
+constexpr int cCameraCount = 4;
 #pragma endregion Precompiled Headers
 

@@ -18,6 +18,7 @@
 #include "SVImageTestApp.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "CameraLibrary/SVCustomDeviceParam.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
@@ -98,8 +99,6 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 	// Create a root item (root items should always be SVRPropertyItem object since they
 	// can not have properties
 	SVRPropertyItem*        pRoot = nullptr;
-	SVRPropertyItemCombo*   pCombo = nullptr;
-	SVRPropertyItemEdit*    pEdit = nullptr;
 	
 	
 	pRoot = m_Tree.InsertItem(new SVRPropertyItem());
@@ -132,225 +131,39 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 				continue;
 			}
 			
+			const SVDeviceParam* pCamFileParam = rCamFileParam.DerivedValue(pCamFileParam);
+			const SVDeviceParam* pCamDeviceParam = rCamDeviceParam.DerivedValue(pCamDeviceParam);
+
 			switch ( rCamFileParam->DataType() )
 			{
+				case DeviceDataTypeBool:
 				case DeviceDataTypeLong:
 				case DeviceDataTypeComplex:
 				case DeviceDataTypeString:
+					SetupCameraDeviceParam(pRoot, pCamDeviceParam, pCamFileParam);
 					break;
 
-				default:
+				case DeviceDataTypeCustom:
 				{
-					pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
-					if (!pCombo)
-						break;
-					
-					pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
-					std::string Label = rCamFileParam->VisualName();
-					
-					if ( Label.empty() )
+					// swap the Container for the real parameters
+					const SVCustomDeviceParam* pCustomFileParam = rCamFileParam.DerivedValue(pCustomFileParam);
+					const SVCustomDeviceParam* pCustomDeviceParam = rCamDeviceParam.DerivedValue(pCustomDeviceParam);
+					if (pCustomFileParam && pCustomDeviceParam)
 					{
-						Label = rCamFileParam->Name();
+						const SVDeviceParamWrapper& rFileParam = pCustomFileParam->GetHeldParam();
+						const SVDeviceParamWrapper& rDeviceParam = pCustomDeviceParam->GetHeldParam();
+
+						const SVDeviceParam* pFileParam = rFileParam.DerivedValue(pFileParam);
+						const SVDeviceParam* pDeviceParam = rDeviceParam.DerivedValue(pDeviceParam);
+						SetupCameraDeviceParam(pRoot, pDeviceParam, pFileParam);
 					}
-					pCombo->SetLabelText( Label.c_str() );
-					pCombo->SetInfoText( rCamFileParam->Description() );
-					pCombo->CreateComboBox();
 				}
 				break;
-			}
-				
-			switch ( rCamFileParam->DataType() )
-			{
-				case DeviceDataTypeLong:
-				{
-					const SVLongValueDeviceParam* pCamFileParam = rCamFileParam.DerivedValue(pCamFileParam);
-					const SVLongValueDeviceParam* pCamDeviceParam = rCamDeviceParam.DerivedValue(pCamDeviceParam);
-					if ( pCamFileParam->info.options.size() > 0 )
-					{
-						pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
-						if (!pCombo)
-							break;
-						
-						pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
-						std::string Label = rCamFileParam->VisualName();
-						if ( Label.empty() )
-						{
-							Label = rCamFileParam->Name();
-						}
-						pCombo->SetLabelText( Label.c_str() );
-						pCombo->SetInfoText( rCamFileParam->Description() );
-						pCombo->CreateComboBox();
-						
-						SVLongValueDeviceParam::OptionsType::const_iterator iterOption;
-						for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
-						{
-							int iPos;
-							iPos = pCombo->AddString( iterOption->m_Description.c_str() );
-							pCombo->SetItemData( iPos, iterOption->m_Value );
-						}
-						if ( pCamFileParam->info.options.size() == 1 )
-						{
-							pCombo->ReadOnly( true );
-						}
-						
-						pCombo->SetItemValue( pCamDeviceParam->lValue );
-					}
-					else
-					{
-						// do a spin control bounded by pParam->info.min / info.max;
-						pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
-						if (!pEdit)
-							break;
-						
-						pEdit->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
-						std::string Label = rCamFileParam->VisualName();
-						if( Label.empty() )
-						{
-							Label = rCamFileParam->Name();
-						}
-						Label = SvUl::Format( _T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
-						pEdit->SetLabelText( Label.c_str() );
-						std::string Description = SvUl::Format( _T("%s   Min = %d, Max = %d; default = %d"), rCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
 
-						pEdit->SetInfoText( Description.c_str() );
-						
-						pEdit->SetItemValue( pCamDeviceParam->GetScaledValue() );
-					}
-					break;
-				}
-
-				case DeviceDataTypei64:
-				{
-					const SVi64ValueDeviceParam* pCamFileParam = rCamFileParam.DerivedValue(pCamFileParam);
-					break;
-				}
-
-				case DeviceDataTypeBool:
-				{
-					const SVBoolValueDeviceParam* pCamFileParam = rCamFileParam.DerivedValue(pCamFileParam);
-					const SVBoolValueDeviceParam* pCamDeviceParam = rCamDeviceParam.DerivedValue(pCamDeviceParam);
-					SVBoolValueDeviceParam::OptionsType::const_iterator iterOption;
-					for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
-					{
-						int iPos;
-						iPos = pCombo->AddString( iterOption->m_Description.c_str() );
-						pCombo->SetItemData( iPos, (LPARAM) iterOption->m_Value );
-					}
-					if ( pCamFileParam->info.options.size() == 1 )
-					{
-						pCombo->ReadOnly( true );
-					}
-					
-					pCombo->SetItemValue( pCamDeviceParam->bValue );
-					
-					break;
-				}
-
-				case DeviceDataTypeString:
-				{
-					switch ( rCamFileParam->Type() )
-					{
-						case DeviceParamCameraFormats:
-						{
-							const SVCameraFormatsDeviceParam* pCamFileParam = rCamFileParam.DerivedValue(pCamFileParam);
-							const SVCameraFormatsDeviceParam* pCamDeviceParam = rCamDeviceParam.DerivedValue(pCamDeviceParam);
-							if ( pCamFileParam->options.size() > 0 )
-							{
-								pCombo = (SVRPropertyItemCombo*) m_Tree.InsertItem(new SVRPropertyItemCombo(),pRoot);
-								if (!pCombo)
-									break;
-								
-								pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
-								std::string Label = rCamFileParam->VisualName();
-								
-								if ( Label.empty() )
-								{
-									Label = rCamFileParam->Name();
-								}
-								pCombo->SetLabelText( Label.c_str() );
-								pCombo->SetInfoText( rCamFileParam->Description() );
-								pCombo->SetButtonText("ROI");
-								pCombo->CreateComboBox();
-						
-								SVCameraFormatsDeviceParam::OptionsType::const_iterator iterOption;
-								const SVCameraFormat* pFormat=nullptr;
-								for (iterOption = pCamFileParam->options.begin(); iterOption != pCamFileParam->options.end(); ++iterOption)
-								{
-									int iPos;
-									iPos = pCombo->AddString( iterOption->second.m_strDescription.c_str() );
-									pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
-									if ( pCamDeviceParam->strValue == iterOption->second.m_strName )
-									{
-										pFormat = &(iterOption->second);
-									}
-								}
-
-								if ( pCamFileParam->options.size() == 1 )
-								{
-									pCombo->ReadOnly( true );
-								}
-								
-								pCombo->SetItemValue( reinterpret_cast<DWORD_PTR>(pFormat) );
-							}
-						}
-						break;
-							
-						default:
-						{
-							const SVStringValueDeviceParam* pCamFileParam = rCamFileParam.DerivedValue(pCamFileParam);
-							const SVStringValueDeviceParam* pCamDeviceParam = rCamDeviceParam.DerivedValue(pCamDeviceParam);
-							if ( pCamFileParam->info.options.size() > 0 )
-							{
-								pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(),pRoot);
-								if (!pCombo)
-									break;
-								
-								pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
-								std::string Label = rCamFileParam->VisualName();
-								
-								if ( Label.empty() )
-								{
-									Label = rCamFileParam->Name();
-								}
-								pCombo->SetLabelText( Label.c_str() );
-								pCombo->SetInfoText( rCamFileParam->Description() );
-								pCombo->CreateComboBox();
-								
-								SVStringValueDeviceParam::OptionsType::const_iterator iterOption;
-								int iOption=0;
-								int iOptionIndex=0;
-								for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
-								{
-									int iPos;
-									iPos = pCombo->AddString( iterOption->m_Description.c_str() );
-									++iOption;
-
-									if ( iterOption->m_Value == pCamDeviceParam->strValue )
-									{
-										iOptionIndex = iOption;
-									}
-									pCombo->SetItemData( iPos, iOption );
-								}
-								if ( pCamFileParam->info.options.size() == 1 )
-								{
-									pCombo->ReadOnly( true );
-								}
-								
-								pCombo->SetItemValue( iOptionIndex );
-							}
-						}
-						break;
-					}
-				}
-				case DeviceDataTypeComplex:
-				{
-					// put a "..." button to pull up custom dialog (e.g. LUT or LR)
-					break;
-				}
-			
 				default:
 					break;
 			}
+				
 		}
 	}
 
@@ -445,44 +258,56 @@ void SVCameraFilePropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 			assert( pDeviceParam );
 			long lValue;
 
+			// If Custom get real DeviceParam
+			if (pDeviceParam && pDeviceParam->DataType() == DeviceDataTypeCustom)
+			{
+				// swap the Container for the real parameters
+				SVCustomDeviceParam* pCustomParam = w.DerivedValue(pCustomParam);
+
+				pDeviceParam = pCustomParam->GetHeldParam();
+			}
 			switch ( pDeviceParam->DataType() )
 			{
 				case DeviceDataTypeLong:
 				{
-					SVLongValueDeviceParam* pParam = w.DerivedValue( pParam );
-					const SVLongValueDeviceParam* pCFParam = wCF.DerivedValue( pCFParam );
-					pItem->GetItemValue(lValue);
-
-					if ( (pCFParam->info.max == 0 && pCFParam->info.min == 0) ||
-						(lValue >= pCFParam->GetScaledMin() && lValue <= pCFParam->GetScaledMax() ) )
+					SVLongValueDeviceParam* pParam = dynamic_cast<SVLongValueDeviceParam*>(pDeviceParam);
+					const SVLongValueDeviceParam* pCFParam = wCF.DerivedValue(pCFParam);
+					if (pParam && pCFParam)
 					{
-						pParam->SetScaledValue(lValue);
-						long lRecalcValue = pParam->GetScaledValue();
-						
-						if( lRecalcValue != lValue)
+						pItem->GetItemValue(lValue);
+						if ((pCFParam->info.max == 0 && pCFParam->info.min == 0)
+							|| (lValue >= pCFParam->GetScaledMin() && lValue <= pCFParam->GetScaledMax()))
 						{
-							pItem->SetItemValue(lRecalcValue);
+							pParam->SetScaledValue(lValue);
+							long lRecalcValue = pParam->GetScaledValue();
+							if (lRecalcValue != lValue)
+							{
+								pItem->SetItemValue(lRecalcValue);
+							}
 						}
-					}
-					else
-					{
-						MessageBeep(MB_ICONASTERISK);
-						*plResult = S_FALSE;
+						else
+						{
+							MessageBeep(MB_ICONASTERISK);
+							*plResult = S_FALSE;
+						}
 					}
 					break;
 				}
 
 				case DeviceDataTypei64:
 				{
-					SVi64ValueDeviceParam* pParam = w.DerivedValue( pParam );
+					// this does nothing so we can't edit I64 values....
 					break;
 				}
 
 				case DeviceDataTypeBool:
 				{
-					SVBoolValueDeviceParam* pParam = w.DerivedValue( pParam );
-					pItem->GetItemValue(lValue);
-					*pParam = lValue != 0;
+					SVBoolValueDeviceParam* pParam = dynamic_cast<SVBoolValueDeviceParam*>(pDeviceParam);
+					if (pParam)
+					{
+						pItem->GetItemValue(lValue);
+						*pParam = lValue != 0;
+					}
 					break;
 				}
 				
@@ -492,7 +317,7 @@ void SVCameraFilePropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 					{
 						case DeviceParamCameraFormats:
 						{
-							SVCameraFormatsDeviceParam* pParam = w.DerivedValue( pParam );
+							SVCameraFormatsDeviceParam* pParam = dynamic_cast<SVCameraFormatsDeviceParam*>(pDeviceParam);
 							_variant_t Value;
 							pItem->GetItemValue( Value );
 							const SVCameraFormat* pFormat = reinterpret_cast< const SVCameraFormat*> (Value.llVal);
@@ -505,7 +330,31 @@ void SVCameraFilePropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 
 						default:
 						{
-							SVStringValueDeviceParam* pParam = w.DerivedValue( pParam );
+							SVStringValueDeviceParam* pParam = dynamic_cast<SVStringValueDeviceParam*>(pDeviceParam);
+							if (pParam)
+							{
+								SVRPropertyItemCombo* l_pCombo = dynamic_cast<SVRPropertyItemCombo*>(pItem);
+
+								if (nullptr != l_pCombo)
+								{
+									int l_Index = l_pCombo->GetCurSel();
+									if (-1 < l_Index)
+									{
+										CString Description;
+										l_pCombo->GetLBText(l_Index, Description);
+
+										SVStringValueDeviceParam::OptionsType::const_iterator iterOption;
+										for (iterOption = pParam->info.options.begin(); iterOption != pParam->info.options.end(); ++iterOption)
+										{
+											if (Description.GetString() == iterOption->m_Description)
+											{
+												pParam->strValue = iterOption->m_Value;
+												break;
+											}
+										}
+									}
+								}
+							}
 						}
 						break;
 					}
@@ -678,4 +527,199 @@ bool SVCameraFilePropertyPageDlg::IsGigeSystem() const
 	}
 	return bRetVal;
 }
+
+void SVCameraFilePropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SVDeviceParam* pDeviceParam, const SVDeviceParam* pFileParam)
+{
+	if (pDeviceParam && pFileParam)
+	{
+		switch (pFileParam->DataType())
+		{
+			case DeviceDataTypeLong:
+			{
+				const SVLongValueDeviceParam* pCamFileParam = dynamic_cast<const SVLongValueDeviceParam*>(pFileParam);
+				const SVLongValueDeviceParam* pCamDeviceParam = dynamic_cast<const SVLongValueDeviceParam*>(pDeviceParam);
+				if (pCamFileParam->info.options.size() > 0)
+				{
+					SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
+					if (pCombo)
+					{
+						pCombo->SetCtrlID(static_cast<UINT> (PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
+						std::string Label = pCamFileParam->VisualName();
+						if (Label.empty())
+						{
+							Label = pCamFileParam->Name();
+						}
+						pCombo->SetLabelText(Label.c_str());
+						pCombo->SetInfoText(pCamFileParam->Description());
+						pCombo->CreateComboBox();
+
+						SVLongValueDeviceParam::OptionsType::const_iterator iterOption;
+						for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
+						{
+							int iPos = pCombo->AddString(iterOption->m_Description.c_str());
+							pCombo->SetItemData(iPos, iterOption->m_Value);
+						}
+						if (pCamFileParam->info.options.size() == 1)
+						{
+							pCombo->ReadOnly(true);
+						}
+						pCombo->SetItemValue(pCamDeviceParam->lValue);
+					}
+				}
+				else
+				{
+					// do a spin control bounded by pParam->info.min / info.max;
+					SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
+					if (pEdit)
+					{
+						pEdit->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
+
+						std::string Label = pCamFileParam->VisualName();
+						if (Label.empty())
+						{
+							Label = pCamFileParam->Name();
+						}
+						Label = SvUl::Format(_T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str());
+						pEdit->SetLabelText(Label.c_str());
+						std::string Description = SvUl::Format(_T("%s   Min = %d, Max = %d; default = %d"), pCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil(pCamFileParam->lValue * pCamFileParam->info.multiplier)));
+						pEdit->SetInfoText(Description.c_str());
+
+						pEdit->SetItemValue(pCamDeviceParam->GetScaledValue());
+					}
+				}
+				break;
+			}
+			case DeviceDataTypeBool:
+			{
+				const SVBoolValueDeviceParam* pCamFileParam = dynamic_cast<const SVBoolValueDeviceParam*>(pFileParam);
+				const SVBoolValueDeviceParam* pCamDeviceParam = dynamic_cast<const SVBoolValueDeviceParam*>(pDeviceParam);
+
+				SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
+				if (pCombo)
+				{
+					pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
+					std::string Label = pCamFileParam->VisualName();
+					if (Label.empty())
+					{
+						Label = pCamFileParam->Name();
+					}
+					pCombo->SetLabelText(Label.c_str());
+					pCombo->SetInfoText(pCamFileParam->Description());
+					pCombo->CreateComboBox();
+
+					SVBoolValueDeviceParam::OptionsType::const_iterator iterOption;
+					for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
+					{
+						int iPos = pCombo->AddString(iterOption->m_Description.c_str());
+						pCombo->SetItemData(iPos, (LPARAM)iterOption->m_Value);
+					}
+					if (pCamFileParam->info.options.size() == 1)
+					{
+						pCombo->ReadOnly(true);
+					}
+					pCombo->SetItemValue(pCamDeviceParam->bValue);
+				}
+				break;
+			}
+			case DeviceDataTypeString:
+			{
+				switch (pFileParam->Type())
+				{
+					case DeviceParamCameraFormats:
+					{
+						const SVCameraFormatsDeviceParam* pCamFileParam = dynamic_cast<const SVCameraFormatsDeviceParam*>(pFileParam);
+						const SVCameraFormatsDeviceParam* pCamDeviceParam = dynamic_cast<const SVCameraFormatsDeviceParam*>(pDeviceParam);
+						if (pCamFileParam->options.size() > 0)
+						{
+							SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
+							if (pCombo)
+							{
+								pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
+								std::string Label = pCamFileParam->VisualName();
+								if (Label.empty())
+								{
+									Label = pCamFileParam->Name();
+								}
+								pCombo->SetLabelText(Label.c_str());
+								pCombo->SetInfoText(pCamFileParam->Description());
+								pCombo->SetButtonText("ROI");
+								pCombo->CreateComboBox();
+
+								SVCameraFormatsDeviceParam::OptionsType::const_iterator iterOption;
+								const SVCameraFormat* pFormat = nullptr;
+								for (iterOption = pCamFileParam->options.begin(); iterOption != pCamFileParam->options.end(); ++iterOption)
+								{
+									if (false == iterOption->second.m_bColor)
+									{
+										int iPos = pCombo->AddString(iterOption->second.m_strDescription.c_str());
+										pCombo->SetItemData(iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)));
+										if (pCamDeviceParam->strValue == iterOption->second.m_strName)
+										{
+											pFormat = &(iterOption->second);
+										}
+									}
+								}
+								if (pCamFileParam->options.size() == 1)
+								{
+									pCombo->ReadOnly(true);
+								}
+								pCombo->SetItemValue(reinterpret_cast<DWORD_PTR>(pFormat));
+							}
+						}// end if ( pCamFileParam->options.size() > 0 )
+					}// end case DeviceParamCameraFormats:
+					break;
+
+					default:
+					{
+						const SVStringValueDeviceParam* pCamFileParam = dynamic_cast<const SVStringValueDeviceParam*>(pFileParam);
+						const SVStringValueDeviceParam* pCamDeviceParam = dynamic_cast<const SVStringValueDeviceParam*>(pDeviceParam);
+						if (pCamFileParam->info.options.size() > 0)
+						{
+							SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
+							if (pCombo)
+							{
+								pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
+								std::string Label = pCamFileParam->VisualName();
+								if (Label.empty())
+								{
+									Label = pCamFileParam->Name();
+								}
+								pCombo->SetLabelText(Label.c_str());
+								pCombo->SetInfoText(pCamFileParam->Description());
+								pCombo->CreateComboBox();
+
+								SVStringValueDeviceParam::OptionsType::const_iterator iterOption;
+								int iOption = 0;
+								int iOptionIndex = 0;
+								for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
+								{
+									int iPos;
+									iPos = pCombo->AddString(iterOption->m_Description.c_str());
+									++iOption;
+									if (iterOption->m_Value == pCamDeviceParam->strValue)
+										iOptionIndex = iOption;
+									pCombo->SetItemData(iPos, iOption);
+								}
+								if (pCamFileParam->info.options.size() == 1)
+								{
+									pCombo->ReadOnly(true);
+								}
+								pCombo->SetItemValue(iOptionIndex);
+							}
+						}
+					}// end default:
+					break;
+				}// end switch ( pFileParam->Type() )
+			}
+			case DeviceDataTypeComplex:
+			{
+				// put a "..." button to pull up custom dialog (e.g. LUT or LR)
+				break;
+			}
+			default:
+				break;
+		}// end switch ( w->DataType() )
+	}
+}
+
 
