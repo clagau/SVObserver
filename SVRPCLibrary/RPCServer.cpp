@@ -27,9 +27,10 @@ RPCServer::RPCServer(RequestHandlerBase* pRequestHandler) : m_pRequestHandler(pR
 
 void RPCServer::disconnect_all_connections()
 {
-	for (const auto& conn : m_Connections)
+	auto ids = connections_ids();
+	for (const auto id : ids)
 	{
-		onDisconnect(conn.first);
+		onDisconnect(id);
 	}
 }
 
@@ -275,5 +276,16 @@ SvSyl::SVFuture<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& r
 
 	return it->second->sendBinaryMessage(buf);
 }
+
+std::vector<int> RPCServer::connections_ids() const
+{
+	auto ids = std::vector<int>{};
+	for (const auto& conn : m_Connections)
+	{
+		ids.push_back(conn.first);
+	}
+	return ids;
+}
+
 
 } // namespace SvRpc

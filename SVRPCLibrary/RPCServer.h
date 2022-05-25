@@ -66,6 +66,8 @@ private:
 	SvSyl::SVFuture<void> send_envelope(int id, const SvPenv::Envelope& rEnvelope);
 
 private:
+	std::vector<int> connections_ids() const;
+
 	RequestHandlerBase* m_pRequestHandler;
 	std::map<int, SvHttp::HttpServerConnection*> m_Connections;
 	std::map<int, SvAuth::SessionContext> m_SessionContexts;
