@@ -207,6 +207,7 @@
     <ClInclude Include="ProgressCallback.h" />
     <ClInclude Include="PropID.h" />
     <ClInclude Include="PropVariant.h" />
+    <ClInclude Include="RaiiLifeFlag.h" />
     <ClInclude Include="SafeArrayHelper.h" />
     <ClInclude Include="SetBits.h" />
     <ClInclude Include="SHA256.h" />

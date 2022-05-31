@@ -14,6 +14,7 @@
 #include "RegistryAccess.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/RaiiLifeFlag.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\LoadDll.h"
 #pragma endregion Includes
@@ -24,7 +25,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-HINSTANCE SvStl::MessageContainer::m_MessageDll( nullptr );
+HINSTANCE SvStl::MessageContainer::m_MessageDll {nullptr};
+bool SvStl::MessageContainer::m_circularCall {false};
 
 constexpr const char* SvEventSource = _T("SVException");
 constexpr const char* SvSecuritySource =  _T("SVSecurity");
@@ -476,8 +478,9 @@ namespace SvStl
 	{
 		HRESULT Result( S_OK );
 
-		if( nullptr == m_MessageDll )
+		if( nullptr == m_MessageDll && false == m_circularCall)
 		{
+			SvDef::RaiiLifeFlag circularCheck {m_circularCall};
 			//! Note all facilities use the same message dll 
 			std::string RegKey( RegPathEventLog );
 			RegKey += getFacilityName();

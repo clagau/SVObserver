@@ -21,6 +21,7 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/ObjectUtilities.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/RaiiLifeFlag.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
@@ -36,23 +37,6 @@ namespace SvVol
 	static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-
-	//RAII class to set and reset flag
-	struct LifeFlag
-	{
-		explicit LifeFlag(bool& flag) :
-			m_rFlag(flag)
-		{
-			m_rFlag = true;
-		}
-		~LifeFlag()
-		{
-			m_rFlag = false;
-		}
-	private:
-		bool& m_rFlag;
-	};
-
 
 SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
@@ -91,7 +75,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			//! When getting the value from an indirect value make sure it is not referencing this object
 			if (nullptr != m_LinkedObjectRef.getValueObject())
 			{
-				LifeFlag circularCheck(m_CircularReference);
+				SvDef::RaiiLifeFlag circularCheck(m_CircularReference);
 				if (m_LinkedObjectRef.getIndex() == Index || -1 != m_LinkedObjectRef.getIndex())
 				{
 					Result = m_LinkedObjectRef.getValue(rValue);
@@ -164,7 +148,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		//! When getting the value from an indirect value make sure it is not referencing this object
 		if (nullptr != m_LinkedObjectRef.getValueObject())
 		{
-			LifeFlag circularCheck(m_CircularReference);
+			SvDef::RaiiLifeFlag circularCheck(m_CircularReference);
 			if (m_LinkedObjectRef.isEntireArray())
 			{
 				Result = m_LinkedObjectRef.getValue(rValue);
@@ -388,7 +372,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		if (false == m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
 		{
-			LifeFlag circularCheck(m_CircularReference);
+			SvDef::RaiiLifeFlag circularCheck(m_CircularReference);
 			m_LinkedObjectRef.getValueObject()->setSaveValueFlag(shouldSaveValue);
 		}
 	}
@@ -409,7 +393,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			return false;
 		}
-		LifeFlag circularCheck(m_CircularReference);
+		SvDef::RaiiLifeFlag circularCheck(m_CircularReference);
 		bool result = pRefObject->isCircularReference();
 		return result;
 	}
@@ -524,7 +508,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			return pObject;
 		}
 
-		LifeFlag circularCheck(m_CircularReference);
+		SvDef::RaiiLifeFlag circularCheck(m_CircularReference);
 		const SvOi::IObjectClass* pLastObject = pRefObject->getLinkedObject();
 		return nullptr != pLastObject ? pLastObject : pObject;
 	}
@@ -840,7 +824,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (false == m_CircularReference)
 			{
-				LifeFlag circularCheck(m_CircularReference);
+				SvDef::RaiiLifeFlag circularCheck(m_CircularReference);
 				//if Reference to an index then this linkedValue is not an array
 				if (0 > m_LinkedObjectRef.ArrayIndex())
 				{
@@ -889,7 +873,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (false == m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
 			{
-				LifeFlag circularCheck(m_CircularReference);
+				SvDef::RaiiLifeFlag circularCheck(m_CircularReference);
 				//if Reference to an index then this linkedValue is not an array
 				if (0 > m_LinkedObjectRef.ArrayIndex())
 				{
@@ -912,7 +896,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (false == m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
 			{
-				LifeFlag circularCheck(m_CircularReference);
+				SvDef::RaiiLifeFlag circularCheck(m_CircularReference);
 				//if Reference to an index then this linkedValue is not an array
 				if (0 > m_LinkedObjectRef.ArrayIndex())
 				{

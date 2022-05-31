@@ -87,6 +87,7 @@ namespace SvStl
 		Messages m_AdditionalMessages;		//! List of additional messages
 		std::string m_What;					//! The what formatted message
 		static HINSTANCE m_MessageDll;		//! The message dll instance as a static variable
+		static bool m_circularCall;
 	#pragma endregion Member variables
 	};
 
