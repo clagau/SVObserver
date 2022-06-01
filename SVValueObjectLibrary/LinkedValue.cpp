@@ -36,6 +36,49 @@ namespace SvVol
 #undef THIS_FILE
 	static char THIS_FILE[] = __FILE__;
 #endif
+
+namespace
+{
+_variant_t convertType(const _variant_t& rValue, VARTYPE newType)
+{
+	_variant_t retValue;
+	if (newType != rValue.vt)
+	{
+		if (0 == (VT_ARRAY & newType))
+		{
+			if (S_OK != ::VariantChangeTypeEx(&retValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, newType))
+			{
+				//empty value if variant can not be converted in the right type
+				::VariantClear(&retValue);
+			}
+		}
+		else
+		{
+			if (0 != (rValue.vt & VT_ARRAY))
+			{
+				retValue = SvUl::convertSafeArrayToOtherSafeArray(rValue, newType);
+			}
+			else
+			{
+				if (S_OK != ::VariantChangeTypeEx(&retValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, newType & ~VT_ARRAY))
+				{
+					//empty value if variant can not be converted in the right type
+					::VariantClear(&retValue);
+				}
+				else
+				{
+					retValue = SvUl::VariantToSafeArray(rValue);
+				}
+			}
+		}
+	}
+	else
+	{
+		retValue = rValue;
+	}
+	return retValue;
+}
+}
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
@@ -175,10 +218,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 	{
 		HRESULT hres(E_FAIL);
-		if (rValue.vt != m_directValue.vt)
-		{
-			m_directValue.Clear();
-		}
+		m_directValue = convertType(m_directValue, rValue.vt);
 
 		if (0 == (rValue.vt & VT_ARRAY))
 		{
@@ -966,12 +1006,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			{
 				m_directValue.boolVal = m_directValue.boolVal ? 1 : 0;
 			}
-			if (GetDefaultType() != m_directValue.vt && S_OK != ::VariantChangeTypeEx(&m_directValue, &m_directValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
-			{
-				//empty value if variant can not be converted in the right type
-				::VariantClear(&m_directValue);
-				assert(false);
-			}
+			m_directValue = convertType(m_directValue, GetDefaultType());
 			return S_OK;
 		}
 		else if (pDataObject->GetAttributeData(scLinkedIndirectValueTag, stringList))

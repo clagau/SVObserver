@@ -1944,9 +1944,7 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask* pExternalToolT
 			rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), initializeAll);
 			if (initializeAll)
 			{
-			
 				rInputValue.setDirectValue(rInputDef.getDefaultValue());
-
 			}
 		}
 		else if (bTypeIsTable)
