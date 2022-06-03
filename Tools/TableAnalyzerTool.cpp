@@ -155,11 +155,8 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 bool TableAnalyzerTool::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool result = __super::resetAllObjects(pErrorMessages);
-	if (result)
-	{
-		//after all values are reset, resultTable must be reset again, because the columns that were just deleted must be removed again.
-		result = m_pResultTable->ResetObject(pErrorMessages);
-	}
+	//after all values are reset, resultTable must be reset again, because the columns that were just deleted must be removed again.
+	result = m_pResultTable->ResetObject(pErrorMessages) && result;
 	return result;
 }
 
