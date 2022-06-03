@@ -205,7 +205,7 @@ void InputConflictDlg::setInputObjectColumn(int pos)
 		HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getinputdataresponse())
 		{
-			pCell->SetText(responseCmd.getinputdataresponse().data().connected_objectdottedname().c_str());
+			pCell->setTextIfInList(responseCmd.getinputdataresponse().data().connected_objectdottedname().c_str());
 		}
 	}
 }

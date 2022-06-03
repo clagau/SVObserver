@@ -267,6 +267,7 @@ void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
 	auto* pConnectObject = GetInputObjectInfo().getObject();
 	if (nullptr != pConnectObject)
 	{
+		//Name is only saved to help by loading (copy) if object id was not be found.
 		value = pConnectObject->GetObjectNameToObjectType().c_str();
 		rWriter.WriteAttribute(scConntectedDotnameTag, value);
 	}

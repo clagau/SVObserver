@@ -67,6 +67,8 @@ public:
 	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID) override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
+
+	uint32_t getSourceTableId() const { return m_sourceTableInput.GetInputObjectInfo().getObjectId(); };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

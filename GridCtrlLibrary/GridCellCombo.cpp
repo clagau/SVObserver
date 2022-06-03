@@ -417,6 +417,19 @@ namespace SvGcl
 		SetStyle(CBS_DROPDOWN);  // CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE, CBS_SORT
 	}
 
+	bool GridCellCombo::setTextIfInList(LPCTSTR szText)
+	{
+		for (int i = 0; i < m_Strings.GetSize(); ++i)
+		{
+			if (szText == m_Strings[i])
+			{
+				SetText(szText);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// Create a control to do the editing
 	BOOL GridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 	{

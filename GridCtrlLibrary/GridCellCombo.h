@@ -54,6 +54,7 @@ namespace SvGcl
 
 	// editing cells
 	public:
+		bool setTextIfInList(LPCTSTR szText);
 		virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
 		virtual void  EndEdit() override;
 

@@ -65,6 +65,7 @@ bool TableDeleteColumnAnalyzer::ResetObject(SvStl::MessageContainerVector* pErro
 	}
 	else
 	{
+		m_deleteColumnInput.setStartSearchId(pTool->getSourceTableId());
 		pTool->removeSourceColumn(pColumnValues);
 	}
 

@@ -541,6 +541,12 @@ void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SVTreeType
 				SvUl::searchAndReplace(fullToolNameNewStr, ToolName.c_str(), NewToolName.c_str());
 			}
 			SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
+
+			//ConnectedDotname should not be renamed, because it is to display the old connectedDotname if the id invalid. (Change is caused by SVB-743)
+			std::string tmpText = "<DATA Name=\"ConnectedDotname\" Type=\"VT_BSTR\">";
+			fullToolNameStr = tmpText + fullToolNameStr;
+			fullToolNameNewStr = tmpText + fullToolNameNewStr;
+			SvUl::searchAndReplace(rXmlData, fullToolNameNewStr.c_str(), fullToolNameStr.c_str());
 		}
 	}
 }
