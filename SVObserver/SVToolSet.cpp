@@ -101,6 +101,11 @@ void SVToolSet::init()
 
 
 	// Set Embedded defaults
+	m_MissingImageCountTS.SetDefaultValue(0, true);
+	m_MissingImageCountTS.setSaveValueFlag(false);
+	m_NotCompleteCountTS.SetDefaultValue(0, true);
+	m_NotCompleteCountTS.setSaveValueFlag(false);
+
 	m_isObjectValid.SetDefaultValue(BOOL(false), true);
 	m_isObjectValid.setSaveValueFlag(false);
 	m_Enabled.SetDefaultValue(BOOL(true));
