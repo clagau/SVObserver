@@ -241,10 +241,6 @@ void CSVImageTestDlg::OnRefresh()
 					}
 				}
 			}
-			else
-			{
-				m_Cameras[i].EnableWindow( false );
-			}
 		}
 
 
@@ -303,6 +299,7 @@ void CSVImageTestDlg::ClearCameras()
 			rCamera.m_pAcquisition = nullptr;
 			rCamera.m_lSelectedCamera = -1;
 		}
+		rCamera.EnableWindow(false);
 	}
 }
 
