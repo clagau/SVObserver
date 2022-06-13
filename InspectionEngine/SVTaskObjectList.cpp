@@ -30,10 +30,8 @@ std::vector<std::string> getNamesFromTaskObjectPtrVector(const SvIe::SVTaskObjec
 {
 	std::vector<std::string> stringlist;
 
-	for (const auto* pObject : rTaskObjectVector)
-	{
-		stringlist.push_back(pObject->GetName());
-	}
+	std::transform(rTaskObjectVector.cbegin(), rTaskObjectVector.cend(), back_inserter(stringlist),
+			[](auto& pObject){return pObject->GetName(); });
 
 	return stringlist;
 }
@@ -77,7 +75,7 @@ void SVTaskObjectListClass::getOutputList(std::back_insert_iterator<std::vector<
 	
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); ++i)
 	{
-		SVTaskObjectClass* l_pObject(TaskObject(i));
+		SVTaskObjectClass* l_pObject(getTaskObject(i));
 
 		if (nullptr != l_pObject)
 		{
@@ -136,9 +134,9 @@ HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, ui
 
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			result = TaskObject(i)->ConnectToObject(rInputName, newID);
+			result = getTaskObject(i)->ConnectToObject(rInputName, newID);
 			if (S_OK == result)
 			{
 				return S_OK;
@@ -159,9 +157,9 @@ HRESULT SVTaskObjectListClass::connectToObject(const SvPb::ConnectToObjectReques
 
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			result = TaskObject(i)->connectToObject(rConnectData);
+			result = getTaskObject(i)->connectToObject(rConnectData);
 			if (S_OK == result)
 			{
 				return S_OK;
@@ -182,9 +180,9 @@ void SVTaskObjectListClass::getInputData(const SvPb::GetInputDataRequest& reques
 
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			TaskObject(i)->getInputData(request, rCmdResponse);
+			getTaskObject(i)->getInputData(request, rCmdResponse);
 			if (rCmdResponse.has_getinputdataresponse())
 			{
 				return;
@@ -201,9 +199,9 @@ void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter) const
 	// Get script of task list members...
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); ++ i)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			SVTaskObjectClass* pTaskObject = TaskObject(i);
+			SVTaskObjectClass* pTaskObject = getTaskObject(i);
 			if (SV_IS_KIND_OF(pTaskObject, SVTaskObjectListClass))
 			{
 				pTaskObject->Persist(rWriter);
@@ -226,7 +224,7 @@ bool SVTaskObjectListClass::CloseObject()
 	// Close our children
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		SVTaskObjectClass* pTaskObject = TaskObject(i);
+		SVTaskObjectClass* pTaskObject = getTaskObject(i);
 		if (pTaskObject)
 		{
 			Result = pTaskObject->CloseObject() && Result;
@@ -248,7 +246,7 @@ HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& rpObject, const S
 		{
 			for (int i = 0; nullptr == rpObject && i < static_cast<int> (numberOfTaskObjects()); i++)
 			{
-				SVTaskObjectClass* l_pTask = TaskObject(i);
+				SVTaskObjectClass* l_pTask = getTaskObject(i);
 				if( nullptr != l_pTask )
 				{
 					l_Status = l_pTask->GetChildObject( rpObject, rNameInfo, Index + 1 );
@@ -364,7 +362,7 @@ void SVTaskObjectListClass::SetDisabled()
 	// Set all children to disabled also
 	for (int j = 0; j < static_cast<int> (numberOfTaskObjects()); ++ j)
 	{
-		SVTaskObjectClass* pObject = TaskObject(j);
+		SVTaskObjectClass* pObject = getTaskObject(j);
 		if (pObject)
 		{
 			pObject->SetDisabled();
@@ -433,7 +431,7 @@ HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentM
 
 	for ( int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++ )
 	{
-		SVTaskObjectClass* pObject = dynamic_cast< SVTaskObjectClass* >( TaskObject(i) );
+		SVTaskObjectClass* pObject = dynamic_cast< SVTaskObjectClass* >(getTaskObject(i) );
 
 		if ( nullptr != pObject )
 		{
@@ -560,7 +558,7 @@ void SVTaskObjectListClass::InsertAt(int pos, ITaskObject& rObject)
 {
 	if (0 <= pos && numberOfTaskObjects() > pos)
 	{
-		InsertBefore(TaskObject(pos)->getObjectId(), rObject);
+		InsertBefore(getTaskObject(pos)->getObjectId(), rObject);
 	}
 	else
 	{
@@ -599,9 +597,9 @@ void SVTaskObjectListClass::moveTaskObject(uint32_t objectToMoveId, uint32_t pre
 	uint32_t currentId = SvDef::InvalidObjectId;
 	for (int i = 0; i < numberOfTaskObjects(); i++)
 	{
-		if (nullptr != TaskObject(i))
+		if (nullptr != getTaskObject(i))
 		{
-			currentId = TaskObject(i)->getObjectId();
+			currentId = getTaskObject(i)->getObjectId();
 		}
 		else
 		{
@@ -620,7 +618,7 @@ void SVTaskObjectListClass::moveTaskObject(uint32_t objectToMoveId, uint32_t pre
 
 	if (0 <= currentPos && numberOfTaskObjects() > currentPos)
 	{
-		auto pObject = TaskObject(currentPos);
+		auto pObject = getTaskObject(currentPos);
 
 		if (0 <= newPos && numberOfTaskObjects() > newPos)
 		{
@@ -657,9 +655,9 @@ bool SVTaskObjectListClass::createAllObjects( const SVObjectLevelCreateStruct& r
 
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			Result &= TaskObject(i)->createAllObjects(createStruct);
+			Result &= getTaskObject(i)->createAllObjects(createStruct);
 		}
 	}
 	return Result;
@@ -676,9 +674,9 @@ void SVTaskObjectListClass::ConnectObject( const SVObjectLevelCreateStruct& rCre
 
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			TaskObject(i)->ConnectObject(createStruct);
+			getTaskObject(i)->ConnectObject(createStruct);
 		}
 	}
 }
@@ -698,9 +696,9 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObject(const SvDef::SVObjectT
 
 	for (int i = 0; nullptr == retObject && i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			retObject = TaskObject(i)->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
+			retObject = getTaskObject(i)->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
 		}
 	}
 	return retObject;
@@ -712,9 +710,9 @@ void SVTaskObjectListClass::OnObjectRenamed(const SVObjectClass& rRenamedObject,
 
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			TaskObject(i)->OnObjectRenamed(rRenamedObject, rOldName);
+			getTaskObject(i)->OnObjectRenamed(rRenamedObject, rOldName);
 		}
 	}
 }
@@ -725,9 +723,9 @@ bool SVTaskObjectListClass::connectAllInputs()
 
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			Result &= TaskObject(i)->connectAllInputs();
+			Result &= getTaskObject(i)->connectAllInputs();
 		}
 	}
 	return Result;
@@ -752,9 +750,9 @@ void SVTaskObjectListClass::getInputs(std::back_insert_iterator<std::vector<SvOl
 
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			TaskObject(i)->getInputs(inserter);
+			getTaskObject(i)->getInputs(inserter);
 		}
 	}
 }
@@ -781,10 +779,10 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId
 		// Check task list members...
 		for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 		{
-			if (TaskObject(i) && TaskObject(i)->getObjectId() == newId)
+			if (getTaskObject(i) && getTaskObject(i)->getObjectId() == newId)
 			{
 				// Delete this list member... the destructor will send SVM_OBJECT_CLOSED!
-				SVObjectClass* pDuplicateObject = TaskObject(i);
+				SVObjectClass* pDuplicateObject = getTaskObject(i);
 				delete pDuplicateObject;
 
 				m_TaskObjectVector[i] = pTaskObject;
@@ -879,7 +877,7 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 	
 	for (int i = Index + Count - 1; i >= Index; -- i)
 	{
-		SVTaskObjectClass* pTaskObject = TaskObject(i);
+		SVTaskObjectClass* pTaskObject = getTaskObject(i);
 		if (pTaskObject)
 		{
 			DestroyChildObject( pTaskObject );
@@ -904,7 +902,7 @@ SVTaskObjectClass* SVTaskObjectListClass::UpdateObject(uint32_t friendId, SVObje
 	// find the friend in our taskObject List
 	for (int i = 0; nullptr == pObject && i < l_iSize; i++)
 	{
-		pObject = TaskObject(i);
+		pObject = getTaskObject(i);
 
 		if ( nullptr != pObject && friendId == pObject->getObjectId() )
 		{
@@ -952,7 +950,7 @@ bool SVTaskObjectListClass::resetAllOutputListObjects( SvStl::MessageContainerVe
 	// Try to send message to outputObjectList members
 	for( int i = 0; i < static_cast<int> (numberOfTaskObjects()); ++ i )
 	{
-		SVTaskObjectClass* l_pObject( TaskObject( i ) );
+		SVTaskObjectClass* l_pObject(getTaskObject( i ) );
 		if( nullptr != l_pObject )
 		{
 			//return-value and error-messages do not be saved here, because this object will call resetAllOutputListObjects by its own and return error-messages to the parents.
@@ -972,9 +970,9 @@ bool SVTaskObjectListClass::isInputImage(uint32_t imageId) const
 		// Get Object from our children
 		for (int i = 0; !Result && i < static_cast<int> (numberOfTaskObjects()); i++)
 		{
-			if (nullptr != TaskObject(i))
+			if (nullptr != getTaskObject(i))
 			{
-				Result = TaskObject(i)->isInputImage(imageId);
+				Result = getTaskObject(i)->isInputImage(imageId);
 			}
 		}
 	}
@@ -998,7 +996,7 @@ bool SVTaskObjectListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVe
 		// Run your children...
 		for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 		{
-			SVTaskObjectClass* pTaskObject = TaskObject(i);
+			SVTaskObjectClass* pTaskObject = getTaskObject(i);
 			if ( nullptr != pTaskObject )
 			{
 				ChildRunStatus.ResetRunStateAndToolSetTimes();
@@ -1028,9 +1026,9 @@ bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErr
 	// Notify all...
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		if (TaskObject(i))
+		if (getTaskObject(i))
 		{
-			Result = (TaskObject(i)->resetAllObjects(&taskErrorMessages) && Result);
+			Result = (getTaskObject(i)->resetAllObjects(&taskErrorMessages) && Result);
 		}
 	}
 
@@ -1091,7 +1089,7 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const Sv
 	// Try to send message to list members, if not already processed...
 	for (int i = 0; nullptr == retObject && i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		SVObjectClass* pObject = TaskObject(i);
+		SVObjectClass* pObject = getTaskObject(i);
 		if (nullptr != pObject && pObject != pRequestor)
 		{
 			retObject = pObject->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
@@ -1135,7 +1133,7 @@ bool SVTaskObjectListClass::RemoveFromTaskObjectVector(uint32_t objectID)
 {
 	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 	{
-		SVTaskObjectClass* pTaskObject = TaskObject(i);
+		SVTaskObjectClass* pTaskObject = getTaskObject(i);
 
 		if (pTaskObject && pTaskObject->getObjectId() == objectID)
 		{

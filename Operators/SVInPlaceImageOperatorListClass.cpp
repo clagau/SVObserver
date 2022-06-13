@@ -112,7 +112,7 @@ bool SVInPlaceImageOperatorListClass::Run( SvIe::RunStatus& rRunStatus, SvStl::M
 		{
 			ChildRunStatus.ResetRunStateAndToolSetTimes();
 
-			SVObjectClass* pObject = TaskObject( i );
+			SVObjectClass* pObject = getTaskObject( i );
 			
 			// Do safe type casting...
 			SVUnaryImageOperatorClass* pOperator = dynamic_cast< SVUnaryImageOperatorClass* >( pObject );

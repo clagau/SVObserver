@@ -208,7 +208,7 @@ bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SV
 		{
 			ChildRunStatus.ResetRunStateAndToolSetTimes();
 
-			SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass*>(TaskObject(i));
+			SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass*>(getTaskObject(i));
 			if (nullptr != pOperator)
 			{
 				if (pOperator->Run(true, sourceImage, destinationImage, ChildRunStatus))
@@ -226,7 +226,7 @@ bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SV
 				// Do not set bRetVal automatically to FALSE, if operator was not running !!!
 				// ChildRunStatus keeps information about, if an error occurred while running !!!
 			}
-			else if (nullptr != dynamic_cast<SvOp::SVResult*>(TaskObject(i)))
+			else if (nullptr != dynamic_cast<SvOp::SVResult*>(getTaskObject(i)))
 			{
 				// Ignore the SVResult children
 				continue;

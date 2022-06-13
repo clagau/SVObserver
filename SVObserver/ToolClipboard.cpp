@@ -563,16 +563,31 @@ std::string ToolClipboard::getUniqueToolName(std::string& rToolName, const SVObj
 	else
 	{
 		SVIPDoc* pDoc = (nullptr != m_pInspection) ? GetIPDocByInspectionID(m_pInspection->getObjectId()) : nullptr;
+		
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLNAMES)
+		if (!m_additionalNames.empty())
+		{
+			OutputDebugString("(additional):\n");
+			for (const auto& rName : m_additionalNames)
+			{
+				OutputDebugString(SvUl::Format("\t%s\n", rName.c_str()).c_str());
+			}
+		}
+#endif
+
 		if (nullptr != pDoc)
 		{
 			uniqueName = pDoc->makeNameUnique(rToolName, m_additionalNames);
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLNAMES)
+			OutputDebugString(SvUl::Format("new Unique: %s -> %s\n", rToolName.c_str(), uniqueName.c_str()).c_str());
+#endif
 		}
 	}
 
-	if (uniqueName != rToolName)
-	{//i.e. newly created. It's OK to have just one vector for this since a Clipboard will be eine only "in one Place"
-		m_additionalNames.push_back(uniqueName);
-	}
+	//The unique name _always_ needs to be added to m_additionalNames (and not just if uniqueName != rToolName) because all names that are present 
+	//need to be either there or in the "names from the tool group list" that will be checked against further down in pDoc->makeNameUnique()
+	m_additionalNames.push_back(uniqueName);//It's OK to have just one vector for this since a clipboard will be used only "in one place"
 
 	return uniqueName;
 }

@@ -594,7 +594,7 @@ SvOi::IObjectClass* HistogramAnalyzer::GetResultObject(SvPb::EmbeddedIdEnum embe
 {
 	for(int i = 0; i < GetSize(); ++i)
 	{
-		SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*> (TaskObject(i));
+		SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*> (getTaskObject(i));
 		if (nullptr != pResult && embeddedID == pResult->GetInputEmbeddedID())
 		{
 			return dynamic_cast<SvOi::IObjectClass*> (pResult);

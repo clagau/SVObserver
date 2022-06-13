@@ -25,10 +25,8 @@ std::vector<std::string> getNamesFromToolGroupList(const ToolGroupList &rToolGro
 {
 	std::vector<std::string> stringlist;
 
-	for (const auto& rToolgroup : rToolGroupList)
-	{
-		stringlist.push_back(rToolgroup.first); 
-	}
+	std::transform(rToolGroupList.cbegin(), rToolGroupList.cend(), back_inserter(stringlist),
+			[](auto& rToolgroup){return rToolgroup.first; });
 
 	return stringlist;
 }

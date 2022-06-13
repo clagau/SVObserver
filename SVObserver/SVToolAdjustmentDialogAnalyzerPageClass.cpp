@@ -253,10 +253,9 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 			if (m_pCurrentAnalyzer)
 			{
-				m_pTool->Add((SvIe::SVTaskObjectClass*)m_pCurrentAnalyzer);
-
-				// Ensure this Object's inputs get connected
-				// Fix to ensure Friends get connections as well
+				m_pTool->Add(dynamic_cast<SvIe::SVTaskObjectClass*>(m_pCurrentAnalyzer));
+				// Ensure this object's inputs get connected
+				// Fix to ensure friends get connections as well
 				m_pTool->connectAllInputs();
 
 				// And last - Create (initialize) it

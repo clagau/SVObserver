@@ -280,7 +280,7 @@ bool LoopTool::RunAllChildren(SvIe::RunStatus& rRunStatus, SvStl::MessageContain
 		// Run your children...
 		for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
 		{
-			SVTaskObjectClass* pTaskObject = TaskObject(i);
+			SVTaskObjectClass* pTaskObject = getTaskObject(i);
 			if (nullptr != pTaskObject)
 			{
 				ChildRunStatus.ResetRunStateAndToolSetTimes();

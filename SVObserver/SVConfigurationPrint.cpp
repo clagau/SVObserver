@@ -201,10 +201,10 @@ static SVObjectClass* GetTool(const std::string& rName, const SvIe::SVTaskObject
 	SVObjectClass* pObject(nullptr);
 	for (int i = 0; !pObject && i < rToolSet.GetSize(); i++)
 	{
-		std::string ToolName( rToolSet.TaskObject(i)->GetName() );
+		std::string ToolName( rToolSet.getTaskObject(i)->GetName() );
 		if ( ToolName == rName) 
 		{
-			pObject = rToolSet.TaskObject(i);
+			pObject = rToolSet.getTaskObject(i);
 		}
 	}
 	return pObject;
@@ -804,7 +804,7 @@ void SVConfigurationPrint::PrintAllChildren(CDC* pDC, SvIe::SVTaskObjectListClas
 {
 	for (int nCnt = 0; nCnt < pTaskObj->GetSize(); nCnt++)
 	{
-		SVObjectClass* pChild = pTaskObj->TaskObject(nCnt);
+		SVObjectClass* pChild = pTaskObj->getTaskObject(nCnt);
 		if (pChild)
 		{
 			PrintObject(pDC, pChild, ptCurPos, nIndentLevel);

@@ -318,7 +318,7 @@ void SVToolSet::updateToolPosition()
 	for (long i(0), position(1); i < GetSize(); i++)
 	{
 		//! For object values use one based index
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (TaskObject(i));
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (getTaskObject(i));
 		if (nullptr != pTool)
 		{
 			position = pTool->setToolPosition(position);
@@ -544,12 +544,12 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 			// Run your children...
 			for (int i = 0; i < GetSize(); i++)
 			{
-				if (TaskObject(i))
+				if (getTaskObject(i))
 				{
 					toolRunStatus.ResetRunStateAndToolSetTimes();
 					toolRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
-					bRetVal = TaskObject(i)->Run(toolRunStatus, &m_RunErrorMessages) && bRetVal;
+					bRetVal = getTaskObject(i)->Run(toolRunStatus, &m_RunErrorMessages) && bRetVal;
 
 					// Update the Run Status
 					rRunStatus.updateState(toolRunStatus, false);

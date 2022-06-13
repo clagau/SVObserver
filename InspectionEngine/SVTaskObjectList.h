@@ -114,7 +114,7 @@ public:
 	bool getAvailableObjects(SVClassInfoStructVector* pList, const SvDef::SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	auto TaskObject(size_t i) const { return m_TaskObjectVector[i]; }
+	auto getTaskObject(size_t i) const { return m_TaskObjectVector[i]; }
 #pragma endregion Methods to replace processMessage
 
 	SVTaskObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner);
