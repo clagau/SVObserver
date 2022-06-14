@@ -64,7 +64,7 @@ public:
 
 protected:
 	virtual void addPages();
-	void ValidateAllSheets();
+	bool ValidateAllSheets();
 	bool ResetTools(SvOi::IObjectClass* pObject);
 
 	CPropertyPage* createToolAdjustmentDialogCommentPage();

@@ -463,7 +463,6 @@ void SVToolAdjustmentDialogSheetClass::OnDestroy()
 {
 	// reset Flag so errors do not go to the display.
 
-
 	CPropertySheet::OnDestroy();
 
 	// Don´t manipulate currentOperatorList at this point 
@@ -477,21 +476,21 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 {
 	CWaitCursor cwcMouse;
 
-	ValidateAllSheets();
+	if (false == ValidateAllSheets())
+	{
+		return;
+	}
 
 	SvOi::IObjectClass* pObject = GetTaskObject();
-	bool resetResult = ResetTools(pObject);
-
-	if (resetResult)
+	if (true == ResetTools(pObject))
 	{
 		markDocumentAsDirty(true);
 		EndDialog(IDOK);
 	}
-
 	else
 	{
 		SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
-		if(nullptr != pTaskObject)
+		if (nullptr != pTaskObject)
 		{
 			SvStl::MessageContainer message = pTaskObject->getFirstTaskMessage();
 			SvStl::MessageTextEnum textEnum = SvStl::Tid_Empty;
@@ -512,7 +511,7 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 }
 
 
-void SVToolAdjustmentDialogSheetClass::ValidateAllSheets()
+bool SVToolAdjustmentDialogSheetClass::ValidateAllSheets()
 {
 	// Try to validate the Equations
 	int cnt = GetPageCount();
@@ -529,7 +528,7 @@ void SVToolAdjustmentDialogSheetClass::ValidateAllSheets()
 					// Equation must be valid or disabled
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10219);
-					return;
+					return false;
 				}
 			}
 			else
@@ -538,7 +537,7 @@ void SVToolAdjustmentDialogSheetClass::ValidateAllSheets()
 				{
 					if (pIDlg->QueryAllowExit() == false)	// exit not allowed
 					{
-						return;
+						return false;
 					}
 				}
 				if (CPropertyPage* pPropertyPage = dynamic_cast <CPropertyPage*> (pPage))
@@ -548,6 +547,7 @@ void SVToolAdjustmentDialogSheetClass::ValidateAllSheets()
 			}
 		}
 	}
+	return true;
 }
 
 
