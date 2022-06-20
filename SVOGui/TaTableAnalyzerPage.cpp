@@ -430,12 +430,14 @@ void TaTableAnalyzerPage::SetPropertyControls()
 			setLimitProperties();
 			break;
 		case SvPb::TableAnalyzerAddColumnType:
+			resetValueController();
 			setAddColumnProperties();
 			break;
 		case SvPb::TableAnalyzerDeleteColumnType:
 			setDeleteColumnProperties();
 			break;
 		default:
+			resetValueController();
 			break;
 	}
 	UpdateData(false);
@@ -493,8 +495,22 @@ void TaTableAnalyzerPage::ShowControls(long SubType)
 	RedrawWindow();
 }
 
+void TaTableAnalyzerPage::resetValueController()
+{
+	
+		m_pValues.reset();
+		m_ExcludeHighWidget->setValueController(nullptr);
+		m_ExcludeLowWidget->setValueController(nullptr);
+		m_LimitWidget->setValueController(nullptr);
+		return;
+}
+	
+
+
+
 void TaTableAnalyzerPage::updateValueController()
 {
+	
 	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
 	{
 		auto pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};

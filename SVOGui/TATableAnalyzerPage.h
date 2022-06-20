@@ -82,6 +82,7 @@ namespace SvOg
 
 		void updateValueController();
 
+		void resetValueController();
 		/// Update the displayed property controls of the selected sort analyzer.
 		void setSortProperties();
 
