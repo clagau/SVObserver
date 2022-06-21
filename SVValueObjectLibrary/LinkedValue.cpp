@@ -1556,7 +1556,14 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					{
 						if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(pLinkedObject) ; nullptr != pValue)
 						{
-							SetArraySize(pValue->getArraySize());
+							if (-1 == m_LinkedObjectRef.getIndex())
+							{
+								SetArraySize(pValue->getArraySize());
+							}
+							else
+							{
+								SetArraySize(1);
+							}
 						}
 					}
 					if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(m_LinkedObjectRef.getObject()); nullptr != pValue && SvUl::VTGroups::Text == SvUl::getVTGroup(pValue->getDefaultValue().vt).first && SvUl::VTGroups::Text != SvUl::getVTGroup(GetDefaultType()).first)
