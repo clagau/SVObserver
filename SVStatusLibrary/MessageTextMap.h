@@ -301,8 +301,6 @@ namespace SvStl
 							"error %s with enable internal Trigger when the system was going online.")},
 		{Tid_GoOnlineFailure_CreatePPQThread, _T("Configuration cannot enter Run.  There is the "
 							"error %s by creating the PPQ Thread.")},
-		{Tid_GoOnlineFailure_CreateTimerThread, _T("Configuration cannot enter Run.  There is the "
-							"error %s by creating the timer Thread.")},
 		{Tid_GoOnlineFailure_InvalidPointerConfig, _T("Configuration cannot enter Run.  Invalid pointer of configuration or mainWnd.")},
 		{Tid_GoOnlineFailure_ModuleReadyOutput, _T("Configuration cannot enter Run.  Cannot write to module ready output.")},
 		{Tid_ErrorNotEnoughDiskSpace, _T("Unable to set monitor list for %s - Not enough Disk Space Available")},

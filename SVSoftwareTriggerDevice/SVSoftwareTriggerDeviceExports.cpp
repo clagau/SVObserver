@@ -23,7 +23,7 @@ HRESULT WINAPI SVCreate()
 	gRefCount++;
 	if (1 == gRefCount)
 	{
-		result = gSoftwareTrigger.Initialize(true);
+		result = gSoftwareTrigger.Initialize();
 	}
 	return result;
 }
@@ -35,7 +35,7 @@ HRESULT WINAPI SVDestroy()
 	gRefCount--;
 	if (0 >= gRefCount)
 	{
-		result = gSoftwareTrigger.Initialize(false);
+		result = gSoftwareTrigger.Destroy();
 	}
 	return result;
 }

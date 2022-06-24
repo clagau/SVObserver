@@ -23,7 +23,7 @@ constexpr uint8_t cPlcBad = 5;
 constexpr uint8_t cPlcGood = 6;
 constexpr uint8_t cSingleObjectType = 1;
 constexpr uint32_t cNormalizePeriod = 500;
-constexpr ULONG cTimerResolution = 5000;
+constexpr int cTimerConversion = 10;
 constexpr double cSecondsPerMinute = 60.0;
 constexpr double cConversionMicrosec = 1000000.0;
 constexpr LPCTSTR cResultFilename = _T("Result");
@@ -48,20 +48,20 @@ void ChannelTimer(std::atomic_bool& rRun, const SimulatedTriggerData& rSimTrigge
 	//Normalize the period to the next 500µs
 	uint32_t period = rSimTriggerData.m_period + cNormalizePeriod - rSimTriggerData.m_period % cNormalizePeriod;
 	LARGE_INTEGER pauseTime;
-	pauseTime.QuadPart = -static_cast<int64_t>(period * 10);
+	pauseTime.QuadPart = -static_cast<int64_t>(period * cTimerConversion);
 
 	uint32_t currentIndex {0UL};
 	uint8_t currentTriggerIndex {1};
 	uint32_t objectID {rSimTriggerData.m_objectID};
-	HANDLE timer = ::CreateWaitableTimer(NULL, FALSE, rSimTriggerData.m_name.c_str());
+	HANDLE timerHandle = ::CreateWaitableTimerEx(nullptr, rSimTriggerData.m_name.c_str(), CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
 
 	while(rRun)
 	{
-		if(currentTriggerIndex <= rSimTriggerData.m_triggerPerObjectID && nullptr != timer )
+		if(currentTriggerIndex <= rSimTriggerData.m_triggerPerObjectID && nullptr != timerHandle)
 		{
-			if (0 != ::SetWaitableTimer(timer, &pauseTime, 0L, nullptr, nullptr, FALSE))
+			if (0 != ::SetWaitableTimer(timerHandle, &pauseTime, 0L, nullptr, nullptr, FALSE))
 			{
-				if (WaitForSingleObject(timer, INFINITE) == WAIT_OBJECT_0)
+				if (WaitForSingleObject(timerHandle, INFINITE) == WAIT_OBJECT_0)
 				{
 					std::string acquisitionFile;
 					if (currentIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
@@ -125,10 +125,10 @@ void ChannelTimer(std::atomic_bool& rRun, const SimulatedTriggerData& rSimTrigge
 			}
 		}
 	}
-	if (nullptr != timer)
+	if (nullptr != timerHandle)
 	{
-		::CancelWaitableTimer(timer);
-		::CloseHandle(timer);
+		::CancelWaitableTimer(timerHandle);
+		::CloseHandle(timerHandle);
 	}
 }
 
@@ -143,8 +143,6 @@ HRESULT SimulatedTriggerSource::initialize()
 	HRESULT result{ S_OK };
 	if(false == m_plcSimulateFile.empty())
 	{
-		m_pSetTimerResolution = reinterpret_cast<NtSetTimerResolutionPtr>(GetProcAddress(GetModuleHandle("ntdll.dll"), "NtSetTimerResolution"));
-
 		std::ifstream cycleFile;
 		std::string fileLine;
 		cycleFile.open(m_plcSimulateFile.c_str(), std::ifstream::in | std::ifstream::binary);
@@ -242,20 +240,8 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 	}
 
 	bool result = __super::setTriggerChannel(channel, active);
-	if(true == result)
+	if(false == result)
 	{
-		if (nullptr != m_pSetTimerResolution)
-		{
-			m_pSetTimerResolution(cTimerResolution, true, &m_originalTimerResolution);
-		}
-	}
-	else
-	{
-		if (nullptr != m_pSetTimerResolution)
-		{
-			m_pSetTimerResolution(m_originalTimerResolution, false, nullptr);
-		}
-
 		std::string resultFilename;
 		size_t pos = m_plcSimulateFile.rfind('\\');
 		if (std::string::npos != pos)

@@ -12,8 +12,6 @@
 
 namespace SvPlc
 {
-using NtSetTimerResolutionPtr = long(__stdcall*)(IN ULONG RequestedResolution, IN BOOLEAN Set, OUT PULONG ActualResolution);
-
 struct SimulatedTriggerData
 {
 	std::string m_name;
@@ -66,8 +64,6 @@ private:
 
 	std::array<ChannelData, cNumberOfChannels> m_channel;
 	std::string m_plcSimulateFile;
-	NtSetTimerResolutionPtr m_pSetTimerResolution {nullptr};
-	ULONG m_originalTimerResolution {0UL};
 
 	std::array<std::atomic_ulong, cNumberOfChannels> m_ObjectsGood{ 0UL, 0UL, 0UL, 0UL };
 	std::array<std::atomic_ulong, cNumberOfChannels> m_ObjectsBad {0UL, 0UL, 0UL, 0UL};

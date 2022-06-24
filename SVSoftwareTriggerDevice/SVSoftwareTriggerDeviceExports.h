@@ -28,4 +28,3 @@ unsigned long WINAPI SVTriggerGetParameterCount( unsigned long triggerIndex);
 _variant_t WINAPI SVTriggerGetParameterName(unsigned long triggerIndex, unsigned long index);
 _variant_t WINAPI SVTriggerGetParameterValue(unsigned long triggerIndex, unsigned long index);
 HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerIndex, unsigned long p_ulIndex, const _variant_t& rValue);
-

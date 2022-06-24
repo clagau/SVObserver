@@ -60,7 +60,6 @@
 #include <iterator>			//Used by static library
 #include <list>				//Used by static library
 #include <map>
-#include <mmsystem.h>
 #include <mutex>
 #include <set>				//Used by static library
 #include <string>

@@ -503,8 +503,9 @@ private:
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
-	SVIMProductEnum             m_eProductType{ SVIM_PRODUCT_TYPE_UNKNOWN };
-	volatile bool               m_bConfigurationValid = false;
+	std::thread m_timerThread;
+	SVIMProductEnum m_eProductType{ SVIM_PRODUCT_TYPE_UNKNOWN };
+	volatile bool m_bConfigurationValid = false;
 
 	//Put filenames here
 	std::string m_preRunExecutionFile;
@@ -512,11 +513,11 @@ private:
 
 	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;
 	SvPb::InspectionList m_inspList4TRC;
+	std::atomic_bool m_runTimer {false};
 
-	///list with additional files for audidtrail  
-	
+	///list with additional files for audit trail
 	mutable SvUl::AuditFiles m_AuditWhiteList;
-	/// list with default files for audidtrail  
+	/// list with default files for audit trail  
 	mutable SvUl::AuditFiles m_AuditDefaultList;
 #pragma endregion Member Variables
 };

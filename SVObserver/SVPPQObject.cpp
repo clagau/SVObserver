@@ -222,16 +222,6 @@ SVPPQObject::~SVPPQObject()
 {
 	SVObjectManagerClass::Instance().ClearShortPPQIndicator();
 
-	// Stop the multimedia timer thread for the output and reset time delays
-	if (0 != m_uOutputTimer)
-	{
-		::timeKillEvent(m_uOutputTimer);
-
-		::timeEndPeriod(1);
-
-		m_uOutputTimer = 0;
-	}
-
 	if (m_isCreated)
 	{
 		Destroy();
@@ -339,14 +329,11 @@ bool SVPPQObject::Create()
 	m_ProcessInspectionsSet.clear();
 	calcUseProcessingOffset4InterestFlag();
 
-	if (m_isCreated)
+	// Force the Inspections to rebuild
+	for (auto pInspection : m_arInspections)
 	{
-		// Force the Inspections to rebuild
-		for (auto pInspection : m_arInspections)
-		{
-			pInspection->RebuildInspection();
-		}// end for
-	}
+		pInspection->RebuildInspection();
+	}// end for
 
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
@@ -395,17 +382,7 @@ bool SVPPQObject::Rebuild()
 void SVPPQObject::Destroy()
 {
 	// Return if not created
-	if (!m_isCreated) { return; }
-
-	// Stop the multimedia timer thread for the output and reset time delays
-	if (0 != m_uOutputTimer)
-	{
-		::timeKillEvent(m_uOutputTimer);
-
-		::timeEndPeriod(1);
-
-		m_uOutputTimer = 0;
-	}
+	if (false == m_isCreated) { return; }
 
 	m_oTriggerQueue.clear();
 
@@ -1032,23 +1009,6 @@ void SVPPQObject::GoOnline()
 		throw Msg;
 	}// end if
 
-	// Create a multimedia timer thread for the output and reset time delays
-	if (TIMERR_NOERROR != ::timeBeginPeriod(1))
-	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreateTimerThread, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
-		throw Msg;
-	}
-
-	//The timer should start when not "Next Trigger Mode" or when reset or data valid delay are not 0
-	bool StartTimer(SvDef::SVPPQNextTriggerMode != m_outputMode);
-	StartTimer |= 0 < m_resetDelay;
-	StartTimer |= 0 < m_DataValidDelay;
-	if (StartTimer)
-	{
-		m_uOutputTimer = ::timeSetEvent(1, 0, SVPPQObject::OutputTimerCallback, reinterpret_cast<DWORD_PTR>(this),
-			TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
-	}// end if
-
 	// Create the PPQ's threads
 	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, GetName()))
 	{
@@ -1104,16 +1064,6 @@ bool SVPPQObject::GoOffline()
 	{
 		pInspection->GoOffline();
 	}// end for
-
-	// Stop the multimedia timer thread for the output and reset time delays
-	if (0 != m_uOutputTimer)
-	{
-		::timeKillEvent(m_uOutputTimer);
-
-		::timeEndPeriod(1);
-
-		m_uOutputTimer = 0;
-	}
 
 	m_PPQPositions.setMaxCameraShutterTime(0.0);
 	// Bring the threads back down to earth
@@ -2746,19 +2696,6 @@ bool SVPPQObject::IsObjectInPPQ(const SVObjectClass& object) const
 	return retValue;
 }
 
-void CALLBACK SVPPQObject::OutputTimerCallback(UINT, UINT, DWORD_PTR dwUser, DWORD_PTR, DWORD_PTR)
-{
-	SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(dwUser);
-
-	if (nullptr != pPPQ)
-	{
-		if (pPPQ->m_AsyncProcedure.IsActive())
-		{
-			pPPQ->NotifyProcessTimerOutputs();
-		}
-	}
-}
-
 HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct& rProduct, SvIe::SVVirtualCamera* pCamera)
 {
 	HRESULT l_Status = S_OK;
@@ -2797,7 +2734,7 @@ void CALLBACK SVPPQObject::APCThreadProcess(ULONG_PTR pData)
 	}
 }
 
-HRESULT SVPPQObject::NotifyProcessTimerOutputs()
+HRESULT SVPPQObject::NotifyProcessTimerOutputs() const
 {
 	HRESULT l_Status = S_OK;
 
@@ -3598,6 +3535,26 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector* pErr
 	return true;
 }
 
+bool SVPPQObject::requiresTimer() const
+{
+	bool result {SvDef::SVPPQNextTriggerMode != m_outputMode && 0 != m_outputDelay};
+	result |= 0 < m_resetDelay;
+	result |= 0 < m_DataValidDelay;
+	return result;
+}
+
+HRESULT SVPPQObject::setModuleReady(bool set)
+{
+	HRESULT result {E_FAIL};
+	if (nullptr != m_pTrigger && nullptr != m_pTrigger->getDevice() && nullptr != m_pTrigger->getDevice()->getDLLTrigger())
+	{
+		_variant_t moduleReadyState {set};
+		unsigned long triggerIndex = m_pTrigger->getDevice()->getDLLTrigger()->GetHandle(m_pTrigger->getDevice()->getDigitizerNumber());
+		result = m_pTrigger->getDevice()->getDLLTrigger()->SetParameterValue(triggerIndex, SVIOParameterEnum::SVModuleReady, moduleReadyState);
+	}
+	return result;
+}
+
 void SVPPQObject::SetNAKMode(SvDef::NakGeneration nakMode, int NAKPar)
 {
 	m_NAKMode = nakMode;
@@ -3913,9 +3870,9 @@ void SVPPQObject::AttachAcqToTriggers(bool setSoftwareTrigger)
 			{
 				if (setSoftwareTrigger)
 				{
-					unsigned long triggerHandle = pTriggerDll->GetHandle(iDigNum);
+					unsigned long triggerIndex = pTriggerDll->GetHandle(iDigNum);
 					_variant_t value = m_pTrigger->GetSoftwareTriggerPeriod();
-					pTriggerDll->SetParameterValue(triggerHandle, SVIOParameterEnum::TriggerPeriod, value);
+					pTriggerDll->SetParameterValue(triggerIndex, SVIOParameterEnum::TriggerPeriod, value);
 				}
 
 				bool cameraSoftwareTrigger {false};

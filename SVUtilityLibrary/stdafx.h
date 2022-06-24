@@ -55,6 +55,7 @@
 #include <assert.h>
 #include <bitset>
 #include <cassert>
+#include <chrono>
 #include <comdef.h>
 #include <comutil.h>
 #include <direct.h>

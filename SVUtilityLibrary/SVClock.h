@@ -13,8 +13,8 @@
 
 namespace SvUl
 {
-	static const double c_MicrosecondsPerMillisecond = 1000.0; ///< the number of microseconds per millisecond: one thousand
-	static const int c_secondsPerMinute = 60; ///< the number of seconds per minute: sixty
+	constexpr double c_MicrosecondsPerMillisecond = 1000.0; /// the number of microseconds per millisecond
+	constexpr int c_secondsPerMinute = 60;					/// the number of seconds per minute
 
 	enum SVConversionEnum
 	{
@@ -30,6 +30,6 @@ namespace SvUl
 	double GetMaxTimeStamp();
 	double GetMinTimeStamp();
 
-	double ConvertTo(SVConversionEnum p_Units, const double& p_rTimeStamp);
-	double ConvertFrom(SVConversionEnum p_Units, double p_Time);
+	double ConvertTo(SVConversionEnum p_Units, const double& rTimeStamp);
+	double ConvertFrom(SVConversionEnum p_Units, const double& rTimeStamp);
 } //namespace SvUl

@@ -262,7 +262,6 @@ enum MessageTextEnum
 	Tid_GoOnlineFailure_Trigger,
 	Tid_GoOnlineFailure_InternalTrigger,
 	Tid_GoOnlineFailure_CreatePPQThread,
-	Tid_GoOnlineFailure_CreateTimerThread,
 	Tid_GoOnlineFailure_InvalidPointerConfig,
 	Tid_GoOnlineFailure_ModuleReadyOutput,
 	Tid_ErrorNotEnoughDiskSpace,

@@ -19,20 +19,22 @@ constexpr unsigned long cMaxSoftwareTriggers = 4;
 
 class SVSoftwareTriggerDevice : public SvTrig::IODeviceBase
 {
+public:
 	struct TimerInfo
 	{
-		std::atomic_uint32_t m_timerID {0};
+		std::thread m_thread;
+		std::atomic_bool m_timerOn {false};
 		std::atomic_ulong m_triggerIndex {0UL};
 		std::atomic_uint16_t m_period {0};
 		std::atomic_bool m_newSetting {false};
 		std::atomic_bool m_pause {false};
 	};
 
-public:
 	SVSoftwareTriggerDevice() = default;
 	virtual ~SVSoftwareTriggerDevice() = default;
 
-	HRESULT Initialize(bool bInit);
+	HRESULT Initialize();
+	HRESULT Destroy();
 
 	unsigned long GetTriggerCount() const;
 	unsigned long GetTriggerHandle(unsigned long index) const;
@@ -42,10 +44,8 @@ public:
 	_variant_t TriggerGetParameterName( unsigned long triggerIndex, unsigned long index) const;
 	_variant_t TriggerGetParameterValue( unsigned long triggerIndex, unsigned long index) const;
 	HRESULT TriggerSetParameterValue( unsigned long triggerIndex, unsigned long index, const _variant_t& rValue);
-	
-	void dispatchTrigger(unsigned long triggerIndex);
 
-	std::array<TimerInfo, cMaxSoftwareTriggers>& getTimerList() { return m_timerList; }
+	void dispatchTrigger(unsigned long triggerIndex, double timestamp);
 private:
 	void beforeStartTrigger(unsigned long triggerIndex) override;
 	void beforeStopTrigger(unsigned long triggerIndex) override;

@@ -795,22 +795,27 @@ _variant_t SVLptIOImpl::GetParameterName(unsigned long index) const
 
 	switch (index)
 	{
-		case SVBoardVersion:
+		case SVIOParameterEnum::SVModuleReady:
+		{
+			result.SetString(_T("Module Ready(R/W)"));
+			break;
+		}
+		case SVIOParameterEnum::SVBoardVersion:
 		{
 			result.SetString(_T("Board Version(R)"));
 			break;
 		}
-		case SVBoardType:
+		case SVIOParameterEnum::SVBoardType:
 		{
 			result.SetString(_T("Board Type(R/W)"));
 			break;
 		}
-		case SVFanState:
+		case SVIOParameterEnum::SVFanState:
 		{
 			result.SetString(_T("Fan State(R)"));
 			break;
 		}
-		case SVFanFreq:
+		case SVIOParameterEnum::SVFanFreq:
 		{
 			result.SetString(_T("Fan Frequency"));
 			break;
@@ -828,7 +833,12 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 
 	switch(index)
 	{
-		case SVBoardVersion:
+		case SVIOParameterEnum::SVModuleReady:
+		{
+			result = m_moduleReady ? TRUE : FALSE;
+			break;
+		}
+		case SVIOParameterEnum::SVBoardVersion:
 		{
 			long lVer = GetBoardVersion();
 			std::string version = SvUl::Format(_T("Dedicated I/O Processor board %d.%02d firmware %d.%02d"),
@@ -839,7 +849,7 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 			result.SetString(version.c_str());
 			break;
 		}
-		case SVBoardType:
+		case SVIOParameterEnum::SVBoardType:
 		{
 			unsigned long type;
 			if (S_OK == GetBoardType(type))
@@ -848,7 +858,7 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 			}
 			break;
 		}
-		case SVFanState:
+		case SVIOParameterEnum::SVFanState:
 		{
 			unsigned long fanState;
 			if (S_OK == GetFanState(fanState))
@@ -857,7 +867,7 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 			}
 			break;
 		}
-		case SVFanFreq:
+		case SVIOParameterEnum::SVFanFreq:
 		{
 			long lTmp[4];
 			if (S_OK == GetFanFreq(lTmp))
@@ -871,7 +881,7 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 			}
 			break;
 		}
-		case SVLogDump:
+		case SVIOParameterEnum::SVLogDump:
 		{
 			unsigned long LogCode[1024];
 			unsigned long TimeStamp[1024];
@@ -913,7 +923,7 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 			}
 			break;
 		}
-		case SVRabbitRTC:
+		case SVIOParameterEnum::SVRabbitRTC:
 		{
 			unsigned long lRTC = 0;
 			if (S_OK == GetRTC(lRTC))
@@ -934,7 +944,16 @@ HRESULT SVLptIOImpl::SetParameterValue(unsigned long Index, const _variant_t& rV
 
 	switch(Index)
 	{
-		case SVBoardType:
+		case SVIOParameterEnum::SVModuleReady:
+		{
+			if (VT_BOOL == rValue.vt)
+			{
+				m_moduleReady = rValue.boolVal ? true : false;
+				result = S_OK;
+			}
+			break;
+		}
+		case SVIOParameterEnum::SVBoardType:
 		{
 			if (VT_I4 == rValue.vt)
 			{
@@ -950,7 +969,7 @@ HRESULT SVLptIOImpl::SetParameterValue(unsigned long Index, const _variant_t& rV
 			}
 			break;
 		}
-		case SVRabbitRTC:
+		case SVIOParameterEnum::SVRabbitRTC:
 		{
 			if (VT_I4 == rValue.vt)
 			{
@@ -958,19 +977,12 @@ HRESULT SVLptIOImpl::SetParameterValue(unsigned long Index, const _variant_t& rV
 			}
 			break;
 		}
-		case SVRabbitWriteLog:
+		case SVIOParameterEnum::SVRabbitWriteLog:
 		{
 			if (VT_I4 == rValue.vt)
 			{
 				SetLogValue(rValue.lVal);
-			}
-			break;
-		}
-		case SVModuleReady:
-		{
-			if(VT_BOOL == rValue.vt)
-			{
-				m_moduleReady = rValue.boolVal ? true : false;
+				result = S_OK;
 			}
 			break;
 		}

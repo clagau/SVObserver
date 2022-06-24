@@ -226,6 +226,12 @@ public:
 	void setTriggerTimeWindow(double preTriggerTimeWindow, double postTriggerTimeWindow) { m_PPQPositions.setTriggerTimeWindow(preTriggerTimeWindow, postTriggerTimeWindow); }
 
 	const SVIOEntryHostStructPtrVector& getUsedOutputs() const { return m_UsedOutputs; }
+
+	HRESULT NotifyProcessTimerOutputs() const;
+
+	bool requiresTimer() const;
+	HRESULT setModuleReady(bool set);
+
 protected:
 
 	struct SVCameraQueueElement
@@ -270,12 +276,9 @@ protected:
 	typedef std::map<SvIe::SVVirtualCamera*, SVCameraInfoElement> SVCameraInfoMap;
 	typedef std::map<SvIe::SVVirtualCamera*, SVCameraQueueElement> SVPendingCameraResponseMap;
 
-	static void CALLBACK OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 );
 	static void CALLBACK APCThreadProcess(ULONG_PTR pData);
 
 	HRESULT MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& rProduct, SvIe::SVVirtualCamera* pCamera );
-
-	HRESULT NotifyProcessTimerOutputs();
 
 	//************************************
 	/// Processes the first element (if available) in the trigger queue and creates a product from it
@@ -345,8 +348,9 @@ protected:
 	bool SetProductIncomplete( SVProductInfoStruct& rProduct );
 
 	bool RecycleProductInfo( SVProductInfoStruct *pProduct );
-
+	
 	void RebuildProductCameraInfoStructs();
+
 
 	//************************************
 	/// Processes a single camera queue event

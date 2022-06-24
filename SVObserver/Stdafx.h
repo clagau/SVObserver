@@ -120,7 +120,6 @@ namespace Gdiplus
 #include <map>
 #include <math.h>
 #include <memory>
-#include <Mmsystem.h>
 #include <mutex>
 #include <numeric>
 #include <Objidl.h>

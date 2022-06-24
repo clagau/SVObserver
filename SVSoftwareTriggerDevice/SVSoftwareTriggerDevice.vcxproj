@@ -68,7 +68,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;Winmm.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>.\SVSoftwareTriggerDevice.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
@@ -96,7 +96,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;Winmm.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>.\SVSoftwareTriggerDevice.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>

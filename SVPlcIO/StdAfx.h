@@ -58,7 +58,6 @@
 #include <iterator>			//Used by static library
 #include <map>
 #include <memory>
-#include <mmsystem.h>
 #include <mutex>
 #include <queue>
 #include <set>				//Used by static library
