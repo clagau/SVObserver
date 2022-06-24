@@ -45,7 +45,7 @@ HRESULT SVThread::Create(LPCTSTR tag)
 		return E_FAIL;
 	}
 
-	if (!m_hShutdown)
+	if (nullptr == m_hShutdown)
 	{
 		m_hShutdown = ::CreateEvent( nullptr, true, false, nullptr );
 		if (nullptr == m_hShutdown)
@@ -57,7 +57,10 @@ HRESULT SVThread::Create(LPCTSTR tag)
 		}
 	}
 
-	m_thread = std::thread(&SVThread::ThreadProc, reinterpret_cast<LPVOID> (this));
+	if (nullptr == m_thread.native_handle() && false == m_thread.joinable())
+	{
+		m_thread = std::thread(&SVThread::ThreadProc, reinterpret_cast<LPVOID> (this));
+	}
 
 	return result;
 }
