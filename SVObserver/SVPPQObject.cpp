@@ -2738,7 +2738,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs() const
 {
 	HRESULT l_Status = S_OK;
 
-	PpqProcessFunction* pProcessFunction {nullptr};
+	const PpqProcessFunction* pProcessFunction {nullptr};
 
 	double currentTime = SvUl::GetTimeStamp();
 	if (0 < m_DataValidDelay)
