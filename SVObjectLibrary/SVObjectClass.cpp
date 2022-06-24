@@ -101,7 +101,6 @@ If this Object is NOT valid, the validationReferenceID refers to the object on t
 */
 void SVObjectClass::init()
 {
-	m_isCreated = false;
 	m_embeddedID = SvPb::NoEmbeddedId;
 
 	// Set object Info...

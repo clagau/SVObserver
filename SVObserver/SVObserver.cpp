@@ -303,8 +303,6 @@ BOOL SVObserverApp::InitInstance()
 
 	ValidateMRUList();
 
-	SvSyl::SVThread::SetDiagnostic(getIniInfoHandler().GetInitialInfo().m_diagnostic);
-
 	// Get SourceImageDepth
 	m_lSouceImageDepth = GetProfileInt(_T("Settings"), _T("Source Image Depth"), -1);
 	if (m_lSouceImageDepth == -1)

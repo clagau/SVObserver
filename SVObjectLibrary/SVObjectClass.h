@@ -251,7 +251,7 @@ protected:
 	std::vector<UINT> m_ObjectAttributesSet;
 
 	// Refer to IsCreated()
-	bool m_isCreated;
+	bool m_isCreated {false};
 	//If object is embedded, set this ID
 	SvPb::EmbeddedIdEnum m_embeddedID;
 	//Owner Info

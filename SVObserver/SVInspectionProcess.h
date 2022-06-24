@@ -56,7 +56,16 @@ class SVInspectionProcess :
 	SV_DECLARE_CLASS
 
 public:
+	using InspectionProcessFunction = std::function<void()>;
 	typedef std::unordered_map<std::string, SVObjectClass*> SVValueObjectMap;
+
+	enum InspectionFunction
+	{
+		Inspection,
+		NotifyLastInspected,
+		ProcessCommand,
+		Size
+	};
 
 	explicit SVInspectionProcess( LPCSTR ObjectName );
 	SVInspectionProcess( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
@@ -162,7 +171,7 @@ public:
 	std::pair<SvTrig::SVTriggerInfoStruct, SVInspectionInfoStruct> getLastProductData() const;
 	void resetLastProduct();
 
-	HRESULT LastProductNotify();
+	void LastProductNotify();
 
 	SVToolSet* GetToolSet() const;
 
@@ -305,9 +314,9 @@ protected:
 
 	void ThreadProcess( bool& p_WaitForEvents );
 
-	HRESULT ProcessInspection( bool& p_rProcessed);
-	HRESULT ProcessNotifyWithLastInspected(bool& p_rProcessed);
-	HRESULT ProcessCommandQueue( bool& p_rProcessed );
+	HRESULT ProcessInspection();
+	HRESULT ProcessNotifyWithLastInspected();
+	HRESULT ProcessCommandQueue();
 	
 	///True if product is a reject
 	bool isReject();
@@ -390,6 +399,7 @@ private:
 	std::atomic_bool m_offlineRequest{ false };
 	std::atomic_bool m_processActive{ false };
 	SVProductInfoStruct m_product{};
+	std::array <InspectionProcessFunction, InspectionFunction::Size> m_processFunctions;
 };
 
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;

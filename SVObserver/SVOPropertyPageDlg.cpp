@@ -35,7 +35,6 @@
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
 #include "SVPPQObject.h"
-#include "SVPPQConstants.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "Triggering/SVTriggerConstants.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -1035,7 +1034,7 @@ void SVOPropertyPageDlg::SetupPPQ()
 			pCombo->SetLabelText(_T("Conditional Output"));
 			pCombo->SetInfoText( InfoString.c_str() );
 			pCombo->CreateComboBox(CBS_DROPDOWNLIST);
-			int nIndex = pCombo->AddString(PPQ_CONDITIONAL_OUTPUT_ALWAYS);
+			int nIndex = pCombo->AddString(SvDef::cPpqConditionalOutputAlways);
 			pCombo->SetItemData(nIndex, nIndex);
 			int selection = nIndex;
 			

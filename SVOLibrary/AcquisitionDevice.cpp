@@ -12,8 +12,28 @@
 #include "stdafx.h"
 #include "AcquisitionDevice.h"
 
-void CALLBACK AcquisitionDevice::APCProc(ULONG_PTR )
+void CALLBACK AcquisitionDevice::APCProc(ULONG_PTR pData)
 {
+	AcquisitionDevice* pAcquisitionDevice = reinterpret_cast<AcquisitionDevice*> (pData);
+	if (nullptr != pAcquisitionDevice)
+	{
+		long queueSize {0L};
+		pAcquisitionDevice->m_cameraQueue.GetSize(queueSize);
+		bool done {1 > queueSize};
+
+		while (false == done)
+		{
+			CameraInfo cameraInfo;
+			pAcquisitionDevice->m_cameraQueue.RemoveHead(&cameraInfo);
+
+			for (const auto& rCallback : pAcquisitionDevice->m_PpqCameraCallbackList)
+			{
+				rCallback.second(pAcquisitionDevice->m_pCaller, cameraInfo);
+			}
+			pAcquisitionDevice->m_cameraQueue.GetSize(queueSize);
+			done = (1 > queueSize);
+		}
+	}
 }
 
 AcquisitionDevice::AcquisitionDevice(LPCTSTR Name)
@@ -106,8 +126,7 @@ HRESULT AcquisitionDevice::UnregisterCallback(ULONG_PTR pPPQ)
 
 HRESULT AcquisitionDevice::Start()
 {
-	auto threadProcess = [this](bool& rProcessed) {return Process(rProcessed); };
-	HRESULT result = m_Thread.Create(&AcquisitionDevice::APCProc, threadProcess, m_DeviceName.c_str());
+	HRESULT result = m_Thread.Create(&AcquisitionDevice::APCProc, m_DeviceName.c_str());
 
 	if (S_OK == result)
 	{
@@ -137,26 +156,6 @@ HRESULT AcquisitionDevice::Reset()
 {
 	m_cameraQueue.clear();
 	return S_OK;
-}
-
-void AcquisitionDevice::Process( bool& )
-{
-	long queueSize{ 0L };
-	m_cameraQueue.GetSize(queueSize);
-	bool done{ 1 >  queueSize};
-
-	while (false == done)
-	{
-		CameraInfo cameraInfo;
-		m_cameraQueue.RemoveHead(&cameraInfo);
-
-		for(const auto& rCallback : m_PpqCameraCallbackList)
-		{
-			rCallback.second(m_pCaller, cameraInfo);
-		}
-		m_cameraQueue.GetSize(queueSize);
-		done = (1 > queueSize);
-	}
 }
 
 void AcquisitionDevice::Notify(CameraInfo&& cameraInfo)

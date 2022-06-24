@@ -20,7 +20,6 @@ struct SourceFileParams;
 
 namespace SvSyl
 {
-using ProcessThread = std::function<void(bool&)>;
 
 class SVThread
 {
@@ -32,13 +31,10 @@ public:
 
 #pragma region Public Methods
 public:
-	HRESULT Create(const ProcessThread& rProcessThread, LPCTSTR tag);
+	HRESULT Create(LPCTSTR tag);
 	void Destroy();
 
-	unsigned long GetThreadID() const;
-
-	bool IsDisabled() { return (m_pProcessThread == nullptr || m_tag.empty()); };
-	HRESULT Restart();
+	bool IsDisabled() { return m_threadName.empty(); };
 
 	int GetPriority() const;
 	void SetPriority(int priority);
@@ -46,24 +42,18 @@ public:
 	bool IsActive() const;
 	HANDLE GetThreadHandle() const;
 
-	static void SetDiagnostic(bool diagnostic) { m_diagnostic = diagnostic; }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
 private:
 	static DWORD WINAPI ThreadProc( LPVOID lpParam );
-	static void SetThreadError(DWORD MessageCode, LPCTSTR Message, SvStl::SourceFileParams SourceFile);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
-	static bool m_diagnostic;
 	HANDLE m_hShutdown{ nullptr };
-	HANDLE m_hThreadComplete{ nullptr };
-	HANDLE m_hThread{ nullptr };
-	unsigned long m_ulThreadID{0UL};
-	std::string m_tag;
-	ProcessThread m_pProcessThread{ nullptr };
+	mutable std::thread m_thread;
+	std::string m_threadName;
 #pragma endregion Member Variables
 };
 } //namespace SvSyl

@@ -149,8 +149,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	// init sequencer - everybody wraps except Single Iteration mode
 	m_loadSequence.Init(m_fileList.begin(), m_fileList.end(), !IsSingleIterationLoadMode());
 
-	auto threadEvent = [this](bool& rProcessed) {return OnThreadEvent(rProcessed); };
-	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, threadEvent, m_name.c_str());
+	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, m_name.c_str());
 	return hr;
 }
 
@@ -207,9 +206,9 @@ HRESULT SVFileCamera::CopyImage(SvOi::ITRCImage* pImage)
 	return hr;
 }
 
-void SVFileCamera::OnAPCEvent(ULONG_PTR data)
+void SVFileCamera::OnAPCEvent(ULONG_PTR pData)
 {
-	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*> (data);
+	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*> (pData);
 	if (nullptr != pCamera)
 	{
 		std::string acuisitionFile = pCamera->getAcquisitionFile();
@@ -248,7 +247,12 @@ void SVFileCamera::OnAPCEvent(ULONG_PTR data)
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_IMAGE_LOAD_ERROR, id, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
+		}
 
+		if (M_NULL != pCamera->m_image)
+		{
+			// fire EndFrame event
+			pCamera->m_endFrameEvent.Fire(pCamera->m_index);
 		}
 #ifdef TRACE_LOADTIME
 		Duration = SvUl::GetTimeStamp() -Duration;
@@ -257,16 +261,6 @@ void SVFileCamera::OnAPCEvent(ULONG_PTR data)
 		OutputDebugString(ss.str().c_str());
 #endif
 
-	}
-}
-
-void SVFileCamera::OnThreadEvent(bool&)
-{
-	// check file Load status ?
-	if (M_NULL != m_image)
-	{
-		// fire EndFrame event
-		m_endFrameEvent.Fire(m_index);
 	}
 }
 

@@ -41,7 +41,6 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVSystemLibrary/SVThread.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Triggering/SVTriggerObject.h"

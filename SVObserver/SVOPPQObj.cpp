@@ -12,7 +12,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVOPPQObj.h"
-#include "SVPPQConstants.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -248,7 +247,7 @@ void SVOPPQObj::RemoveCameraInputConditionalOutput()
 {
 	if (IsConditionalOutputCameraInput())
 	{
-		m_conditionalOutputName = PPQ_CONDITIONAL_OUTPUT_ALWAYS;
+		m_conditionalOutputName = SvDef::cPpqConditionalOutputAlways;
 	}
 }
 

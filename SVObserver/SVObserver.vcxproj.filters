@@ -829,9 +829,6 @@
     <ClInclude Include="SVPPQBar.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVPPQConstants.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVPPQEntryDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

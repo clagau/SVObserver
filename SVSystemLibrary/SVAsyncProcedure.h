@@ -26,19 +26,17 @@ private:
 	//static void CALLBACK APCProc( DWORD dwParam );
 	
 public:
-	SVAsyncProcedure();
+	SVAsyncProcedure() = default;
 	~SVAsyncProcedure();
 
-	HRESULT Create(PAPCFUNC apcHandler, const ProcessThread& rProceesThread, LPCTSTR tag);
+	HRESULT Create(PAPCFUNC apcHandler, LPCTSTR tag);
 	void Destroy();
-
-	unsigned long GetThreadID() const;
 
 	int GetPriority() const;
 	void SetPriority(int priority);
 
 	bool IsActive() const;
 
-	HRESULT Signal(void* pData);
+	HRESULT Signal(const void* const pData);
 };
 } //namespace SvSyl

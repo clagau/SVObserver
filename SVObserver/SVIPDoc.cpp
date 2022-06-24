@@ -4026,20 +4026,19 @@ HRESULT SVIPDoc::UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImag
 
 HRESULT SVIPDoc::UpdateWithLastProduct()
 {
-	HRESULT l_Status = S_OK;
-
+	HRESULT result {S_OK};
 	SVInspectionProcess* pInspection = GetInspectionProcess();
 
 	if (nullptr != pInspection)
 	{
-		l_Status = pInspection->LastProductNotify();
+		pInspection->LastProductNotify();
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		result = E_FAIL;
 	}
 
-	return l_Status;
+	return result;
 }
 
 bool SVIPDoc::RunOnce()

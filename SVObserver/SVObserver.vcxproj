@@ -495,7 +495,6 @@ echo %time%
     <ClInclude Include="SVPatResultDlgClass.h" />
     <ClInclude Include="SVPixelAnalyzerDlg.h" />
     <ClInclude Include="SVPPQBar.h" />
-    <ClInclude Include="SVPPQConstants.h" />
     <ClInclude Include="SVPPQEntryDialog.h" />
     <ClInclude Include="SVPPQEntryDialogDigInPage.h" />
     <ClInclude Include="SVPPQEntryDialogRemotePage.h" />

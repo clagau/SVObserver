@@ -20,25 +20,21 @@
 
 namespace SvSyl
 {
-SVAsyncProcedure::SVAsyncProcedure()
-{
-}
-
 SVAsyncProcedure::~SVAsyncProcedure()
 {
 	Destroy();
 }
 
-HRESULT SVAsyncProcedure::Create(PAPCFUNC apcHandler, const ProcessThread& rProceesThread, LPCTSTR tag)
+HRESULT SVAsyncProcedure::Create(PAPCFUNC apcHandler, LPCTSTR tag)
 {
 	m_tag = tag;
 	m_apcHandler = apcHandler;
 
-	HRESULT hr = m_thread.Create(rProceesThread, m_tag.c_str());
+	HRESULT hr = m_thread.Create(m_tag.c_str());
 	return hr;
 }
 
-HRESULT SVAsyncProcedure::Signal(void* pData)
+HRESULT SVAsyncProcedure::Signal(const void* const pData)
 {
 	SvStl::MessageManager Exception(SvStl::MsgType::Log );
 
@@ -50,34 +46,11 @@ HRESULT SVAsyncProcedure::Signal(void* pData)
 		return Result;
 	}
 
-	if( ! m_thread.IsActive() )
-	{
-		Exception.setMessage( SVMSG_THREAD_CREATION_ERROR, m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25037_AsyncProcedure );
-
-		Result = m_thread.Restart();
-	}
-
 	if( S_OK == Result )
 	{
-		if( 0 == ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(pData) )  )
+		if( 0 == ::QueueUserAPC(m_apcHandler, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(pData)))
 		{
 			Exception.setMessage( SVMSG_QUEUE_USER_APC_ERROR, m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25038_AsyncProcedure );
-
-			Result = m_thread.Restart();
-
-			if( S_OK == Result )
-			{
-				if( 0 == ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(pData) )  )
-				{
-					Result = SVMSG_QUEUE_USER_APC_ERROR;
-
-					Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25039_AsyncProcedure );
-				}
-			}
-			else
-			{
-				Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25040_AsyncProcedure );
-			}
 		}
 	}
 	else
@@ -91,11 +64,6 @@ HRESULT SVAsyncProcedure::Signal(void* pData)
 void SVAsyncProcedure::Destroy()
 {
 	m_thread.Destroy();
-}
-
-unsigned long SVAsyncProcedure::GetThreadID() const
-{
-	return m_thread.GetThreadID();
 }
 
 int SVAsyncProcedure::GetPriority() const

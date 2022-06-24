@@ -31,9 +31,12 @@
 
 
 #pragma region Declarations
-constexpr long	StandardPpqLength	= 2;
-constexpr long g_lPPQExtraBufferSize = 50;
-constexpr long g_maxPpqLength = 300;
+constexpr long cStandardPpqLength = 2;
+constexpr long cStandardOutputDelay = 100;
+constexpr long cMinReducedPpqPos = 2;
+constexpr long cTriggerQueueSize = 10;
+constexpr long cPPQExtraBufferSize = 50;
+constexpr long cMaxPpqLength = 300;
 
 namespace SvOi
 {
@@ -51,7 +54,7 @@ struct MonitorListAttributeStruct;
 
 constexpr long getMaxPpqLength()
 {
-	return std::min<long>(g_maxPpqLength, SvOi::ITriggerRecordControllerRW::cMaxTriggerRecords);
+	return std::min<long>(cMaxPpqLength, SvOi::ITriggerRecordControllerRW::cMaxTriggerRecords);
 };
 
 class SVPPQObject : 
@@ -71,6 +74,20 @@ class SVPPQObject :
 		OutputNr
 	};
 
+	using PpqProcessFunction = std::function<void()>;
+
+	enum PpqFunction
+	{
+		Trigger,
+		DataValidDelay,
+		ResetOutputDelay,
+		DelayOutputs,
+		CameraResponses,
+		NotifyInspection,
+		CompleteInspections,
+		ProductRequests,
+		Size
+	};
 
 public:
 
@@ -184,8 +201,8 @@ public:
 
 	bool IsProductAlive( long p_ProductCount ) const;
 
-	SVInputObjectList*    m_pInputList;
-	SVOutputObjectList*   m_pOutputList;
+	SVInputObjectList*    m_pInputList {nullptr};
+	SVOutputObjectList*   m_pOutputList {nullptr};
 
 	SvVol::BasicValueObjectPtr getPpqVaraible(LPCTSTR Name) { return m_PpqValues.getValueObject(Name); }
 	void PersistInputs(SvOi::IObjectWriter& rWriter);
@@ -239,7 +256,7 @@ protected:
 
 	};
 
-	bool m_bActiveMonitorList;
+	bool m_bActiveMonitorList {false};
 	long m_rejectCount = 0;
 	SvSml::RingBufferPointer m_SlotManager;
 	
@@ -254,76 +271,61 @@ protected:
 	typedef std::map<SvIe::SVVirtualCamera*, SVCameraQueueElement> SVPendingCameraResponseMap;
 
 	static void CALLBACK OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 );
-	static void CALLBACK APCThreadProcess(ULONG_PTR pParam);
+	static void CALLBACK APCThreadProcess(ULONG_PTR pData);
 
 	HRESULT MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& rProduct, SvIe::SVVirtualCamera* pCamera );
-
-	void ThreadProcess( bool& p_WaitForEvents );
 
 	HRESULT NotifyProcessTimerOutputs();
 
 	//************************************
 	/// Processes the first element (if available) in the trigger queue and creates a product from it
-	/// \param rProcessed [out] false if the trigger queue empty, otherwise true.
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessTrigger( bool& rProcessed );
+	HRESULT ProcessTrigger();
 
 	//************************************
 	/// Extracts the first valid entry in in m_oNotifyInspectionsSet and calls NotifyInspections()
-	/// \param rProcessed [out] true if one inspection was successfully notified, otherwise false.
 	/// \returns S_OK (or E_FAIL if NotifyInspections failed)
 	//************************************
-	HRESULT ProcessNotifyInspections( bool& rProcessed );
-
-	//************************************
-	/// Empties m_ProcessInspectionsSet and starts all Inspections that were contained in it
-	/// \return true if an item was removed from m_oCamerasQueue, otherwise false
-	//************************************
-	bool processInspections( );
+	HRESULT ProcessNotifyInspections();
 
 	//************************************
 	/// Controls the output of completed results that require a delay before they are output.
-	/// \param rProcessed [out] true if a SVProductInfoStruct was processed
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessDelayOutputs( bool& rProcessed );
+	HRESULT ProcessDelayOutputs();
 
 	//************************************
 	/// If at least two entries in m_oOutputsResetQueue: removes the head and calls ResetOutputs()
-	/// \param rProcessed [out] true if ResetOutputs() was called
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessResetOutputs( bool& rProcessed );
+	HRESULT ProcessResetOutputs();
 
 	//************************************
 	/// If data valid delay is set then processes when the signals are to be set
-	/// \param rProcessed [out] true if Data Valid Delay processed
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessDataValidDelay( bool& rProcessed );
+	HRESULT ProcessDataValidDelay();
 
 	//************************************
 	/// If possible, processes one camera response (either from the pending camera responses or directly from the trigger queue)
-	/// \param rProcessed [out] true if a camera response was processed successfully
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessCameraResponses( bool& rProcessed );
+	HRESULT ProcessCameraResponses();
+
 	//************************************
 	/// If all inspections for a product are done, sets the product to complete
-	/// \param rProcessed [out] true m_oTriggerQueue is empty or if a product has been set to complete
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessCompleteInspections( bool& rProcessed );
+	HRESULT ProcessCompleteInspections();
 	//************************************
 	/// Possibly used when results are requested via remote
-	/// \param rProcessed [out] true if false otherwise
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessProductRequests( bool& rProcessed );
+	HRESULT ProcessProductRequests();
 
 	HRESULT ProcessOutputs(SVProductInfoStruct& rProduct);
-	HRESULT ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct& rProduct, bool& rProcessed);
+	HRESULT ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct& rProduct);
 
 	SVProductInfoStruct* GetProductInfoStruct(long processCount) const;
 
@@ -357,14 +359,13 @@ protected:
 
 	mutable SvSyl::SVAsyncProcedure m_AsyncProcedure;
 
-	std::atomic<double> m_NextOutputDelayTimestamp;
-
-	std::atomic<double> m_NextOutputResetTimestamp;
-
-	std::atomic<double> m_NextDataValidDelayTimestamp;
+	std::atomic<double> m_NextOutputDelayTimestamp {0.0};
+	std::atomic<double> m_NextOutputResetTimestamp {0.0};
+	std::atomic<double> m_NextDataValidDelayTimestamp {0.0};
 
 	// Queues for the PPQ's threads to store incoming objects to be processed
-	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTrig::SVTriggerInfoStruct s and SVVariantBoolVector s
+	///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTrig::SVTriggerInfoStruct s and SVVariantBoolVector s
+	SVTriggerInfoQueue m_oTriggerQueue {cTriggerQueueSize};
 	SVInspectionInfoQueue m_oInspectionQueue;
 	SVProcessCountQueue m_oOutputsDelayQueue;
 	SVProcessCountQueue m_oOutputsResetQueue;
@@ -388,13 +389,13 @@ protected:
 	SVIOEntryHostStructPtr m_pDataValid;
 
 	// Pointers to the Subsystem objects used by the PPQ
-	SvTrig::SVTriggerObject*       m_pTrigger;
+	SvTrig::SVTriggerObject* m_pTrigger {nullptr};
 	SVInspectionProcessVector    m_arInspections;
 
 	// Pointer to the PPQ's buckets
 	SVPPQShiftRegister m_PPQPositions;
 
-	SVProductInfoStruct*  m_pMasterProductInfos;
+	SVProductInfoStruct*  m_pMasterProductInfos {nullptr};
 	SVProductPointerQueue m_qAvailableProductInfos;
 
 	// Value Objects used by the PPQ
@@ -438,22 +439,23 @@ private:
 	PpqCameraCallBack m_cameraCallback;
 	SvTrig::PpqTriggerCallBack m_triggerCallback;
 	SvVol::BasicValueObjects	m_PpqValues;
-	SvDef::SVPPQOutputModeEnum m_outputMode;
-	long m_outputDelay;
-	long m_resetDelay;
+	SvDef::SVPPQOutputModeEnum m_outputMode {SvDef::SVPPQNextTriggerMode};
+	std::array <PpqProcessFunction, PpqFunction::Size> m_processFunctions;
+	long m_outputDelay {cStandardOutputDelay};
+	long m_resetDelay {0};
 	long m_DataValidDelay;
-	bool m_maintainSourceImages;
-	long m_inspectionTimeoutMillisec;
-	bool m_bOnline;
+	bool m_maintainSourceImages {false};
+	long m_inspectionTimeoutMillisec {0};
+	bool m_bOnline {false};
 
-	UINT m_uOutputTimer;
+	UINT m_uOutputTimer {0};
 
-	SvDef::NakGeneration  m_NAKMode;			//!Different Mode for NAK Behavior Legacy, Bursts,RepairedLegacy,FixedMaximum
-	int m_NAKParameter;						//!Additional Parameter for NAK Behavior 	
-	long m_NAKCount;
-	long m_FirstNAKProcessCount;		///only trigger >= m_FirstNAKProcessCount will be inspected 
-	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
-	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
+	SvDef::NakGeneration  m_NAKMode {SvDef::Bursts};//!Different Mode for NAK Behavior Legacy, Bursts,RepairedLegacy,FixedMaximum
+	int m_NAKParameter {SvDef::DefaultNakParameter}; //!Additional Parameter for NAK Behavior
+	long m_NAKCount {0};
+	long m_FirstNAKProcessCount {0};	///only trigger >= m_FirstNAKProcessCount will be inspected 
+	long m_NewNAKCount {0};				//!Nak count will be set to 0 if no NAK occurs 
+	long m_ReducedPPQPosition {cMinReducedPpqPos};	/// min number of inspection that will be checked for startInspection  for nakMode =2
 	std::atomic_long m_lastPPQPosition {0L};		/// This is the PPQ position of the last SetInspectionComplete call
 	int m_maxProcessingOffset4Interest {0};  
 	bool m_useProcessingOffset4Interest {false};	///Flag if processing offset will used. It should only used if m_maxProcessingOffset4Interest >2 and <PPQLength, RejectCondition set and at least two Inspections in this PPQ.

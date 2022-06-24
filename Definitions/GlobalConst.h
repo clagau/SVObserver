@@ -149,6 +149,8 @@ constexpr unsigned long VT_DPOINT = 81;
 
 constexpr const char* cIndexKeyword = _T("IDX");
 
+constexpr const char* cPpqConditionalOutputAlways = _T("Always");
+
 constexpr int cTriggerDataNumber = 9;
 #pragma endregion Declarations
 } //namespace SvDef

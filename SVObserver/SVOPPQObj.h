@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <utility>
 #include "SVImportedInspectionInfo.h"
-#include "SVPPQConstants.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -88,7 +88,7 @@ private:
 	bool m_bMaintainSrcImg {false};
 	int m_MaxProcessingOffset {0};
 	long m_lInspectionTimeout {0};
-	std::string m_conditionalOutputName {PPQ_CONDITIONAL_OUTPUT_ALWAYS};
+	std::string m_conditionalOutputName {SvDef::cPpqConditionalOutputAlways};
 	SVNameObjectIdPairList m_availableInputs;
 	SVImportedInspectionInfo m_importedInspectionInfo;
 };

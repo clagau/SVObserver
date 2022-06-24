@@ -24,7 +24,7 @@ typedef std::function<void(ULONG_PTR, const CameraInfo&)> PpqCameraCallBack;
 class AcquisitionDevice
 {
 public:
-	static void CALLBACK APCProc( ULONG_PTR dwParam );
+	static void CALLBACK APCProc(ULONG_PTR pData);
 
 	explicit AcquisitionDevice(LPCTSTR deviceName);
 	virtual ~AcquisitionDevice() = default;
@@ -50,12 +50,6 @@ public:
 
 protected:
 	typedef SVTQueueObject<CameraInfo> CameraQueue;
-
-	/* AcquisitionDevice Callback Functions */
-
-	void Process(bool& rWaitForEvents);
-
-	/* Device Callback Functions */
 
 	virtual void Notify(CameraInfo&&);
 

@@ -48,8 +48,7 @@ private:
 	SVFrameEventHandler m_startFrameEvent;
 	SVFrameEventHandler m_endFrameEvent;
 
-	static void CALLBACK OnAPCEvent( ULONG_PTR data );
-	void OnThreadEvent( bool& p_WaitForEvents );
+	static void CALLBACK OnAPCEvent(ULONG_PTR pData);
 
 	std::string GetNextFilename();
 

@@ -98,7 +98,7 @@ bool isProductAlive(SVPPQObject* pPPQ, long triggerCount)
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
+HRESULT SVInspectionProcess::ProcessInspection()
 {
 	HRESULT l_Status = S_OK;
 
@@ -114,8 +114,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		m_processActive = false;
 	}
 
-	rProcessed = m_processActive;
-	if (rProcessed)
+	if (m_processActive)
 	{
 		// Get the info struct for this inspection
 		const auto iter = product.m_svInspectionInfos.find(getObjectId());
@@ -123,7 +122,6 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		validProduct = (false == validProduct) ? false : iter->second.m_InProcess && iter->second.m_HasBeenQueued;
 		if (false == validProduct)
 		{
-			rProcessed = false;
 			return E_FAIL;
 		}
 		SVInspectionInfoStruct& rIPInfo = iter->second;
@@ -248,10 +246,10 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 			}
 		}
 
-		bool l_Process = (l_InputXferCount == m_PPQInputs.size()) && (isProductAlive(GetPPQ(), product.m_triggerInfo.lTriggerCount));
+		bool processed = (l_InputXferCount == m_PPQInputs.size()) && (isProductAlive(GetPPQ(), product.m_triggerInfo.lTriggerCount));
 
 		// Check if tool set is alive and enabled...
-		if (!l_Process)
+		if (false == processed)
 		{
 			// Product has left the PPQ ... don't inspect
 			rIPInfo.m_InspectedState = PRODUCT_NOT_INSPECTED;
@@ -289,10 +287,10 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		m_processActive = false;
 		SVObjectManagerClass::Instance().DecrementInspectionIndicator();
 
-		if (l_Process)
+		if (processed)
 		{
 			rIPInfo.ClearIndexes();
-			m_NotifyWithLastInspected = true;
+			LastProductNotify();
 		}
 	}
 	return l_Status;
@@ -367,10 +365,8 @@ bool SVInspectionProcess::isReject()
 	return result;
 }
 
-HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
+HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected()
 {
-	HRESULT l_Status = S_OK;
-
 	if (m_NotifyWithLastInspected)
 	{
 		m_NotifyWithLastInspected = false;
@@ -388,15 +384,13 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 			SVObjectManagerClass::Instance().UpdateObserver(m_PPQId, data);
 		}
 		m_lastRunProduct.m_triggered = false;
-
-		p_rProcessed = true;
 	}
-	return l_Status;
+	return S_OK;
 }
 
-HRESULT SVInspectionProcess::ProcessCommandQueue(bool& p_rProcessed)
+HRESULT SVInspectionProcess::ProcessCommandQueue()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT result {S_OK};
 
 	if (!(m_CommandQueue.IsEmpty()))
 	{
@@ -406,14 +400,12 @@ HRESULT SVInspectionProcess::ProcessCommandQueue(bool& p_rProcessed)
 		{
 			if (nullptr != pCommand)
 			{
-				l_Status = pCommand->Execute();
+				result = pCommand->Execute();
 			}
 		}
-
-		p_rProcessed = true;
 	}
 
-	return l_Status;
+	return result;
 }
 
 SVInspectionProcess::SVInspectionProcess(LPCSTR ObjectName)
@@ -481,8 +473,7 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 
 	m_NotifyWithLastInspected = false;
 
-	auto threadProcess = [this](bool& rProcessed) {ThreadProcess(rProcessed); };
-	if (S_OK != m_AsyncProcedure.Create(&SVInspectionProcess::APCThreadProcess, threadProcess, GetName()))
+	if (S_OK != m_AsyncProcedure.Create(&SVInspectionProcess::APCThreadProcess, GetName()))
 	{
 		return false;
 	}
@@ -497,25 +488,13 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 	return true;
 }// end Create
 
-void CALLBACK SVInspectionProcess::APCThreadProcess(ULONG_PTR)
+void CALLBACK SVInspectionProcess::APCThreadProcess(ULONG_PTR pData)
 {
-}
-
-void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
-{
-	bool processed = false;
-
-	if (m_processActive)
+	InspectionProcessFunction* pProcessFunction = reinterpret_cast<InspectionProcessFunction*> (pData);
+	if (nullptr != pProcessFunction && nullptr != *pProcessFunction)
 	{
-		ProcessInspection(processed);
+		(*pProcessFunction)();
 	}
-	ProcessNotifyWithLastInspected(processed);
-	if (false == processed)
-	{
-		ProcessCommandQueue(processed);
-	}
-
-	p_WaitForEvents = (false == processed);
 }
 
 void SVInspectionProcess::DestroyInspection()
@@ -852,7 +831,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 		}
 		SVObjectManagerClass::Instance().IncrementInspectionIndicator();
 		m_processActive = true;
-		result = m_AsyncProcedure.Signal(nullptr);
+		result = m_AsyncProcedure.Signal(&m_processFunctions[InspectionFunction::Inspection]);
 	}
 	return result;
 }
@@ -2220,15 +2199,11 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct* 
 	return Result;
 }
 
-HRESULT SVInspectionProcess::LastProductNotify()
+void SVInspectionProcess::LastProductNotify()
 {
-	HRESULT l_hrOk = S_OK;
-
 	m_NotifyWithLastInspected = true;
 
-	m_AsyncProcedure.Signal(nullptr);
-
-	return l_hrOk;
+	m_AsyncProcedure.Signal(&m_processFunctions[InspectionFunction::NotifyLastInspected]);
 }
 
 bool SVInspectionProcess::CheckAndResetConditionalHistory()
@@ -2450,6 +2425,9 @@ bool SVInspectionProcess::CreateObject()
 
 	m_RegressionTestPlayEquation.ConnectObject(createStruct);
 
+	m_processFunctions[InspectionFunction::Inspection] = [this]() {ProcessInspection();};
+	m_processFunctions[InspectionFunction::NotifyLastInspected] = [this]() {ProcessNotifyWithLastInspected();};
+	m_processFunctions[InspectionFunction::ProcessCommand] = [this]() {ProcessCommandQueue();};
 	return m_isCreated;
 }
 
@@ -3092,7 +3070,7 @@ HRESULT SVInspectionProcess::SubmitCommand(const SvOi::ICommandPtr& rCommandPtr)
 
 	if (m_CommandQueue.AddTail(rCommandPtr))
 	{
-		Result = m_AsyncProcedure.Signal(nullptr);
+		Result = m_AsyncProcedure.Signal(&m_processFunctions[InspectionFunction::ProcessCommand]);
 	}
 	else
 	{
