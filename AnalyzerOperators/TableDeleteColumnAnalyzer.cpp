@@ -52,8 +52,7 @@ bool TableDeleteColumnAnalyzer::ResetObject(SvStl::MessageContainerVector* pErro
 	m_deleteColumnInput.validateInput();
 
 	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (GetParent());
-	SvVol::DoubleSortValueObject* pColumnValues = m_deleteColumnInput.getInput<SvVol::DoubleSortValueObject>(false);
-	if (nullptr == pTool || nullptr == pColumnValues)
+	if (nullptr == pTool)
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -66,7 +65,21 @@ bool TableDeleteColumnAnalyzer::ResetObject(SvStl::MessageContainerVector* pErro
 	else
 	{
 		m_deleteColumnInput.setStartSearchId(pTool->getSourceTableId());
-		pTool->removeSourceColumn(pColumnValues);
+		SvVol::DoubleSortValueObject* pColumnValues = m_deleteColumnInput.getInput<SvVol::DoubleSortValueObject>(false);
+		if (nullptr == pColumnValues)
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer message;
+				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(message);
+			}
+			Result = false;
+		}
+		else
+		{
+			pTool->removeSourceColumn(pColumnValues);
+		}
 	}
 
 	return Result;

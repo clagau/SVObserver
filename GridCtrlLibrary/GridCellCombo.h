@@ -161,6 +161,7 @@ namespace SvGcl
 		afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 		afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 		afx_msg void OnDropdown();
+		afx_msg void OnSelChange();
 		afx_msg UINT OnGetDlgCode();
 		afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
 		//}}AFX_MSG

@@ -586,6 +586,7 @@ namespace SvGcl
 		ON_MESSAGE(WM_GETFONT, OnGetFont)
 		ON_MESSAGE(WM_IME_CHAR, OnImeChar)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_INPLACE_CONTROL, OnEndInPlaceEdit)
+		ON_NOTIFY(GVN_SELCHANGED, IDC_INPLACE_CONTROL, OnSelChangedInPlaceEdit)
 	END_MESSAGE_MAP()
 
 
@@ -1330,6 +1331,33 @@ namespace SvGcl
 		case VK_END:
 			OnKeyDown((UINT)pgvItem->lParam, 0, 0);
 			OnEditCell(m_idCurrentCell.row, m_idCurrentCell.col, CPoint( -1, -1), (UINT)pgvItem->lParam);
+		}
+
+		*pResult = 0;
+	}
+
+	// Callback from any CInPlaceEdits when selection changed (by now only ComboBox). This set the string and calls GVN_VALUE_SELCHANGED
+	void GridCtrl::OnSelChangedInPlaceEdit(NMHDR* pNMHDR, LRESULT* pResult)
+	{
+		GV_DISPINFO* pgvDispInfo = (GV_DISPINFO*)pNMHDR;
+		GV_ITEM* pgvItem = &pgvDispInfo->item;
+
+		// In case OnSelChangedInPlaceEdit called as window is being destroyed
+		if (!IsWindow(GetSafeHwnd()))
+			return;
+
+		CString strCurrentText = GetItemText(pgvItem->row, pgvItem->col);
+		if (strCurrentText != pgvItem->strText)
+		{
+			SetItemText(pgvItem->row, pgvItem->col, pgvItem->strText);
+			if (ValidateEdit(pgvItem->row, pgvItem->col, pgvItem->strText))
+			{
+				SendMessageToParent(pgvItem->row, pgvItem->col, GVN_VALUE_SELCHANGED);
+			}
+			else
+			{
+				SetItemText(pgvItem->row, pgvItem->col, strCurrentText);
+			}
 		}
 
 		*pResult = 0;

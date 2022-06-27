@@ -326,6 +326,7 @@ namespace SvGcl
 		ON_WM_KEYDOWN()
 		ON_WM_KEYUP()
 		ON_CONTROL_REFLECT(CBN_DROPDOWN, OnDropdown)
+		ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelChange)
 		ON_WM_GETDLGCODE()
 		ON_WM_CTLCOLOR_REFLECT()
 		//}}AFX_MSG_MAP
@@ -344,6 +345,33 @@ namespace SvGcl
 	void InPlaceList::OnDropdown() 
 	{
 		SetDroppedWidth(GetCorrectDropWidth());
+	}
+
+	void InPlaceList::OnSelChange()
+	{
+		CString str;
+		if (::IsWindow(m_hWnd))
+		{
+			GetWindowText(str);
+		}
+
+		GV_DISPINFO dispinfo;
+
+		dispinfo.hdr.hwndFrom = GetSafeHwnd();
+		dispinfo.hdr.idFrom = GetDlgCtrlID();
+		dispinfo.hdr.code = GVN_SELCHANGED;
+
+		dispinfo.item.mask = LVIF_TEXT | LVIF_PARAM;
+		dispinfo.item.row = m_nRow;
+		dispinfo.item.col = m_nCol;
+		dispinfo.item.strText = str;
+		dispinfo.item.lParam = (LPARAM)m_nLastChar;
+
+		CWnd* pOwner = GetOwner();
+		if (IsWindow(pOwner->GetSafeHwnd()))
+		{
+			pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+		}
 	}
 
 	void InPlaceList::OnKillFocus(CWnd* pNewWnd) 

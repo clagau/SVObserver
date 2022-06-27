@@ -24,7 +24,7 @@ private:
 
 #pragma region Constructor
 public:
-	explicit InputConflictDlg(uint32_t inspectionId, std::vector<SvPb::FixedInputData>&, CWnd* pParent = nullptr);
+	explicit InputConflictDlg(uint32_t inspectionId, std::vector<SvPb::FixedInputData>& rInputDataVector, const std::vector<uint32_t>& rToolIds, CWnd* pParent = nullptr);
 	virtual ~InputConflictDlg();
 #pragma endregion Constructor
 
@@ -40,8 +40,11 @@ protected:
 	void LoadGlobalData();
 	void OnGridClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/);
 	void OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
+	void OnGridValueSelectionChanged(NMHDR* pNotifyStruct, LRESULT* pResult);
 	bool setLinkedValue(const std::string& rNewStr, const std::string& name, LinkedValueData& rData);
 	void commitLinkedData(int pos, const LinkedValueData& rData);
+	void commitInputObject(int pos, const std::string& rText);
+	void updateSelections();
 #pragma endregion Protected Methods
 
 #pragma region Member variables
@@ -49,6 +52,7 @@ private:
 	uint32_t m_inspectionId {SvDef::InvalidObjectId};
 	SvGcl::GridCtrl m_Grid;						//The grid displaying the conflicting values
 	std::vector<SvPb::FixedInputData>& m_rInputDataVector;  //This is the conflict Global Data as data pair
+	const std::vector<uint32_t>& m_rToolIds;
 	CBitmap m_downArrowBitmap;
 	CImageList m_ImageList;
 

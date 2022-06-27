@@ -1382,8 +1382,6 @@ void fixInputs(uint32_t inspectionId, const std::vector<uint32_t>& rToolIds)
 	}
 	if (false == fixedDataVector.empty())
 	{
-		SvOg::InputConflictDlg ConflictDlg(inspectionId, fixedDataVector);
-		ConflictDlg.DoModal();
 		for (auto toolId : rToolIds)
 		{
 			auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
@@ -1392,13 +1390,25 @@ void fixInputs(uint32_t inspectionId, const std::vector<uint32_t>& rToolIds)
 				pTool->resetAllObjects();
 			}
 		}
-		//@TODO[MZA][10.20][14.03.2022] Wird ein WindowTool von einer Inspection zu einer anderen Inspection kopiert, wird durch ein Reset die Images nicht richtig angepasst.
-		//Deshalb muss man noch ein Reset machen. Wenn das Reset verbessert wird, könnte das zweite Reset vielleicht überflüssig.
-		auto* pInsp = SVObjectManagerClass::Instance().GetObject(inspectionId);
-		if (nullptr != pInsp)
+
+		SvOg::InputConflictDlg ConflictDlg(inspectionId, fixedDataVector, rToolIds);
+		ConflictDlg.DoModal();
+
+		for (auto toolId : rToolIds)
 		{
-			pInsp->resetAllObjects();
+			auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
+			if (nullptr != pTool)
+			{
+				pTool->resetAllObjects();
+			}
 		}
+	}
+	//@TODO[MZA][10.20][14.03.2022] Wird z.b ein WindowTool von einer Inspection zu einer anderen Inspection kopiert, wird durch ein Reset die Images nicht richtig angepasst.
+	//Deshalb muss man noch ein Reset machen. Wenn das Reset verbessert wird, könnte das zweite Reset vielleicht überflüssig.
+	auto* pInsp = SVObjectManagerClass::Instance().GetObject(inspectionId);
+	if (nullptr != pInsp)
+	{
+		pInsp->resetAllObjects();
 	}
 }
 

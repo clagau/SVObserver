@@ -60,14 +60,16 @@ namespace SvOg
 BEGIN_MESSAGE_MAP(InputConflictDlg, CDialog)
 	ON_NOTIFY(NM_CLICK, IDC_GLOBAL_CONFLICT_GRID, OnGridClick)
 	ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GLOBAL_CONFLICT_GRID, OnGridEndEdit)
+	ON_NOTIFY(GVN_VALUE_SELCHANGED, IDC_GLOBAL_CONFLICT_GRID, OnGridValueSelectionChanged)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
-InputConflictDlg::InputConflictDlg(uint32_t inspectionId, std::vector<SvPb::FixedInputData>& rInputData, CWnd* pParent /*nullptr*/)
+InputConflictDlg::InputConflictDlg(uint32_t inspectionId, std::vector<SvPb::FixedInputData>& rInputData, const std::vector<uint32_t>& rToolIds, CWnd* pParent /*nullptr*/)
 	: CDialog(InputConflictDlg::IDD, pParent)
-	, m_inspectionId(inspectionId)
-	, m_rInputDataVector(rInputData)
+	, m_inspectionId {inspectionId}
+	, m_rInputDataVector {rInputData}
+	, m_rToolIds {rToolIds}
 {
 
 }
@@ -205,7 +207,10 @@ void InputConflictDlg::setInputObjectColumn(int pos)
 		HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getinputdataresponse())
 		{
-			pCell->setTextIfInList(responseCmd.getinputdataresponse().data().connected_objectdottedname().c_str());
+			if (false == pCell->setTextIfInList(responseCmd.getinputdataresponse().data().connected_objectdottedname().c_str()))
+			{
+				pCell->SetText(nullptr);
+			}
 		}
 	}
 }
@@ -306,29 +311,7 @@ void InputConflictDlg::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 				}
 				else
 				{
-					SvPb::InspectionCmdRequest requestCmd;
-					SvPb::InspectionCmdResponse responseCmd;
-					auto iter = m_inputObjectValueMap.find(m_rInputDataVector[pItem->iRow - 1].objectid());
-					if (m_inputObjectValueMap.end() != iter)
-					{
-						auto valueIter = std::ranges::find_if(iter->second, [cellText](const auto& rEntry) { return cellText == rEntry.objectname(); });
-						if (iter->second.end() != valueIter)
-						{
-							auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
-							pRequest->set_objectid(m_rInputDataVector[pItem->iRow - 1].objectid());
-							pRequest->set_newconnectedid(valueIter->objectid());
-							HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
-							assert(S_OK == hr);
-						}
-						else
-						{
-							assert(false);
-						}
-					}
-					else
-					{
-						assert(false);
-					}
+					commitInputObject(pItem->iRow - 1, cellText);
 				}
 				break;
 			}
@@ -336,6 +319,17 @@ void InputConflictDlg::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 	}
 
 	*pResult = (bAcceptChange) ? 0 : -1;
+}
+
+void InputConflictDlg::OnGridValueSelectionChanged(NMHDR* pNotifyStruct, LRESULT*)
+{
+	SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
+	if (0 < pItem->iRow && m_rInputDataVector.size() >= pItem->iRow)
+	{
+		std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
+		commitInputObject(pItem->iRow - 1, cellText);
+		updateSelections();
+	}
 }
 
 bool InputConflictDlg::setLinkedValue(const std::string& rNewStr, const std::string& rName, LinkedValueData& rData)
@@ -368,6 +362,46 @@ void InputConflictDlg::commitLinkedData(int pos, const LinkedValueData& rData)
 	m_valuesControllerMap[m_rInputDataVector[pos].parentid()]->Commit();
 	setLinkedValueColumns(pos);
 	m_Grid.Refresh();
+}
+
+void InputConflictDlg::commitInputObject(int pos, const std::string& rText)
+{
+	auto iter = m_inputObjectValueMap.find(m_rInputDataVector[pos].objectid());
+	if (m_inputObjectValueMap.end() != iter)
+	{
+		auto valueIter = std::ranges::find_if(iter->second, [rText](const auto& rEntry) { return rText == rEntry.objectname(); });
+		if (iter->second.end() != valueIter)
+		{
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
+			pRequest->set_objectid(m_rInputDataVector[pos].objectid());
+			pRequest->set_newconnectedid(valueIter->objectid());
+			HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
+			assert(S_OK == hr);
+		}
+		else
+		{
+			assert(false);
+		}
+	}
+	else
+	{
+		assert(false);
+	}
+}
+
+void InputConflictDlg::updateSelections()
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	auto* pRequest = requestCmd.mutable_resetobjectrequest();
+	for (auto id : m_rToolIds)
+	{
+		pRequest->set_objectid(id);
+		SvCmd::InspectionCommands(m_inspectionId, requestCmd, nullptr);
+	}
+	m_inputObjectValueMap.clear();
+	LoadGlobalData();
 }
 #pragma endregion Protected Methods
 } //namespace SvOg
