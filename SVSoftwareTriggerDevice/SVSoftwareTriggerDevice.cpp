@@ -21,10 +21,17 @@ constexpr LPCTSTR cTriggerName = "SoftwareTrigger_1.Dig_";		///This name must ma
 
 void CycleTimer(SVSoftwareTriggerDevice::TimerInfo& rTimerInfo, std::function<void(unsigned long, double)> dispatcher)
 {
+	enum TimerHandles
+	{
+		ShutDown,
+		Timer,
+		HandleCount
+	};
+
 	HANDLE timerHandle = ::CreateWaitableTimerEx(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
 	if (nullptr != timerHandle)
 	{
-		LARGE_INTEGER pauseTime;
+		LARGE_INTEGER pauseTime {};
 		while (rTimerInfo.m_timerOn)
 		{
 			if (rTimerInfo.m_newSetting)
@@ -41,7 +48,8 @@ void CycleTimer(SVSoftwareTriggerDevice::TimerInfo& rTimerInfo, std::function<vo
 
 			if (nullptr != timerHandle)
 			{
-				if (WaitForSingleObject(timerHandle, INFINITE) == WAIT_OBJECT_0)
+				HANDLE eventHandles[TimerHandles::HandleCount] {timerHandle, rTimerInfo.m_shutdown};
+				if (::WaitForMultipleObjects(TimerHandles::HandleCount, eventHandles, false, INFINITE) == WAIT_OBJECT_0)
 				{
 					if (rTimerInfo.m_timerOn && nullptr != dispatcher)
 					{
@@ -65,7 +73,7 @@ HRESULT SVSoftwareTriggerDevice::Destroy()
 {
 	for (auto& rTimer : m_timerList)
 	{
-		if (rTimer.m_thread.joinable() && rTimer.m_timerOn)
+		if (rTimer.m_thread.joinable())
 		{
 			rTimer.m_timerOn = false;
 			rTimer.m_thread.join();
@@ -219,6 +227,12 @@ void SVSoftwareTriggerDevice::beforeStartTrigger(unsigned long triggerIndex)
 	int triggerChannel = triggerIndex - 1;
 	TimerInfo& rTimer = m_timerList[triggerChannel];
 	rTimer.m_timerOn = true;
+	if (nullptr != rTimer.m_shutdown)
+	{
+		::CloseHandle(rTimer.m_shutdown);
+		rTimer.m_shutdown = nullptr;
+	}
+	rTimer.m_shutdown = ::CreateEvent(NULL, false, false, NULL);
 	rTimer.m_newSetting = true;
 	std::function<void(unsigned long, double)> dispatcher = [this](unsigned long triggerIndex, double timestamp) { dispatchTrigger(triggerIndex, timestamp); };
 	rTimer.m_thread = std::thread(&CycleTimer, std::ref(rTimer), dispatcher);
@@ -231,7 +245,10 @@ void SVSoftwareTriggerDevice::beforeStopTrigger(unsigned long triggerIndex)
 	if (rTimer.m_thread.joinable() && rTimer.m_timerOn)
 	{
 		rTimer.m_timerOn = false;
+		::SetEvent(rTimer.m_shutdown);
 		rTimer.m_thread.join();
+		::CloseHandle(rTimer.m_shutdown);
+		rTimer.m_shutdown = nullptr;
 	}
 
 	if (std::none_of(m_timerList.begin(), m_timerList.end(), [](const auto& rTimer) { return rTimer.m_thread.joinable(); }))

@@ -22,6 +22,7 @@ struct SimulatedTriggerData
 	uint32_t m_initialDelay {0UL};
 	uint32_t m_period {0UL};
 	uint32_t m_objectDelay {0UL};
+	HANDLE m_shutdown {nullptr};
 	std::vector<std::string> m_LoadImageList;
 };
 

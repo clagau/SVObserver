@@ -23,6 +23,7 @@ public:
 	struct TimerInfo
 	{
 		std::thread m_thread;
+		HANDLE m_shutdown {nullptr};
 		std::atomic_bool m_timerOn {false};
 		std::atomic_ulong m_triggerIndex {0UL};
 		std::atomic_uint16_t m_period {0};

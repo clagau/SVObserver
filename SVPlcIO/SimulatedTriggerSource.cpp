@@ -40,6 +40,13 @@ std::array<std::atomic_bool, cNumberOfChannels> gNewTrigger {false, false, false
 
 void ChannelTimer(std::atomic_bool& rRun, const SimulatedTriggerData& rSimTriggerData)
 {
+	enum TimerHandles
+	{
+		ShutDown,
+		Timer,
+		HandleCount
+	};
+
 	if(0 != rSimTriggerData.m_initialDelay)
 	{
 		std::this_thread::sleep_for(std::chrono::microseconds(rSimTriggerData.m_initialDelay));
@@ -61,7 +68,8 @@ void ChannelTimer(std::atomic_bool& rRun, const SimulatedTriggerData& rSimTrigge
 		{
 			if (0 != ::SetWaitableTimer(timerHandle, &pauseTime, 0L, nullptr, nullptr, FALSE))
 			{
-				if (WaitForSingleObject(timerHandle, INFINITE) == WAIT_OBJECT_0)
+				HANDLE eventHandles[TimerHandles::HandleCount] {timerHandle, rSimTriggerData.m_shutdown};
+				if (::WaitForMultipleObjects(TimerHandles::HandleCount, eventHandles, false, INFINITE) == WAIT_OBJECT_0)
 				{
 					std::string acquisitionFile;
 					if (currentIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
@@ -220,6 +228,12 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 					}
 				}
 				m_channel[channel].m_runThread = true;
+				if (nullptr != m_channel[channel].m_simulatedTriggerData.m_shutdown)
+				{
+					::CloseHandle(m_channel[channel].m_simulatedTriggerData.m_shutdown);
+					m_channel[channel].m_simulatedTriggerData.m_shutdown = nullptr;
+				}
+				m_channel[channel].m_simulatedTriggerData.m_shutdown = ::CreateEvent(NULL, false, false, NULL);
 				m_channel[channel].m_timerThread = std::thread(&ChannelTimer, std::ref(m_channel[channel].m_runThread), std::ref(m_channel[channel].m_simulatedTriggerData));
 				::SetThreadPriority(m_channel[channel].m_timerThread.native_handle(), THREAD_PRIORITY_HIGHEST);
 			}
@@ -230,7 +244,10 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 			if (m_channel[channel].m_timerThread.joinable())
 			{
 				m_channel[channel].m_runThread = false;
+				::SetEvent(m_channel[channel].m_simulatedTriggerData.m_shutdown);
 				m_channel[channel].m_timerThread.join();
+				::CloseHandle(m_channel[channel].m_simulatedTriggerData.m_shutdown);
+				m_channel[channel].m_simulatedTriggerData.m_shutdown = nullptr;
 				if (m_channel[channel].m_resultFile.is_open())
 				{
 					m_channel[channel].m_resultFile.close();

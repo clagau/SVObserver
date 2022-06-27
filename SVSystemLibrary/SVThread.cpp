@@ -14,10 +14,8 @@
 
 #include "SVThread.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageData.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 // This const defines how long the destroy should wait at most to complete the shutdown
