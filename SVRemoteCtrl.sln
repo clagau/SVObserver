@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVHttpLibrary", "SVHttpLibrary\SVHttpLibrary.vcxproj", "{4B3ACAC6-849C-46FA-94CC-AEACD7F9AAE2}"
 EndProject
@@ -11,6 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVRemoteControl", "SVRemote
 	ProjectSection(ProjectDependencies) = postProject
 		{C3C84C20-1039-4D97-95E2-B26143D86241} = {C3C84C20-1039-4D97-95E2-B26143D86241}
 		{A8F3AF59-2581-40F2-8378-05A090B90677} = {A8F3AF59-2581-40F2-8378-05A090B90677}
+		{A511C66F-36A3-4590-9CB4-A0CB6CA1D702} = {A511C66F-36A3-4590-9CB4-A0CB6CA1D702}
 		{2F3FD18D-3FDE-414C-8AF5-4A872B1519FF} = {2F3FD18D-3FDE-414C-8AF5-4A872B1519FF}
 		{B022279A-59CD-41C3-9EA5-F9721FECAFDD} = {B022279A-59CD-41C3-9EA5-F9721FECAFDD}
 		{CC1AD2B6-2FE9-4094-A4DD-2554651E57C3} = {CC1AD2B6-2FE9-4094-A4DD-2554651E57C3}
@@ -35,6 +36,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVUtilityLibrary", "SVUtili
 	ProjectSection(ProjectDependencies) = postProject
 		{2F3FD18D-3FDE-414C-8AF5-4A872B1519FF} = {2F3FD18D-3FDE-414C-8AF5-4A872B1519FF}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVMessage", "SVMessage\SVMessage.vcxproj", "{A511C66F-36A3-4590-9CB4-A0CB6CA1D702}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -116,8 +119,17 @@ Global
 		{B022279A-59CD-41C3-9EA5-F9721FECAFDD}.Release|Win32.Build.0 = Release|Win32
 		{B022279A-59CD-41C3-9EA5-F9721FECAFDD}.Release|x64.ActiveCfg = Release|x64
 		{B022279A-59CD-41C3-9EA5-F9721FECAFDD}.Release|x64.Build.0 = Release|x64
+		{A511C66F-36A3-4590-9CB4-A0CB6CA1D702}.Debug|Win32.ActiveCfg = Debug|x64
+		{A511C66F-36A3-4590-9CB4-A0CB6CA1D702}.Debug|x64.ActiveCfg = Debug|x64
+		{A511C66F-36A3-4590-9CB4-A0CB6CA1D702}.Debug|x64.Build.0 = Debug|x64
+		{A511C66F-36A3-4590-9CB4-A0CB6CA1D702}.Release|Win32.ActiveCfg = Release|x64
+		{A511C66F-36A3-4590-9CB4-A0CB6CA1D702}.Release|x64.ActiveCfg = Release|x64
+		{A511C66F-36A3-4590-9CB4-A0CB6CA1D702}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18B46E38-06C9-431D-84D8-ABE97D8884E7}
 	EndGlobalSection
 EndGlobal
