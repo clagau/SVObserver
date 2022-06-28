@@ -45,11 +45,11 @@ SVShowDependentsDialog::SVShowDependentsDialog(const std::set<uint32_t>& rIdsOfO
 	FillDependencyList(rIdsOfObjectsDependedOn, objectType);
 }
 
-SVShowDependentsDialog::SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText /*= nullptr*/, CWnd* pParent /*= nullptr*/)
+SVShowDependentsDialog::SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText /*= nullptr*/, DialogType Type /*= Show*/, CWnd* pParent /*= nullptr*/)
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
 	, m_dependencyList(dependencyList)
 	, m_DisplayText((nullptr != DisplayText) ? DisplayText : std::string())
-	, m_DialogType(Show)
+	, m_DialogType(Type)
 {
 }
 

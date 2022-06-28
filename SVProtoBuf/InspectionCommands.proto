@@ -253,6 +253,7 @@ message GetObjectParametersResponse
 	string name = 2;
 	uint32 allowedAttributes = 3;
 	SVObjectTypeInfoStruct typeInfo = 4;
+	EmbeddedIdEnum embeddedID = 5;
 }
 
 //This is the message to return the object-dotted-name to a defined position.

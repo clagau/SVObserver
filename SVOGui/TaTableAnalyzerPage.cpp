@@ -18,6 +18,8 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "FormulaController.h"
 #include "SVFormulaEditorSheet.h"
+#include "ObjectInterfaces/IDependencyManager.h"
+#include "SVShowDependentsDialog.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -28,6 +30,84 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
+
+namespace
+{
+uint32_t getResultTableObjectId(uint32_t inspectionId, uint32_t taskObjectId)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
+	auto* pTreeSearchParameter = pRequest->mutable_tree_search();
+	pTreeSearchParameter->set_search_start_id(taskObjectId);
+	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::TableObjectType);
+	pTreeSearchParameter->mutable_type_info()->set_subtype(SvPb::TableCopyObjectType);
+
+	uint32_t resultTableId {SvDef::InvalidObjectId};
+	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
+	{
+		auto availableList = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
+		if (0 < availableList.size())
+		{
+			resultTableId = availableList[0].second;
+		}
+	}
+	return resultTableId;
+}
+
+std::pair<SvPb::EmbeddedIdEnum, std::string> getEmbeddedIdNamePair(uint32_t inspectionId, uint32_t objectId)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+	pRequest->set_objectid(objectId);
+	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
+	{
+		return {responseCmd.getobjectparametersresponse().embeddedid(), responseCmd.getobjectparametersresponse().name()};
+	}
+	return {SvPb::NoEmbeddedId, ""};
+}
+
+std::pair <uint32_t,std::string> getValueObjectIdNamePairFromColumn(uint32_t inspectionId, uint32_t taskObjectId, uint32_t columnId)
+{
+	uint32_t valueObjectId {SvDef::InvalidObjectId};
+	uint32_t resultTableId = getResultTableObjectId(inspectionId, taskObjectId);
+	auto [embeddedId, name] = getEmbeddedIdNamePair(inspectionId, columnId);
+	if (SvDef::InvalidObjectId != resultTableId && SvPb::NoEmbeddedId != embeddedId)
+	{
+		ValueController valueController {SvOg::BoundValues{ inspectionId, resultTableId }};
+		valueController.Init();
+
+		return {valueController.GetObjectID(embeddedId), name};
+	}
+	else
+	{
+		assert(false);
+	}
+	return {valueObjectId, name};
+}
+
+bool clarifyIfChangeWanted(uint32_t inspectionId, uint32_t taskObjectId, uint32_t columnId)
+{
+	bool retValue {true};
+	auto [valueObjectId, name] = getValueObjectIdNamePairFromColumn(inspectionId, taskObjectId, columnId);
+	if (SvDef::InvalidObjectId != valueObjectId)
+	{
+		SvDef::StringPairVector dependencyList;
+		SvOi::getObjectDependency(std::back_inserter(dependencyList), {valueObjectId}, SvOi::ToolDependencyEnum::Client);
+		if (false == dependencyList.empty())
+		{
+			std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
+			std::string DisplayText = SvUl::Format(FormatText.c_str(), name.c_str(), name.c_str(), name.c_str(), name.c_str());
+			SVShowDependentsDialog Dlg(dependencyList, DisplayText.c_str(), SVShowDependentsDialog::DeleteConfirm);
+			return (IDOK == Dlg.DoModal());
+		}
+	}
+	return retValue;
+}
+}
 
 constexpr const char* NoColumnTag = _T("(No Column Available)");
 constexpr const char* IsAscTag = _T("IsAsc");
@@ -238,6 +318,16 @@ void TaTableAnalyzerPage::OnChangeColumnSelection()
 	uint32_t columnId = m_columnSelectionCB.getSelectedValue();
 	if (SvDef::InvalidObjectId != columnId && SvDef::InvalidObjectId != m_selectedAnalyzerID)
 	{
+
+		if (SvPb::TableAnalyzerDeleteColumnType == m_selectedSubType)
+		{
+			if (false == clarifyIfChangeWanted(m_InspectionID, m_TaskObjectID, columnId))
+			{
+				SetPropertyControls();
+				return;
+			}
+		}
+		
 		SvPb::InspectionCmdRequest requestCmd;
 		auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
 		pRequest->set_objectid(m_selectedAnalyzerID);
@@ -504,13 +594,9 @@ void TaTableAnalyzerPage::resetValueController()
 		m_LimitWidget->setValueController(nullptr);
 		return;
 }
-	
-
-
 
 void TaTableAnalyzerPage::updateValueController()
 {
-	
 	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
 	{
 		auto pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};

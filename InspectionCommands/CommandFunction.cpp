@@ -223,6 +223,7 @@ SvPb::InspectionCmdResponse getObjectParameters(SvPb::GetObjectParametersRequest
 		{
 			pObjParamResponse->set_isvalid(pTask->isErrorMessageEmpty());
 		}
+		pObjParamResponse->set_embeddedid(pObject->GetEmbeddedID());
 	}
 	else
 	{

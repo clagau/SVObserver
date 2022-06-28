@@ -35,7 +35,7 @@ namespace SvOg
 	#pragma region Constructor
 	public:
 		explicit SVShowDependentsDialog( const std::set<uint32_t>& rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
-		explicit SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText = nullptr, CWnd* pParent = nullptr);
+		explicit SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText = nullptr, DialogType Type = Show, CWnd* pParent = nullptr);
 	#pragma endregion Constructor
 
 	protected:
