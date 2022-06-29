@@ -132,17 +132,15 @@ protected:
 	/// \param rInputImages [in] The input images of the tool
 	void validateIds(std::string& rXmlData, uint32_t ownerId, SvPb::ClassIdEnum toolClassId) const;
 
-	//************************************
-	/// This method replaces the tool name and the dotted name (e.g. in Equation)
+	/// This method replaces the tool name and the dotted name (e.g. in equations)
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
 	/// \param rTree [in] Reference to the tree generated from the clipboard
 	/// \param pOwner [in] The owner of the new object.
 	/// \returns HRESULT S_OK on success
-	HRESULT replaceDuplicateToolNames(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, const SVObjectClass* pOwner) const;
+	HRESULT updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const;
 
-	void replaceToolNameIfDuplicate(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, const SVObjectClass* pOwner, SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const;
+	void updateToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const;
 	std::string getUniqueToolName(std::string& rToolName, const SVObjectClass* pOwner) const;
-	
 
 	//************************************
 	// Description: This method replaces all the unique ids

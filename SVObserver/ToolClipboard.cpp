@@ -159,7 +159,7 @@ std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& r
 	if (S_OK == Result)
 	{
 		readTool(XmlData, Tree, ownerId);
-		Result = replaceDuplicateToolNames(XmlData, Tree, pOwner);
+		Result = updateAllToolNames(XmlData, Tree, pOwner);
 	}
 	if (S_OK == Result)
 	{
@@ -464,7 +464,7 @@ void ToolClipboard::validateIds(std::string& rXmlData, uint32_t ownerId, SvPb::C
 	}
 }
 
-HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, const SVObjectClass* pOwner) const
+HRESULT ToolClipboard::updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const
 {
 	HRESULT Result(E_FAIL);
 
@@ -483,7 +483,7 @@ HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SvXml::S
 			variant_t value;
 			rTree.getLeafData(fullToolNameHandle, value);
 
-			replaceToolNameIfDuplicate(rXmlData, rTree, pOwner, ToolItem, SvUl::createStdString(value));
+			updateToolName(rXmlData, rTree, pOwner, ToolItem, SvUl::createStdString(value));
 			Result = S_OK;
 			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
 		}
@@ -499,7 +499,7 @@ HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SvXml::S
 	return Result;
 }
 
-void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, const SVObjectClass* pOwner, SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const
+void ToolClipboard::updateToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const
 {
 	_variant_t ObjectName;
 	SvXml::SVNavigateTree::GetItem(rTree, scObjectNameTag, ToolItem, ObjectName);
@@ -509,45 +509,45 @@ void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SvXml::SVX
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLCLIPBOARD)
 	std::stringstream ss;
-	ss << _T("ToolClipboard::replaceToolNameIfDuplicate(): ") << ToolName << _T(" -> ") << NewToolName << "\n";
+	ss << _T("ToolClipboard::updateToolName(): ") << ToolName << _T(" -> ") << NewToolName << "\n";
 	::OutputDebugString(ss.str().c_str());
 #endif
 
 	if (NewToolName != ToolName)
 	{
-		// adding ">" and "<" ensures that the correct occurrence of the name in the XML string will be replaced
-		auto searchString = ">" + NewToolName + "<";
-		auto replacementString = ">" + ToolName + "<";
-
 		size_t pos = rXmlData.find(scObjectNameTag);
 
 		if (pos != std::string::npos)
 		{
+			// adding ">" and "<" ensures that only the correct occurrences of the name in the XML string will be replaced
+			auto searchString = ">" + NewToolName + "<";
+			auto replacementString = ">" + ToolName + "<";
+
 			pos += sizeof(scObjectNameTag);
 			pos = rXmlData.find(replacementString.c_str(), pos);
 			rXmlData.replace(pos, strlen(replacementString.c_str()), searchString.c_str());
 		}
+	}
 
-		if (false == rOldFullToolName.empty())
-		{ //replace the dottedName in equations with the new name.
-			std::string fullToolNameStr = rOldFullToolName + _T(".");
-			std::string fullToolNameNewStr = fullToolNameStr;
-			if (nullptr != pOwner)
-			{
-				fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewToolName + _T(".");
-			}
-			else
-			{
-				SvUl::searchAndReplace(fullToolNameNewStr, ToolName.c_str(), NewToolName.c_str());
-			}
-			SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
-
-			//ConnectedDotname should not be renamed, because it is to display the old connectedDotname if the id invalid. (Change is caused by SVB-743)
-			std::string tmpText = "<DATA Name=\"ConnectedDotname\" Type=\"VT_BSTR\">";
-			fullToolNameStr = tmpText + fullToolNameStr;
-			fullToolNameNewStr = tmpText + fullToolNameNewStr;
-			SvUl::searchAndReplace(rXmlData, fullToolNameNewStr.c_str(), fullToolNameStr.c_str());
+	if (false == rOldFullToolName.empty())
+	{ //update the dotted Name
+		std::string fullToolNameStr = rOldFullToolName + _T(".");
+		std::string fullToolNameNewStr = fullToolNameStr;
+		if (nullptr != pOwner)
+		{
+			fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewToolName + _T(".");
 		}
+		else
+		{
+			SvUl::searchAndReplace(fullToolNameNewStr, ToolName.c_str(), NewToolName.c_str());
+		}
+		SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
+
+		//ConnectedDotname should not be renamed, because it is to display the old connectedDotname if the id invalid. (Change is caused by SVB-743)
+		std::string tmpText = "<DATA Name=\"ConnectedDotname\" Type=\"VT_BSTR\">";
+		fullToolNameStr = tmpText + fullToolNameStr;
+		fullToolNameNewStr = tmpText + fullToolNameNewStr;
+		SvUl::searchAndReplace(rXmlData, fullToolNameNewStr.c_str(), fullToolNameStr.c_str());
 	}
 }
 
