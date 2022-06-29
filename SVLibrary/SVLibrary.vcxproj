@@ -133,9 +133,6 @@
     <ClInclude Include="SVValueBaseNormalizerClass.h" />
     <ClInclude Include="SVWinUtility.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SVOINIClass.inl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

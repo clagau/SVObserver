@@ -11,14 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <set>
-//Moved to precompiled header: #include <iterator>
 #include "SVImageFileLoader.h"
 #include "SVImageFile.h"
-
-#include "SVFileSystemLibrary/SVFileInfo.h"
-#include "SVFileSystemLibrary/SVFileInfoComparator.h"
-#include "SVFileSystemLibrary/SVFileSystemScanner.h"
+#include "SVUtilityLibrary/FileHelper.h"
 #pragma endregion Includes
 
 HRESULT SVImageFileLoader::Load(LPCTSTR FileName, SVImageFile& rImageFile)
@@ -34,16 +29,11 @@ HRESULT SVImageFileLoader::LoadFirstFile( LPCTSTR Name, LPCTSTR Ext, SVImageFile
 
 	if( FILE_ATTRIBUTE_DIRECTORY == ( ::GetFileAttributes(Name) & FILE_ATTRIBUTE_DIRECTORY)  )
 	{
-		typedef std::set<SVFileInfo, SVFileInfoComparator> SVFileList;
-		typedef SVFileList::const_iterator FileListIterator;
-		typedef std::insert_iterator<SVFileList> Insertor;
-
-		SVFileList fileList;
-		SVFileSystemScanner<Insertor>::ScanForFiles( Name, Ext, Insertor(fileList, fileList.end()));
-		FileListIterator it = fileList.begin();
-		if (it != fileList.end())
+		std::vector<std::string> fileList {SvUl::getFileList(Name, Ext, false)};
+		auto iter = fileList.begin();
+		if (fileList.end() != iter)
 		{
-			FileName = it->filename;
+			FileName = *iter;
 		}
 	}
 	else

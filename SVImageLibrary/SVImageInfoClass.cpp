@@ -9,13 +9,16 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:53:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageInfoClass.h"
-
+#include "InspectionEngine/SVImageClass.h"
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -27,16 +30,16 @@ SVImageInfoClass::SVImageInfoClass()
 	Initialize();
 }
 
-SVImageInfoClass::SVImageInfoClass(const SVImageInfoClass &p_rsvValue)
+SVImageInfoClass::SVImageInfoClass(const SVImageInfoClass& rRhs)
 {
 	Initialize();
 
-	*this = p_rsvValue;
+	*this = rRhs;
 }
 
-SVImageInfoClass::SVImageInfoClass(const BITMAPINFOHEADER& p_rBitmapHeader)
+SVImageInfoClass::SVImageInfoClass(const BITMAPINFOHEADER& rBitmapHeader)
 {
-	*this = p_rBitmapHeader;
+	*this = rBitmapHeader;
 }
 
 SVImageInfoClass::~SVImageInfoClass()
@@ -44,15 +47,15 @@ SVImageInfoClass::~SVImageInfoClass()
 	Initialize();
 }
 
-SVImageInfoClass &SVImageInfoClass::operator=(const SVImageInfoClass &p_rsvValue)
+SVImageInfoClass &SVImageInfoClass::operator=(const SVImageInfoClass & rRhs)
 {
-	if (this != &p_rsvValue)
+	if (this != &rRhs)
 	{
-		m_OwnerImageID = p_rsvValue.m_OwnerImageID;
-		m_OwnerObjectID = p_rsvValue.m_OwnerObjectID;
-		m_svExtents = p_rsvValue.m_svExtents;
-		m_svProperties = p_rsvValue.m_svProperties;
-		m_isDibBuffer = p_rsvValue.m_isDibBuffer;
+		m_OwnerImageID = rRhs.m_OwnerImageID;
+		m_OwnerObjectID = rRhs.m_OwnerObjectID;
+		m_svExtents = rRhs.m_svExtents;
+		m_svProperties = rRhs.m_svProperties;
+		m_isDibBuffer = rRhs.m_isDibBuffer;
 
 		m_svExtents.UpdateData();
 	}
@@ -61,35 +64,33 @@ SVImageInfoClass &SVImageInfoClass::operator=(const SVImageInfoClass &p_rsvValue
 
 
 // And how 
-const SVImageInfoClass &SVImageInfoClass::operator=(const BITMAPINFOHEADER& p_rBitmapHeader)
+const SVImageInfoClass &SVImageInfoClass::operator=(const BITMAPINFOHEADER& rBitmapHeader)
 {
 	Initialize();
 
 	int l_iFormat = SvDef::SVImageFormatUnknown;
-	if (p_rBitmapHeader.biBitCount == 8)
+	if (rBitmapHeader.biBitCount == 8)
 	{
 		l_iFormat = SvDef::SVImageFormatMono8;
 	}
-	else
-		if (p_rBitmapHeader.biBitCount == 24)
-		{
-			l_iFormat = SvDef::SVImageFormatBGR888;
-		}
-		else
-			if (p_rBitmapHeader.biBitCount == 32)
-			{
-				l_iFormat = SvDef::SVImageFormatBGR888X;
-			}
+	else if (rBitmapHeader.biBitCount == 24)
+	{
+		l_iFormat = SvDef::SVImageFormatBGR888;
+	}
+	else if (rBitmapHeader.biBitCount == 32)
+	{
+		l_iFormat = SvDef::SVImageFormatBGR888X;
+	}
 	SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat);
 
-	SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, p_rBitmapHeader.biBitCount);
+	SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, rBitmapHeader.biBitCount);
 	SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 	SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
 
-	SetExtentProperty(SvPb::SVExtentPropertyHeight, abs(p_rBitmapHeader.biHeight));
-	SetExtentProperty(SvPb::SVExtentPropertyWidth, p_rBitmapHeader.biWidth);
+	SetExtentProperty(SvPb::SVExtentPropertyHeight, abs(rBitmapHeader.biHeight));
+	SetExtentProperty(SvPb::SVExtentPropertyWidth, rBitmapHeader.biWidth);
 
-	if (p_rBitmapHeader.biBitCount == 24)
+	if (rBitmapHeader.biBitCount == 24)
 	{
 		SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8);
 		SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3);
@@ -396,18 +397,9 @@ const SVExtentFigureStruct& SVImageInfoClass::GetFigure() const
 	return m_svExtents.GetFigure();
 }
 
-HRESULT SVImageInfoClass::GetOwnerImage(SVObjectClass*& rpObject) const
+SvIe::SVImageClass* SVImageInfoClass::GetOwnerImage() const
 {
-	HRESULT result = S_OK;
-
-	rpObject = SVObjectManagerClass::Instance().GetObject(m_OwnerImageID);
-
-	if (nullptr == rpObject)
-	{
-		result = E_FAIL;
-	}
-
-	return result;
+	return dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_OwnerImageID));
 }
 
 void SVImageInfoClass::SetOwnerImage(uint32_t objectID)

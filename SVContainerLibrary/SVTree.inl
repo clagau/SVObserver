@@ -73,7 +73,7 @@ namespace SvCl
 	template<typename Key, typename Data>
 	typename SVTree<Key, Data>::iterator SVTree<Key, Data>::find( SVTreeContainer& rTree, const Key& rKey )
 	{
-		auto Result = std::find_if( rTree.begin(), rTree.end(), SVCompareKeys<Key, std::shared_ptr<Data>>(rKey) );
+		auto Result = std::find_if( rTree.begin(), rTree.end(), [&rKey](const auto& rEntry) {return rEntry.first == rKey; });
 
 		return Result;
 	}
@@ -81,7 +81,7 @@ namespace SvCl
 	template<typename Key, typename Data>
 	typename SVTree<Key, Data>::const_iterator SVTree<Key, Data>::find( const SVTreeContainer& rTree, const Key& rKey )
 	{
-		const auto Result = std::find_if( rTree.begin(), rTree.end(), SVCompareKeys<Key, std::shared_ptr<Data>>(rKey) );
+		const auto Result = std::find_if( rTree.begin(), rTree.end(), [&rKey](const auto& rEntry) {return rEntry.first == rKey; });
 
 		return Result;
 	}

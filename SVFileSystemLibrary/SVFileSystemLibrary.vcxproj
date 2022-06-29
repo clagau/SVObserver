@@ -99,16 +99,10 @@
   <ItemGroup>
     <ClInclude Include="FilepathUtilities.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVFileInfo.h" />
-    <ClInclude Include="SVFileInfoComparator.h" />
     <ClInclude Include="SVFileNameArrayClass.h" />
     <ClInclude Include="SVFileNameClass.h" />
     <ClInclude Include="SVFileNameLockablePointerArrayClass.h" />
     <ClInclude Include="SVFileNameManagerClass.h" />
-    <ClInclude Include="SVFileSystemScanner.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SVFileSystemScanner.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

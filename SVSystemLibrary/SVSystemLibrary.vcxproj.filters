@@ -62,9 +62,6 @@
     <ClInclude Include="SVSAXErrorHandlerImpl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVSequencer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVVersionInfo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -83,9 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVSAXErrorHandlerImpl.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVSequencer.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVFuture.inl">

@@ -109,14 +109,12 @@
     <ClInclude Include="SVLockableClass.h" />
     <ClInclude Include="SVSAXContentHandlerImpl.h" />
     <ClInclude Include="SVSAXErrorHandlerImpl.h" />
-    <ClInclude Include="SVSequencer.h" />
     <ClInclude Include="SVThread.h" />
     <ClInclude Include="SVVersionInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVFuture.inl" />
     <None Include="SVSAXErrorHandlerImpl.inl" />
-    <None Include="SVSequencer.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

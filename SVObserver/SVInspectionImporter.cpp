@@ -284,7 +284,7 @@ static void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std
 	}
 }
 
-static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& rXmlString, SvXml::SaxXMLHandler<SVTreeType>& rSaxHandler, SvUl::GlobalConflictPairVector& rGlobalConflicts)
+static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& rXmlString, SvXml::SaxXMLHandler& rSaxHandler, SvUl::GlobalConflictPairVector& rGlobalConflicts)
 {
 	std::vector<SvUl::GlobalConstantData> importedGlobals;
 	importGlobalConstants(rTree, importedGlobals);
@@ -423,7 +423,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 			unsigned long parserHandle = SVObjectScriptParser::GetParserHandle();
 
 			// Create Inspection process - leave unattached for now
-			hr = SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionId, rXmlTree, hItem);
+			hr = SVInspectionTreeParser::CreateInspectionObject(inspectionInfo.m_inspectionId, rXmlTree, hItem);
 			if (S_OK == hr)
 			{
 				rProgress.UpdateText(_T("Creating Toolset objects..."));
@@ -443,7 +443,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 					SVConfigurationObject::updateConfTreeToNewestVersion(rXmlTree, hItemToolset);
 
 					// Launch parser progress
-					SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >(rXmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionId, pInspection, &l_ParserProgressDialog));
+					SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser(rXmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionId, pInspection, &l_ParserProgressDialog));
 					if (nullptr != pParser)
 					{
 						// Set the Parser Object
@@ -597,7 +597,7 @@ HRESULT SVInspectionImporter::GetProperties(const std::string& rFileName, long& 
 HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, const std::string& rNewInspectionName, SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalConflictPairVector& rGlobalConflicts)
 {
 	SvXml::SVXMLMaterialsTree XmlTree;
-	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
+	SvXml::SaxXMLHandler SaxHandler;
 	HRESULT	hr = SaxHandler.BuildFromXMLFile(&XmlTree, inFileName.c_str());
 	if (S_OK != hr)
 	{

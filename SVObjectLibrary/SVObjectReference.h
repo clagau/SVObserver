@@ -41,16 +41,16 @@ class SVObjectClass;
 class SVObjectReference
 {
 public:
-	SVObjectReference();
+	SVObjectReference() =default;
 	SVObjectReference( const SVObjectReference& rhs );
 	SVObjectReference( SVObjectClass* pObject, long lArrayIndex, std::string strDefaultValue = std::string() );
 	SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
 	explicit SVObjectReference(SVObjectClass* pObject);
 	explicit SVObjectReference( uint32_t objectId );
-	~SVObjectReference();
 	/// This constructor create an object depending of a ID and if required an index. 
 	/// \param objectIdAndIndexString [in] A string with a ID and if required an index (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
 	explicit SVObjectReference(const std::string& objectIdAndIndexString);
+	~SVObjectReference();
 	const SVObjectReference& operator = ( const SVObjectReference& rhs );
 	bool operator == ( const SVObjectReference& rhs ) const;
 
@@ -58,7 +58,7 @@ public:
 	void clear();
 	void update();
 
-	SVObjectClass* getObject() const;
+	SVObjectClass* getObject() const { return m_pObject; }
 	SVObjectClass* getFinalObject() const;
 	SvOi::IValueObject* getValueObject(bool forceCast=false) const;
 	
@@ -144,6 +144,4 @@ protected:
 };
 
 typedef std::vector<SVObjectReference> SVObjectReferenceVector;
-
-#include "SVObjectReference.inl"
 

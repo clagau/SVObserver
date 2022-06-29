@@ -162,7 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVObjectManagerClass.inl" />
-    <None Include="SVObjectReference.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

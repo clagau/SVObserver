@@ -108,9 +108,4 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SVImageInfoClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-  </ItemGroup>
 </Project>

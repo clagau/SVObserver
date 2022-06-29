@@ -21,6 +21,44 @@
 #include "SVProtoBuf/GetObjectSelector.pb.h"
 #pragma endregion Includes
 
+bool SVObjectReference::operator < (const SVObjectReference& rhs) const
+{
+	return (m_pObject < rhs.m_pObject) || ((m_pObject == rhs.m_pObject) && (m_ArrayIndex < rhs.m_ArrayIndex));
+}
+
+SVObjectReference::SVObjectReference(const SVObjectReference& rhs)
+{
+	*this = rhs;
+}
+
+SVObjectReference::SVObjectReference(SVObjectClass* pObject, long lArrayIndex, std::string strDefaultValue) :
+	m_ArrayIndex(lArrayIndex)
+	, m_pObject(pObject)
+{
+	m_objectId = m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
+	if (nullptr != m_pObject)
+	{
+		m_NameInfo.ParseObjectName(m_NameInfo, m_pObject->GetCompleteName().c_str());
+		registerNotification();
+	}
+	m_NameInfo.SetIsIndexPresent(true);
+	m_NameInfo.SetIndex(SvUl::Format(_T("%d"), lArrayIndex));
+	m_NameInfo.SetIsDefaultValuePresent(true);
+	m_NameInfo.SetDefaultValue(strDefaultValue);
+}
+
+SVObjectReference::SVObjectReference(SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo)
+	: m_pObject(pObject)
+{
+	if (nullptr != m_pObject)
+	{
+		m_objectId = m_pObject->getObjectId();
+		registerNotification();
+	}
+	m_NameInfo = p_rNameInfo;
+	m_ArrayIndex = p_rNameInfo.GetIndexValue();
+}
+
 SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	m_ArrayIndex(-1)
 	,m_pObject(pObject)
@@ -38,34 +76,6 @@ SVObjectReference::SVObjectReference(uint32_t objectId)
 {
 	m_pObject = SVObjectManagerClass::Instance().GetObject(m_objectId);
 	registerNotification();
-}
-
-SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, std::string strDefaultValue ):
-	m_ArrayIndex(lArrayIndex) 
-	, m_pObject(pObject)
-{
-	m_objectId = m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
-	if( nullptr != m_pObject )
-	{
-		m_NameInfo.ParseObjectName( m_NameInfo, m_pObject->GetCompleteName().c_str() );
-		registerNotification();
-	}
-	m_NameInfo.SetIsIndexPresent(true);
-	m_NameInfo.SetIndex( SvUl::Format(_T("%d"), lArrayIndex ));
-	m_NameInfo.SetIsDefaultValuePresent(true);
-	m_NameInfo.SetDefaultValue( strDefaultValue );
-}
-
-SVObjectReference::SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo )
-	: m_pObject(pObject)
-{
-	if (nullptr != m_pObject)
-	{
-		m_objectId = m_pObject->getObjectId();
-		registerNotification();
-	}
-	m_NameInfo = p_rNameInfo;
-	m_ArrayIndex = p_rNameInfo.GetIndexValue();
 }
 
 SVObjectReference::SVObjectReference(const std::string& objectIdAndIndexString)
@@ -130,6 +140,12 @@ const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference
 	return *this;
 }
 
+bool SVObjectReference::operator == (const SVObjectReference& rhs) const
+{
+	bool res = (m_pObject == rhs.m_pObject) && (m_ArrayIndex == rhs.m_ArrayIndex);
+	return res;
+}
+
 void  SVObjectReference::clear()
 {
 	m_notifyPtr.reset();
@@ -153,15 +169,6 @@ void SVObjectReference::update()
 		m_pValueObject = nullptr;
 		m_pFinalObject = nullptr;
 	}
-}
-
-SvOi::IValueObject* SVObjectReference::getValueObject(bool forceCast) const
-{
-	if (nullptr == m_pValueObject || forceCast)
-	{
-		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
-	}
-	return m_pValueObject;
 }
 
 SVObjectClass* SVObjectReference::getFinalObject() const
@@ -191,6 +198,52 @@ SVObjectClass* SVObjectReference::getFinalObject() const
 		}
 	}
 	return m_pFinalObject;
+}
+
+SvOi::IValueObject* SVObjectReference::getValueObject(bool forceCast) const
+{
+	if (nullptr == m_pValueObject || forceCast)
+	{
+		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
+	}
+	return m_pValueObject;
+}
+
+long SVObjectReference::ArrayIndex() const
+{
+	long Index = -1;
+
+	if (isArray() && m_ArrayIndex > -1)
+	{
+		Index = m_ArrayIndex;
+	}
+
+	return Index;
+}
+
+long SVObjectReference::getValidArrayIndex() const
+{
+	return (-1 != ArrayIndex()) ? ArrayIndex() : 0;
+}
+
+std::string SVObjectReference::DefaultValue() const
+{
+	return m_NameInfo.GetDefaultValue();
+}
+
+bool SVObjectReference::isArray() const
+{
+	const SvOi::IValueObject* pValueObject = getValueObject(true);
+	// the parameter forceCast was added to the getValueObject() call since problems were cause otherwise
+	// when SVArchiveRecordsArray::RemoveDisconnectedObject() is called by the BasicValueObject destructor
+	// which can happen because of the changes in SVO-2297
+	return nullptr != pValueObject ? pValueObject->isArray() : false;
+}
+
+bool SVObjectReference::isEntireArray() const
+{
+	return isArray() && m_ArrayIndex == -1 && m_NameInfo.IsIndexPresent();
+
 }
 
 std::string SVObjectReference::objectIdToString() const
@@ -287,6 +340,58 @@ const SVObjectNameInfo& SVObjectReference::GetObjectNameInfo() const
 	return m_NameInfo;
 }
 
+UINT SVObjectReference::ObjectAttributesAllowed() const
+{
+	assert(nullptr != m_pObject);
+	if (nullptr != m_pObject)
+	{
+		return m_pObject->ObjectAttributesAllowed();
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+UINT SVObjectReference::ObjectAttributesSet() const
+{
+	assert(nullptr != m_pObject);
+	if (nullptr != m_pObject)
+	{
+		return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0);
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+UINT SVObjectReference::SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type)
+{
+	assert(nullptr != m_pObject);
+	if (nullptr != m_pObject)
+	{
+		return m_pObject->SetObjectAttributesAllowed(Attributes, Type);
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+UINT SVObjectReference::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeType Type)
+{
+	assert(nullptr != m_pObject);
+	if (nullptr != m_pObject)
+	{
+		return m_pObject->SetObjectAttributesSet(Attributes, Type, m_ArrayIndex >= 0 ? m_ArrayIndex : 0);
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 std::string SVObjectReference::GetIndexString(bool OneBased /*=false*/) const
 {
 	std::string Result;
@@ -313,64 +418,6 @@ HRESULT SVObjectReference::getValue(_variant_t& rValue) const
 		return pValueObject->getValue(rValue, ArrayIndex());
 	}
 	return E_POINTER;
-}
-
-const std::string& SVObjectReference::GetIndex() const
-{
-	
-	return m_NameInfo.GetIndex();
-}
-
-UINT SVObjectReference::ObjectAttributesAllowed() const
-{
-	assert( nullptr != m_pObject );
-	if (nullptr != m_pObject)
-	{
-		return m_pObject->ObjectAttributesAllowed();
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-UINT SVObjectReference::ObjectAttributesSet() const
-{
-	assert( nullptr != m_pObject );
-	if (nullptr != m_pObject)
-	{
-		return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0);
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-UINT SVObjectReference::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
-{
-	assert( nullptr != m_pObject );
-	if (nullptr != m_pObject)
-	{
-		return m_pObject->SetObjectAttributesAllowed(Attributes, Type);
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-UINT SVObjectReference::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type )
-{
-	assert( nullptr != m_pObject );
-	if (nullptr != m_pObject)
-	{
-		return m_pObject->SetObjectAttributesSet(Attributes, Type, m_ArrayIndex >= 0 ? m_ArrayIndex : 0);
-	}
-	else
-	{
-		return 0;
-	}
 }
 
 long SVObjectReference::IncrementIndex()
@@ -455,6 +502,12 @@ void SVObjectReference::onChangeNotification(SvOi::ObjectNotificationType type, 
 		default:
 			break;
 	}
+}
+
+const std::string& SVObjectReference::GetIndex() const
+{
+
+	return m_NameInfo.GetIndex();
 }
 
 void SVObjectReference::registerNotification()

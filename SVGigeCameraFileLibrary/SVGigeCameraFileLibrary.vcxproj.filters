@@ -54,9 +54,4 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SVCustomParameterBuilder.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-  </ItemGroup>
 </Project>

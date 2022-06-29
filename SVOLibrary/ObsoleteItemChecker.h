@@ -8,18 +8,16 @@
 #pragma once
 
 #pragma region Includes
-#include "SVHardwareManifest.h"
 #pragma endregion Includes
 
 namespace SvXml
 {
-	template<typename TreeType>
-	static HRESULT HasObsoleteItem(TreeType& rTree, std::string& rItemType, int& errorCode);
-	
-	
-	template< typename SVTreeType >
-	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, std::string& rItemType, int& errorCode );
+class SVXMLMaterialsTree;
+}
+
+namespace SvXml
+{
+	HRESULT HasObsoleteItem(SvXml::SVXMLMaterialsTree& rTree, std::string& rItemType, int& errorCode);
+	HRESULT CheckObsoleteItems(SvXml::SVXMLMaterialsTree& rTree, const unsigned long& ulSVOConfigVersion, std::string& rItemType, int& errorCode);
 	
 } //namespace SvXml
-
-#include "ObsoleteItemChecker.inl"

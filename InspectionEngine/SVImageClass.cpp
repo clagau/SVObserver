@@ -740,13 +740,11 @@ HRESULT SVImageClass::RemoveChild(uint32_t childID)
 
 		if (l_Iter != m_ChildArrays.end())
 		{
-			SVImageClass* l_pImage = nullptr;
+			SVImageClass* pImage {l_Iter->second.GetOwnerImage()};
 
-			l_Iter->second.GetOwnerImage(l_pImage);
-
-			if (nullptr != l_pImage)
+			if (nullptr != pImage)
 			{
-				l_hrOk = l_pImage->RemoveObjectConnection(getObjectId());
+				l_hrOk = pImage->RemoveObjectConnection(getObjectId());
 			}
 
 			l_Iter->second.Initialize();

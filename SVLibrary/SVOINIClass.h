@@ -11,29 +11,48 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <io.h>
-
-
 namespace SvLib
 {
 	class SVOINIClass
 	{
 	public:
-		explicit SVOINIClass(LPCTSTR FileName);
-		virtual ~SVOINIClass();
+		explicit SVOINIClass(LPCTSTR FileName) : m_FileName(FileName) {};
+		virtual ~SVOINIClass() = default;
 
-		std::string GetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Default ) const;
+		std::string GetValueString(LPCTSTR Section, LPCTSTR Key, LPCTSTR defaultValue) const
+		{
+			TCHAR Value[SHRT_MAX];
+			::GetPrivateProfileString(Section, Key, defaultValue, Value, sizeof Value, m_FileName.c_str());
+			return std::string {Value};
+		}
 
-		int GetValueInt( LPCTSTR Section, LPCTSTR Key, int Default ) const;
+		int GetValueInt(LPCTSTR Section, LPCTSTR Key, int defaultValue) const
+		{
+			return ::GetPrivateProfileInt(Section, Key, defaultValue, m_FileName.c_str());
+		}
 
-		double GetValueDouble(LPCTSTR Section, LPCTSTR Key, double Default) const;
+		double GetValueDouble(LPCTSTR Section, LPCTSTR Key, double defaultValue) const
+		{
+			std::string resultString = GetValueString(Section, Key, std::to_string(defaultValue).c_str());
+			double result = defaultValue;
+			if (false == resultString.empty())
+			{
+				result = ::atof(resultString.c_str());
+			}
+			return result;
+		}
 
-		HRESULT SetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Value ) const;
+		HRESULT SetValueString(LPCTSTR Section, LPCTSTR Key, LPCTSTR Value) const
+		{
+			return ::WritePrivateProfileString(Section, Key, Value, m_FileName.c_str()) ? S_OK : E_FAIL;
+		}
 
-		HRESULT SetValueInt( LPCTSTR Section, LPCTSTR Key, int Value ) const;
+		HRESULT SetValueInt(LPCTSTR Section, LPCTSTR Key, int Value) const
+		{
+			return SetValueString(Section, Key, std::to_string(Value).c_str());
+		}
+
 	protected:
 		std::string m_FileName;
 	};
 } //namespace SvLib
-
-#include "SVOINIClass.inl"

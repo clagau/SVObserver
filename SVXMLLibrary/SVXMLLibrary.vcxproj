@@ -89,17 +89,20 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LoadConfiguration.cpp" />
     <ClCompile Include="SaxContentHandler.cpp" />
     <ClCompile Include="SaxEncryptionHandler.cpp" />
     <ClCompile Include="SaxErrorHandler.cpp" />
     <ClCompile Include="SaxExtractPropertiesHandler.cpp" />
     <ClCompile Include="SaxParser.cpp" />
     <ClCompile Include="SaxTreeElement.cpp" />
+    <ClCompile Include="SaxXMLHandler.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVMaterialData.cpp" />
+    <ClCompile Include="SVNavigateTree.cpp" />
     <ClCompile Include="SVObjectXMLWriter.cpp" />
     <ClCompile Include="SVSimpleXml.cpp" />
     <ClCompile Include="SVVariantConverter.cpp" />
@@ -133,9 +136,6 @@
     <ClInclude Include="XMLWriter.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="LoadConfiguration.inl" />
-    <None Include="SaxXMLHandler.inl" />
-    <None Include="SVNavigateTree.inl" />
     <None Include="SVXMLTree.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

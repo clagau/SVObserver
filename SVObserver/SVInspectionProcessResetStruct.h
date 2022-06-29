@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <map>
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
@@ -36,6 +35,4 @@ struct SVInspectionProcessResetStruct
 };
 
 typedef std::map<SvTo::SVToolClass*, SVInspectionProcessResetStruct> SVStdMapSVToolClassPtrSVInspectionProcessResetStruct;
-
-#include "SVInspectionProcessResetStruct.inl"
 

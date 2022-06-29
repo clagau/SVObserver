@@ -18,7 +18,7 @@ namespace SvOi
 {
 	class ILinkedObject;
 
-	enum SVResetItemEnum //! used with Embedded Object registration.
+	enum SVResetItemEnum : int //! used with Embedded Object registration.
 	{
 		//!  Used in cases where changing the Tool value can have an impact on 
 		//! 	dependent Tools. In most cases this would be overkill.	

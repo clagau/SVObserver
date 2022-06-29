@@ -26,10 +26,6 @@
 
 
 #pragma region Declarations
-namespace SvOi
-{
-class IObjectWriter;
-}
 struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;
 
@@ -37,7 +33,16 @@ class SVObjectAttributeClass;
 
 namespace SvIe
 {
-	class RunStatus;
+class RunStatus;
+}
+namespace SvOi
+{
+class IObjectWriter;
+enum SVResetItemEnum : int;
+}
+namespace SvPb
+{
+class FixedInputData;
 }
 
 typedef std::vector<SVObjectClass*> SVObjectPtrVector;

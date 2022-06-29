@@ -7,11 +7,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <algorithm>
-//Moved to precompiled header: #include <memory>
-//Moved to precompiled header: #include <utility>
-//Moved to precompiled header: #include <sequential_tree.h>
-#include "SVCompareKeys.h"
 #pragma endregion Includes
 
 namespace SvCl

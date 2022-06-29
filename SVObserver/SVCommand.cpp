@@ -1547,9 +1547,7 @@ HRESULT SVCommand::ImageToBSTR(const SVImageInfoClass& rImageInfo, SvOi::SVImage
 		long l_lBandNumber = 1;
 		long l_lBandLink = 0;
 
-		SvIe::SVImageClass* pImage(nullptr);
-
-		oChildInfo.GetOwnerImage(pImage);
+		SvIe::SVImageClass* pImage {oChildInfo.GetOwnerImage()};
 
 		if (nullptr != pImage)
 		{

@@ -513,6 +513,18 @@
     <ClCompile Include="SVObserverOuttakes.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVConfigXMLPrint.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVImportProgress.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVInspectionProcessResetStruct.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVInspectionTreeParser.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1080,9 +1092,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVInspectionProcessResetStruct.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="hlp\AfxCore.rtf">
       <Filter>Help Files</Filter>
     </None>
@@ -1166,15 +1175,6 @@
     </None>
     <None Include="SVConfigurationTreeWriter.inl">
       <Filter>Quelldateien</Filter>
-    </None>
-    <None Include="SVInspectionTreeParser.inl">
-      <Filter>Quelldateien</Filter>
-    </None>
-    <None Include="SVImportProgress.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVConfigXMLPrint.inl">
-      <Filter>Headerdateien</Filter>
     </None>
     <None Include="RootChildren.inl">
       <Filter>Headerdateien</Filter>

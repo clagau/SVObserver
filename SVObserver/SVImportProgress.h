@@ -15,13 +15,13 @@
 #include "SVProgressDialog.h"
 #pragma endregion Includes
 
+struct SVInspectionImportHelper;
 class SVImportTask;
 
-template<typename Task>
 class SVImportProgress : public SVIProgress
 {
 public:
-	SVImportProgress(Task& rTask, LPCTSTR title, CWnd* pParent=nullptr);
+	SVImportProgress(SVInspectionImportHelper& rTask, LPCTSTR title, CWnd* pParent=nullptr);
 	virtual ~SVImportProgress();
 
 	void DoModal();
@@ -39,9 +39,7 @@ private:
 	static DWORD WINAPI TaskThread(LPVOID lpHost);
 
 	SVProgressDialog m_Dialog;
-	Task& m_rTask;
+	SVInspectionImportHelper& m_rTask;
 	HRESULT m_Status;
 	HANDLE m_hThread;
 };
-
-#include "SVImportProgress.inl"

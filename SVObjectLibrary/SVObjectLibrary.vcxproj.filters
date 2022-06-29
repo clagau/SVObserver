@@ -142,8 +142,5 @@
     <None Include="SVObjectManagerClass.inl">
       <Filter>Headerdateien</Filter>
     </None>
-    <None Include="SVObjectReference.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
   </ItemGroup>
 </Project>

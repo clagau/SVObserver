@@ -241,9 +241,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVHistogram.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="AvailableObjectListComboBox.inl">
       <Filter>Headerdateien</Filter>
     </None>

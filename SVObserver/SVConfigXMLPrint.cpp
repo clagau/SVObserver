@@ -3,16 +3,15 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVConfigXMLPrint
-//* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
+//* .File Name       : $Workfile:   SVConfigXMLPrint.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.15  $
 //* .Check In Date   : $Date:   23 Jul 2014 10:34:38  $
 //******************************************************************************
 
 #pragma region Includes
-#include "SVUtilityLibrary/StringHelper.h"
-#include "AnalyzerOperators/BlobAnalyzer.h"
-#include "Operators/SVResultDouble.h"
+#include "StdAfx.h"
+#include "SVConfigXMLPrint.h"
 #include "ConfigurationOuttakes.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
@@ -23,14 +22,17 @@
 #include "SVIODoc.h"
 #include "SVToolGrouping.h"
 #include "SVToolSet.h"
+#include "AnalyzerOperators/BlobAnalyzer.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "ObjectInterfaces/IValueObject.h"
+#include "Operators/SVResultDouble.h"
 #include "Operators/SVShapeMaskHelperClass.h"
+#include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/SVTool.h"
 #include "Triggering/SVTriggerClass.h"
@@ -39,10 +41,6 @@
 
 const std::vector<SvPb::EmbeddedIdEnum>& NonPrintEmbeddeds();
 const std::vector<SvPb::ClassIdEnum>& NonPrintClassIds();
-
-typedef sv_xml::SVConfigXMLPrint SVConfigXMLPrint;
-
-typedef sv_xml::SVDeviceParamConfigXMLHelper SVDeviceParamConfigXMLHelper;
 
 const wchar_t* invalid = L"** I N V A L I D ! **";
 
@@ -66,6 +64,25 @@ const static wchar_t* XML_FailStatusList = L"FailStatusList";
 const static wchar_t* XML_FailStatusItem = L"FailStatusItem";
 
 
+namespace sv_xml
+{
+
+std::wstring space2underscore(std::wstring text)
+{
+	std::replace(text.begin(), text.end(), L' ', L'_');
+	return text;
+}
+
+const std::wstring now()
+{
+	const std::wstring sep = L" ";
+	typedef boost::posix_time::ptime ptime;
+	typedef boost::posix_time::microsec_clock clock;
+	ptime pt = clock::local_time();
+	std::wstringstream ss;
+	ss << pt.date() << sep << pt.time_of_day() << std::ends;
+	return ss.str();
+}
 
 static SVToolGrouping GetToolGroupings(uint32_t inspectionId)
 {
@@ -92,7 +109,7 @@ static SVObjectClass* GetTool(const std::string& rName, const SvIe::SVTaskObject
 	return pObject;
 }
 
-inline const std::string SVConfigXMLPrint::Print() const
+const std::string SVConfigXMLPrint::Print() const
 {
 	m_cfo = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject(m_cfo);
@@ -111,7 +128,7 @@ inline const std::string SVConfigXMLPrint::Print() const
 	return HG2String(hg)();
 }
 
-inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
+void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 {
 	writer->WriteStartDocument(XmlStandalone::XmlStandalone_Yes);
 	wchar_t head[] = L"<?xml version=\"1.0\"?>";
@@ -144,7 +161,7 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 	writer->Flush();
 }
 
-inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
+void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 {
 	typedef std::map<std::string, SvTrig::SVTriggerObject*> TriggerMap;
 	TriggerMap triggers;
@@ -170,7 +187,7 @@ inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTrig::SVTriggerObject* pTrigger) const
+void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTrig::SVTriggerObject* pTrigger) const
 {
 	ASSERT(nullptr != pTrigger);
 	if (nullptr == pTrigger) { return; }
@@ -192,7 +209,7 @@ inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTrig::SVTriggerObjec
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteCameras(Writer writer) const
+void SVConfigXMLPrint::WriteCameras(Writer writer) const
 {
 	typedef std::map<std::string, SvIe::SVVirtualCamera*> CameraMap;
 	CameraMap cameras;
@@ -218,14 +235,14 @@ inline void SVConfigXMLPrint::WriteCameras(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline const wchar_t* LoadingModeText(long mode)
+const wchar_t* LoadingModeText(long mode)
 {
 	if (ContinuousMode == mode) return L"Continuous Load";
 	if (SingleIterationMode == mode) return L"Single Iteration";
 	return L"Single File";
 }
 
-inline void SVConfigXMLPrint::WriteCamera(Writer writer, SvIe::SVVirtualCamera* pCamera) const
+void SVConfigXMLPrint::WriteCamera(Writer writer, SvIe::SVVirtualCamera* pCamera) const
 {
 	ASSERT(nullptr != pCamera);
 	if (nullptr == pCamera) { return; }
@@ -247,7 +264,7 @@ inline void SVConfigXMLPrint::WriteCamera(Writer writer, SvIe::SVVirtualCamera* 
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SvIe::SVVirtualCamera* pCamera) const
+void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SvIe::SVVirtualCamera* pCamera) const
 {
 	writer->WriteStartElement(nullptr, L"HardwareAcquisition", nullptr);
 	SVFileNameArrayClass* pfnac = nullptr;
@@ -295,7 +312,7 @@ inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SvIe::SVVirtualCam
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteFileAcq(Writer writer, SvIe::SVVirtualCamera* pCamera) const
+void SVConfigXMLPrint::WriteFileAcq(Writer writer, SvIe::SVVirtualCamera* pCamera) const
 {
 	ASSERT(nullptr != pCamera);
 	if (nullptr == pCamera) { return; }
@@ -316,7 +333,7 @@ inline void SVConfigXMLPrint::WriteFileAcq(Writer writer, SvIe::SVVirtualCamera*
 	writer->WriteEndElement();
 }
 
-inline const wchar_t* PPQModeText(SvDef::SVPPQOutputModeEnum mode)
+const wchar_t* PPQModeText(SvDef::SVPPQOutputModeEnum mode)
 {
 	switch (mode)
 	{
@@ -339,7 +356,7 @@ inline const wchar_t* PPQModeText(SvDef::SVPPQOutputModeEnum mode)
 	}
 }
 
-inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
+void SVConfigXMLPrint::WritePPQs(Writer writer) const
 {
 	typedef std::map<std::string, SVPPQObject*> PPQMap;
 	PPQMap ppqs;
@@ -392,7 +409,7 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject* pPPQ) const
+void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject* pPPQ) const
 {
 	SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras(true);
 
@@ -407,7 +424,7 @@ inline void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject* pPPQ) 
 	}
 }
 
-inline void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject* pPPQ) const
+void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject* pPPQ) const
 {
 	InspectionMap inspections;
 	long lSize = 0;
@@ -431,7 +448,7 @@ inline void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject* pP
 	}
 }
 
-inline void SVConfigXMLPrint::WriteInspections(Writer writer) const
+void SVConfigXMLPrint::WriteInspections(Writer writer) const
 {
 	InspectionMap inspections;
 	long lSize = 0;
@@ -458,7 +475,7 @@ inline void SVConfigXMLPrint::WriteInspections(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteToolSets(Writer writer) const
+void SVConfigXMLPrint::WriteToolSets(Writer writer) const
 {
 	InspectionMap inspections;
 	long lSize = 0;
@@ -483,7 +500,7 @@ inline void SVConfigXMLPrint::WriteToolSets(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteToolSet(Writer writer, SVInspectionProcess* pInspection) const
+void SVConfigXMLPrint::WriteToolSet(Writer writer, SVInspectionProcess* pInspection) const
 {
 	ASSERT(nullptr != pInspection);
 	if (nullptr == pInspection) { return; }
@@ -496,7 +513,7 @@ inline void SVConfigXMLPrint::WriteToolSet(Writer writer, SVInspectionProcess* p
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteIOSection(Writer writer) const
+void SVConfigXMLPrint::WriteIOSection(Writer writer) const
 {
 	writer->WriteStartElement(nullptr, L"InputOutput", nullptr);
 	WriteModuleIO(writer);
@@ -506,7 +523,7 @@ inline void SVConfigXMLPrint::WriteIOSection(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
+void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -578,7 +595,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 	}
 }
 
-inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
+void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 {
 	CPoint				ptTemp(0, 0);
 
@@ -664,7 +681,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 	}
 }
 
-inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
+void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -792,7 +809,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 }
 
 
-inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
+void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 {
 
 	WriteStartEndElement writerPPQBar(writer, nullptr, L"PPQBar", nullptr);
@@ -888,9 +905,9 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 
 }
 
-inline std::wstring utf16(const std::string& str) { return SvUl::to_utf16(str.c_str(), cp_dflt); }
+std::wstring utf16(const std::string& str) { return SvUl::to_utf16(str.c_str(), cp_dflt); }
 
-inline void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pObj) const
+void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pObj) const
 {
 	if (pObj->ObjectAttributesAllowed() & SvPb::audittrail)
 	{
@@ -925,7 +942,7 @@ inline void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pOb
 	}
 }
 
-inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveTool* ar) const
+void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveTool* ar) const
 {
 	if (ar)
 	{
@@ -959,7 +976,7 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveToo
 	}
 }
 
-inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject) const
+void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject) const
 {
 	SvPb::ClassIdEnum classID = pObject->GetClassID();
 	const auto& nonPCIds = NonPrintClassIds();
@@ -1273,7 +1290,7 @@ void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr 
 	}
 }
 
-inline void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
+void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
 {
 	std::string Value;
 	int Index(0);
@@ -1313,18 +1330,18 @@ inline void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
 //////////////////////////////////////////////////////////////////
 // Visitor helper
 
-inline SVDeviceParamConfigXMLHelper::SVDeviceParamConfigXMLHelper(
+SVDeviceParamConfigXMLHelper::SVDeviceParamConfigXMLHelper(
 	Writer writer, SVDeviceParamCollection& rCamFileParams)
 	: m_writer(writer), m_rCamFileParams(rCamFileParams)
 {
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVDeviceParam&)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVDeviceParam&)
 {
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLongValueDeviceParam& param)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLongValueDeviceParam& param)
 {
 	const SVLongValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter(param.Type()).DerivedValue(pCamFileParam);
 	if (pCamFileParam)
@@ -1351,7 +1368,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLongValueDeviceParam& param
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVi64ValueDeviceParam& param)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVi64ValueDeviceParam& param)
 {
 	const SVi64ValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter(param.Type()).DerivedValue(pCamFileParam);
 	if (pCamFileParam)
@@ -1365,7 +1382,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVi64ValueDeviceParam& param)
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVBoolValueDeviceParam& param)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVBoolValueDeviceParam& param)
 {
 	const SVBoolValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter(param.Type()).DerivedValue(pCamFileParam);
 	if (pCamFileParam)
@@ -1392,7 +1409,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVBoolValueDeviceParam& param
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVStringValueDeviceParam& param)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVStringValueDeviceParam& param)
 {
 	const SVStringValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter(param.Type()).DerivedValue(pCamFileParam);
 	if (pCamFileParam)
@@ -1405,22 +1422,22 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVStringValueDeviceParam& par
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVParamListDeviceParam&)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVParamListDeviceParam&)
 {
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLutDeviceParam&)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLutDeviceParam&)
 {
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLightReferenceDeviceParam&)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLightReferenceDeviceParam&)
 {
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCameraFormatsDeviceParam& param)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCameraFormatsDeviceParam& param)
 {
 	const SVCameraFormatsDeviceParam* pCamFileParam = m_rCamFileParams.Parameter(param.Type()).DerivedValue(pCamFileParam);
 	if (pCamFileParam)
@@ -1457,7 +1474,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCameraFormatsDeviceParam& p
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
+HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 {
 	const SVCustomDeviceParam* pParam = m_rCamFileParams.Parameter(param.Type()).DerivedValue(pParam);
 	if (pParam)
@@ -1472,7 +1489,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 }
 
 
-inline void SVConfigXMLPrint::WriteExternalFiles(Writer writer) const
+void SVConfigXMLPrint::WriteExternalFiles(Writer writer) const
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1550,3 +1567,5 @@ inline void SVConfigXMLPrint::WriteExternalFiles(Writer writer) const
 
 	}
 }
+
+} //namespace sv_xml

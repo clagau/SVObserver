@@ -68,27 +68,25 @@ class SVRemoteOutputGroup;
 class SVRemoteOutputObject;
 class SVPPQObject;
 class SVLightReference;
-
-typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
 struct SVFindPredicate
 {
-	SVTreeType& m_rTree;
+	SvXml::SVXMLMaterialsTree& m_rTree;
 	std::string m_Name;
 
-	SVFindPredicate(SVTreeType& rTree, const std::string& p_rName) : m_rTree(rTree), m_Name(p_rName) {}
-	SVFindPredicate(SVTreeType& rTree, int StringResourceID) : m_rTree(rTree)
+	SVFindPredicate(SvXml::SVXMLMaterialsTree& rTree, const std::string& p_rName) : m_rTree(rTree), m_Name(p_rName) {}
+	SVFindPredicate(SvXml::SVXMLMaterialsTree& rTree, int StringResourceID) : m_rTree(rTree)
 	{
 		m_Name = SvUl::LoadStdString(StringResourceID);
 	}
 
-	bool operator()(const SVTreeType::SVBranchHandle& p_rRight) const
+	bool operator()(const SvXml::SVXMLMaterialsTree::SVBranchHandle& rBranchHandle) const
 	{
 		bool Result(false);
 		std::string Name;
 
-		Name = m_rTree.getBranchName(p_rRight);
+		Name = m_rTree.getBranchName(rBranchHandle);
 		Result = (m_Name == Name);
 
 		return Result;

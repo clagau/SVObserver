@@ -84,6 +84,9 @@
     <ClCompile Include="FileHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalConstantData.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="7zTypes.h">
@@ -221,9 +224,6 @@
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVSafeArray.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="GlobalConstantData.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

@@ -27,142 +27,137 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma region Includes
 
+class SVConfigurationObject;
+class SVObjectClass;
+class SVInspectionProcess;
+class SVPPQObject;
+
+namespace SvIe
+{
+class SVTaskObjectClass;
+class SVTaskObjectListClass;
+class SVVirtualCamera;
+}
+namespace SvTrig
+{
+class SVTriggerObject;
+}
 namespace SvTo
 {
-	class SVArchiveTool;
-	class SVToolClass;
+class SVArchiveTool;
+class SVToolClass;
 }
-
-class SVObjectClass;
 
 typedef CComPtr<IXmlWriter> Writer;
 
 namespace sv_xml
 {
+std::wstring space2underscore(std::wstring text);
 
-	std::wstring space2underscore(std::wstring text)
+class WriteStartEndElement
+{
+public:
+	WriteStartEndElement(Writer writer, LPCWSTR pwszPrefix, LPCWSTR pwszLocalName, LPCWSTR pwszNamespaceUri)
+		:m_Writer(writer)
 	{
-		std::replace(text.begin(), text.end(), L' ', L'_');
-		return text;
+		std::wstring temp = space2underscore(std::wstring(pwszLocalName));
+		m_Writer->WriteStartElement(pwszPrefix, temp.c_str(), pwszNamespaceUri);
 	}
 
-	class WriteStartEndElement
+	~WriteStartEndElement()
 	{
-	public:
-		WriteStartEndElement(Writer writer, LPCWSTR pwszPrefix, LPCWSTR pwszLocalName, LPCWSTR pwszNamespaceUri)
-			:m_Writer(writer)
-		{
-			std::wstring temp = space2underscore(std::wstring(pwszLocalName));
-			m_Writer->WriteStartElement(pwszPrefix, temp.c_str(), pwszNamespaceUri);
-		}
-
-		~WriteStartEndElement()
-		{
-			m_Writer->WriteEndElement();
-		}
-
-		Writer m_Writer;
-	};
-
-	class SVConfigXMLPrint
-	{
-	public:
-		const std::string Print() const;
-
-	private:
-		typedef std::map<std::string, SVInspectionProcess*> InspectionMap;
-
-		void PrintXMLDoc(Writer  writer) const;
-		void WriteTriggers(Writer  writer) const;
-		void WriteTrigger(Writer  writer, SvTrig::SVTriggerObject* pTrigger) const;
-		void WriteCameras(Writer  writer) const;
-		void WriteCamera(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
-		void WriteHardwareAcq(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
-		void WriteFileAcq(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
-		void WritePPQs(Writer  writer) const;
-		void WritePPQCameras(Writer  writer, SVPPQObject* pPPQ) const;
-		void WritePPQInspections(Writer  writer, SVPPQObject* pPPQ) const;
-		void WriteInspections(Writer  writer) const;
-		void WriteToolSets(Writer writer) const;
-		void WriteToolSet(Writer writer, SVInspectionProcess* pInspection) const;
-		void WriteArchiveTool(Writer writer, SvTo::SVArchiveTool* pArchiveTool) const;
-		void WriteModuleIO(Writer writer) const;
-		void WriteResultIO(Writer writer) const;
-		void WriteIOSection(Writer writer) const;
-		void WriteMonitorListSection(Writer writer) const;
-		void WritePPQBar(Writer writer) const;
-		void WriteObject(Writer writer, SVObjectClass* pObj) const;
-		void WriteValueObject(Writer writer, SVObjectClass* pObj) const;
-		void WriteAllChildren(Writer writer, SvIe::SVTaskObjectListClass* pObj) const;
-		void WriteChildren(Writer writer, SVObjectClass* pObj) const;
-		void WriteFriends(Writer writer, SvIe::SVTaskObjectClass* pObj) const;
-		void WriteInputOutputList(Writer writer, SvIe::SVTaskObjectClass* pTaskObj) const;
-		void WriteValueObject(Writer writer, const std::wstring& rTag, const std::wstring& rName, const std::wstring& rValue) const;
-		void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
-		void WriteGlobalConstants(Writer writer) const;
-
-		void WriteExternalFiles(Writer writer) const;
-		mutable SVConfigurationObject* m_cfo;
-		mutable int nToolNumber;
-	};
-
-	class HG2String
-	{
-		HGLOBAL hg;
-	public:
-		explicit HG2String(HGLOBAL h) : hg(h)
-		{
-		}
-		~HG2String()
-		{
-			::GlobalUnlock(hg);
-		}
-
-		const std::string operator()() { return reinterpret_cast<const char*>(::GlobalLock(hg)); }
-	};
-
-	const std::wstring now()
-	{
-		const std::wstring sep = L" ";
-		typedef boost::posix_time::ptime ptime;
-		typedef boost::posix_time::microsec_clock clock;
-		ptime pt = clock::local_time();
-		std::wstringstream ss;
-		ss << pt.date() << sep << pt.time_of_day() << std::ends;
-		return ss.str();
+		m_Writer->WriteEndElement();
 	}
 
-	class SVDeviceParamConfigXMLHelper :
-		public SvCam::BaseVisitor,
-		public SvCam::Visitor<SVDeviceParam>,
-		public SvCam::Visitor<SVLongValueDeviceParam>,
-		public SvCam::Visitor<SVi64ValueDeviceParam>,
-		public SvCam::Visitor<SVBoolValueDeviceParam>,
-		public SvCam::Visitor<SVStringValueDeviceParam>,
-		public SvCam::Visitor<SVParamListDeviceParam>,
-		public SvCam::Visitor<SVLutDeviceParam>,
-		public SvCam::Visitor<SVLightReferenceDeviceParam>,
-		public SvCam::Visitor<SVCameraFormatsDeviceParam>,
-		public SvCam::Visitor<SVCustomDeviceParam>
-	{
-	public:
-		SVDeviceParamConfigXMLHelper(Writer writer, SVDeviceParamCollection& rCamFileParams);
-		HRESULT Visit(SVDeviceParam&);
-		HRESULT Visit(SVLongValueDeviceParam&);
-		HRESULT Visit(SVi64ValueDeviceParam&);
-		HRESULT Visit(SVBoolValueDeviceParam&);
-		HRESULT Visit(SVStringValueDeviceParam&);
-		HRESULT Visit(SVParamListDeviceParam&);
-		HRESULT Visit(SVLutDeviceParam&);
-		HRESULT Visit(SVLightReferenceDeviceParam&);
-		HRESULT Visit(SVCameraFormatsDeviceParam&);
-		HRESULT Visit(SVCustomDeviceParam&);
+	Writer m_Writer;
+};
 
-	private:
-		Writer m_writer;
-		SVDeviceParamCollection& m_rCamFileParams;
-	};
+class SVConfigXMLPrint
+{
+public:
+	const std::string Print() const;
+
+private:
+	typedef std::map<std::string, SVInspectionProcess*> InspectionMap;
+
+	void PrintXMLDoc(Writer  writer) const;
+	void WriteTriggers(Writer  writer) const;
+	void WriteTrigger(Writer  writer, SvTrig::SVTriggerObject* pTrigger) const;
+	void WriteCameras(Writer  writer) const;
+	void WriteCamera(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
+	void WriteHardwareAcq(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
+	void WriteFileAcq(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
+	void WritePPQs(Writer  writer) const;
+	void WritePPQCameras(Writer  writer, SVPPQObject* pPPQ) const;
+	void WritePPQInspections(Writer  writer, SVPPQObject* pPPQ) const;
+	void WriteInspections(Writer  writer) const;
+	void WriteToolSets(Writer writer) const;
+	void WriteToolSet(Writer writer, SVInspectionProcess* pInspection) const;
+	void WriteArchiveTool(Writer writer, SvTo::SVArchiveTool* pArchiveTool) const;
+	void WriteModuleIO(Writer writer) const;
+	void WriteResultIO(Writer writer) const;
+	void WriteIOSection(Writer writer) const;
+	void WriteMonitorListSection(Writer writer) const;
+	void WritePPQBar(Writer writer) const;
+	void WriteObject(Writer writer, SVObjectClass* pObj) const;
+	void WriteValueObject(Writer writer, SVObjectClass* pObj) const;
+	void WriteAllChildren(Writer writer, SvIe::SVTaskObjectListClass* pObj) const;
+	void WriteChildren(Writer writer, SVObjectClass* pObj) const;
+	void WriteFriends(Writer writer, SvIe::SVTaskObjectClass* pObj) const;
+	void WriteInputOutputList(Writer writer, SvIe::SVTaskObjectClass* pTaskObj) const;
+	void WriteValueObject(Writer writer, const std::wstring& rTag, const std::wstring& rName, const std::wstring& rValue) const;
+	void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
+	void WriteGlobalConstants(Writer writer) const;
+
+	void WriteExternalFiles(Writer writer) const;
+	mutable SVConfigurationObject* m_cfo;
+	mutable int nToolNumber;
+};
+
+class HG2String
+{
+	HGLOBAL hg;
+public:
+	explicit HG2String(HGLOBAL h) : hg(h)
+	{
+	}
+	~HG2String()
+	{
+		::GlobalUnlock(hg);
+	}
+
+	const std::string operator()() { return reinterpret_cast<const char*>(::GlobalLock(hg)); }
+};
+
+class SVDeviceParamConfigXMLHelper :
+	public SvCam::BaseVisitor,
+	public SvCam::Visitor<SVDeviceParam>,
+	public SvCam::Visitor<SVLongValueDeviceParam>,
+	public SvCam::Visitor<SVi64ValueDeviceParam>,
+	public SvCam::Visitor<SVBoolValueDeviceParam>,
+	public SvCam::Visitor<SVStringValueDeviceParam>,
+	public SvCam::Visitor<SVParamListDeviceParam>,
+	public SvCam::Visitor<SVLutDeviceParam>,
+	public SvCam::Visitor<SVLightReferenceDeviceParam>,
+	public SvCam::Visitor<SVCameraFormatsDeviceParam>,
+	public SvCam::Visitor<SVCustomDeviceParam>
+{
+public:
+	SVDeviceParamConfigXMLHelper(Writer writer, SVDeviceParamCollection& rCamFileParams);
+	HRESULT Visit(SVDeviceParam&);
+	HRESULT Visit(SVLongValueDeviceParam&);
+	HRESULT Visit(SVi64ValueDeviceParam&);
+	HRESULT Visit(SVBoolValueDeviceParam&);
+	HRESULT Visit(SVStringValueDeviceParam&);
+	HRESULT Visit(SVParamListDeviceParam&);
+	HRESULT Visit(SVLutDeviceParam&);
+	HRESULT Visit(SVLightReferenceDeviceParam&);
+	HRESULT Visit(SVCameraFormatsDeviceParam&);
+	HRESULT Visit(SVCustomDeviceParam&);
+
+private:
+	Writer m_writer;
+	SVDeviceParamCollection& m_rCamFileParams;
+};
 }
-
-#include "SVConfigXMLPrint.inl"
 

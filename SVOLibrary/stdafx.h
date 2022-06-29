@@ -62,6 +62,10 @@
 #include <memory>
 #include <mutex>
 #include <queue>
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#include <sequential_tree.h>
+#pragma warning(pop)
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library

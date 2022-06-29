@@ -234,6 +234,7 @@ echo %time%
     <ClCompile Include="SVCommandInspectionGetItems.cpp" />
     <ClCompile Include="SVConfigurationObject.cpp" />
     <ClCompile Include="SVConfigurationPrint.cpp" />
+    <ClCompile Include="SVConfigXMLPrint.cpp" />
     <ClCompile Include="SVDataDefinitionSheet.cpp" />
     <ClCompile Include="SVDataDefinitionStruct.cpp" />
     <ClCompile Include="SVDirectX.cpp" />
@@ -251,10 +252,13 @@ echo %time%
     <ClCompile Include="SVHistogramAnalyzerSetup.cpp" />
     <ClCompile Include="SVImageView.cpp" />
     <ClCompile Include="SVImageViewScroll.cpp" />
+    <ClCompile Include="SVImportProgress.cpp" />
     <ClCompile Include="SVInfoStructs.cpp" />
     <ClCompile Include="SVInspectionExporter.cpp" />
     <ClCompile Include="SVInspectionImporter.cpp" />
     <ClCompile Include="SVInspectionProcess.cpp" />
+    <ClCompile Include="SVInspectionProcessResetStruct.cpp" />
+    <ClCompile Include="SVInspectionTreeParser.cpp" />
     <ClCompile Include="SVIOAdjustDialog.cpp" />
     <ClCompile Include="SVIOBoardCapabilities.cpp" />
     <ClCompile Include="SVIOController.cpp" />
@@ -575,10 +579,6 @@ echo %time%
     <None Include="RootChildren.inl" />
     <None Include="RootObject.inl" />
     <None Include="SVConfigurationTreeWriter.inl" />
-    <None Include="SVConfigXMLPrint.inl" />
-    <None Include="SVImportProgress.inl" />
-    <None Include="SVInspectionProcessResetStruct.inl" />
-    <None Include="SVInspectionTreeParser.inl" />
     <None Include="hlp\AfxCore.rtf" />
     <None Include="hlp\AfxOleCl.rtf" />
     <None Include="hlp\AfxOleSv.rtf" />

@@ -14,11 +14,11 @@
 #include "SVFileCamera.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "SVFileSystemLibrary/SVFileSystemScanner.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
-#include "ObjectInterfaces/ITRCImage.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary/FileHelper.h"
 #pragma endregion Includes
 
 //#define TRACE_LOADTIME true
@@ -103,22 +103,18 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 
 	if (m_fileData.mode == ContinuousMode || m_fileData.mode == SingleIterationMode)
 	{
-		// Get File List
-		SVFileSystemScanner<Insertor>::ScanForFiles(m_fileData.directory.c_str(), _T("*.bmp"), Insertor(m_fileList, m_fileList.end()));
-		
+		m_fileList = SvUl::getFileList(m_fileData.directory.c_str(), _T(".bmp"), false);
 	}
 	else // Single File Mode
 	{
-		SVFileInfo info;
-		info.filename = m_fileData.fileName;
-		m_fileList.insert(info);
+		m_fileList.push_back(m_fileData.fileName);
 	}
+	m_currentFileIter = m_fileList.begin();
+
 	std::stringstream ss;
 	ss << "SVFileCamera start filelist size for" <<  GetName().c_str()  << " : " << m_fileList.size(); 
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, ss.str().c_str(), SvStl::SourceFileParams(StdMessageParams));
-
-
 
 	m_UsePreLoadImages = true;
 	if (m_fileList.size() > m_MaxPreloadFileNumber)
@@ -128,26 +124,22 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 
 	if (m_UsePreLoadImages)
 	{
-		m_images.resize(m_fileList.size(), M_NULL);
+		m_imageList.resize(m_fileList.size(), M_NULL);
 		int index{ 0 };
-		for (auto& finfo : m_fileList)
+		for (auto& filename : m_fileList)
 		{
-			MIL_ID id = MbufImport(finfo.filename.c_str(), M_DEFAULT, M_RESTORE, M_DEFAULT_HOST, M_NULL);
+			MIL_ID id = MbufImport(filename.c_str(), M_DEFAULT, M_RESTORE, M_DEFAULT_HOST, M_NULL);
 			if (id != NULL)
 			{
-				m_images.at(index++) = id;
+				m_imageList.at(index++) = id;
 			}
 			else
 			{
 				return E_FAIL;
 			}
-
 		}
-		m_loadedImageSequence.Init(m_images.begin(), m_images.end(), !IsSingleIterationLoadMode());
+		m_currentImageIter = m_imageList.begin();
 	}
-
-	// init sequencer - everybody wraps except Single Iteration mode
-	m_loadSequence.Init(m_fileList.begin(), m_fileList.end(), !IsSingleIterationLoadMode());
 
 	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, m_name.c_str());
 	return hr;
@@ -159,7 +151,7 @@ void SVFileCamera::Stop()
 	m_thread.Destroy();
 	if (m_UsePreLoadImages)
 	{
-		for (auto& id : m_images)
+		for (auto& id : m_imageList)
 		{
 			if (M_NULL != id)
 			{
@@ -182,13 +174,39 @@ bool SVFileCamera::IsRunning() const
 
 std::string SVFileCamera::GetNextFilename()
 {
-	std::string result = m_acquisitionFile.empty() ? m_loadSequence.GetNext().filename : m_acquisitionFile;
+	std::string result;
+	if (m_acquisitionFile.empty())
+	{
+		if (m_fileList.end() == m_currentFileIter)
+		{
+			m_currentFileIter = IsSingleIterationLoadMode() ? m_fileList.end() : m_fileList.begin();
+		}
+		if (m_fileList.end() != m_currentFileIter)
+		{
+			result = *m_currentFileIter;
+			++m_currentFileIter;
+		}
+	}
+	else
+	{
+		result = m_acquisitionFile;
+	}
 	m_acquisitionFile.clear();
 	return result;
 }
 MIL_ID SVFileCamera::GetNextImageId()
 {
-	return m_loadedImageSequence.GetNext();
+	MIL_ID result {0LL};
+	if (m_imageList.end() == m_currentImageIter)
+	{
+		m_currentImageIter = IsSingleIterationLoadMode() ? m_imageList.end() : m_imageList.begin();
+	}
+	if (m_imageList.end() != m_currentImageIter)
+	{
+		result = *m_currentImageIter;
+		++m_currentImageIter;
+	}
+	return result;
 }
 
 HRESULT SVFileCamera::DoOneShot(LPCTSTR pAcquisitionFile)
@@ -213,7 +231,7 @@ void SVFileCamera::OnAPCEvent(ULONG_PTR pData)
 	{
 		std::string acuisitionFile = pCamera->getAcquisitionFile();
 		// fire StartFrame event
-		pCamera->m_startFrameEvent.Fire(pCamera->m_index);
+		pCamera->m_startFrameEvent(pCamera->m_index);
 #ifdef TRACE_LOADTIME
 		double Duration = SvUl::GetTimeStamp();
 #endif
@@ -252,7 +270,7 @@ void SVFileCamera::OnAPCEvent(ULONG_PTR pData)
 		if (M_NULL != pCamera->m_image)
 		{
 			// fire EndFrame event
-			pCamera->m_endFrameEvent.Fire(pCamera->m_index);
+			pCamera->m_endFrameEvent(pCamera->m_index);
 		}
 #ifdef TRACE_LOADTIME
 		Duration = SvUl::GetTimeStamp() -Duration;

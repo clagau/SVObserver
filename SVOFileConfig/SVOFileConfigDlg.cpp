@@ -216,11 +216,12 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 
 	GetDirectoryRemoveLevel( m_strLastDirectory, 1);
 
-
 	mTree.SetRedraw( false );
 
 	m_XMLCTree.Clear();
-	SvXml::SVOCMLoadConfiguration(m_ulCurrentVersion, dlg.GetPathName(), m_XMLCTree);
+
+	//@TODO[gra][10.30][29.04.2022]: Conversion function from SVXMLMaterialTree to XMLCtree
+	//SvXml::SVOCMLoadConfiguration(m_ulCurrentVersion, dlg.GetPathName(), m_XMLCTree);
 	if( m_ulCurrentVersion >= 0x50100)
 	{
 		CheckConfiguration();

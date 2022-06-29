@@ -15,18 +15,21 @@
 
 #include "RemoteCommand.h"
 #include "RemoteMonitorListController.h"
+#include "RemoteMonitorListHelper.h"
+#include "RootObject.h"
 #include "SVConfigurationObject.h"
 #include "SVConfigXMLPrint.h"
 #include "SVRemoteControlConstants.h"
-#include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVValueObjectLibrary/BasicValueObject.h"
-#include "RemoteMonitorListHelper.h"
+#include "SVToolSet.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
+#include "InspectionEngine/SVTaskObjectList.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/SVRC.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -123,7 +126,7 @@ HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport(std::string& rRepor
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigXMLPrint printSEC;
+	sv_xml::SVConfigXMLPrint printSEC;
 	try
 	{
 		rReport = printSEC.Print();

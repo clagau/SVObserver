@@ -3,29 +3,31 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVImportProgress
-//* .File Name       : $Workfile:   SVImportProgress.inl  $
+//* .File Name       : $Workfile:   SVImportProgress.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:58:30  $
 //******************************************************************************
 
-
+#pragma region Includes
+#include "Stdafx.h"
+#include "SVImportProgress.h"
+#include "SVInspectionImporter.h"
 #include "Definitions/SVUserMessage.h"
+#pragma endregion Includes
 
-template<typename Task>
-DWORD WINAPI SVImportProgress<Task>::TaskThread(LPVOID lpHost)
+DWORD WINAPI SVImportProgress::TaskThread(LPVOID lpHost)
 {
-	SVImportProgress<Task>* l_pProgressTask = ( reinterpret_cast<SVImportProgress<Task> *>(lpHost));
+	SVImportProgress* pProgressTask = ( reinterpret_cast<SVImportProgress*> (lpHost));
 
-	l_pProgressTask->m_Status = l_pProgressTask->m_rTask.Import(*l_pProgressTask);
+	pProgressTask->m_Status = pProgressTask->m_rTask.Import(*pProgressTask);
 
-	l_pProgressTask->Complete();
+	pProgressTask->Complete();
 
 	return S_OK;
 }
 
-template<typename Task>
-SVImportProgress<Task>::SVImportProgress(Task& rTask, LPCTSTR title, CWnd* pParent)
+SVImportProgress::SVImportProgress(SVInspectionImportHelper& rTask, LPCTSTR title, CWnd* pParent)
 : SVIProgress()
 , m_rTask(rTask)
 , m_Dialog(title, pParent)
@@ -34,8 +36,7 @@ SVImportProgress<Task>::SVImportProgress(Task& rTask, LPCTSTR title, CWnd* pPare
 	m_Dialog.m_pTask = this;
 }
 
-template<typename Task>
-SVImportProgress<Task>::~SVImportProgress()
+SVImportProgress::~SVImportProgress()
 {
 	if (m_hThread)
 	{
@@ -43,18 +44,16 @@ SVImportProgress<Task>::~SVImportProgress()
 	}
 }
 
-template<typename Task>
-void SVImportProgress<Task>::DoModal()
+void SVImportProgress::DoModal()
 {
 	m_Dialog.DoModal();
 }
 
-template<typename Task>
-HRESULT SVImportProgress<Task>::Start()
+HRESULT SVImportProgress::Start()
 {
 	HRESULT l_Status(S_OK);
 
-	m_hThread = ::CreateThread(nullptr, 0, &SVImportProgress<Task>::TaskThread, this, 0, nullptr);
+	m_hThread = ::CreateThread(nullptr, 0, &SVImportProgress::TaskThread, this, 0, nullptr);
 
 	if (nullptr == m_hThread)
 	{
@@ -63,26 +62,22 @@ HRESULT SVImportProgress<Task>::Start()
 	return l_Status;
 }
 
-template<typename Task>
-void SVImportProgress<Task>::Complete()
+void SVImportProgress::Complete()
 {
 	m_Dialog.PostMessage(SV_END_PROGRESS_DIALOG, 0, 0);
 }
 
-template<typename Task>
-HRESULT SVImportProgress<Task>::GetStatus() const
+HRESULT SVImportProgress::GetStatus() const
 {
 	return m_Status;
 }
 
-template<typename Task>
-void SVImportProgress<Task>::Cancel()
+void SVImportProgress::Cancel()
 {
 	m_Status = E_FAIL;
 }
 
-template<typename Task>
-HRESULT SVImportProgress<Task>::UpdateProgress(unsigned long p_Current, unsigned long p_Total)
+HRESULT SVImportProgress::UpdateProgress(unsigned long p_Current, unsigned long p_Total)
 {
 	HRESULT l_Status(m_Status);
 
@@ -93,8 +88,7 @@ HRESULT SVImportProgress<Task>::UpdateProgress(unsigned long p_Current, unsigned
 	return l_Status;
 }
 
-template<typename Task>
-HRESULT SVImportProgress<Task>::UpdateText(LPCTSTR text)
+HRESULT SVImportProgress::UpdateText(LPCTSTR text)
 {
 	m_Dialog.SendMessage(SV_UPDATE_PROGRESS_TEXT, 0L, reinterpret_cast<LPARAM>(text));
 	return true;

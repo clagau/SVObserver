@@ -16,18 +16,22 @@
 #include "Definitions/ObjectDefines.h"
 
 class SVObjectClass;
+namespace SvIe
+{
+class SVImageClass;
+}
 
 class SVImageInfoClass
 {
 public:
 	SVImageInfoClass();
-	SVImageInfoClass( const SVImageInfoClass& p_rsvValue );
-	explicit SVImageInfoClass( const BITMAPINFOHEADER& p_rBitmapHeader );
+	SVImageInfoClass( const SVImageInfoClass& rRhs );
+	explicit SVImageInfoClass( const BITMAPINFOHEADER& rBitmapHeader );
 
 	~SVImageInfoClass();
 
-	SVImageInfoClass &operator=( const SVImageInfoClass& p_rsvValue );
-	const SVImageInfoClass &operator=( const BITMAPINFOHEADER& p_rBitmapHeader );
+	SVImageInfoClass &operator=( const SVImageInfoClass& rRhs);
+	const SVImageInfoClass &operator=( const BITMAPINFOHEADER& rBitmapHeader );
 
 	HRESULT Initialize();
 
@@ -65,10 +69,7 @@ public:
 
 	long GetBufferSize();
 
-	template< typename SV_OBJECT_TYPE >
-	HRESULT GetOwnerImage( SV_OBJECT_TYPE*& p_rpObject ) const;
-
-	HRESULT GetOwnerImage( SVObjectClass*& p_rpObject ) const;
+	SvIe::SVImageClass* GetOwnerImage() const;
 	void SetOwnerImage(uint32_t objectID );
 
 	SVObjectClass* GetOwner() const;
@@ -100,6 +101,4 @@ private:
 	SVImagePropertiesClass m_svProperties;
 	bool m_isDibBuffer;
 };
-
-#include "SVImageInfoClass.inl"
 

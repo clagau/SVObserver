@@ -22,6 +22,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/ILinkedObject.h"
 #include "ObjectInterfaces/IObjectWriter.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"

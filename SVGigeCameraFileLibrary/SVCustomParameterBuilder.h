@@ -10,8 +10,7 @@
 //******************************************************************************
 #pragma once
 
-//Moved to precompiled header: #include <memory>
-//Moved to precompiled header: #include <utility>
+#include "CameraLibrary/SVDeviceParam.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 
 class SVBoolValueDeviceParam;
@@ -24,8 +23,7 @@ class SVStringValueDeviceParam;
 class SVCustomParameterBuilder
 {
 public:
-	template<typename Insertor>
-	static void BuildCustomDeviceParams(const SVMaterialsTree::SVTreeContainer& rTree, Insertor insertor);
+	static void BuildCustomDeviceParams(const SVMaterialsTree::SVTreeContainer& rTree, std::insert_iterator<SVDeviceParamMap> insertor);
 
 private:
 	static SVCustomDeviceParam* BuildCustomDeviceParam(const SVMaterialsTree::SVTreeContainer& rOptions);
@@ -36,6 +34,4 @@ private:
 	static void BuildCommonAttributes(SVDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions);
 	static void BuildOptions(SVDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions);
 };
-
-#include "SVCustomParameterBuilder.inl"
 

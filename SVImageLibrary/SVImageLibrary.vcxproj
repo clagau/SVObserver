@@ -152,9 +152,6 @@
     <ClInclude Include="SVImagingDeviceParams.h" />
     <ClInclude Include="SVLightReference.H" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SVImageInfoClass.inl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

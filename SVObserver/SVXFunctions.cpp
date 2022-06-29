@@ -25,6 +25,7 @@
 #include "SVUtilityLibrary/SHA256.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVClock.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/LoadConfiguration.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 
@@ -300,7 +301,7 @@ namespace
 					else // new parsing
 					{
 						SVConfigurationObject::updateConfTreeToNewestVersion(p_rTree, hItemToolset);
-						SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerId, pInspect, &l_ParserProgressDialog));
+						SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser(p_rTree, hItemToolset, parserHandle, ownerId, pInspect, &l_ParserProgressDialog));
 						if (nullptr != pParser)
 						{
 							// Set the Parser Object

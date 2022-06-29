@@ -3,26 +3,26 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVInspectionTreeParser
-//* .File Name       : $Workfile:   SVInspectionTreeParser.inl  $
+//* .File Name       : $Workfile:   SVInspectionTreeParser.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   19 Dec 2014 04:10:42  $
 //******************************************************************************
 
-#pragma once
-
 #pragma region Includes
-#include "SVXMLLibrary\SVNavigateTree.h"
-#include "SVObjectLibrary\SVObjectBuilder.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVXMLLibrary\SVConfigurationTags.h"
-#include "SVObjectLibrary\SVToolsetScriptTags.h"
+#include "Stdafx.h"
+#include "SVInspectionTreeParser.h"
 #include "SVInspectionProcess.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVObjectLibrary/SVObjectBuilder.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
 // The attribute object type table is needed to convert string type to point or double point type.
@@ -58,8 +58,7 @@ namespace
 	}
 }
 
-template< typename SVTreeType >
-SVInspectionTreeParser< SVTreeType >::SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, uint32_t ownerId, SVObjectClass* pOwnerObject, CWnd* pWnd)
+SVInspectionTreeParser::SVInspectionTreeParser(SvXml::SVXMLMaterialsTree& rTreeCtrl, SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, unsigned long parserHandle, uint32_t ownerId, SVObjectClass* pOwnerObject, CWnd* pWnd)
 : SVObjectScriptParserBase(parserHandle, ownerId, pOwnerObject, pWnd)
 , m_rTree(rTreeCtrl)
 , m_rootItem(hItem)
@@ -69,14 +68,12 @@ SVInspectionTreeParser< SVTreeType >::SVInspectionTreeParser(SVTreeType& rTreeCt
 	m_totalSize = m_rTree.getCount();
 }
 
-template< typename SVTreeType >
-SVInspectionTreeParser< SVTreeType >::~SVInspectionTreeParser() 
+SVInspectionTreeParser::~SVInspectionTreeParser() 
 { 
 }
 
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::DoParse()
+HRESULT SVInspectionTreeParser::DoParse()
 {
 	HRESULT hr = S_OK;
 	m_count = 0;
@@ -84,31 +81,28 @@ HRESULT SVInspectionTreeParser< SVTreeType >::DoParse()
 	return hr;
 }
 
-template< typename SVTreeType >
-size_t SVInspectionTreeParser< SVTreeType >::GetTotal() const
+size_t SVInspectionTreeParser::GetTotal() const
 {
 	// get count of nodes
 	return m_totalSize;
 }
 
-template< typename SVTreeType >
-bool SVInspectionTreeParser< SVTreeType >::GetItemValue(const std::string& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& rValue)
+bool SVInspectionTreeParser::GetItemValue(const std::string& tag, SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, _variant_t& rValue)
 {
 	m_count++;
 	return SvXml::SVNavigateTree::GetItem(m_rTree, tag.c_str(), hItem, rValue) ? true : false;
 }
 
-template< typename SVTreeType >
-bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBranchHandle hItem, const std::string& tag, std::vector<_variant_t>& rValueList)
+bool SVInspectionTreeParser::GetValues(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, const std::string& tag, std::vector<_variant_t>& rValueList)
 {
 	bool bRetVal = false;
 
-	typename SVTreeType::SVBranchHandle hBranch = nullptr;
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hBranch = nullptr;
 	SvXml::SVNavigateTree::GetItemBranch(m_rTree, tag.c_str(), hItem, hBranch);
 	if(nullptr != hBranch)
 	{
 		bRetVal = true;
-		typename SVTreeType::SVLeafHandle hValue;
+		SvXml::SVXMLMaterialsTree::SVLeafHandle hValue;
 		hValue = m_rTree.getFirstLeaf(hBranch);
 		do
 		{
@@ -127,8 +121,7 @@ bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBran
 	return bRetVal;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID)
+HRESULT SVInspectionTreeParser::Process(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 
@@ -196,8 +189,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeType::SVBranchHandle hParentItem, uint32_t ownerID)
+HRESULT SVInspectionTreeParser::ProcessChildren(SvXml::SVXMLMaterialsTree::SVBranchHandle hParentItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 
@@ -214,7 +206,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeTyp
 	}
 
 	// iterate thru nodes and process
-	typename SVTreeType::SVBranchHandle hItem( nullptr );
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hItem( nullptr );
 	hItem = m_rTree.getFirstBranch(hParentItem);
 	do
 	{
@@ -253,14 +245,13 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeTyp
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriends(typename SVTreeType::SVBranchHandle hFriends, uint32_t ownerID)
+HRESULT SVInspectionTreeParser::ProcessFriends(SvXml::SVXMLMaterialsTree::SVBranchHandle hFriends, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 	// Destroy Friends
 	SVObjectBuilder::DestroyFriends(ownerID);
 
-	typename SVTreeType::SVBranchHandle hItem( nullptr );
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hItem( nullptr );
 	hItem = m_rTree.getFirstBranch(hFriends);
 	do
 	{
@@ -274,8 +265,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriends(typename SVTreeType
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID)
+HRESULT SVInspectionTreeParser::ProcessFriend(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 
@@ -309,11 +299,10 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hEmbeddeds, uint32_t ownerID)
+HRESULT SVInspectionTreeParser::ProcessEmbeddeds(SvXml::SVXMLMaterialsTree::SVBranchHandle hEmbeddeds, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
-	typename SVTreeType::SVBranchHandle hItem( nullptr );
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hItem( nullptr );
 	hItem = m_rTree.getFirstBranch(hEmbeddeds);
 	do
 	{
@@ -327,8 +316,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddeds(typename SVTreeTy
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID)
+HRESULT SVInspectionTreeParser::ProcessEmbedded(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 	_variant_t objectName;
@@ -399,12 +387,11 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedChilds(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID)
+HRESULT SVInspectionTreeParser::ProcessEmbeddedChilds(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 
-	typename SVTreeType::SVBranchHandle hChild = m_rTree.getFirstBranch(hItem);
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hChild = m_rTree.getFirstBranch(hItem);
 	std::vector<uint32_t> objectIdList;
 	while (hChild)
 	{
@@ -421,8 +408,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedChilds(typename SVT
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID, SVObjectScriptDataObjectTypeEnum dataType)
+HRESULT SVInspectionTreeParser::ProcessEmbeddedValues(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID, SVObjectScriptDataObjectTypeEnum dataType)
 {
 	HRESULT hr = S_OK;
 
@@ -445,14 +431,13 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVT
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t , uint32_t objectID, bool excludeDefaultAndArray)
+HRESULT SVInspectionTreeParser::ProcessBranchObjectValues(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t , uint32_t objectID, bool excludeDefaultAndArray)
 {
 	HRESULT hr = S_OK;
 
 	if( nullptr != hItem && SvXml::SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
-		typename SVTreeType::SVBranchHandle hValue( nullptr );
+		SvXml::SVXMLMaterialsTree::SVBranchHandle hValue( nullptr );
 
 		hValue = m_rTree.getFirstBranch(hItem);
 
@@ -472,7 +457,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 				std::vector<_variant_t> values;
 				if (SvXml::SVNavigateTree::HasChildren(m_rTree, hValue))
 				{
-					typename SVTreeType::SVLeafHandle hChildValue = m_rTree.getFirstLeaf(hValue);
+					SvXml::SVXMLMaterialsTree::SVLeafHandle hChildValue = m_rTree.getFirstLeaf(hValue);
 
 					do
 					{
@@ -514,14 +499,13 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t, uint32_t objectID, bool excludeDefaultAndArray)
+HRESULT SVInspectionTreeParser::ProcessLeafObjectValues(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t, uint32_t objectID, bool excludeDefaultAndArray)
 {
 	HRESULT hr = S_OK;
 
 	if( nullptr != hItem && SvXml::SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
-		typename SVTreeType::SVLeafHandle hValue( m_rTree.getFirstLeaf(hItem) );
+		SvXml::SVXMLMaterialsTree::SVLeafHandle hValue( m_rTree.getFirstLeaf(hItem) );
 
 		while( S_OK == hr && m_rTree.isValidLeaf(hItem, hValue) )
 		{
@@ -557,8 +541,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(uint32_t ownerID, uint32_t objectID, typename SVTreeType::SVBranchHandle hItem)
+HRESULT SVInspectionTreeParser::ProcessAttributes(uint32_t ownerID, uint32_t objectID, SvXml::SVXMLMaterialsTree::SVBranchHandle hItem)
 {
 	HRESULT hr = S_OK;
 
@@ -572,28 +555,25 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(uint32_t ownerID
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEquation(uint32_t ownerID, const _variant_t& equation)
+HRESULT SVInspectionTreeParser::ProcessEquation(uint32_t ownerID, const _variant_t& equation)
 {
 	// process Equation Buffer
 	HRESULT hr = SVObjectBuilder::SetObjectValue(ownerID, ownerID, scEquationBufferTag, equation, SV_STRING_Type);
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessMaskData(uint32_t ownerID, const _variant_t& maskData)
+HRESULT SVInspectionTreeParser::ProcessMaskData(uint32_t ownerID, const _variant_t& maskData)
 {
 	// process Mask Data Buffer
 	HRESULT hr = SVObjectBuilder::SetObjectValue(ownerID, ownerID, scMaskDataTag, maskData, SV_STRING_Type);
 	return hr;
 }
 
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType::SVBranchHandle hInputs, uint32_t ownerID)
+HRESULT SVInspectionTreeParser::ProcessInputs(SvXml::SVXMLMaterialsTree::SVBranchHandle hInputs, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 	SvDef::StringPairVector InputPairVector;
-	typename SVTreeType::SVBranchHandle hInput{ m_rTree.getFirstBranch(hInputs) };
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hInput{ m_rTree.getFirstBranch(hInputs) };
 	do
 	{
 		if (hInput)
@@ -650,18 +630,17 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType:
 	return hr;
 }
 
-template< typename SVTreeType >
-bool SVInspectionTreeParser< SVTreeType >::HasTag(typename SVTreeType::SVBranchHandle hItem, const std::string& tag)
+bool SVInspectionTreeParser::HasTag(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, const std::string& tag)
 {
 	bool l_Status = true;
 
-	typename SVTreeType::SVBranchHandle hValues( nullptr );
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hValues( nullptr );
 
 	hValues = m_rTree.findBranch(hItem, tag.c_str());
 
 	if( nullptr == hValues )
 	{
-		typename SVTreeType::SVLeafHandle hLeaf;
+		SvXml::SVXMLMaterialsTree::SVLeafHandle hLeaf;
 
 		hLeaf = m_rTree.findLeaf(hItem, tag.c_str());
 		if( !m_rTree.isValidLeaf(hItem, hLeaf) )
@@ -678,8 +657,7 @@ bool SVInspectionTreeParser< SVTreeType >::HasTag(typename SVTreeType::SVBranchH
 }
 
 // This will need to change if/when SVInspectionprocess is converted to inhert from SVTaskObjectList
-template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(uint32_t& rInspectionId, SVTreeType& p_rTree, typename SVTreeType::SVBranchHandle hItem)
+HRESULT SVInspectionTreeParser::CreateInspectionObject(uint32_t& rInspectionId, SvXml::SVXMLMaterialsTree& p_rTree, SvXml::SVXMLMaterialsTree::SVBranchHandle hItem)
 {
 	HRESULT hr = S_OK;
 	

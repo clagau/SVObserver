@@ -12,61 +12,34 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <comdef.h>
+#include "SVXMLMaterialsTree.h"
 #pragma endregion Includes
+
 
 namespace  SvXml
 {
-	class SVNavigateTree
-	{
-	private:
-		SVNavigateTree();
-		~SVNavigateTree();
+using FindPredicate = std::function<bool(const SVXMLMaterialsTree::SVBranchHandle&)>;
 
-	public:
-		template< typename SVTreeType >
-		static bool AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, const _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem = nullptr );
+class SVNavigateTree
+{
+private:
+	SVNavigateTree();
+	~SVNavigateTree();
 
-		template< typename SVTreeType >
-		static bool SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, const _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem = nullptr );
-
-		template< typename SVTreeType >
-		static bool AddBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, typename SVTreeType::SVBranchHandle* ppItem = nullptr );
-
-		template< typename SVTreeType >
-		static bool SetBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, typename SVTreeType::SVBranchHandle* ppItem = nullptr );
-
-		template< typename SVTreeType >
-		static bool GetItemBranch( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVBranchHandle& rpItem );
-
-		template< typename SVTreeType >
-		static std::vector<typename SVTreeType::SVBranchHandle> findSubbranches(SVTreeType& rTree, typename SVTreeType::SVBranchHandle pParent);
-
-		template< typename SVTreeType >
-		static bool GetItemLeaf( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle& rpItem );
-
-		template< typename SVTreeType >
-		static bool GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, _variant_t& rData );
-
-		template< typename SVTreeType >
-		static bool DeleteItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pItem );
-
-		template< typename SVTreeType >
-		static bool DeleteItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle pItem );
-
-		template< typename SVTreeType >
-		static bool DeleteAllItems( SVTreeType &rTree );
-
-		template< typename SVTreeType >
-		static bool HasChildren(SVTreeType& rTree, typename SVTreeType::SVBranchHandle pItem);
-
-		template< typename SVTreeType, typename SVPredicate >
-		static bool FindBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle startBranch, const SVPredicate& rPredicate, typename SVTreeType::SVBranchHandle& rFoundItem );
-
-	};
+public:
+	static bool AddItem( SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle pParent, LPCTSTR Name, const _variant_t &rVariant, SVXMLMaterialsTree::SVLeafHandle* ppItem = nullptr );
+	static bool SetItem( SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle pParent, LPCTSTR Name, const _variant_t &rVariant, SVXMLMaterialsTree::SVLeafHandle* ppItem = nullptr );
+	static bool AddBranch( SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle pParent, LPCTSTR Name, SVXMLMaterialsTree::SVBranchHandle* ppItem = nullptr );
+	static bool SetBranch( SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle pParent, LPCTSTR Name, SVXMLMaterialsTree::SVBranchHandle* ppItem = nullptr );
+	static bool GetItemBranch( SVXMLMaterialsTree &rTree, LPCTSTR Name, SVXMLMaterialsTree::SVBranchHandle pParent, SVXMLMaterialsTree::SVBranchHandle& rpItem );
+	static std::vector<SVXMLMaterialsTree::SVBranchHandle> findSubbranches(SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle pParent);
+	static bool GetItemLeaf( SVXMLMaterialsTree &rTree, LPCTSTR Name, SVXMLMaterialsTree::SVBranchHandle pParent, SVXMLMaterialsTree::SVLeafHandle& rpItem );
+	static bool GetItem( SVXMLMaterialsTree &rTree, LPCTSTR Name, SVXMLMaterialsTree::SVBranchHandle pParent, _variant_t& rData );
+	static bool DeleteItem( SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle pItem );
+	static bool DeleteItem( SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle pParent, SVXMLMaterialsTree::SVLeafHandle pItem );
+	static bool DeleteAllItems( SVXMLMaterialsTree &rTree );
+	static bool HasChildren(SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle pItem);
+	static bool FindBranch( SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle startBranch, FindPredicate findPredicate, SVXMLMaterialsTree::SVBranchHandle& rFoundItem );
+};
 } //namespace SvXml
-
-#pragma region Inline
-#include "SVNavigateTree.inl"
-#pragma endregion Inline
 

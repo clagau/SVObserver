@@ -161,6 +161,7 @@
     <ClCompile Include="BitmapHelper.cpp" />
     <ClCompile Include="DirectoryUtilities.cpp" />
     <ClCompile Include="FileHelper.cpp" />
+    <ClCompile Include="GlobalConstantData.cpp" />
     <ClCompile Include="InStreamWrapper.cpp" />
     <ClCompile Include="LoadDll.cpp" />
     <ClCompile Include="ModuleInfo.cpp" />
@@ -228,7 +229,6 @@
     <ClInclude Include="ZipHelper.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GlobalConstantData.inl" />
     <None Include="SVHandleManager.inl" />
     <None Include="SVSafeArray.inl" />
   </ItemGroup>

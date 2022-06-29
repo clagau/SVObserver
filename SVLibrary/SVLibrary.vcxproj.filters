@@ -75,9 +75,4 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SVOINIClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-  </ItemGroup>
 </Project>

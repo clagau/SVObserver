@@ -20,8 +20,6 @@
 #include "SVDeviceParam.h"
 
 
-typedef std::map <SVDeviceParamEnum, SVDeviceParamWrapper> SVDeviceParamMap;
-
 class SVDeviceParamCollection
 {
 public:

@@ -36,10 +36,10 @@ namespace SvUl
 
 #pragma region Public Methods
 	public:
-		inline bool operator<(const GlobalConstantData& Rhs) const;
-		inline const GlobalConstantData& operator=(const GlobalConstantData& Rhs);
-		inline bool operator==(const GlobalConstantData& Rhs) const;
-		inline bool operator!=(const GlobalConstantData& Rhs) const { return !(Rhs == *this); };
+		bool operator<(const GlobalConstantData& Rhs) const;
+		const GlobalConstantData& operator=(const GlobalConstantData& Rhs);
+		bool operator==(const GlobalConstantData& Rhs) const;
+		bool operator!=(const GlobalConstantData& Rhs) const { return !(Rhs == *this); };
 #pragma endregion Public Methods
 
 #pragma region Member variables
@@ -56,8 +56,4 @@ namespace SvUl
 	typedef std::vector< GlobalConflictPair > GlobalConflictPairVector;
 
 } //namespace SvUl
-
-#pragma region Inline
-#include "GlobalConstantData.inl"
-#pragma endregion Inline
 

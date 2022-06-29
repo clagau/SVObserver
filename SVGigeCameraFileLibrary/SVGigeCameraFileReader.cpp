@@ -307,8 +307,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const std::string& filename, SV
 	}
 
 	// Process Materials tree for the Custom parameters
-	typedef std::insert_iterator<SVDeviceParamMap> Insertor;
-	SVCustomParameterBuilder::BuildCustomDeviceParams(customParams, Insertor(rParams.mapParameters, rParams.mapParameters.end()));
+	SVCustomParameterBuilder::BuildCustomDeviceParams(customParams, std::insert_iterator<SVDeviceParamMap>(rParams.mapParameters, rParams.mapParameters.end()));
 	return hr;
 }
 

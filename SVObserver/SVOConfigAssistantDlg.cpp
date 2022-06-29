@@ -1923,7 +1923,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					{
 						SVInspectionImportHelper importer  = SVInspectionImportHelper(importFilename, inspectionName, ToolsetImage);
 						std::string title = _T( "Importing Inspection..." );
-						SVImportProgress<SVInspectionImportHelper> progress(importer, title.c_str());
+						SVImportProgress progress(importer, title.c_str());
 						progress.DoModal();
 
 						HRESULT hr = progress.GetStatus();

@@ -182,7 +182,7 @@ HRESULT SvOi::importCustom2Filter(const std::string& rFileName,
 	std::vector<long> &kernelArray)
 {
 	SvXml::SVXMLMaterialsTree Tree;
-	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
+	SvXml::SaxXMLHandler  SaxHandler;
 
 	HRESULT Result  = SaxHandler.BuildFromXMLFile(&Tree, rFileName.c_str() );	
 	

@@ -16,9 +16,7 @@
 
 namespace  SvXml
 {
-	template< typename SVTreeType >
-	HRESULT SVOCMLoadConfiguration(unsigned long &FileVersion, LPCTSTR Filename, SVTreeType& p_rTree);
+class SVXMLMaterialsTree;
+HRESULT SVOCMLoadConfiguration(unsigned long &FileVersion, LPCTSTR Filename, SVXMLMaterialsTree& p_rTree);
 } //namespace SvXml
-
-#include "LoadConfiguration.inl"
 

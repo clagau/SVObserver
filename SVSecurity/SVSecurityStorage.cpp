@@ -187,7 +187,7 @@ HRESULT SVSecurityStorage::Load( LPCTSTR FileName )
 	SvXml::SaxEncryptionHandler EncyptionHandler;
 	SvXml::SVXMLMaterialsTree TestTree;
 	SvXml::SVXMLMaterialsTree XMLTree;
-	SvXml::SaxXMLHandler<SvXml::SVXMLMaterialsTree>  SaxHandler;
+	SvXml::SaxXMLHandler SaxHandler;
 	SaxHandler.SetSaxEncryptionHandler(&EncyptionHandler);
 
 	HRESULT hr  = SaxHandler.BuildFromXMLFile(&XMLTree,  FileName );

@@ -214,5 +214,6 @@ private:
 };
 
 typedef TValueSemantics<SVDeviceParam> SVDeviceParamWrapper;
+typedef std::map <SVDeviceParamEnum, SVDeviceParamWrapper> SVDeviceParamMap;
 
 

@@ -118,6 +118,19 @@ SVDeviceParamDataTypeEnum GetDataTypeEnumFromString(const std::string& tag)
 	return dataTypeEnum;
 }
 
+void SVCustomParameterBuilder::BuildCustomDeviceParams(const SVMaterialsTree::SVTreeContainer& rTree, std::insert_iterator<SVDeviceParamMap> insertor)
+{
+	for (SVMaterialsTree::const_iterator it = rTree.begin(); it != rTree.end(); ++it)
+	{
+		std::shared_ptr<SVCustomDeviceParam> pParam(SVCustomParameterBuilder::BuildCustomDeviceParam(*it.node()));
+		if (pParam.get())
+		{
+			// Add to list (makes a copy)
+			insertor = std::make_pair(pParam->Type(), SVDeviceParamWrapper(*pParam));
+		}
+	}
+}
+
 SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVMaterialsTree::SVTreeContainer& rOptions )
 {
 	SVCustomDeviceParam* pCustomDeviceParam = nullptr;

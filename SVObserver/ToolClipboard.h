@@ -14,9 +14,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
 
 //Forward declarations
@@ -45,7 +45,6 @@ class ToolClipboard
 {
 public:
 #pragma region Declarations
-	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
 public:
@@ -108,21 +107,21 @@ protected:
 	// Parameter: rTree <out> Reference to the tree to store the XML conversion
 	// Return: S_OK on success
 	//************************************
-	HRESULT convertXmlToTree( const std::string& rXmlData, SVTreeType& rTree ) const;
+	HRESULT convertXmlToTree( const std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree ) const;
 
 	//************************************
 	// Description: This method checks the clipboard SVObserver version to the current SVObserver version
 	// Parameter: rTree <in> Reference to the tree
 	// Return: S_OK on success
 	//************************************
-	HRESULT checkVersion( SVTreeType& rTree ) const;
+	HRESULT checkVersion(SvXml::SVXMLMaterialsTree& rTree ) const;
 
 	/// This method reads the tools data
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
 	/// \param rTree [in] Reference to the tree generated from the clipboard
 	/// \param postId [in] The id of the object currently selected where the new object should be inserted
 	/// \param ownerId [in] The id of the owner of the new object.
-	void readTool(std::string& rXmlData, SVTreeType& rTree, uint32_t ownerId) const;
+	void readTool(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, uint32_t ownerId) const;
 
 	/// This method validates the tools IDs
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
@@ -139,9 +138,9 @@ protected:
 	/// \param rTree [in] Reference to the tree generated from the clipboard
 	/// \param pOwner [in] The owner of the new object.
 	/// \returns HRESULT S_OK on success
-	HRESULT replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const;
+	HRESULT replaceDuplicateToolNames(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, const SVObjectClass* pOwner) const;
 
-	void replaceToolNameIfDuplicate(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const;
+	void replaceToolNameIfDuplicate(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, const SVObjectClass* pOwner, SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const;
 	std::string getUniqueToolName(std::string& rToolName, const SVObjectClass* pOwner) const;
 	
 
@@ -151,16 +150,16 @@ protected:
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT replaceUniqueIds( std::string& rXmlData, SVTreeType& rTree ) const;
+	HRESULT replaceUniqueIds( std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree ) const;
 
 	//************************************
 	// Description: This method parses the tree and generates the tool
 	// Parameter : rTree <in> Reference to the tree to parse
 	// Return: rToolId: Reference to the tool ID generated
 	//************************************
-	std::vector<uint32_t> parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner);
+	std::vector<uint32_t> parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass* pOwner);
 
-	uint32_t parseOneToolFromTree(SVTreeType& rTree, SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem);
+	uint32_t parseOneToolFromTree(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass* pOwner, SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem);
 
 	SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds) const;
 
@@ -171,15 +170,12 @@ protected:
 
 private:
 #pragma region Member Variables
-	//@TODO [Arvid][10.20][20.05.2022]; why so many mutables? this clipboard should be properly designed! not everything should be crammed into one class.
 	mutable SVInspectionProcess* m_pInspection{nullptr};
 	mutable SvStl::MessageManager m_errorMessage{SvStl::MsgType::Log | SvStl::MsgType::Display};
 	mutable std::vector<std::string> m_additionalNames;
 
 	std::string m_baseFilePath;
 	std::string m_zipFilePath;
-
-
 #pragma endregion Member Variables
 };
 

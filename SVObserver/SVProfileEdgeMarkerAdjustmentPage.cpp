@@ -123,8 +123,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPage::OnInitDialog()
 		const SVImageInfoClass* pImageInfo = m_pTool->getFirstImageInfo();
 		if (nullptr != pImageInfo)
 		{
-			SvIe::SVImageClass* pImage = nullptr;
-			pImageInfo->GetOwnerImage(pImage);
+			SvIe::SVImageClass* pImage {pImageInfo->GetOwnerImage()};
 			if(nullptr != pImage)
 			{
 				m_dialogImage.AddTab("Image");

@@ -101,7 +101,6 @@
     <ClInclude Include="ObjectSelectorItem.h" />
     <ClInclude Include="ObjectTreeItems.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVCompareKeys.h" />
     <ClInclude Include="SVObjectArrayClassTemplate.h" />
     <ClInclude Include="SVThreadSafeList.h" />
     <ClInclude Include="SVRingBuffer.h" />

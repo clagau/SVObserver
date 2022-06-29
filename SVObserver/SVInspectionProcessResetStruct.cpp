@@ -3,23 +3,28 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVInspectionProcessResetStruct
-//* .File Name       : $Workfile:   SVInspectionProcessResetStruct.inl  $
+//* .File Name       : $Workfile:   SVInspectionProcessResetStruct.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:02:56  $
 //******************************************************************************
 
-inline SVInspectionProcessResetStruct::SVInspectionProcessResetStruct()
+#pragma region Includes
+#include "StdAfx.h"
+#include "SVInspectionProcessResetStruct.h"
+#pragma endregion Includes
+
+SVInspectionProcessResetStruct::SVInspectionProcessResetStruct()
 {
 	m_eResetItem = SvOi::SVResetItemNone;
 };
 
-inline SVInspectionProcessResetStruct::SVInspectionProcessResetStruct( const SVInspectionProcessResetStruct& rRhs )
+SVInspectionProcessResetStruct::SVInspectionProcessResetStruct( const SVInspectionProcessResetStruct& rRhs )
 {
 	*this = rRhs;
 };
 
-inline const SVInspectionProcessResetStruct &SVInspectionProcessResetStruct::operator=( const SVInspectionProcessResetStruct& rRhs )
+const SVInspectionProcessResetStruct &SVInspectionProcessResetStruct::operator=( const SVInspectionProcessResetStruct& rRhs )
 {
 	if( &rRhs != this  )
 	{
@@ -30,7 +35,7 @@ inline const SVInspectionProcessResetStruct &SVInspectionProcessResetStruct::ope
 	return *this;
 };
 
-inline SvOi::SVResetItemEnum SVInspectionProcessResetStruct::SetResetData( SvOi::SVResetItemEnum eResetItem, SVObjectClass *pObject )
+SvOi::SVResetItemEnum SVInspectionProcessResetStruct::SetResetData( SvOi::SVResetItemEnum eResetItem, SVObjectClass *pObject )
 {
 	switch( eResetItem )
 	{

@@ -32,9 +32,6 @@
     <None Include="SVFileAcquisitionDevice.def">
       <Filter>Quelldateien</Filter>
     </None>
-    <None Include="SVEventHandler.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="res\SVFileAcquisitionDevice.rc2">
       <Filter>Ressourcendateien</Filter>
     </None>
@@ -52,9 +49,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEventHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFileAcquisitionDevice.h">

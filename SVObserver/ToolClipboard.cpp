@@ -148,7 +148,7 @@ std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& r
 		m_pInspection = dynamic_cast<SVInspectionProcess*> (pOwner->GetAncestor(SvPb::SVInspectionObjectType));
 	}
 
-	SVTreeType Tree;
+	SvXml::SVXMLMaterialsTree Tree;
 
 	HRESULT Result = convertXmlToTree(XmlData, Tree);
 	if (S_OK == Result)
@@ -353,9 +353,9 @@ void ToolClipboard::moveDependencyFilesToRunPath(const SvDef::StringVector& rDep
 	}
 }
 
-HRESULT ToolClipboard::convertXmlToTree(const std::string& rXmlData, SVTreeType& rTree) const
+HRESULT ToolClipboard::convertXmlToTree(const std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree) const
 {
-	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
+	SvXml::SaxXMLHandler  SaxHandler;
 	HRESULT	Result = SaxHandler.BuildFromXMLString(&rTree, _variant_t(rXmlData.c_str()));
 	if (false == SUCCEEDED(Result))
 	{
@@ -366,11 +366,11 @@ HRESULT ToolClipboard::convertXmlToTree(const std::string& rXmlData, SVTreeType&
 	return Result;
 }
 
-HRESULT ToolClipboard::checkVersion(SVTreeType& rTree) const
+HRESULT ToolClipboard::checkVersion(SvXml::SVXMLMaterialsTree& rTree) const
 {
 	HRESULT Result(E_FAIL);
 
-	SVTreeType::SVBranchHandle EnvironmentItem = nullptr;
+	SvXml::SVXMLMaterialsTree::SVBranchHandle EnvironmentItem = nullptr;
 
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_ENVIRONMENT, nullptr, EnvironmentItem))
 	{
@@ -394,9 +394,9 @@ HRESULT ToolClipboard::checkVersion(SVTreeType& rTree) const
 	return Result;
 }
 
-void ToolClipboard::readTool(std::string& rXmlData, SVTreeType& rTree, uint32_t ownerId) const
+void ToolClipboard::readTool(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, uint32_t ownerId) const
 {
-	SVTreeType::SVBranchHandle ToolsItem = nullptr;
+	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem = nullptr;
 	if (false == SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Data);
@@ -404,7 +404,7 @@ void ToolClipboard::readTool(std::string& rXmlData, SVTreeType& rTree, uint32_t 
 		e.Throw();
 	}
 
-	std::vector<typename SVTreeType::SVBranchHandle> branchHandles = SvXml::SVNavigateTree::findSubbranches(rTree, ToolsItem); //we are assuming here that all subbranches contain tools
+	std::vector<typename SvXml::SVXMLMaterialsTree::SVBranchHandle> branchHandles = SvXml::SVNavigateTree::findSubbranches(rTree, ToolsItem); //we are assuming here that all subbranches contain tools
 
 	if (false == branchHandles.empty())
 	{
@@ -464,21 +464,21 @@ void ToolClipboard::validateIds(std::string& rXmlData, uint32_t ownerId, SvPb::C
 	}
 }
 
-HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const
+HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, const SVObjectClass* pOwner) const
 {
 	HRESULT Result(E_FAIL);
 
-	SVTreeType::SVBranchHandle ToolsItem(nullptr);
+	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem(nullptr);
 
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
 	{
-		SVTreeType::SVBranchHandle ToolItem = rTree.getFirstBranch(ToolsItem);
+		SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem = rTree.getFirstBranch(ToolsItem);
 
 		int toolIndex = 0;
 		while (rTree.isValidBranch(ToolItem))
 		{
 			std::string fullToolNameTag {SvUl::Format(SvXml::FullToolNameTag, toolIndex++)};
-			SVTreeType::SVLeafHandle fullToolNameHandle;
+			SvXml::SVXMLMaterialsTree::SVLeafHandle fullToolNameHandle;
 			SvXml::SVNavigateTree::GetItemLeaf(rTree, fullToolNameTag.c_str(), ToolsItem, fullToolNameHandle);
 			variant_t value;
 			rTree.getLeafData(fullToolNameHandle, value);
@@ -499,7 +499,7 @@ HRESULT ToolClipboard::replaceDuplicateToolNames(std::string& rXmlData, SVTreeTy
 	return Result;
 }
 
-void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const
+void ToolClipboard::replaceToolNameIfDuplicate(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, const SVObjectClass* pOwner, SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const
 {
 	_variant_t ObjectName;
 	SvXml::SVNavigateTree::GetItem(rTree, scObjectNameTag, ToolItem, ObjectName);
@@ -593,11 +593,11 @@ std::string ToolClipboard::getUniqueToolName(std::string& rToolName, const SVObj
 }
 
 
-HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SVTreeType& rTree) const
+HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree) const
 {
 	HRESULT Result(E_FAIL);
 
-	SVTreeType::SVBranchHandle ToolsItem = nullptr;
+	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem = nullptr;
 
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
 	{
@@ -633,15 +633,15 @@ HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SVTreeType& rTree
 }
 
 
-std::vector<uint32_t> ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner)
+std::vector<uint32_t> ToolClipboard::parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass* pOwner)
 {
-	SVTreeType::SVBranchHandle ToolsItem(nullptr);
+	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem(nullptr);
 
 	std::vector<uint32_t> toolIds;
 
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
 	{
-		SVTreeType::SVBranchHandle ToolItem(nullptr);
+		SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem(nullptr);
 
 		ToolItem = rTree.getFirstBranch(ToolsItem);
 
@@ -665,7 +665,7 @@ std::vector<uint32_t> ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObject
 }
 
 
-uint32_t ToolClipboard::parseOneToolFromTree(SVTreeType& rTree, SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem)
+uint32_t ToolClipboard::parseOneToolFromTree(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass* pOwner, SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem)
 {
 	_variant_t UniqueID;
 
@@ -683,7 +683,7 @@ uint32_t ToolClipboard::parseOneToolFromTree(SVTreeType& rTree, SVObjectClass* p
 		SVParserProgressDialog ParserProgressDialog(SvO::InsertingTool, AfxGetMainWnd());
 		unsigned long parserHandle = SVObjectScriptParser::GetParserHandle();
 
-		SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle,
+		SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser(rTree, ToolItem, parserHandle,
 			pOwnerTmp->getObjectId(), pOwnerTmp, &ParserProgressDialog));
 		if (nullptr != pParser)
 		{

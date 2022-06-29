@@ -17,10 +17,11 @@
 #include "SVIOParameterEnum.h"
 #include "SVRemoteOutputObject.h"
 #include "SVOutputObjectList.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage\SVMessage.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/IValueObject.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

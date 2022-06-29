@@ -234,7 +234,7 @@ namespace SvCl
 				Branch = rDisplayLocation.substr(0, StartPos);
 			}
 			std::string Item = Branch + NodeName;
-			Iter = std::find_if(IterStart, IterEnd, SVCompareKeys<std::string, std::shared_ptr<ObjectSelectorItem>>(Item));;
+			Iter = std::find_if(IterStart, IterEnd, [&Item](const auto& rEntry) {return rEntry.first == Item; });
 			//Branch not found so create or exit
 			if (IterEnd == Iter)
 			{

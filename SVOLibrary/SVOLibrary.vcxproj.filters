@@ -39,6 +39,9 @@
     <ClCompile Include="SVMemoryManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ObsoleteItemChecker.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -86,9 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVTQueueObject.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="ObsoleteItemChecker.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

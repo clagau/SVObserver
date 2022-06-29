@@ -82,10 +82,16 @@ namespace SvMc
 		void DrawBound(CPaintDC & dc, int pos, COLORREF color);
 		void DrawBounds(CPaintDC & dc);
 		void DrawGrid(CPaintDC & dc);
-		bool SetScale(histogram::scale s);
+		bool SetScale(histogram::scale s)
+		{
+			bool result {SvUl::SVHistogramBase::SetScale(s)};
+			if (result)
+			{
+				UpdateAnchors(m_client, m_func);
+			}
+			return result;
+		}
 	};
-
-	#include "SVHistogram.inl"
 
 	#define HISTOGRAM_CLASSNAME _T("SVHistogram")
 } //namespace SvMc

@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVRemoteOutputObject.h"
 #include "ObjectInterfaces/IObjectWriter.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

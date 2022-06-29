@@ -57,6 +57,15 @@
     <ClCompile Include="SVSimpleXml.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="LoadConfiguration.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SaxXMLHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVNavigateTree.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ISaxElementHandler.h">
@@ -131,15 +140,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVXMLTree.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVNavigateTree.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SaxXMLHandler.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="LoadConfiguration.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

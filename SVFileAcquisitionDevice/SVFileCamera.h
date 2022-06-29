@@ -13,10 +13,6 @@
 #pragma region Includes
 #include <mil.h>
 #include "SVFileCameraStruct.h"
-#include "SVEventHandler.h"
-#include "SVFileSystemLibrary/SVFileInfo.h"
-#include "SVFileSystemLibrary/SVFileInfoComparator.h"
-#include "SVSystemLibrary/SVSequencer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #pragma endregion Includes
 
@@ -28,39 +24,33 @@ class ITRCImage;
 
 class SVFileCamera
 {
-private:
-	typedef std::set<SVFileInfo, SVFileInfoComparator> SVFileList;
-	typedef SVFileList::const_iterator FileListIterator;
-	typedef std::insert_iterator<SVFileList> Insertor;
-
 public:
 	using EventHandler = std::function<HRESULT (unsigned long)>;
-	typedef SVEventHandler<EventHandler> SVFrameEventHandler;
 
 private:
 	long m_index{-1L};
 	SVFileCameraStruct m_fileData;
 	std::string m_name;
-	SVFileList m_fileList;
-	SVSequencer<FileListIterator> m_loadSequence{ SVFileInfo() };
+	std::vector<std::string> m_fileList;
+	std::vector<std::string>::iterator m_currentFileIter {m_fileList.end()};
 	MIL_ID m_image = M_NULL;
 	SvSyl::SVAsyncProcedure m_thread;
-	SVFrameEventHandler m_startFrameEvent;
-	SVFrameEventHandler m_endFrameEvent;
+	EventHandler m_startFrameEvent;
+	EventHandler m_endFrameEvent;
 
 	static void CALLBACK OnAPCEvent(ULONG_PTR pData);
 
 	std::string GetNextFilename();
 
 	MIL_ID GetNextImageId();
-	SVSequencer<std::vector<MIL_ID>::const_iterator> m_loadedImageSequence{ 0 };
 	bool m_UsePreLoadImages{ true };
 	int m_MaxPreloadFileNumber{ 50 };
 	int m_PreloadTimeDelay{ -1 };
 	mutable std::mutex m_fileCameraMutex;
 	std::string m_acquisitionFile;
 
-	std::vector<MIL_ID> m_images;
+	std::vector<MIL_ID> m_imageList;
+	std::vector<MIL_ID>::iterator m_currentImageIter {m_imageList.end()};
 public:
 	long m_lIsStarted{0L};
 	SVFileCamera() = default;
