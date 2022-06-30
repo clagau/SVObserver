@@ -106,7 +106,7 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 	// check path
 	if( PathName && _tcslen( PathName ) < _MAX_PATH )
 	{
-		TCHAR* pLast = (TCHAR*)PathName;
+		TCHAR* pLast = const_cast<TCHAR*>  (PathName);
 		TCHAR  drive[_MAX_DRIVE];
 		TCHAR  dir[_MAX_DIR];
 		TCHAR  fname[_MAX_FNAME];
@@ -257,9 +257,9 @@ bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories )
 		WIN32_FIND_DATA findData;
 		bool Result( true );
 		HANDLE hFindFile = FindFirstFile( PathName, &findData );
-		do
+		if (hFindFile)
 		{
-			if( hFindFile )
+			do
 			{
 				TCHAR  path[_MAX_PATH];
 				_tmakepath( path, drive, dir, findData.cFileName, _T( "" ) );
@@ -292,10 +292,10 @@ bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories )
 					// Delete file...
 					Result = DeleteFile( path ) && Result;
 				}
-			}
-		} while( FindNextFile( hFindFile, &findData ) );
+			} while (FindNextFile(hFindFile, &findData));
+			FindClose(hFindFile);
+		}
 
-		FindClose( hFindFile );
 		return Result;
 	}
 

@@ -18,7 +18,7 @@
 //
 // Written by Chris Maunder <chris@codeproject.com>
 // Copyright (c) 1998-2005. All Rights Reserved.
-/
+//
 // The code contained in this file was based on the original
 // WorldCom Grid control written by Joe Willcoxson,
 //        mailto:chinajoe@aol.com
@@ -7204,7 +7204,7 @@ namespace SvGcl
 			return FALSE;
 		}
 
-		TRY
+		try
 		{
 			int nNumColumns = GetColumnCount();
 			for (int i = 0; i < GetRowCount(); i++)
@@ -7218,13 +7218,11 @@ namespace SvGcl
 
 			File.Close();
 		}
-
-		CATCH (CFileException, e)
+		catch (const CFileException&)
 		{
 			AfxMessageBox(_T("Unable to save grid list"));
 			return FALSE;
 		}
-		END_CATCH
 
 		return TRUE;
 	}
@@ -7247,7 +7245,7 @@ namespace SvGcl
 
 		DeleteAllItems();
 
-		TRY
+		try
 		{
 			// Read Header off file
 			File.ReadString(buffer, 1024);
@@ -7318,13 +7316,11 @@ namespace SvGcl
 			AutoSizeColumns(GetAutoSizeStyle());
 			File.Close();
 		}
-
-		CATCH (CFileException, e)
+		catch (const CFileException&)
 		{
 			AfxMessageBox(_T("Unable to load grid data"));
 			return FALSE;
 		}
-		END_CATCH
 
 		return TRUE;
 	}

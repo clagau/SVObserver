@@ -26,8 +26,8 @@
 bool g_bUseCorrectListRecursion = true;
 
 SVEquationYaccClass::SVEquationYaccClass()
+	:m_StatusCode {S_OK}
 {
-	m_StatusCode = S_OK;
 	yacc_err = 0;
 	sIndex = 0;
 	memset( lex_stack,'\0', sizeof( lex_stack ) );

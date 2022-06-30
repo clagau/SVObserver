@@ -139,15 +139,13 @@ HRESULT SVCameraFormatsDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 	if (const SVCameraFormatsDeviceParam* pParam = dynamic_cast<const SVCameraFormatsDeviceParam*>(pBaseParam))
 	{
 		info = pParam->info;
-		OptionsType::iterator iterUser;
-		OptionsType::iterator iterCameraFile;
-		for (iterUser = options.begin(); iterUser != options.end(); ++iterUser)
+		for (auto iterUser = options.begin(); iterUser != options.end(); ++iterUser)
 		{
-			SVCameraFormat& rcf = iterUser->second;
-			iterCameraFile = const_cast<SVCameraFormatsDeviceParam *>(pParam)->options.find(iterUser->first);
+			auto iterCameraFile = pParam->options.find(iterUser->first);
 			if (iterCameraFile != pParam->options.end())
 			{
-				SVCameraFormat& rcfCameraFile = iterCameraFile->second;
+				const SVCameraFormat& rcfCameraFile = iterCameraFile->second;
+				SVCameraFormat& rcf = iterUser->second;
 				rcf.AssignConstantValues(rcfCameraFile);
 			}
 		}

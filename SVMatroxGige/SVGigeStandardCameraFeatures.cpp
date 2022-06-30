@@ -26,15 +26,18 @@ struct SVGigeTriggerLineGet
 	// iterate thru the Line Selectors (Line0/Line1) and get the first one whose LineMode is Input
 	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+		HRESULT result = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		
-		_variant_t value( _T("Input") );
-		l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
-		if (l_Code == S_OK)
+		if (S_OK == result)
 		{
-			rValue = _bstr_t(SvUl::createStdString(value).c_str()).Detach();
+			_variant_t value(_T("Input"));
+			result = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
+			if (S_OK == result)
+			{
+				rValue = _bstr_t(SvUl::createStdString(value).c_str()).Detach();
+			}
 		}
-		return l_Code;
+		return result;
 	}
 };
 
@@ -119,15 +122,17 @@ struct SVGigeStrobeInvertGetter
 	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
 		// Get which line is the Strobe (LineMode = Output)
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
-		
-		_variant_t value( _T("Output") );
-		l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
-		if (l_Code == S_OK)
+		HRESULT result = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+		if (S_OK == result)
 		{
-			rValue = _bstr_t(SvUl::createStdString(value).c_str()).Detach();
+			_variant_t value(_T("Output"));
+			result = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
+			if (S_OK == result)
+			{
+				rValue = _bstr_t(SvUl::createStdString(value).c_str()).Detach();
+			}
 		}
-		return l_Code;
+		return result;
 	}
 };
 
@@ -180,10 +185,7 @@ struct SVGigeEventSetter
 {
 	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{
-		std::string l_value = SvUl::createStdString(rValue);
-		std::string eventValue = l_value.c_str();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), eventValue.c_str());
-		return l_Code;
+		return SVMatroxDigitizerInterface::SetGigeEvent(*(Digitizer.get()), rFeature.GetName(), SvUl::createStdString(rValue));
 	}
 };
 

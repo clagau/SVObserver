@@ -24,18 +24,17 @@
 */
 struct SVDIBITMAPINFO
 {
-	HBITMAP hbm;
-	void* pBits;
-	BITMAPINFO* pBitmapInfo;
+	HBITMAP hbm{nullptr};
+	void* pBits{nullptr};
+	BITMAPINFO* pBitmapInfo{nullptr};
 
-	SVDIBITMAPINFO() {hbm=nullptr; pBits=nullptr; pBitmapInfo=nullptr; pBitmapHeader=nullptr;}
-	SVDIBITMAPINFO(HBITMAP hbm_, void* pBits_, BITMAPINFO* pBitmapInfo_, BITMAPINFOHEADER* pBitmapHeader_=nullptr) 
-	{ 
-		hbm = hbm_; 
-		pBits = pBits_; 
-		pBitmapInfo = pBitmapInfo_;
-		pBitmapHeader = pBitmapHeader_ ? pBitmapHeader_ : pBitmapInfo_ ? &(pBitmapInfo_->bmiHeader) : nullptr;
-	}
+	SVDIBITMAPINFO() = default;
+	SVDIBITMAPINFO(HBITMAP hbm_, void* pBits_, BITMAPINFO* pBitmapInfo_, BITMAPINFOHEADER* pBitmapHeader_=nullptr)
+		:hbm{hbm_}
+		,pBits{pBits_}
+		,pBitmapInfo{pBitmapInfo_}
+		,pBitmapHeader{pBitmapHeader_ ? pBitmapHeader_ : pBitmapInfo_ ? &(pBitmapInfo_->bmiHeader) : nullptr}
+	{}
 	
 	BITMAPINFOHEADER* Header() const { return pBitmapHeader ? pBitmapHeader : pBitmapInfo ? &(pBitmapInfo->bmiHeader) : nullptr; }
 
@@ -43,7 +42,7 @@ struct SVDIBITMAPINFO
 	void Clear() { pBitmapInfo = nullptr; pBits = nullptr; hbm = nullptr; pBitmapHeader = nullptr; }
 
 private:
-	BITMAPINFOHEADER* pBitmapHeader;
+	BITMAPINFOHEADER* pBitmapHeader{nullptr};
 };
 
 
@@ -77,7 +76,7 @@ public:
 
 	static HRESULT SVImageInfoToNewDIB( const BITMAPINFOHEADER& info, SVDIBITMAPINFO& rsvDIB );
 
-	static HRESULT SVHBitmapToDC(const SVDIBITMAPINFO svSrcDIB, HDC hDC);
+	static HRESULT SVHBitmapToDC(const SVDIBITMAPINFO& rSrcDIB, HDC hDC);
 
 	static HRESULT SVImageInfoToImageDefinitionStruct( const BITMAPINFOHEADER& rInfo, SVImageDefinitionStruct& rImageDef );
 };

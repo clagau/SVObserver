@@ -75,18 +75,6 @@ namespace SvGcl
 	IMPLEMENT_DYNAMIC(GridCellBase, CObject)
 
 	/////////////////////////////////////////////////////////////////////////////
-	// GridCellBase
-
-	GridCellBase::GridCellBase()
-	{
-		Reset();
-	}
-
-	GridCellBase::~GridCellBase()
-	{
-	}
-
-	/////////////////////////////////////////////////////////////////////////////
 	// GridCellBase Operations
 
 	void GridCellBase::Reset()
@@ -154,9 +142,11 @@ namespace SvGcl
 
 		// Get the default cell implementation for this kind of cell. We use it if this cell
 		// has anything marked as "default"
-		CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
-		if (!pDefaultCell)
+		CGridDefaultCell *pDefaultCell = dynamic_cast<CGridDefaultCell*> (GetDefaultCell());
+		if (nullptr == pDefaultCell)
+		{
 			return FALSE;
+		}
 
 		// Set up text and background colours
 		COLORREF TextClr, TextBkClr;
@@ -542,7 +532,7 @@ namespace SvGcl
 				pDC = pGrid->GetDC();
 			if (nullptr == pDC || nullptr == szText) 
 			{
-				CGridDefaultCell* pDefCell = (CGridDefaultCell*) GetDefaultCell();
+				CGridDefaultCell* pDefCell = dynamic_cast<CGridDefaultCell*> (GetDefaultCell());
 				assert(pDefCell);
 				return CSize(pDefCell->GetWidth(), pDefCell->GetHeight());
 			}
@@ -667,9 +657,11 @@ namespace SvGcl
 		{
 			// Get the default cell implementation for this kind of cell. We use it if this cell
 			// has anything marked as "default"
-			CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
-			if (!pDefaultCell)
+			CGridDefaultCell *pDefaultCell = dynamic_cast<CGridDefaultCell*> (GetDefaultCell());
+			if (nullptr == pDefaultCell)
+			{
 				return FALSE;
+			}
 
 			// Use custom color if it doesn't match the default color and the
 			// default grid background color.  If not, leave it alone.

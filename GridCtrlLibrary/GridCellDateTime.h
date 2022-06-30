@@ -35,7 +35,7 @@ namespace SvGcl
 		DECLARE_DYNCREATE(GridCellDateTime)
 
 		CTime m_cTime;
-		DWORD m_dwStyle;
+		DWORD m_dwStyle {0};
 
 	public:
 		GridCellDateTime();

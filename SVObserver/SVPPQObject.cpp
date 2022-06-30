@@ -3090,7 +3090,7 @@ HRESULT SVPPQObject::ProcessCameraResponses()
 		{
 			result =  ProcessCameraResponse(cameraData);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-			::OutputDebugString(SvUl::Format(_T("%s Processed Camera Response %s\n"), GetName(), l_Data.m_pCamera->GetName()).c_str());
+			::OutputDebugString(SvUl::Format(_T("%s Processed Camera Response %s\n"), GetName(), cameraData.m_pCamera->GetName()).c_str());
 #endif
 		}
 		else
@@ -3191,7 +3191,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections()
 				{
 					SetProductIncomplete(static_cast<long>(i));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-					::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d\n"), GetName(), l_pPPQProduct->triggerCount()).c_str());
+					::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d\n"), GetName(), pProduct->triggerCount()).c_str());
 #endif
 				}
 				else

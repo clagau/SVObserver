@@ -31,11 +31,8 @@ bool operator < (const GUID& guid1, const GUID& guid2)
 }
 
 extern "C" int APIENTRY
-DllMain(HINSTANCE, DWORD dwReason, LPVOID lpReserved)
+DllMain(HINSTANCE, DWORD dwReason, LPVOID /*lpReserved (remove if required*/)
 {
-	// Remove this if you use lpReserved
-	UNREFERENCED_PARAMETER(lpReserved);
-
 	if (dwReason == DLL_PROCESS_ATTACH)
 	{
 #if _DEBUG

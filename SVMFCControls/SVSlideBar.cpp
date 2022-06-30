@@ -25,17 +25,6 @@ namespace SvMc
 {
 	static SvSyl::SVLockableClass SVSlideBarLock;
 
-	SVSlideBar::SVSlideBar()
-	{
-		bTracking = false;
-		dwSlideBarType	= SV_SLIDEBAR_VERT;
-		trackRect.SetRectEmpty();
-	}
-
-	SVSlideBar::~SVSlideBar()
-	{
-	}
-
 	BEGIN_MESSAGE_MAP(SVSlideBar, CWnd)
 		//{{AFX_MSG_MAP(SVSlideBar)
 		ON_WM_MOUSEMOVE()
@@ -135,7 +124,7 @@ namespace SvMc
 	{
 		CWnd::OnWindowPosChanged(lpwndpos);
 
-		CControlBar* pParent = ( CControlBar* ) GetParent();
+		CControlBar* pParent = dynamic_cast<CControlBar*> (GetParent());
 		if( pParent )
 		{
 			DWORD dwParentStyle = pParent->GetBarStyle();

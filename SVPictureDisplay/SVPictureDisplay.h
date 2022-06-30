@@ -11,12 +11,6 @@
 
 #pragma once
 
-#pragma region Includes
-#if !defined( __AFXCTL_H__ )
-#error "include 'afxctl.h' before including this file"
-#endif
-#pragma endregion Includes
-
 #pragma region Declarations
 extern const GUID CDECL _tlid;
 extern const WORD _wVerMajor;

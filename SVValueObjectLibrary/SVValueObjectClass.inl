@@ -29,17 +29,17 @@ int32_t SVValueObjectClass<T>::m_maxTextSize = SvDef::cMaxStringByteSize;
 
 #pragma region Constructor
 template <typename T>
-SVValueObjectClass<T>::SVValueObjectClass(LPCTSTR ObjectName)
-	: SVObjectClass(ObjectName)
+SVValueObjectClass<T>::SVValueObjectClass(LPCTSTR ObjectName) : SVObjectClass(ObjectName)
 {
-	Initialize();
+	m_ObjectAttributesAllowed = SvDef::defaultValueObjectAttributes;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVValueObjectType;
 }
 
 template <typename T>
-SVValueObjectClass<T>::SVValueObjectClass(SVObjectClass* POwner, int StringResourceID)
-	: SVObjectClass(POwner, StringResourceID)
+SVValueObjectClass<T>::SVValueObjectClass(SVObjectClass* POwner, int StringResourceID) : SVObjectClass(POwner, StringResourceID)
 {
-	Initialize();
+	m_ObjectAttributesAllowed = SvDef::defaultValueObjectAttributes;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVValueObjectType;
 }
 
 template <typename T>
@@ -68,7 +68,6 @@ bool SVValueObjectClass<T>::CreateObject(const SVObjectLevelCreateStruct& rCreat
 	bool l_bOk = SVObjectClass::CreateObject(rCreateStructure);
 
 	SVObjectManagerClass::Instance().RegisterSubObject(getObjectId());
-	SetObjectAttributesAllowed(SvPb::dataDefinitionValue, SvOi::SetAttributeType::AddAttribute);	// derived classes need to reset this
 
 	return l_bOk;
 }
@@ -131,8 +130,6 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int32_t iSize)
 template <typename T>
 HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
-	HRESULT Result(E_FAIL);
-
 	SvCl::SVObjectLongArrayClass LongArray;
 	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
 	ValueVector ValueArray;
@@ -173,13 +170,10 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 	}
 	else
 	{
-		Result = SVObjectClass::SetObjectValue(pDataObject);
-		return Result;
+		return SVObjectClass::SetObjectValue(pDataObject);
 	}
 
-	Result = S_OK;	// always OK if we get here
-
-	return Result;
+	return S_OK;
 }
 
 template <typename T>
@@ -275,8 +269,6 @@ template <typename T> bool SVValueObjectClass<T>::GetMinMaxValues(T& minvalue, T
 template <typename T>
 HRESULT SVValueObjectClass<T>::SetArrayValues(const ValueVector& rValues)
 {
-	HRESULT Result(E_FAIL);
-
 	int32_t Size = static_cast<int32_t> (rValues.size());
 	assert(Size <= getArraySize());
 	if (Size <= getArraySize() && nullptr != m_pValue)
@@ -286,13 +278,12 @@ HRESULT SVValueObjectClass<T>::SetArrayValues(const ValueVector& rValues)
 		{
 			memcpy(m_pValue, &rValues.at(0), Size * sizeof(ValueType));
 		}
-		Result = S_OK;
+		return S_OK;
 	}
 	else
 	{
-		Result = SVMSG_SVO_33_OBJECT_INDEX_INVALID;
+		return SVMSG_SVO_33_OBJECT_INDEX_INVALID;
 	}
-	return Result;
 }
 
 template <typename T>
@@ -355,10 +346,8 @@ UINT SVValueObjectClass<T>::SetObjectAttributesAllowed(UINT Attributes, SvOi::Se
 template <typename T>
 HRESULT SVValueObjectClass<T>::getValue(double& rValue, int Index /*= -1*/) const
 {
-	HRESULT Result(E_FAIL);
-
 	ValueType Value;
-	Result = GetValue(Value, Index);
+	HRESULT Result = GetValue(Value, Index);
 	rValue = ValueType2Double(Value);
 
 	return Result;
@@ -500,19 +489,17 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 template <typename T>
 HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/) const
 {
-	HRESULT Result(E_FAIL);
-
 	//! If index is -1 and it is an array then get the whole array
 	if (-1 == Index && isArray())
 	{
 		rValue = vectorType2SafeArray(getResultSize());
-		Result = S_OK;
+		return S_OK;
 	}
 	else
 	{
 		ValueType Value;
-		Result = GetValue(Value, Index);
-		if (S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result || E_BOUNDS == Result)
+		HRESULT result = GetValue(Value, Index);
+		if (S_OK == result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result || E_BOUNDS == result)
 		{
 			rValue = ValueType2Variant(&Value);
 		}
@@ -520,9 +507,8 @@ HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/) 
 		{
 			rValue.Clear();
 		}
+		return result;
 	}
-
-	return Result;
 }
 
 template <typename T>
@@ -658,17 +644,6 @@ void SVValueObjectClass<T>::validateValue(const _variant_t& rValue, const _varia
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-template <typename T>
-void SVValueObjectClass<T>::Initialize()
-{
-	m_LegacyVectorObjectCompatibility = false;
-	m_ResetAlways = false;
-	m_eResetItem = SvOi::SVResetItemIP;
-	m_ResultSize = 1;
-	m_ObjectTypeInfo.m_ObjectType = SvPb::SVValueObjectType;
-	SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
-}
-
 template <typename T>
 int32_t SVValueObjectClass<T>::getByteSize(bool useResultSize, bool memBlockData) const
 {
@@ -865,13 +840,6 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 	else
 	{
 		result = SvUl::getVectorFromOneDim<T>(rValue);
-		//Allow arraysize 0
-		if (0 > result.size())
-		{
-			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
-			Exception.Throw();
-		}
 	}
 
 	return result;

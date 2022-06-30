@@ -21,14 +21,9 @@ static char THIS_FILE[] = __FILE__;
 namespace SvMc
 {
 	SVOConfigNameEdit::SVOConfigNameEdit(LPCTSTR const sExcludedChars)
-	{
-		m_sExcludedChars = sExcludedChars;
-	}
-
-	SVOConfigNameEdit::~SVOConfigNameEdit()
+		:m_sExcludedChars {sExcludedChars}
 	{
 	}
-
 
 	BEGIN_MESSAGE_MAP(SVOConfigNameEdit, CEdit)
 		//{{AFX_MSG_MAP(SVOConfigNameEdit)

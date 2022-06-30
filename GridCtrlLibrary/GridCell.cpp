@@ -130,9 +130,11 @@ namespace SvGcl
 	{
 		if (nullptr == m_plfFont)
 		{
-			CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
-			if (!pDefaultCell)
+			CGridDefaultCell* pDefaultCell = dynamic_cast<CGridDefaultCell*> (GetDefaultCell());
+			if (nullptr == pDefaultCell)
+			{
 				return nullptr;
+			}
 
 			return pDefaultCell->GetFont();
 		}
@@ -145,9 +147,11 @@ namespace SvGcl
 		// If the default font is specified, use the default cell implementation
 		if (nullptr == m_plfFont)
 		{
-			CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
-			if (!pDefaultCell)
+			CGridDefaultCell* pDefaultCell = dynamic_cast<CGridDefaultCell*> (GetDefaultCell());
+			if (nullptr == pDefaultCell)
+			{
 				return nullptr;
+			}
 
 			return pDefaultCell->GetFontObject();
 		}
@@ -164,9 +168,11 @@ namespace SvGcl
 	{
 		if (m_nFormat == (DWORD)-1)
 		{
-			CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
-			if (!pDefaultCell)
+			CGridDefaultCell* pDefaultCell = dynamic_cast<CGridDefaultCell*> (GetDefaultCell());
+			if (nullptr == pDefaultCell)
+			{
 				return 0;
+			}
 
 			return pDefaultCell->GetFormat();
 		}
@@ -178,9 +184,11 @@ namespace SvGcl
 	{
 		if (m_nMargin == (UINT)-1)
 		{
-			CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
-			if (!pDefaultCell)
+			CGridDefaultCell* pDefaultCell = dynamic_cast<CGridDefaultCell*> (GetDefaultCell());
+			if (nullptr == pDefaultCell)
+			{
 				return 0;
+			}
 
 			return pDefaultCell->GetMargin();
 		}
@@ -217,8 +225,10 @@ namespace SvGcl
 
 	void GridCell::EndEdit()
 	{
-		if (m_pEditWnd)
-			((InPlaceEdit*)m_pEditWnd)->EndEdit();
+		if (nullptr != m_pEditWnd)
+		{
+			(static_cast<InPlaceEdit*> (m_pEditWnd))->EndEdit();
+		}
 	}
 
 	void GridCell::OnEndEdit()
@@ -239,8 +249,6 @@ namespace SvGcl
 	#endif
 		m_crFgClr = CLR_DEFAULT;
 		m_crBkClr = CLR_DEFAULT;
-		m_Size    = CSize(30,10);
-		m_dwStyle = 0;
 
 	#ifdef _WIN32_WCE
 		LOGFONT lf;

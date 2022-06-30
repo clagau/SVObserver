@@ -94,7 +94,7 @@ public:
 
 	HRESULT CopyImage(SvOi::ITRCImage* pImagePtr);
 
-	HRESULT loadImage(std::string fileName);
+	HRESULT loadImage(const std::string& rFileName);
 	std::string getAcquisitionFile() const;
 
 	double m_StartTimeStamp{0.0};

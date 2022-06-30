@@ -18,28 +18,23 @@
 class SVLightReferenceAttributeInfo
 {
 public:
-	std::string strName;       // contains the text "Contrast", "Brightness", etc.
-	int iIDCaption;         // contains the resource ID of "Contrast", etc. at the time the config was saved. Unfortunately, this ID can change.
-	DWORD dwType;			// the Type of the Attribute (corresponds to the Device Parameter (SVDeviceParamEnum))
-	long lValue;
-	long lMin;
-	long lMax;
-	long lStep;
+	std::string strName {};       // contains the text "Contrast", "Brightness", etc.
+	int iIDCaption {0};         // contains the resource ID of "Contrast", etc. at the time the config was saved. Unfortunately, this ID can change.
+	DWORD dwType {0};			// the Type of the Attribute (corresponds to the Device Parameter (SVDeviceParamEnum))
+	long lValue {0L};
+	long lMin {0L};
+	long lMax {0L};
+	long lStep {0L};
 	
-	SVLightReferenceAttributeInfo();
-	SVLightReferenceAttributeInfo( const SVLightReferenceAttributeInfo& rhs );
-	~SVLightReferenceAttributeInfo();
-
-	const SVLightReferenceAttributeInfo& operator = ( const SVLightReferenceAttributeInfo& rhs );
+	SVLightReferenceAttributeInfo() = default;
+	~SVLightReferenceAttributeInfo() = default;
 };
 
 class SVLightReferenceBand
 {
 public:
-	SVLightReferenceBand();
-	SVLightReferenceBand( const SVLightReferenceBand& rhs );
-	const SVLightReferenceBand& operator=( const SVLightReferenceBand& rhs );
-	~SVLightReferenceBand();
+	SVLightReferenceBand() = default;
+	~SVLightReferenceBand() = default;
 
 	void Create( int iNumAttributes );
 	void Destroy();
@@ -54,10 +49,10 @@ public:
 
 	std::vector< SVLightReferenceAttributeInfo > m_aAttributeInfo;
 
-    unsigned long m_ulFileVersion;
+    unsigned long m_ulFileVersion{0UL};
 
 protected:
-    int	m_iNumAttributes;    // the number of "attributes", e.g. Contrast, Brightness
+	int	m_iNumAttributes {0};    // the number of "attributes", e.g. Contrast, Brightness
 };
 
 class SVLightReference
@@ -81,9 +76,9 @@ public:
 
     std::vector<SVLightReferenceBand>	m_aLightReferenceBand;
 
-	unsigned long m_ulFileVersion;
+	unsigned long m_ulFileVersion {0UL};
 
 protected:
-	int	m_iNumBands;    // the number of bands (channels)
+	int	m_iNumBands {0};    // the number of bands (channels)
 };
 

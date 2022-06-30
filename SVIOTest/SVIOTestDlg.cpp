@@ -85,14 +85,7 @@ END_MESSAGE_MAP()
 SVIOTestDlg::SVIOTestDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVIOTestDlg::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(SVIOTestDlg)
-	m_lStaticChannel = 0;
-	m_BoardModel = -1;
-	//}}AFX_DATA_INIT
-	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-
-	for (int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+	for (int triggerchannel = 0; triggerchannel < cTriggerChannelNr; triggerchannel++)
 	{
 		m_FanFreq[triggerchannel] = 0;
 		m_TriggerData[triggerchannel].OnTriggerStart();
@@ -106,7 +99,7 @@ SVIOTestDlg::~SVIOTestDlg()
 SVIOTriggerDataStruct* SVIOTestDlg::getTriggerData(unsigned long triggerChannel)
 {
 	SVIOTriggerDataStruct* pResult{nullptr};
-	if(c_upperBoundForTriggerChannel > triggerChannel)
+	if(cTriggerChannelNr > triggerChannel)
 	{
 		pResult = &m_TriggerData[triggerChannel];
 	}
@@ -133,24 +126,17 @@ bool SVIOTestDlg::AllowTriggerParamEditing() const
 void SVIOTestDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVIOTestDlg)
 	DDX_Control(pDX, IDC_BOARD_MODEL_COMBO, m_BoardModelCombo);
 	DDX_Control(pDX, IDC_SYSTEM_TEXT, m_BoardTxt);
 
-	// IDC_FAN_FREQ1 to IDC_FAN_FREQ4,
-	// IDC_FAN1_TXT to IDC_FAN4_TXT,
-	// and IDC_FAN1 to IDC_FAN4 must be contiguous and sequential for this to work:
-	for (int fanID = 0; fanID < c_upperBoundForFanId; ++fanID)
+	//The Resource IDs must be contiguous and sequential for this to work:
+	for (int fanID = 0; fanID < cFanIdNr; ++fanID)
 	{
 		DDX_Text(pDX, IDC_FAN_FREQ1 + fanID, m_FanFreq[fanID]);
 		DDX_Control(pDX, IDC_FAN1_TXT + fanID, m_FanTxt[fanID]);
 		DDX_Control(pDX, IDC_FAN1 + fanID, m_Fan[fanID]);
 	}
-	// IDC_TRIGGER1_MINIMUM to IDC_TRIGGER4_MINIMUM,
-	// IDC_TRIGGER1_AVERAGE to IDC_TRIGGER4_AVERAGE
-	// IDC_TRIGGER1_MAXIMUM to IDC_TRIGGER4_MAXIMUM,
-	// and IDC_TRIGGER1_COUNT to IDC_TRIGGER4_COUNT must be contiguous and sequential for this to work:
-	for (int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
+	for (int triggerchannel = 0; triggerchannel < cTriggerChannelNr; ++triggerchannel)
 	{
 		DDX_Control(pDX, IDC_TRIGGER1_MINIMUM + triggerchannel, m_TriggerMinimum[triggerchannel]);
 		DDX_Control(pDX, IDC_TRIGGER1_AVERAGE + triggerchannel, m_TriggerAverage[triggerchannel]);
@@ -159,10 +145,9 @@ void SVIOTestDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Control(pDX, IDC_TRIGGER1_COUNT + triggerchannel, m_TriggerCountWnd[triggerchannel]);
 	}
 
-	// IDC_INPUT1 to IDC_INPUT8 must be contiguous and sequential for this to work:
-	for (int inputchannel = 1; inputchannel < c_upperBoundForInputChannel; inputchannel++)
+	for (int inputchannel = 0; inputchannel < cInputChannelNr; ++inputchannel)
 	{
-		DDX_Control(pDX, IDC_INPUT1 + inputchannel - 1, m_input[inputchannel]);
+		DDX_Control(pDX, IDC_INPUT1 + inputchannel, m_input[inputchannel]);
 	}
 
 	DDX_Control(pDX, IDC_RADIO1, m_cbtSlow);
@@ -203,6 +188,7 @@ BOOL SVIOTestDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -406,54 +392,27 @@ void SVIOTestDlg::OnButton2()
 
 void SVIOTestDlg::OnTimer( UINT_PTR nIDEvent )
 {
-	bool bValue = 0;
-	CStatic *pCStatic;
-
 	// Update Digital Input status Indicators
 	long numInputs {SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount()};
 	for (long inputIndex = 0 ; inputIndex < numInputs ; ++inputIndex)
 	{
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputValue(inputIndex, bValue);
-		switch (inputIndex)
+		if (inputIndex < cInputChannelNr)
 		{
-			case 0:
-				pCStatic = &m_input[1];
-				break;
-			case 1:
-				pCStatic = &m_input[2];
-				break;
-			case 2:
-				pCStatic = &m_input[3];
-				break;
-			case 3:
-				pCStatic = &m_input[4];
-				break;
-			case 4:
-				pCStatic = &m_input[5];
-				break;
-			case 5:
-				pCStatic = &m_input[6];
-				break;
-			case 6:
-				pCStatic = &m_input[7];
-				break;
-			case 7:
-				pCStatic = &m_input[8];
-				break;
-			default:
-				pCStatic = &m_input[1];
-		}
-		if( (SVRABBIT_X2 == m_lSystemType || SVRABBIT_X3 == m_lSystemType) && (6 == inputIndex || 7 == inputIndex) )
-		{
-			pCStatic->SetIcon(AfxGetApp()->LoadIcon( IDI_ICON5));
-		}
-		else if(bValue)
-		{
-			pCStatic->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1));
-		}
-		else
-		{
-			pCStatic->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON3));
+			bool bValue = 0;
+			CStatic* pStatic {&m_input[inputIndex]};
+			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputValue(inputIndex, bValue);
+			if ((SVRABBIT_X2 == m_lSystemType || SVRABBIT_X3 == m_lSystemType) && (6 == inputIndex || 7 == inputIndex))
+			{
+				pStatic->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON5));
+			}
+			else if (bValue)
+			{
+				pStatic->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1));
+			}
+			else
+			{
+				pStatic->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON3));
+			}
 		}
 	}
 
@@ -463,7 +422,7 @@ void SVIOTestDlg::OnTimer( UINT_PTR nIDEvent )
 		_variant_t value = SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState);
 		if(VT_EMPTY != value.vt)
 		{
-			for (unsigned int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
+			for (unsigned int triggerchannel = 0; triggerchannel < cTriggerChannelNr; ++triggerchannel)
 			{
 				m_Fan[triggerchannel].SetIcon( AfxGetApp()->LoadIcon( ( value.lVal & (1 << triggerchannel)) ? IDI_ICON4 : IDI_ICON3 ));
 			}
@@ -471,7 +430,7 @@ void SVIOTestDlg::OnTimer( UINT_PTR nIDEvent )
 		value = SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq);
 		if (VT_EMPTY != value.vt)
 		{
-			for (unsigned int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
+			for (unsigned int triggerchannel = 0; triggerchannel < cTriggerChannelNr; ++triggerchannel)
 			{
 				m_FanFreq[triggerchannel] = value.lVal >> (8 * triggerchannel) & 0xff;
 			}
@@ -573,12 +532,12 @@ void SVIOTestDlg::OnTestOutputs()
 
 void SVIOTriggerDataStruct::OnTriggerStart()
 {
-	ulLastIndex = 0;
-	ulIndex = 0;
-	ulNextIndex = 1;
-	lTriggerCount = 0;
-	m_LastTime = 0;
-	m_TotalTime = 0;
+	ulLastIndex = 0UL;
+	ulIndex = 0UL;
+	ulNextIndex = 1UL;
+	lTriggerCount = 0L;
+	m_LastTime = 0.0;
+	m_TotalTime = 0.0;
 	m_MaxTime = SvUl::GetMinTimeStamp();
 	m_MinTime = SvUl::GetMaxTimeStamp();
 }
@@ -658,11 +617,8 @@ void SVIOTestDlg::OnStartTriggers()
 	{
 		unsigned long triggerIndex = m_psvTriggers->GetHandle(triggerchannel);
 		StartTrigger(triggerchannel);
-		if (numTriggers >= triggerchannel)
-		{
-			auto triggerFunction = [this](SvTrig::TriggerData&& triggerData) {return triggerCallback(std::move(triggerData));  };
-			m_psvTriggers->Register(triggerIndex, triggerFunction);
-		}
+		auto triggerFunction = [this](SvTrig::TriggerData&& triggerData) {return triggerCallback(std::move(triggerData));  };
+		m_psvTriggers->Register(triggerIndex, triggerFunction);
 	}
 
 	for (unsigned int triggerchannel = 0; triggerchannel < numTriggers; ++triggerchannel)
@@ -794,56 +750,27 @@ void SVIOTestDlg::OnTriggerParam()
 {
 	if (IsSoftwareTrigger())
 	{
-		SVSoftwareTriggerSetupDlg l_dlg;
+		SVSoftwareTriggerSetupDlg dlg;
 		
 		unsigned long count = m_psvTriggers->GetCount();
 		for( unsigned long x = 0 ; x < count ; x++ )
 		{
 			unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
 			_variant_t value = m_psvTriggers->GetParameterValue(triggerchannel, SVIOParameterEnum::TriggerPeriod);
-
-			switch (x)
+			if (x < cTriggerChannelNr)
 			{
-				case 0:
-				l_dlg.m_period1 = value.lVal;
-				break;
-
-				case 1:
-				l_dlg.m_period2 = value.lVal;
-				break;
-
-				case 2:
-				l_dlg.m_period3 = value.lVal;
-				break;
-
-				case 3:
-				l_dlg.m_period4 = value.lVal;
-				break;
+				dlg.m_period[x] = value.lVal;
 			}
 		}
-		if( IDOK == l_dlg.DoModal() )
+		if( IDOK == dlg.DoModal() )
 		{
 			for( unsigned long x = 0 ; x < count ; x++ )
 			{
 				unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
 				_variant_t value;
-				switch (x)
+				if (x < cTriggerChannelNr)
 				{
-					case 0:
-					value = l_dlg.m_period1;
-					break;
-
-					case 1:
-					value = l_dlg.m_period2;
-					break;
-
-					case 2:
-					value = l_dlg.m_period3;
-					break;
-
-					case 3:
-					value = l_dlg.m_period4;
-					break;
+					value = dlg.m_period[x];
 				}
 				m_psvTriggers->SetParameterValue( triggerchannel, SVIOParameterEnum::TriggerPeriod, value);
 			}
@@ -851,76 +778,38 @@ void SVIOTestDlg::OnTriggerParam()
 	}
 	else
 	{
-		SVTriggerSetupDlgClass l_dlg;
-		l_dlg.m_psvTriggers = m_psvTriggers;
+		SVTriggerSetupDlgClass dlg;
+		dlg.m_psvTriggers = m_psvTriggers;
 
-		l_dlg.m_lStrobeInverts = m_lStrobeInverts;
-		l_dlg.m_lTrigInverts = m_lTrigInverts;
-		l_dlg.m_lSystemType = m_lSystemType;
+		dlg.m_lStrobeInverts = m_lStrobeInverts;
+		dlg.m_lTrigInverts = m_lTrigInverts;
+		dlg.m_lSystemType = m_lSystemType;
 
 		unsigned long count = m_psvTriggers->GetCount();
 		for(unsigned long x=0 ; x < count ; ++x)
 		{
 			unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
 			_variant_t value = m_psvTriggers->GetParameterValue( triggerchannel, SVSignalEdge);
-			switch( x )
+			if (x < cTriggerChannelNr)
 			{
-				case 0:
-				{
-					l_dlg.m_bTrig1Rising = value.lVal > 0 ? true : false;
-					break;
-				}
-				case 1:
-				{
-					l_dlg.m_bTrig2Rising = value.lVal > 0 ? true : false;
-					break;
-				}
-				case 2:
-				{
-					l_dlg.m_bTrig3Rising = value.lVal > 0 ? true : false;
-					break;
-				}
-				case 3:
-				{
-					l_dlg.m_bTrig4Rising = value.lVal > 0 ? true : false;
-					break;
-				}
+				dlg.m_bTrigRising[x] = value.lVal > 0 ? true : false;
 			}
 		}
-		if( IDOK == l_dlg.DoModal() )
+		if( IDOK == dlg.DoModal() )
 		{
 			for(unsigned long x = 0 ; x < count ; ++x)
 			{
 				unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
 				_variant_t value;
-				switch( x )
+				if (x < cTriggerChannelNr)
 				{
-					case 0:
-					{
-						value = l_dlg.m_bTrig1Rising ? 1L : -1L;
-						break;
-					}
-					case 1:
-					{
-						value = l_dlg.m_bTrig2Rising ? 1L : -1L;
-						break;
-					}
-					case 2:
-					{
-						value = l_dlg.m_bTrig3Rising ? 1L : -1L;
-						break;
-					}
-					case 3:
-					{
-						value = l_dlg.m_bTrig4Rising ? 1L : -1L;
-						break;
-					}
+					value = dlg.m_bTrigRising[x] ?  1L : -1L;
 				}
 				m_psvTriggers->SetParameterValue( triggerchannel, SVIOParameterEnum::SVSignalEdge, value);
 			}
 		}
-		m_lStrobeInverts = l_dlg.m_lStrobeInverts;
-		m_lTrigInverts = l_dlg.m_lTrigInverts;
+		m_lStrobeInverts = dlg.m_lStrobeInverts;
+		m_lTrigInverts = dlg.m_lTrigInverts;
 	}
 }
 
@@ -928,7 +817,7 @@ void SVIOTestDlg::ShowFans( bool p_bShow )
 {
 	UINT cmd = (p_bShow) ? SW_SHOW : SW_HIDE;
 	
-	for (unsigned int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
+	for (unsigned int triggerchannel = 0; triggerchannel < cTriggerChannelNr; ++triggerchannel)
 	{
 		m_Fan[ triggerchannel ].ShowWindow( cmd );
 		m_FanTxt[ triggerchannel ].ShowWindow( cmd );

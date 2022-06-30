@@ -15,13 +15,13 @@
 #define IDD_PASSWORD                    130
 #define ID_CDKEY1                       1000
 #define ID_CDKEY2                       1001
-#define ID_SERIAL_NUMBER                1003
-#define ID_CDKEY3                       1004
-#define ID_CDKEY4                       1005
+#define ID_CDKEY3                       1002
+#define ID_CDKEY4                       1003
+#define ID_CDKEY5                       1004
+#define ID_SERIAL_NUMBER                1005
 #define ID_DATE                         1006
 #define ID_MODEL_NUMBER                 1007
 #define ID_SERVICED_BY                  1008
-#define ID_CDKEY5                       1009
 #define IDC_PRODUCTID                   1010
 #define IDC_TYPE                        1011
 #define IDC_EDIT1                       1012

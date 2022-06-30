@@ -32,7 +32,7 @@ public:
 	virtual HRESULT GetValue(VARIANT& rv) const override;
 	virtual HRESULT SetValue(const VARIANT& rv) override;
 
-	bool bValue;
+	bool bValue {false};
 
 	TDeviceParamInfo<bool> info;
 	typedef TDeviceOption<bool> OptionType;

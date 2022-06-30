@@ -282,18 +282,16 @@ void SVFileCamera::OnAPCEvent(ULONG_PTR pData)
 	}
 }
 
-HRESULT SVFileCamera::loadImage(std::string fileName)
+HRESULT SVFileCamera::loadImage(const std::string& rFileName)
 {
-
-
 	if (M_NULL != m_image)
 	{
 		MbufClear(m_image, 0);
-		MbufImport(fileName.c_str(), M_DEFAULT, M_LOAD, M_NULL, &m_image);
+		MbufImport(rFileName, M_DEFAULT, M_LOAD, M_NULL, &m_image);
 	}
 	else
 	{
-		m_image = MbufImport(fileName.c_str(), M_DEFAULT, M_RESTORE, M_DEFAULT_HOST, M_NULL);
+		m_image = MbufImport(rFileName, M_DEFAULT, M_RESTORE, M_DEFAULT_HOST, M_NULL);
 	}
 
 	if (M_NULL != m_image)

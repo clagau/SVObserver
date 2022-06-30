@@ -19,20 +19,6 @@
 
 namespace SvMc
 {
-	SVListCtrl::SVListCtrl()
-	{
-		m_CurItem     = 0;
-		m_CurSubItem  = 1;
-		m_bHasFocus   = FALSE;
-		m_bIsDragging = FALSE;
-	}
-
-
-	SVListCtrl::~SVListCtrl()
-	{
-	}
-
-
 	BEGIN_MESSAGE_MAP(SVListCtrl, CListCtrl)
 		//{{AFX_MSG_MAP(SVListCtrl)
 		ON_WM_CREATE()
@@ -123,7 +109,7 @@ namespace SvMc
 							m_CurSubItem = 1;
 						else
 						{
-							CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+							CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 							// Make the column visible.
 							// We have to take into account that the header may be reordered.
 							MakeColumnVisible(Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem));
@@ -143,7 +129,7 @@ namespace SvMc
 					{
 						// Increment the order number.
 						m_CurSubItem++;
-						CHeaderCtrl* pHeader = (CHeaderCtrl*) GetDlgItem(0);
+						CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 						int nColumnCount = pHeader->GetItemCount();
 						// Don't go beyond the last column.
 						if (m_CurSubItem > nColumnCount -1) 
@@ -168,7 +154,7 @@ namespace SvMc
 						m_CurItem = GetNextItem(-1, LVNI_ALL | LVNI_SELECTED);
 						if (m_CurSubItem != -1 && m_CurItem != -1)
 						{
-							CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+							CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 							int iSubItem = Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem);
 							OnEditItem(m_CurItem, iSubItem, CPoint(-1, -1), VK_RETURN);
 							return TRUE;
@@ -183,7 +169,7 @@ namespace SvMc
 
 						if (m_CurSubItem != -1 && m_CurItem != -1)
 						{
-							CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+							CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 							int iSubItem = Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem);
 							OnEditItem(m_CurItem, iSubItem, CPoint(-1, -1), VK_SPACE);
 							return TRUE;
@@ -197,7 +183,7 @@ namespace SvMc
 
 						if (m_CurSubItem != -1 && m_CurItem != -1)
 						{
-							CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+							CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 							int iSubItem = Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem);
 							OnEditItem(m_CurItem, iSubItem, CPoint(-1, -1), VK_SPACE);
 							return TRUE;
@@ -404,7 +390,7 @@ namespace SvMc
 			if (ht.iItem!=-1 && ht.iSubItem > 0)
 			{
 				m_CurSubItem = IndexToOrder(ht.iSubItem);
-				CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+				CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 				// Make the column fully visible.
 				MakeColumnVisible(Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem));
 				CListCtrl::OnLButtonDown(nFlags, point);
@@ -492,9 +478,9 @@ namespace SvMc
 	}
 
 
-	void SVListCtrl::OnControlLButtonDown(UINT , CPoint point, LVHITTESTINFO& ht)
+	void SVListCtrl::OnControlLButtonDown(UINT , CPoint point, const LVHITTESTINFO& rHt)
 	{
-		OnEditItem(ht.iItem, ht.iSubItem, point, VK_LBUTTON);
+		OnEditItem(rHt.iItem, rHt.iSubItem, point, VK_LBUTTON);
 	}
 
 
@@ -505,7 +491,6 @@ namespace SvMc
 
 		CListCtrl::OnHScroll(nSBCode, nPos, pScrollBar);
 	}
-
 
 	void SVListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 	{
@@ -549,7 +534,7 @@ namespace SvMc
 		if (nCol < 0)
 			return;
 		// Get the order array to total the column offset.
-		CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+		CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 		int nColCount = pHeader->GetItemCount();
 		assert(nCol < nColCount);
 		int *pOrderarray = new int[nColCount];
@@ -580,7 +565,7 @@ namespace SvMc
 	int SVListCtrl::IndexToOrder(int iIndex)
 	{
 		// This translates a column index value to a column order value.
-		CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+		CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 		int nColCount = pHeader->GetItemCount();
 		int *pOrderarray = new int[nColCount];
 		Header_GetOrderArray(pHeader->m_hWnd, nColCount, pOrderarray);
@@ -607,7 +592,7 @@ namespace SvMc
 
 	void SVListCtrl::OnBeginlabeledit(NMHDR* pNMHDR, LRESULT* pResult) 
 	{
-		LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
+		LV_DISPINFO* pDispInfo = reinterpret_cast<LV_DISPINFO*> (pNMHDR);
 
 		CPoint	cursor;
 		GetCursorPos(&cursor);
@@ -688,7 +673,7 @@ namespace SvMc
 
 	void SVListCtrl::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult) 
 	{
-		LV_DISPINFO* plvDispInfo = (LV_DISPINFO*)pNMHDR;
+		LV_DISPINFO* plvDispInfo = reinterpret_cast<LV_DISPINFO*> (pNMHDR);
 		LV_ITEM* plvItem = &plvDispInfo->item;
 
 		OnEndEditItem(plvItem);
@@ -738,7 +723,7 @@ namespace SvMc
 					m_CurSubItem = 1;
 				else
 				{
-					CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+					CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 					// Make the column visible.
 					// We have to take into account that the header may be reordered.
 					MakeColumnVisible(Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem));
@@ -759,7 +744,7 @@ namespace SvMc
 			{
 				// Increment the order number.
 				m_CurSubItem++;
-				CHeaderCtrl* pHeader = (CHeaderCtrl*) GetDlgItem(0);
+				CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
 				int nColumnCount = pHeader->GetItemCount();
 				// Don't go beyond the last column.
 				if (m_CurSubItem > nColumnCount -1) 

@@ -142,9 +142,9 @@ namespace SvGcl
 		virtual CFont*   GetFontObject() const override;
 
 	protected:
-		CSize m_Size;       // Default Size
+		CSize m_Size {30, 10};       // Default Size
 		CFont m_Font;       // Cached font
-		DWORD m_dwStyle;    // Cell Style - unused
+		DWORD m_dwStyle {0};    // Cell Style - unused
 	};
 
 } // namespace SvGcl

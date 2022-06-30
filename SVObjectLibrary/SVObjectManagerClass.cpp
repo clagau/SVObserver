@@ -359,7 +359,7 @@ bool SVObjectManagerClass::CreateObjectID(SVObjectClass* pObject)
 				uint32_t OwnerId = pObject->GetParentID();
 				if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
 				{
-					SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType::Owner);
+					SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType(SvOl::JoinType::Owner));
 				}
 			}
 		}
@@ -468,7 +468,7 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 					uint32_t OwnerId = pObject->GetParentID();
 					if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
 					{
-						SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType::Owner);
+						SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType(SvOl::JoinType::Owner));
 					}
 				}
 			}

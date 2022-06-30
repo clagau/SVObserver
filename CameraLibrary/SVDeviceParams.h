@@ -148,8 +148,8 @@ template<typename TYPE> struct TDeviceOption	// used for discrete selectable val
 	TYPE m_Value;
 	std::string m_Description;
 	TDeviceOption() {};
-	TDeviceOption(const TYPE& rValue) { this->value = rValue; };
-	TDeviceOption(const TYPE& rValue, const std::string& rDescription) { m_Value = rValue; m_Description = rDescription; };
+	explicit TDeviceOption(const TYPE& rValue) : m_Value {rValue} {}
+	explicit TDeviceOption(const TYPE& rValue, const std::string& rDescription) : m_Value {rValue}, m_Description {rDescription} {}
 	operator TYPE() const { return m_Value; };
 };
 
@@ -160,8 +160,7 @@ private:
 	const std::string& m_rDescription;
 
 public:
-	OptionDescMatch(const std::string& rDescription)
-		: m_rDescription(rDescription) {}
+	explicit OptionDescMatch(const std::string& rDescription) : m_rDescription(rDescription) {}
 
 	bool operator()(const OptionType& option) const
 	{
@@ -197,10 +196,10 @@ template<typename TYPE> struct TDeviceParamInfo
 	TDeviceParamInfo(const TDeviceParamInfo<TYPE>& rhs) { *this = rhs; }
 	const TDeviceParamInfo<TYPE>& operator= (const TDeviceParamInfo<TYPE>& rhs);	// defined below
 
-	bool OptionExists(std::string description) const
+	bool OptionExists(LPCTSTR pDescription) const
 	{
 		bool bRet = false;
-		typename OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
+		typename OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(pDescription));
 		if (it != options.end())
 		{
 			bRet = true;
@@ -222,26 +221,26 @@ inline const TDeviceParamInfo<TYPE>& TDeviceParamInfo<TYPE>::operator= (const TD
 template<> 
 struct TDeviceParamInfo<long>
 {
-	long min;
-	long max;
-	long vendorId;
-	unsigned long mask;	// for register params
-	long offset;
-	double multiplier;
-	double unit_divisor;
-	std::string sUnits;
+	long min {0L};
+	long max {LONG_MAX};
+	long vendorId {0L};
+	unsigned long mask {0UL};	// for register params
+	long offset {0L};
+	double multiplier {1.0};
+	double unit_divisor {1.0};
+	std::string sUnits {};
 	typedef TDeviceOption<long>     OptionType;
 	typedef std::vector<OptionType> OptionsType;
 	OptionsType options;
 
-	TDeviceParamInfo();
+	TDeviceParamInfo() = default;
 	TDeviceParamInfo(const TDeviceParamInfo& rhs);
 	const TDeviceParamInfo& operator= (const TDeviceParamInfo& rhs);
 
-	bool OptionExists(std::string description) const
+	bool OptionExists(const std::string& rDescription) const
 	{
 		bool bRet = false;
-		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
+		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(rDescription));
 		if (it != options.end())
 		{
 			bRet = true;
@@ -250,26 +249,26 @@ struct TDeviceParamInfo<long>
 	}
 };
 
-template<> 
+template<>
 struct TDeviceParamInfo<__int64>
 {
-	__int64 min;
-	__int64 max;
-	__int64 offset;
-	double multiplier;
-	std::string sUnits;
+	__int64 min {0LL};
+	__int64 max {_I64_MAX};
+	__int64 offset {0LL};
+	double multiplier {1.0};
+	std::string sUnits{};
 	typedef TDeviceOption<__int64>     OptionType;
 	typedef std::vector<OptionType> OptionsType;
 	OptionsType options;
 
-	TDeviceParamInfo() ;
+	TDeviceParamInfo() = default;
 	TDeviceParamInfo(const TDeviceParamInfo& rhs);
 	const TDeviceParamInfo& operator= (const TDeviceParamInfo& rhs);
 
-	bool OptionExists(std::string description) const
+	bool OptionExists(const std::string& rDescription) const
 	{
 		bool bRet = false;
-		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
+		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(rDescription));
 		if (it != options.end())
 		{
 			bRet = true;

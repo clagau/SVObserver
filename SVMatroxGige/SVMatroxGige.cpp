@@ -1303,7 +1303,7 @@ HRESULT SVMatroxGige::ReadCameraSequenceFile(SVMatroxGigeDigitizer& rCamera, con
 		++lineNumber;
 		fileLine.erase(std::remove_if(fileLine.begin(), fileLine.end(), ::isspace), fileLine.end());
 		//filter comments
-		if (false == fileLine.empty() && 0 != fileLine.find("//"))
+		if (false == fileLine.empty() && false == fileLine.starts_with("//"))
 		{
 			std::stringstream stringStream(fileLine);
 			std::string value;

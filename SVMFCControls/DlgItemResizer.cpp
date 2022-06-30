@@ -100,7 +100,7 @@ namespace SvMc
 
 		for (INT i = 0; i < m_Controls.GetSize(); i++)
 		{
-			DLGITEMINFO *item = (DLGITEMINFO *)m_Controls[i];
+			DLGITEMINFO *item = static_cast<DLGITEMINFO*> (m_Controls[i]);
 			CWnd *ctrl = CWnd::FromHandle(item->m_hWnd);
 
 			// Invalidate the old position

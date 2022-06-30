@@ -12,24 +12,19 @@
 #include "SVBoolValueDeviceParam.h"
 
 SVBoolValueDeviceParam::SVBoolValueDeviceParam()
-: bValue(false) 
 {
 	m_eDataType = DeviceDataTypeBool;
 }
 
-SVBoolValueDeviceParam::SVBoolValueDeviceParam(SVDeviceParamEnum typeEnum)
-: SVDeviceParam(typeEnum)
-, bValue(false) 
+SVBoolValueDeviceParam::SVBoolValueDeviceParam(SVDeviceParamEnum typeEnum) : SVDeviceParam(typeEnum)
 {
 	m_eDataType = DeviceDataTypeBool;
 }
 
-SVBoolValueDeviceParam::SVBoolValueDeviceParam(const SVBoolValueDeviceParam& rhs) 
-: SVDeviceParam(rhs)
+SVBoolValueDeviceParam::SVBoolValueDeviceParam(const SVBoolValueDeviceParam& rhs) : SVDeviceParam(rhs)
+,bValue{rhs.bValue}
+,info{rhs.info}
 {
-	m_eDataType = DeviceDataTypeBool;
-	bValue = rhs.bValue;
-	info = rhs.info;
 }
 
 SVClonable* SVBoolValueDeviceParam::CloneImpl() const
@@ -93,7 +88,7 @@ bool& BoolValue(SVDeviceParamWrapper& w)
 	const SVBoolValueDeviceParam* p = w.DerivedValue(p); 
 	if (nullptr == p) 
 	{
-		w = SVBoolValueDeviceParam(); 
+		w = SVBoolValueDeviceParam();
 		p = w.DerivedValue(p);
 	} 
 	assert(p); 

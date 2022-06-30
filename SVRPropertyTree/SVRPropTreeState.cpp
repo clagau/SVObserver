@@ -16,25 +16,13 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVRPropTreeState::SVRPropTreeState()
-{
-
-}
-
-SVRPropTreeState::~SVRPropTreeState()
-{
-
-}
-
-
 SVRPropTreeState::SVRPropTreeState( const SVRPropTreeState& rRhs )
+	:m_State{rRhs.m_State}
 {
-	m_State = rRhs.m_State;
 }
 
 const SVRPropTreeState& SVRPropTreeState::operator = ( const SVRPropTreeState& rRhs )
 {
-	m_State.clear();
 	m_State = rRhs.m_State;
 	return *this;
 }

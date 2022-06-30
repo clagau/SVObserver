@@ -43,8 +43,8 @@ class SVRPropertyItemEdit : public CEdit, public SVRPropertyItem
 {
 // Construction
 public:
-	SVRPropertyItemEdit();
-	virtual ~SVRPropertyItemEdit();
+	SVRPropertyItemEdit() = default;
+	virtual ~SVRPropertyItemEdit() = default;
 
 // Attributes
 public:
@@ -155,14 +155,14 @@ protected:
 
 private:
 	_variant_t	m_vtData;
-	std::string*   m_pValue;
+	std::string*   m_pValue {nullptr};
 	std::string    m_Previous;
-	std::string    m_ButtonText;
+	std::string    m_ButtonText {_T("...")};
 
 	SVNotifyButton m_btnDots;
 
-	bool m_bShowButton;
-	bool m_bKillFocusWorkaround;
+	bool m_bShowButton{false};
+	bool m_bKillFocusWorkaround{false};
 
 public:
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);

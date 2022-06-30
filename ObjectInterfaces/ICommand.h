@@ -46,13 +46,13 @@ template <class T>
 class CTaskWrapper : public SvOi::ICommand
 {
 public:
-	explicit CTaskWrapper(T&& task)
+	explicit CTaskWrapper(T&& task) :
+		m_InspectionTask{std::move(task)}
 	{
-		m_InspectionTask = std::move(task);
 	}
 	CTaskWrapper() = delete;
 	virtual unsigned long GetCommandType() const override { return 1UL; }
-	virtual HRESULT Execute() { m_InspectionTask(); return S_OK; }
+	virtual HRESULT Execute() override { m_InspectionTask(); return S_OK; }
 	T m_InspectionTask;
 
 };

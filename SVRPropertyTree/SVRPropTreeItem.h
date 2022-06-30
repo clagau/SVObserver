@@ -33,12 +33,12 @@ class SVRPropTree;
 
 class SVRPropertyItem
 {
-// Construction
+	// Construction
 public:
 	SVRPropertyItem();
 	virtual ~SVRPropertyItem();
 
-// Attributes/Operations
+	// Attributes/Operations
 public:
 	// @cmember Property Item states.
 	bool IsExpanded();
@@ -66,8 +66,8 @@ public:
 	COLORREF GetBackColor();
 	COLORREF SetForeColor(COLORREF rgb);
 	COLORREF SetBackColor(COLORREF rgb);
-	COLORREF SetBackColorReadOnly(bool refresh,COLORREF rgb);
-	
+	COLORREF SetBackColorReadOnly(bool refresh, COLORREF rgb);
+
 	// Returns true if the item has a checkbox
 	bool IsCheckBox();
 
@@ -144,7 +144,7 @@ public:
 	virtual bool GetItemValue(float& fltVal);
 	virtual bool GetItemValue(double& dblVal);
 	virtual bool GetItemValue(std::string& strVal);
-    virtual bool GetItemValue(_variant_t& vtVal);
+	virtual bool GetItemValue(_variant_t& vtVal);
 
 	// Set the item's attribute value
 	virtual bool SetItemValue(const bool boolVal);
@@ -217,7 +217,7 @@ public:
 	SVRPropTree* GetPropTree();
 protected:
 	// SVRPropTree class that this class belongs
-	SVRPropTree*	m_pProp;
+	SVRPropTree* m_pProp {nullptr};
 
 	// TreeItem label name
 	std::string			m_Label;
@@ -226,56 +226,56 @@ protected:
 	std::string			m_Info;
 
 	// TreeItem location
-	CPoint			m_loc;
+	CPoint			m_loc {0,0};
 
 	// TreeItem attribute size
-	CRect				m_rc;
+	CRect				m_rc {0,0,0,0};
 
 	// ID of control item (should be unique)
-	UINT				m_nCtrlID;
+	UINT				m_nCtrlID {0};
 
 protected:
 	enum ItemStates
 	{
-		ItemSelected  = 0x00000001,
-		ItemExpanded  = 0x00000002,
-		ItemCheckbox  = 0x00000004,
-		ItemChecked   = 0x00000008,
+		ItemSelected = 0x00000001,
+		ItemExpanded = 0x00000002,
+		ItemCheckbox = 0x00000004,
+		ItemChecked = 0x00000008,
 		ItemActivated = 0x00000010,
-		ItemReadOnly  = 0x00000020,
-		ItemHidden    = 0x00000040,
+		ItemReadOnly = 0x00000020,
+		ItemHidden = 0x00000040,
 		ItemButtonEnableIfReadOnly = 0x00000080,  //only used if ItemEdit and ReadOnly
 	};
 
 	// @cmember Item state
-	DWORD				m_dwState;
+	DWORD				m_dwState {0UL};
 
 	// @cmember TRUE if item is activated.
-	bool				m_bActivated;
+	bool				m_bActivated {false};
 
 	// @cmember TRUE if item has been commited once (activation).
-	bool				m_bCommitOnce;
+	bool				m_bCommitOnce {false};
 
-	bool				m_bCanShrink;
+	bool				m_bCanShrink {true};
 
 	// Rectangle position of the expand button (if contains one)
-	CRect				m_rcExpand;
+	CRect				m_rcExpand {0,0,0,0};
 
 	// Rectangle position of the check box (if contains one)
-	CRect				m_rcCheckbox;
+	CRect				m_rcCheckbox {0,0,0,0};
 
 	// link pointers
-	SVRPropertyItem*		m_pParent;
-	SVRPropertyItem*		m_pSibling;
-	SVRPropertyItem*		m_pChild;
-	SVRPropertyItem*		m_pVis;
+	SVRPropertyItem* m_pParent {nullptr};
+	SVRPropertyItem* m_pSibling {nullptr};
+	SVRPropertyItem* m_pChild {nullptr};
+	SVRPropertyItem* m_pVis {nullptr};
 
-	COLORREF m_rgbForeColor;
-	COLORREF m_rgbBackColor;
-	COLORREF m_rgbBackColorReadOnly ;
+	COLORREF m_rgbForeColor {0};
+	COLORREF m_rgbBackColor {0};
+	COLORREF m_rgbBackColorReadOnly {0};
 
-	bool m_bCanHighlight;
-	bool m_bBold;
-	long m_lHeight;
+	bool m_bCanHighlight {true};
+	bool m_bBold {false};
+	long m_lHeight {0};
 };
 

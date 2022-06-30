@@ -35,19 +35,7 @@ SVSecuritySetupPage::SVSecuritySetupPage() : CPropertyPage(SVSecuritySetupPage::
 	SVSecuritySetupPage(SVSecuritySetupPage::IDD, 0 );
 }
 
-SVSecuritySetupPage::SVSecuritySetupPage(UINT nIDTemplate, UINT nIDCaption)
-	: CPropertyPage(nIDTemplate, nIDCaption)
-{
-	//{{AFX_DATA_INIT(SVSecuritySetupPage)
-	m_bForcePrompt = FALSE;
-	m_bLogOnMode = FALSE;
-	m_lTimeout = 0;
-	m_Group = _T("");
-	//}}AFX_DATA_INIT
-
-}
-
-SVSecuritySetupPage::~SVSecuritySetupPage()
+SVSecuritySetupPage::SVSecuritySetupPage(UINT nIDTemplate, UINT nIDCaption) : CPropertyPage(nIDTemplate, nIDCaption)
 {
 }
 
@@ -82,7 +70,7 @@ BOOL SVSecuritySetupPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	pPropSheet = (SVSecuritySetupSheet*)GetParent();
+	pPropSheet = dynamic_cast<SVSecuritySetupSheet*> (GetParent());
 
 	pPropSheet->InitializeGroupList(m_lbNetGroups);
 
@@ -190,9 +178,10 @@ void SVSecuritySetupPage::SetGroups(CString groups)
 	{
 		CString	group;
 		m_lbNetGroups.GetText(i, group);
-		int nStart = -1, nFinish;
+		int nStart {-1};
 		do
 		{
+			int nFinish {0};
 			if ((nFinish = groups.Find(_T(','), ++nStart)) == -1)
 				nFinish = groups.GetLength();
 			if (groups.Mid(nStart, (nFinish-nStart)) == group)

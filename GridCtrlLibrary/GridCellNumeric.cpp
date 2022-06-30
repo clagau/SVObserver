@@ -56,8 +56,10 @@ namespace SvGcl
 	// Cancel the editing.
 	void GridCellNumeric::EndEdit()
 	{
-		if (m_pEditWnd)
-			((InPlaceEdit*)m_pEditWnd)->EndEdit();
+		if (nullptr != m_pEditWnd)
+		{
+			(dynamic_cast<InPlaceEdit*> (m_pEditWnd))->EndEdit();
+		}
 	}
 
 } // namespace SvGcl

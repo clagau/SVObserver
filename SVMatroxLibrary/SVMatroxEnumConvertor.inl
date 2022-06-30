@@ -14,13 +14,11 @@
 template<typename PairContainer, typename SVEnumType>
 HRESULT ConvertEnumToMatroxType(const PairContainer& rEnumPairList, SVEnumType Type, long long& rMatroxType)
 {
-	for(const auto& rEntry : rEnumPairList)
+	const auto iter = std::find_if(rEnumPairList.begin(), rEnumPairList.end(), [&Type](const auto& rEntry) {return rEntry.first == Type; });
+	if (rEnumPairList.end() != iter)
 	{
-		if(rEntry.first == Type)
-		{
-			rMatroxType = rEntry.second;
-			return S_OK;
-		}
+		rMatroxType = iter->second;
+		return S_OK;
 	}
 	return SVMEE_INTERNAL_CONVERSION_ERROR;
 }
@@ -28,13 +26,11 @@ HRESULT ConvertEnumToMatroxType(const PairContainer& rEnumPairList, SVEnumType T
 template<typename PairContainer, typename SVEnumType>
 HRESULT ConvertEnumFromMatroxType(const PairContainer& rEnumPairList, long long MatroxType, SVEnumType& rType)
 {
-	for (const auto& rEntry : rEnumPairList)
+	const auto iter = std::find_if(rEnumPairList.begin(), rEnumPairList.end(), [&MatroxType](const auto& rEntry) {return rEntry.second == MatroxType; });
+	if (rEnumPairList.end() != iter)
 	{
-		if (rEntry.second == MatroxType)
-		{
-			rType = rEntry.first;
-			return S_OK;
-		}
+		rType = iter->first;
+		return S_OK;
 	}
 	return SVMEE_INTERNAL_CONVERSION_ERROR;
 }

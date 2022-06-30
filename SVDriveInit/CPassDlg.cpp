@@ -24,10 +24,8 @@ static char THIS_FILE[] = __FILE__;
 
 CPassDlg::CPassDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CPassDlg::IDD, pParent)
+	, m_password{_T("")}
 {
-	//{{AFX_DATA_INIT(CPassDlg)
-	m_password = _T("");
-	//}}AFX_DATA_INIT
 }
 
 

@@ -31,9 +31,9 @@ namespace SvMc
 	class SVDlgGraph : public CStatic
 	{
 	public:
-		SVDlgGraph();
+		SVDlgGraph() = default;
 
-		virtual ~SVDlgGraph();
+		virtual ~SVDlgGraph() = default;
 
 		BOOL SetColor(COLORREF rgb, BOOL bRedraw = TRUE);
 
@@ -65,24 +65,24 @@ namespace SvMc
 
 	protected:
 
-		SvCl::SVObjectPointArrayClass m_PointVec;
-		SVProcMousePointFunc pProcFunc;
-		LPVOID pUserData;
+		SvCl::SVObjectPointArrayClass m_PointVec {};
+		SVProcMousePointFunc pProcFunc {nullptr};
+		LPVOID pUserData {nullptr};
 
-		double xMult;
-		double yMult;
-		long xDisp;
-		long yDisp;
-		long yClient;
-		long m_lXMin;
-		long m_lYMin;
-		long m_lXMax;
-		long m_lYMax;
+		double xMult {0.0};
+		double yMult {0.0};
+		long xDisp {0L};
+		long yDisp {0L};
+		long yClient {0L};
+		long m_lXMin {0L};
+		long m_lYMin {0L};
+		long m_lXMax {0L};
+		long m_lYMax {0L};
 
-		COLORREF mrgbGraphColor;
+		COLORREF mrgbGraphColor {RGB(0, 0, 0)};
 
-		BOOL bButtonDown;
+		BOOL bButtonDown {false};
 
-		SVNormalizeModeEnum normalizeMode;
+		SVNormalizeModeEnum normalizeMode {SVNormalizeModeEnum::SVNormalize1D};
 	};
 } //namespace SvMc

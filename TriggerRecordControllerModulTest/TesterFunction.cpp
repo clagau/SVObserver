@@ -40,7 +40,7 @@ using namespace std::chrono_literals;
 #pragma region Local Function
 HANDLE createEvent(LPCTSTR eventName)
 {
-	PSECURITY_DESCRIPTOR psd = (PSECURITY_DESCRIPTOR)LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
+	PSECURITY_DESCRIPTOR psd = (PSECURITY_DESCRIPTOR) ::HeapAlloc(::GetProcessHeap(), LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
 	InitializeSecurityDescriptor(psd, SECURITY_DESCRIPTOR_REVISION);
 	SetSecurityDescriptorDacl(psd, TRUE, NULL, FALSE);
 	SECURITY_ATTRIBUTES sa = {0};
@@ -252,7 +252,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 		bool isInterestTest = false;
 		int startInterestPause = 0;
 		int stopInterestPause = 0;
-		if (0 < numbersOfRecords[0].second)
+		if (0 < numbersOfRecords.size() && 0 < numbersOfRecords[0].second)
 		{
 			isInterestTest = true;
 			getInterestPausePoints(numbersOfRecords[0].first, numberOfRuns, divFac, startInterestPause, stopInterestPause);
@@ -680,7 +680,7 @@ namespace
 		return retValue;
 	}
 
-	void checkInterestEvents(ReaderTestData& testData, SvPb::InspectionList& rInspectionList, int testDataPos)
+	void checkInterestEvents(ReaderTestData& testData, const SvPb::InspectionList& rInspectionList, int testDataPos)
 	{
 		std::map<int, std::vector<int>> newInterestTrMap;
 		{

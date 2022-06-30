@@ -11,10 +11,6 @@
 
 #pragma once
 
-#if !defined( __AFXCTL_H__ )
-	#error include 'afxctl.h' before including this file
-#endif
-
 #pragma region Includes
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #pragma endregion Includes

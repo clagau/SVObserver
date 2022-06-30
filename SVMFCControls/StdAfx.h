@@ -71,7 +71,8 @@
 #include <math.h>
 #include <numeric>
 #include <set>				//Used by static library
-#include <string>			//Used by static library
+#include <sstream>
+#include <string>
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
 #pragma endregion Precompiled Headers

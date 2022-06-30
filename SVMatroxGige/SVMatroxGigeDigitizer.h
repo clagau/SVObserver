@@ -29,7 +29,7 @@ class SVAcquisitionBufferInterface;
 class SVConditionVariable
 {
 private:
-	volatile long m_value;
+	volatile long m_value {0L};
 
 public:
 	void Increment() { ::InterlockedIncrement(&m_value); }
@@ -91,9 +91,9 @@ public:
 	long m_lStartIndex{-1};
 	long m_lLastUsedIndex{-1};
 
-	SVConditionVariable m_frameStack;
-	SVMatroxDigitizerPtr m_Digitizer;
-	SVMatroxGigeCameraId m_svCameraId;
+	SVConditionVariable m_frameStack {};
+	SVMatroxDigitizerPtr m_Digitizer {};
+	SVMatroxGigeCameraId m_svCameraId {};
 
 	double m_StartFrameTimeStamp{0.0};
 	bool m_chunkData {false};

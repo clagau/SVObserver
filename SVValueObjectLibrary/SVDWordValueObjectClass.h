@@ -31,7 +31,7 @@ public:
 	SVDWordValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDWORDVALUEOBJECT );
 	SVDWordValueObjectClass( const SVDWordValueObjectClass& rhs );
 	const SVDWordValueObjectClass& operator = ( const SVDWordValueObjectClass& rhs );
-	void setStandardFormatString();
+	void setStandardFormatString() override;
 
 	virtual ~SVDWordValueObjectClass();
 

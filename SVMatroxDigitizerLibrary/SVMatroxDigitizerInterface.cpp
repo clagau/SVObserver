@@ -1269,7 +1269,7 @@ HRESULT SVMatroxDigitizerInterface::GetGigeEventList(const SVMatroxDigitizer& Di
 					long long eventType = -1;
 					std::string evName = "Event";
 					evName += name;
-					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, evName.c_str(), M_TYPE_MIL_INT, &eventType);
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, evName, M_TYPE_MIL_INT, &eventType);
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();
 					if (l_Code == S_OK)
 					{

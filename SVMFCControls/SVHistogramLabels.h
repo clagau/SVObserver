@@ -65,7 +65,7 @@ namespace SvMc
 	{
 		void AnchorUpdate(const CRect& rRect, Func func);
 	protected:
-		CPoint  m_anchor;
+		CPoint  m_anchor {0,0};
 	};
 
 	template<>
@@ -140,7 +140,7 @@ namespace SvMc
 			return m_rect;
 		}
 	protected:
-		CRect  m_rect;
+		CRect  m_rect {0,0,0,0};
 	};
 
 	template<>
@@ -267,18 +267,12 @@ namespace SvMc
 			m_text = str;
 			m_changed = true;
 		}
-		Label()
-		{
-			m_text = "";
-			m_changed = false;
-			this->m_anchor = CPoint(0, 0);
-			this->m_rect = CRect(0, 0, 0, 0);
-		}
+		Label() = default;
 
 	private:
 		CString m_text;
 		CString m_oldtxt;
-		bool	  m_changed;
+		bool m_changed{false};
 	};
 
 	template<typename LabelType, typename Tail>

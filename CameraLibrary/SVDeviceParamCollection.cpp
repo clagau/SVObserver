@@ -50,9 +50,9 @@ bool SVDeviceParamIndexer::keycomp::operator () (const SVDeviceParamEnum& rLhs, 
 	return iterLhs->second->GetOrder() < iterRhs->second->GetOrder();
 }
 
-SVDeviceParamCollection::SVDeviceParamCollection( const SVDeviceParamCollection& rhs )
+SVDeviceParamCollection::SVDeviceParamCollection( const SVDeviceParamCollection& rhs ) :
+	mapParameters {rhs.mapParameters}
 {
-	mapParameters = rhs.mapParameters;
 }
 
 SVDeviceParamCollection& SVDeviceParamCollection::operator = ( const SVDeviceParamCollection& rhs )

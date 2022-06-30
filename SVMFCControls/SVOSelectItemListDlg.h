@@ -22,11 +22,11 @@ namespace SvMc
 		// Construction
 	public:
 		void AddListBoxItem(CString sItem);
-		SVOSelectItemListDlg(CWnd* pParent = nullptr);   // standard constructor
-		virtual ~SVOSelectItemListDlg();
+		SVOSelectItemListDlg(CWnd* pParent = nullptr) : CDialog(IDD, pParent) {};
+		virtual ~SVOSelectItemListDlg() = default;
 
 		void SetDisplayName(LPCTSTR sDisplayName);
-		int m_iSelectedItemPosition;
+		int m_iSelectedItemPosition {0};
 		// Dialog Data
 		//{{AFX_DATA(SVOSelectItemListDlg)
 		enum { IDD = IDD_DLG_AA_SELECT_ITEM_DLG };

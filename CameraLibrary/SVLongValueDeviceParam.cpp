@@ -16,26 +16,19 @@
 #pragma endregion Includes
 
 SVLongValueDeviceParam::SVLongValueDeviceParam()
-: lValue(0) 
 {
 	m_eDataType = DeviceDataTypeLong;
-	init();
 }
 
-SVLongValueDeviceParam::SVLongValueDeviceParam(SVDeviceParamEnum typeEnum)
-: SVDeviceParam(typeEnum)
-, lValue(0) 
+SVLongValueDeviceParam::SVLongValueDeviceParam(SVDeviceParamEnum typeEnum) : SVDeviceParam(typeEnum)
 {
 	m_eDataType = DeviceDataTypeLong;
-	init();
 }
 
-SVLongValueDeviceParam::SVLongValueDeviceParam(const SVLongValueDeviceParam& rhs) 
-: SVDeviceParam( rhs )
+SVLongValueDeviceParam::SVLongValueDeviceParam(const SVLongValueDeviceParam& rhs)  : SVDeviceParam(rhs)
+, lValue{rhs.lValue}
+, info{rhs.info}
 {
-	m_eDataType = DeviceDataTypeLong;
-	lValue = rhs.lValue;
-	info = rhs.info;
 }
 
 SVLongValueDeviceParam::~SVLongValueDeviceParam()
@@ -51,22 +44,11 @@ SVLongValueDeviceParam::SVLongValueDeviceParam(long rhs)	// not const long& so t
 {
 	m_eDataType = DeviceDataTypeLong;
 	lValue = rhs;
-	init();
 }
 
 SVLongValueDeviceParam::operator long() const
 {
 	return lValue;
-}
-
-void SVLongValueDeviceParam::init()
-{
-	m_eDataType = DeviceDataTypeLong;
-	info.min = 0;
-	info.max = LONG_MAX;
-	info.multiplier = 1.0;
-	info.offset = 0;
-	info.sUnits = "";
 }
 
 SVLongValueDeviceParam& SVLongValueDeviceParam::operator=(const SVLongValueDeviceParam& rhs)
@@ -156,7 +138,7 @@ long& LongValue(SVDeviceParamWrapper& w)
 	const SVLongValueDeviceParam* p = w.DerivedValue(p); 
 	if (nullptr == p) 
 	{
-		w = SVLongValueDeviceParam(); 
+		w = SVLongValueDeviceParam();
 		p = w.DerivedValue(p);
 	} 
 	return const_cast<SVLongValueDeviceParam*>(p)->lValue;

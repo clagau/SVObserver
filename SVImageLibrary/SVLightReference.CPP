@@ -12,82 +12,13 @@
 #include "stdafx.h"
 #include "SVLightReference.h"
 
-SVLightReferenceAttributeInfo::SVLightReferenceAttributeInfo()
-{
-	iIDCaption=0;
-	dwType=0;
-	lValue=0;
-	lMin=0;
-	lMax=0;
-	lStep=0;
-}
-
-SVLightReferenceAttributeInfo::~SVLightReferenceAttributeInfo()
-{
-}
-
-SVLightReferenceAttributeInfo::SVLightReferenceAttributeInfo( const SVLightReferenceAttributeInfo& rhs )
-{
-	*this = rhs;
-}
-
-const SVLightReferenceAttributeInfo& SVLightReferenceAttributeInfo::operator = ( const SVLightReferenceAttributeInfo& rhs )
-{
-	if ( this != &rhs )
-	{
-		strName    = rhs.strName;
-		iIDCaption = rhs.iIDCaption;
-		dwType     = rhs.dwType;
-		lValue     = rhs.lValue;
-		lMin       = rhs.lMin;
-		lMax       = rhs.lMax;
-		lStep      = rhs.lStep;
-		
-	}
-	return *this;
-}
-
-
-SVLightReferenceBand::SVLightReferenceBand()
-{
-	m_iNumAttributes        = 0;
-}
-
-SVLightReferenceBand::SVLightReferenceBand( const SVLightReferenceBand& rhs )
-{
-	m_iNumAttributes         = 0;
-
-	*this = rhs;
-}
-
-SVLightReferenceBand::~SVLightReferenceBand()
-{
-	Destroy();
-}
-
-const SVLightReferenceBand& SVLightReferenceBand::operator=( const SVLightReferenceBand& rhs )
-{
-    if ( this != &rhs )
-	{
-		Create(rhs.m_iNumAttributes);
-		m_aAttributeInfo = rhs.m_aAttributeInfo;
-	}
-
-	return( *this );
-}
-
 void SVLightReferenceBand::Create(int iSize)
 {
-	Destroy();
+	m_aAttributeInfo.clear();
 
 	// we can now create 0 size LR's (for digital). The attributes are added with calls to AddAttribute
 	m_iNumAttributes = iSize;
 	m_aAttributeInfo.resize(iSize);
-}
-
-void SVLightReferenceBand::Destroy()
-{
-	m_aAttributeInfo.clear();
 }
 
 SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByType( DWORD dwAttributeType )
@@ -199,6 +130,7 @@ const SVLightReference& SVLightReference::operator = ( const SVLightReference& r
 	    if(	Create( rhs.m_iNumBands ) )
 	    {
 			m_aLightReferenceBand = rhs.m_aLightReferenceBand;
+			m_ulFileVersion = rhs.m_ulFileVersion;
 	    }
     }
 

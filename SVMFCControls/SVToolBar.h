@@ -20,14 +20,15 @@ namespace SvMc
 	{
 		// Construction
 	public:
-		SVToolBar();
+		SVToolBar() = default;
+		virtual ~SVToolBar();
 
 		// Attributes
 	public:
 
 	private:
-		int         m_nButtonCount;
-		TBBUTTON    *m_pTBButtons;
+		int         m_nButtonCount {0};
+		TBBUTTON*	m_pTBButtons {nullptr};
 
 		// Operations
 	public:
@@ -39,10 +40,6 @@ namespace SvMc
 		// ClassWizard generated virtual function overrides
 		//{{AFX_VIRTUAL(SVToolBar)
 		//}}AFX_VIRTUAL
-
-		// Implementation
-	public:
-		virtual ~SVToolBar();
 
 		// Generated message map functions
 	protected:

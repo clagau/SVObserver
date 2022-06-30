@@ -126,28 +126,8 @@ END_MESSAGE_MAP()
 //
 //////////////////////////////////////////////////////////////////////////
 CLabel::CLabel()
+	: m_crText{::GetSysColor(COLOR_WINDOWTEXT)}
 {
-	m_crText = GetSysColor(COLOR_WINDOWTEXT);
-
-// 1.1
-	m_hBackBrush = nullptr;
-
-	m_crHiColor =		0;
-	m_crLoColor	=		0;
-
-	m_bTimer =			FALSE;
-	m_bState =			FALSE;
-	m_bTransparent =	FALSE;
-	m_Link =			LinkNone;
-	m_hCursor =			nullptr;
-	m_Type =			None;
-	m_bFont3d =			FALSE;
-	m_bNotifyParent =	FALSE;
-	m_bToolTips =		FALSE;
-	m_bRotation =		FALSE;
-	m_fillmode =		Normal;
-	m_cr3DHiliteColor =	RGB(255,255,255);
-	
 	m_hwndBrush = ::CreateSolidBrush(GetSysColor(COLOR_3DFACE));
 }
 
@@ -396,7 +376,6 @@ void CLabel::OnPaint()
 			}
 
 			pDCMem->DrawText(strText, rc, dwFlags);
-			m_3dType;
 		}
 	}
 
@@ -1169,7 +1148,6 @@ void CLabel::DrawGradientFill(CDC* pDC, CRect* pRect, COLORREF crStart, COLORREF
 	// Get the starting RGB values and calculate the incremental
 	// changes to be applied.
 
-	COLORREF cr;
 	int nR = GetRValue(crStart);
 	int nG = GetGValue(crStart);
 	int nB = GetBValue(crStart);
@@ -1192,10 +1170,6 @@ void CLabel::DrawGradientFill(CDC* pDC, CRect* pRect, COLORREF crStart, COLORREF
 	nG *= 256;
 	nB *= 256;
 
-	neR *= 256;
-	neG *= 256;
-	neB *= 256;
-
 	int nCX = pRect->Width() / max(nSegments, 1), nLeft = pRect->left, nRight;
 	pDC->SelectStockObject(NULL_PEN);
 
@@ -1213,7 +1187,7 @@ void CLabel::DrawGradientFill(CDC* pDC, CRect* pRect, COLORREF crStart, COLORREF
 			nRight = nLeft + nCX;
 		}
 
-		cr = RGB(nR / 256, nG / 256, nB / 256);
+		COLORREF cr {RGB(nR/256, nG/256, nB/256)};
 
 		CBrush br(cr);
 		CBrush* pbrOld = pDC->SelectObject(&br);

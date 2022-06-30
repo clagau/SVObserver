@@ -25,8 +25,8 @@ class SVObjectClass;
 // Should be in the class definition...
 #define SV_DECLARE_CLASS					\
 		public:	\
-			virtual SvPb::ClassIdEnum GetClassID() const; \
-			virtual LPCTSTR GetClassName() const;
+			virtual SvPb::ClassIdEnum GetClassID() const override; \
+			LPCTSTR GetClassName() const;
 
 
 // Should be in the implementation file... ( .cpp )

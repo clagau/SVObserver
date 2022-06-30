@@ -16,19 +16,19 @@ enum { FromViewPort, ToViewPort };
 class SVDrawContext
 {
 public:
-	HDC DC;					// GDI Device Context
-	double ScaleFactor;		// Scale Factor (not used yet - always 1)
+	HDC DC {nullptr};					// GDI Device Context
+	double ScaleFactor {1.0};		// Scale Factor (not used yet - always 1)
 
-	POINT ViewPortOffset;	// View Port Normalization
+	POINT ViewPortOffset {0,0};	// View Port Normalization
 
-	long m_lIndex;
+	long m_lIndex {1L};
 
 public:
 	explicit SVDrawContext( HDC Hdc );
 	explicit SVDrawContext( HDC Hdc, double dScale );
-	void Transform( POINT* PInPoints, POINT* POutPoints, int Cnt );
-	void InverseTransform( POINT* PInPoints, POINT* POutPoints, int Cnt );
-	void Scale( POINT& RPoint, double ScaleValue );
+	void Transform(const POINT* const pInPoints, POINT* pOutPoints, int Cnt );
+	void InverseTransform(const POINT* const pInPoints, POINT* pOutPoints, int Cnt );
+	void Scale( POINT& rPoint, double ScaleValue );
 
 	// Usage p_lIndex is used with the y component of the first point of a polyline
 	// when drawing horizontal lines to skip lines when zoomed in.

@@ -37,8 +37,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-enum { DROPDOWN_HEIGHT = 100};
-
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemCombo
 
@@ -53,24 +51,6 @@ BEGIN_MESSAGE_MAP(SVRPropertyItemCombo, CComboBox)
 	ON_WM_KILLFOCUS()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-SVRPropertyItemCombo::SVRPropertyItemCombo() :
-	m_nDropHeight(DROPDOWN_HEIGHT)
-{
-	Initialize();
-}
-
-SVRPropertyItemCombo::~SVRPropertyItemCombo()
-{
-}
-
-void SVRPropertyItemCombo::Initialize()
-{
-	// Initialize all variables
-	m_bShowButton      = false;
-	m_bEnableButton    = true;
-	m_ButtonText = _T("...");
-}
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemCombo message handlers
@@ -145,10 +125,10 @@ void SVRPropertyItemCombo::OnCommit()
 
 void SVRPropertyItemCombo::StoreItemData()
 {
-	LONG idx;
 	// store combo box item data
 	if ( nullptr != GetSafeHwnd() )
 	{
+		int idx {0};
 		if( CB_ERR != (idx = GetCurSel()) )
 		{
 			m_lComboData = (LPARAM)GetItemData(idx);
@@ -439,7 +419,7 @@ void SVRPropertyItemCombo::OnSize(UINT nType, int cx, int cy)
 BOOL SVRPropertyItemCombo::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult )
 {
 	BOOL bResult;
-	NMHDR* pnmhdr = (NMHDR*) lParam;
+	NMHDR* pnmhdr = reinterpret_cast<NMHDR*> (lParam);
 
 	if ( m_bEnableButton && pnmhdr->code == NM_CLICK && (UINT) m_btnDots.GetDlgCtrlID() == pnmhdr->idFrom )
 	{

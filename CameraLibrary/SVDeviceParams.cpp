@@ -294,18 +294,6 @@ HRESULT FromVariant( std::string& rsValue, const VARIANT& rv )
 ///////////////////////////////////////////////////////////////////////////////////
 
 // long Specialization TDeviceParamInfo Implementation ....
-TDeviceParamInfo<long>::TDeviceParamInfo() 
-{
-	min=0; 
-	max = 0;
-	vendorId = 0;
-	mask = 0;
-	offset = 0; 
-	multiplier=1; 
-	unit_divisor = 1;
-	sUnits = _T("");
-}
-
 TDeviceParamInfo<long>::TDeviceParamInfo(const TDeviceParamInfo<long>& rhs)
 {
 	*this=rhs;
@@ -329,15 +317,6 @@ const TDeviceParamInfo<long>& TDeviceParamInfo<long>::operator= (const TDevicePa
 }
 
 // __in64 Specialization TDeviceParamInfo Implementation ....
-TDeviceParamInfo<__int64>::TDeviceParamInfo() 
-{
-	min=0; 
-	max = 0; 
-	offset = 0; 
-	multiplier=1; 
-	sUnits = _T("");
-}
-
 TDeviceParamInfo<__int64>::TDeviceParamInfo(const TDeviceParamInfo<__int64>& rhs)
 {
 	*this=rhs;

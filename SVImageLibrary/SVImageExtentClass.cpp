@@ -287,6 +287,10 @@ SVImageExtentClass &SVImageExtentClass::operator=(const SVImageExtentClass& rRhs
 		m_extentValues = rRhs.m_extentValues;
 		m_figure = rRhs.m_figure;
 		m_isUpdated = rRhs.m_isUpdated;
+		m_useTransferMatrix = rRhs.m_useTransferMatrix;
+		m_TransferAngle = rRhs.m_TransferAngle;
+		m_properties = rRhs.m_properties;
+		m_TransferMatrix = rRhs.m_TransferMatrix;
 	}
 	return *this;
 }
@@ -294,7 +298,6 @@ SVImageExtentClass &SVImageExtentClass::operator=(const SVImageExtentClass& rRhs
 
 void SVImageExtentClass::Initialize()
 {
-
 	m_eTranslation = SvPb::SVExtentTranslationUnknown;
 	m_properties = 0UL;
 
@@ -4080,11 +4083,10 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			// very helpful. Currently none of these cases give much help
 			// with error identification.
 
-			double dValue = 0.0;
-			double inputHeight = 0.0;
-			double inputWidth = 0.0;
-			double heightScaleFactor = 1.0;
-			double widthScaleFactor = 1.0;
+			double inputHeight {0.0};
+			double inputWidth {0.0};
+			double heightScaleFactor {1.0};
+			double widthScaleFactor {1.0};
 
 			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 
@@ -4097,7 +4099,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				dValue = inputWidth * widthScaleFactor;
+				double dValue = inputWidth * widthScaleFactor;
 				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
@@ -4113,7 +4115,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				dValue = inputHeight * heightScaleFactor;
+				double dValue = inputHeight * heightScaleFactor;
 				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
@@ -4128,7 +4130,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 		case SvPb::SVExtentTranslationFlippedRotate:
 		case SvPb::SVExtentTranslationRotate:
 		{
-			double dValue = 0.0;
+			double dValue {0.0};
 
 			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 

@@ -40,7 +40,7 @@ SVFileNameClass::SVFileNameClass(LPCTSTR szFullFileName)
 	SetFullFileName( szFullFileName );
 }
 
-SVFileNameClass::SVFileNameClass(SVFileNameClass * svFileName)
+SVFileNameClass::SVFileNameClass(const SVFileNameClass* const svFileName)
 {
 	if ( svFileName )
 	{

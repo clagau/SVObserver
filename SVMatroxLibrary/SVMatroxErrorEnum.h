@@ -24,24 +24,24 @@
 // should only be explicitly used within the Matrox wrapper.  Any value that
 // is being checked outside the wrapper should be mapped to the standard 
 // SVO error codes.
-enum SVMatroxErrorEnum
+enum SVMatroxErrorEnum : long
 {
-	SVMEE_INVALID_HANDLE			= 0xcf000001,
-	SVMEE_INVALID_PARAMETER			= 0xcf000002,
-	SVMEE_WRONG_PARAMETER			= 0xcf000003,
+	SVMEE_INVALID_HANDLE			= static_cast<long> (0xcf000001),
+	SVMEE_INVALID_PARAMETER			= static_cast<long> (0xcf000002),
+	SVMEE_WRONG_PARAMETER			= static_cast<long> (0xcf000003),
 
-	SVMEE_BAD_POINTER				= 0xcf000005,
+	SVMEE_BAD_POINTER				= static_cast<long> (0xcf000005),
 
 
-	SVMEE_MATROX_THREW_EXCEPTION    = 0xcf000008,
-	SVMEE_INVALID_LOCK              = 0xcf000009,
+	SVMEE_MATROX_THREW_EXCEPTION    = static_cast<long> (0xcf000008),
+	SVMEE_INVALID_LOCK              = static_cast<long> (0xcf000009),
 
-	SVMEE_MATROX_ERROR				= 0xcf000000,
+	SVMEE_MATROX_ERROR				= static_cast<long> (0xcf000000),
 	
-	SVMEE_MATROX_ALLOCATION			= 0xcf000037,
+	SVMEE_MATROX_ALLOCATION			= static_cast<long> (0xcf000037),
 
-	SVMEE_INTERNAL_CONVERSION_ERROR	= 0xcf000bad,
+	SVMEE_INTERNAL_CONVERSION_ERROR	= static_cast<long> (0xcf000bad),
 
-	SVMEE_MBUF_ALLOCATION_FAILED	= 0xcf00c678
+	SVMEE_MBUF_ALLOCATION_FAILED	= static_cast<long> (0xcf00c678)
 };
 

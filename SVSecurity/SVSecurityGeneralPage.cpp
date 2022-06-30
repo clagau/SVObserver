@@ -35,12 +35,7 @@ SVSecurityGeneralPage::SVSecurityGeneralPage(UINT nIDTemplate, UINT nIDCaption)
 	//}}AFX_DATA_INIT
 }
 
-SVSecurityGeneralPage::SVSecurityGeneralPage() 
-: CPropertyPage(SVSecurityGeneralPage::IDD)
-{
-}
-
-SVSecurityGeneralPage::~SVSecurityGeneralPage()
+SVSecurityGeneralPage::SVSecurityGeneralPage() : CPropertyPage(SVSecurityGeneralPage::IDD)
 {
 }
 
@@ -100,7 +95,7 @@ BOOL SVSecurityGeneralPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	
-	SVSecuritySetupSheet* pPropSheet = (SVSecuritySetupSheet*)GetParent();
+	SVSecuritySetupSheet* pPropSheet = dynamic_cast<SVSecuritySetupSheet*> (GetParent());
 
 	m_pAccess = pPropSheet->m_pAccess;
 	

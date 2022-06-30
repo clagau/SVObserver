@@ -39,7 +39,7 @@ public:
 	virtual HRESULT SetValue(const VARIANT& rv) override;
 
 	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;
-	long lValue;
+	long lValue {0L};
 
 	TDeviceParamInfo<long> info;
 	typedef TDeviceParamInfo<long>::OptionType  OptionType;
@@ -49,7 +49,6 @@ public:
 	DEFINE_VISITABLE()
 
 private:
-	void init();
 };
 
 

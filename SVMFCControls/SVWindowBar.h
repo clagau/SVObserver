@@ -62,11 +62,11 @@ namespace SvMc
 		// Data Element(s):
 		//******************************************************************************
 	protected:
-		CString windowTitle;
-		CSize windowSize;
+		CString windowTitle {};
+		CSize windowSize {0, 0};
 
-		SVSlideBar	slidebar;
-		BOOL			m_bMenuRemoved;
-		HBRUSH			m_hWindowBackgroundColor;
+		SVSlideBar	slidebar {};
+		BOOL m_bMenuRemoved {false};
+		HBRUSH	m_hWindowBackgroundColor {nullptr};
 	};
 } //namespace SvMc

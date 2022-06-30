@@ -48,6 +48,8 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SVSecurityApp
 
+constexpr char cHelpFile[] = _T("C:\\SVObserver\\bin\\SVObserver.chm");
+
 BEGIN_MESSAGE_MAP(SVSecurityApp, CWinApp)
 	//{{AFX_MSG_MAP(SVSecurityApp)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
@@ -57,9 +59,12 @@ END_MESSAGE_MAP()
 
 SVSecurityApp::SVSecurityApp()
 {
-	free((void*)m_pszHelpFilePath);
-	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
-	EnableHtmlHelp();	
+	free(reinterpret_cast<void*> (const_cast<char*> (m_pszHelpFilePath)));
+	TCHAR* pPath = new TCHAR[strlen(cHelpFile) + 1];
+	memcpy(pPath, cHelpFile, strlen(cHelpFile));
+	pPath[strlen(cHelpFile)] = '\0';
+	m_pszHelpFilePath = pPath;
+	EnableHtmlHelp();
 }
 
 SVSecurityApp::~SVSecurityApp()

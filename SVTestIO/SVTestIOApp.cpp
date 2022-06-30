@@ -49,19 +49,6 @@
 BEGIN_MESSAGE_MAP(SVTestIOApp, CWinApp)
 END_MESSAGE_MAP()
 
-// SVTestIOApp construction
-
-SVTestIOApp::SVTestIOApp()
-{
-	// TODO: add construction code here,
-	// Place all significant initialization in InitInstance
-}
-
-SVTestIOApp::~SVTestIOApp()
-{
-}
-
-// The one and only SVTestIOApp object
 
 SVTestIOApp theApp;
 

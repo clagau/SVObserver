@@ -22,18 +22,15 @@ namespace SvMc
 {
 	IMPLEMENT_DYNCREATE( SVWindowBar, CControlBar )
 
-		SVWindowBar::SVWindowBar()
-		: CControlBar()
+	SVWindowBar::SVWindowBar() : CControlBar()
+		, windowTitle {_T("SVWindowBar")}
 	{
-		windowTitle = _T( "SVWindowBar" );
-		windowSize  = CSize( 0, 0 );
 		m_hWindowBackgroundColor = ::CreateSolidBrush( ::GetSysColor( COLOR_BTNHILIGHT ));
-		m_bMenuRemoved = false;
 	}
 
 	SVWindowBar::~SVWindowBar()
 	{
-		if( m_hWindowBackgroundColor )
+		if(nullptr !=  m_hWindowBackgroundColor )
 		{
 			DeleteObject( m_hWindowBackgroundColor );
 		}

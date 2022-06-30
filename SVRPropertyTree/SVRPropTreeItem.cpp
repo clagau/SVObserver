@@ -77,28 +77,11 @@ static void _DrawExpand(HDC hdc, LONG x, LONG y, bool bExpand, bool bFill)
 // @doc EXTERNAL
 // @mfunc Constructor
 
-SVRPropertyItem::SVRPropertyItem() :
-	m_pProp(nullptr),
-	m_loc(0, 0),
-	m_rc(0, 0, 0, 0),
-	m_nCtrlID(0),
-	m_dwState(0),
-	m_bActivated(FALSE),
-	m_bCommitOnce(FALSE),
-	m_rcExpand(0, 0, 0, 0),
-	m_rcCheckbox(0, 0, 0, 0),
-	m_pParent(nullptr),
-	m_pSibling(nullptr),
-	m_pChild(nullptr),
-	m_pVis(nullptr),
-	m_bCanShrink(true),
-	m_rgbForeColor(::GetSysColor(COLOR_BTNTEXT)),
-	m_rgbBackColor(::GetSysColor(COLOR_WINDOW)),
-	m_rgbBackColorReadOnly(::GetSysColor(COLOR_WINDOW)), //(SvDef::WhiteSmoke) 
-	m_bCanHighlight(true),
-	m_bBold(false),
-	m_lHeight(SVRPropTree::PROPTREEITEM_DEFHEIGHT)
-
+SVRPropertyItem::SVRPropertyItem()
+	:m_rgbForeColor(::GetSysColor(COLOR_BTNTEXT))
+	,m_rgbBackColor(::GetSysColor(COLOR_WINDOW))
+	,m_rgbBackColorReadOnly(::GetSysColor(COLOR_WINDOW))
+	,m_lHeight(SVRPropTree::PROPTREEITEM_DEFHEIGHT)
 {
 }
 
@@ -650,10 +633,7 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 	LONG nTotal, nCol, ey;
 	CRect drc, ir;
 
-	CFont*	l_pOldFont;
-
 	assert(nullptr != m_pProp);
-
 
 	if(!IsRootLevel() && IsHidden())
 	{
@@ -783,13 +763,14 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 	// draw label
 	if (!m_Label.empty())
 	{
+		CFont* pOldFont{nullptr};
 		if (IsRootLevel())
 		{
-			l_pOldFont = pDC->SelectObject(SVRPropTree::GetBoldFont());
+			pOldFont = pDC->SelectObject(SVRPropTree::GetBoldFont());
 		}
 		else
 		{
-			l_pOldFont = pDC->SelectObject(IsBold() ? SVRPropTree::GetBoldFont() : SVRPropTree::GetNormalFont());
+			pOldFont = pDC->SelectObject(IsBold() ? SVRPropTree::GetBoldFont() : SVRPropTree::GetNormalFont());
 		}
 
 		pDC->SetTextColor( m_rgbForeColor );
@@ -823,8 +804,7 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 
 		pDC->DrawText(m_Label.c_str(), &ir, DT_SINGLELINE|DT_VCENTER);
 
-//JAB110508
-		pDC->SelectObject(l_pOldFont);
+		pDC->SelectObject(pOldFont);
 	}
 
 	// draw check box frame

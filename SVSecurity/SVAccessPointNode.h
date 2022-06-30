@@ -19,16 +19,16 @@
 class SVAccessPointNode  
 {
 public:
-	SVAccessPointNode();
+	SVAccessPointNode() = default;
 	SVAccessPointNode(const SVAccessPointNode& rRhs);
 	SVAccessPointNode(long lID, LPCTSTR Name, LPCTSTR NTGroup, bool bForce );
-	~SVAccessPointNode();
+	~SVAccessPointNode() =default;
 	const SVAccessPointNode& operator=( const SVAccessPointNode& rRhs );
 	const SVAccessPointNode& CopyData( const SVAccessPointNode& rRhs );
-	bool m_bHasData;
-	long m_lID;
+	bool m_bHasData {false};
+	long m_lID {0L};
 	std::string m_Name;
-	std::string m_NTGroup;
-	bool m_bForcePrompt;
-	bool m_bDataCannotChange;
+	std::string m_NTGroup {_T("Administrators")};
+	bool m_bForcePrompt {true};
+	bool m_bDataCannotChange {false};
 };

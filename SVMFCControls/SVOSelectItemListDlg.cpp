@@ -22,18 +22,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	SVOSelectItemListDlg::SVOSelectItemListDlg(CWnd* pParent /*=nullptr*/)
-		: CDialog(SVOSelectItemListDlg::IDD, pParent), m_iSelectedItemPosition(0)
-	{
-		//{{AFX_DATA_INIT(SVOSelectItemListDlg)
-		m_sSelectItemListValue = _T("");
-		//}}AFX_DATA_INIT
-	}
-
-	SVOSelectItemListDlg::~SVOSelectItemListDlg()
-	{
-	}
-
 	void SVOSelectItemListDlg::DoDataExchange(CDataExchange* pDX)
 	{
 		CDialog::DoDataExchange(pDX);
@@ -60,8 +48,6 @@ namespace SvMc
 	BOOL SVOSelectItemListDlg::OnInitDialog() 
 	{
 		CDialog::OnInitDialog();
-		SVDisplayList::iterator pos;
-		CString sTxt;
 
 		for(auto const& rItem : m_DisplayList)
 		{

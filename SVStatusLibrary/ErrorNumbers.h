@@ -564,7 +564,7 @@ namespace SvStl
 
 	//Customer HRESULTs
 	constexpr DWORD cSuccessSVObserver = (1 << 29)/*customer flag*/ + (FAC_SVOBSERVER << 16)/*facility*/;
-	constexpr DWORD cFailureSVObserver = cSuccessSVObserver + static_cast<DWORD>(1 << 31)/*Severity-flag to failure*/;
+	constexpr DWORD cFailureSVObserver = cSuccessSVObserver + (1UL << 31)/*Severity-flag to failure*/;
 
 	constexpr DWORD cCustomHRSVO_RunOnceFailed = cFailureSVObserver + 1;
 

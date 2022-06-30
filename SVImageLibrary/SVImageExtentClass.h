@@ -155,7 +155,7 @@ private:
 	SVExtentPropertyValueMap m_extentValues;
 	bool m_isUpdated = false;
 	double m_TransferAngle=0.0;
-	double m_TransferMatrix[2][3] = {{1.0, 0.0,0.0},{0.0, 1.0,0.0}};
+	std::array<std::array<double, 3>, 2> m_TransferMatrix = {{{1.0, 0.0,0.0},{0.0, 1.0,0.0}}};
 	bool m_useTransferMatrix {false};
 };
 

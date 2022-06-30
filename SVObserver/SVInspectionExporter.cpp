@@ -108,7 +108,7 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, const SVInspectio
 		SvOl::DependencyManager::Dependencies DependencyList;
 		SvOl::DependencyManager::DependencyInserter Inserter(std::inserter(DependencyList, DependencyList.end()));
 		SvOl::DependencyManager::Instance().updateVertexIndex();
-		SvOl::DependencyManager::Instance().getDependents(GlobalConstantSet, Inserter, SvOl::JoinType::Dependent);
+		SvOl::DependencyManager::Instance().getDependents(GlobalConstantSet, Inserter, SvOl::JoinType(SvOl::JoinType::Dependent));
 
 		std::set<SvVol::BasicValueObject*> globalSet;
 		for(const auto& rEntry : DependencyList)

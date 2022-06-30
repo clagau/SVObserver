@@ -164,7 +164,7 @@ public:
 	static SVDeviceParam* Create(SVDeviceParamEnum eType);
 	static std::string GetParameterName( SVDeviceParamEnum e );
 	SVDeviceParam* Clone() const {return static_cast< SVDeviceParam* >( CloneImpl() );}
-	virtual SVClonable* CloneImpl() const = 0;
+	virtual SVClonable* CloneImpl() const override = 0;
 
 	virtual HRESULT GetValue( VARIANT& rv ) const;
 	virtual HRESULT SetValue( const VARIANT& rv );

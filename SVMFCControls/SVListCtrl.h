@@ -16,15 +16,15 @@ namespace SvMc
 	class SVListCtrl : public CListCtrl
 	{
 	public:
-		SVListCtrl();
+		SVListCtrl() = default;
+		virtual ~SVListCtrl() = default;
 
-		virtual ~SVListCtrl();
 		//override this to set the color for current cell
 		COLORREF GetCellRGB(void);
 		//called before from within OnlButtonDown and OnDblclk, but before anything happens, return TRUE to continue, FALSE to say not selecting the item
 		BOOL OnItemLButtonDown(LVHITTESTINFO& ht);
 		//override this to activate any control when lButtonDown in a cell, called from within OnLButtonDown
-		void OnControlLButtonDown(UINT nFlags, CPoint point, LVHITTESTINFO& ht);
+		void OnControlLButtonDown(UINT nFlags, CPoint point, const LVHITTESTINFO& rHt);
 
 		//{{AFX_VIRTUAL(SVListCtrl)
 	public:
@@ -71,10 +71,11 @@ namespace SvMc
 		BOOL IsReadOnly(int nItem, int nSubItem=0);
 
 	private:
-		int		m_CurItem;
-		int		m_CurSubItem;
-		int		m_nDragItem, m_nDragTarget;
-		BOOL	m_bIsDragging;
-		BOOL	m_bHasFocus;
+		int		m_CurItem {0};
+		int		m_CurSubItem {1};
+		int		m_nDragItem {0};
+		int		m_nDragTarget {0};
+		BOOL	m_bIsDragging {false};
+		BOOL	m_bHasFocus {false};
 	};
 } //namespace SvMc

@@ -437,7 +437,7 @@ namespace SvGcl
 		void Refresh();
 		void AutoFill();   // Fill grid with blank cells
 
-		void EnsureVisible(CCellID &cell)       { EnsureVisible(cell.row, cell.col); }
+		void EnsureVisible(const CCellID& rCell)       { EnsureVisible(rCell.row, rCell.col); }
 		void EnsureVisible(int nRow, int nCol);
 		BOOL IsCellVisible(int nRow, int nCol);
 		BOOL IsCellVisible(CCellID cell);
@@ -887,9 +887,9 @@ namespace SvGcl
 			cell.SetFont(&(gvdi.item.lfFont));
 			cell.SetMargin(gvdi.item.nMargin);
 			cell.SetText(gvdi.item.strText);
-			cell.SetGrid((GridCtrl*) this);
+			cell.SetGrid(const_cast<GridCtrl*> (this));
 
-			return (GridCellBase*) &cell;
+			return dynamic_cast<GridCellBase*> (&cell);
 		}
 
 		GRID_ROW* pRow = m_RowData[nRow];

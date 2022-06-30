@@ -94,7 +94,7 @@ public:
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>& rValues) const override;
 	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
-	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")) const;
+	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")) const override;
 	virtual void setResetOptions(bool p_bResetAlways, SvOi::SVResetItemEnum p_eResetItem) override;
 	virtual void validateValue(const _variant_t& rValue, const _variant_t& rDefaultValue) const override;
 	virtual std::string getTypeName() const override { return m_TypeName; };
@@ -114,7 +114,7 @@ public:
 	///Only specialized versions, namely DoubleSortValue, SVStringValue and SVVariantValue need an implementation
 	virtual void updateMemBlockData() override {}
 	virtual SvPb::LinkedSelectedOption getSelectedOption() const override { return SvPb::LinkedSelectedOption::DirectValue; };
-	virtual void setStandardFormatString() = 0;
+	virtual void setStandardFormatString() override = 0;
 	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
 
 
@@ -201,8 +201,8 @@ protected:
 	virtual bool CheckMaxMin(T Value) const;// { return true; };
 #pragma endregion Protected Methods
 
-	ValueType m_MaxValue;
-	ValueType m_MinValue;
+	ValueType m_MaxValue {};
+	ValueType m_MinValue {};
 	bool m_UseMaxMinValue {false};
 
 
@@ -217,16 +217,16 @@ private:
 	bool m_LegacyVectorObjectCompatibility {false};
 	std::string m_OutFormat;				//This is used to format the value object to a string
 
-	SvOi::SVResetItemEnum m_eResetItem;
+	SvOi::SVResetItemEnum m_eResetItem {SvOi::SVResetItemIP};
 
 	//NOTE! Never access these variables directly as getResultSize and getArraySize are overloaded
 	//>Use int_32_t to make sure it stays constant in size for Shared Memory
 	int32_t m_ArraySize {0L};
-	int32_t m_ResultSize {0L};
+	int32_t m_ResultSize {1L};
 	int32_t* m_pResultSize {nullptr};
 
 
-	ValueType m_DefaultValue;
+	ValueType m_DefaultValue {};
 	///This value object pointer is always a pointer to the template type, for SVStringValueObjectClass and SVVariantValueObjectClass
 	///the memory block pointer is stored in the derived class
 	ValueType* m_pValue {nullptr};

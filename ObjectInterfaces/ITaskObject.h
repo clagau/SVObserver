@@ -33,7 +33,7 @@ namespace SvOi
 enum class ResetTarget{ None =0 ,FromObject =1, Inspection =2   };
 struct ResetParameter
 {
-	ResetParameter(SvPb::ResetType t) { target = t; };
+	explicit ResetParameter(SvPb::ResetType t) { target = t; };
 	SvPb::ResetType target = SvPb::ResetType::RT_None;
 	SvPb::ResetType result = SvPb::ResetType::RT_None;
 };

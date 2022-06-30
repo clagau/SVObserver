@@ -45,14 +45,12 @@ SVLutTransformOperation* SVLutTransformOperationMap::GetType(SVLutTransformOpera
 SVLutTransformOperationEnum SVLutTransformOperationMap::GetType(const SVLutTransformOperation* pType)
 {
 	assert( pType );
-	for (auto const& rEntry : m_TypeInfoMap)
+	auto iter = std::find_if(m_TypeInfoMap.begin(), m_TypeInfoMap.end(), [&pType](const auto rEntry)
 	{
-		if (pType && rEntry.second.m_pType && typeid(*rEntry.second.m_pType) == typeid(*pType))
-		{
-			return rEntry.second.m_eType;
-		}
-	}
-	return LutTransformTypeUnknown;
+		return nullptr != pType && nullptr != rEntry.second.m_pType && typeid(*rEntry.second.m_pType) == typeid(*pType);
+	});
+
+	return m_TypeInfoMap.end() != iter ? iter->second.m_eType : SVLutTransformOperationEnum::LutTransformTypeUnknown;
 }
 
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(SVLutTransformOperationEnum e)
@@ -63,49 +61,35 @@ const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperatio
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const SVLutTransformOperation* pType)
 {
 	assert( pType );
-	for (auto const& rEntry : m_TypeInfoMap)
+	auto iter = std::find_if(m_TypeInfoMap.begin(), m_TypeInfoMap.end(), [&pType](const auto rEntry)
 	{
-		if (pType && rEntry.second.m_pType && typeid(*rEntry.second.m_pType) == typeid(*pType))
-		{
-			return &rEntry.second;
-		}
-	}
-	return nullptr;
+		return nullptr != pType && nullptr != rEntry.second.m_pType && typeid(*rEntry.second.m_pType) == typeid(*pType);
+	});
+
+	return m_TypeInfoMap.end() != iter ? &iter->second : nullptr;
 }
 
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const std::string& rType)
 {
-	for (auto const& rEntry : m_TypeInfoMap)
+	auto iter = std::find_if(m_TypeInfoMap.begin(), m_TypeInfoMap.end(), [&rType](const auto rEntry)
 	{
-		if (rType == rEntry.second.m_Type && !rType.empty())
-		{
-			return &rEntry.second;
-		}
-	}
-	return nullptr;
+		return rType == rEntry.second.m_Type && false == rType.empty();
+	});
+
+	return m_TypeInfoMap.end() != iter ? &iter->second : nullptr;
 }
 
 SVLutTransformOperation::~SVLutTransformOperation()
 {
 }
 
-SVLutTransform::SVLutTransform()
-{
-	mpType = nullptr;
-	mbOwnType = false;
-}
-
 SVLutTransform::SVLutTransform(const SVLutTransformOperation& rType)
 {
-	mpType = nullptr;
-	mbOwnType = false;
 	SetOperation( rType );
 }
 
 SVLutTransform::SVLutTransform(const SVLutTransform& rhs)
 {
-	mpType = nullptr;
-	mbOwnType = false;
 	*this = rhs;
 }
 

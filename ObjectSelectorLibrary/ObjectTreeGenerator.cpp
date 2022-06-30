@@ -72,8 +72,6 @@ namespace SvOsl
 
 	INT_PTR ObjectTreeGenerator::showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent )
 	{
-		INT_PTR Result( IDCANCEL );
-
 		//Make sure Object result cleared could still have previous result
 		m_SelectedObjects.clear();
 		m_ModifiedObjects.clear();
@@ -104,7 +102,7 @@ namespace SvOsl
 		delete pWait;
 		pWait = nullptr;
 
-		Result = Sheet.DoModal();
+		INT_PTR Result {Sheet.DoModal()};
 
 		if( IDOK == Result )
 		{

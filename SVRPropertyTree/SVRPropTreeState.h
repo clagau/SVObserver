@@ -22,8 +22,8 @@ public:
 
 	typedef std::map<std::string, bool> MapStringTreeState;
 
-	SVRPropTreeState();
-	virtual ~SVRPropTreeState();
+	SVRPropTreeState() =default;
+	virtual ~SVRPropTreeState() = default;
 	SVRPropTreeState( const SVRPropTreeState& rRhs );
 	const SVRPropTreeState& operator = ( const SVRPropTreeState& rRhs );
 	MapStringTreeState m_State;

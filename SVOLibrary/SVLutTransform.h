@@ -72,7 +72,7 @@ class SVLutTransformOperationTwoKnee;
 class SVLutTransform
 {
 public:
-	SVLutTransform();
+	SVLutTransform() = default;
 	explicit SVLutTransform(const SVLutTransformOperation& rType);
 	SVLutTransform(const SVLutTransform& rhs);
 	virtual ~SVLutTransform();
@@ -106,8 +106,8 @@ public:
 
 
 protected:
-	SVLutTransformOperation* mpType;
-	bool mbOwnType;
+	SVLutTransformOperation* mpType {nullptr};
+	bool mbOwnType {false};
 	static SVLutTransformOperationMap mMapTypes;
 	SVLutTransformParameters mParam;
 

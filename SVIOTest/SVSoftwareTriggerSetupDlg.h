@@ -18,7 +18,7 @@ class SVSoftwareTriggerSetupDlg : public CDialog
 {
 public:
 	SVSoftwareTriggerSetupDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVSoftwareTriggerSetupDlg();
+	virtual ~SVSoftwareTriggerSetupDlg() = default;
 
 // Dialog Data
 	enum { IDD = IDD_SOFTWARETRIGGER_SETUP_DLG };
@@ -30,9 +30,6 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	long m_period1;
-	long m_period2;
-	long m_period3;
-	long m_period4;
+	long m_period[cTriggerChannelNr] {0L, 0L, 0L, 0L};
 };
 

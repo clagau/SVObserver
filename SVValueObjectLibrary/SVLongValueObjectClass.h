@@ -30,7 +30,7 @@ public:
 
 	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
 
-	void setStandardFormatString();
+	void setStandardFormatString() override;
 
 	virtual ~SVLongValueObjectClass();
 

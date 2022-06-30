@@ -84,7 +84,6 @@ namespace SvMc
 	INT_PTR DisplayMessageBox::showDialog( HWND hParent, LPCTSTR Message, LPCTSTR MessageDetails, UINT Type )
 	{
 		static HINSTANCE ResourceInstance( nullptr );
-		INT_PTR Result( IDCANCEL );
 		HINSTANCE currentResourceInstance( AfxGetResourceHandle() );
 
 		if (nullptr == ResourceInstance)
@@ -109,20 +108,19 @@ namespace SvMc
 			}
 
 			DisplayMessageBox ErrorMsgBox( pParent, Message, MessageDetails, Type );
-			Result = ErrorMsgBox.DoModal();
+			INT_PTR result = ErrorMsgBox.DoModal();
 
 			if (currentResourceInstance != ResourceInstance)
 			{
 				//Set the resource instance back to the old value
 				AfxSetResourceHandle( currentResourceInstance );
 			}
+			return result;
 		}
 		else
 		{
-			Result = -1;
+			return -1;
 		}
-
-		return Result;
 	}
 	#pragma endregion Public Methods
 

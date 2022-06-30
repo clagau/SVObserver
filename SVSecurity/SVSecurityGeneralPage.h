@@ -25,7 +25,7 @@ class SVSecurityGeneralPage : public CPropertyPage
 public:
 	SVSecurityGeneralPage();
 	explicit SVSecurityGeneralPage(UINT nIDTemplate, UINT nIDCaption = 0);
-	virtual ~SVSecurityGeneralPage();
+	virtual ~SVSecurityGeneralPage() = default;
 
 	//{{AFX_DATA(SVSecurityGeneralPage)
 	enum { IDD = IDD_GENERAL_SECURITY_PAGE };
@@ -39,7 +39,7 @@ public:
 	//}}AFX_VIRTUAL
 
 protected:
-	SVAccessClass* m_pAccess;
+	SVAccessClass* m_pAccess {nullptr};
 
 	// Generated message map functions
 	//{{AFX_MSG(SVSecurityGeneralPage)

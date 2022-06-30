@@ -17,16 +17,6 @@
 //	image - An integer specifying which image in the image list that the node uses.
 //	simage - An integer specifying which image in the image list that the node uses when selected.
 
-typedef struct tagItem
-{
-	HTREEITEM	parent;
-	int			id;
-	int			image;
-	int			simage;
-} Item;
-
-/////////////////////////////////////////////////////////////////////////////
-// SVSecuritySetupSheet
 
 class SVAccessClass;
 
@@ -40,9 +30,7 @@ public:
 	explicit SVSecuritySetupSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	explicit SVSecuritySetupSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
-// Attributes
-public:
-	SVAccessClass* m_pAccess;
+	SVAccessClass* m_pAccess {nullptr};
 
 // Operations
 public:
@@ -67,8 +55,6 @@ public:
 	
 	void InitializeGroupList(CListBox& list);
 
-	void Initialize(void);
-
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(SVSecuritySetupSheet)
@@ -85,9 +71,6 @@ protected:
 	friend class SVSecuritySetupPage;
 
 private:
-	
-	
-	Item			item;
 };
 
 /////////////////////////////////////////////////////////////////////////////

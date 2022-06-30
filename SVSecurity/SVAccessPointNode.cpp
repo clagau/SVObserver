@@ -25,20 +25,6 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVAccessPointNode::SVAccessPointNode()
-{
-	m_bDataCannotChange = false;
-	m_bHasData = false;
-	m_lID = 0;
-	m_bForcePrompt = true;
-	m_Name = _T("");
-	m_NTGroup = _T("Administrators");
-}
-
-SVAccessPointNode::~SVAccessPointNode()
-{
-}
-
 SVAccessPointNode::SVAccessPointNode(const SVAccessPointNode& rRhs)
 {
 	*this = rRhs;
@@ -65,10 +51,10 @@ const SVAccessPointNode& SVAccessPointNode::CopyData( const SVAccessPointNode& r
 }
 
 SVAccessPointNode::SVAccessPointNode(long lID, LPCTSTR Name, LPCTSTR NTGroup, bool bForce )
+	:m_lID{lID}
+	,m_Name{Name}
+	,m_bForcePrompt{bForce}
 {
-	m_lID = lID;
-	m_bForcePrompt = bForce;
-	m_Name = Name;
 	if( nullptr == NTGroup )
 	{
 		m_NTGroup.clear();
@@ -79,5 +65,4 @@ SVAccessPointNode::SVAccessPointNode(long lID, LPCTSTR Name, LPCTSTR NTGroup, bo
 		m_NTGroup = NTGroup;
 		m_bHasData = true;
 	}
-	m_bDataCannotChange = false;
 }	

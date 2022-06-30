@@ -26,21 +26,18 @@ class SVTriggerSetupDlgClass : public CDialog
 {
 // Construction
 public:
-	SVTriggerSetupDlgClass(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVTriggerSetupDlgClass();
+	SVTriggerSetupDlgClass(CWnd* pParent = nullptr) : CDialog(IDD, pParent) {};   // standard constructor
+	virtual ~SVTriggerSetupDlgClass() = default;
 
-	SvTrig::SVIOTriggerLoadLibraryClass *m_psvTriggers;
-	long m_lStrobeInverts;
-	long m_lTrigInverts;
-	long m_lSystemType;
+	SvTrig::SVIOTriggerLoadLibraryClass *m_psvTriggers{nullptr};
+	long m_lStrobeInverts {0L};
+	long m_lTrigInverts {0L};
+	long m_lSystemType {0L};
 
 // Dialog Data
 	//{{AFX_DATA(SVTriggerSetupDlgClass)
 	enum { IDD = IDD_TRIG_SETUP_DLG };
-	BOOL	m_bTrig1Rising;
-	BOOL	m_bTrig2Rising;
-	BOOL	m_bTrig3Rising;
-	BOOL	m_bTrig4Rising;
+	BOOL	m_bTrigRising[cTriggerChannelNr] {false, false, false, false};
 	//}}AFX_DATA
 
 
@@ -56,14 +53,8 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVTriggerSetupDlgClass)
-	afx_msg void OnStrobe1InvBtn();
-	afx_msg void OnStrobe2InvBtn();
-	afx_msg void OnStrobe3InvBtn();
-	afx_msg void OnStrobe4InvBtn();
-	afx_msg void OnTrig1InvBtn();
-	afx_msg void OnTrig2InvBtn();
-	afx_msg void OnTrig3InvBtn();
-	afx_msg void OnTrig4InvBtn();
+	afx_msg void OnStrobeInvBtn(UINT nID);
+	afx_msg void OnTrigInvBtn(UINT nID);
 	virtual void OnOK() override;
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG

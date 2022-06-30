@@ -23,7 +23,7 @@ private:
 	ErrorStrategy& m_rStrategy;
 
 public:
-	SVSAXErrorHandlerImpl(ErrorStrategy& strategy);
+	explicit SVSAXErrorHandlerImpl(ErrorStrategy& strategy);
 	virtual ~SVSAXErrorHandlerImpl();
 
 	// This must be correctly implemented, if your handler must be a COM Object

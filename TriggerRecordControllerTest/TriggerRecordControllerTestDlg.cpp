@@ -574,10 +574,10 @@ namespace SvTrcT
 	void CTriggerRecordControllerTestDlg::updateToolList()
 	{
 		SvUl::NameObjectIdList availableList;
-		for (const auto& tool : m_toolList)
-		{
-			availableList.push_back(SvUl::NameObjectIdPair(tool->getName(), tool->getObjectId()));
-		}
+		std::transform(m_toolList.begin(), m_toolList.end(), availableList.begin(), [](const auto& pTool)
+		{ 
+			return SvUl::NameObjectIdPair(pTool->getName(), pTool->getObjectId());
+		});
 		m_toolListBox.init(availableList, "<No Tool>");
 	}
 
@@ -675,7 +675,10 @@ namespace SvTrcT
 			{
 				HRESULT hr = SVMatroxBufferInterface::Import(imageHandle->GetBuffer(), std::string(rPath), SVFileBitmap, false);
 				assert(S_OK == hr);
-				UNREFERENCED_PARAMETER(hr);
+				if (S_OK != hr)
+				{
+					::OutputDebugString("Error import buffer");
+				}
 			}
 		}
 		return pImage;
@@ -690,7 +693,7 @@ namespace SvTrcT
 		struct tm locTime;
 		localtime_s(&locTime, &current_time);
 		char timeBuf[100];
-		asctime_s(timeBuf, 100, &locTime);
+		::strftime(timeBuf, 100, "%#c", &locTime);
 		m_toolDescription.Format("Last reset (%s): %s", m_isTRCValid?"valid":"invalid", timeBuf);
 		UpdateData(false);
 	}

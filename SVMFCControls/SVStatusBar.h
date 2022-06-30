@@ -29,13 +29,13 @@ class SVStatusBar : public CStatusBar
 {
 public:
 	SVStatusBar();
-	virtual ~SVStatusBar();
+	virtual ~SVStatusBar() = default;
 	virtual void DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct ) override;
-	COLORREF m_lModeBKColor;
-	COLORREF m_lModeForeColor;
-	COLORREF m_lErrorBKColor;
-	COLORREF m_lErrorForeColor;
-	CString m_strModeText;
-	CString m_strErrorText;
+	COLORREF m_lModeBKColor {0};
+	COLORREF m_lModeForeColor {0};
+	COLORREF m_lErrorBKColor {0};
+	COLORREF m_lErrorForeColor {0};
+	CString m_strModeText {};
+	CString m_strErrorText {};
 };
 

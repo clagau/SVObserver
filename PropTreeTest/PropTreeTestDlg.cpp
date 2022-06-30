@@ -31,7 +31,6 @@ namespace
 PropTreeTestDlg::PropTreeTestDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(PropTreeTestDlg::IDD, pParent)
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void PropTreeTestDlg::DoDataExchange(CDataExchange* pDX)
@@ -51,6 +50,7 @@ BOOL PropTreeTestDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
@@ -183,7 +183,7 @@ void PropTreeTestDlg::SetupTrigger()
 		pRoot->SetLabelText(_T("Trigger"));
 		pRoot->SetInfoText(_T("Define a Trigger"));
 
-		SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
+		SVRPropertyItemCombo* pCombo = dynamic_cast<SVRPropertyItemCombo*> (m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot));
 
 		if (pCombo)
 		{

@@ -21,16 +21,16 @@ namespace SvMc
 		public CListBox
 	{
 	public:
-		SVEditableListBox(void);
-		virtual ~SVEditableListBox(void);
+		SVEditableListBox() = default;
+		virtual ~SVEditableListBox();
 
 	protected:
 		void    EditStarts  ();
 		void    EditEnds    ( BOOL bCommitText = TRUE );
 
 		SVEditHelper   m_ceEdit;
-		int     m_iItemBeingEdited;
-		int     m_iLastSelected;
+		int     m_iItemBeingEdited{0};
+		int     m_iLastSelected{-1};
 
 		//{{AFX_MSG(SVEditableListBox)
 		afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);

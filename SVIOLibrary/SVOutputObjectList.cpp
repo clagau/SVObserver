@@ -222,7 +222,7 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 	return Result;
 }
 
-bool SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
+bool SVOutputObjectList::ResetOutputs(const SVIOEntryHostStructPtrVector& rIOEntries )
 {
 	for( size_t i = 0; i < rIOEntries.size(); i++ )
 	{
@@ -559,12 +559,12 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 	return l_Status;
 }
 
-bool SVOutputObjectList::OutputIsNotValid( std::string Name )
+bool SVOutputObjectList::OutputIsNotValid(const std::string& rName )
 {
 	bool l_bRet = true;
 	
 	SVObjectClass* l_pObject = nullptr;
-	SVObjectManagerClass::Instance().GetObjectByDottedName( Name, l_pObject );
+	SVObjectManagerClass::Instance().GetObjectByDottedName( rName, l_pObject );
 	// Check if the object exists.
 	if( nullptr != l_pObject )
 	{

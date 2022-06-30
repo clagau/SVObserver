@@ -144,7 +144,12 @@ SVObserverApp::SVObserverApp() :
 {
 	free((void*)m_pszHelpFilePath);
 
-	m_pszHelpFilePath = _tcsdup(SvStl::GlobalPath::Inst().GetBinPath(_T("SVObserver.chm")).c_str());
+	std::string helpPath {SvStl::GlobalPath::Inst().GetBinPath(_T("SVObserver.chm"))};
+	TCHAR* pPath = new TCHAR[helpPath.size() + 1];
+	memcpy(pPath, helpPath.c_str(), helpPath.size());
+	pPath[helpPath.size()] = '\0';
+	m_pszHelpFilePath = pPath;
+
 	EnableHtmlHelp();
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)

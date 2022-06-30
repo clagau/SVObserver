@@ -247,12 +247,11 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerIndex)
 			Tec::setTriggerChannel(static_cast<uint8_t> (triggerChannel), false);
 		}
 		//Still some active trigger
-		bool activeTrigger{false};
-		for (const auto& rStarted : m_triggerStarted)
+		bool activeTrigger {std::any_of(m_triggerStarted.begin(), m_triggerStarted.end(), [](const auto& rActive)
 		{
-			activeTrigger |= rStarted;
-		}
-		if(!activeTrigger)
+			return rActive.load();
+		})};
+		if(false == activeTrigger)
 		{
 			Tec::stopTriggerEngine();
 			m_engineStarted = false;

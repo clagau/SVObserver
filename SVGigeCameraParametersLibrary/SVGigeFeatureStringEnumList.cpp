@@ -54,29 +54,31 @@ bool SVGigeFeatureStringEnumList::HasTranslation() const
 
 HRESULT SVGigeFeatureStringEnumList::GetGigeFeatureString(const std::string& rDeviceParam, std::string& rGigeFeature) const
 {
-	for(const auto& rEntry : m_stringEnums)
+	auto iter = std::find_if(m_stringEnums.begin(), m_stringEnums.end(), [&rDeviceParam](const auto& rEntry)
 	{
-		if(rEntry.first == rDeviceParam)
-		{
-			rGigeFeature = rEntry.second;
-			return S_OK;
-		}
-	}
+		return rEntry.first == rDeviceParam;
+	});
 
+	if(m_stringEnums.end() != iter)
+	{
+		rGigeFeature = iter->second;
+		return S_OK;
+	}
 	return E_FAIL;
 }
 
 HRESULT SVGigeFeatureStringEnumList::GetDeviceParamString(const std::string& rGigeFeature, std::string& rDeviceParam) const
 {
-	for (const auto& rEntry : m_stringEnums)
+	auto iter = std::find_if(m_stringEnums.begin(), m_stringEnums.end(), [&rGigeFeature](const auto& rEntry)
 	{
-		if (rEntry.second == rGigeFeature)
-		{
-			rDeviceParam = rEntry.first;
-			return S_OK;
-		}
-	}
+		return rEntry.second == rGigeFeature;
+	});
 
+	if (m_stringEnums.end() != iter)
+	{
+		rDeviceParam = iter->first;
+		return S_OK;
+	}
 	return E_FAIL;
 }
 

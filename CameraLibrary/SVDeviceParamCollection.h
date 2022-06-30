@@ -42,7 +42,7 @@ public:
 
 	HRESULT SetParameter( const SVDeviceParamWrapper& rw )
 	{
-		if ( nullptr != ((const SVDeviceParam*) rw ) )
+		if ( nullptr != static_cast<const SVDeviceParam*> (rw))
 		{
 			mapParameters[rw->Type()] = rw;
 			return S_OK;

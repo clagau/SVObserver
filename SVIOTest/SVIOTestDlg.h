@@ -28,46 +28,35 @@ enum IOBoardType
 	SVRABBIT_X3 = 12,
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// SVIOTestDlg dialog
+constexpr int cFanIdNr = 4;
+constexpr int cInputChannelNr = 8;
 
 struct SVIOTriggerDataStruct
 {
-	unsigned long ulLastIndex;
-	unsigned long ulIndex;
-	unsigned long ulNextIndex;
+	unsigned long ulLastIndex {0UL};
+	unsigned long ulIndex {0UL};
+	unsigned long ulNextIndex {1UL};
 
-	long lTriggerCount;
+	long lTriggerCount {0L};
 
-	double m_TimeStamp[100];
+	std::array<double, 100> m_TimeStamp {0.0};
 
-	double m_LastTime;
-	double m_TotalTime;
-	double m_MinTime;
-	double m_MaxTime;
+	double m_LastTime {0.0};
+	double m_TotalTime {0.0};
+	double m_MinTime {0.0};
+	double m_MaxTime {0.0};
 
 	void OnTriggerStart();
-
 };
-
-const int c_upperBoundForTriggerChannel = 4;
-const int c_upperBoundForFanId = 4;
-const int c_upperBoundForInputChannel = 9;
 
 class SVIOTestDlg : public CDialog
 {
-// Construction
 private:
-	//@TODO[Arvid]: I have removed some code duplication in this project.
-	//@TODO[Arvid]: currently the 0-th Array elements are not used and the array sizes are 5 (for just four trigger channels)
-	//@TODO[Arvid]: I have left it like this so the numbers used remain the same.
-	//@TODO[Arvid]: Whoever feels like correcting this is very welcome to tidy up the code further
-
-	HANDLE m_hWorkerThread;
+	HANDLE m_hWorkerThread {nullptr};
 public:
-	bool m_bFast;
-	bool m_bTestRand;
-	bool m_bThreadRunning;
+	bool m_bFast {false};
+	bool m_bTestRand {false};
+	bool m_bThreadRunning {false};
 
 	SVIOTestDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~SVIOTestDlg();
@@ -76,38 +65,38 @@ public:
 
 	SVIOTriggerDataStruct* getTriggerData(unsigned long triggerChannel);
 
-// Dialog Data
-	//{{AFX_DATA(SVIOTestDlg)
+	// Dialog Data
+		//{{AFX_DATA(SVIOTestDlg)
 	enum { IDD = IDD_SVIOTEST_DIALOG };
 	CComboBox	m_BoardModelCombo;
 	CStatic	m_BoardTxt;
 
-	CStatic	m_FanTxt[c_upperBoundForFanId];
-	CStatic	m_Fan[c_upperBoundForFanId];
-	CStatic	m_TriggerMinimum[c_upperBoundForTriggerChannel];
-	CStatic	m_TriggerMaximum[c_upperBoundForTriggerChannel];
-	CStatic	m_TriggerDistance[c_upperBoundForTriggerChannel];
-	CStatic	m_TriggerCountWnd[c_upperBoundForTriggerChannel];
-	CStatic	m_TriggerAverage[c_upperBoundForTriggerChannel];
+	CStatic	m_FanTxt[cFanIdNr];
+	CStatic	m_Fan[cFanIdNr];
+	CStatic	m_TriggerMinimum[cTriggerChannelNr];
+	CStatic	m_TriggerMaximum[cTriggerChannelNr];
+	CStatic	m_TriggerDistance[cTriggerChannelNr];
+	CStatic	m_TriggerCountWnd[cTriggerChannelNr];
+	CStatic	m_TriggerAverage[cTriggerChannelNr];
 
 	CButton	m_cbtSlow;
-	CStatic	m_input[c_upperBoundForInputChannel];
-	long	m_lStaticChannel;
-	int		m_BoardModel;
+	CStatic	m_input[cInputChannelNr];
+	long	m_lStaticChannel {0L};
+	int		m_BoardModel {-1};
 	//}}AFX_DATA
 
-	long m_lTrigInverts;
-	long m_lStrobeInverts;
+	long m_lTrigInverts {0L};
+	long m_lStrobeInverts {0L};
 	CString m_csDigital;
 	CString m_csTrigger;
 
-	bool m_bInterruptEnabled;
-	int nSpeed;
-	int nSeq;
+	bool m_bInterruptEnabled {false};
+	int nSpeed {0};
+	int nSeq {0};
 
-	SvTrig::SVIOTriggerLoadLibraryClass *m_psvTriggers;
+	SvTrig::SVIOTriggerLoadLibraryClass *m_psvTriggers {nullptr};
 
-	long m_lSystemType;
+	long m_lSystemType {0L};
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVIOTestDlg)
@@ -118,7 +107,7 @@ public:
 
 // Implementation
 protected:
-	HICON m_hIcon;
+	HICON m_hIcon{nullptr};
 
 	// Generated message map functions
 	//{{AFX_MSG(SVIOTestDlg)
@@ -156,11 +145,11 @@ protected:
 
 
 private:
-	long m_TriggerCount[c_upperBoundForTriggerChannel];
+	long m_TriggerCount[cTriggerChannelNr] {0L, 0L, 0L, 0L};
 
-	SVIOTriggerDataStruct m_TriggerData[c_upperBoundForTriggerChannel];
+	SVIOTriggerDataStruct m_TriggerData[cTriggerChannelNr];
 
-	long m_FanFreq[c_upperBoundForFanId];
+	long m_FanFreq[cFanIdNr] {0L, 0L, 0L, 0L};
 
 	bool m_bCurrentlyAcceptingTriggers = false;
 };

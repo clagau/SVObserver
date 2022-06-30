@@ -267,7 +267,6 @@ void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
 	auto* pConnectObject = GetInputObjectInfo().getObject();
 	if (nullptr != pConnectObject)
 	{
-		//Name is only saved to help by loading (copy) if object id was not be found.
 		value = pConnectObject->GetObjectNameToObjectType().c_str();
 		rWriter.WriteAttribute(scConntectedDotnameTag, value);
 	}
@@ -317,11 +316,11 @@ void InputObject::correctDependencies()
 	{
 		if (SvPb::noAttributes == ObjectAttributesAllowed())
 		{
-			SVObjectManagerClass::Instance().disconnectDependency(m_InputObjectInfo.getObject()->getObjectId(), getObjectId(), SvOl::JoinType::Dependent);
+			SVObjectManagerClass::Instance().disconnectDependency(m_InputObjectInfo.getObject()->getObjectId(), getObjectId(), SvOl::JoinType(SvOl::JoinType::Dependent));
 		}
 		else
 		{
-			SVObjectManagerClass::Instance().connectDependency(m_InputObjectInfo.getObject()->getObjectId(), getObjectId(), SvOl::JoinType::Dependent);
+			SVObjectManagerClass::Instance().connectDependency(m_InputObjectInfo.getObject()->getObjectId(), getObjectId(), SvOl::JoinType(SvOl::JoinType::Dependent));
 		}
 	}
 }

@@ -57,13 +57,13 @@ namespace SvMc
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		int     m_nRow;
-		int     m_nCol;
+		int     m_nRow {0};
+		int     m_nCol {0};
 		CString m_sInitText;
-		UINT    m_nLastChar;
-		BOOL    m_bExitOnArrows;
-		BOOL		m_bEditNumber;
-		BOOL		m_bDecimal;
-		BOOL		m_bSign;
+		UINT    m_nLastChar {0U};
+		BOOL    m_bExitOnArrows {false};
+		BOOL	m_bEditNumber {false};
+		BOOL	m_bDecimal {false};
+		BOOL	m_bSign {false};
 	};
 } //namespace SvMc

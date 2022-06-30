@@ -19,12 +19,6 @@
 
 SVTestIODlg::SVTestIODlg(CWnd* pParent /*=nullptr*/) : CDialog(SVTestIODlg::IDD, pParent)
 {
-	
-}
-
-SVTestIODlg::~SVTestIODlg()
-{
-	
 }
 
 void SVTestIODlg::DoDataExchange(CDataExchange* pDX)
@@ -32,15 +26,15 @@ void SVTestIODlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 
 	// IDC_INPUT1 to IDC_INPUT8 must be contiguous and sequential for this to work:
-	for (int inputchannel = 1; inputchannel < c_upperBoundForInputChannel; inputchannel++)
+	for (int inputchannel = 0; inputchannel < cInputChannelNr; ++inputchannel)
 	{
-		DDX_Control(pDX, IDC_INPUT1+inputchannel-1, m_input[inputchannel]);
+		DDX_Control(pDX, IDC_INPUT1+inputchannel, m_input[inputchannel]);
 	}
 
 	// IDC_OUTPUT1 to IDC_OUTPUT16 must be contiguous and sequential for this to work:
-	for (int outputchannel = 1; outputchannel < c_upperBoundForOutputChannel; outputchannel++)
+	for (int outputchannel = 9; outputchannel < cOutputChannelNr; outputchannel++)
 	{
-		DDX_Control(pDX, IDC_OUTPUT1+outputchannel-1, m_Output[outputchannel]);
+		DDX_Control(pDX, IDC_OUTPUT1+outputchannel, m_Output[outputchannel]);
 	}
 
 	DDX_Control(pDX, IDC_LOG_LIST, m_LogList);
@@ -68,7 +62,7 @@ END_MESSAGE_MAP()
 
 void SVTestIODlg::OnInputButtonClicked( UINT nID )
 {
-	int inputchannel = nID - IDC_INPUT1 + 1; //inputchannel is one-based
+	int inputchannel = nID - IDC_INPUT1;
 
 	ToggleInput( inputchannel );
 
@@ -77,12 +71,12 @@ void SVTestIODlg::OnInputButtonClicked( UINT nID )
 
 void SVTestIODlg::ToggleInput(unsigned int inputchannel)
 {
-	if( inputchannel < 1 ||  inputchannel >= c_upperBoundForInputChannel)
+	if(inputchannel >= cInputChannelNr)
 	{
 		return; //invalid inputchannel: do nothing!
 	}
 
-	unsigned long mask = 1 << (inputchannel-1);
+	unsigned long mask = 1 << inputchannel;
 	if( m_lInputs & mask )
 	{
 		m_lInputs &= ~mask ;
@@ -152,7 +146,7 @@ LRESULT SVTestIODlg::OnSetOutput(WPARAM wParam, LPARAM lParam)
 
 	HICON l_hState = nullptr;
 
-	unsigned long zeroBasedOutputchannel = static_cast<unsigned long>(wParam);
+	unsigned long outputchannel = static_cast<unsigned long>(wParam);
 	bool bState = lParam != 0;
 	if (bState)
 	{
@@ -163,11 +157,9 @@ LRESULT SVTestIODlg::OnSetOutput(WPARAM wParam, LPARAM lParam)
 		l_hState = AfxGetApp()->LoadIconA(IDI_ICON4);
 	}
 
-	unsigned long oneBasedOutputchannel = zeroBasedOutputchannel + 1;
-
-	if (oneBasedOutputchannel < c_upperBoundForOutputChannel)
+	if (outputchannel < cOutputChannelNr)
 	{
-		m_Output[oneBasedOutputchannel].SetIcon(l_hState);
+		m_Output[outputchannel].SetIcon(l_hState);
 	}
 
 	
@@ -188,7 +180,7 @@ LRESULT SVTestIODlg::OnSetOutput(WPARAM wParam, LPARAM lParam)
 
 		::QueryPerformanceCounter((LARGE_INTEGER*)&l_i64Check);
 		l_iTime = (l_i64Check - m_i64Start) / m_i64Frequency;
-		l_strTmp.Format("%010I64u Ch %02d %s", l_iTime, oneBasedOutputchannel, bState ? "Off" : "On");
+		l_strTmp.Format("%010I64u Ch %02lu %s", l_iTime, outputchannel+1, bState ? "Off" : "On");
 		m_LogList.AddString(l_strTmp);
 	}
 	return 0;

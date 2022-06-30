@@ -170,15 +170,12 @@ namespace SvOsl
 		}
 
 		CMenu Menu;
-		CMenu* pPopupMenu {nullptr};
+		UINT MenuResource {IDR_TREE_ALL_VALUES_MENU};
 
-		UINT MenuResource = 0;
-
-		MenuResource = IDR_TREE_ALL_VALUES_MENU;
-
-		if (0 != MenuResource && Menu.LoadMenu(MenuResource))
+		if (Menu.LoadMenu(MenuResource))
 		{
-			if (nullptr != (pPopupMenu = Menu.GetSubMenu(0)))
+			CMenu* pPopupMenu {Menu.GetSubMenu(0)};
+			if (nullptr != pPopupMenu)
 			{
 				CPoint Point = getContextPoint();
 				ClientToScreen(&Point);

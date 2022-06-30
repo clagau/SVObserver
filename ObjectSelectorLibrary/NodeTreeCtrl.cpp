@@ -277,7 +277,6 @@ namespace SvOsl
 	void NodeTreeCtrl::showContextMenu( bool ItemHit )
 	{
 		CMenu Menu;
-		CMenu* pPopupMenu{nullptr};
 
 		UINT MenuResource = 0;
 
@@ -292,7 +291,8 @@ namespace SvOsl
 
 		if( 0 != MenuResource && Menu.LoadMenu( MenuResource ) )
 		{
-			if(nullptr != (pPopupMenu = Menu.GetSubMenu(0)))
+			CMenu* pPopupMenu {Menu.GetSubMenu(0)};
+			if(nullptr != pPopupMenu)
 			{
 				//Single select remove the check all command
 				if( isSingleSelect() )

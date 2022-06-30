@@ -36,8 +36,8 @@
 class SVRPropertyItemStatic : public SVRPropertyItem
 {
 public:
-	SVRPropertyItemStatic();
-	virtual ~SVRPropertyItemStatic();
+	SVRPropertyItemStatic() = default;
+	virtual ~SVRPropertyItemStatic() = default;
 
 public:
 	// The attribute area needs drawing

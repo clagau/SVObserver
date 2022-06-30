@@ -76,18 +76,16 @@ namespace SvGcl
 	/////////////////////////////////////////////////////////////////////////////
 	// InPlaceEdit
 
-	InPlaceEdit::InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
-							   int nRow, int nColumn, CString sInitText, 
-							   UINT nFirstChar)
+	InPlaceEdit::InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID, int nRow, int nColumn, CString sInitText, UINT nFirstChar)
+		:m_sInitText {sInitText}
+		, m_nRow {nRow}
+		, m_nColumn {nColumn}
+		, m_nLastChar {0}
+		,m_Rect {rect}
 	{
-		m_sInitText     = sInitText;
-		m_nRow          = nRow;
-		m_nColumn       = nColumn;
-		m_nLastChar     = 0; 
 		m_bExitOnArrows = (nFirstChar != VK_LBUTTON);    // If mouse click brought us here,
 														 // then no exit on arrows
 
-		m_Rect = rect;  // For bizarre CE bug.
     
 		DWORD dwEditStyle = WS_BORDER|WS_CHILD|WS_VISIBLE| ES_AUTOHSCROLL //|ES_MULTILINE
 			| dwStyle;

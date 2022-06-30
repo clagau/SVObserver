@@ -33,7 +33,7 @@ public:
 	virtual HRESULT GetValue(VARIANT& rv) const override;
 	virtual HRESULT SetValue(const VARIANT& rv) override;
 
-	__int64 iValue;
+	__int64 iValue {0LL};
 
 	TDeviceParamInfo<__int64> info;
 	typedef TDeviceOption<__int64> OptionType;

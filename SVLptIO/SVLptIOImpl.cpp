@@ -743,16 +743,12 @@ HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long triggerIndex, unsign
 					{
 						m_lLptTriggerEdge |= lMask;
 						m_lIOBrdTriggerEdge |= 1 << (triggerIndex -1);
-
-						result = S_OK;
 						break;
 					}
 					case -1:
 					{
 						m_lLptTriggerEdge &= ~lMask;
 						m_lIOBrdTriggerEdge &= ~(1 << (triggerIndex -1));
-
-						result = S_OK;
 						break;
 					}
 					default:
@@ -900,7 +896,7 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 					struct tm *newTime;
 					newTime = localtime(&timeVal);
 					char strTmp[50];
-					strcpy_s(strTmp, 50, asctime(newTime));
+					::strftime(strTmp, 50, "%#c", newTime);
 					size_t size = strlen(strTmp);
 					if (size >= 25) // get rid of the newline from asctime.
 						strTmp[24] = 0;
@@ -910,13 +906,13 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 					{
 						timeVal = TimeStamp[i];
 						newTime = localtime(&timeVal);
-						strcpy_s(strTmp, 50, asctime(newTime));
+						::strftime(strTmp, 50, "%#c", newTime);
 						size = strlen(strTmp);
 						if (size >= 25) // get rid of the newline from asctime.
 						{
 							strTmp[24] = 0;
 						}
-						fprintf(fh, "%s >function %02x\n", strTmp, LogCode[i]);
+						fprintf(fh, "%s >function %02lx\n", strTmp, LogCode[i]);
 					}
 					fclose(fh);
 				}
@@ -1067,7 +1063,6 @@ HRESULT SVLptIOImpl::GetLockState(bool& bLocked)
 HRESULT SVLptIOImpl::WriteUnlockString()
 {
 	HRESULT hr = S_OK;
-	unsigned long lCommand = 0;
 	LPCSTR pString = "Unlock";
 	
 	long Retry = RETRY;
@@ -1076,7 +1071,7 @@ HRESULT SVLptIOImpl::WriteUnlockString()
 	while (Retry > 0)
 	{
 		// Resets parallel board sub command sequence.
-		lCommand = NO_CMD;
+		unsigned long lCommand {NO_CMD};
 		SVReadWriteLpt(lCommand, SVControlCommand);
 		
 		lCommand = UNLOCK_CMD;
@@ -1111,7 +1106,6 @@ HRESULT SVLptIOImpl::WriteLockString()
 {
 	HRESULT hr = S_OK;
 
-	unsigned long lCommand = 0;
 	LPCSTR pString = "Lock";
 
 	long Retry = RETRY;
@@ -1120,7 +1114,7 @@ HRESULT SVLptIOImpl::WriteLockString()
 	while (Retry > 0)
 	{
 		// Resets parallel board sub command sequence.
-		lCommand = NO_CMD;
+		unsigned long lCommand {NO_CMD};
 		SVReadWriteLpt(lCommand, SVControlCommand);
 		
 		lCommand = LOCK_CMD;
@@ -1217,7 +1211,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 			if (SvUl::ConvertTo(SvUl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
 			{
 				hr = GetStatusPort(status);
-				if (0 == (status & 128))
+				if (S_OK == hr && 0 != (status & 128))
 				{
 					hr = S_FALSE;
 				}
@@ -1283,7 +1277,10 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 								}
 								hr = GetStatusPort(status);
 							}
-							hr = SetControlPort(static_cast<unsigned char>(nVal | lControl));
+							if (S_OK == hr)
+							{
+								hr = SetControlPort(static_cast<unsigned char>(nVal | lControl));
+							}
 						}
 					}
 				}
@@ -1315,14 +1312,14 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 							}
 							hr = GetStatusPort(status);
 						}
-						if (lBit < 0)
+						if (S_OK == hr && lBit < 0)
 						{
 							unsigned char value;
-								hr = GetDataPort(value);
-								if (S_OK == hr)
-								{
-									rlValue = static_cast<long>(value);
-								}
+							hr = GetDataPort(value);
+							if (S_OK == hr)
+							{
+								rlValue = static_cast<long>(value);
+							}
 						}
 						else
 						{

@@ -19,10 +19,7 @@ namespace Tec
 void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, TriggerType triggerType, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData)
 {
 	g_pPowerLink = std::make_unique<PowerlinkConnection>(reportTrigger, triggerType, plcNodeID, plcTransferTime, rAdditionalData);
-	if(nullptr != g_pPowerLink)
-	{
-		::OutputDebugString("Start Trigger Engine!\n");
-	}
+	::OutputDebugString("Start Trigger Engine!\n");
 }
 
 void stopTriggerEngine()

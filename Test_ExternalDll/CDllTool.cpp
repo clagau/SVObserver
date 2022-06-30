@@ -93,8 +93,11 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 			aIndex[0] = x;
 			aIndex[1] = y;
 			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, 1);
-			assert(hr == S_OK); 	UNREFERENCED_PARAMETER(hr);
-
+			assert(hr == S_OK);
+			if (S_OK != hr)
+			{
+				::OutputDebugString("Error in function MultiDimSetAt");
+			}
 		}
 	}
 	inputDefEx[InputValue_TABLE_ARRAY].vt = VT_ARRAY | VT_R8;
@@ -489,12 +492,16 @@ HRESULT CDllTool::run_copyTableInput2Output()
 		m_ResultTables[FirstResultTable].vt = VT_EMPTY;
 	}
 
-	ATLASSERT(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
+	assert(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
 		int dim = saInput.GetDimensions();
-		assert(dim == 2);	UNREFERENCED_PARAMETER(dim);
+		assert(dim == 2);
+		if (dim != 2)
+		{
+			::OutputDebugString("Input array not dimension size 2!");
+		}
 		unsigned long NX = saInput.GetCount();
 		unsigned long NY = saInput.GetCount(1);
 		if (NX > 0 && NY > 0)
@@ -510,13 +517,17 @@ HRESULT CDllTool::run_copyTableInput2Output()
 					aIndex[1] = y;
 					double val {0};
 
-					if (x < NX && y < NY)
+					if (x < NX)
 					{
 						saInput.MultiDimGetAt(aIndex, val);
 					}
 
 					HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
-					ATLASSERT(hr == S_OK);	UNREFERENCED_PARAMETER(hr);
+					assert(S_OK == hr);
+					if (S_OK != hr)
+					{
+						::OutputDebugString("Error in function MultiDimSetAt");
+					}
 				}
 			}
 
@@ -534,12 +545,16 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 
 
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].Clear();
-	ATLASSERT(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
+	assert(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
 		int dim = saInput.GetDimensions();
-		assert(dim == 2);	UNREFERENCED_PARAMETER(dim);
+		assert(dim == 2);
+		if (dim != 2)
+		{
+			::OutputDebugString("Input array not dimension size 2!");
+		}
 		int NX = saInput.GetCount();
 		int NY = saInput.GetCount(1);
 
@@ -586,10 +601,12 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 	{
 		CComSafeArray<BSTR> saInput((m_aInputValues[InputValue_TABLE_NAMES].parray));
 		int dim = saInput.GetDimensions();
-		assert(dim == 1);	UNREFERENCED_PARAMETER(dim);
+		assert(dim == 1);
+		if (dim != 1)
+		{
+			::OutputDebugString("Input array not dimension size 1!");
+		}
 		int len = saInput.GetCount();
-		std::stringstream sts;
-		//::OutputDebugString(" Table Names\n");
 
 		for (int y = 0; y < len; y++)
 		{
@@ -628,14 +645,14 @@ HRESULT CDllTool::run()
 
 	_bstr_t inputstring = m_aInputValues[InputValue_BSTR].bstrVal;
 	std::wstring output = L"Input: ";
-	output += (wchar_t*)inputstring;
+	output += static_cast<wchar_t*> (inputstring);
 
 	m_aResultValues[ResultValue_BSTR] = _bstr_t(output.c_str());
 	long Select = m_aInputValues[InputValue_LONG_TABLE_SELECT];
 
 	m_aResultValues[ResultValue_DOUBLE_ARRAY].Clear();
 
-	ATLASSERT(m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8));
+	assert(m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		int inputarrayLen = 0;
@@ -660,14 +677,12 @@ HRESULT CDllTool::run()
 
 	m_aResultValues[ResultValue_INT_ARRAY].Clear();
 
-	ATLASSERT(m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4));
+	assert(m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4));
 	if (m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))
 	{
-		int inputarrayLen = 0;
-
 		CComSafeArray<int> saInput((m_aInputValues[InputValue_INT_ARRAY].parray));
 
-		inputarrayLen = saInput.GetCount();
+		int inputarrayLen = saInput.GetCount();
 
 
 		//copy input to output 
@@ -684,7 +699,7 @@ HRESULT CDllTool::run()
 		}
 	}
 
-	ATLASSERT(m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8));
+	assert(m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8))
 	{
 		double out {0};
@@ -698,7 +713,7 @@ HRESULT CDllTool::run()
 		{
 			out += saInput[i];
 		}
-		//m_aResultValues[ResultValue_DOUBLE].dblVal += out;
+		m_aResultValues[ResultValue_DOUBLE].dblVal += out;
 	}
 
 	run_copySelectedTableInput2Output(Select);

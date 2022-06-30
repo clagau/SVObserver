@@ -50,13 +50,8 @@ static char THIS_FILE[] = __FILE__;
 
 // Create a tab item 
 TTabItem::TTabItem(CWnd *pParent, LPCTSTR szLabel, HICON hIcon)
+	:m_hIcon{hIcon}
 {
-	m_pWnd = nullptr;
-	m_nMinX = m_nMaxX = 0;
-	m_bVisible = TRUE;
-	m_bEnabled = TRUE;
-	m_bWndEnabled = TRUE;
-	m_hIcon = hIcon;
 	RECT rect;
 	::ZeroMemory(&rect, sizeof(RECT));
 	m_pCaption = new CStatic;
@@ -69,25 +64,25 @@ TTabItem::TTabItem(const TTabItem& obj)
 	*this = obj;
 }
 
-TTabItem& TTabItem::operator=(const TTabItem& obj)
+TTabItem& TTabItem::operator=(const TTabItem& rRhs)
 {
-	m_pWnd = obj.m_pWnd;
-	m_pCaption = obj.m_pCaption;
-	m_bWndEnabled = obj.m_bWndEnabled;
-	m_bEnabled = obj.m_bEnabled;
-	m_bVisible = obj.m_bVisible;
-	m_nMinX = obj.m_nMinX;
-	m_nMaxX = obj.m_nMaxX;
+	m_pWnd = rRhs.m_pWnd;
+	m_pCaption = rRhs.m_pCaption;
+	m_bWndEnabled = rRhs.m_bWndEnabled;
+	m_bEnabled = rRhs.m_bEnabled;
+	m_bVisible = rRhs.m_bVisible;
+	m_nMinX = rRhs.m_nMinX;
+	m_nMaxX = rRhs.m_nMaxX;
 	return *this;
 }
 
 TTabItem::~TTabItem()
 {
-	// This is done in TVisualFramework::Destroy()
-	//if (m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)))
-	//  delete m_pWnd;
 	assert(m_pCaption);
-	delete m_pCaption;
+	if (nullptr != m_pCaption)
+	{
+		delete m_pCaption;
+	}
 }
 
 // Set rectangle for tab caption
@@ -215,12 +210,11 @@ TTabWnd::~TTabWnd()
 TTabItem *TTabWnd::findTabItem(int nIndex)
 {
 	int nNdx = 0;
-	TTabItemList::iterator iterator;
-	for (iterator = m_TabList.begin(); iterator != m_TabList.end(); iterator++)
+	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
 	{
 		if (nNdx == nIndex)
 			return (*iterator);
-		nNdx++;
+		++nNdx;
 	}
 	return nullptr;
 }
@@ -238,8 +232,9 @@ BOOL TTabWnd::Create(LPCTSTR, LPCTSTR lpszWindowName,
 		return FALSE;
 	if (pParentWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)))
 	{
-		((CFrameWnd*)pParentWnd)->ModifyStyleEx(WS_EX_CLIENTEDGE, 0, SWP_FRAMECHANGED);
-		((CFrameWnd*)pParentWnd)->RecalcLayout();
+		CFrameWnd* pFrameWnd = static_cast<CFrameWnd*> (pParentWnd);
+		pFrameWnd->ModifyStyleEx(WS_EX_CLIENTEDGE, 0, SWP_FRAMECHANGED);
+		pFrameWnd->RecalcLayout();
 	}
 	ResizeTab();
 	return TRUE;
@@ -257,8 +252,7 @@ int TTabWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void TTabWnd::OnDestroy()
 {
 	CWnd::OnDestroy();
-	TTabItemList::iterator iterator;
-	for (iterator = m_TabList.begin(); iterator != m_TabList.end(); iterator++)
+	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
 	{
 		delete (*iterator);
 	}
@@ -303,8 +297,7 @@ TTabItem *TTabWnd::addTab(CWnd *pWnd, LPCTSTR szLabel)
 int TTabWnd::GetTabLength()
 {
 	int nLength = 0;
-	TTabItemList::iterator iterator;
-	for (iterator = m_TabList.begin(); iterator != m_TabList.end(); iterator++)
+	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
 	{
 		nLength += (*iterator)->GetLength();
 	}
@@ -329,11 +322,9 @@ int TTabWnd::GetTabIndex(CWnd *pWnd)
 	assert(pWnd);
 
 	int nIndex = 0;
-	TTabItem *pItem;
-	TTabItemList::iterator iterator;
-	for (iterator = m_TabList.begin(); iterator != m_TabList.end(); iterator++)
+	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
 	{
-		pItem = *iterator;
+		TTabItem* pItem = *iterator;
 		if (pItem->m_pWnd == pWnd)
 			return nIndex;
 		nIndex++;
@@ -748,8 +739,7 @@ void TTabWnd::OnPaint()
 	drawClient(&dc, client);
 
 	int x = 0, nIndex = 0;
-	TTabItemList::iterator iterator;
-	for (iterator = m_TabList.begin(); iterator != m_TabList.end(); iterator++)
+	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
 	{
 		TTabItem *pItem = *iterator;
 		assert(nullptr != pItem);
@@ -806,8 +796,7 @@ int TTabWnd::HitTest(int x, int y)
 	};
 
 	int nIndex = 0;
-	TTabItemList::iterator iterator;
-	for (iterator = m_TabList.begin(); iterator != m_TabList.end(); iterator++)
+	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
 	{
 		TTabItem *pItem = (*iterator);
 		if (pItem->m_bEnabled && pItem->m_bVisible)
@@ -863,7 +852,7 @@ BOOL TTabWnd::SetActivePane(int nIndex, BOOL bActivate)
 			while (pParent && !pParent->IsKindOf(RUNTIME_CLASS(CFrameWnd)))
 				pParent = pParent->GetParent();
 			assert(nullptr != pParent);
-			updateFrame((CFrameWnd*)pParent, pNewPane->m_pWnd);
+			updateFrame(static_cast<CFrameWnd*> (pParent), pNewPane->m_pWnd);
 		}
 		return TRUE;
 	}
@@ -879,21 +868,20 @@ BOOL TTabWnd::updateFrame(CFrameWnd *pFrame, CWnd *pWnd)
 	if (pWnd->IsKindOf(RUNTIME_CLASS(CView)))
 	{
 		// New tab item is a view
-		pFrame->SetActiveView((CView*)pWnd);
+		pFrame->SetActiveView(static_cast<CView*> (pWnd));
 		return TRUE;
 	}
 	else if (pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)))
 	{
-		CSplitterWnd *pSplitter = (CSplitterWnd*)pWnd;
+		CSplitterWnd *pSplitter = static_cast<CSplitterWnd*> (pWnd);
 		CWnd *pView = pSplitter->GetActivePane();
 		if (nullptr == pView)
 		{
-			CWnd *pTmpView;
-			for (int x = 0; x < pSplitter->GetRowCount(); x++)
+			for (int x = 0; x < pSplitter->GetRowCount(); ++x)
 			{
-				for (int y = 0; y < pSplitter->GetColumnCount(); y++)
+				for (int y = 0; y < pSplitter->GetColumnCount(); ++y)
 				{
-					pTmpView = pSplitter->GetPane(x, y);
+					CWnd* pTmpView = pSplitter->GetPane(x, y);
 					if (pTmpView->IsWindowEnabled())
 					{
 						if (updateFrame(pFrame, pTmpView))
@@ -901,14 +889,13 @@ BOOL TTabWnd::updateFrame(CFrameWnd *pFrame, CWnd *pWnd)
 					}
 				}
 			}
-		}
-		if (nullptr == pView)
 			pView = pSplitter->GetPane(0, 0);
-		pFrame->SetActiveView((CView*)pView);
+		}
+		pFrame->SetActiveView(static_cast<CView*> (pView));
 	}
 	else if (pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
-		TTabWnd *pTab = (TTabWnd*)pWnd;
+		TTabWnd *pTab = static_cast<TTabWnd*> (pWnd);
 		int nIndex = pTab->GetTabIndex();
 		CWnd *pTabWnd = pTab->GetTabWnd(nIndex);
 		if (updateFrame(pFrame, pTabWnd))
@@ -921,23 +908,22 @@ BOOL TTabWnd::updateFrame(CFrameWnd *pFrame, CWnd *pWnd)
 void TTabWnd::ResizeTab(int cx, int cy)
 {
 	CRect rect;
-	CWnd *pParent = (CWnd*)GetParent();
+	CWnd *pParent = GetParent();
 	assert(pParent);
 	pParent->GetClientRect(&rect);
 
 	if (pParent->IsKindOf(RUNTIME_CLASS(CSplitterWnd)))
 	{
-		CSplitterWnd *splitter = (CSplitterWnd*)pParent;
-		assert(pParent);
+		CSplitterWnd* pSplitter = static_cast<CSplitterWnd*> (pParent);
 		int iRowCount, iColCount;
-		iRowCount = splitter->GetRowCount();
-		iColCount = splitter->GetColumnCount();
+		iRowCount = pSplitter->GetRowCount();
+		iColCount = pSplitter->GetColumnCount();
 		BOOL aDoRecalc = TRUE;
-		for (int iCol = 0; iCol < iColCount; iCol++)
+		for (int iCol = 0; iCol < iColCount; ++iCol)
 		{
-			for (int iRow = 0; iRow < iRowCount; iRow++)
+			for (int iRow = 0; iRow < iRowCount; ++iRow)
 			{
-				if (nullptr == GetDlgItem(splitter->IdFromRowCol(iRow, iCol)))
+				if (nullptr == GetDlgItem(pSplitter->IdFromRowCol(iRow, iCol)))
 				{
 					aDoRecalc = FALSE;
 					break;
@@ -948,7 +934,7 @@ void TTabWnd::ResizeTab(int cx, int cy)
 		}
 		if (aDoRecalc)
 		{
-			splitter->RecalcLayout();
+			pSplitter->RecalcLayout();
 		}
 	}
 	else if (pParent->IsKindOf(RUNTIME_CLASS(CFrameWnd)))
@@ -960,11 +946,9 @@ void TTabWnd::ResizeTab(int cx, int cy)
 	}
 
 	m_bLockFlag = TRUE; // reentrancy check (might get called recursivly from OnSize)
-	CWnd *pWnd;
-	TTabItemList::iterator iterator;
-	for (iterator = m_TabList.begin(); iterator != m_TabList.end(); iterator++)
+	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
 	{
-		pWnd = (*iterator)->m_pWnd;
+		CWnd* pWnd = (*iterator)->m_pWnd;
 		if (cx == -1 && cy == -1)
 		{
 			switch (m_nTabPos)
@@ -1050,7 +1034,7 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, CRuntimeClass *pViewClass,
 	CRect rect, client;
 	assert(pViewClass && pContext);
 
-	CWnd *pWnd = (CWnd*)pViewClass->CreateObject();
+	CWnd *pWnd = static_cast<CWnd*> (pViewClass->CreateObject());
 	if (!pWnd)
 		return nullptr;
 
@@ -1096,7 +1080,7 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, int nRows, int nCols,
 	int dwStyle = AFX_WS_DEFAULT_VIEW;
 	dwStyle &= ~WS_BORDER;
 
-	CSplitterWnd *pSplitter = (CSplitterWnd*)pWnd;
+	CSplitterWnd *pSplitter = static_cast<CSplitterWnd*> (pWnd);
 	if (!pSplitter->CreateStatic(this, nRows, nCols, dwStyle, nID))
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_VISUALFX)
@@ -1572,8 +1556,7 @@ TVisualFramework::~TVisualFramework()
 // Find an object in the map with the specified unique id
 TVisualObject *TVisualFramework::findObject(DWORD dwId)
 {
-	TVisualObjectMap::iterator iterator;
-	for (iterator = m_ObjectMap.begin(); iterator != m_ObjectMap.end(); iterator++)
+	for (auto iterator = m_ObjectMap.begin(); iterator != m_ObjectMap.end(); ++iterator)
 	{
 		if (dwId == iterator->first)
 			return iterator->second;
@@ -1584,8 +1567,7 @@ TVisualObject *TVisualFramework::findObject(DWORD dwId)
 // Find an object in the map with the specified window
 TVisualObject *TVisualFramework::findObject(CWnd *pWnd)
 {
-	TVisualObjectMap::iterator iterator;
-	for (iterator = m_ObjectMap.begin(); iterator != m_ObjectMap.end(); iterator++)
+	for (auto iterator = m_ObjectMap.begin(); iterator != m_ObjectMap.end(); ++iterator)
 	{
 		if (pWnd == iterator->second->m_pWnd)
 			return iterator->second;
@@ -1687,8 +1669,7 @@ BOOL TVisualFramework::Create(CWnd *pWnd)
 	// Walk thru visual object hierarchy and create windows
 	BOOL rc;
 	TVisualObject *pObject;
-	TVisualObjectList::iterator it;
-	for (it = m_ObjectList.begin(); it != m_ObjectList.end(); it++)
+	for (auto it = m_ObjectList.begin(); it != m_ObjectList.end(); ++it)
 	{
 		pObject = *it;
 		rc = execCreate(pWnd, pObject);
@@ -1703,8 +1684,7 @@ BOOL TVisualFramework::Create(CWnd *pWnd)
 
 	// Walk thru the map and find first object that can be focused
 	// Then set focus
-	TVisualObjectMap::iterator mapit;
-	for (mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); mapit++)
+	for (auto mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); ++mapit)
 	{
 		pObject = mapit->second;
 		if (pObject->CanFocus())
@@ -1718,21 +1698,19 @@ BOOL TVisualFramework::Create(CWnd *pWnd)
 }
 
 // Destroy all objects in the framework
-void TVisualFramework::Destroy(void)
+void TVisualFramework::Destroy()
 {
 	TVisualObject *pObject;
 
 	// Recursive delete of all objects
-	TVisualObjectList::iterator it;
-	for (it = m_ObjectList.begin(); it != m_ObjectList.end(); it++)
+	for (auto it = m_ObjectList.begin(); it != m_ObjectList.end(); ++it)
 	{
 		pObject = *it;
 		execDestroy(pObject);
 	}
 
 	// Delete pointers in object map
-	TVisualObjectMap::iterator mapit;
-	for (mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); mapit++)
+	for (auto mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); ++mapit)
 	{
 		pObject = mapit->second;
 		delete pObject;
@@ -1751,22 +1729,18 @@ void TVisualFramework::execDestroy(TVisualObject *pObject)
 	{
 		if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		{
-			TVisualObject *pObj;
-			TVisualObjectList::iterator it;
-			for (it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); it++)
+			for (auto it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); ++it)
 			{
-				pObj = *it;
+				TVisualObject* pObj = *it;
 				execDestroy(pObj);
 			}
 			pObject->Destroy(TRUE);
 		}
 		else if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)))
 		{
-			TVisualObject *pObj;
-			TVisualObjectList::iterator it;
-			for (it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); it++)
+			for (auto it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); ++it)
 			{
-				pObj = *it;
+				TVisualObject* pObj = *it;
 				execDestroy(pObj);
 			}
 			pObject->Destroy(TRUE);
@@ -1777,8 +1751,7 @@ void TVisualFramework::execDestroy(TVisualObject *pObject)
 void TVisualFramework::Remove(TVisualObject *pObject)
 {
 	execDestroy(pObject);
-	TVisualObjectList::iterator it;
-	for (it = m_ObjectList.begin(); it != m_ObjectList.end(); it++)
+	for (auto it = m_ObjectList.begin(); it != m_ObjectList.end(); ++it)
 	{
 		if (pObject == *it)
 		{
@@ -1787,8 +1760,7 @@ void TVisualFramework::Remove(TVisualObject *pObject)
 	}
 
 	// Delete pointers in object map
-	TVisualObjectMap::iterator mapit;
-	for (mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); mapit++)
+	for (auto mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); ++mapit)
 	{
 		if (pObject == mapit->second)
 		{
@@ -1841,7 +1813,7 @@ BOOL TVisualFramework::execCreateView(CWnd *pWnd, TVisualObject *pObject)
 	assert(pObject->m_pContext);
 	assert(pObject->m_pRuntimeClass);
 
-	CFrameWnd *pFrame = (CFrameWnd*)pWnd;
+	CFrameWnd *pFrame = static_cast<CFrameWnd*> (pWnd);
 	pObject->m_pContext->m_pNewViewClass = pObject->m_pRuntimeClass;
 	pObject->m_pWnd = pFrame->CreateView(pObject->m_pContext);
 	assert(pObject->m_pWnd);
@@ -1863,9 +1835,8 @@ BOOL TVisualFramework::execCreateTabView(CWnd *pWnd, TVisualObject *pObject)
 	assert(pObject->m_pRuntimeClass);
 	assert(!pObject->m_strTitle.IsEmpty());
 
-	TTabWnd *pTab = (TTabWnd*)pWnd;
-	TTabItem *pItem;
-	pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_pRuntimeClass,
+	TTabWnd *pTab = static_cast<TTabWnd*> (pWnd);
+	TTabItem* pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_pRuntimeClass,
 							 pObject->m_pContext);
 	assert(pItem);
 	pItem->SetIcon(pObject->GetIcon());
@@ -1891,8 +1862,8 @@ BOOL TVisualFramework::execCreateSplitter(CWnd *pWnd, TVisualObject *pObject)
 
 	if (pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
-		TTabWnd *pTab = (TTabWnd*)pWnd;
-		TTabItem *pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_nRows,
+		TTabWnd* pTab = static_cast<TTabWnd*> (pWnd);
+		TTabItem* pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_nRows,
 										   pObject->m_nCols, pObject->m_pWnd);
 		pItem->SetIcon(pObject->GetIcon());
 		assert(::IsWindow(pObject->m_pWnd->m_hWnd));
@@ -1900,13 +1871,13 @@ BOOL TVisualFramework::execCreateSplitter(CWnd *pWnd, TVisualObject *pObject)
 	}
 	else if (pWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)))
 	{
-		((CSplitterWnd*)pObject->m_pWnd)->CreateStatic(pWnd, pObject->m_nRows, pObject->m_nCols);
+		CSplitterWnd* pSplitter = static_cast<CSplitterWnd*> (pObject->m_pWnd);
+		pSplitter->CreateStatic(pWnd, pObject->m_nRows, pObject->m_nCols);
 		assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 		pObject->m_pParent = pWnd;
 	}
 	setTabWndProperties(pObject);
-	TVisualObjectList::iterator it;
-	for (it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); it++)
+	for (auto it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); ++it)
 	{
 		execCreate(pObject->m_pWnd, *it);
 	}
@@ -1920,7 +1891,7 @@ BOOL TVisualFramework::execCreateSplitterView(CWnd *pWnd, TVisualObject *pObject
 	assert(pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
 	assert(pObject);
 
-	CSplitterWnd *pSplitter = (CSplitterWnd*)pWnd;
+	CSplitterWnd* pSplitter = static_cast<CSplitterWnd*> (pWnd);
 	pSplitter->CreateView(pObject->m_nRowIndex, pObject->m_nColIndex,
 						  pObject->m_pRuntimeClass, pObject->m_Size,
 						  pObject->m_pContext);
@@ -1929,8 +1900,7 @@ BOOL TVisualFramework::execCreateSplitterView(CWnd *pWnd, TVisualObject *pObject
 	assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 	pObject->m_pParent = pSplitter;
 	setTabWndProperties(pObject);
-	TVisualObjectList::iterator it;
-	for (it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); it++)
+	for (auto it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); ++it)
 	{
 		execCreate(pObject->m_pWnd, *it);
 	}
@@ -1943,20 +1913,19 @@ BOOL TVisualFramework::execCreateSplitterSplitter(CWnd *pWnd, TVisualObject *pOb
 	assert(pWnd);
 	assert(pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
 
-	CSplitterWnd *pParent = (CSplitterWnd*)pWnd;
+	CSplitterWnd* pParent = static_cast<CSplitterWnd*> (pWnd);
 	// Cannot use pObject->m_pRuntimeClass->CreateObject() since splitters 
 	// do not support dynamic creation
 	pObject->m_pWnd = CreateSplitter(pObject->m_dwId);
 	assert(pObject->m_pWnd);
 	assert(pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
-	CSplitterWnd *pSplitter = (CSplitterWnd*)pObject->m_pWnd;
+	CSplitterWnd *pSplitter = static_cast<CSplitterWnd*> (pObject->m_pWnd);
 	pSplitter->CreateStatic(pParent, pObject->m_nRows, pObject->m_nCols,
 							WS_CHILD | WS_VISIBLE | WS_BORDER,
 							pParent->IdFromRowCol(pObject->m_nRowIndex, pObject->m_nColIndex));
 	assert(::IsWindow(pSplitter->m_hWnd));
 	pObject->m_pParent = pParent;
-	TVisualObjectList::iterator it;
-	for (it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); it++)
+	for (auto it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); ++it)
 	{
 		execCreate(pObject->m_pWnd, *it);
 	}
@@ -1971,9 +1940,8 @@ BOOL TVisualFramework::execCreateTabWnd(CWnd *pWnd, TVisualObject *pObject)
 
 	if (pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
-		TTabWnd *pTab = (TTabWnd*)pWnd;
-		TTabItem *pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_pRuntimeClass,
-										   pObject->m_pContext);
+		TTabWnd* pTab = static_cast<TTabWnd*> (pWnd);
+		TTabItem* pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_pRuntimeClass, pObject->m_pContext);
 		pItem->SetIcon(pObject->GetIcon());
 		assert(pItem);
 		pObject->m_pWnd = pItem->GetSafeWnd();
@@ -1985,7 +1953,7 @@ BOOL TVisualFramework::execCreateTabWnd(CWnd *pWnd, TVisualObject *pObject)
 	else
 	{
 		CRect rect;
-		pObject->m_pWnd = (CWnd*)pObject->m_pRuntimeClass->CreateObject();
+		pObject->m_pWnd = static_cast<CWnd*> (pObject->m_pRuntimeClass->CreateObject());
 		assert(pObject->m_pWnd);
 		pObject->m_pParent = pWnd;
 		pObject->m_pWnd->Create(nullptr, _T(""), WS_VISIBLE | WS_CHILD,
@@ -1993,11 +1961,10 @@ BOOL TVisualFramework::execCreateTabWnd(CWnd *pWnd, TVisualObject *pObject)
 		assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 		setTabWndProperties(pObject);
 	}
-	TVisualObject *pObj;
-	TVisualObjectList::iterator it;
-	for (it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); it++)
+	
+	for (auto it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); ++it)
 	{
-		pObj = *it;
+		TVisualObject* pObj = *it;
 		execCreate(pObject->m_pWnd, pObj);
 	}
 	return TRUE;
@@ -2012,7 +1979,7 @@ void TVisualFramework::setTabWndProperties(TVisualObject *pObject)
 	// If this is a tab window then set the position of tabs
 	if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
-		TTabWnd *pTab = (TTabWnd*)pObject->m_pWnd;
+		TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pWnd);
 		if (pObject->m_dwStyle & TVisualObject::TOS_TABTOP)
 			pTab->SetTabPos(TTabWnd::TP_TOP);
 		else if (pObject->m_dwStyle & TVisualObject::TOS_TABBOTTOM)
@@ -2024,7 +1991,7 @@ void TVisualFramework::setTabWndProperties(TVisualObject *pObject)
 	assert(pObject->m_pParent);
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
-		TTabWnd *pTab = (TTabWnd*)pObject->m_pParent;
+		TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pParent);
 		if (pObject->m_dwStyle & TVisualObject::TOS_SELECTED)
 		{
 			int nIndex = pTab->GetTabIndex(pObject->m_pWnd);
@@ -2062,7 +2029,7 @@ CWnd *TVisualFramework::GetObject(DWORD dwId)
 DWORD TVisualFramework::GetObject(CWnd *pWnd)
 {
 	assert(pWnd);
-	TVisualObject *pObject = findObject(pWnd);
+	TVisualObject* pObject = findObject(pWnd);
 	if (nullptr == pObject)
 		return 0;
 	return pObject->m_dwId;
@@ -2090,7 +2057,7 @@ TVisualObject *TVisualFramework::GetActiveTab(TVisualObject *pObject)
 	if (!pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		return nullptr;
 
-	TTabWnd *pTab = (TTabWnd*)pObject->m_pWnd;
+	TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pWnd);
 	int nIndex = pTab->GetTabIndex();
 	CWnd *pWnd = pTab->GetTabWnd(nIndex);
 	assert(pWnd);
@@ -2109,7 +2076,7 @@ BOOL TVisualFramework::SetActiveTab(TVisualObject *pObject)
 	if (!pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		return FALSE;
 
-	TTabWnd *pTab = (TTabWnd*)pObject->m_pParent;
+	TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pParent);
 	int nIndex = pTab->GetTabIndex(pObject->m_pWnd);
 	return pTab->SetActivePane(nIndex, FALSE);
 }
@@ -2182,18 +2149,16 @@ void TVisualFramework::SetFont(CFont *pFont)
 {
 	assert(pFont);
 
-	TVisualObject *pObject;
-	TVisualObjectMap::iterator mapit;
-	for (mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); mapit++)
+	for (auto mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); ++mapit)
 	{
-		pObject = mapit->second;
+		TVisualObject* pObject = mapit->second;
 		if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		{
-			((TTabWnd*)pObject->m_pWnd)->SetFont(pFont);
+			(static_cast<TTabWnd*> (pObject->m_pWnd))->SetFont(pFont);
 		}
 		else if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TVisualFormView)))
 		{
-			((TVisualFormView*)pObject->m_pWnd)->SetFont(pFont);
+			(static_cast<TVisualFormView*> (pObject->m_pWnd))->SetFont(pFont);
 		}
 		else
 		{
@@ -2249,13 +2214,12 @@ BOOL TVisualFramework::SetActivePane(TVisualObject *pObject)
 	list.reverse();
 
 	// Now, walk thru the list and set focus as desired
-	TVisualObjectList::iterator it;
-	for (it = list.begin(); it != list.end(); it++)
+	for (auto it = list.begin(); it != list.end(); ++it)
 	{
 		pObj = *it;
 		if (pObj->m_pOwner && pObj->m_pOwner->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		{
-			TTabWnd *pTab = (TTabWnd*)pObj->m_pOwner->m_pWnd;
+			TTabWnd* pTab = static_cast<TTabWnd*> (pObj->m_pOwner->m_pWnd);
 			int nIndex = pTab->GetTabIndex(pObj->m_pWnd);
 			if (!pTab->SetActivePane(nIndex))
 				return FALSE;
@@ -2263,8 +2227,8 @@ BOOL TVisualFramework::SetActivePane(TVisualObject *pObject)
 	}
 
 	// Update framework owner
-	CFrameWnd *pFrame = (CFrameWnd*)m_pOwner;
-	pFrame->SetActiveView((CView*)pObject->m_pWnd);
+	CFrameWnd* pFrame = static_cast<CFrameWnd*> (m_pOwner);
+	pFrame->SetActiveView(static_cast<CView*> (pObject->m_pWnd));
 
 	return TRUE;
 }
@@ -2272,7 +2236,7 @@ BOOL TVisualFramework::SetActivePane(TVisualObject *pObject)
 // Return a pointer to visual object that represents the currently active pane
 TVisualObject *TVisualFramework::GetActivePane(void)
 {
-	CFrameWnd *pFrame = (CFrameWnd*)m_pOwner;
+	CFrameWnd *pFrame = static_cast<CFrameWnd*> (m_pOwner);
 	assert(pFrame);
 	CView *pView = pFrame->GetActiveView();
 	assert(pView);
@@ -2291,7 +2255,7 @@ BOOL TVisualFramework::Enable(TVisualObject *pObject, BOOL bEnable)
 		pObject->m_pWnd->EnableWindow(bEnable);
 		if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		{
-			TTabWnd *pTab = (TTabWnd*)pObject->m_pParent;
+			TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pParent);
 			int nIndex = pTab->GetTabIndex(pObject->m_pWnd);
 			pTab->Enable(nIndex, bEnable);
 		}
@@ -2310,7 +2274,7 @@ BOOL TVisualFramework::EnableTab(TVisualObject *pObject, BOOL bEnable)
 	// Check if parent is a tab window
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
-		TTabWnd *pTab = (TTabWnd*)pObject->m_pParent;
+		TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pParent);
 		int nIndex = pTab->GetTabIndex(pObject->m_pWnd);
 		if (nIndex == pTab->GetTabIndex())
 			return FALSE;
@@ -2331,7 +2295,7 @@ BOOL TVisualFramework::ShowTab(TVisualObject *pObject, BOOL bShow)
 	if (!pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		return FALSE;
 
-	TTabWnd *pTab = (TTabWnd*)pObject->m_pParent;
+	TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pParent);
 	int nIndex = pTab->GetTabIndex(pObject->m_pWnd);
 	if (nIndex == pTab->GetTabIndex())
 		return FALSE;
@@ -2361,7 +2325,7 @@ BOOL TVisualFramework::IsTabEnabled(TVisualObject *pObject, BOOL& bEnabled)
 
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
-		TTabWnd *pTab = (TTabWnd*)pObject->m_pParent;
+		TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pParent);
 		int nIndex = pTab->GetTabIndex(pObject->m_pWnd);
 		bEnabled = pTab->IsTabEnabled(nIndex);
 		return TRUE;
@@ -2379,7 +2343,7 @@ BOOL TVisualFramework::IsTabVisible(TVisualObject *pObject, BOOL& bVisible)
 
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
-		TTabWnd *pTab = (TTabWnd*)pObject->m_pParent;
+		TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pParent);
 		int nIndex = pTab->GetTabIndex(pObject->m_pWnd);
 		bVisible = pTab->IsTabVisible(nIndex);
 		return TRUE;
@@ -2414,7 +2378,7 @@ BOOL TVisualFramework::ProcessMessage(MSG *pMsg)
 					pObject = pObject->m_pOwner;
 				if (pObject)
 				{
-					TTabWnd *pTab = (TTabWnd*)pObject->m_pWnd;
+					TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pWnd);
 					BOOL bShift = (::GetAsyncKeyState(VK_SHIFT) != 0);
 					int nIndex = pTab->GetTabIndex();
 					int nNdx = nIndex;
@@ -2442,12 +2406,9 @@ BOOL TVisualFramework::ProcessMessage(MSG *pMsg)
 	}
 	else if (pMsg->message == WM_SYSKEYDOWN)
 	{
-		// Handle hot keys for views (if defined)
-		TVisualObject *pObject;
-		TVisualObjectMap::iterator mapit;
-		for (mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); mapit++)
+		for (auto mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); ++mapit)
 		{
-			pObject = mapit->second;
+			TVisualObject* pObject = mapit->second;
 			if (pObject->m_cHotKey == pMsg->wParam)
 			{
 				if (SetActivePane(pObject))
@@ -2459,8 +2420,7 @@ BOOL TVisualFramework::ProcessMessage(MSG *pMsg)
 	return FALSE;
 }
 
-BOOL TVisualFramework::OnCmdMsg(UINT nID, int nCode, void* pExtra,
-								AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL TVisualFramework::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// TODO: Add your specialized code here and/or call the base class
 
@@ -2512,9 +2472,9 @@ void TVisualFormView::OnEnable(BOOL bEnable)
 // lParam is a pointer to CFont object
 BOOL __stdcall setChildFont(HWND hwnd, LPARAM lparam)
 {
-	CFont *pFont = (CFont*)lparam;
+	CFont* pFont = reinterpret_cast<CFont*> (lparam);
 	assert(pFont);
-	CWnd *pWnd = CWnd::FromHandle(hwnd);
+	CWnd* pWnd = CWnd::FromHandle(hwnd);
 	assert(pWnd);
 	pWnd->SetFont(pFont);
 	return TRUE;
@@ -2523,7 +2483,7 @@ BOOL __stdcall setChildFont(HWND hwnd, LPARAM lparam)
 // lParam is a BOOL
 BOOL __stdcall setChildEnabled(HWND hwnd, LPARAM lparam)
 {
-	BOOL bEnabled = (BOOL)lparam;
+	BOOL bEnabled = static_cast<BOOL> (lparam);
 	CWnd *pWnd = CWnd::FromHandle(hwnd);
 	assert(pWnd);
 	pWnd->EnableWindow(bEnabled);

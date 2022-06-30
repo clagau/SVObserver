@@ -58,7 +58,7 @@ class SVRPropertyItemFile : public CEdit, public SVRPropertyItem
 // Construction
 public:
     SVRPropertyItemFile(bool bFullAccess, DWORD dwFlags, LPCTSTR sFilter = nullptr, LPCTSTR sInitialDir = nullptr, BOOL bSetDir = false);
-	virtual ~SVRPropertyItemFile();
+	virtual ~SVRPropertyItemFile() = default;
 
 // Attributes
 public:
@@ -99,10 +99,6 @@ public:
 
 	// Generated message map functions
 protected:
-	// @cmember Initialize member variables.
-	void Initialize(void);
-	void ResetControl(void);
-
 	// @cmember Handles a mouse click on the button.
 	void ButtonClicked();
 	
@@ -142,25 +138,25 @@ private:
 	// @cmember Filter for CFileDialog control.
 	std::string	m_Filter;
 	// @cmember Browse button on left side of control?
-	bool m_bButtonLeft;
+	bool m_bButtonLeft {false};
 	// @cmember TRUE while control is being created, FALSE otherwise.
-	bool m_bCreatingControl;
+	bool m_bCreatingControl {true};
 	// @cmember Browse for files or folders?
-	bool m_bFindFolder;
+	bool m_bFindFolder {false};
 	// @cmember Button has captured the mouse?
-	bool m_bMouseCaptured;
+	bool m_bMouseCaptured {false};
 	// @cmember Window text has changed since last time FillBuffers() was called.
-	bool m_bTextChanged;
+	bool m_bTextChanged {true};
 	// @cmember Add a trailing slash to folders?
-	bool m_bTrailingSlash;
+	bool m_bTrailingSlash {false};
 	// @cmember Current button state (up, down, or disabled).
-	int m_nButtonState;
+	int m_nButtonState {0};
 	// @cmember Window coordinates of the button.
-	CRect m_rcButtonRect;
+	CRect m_rcButtonRect {0,0,0,0};
 
-    BOOL m_bInitialDirSet;
+    BOOL m_bInitialDirSet{false};
     std::string m_InitialDir;
-	bool m_bFullAccess;
+	bool m_bFullAccess {false};
 protected:
 	std::string m_Attribute;
 };

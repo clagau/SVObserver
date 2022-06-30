@@ -54,9 +54,8 @@ namespace SvGcl
 	//////////////////////////////////////////////////////////////////////
 
 	GridCellDateTime::GridCellDateTime() : GridCell()
+		,m_cTime{CTime::GetCurrentTime()}
 	{
-		m_dwStyle = 0;
-		m_cTime   = CTime::GetCurrentTime();
 	}
 
 	GridCellDateTime::GridCellDateTime(DWORD dwStyle) : GridCell()
@@ -91,7 +90,10 @@ namespace SvGcl
 
 	void GridCellDateTime::EndEdit()
 	{
-		if (m_pEditWnd) ((InPlaceDateTime*)m_pEditWnd)->EndEdit();
+		if (nullptr != m_pEditWnd)
+		{
+			(static_cast<InPlaceDateTime*> (m_pEditWnd))->EndEdit();
+		}
 	}
 
 	void GridCellDateTime::Init(DWORD dwStyle)

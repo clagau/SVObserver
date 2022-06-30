@@ -37,6 +37,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
+
 namespace
 {
 bool verifyNewName(const std::string& rNewName, uint32_t objectId, std::back_insert_iterator<SvStl::MessageContainerVector> inserter)
@@ -151,7 +152,7 @@ void SVObjectClass::connectObject(uint32_t objectId)
 	if (SvDef::InvalidObjectId != objectId)
 	{
 		std::lock_guard<std::mutex> Autolock(m_inputMutex);
-		SVObjectManagerClass::Instance().connectDependency(getObjectId(), objectId, SvOl::JoinType::Dependent);
+		SVObjectManagerClass::Instance().connectDependency(getObjectId(), objectId, SvOl::JoinType(SvOl::JoinType::Dependent));
 		m_connectedSet.emplace(objectId);
 	}
 }
@@ -166,7 +167,7 @@ void SVObjectClass::disconnectObject(uint32_t objectId)
 			auto iter = m_connectedSet.find(objectId);
 			if (m_connectedSet.end() != iter)
 			{
-				SVObjectManagerClass::Instance().disconnectDependency(getObjectId(), objectId, SvOl::JoinType::Dependent);
+				SVObjectManagerClass::Instance().disconnectDependency(getObjectId(), objectId, SvOl::JoinType(SvOl::JoinType::Dependent));
 				m_connectedSet.erase(iter);
 				pObject = SVObjectManagerClass::Instance().GetObject(objectId);
 			}
@@ -492,14 +493,14 @@ bool SVObjectClass::SetObjectOwner(SVObjectClass* pNewOwner)
 	//First disconnect the previous owner
 	if (nullptr != m_pOwner)
 	{
-		SVObjectManagerClass::Instance().disconnectDependency(m_pOwner->getObjectId(), getObjectId(), SvOl::JoinType::Owner);
+		SVObjectManagerClass::Instance().disconnectDependency(m_pOwner->getObjectId(), getObjectId(), SvOl::JoinType(SvOl::JoinType::Owner));
 	}
 
 	m_pOwner = pNewOwner;
 
 	if (nullptr != m_pOwner)
 	{
-		SVObjectManagerClass::Instance().connectDependency(m_pOwner->getObjectId(), getObjectId(), SvOl::JoinType::Owner);
+		SVObjectManagerClass::Instance().connectDependency(m_pOwner->getObjectId(), getObjectId(), SvOl::JoinType(SvOl::JoinType::Owner));
 		return true;
 	}
 	return false;

@@ -62,7 +62,6 @@ END_MESSAGE_MAP()
 SMViewDlg::SMViewDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(SMViewDlg::IDD, pParent)
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void SMViewDlg::DoDataExchange(CDataExchange* pDX)
@@ -101,6 +100,7 @@ BOOL SMViewDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.

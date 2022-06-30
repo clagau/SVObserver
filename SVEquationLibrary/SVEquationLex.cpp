@@ -49,7 +49,7 @@ struct yy_buffer_state* SVEquationLexClass::yy_scan_buffer( char *base, yy_size_
 		/* They forgot to leave room for the EOB's. */
 		return 0;
 
-	b = (struct yy_buffer_state*) yy_flex_alloc( sizeof( struct yy_buffer_state ) );
+	b = static_cast<yy_buffer_state*> (yy_flex_alloc(sizeof(yy_buffer_state)));
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_can_buffer()" );
 
@@ -83,7 +83,7 @@ struct yy_buffer_state* SVEquationLexClass::yy_scan_bytes( const char *bytes, in
 
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = len + 2;
-	buf = (char *) yy_flex_alloc( n );
+	buf = static_cast<char*> (yy_flex_alloc(n));
 	if ( ! buf )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_bytes()" );
 

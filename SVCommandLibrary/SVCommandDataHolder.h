@@ -46,7 +46,7 @@ public:
 	HRESULT GetBlock( const _bstr_t& rName, std::vector<unsigned char>& rData ) const;
 	HRESULT GetImage( const _bstr_t& rName, std::vector<unsigned char>& rData ) const;
 
-	HRESULT SetData( _bstr_t nameBstr, SVCommandDataFacadePtr& rDataPointer);
+	HRESULT SetData( _bstr_t nameBstr, const SVCommandDataFacadePtr& rDataPointer);
 	HRESULT SetContainer( const _bstr_t& rName, const SVCommandDataHolder& rData, bool readOnly = false );
 	HRESULT SetValue( const _bstr_t& rName, const _variant_t& rData, bool ReadOnly = false );
 	HRESULT SetBlock( const _bstr_t& rName, const std::vector<unsigned char>& rData, bool readOnly = false );

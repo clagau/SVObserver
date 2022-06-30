@@ -99,7 +99,7 @@ template < typename TYPE >
 class TTemporaryPointerWrapper
 {
 public:
-	TTemporaryPointerWrapper(TYPE*);
+	explicit TTemporaryPointerWrapper(TYPE*);
 	~TTemporaryPointerWrapper();
 	operator const TYPE*();
 private:
@@ -147,7 +147,9 @@ class TValueSemantics	// enable value semantics of polymorphic types
 {
 public:
 	TValueSemantics();
+	// cppcheck-suppress has a constructor with 1 argument that is not explicit.
 	TValueSemantics(const BASETYPE* pType);
+	// cppcheck-suppress has a constructor with 1 argument that is not explicit.
 	TValueSemantics(const BASETYPE& rType);
 	TValueSemantics(const TValueSemantics<BASETYPE>& rhs);
 	~TValueSemantics();// this class should not be derived from, therefore not virtual
@@ -335,7 +337,7 @@ public:
 	FACTORYBASE* New(const TYPEID& id);
 	FACTORYBASE* New(const TYPEID2& id);
 	bool SetDefault(const TYPEID& id);
-	TDoubleFactory();
+	TDoubleFactory() = default;
 
 	// give const access to type maps ( the whole point of a 2-type factory )
 	typedef std::map<TYPEID, TYPEID2> TypeMapPrimary;
@@ -346,18 +348,12 @@ public:
 	const TypeMapSecondary& SecondaryMap();
 private:
 	typedef std::map<TYPEID, CreateFn> CreateFnMap;
-	TYPEID mDefaultType;
-	bool mbSetDefault;
+	TYPEID mDefaultType {};
+	bool mbSetDefault {false};
 	CreateFnMap mapCreateFn;
 	TypeMapPrimary mapPrimaryType;
 	TypeMapSecondary mapSecondaryType;
 };
-
-template <typename TYPEID, typename TYPEID2, class FACTORYBASE>
-TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::TDoubleFactory()
-{
-	mbSetDefault=false;
-}
 
 template <typename TYPEID, typename TYPEID2, class FACTORYBASE>
 bool TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::Register(const TYPEID& id, const TYPEID2& id2, CreateFn fn)
@@ -426,13 +422,14 @@ FACTORYBASE* TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::New(const TYPEID2& id
 	typename TypeMapSecondary::const_iterator iter = mapSecondaryType.find(id2);
 	if (iter == mapSecondaryType.end())
 	{
+		auto iterCreateFn {mapCreateFn.end()};
 		if ( mbSetDefault )
 		{
 			// try default type
-			iter = mapCreateFn.find(mDefaultType);
+			iterCreateFn = mapCreateFn.find(mDefaultType);
 		}
 
-		if ( iter != mapCreateFn.end() )	// try test again
+		if (mapCreateFn.end() != iterCreateFn)
 		{
 			return New(mDefaultType);
 		}

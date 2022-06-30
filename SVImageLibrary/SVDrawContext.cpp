@@ -23,66 +23,53 @@ static char THIS_FILE[] = __FILE__;
 // Constructor
 ///////////////////////////////////////////////////////////
 SVDrawContext::SVDrawContext( HDC Hdc )
+	: DC {Hdc}
 {
-	m_lIndex = 1;
-
-	DC = Hdc;
-
-	ScaleFactor = 1.0;
-
-	ViewPortOffset.x = 0;
-	ViewPortOffset.y = 0;
 }
 
 SVDrawContext::SVDrawContext( HDC Hdc, double dScale )
+	: DC {Hdc}
+	, ScaleFactor {dScale}
 {
-	m_lIndex = 1;
-
-	DC = Hdc;
-
-	ScaleFactor = dScale;
-
-	ViewPortOffset.x = 0;
-	ViewPortOffset.y = 0;
 }
 
 ///////////////////////////////////////////////////////////
 // Transform a set of points
 ///////////////////////////////////////////////////////////
-void SVDrawContext::Transform( POINT* PInPoints, POINT* POutPoints, int Cnt )
+void SVDrawContext::Transform(const POINT* const pInPoints, POINT* pOutPoints, int Cnt )
 {
 	for( int i = 0;i < Cnt;i++ )
 	{
-		POutPoints[i] = PInPoints[i];
+		pOutPoints[i] = pInPoints[i];
 
-		ViewPortNormalize( POutPoints[i] );
+		ViewPortNormalize( pOutPoints[i] );
 
-		Scale( POutPoints[i], ScaleFactor );
+		Scale( pOutPoints[i], ScaleFactor );
 	}
 }
 
 ///////////////////////////////////////////////////////////
 // Perform Inverse Transform
 ///////////////////////////////////////////////////////////
-void SVDrawContext::InverseTransform( POINT* PInPoints, POINT* POutPoints, int Cnt )
+void SVDrawContext::InverseTransform(const POINT* const pInPoints, POINT* pOutPoints, int Cnt )
 {
 	for( int i = 0;i < Cnt;i++ )
 	{
-		POutPoints[i] = PInPoints[i];
+		pOutPoints[i] = pInPoints[i];
 
-		Scale ( POutPoints[i], 1.0 / ScaleFactor );
+		Scale (pOutPoints[i], 1.0 / ScaleFactor );
 
-		ViewPortNormalize( POutPoints[i], FromViewPort );
+		ViewPortNormalize(pOutPoints[i], FromViewPort);
 	}
 }
 
 ///////////////////////////////////////////////////////////
 // Scale a set of points
 ///////////////////////////////////////////////////////////
-void SVDrawContext::Scale( POINT& RPoint, double ScaleValue )
+void SVDrawContext::Scale( POINT& rPoint, double ScaleValue )
 {
-	RPoint.x = (long)( (double)RPoint.x * ScaleValue );
-	RPoint.y = (long)( (double)RPoint.y * ScaleValue );
+	rPoint.x = (long)( (double)rPoint.x * ScaleValue );
+	rPoint.y = (long)( (double)rPoint.y * ScaleValue );
 }
 
 ///////////////////////////////////////////////////////////

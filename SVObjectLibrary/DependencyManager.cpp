@@ -48,17 +48,17 @@ namespace SvOl
 		std::vector<Dependency> DependencyVector;
 		Dependencies ObjectDependencies;
 
-		VertexSet childrenSet = getAllDependents(rSourceSet, SvOl::JoinType::Owner);
+		VertexSet childrenSet = getAllDependents(rSourceSet, JoinType(SvOl::JoinType::Owner));
 
 		if( SvOi::ToolDependencyEnum::Client == (SvOi::ToolDependencyEnum::Client & ToolDependency) )
 		{
-			getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType::Dependent, false);
+			getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), JoinType(SvOl::JoinType::Dependent), false);
 		}
 		if( SvOi::ToolDependencyEnum::Supplier == (SvOi::ToolDependencyEnum::Supplier & ToolDependency) ) 
 		{
 			// Here the pairs need to be reversed
 			Dependencies ToolSuppliers;
-			getDependents(childrenSet, std::inserter(ToolSuppliers, ToolSuppliers.end()), SvOl::JoinType::Dependent, true);
+			getDependents(childrenSet, std::inserter(ToolSuppliers, ToolSuppliers.end()), JoinType(SvOl::JoinType::Dependent), true);
 			for (const auto& rDependency :ToolSuppliers)
 			{
 				ObjectDependencies.insert({rDependency.second, rDependency.first});
@@ -165,7 +165,7 @@ namespace SvOl
 		}
 		if (nullptr != fileName)
 		{
-			SvCl::ObjectGraph<uint32_t, SvOl::JoinType> OutputGraph(ObjectDependencies, SvOl::JoinType::Owner);
+			SvCl::ObjectGraph<uint32_t, SvOl::JoinType> OutputGraph(ObjectDependencies, SvOl::JoinType(SvOl::JoinType::Owner));
 			SvOl::ObjectNameLookup NameLookup;
 			OutputGraph.saveGraphDot(fileName, NameLookup);
 		}
@@ -176,8 +176,8 @@ namespace SvOl
 		//! Note before calling this method the graph index must be updated this is done in the interface!
 		Dependencies ObjectDependencies;
 
-		VertexSet childrenSet = getAllDependents(rSourceSet, SvOl::JoinType::Owner);
-		getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType::Dependent, false);
+		VertexSet childrenSet = getAllDependents(rSourceSet, SvOl::JoinType(SvOl::JoinType::Owner));
+		getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType(SvOl::JoinType::Dependent), false);
 
 		for (auto const& rEntry : ObjectDependencies)
 		{
@@ -203,17 +203,17 @@ namespace SvOl
 		std::vector<Dependency> DependencyVector;
 		Dependencies ObjectDependencies;
 
-		VertexSet childrenSet = getAllDependents(rSourceSet, SvOl::JoinType::Owner);
+		VertexSet childrenSet = getAllDependents(rSourceSet, SvOl::JoinType(SvOl::JoinType::Owner));
 
 		if (SvOi::ToolDependencyEnum::Client == (SvOi::ToolDependencyEnum::Client & ToolDependency))
 		{
-			getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()),SvOl::JoinType::Dependent, false);
+			getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType(SvOl::JoinType::Dependent), false);
 		}
 		if (SvOi::ToolDependencyEnum::Supplier == (SvOi::ToolDependencyEnum::Supplier & ToolDependency))
 		{
 			// Here the pairs need to be reversed
 			Dependencies ToolSuppliers;
-			getDependents(childrenSet, std::inserter(ToolSuppliers, ToolSuppliers.end()), SvOl::JoinType::Dependent, true);
+			getDependents(childrenSet, std::inserter(ToolSuppliers, ToolSuppliers.end()), SvOl::JoinType(SvOl::JoinType::Dependent), true);
 			for (const auto& rDependency : ToolSuppliers)
 			{
 				ObjectDependencies.insert({rDependency.second, rDependency.first});

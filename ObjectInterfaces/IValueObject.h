@@ -181,9 +181,9 @@ namespace SvOi
 
 	struct SetLinkedStruct
 	{
-		SetLinkedStruct(ILinkedObject* pValueObject, SvPb::LinkedValue linkedData) :
+		SetLinkedStruct(ILinkedObject* pValueObject, const SvPb::LinkedValue& rLinkedData) :
 			m_pValueObject{ pValueObject }
-			, m_linkedData {linkedData} {}
+			, m_linkedData {rLinkedData} {}
 
 		ILinkedObject* m_pValueObject{ nullptr };
 		SvPb::LinkedValue m_linkedData;

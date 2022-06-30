@@ -20,20 +20,13 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	SVInPlaceEdit::SVInPlaceEdit(CWnd* pParent,
-		CRect& rect,
-		DWORD dwStyle,
-		UINT nID,
-		int nRow, int nCol,
-		CString sInitText,
-		UINT nFirstChar,
-		BOOL bExitOnArrows/*=TRUE*/)
+	SVInPlaceEdit::SVInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+		int nRow, int nCol, CString sInitText, UINT nFirstChar, BOOL bExitOnArrows/*=TRUE*/)
+		: m_sInitText {sInitText}
+		, m_nRow {nRow}
+		, m_nCol {nCol}
+		, m_bExitOnArrows {bExitOnArrows}
 	{
-		m_sInitText     = sInitText;
-		m_nRow          = nRow;
-		m_nCol          = nCol;
-		m_nLastChar     = 0; 
-		m_bExitOnArrows = bExitOnArrows;
 
 		DWORD dwEditStyle = WS_CHILD | WS_VISIBLE | dwStyle;
 		if (!Create(dwEditStyle, rect, pParent, nID))

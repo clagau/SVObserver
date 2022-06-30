@@ -21,8 +21,8 @@ public:
 	explicit SVImageBufferHandleImage(const SVMatroxBuffer& rMilImage);
 	virtual ~SVImageBufferHandleImage();
 
-	bool empty() const;
-	void clear();
+	bool empty() const override;
+	void clear() override;
 
 	virtual SVPoint<long> GetPositionPoint() const override;
 	virtual SVBitmapInfo GetBitmapInfo() const override;

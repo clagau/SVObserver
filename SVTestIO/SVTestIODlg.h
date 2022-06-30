@@ -19,15 +19,15 @@
 #pragma endregion Includes
 
 
-const int c_upperBoundForInputChannel = 9;
-const int c_upperBoundForOutputChannel = 17;
+const int cInputChannelNr = 8;
+const int cOutputChannelNr = 16;
 
 
 class SVTestIODlg : public CDialog, public SvTrig::IODeviceBase
 {
 public:
 	SVTestIODlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVTestIODlg();
+	virtual ~SVTestIODlg() = default;
 
 // Dialog Data
 	enum { IDD = IDD_TEST_IO_DLG };
@@ -52,9 +52,9 @@ public:
 
 	virtual BOOL OnInitDialog() override;
 
-	CStatic m_input[c_upperBoundForInputChannel];
+	CStatic m_input[cInputChannelNr];
 	unsigned long m_lInputs{ 0UL };
-	CStatic m_Output[c_upperBoundForOutputChannel];
+	CStatic m_Output[cOutputChannelNr];
 	CListBox m_LogList;
 
 	afx_msg void OnBnClickedResetTs();

@@ -32,33 +32,18 @@
 
 #include "SVRPropTreeItemStatic.h"
 
-
-SVRPropertyItemStatic::SVRPropertyItemStatic()
-{
-}
-
-
-SVRPropertyItemStatic::~SVRPropertyItemStatic()
-{
-}
-
-
 void SVRPropertyItemStatic::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
 	assert(nullptr != m_pProp);
-	CFont*	l_pOldFont;
 
-
-//- JAB110708 - GetNormalFont is a static function getting a static member.
-	l_pOldFont = pDC->SelectObject(m_pProp->GetNormalFont());
+	CFont*  pOldFont = pDC->SelectObject(m_pProp->GetNormalFont());
 	pDC->SetTextColor(RGB(0,0,0));
 	pDC->SetBkMode(TRANSPARENT);
 
 	CRect DrawRect( rRect );
 	pDC->DrawText(m_Attribute.c_str(), DrawRect, DT_SINGLELINE|DT_VCENTER);
 
-//- JAB110708
-	pDC->SelectObject(l_pOldFont);
+	pDC->SelectObject(pOldFont);
 }
 
 

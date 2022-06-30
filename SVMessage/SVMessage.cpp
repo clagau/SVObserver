@@ -121,7 +121,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		0,                         // must be zero 
 		REG_EXPAND_SZ,             // value type 
 		(LPBYTE) MessageFile,        // pointer to value data 
-		(DWORD) lstrlen( MessageFile ) + 1 ) ) // length of value data 
+		(DWORD) wcsnlen( MessageFile, 1024) + 1 ) ) // length of value data 
 	{
 		printf( "Could not set the category message file." ); 
 
@@ -137,7 +137,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		0,                         // must be zero 
 		REG_EXPAND_SZ,             // value type 
 		(LPBYTE) MessageFile,        // pointer to value data 
-		(DWORD) lstrlen( MessageFile ) + 1 ) ) // length of value data 
+		(DWORD) wcsnlen( MessageFile, 1024 ) + 1 ) ) // length of value data 
 	{
 		printf( "Could not set the parameter message file." ); 
 
@@ -153,7 +153,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		0,                         // must be zero 
 		REG_EXPAND_SZ,             // value type 
 		(LPBYTE) MessageFile,        // pointer to value data 
-		(DWORD) lstrlen( MessageFile ) + 1 ) ) // length of value data 
+		(DWORD) wcsnlen( MessageFile, 1024 ) + 1 ) ) // length of value data 
 	{
 		printf( "Could not set the event message file." ); 
 

@@ -263,7 +263,7 @@ HRESULT SVCommandDataHolder::GetImage( const _bstr_t& rName, std::vector<unsigne
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::SetData( _bstr_t nameBstr, SVCommandDataFacadePtr& rDataPointer )
+HRESULT SVCommandDataHolder::SetData( _bstr_t nameBstr, const SVCommandDataFacadePtr& rDataPointer )
 {
 	HRESULT l_Status = S_OK;
 	std::string name = SvUl::createStdString(nameBstr);

@@ -14,12 +14,8 @@
 #include "Definitions/Color.h"
 
 SVStatusBar::SVStatusBar()
-{
-	m_lModeBKColor =SvDef::LightGray;
-	m_lModeForeColor = SvDef::Black;
-}
-
-SVStatusBar::~SVStatusBar()
+	:m_lModeBKColor {SvDef::LightGray}
+	,m_lModeForeColor {SvDef::Black}
 {
 }
 

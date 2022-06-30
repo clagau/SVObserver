@@ -68,3 +68,5 @@
 #include <unordered_map>
 #include <vector>			//Used by static library
 #pragma endregion Precompiled Headers
+
+constexpr int cTriggerChannelNr = 4;

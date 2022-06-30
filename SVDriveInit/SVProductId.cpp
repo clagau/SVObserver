@@ -77,7 +77,7 @@ bool SVProductId::UpdateProductId() const
                           &l_hKey, & l_ulValue ) )
       {
           RegSetValueEx( l_hKey, _T("SVObserver"),0L, REG_SZ,
-              (const unsigned char *) _T("C:\\SVObserver\\bin\\SVFinishSetup1.cmd"),
+              reinterpret_cast<const unsigned char*> (_T("C:\\SVObserver\\bin\\SVFinishSetup1.cmd")),
               38 * sizeof(TCHAR) );
            
           RegFlushKey( l_hKey );
@@ -132,7 +132,7 @@ LPCTSTR SVProductId::GetSubElement( size_t p_Index ) const
 {
 	LPCTSTR l_pszResult = nullptr;
 
-	if( 0 <= p_Index && p_Index < 5 )
+	if(p_Index < 5 )
 	{ 
 		l_pszResult = m_szProductId[ p_Index ];
 	}
@@ -144,7 +144,7 @@ HRESULT SVProductId::SetSubElement( size_t p_Index, LPCTSTR p_szData )
 {
 	HRESULT l_Status = S_OK;
 
-	if( 0 <= p_Index && p_Index < 5 )
+	if(p_Index < 5 )
 	{ 
 		m_ResealWindows = true;
 		::strcpy_s( m_szProductId[ p_Index ], 6, p_szData );

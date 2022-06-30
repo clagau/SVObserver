@@ -101,8 +101,10 @@ HRESULT SVMatroxGigeDigitizer::StartGrabArray(SVMatroxDigitizerInterface::SVMatr
 HRESULT SVMatroxGigeDigitizer::StopGrabArray(SVMatroxDigitizerInterface::SVMatroxHookFunctionPtr func)
 {
 	HRESULT hr = SVMatroxDigitizerInterface::EnableCorruptedFrameMonitoring(*(m_Digitizer.get()), false);
-	hr = SVMatroxDigitizerInterface::StopGrabArray(*(m_Digitizer.get()), m_AcqBuffers, SVMatroxDigitizerGrab::SVGrabSynchronous, func, this);
-	
+	if (S_OK == hr)
+	{
+		hr = SVMatroxDigitizerInterface::StopGrabArray(*(m_Digitizer.get()), m_AcqBuffers, SVMatroxDigitizerGrab::SVGrabSynchronous, func, this);
+	}
 	return hr;
 }
 
@@ -162,7 +164,7 @@ std::string SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 	{
 		deviceParamStruct.accessor.feature.GetGigeFeatureString(m_lineInputMoniker + " Rising", featureName);
 	}
-	return featureName.c_str();
+	return featureName;
 }
 
 std::string SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
@@ -174,7 +176,7 @@ std::string SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
 	{
 		deviceParamStruct.accessor.feature.GetGigeFeatureString(m_lineInputMoniker + " Falling", featureName);
 	}
-	return featureName.c_str();
+	return featureName;
 }
 
 bool SVMatroxGigeDigitizer::IsGigeEventListValid() const

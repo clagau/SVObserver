@@ -31,7 +31,7 @@ namespace SvMc
 
 		// Implementation
 	public:
-		virtual ~SVOConfigNameEdit();
+		virtual ~SVOConfigNameEdit() =default;
 
 		// Generated message map functions
 	protected:

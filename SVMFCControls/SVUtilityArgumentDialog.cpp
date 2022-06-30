@@ -24,18 +24,6 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SVUtilityArgumentDialog dialog
 
-SVUtilityArgumentDialog::SVUtilityArgumentDialog(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVUtilityArgumentDialog::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(SVUtilityArgumentDialog)
-	mszArguments = _T("");
-	//}}AFX_DATA_INIT
-}
-
-SVUtilityArgumentDialog::~SVUtilityArgumentDialog()
-{
-}
-
 void SVUtilityArgumentDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);

@@ -15,13 +15,13 @@ class SVUtilityArgumentDialog : public CDialog
 {
 // Construction
 public:
-	SVUtilityArgumentDialog(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVUtilityArgumentDialog();
+	SVUtilityArgumentDialog(CWnd* pParent = nullptr) : CDialog(IDD, pParent) {};
+	virtual ~SVUtilityArgumentDialog() = default;
 
 // Dialog Data
 	//{{AFX_DATA(SVUtilityArgumentDialog)
 	enum { IDD = IDD_ARGUMENT_PROMPT };
-	CString	mszArguments;
+	CString	mszArguments{};
 	//}}AFX_DATA
 
 // Overrides

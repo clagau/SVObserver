@@ -16,6 +16,8 @@
 #include "SVProductId.h"
 #pragma endregion Includes
 
+constexpr int cCdKeyBlockNr = 5;
+
 class SVDriveInitDlg : public CDialog
 {
 public:
@@ -27,11 +29,7 @@ public:
 	CButton m_SingleCamera;
 	CEdit	m_model_number;
 	CComboBox	m_type;
-	CEdit	m_cdkey5;
-	CEdit	m_cdkey4;
-	CEdit	m_cdkey3;
-	CEdit	m_cdkey2;
-	CEdit	m_cdkey1;
+	CEdit	m_cdkey[cCdKeyBlockNr];
 	CEdit	m_date;
 	CEdit	m_serviced_by;
 	CEdit	m_serial_number;
@@ -55,16 +53,11 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
-	afx_msg void OnChangeCdkey1();
-	afx_msg void OnChangeCdkey2();
-	afx_msg void OnChangeCdkey3();
-	afx_msg void OnChangeCdkey4();
-	afx_msg void OnChangeCdkey5();
+	afx_msg void OnChangeCdkey(UINT);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
-	void OnChangeCdkey(CEdit& rEdit);
 	bool IsValidModelNumber() const;
 
 	bool GetOEMInfo();

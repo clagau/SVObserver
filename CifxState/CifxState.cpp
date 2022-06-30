@@ -487,7 +487,7 @@ int main(int argc, char* args[])
 	{
 		CHANNEL_INFORMATION channelInfo;
 		g_cifxLoadLib.m_pChannelInfo(g_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
-		std::string outputString((char*) channelInfo.abFWName);
+		std::string outputString(reinterpret_cast<char*> (channelInfo.abFWName));
 		std::string firmware;
 		firmware = std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision);
 		g_notificationType = (Pd0Version == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;

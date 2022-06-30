@@ -73,16 +73,16 @@ void TrcTesterConfiguration::InspectionsDef::recalcRecordSizes()
 	m_recordInterestSize = std::max<int>(0, distInterest(rd));
 }
 
-TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile, bool isLocal)
+TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, const SvLib::SVOINIClass& rIniFile, bool isLocal)
 	: m_isLocal(isLocal)
 {
-	m_NumberOfRuns = iniFile.GetValueInt(_T("General"), _T("NumberOfRuns"), m_NumberOfRuns);
-	m_maxTimeSetBufferPerIter = iniFile.GetValueDouble(_T("MaxTime"), _T("SetBufferPerIter"), m_maxTimeSetBufferPerIter);
-	m_maxTimeCheckBufferPerBuffer = iniFile.GetValueDouble(_T("MaxTime"), _T("CheckBufferPerBuffer"), m_maxTimeCheckBufferPerBuffer);
-	m_maxTimesetAndReadImage = iniFile.GetValueDouble(_T("MaxTime"), _T("SetAndReadImage"), m_maxTimesetAndReadImage);
-	m_maxTimesetAndReadValue = iniFile.GetValueDouble(_T("MaxTime"), _T("SetAndReadValue"), m_maxTimesetAndReadValue);
-	m_maxSpecifyBufferFactor = iniFile.GetValueInt(_T("General"), _T("MaxSpecifyFactor"), m_maxSpecifyBufferFactor);
-	m_SpecifyBufferDiv = iniFile.GetValueInt(_T("General"), _T("SpecifyBufferDiv"), m_SpecifyBufferDiv);
+	m_NumberOfRuns = rIniFile.GetValueInt(_T("General"), _T("NumberOfRuns"), m_NumberOfRuns);
+	m_maxTimeSetBufferPerIter = rIniFile.GetValueDouble(_T("MaxTime"), _T("SetBufferPerIter"), m_maxTimeSetBufferPerIter);
+	m_maxTimeCheckBufferPerBuffer = rIniFile.GetValueDouble(_T("MaxTime"), _T("CheckBufferPerBuffer"), m_maxTimeCheckBufferPerBuffer);
+	m_maxTimesetAndReadImage = rIniFile.GetValueDouble(_T("MaxTime"), _T("SetAndReadImage"), m_maxTimesetAndReadImage);
+	m_maxTimesetAndReadValue = rIniFile.GetValueDouble(_T("MaxTime"), _T("SetAndReadValue"), m_maxTimesetAndReadValue);
+	m_maxSpecifyBufferFactor = rIniFile.GetValueInt(_T("General"), _T("MaxSpecifyFactor"), m_maxSpecifyBufferFactor);
+	m_SpecifyBufferDiv = rIniFile.GetValueInt(_T("General"), _T("SpecifyBufferDiv"), m_SpecifyBufferDiv);
 
 	init(rLogClass);
 }

@@ -28,7 +28,7 @@ struct ParamDef
 class TrcTesterConfiguration
 {
 public:
-	TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile, bool isLocal);
+	TrcTesterConfiguration(LogClass& rLogClass, const SvLib::SVOINIClass& rIniFile, bool isLocal);
 	explicit TrcTesterConfiguration(LogClass& rLogClass);
 
 	~TrcTesterConfiguration();

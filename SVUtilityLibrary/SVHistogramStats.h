@@ -56,22 +56,20 @@ namespace SvUl
 	class SVHistogramStats
 	{
 
-		__int64 m_total;
-		__int64 m_squares;
+		__int64 m_total {0LL};
+		__int64 m_squares {0LL};
 
-		int m_low_peak;
-		int m_low_peak_value;
-		int m_high_peak;
-		int m_high_peak_value;
-		//int m_valley;
-		int m_max_px; // max grayscale value
-		int m_min_px; // min grayscale value
-		int m_count_px; // pixel count
-		int m_count_gs; // grayscale values count
-		int m_start;
-		//int m_default;
-		int m_threshold;
-		int m_min_peak;
+		int m_low_peak {0};
+		int m_low_peak_value {0};
+		int m_high_peak {0};
+		int m_high_peak_value {0};
+		int m_max_px {0}; // max grayscale value
+		int m_min_px {0}; // min grayscale value
+		int m_count_px {0}; // pixel count
+		int m_count_gs {0}; // grayscale values count
+		int m_start {0};
+		int m_threshold {0};
+		int m_min_peak {0};
 
 	public:
 		int low_peak()	const { return m_low_peak+m_start; }
@@ -95,20 +93,9 @@ namespace SvUl
 
 		double std_dev() const { return sqrt(variance()); }
 
-		SVHistogramStats(int start = 0, int thr = 1): 
-		m_start(start),
-			m_threshold(thr),
-			//m_default(def),
-			m_low_peak(0),
-			m_low_peak_value(0),
-			m_high_peak(0),
-			m_high_peak_value(0),
-			m_max_px(0),
-			m_min_px(0),
-			m_count_px(0),
-			m_count_gs(0),
-			m_total(0),
-			m_squares(0)
+		SVHistogramStats(int start = 0, int thr = 1)
+		:m_start(start)
+		,m_threshold(thr)
 		{
 		}
 

@@ -152,7 +152,6 @@ HRESULT SimulatedTriggerSource::initialize()
 	if(false == m_plcSimulateFile.empty())
 	{
 		std::ifstream cycleFile;
-		std::string fileLine;
 		cycleFile.open(m_plcSimulateFile.c_str(), std::ifstream::in | std::ifstream::binary);
 		if(false== cycleFile.is_open())
 		{
@@ -163,11 +162,12 @@ HRESULT SimulatedTriggerSource::initialize()
 			std::vector<std::vector<std::string>> cycleParamList;
 			cycleParamList.reserve(cNumberOfChannels);
 			///Header
+			std::string fileLine;
 			std::getline(cycleFile, fileLine);
 			while (false == cycleFile.eof())
 			{
 				std::getline(cycleFile, fileLine);
-				if (true == fileLine.empty() || 0 == fileLine.find(_T("//")))
+				if (true == fileLine.empty() || fileLine.starts_with(_T("//")))
 				{
 					continue;
 				}
@@ -285,7 +285,7 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 					fileData += cObjectInvalid;
 					fileData += std::to_string(m_ObjectsInvalid[i]) + _T("\r\n");
 				}
-				resultFile.write(fileData.c_str(), fileData.size());
+				resultFile.write(fileData.c_str(), static_cast<int64_t> (fileData.size()));
 				resultFile.close();
 			}
 		}

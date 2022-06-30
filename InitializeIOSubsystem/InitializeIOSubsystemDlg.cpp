@@ -58,18 +58,7 @@ END_MESSAGE_MAP()
 
 InitializeIOSubsystemDlg::InitializeIOSubsystemDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(InitializeIOSubsystemDlg::IDD, pParent)
-	, m_bLptIOInitialized(false)
-	, m_lGoodCounter(0)
-	, m_lVer(0)
-	, m_TimeElapse(0)
-	, m_FailedCounts(0)
-	, m_bShutdown(false)
-	, m_bToggle(false)
-	, m_bOldBehavior(false)
-	, m_lNewBehaviorCounter(0)
-	, m_lProgressCounter(0)
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void InitializeIOSubsystemDlg::DoDataExchange(CDataExchange* pDX)
@@ -99,6 +88,7 @@ BOOL InitializeIOSubsystemDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -321,7 +311,7 @@ void InitializeIOSubsystemDlg::OnDestroy()
 		time_t Now;
 		time(&Now);
 		CString DateTime;
-		struct tm NowInfo;
+		tm NowInfo {0,0,0,0,0,0,0,0,0};
 		localtime_s( &NowInfo, &Now );
 		DateTime.Format(_T("Started InitializeIOSubsystem %02d.%02d.%04d %02d:%02d:%02d"), NowInfo.tm_mday, NowInfo.tm_mon + 1, NowInfo.tm_year + 1900, NowInfo.tm_hour, NowInfo.tm_min, NowInfo.tm_sec );
 		fprintf( fh, "\n%s\n%s\nStartup Time %lld Seconds, Errors %ld\n", DateTime.GetString(), m_strVer.GetString(), m_TimeElapse, m_FailedCounts );

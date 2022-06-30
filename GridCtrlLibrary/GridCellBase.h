@@ -110,8 +110,8 @@ namespace SvGcl
 
 	// Construction/Destruction
 	public:
-		GridCellBase();
-		virtual ~GridCellBase();
+		GridCellBase() = default;
+		virtual ~GridCellBase() = default;
 
 	// Attributes
 	public:
@@ -124,7 +124,7 @@ namespace SvGcl
 		virtual void SetBackClr(COLORREF /* clr */)             = 0 ;
 		virtual void SetFont(const LOGFONT* /* plf */)          = 0 ;
 		virtual void SetMargin( UINT /* nMargin */)             = 0 ;
-		virtual void SetGrid(GridCtrl* /* pGrid */)            = 0 ;
+		virtual void SetGrid(GridCtrl* /* pGrid */)				= 0 ;
 		virtual void SetCoords( int /* nRow */, int /* nCol */) = 0 ;
 
 		virtual LPCTSTR    GetText()       const                = 0 ;
@@ -196,7 +196,7 @@ namespace SvGcl
 		virtual BOOL OnSetCursor();
 
 	protected:
-		DWORD    m_nState;      // Cell state (selected/focus etc)
+		DWORD    m_nState {0};      // Cell state (selected/focus etc)
 	};
 
 } // namespace SvGcl

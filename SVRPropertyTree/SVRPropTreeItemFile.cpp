@@ -52,41 +52,15 @@ enum
 	BTN_DISABLED  = 2,
 };
 
-void SVRPropertyItemFile::Initialize()
-{
-	// Initialize all variables
-	m_bButtonLeft      = false;
-	m_bCreatingControl = true;
-	m_bFindFolder      = false;
-	m_bMouseCaptured   = false;
-	m_bTextChanged     = true;
-	m_bTrailingSlash   = false;
-	m_nButtonState     = BTN_UP;
-	m_rcButtonRect.SetRectEmpty();
-}
-
-void SVRPropertyItemFile::ResetControl()
-{
-	m_bCreatingControl = true;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// SVRPropertyItemFile
-
 SVRPropertyItemFile::SVRPropertyItemFile(bool bFullAccess, DWORD dwFlags, LPCTSTR lpszVal, LPCTSTR sInitialDir, BOOL bSetDir) 
 : m_Attribute(_T(""))
 , m_Filter(_T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||"))
+, m_InitialDir {sInitialDir}
+, m_bInitialDirSet {bSetDir}
 , m_bFullAccess(bFullAccess)
+, m_nButtonState {BTN_UP}
 {
-    m_InitialDir = sInitialDir;
-    m_bInitialDirSet = bSetDir;
-    Initialize();
     SetItemType(dwFlags,lpszVal);
-}
-
-SVRPropertyItemFile::~SVRPropertyItemFile()
-{
-	ResetControl();
 }
 
 BEGIN_MESSAGE_MAP(SVRPropertyItemFile, CEdit)
@@ -343,8 +317,7 @@ bool SVRPropertyItemFile::SVRBrowseForFolder()
 
 bool SVRPropertyItemFile::SVROpenFile()
 {
-	bool bReturnValue = false;
-	bool bDirectory   = true;			// assume user of this class has set the initial directory
+	bool result {false};
 
 	SvMc::SVFileDialog dlg(true, m_bFullAccess, nullptr, nullptr, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, m_Filter.c_str(), this);
 
@@ -352,7 +325,6 @@ bool SVRPropertyItemFile::SVROpenFile()
 	TCHAR lpstrDirectory[_MAX_PATH] = _T("");
 	if (nullptr == dlg.m_ofn.lpstrInitialDir)
 	{
-		bDirectory = false;				// directory in edit control
 		_tcscpy(lpstrDirectory, GetPathName().c_str() );
 		dlg.m_ofn.lpstrInitialDir = lpstrDirectory;
 	}
@@ -364,13 +336,13 @@ bool SVRPropertyItemFile::SVROpenFile()
 	if (IDOK == dlg.DoModal())			// Start the FileDialog
 	{									// user clicked OK, enter files selected into edit control
 		SetWindowText(dlg.GetPathName().GetString());
-		bReturnValue = true;
+		result = true;
 	}
 	
 	m_pProp->SetFocusedItem(this);
 	SetFocus();									// ensure focus returns to this control
 	
-	return bReturnValue;
+	return result;
 }
 
 std::string SVRPropertyItemFile::GetPathName()
@@ -561,7 +533,7 @@ UINT SVRPropertyItemFile::OnGetDlgCode()
 
 bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=nullptr*/)
 {
-	ResetControl();
+	m_bCreatingControl = true;
 
 	m_bButtonLeft    = (dwFlags & SVR_BUTTONLEFT) ? true : false;
 	m_bFindFolder    = (dwFlags & SVR_FOLDER) ? true : false;

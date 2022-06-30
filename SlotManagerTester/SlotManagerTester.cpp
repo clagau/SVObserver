@@ -49,9 +49,10 @@ bool isPrim(int number)
 {
 	static std::set<int> primSet;
 	static bool isinit = false;
-	if (!isinit)
+	if (false == isinit)
 	{
 		Init(primSet, 1000);
+		isinit = true;
 	}
 	if (primSet.find(number) != primSet.end())
 	{
@@ -87,7 +88,7 @@ bool  DisplayTrigger(SvSml::SMRingBuffer &Ringbuffer, SvSml::SMRingBuffer::SlotT
 	return true;
 }
 
-size_t DisplayAllRejects(SvSml::SMRingBuffer &Ringbuffer)
+size_t DisplayAllRejects(const SvSml::SMRingBuffer &Ringbuffer)
 {
 	std::vector<int> rejects;
 	Ringbuffer.GetRejects(rejects);
@@ -151,10 +152,10 @@ int main(int argc, char* argv[])
 
 	if (bServer)
 	{
-		DWORD failer(0);
-		SvSml::SMRingBuffer Ringbufffer;
 		try
 		{
+			DWORD failer(0);
+			SvSml::SMRingBuffer Ringbufffer;
 			SvSml::SMParameterStruct  Param(2000,200);
 			Ringbufffer.CreateConnection(name.c_str(), nTotal,nRejects, Param);
 			for (UINT Triggercount = 0;  Triggercount < MAXDWORD; Triggercount++)

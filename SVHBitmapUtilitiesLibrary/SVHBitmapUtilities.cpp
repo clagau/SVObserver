@@ -204,7 +204,7 @@ HRESULT SVIHBitmapUtilities::SVImageInfoToNewDIB( const BITMAPINFOHEADER& info, 
 @SVOperationDescription This function copies a SVDIBITMAPINFO to a HDC.
 
 */
-HRESULT SVIHBitmapUtilities::SVHBitmapToDC(const SVDIBITMAPINFO svSrcDIB, HDC hDC)
+HRESULT SVIHBitmapUtilities::SVHBitmapToDC(const SVDIBITMAPINFO& rSrcDIB, HDC hDC)
 {
 	HRESULT hr = S_OK;
 
@@ -212,9 +212,9 @@ HRESULT SVIHBitmapUtilities::SVHBitmapToDC(const SVDIBITMAPINFO svSrcDIB, HDC hD
 	::GetWindowExtEx(hDC, &sizeDest);
 
 	HDC memDC = ::CreateCompatibleDC( hDC );
-	::SelectObject(memDC, svSrcDIB.hbm );
+	::SelectObject(memDC, rSrcDIB.hbm );
 
-	SIZE sizeSrc = { svSrcDIB.pBitmapInfo->bmiHeader.biWidth, svSrcDIB.pBitmapInfo->bmiHeader.biHeight };
+	SIZE sizeSrc = {rSrcDIB.pBitmapInfo->bmiHeader.biWidth, rSrcDIB.pBitmapInfo->bmiHeader.biHeight };
 
 	::StretchBlt( hDC, 0, 0, sizeDest.cx, sizeDest.cy, 
 				   memDC, 0, 0, sizeSrc.cx, sizeSrc.cy, SRCCOPY );

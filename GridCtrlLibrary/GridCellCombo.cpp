@@ -111,9 +111,11 @@ namespace SvGcl
 	{
 		CEdit::OnKillFocus(pNewWnd);
 	
-		InPlaceList* pOwner = (InPlaceList*) GetOwner();  // This MUST be a InPlaceList
-		if (pOwner)
-			pOwner->EndEdit();	
+		InPlaceList* pOwner = dynamic_cast<InPlaceList*> (GetOwner());  // This MUST be a InPlaceList
+		if (nullptr != pOwner)
+		{
+			pOwner->EndEdit();
+		}
 	}
 
 	void ComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
@@ -124,8 +126,10 @@ namespace SvGcl
 			(GetKeyState(VK_CONTROL) < 0 && GetDlgCtrlID() == IDC_COMBOEDIT))
 		{
 			CWnd* pOwner = GetOwner();
-			if (pOwner)
-				pOwner->SendMessage(WM_KEYDOWN, nChar, nRepCnt+ (((DWORD)nFlags)<<16));
+			if (nullptr != pOwner)
+			{
+				pOwner->SendMessage(WM_KEYDOWN, nChar, nRepCnt + (((DWORD)nFlags) << 16));
+			}
 			return;
 		}
 
@@ -137,16 +141,20 @@ namespace SvGcl
 		if (nChar == VK_ESCAPE) 
 		{
 			CWnd* pOwner = GetOwner();
-			if (pOwner)
-				pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (((DWORD)nFlags)<<16));
+			if (nullptr != pOwner)
+			{
+				pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (((DWORD)nFlags) << 16));
+			}
 			return;
 		}
 
 		if (nChar == VK_TAB || nChar == VK_RETURN || nChar == VK_ESCAPE)
 		{
 			CWnd* pOwner = GetOwner();
-			if (pOwner)
-				pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (((DWORD)nFlags)<<16));
+			if (nullptr != pOwner)
+			{
+				pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (((DWORD)nFlags) << 16));
+			}
 			return;
 		}
 
@@ -256,7 +264,9 @@ namespace SvGcl
  
 		CWnd* pOwner = GetOwner();
 		if (IsWindow(pOwner->GetSafeHwnd()))
-			pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo );
+		{
+			pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+		}
  
 		// Close this window (PostNcDestroy will delete this)
 		if (::IsWindow(m_hWnd))
@@ -482,8 +492,10 @@ namespace SvGcl
 	// Cancel the editing.
 	void GridCellCombo::EndEdit()
 	{
-		if (m_pEditWnd)
-			((InPlaceList*)m_pEditWnd)->EndEdit();
+		if (nullptr != m_pEditWnd)
+		{
+			(static_cast<InPlaceList*> (m_pEditWnd))->EndEdit();
+		}
 	}
 
 	// Override draw so that when the cell is selected, a drop arrow is shown in the RHS.

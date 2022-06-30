@@ -20,9 +20,9 @@ namespace SvMc
 	{
 		// Construction
 	public:
-		SVSlideBar();
+		SVSlideBar() = default;
 
-		virtual ~SVSlideBar();
+		virtual ~SVSlideBar() = default;
 
 
 		// Operations
@@ -60,8 +60,8 @@ namespace SvMc
 			SV_SLIDEBAR_VERT
 		};
 
-		BOOL	bTracking;
-		DWORD	dwSlideBarType;
-		CRect   trackRect;
+		BOOL	bTracking {false};
+		DWORD	dwSlideBarType {SV_SLIDEBAR_VERT};
+		CRect   trackRect {0,0,0,0};
 	};
 } //namespace SvMc

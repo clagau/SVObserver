@@ -57,7 +57,7 @@ public:
 	//constructor.  This method takes a pointer to a 
 	//SVFileNameClass and copies the elements into the new 
 	//object.
-	explicit SVFileNameClass(SVFileNameClass * svFileName);
+	explicit SVFileNameClass(const SVFileNameClass* const svFileName);
 
 	virtual ~SVFileNameClass();
 

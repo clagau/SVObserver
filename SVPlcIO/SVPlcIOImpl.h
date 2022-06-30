@@ -72,9 +72,9 @@ private:
 	long m_PlcVersion {0L};
 	std::atomic_bool m_engineStarted {false};
 	std::atomic_bool m_engineInitialized {false};
-	std::atomic_bool m_triggerStarted[cMaxPlcTriggers]{false, false, false, false};
-	std::atomic_uint32_t m_inputCount[cMaxPlcTriggers] {0UL, 0UL, 0UL, 0UL};
-	std::atomic_uint32_t m_outputCount[cMaxPlcTriggers] {0UL, 0UL, 0UL, 0UL};
+	std::array<std::atomic_bool, cMaxPlcTriggers> m_triggerStarted{false, false, false, false};
+	std::array<std::atomic_uint32_t, cMaxPlcTriggers> m_inputCount {0UL, 0UL, 0UL, 0UL};
+	std::array<std::atomic_uint32_t, cMaxPlcTriggers> m_outputCount {0UL, 0UL, 0UL, 0UL};
 	std::atomic_int8_t m_currentTriggerChannel{-1};
 
 	std::string m_AdditionalData;

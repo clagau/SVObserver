@@ -13,15 +13,12 @@
 
 namespace SvMc
 {
-	SVEditableListBox::SVEditableListBox(void)
-	{
-		m_iLastSelected = -1;
-	}
-
-	SVEditableListBox::~SVEditableListBox(void)
+	SVEditableListBox::~SVEditableListBox()
 	{
 		if (nullptr != m_ceEdit.GetSafeHwnd())
+		{
 			m_ceEdit.DestroyWindow();
+		}
 	}
 
 	BEGIN_MESSAGE_MAP(SVEditableListBox, CListBox)

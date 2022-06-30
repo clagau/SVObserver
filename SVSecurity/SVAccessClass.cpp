@@ -378,70 +378,62 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 		std::string TmpPW = m_svStorage.GetCurrentPassword();
 
 		BOOL bPromptForPassword = Force ;
-		bool TryLogOn = true;
-		bool UserValidated;
-
-		while( TryLogOn )
+		bool UserValidated {false};
+		if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || TmpUser.empty() )
 		{
-			UserValidated = false;
-			if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || TmpUser.empty() )
+			// Call Log Screen
+			hr = PasswordDialog( TmpUser, TmpPW, Name.c_str(), Status.c_str());
+			if( hr == S_FALSE )
 			{
-				// Call Log Screen
-				hr = PasswordDialog( TmpUser, TmpPW, Name.c_str(), Status.c_str());
-				if( hr == S_FALSE )
-				{
-					TryLogOn = false;
-					break;
-				}
-				if( hr == SVMSG_SVS_ACCESS_DENIED )
-				{
-					Status = _T("Invalid User or Password");
-				}
-				if( S_OK == hr )
-				{
-					if( IsMasterPassword( TmpUser.c_str(), TmpPW.c_str() ) )
-					{
-						return S_OK;
-					}
-				}
-				UserValidated = true;
+				return hr;
 			}
-
-			HANDLE phToken = nullptr;
-			// Group 
-			// UserValidated prevents the extra call to logonUser
-			if( (S_OK == hr && UserValidated) || LogonUser( TmpUser.c_str(), m_LogonServer.c_str(), TmpPW.c_str(), 
-				LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, &phToken) )
+			if( hr == SVMSG_SVS_ACCESS_DENIED )
 			{
-				CloseHandle( phToken);
+				Status = _T("Invalid User or Password");
+			}
+			if( S_OK == hr )
+			{
+				if( IsMasterPassword( TmpUser.c_str(), TmpPW.c_str() ) )
+				{
+					return S_OK;
+				}
+			}
+			UserValidated = true;
+		}
 
-				SvDef::StringVector msgList;
-				msgList.push_back( TmpUser );
-				msgList.push_back( Name );
+		HANDLE phToken = nullptr;
+		// Group 
+		// UserValidated prevents the extra call to logonUser
+		if( (S_OK == hr && UserValidated) || LogonUser( TmpUser.c_str(), m_LogonServer.c_str(), TmpPW.c_str(), 
+			LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, &phToken) )
+		{
+			CloseHandle( phToken);
+
+			SvDef::StringVector msgList;
+			msgList.push_back( TmpUser );
+			msgList.push_back( Name );
 				
-				if( IsUserAMember( TmpUser, NTGroup )  )
-				{
-					ResetTime();
-					hr = S_OK;
-					TryLogOn = false;
+			if( IsUserAMember( TmpUser, NTGroup )  )
+			{
+				ResetTime();
+				hr = S_OK;
 
-					// Event viewer
-					// Application Log Gained Access...Category - SVAccess
-					SvStl::MessageManager Exception(SvStl::MsgType::Log );
-					Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvStl::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				// Event viewer
+				// Application Log Gained Access...Category - SVAccess
+				SvStl::MessageManager Exception(SvStl::MsgType::Log );
+				Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvStl::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-					msgList.clear();
-					msgList.push_back( TmpUser );
-					Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
-					break;
-				}
-				if( UserValidated )
-				{
-					SvStl::MessageManager Exception(SvStl::MsgType::Log );
-					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				msgList.clear();
+				msgList.push_back( TmpUser );
+				Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				return hr;
+			}
+			if( UserValidated )
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Log );
+				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-					Status = _T("User Does Not Have Rights to This Function");
-				}
+				Status = _T("User Does Not Have Rights to This Function");
 			}
 			bPromptForPassword = true;  // If user failed, then set bPromptForPassword so we call the password dialog
 		}
@@ -535,130 +527,121 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 		std::string TmpPW = m_svStorage.GetCurrentPassword();
 
 		bool bPromptForPassword = Force1 || Force2;
-		bool l_bTryLogOn = true;
 		bool l_bUserValidated = false;
 		long l_lState = l_bGroup1Validated + l_bGroup2Validated*2;
 		long l_lLastState = l_lState;
 
-		while( l_bTryLogOn )
+		if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || TmpUser.empty() )
 		{
-			if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || TmpUser.empty() )
+			// *** Status Text for Logon Dialog
+			if( (l_lLastState == l_lState) && l_bUserValidated)
 			{
-				// *** Status Text for Logon Dialog
-				if( (l_lLastState == l_lState) && l_bUserValidated)
+				Status = _T("User Does Not Have Rights to This Function");
+				msgId = SvStl::Tid_Security_UserNoRights;
+				msgList.clear();
+			}
+			else
+			{
+				switch( l_lState )
 				{
-					Status = _T("User Does Not Have Rights to This Function");
-					msgId = SvStl::Tid_Security_UserNoRights;
-					msgList.clear();
-				}
-				else
-				{
-					switch( l_lState )
+					case 0:
 					{
-						case 0:
-						{
-							std::string tmpString = Name1 + _T(" , ") + Name2;
-							Status = _T("Access - ") + tmpString;
-							msgId = SvStl::Tid_Security_Access;
-							msgList.clear();
-							msgList.push_back(std::string(tmpString));
-							break;
-						}
-						case 1:
-						{
-							Status = _T("Access - ") + Name2;
-							msgId = SvStl::Tid_Security_Access;
-							msgList.clear();
-							msgList.push_back(std::string(Name2));
-							break;
-						}
-						case 2:
-						{
-							Status = _T("Access - ") + Name1;
-							msgId = SvStl::Tid_Security_Access;
-							msgList.clear();
-							msgList.push_back(std::string(Name1));
-							break;
-						}
+						std::string tmpString = Name1 + _T(" , ") + Name2;
+						Status = _T("Access - ") + tmpString;
+						msgId = SvStl::Tid_Security_Access;
+						msgList.clear();
+						msgList.push_back(std::string(tmpString));
+						break;
 					}
-					l_lLastState = l_lState;
-				}
-
-				l_bUserValidated = false;
-
-				std::string Attempt = SvStl::MessageTextGenerator::Instance().getText(msgId, msgList);
-				// Call Log in Dialog
-				hr = PasswordDialog( TmpUser, TmpPW, Attempt.c_str(), Status.c_str());
-				if( hr == S_FALSE )
-				{
-					l_bTryLogOn = false;
-					break;
-				}
-				if( hr == SVMSG_SVS_ACCESS_DENIED )
-				{
-					Status = _T("Invalid User or Password");
-				}
-				if( S_OK == hr )
-				{
-					if( IsMasterPassword( TmpUser.c_str(), TmpPW.c_str() ) )
+					case 1:
 					{
-						return S_OK;
+						Status = _T("Access - ") + Name2;
+						msgId = SvStl::Tid_Security_Access;
+						msgList.clear();
+						msgList.push_back(std::string(Name2));
+						break;
 					}
-					l_bUserValidated = true;
+					case 2:
+					{
+						Status = _T("Access - ") + Name1;
+						msgId = SvStl::Tid_Security_Access;
+						msgList.clear();
+						msgList.push_back(std::string(Name1));
+						break;
+					}
 				}
-
+				l_lLastState = l_lState;
 			}
 
-			HANDLE phToken = nullptr;
-			// Group 
-			// UserValidated prevents the extra call to logonUser
-			if( ( S_OK == hr && l_bUserValidated) || LogonUser( TmpUser.c_str(), m_LogonServer.c_str(), TmpPW.c_str(), 
-				LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, &phToken) )
+			l_bUserValidated = false;
+
+			std::string Attempt = SvStl::MessageTextGenerator::Instance().getText(msgId, msgList);
+			// Call Log in Dialog
+			hr = PasswordDialog( TmpUser, TmpPW, Attempt.c_str(), Status.c_str());
+			if( hr == S_FALSE )
 			{
-				CloseHandle( phToken);
-
-				if( IsUserAMember( TmpUser, NTGroup1 ) )
+				return hr;
+			}
+			if( hr == SVMSG_SVS_ACCESS_DENIED )
+			{
+				Status = _T("Invalid User or Password");
+			}
+			if( S_OK == hr )
+			{
+				if( IsMasterPassword( TmpUser.c_str(), TmpPW.c_str() ) )
 				{
-					l_bGroup1Validated = true;
+					return S_OK;
 				}
+				l_bUserValidated = true;
+			}
+		}
 
-				if( IsUserAMember( TmpUser, NTGroup2 ) )
+		HANDLE phToken = nullptr;
+		// Group 
+		// UserValidated prevents the extra call to logonUser
+		if( ( S_OK == hr && l_bUserValidated) || LogonUser( TmpUser.c_str(), m_LogonServer.c_str(), TmpPW.c_str(), 
+			LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, &phToken) )
+		{
+			CloseHandle( phToken);
+
+			if( IsUserAMember( TmpUser, NTGroup1 ) )
+			{
+				l_bGroup1Validated = true;
+			}
+
+			if( IsUserAMember( TmpUser, NTGroup2 ) )
+			{
+				l_bGroup2Validated = true;
+			}
+
+			l_lState = l_bGroup1Validated + l_bGroup2Validated*2 ;
+
+			if( l_bGroup1Validated &&  l_bGroup2Validated )
+			{
+				ResetTime();
+				hr = S_OK;
+
+				msgList.clear();
+				msgList.push_back( TmpUser );
+				SvStl::MessageManager Exception(SvStl::MsgType::Log );
+				Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
+
+				Exception.setMessage( lId2, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			}
+			else
+			{
+				if( l_lState != l_lLastState )
 				{
-					l_bGroup2Validated = true;
-				}
-
-				l_lState = l_bGroup1Validated + l_bGroup2Validated*2 ;
-
-				if( l_bGroup1Validated &&  l_bGroup2Validated )
-				{
-					ResetTime();
-					hr = S_OK;
-					l_bTryLogOn = false;
-
 					msgList.clear();
 					msgList.push_back( TmpUser );
+					msgList.push_back( Name1 );
 					SvStl::MessageManager Exception(SvStl::MsgType::Log );
-					Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
-
-					Exception.setMessage( lId2, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
-
-					break;
+					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
-				else
-				{
-					if( l_lState != l_lLastState )
-					{
-						msgList.clear();
-						msgList.push_back( TmpUser );
-						msgList.push_back( Name1 );
-						SvStl::MessageManager Exception(SvStl::MsgType::Log );
-						Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
-					}
 
-				}
 			}
-			bPromptForPassword = true;  // If user failed, then set bPromptForPassword so we call the password dialog
 		}
+		bPromptForPassword = true;  // If user failed, then set bPromptForPassword so we call the password dialog
 	}
 	else
 	{
@@ -707,13 +690,10 @@ HRESULT SVAccessClass::GetNTGroup( long lID, std::string& rGroup )
 	HRESULT hr = S_FALSE;
 	SVAccessPointNode* pNode = m_svStorage.FindByID( lID );
 
-	if( pNode )
+	if(nullptr != pNode )
 	{
-		if( pNode )
-		{
-			rGroup = pNode->m_NTGroup;
-			hr = S_OK;
-		}
+		rGroup = pNode->m_NTGroup;
+		hr = S_OK;
 	}
 
 	return hr;
@@ -891,12 +871,8 @@ HRESULT SVAccessClass::SetNTGroup( long lID, LPCTSTR strGroup )
 // Loads the security system from the storage class
 HRESULT SVAccessClass::Load( LPCTSTR FileName)
 {
-	HRESULT Result( E_FAIL );
-
 	m_FileName = FileName;
-	Result =  m_svStorage.Load( m_FileName.c_str() );
-
-	return Result;
+	return m_svStorage.Load( m_FileName.c_str() );
 }
 
 // Adds a new security node.

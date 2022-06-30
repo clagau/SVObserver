@@ -17,20 +17,11 @@ namespace SvMc
 {
 	struct SVDlgBitmapTextStruct
 	{
-		SVDlgBitmapTextStruct()
-		{
-			AbsoluteCoord = true;
-			X = 0.0;
-			Y = 0.0;
-			m_Color = 0;
-			m_Text = _T( "" );
-		};
-
-		bool AbsoluteCoord;
-		double X;
-		double Y;
-		COLORREF m_Color;
-		std::string m_Text;
+		bool AbsoluteCoord {true};
+		double X {0.0};
+		double Y {0.0};
+		COLORREF m_Color {0};
+		std::string m_Text {};
 	};
 
 	class SVDlgBitmapClass : public CStatic
@@ -44,7 +35,7 @@ namespace SvMc
 		DECLARE_MESSAGE_MAP()
 
 	public:
-		SVDlgBitmapClass();
+		SVDlgBitmapClass() = default;
 		virtual ~SVDlgBitmapClass();
 
 		BOOL Init( LPCTSTR lpszResourceName );
@@ -56,7 +47,7 @@ namespace SvMc
 		BOOL TextOut( double X, double Y, COLORREF Color, LPCTSTR StrText );
 
 	public:
-		BOOL OEMMode;
+		BOOL OEMMode {false};
 
 	protected:
 		HBITMAP InitFromFile();

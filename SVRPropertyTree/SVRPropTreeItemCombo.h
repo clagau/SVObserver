@@ -35,12 +35,14 @@
 #include "SVNotifyButton.h"
 #pragma endregion Includes
 
+constexpr long cDropdownHeight = 100;
+
 class SVRPropertyItemCombo : public CComboBox, public SVRPropertyItem
 {
 // Construction
 public:
-	SVRPropertyItemCombo();
-	virtual ~SVRPropertyItemCombo();
+	SVRPropertyItemCombo() = default;
+	virtual ~SVRPropertyItemCombo() = default;
 
 // Attributes
 public:
@@ -89,13 +91,12 @@ public:
 
 protected:
 //	CVariantObj	m_vtData;
-	LPARAM  m_lComboData;
-	LONG    m_nDropHeight;
-	std::string m_ButtonText;
+	LPARAM  m_lComboData {0LL};
+	long    m_nDropHeight {cDropdownHeight};
+	std::string m_ButtonText {_T("...")};
 
 // Operations
 protected:
-	void Initialize(void);
 	LONG FindCBData(LPARAM lParam);
 
 // Overrides
@@ -130,8 +131,8 @@ private:
 
 	SVNotifyButton m_btnDots;
 
-	bool m_bShowButton;
-	bool m_bEnableButton;
+	bool m_bShowButton {false};
+	bool m_bEnableButton {true};
 
 };
 

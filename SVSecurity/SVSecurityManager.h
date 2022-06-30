@@ -19,7 +19,9 @@ public:
 	bool    SVIsLoggedOn();
 	bool	SVIsSecured( long lId );
 	SVSecurityManager();
+	explicit SVSecurityManager(const SVSecurityManager&) = delete;
 	virtual ~SVSecurityManager();
+	SVSecurityManager& operator=(const SVSecurityManager&) = delete;
 	HRESULT SVValidate( long lId );
 	HRESULT SVValidate( long lId1, long lId2 );
 	bool SVIsDisplayable( long lId );
@@ -35,7 +37,7 @@ public:
 	HRESULT SVProtectData( long lID );
 	bool    SVGetUseLogon();
 private:
-	SVAccessClass* m_pSVAccess;
+	SVAccessClass* m_pSVAccess{nullptr};
 };
 
 __declspec(dllexport) SVSecurityManager& TheSecurityManager();

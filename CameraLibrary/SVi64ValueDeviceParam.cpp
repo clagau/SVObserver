@@ -15,24 +15,19 @@
 #pragma endregion Includes
 
 SVi64ValueDeviceParam::SVi64ValueDeviceParam()
-: iValue(0)
-{
-	init();
-}
-
-SVi64ValueDeviceParam::SVi64ValueDeviceParam(SVDeviceParamEnum typeEnum)
-: SVDeviceParam(typeEnum)
-, iValue(0)
-{
-	init();
-}
-
-SVi64ValueDeviceParam::SVi64ValueDeviceParam(const SVi64ValueDeviceParam& rhs) 
-: SVDeviceParam(rhs)
 {
 	m_eDataType = DeviceDataTypei64;
-	iValue = rhs.iValue;
-	info = rhs.info;
+}
+
+SVi64ValueDeviceParam::SVi64ValueDeviceParam(SVDeviceParamEnum typeEnum) : SVDeviceParam(typeEnum)
+{
+	m_eDataType = DeviceDataTypei64;
+}
+
+SVi64ValueDeviceParam::SVi64ValueDeviceParam(const SVi64ValueDeviceParam& rhs) : SVDeviceParam(rhs)
+,iValue{rhs.iValue}
+,info{rhs.info}
+{
 }
 
 SVi64ValueDeviceParam::~SVi64ValueDeviceParam()
@@ -45,28 +40,20 @@ SVClonable* SVi64ValueDeviceParam::CloneImpl() const
 }
 
 SVi64ValueDeviceParam::SVi64ValueDeviceParam(const __int64& rhs)
+	: iValue{rhs}
 {
 	m_eDataType = DeviceDataTypei64;
-	iValue = rhs;
-	init();
 }
 
 SVi64ValueDeviceParam::SVi64ValueDeviceParam(const LARGE_INTEGER& rhs)
+	: iValue {rhs.QuadPart}
 {
-	iValue = rhs.QuadPart;
-	init();
+	m_eDataType = DeviceDataTypei64;
 }
 
 SVi64ValueDeviceParam::operator __int64() const
 {
 	return iValue;
-}
-
-void SVi64ValueDeviceParam::init()
-{
-	m_eDataType = DeviceDataTypei64;
-	info.min = 0;
-	info.max = _I64_MAX;
 }
 
 SVi64ValueDeviceParam& SVi64ValueDeviceParam::operator=(const SVi64ValueDeviceParam& rhs)

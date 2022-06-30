@@ -98,13 +98,13 @@ namespace SvOsl
 
 	private:
 	#pragma region Member Variables
-		enum
+		enum Column_Enum
 		{
 			NameColumn = 0,
 			LocationColumn,
 			CheckColumn,
 			TypeColumn
-		} Column_Enum;
+		};
 
 		SvCl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
 		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls

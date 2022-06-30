@@ -14,26 +14,20 @@
 #include "SVSoftwareTriggerSetupDlg.h"
 #pragma endregion Includes
 
-SVSoftwareTriggerSetupDlg::SVSoftwareTriggerSetupDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVSoftwareTriggerSetupDlg::IDD, pParent)
-	, m_period1(0)
-	, m_period2(0)
-	, m_period3(0)
-	, m_period4(0)
-{
-}
+BEGIN_MESSAGE_MAP(SVSoftwareTriggerSetupDlg, CDialog)
+END_MESSAGE_MAP()
 
-SVSoftwareTriggerSetupDlg::~SVSoftwareTriggerSetupDlg()
+SVSoftwareTriggerSetupDlg::SVSoftwareTriggerSetupDlg(CWnd* pParent /*=nullptr*/) : CDialog(SVSoftwareTriggerSetupDlg::IDD, pParent)
 {
 }
 
 void SVSoftwareTriggerSetupDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_PERIOD1, m_period1);
-	DDX_Text(pDX, IDC_PERIOD2, m_period2);
-	DDX_Text(pDX, IDC_PERIOD3, m_period3);
-	DDX_Text(pDX, IDC_PERIOD4, m_period4);
+	for (int i = 0; i < cTriggerChannelNr; ++i)
+	{
+		DDX_Text(pDX, IDC_PERIOD1 + i, m_period[i]);
+	}
 }
 
 BOOL SVSoftwareTriggerSetupDlg::OnInitDialog() 
@@ -52,10 +46,3 @@ void SVSoftwareTriggerSetupDlg::OnOK()
 	
 	CDialog::OnOK();
 }
-
-BEGIN_MESSAGE_MAP(SVSoftwareTriggerSetupDlg, CDialog)
-END_MESSAGE_MAP()
-
-
-// SVSoftwareTriggerSetupDlg message handlers
-

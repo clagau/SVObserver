@@ -29,23 +29,10 @@ public:
 	
 	explicit SVSecuritySetupPage(UINT nIDTemplate, UINT nIDCaption = 0);
 	
-	virtual ~SVSecuritySetupPage();
+	virtual ~SVSecuritySetupPage() = default;
 	void BuildTree( long& p_NodeIndex, HTREEITEM hParent, bool p_Root );
 
-// Dialog Data
-	//{{AFX_DATA(SVSecuritySetupPage)
 	enum { IDD = IDD_SECURITY_PAGE };
-	CTreeCtrl	m_AccessPointTree;
-	CListBox	m_lbNetGroups;
-	BOOL	m_bForcePrompt;
-	BOOL	m_bLogOnMode;
-	long	m_lTimeout;
-	CString	m_Group;
-	//}}AFX_DATA
-	
-	int		m_nParent;
-	
-	int		m_nChild;
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVSecuritySetupPage)
@@ -75,16 +62,23 @@ protected:
 
 	int GetNodeIndexFromTree();
 
-
 	void  SetGroups(CString groups);
 	
 	void  ResetGroups();
 
-
 protected:	
-	
-	SVSecuritySetupSheet*   pPropSheet;
-	SVAccessClass*          m_pAccess;
+	CTreeCtrl	m_AccessPointTree;
+	CListBox	m_lbNetGroups;
+	BOOL	m_bForcePrompt {false};
+	BOOL	m_bLogOnMode {false};
+	long	m_lTimeout {0L};
+	CString	m_Group;
+
+	int		m_nParent {0};
+	int		m_nChild {0};
+
+	SVSecuritySetupSheet*   pPropSheet {nullptr};
+	SVAccessClass*          m_pAccess {nullptr};
 };
 
 

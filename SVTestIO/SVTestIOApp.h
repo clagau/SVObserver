@@ -23,15 +23,15 @@ class SVTestIODlg;
 class SVTestIOApp : public CWinApp
 {
 public:
-	SVTestIOApp();
-	virtual ~SVTestIOApp();
+	SVTestIOApp() = default;
+	virtual ~SVTestIOApp() = default;
 
 // Overrides
 public:
 	virtual BOOL InitInstance() override;
 	virtual BOOL ExitInstance() override;
 
-	SVTestIODlg* m_pTestIODlg;
+	SVTestIODlg* m_pTestIODlg{nullptr};
 
 	DECLARE_MESSAGE_MAP()
 };

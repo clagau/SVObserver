@@ -42,14 +42,14 @@
 
 class TTabItem {
 private:
-  CWnd *m_pWnd;             // Window (view) associated with this tab
-  CStatic *m_pCaption;      // Caption of this tab
-  BOOL m_bWndEnabled;       // Is window enabled
-  BOOL m_bEnabled;          // Is tab enabled
-  BOOL m_bVisible;          // Is tab visible
-  int m_nMinX;              // Client left X coordinate
-  int m_nMaxX;              // Client right X coordinate
-  HICON m_hIcon;            // Optional icon handle for tab
+  CWnd *m_pWnd {nullptr};           // Window (view) associated with this tab
+  CStatic *m_pCaption {nullptr};    // Caption of this tab
+  BOOL m_bWndEnabled {true};        // Is window enabled
+  BOOL m_bEnabled {true};           // Is tab enabled
+  BOOL m_bVisible {true};           // Is tab visible
+  int m_nMinX {0};                  // Client left X coordinate
+  int m_nMaxX {0};                  // Client right X coordinate
+  HICON m_hIcon {nullptr};          // Optional icon handle for tab
 
 public:
   TTabItem(CWnd *pParent, LPCTSTR label, HICON hIcon = nullptr);
@@ -362,8 +362,8 @@ public:
   BOOL Add(TVisualObject *pObject);
   BOOL Add(TVisualObject *pOwner, TVisualObject *pObject);
 
-  virtual BOOL Create(CWnd *pWnd = nullptr);
-  virtual void Destroy(void);
+  BOOL Create(CWnd *pWnd = nullptr);
+  void Destroy(void);
 
   CWnd *GetWnd(void);
   CWnd *GetSafeWnd(void);
@@ -425,24 +425,24 @@ protected:
 class TVisualFrameworkIterator {
 private:
   enum TIteratorType { IT_MAP, IT_LIST };
-  TVisualObjectMap *m_pObjectMap;
+  TVisualObjectMap *m_pObjectMap {nullptr};
   TVisualObjectMap::iterator m_MapIt;
-  TVisualObjectList *m_pObjectList;
+  TVisualObjectList *m_pObjectList {nullptr};
   TVisualObjectList::iterator m_ListIt;
   TIteratorType m_nType;
 
 public:
 	explicit TVisualFrameworkIterator(TVisualFramework& obj)
     :m_pObjectMap(&(obj.m_ObjectMap))
+    ,m_MapIt{m_pObjectMap->begin()}
+    ,m_nType{IT_MAP}
   {
-    m_MapIt = m_pObjectMap->begin();
-    m_nType = IT_MAP;
   }
 	explicit TVisualFrameworkIterator(TVisualObject& obj)
     :m_pObjectList(&(obj.m_ObjectList))
+    ,m_ListIt{m_pObjectList->begin()}
+    , m_nType {IT_LIST}
   {
-    m_ListIt = m_pObjectList->begin();
-    m_nType = IT_LIST;
   }
   TVisualObject *operator->()
   {
@@ -469,8 +469,8 @@ public:
   int operator++(int)
   { 
     switch (m_nType) {
-    case IT_MAP: m_MapIt++; break;
-    case IT_LIST: m_ListIt++; break;
+    case IT_MAP: ++m_MapIt; break;
+    case IT_LIST: ++m_ListIt; break;
     default: ASSERT(FALSE);
     }
     return End();

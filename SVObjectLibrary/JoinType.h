@@ -29,7 +29,7 @@ namespace SvOl
 	public:
 		JoinType() { Assign( NotSet ); }
 
-		JoinType(int flags) { Assign( flags );}
+		explicit JoinType(int flags) { Assign( flags );}
 
 	#pragma endregion Constructor
 

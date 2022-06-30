@@ -31,11 +31,6 @@ namespace SvMc
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVDlgBitmapClass::SVDlgBitmapClass()
-	{
-		OEMMode = FALSE;
-	}
-
 	SVDlgBitmapClass::~SVDlgBitmapClass()
 	{
 		bitmap.DeleteObject();
@@ -63,15 +58,15 @@ namespace SvMc
 		HBITMAP bm;
 		bm = InitFromFile();
 
-		if( !bm )
+		if(nullptr == bm)
 		{
-			bm = (HBITMAP) ::LoadImage(  AfxGetResourceHandle(), 
+			bm = static_cast<HBITMAP> (::LoadImage(  AfxGetResourceHandle(), 
 				MAKEINTRESOURCE( nIDResource ),
 				IMAGE_BITMAP,
 				0,
 				0,
-				LR_DEFAULTCOLOR | LR_CREATEDIBSECTION );
-		}// end if
+				LR_DEFAULTCOLOR | LR_CREATEDIBSECTION ));
+		}
 
 		return bitmap.Attach( bm );
 	}
@@ -159,12 +154,9 @@ namespace SvMc
 
 			RGBQUAD* pColors = new RGBQUAD[colNum];
 			::GetDIBColorTable( memDC.GetSafeHdc(), 0, colNum, pColors );
-			BYTE swap;
 			for( UINT i = 0; i < colNum; ++i )
 			{	// BGR -> RGB
-				swap = pColors[i].rgbBlue;
-				pColors[i].rgbBlue = pColors[i].rgbRed;
-				pColors[i].rgbRed = swap;
+				std::swap(pColors[i].rgbBlue, pColors[i].rgbRed);
 				pColors[i].rgbReserved = 0;//PC_EXPLICIT; //PC_NOCOLLAPSE;//PC_RESERVED; //; // //
 			};
 

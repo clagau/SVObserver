@@ -261,7 +261,7 @@ protected:
 	SvPb::EmbeddedIdEnum m_embeddedID;
 	//Owner Info
 	SVObjectClass* m_pOwner = nullptr;
-	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;
+	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo{};
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 
 	SVObjectPtrVector m_embeddedList;

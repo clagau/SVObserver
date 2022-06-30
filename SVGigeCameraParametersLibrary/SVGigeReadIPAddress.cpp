@@ -20,11 +20,10 @@ HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerPtr Digitizer, const SV
 { 
 	//SVMatroxString value;
 	__int64 value;
-	std::string sTmp;
 	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeIPAddress(*(Digitizer.get()), value);
 	if (l_Code == S_OK)
 	{
-		sTmp = SvUl::Format("%u.%u.%u.%u", 
+		std::string sTmp = SvUl::Format("%u.%u.%u.%u",
 					static_cast<unsigned char>(value),
 					static_cast<unsigned char>(value >> 8) & 0xFF,
 					static_cast<unsigned char>(value >> 16) & 0xFF,

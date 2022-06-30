@@ -19,18 +19,20 @@ SVStringValueDeviceParam::SVStringValueDeviceParam()
 	m_eDataType = DeviceDataTypeString;
 }
 
-SVStringValueDeviceParam::SVStringValueDeviceParam(SVDeviceParamEnum typeEnum)
-: SVDeviceParam(typeEnum)
+SVStringValueDeviceParam::SVStringValueDeviceParam(SVDeviceParamEnum typeEnum) : SVDeviceParam(typeEnum)
 {
 	m_eDataType = DeviceDataTypeString;
 }
 
-SVStringValueDeviceParam::SVStringValueDeviceParam( const SVStringValueDeviceParam& rRhs )
-: SVDeviceParam( rRhs )
+SVStringValueDeviceParam::SVStringValueDeviceParam( const SVStringValueDeviceParam& rRhs ) : SVDeviceParam(rRhs)
+, strValue {rRhs.strValue}
+, info{rRhs.info}
 {
-	m_eDataType = DeviceDataTypeString;
-	strValue = rRhs.strValue;
-	info = rRhs.info;
+}
+
+SVStringValueDeviceParam::SVStringValueDeviceParam(const std::string& rRhs) :
+ strValue{rRhs}
+{
 }
 
 SVStringValueDeviceParam::~SVStringValueDeviceParam()
@@ -40,12 +42,6 @@ SVStringValueDeviceParam::~SVStringValueDeviceParam()
 SVClonable* SVStringValueDeviceParam::CloneImpl() const
 {
 	return new SVStringValueDeviceParam( *this );
-}
-
-SVStringValueDeviceParam::SVStringValueDeviceParam( const std::string& rRhs )
-{
-	m_eDataType = DeviceDataTypeString;
-	strValue = rRhs;
 }
 
 SVStringValueDeviceParam& SVStringValueDeviceParam::operator = (const SVStringValueDeviceParam& rRhs)
@@ -112,7 +108,7 @@ const std::string& StringValue(const SVDeviceParamWrapper& w)
 
 SVDeviceParamWrapper DeviceParam(const std::string& s) 
 {
-	return SVStringValueDeviceParam(s.c_str());
+	return SVStringValueDeviceParam(s);
 }
 
 #endif

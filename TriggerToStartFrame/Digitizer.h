@@ -113,11 +113,11 @@ class SVImageBufferHandleInterface
 {
 public:
 
-	bool empty() const {};
+	bool empty() const { return false; }
 	void clear() {};
 	
-	SVPoint<long> GetPositionPoint() const {};
-	SVBitmapInfo GetBitmapInfo() const {};
+	SVPoint<long> GetPositionPoint() const { return SVPoint<long>{0L, 0L}; }
+	SVBitmapInfo GetBitmapInfo() const { return SVBitmapInfo {}; }
 	unsigned char* GetBufferAddress() const { return nullptr; }
 
 	const SVMatroxBuffer& GetBuffer() const { return m_MatroxBuffer; }

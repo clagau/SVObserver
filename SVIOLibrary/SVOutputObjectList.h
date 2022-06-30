@@ -39,7 +39,7 @@ public:
 	HRESULT DetachOutput(uint32_t outputID );
 
 	ObjectIdVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, const std::vector<bool>& rOutputResult, bool useDefaults, bool p_ACK, bool p_NAK);
-	bool ResetOutputs(SVIOEntryHostStructPtrVector& rIOEntries);
+	bool ResetOutputs(const SVIOEntryHostStructPtrVector& rIOEntries);
 	bool WriteOutputs(const ObjectIdVariantPairVector& rOutputValues);
 	bool WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool p_ACK, bool p_NAK );
 	bool WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
@@ -49,7 +49,7 @@ public:
 
 	SVIOEntryHostStructPtrVector getOutputList() const;
 
-	bool OutputIsNotValid( std::string p_strName );
+	bool OutputIsNotValid(const std::string& rName);
 
 	typedef  std::map<int, _variant_t> IntVariantMap;
 	///This function returns no error because the IO PLC dll is the only type which supports this functionality

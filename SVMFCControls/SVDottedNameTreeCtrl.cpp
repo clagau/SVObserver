@@ -46,16 +46,21 @@ namespace SvMc
 	////////////////////////////////////////////////////////////////////////////////
 	BOOL SVDottedNameTreeCtrl::AddItem( LPCTSTR DottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
 	{
-		LPTSTR Source = _tcsdup( DottedItemName );
-		if( Source )
+		std::string dottedName {DottedItemName};
+		if( false == dottedName.empty())
 		{
 			HTREEITEM hRoot = nullptr;
 
-			TCHAR sep[] = _T( "." );
-			LPTSTR tStrToken = _tcstok( Source, sep );
-			LPTSTR tStrNextToken = _tcstok( nullptr, sep );
+			std::vector<std::string> nameList;
+			nameList.reserve(50);
+			std::stringstream stringStream(dottedName);
+			std::string name;
+			while (std::getline(stringStream, name, '.'))
+			{
+				nameList.emplace_back(std::move(name));
+			}
 
-			while( nullptr != tStrToken )
+			for(auto iter = nameList.cbegin(); nameList.cend() != iter; ++iter)
 			{
 				// Note:
 				// If there is no next token ( nullptr == tStrNextToken ), 
@@ -67,7 +72,7 @@ namespace SvMc
 				do
 				{
 					CString strItem = GetItemText( hSibling );
-					if( strItem.CompareNoCase( tStrToken ) == 0 )
+					if( strItem.CompareNoCase(iter->c_str()) == 0 )
 						break;
 				} while( NULL != (hSibling = GetNextItem( hSibling, TVGN_NEXT )));
 
@@ -75,13 +80,15 @@ namespace SvMc
 				{
 					// There were no leaf which was refered by the token at this
 					// tree level yet.
+					auto nextIter {iter};
+					++nextIter;
 
 					// Put in a new leaf...
-					if( nullptr == tStrNextToken )
+					if(nameList.cend() == nextIter)
 					{
 						// We stick the object itself inside...
 						hSibling = InsertItem( TVIF_TEXT | TVIF_PARAM, // UINT nMask, 
-							( LPCTSTR ) tStrToken,  // LPCTSTR lpszItem, 
+							iter->c_str(),  // LPCTSTR lpszItem, 
 							0,                     // int nImage, 
 							0,                     // int nSelectedImage, 
 							0, //INDEXTOSTATEIMAGEMASK( nIndex ),	// UINT nState, 
@@ -95,13 +102,12 @@ namespace SvMc
 						if( BExpand )
 							Expand( hRoot, TVE_EXPAND );
 
-						free( Source );
 						return( nullptr != hSibling );
 					}
 
 					// We build just another sibling...
 					hSibling = InsertItem( TVIF_TEXT,				// UINT nMask, 
-						( LPCTSTR ) tStrToken,  // LPCTSTR lpszItem, 
+						iter->c_str(),  // LPCTSTR lpszItem, 
 						0,                     // int nImage, 
 						0,                     // int nSelectedImage, 
 						0, //INDEXTOSTATEIMAGEMASK( nIndex ),	// UINT nState, 
@@ -120,18 +126,11 @@ namespace SvMc
 
 					// We walk down the root...
 					hRoot = hSibling;
-
-					// And get the next token...
-					tStrToken = tStrNextToken;
-					tStrNextToken = _tcstok( nullptr, sep );
-
 					continue;
 				}
 
 				break;
 			}	
-
-			free( Source );
 		}
 
 		return FALSE;
@@ -145,16 +144,21 @@ namespace SvMc
 	////////////////////////////////////////////////////////////////////////////////
 	HTREEITEM SVDottedNameTreeCtrl::GetItem( LPCTSTR DottedItemName )
 	{
-		LPTSTR tStrSource = _tcsdup( DottedItemName );
-		if( tStrSource )
+		std::string dottedName {DottedItemName};
+		if (false == dottedName.empty())
 		{
 			HTREEITEM hRoot = nullptr;
 
-			TCHAR sep[] = _T( "." );
-			LPTSTR tStrToken = _tcstok( tStrSource, sep );
-			LPTSTR tStrNextToken = _tcstok( nullptr, sep );
+			std::vector<std::string> nameList;
+			nameList.reserve(50);
+			std::stringstream stringStream(dottedName);
+			std::string name;
+			while (std::getline(stringStream, name, '.'))
+			{
+				nameList.emplace_back(std::move(name));
+			}
 
-			while( nullptr != tStrToken )   
+			for (auto iter = nameList.begin(); nameList.end() != iter; ++iter)
 			{
 				// Note:
 				// If there is no next token ( nullptr == tStrNextToken ), 
@@ -166,33 +170,27 @@ namespace SvMc
 				do
 				{
 					CString strItem = GetItemText( hSibling );
-					if( strItem.CompareNoCase( tStrToken ) == 0 )
+					if( strItem.CompareNoCase(iter->c_str()) == 0 )
 						break;
 				} while(NULL != (hSibling = GetNextItem( hSibling, TVGN_NEXT )));
 
 				if( nullptr != hSibling )
 				{
-					if( nullptr == tStrNextToken )
+					auto nextIter {iter};
+					++nextIter;
+
+					if (nameList.cend() == nextIter)
 					{
-						// We found the item...
-						free( tStrSource );
 						return hSibling;
 					}
 
 					// We walk down the root...
 					hRoot = hSibling;
-
-					// And get the next token...
-					tStrToken = tStrNextToken;
-					tStrNextToken = _tcstok( nullptr, sep );
-
 					continue;
 				}
 
 				break;
 			}	
-
-			free( tStrSource );
 		}
 
 		return nullptr;

@@ -26,29 +26,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	SVDlgGraph::SVDlgGraph()
-	{
-		pProcFunc = nullptr;
-		pUserData = nullptr;
-		xMult = 0.0;
-		yMult = 0.0;
-		xDisp = 0;
-		yDisp = 0;
-		yClient = 0;
-		bButtonDown = FALSE;
-		normalizeMode = SVNormalize1D;
-		mrgbGraphColor = RGB(0,0,0);	// default black
-		m_lXMax = 0;
-		m_lYMax = 0;
-		m_lXMin = 0;
-		m_lYMin = 0;
-	}
-
-	SVDlgGraph::~SVDlgGraph()
-	{
-	}
-
-
 	BEGIN_MESSAGE_MAP(SVDlgGraph, CStatic)
 		//{{AFX_MSG_MAP(SVDlgGraph)
 		ON_WM_LBUTTONDOWN()

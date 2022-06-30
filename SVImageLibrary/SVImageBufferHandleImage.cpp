@@ -25,7 +25,7 @@ SVImageBufferHandleImage::SVImageBufferHandleImage(const SVMatroxBuffer& rMilIma
 
 SVImageBufferHandleImage::~SVImageBufferHandleImage()
 {
-	clear();
+	m_Buffer.clear();
 }
 
 bool SVImageBufferHandleImage::empty() const

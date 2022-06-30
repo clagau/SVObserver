@@ -20,7 +20,7 @@ namespace SvTrcT
 	{
 #pragma region Constructor
 	public:
-		WindowTool(uint32_t id);
+		explicit WindowTool(uint32_t id);
 		virtual ~WindowTool() = default;
 
 #pragma endregion Constructor

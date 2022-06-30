@@ -15,7 +15,7 @@ public:
 	typedef typename Container::size_type size_type;
 
 	SVThreadSafeList() {}
-	SVThreadSafeList(size_type InitSize) : m_list(InitSize) {}
+	explicit SVThreadSafeList(size_type InitSize) : m_list(InitSize) {}
 	~SVThreadSafeList() {}
 
 	inline bool empty() const 
@@ -71,7 +71,7 @@ public:
 	int Insert(size_t position, const type& newElement)
 	{
 		std::lock_guard<std::mutex> lock(m_dataMutex);
-		if (0 <= position && m_list.size() > position)
+		if (m_list.size() > position)
 		{
 			m_list.insert(m_list.begin()+position, newElement);
 			return static_cast<int>(position);
@@ -130,7 +130,7 @@ public:
 protected:
 	mutable std::mutex m_dataMutex;
 	Container m_list;
-	type m_emptytype; // empty item to be returned if
+	type m_emptytype {}; // empty item to be returned if
 #pragma endregion Protected
 
 #pragma region Private

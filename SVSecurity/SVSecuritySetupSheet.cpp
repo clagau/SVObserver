@@ -22,27 +22,22 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-void SVSecuritySetupSheet::Initialize(void)
+SVSecuritySetupSheet::SVSecuritySetupSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage) 
+	: CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
 	m_psh.dwFlags &= ~PSH_HASHELP;
 }
 
-SVSecuritySetupSheet::SVSecuritySetupSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+SVSecuritySetupSheet::SVSecuritySetupSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage) 
+	: CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
-	Initialize();
+	m_psh.dwFlags &= ~PSH_HASHELP;
 }
 
-SVSecuritySetupSheet::SVSecuritySetupSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+SVSecuritySetupSheet::SVSecuritySetupSheet() 
+	: CPropertySheet(_T("SECURITY SETUP"), nullptr, 0)
 {
-	Initialize();
-}
-
-SVSecuritySetupSheet::SVSecuritySetupSheet()
-	:CPropertySheet(_T("SECURITY SETUP"), nullptr, 0)
-{
-	Initialize();
+	m_psh.dwFlags &= ~PSH_HASHELP;
 }
 
 SVSecuritySetupSheet::~SVSecuritySetupSheet()

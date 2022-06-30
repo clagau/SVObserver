@@ -25,15 +25,12 @@ namespace SvMc
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVToolBar::SVToolBar()
-	{
-		m_pTBButtons = nullptr;
-	}
-
 	SVToolBar::~SVToolBar()
 	{
-		if (m_pTBButtons)
-			delete []m_pTBButtons;
+		if (nullptr != m_pTBButtons)
+		{
+			delete[] m_pTBButtons;
+		}
 	}
 
 
