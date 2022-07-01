@@ -193,6 +193,7 @@ namespace SvOg
 		ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
 		ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
+		ON_NOTIFY(GVN_VALUE_SELCHANGED, IDC_GRID, OnGridValueSelectionChanged)
 		ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
 		ON_COMMAND(ID_ADD_COLUMN, OnBnClickedButtonAdd)
 		ON_COMMAND(ID_REMOVE_COLUMNS, OnBnClickedButtonRemove)
@@ -322,69 +323,14 @@ namespace SvOg
 	void TADialogGroupToolInputPage::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 	{
 		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
-		bool bAcceptChange = true;
+		bool bAcceptChange = OnValueChanged(pItem->iRow, pItem->iColumn);
+		*pResult = (bAcceptChange) ? 0 : -1;
+	}
 
-		if (0 < pItem->iRow && m_inputData.size() >= pItem->iRow)
-		{
-			std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
-			switch (pItem->iColumn)
-			{
-			case NameColumn:
-				if (m_inputData[pItem->iRow - 1].m_name != cellText)
-				{
-					if (m_inputData.end() != std::find_if(m_inputData.begin(), m_inputData.end(), [cellText](const auto& rEntry) { return rEntry.m_name == cellText; }))
-					{
-						SvDef::StringVector msgList;
-						msgList.emplace_back(cellText);
-						SvStl::MessageManager Msg(SvStl::MsgType::Display);
-						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams));
-						bAcceptChange = false;
-					}
-					else
-					{
-						m_inputData[pItem->iRow - 1].m_name = cellText;
-					}
-				}
-				break;
-			case TypeColumn:
-			{
-				const auto& type = getType(cellText);
-				m_inputData[pItem->iRow - 1].m_type = static_cast<SvPb::LinkedValueTypeEnum>(type.second);
-				FillGridControl();
-				break;
-			}
-			case DefaultColumn:
-			{
-				if (SvPb::isValueType(m_inputData[pItem->iRow - 1].m_type))
-				{
-					try
-					{
-						//check if text a correct variant	
-						m_inputData[pItem->iRow - 1].m_data.m_defaultValue = checkText(m_inputData[pItem->iRow - 1].m_type, cellText);
-					}
-					catch (const SvStl::MessageContainer& rSvE)
-					{
-						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						Msg.setMessage(rSvE.getMessage());
-						bAcceptChange = false;
-						m_inputData[pItem->iRow - 1].m_data.m_defaultValue = SvPb::getDefaultString(m_inputData[pItem->iRow - 1].m_type);
-						m_Grid.SetItemText(pItem->iRow, DefaultColumn, static_cast<CString>(m_inputData[pItem->iRow - 1].m_data.m_defaultValue));
-					}
-				}
-				else
-				{
-					m_inputData[pItem->iRow - 1].m_data.m_defaultValue = _variant_t{};
-				}
-				break;
-			}
-			case ValueColumn:
-			{
-				bAcceptChange = setValue(m_inputData[pItem->iRow - 1], cellText);
-				break;
-			}
-			}
-		}
-
+	void TADialogGroupToolInputPage::OnGridValueSelectionChanged(NMHDR* pNotifyStruct, LRESULT* pResult)
+	{
+		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
+		bool bAcceptChange = OnValueChanged(pItem->iRow, pItem->iColumn);
 		*pResult = (bAcceptChange) ? 0 : -1;
 	}
 
@@ -760,6 +706,72 @@ namespace SvOg
 		{
 			GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(false);
 		}
+	}
+
+	bool TADialogGroupToolInputPage::OnValueChanged(int row, int column)
+	{
+		bool bAcceptChange {true};
+		if (0 < row && m_inputData.size() >= row)
+		{
+			std::string cellText = m_Grid.GetCell(row, column)->GetText();
+			switch (column)
+			{
+				case NameColumn:
+					if (m_inputData[row - 1].m_name != cellText)
+					{
+						if (m_inputData.end() != std::find_if(m_inputData.begin(), m_inputData.end(), [cellText](const auto& rEntry) { return rEntry.m_name == cellText; }))
+						{
+							SvDef::StringVector msgList;
+							msgList.emplace_back(cellText);
+							SvStl::MessageManager Msg(SvStl::MsgType::Display);
+							Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams));
+							bAcceptChange = false;
+						}
+						else
+						{
+							m_inputData[row - 1].m_name = cellText;
+						}
+					}
+					break;
+				case TypeColumn:
+				{
+					const auto& type = getType(cellText);
+					m_inputData[row - 1].m_type = static_cast<SvPb::LinkedValueTypeEnum>(type.second);
+					FillGridControl();
+					break;
+				}
+				case DefaultColumn:
+				{
+					if (SvPb::isValueType(m_inputData[row - 1].m_type))
+					{
+						try
+						{
+							//check if text a correct variant	
+							m_inputData[row - 1].m_data.m_defaultValue = checkText(m_inputData[row - 1].m_type, cellText);
+						}
+						catch (const SvStl::MessageContainer& rSvE)
+						{
+							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							Msg.setMessage(rSvE.getMessage());
+							bAcceptChange = false;
+							m_inputData[row - 1].m_data.m_defaultValue = SvPb::getDefaultString(m_inputData[row - 1].m_type);
+							m_Grid.SetItemText(row, DefaultColumn, static_cast<CString>(m_inputData[row - 1].m_data.m_defaultValue));
+						}
+					}
+					else
+					{
+						m_inputData[row - 1].m_data.m_defaultValue = _variant_t {};
+					}
+					break;
+				}
+				case ValueColumn:
+				{
+					bAcceptChange = setValue(m_inputData[row - 1], cellText);
+					break;
+				}
+			}
+		}
+		return bAcceptChange;
 	}
 #pragma endregion Private Mehods
 } //namespace SvOg

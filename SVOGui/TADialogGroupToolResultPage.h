@@ -67,6 +67,7 @@ namespace SvOg
 
 		void OnGridClick(NMHDR*, LRESULT*);
 		void OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
+		void OnGridValueSelectionChanged(NMHDR* pNotifyStruct, LRESULT* pResult);
 		void OnSelectionChanged(NMHDR* pNotifyStruct, LRESULT* pResult);
 
 		void OnBnClickedButtonRemove();
@@ -99,6 +100,8 @@ namespace SvOg
 		void loadDataList();
 
 		void UpdateEnableButtons();
+
+		bool OnValueChanged(int row, int column);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

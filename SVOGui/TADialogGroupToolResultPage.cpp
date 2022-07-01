@@ -102,6 +102,7 @@ namespace SvOg
 		ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
 		ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
+		ON_NOTIFY(GVN_VALUE_SELCHANGED, IDC_GRID, OnGridValueSelectionChanged)
 		ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
 		ON_COMMAND(ID_ADD_COLUMN, OnBnClickedButtonAdd)
 		ON_COMMAND(ID_REMOVE_COLUMNS, OnBnClickedButtonRemove)
@@ -228,47 +229,58 @@ namespace SvOg
 		}
 	}
 
+	bool TADialogGroupToolResultPage::OnValueChanged(int row, int column)
+	{
+		bool bAcceptChange {true};
+		if (0 < row && m_resultData.size() >= row)
+		{
+			std::string cellText = m_Grid.GetCell(row, column)->GetText();
+			switch (column)
+			{
+				case NameColumn:
+					if (m_resultData[row - 1].m_name != cellText)
+					{
+						if (m_resultData.end() != std::find_if(m_resultData.begin(), m_resultData.end(), [cellText](const auto& rEntry) { return rEntry.m_name == cellText; }))
+						{
+							SvDef::StringVector msgList;
+							msgList.emplace_back(cellText);
+							SvStl::MessageManager Msg(SvStl::MsgType::Display);
+							Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams));
+							bAcceptChange = false;
+						}
+						else
+						{
+							m_resultData[row - 1].m_name = cellText;
+						}
+					}
+					break;
+				case TypeColumn:
+				{
+					const auto& type = getType(cellText);
+					m_resultData[row - 1].m_type = static_cast<SvPb::LinkedValueTypeEnum>(type.second);
+					FillGridControl();
+					break;
+				}
+				case ValueColumn:
+				{
+					bAcceptChange = setValue(m_resultData[row - 1], cellText);
+				}
+			}
+		}
+		return bAcceptChange;
+	}
+
 	void TADialogGroupToolResultPage::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 	{
 		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
-		bool bAcceptChange = true;
+		bool bAcceptChange = OnValueChanged(pItem->iRow, pItem->iColumn);
+		*pResult = (bAcceptChange) ? 0 : -1;
+	}
 
-		if (0 < pItem->iRow && m_resultData.size() >= pItem->iRow)
-		{
-			std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
-			switch (pItem->iColumn)
-			{
-			case NameColumn:
-				if (m_resultData[pItem->iRow - 1].m_name != cellText)
-				{
-					if (m_resultData.end() != std::find_if(m_resultData.begin(), m_resultData.end(), [cellText](const auto& rEntry) { return rEntry.m_name == cellText; }))
-					{
-						SvDef::StringVector msgList;
-						msgList.emplace_back(cellText);
-						SvStl::MessageManager Msg(SvStl::MsgType::Display);
-						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams));
-						bAcceptChange = false;
-					}
-					else
-					{
-						m_resultData[pItem->iRow - 1].m_name = cellText;
-					}
-				}
-				break;
-			case TypeColumn:
-			{
-				const auto& type = getType(cellText);
-				m_resultData[pItem->iRow - 1].m_type = static_cast<SvPb::LinkedValueTypeEnum>(type.second);
-				FillGridControl();
-				break;
-			}
-			case ValueColumn:
-			{
-				bAcceptChange = setValue(m_resultData[pItem->iRow - 1], cellText);
-			}
-			}
-		}
-
+	void TADialogGroupToolResultPage::OnGridValueSelectionChanged(NMHDR* pNotifyStruct, LRESULT* pResult)
+	{
+		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
+		bool bAcceptChange = OnValueChanged(pItem->iRow, pItem->iColumn);
 		*pResult = (bAcceptChange) ? 0 : -1;
 	}
 
