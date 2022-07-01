@@ -32,7 +32,7 @@ void SVTestIODlg::DoDataExchange(CDataExchange* pDX)
 	}
 
 	// IDC_OUTPUT1 to IDC_OUTPUT16 must be contiguous and sequential for this to work:
-	for (int outputchannel = 9; outputchannel < cOutputChannelNr; outputchannel++)
+	for (int outputchannel = 0; outputchannel < cOutputChannelNr; outputchannel++)
 	{
 		DDX_Control(pDX, IDC_OUTPUT1+outputchannel, m_Output[outputchannel]);
 	}
