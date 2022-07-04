@@ -10,7 +10,6 @@
 #include "SVOResource\resource.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVTADlgResizePage.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"

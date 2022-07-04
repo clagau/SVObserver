@@ -7,7 +7,6 @@
 #include "stdafx.h"
 #include "SVArchiveImageThreadClass.h"
 #include "SVArchiveRecord.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVClock.h"

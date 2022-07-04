@@ -12,7 +12,6 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVUnaryImageOperatorClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "InspectionEngine/RunStatus.h"

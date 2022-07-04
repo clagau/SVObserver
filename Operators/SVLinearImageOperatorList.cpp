@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVLinearImageOperatorList.h"
 #include "SVUnaryImageOperatorClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageRotateStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"

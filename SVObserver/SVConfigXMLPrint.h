@@ -20,11 +20,8 @@
 #include "CameraLibrary/SVParamListDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
+#include "SVIOLibrary/SVIOEntryHostStruct.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "InspectionEngine/SVImageClass.h"
-#include "SVIOLibrary/SVInputObjectList.h"
-#include "SVImageLibrary/SVLightReference.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma region Includes
 
 class SVConfigurationObject;

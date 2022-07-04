@@ -15,7 +15,6 @@
 #include "SVInspectionProcess.h"
 #include "SVInspectionProcessResetStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVImageLibrary\SVImagingDeviceParams.h"
 #include "SVIOLibrary/SVInputObject.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"

@@ -15,7 +15,6 @@
 #include "SVRange.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVTaskObject.h"
-#include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
