@@ -63,7 +63,7 @@ static char THIS_FILE[] = __FILE__;
 constexpr double TwentyPercent = .20;
 #pragma endregion Declarations
 
-HRESULT SVPPQObject::ProcessDelayOutputs()
+void SVPPQObject::ProcessDelayOutputs()
 /// Used in data completion mode, but not in next trigger mode.
 /// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
 /// from m_ppPPQPositions via GetProductInfoStruct()
@@ -71,12 +71,9 @@ HRESULT SVPPQObject::ProcessDelayOutputs()
 /// from where WriteOutputs() will be called.
 /// Otherwise, puts the trigger count back into the outputs delay queue, 
 {
-	HRESULT l_Status = S_OK;
+	double currentTime {SvUl::GetTimeStamp()};
 
 	SVProductInfoStruct* pProduct {nullptr};
-
-	double l_CurrentTime = SvUl::GetTimeStamp();
-
 	while (0 < m_oOutputsDelayQueue.GetCount() && nullptr == pProduct)
 	{
 		long l_ProcessCount = 0;
@@ -87,8 +84,6 @@ HRESULT SVPPQObject::ProcessDelayOutputs()
 		}
 		else
 		{
-			l_Status = E_FAIL;
-
 			break;
 		}
 
@@ -103,7 +98,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs()
 					l_pNextProduct = GetProductInfoStruct(l_ProcessCount);
 				}
 
-				if (0 < m_outputDelay && nullptr != l_pNextProduct && l_pNextProduct->m_outputsInfo.m_EndOutputDelay <= l_CurrentTime)
+				if (0 < m_outputDelay && nullptr != l_pNextProduct && l_pNextProduct->m_outputsInfo.m_EndOutputDelay <= currentTime)
 				{
 					pProduct = nullptr;
 				}
@@ -114,7 +109,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs()
 		{
 			// if time delay has not expired yet, then put back on the 
 			// m_oOutputsDelayQueue.  Then why did we remove it to begin with?
-			if (l_CurrentTime < pProduct->m_outputsInfo.m_EndOutputDelay)
+			if (currentTime < pProduct->m_outputsInfo.m_EndOutputDelay)
 			{
 				m_NextOutputDelayTimestamp = pProduct->m_outputsInfo.m_EndOutputDelay;
 
@@ -138,32 +133,25 @@ HRESULT SVPPQObject::ProcessDelayOutputs()
 			case SvDef::SVPPQTimeDelayMode:
 			case SvDef::SVPPQExtendedTimeDelayMode:
 			{
-				l_Status = ProcessOutputs(*pProduct);
+				ProcessOutputs(*pProduct);
 				break;
 			}
 			case SvDef::SVPPQTimeDelayAndDataCompleteMode:
 			case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 			{
-				l_Status = ProcessTimeDelayAndDataCompleteOutputs(*pProduct);
-
+				ProcessTimeDelayAndDataCompleteOutputs(*pProduct);
 				break;
 			}
 			default:
 			{
-				l_Status = E_FAIL;
-
 				break;
 			}
 		}
 	}
-
-	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
+void SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 {
-	HRESULT l_Status = S_OK;
-
 	if (false == rProduct.m_dataComplete)
 	{
 		SetProductIncomplete(rProduct);
@@ -181,20 +169,13 @@ HRESULT SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 		}
 		SetProductComplete(rProduct);
 	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct& p_rProduct)
+void SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct& p_rProduct)
 {
-	HRESULT result {S_OK};
 	if (p_rProduct.m_dataComplete)
 	{
-		result = ProcessOutputs(p_rProduct);
+		ProcessOutputs(p_rProduct);
 		m_NextOutputDelayTimestamp = 0.0;
 	}
 	else
@@ -202,8 +183,6 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct&
 		m_NextOutputDelayTimestamp = p_rProduct.m_outputsInfo.m_EndOutputDelay;
 		m_oOutputsDelayQueue.AddHead(p_rProduct.triggerCount());
 	}
-
-	return result;
 }
 
 #pragma region Constructor
@@ -326,7 +305,6 @@ bool SVPPQObject::Create()
 	m_isCreated = true;
 
 	m_oNotifyInspectionsSet.clear();
-	m_ProcessInspectionsSet.clear();
 	calcUseProcessingOffset4InterestFlag();
 
 	// Force the Inspections to rebuild
@@ -392,7 +370,6 @@ void SVPPQObject::Destroy()
 	}
 
 	m_oNotifyInspectionsSet.clear();
-	m_ProcessInspectionsSet.clear();
 
 	if (!(m_PendingCameraResponses.empty()))
 	{
@@ -1885,82 +1862,8 @@ void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 
 }// end IndexPPQ
 
-
-// p_Offset represents PPQ position of product.
-HRESULT SVPPQObject::NotifyInspections(long offset)
+void SVPPQObject::StartInspection(uint32_t inspectionID)
 {
-	HRESULT l_Status = S_OK;
-
-	// ************************************************************************
-	// Now we need to check if any inspections were waiting on inputs read after
-	// the first position. Only check the products at positions that have a input set
-
-	// Begin checking inspections to start processing
-	if (0 <= offset && static_cast<size_t>(offset) < m_PPQPositions.size())
-	{
-		SVProductInfoStruct* pTempProduct = m_PPQPositions.GetProductAt(offset);
-		pTempProduct->m_CantProcessReason = CantProcessEnum::NoReason;
-		// See if the Inspection Processes can inspect this product
-		int iSize = static_cast<int> (m_arInspections.size());
-
-		for (int i = 0; i < iSize; i++)
-		{
-			SVInspectionInfoStruct& rInfo = pTempProduct->m_svInspectionInfos[m_arInspections[i]->getObjectId()];
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-			::OutputDebugString(SvUl::Format(_T("%s Notify Inspection TRI=%d CanProcess=%d, InProcess=%d, ProdActive=%d\n"), GetName(), pTempProduct->triggerCount(), rInfo.m_CanProcess, rInfo.m_InProcess, pTempProduct->IsProductActive()).c_str());
-#endif
-			// if product has not been previously determined that it "can 
-			// process".  That would generally mean that it's been here 
-			// before, and should not be able to happen.
-			if (false == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued && pTempProduct->IsProductActive())
-			{
-				// Tests if we have all required inputs.  Includes assigned 
-				// discrete inputs and camera images.
-				// If images or inputs are missing, CanProcess will return 
-				// FALSE(0).  m_CanProcess will also equal false.
-				rInfo.m_CanProcess = m_arInspections[i]->CanProcess(pTempProduct, pTempProduct->m_CantProcessReason);
-
-				if (rInfo.m_CanProcess)
-				{
-					if (pTempProduct->IsProductActive())
-					{
-						m_ProcessInspectionsSet.insert(m_arInspections[i]->getObjectId());
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Add Process Inspection Set TRI=%d\n"), GetName(), pTempProduct->triggerCount()).c_str());
-#endif
-					}
-				}
-				else
-				{
-					// If it can not process, this still does not change the 
-					// l_Status, so the returned status will still be S_OK
-					// which indicates NOT "Processed".
-					l_Status = S_FALSE; // 1
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-					::OutputDebugString(SvUl::Format(_T("%s Cannot Process Inspection TRI=%d\n"), GetName(), pTempProduct->triggerCount()).c_str());
-#endif
-				}
-			} // if( !( l_rInfo.m_CanProcess ) && !( l_rInfo.m_InProcess ) && pTempProduct->IsProductActive() )
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-	// Now we need to check if any inspections were waiting on inputs read after
-	// the first position. Only check the products at positions that have a input set
-	// End checking inspections to start processing
-	// ************************************************************************
-
-	return l_Status;
-}
-
-HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
-{
-	HRESULT result {S_OK};
-
 	SVProductInfoStruct* pProduct {nullptr};
 	size_t count = m_PPQPositions.size();
 
@@ -2066,12 +1969,14 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 		if (pProduct->m_triggered == 0)
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("SVPPQObject::StartInspection product not triggerd"), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ProductNotTriggered, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		}
-		result = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->StartProcess(pProduct);
+		if (S_OK != pProduct->m_svInspectionInfos[inspectionID].m_pInspection->StartProcess(pProduct))
+		{
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorStartInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		}
 	}
-
-	return result;
 }
 
 void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
@@ -2419,7 +2324,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 	if ((nullptr != rElement.m_pCamera) && (nullptr != rElement.m_Data.m_pImage))
 	{
 		long cameraPpqPos = 0;
-		size_t l_ProductIndex = static_cast<size_t> (-1);
+		size_t productIndex = static_cast<size_t> (-1);
 		SVProductInfoStruct* pProduct = nullptr;
 		SVCameraInfoMap::iterator l_svIter;
 		long	ppqSize = static_cast<long> (m_PPQPositions.size());
@@ -2446,19 +2351,32 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 			// If trigger has not occurred yet, l_Position will equal -1.
 			if (0 <= position && position < ppqSize)
 			{
-				l_ProductIndex = static_cast<size_t> (position + cameraPpqPos);
-				if (l_ProductIndex < ppqSize)
+				productIndex = static_cast<size_t> (position + cameraPpqPos);
+				if (productIndex < ppqSize)
 				{
-					pProduct = m_PPQPositions.GetProductAt(l_ProductIndex);
+					pProduct = m_PPQPositions.GetProductAt(productIndex);
 					if (nullptr != pProduct && pProduct->IsProductActive() && !pProduct->m_dataComplete)
 					{
 						if (cameraID >= 0 && cameraID < SvDef::cMaximumCameras)
 						{
 							pProduct->m_hasCameraImage[cameraID] = true;
 						}
+
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Camera %s | TRI=%d, PPQPos=%d\n"), GetName(), rElement.m_pCamera->GetName(), pProduct->triggerCount(), l_ProductIndex).c_str());
+						::OutputDebugString(SvUl::Format(_T("%s Camera %s | TRI=%d, PPQPos=%d\n"), GetName(), rElement.m_pCamera->GetName(), pProduct->triggerCount(), productIndex).c_str());
 #endif
+						for (size_t i = (productIndex + 1); i < m_PPQPositions.size(); ++i)
+						{
+							SVProductInfoStruct* pCheckProduct = m_PPQPositions.GetProductAt(i);
+							if (true == pCheckProduct->m_hasCameraImage[cameraID])
+							{
+								break;
+							}
+							else
+							{
+								SetProductIncomplete(*pCheckProduct);
+							}
+						}
 					}
 					else
 					{
@@ -2503,7 +2421,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 				{
 					IterCamera->second.Assign(rElement.m_Data);
 
-					for (size_t i = (l_ProductIndex + 1); i < m_PPQPositions.size(); ++i)
+					for (size_t i = (productIndex + 1); i < m_PPQPositions.size(); ++i)
 					{
 						SVProductInfoStruct* l_pAcqProduct = m_PPQPositions.GetProductAt(i);
 
@@ -2773,10 +2691,8 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs() const
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessTrigger()
+void SVPPQObject::ProcessTrigger()
 {
-	HRESULT result {S_OK};
-
 	/// Works through the queued triggers (e.g., pushed by FinishTrigger()).
 	/// This is done by taking a SVTriggerQueueElement from the head of m_oTriggerQueue 
 	/// and using the information in the SVTriggerInfoStruct therein to "create" a new product
@@ -2784,153 +2700,117 @@ HRESULT SVPPQObject::ProcessTrigger()
 	/// In NextTriggerMode the results of the oldest product will be output through IndexPPQ().
 	/// m_CameraInputData will contain trigger-data including the data index 
 
-	if (0 < m_oTriggerQueue.size())
+	while (0 < m_oTriggerQueue.size())
 	{
-		SvTrig::SVTriggerInfoStruct poppedFromQueue;
-
-		if (S_OK == m_oTriggerQueue.PopHead(poppedFromQueue))
+		SvTrig::SVTriggerInfoStruct triggerInfo;;
+		if (m_bOnline && S_OK == m_oTriggerQueue.PopHead(triggerInfo))
 		{
-			if (m_bOnline)
-			{
-				SVProductInfoStruct* pProduct = IndexPPQ(std::move(poppedFromQueue));
+			SVProductInfoStruct* pProduct = IndexPPQ(std::move(triggerInfo));
 
-				if (nullptr != pProduct)
-				{
-					InitializeProduct(pProduct);
+			if (nullptr != pProduct)
+			{
+				InitializeProduct(pProduct);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-					::OutputDebugString(SvUl::Format(_T("%s Process Trigger TRI=%d, ProdActive=%d\n"), GetName(), pProduct->triggerCount(), pProduct->IsProductActive()).c_str());
+				::OutputDebugString(SvUl::Format(_T("%s Process Trigger TRI=%d, ProdActive=%d\n"), GetName(), pProduct->triggerCount(), pProduct->IsProductActive()).c_str());
 #endif
 
-					if (nullptr != m_spTiggercount)
+				if (nullptr != m_spTiggercount)
+				{
+					m_spTiggercount->setValue(pProduct->m_triggerInfo.lTriggerCount);
+				}
+
+				m_oNotifyInspectionsSet.insert(pProduct->triggerCount());
+
+				// Get Shared Memory Slot
+				if (HasActiveMonitorList() && GetSlotmanager().get())
+				{
+					try
 					{
-						m_spTiggercount->setValue(pProduct->m_triggerInfo.lTriggerCount);
+
+						long writerslot = GetSlotmanager()->GetNextWriteSlot();
+						//TRACE("Get Writeslot %i\n", writerslot);
+						pProduct->m_monitorListSMSlot = writerslot;
+						for (auto& mapElement : pProduct->m_svInspectionInfos)
+						{
+							mapElement.second.m_lastInspectedSlot = writerslot;
+						}
 					}
-
-					m_oNotifyInspectionsSet.insert(pProduct->triggerCount());
-
-					// Get Shared Memory Slot
-					if (HasActiveMonitorList() && GetSlotmanager().get())
+					catch (const std::exception& e)
 					{
-						try
-						{
-
-							long writerslot = GetSlotmanager()->GetNextWriteSlot();
-							//TRACE("Get Writeslot %i\n", writerslot);
-							pProduct->m_monitorListSMSlot = writerslot;
-							for (auto& mapElement : pProduct->m_svInspectionInfos)
-							{
-								mapElement.second.m_lastInspectedSlot = writerslot;
-							}
-						}
-						catch (const std::exception& e)
-						{
-							SvDef::StringVector msgList;
-							msgList.push_back(e.what());
-							SvStl::MessageManager Exception(SvStl::MsgType::Log);
-							Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15026);
-						}
-						catch (...)
-						{
-							SvDef::StringVector msgList;
-							msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
-							SvStl::MessageManager Exception(SvStl::MsgType::Log);
-							Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15027);
-						}
+						SvDef::StringVector msgList;
+						msgList.push_back(e.what());
+						SvStl::MessageManager Exception(SvStl::MsgType::Log);
+						Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15026);
+					}
+					catch (...)
+					{
+						SvDef::StringVector msgList;
+						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
+						SvStl::MessageManager Exception(SvStl::MsgType::Log);
+						Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15027);
 					}
 				}
 			}
-		}
-		else
-		{
-			result = E_FAIL;
 		}
 	}
-
-	return result;
 }
 
-HRESULT SVPPQObject::ProcessNotifyInspections()
+void SVPPQObject::ProcessNotifyInspections()
 {
-	/// Does nothing if the trigger queue is nonempty or the m_oNotifyInspectionsSet is empty.
-	/// Otherwise works through m_oNotifyInspectionsSet trying to notify one (and only one) inspection.
-	HRESULT result {S_OK};
-
-	if (0 < m_oNotifyInspectionsSet.size()) // if there is a request to notify.
+	std::set<uint32_t> processInspectionsSet;
+	for(const auto& rTriggerCount : m_oNotifyInspectionsSet)
 	{
-		SVProcessCountSet::iterator l_Iter(m_oNotifyInspectionsSet.begin());
-
-		bool processed {false};
-		// if the offset is outside the range of the PPQ, then execute 
-		// this while statement.  The offset is initially forced outside 
-		// the range in order to force the first execution.  
-		do
+		SVProductInfoStruct* pProduct = m_PPQPositions.GetProductByTriggerCount(rTriggerCount);
+		if (nullptr != pProduct)
 		{
-			long l_ProcessCount = *l_Iter;
+			pProduct->m_CantProcessReason = CantProcessEnum::NoReason;
+			// See if the Inspection Processes can inspect this product
+			int iSize = static_cast<int> (m_arInspections.size());
 
-			long l_Offset = m_PPQPositions.GetIndexByTriggerCount(l_ProcessCount);
-
-			processed = (0 <= l_Offset && l_Offset <static_cast<long> (m_PPQPositions.size()));
-
-			// if offset for element is within PPQ.
-			if (true == processed)
+			for (int i = 0; i < iSize; i++)
 			{
-				result = NotifyInspections(l_Offset);
+				SVInspectionInfoStruct& rInfo = pProduct->m_svInspectionInfos[m_arInspections[i]->getObjectId()];
 
-				if (S_OK == result)
-				{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-					::OutputDebugString(SvUl::Format(_T("%s Removed Notify Inspection TRI=%d\n"), GetName(), *l_Iter).c_str());
+				::OutputDebugString(SvUl::Format(_T("%s Notify Inspection TRI=%d CanProcess=%d, InProcess=%d, ProdActive=%d\n"), GetName(), rTriggerCount, rInfo.m_CanProcess, rInfo.m_InProcess, pProduct->IsProductActive()).c_str());
 #endif
-					// event has been placed on the inspection queue and
-					// should be removed from the NotifyInspectionQueue.
-					// Processed is already set to true.
-					l_Iter = m_oNotifyInspectionsSet.erase(l_Iter);
+				if (false == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued && pProduct->IsProductActive())
+				{
+					rInfo.m_CanProcess = m_arInspections[i]->CanProcess(pProduct, pProduct->m_CantProcessReason);
 
-					for (const auto& rId : m_ProcessInspectionsSet)
+					if (rInfo.m_CanProcess)
 					{
-						StartInspection(rId);
-					}
-					m_ProcessInspectionsSet.clear();
-				}
-				else if (S_FALSE == result)
-				{
-					// this means that inspection was not notified 
-					// because inputs or image were not ready.  
-					// proceed to next inspection.
-					++l_Iter;
-					processed = false;
-					result = S_OK;
-				}
-			}
-			else // of offset for element is outside PPQ (fell off/dead).
-			{
+						StartInspection(m_arInspections[i]->getObjectId());
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-				::OutputDebugString(SvUl::Format(_T("%s Removed Notify Inspection TRI=%d\n"), GetName(), *l_Iter).c_str());
+						::OutputDebugString(SvUl::Format(_T("%s Add Process Inspection Set TRI=%d\n"), GetName(), rTriggerCount).c_str());
 #endif
-				// product is dead and process should be killed here 
-				// so as to now waste inspection time.
-				// processed is already false.
-				l_Iter = m_oNotifyInspectionsSet.erase(l_Iter);
+					}
+					else
+					{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+						::OutputDebugString(SvUl::Format(_T("%s Cannot Process Inspection TRI=%d\n"), GetName(), rTriggerCount).c_str());
+#endif
+					}
+				}
 			}
-
-		} while ((false == processed) && (l_Iter != m_oNotifyInspectionsSet.end()) && SUCCEEDED(result));
-	} // if there is an item on the notify inspection queue.
-
-	return result;
+		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+			::OutputDebugString(SvUl::Format(_T("%s Removed Notify Inspection TRI=%d\n"), GetName(), rTriggerCount).c_str());
+#endif
+	}
+	m_oNotifyInspectionsSet.clear();
 }
 
-HRESULT SVPPQObject::ProcessResetOutputs()
+void SVPPQObject::ProcessResetOutputs()
+{
 /// Removes the "head process count" from the outputs reset queue
 /// and determines from it the corresponding product pointer.
 /// If there is a new "head process count" in the outputs reset queue:
 /// Determines if the corresponding product's m_EndResetDelay has already been reached.
 /// If so, calls ResetOutputs().
 /// If not, puts the original "head process count" back onto the outputs reset queue
-{
-	HRESULT result {S_OK};
+	double currentTime {SvUl::GetTimeStamp()};
 
-	bool processed {false};
-	double currentTime = SvUl::GetTimeStamp();
 	while (0 < m_oOutputsResetQueue.GetCount())
 	{
 		SVProductInfoStruct* pProduct {nullptr};
@@ -2942,7 +2822,6 @@ HRESULT SVPPQObject::ProcessResetOutputs()
 		}
 		else
 		{
-			result = E_FAIL;
 			break;
 		}
 
@@ -2951,7 +2830,7 @@ HRESULT SVPPQObject::ProcessResetOutputs()
 			if (currentTime >= pProduct->m_outputsInfo.m_EndResetDelay)
 			{
 				m_oOutputsResetQueue.RemoveHead(&processCount);
-				processed = true;
+				ResetOutputs();
 				m_NextOutputResetTimestamp = 0.0;
 			}
 			else
@@ -2965,26 +2844,13 @@ HRESULT SVPPQObject::ProcessResetOutputs()
 			m_oOutputsResetQueue.RemoveHead(&processCount);
 		}
 	}
-
-	if (processed)
-	{
-		ResetOutputs();
-	}
-	else
-	{
-		result = E_FAIL;
-	}
-	return result;
 }
 
-HRESULT SVPPQObject::ProcessDataValidDelay()
+void SVPPQObject::ProcessDataValidDelay()
 {
-	HRESULT result {S_OK};
+	double currentTime {SvUl::GetTimeStamp()};
 
 	SVProductInfoStruct* pProduct(nullptr);
-
-	double CurrentTime = SvUl::GetTimeStamp();
-
 	while (0 < m_DataValidDelayQueue.GetCount() && nullptr == pProduct)
 	{
 		long ProcessCount = 0;
@@ -2995,7 +2861,6 @@ HRESULT SVPPQObject::ProcessDataValidDelay()
 		}
 		else
 		{
-			result = E_FAIL;
 			break;
 		}
 
@@ -3007,7 +2872,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay()
 			{
 				pNextProduct = GetProductInfoStruct(ProcessCount);
 			}
-			if (nullptr != pNextProduct && pNextProduct->m_outputsInfo.m_EndDataValidDelay <= CurrentTime)
+			if (nullptr != pNextProduct && pNextProduct->m_outputsInfo.m_EndDataValidDelay <= currentTime)
 			{
 				pProduct = nullptr;
 			}
@@ -3015,7 +2880,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay()
 
 		if (nullptr != pProduct)
 		{
-			if (CurrentTime < pProduct->m_outputsInfo.m_EndDataValidDelay)
+			if (currentTime < pProduct->m_outputsInfo.m_EndDataValidDelay)
 			{
 				m_NextDataValidDelayTimestamp = pProduct->m_outputsInfo.m_EndDataValidDelay;
 
@@ -3039,29 +2904,21 @@ HRESULT SVPPQObject::ProcessDataValidDelay()
 			m_pOutputList->WriteOutputValue(m_pOutputToggle, pProduct->m_outputsInfo.m_OutputToggleResult);
 		}
 	}
-	else
-	{
-		result = E_FAIL;
-	}
-
-	return result;
 }
 
-HRESULT SVPPQObject::ProcessCameraResponses()
+void SVPPQObject::ProcessCameraResponses()
 /// If camera responses pending AND trigger queue empty:
 /// Removes camera responses from m_PendingCameraResponses and tries to process them
 /// until the first processing succeeds.
 /// If no responses processed: Removes the head of m_CameraResponseQueue and processes that
 /// until one processing attempt is successful or m_CameraResponseQueue is empty.
 {
-	HRESULT result {S_OK};
-
 	bool processed {false};
 	if (0 < m_PendingCameraResponses.size())
 	{
 		SVCameraInfoMap::const_iterator l_CameraIter = m_Cameras.begin();
 
-		while (S_OK == result && l_CameraIter != m_Cameras.end() && false == processed)
+		while (l_CameraIter != m_Cameras.end() && false == processed)
 		{
 			SVPendingCameraResponseMap::iterator l_PendingIter = m_PendingCameraResponses.find(l_CameraIter->first);
 
@@ -3083,27 +2940,24 @@ HRESULT SVPPQObject::ProcessCameraResponses()
 		}
 	} // if( 0 < m_PendingCameraResponses.size() )
 
-	while (S_OK == result && 0 < m_CameraResponseQueue.GetCount())
+	while (0 < m_CameraResponseQueue.GetCount())
 	{
 		SVCameraQueueElement cameraData;
 		if (m_CameraResponseQueue.RemoveHead(&cameraData))
 		{
-			result =  ProcessCameraResponse(cameraData);
+			ProcessCameraResponse(cameraData);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 			::OutputDebugString(SvUl::Format(_T("%s Processed Camera Response %s\n"), GetName(), cameraData.m_pCamera->GetName()).c_str());
 #endif
 		}
 		else
 		{
-			result = E_FAIL;
 			break;
 		}
 	}
-
-	return result;
 }
 
-HRESULT SVPPQObject::ProcessCompleteInspections()
+void SVPPQObject::ProcessCompleteInspections()
 /// Does nothing unless m_oInspectionQueue is non-empty.
 /// If so, gets all SVInspectionInfoPairs from m_oInspectionQueue and inserts all
 /// inspection IDs into m_ProcessInspectionsSet.
@@ -3116,108 +2970,69 @@ HRESULT SVPPQObject::ProcessCompleteInspections()
 /// The product is then set to complete and all products further back in m_ppPPQPositions
 /// are set to incomplete.
 {
-	HRESULT result {S_OK};
-
-	SVInspectionInfoPair inspectionInfoPair;
-	for (int i = 0; i < m_oInspectionQueue.GetCount(); ++i)
+	while (0 < m_oInspectionQueue.GetCount())
 	{
-		if (m_oInspectionQueue.GetAt(i, &inspectionInfoPair))
-		{
-			if (nullptr != inspectionInfoPair.second.m_pInspection)
-			{
-				m_ProcessInspectionsSet.insert(inspectionInfoPair.second.m_pInspection->getObjectId());
-			}
-		}
-	}
-
-	if (!(m_ProcessInspectionsSet.empty()))
-	{
-		for (const auto& rId : m_ProcessInspectionsSet)
-		{
-			StartInspection(rId);
-		}
-		m_ProcessInspectionsSet.clear();
-	}
-
-	SVProductInfoStruct* pProduct = nullptr;
-	long ppqIndex = static_cast<long>(m_PPQPositions.size());
-	while (0 < m_oInspectionQueue.GetCount() && nullptr == pProduct)
-	{
+		SVInspectionInfoPair inspectionInfoPair;
 		if (m_oInspectionQueue.RemoveHead(&inspectionInfoPair))
 		{
-			ppqIndex = m_PPQPositions.GetIndexByTriggerCount(inspectionInfoPair.first);
-
-			if (0 <= ppqIndex && ppqIndex < static_cast<long>(m_PPQPositions.size()))
+			SVProductInfoStruct* pProduct = m_PPQPositions.GetProductByTriggerCount(inspectionInfoPair.first);
+			if (nullptr != pProduct)
 			{
-				pProduct = m_PPQPositions.GetProductAt(ppqIndex);
+				if (pProduct->m_outputsInfo.m_EndProcess == 0.0)
+				{
+					SVInspectionInfoStruct& inspectionInfo = inspectionInfoPair.second;
+					uint32_t inspectedID {inspectionInfo.m_pInspection->getObjectId()};
+					SVInspectionInfoStruct& rPpqInspectionInfo = pProduct->m_svInspectionInfos[inspectedID];
+
+					rPpqInspectionInfo = inspectionInfo;
+					rPpqInspectionInfo.ClearIndexes();
+
+					setOutputResults(inspectedID, pProduct->m_outputsInfo.m_outputResult);
+
+					// Inspection Process is done, let everyone know.
+					SetInspectionComplete(*pProduct, inspectionInfo.m_pInspection->getObjectId());
+				}
+
+				if (pProduct->m_dataComplete)
+				{
+					SetProductComplete(*pProduct);
+					size_t ppqIndex = m_PPQPositions.GetIndexByTriggerCount(inspectionInfoPair.first);
+					for (size_t i = ppqIndex + 1; i < m_PPQPositions.size(); ++i)
+					{
+						pProduct = m_PPQPositions.GetProductAt(ppqIndex);
+
+						if (nullptr != pProduct && pProduct->IsProductActive())
+						{
+							SetProductIncomplete(static_cast<long>(i));
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+							::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d\n"), GetName(), pProduct->triggerCount()).c_str());
+#endif
+						}
+						else
+						{
+							break;
+						}
+					}
+				}
 			}
 		}
 		else
 		{
-			result = E_FAIL;
 			break;
 		}
 	}
-
-	if (nullptr != pProduct)
-	{
-		if (pProduct->m_outputsInfo.m_EndProcess == 0.0)
-		{
-			SVInspectionInfoStruct& inspectionInfo = inspectionInfoPair.second;
-			uint32_t inspectedID {inspectionInfo.m_pInspection->getObjectId()};
-			SVInspectionInfoStruct& rPpqInspectionInfo = pProduct->m_svInspectionInfos[inspectedID];
-
-			rPpqInspectionInfo = inspectionInfo;
-			rPpqInspectionInfo.ClearIndexes();
-
-			setOutputResults(inspectedID, pProduct->m_outputsInfo.m_outputResult);
-
-			// Inspection Process is done, let everyone know.
-			if (!SetInspectionComplete(*pProduct, inspectionInfo.m_pInspection->getObjectId()))
-			{
-				result = E_FAIL;
-			}
-		}
-
-		if (pProduct->m_dataComplete)
-		{
-			SetProductComplete(ppqIndex);
-
-			for (size_t i = ppqIndex + 1; i < m_PPQPositions.size(); ++i)
-			{
-				pProduct = m_PPQPositions.GetProductAt(ppqIndex);
-
-				if (nullptr != pProduct && pProduct->IsProductActive())
-				{
-					SetProductIncomplete(static_cast<long>(i));
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-					::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d\n"), GetName(), pProduct->triggerCount()).c_str());
-#endif
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-	}
-
-	return result;
 }
 
-HRESULT SVPPQObject::ProcessProductRequests()
+void SVPPQObject::ProcessProductRequests()
 /// Does nothing unless both m_oTriggerQueue and m_ProductRequests are nonempty.
 /// Otherwise extracts the first SVProductRequestPair from m_ProductRequests,
 /// gets the SVProductInfoStruct specified in the request.
 /// Then copies the SVProductInfoStruct into the m_pProduct member of the SVProductInfoRequestStruct
 /// contained in the request pair.
 {
-	HRESULT result = S_OK;
-
-	if (0 < m_ProductRequests.GetCount())
+	while (0 < m_ProductRequests.GetCount())
 	{
 		SVProductRequestPair request;
-
 		if (m_ProductRequests.RemoveHead(&request))
 		{
 			if (nullptr != request.second.m_pProduct)
@@ -3233,15 +3048,9 @@ HRESULT SVPPQObject::ProcessProductRequests()
 					request.second.m_pProduct->InitProductInfo();
 				}
 			}
-			result = request.second.NotifyRequestComplete();
-		}
-		else
-		{
-			result = E_FAIL;
+			request.second.NotifyRequestComplete();
 		}
 	}
-
-	return result;
 }
 
 HRESULT SVPPQObject::GetProduct(SVProductInfoStruct& p_rProduct, long lProcessCount) const

@@ -681,5 +681,7 @@ enum MessageTextEnum
 	Tid_ValidateValue_MinMaxInvalid,
 	Tid_ObjectNotFound,
 	Tid_NameContainsInvalidChars,
+	Tid_ProductNotTriggered,
+	Tid_ErrorStartInspection,
 };
 } //namespace SvStl

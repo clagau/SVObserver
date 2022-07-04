@@ -800,6 +800,8 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 			{
 				if (nullptr == iter->second.getImage())
 				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Log);
+					Msg.setMessage(SVMSG_SVO_71_INVALID_SOURCE_IMAGE_INDEX, _T(""), SvStl::SourceFileParams(StdMessageParams));
 					return SVMSG_SVO_71_INVALID_SOURCE_IMAGE_INDEX;
 				}
 			}

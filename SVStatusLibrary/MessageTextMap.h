@@ -719,6 +719,8 @@ namespace SvStl
 		{Tid_Greater, _T("greater")},
 		{Tid_ValidateValue_MinMaxInvalid, _T("Validate Value failed: Not between min and max")},
 		{Tid_ObjectNotFound, _T("Object with the id %s not found.")},
-		{Tid_NameContainsInvalidChars, _T("Name contains invalid special characters.")}
+		{Tid_NameContainsInvalidChars, _T("Name contains invalid special characters.")},
+		{Tid_ProductNotTriggered, _T("SVPPQObject::StartInspection product not triggerd")},
+		{Tid_ErrorStartInspection, _T("Insepection coul not be started")},
 };
 } //namespace SvStl

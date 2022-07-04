@@ -280,63 +280,24 @@ protected:
 
 	HRESULT MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& rProduct, SvIe::SVVirtualCamera* pCamera );
 
-	//************************************
-	/// Processes the first element (if available) in the trigger queue and creates a product from it
-	/// \returns S_OK on success, otherwise E_FAIL
-	//************************************
-	HRESULT ProcessTrigger();
+	void ProcessTrigger();
+	void ProcessNotifyInspections();
+	void ProcessDelayOutputs();
+	void ProcessResetOutputs();
+	void ProcessDataValidDelay();
+	void ProcessCameraResponses();
+	void ProcessCompleteInspections();
+	void ProcessProductRequests();
 
-	//************************************
-	/// Extracts the first valid entry in in m_oNotifyInspectionsSet and calls NotifyInspections()
-	/// \returns S_OK (or E_FAIL if NotifyInspections failed)
-	//************************************
-	HRESULT ProcessNotifyInspections();
-
-	//************************************
-	/// Controls the output of completed results that require a delay before they are output.
-	/// \returns S_OK on success, otherwise E_FAIL
-	//************************************
-	HRESULT ProcessDelayOutputs();
-
-	//************************************
-	/// If at least two entries in m_oOutputsResetQueue: removes the head and calls ResetOutputs()
-	/// \returns S_OK on success, otherwise E_FAIL
-	//************************************
-	HRESULT ProcessResetOutputs();
-
-	//************************************
-	/// If data valid delay is set then processes when the signals are to be set
-	/// \returns S_OK on success, otherwise E_FAIL
-	//************************************
-	HRESULT ProcessDataValidDelay();
-
-	//************************************
-	/// If possible, processes one camera response (either from the pending camera responses or directly from the trigger queue)
-	/// \returns S_OK on success, otherwise E_FAIL
-	//************************************
-	HRESULT ProcessCameraResponses();
-
-	//************************************
-	/// If all inspections for a product are done, sets the product to complete
-	/// \returns S_OK on success, otherwise E_FAIL
-	//************************************
-	HRESULT ProcessCompleteInspections();
-	//************************************
-	/// Possibly used when results are requested via remote
-	/// \returns S_OK on success, otherwise E_FAIL
-	//************************************
-	HRESULT ProcessProductRequests();
-
-	HRESULT ProcessOutputs(SVProductInfoStruct& rProduct);
-	HRESULT ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct& rProduct);
+	void ProcessOutputs(SVProductInfoStruct& rProduct);
+	void ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct& rProduct);
 
 	SVProductInfoStruct* GetProductInfoStruct(long processCount) const;
 
 	SVProductInfoStruct* IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTriggerInfo);
 	void InitializeProduct( SVProductInfoStruct* pNewProduct);
 	void StartOutputs( SVProductInfoStruct* p_pProduct );
-	HRESULT NotifyInspections( long p_Offset );
-	HRESULT StartInspection(uint32_t inspectionID );
+	void StartInspection(uint32_t inspectionID );
 
 	void AddResultsToPPQ(SVProductInfoStruct& rProduct);
 	bool SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t inspId);
@@ -380,7 +341,6 @@ protected:
 	SVPendingCameraResponseMap m_PendingCameraResponses;
 
 	SVProcessCountSet m_oNotifyInspectionsSet;
-	std::set<uint32_t> m_ProcessInspectionsSet;
 
 	// Pointers to the PPQ's I/O Lists
 	SVIOEntryHostStructPtrVector m_AllInputs;
