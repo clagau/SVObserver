@@ -2975,6 +2975,10 @@ void SVPPQObject::ProcessCompleteInspections()
 		SVInspectionInfoPair inspectionInfoPair;
 		if (m_oInspectionQueue.RemoveHead(&inspectionInfoPair))
 		{
+			if (nullptr != inspectionInfoPair.second.m_pInspection)
+			{
+				StartInspection(inspectionInfoPair.second.m_pInspection->getObjectId());
+			}
 			SVProductInfoStruct* pProduct = m_PPQPositions.GetProductByTriggerCount(inspectionInfoPair.first);
 			if (nullptr != pProduct)
 			{
