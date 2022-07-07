@@ -304,7 +304,7 @@ bool SVPPQObject::Create()
 
 	m_isCreated = true;
 
-	m_oNotifyInspectionsSet.clear();
+	m_notifyInspectionList.clear();
 	calcUseProcessingOffset4InterestFlag();
 
 	// Force the Inspections to rebuild
@@ -369,7 +369,7 @@ void SVPPQObject::Destroy()
 		ProcessProductRequests();
 	}
 
-	m_oNotifyInspectionsSet.clear();
+	m_notifyInspectionList.clear();
 
 	if (!(m_PendingCameraResponses.empty()))
 	{
@@ -2182,21 +2182,6 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t 
 	return bValid;
 }
 
-bool SVPPQObject::SetProductComplete(long p_PPQIndex)
-{
-	SVProductInfoStruct* pProduct = m_PPQPositions.GetProductAt(p_PPQIndex);
-
-	bool l_Status = false;
-
-	if (nullptr != pProduct)
-	{
-		CommitSharedMemory(*pProduct);
-		l_Status = SetProductComplete(*pProduct);
-	}
-
-	return l_Status;
-}
-
 bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 {
 
@@ -2211,6 +2196,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
 
+	CommitSharedMemory(rProduct);
 	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 	if (rProduct.IsProductActive())
 	{
@@ -2441,7 +2427,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 						}
 					}
 
-					m_oNotifyInspectionsSet.insert(pProduct->triggerCount());
+					m_notifyInspectionList.push_back(pProduct->triggerCount());
 					m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::NotifyInspection]);
 				}
 				else
@@ -2719,7 +2705,7 @@ void SVPPQObject::ProcessTrigger()
 					m_spTiggercount->setValue(pProduct->m_triggerInfo.lTriggerCount);
 				}
 
-				m_oNotifyInspectionsSet.insert(pProduct->triggerCount());
+				m_notifyInspectionList.push_back(pProduct->triggerCount());
 
 				// Get Shared Memory Slot
 				if (HasActiveMonitorList() && GetSlotmanager().get())
@@ -2757,10 +2743,10 @@ void SVPPQObject::ProcessTrigger()
 
 void SVPPQObject::ProcessNotifyInspections()
 {
-	std::set<uint32_t> processInspectionsSet;
-	for(const auto& rTriggerCount : m_oNotifyInspectionsSet)
+	std::vector<long> notifyRestInspectionList;
+	for(const auto triggerCount : m_notifyInspectionList)
 	{
-		SVProductInfoStruct* pProduct = m_PPQPositions.GetProductByTriggerCount(rTriggerCount);
+		SVProductInfoStruct* pProduct = m_PPQPositions.GetProductByTriggerCount(triggerCount);
 		if (nullptr != pProduct)
 		{
 			pProduct->m_CantProcessReason = CantProcessEnum::NoReason;
@@ -2772,7 +2758,7 @@ void SVPPQObject::ProcessNotifyInspections()
 				SVInspectionInfoStruct& rInfo = pProduct->m_svInspectionInfos[m_arInspections[i]->getObjectId()];
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-				::OutputDebugString(SvUl::Format(_T("%s Notify Inspection TRI=%d CanProcess=%d, InProcess=%d, ProdActive=%d\n"), GetName(), rTriggerCount, rInfo.m_CanProcess, rInfo.m_InProcess, pProduct->IsProductActive()).c_str());
+				::OutputDebugString(SvUl::Format(_T("%s Notify Inspection TRI=%d CanProcess=%d, InProcess=%d, ProdActive=%d\n"), GetName(), triggerCount, rInfo.m_CanProcess, rInfo.m_InProcess, pProduct->IsProductActive()).c_str());
 #endif
 				if (false == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued && pProduct->IsProductActive())
 				{
@@ -2782,23 +2768,28 @@ void SVPPQObject::ProcessNotifyInspections()
 					{
 						StartInspection(m_arInspections[i]->getObjectId());
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Add Process Inspection Set TRI=%d\n"), GetName(), rTriggerCount).c_str());
+						::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d\n"), GetName(), triggerCount).c_str());
 #endif
 					}
 					else
 					{
+						notifyRestInspectionList.push_back(triggerCount);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Cannot Process Inspection TRI=%d\n"), GetName(), rTriggerCount).c_str());
+						::OutputDebugString(SvUl::Format(_T("%s Cannot Process Inspection TRI=%d\n"), GetName(), triggerCount).c_str());
 #endif
 					}
 				}
 			}
 		}
+		else
+		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-			::OutputDebugString(SvUl::Format(_T("%s Removed Notify Inspection TRI=%d\n"), GetName(), rTriggerCount).c_str());
+			::OutputDebugString(SvUl::Format(_T("%s Removed Notify Inspection TRI=%d\n"), GetName(), triggerCount).c_str());
 #endif
+		}
 	}
-	m_oNotifyInspectionsSet.clear();
+
+	std::swap(m_notifyInspectionList, notifyRestInspectionList);
 }
 
 void SVPPQObject::ProcessResetOutputs()

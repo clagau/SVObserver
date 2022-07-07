@@ -100,8 +100,6 @@ public:
 	typedef std::pair< long, SVInspectionInfoStruct > SVInspectionInfoPair;
 	typedef std::pair< long, SVProductInfoRequestStruct > SVProductRequestPair;
 	typedef std::vector< SVProductInfoStruct* > SVProductPositionQueue;
-	typedef std::deque< long > SVProcessCountDeque;
-	typedef std::set< long > SVProcessCountSet;
 
 	void SetNAKMode(SvDef::NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
@@ -302,7 +300,6 @@ protected:
 	void AddResultsToPPQ(SVProductInfoStruct& rProduct);
 	bool SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t inspId);
 
-	bool SetProductComplete(long p_PPQIndex);
 	bool SetProductComplete( SVProductInfoStruct& rProduct );
 
 	bool SetProductIncomplete( long p_PPQIndex );
@@ -340,7 +337,7 @@ protected:
 	SVCameraResponseQueue m_CameraResponseQueue;
 	SVPendingCameraResponseMap m_PendingCameraResponses;
 
-	SVProcessCountSet m_oNotifyInspectionsSet;
+	std::vector<long> m_notifyInspectionList;
 
 	// Pointers to the PPQ's I/O Lists
 	SVIOEntryHostStructPtrVector m_AllInputs;
