@@ -43,10 +43,8 @@ public:
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
-	bool GetArchiveResultFilepath( std::string& rName );
-	const std::string GetImageArchivePathPart1() const;
-	const std::string GetImageArchivePathPart2() const;
-	const std::string GetImageArchivePathPart3() const;
+	std::string GetUntranslatedFullResultFilepath();
+
 	const std::string alternativeImageDirectory(const std::string& imagePathRoot);
 
 	static long CalculateImageMemory(SvIe::SVImageClass* pImage );
@@ -59,9 +57,7 @@ public:
 	std::string archiveImageDirectory(); //the directory into which the next archive image is to be placed
 	bool ensureArchiveImageDirectoryExists();
 
-	bool SetFileArchivePath(LPCTSTR lpszName);
 	std::string getNextImageFileName();
-
 	
 #pragma region Methods to replace processMessage
 	virtual void disconnectObjectInput(uint32_t objectId) override;
@@ -114,7 +110,13 @@ private:
 	bool ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl::MessageContainerVector* pErrorMessages);///< Checks the directory and the available space for storing image archive files.
 	bool InitializeAndValidate();
 
-private:
+	std::string GetResultFilepathPart1() const;
+	std::string GetResultFilepathPart2() const;
+	std::string GetResultFilepathPart3() const;
+
+	std::string GetImageDirectoryPathPart1() const;
+	std::string GetImageDirectoryPathPart2() const;
+	std::string GetImageDirectoryPathPart3() const;
 
 	//
 	// A string value to represent all the ids for the
@@ -122,10 +124,8 @@ private:
 	// be stored and retrieved from storage.
 	//
 	SvVol::SVStringValueObjectClass m_svoArchiveImageNames;
-	/// This variable holds an array of result names with an Zero based Index (In the svx files these names have also a zero based index). 
+	/// This variable holds an array of result names with an zero based Index (In the svx files these names have also a zero based index). 
 	SvVol::SVStringValueObjectClass m_svoArchiveResultNames;
-	
-	
 
 	//
 	// A flag used to indicate a first call to onRun() after a
@@ -133,10 +133,13 @@ private:
 	//
 	bool m_bInitializedForRun;
 
+	SvVol::LinkedValue m_resultFilepathPart1;
+	SvVol::LinkedValue m_resultFilepathPart2;
+	SvVol::LinkedValue m_resultFilepathPart3; 
+
 	SvVol::LinkedValue m_imageFileRootPath1; 
 	SvVol::LinkedValue m_imageFileRootPath2;
 	SvVol::LinkedValue m_imageFileRootPath3;
-	SvVol::SVStringValueObjectClass	m_stringFileArchivePath;
 
 	std::string m_currentImagePathRoot; // needed by SVArchiveRecord
 

@@ -298,7 +298,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	std::string Temp = SvUl::Format(_T("%ld"), m_ImagesToArchive);
 	m_EditMaxImages.SetWindowText( Temp.c_str() );
 
-	//store the MaxImageNumber
+	// store the MaxImageNumber
 	// cppcheck-suppress danglingLifetime //this pointer is immediately converted to a CString and does not "dangle"
 	m_sMaxImageNumber = Temp.c_str(); 
 
@@ -312,7 +312,6 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
 	m_ImageFilepathrootWidgetHelpers[2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot3, m_ImageFilepathroot3Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart3EId, &m_ValueController);
 	m_alternativeImagePaths.init();
-
 
 	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
 	m_useAlternativeImagePathButton.SetCheck(m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId));
@@ -745,6 +744,7 @@ __int64 SVTADlgArchiveImagePage::CalculateFreeMem()
 	return FreeMem;
 }
 
+
 afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePath()
 {
 	UpdateData(TRUE);
@@ -764,7 +764,7 @@ void SVTADlgArchiveImagePage::OnButtonImageFilepathroot2()
 
 void SVTADlgArchiveImagePage::OnButtonImageFilepathroot3()
 {
-	m_ImageFilepathrootWidgetHelpers[2]->OnButton();
+	m_ImageFilepathrootWidgetHelpers[2]->OnButton(); 
 }
 
 void SVTADlgArchiveImagePage::OnKillFocusImageFilepathroot1()

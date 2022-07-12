@@ -15,6 +15,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
+#include "SVOGui/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -59,6 +60,13 @@ protected:
 	afx_msg void OnBnClickedHeaderCheck();
 	afx_msg void OnBnClickedHeaderBtn();
 
+	afx_msg void OnButtonResultFilepath1();
+	afx_msg void OnButtonResultFilepathPart2();
+	afx_msg void OnButtonResultFilepath3();
+	afx_msg void OnKillFocusResultFilepath1();
+	afx_msg void OnKillFocusResultFilepathPart2();
+	afx_msg void OnKillFocusResultFilepath3();
+
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
 	SvDef::StringPairVector GetSelectedHeaderNamePairs();
@@ -74,7 +82,6 @@ private:
 	CImageList m_StateImageList;						//The state image list
 	CButton m_Select;									//The tree select button
 	CBitmap m_TreeBitmap;								//The bitmap for the tree button
-	CEdit	m_ArchiveFileName;							//Archive file name
 	BOOL	m_AppendArchive;							//Append archive flag
 	BOOL    m_FormatResults;							//Flag: Use special format for Archive Tool value strings?
 	DWORD   m_TotalWidth;								//Minimum total number of characters for Archive Tool value strings
@@ -83,6 +90,19 @@ private:
 	CEdit	m_DecimalsEdit;								//Edit control for number of decimal places 
 	BOOL	m_ColumnHeaders;							//Column headers flag
 	uint32_t m_inspectionId;
+	uint32_t m_taskId;
+
+	//edit boxes for the parts of the archive file path and buttons to manipulate them
+	CEdit	m_ResultFilepathPart1Edit;					
+	CButton m_ResultFilepathPart1Button;
+	CEdit	m_ResultFilepathPart2Edit;
+	CButton m_ResultFilepathPart2Button;
+	CEdit	m_ResultFilepathPart3Edit;
+	CButton m_ResultFilepathPart3Button;
+
+	SvOg::ValueController m_ValueController;
+	std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, 3> m_ResultFilepathWidgetHelpers;
+
 #pragma endregion Private Members
 };
 

@@ -166,9 +166,11 @@ private:
 	CStatic	m_wndAvailableArchiveImageMemory;
 	CComboBox	m_WhenToArchive;
 	SvMc::EditNumbers	m_EditMaxImages;
+
 	CEdit	m_ImageFilepathroot1;
 	CEdit	m_ImageFilepathroot2;
 	CEdit	m_ImageFilepathroot3;
+
 	CButton m_ImageFilepathroot1Button;
 	CButton m_ImageFilepathroot2Button;
 	CButton m_ImageFilepathroot3Button;
@@ -192,7 +194,7 @@ private:
 
 	SvOg::ValueController m_ValueController;
 	std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, 3> m_ImageFilepathrootWidgetHelpers;
-	
+
 	bool m_Init = false;
 	AipCtr m_alternativeImagePaths;
 

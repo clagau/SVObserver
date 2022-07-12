@@ -796,7 +796,7 @@ enum EmbeddedIdEnum
 	OCVExtentWidthEId = 119;
 	OCVExtentHeightEId = 120;
 	OCVMatchScoreEId = 121;
-	ArchiveFilePathEId = 122;
+	ArchiveResultFilePathPart1EId = 122;
 	ArchiveImageGuids_OBSOLETE_EId = 123;
 	ArchiveImageFileRootPart1EId = 124;
 	ArchiveResultGuids_OBSOLETE_EId = 125;
@@ -1237,6 +1237,8 @@ enum EmbeddedIdEnum
 	FontScaleYEId = 586;
 	XAxisAngleEId = 587;
 	IsColorImageCheckEId = 588;
+	ArchiveResultFilePathPart2EId = 589;
+	ArchiveResultFilePathPart3EId = 590;
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
@@ -1253,8 +1255,6 @@ enum EmbeddedIdEnum
 	ResultObjectValueEId = 2000; //Result value object (for e.g. Result in Group Tool)
 	ResultObjectLinkedEId = 2100; //obsolete, but needed for loading configs older than 10.20
 	ResultObjectTypeEId = 2200; //Type for Result Object (for e.g. Result in Group Tool)
-
-
 
 	//IDs for Inputs
 	LUTOperatorInputEId = 100000;
