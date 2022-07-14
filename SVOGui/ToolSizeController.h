@@ -80,6 +80,7 @@ public:
 	std::map< SvPb::SVExtentPropertyEnum, double> GetExtentValues();
 	HRESULT CheckExtents() { return SetExtents(m_Extents); };
 	bool GetAutofitAllowedFlag() const { return m_isAutofitAllowedFlag; };
+	bool IsFormulaFromAllowed() const ;
 private:
 	void  InitHelper();
 	HRESULT  SetExtents(const Extents& extents);

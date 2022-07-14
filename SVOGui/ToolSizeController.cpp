@@ -39,6 +39,11 @@ ToolSizeController::~ToolSizeController()
 {
 
 }
+bool ToolSizeController::IsFormulaFromAllowed() const
+{
+	return IsAdjustSizeAllowed() && (GetAutoSizeEnabled() != SvPb::EnableNone);
+}
+
 
 void  ToolSizeController::InitHelper()
 {
@@ -186,7 +191,7 @@ void  ToolSizeController::InitValues()
 	{
 		m_isToolValid = responseCmd.getobjectparametersresponse().isvalid();
 	}
-	
+
 }
 
 const SvOg::ToolSizeController::EQAdjustStruct ToolSizeController::GetEquationStruct(SvDef::ToolSizeAdjustEnum adjustenum) const

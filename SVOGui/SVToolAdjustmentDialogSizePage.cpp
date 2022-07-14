@@ -187,6 +187,14 @@ void SVToolAdjustmentDialogSizePage::Refresh(bool bSave /*= true*/)
 	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSPositionY].EnableWindow(bEnable);
 
 
+	
+	
+	bool bShowFormulaFrom = m_ToolSizeHelper.IsFormulaFromAllowed(); 
+	m_ComboBoxImages.ShowWindow(bShowFormulaFrom ? SW_SHOW : SW_HIDE);
+	m_ComboBoxImages.EnableWindow(bShowFormulaFrom);
+	m_Button_FormulaFrom.ShowWindow(bShowFormulaFrom ? SW_SHOW : SW_HIDE);
+
+
 	SizeModes Modes;
 	SizeValues Values;
 	m_ToolSizeHelper.GetToolSizeMode(true, Modes, Values);
@@ -323,7 +331,7 @@ bool SVToolAdjustmentDialogSizePage::GetToolNameFromImageList(std::string& rtool
 
 void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormulaFrom()
 {
-	
+
 	UpdateData(TRUE); // get data from dialog
 	std::string toolName;
 	if (GetToolNameFromImageList(toolName))
