@@ -1185,8 +1185,9 @@ void TADialogDrawPage::ObjectChangedExDialogImage(long, long, VARIANT* Parameter
 		{
 			setOverlayProperties(pData->m_type, *pData->m_pValues, ParameterList, ParameterValue);
 
-			refresh();
+			//because setBOSACtrl make a redraw, refresh after them.
 			setBOSACtrl();
+			refresh();
 		}
 	}
 }
