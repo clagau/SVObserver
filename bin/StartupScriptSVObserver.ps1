@@ -36,14 +36,24 @@ $var = Get-WmiObject -class Win32_processor | ft NumberOfCores
 [long]$memory = 0
 Get-WmiObject -Class Win32_PhysicalMemory | ForEach-Object -Process { $memory += $_.Capacity }
 $memory = $memory / 1GB
-if ($memory -gt 24)
+if ($memory -gt 48)
+{
+  # format the V:\ drive 10GB
+  $cmdout = imdisk -a -s 10G -m V: -p "/fs:ntfs /q /y"
+  if ($LastExitCode -ne 0)
+  {
+    echo "Could not format imdisk for V-drive"
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Creation of V-drive (10 GB) with imdisk failed. $cmdout"  -Category 0
+  }
+}
+elseif ($memory -gt 24)
 {
   # format the V:\ drive 8GB
   $cmdout = imdisk -a -s 8G -m V: -p "/fs:ntfs /q /y"
   if ($LastExitCode -ne 0)
   {
-    echo "Could not format imdisk for V-drive"
-    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB. $cmdout"  -Category 0
+    echo "Could not format imdisk for V-drive" 
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Creation of V-drive (8 GB) with imdisk failed. $cmdout"  -Category 0
   }
 }
 elseif ($memory -gt 12 -and $memory -le 24)
@@ -53,7 +63,7 @@ elseif ($memory -gt 12 -and $memory -le 24)
   if ($LastExitCode -ne 0)
   {
     echo "Could not format imdisk for V-drive"
-    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB. $cmdout"  -Category 0
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Creation of V-drive (3 GB) with imdisk failed. $cmdout"  -Category 0
   }
 }
 else
@@ -64,7 +74,7 @@ else
   if ($LastExitCode -ne 0)
   {
     echo "Could not format imdisk for V-drive"
-    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 100MB. $cmdout"  -Category 0
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Creation of V-drive (100 MB) with imdisk failed. $cmdout"  -Category 0
   }
 }
 
