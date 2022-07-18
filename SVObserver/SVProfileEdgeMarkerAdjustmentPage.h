@@ -103,6 +103,8 @@ private:
 	/// \param bVertical [in] If true it spin the graph to vertical.
 	/// \param allowType [in] Set the allowType to the control. Default is none change allowed.
 	void setMarkerOverlayToPicture( DWORD value, bool bVertical, long allowType = CDSVPictureDisplay::AllowNone );
+
+	void OnChangeValue(std::unique_ptr<SvOg::LinkedValueWidgetHelper>& rWidget);
 #pragma endregion Private Methods
 
 #pragma region Member variables

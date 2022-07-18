@@ -18,6 +18,7 @@
 #include "Tools/SVTool.h"
 #include "AnalyzerOperators/Analyzer.h"
 #include "Operators/SVLinearEdgeProcessingClass.h"
+#include "SVUtilityLibrary/RaiiLifeFlag.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -191,9 +192,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeUpperSelected()
 {
 	if (nullptr != m_UpperSelectedWidget && m_upperThresholdOption == SvDef::SV_USE_SELECTED)
 	{
-		UpdateData(TRUE);
-		m_UpperSelectedWidget->EditboxToValue(true);
-		SetInspectionData();
+		OnChangeValue(m_UpperSelectedWidget);
 	}
 }
 
@@ -201,9 +200,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeUpperPercentDiff()
 {
 	if(nullptr != m_UpperMaxDiffWidget && m_upperThresholdOption == SvDef::SV_USE_MAX_MINUS_PERCENT_DIFF)
 	{
-		UpdateData(TRUE);
-		m_UpperMaxDiffWidget->EditboxToValue(true);
-		SetInspectionData();
+		OnChangeValue(m_UpperMaxDiffWidget);
 	}
 }
 
@@ -211,9 +208,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeUpperMaxOffset()
 {
 	if(nullptr != m_UpperMaxOffsetWidget && m_upperThresholdOption == SvDef::SV_USE_MAX_MINUS_OFFSET)
 	{
-		UpdateData(TRUE);
-		m_UpperMaxOffsetWidget->EditboxToValue(true);
-		SetInspectionData();
+		OnChangeValue(m_UpperMaxOffsetWidget);
 	}
 }
 
@@ -221,9 +216,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeUpperMinOffset()
 {
 	if(nullptr != m_UpperMinOffsetWidget && m_upperThresholdOption == SvDef::SV_USE_MIN_PLUS_OFFSET)
 	{
-		UpdateData(TRUE);
-		m_UpperMinOffsetWidget->EditboxToValue(true);
-		SetInspectionData();
+		OnChangeValue(m_UpperMinOffsetWidget);
 	}
 }
 
@@ -231,9 +224,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeLowerSelected()
 {
 	if (nullptr != m_LowerSelectedWidget && m_lowerThresholdOption == SvDef::SV_USE_SELECTED)
 	{
-		UpdateData(TRUE);
-		m_LowerSelectedWidget->EditboxToValue(true);
-		SetInspectionData();
+		OnChangeValue(m_LowerSelectedWidget);
 	}
 }
 
@@ -241,9 +232,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeLowerPercentDiff()
 {
 	if(nullptr != m_LowerMaxDiffWidget && m_lowerThresholdOption != SvDef::SV_USE_SELECTED)
 	{
-		UpdateData(TRUE);
-		m_LowerMaxDiffWidget->EditboxToValue(true);
-		SetInspectionData();
+		OnChangeValue(m_LowerMaxDiffWidget);
 	}
 }
 
@@ -251,9 +240,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeLowerMaxOffset()
 {
 	if(nullptr != m_LowerMaxOffsetWidget && m_lowerThresholdOption != SvDef::SV_USE_SELECTED)
 	{
-		UpdateData(TRUE);
-		m_LowerMaxOffsetWidget->EditboxToValue(true);
-		SetInspectionData();
+		OnChangeValue(m_UpperMaxDiffWidget);
 	}
 }
 
@@ -261,9 +248,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeLowerMinOffset()
 {
 	if(nullptr != m_LowerMinOffsetWidget && m_lowerThresholdOption != SvDef::SV_USE_SELECTED)
 	{
-		UpdateData(TRUE);
-		m_LowerMinOffsetWidget->EditboxToValue(true);
-		SetInspectionData();
+		OnChangeValue(m_LowerMinOffsetWidget);
 	}
 }
 
@@ -732,5 +717,18 @@ void SVProfileEdgeMarkerAdjustmentPage::setMarkerOverlayToPicture(DWORD value, b
 	ParMap[CDSVPictureDisplay::P_VALUE] = static_cast<long>(bVertical ? value : 255 - value);
 
 	m_dialogImage.AddOverlay(0, ParMap, &handle);
+}
+
+void SVProfileEdgeMarkerAdjustmentPage::OnChangeValue(std::unique_ptr<SvOg::LinkedValueWidgetHelper>& rWidget)
+{
+	static bool isStarted = false;
+	//Check if function already start to avoid endless recursive calls of this function.
+	if (false == isStarted && nullptr != rWidget)
+	{
+		SvDef::RaiiLifeFlag circularCheck(isStarted);
+		UpdateData(TRUE);
+		rWidget->EditboxToValue(true);
+		SetInspectionData();
+	}
 }
 #pragma endregion Private Methods
