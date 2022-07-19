@@ -22,7 +22,7 @@ enum ListType
 }
 
 ///General errors should be reporteted by the errorcode
-//State is usefull for states wich are not errors, or if only a part of bigger message is not valid 
+//State is usefull for states wich are not errors, or if only a part of bigger message is not valid
 enum State
 {
 	isValid = 0;
@@ -61,7 +61,7 @@ enum DeviceModeType
 enum ProductFilterEnum
 {
 	noFilter = 0;
-	lastInspectedFilter = 1;		//Filters the last inspected products 
+	lastInspectedFilter = 1;		//Filters the last inspected products
 	lastRejectFilter = 2;			//Filters the last rejected products
 }
 

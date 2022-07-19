@@ -37,7 +37,7 @@ message GetObjectSelectorItemsRequest
 	uint32 inspectionID = 2;		//The inspection ID to query for the items
 	uint32 instanceID = 3;			//The object instance ID to query if required can be SvDef::InvalidObjectId
 	ObjectAttributes attribute = 4;	//The object attribute to filter the toolset items
-	bool wholeArray = 5;			//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
+	bool wholeArray = 5;			//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[])
 	ObjectSelectorType type = 6;	//item types required
 	uint32 importantObjectForStopAtBorder = 10; //If this value set (!= SvDef::InvalidObjectId), than it look from this up to parent if any Border (e.g. Closed GroupTool) is available and set this than as starting position and also stop at a closed GroupTool.
 
@@ -47,6 +47,12 @@ message GetObjectSelectorItemsRequest
 		uint32 attributesSet = 8;			//Object selector filter for attributes set (value not used)
 		ExludeSameLineageData excludeSameLineage = 9;			//Object selector filter exclude all object from the same lineage (list of object which exclude)
 	}
+}
+
+//@TODO This use the same response than the first version GetObjectSelectorItemsRequest. In a later version (maybe 10.30) it should be combined.
+message GetObjectSelectorItems2Request
+{
+	uint32 objectID = 1;			//The object instance ID from a LinkedValue or Equation
 }
 
 message GetObjectSelectorItemsResponse

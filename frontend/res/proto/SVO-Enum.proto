@@ -67,6 +67,7 @@ enum SVObjectTypeEnum
 	SVUnaryImageOperatorListObjectType		= 0x00006000;
 	TableObjectType							= 0x00007000;
 	TableAnalyzerType						= 0x00007001;
+	DrawTaskType							= 0x00007002;
 
 	SVAnalyzerObjectType					= 0x00010000;
 
@@ -107,7 +108,7 @@ enum SVObjectSubTypeEnum
 	SVToolAcquisitionObjectType					= 0x0000001a;
 	SVToolFreezeObjectType						= 0x0000001b;
 	SVTransformationToolObjectType				= 0x0000001c;
-	SVPolarTransformationToolObjectType			= 0x0000001d; 
+	SVPolarTransformationToolObjectType			= 0x0000001d;
 	SVColorToolObjectType						= 0x0000001e;
 	SVToolCylindricalObjectType					= 0x0000001f;
 	SVPerspectiveToolObjectType                 = 0x00000020;
@@ -120,12 +121,13 @@ enum SVObjectSubTypeEnum
 	SVTableAnalyzerToolObjectType				= 0x0000002c;
 	LoopToolObjectType							= 0x0000002d;
 	GroupToolObjectType							= 0x0000002e;
+	DrawToolObjectType							= 0x0000002f;
 
 	SVEnvironmentObjectType						= 0x00000062;
 	SVCameraObjectType							= 0x00000063;
 	SVGlobalConstantObjectType					= 0x00000064;
 
-	// Analyzer Subtypes:	
+	// Analyzer Subtypes:
 	PixelAnalyzerObjectType				    = 0x00000100;
 	SVBlobAnalyzerObjectType					= 0x00000101;
 	SVLuminanceAnalyzerObjectType				= 0x00000102;
@@ -163,7 +165,7 @@ enum SVObjectSubTypeEnum
 	SVAutoThresholdEquationObjectType			= 0x00000404;
 	SVLUTEquationObjectType						= 0x00000405;
 
-	//Equation Subtypes for VAriableSize 	
+	//Equation Subtypes for VAriableSize
 	EQSizeWidthType								= 0x00000406;
 	EQSizeHeightType							= 0x00000407;
 	EQSizePositionXType							= 0x00000408;
@@ -188,7 +190,7 @@ enum SVObjectSubTypeEnum
 	SVEvaluateEndRadiusObjectType				= 0x0000048c;
 	SVEvaluateStartAngleObjectType				= 0x0000048d;
 	SVEvaluateEndAngleObjectType				= 0x0000048e;
-			
+
 	// IO Subtypes:
 	SVDigitalInputObjectType					= 0x00000500;
 	SVDigitalOutputObjectType					= 0x00000501;
@@ -270,7 +272,18 @@ enum SVObjectSubTypeEnum
 	TableAnalyzerExcludeType				= 0x00004011;
 	TableAnalyzerLimitType					= 0x00004012;
 	TableAnalyzerAddColumnType				= 0x00004013;
+	TableAnalyzerDeleteColumnType			= 0x00004014;
 
+	//DrawTask Subtypes
+	DrawRectangleTaskType					= 0x00004100;
+	DrawOvalTaskType						= 0x00004101;
+	DrawSegmentTaskType						= 0x00004102;
+	DrawTriangleTaskType					= 0x00004103;
+	DrawLineTaskType						= 0x00004104;
+	DrawPolygonTaskType					    = 0x00004105;
+	DrawBucketFillTaskType					= 0x00004106;
+	DrawPointsTaskType					 	= 0x00004107;
+	DrawTextTaskType						= 0x00004108;
 
 	//ValueObject SubTypes
 	SVDWordValueObjectType					= 0x00005000;
@@ -286,6 +299,7 @@ enum SVObjectSubTypeEnum
 	SVCharValueObjectType					= 0x0000500A;
 	SVVariantValueObjectType				= 0x0000500B;
 	DoubleSortValueObjectType				= 0x0000500C;
+	SVTimerValueObjectType					= 0x0000500D;
 }
 
 enum LUTModeEnum
@@ -311,8 +325,8 @@ enum ObjectAttributes
 	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
 	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
 	audittrail					= 0x00000080;	//Object is printed in the configuration report
-	remotelySettable				= 0x00000100;	//Object can be set remotely
-	settableOnline				= 0x00000200;	//Object can be set when SVObserver is Online
+	remotelySetable				= 0x00000100;	//Object can be set remotely  //@TODO[Arvid]: this is a typo. 'remotelySettable' would be correct
+	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online //@TODO[Arvid]: this is a typo. 'settableOnline' would be correct
 	extentObject				= 0x00000400;	//Object is an extent value object
 	taskObject					= 0x00000800;	//Object is a task object
 	publishResultImage			= 0x00001000;	//Object result image can be published
@@ -333,12 +347,12 @@ enum ObjectSelectorType
 {
 	allValueObjects = 0;			//All valueObjects
 	allNumberValueObjects = 1;		//All ValueObjects which can be converted to a integer or double
-	realNumberValueOjects = 2;		//All number valueObjects, but not e.g. timer or enums
 	stringValueObjects = 3;
-	tableObjects = 4;				//Inspection  table Objects 
+	tableObjects = 4;				//Inspection  table Objects
 	allImageObjects = 5;
 	grayImageObjects = 6;
 	colorImageObjects = 7;
+	toolObjects = 8;
 }
 
 enum SVExtentPropertyEnum
@@ -372,7 +386,7 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyOutputWidth             = 0x04000000;
 	SVExtentPropertyOutputHeight            = 0x08000000;
 
-	//SVExtentPropertyPositionsInput = SVExtentPropertyPositionPointX | SVExtentPropertyPositionPointY | SVExtentPropertyPositionPointEndOfLineX | 
+	//SVExtentPropertyPositionsInput = SVExtentPropertyPositionPointX | SVExtentPropertyPositionPointY | SVExtentPropertyPositionPointEndOfLineX |
 	//								SVExtentPropertyPositionPointEndOfLineY | SVExtentPropertyTranslationOffsetX | SVExtentPropertyTranslationOffsetY | SVExtentPropertyRotationAngle,
 	SVExtentPropertyPositionsInput = 0x000000DF;
 
@@ -401,7 +415,7 @@ enum SVExtentPropertyEnum
 	//SVExtentPropertyNoDecimalPlaces = SVExtentPropertyPositionPoint | SVExtentPropertyPositionPointEndOfLine | SVExtentPropertyTranslationOffset | SVExtentPropertyOutputPositionPoint
 	//						| SVExtentPropertyWidth	| SVExtentPropertyHeight | SVExtentPropertyOutputWidth | SVExtentPropertyOutputHeight,
 	SVExtentPropertyNoDecimalPlaces = 0x0F0003CF;
-	
+
 	//SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle | SVExtentPropertyStartAngle	| SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius | SVExtentPropertyOuterRadius,
 	SVExtentProperty2DecimalPlaces = 0x00F00010;
 }
@@ -439,28 +453,28 @@ enum SVExtentTranslationEnum
 	SVExtentTranslationUnknown         = 0;
 	SVExtentTranslationNone            = 10;
 	SVExtentTranslationShift           = 20; //<default e.g WindowTool Shifttool
-	SVExtentTranslationRotate          = 30;
-	SVExtentTranslationFlippedRotate   = 31;
+	SVExtentTranslationRotate          = 30; //< not used
+	SVExtentTranslationFlippedRotate   = 31; //SVImageExtentClass patternExtents
 	SVExtentTranslationProfile         = 40; //<LinearTool with Rotation
 	SVExtentTranslationProfileShift    = 41; //<LinearTool without Rotation
-	SVExtentTranslationTransformShift  = 50;
-	SVExtentTranslationTransformRotate = 51;
-	SVExtentTranslationPolarUnwrap     = 60;
-	SVExtentTranslationLine            = 80;
+	SVExtentTranslationTransformShift  = 50; //SVImagetransform
+	SVExtentTranslationTransformRotate = 51; //SVImagetransform
+	SVExtentTranslationPolarUnwrap     = 60; //SVPolarTransformationToolClass
+	SVExtentTranslationLine            = 80; //LinearAnalyzer
 
-	/// SvDef::SVExtentTranslationResize - Does a position, height, and width, 
+	/// SvDef::SVExtentTranslationResize - Does a position, height, and width,
 	///  translation that uses the scale factor values.
 	///  Uses include the Resize Tool.
-	SVExtentTranslationResize		   = 89;
+	SVExtentTranslationResize		   = 89; //ResizeTool
 
-	/// SVExtentDoubleHeight - Does a position, and height translation 
+	/// SVExtentDoubleHeight - Does a position, and height translation
 	///  that uses the height scale factor value.
 	///  Uses include the Image Tool, Double Height operation.
-	SVExtentTranslationDoubleHeight    = 90;
+	SVExtentTranslationDoubleHeight    = 90; //imageTool
 
 	SVExtentTranslationFlipVertical	   = 91;
 	SVExtentTranslationFlipHorizontal  = 92;
-	SVExtentTranslationFigureShift	   = 93;
+	SVExtentTranslationFigureShift	   = 93; //SVLoadImageToolClass
 	SVExtentTranslationLinear          = 100;
 	SVExtentTranslationCylindricalWarpH			= 110;
 	SVExtentTranslationCylindricalWarpV			= 111;
@@ -532,6 +546,7 @@ enum ClassIdEnum
 	LoopToolClassId = 41;
 	ExternalToolClassId = 42;
 	GroupToolClassId = 43;
+	DrawToolClassId = 44;
 
 
 	//Analyzer Class Ids
@@ -557,6 +572,7 @@ enum ClassIdEnum
 	BlobFeatureTaskClassId = 119;
 	BlobFeatureListClassId = 120;
 	BlobDrawClassId = 121;
+	TableAnaylzerDeleteColumnClassId = 122;
 
 	//Result Class Ids
 	PointXResultClassId = 200;
@@ -580,7 +596,7 @@ enum ClassIdEnum
 	HorizEdgeFilterClassId = 303;
 	VertEdgeFilterClassId = 304;
 	EdgeDetectFilterClassId = 305;
-	EdgeDetect2FilterClassId = 306;	
+	EdgeDetect2FilterClassId = 306;
 	LaplacianEdgeFilterClassId = 307;
 	LaplacianEdge2FilterClassId = 308;
 	MaxMinusMinFilterClassId = 309;
@@ -640,7 +656,7 @@ enum ClassIdEnum
 	TableFillObjectId = 436;
 	TableCopyObjectId = 437;
 	RemoteOutputObjectId = 438;
-	EQAdjustSizeWidthClassId = 439;						
+	EQAdjustSizeWidthClassId = 439;
 	EQAdjustSizeHeightClassId = 440;
 	EQAdjustSizePositionXClassId = 441;
 	EQAdjustSizePositionYClassId = 442;
@@ -651,6 +667,15 @@ enum ClassIdEnum
 	InputParameterTaskClassId = 448;
 	ResultParameterTaskClassId = 449;
 	InputConnectedClassId = 450;
+	DrawRectangleClassId = 451;
+	DrawOvalClassId = 452;
+	DrawSegmentClassId = 453;
+	DrawTriangleClassId = 454;
+	DrawLineClassId = 455;
+	DrawPolygonClassId = 456;
+	DrawBucketFillClassId = 457;
+	DrawPointsClassId = 458;
+	DrawTextClassId = 459;
 }
 
 enum EmbeddedIdEnum
@@ -734,7 +759,7 @@ enum EmbeddedIdEnum
 	LowerThresholdActivateEId = 80;
 	AutoThresholdEId = 81;
 	BlackBackgroundEId = 82;
-	AutoThresholdMultiplierEId = 83;	
+	AutoThresholdMultiplierEId = 83;
 	RingBuffer_FlagOfOutputImagesEId = 84;
 	FilterKernelEId = 85;
 	FilterKernelWidthEId = 86;
@@ -848,10 +873,10 @@ enum EmbeddedIdEnum
 	MaskFillColorEId = 200;
 	ShapeMaskTypeEId = 201;
 	ShapeMaskMaskAreaEId = 202;
-	ShapeMaskPropertyCenterXEId = 203;
-	ShapeMaskPropertyCenterYEId = 204;
-	ShapeMaskPropertyWidthEId = 205;
-	ShapeMaskPropertyHeightEId = 206;
+	CenterXEId = 203;
+	CenterYEId = 204;
+	WidthEId = 205;
+	HeightEId = 206;
 	ShapeMaskPropertySideThicknessEId = 207;
 	ShapeMaskPropertyTopBottomThicknessEId = 208;
 	ShapeMaskPropertyOffsetEId = 209;
@@ -961,8 +986,8 @@ enum EmbeddedIdEnum
 	OutputCenterYEId = 313;
 	OutputStartRadiusEId = 314;
 	OutputEndRadiusEId = 315;
-	OutputStartAngleEId = 316;
-	OutputEndAngleEId = 317;
+	StartAngleEId = 316;
+	EndAngleEId = 317;
 	OutputInterpolationModeEId = 318;
 	OutputUseFormulaEId = 319;
 	OutputAngularMethodEId = 320;
@@ -1053,7 +1078,7 @@ enum EmbeddedIdEnum
 	Band2LowerThresholdEId = 405;
 	Band2ThresholdExcludeEId = 406;
 	Band2ThresholdEnabledEId = 407;
-	EdgeUpperThresholdValueEId = 408;
+	EdgeAUpperThresholdSelectedValueEId = 408;
 	EdgeADirectionEId = 409;
 	EdgeAPolarisationEId = 410;
 	EdgeAEdgeSelectEId = 411;
@@ -1061,7 +1086,7 @@ enum EmbeddedIdEnum
 	EdgeAIsFixedEdgeMarkerEId = 413;
 	EdgeAPositionEId = 414;
 	EdgeAPositionOffsetEId = 415;
-	EdgeALowerThresholdValueEId = 416;
+	EdgeALowerThresholdSelectedValueEId = 416;
 	EdgeBDirectionEId = 418;
 	EdgeBPolarisationEId = 419;
 	EdgeBEdgeSelectEId = 420;
@@ -1069,8 +1094,8 @@ enum EmbeddedIdEnum
 	EdgeBIsFixedEdgeMarkerEId = 422;
 	EdgeBPositionEId = 423;
 	EdgeBPositionOffsetEId = 424;
-	EdgeBLowerThresholdValueEId = 425;
-	EdgeBUpperThresholdValueEId = 426;
+	EdgeBLowerThresholdSelectedValueEId = 425;
+	EdgeBUpperThresholdSelectedValueEId = 426;
 	DrawCriteriaEId = 427;
 	ResizeInterpolationModeEId = 428;
 	ResizeOverscanEId = 429;
@@ -1113,8 +1138,6 @@ enum EmbeddedIdEnum
 	EnvironmentModeValueUidEId = 468;
 	EnvironmentModeUidEId = 469;
 	EnvironmentAutoSaveUidEId = 470;
-	EnvironmentDiskProtectionUidEId = 471;
-	EnvironmentStartLastConfiEIdEId = 472;
 	TableAnaylzerSortIsASCEId = 474;
 	TableAnaylzerExcludeHighEId = 475;
 	TableAnaylzerExcludeHigh_LinkEId = 476; //obsolete, but needed for loading configs older than 10.20
@@ -1129,8 +1152,8 @@ enum EmbeddedIdEnum
 	LoopBreakEId = 485;
 	LoopBreak_LinkedEId = 486; //obsolete, but needed for loading configs older than 10.20
 	TriggerTimeEId = 487;
-    SubfolderLocationEId = 488;
-    SubfolderLocationLinkEId = 489; //obsolete, but needed for loading configs older than 10.20
+	SubfolderLocationEId = 488;
+	SubfolderLocationLinkEId = 489; //obsolete, but needed for loading configs older than 10.20
 	InspectionNameEId = 490;
 	FormatArchiveToolResultsEId = 491;
 	ArchiveResultsMinimumNumberOfCharactersEId = 492;
@@ -1142,7 +1165,6 @@ enum EmbeddedIdEnum
 	ArchiveImageFileRootPart3LinkEId = 498; //obsolete, but needed for loading configs older than 10.20
 	IsClosedEId = 499;
 	TriggerPerObjectIDEId = 500;
-	
 	FeatureTypeEId = 501;
 	SortEnumEId = 502;
 	IsExcludeEId = 503;
@@ -1184,15 +1206,39 @@ enum EmbeddedIdEnum
 	UseAdditionalImageEId = 553;
 	LinkedValueContentEId = 554;
 	LinkedValueTypeEId = 555;
-
+	IsColorImageEId = 556;
+	UseBackgroundImageEId = 557;
+	PositionXEId = 558;
+	PositionYEId = 559;
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
-
 	ImageToolEnabledGainId = 561;
 	ImageToolGainId = 562;
 	ImageToolOffsetId = 563;
-	ImageToolUseLutId = 566;
+	ImageToolRecalculateOnceId = 566;
+	AutoFitSizeEId = 567;
+	DrawAreaEId = 568;
+	LeftEId = 569;
+	TopEId = 570;
+	EdgeALowerThresholdValueEId = 571;
+	EdgeAUpperThresholdValueEId = 572;
+	EdgeBLowerThresholdValueEId = 573;
+	EdgeBUpperThresholdValueEId = 574;
+	UseUnitMappingEId = 575;
+	X1EId = 576;
+	Y1EId = 577;
+	X2EId = 578;
+	Y2EId = 579;
+	X3EId = 580;
+	Y3EId = 581;
+	TextEId = 582;
+	IsBackgroundTransparentEId = 583;
+	FontSizeEId = 584;
+	FontScaleXEId = 585;
+	FontScaleYEId = 586;
+	XAxisAngleEId = 587;
+	IsColorImageCheckEId = 588;
 
-	//The following Ids are the first of an array and must have 100 reserved Ids 
+	//The following Ids are the first of an array and must have 100 reserved Ids
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
 	RingBufferIndexLinkEId = 1150; //obsolete, but needed for loading configs older than 10.20
@@ -1269,7 +1315,9 @@ enum EmbeddedIdEnum
 	ImageArithmeticUseLutEId = 100055;
 	MissingImageCountEId = 100056;
 	NotCompleteCountEId = 100057;
-	//The following Ids are the first of an array and must have 100 reserved Ids 
+	DeleteColumnInputEId = 100058;
+
+	//The following Ids are the first of an array and must have 100 reserved Ids
 	ImageInputEId = 150000;
 }
 
@@ -1277,8 +1325,8 @@ enum EmbeddedIdEnum
 /// Enum moved from Definitions, original comments kept.
 enum SVImageTypeEnum // Used by SVImageClass
 {
-//--------- SVImageTypeUnknown - only for initialization at construction. 
-//---------   Should be set to a different value by first 
+//--------- SVImageTypeUnknown - only for initialization at construction.
+//---------   Should be set to a different value by first
 //---------	  SVImageClass::Initialize() call.
 //---------	  This image type does not create an image buffer pool?
 	SVImageTypeUnknown     = 0;
@@ -1293,54 +1341,54 @@ enum SVImageTypeEnum // Used by SVImageClass
 //---------   Does not set Tool Image within UpdateFromToolInformation().
 	SVImageTypeIndependent = 2;
 
-//--------- SVImageTypeDependent - Only used to define the 3 banded images of 
+//--------- SVImageTypeDependent - Only used to define the 3 banded images of
 //---------   a Color Tool.
 //---------
 //---------   Logical buffer (similar to SVImageTypeLogical)
-//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the
 //---------   image types that result in a Matrox "child" buffer
 //---------   (as opposed to an SVO "child" buffer).
-//---------   Dependent image types maintain a child->parent 
+//---------   Dependent image types maintain a child->parent
 //---------   relationship at the SVImageClass level (nullptr != m_ParentImagePtr)
 //---------
 //---------	  Different between to SVImageTypeLogical is that this type have the same size as the parent and SVImageTypeLogical can be a part of the parent.
 //---------   Also this type does not set Tool Image within UpdateFromToolInformation(), but SVImageTypeLogical do.
 	SVImageTypeDependent   = 3;
 
-//--------- SVImageTypePhysical - Normal buffer type for most output images. 
-//---------   Originally Logical images were also allowed as output images; 
-//---------   but problems forced us to simplify the use case logic and make 
+//--------- SVImageTypePhysical - Normal buffer type for most output images.
+//---------   Originally Logical images were also allowed as output images;
+//---------   but problems forced us to simplify the use case logic and make
 //---------   them all physical.  This could be re-visited in the future.
 	SVImageTypePhysical    = 4;
 
 //--------- SVImageTypeLogicalAndPhysical (previously SVImageTypeLogical) -
 //---------   SHOULD NOT BE USED FOR NEW IMPLEMENTATIONS.
-//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the
 //---------   image types that result in a Matrox "child" buffer
 //---------   (as opposed to an SVO "child" buffer).
-//---------   SVImageTypeLogicalAndPhysical also results in allocation of 
+//---------   SVImageTypeLogicalAndPhysical also results in allocation of
 //---------   physical buffers.  In general I would consider this a mistake or
-//---------   bad design; but they are used (the physical buffers) by the 
-//---------   SVLinearImageOperatorListClass and the 
-//---------   SVStdImageOperatorListClass. 
-//---------   @TODO someday the logical buffer 
+//---------   bad design; but they are used (the physical buffers) by the
+//---------   SVLinearImageOperatorListClass and the
+//---------   SVStdImageOperatorListClass.
+//---------   @TODO someday the logical buffer
 //---------   portions should be replaced with the new SVImageTypeLogical
-//---------   buffer, and the physical portions should be replaced with the 
+//---------   buffer, and the physical portions should be replaced with the
 //---------   SVImageTypePhysical buffer.  This type should be obsoleted and
 //---------   removed.
 //		SVImageTypeLogicalAndPhysical = 5, deprecated
 
 //		SVImageTypeVirtual     = 6, - Not used.
 
-//--------- SVImageTypeMain - only used for the MainImage.  Set by 
-//---------   SVMainImageClass constructor. 
+//--------- SVImageTypeMain - only used for the MainImage.  Set by
+//---------   SVMainImageClass constructor.
 	SVImageTypeMain        = 7;
 
 //--------- SVImageTypeRGBMain - deprecated
 //		SVImageTypeRGBMain     = 8,
 
 //--------- SVImageTypeLogical -
-//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the
 //---------   image types that result in a Matrox "child" buffer
 //---------   (as opposed to an SVO "child" buffer).
 	SVImageTypeLogical = 9;
@@ -1350,34 +1398,34 @@ enum SVImageTypeEnum // Used by SVImageClass
 //In the next step, this could replace the SvOi::SVBlobFeatureEnum enum.
 enum SVBlobFeatureEnum
 {
-	SV_AREA = 0;            
-	SV_BOXX_MAX = 1;        
-	SV_BOXX_MIN = 2;        
-	SV_BOXY_MAX = 3;        
-	SV_BOXY_MIN = 4;        
-	SV_BREADTH = 5;         
-	SV_CENTEROFGRAVITY_X = 6;   
-	SV_CENTEROFGRAVITY_Y = 7;   
-	SV_CONVEX_PERIMETER = 8;    
-	SV_FERET_ELONGATION = 9;    
-	SV_FERETMAX_ANGLE = 10;     
-	SV_FERETMAX_DIAMETER = 11;  
-	SV_FERETMEAN_DIAMETER = 12; 
-	SV_FERETMIN_ANGLE = 13;     
-	SV_FERETMIN_DIAMETER = 14;  
-	SV_FERET_X = 15;            
-	SV_FERET_Y = 16;            
-	SV_FIRSTPOINT_X = 17;       
-	SV_FIRSTPOINT_Y = 18;       
-	SV_LABEL = 19;              
-	SV_LENGTH = 20;             
-	SV_NBROF_HOLES = 21;        
-	SV_PERIMETER = 22;          
-	SV_ROUGHNESS = 23;          
+	SV_AREA = 0;
+	SV_BOXX_MAX = 1;
+	SV_BOXX_MIN = 2;
+	SV_BOXY_MAX = 3;
+	SV_BOXY_MIN = 4;
+	SV_BREADTH = 5;
+	SV_CENTEROFGRAVITY_X = 6;
+	SV_CENTEROFGRAVITY_Y = 7;
+	SV_CONVEX_PERIMETER = 8;
+	SV_FERET_ELONGATION = 9;
+	SV_FERETMAX_ANGLE = 10;
+	SV_FERETMAX_DIAMETER = 11;
+	SV_FERETMEAN_DIAMETER = 12;
+	SV_FERETMIN_ANGLE = 13;
+	SV_FERETMIN_DIAMETER = 14;
+	SV_FERET_X = 15;
+	SV_FERET_Y = 16;
+	SV_FIRSTPOINT_X = 17;
+	SV_FIRSTPOINT_Y = 18;
+	SV_LABEL = 19;
+	SV_LENGTH = 20;
+	SV_NBROF_HOLES = 21;
+	SV_PERIMETER = 22;
+	SV_ROUGHNESS = 23;
 	SV_SUM_PIXEL = 24;          // Will not work with thresholded images i.e.
-	SV_COMPACTNESS = 25;        
-	SV_NBR_RUNS = 26;           
-	SV_XMINAT_YMIN = 27;        
+	SV_COMPACTNESS = 25;
+	SV_NBR_RUNS = 26;
+	SV_XMINAT_YMIN = 27;
 	SV_XMAXAT_YMAX = 28;
 	SV_YMINAT_XMAX = 29;
 	SV_YMAXAT_XMIN = 30;
@@ -1411,7 +1459,7 @@ enum ExDllInterfaceType
 	Invalid = 4;
 }
 
-enum InputTypeEnum
+enum LinkedValueTypeEnum
 {
 	TypeDecimal = 0;
 	TypeText = 1;
@@ -1419,4 +1467,14 @@ enum InputTypeEnum
 	TypeGrayImage = 3;
 	TypeColorImage = 4;
 	TypeImage = 5;
+	TypeStates = 6;
 };
+enum ResetType
+{
+	RT_None =0 ;
+	RT_FromObject =1;  //use resettype from embeddet variable only used in Request not in Response
+	RT_OWNER = 2;
+	RT_Tool = 3;
+	RT_IP  = 4;
+};
+

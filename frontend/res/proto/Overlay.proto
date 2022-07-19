@@ -225,7 +225,7 @@ message OverlayShapeMarker
 	ValueObject value = 3;
 	Orientation orientationType = 4;
 	Size sizeType = 5;
-	
+
 	oneof SVOData
 	{
 		SVOSelectedMarker selectedMarkerData = 6;
@@ -246,9 +246,9 @@ message OverlayShapeBlockMarker
 {
 	//This Block marker start with the first pixel with the first color. At the position changePos[0] it changes to the next color and so on.
 	repeated uint32 colors = 1;
-	repeated int32 changePos = 2;	
+	repeated int32 changePos = 2;
 	Orientation orientationType = 4;
-	
+
 	oneof DataType
 	{
 		int32 PixelCountingAnalyzerResultPos = 3;

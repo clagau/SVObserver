@@ -226,6 +226,7 @@ message ConfigurationLockStatusNotification
 	optional string host = 4;
 }
 
+
 message GetGatewayMessageStreamRequest
 {
 	repeated MessageSeverity severityList = 1;	//The severity types to receive if empty all are received

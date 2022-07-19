@@ -21,7 +21,7 @@ message DataDefinition
 {
 	string name = 1;				//Name of value or image object
 	bool writable = 2;				//True if object is writable
-	bool published = 3;				//True if object has been published 
+	bool published = 3;				//True if object has been published
 	string type = 4;				//The object type (int, double etc..)
 	repeated string additionalInfo = 5;	//List of additional information
 }
@@ -37,7 +37,7 @@ message Value
 }
 
 //Retrieves the SVObserver version
-message GetSVObserverVersionRequest 
+message GetSVObserverVersionRequest
 {
 }
 
@@ -48,17 +48,17 @@ message SetDeviceModeRequest
 }
 
 //Gets the current SVObserver device mode
-message GetDeviceModeRequest 
+message GetDeviceModeRequest
 {
 }
 
-message GetDeviceModeResponse 
+message GetDeviceModeResponse
 {
 	DeviceModeType mode = 1;		//The current SVObserver device mode
 }
 
 ///Gets the current SVObserver state
-message GetStateRequest 
+message GetStateRequest
 {
 }
 
@@ -76,7 +76,6 @@ message GetStateResponse
 	// SVIM_SETUPMODE =			0x0080; SVObserver is in edit mode
 	// SVIM_SAVING_CONFIG =		0x0100;	SVObserver is busy saving a configuration
 	// SVIM_STOPPING =			0x0200;	SVObserver is busy stopping the configuration
-	// SVIM_RAID_FAILURE =		0x0400; SVObserver has a raid failure
 }
 
 ///Gets the currently loaded configuration from SVObserver and saves it in the file name (locally)
@@ -280,7 +279,7 @@ message RunOnceRequest
 ///Loads a configuration given a local file name into SVObserver as the current configuration
 message LoadConfigRequest
 {
-	string fileName = 1;			//The configuration file name to load 
+	string fileName = 1;			//The configuration file name to load
 }
 
 message SaveClientChunkError
@@ -405,21 +404,21 @@ message SetTriggerConfigRequest
 
 message SoftwareTriggerRequest
 {
-	string inspectionName = 1;				//The înspection name to trigger
+	string inspectionName = 1;				//The ï¿½nspection name to trigger
 	sfixed32 period = 2;					//The trigger period in ms when 0 then a single trigger is sent
 	sfixed32 startObjectID = 3;				//The starting objectID value
 	sfixed32 triggerPerObjectID = 4;		//The number of trigger per objectID
 	fixed32 numberObjectID = 5;				//The number of objectIDs to trigger when 0 continuously
 }
 
-message GetConfigurationInfoRequest 
+message GetConfigurationInfoRequest
 {
 }
 
-message GetConfigurationInfoResponse 
+message GetConfigurationInfoResponse
 {
   string fileName = 1;          //The path to the loaded configuration file
   uint64 lastModified = 2;		//The last modified time stamp
-  uint64 loadedSince = 3;		//The load time time stamp	
-  string hash = 4;              //hash code 
+  uint64 loadedSince = 3;		//The load time time stamp
+  string hash = 4;              //hash code
 }
