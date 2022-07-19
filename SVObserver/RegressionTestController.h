@@ -66,6 +66,7 @@ private:
 	bool m_IsInitEquationText {false};
 	bool m_isValidationMode {false};
 	long m_triggerIndex {0L};
+	uint32_t m_toolsetCameraID {0UL};
 	std::string m_resultFileName;
 	std::ofstream m_fileOutputResult;
 	SvOi::IFormulaControllerPtr m_pPlayEquationController;

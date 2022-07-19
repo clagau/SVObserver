@@ -136,6 +136,10 @@ void  RegressionTestController::initialize(HWND hMainWnd, HWND hRegressionWnd, S
 	m_pInspection = pInspection;
 	m_objectIDParams = rObjectIDParams;
 	m_OutputValueList = std::move(OutputValueList);
+	if (nullptr != m_pInspection)
+	{
+		m_toolsetCameraID = m_pInspection->getFirstCamera();
+	}
 }
 
 DWORD RegressionTestController::runThread()
@@ -416,6 +420,11 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 				{
 					return pCamera != nullptr && runFileStruct.ObjectName == pCamera->GetName();
 				});
+			if (cameraIter == rCameraList.end() || nullptr != *cameraIter)
+			{
+				continue;
+			}
+			SvIe::SVVirtualCamera* pCamera {*cameraIter};
 			std::string regPath;
 			std::string regFile;
 			size_t pos = runFileStruct.FileName.find_last_of('\\');
@@ -428,71 +437,74 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 			{
 				regFile = runFileStruct.FileName;
 			}
-			SvVol::BasicValueObjectPtr pRegValue = (*cameraIter)->getCameraValue(SvDef::FqnCameraRegPath);
+			SvVol::BasicValueObjectPtr pRegValue = pCamera->getCameraValue(SvDef::FqnCameraRegPath);
 			if (nullptr != pRegValue)
 			{
 				pRegValue->setValue(regPath.c_str());
 			}
-			pRegValue = (*cameraIter)->getCameraValue(SvDef::FqnCameraRegFile);
+			pRegValue = pCamera->getCameraValue(SvDef::FqnCameraRegFile);
 			if (nullptr != pRegValue)
 			{
 				pRegValue->setValue(regFile.c_str());
 			}
 			rIP.AddInputImageRequestByCameraName(runFileStruct.ObjectName, runFileStruct.FileName);
 
-			if (true == m_isValidationMode)
+			if (m_toolsetCameraID == pCamera->getObjectId())
 			{
-				m_triggerIndex = -1;
-				m_objectIDParams.m_currentObjectID = -1;
-				size_t pos2 = regFile.find_last_of('.');
-				size_t pos1 = regFile.find_last_of('_', pos2);
-				if (std::string::npos != pos1 && std::string::npos != pos2)
+				if (true == m_isValidationMode)
 				{
-					try
+					m_triggerIndex = -1;
+					m_objectIDParams.m_currentObjectID = -1;
+					size_t pos2 = regFile.find_last_of('.');
+					size_t pos1 = regFile.find_last_of('_', pos2);
+					if (std::string::npos != pos1 && std::string::npos != pos2)
 					{
-						m_triggerIndex = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1 - 1));
+						try
+						{
+							m_triggerIndex = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1 - 1));
+						}
+						catch (const std::exception&)
+						{
+						}
+						pos2 = pos1 - 1;
 					}
-					catch (const std::exception&)
+					pos1 = regFile.find_last_of('_', pos2);
+					if (std::string::npos != pos1 && std::string::npos != pos2)
 					{
+						try
+						{
+							m_objectIDParams.m_currentObjectID = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1));
+						}
+						catch (const std::exception&)
+						{
+						}
 					}
-					pos2 = pos1 - 1;
-				}
-				pos1 = regFile.find_last_of('_', pos2);
-				if (std::string::npos != pos1 && std::string::npos != pos2)
-				{
-					try
-					{
-						m_objectIDParams.m_currentObjectID = std::stoul(regFile.substr(pos1 + 1, pos2 - pos1));
-					}
-					catch (const std::exception&)
-					{
-					}
-				}
-			}
-			else
-			{
-				if (RegressionRunModeEnum::RegModeSingleStepBack == m_RunMode)
-				{
-					--m_triggerIndex;
 				}
 				else
 				{
-					++m_triggerIndex;
-				}
+					if (RegressionRunModeEnum::RegModeSingleStepBack == m_RunMode)
+					{
+						--m_triggerIndex;
+					}
+					else
+					{
+						++m_triggerIndex;
+					}
 
-				if (m_objectIDParams.m_triggerPerObjectID < m_triggerIndex)
-				{
-					++m_objectIDParams.m_currentObjectID;
-					m_triggerIndex = 1L;
-				}
-				else if (1L > m_triggerIndex)
-				{
-					--m_objectIDParams.m_currentObjectID;
-					m_triggerIndex = m_objectIDParams.m_triggerPerObjectID;
-				}
-				else if (0 == m_objectIDParams.m_startObjectID && 0 == m_objectIDParams.m_currentObjectID)
-				{
-					m_objectIDParams.m_currentObjectID = 1L;
+					if (m_objectIDParams.m_triggerPerObjectID < m_triggerIndex)
+					{
+						++m_objectIDParams.m_currentObjectID;
+						m_triggerIndex = 1L;
+					}
+					else if (1L > m_triggerIndex)
+					{
+						--m_objectIDParams.m_currentObjectID;
+						m_triggerIndex = m_objectIDParams.m_triggerPerObjectID;
+					}
+					else if (0 == m_objectIDParams.m_startObjectID && 0 == m_objectIDParams.m_currentObjectID)
+					{
+						m_objectIDParams.m_currentObjectID = 1L;
+					}
 				}
 			}
 		}
