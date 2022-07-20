@@ -2196,6 +2196,13 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
 
+	if (false == getMaintainSourceImages())
+	{
+		for (auto& rValue : rProduct.m_svCameraInfos)
+		{
+			rValue.second.ClearInfo();
+		}
+	}
 	CommitSharedMemory(rProduct);
 	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 	if (rProduct.IsProductActive())
