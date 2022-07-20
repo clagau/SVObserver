@@ -46,15 +46,18 @@ class EditCtrlData
 {
 public:
 	explicit EditCtrlData(int nIDC) : m_nIDC(nIDC) {};
-	bool checkLimitsAndDisplayError() const
+	bool checkLimitsAndDisplayError(bool displayErrMsgBox = true) const
 	{
 		if (m_useMinMax)
 		{
 			if (m_value < m_min || m_value > m_max)
 			{
-				SvDef::StringVector additionalTextList {m_fieldName, std::to_string(m_min), std::to_string(m_max)};
-				SvStl::MessageManager Msg(SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidParameterValue, additionalTextList, SvStl::SourceFileParams(StdMessageParams));
+				if (displayErrMsgBox)
+				{
+					SvDef::StringVector additionalTextList {m_fieldName, std::to_string(m_min), std::to_string(m_max)};
+					SvStl::MessageManager Msg(SvStl::MsgType::Display);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidParameterValue, additionalTextList, SvStl::SourceFileParams(StdMessageParams));
+				}
 				return false;
 			}
 		}

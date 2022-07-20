@@ -425,8 +425,8 @@ void TADialogDrawPage::OnKillFocusEdit(UINT nID)
 		{
 			ctrlDataIter->m_Widget->EditboxToValue();
 		}
-		else if (false == ctrlDataIter->checkLimitsAndDisplayError())
-		{
+		else if (false == ctrlDataIter->checkLimitsAndDisplayError(false))
+		{	//checkLimitsAndDisplayError should not display MessageBox, because if the focus set back the check will be done again and the error message will be displayed
 			GetDlgItem(nID)->SetFocus();
 			return;
 		}
