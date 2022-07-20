@@ -415,7 +415,6 @@ void SVTADlgExternalSelectDllPage::InitializeDllAndDisplayResults(bool jumpToInp
 		m_strStatus += cCRLF;
 
 		UpdateData(FALSE);
-		m_StatusEdit.SetSel(m_strStatus.GetLength(), m_strStatus.GetLength());
 
 	}
 	catch (const SvStl::MessageContainer& e)
@@ -454,6 +453,7 @@ bool SVTADlgExternalSelectDllPage::InitializeDll(bool setDefaultValues)
 		m_strStatus += message.c_str();
 		m_strStatus += cCRLF;
 	}
+
 	UpdateData(FALSE);
 
 	if (setDefaultValues)
@@ -515,7 +515,6 @@ BOOL SVTADlgExternalSelectDllPage::PreTranslateMessage(MSG* pMsg)
 LRESULT SVTADlgExternalSelectDllPage::OnUpdateStatus(WPARAM, LPARAM)
 {
 	UpdateData();
-	m_StatusEdit.SetSel(m_strStatus.GetLength(), m_strStatus.GetLength());
 	return 0;
 }
 

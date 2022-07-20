@@ -1181,7 +1181,6 @@ HRESULT SVExternalToolTask::Initialize(std::vector<std::string>& rStatusMsgs, bo
 	m_aInspectionInputImages.clear();
 	m_InspectionInputValues.clear();
 
-
 	if (isToolActive())
 	{
 

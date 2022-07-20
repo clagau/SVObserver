@@ -357,7 +357,7 @@ void SVTADlgExternalInputSelectPage::OnOK()
 
 // Loops through Tree Items to fill existing SVInputObjectInfo array (if input is another VO) and/or SVValueObjects with 
 // constant values (if input is not another VO)
-void SVTADlgExternalInputSelectPage::updateInputValuesFromPropertyTree()
+void SVTADlgExternalInputSelectPage::updateInputValuesFromPropertyTree(bool runOnce)
 {
 	if (m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild())
 	{
@@ -365,7 +365,7 @@ void SVTADlgExternalInputSelectPage::updateInputValuesFromPropertyTree()
 		m_Tree.SaveState(propTreeState);
 		m_rExternalToolTaskController.setPropTreeState(propTreeState);
 
-		m_InputValues.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_InputValues.Commit(SvOg::PostAction::doReset | (runOnce ? SvOg::PostAction::doRunOnce: SvOg::PostAction::doNothing));
 	}
 }
 

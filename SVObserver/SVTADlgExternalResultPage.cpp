@@ -262,7 +262,8 @@ void SVTADlgExternalResultPage::HandleTables(std::map<std::string, SVRPropertyIt
 	}
 }
 
-BOOL SVTADlgExternalResultPage::OnSetActive()
+
+void SVTADlgExternalResultPage::runOnce()
 {
 	if (m_InspectionID > 0)
 	{
@@ -281,7 +282,6 @@ BOOL SVTADlgExternalResultPage::OnSetActive()
 		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_HIDE);
 	}
 
-	return CPropertyPage::OnSetActive();
 }
 
 void SVTADlgExternalResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)

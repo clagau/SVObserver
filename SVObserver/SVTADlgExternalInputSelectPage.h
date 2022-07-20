@@ -46,7 +46,7 @@ public:
 // Implementation
 protected:
 	void SelectObject( SVRPropertyItemEdit& rItem );
-	void updateInputValuesFromPropertyTree();
+	void updateInputValuesFromPropertyTree(bool runOnce=false);
 
 	int GetItemIndex(SVRPropertyItem* pItem);
 	const std::unique_ptr<SvPb::InputValueDefinition> GetInputDefinitionPtr(SVRPropertyItem* pItem);

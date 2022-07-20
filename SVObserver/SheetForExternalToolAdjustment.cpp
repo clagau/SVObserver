@@ -112,19 +112,13 @@ void SheetForExternalToolAdjustment::OnRunOnce()
 {
 	GreyOutHelper goh(m_runOnceButton, _T("<Running>"));
 
-	SvOi::IObjectClass* pObject = GetTaskObject();
-	ResetTools(pObject);
+	SetActivePage(c_indexOfOutputValuePage);
 
-	auto activeIndex = GetActiveIndex();
+	auto pOutputValuePage = dynamic_cast<SVTADlgExternalResultPage*>(GetActivePage());
 
-	if (c_indexOfOutputValuePage == activeIndex)
+	if (nullptr != pOutputValuePage)
 	{
-		auto pOutputValuePage = dynamic_cast<SVTADlgExternalResultPage*>(GetActivePage());
-
-		if (nullptr != pOutputValuePage)
-		{
-			pOutputValuePage->OnSetActive();
-		}
+		pOutputValuePage->runOnce();
 	}
 }
 

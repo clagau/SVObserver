@@ -39,7 +39,7 @@ public:
 	//}}AFX_VIRTUAL
 
 public:
-	BOOL OnSetActive() override;
+	void runOnce();
 
 protected:
 	int SelectObject(int iIndex);
@@ -50,7 +50,7 @@ protected:
 
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
-	std::string						m_sTitle;
+	std::string	m_sTitle;
 	ExternalToolTaskController& m_rExternalToolTaskController;
 	SvOg::ValueController m_ValueController;
 
