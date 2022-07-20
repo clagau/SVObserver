@@ -380,6 +380,8 @@ namespace
 			return {false, hr};
 		}
 
+		pConfig->RunOnce();
+
 		if (pConfig->IsConfigurationLoaded())
 		{
 			// Removes any invalid entries in the output list.

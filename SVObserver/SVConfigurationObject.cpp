@@ -3701,19 +3701,15 @@ bool SVConfigurationObject::FinishIPDoc(SVInspectionProcess* pInspection, bool i
 	return bOk;
 }
 
-bool SVConfigurationObject::Activate()
+void SVConfigurationObject::RunOnce() const
 {
-	bool bOk = true;
-
-	long lSize = static_cast<long> (m_arInspectionArray.size());
-
-	for (long l = lSize - 1; -1 < l; l--)
+	for (const auto* pInspection : m_arInspectionArray)
 	{
-		SVInspectionProcess* pInspection = m_arInspectionArray[l];
-		SvCmd::RunOnceSynchronous(pInspection->getObjectId());
+		if (nullptr != pInspection)
+		{
+			SvCmd::RunOnceSynchronous(pInspection->getObjectId());
+		}
 	}
-
-	return bOk;
 }
 
 bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
@@ -3744,16 +3740,6 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(rSvE.getMessage());
 		return false;
-	}
-
-	for (auto pInspection : m_arInspectionArray)
-	{
-		if (nullptr != pInspection)
-		{
-			SVSVIMStateClass::AddState(SV_STATE_INTERNAL_RUN);
-			pInspection->RunOnce();
-			SVSVIMStateClass::RemoveState(SV_STATE_INTERNAL_RUN);
-		}
 	}
 
 	return bOk;

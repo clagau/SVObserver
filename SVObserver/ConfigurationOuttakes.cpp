@@ -277,7 +277,7 @@ SVConfigurationObject* UseConfigAssistant(SVOConfigAssistantDlg& rAssistantDlg, 
 		//
 		AfxGetMainWnd()->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
 
-		bOk = pConfig->Activate() && bOk;
+		pConfig->RunOnce();
 	}
 
 	if (newConfiguration)

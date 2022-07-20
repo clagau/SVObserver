@@ -186,7 +186,7 @@ public:
 	HRESULT SetCameraItems(const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus);
 
 	bool RebuildInputOutputLists(bool isLoad = false);
-	bool Activate();
+	void RunOnce() const;
 
 	bool DestroyConfiguration();
 
