@@ -486,6 +486,7 @@ bool ToolSizeController::ResetToolSizeAdjustTask()
 	return (S_OK == SvCmd::InspectionCommands(m_ipId, requestCmd, nullptr));
 }
 
+
 bool  ToolSizeController::StoreExtents(bool init)
 {
 	if (init)
@@ -493,7 +494,10 @@ bool  ToolSizeController::StoreExtents(bool init)
 		InitValues();
 		
 	}
+	
 	m_OriginalExtents = m_Extents;
+	m_bOrginalSizeModes = GetToolSizeMode(false, m_OrginalSizeModes);
+
 	return true;
 };
 const Extents& ToolSizeController::GetExtents(bool init)
@@ -570,12 +574,24 @@ bool ToolSizeController::HasChanged(bool init)
 	{
 		hasChanged = true;
 	}
+
+	SizeModes Modes;
+	GetToolSizeMode(false, Modes);
+	if (m_OrginalSizeModes != Modes)
+	{
+		hasChanged = true;
+	}
 	return hasChanged;
 }
 bool ToolSizeController::RestoreExtents()
 {
 	
+	if(m_bOrginalSizeModes)
+	{
+		SetToolSizeMode(m_OrginalSizeModes, false);
+	}
 	HRESULT hr = SetExtents(m_OriginalExtents);
+
 	return (hr == S_OK);
 }
 

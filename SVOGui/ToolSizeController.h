@@ -102,7 +102,8 @@ private:
 	bool m_isToolValid {false};
 	bool m_isAutofitAllowedFlag {false};
 
-
+	bool		m_bOrginalSizeModes {false};
+	SizeModes m_OrginalSizeModes;
 	Extents m_OriginalExtents;
 	Extents m_Extents;
 	Extents m_ParentExtents;
