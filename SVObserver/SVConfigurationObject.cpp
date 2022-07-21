@@ -3741,6 +3741,19 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 		Exception.setMessage(rSvE.getMessage());
 		return false;
 	}
+	
+	if (false == isLoad)
+	{
+		for (auto pInspection : m_arInspectionArray)
+		{
+			if (nullptr != pInspection)
+			{
+				SVSVIMStateClass::AddState(SV_STATE_INTERNAL_RUN);
+				pInspection->RunOnce();
+				SVSVIMStateClass::RemoveState(SV_STATE_INTERNAL_RUN);
+			}
+		}
+	}
 
 	return bOk;
 }

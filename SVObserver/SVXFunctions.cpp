@@ -380,7 +380,9 @@ namespace
 			return {false, hr};
 		}
 
+		SVSVIMStateClass::AddState(SV_STATE_INTERNAL_RUN);
 		pConfig->RunOnce();
+		SVSVIMStateClass::RemoveState(SV_STATE_INTERNAL_RUN);
 
 		if (pConfig->IsConfigurationLoaded())
 		{
