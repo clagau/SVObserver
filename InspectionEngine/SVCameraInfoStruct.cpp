@@ -30,9 +30,14 @@ void SVCameraInfoStruct::Assign(const CameraInfo& rCameraInfo)
 }
 
 
-void SVCameraInfoStruct::ClearInfo()
+void SVCameraInfoStruct::ClearInfo(bool clearImage /*= false*/)
 {
-	m_cameraInfo = {};
+	if (false == clearImage)
+	{
+		m_cameraInfo.m_startFrameTimestamp = 0.0;
+		m_cameraInfo.m_endFrameTimestamp = 0.0;
+	}
+	m_cameraInfo.m_pImage = nullptr;
 }
 
 const SvOi::ITRCImagePtr SVCameraInfoStruct::GetNextImage()

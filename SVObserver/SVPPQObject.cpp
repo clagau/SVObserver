@@ -1532,8 +1532,14 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 
 	if (bNak)
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+		::OutputDebugString(SvUl::Format(_T("%s NAK TRI=%d\n"), GetName(), pProduct->triggerCount()).c_str());
+#endif
 		::InterlockedIncrement(&m_NAKCount);
-		::InterlockedIncrement(&m_NewNAKCount);
+		if (pProduct->m_triggered)
+		{
+			::InterlockedIncrement(&m_NewNAKCount);
+		}
 	}
 	else
 	{
@@ -2196,13 +2202,6 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
 
-	if (false == getMaintainSourceImages())
-	{
-		for (auto& rValue : rProduct.m_svCameraInfos)
-		{
-			rValue.second.ClearInfo();
-		}
-	}
 	CommitSharedMemory(rProduct);
 	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 	if (rProduct.IsProductActive())
@@ -2234,6 +2233,13 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		}
 	}
 
+	if (false == getMaintainSourceImages())
+	{
+		for (auto& rValue : rProduct.m_svCameraInfos)
+		{
+			rValue.second.ClearInfo(true);
+		}
+	}
 	return l_Status;
 }
 
@@ -2289,6 +2295,10 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 		}
 	}
 
+	for (auto& rCamera : rProduct.m_svCameraInfos)
+	{
+		rCamera.second.ClearInfo(true);
+	}
 	return l_Status;
 }
 

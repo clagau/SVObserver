@@ -38,7 +38,7 @@ public:
 public:
 	void Assign(const CameraInfo& rCameraInfo);
 
-	void ClearInfo();
+	void ClearInfo(bool clearImage = false);
 
 	const SvOi::ITRCImagePtr GetNextImage();
 	const void setCamera(uint32_t cameraId, NextImageHandleFunctor NextImageHandleFunctor);
