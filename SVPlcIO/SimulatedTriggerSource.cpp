@@ -172,18 +172,21 @@ HRESULT SimulatedTriggerSource::initialize()
 					continue;
 				}
 				std::vector<std::string> cycleParam;
-				cycleParam.reserve(cCycleParameterNumber);
+				cycleParam.resize(cCycleParameterNumber);
 				std::stringstream stringStream(fileLine);
 				std::string value;
+				size_t parameterNr {0};
 				while (std::getline(stringStream, value, ';'))
 				{
-					cycleParam.emplace_back(std::move(value));
+					if (parameterNr >= cCycleParameterNumber)
+					{
+						break;
+					}
+					cycleParam[parameterNr] = value;
+					++parameterNr;
 				}
 
-				if (cCycleParameterNumber == cycleParam.size())
-				{
-					cycleParamList.emplace_back(std::move(cycleParam));
-				}
+				cycleParamList.emplace_back(std::move(cycleParam));
 			}
 			cycleFile.close();
 

@@ -194,12 +194,15 @@ void SVVirtualCamera::removeNeededBufferEntry(uint32_t id)
 
 void SVVirtualCamera::setAcquisitionDevice(bool fileAcquisition)
 {
-	m_pCurrentDevice = fileAcquisition ? m_pFileDevice : m_pMainDevice;
-	if (fileAcquisition && nullptr != m_pFileDevice && nullptr != m_pMainDevice)
+	if (false == m_bFileAcquisition)
 	{
-		SVImageInfoClass imageInfo;
-		m_pMainDevice->GetImageInfo(&imageInfo);
-		m_pFileDevice->CreateBuffers(imageInfo);
+		m_pCurrentDevice = fileAcquisition ? m_pFileDevice : m_pMainDevice;
+		if (fileAcquisition && nullptr != m_pFileDevice && nullptr != m_pMainDevice)
+		{
+			SVImageInfoClass imageInfo;
+			m_pMainDevice->GetImageInfo(&imageInfo);
+			m_pFileDevice->CreateBuffers(imageInfo);
+		}
 	}
 }
 
