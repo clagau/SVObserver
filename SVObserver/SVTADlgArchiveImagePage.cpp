@@ -83,6 +83,11 @@ constexpr long MaxImagesWarningLimit = 100L;
 
 #pragma endregion Declarations
 
+bool memoryNeedsToBeConsidered(long mode)
+{
+	return mode == SvTo::SVArchiveGoOffline || mode == SvTo::SVArchiveAsynchronous;
+}
+
 #pragma region Constructor
 SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent) 
 : CPropertyPage(SVTADlgArchiveImagePage::IDD)
@@ -302,11 +307,11 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	// cppcheck-suppress danglingLifetime //this pointer is immediately converted to a CString and does not "dangle"
 	m_sMaxImageNumber = Temp.c_str(); 
 
-	__int64 MemUsed = SVMemoryManager::Instance().ReservedBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
+	__int64 MemUsed = SVMemoryManager::Instance().ReservedBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL);
 	m_ToolImageMemoryUsage = 0;
-	m_TotalArchiveImageMemoryAvailable = SVMemoryManager::Instance().SizeOfPoolBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
+	m_TotalArchiveImageMemoryAvailable = SVMemoryManager::Instance().SizeOfPoolBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL);
 
-	m_wndAvailableArchiveImageMemory.ShowWindow( lMode == SvTo::SVArchiveGoOffline );
+	m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(lMode));
 
 	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController);
 	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
@@ -326,8 +331,8 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_InitialArchiveImageMemoryUsageExcludingThisTool = MemUsed;
 
-	// calculate free mem if in SVArchiveGoOffline mode
-	if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
+	// calculate free mem if in SVArchiveGoOffline or SVArchiveAsynchronous mode
+	if (memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
 	{
 		m_InitialArchiveImageMemoryUsageExcludingThisTool -= m_ToolImageMemoryUsage;
 	}
@@ -410,7 +415,7 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 	m_ItemsSelected.DeleteAllItems();
 
 	MemoryUsage();
-	if(SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
+	if(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
 	{
 		CalculateFreeMem();
 	}
@@ -570,7 +575,7 @@ void SVTADlgArchiveImagePage::OnSelchangeWhenToArchive()
 	if (iSel != CB_ERR)
 	{
 		m_eSelectedArchiveMethod = static_cast <SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData( iSel ));
-		m_wndAvailableArchiveImageMemory.ShowWindow(SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod );
+		m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
 
 		//if changing to SVArchiveGoOffline mode - build m_mapSelectedImageUsage with selected items in the tree
 		if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
@@ -605,7 +610,7 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 		if ( 0 < m_ImagesToArchive )
 		{  
 			//check to make sure we don't go over the amount of free memory
-			if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
+			if (memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
 			{
 				__int64 llFreeMem = CalculateFreeMem();
 				if( 0 <= llFreeMem )
@@ -655,11 +660,10 @@ bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 	{	
 		bool bAddItem = true;
 
-		//only check for memory if in mode SVArchiveGoOffline
-		if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
+		if (memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
 		{
 			__int64 CurrentToolFreeMem = CalculateFreeMem();
-			//lDelta is the total amount of memory that will need to be allocated.  Only gets commited once the tool's reset object gets called.
+			//lDelta is the total amount of memory that will need to be allocated. Only gets commited once the tool's reset object gets called.
 			__int64 lDelta = MemoryForSelectedImage - m_InitialToolImageMemoryUsage + m_ToolImageMemoryUsage;			
 			__int64 Difference = CurrentToolFreeMem - MemoryForSelectedImage;
 
@@ -671,7 +675,7 @@ bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 
 			if (bCanReserve && (0 < lDelta))
 			{
-				bCanReserve = SVMemoryManager::Instance().CanReservePoolMemory( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, lDelta );
+				bCanReserve = SVMemoryManager::Instance().CanReservePoolMemory( SvDef::ARCHIVE_TOOL_MEMORY_POOL, lDelta );
 			}
 
 			if (bCanReserve)
@@ -699,8 +703,7 @@ bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 	{
 		m_mapSelectedImageMemUsage.erase( pImage );
 
-		//Calculate Free Mem if in SVArchiveGoOffline mode
-		if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
+		if (memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
 		{
 			__int64 FreeMem = CalculateFreeMem();
 

@@ -25,10 +25,10 @@ public:
 
 	HRESULT Create(__int64 lPoolSizeKBytes);
 
-	HRESULT ReservePoolMemory(void* pOwner, __int64 lSizeInBytes);
+	HRESULT ReservePoolMemory(void* pOwner, __int64 sizeInBytes);
 
 	HRESULT ReleasePoolMemory(void* pOwner);
-	HRESULT ReleasePoolMemory(void* pOwner, long lSizeInBytes);
+	HRESULT ReleasePoolMemory(void* pOwner, long sizeInBytes);
 
 	__int64 FreeBytes();
 	__int64 SizeOfPoolBytes();
@@ -77,15 +77,15 @@ class SVMemoryManager
 public:
 	static SVMemoryManager& Instance();
 
-	void InitializeMemoryManager(LPCTSTR strPoolName1, LPCTSTR strPoolName2, long goOfflineBufferSize, long asyncBufferSize);
-	HRESULT CreatePool( LPCTSTR strPoolName, __int64 lPoolSizeKBytes );
-	HRESULT ReservePoolMemory( LPCTSTR strPoolName, void* pOwner, __int64 lSizeInBytes );
-	bool    CanReservePoolMemory( LPCTSTR strPoolName, __int64 lSizeInBytes );
-	HRESULT ReleasePoolMemory( LPCTSTR strPoolName, void* pOwner );
-	HRESULT ReleasePoolMemory( LPCTSTR strPoolName, void* pOwner, long lSizeInBytes );
-	__int64 FreeBytes( LPCTSTR strPoolName );
-	__int64 SizeOfPoolBytes( LPCTSTR strPoolName );
-	__int64 ReservedBytes( LPCTSTR strPoolName ){ return SizeOfPoolBytes(strPoolName) - FreeBytes(strPoolName);}
+	void InitializeMemoryManager(LPCTSTR poolName, long bufferSize);
+	HRESULT CreatePool( LPCTSTR poolName, __int64 lPoolSizeKBytes );
+	HRESULT ReservePoolMemory( LPCTSTR poolName, void* pOwner, __int64 sizeInBytes );
+	bool    CanReservePoolMemory( LPCTSTR poolName, __int64 sizeInBytes );
+	HRESULT ReleasePoolMemory( LPCTSTR poolName, void* pOwner );
+	HRESULT ReleasePoolMemory( LPCTSTR poolName, void* pOwner, long sizeInBytes );
+	__int64 FreeBytes( LPCTSTR poolName );
+	__int64 SizeOfPoolBytes( LPCTSTR poolName );
+	__int64 ReservedBytes( LPCTSTR poolName ){ return SizeOfPoolBytes(poolName) - FreeBytes(poolName);}
 
 private:
 	typedef std::map <std::string, SVMemoryPool> SVMemoryPoolMap;

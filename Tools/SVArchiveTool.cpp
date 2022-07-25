@@ -62,8 +62,7 @@ SVArchiveTool::~SVArchiveTool()
 {
 	ArchiveDataAsynchron::Instance().GoOffline();
 	SVArchiveImageThreadClass::Instance().GoOffline();
-	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
-	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
+	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL, this);
 	m_ResultCollection.SetArchiveTool(nullptr);
 	m_ImageCollection.SetArchiveTool(nullptr);
 }
@@ -629,8 +628,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 
 bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMessages)
 {
-	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
-	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
+	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL, this);
 	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous)
 	{
 		// async doesn't really allocate any buffers but it does preparation work (initm_ImageInfo)
@@ -671,13 +669,11 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 					}
 					rTRC.removeAllImageBuffer(getObjectId());
 
-					const char* memoryPoolName = (m_eArchiveMethod == SVArchiveAsynchronous) ? SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME : SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME;
-
 					for (const auto& iter : bufferMap)
 					{
 						long bufferNumber = iter.second * dwMaxImages;
 						__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
-						hrAllocate = SVMemoryManager::Instance().ReservePoolMemory(memoryPoolName, this, l_lImageBufferSize);
+						hrAllocate = SVMemoryManager::Instance().ReservePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL, this, l_lImageBufferSize);
 						if (S_OK != hrAllocate)
 						{
 							if (nullptr != pErrorMessages)

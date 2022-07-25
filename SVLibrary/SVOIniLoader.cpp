@@ -41,7 +41,8 @@ constexpr const char* DisplaySectionTag = _T("Display");
 constexpr const char* ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
 constexpr const char* PreTriggerTimeWindowTag = _T("PreTriggerTimeWindow");
 constexpr const char* PostTriggerTimeWindowTag = _T("PostTriggerTimeWindow");
-constexpr const char* ArchiveBufferSizeTag = _T("ArchiveToolGoOfflineBufferSize");
+constexpr const char* ArchiveBufferSizeTag = _T("ArchiveToolBufferSize");
+constexpr const char* ArchiveGoOfflineBufferSizeTag = _T("ArchiveToolGoOfflineBufferSize");
 constexpr const char* ArchiveAsyncBufferSizeTag = _T("ArchiveToolAsyncBufferSize");
 constexpr const char* DataValidDelayTag = _T("DataValidDelay");
 constexpr const char* MaxTextSizeTag = _T("MaxTextSize");
@@ -140,6 +141,8 @@ void SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
 
 void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 {
+	constexpr int defaultArchiveToolBufferSize = 2000;
+
 	SVOINIClass SvimIni(svimIniFile); //@TODO [Arvid][10.00][20.8.2020] hier sollte geprüft werden, ob diese Datei überhaupt existiert! 
 	//aktuell: wenn nicht, erscheint keine Fehlermeldung!
 
@@ -174,7 +177,21 @@ void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 	m_rInitialInfo.m_preTriggerTimeWindow = SvimIni.GetValueDouble(SettingsTag, PreTriggerTimeWindowTag, 0.0);
 	m_rInitialInfo.m_postTriggerTimeWindow = SvimIni.GetValueDouble(SettingsTag, PostTriggerTimeWindowTag, 0.0);
 	m_rInitialInfo.m_archiveToolBufferSize = static_cast<long> (SvimIni.GetValueInt(SettingsTag, ArchiveBufferSizeTag, 0));
-	m_rInitialInfo.m_archiveToolAsyncBufferSize = static_cast<long> (SvimIni.GetValueInt(SettingsTag, ArchiveAsyncBufferSizeTag, 0));
+
+	if (0 == m_rInitialInfo.m_archiveToolBufferSize)
+	{
+		//not configured? try the "old style" tags
+		auto goOfflineBuffer = static_cast<long> (SvimIni.GetValueInt(SettingsTag, ArchiveGoOfflineBufferSizeTag, 0));
+		auto asyncBuffer = static_cast<long> (SvimIni.GetValueInt(SettingsTag, ArchiveAsyncBufferSizeTag, 0));
+
+		m_rInitialInfo.m_archiveToolBufferSize = std::max (goOfflineBuffer, asyncBuffer);
+		if (0 == m_rInitialInfo.m_archiveToolBufferSize)
+		{
+			//still not configured? use default
+			m_rInitialInfo.m_archiveToolBufferSize = defaultArchiveToolBufferSize;
+		}
+	}
+
 	m_rInitialInfo.m_dataValidDelay = static_cast<long> (SvimIni.GetValueInt(SettingsTag, DataValidDelayTag, 0));
 	m_rInitialInfo.m_maxTextSize = SvimIni.GetValueInt(_T("Settings"), _T("MaxTextSize"), 0);
 	int value = SvimIni.GetValueInt(SettingsTag, EnableAutosaveTag, 0);

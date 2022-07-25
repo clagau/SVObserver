@@ -58,8 +58,7 @@ constexpr const char* cInputTag_NewColumn = _T("NewColumn");
 constexpr const char* cInputTag_DeleteColumn = _T("DeleteColumn");
 constexpr const char* cInputTag_LongResultValue = _T("LongResultValue");
 
-constexpr const char* ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");
-constexpr const char* ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffline");
+constexpr const char* ARCHIVE_TOOL_MEMORY_POOL = _T("ArchiveToolMemoryPool");
 
 constexpr const char* SizeAdjustTextNone = _T("Manual");
 constexpr const char* SizeAdjustTextFormula = _T("Formula");

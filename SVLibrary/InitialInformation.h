@@ -103,7 +103,6 @@ namespace SvLib
 		long  m_PreloadTimeDelay{ DefaultPreloadTimeDelay };
 
 		long m_archiveToolBufferSize {0L};
-		long m_archiveToolAsyncBufferSize {0L};
 		long m_dataValidDelay {0L};
 		int m_maxTextSize {0};
 

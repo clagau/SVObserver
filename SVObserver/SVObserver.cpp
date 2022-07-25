@@ -397,8 +397,7 @@ BOOL SVObserverApp::InitInstance()
 	EnableShellOpen();
 	RegisterShellFileTypes(TRUE);
 
-	SVMemoryManager::Instance().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME,
-		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, getIniInfoHandler().GetInitialInfo().m_archiveToolBufferSize, getIniInfoHandler().GetInitialInfo().m_archiveToolAsyncBufferSize);
+	SVMemoryManager::Instance().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL, getIniInfoHandler().GetInitialInfo().m_archiveToolBufferSize);
 
 // Close Start Window
 	sWin.DestroyWindow();

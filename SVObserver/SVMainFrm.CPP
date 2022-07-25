@@ -46,7 +46,6 @@
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVOGui/AuditFilesDialog.h"
-#include "SVOLibrary/SVMemoryManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

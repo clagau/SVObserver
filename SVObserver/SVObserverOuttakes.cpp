@@ -164,7 +164,7 @@ void StopSvo()
 		return;
 	}
 
-	if (SVMemoryManager::Instance().ReservedBytes(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME) > 0)
+	if (SVMemoryManager::Instance().ReservedBytes(SvDef::ARCHIVE_TOOL_MEMORY_POOL) > 0)
 	{
 		pArchiveWriteDlg = new SVArchiveWritingDlg;
 		pArchiveWriteDlg->Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
