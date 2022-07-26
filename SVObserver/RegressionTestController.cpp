@@ -420,7 +420,7 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 				{
 					return pCamera != nullptr && runFileStruct.ObjectName == pCamera->GetName();
 				});
-			if (cameraIter == rCameraList.end() || nullptr != *cameraIter)
+			if (cameraIter == rCameraList.end() || nullptr == *cameraIter)
 			{
 				continue;
 			}
