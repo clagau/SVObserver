@@ -492,13 +492,12 @@ void SVShiftTool::LocalInitialize()
 	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyTranslationOffsetY, &m_DisplacementY );
 
 	//Set Default Values
-	//@TODO[MEC][10.20][03.11.2021] use constants 
 	if (m_pEmbeddedExtents)
 	{
-		m_pEmbeddedExtents->m_ExtentTop.SetDefaultValue(10, true);
-		m_pEmbeddedExtents->m_ExtentLeft.SetDefaultValue(10, true);
-		m_pEmbeddedExtents->m_ExtentWidth.SetDefaultValue(100, true);
-		m_pEmbeddedExtents->m_ExtentHeight.SetDefaultValue(100, true);
+		m_pEmbeddedExtents->m_ExtentTop.SetDefaultValue(SvDef::cDefaultWindowToolTop, true);
+		m_pEmbeddedExtents->m_ExtentLeft.SetDefaultValue(SvDef::cDefaultWindowToolLeft, true);
+		m_pEmbeddedExtents->m_ExtentWidth.SetDefaultValue(SvDef::cDefaultWindowToolWidth, true);
+		m_pEmbeddedExtents->m_ExtentHeight.SetDefaultValue(SvDef::cDefaultWindowToolHeight, true);
 	}
 	m_TranslationX.SetDefaultValue( 0, true );
 	m_TranslationX.setSaveValueFlag(false);
@@ -513,9 +512,9 @@ void SVShiftTool::LocalInitialize()
 	m_DisplacementY.SetDefaultValue( 0, true );
 	m_DisplacementY.setSaveValueFlag(false);
 
-	m_LeftResult.SetDefaultValue( 10, true );
+	m_LeftResult.SetDefaultValue(SvDef::cDefaultWindowToolLeft, true );
 	m_LeftResult.setSaveValueFlag(false);
-	m_TopResult.SetDefaultValue( 10, true );
+	m_TopResult.SetDefaultValue(SvDef::cDefaultWindowToolTop, true );
 	m_TopResult.setSaveValueFlag(false);
 
 	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
