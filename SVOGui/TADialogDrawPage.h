@@ -75,6 +75,7 @@ namespace SvOg
 		//{{AFX_MSG(TADialogDrawPage)
 		virtual BOOL OnInitDialog() override;
 		virtual BOOL PreTranslateMessage(MSG* pMsg) override;
+		virtual BOOL OnKillActive() override;
 		void OnSelchangedTree(NMHDR*, LRESULT* pResult);
 		void OnButtonCheck(UINT nID);
 		void OnButtonButton(UINT nID);

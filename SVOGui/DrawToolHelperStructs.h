@@ -1,6 +1,7 @@
 #pragma once
 #include "SVStatusLibrary/MessageManager.h"
 #include "LinkedValueWidgetHelper.h"
+#include "SVUtilityLibrary/SVClock.h"
 
 
 namespace SvOg
@@ -46,17 +47,29 @@ class EditCtrlData
 {
 public:
 	explicit EditCtrlData(int nIDC) : m_nIDC(nIDC) {};
-	bool checkLimitsAndDisplayError(bool displayErrMsgBox = true) const
+	bool checkLimitsAndDisplayError() const
 	{
+		static double s_lastDisplay {0};
+		static std::string s_lastFieldName;
+		static int s_lastValue {-1};
+
 		if (m_useMinMax)
 		{
 			if (m_value < m_min || m_value > m_max)
 			{
-				if (displayErrMsgBox)
+				//To avoid to display the message more time (up to 4), a timer is added.
+				auto currentTime = SvUl::GetTimeStamp();
+				if (currentTime > s_lastDisplay + 100 || s_lastFieldName != m_fieldName || s_lastValue != m_value)
 				{
+					//timer must be set before calling message (calling of message can lead to call KillFocus, which call the check again.)
+					s_lastDisplay = SvUl::GetTimeStamp();
+					s_lastFieldName = m_fieldName;
+					s_lastValue = m_value;
 					SvDef::StringVector additionalTextList {m_fieldName, std::to_string(m_min), std::to_string(m_max)};
 					SvStl::MessageManager Msg(SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidParameterValue, additionalTextList, SvStl::SourceFileParams(StdMessageParams));
+					//timer must be set after calling message, because the user can need different long to close the Message and after this an focus change can happened.
+					s_lastDisplay = SvUl::GetTimeStamp();
 				}
 				return false;
 			}

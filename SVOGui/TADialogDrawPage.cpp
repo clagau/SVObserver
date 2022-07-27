@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(TADialogDrawPage, CPropertyPage)
 	ON_NOTIFY(TVN_BEGINLABELEDIT, IDC_TREE, OnBeginLabelEdit)
 	ON_NOTIFY(TVN_ENDLABELEDIT, IDC_TREE, OnEndLabelEdit)
 	ON_NOTIFY(TVN_BEGINDRAG, IDC_TREE, OnDragTree)
+	ON_WM_KILLFOCUS()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
 	ON_CONTROL_RANGE(BN_CLICKED, IDC_CHECK1, IDC_CHECK5, OnButtonCheck)
@@ -221,6 +222,16 @@ BOOL TADialogDrawPage::PreTranslateMessage(MSG* pMsg)
 		}
 	}
 	return __super::PreTranslateMessage(pMsg);
+}
+
+BOOL TADialogDrawPage::OnKillActive()
+{
+	bool ret = setBOSAData();
+	if (ret)
+	{
+		return CPropertyPage::OnKillActive();
+	}
+	return false;
 }
 
 void TADialogDrawPage::OnSelchangedTree(NMHDR*, LRESULT* pResult)
@@ -425,7 +436,7 @@ void TADialogDrawPage::OnKillFocusEdit(UINT nID)
 		{
 			ctrlDataIter->m_Widget->EditboxToValue();
 		}
-		else if (false == ctrlDataIter->checkLimitsAndDisplayError(false))
+		else if (false == ctrlDataIter->checkLimitsAndDisplayError())
 		{	//checkLimitsAndDisplayError should not display MessageBox, because if the focus set back the check will be done again and the error message will be displayed
 			GetDlgItem(nID)->SetFocus();
 			return;
