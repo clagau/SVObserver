@@ -188,12 +188,16 @@ void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInf
 				setPause(true);
 		}
 	}
-	else if(SvDef::TriggerType::HardwareTrigger == m_type && getObjectIDParameters().m_triggerPerObjectID != static_cast<long> (rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID]))
+	else if(SvDef::TriggerType::HardwareTrigger == m_type)
 	{
-		//Set the trigger per objectID value according to what the PLC sends
 		SvTrig::ObjectIDParameters objectIDParam = getObjectIDParameters();
-		objectIDParam.m_triggerPerObjectID = static_cast<long> (rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID]);
-		setObjectIDParameters(objectIDParam);
+		long triggerPerObjectID = static_cast<long> (rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID]);
+		if (0 != triggerPerObjectID && objectIDParam.m_triggerPerObjectID != triggerPerObjectID)
+		{
+			objectIDParam.m_triggerPerObjectID = triggerPerObjectID;
+			//Set the trigger per objectID value according to what the PLC sends
+			setObjectIDParameters(objectIDParam);
+		}
 	}
 }
 
