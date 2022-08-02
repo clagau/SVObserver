@@ -166,6 +166,7 @@
     <ClCompile Include="LoadDll.cpp" />
     <ClCompile Include="ModuleInfo.cpp" />
     <ClCompile Include="OutStreamWrapper.cpp" />
+    <ClCompile Include="PeriodicTimer.cpp" />
     <ClCompile Include="PropVariant.cpp" />
     <ClCompile Include="SafeArrayHelper.cpp" />
     <ClCompile Include="SHA256.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="NameObjectIdList.h" />
     <ClInclude Include="NaturalStringCompare.h" />
     <ClInclude Include="OutStreamWrapper.h" />
+    <ClInclude Include="PeriodicTimer.h" />
     <ClInclude Include="ProgressCallback.h" />
     <ClInclude Include="PropID.h" />
     <ClInclude Include="PropVariant.h" />

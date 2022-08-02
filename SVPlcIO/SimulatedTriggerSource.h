@@ -8,13 +8,14 @@
 
 #pragma region Includes
 #include "TriggerSource.h"
+#include "SVUtilityLibrary/PeriodicTimer.h"
 #pragma endregion Includes
 
 namespace SvPlc
 {
 struct SimulatedTriggerData
 {
-	std::string m_name;
+	std::string m_name {};
 	uint8_t m_channel {0};
 	long m_objectNumber {0L};
 	uint32_t m_objectID {0UL};
@@ -22,17 +23,16 @@ struct SimulatedTriggerData
 	uint32_t m_initialDelay {0UL};
 	uint32_t m_period {0UL};
 	uint32_t m_objectDelay {0UL};
-	HANDLE m_shutdown {nullptr};
-	std::vector<std::string> m_LoadImageList;
+	std::vector<std::string> m_LoadImageList {};
 };
 
 struct ChannelData
 {
-	std::thread m_timerThread;
-	std::atomic_bool m_runThread{false};
-	SimulatedTriggerData m_simulatedTriggerData;
-	std::map<uint32_t, std::string> m_objectIDFileMap;
-	std::ofstream m_resultFile;
+	SimulatedTriggerData m_simulatedTriggerData {};
+	SvUl::TimerInfo m_timerInfo {};
+	std::map<uint32_t, std::string> m_objectIDFileMap {};
+	std::ofstream m_resultFile {};
+	bool m_intialize {false};
 };
 
 /// a simplified simulation of HardwareTriggerSource
@@ -62,6 +62,8 @@ public:
 
 private:
 	HRESULT initChannel(const std::vector<std::vector<std::string>>& rCycleParamList);
+
+	void dispatchTrigger(const std::string& rName, double timestamp);
 
 	std::array<ChannelData, cNumberOfChannels> m_channel;
 	std::string m_plcSimulateFile;

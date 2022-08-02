@@ -87,6 +87,9 @@
     <ClCompile Include="GlobalConstantData.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="PeriodicTimer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="7zTypes.h">
@@ -216,6 +219,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RaiiLifeFlag.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="PeriodicTimer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

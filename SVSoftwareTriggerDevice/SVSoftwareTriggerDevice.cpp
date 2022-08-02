@@ -16,70 +16,21 @@
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
-constexpr int cTimerConversion = 10000;
+constexpr uint32_t cConversionMicrosec = 1000;
 constexpr LPCTSTR cTriggerName = "SoftwareTrigger_1.Dig_";		///This name must match the name in the SVHardwareManifest
-
-void CycleTimer(SVSoftwareTriggerDevice::TimerInfo& rTimerInfo, std::function<void(unsigned long, double)> dispatcher)
-{
-	enum TimerHandles
-	{
-		ShutDown,
-		Timer,
-		HandleCount
-	};
-
-	HANDLE timerHandle = ::CreateWaitableTimerEx(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
-	if (nullptr != timerHandle)
-	{
-		LARGE_INTEGER pauseTime {};
-		while (rTimerInfo.m_timerOn)
-		{
-			if (rTimerInfo.m_newSetting)
-			{
-				pauseTime.QuadPart = -static_cast<int64_t>(rTimerInfo.m_period * cTimerConversion);
-			}
-			if (0 == ::SetWaitableTimer(timerHandle, &pauseTime, 0, nullptr, nullptr, FALSE))
-			{
-				::CancelWaitableTimer(timerHandle);
-				::CloseHandle(timerHandle);
-				timerHandle = nullptr;
-				rTimerInfo.m_timerOn = false;
-			}
-
-			if (nullptr != timerHandle)
-			{
-				HANDLE eventHandles[TimerHandles::HandleCount] {timerHandle, rTimerInfo.m_shutdown};
-				if (::WaitForMultipleObjects(TimerHandles::HandleCount, eventHandles, false, INFINITE) == WAIT_OBJECT_0)
-				{
-					if (rTimerInfo.m_timerOn && nullptr != dispatcher)
-					{
-						double timeStamp {SvUl::GetTimeStamp()};
-						dispatcher(rTimerInfo.m_triggerIndex, timeStamp);
-					}
-				}
-			}
-		}
-		::CancelWaitableTimer(timerHandle);
-		::CloseHandle(timerHandle);
-	}
-}
 
 HRESULT SVSoftwareTriggerDevice::Initialize()
 {
+	for (uint32_t i = 0; i < static_cast<uint32_t> (m_timerList.size()); ++i)
+	{
+		m_timerList[i].m_name =cTriggerName;
+		m_timerList[i].m_name += std::to_string(i);
+	}
 	return S_OK;
 }
 
 HRESULT SVSoftwareTriggerDevice::Destroy()
 {
-	for (auto& rTimer : m_timerList)
-	{
-		if (rTimer.m_thread.joinable())
-		{
-			rTimer.m_timerOn = false;
-			rTimer.m_thread.join();
-		}
-	}
-
 	m_triggerCallbackMap.clear();
 	return S_OK;
 }
@@ -97,15 +48,14 @@ unsigned long SVSoftwareTriggerDevice::GetTriggerHandle(unsigned long index) con
 _variant_t SVSoftwareTriggerDevice::GetTriggerName(unsigned long triggerIndex) const
 {
 	_variant_t result;
-	std::string triggerName {cTriggerName};
-	triggerName += std::to_string(triggerIndex - 1);
-	result.SetString(triggerName.c_str());
+	
+	result.SetString(m_timerList[triggerIndex - 1].m_name.c_str());
 	return result;
 }
 
 unsigned long SVSoftwareTriggerDevice::TriggerGetParameterCount(unsigned long) const
 {
-	return 2UL;
+	return 3UL;
 }
 
 _variant_t SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long, unsigned long index) const
@@ -201,57 +151,23 @@ HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( unsigned long trigger
 	return result;
 }
 
-
-void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex, double timestamp)
-{
-	if (m_moduleReady)
-	{
-		int triggerChannel = triggerIndex - 1;
-		bool validChannel = triggerChannel >= 0 && triggerChannel < m_timerList.size();
-
-		SvTrig::TriggerData triggerData;
-		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(timestamp);
-		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(static_cast<uint8_t> (triggerChannel));
-
-		auto iter = m_triggerCallbackMap.find(triggerIndex);
-		if (m_triggerCallbackMap.end() != iter && validChannel && false == m_timerList[triggerChannel].m_pause)
-		{
-			iter->second(std::move(triggerData));
-		}
-	}
-}
-
 void SVSoftwareTriggerDevice::beforeStartTrigger(unsigned long triggerIndex)
 {
 	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 	int triggerChannel = triggerIndex - 1;
-	TimerInfo& rTimer = m_timerList[triggerChannel];
-	rTimer.m_timerOn = true;
-	if (nullptr != rTimer.m_shutdown)
-	{
-		::CloseHandle(rTimer.m_shutdown);
-		rTimer.m_shutdown = nullptr;
-	}
-	rTimer.m_shutdown = ::CreateEvent(NULL, false, false, NULL);
-	rTimer.m_newSetting = true;
-	std::function<void(unsigned long, double)> dispatcher = [this](unsigned long triggerIndex, double timestamp) { dispatchTrigger(triggerIndex, timestamp); };
-	rTimer.m_thread = std::thread(&CycleTimer, std::ref(rTimer), dispatcher);
+	SvUl::TimerInfo& rTimer = m_timerList[triggerChannel];
+	rTimer.m_callbackFunction = [this](const std::string& rName, double timestamp) {  dispatchTrigger(rName, timestamp); };
+	SvUl::PeriodicTimer::SetTimer(rTimer);
 }
 
 void SVSoftwareTriggerDevice::beforeStopTrigger(unsigned long triggerIndex)
 {
 	int triggerChannel = triggerIndex - 1;
-	TimerInfo& rTimer = m_timerList[triggerChannel];
-	if (rTimer.m_thread.joinable() && rTimer.m_timerOn)
-	{
-		rTimer.m_timerOn = false;
-		::SetEvent(rTimer.m_shutdown);
-		rTimer.m_thread.join();
-		::CloseHandle(rTimer.m_shutdown);
-		rTimer.m_shutdown = nullptr;
-	}
-
-	if (std::none_of(m_timerList.begin(), m_timerList.end(), [](const auto& rTimer) { return rTimer.m_thread.joinable(); }))
+	SvUl::TimerInfo& rTimer = m_timerList[triggerChannel];
+	SvUl::PeriodicTimer::CloseTimer(rTimer.m_name);
+	rTimer.m_callbackFunction = nullptr;
+	
+	if (std::none_of(m_timerList.begin(), m_timerList.end(), [](const auto& rTimer) { return nullptr != rTimer.m_callbackFunction; }))
 	{
 		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 	}
@@ -259,7 +175,7 @@ void SVSoftwareTriggerDevice::beforeStopTrigger(unsigned long triggerIndex)
 long SVSoftwareTriggerDevice::GetTriggerPeriod( unsigned long triggerIndex) const
 {
 	int triggerChannel = triggerIndex - 1;
-	return static_cast<long> (m_timerList[triggerChannel].m_period);
+	return static_cast<long> (m_timerList[triggerChannel].m_period / cConversionMicrosec);
 }
 
 HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod(unsigned long triggerIndex, long period)
@@ -269,10 +185,12 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod(unsigned long triggerIndex, lo
 	if(0 <= period)
 	{
 		int triggerChannel = triggerIndex - 1;
-		TimerInfo& rTimer = m_timerList[triggerChannel];
-		rTimer.m_period = static_cast<uint16_t> (period);
-		rTimer.m_triggerIndex = triggerIndex;
-		rTimer.m_newSetting = true;
+		SvUl::TimerInfo& rTimer = m_timerList[triggerChannel];
+		rTimer.m_period = static_cast<uint32_t> (period * cConversionMicrosec);
+		if (nullptr != rTimer.m_callbackFunction)
+		{
+			SvUl::PeriodicTimer::SetTimer(rTimer);
+		}
 		result = S_OK;
 	}
 	return result;
@@ -281,8 +199,33 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod(unsigned long triggerIndex, lo
 void SVSoftwareTriggerDevice::SetTriggerPause(unsigned long triggerIndex, bool pause)
 {
 	int triggerChannel = triggerIndex - 1;
-	TimerInfo& rTimer = m_timerList[triggerChannel];
+	SvUl::TimerInfo& rTimer = m_timerList[triggerChannel];
 	rTimer.m_pause = pause;
-	rTimer.m_triggerIndex = triggerIndex;
-	rTimer.m_newSetting = true;
+}
+
+void SVSoftwareTriggerDevice::dispatchTrigger(const std::string& rName, double timestamp)
+{
+	if (m_moduleReady)
+	{
+		int triggerChannel {-1};
+		for (int i = 0; i < static_cast<int> (m_timerList.size()); ++i)
+		{
+			if (rName == m_timerList[i].m_name)
+			{
+				triggerChannel = i;
+				break;
+			}
+		}
+		bool validChannel = triggerChannel >= 0 && triggerChannel < m_timerList.size();
+
+		SvTrig::TriggerData triggerData;
+		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(timestamp);
+		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(static_cast<uint8_t> (triggerChannel));
+
+		auto iter = m_triggerCallbackMap.find(triggerChannel + 1);
+		if (m_triggerCallbackMap.end() != iter && validChannel && false == m_timerList[triggerChannel].m_pause)
+		{
+			iter->second(std::move(triggerData));
+		}
+	}
 }

@@ -38,112 +38,9 @@ std::mutex gTriggerDataMutex;
 std::array<TriggerReport, cNumberOfChannels> gTriggerReport;
 std::array<std::atomic_bool, cNumberOfChannels> gNewTrigger {false, false, false, false};
 
-void ChannelTimer(std::atomic_bool& rRun, const SimulatedTriggerData& rSimTriggerData)
-{
-	enum TimerHandles
-	{
-		ShutDown,
-		Timer,
-		HandleCount
-	};
-
-	if(0 != rSimTriggerData.m_initialDelay)
-	{
-		std::this_thread::sleep_for(std::chrono::microseconds(rSimTriggerData.m_initialDelay));
-	}
-
-	//Normalize the period to the next 500µs
-	uint32_t period = rSimTriggerData.m_period + cNormalizePeriod - rSimTriggerData.m_period % cNormalizePeriod;
-	LARGE_INTEGER pauseTime;
-	pauseTime.QuadPart = -static_cast<int64_t>(period * cTimerConversion);
-
-	uint32_t currentIndex {0UL};
-	uint8_t currentTriggerIndex {1};
-	uint32_t objectID {rSimTriggerData.m_objectID};
-	HANDLE timerHandle = ::CreateWaitableTimerEx(nullptr, rSimTriggerData.m_name.c_str(), CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
-
-	while(rRun)
-	{
-		if(currentTriggerIndex <= rSimTriggerData.m_triggerPerObjectID && nullptr != timerHandle)
-		{
-			if (0 != ::SetWaitableTimer(timerHandle, &pauseTime, 0L, nullptr, nullptr, FALSE))
-			{
-				HANDLE eventHandles[TimerHandles::HandleCount] {timerHandle, rSimTriggerData.m_shutdown};
-				if (::WaitForMultipleObjects(TimerHandles::HandleCount, eventHandles, false, INFINITE) == WAIT_OBJECT_0)
-				{
-					std::string acquisitionFile;
-					if (currentIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
-					{
-						acquisitionFile = rSimTriggerData.m_LoadImageList[currentIndex];
-					}
-					if (false == acquisitionFile.empty())
-					{
-						size_t pos2 = acquisitionFile.find_last_of('.');
-						size_t pos1 = acquisitionFile.find_last_of('_', pos2);
-						uint8_t triggerIndex {0};
-						if (std::string::npos != pos1 && std::string::npos != pos2)
-						{
-							triggerIndex = static_cast<uint8_t> (std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1 - 1)));
-							pos2 = pos1 - 1;
-						}
-						pos1 = acquisitionFile.find_last_of('_', pos2);
-						if (std::string::npos != pos1 && std::string::npos != pos2 && 0 != triggerIndex)
-						{
-							objectID = std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1));
-							currentTriggerIndex = triggerIndex;
-						}
-					}
-
-					TriggerReport triggerReport;
-					triggerReport.m_triggerTimestamp = SvUl::GetTimeStamp();
-					triggerReport.m_channel = rSimTriggerData.m_channel;
-					triggerReport.m_objectID = objectID;
-					triggerReport.m_objectType = cSingleObjectType;
-					triggerReport.m_triggerPerObjectID = rSimTriggerData.m_triggerPerObjectID;
-					triggerReport.m_triggerIndex = currentTriggerIndex;
-					triggerReport.m_isValid = true;
-					triggerReport.m_acquisitionFile = acquisitionFile;
-					{
-						std::lock_guard<std::mutex> guard {gTriggerDataMutex};
-						gTriggerReport[triggerReport.m_channel] = std::move(triggerReport);
-					}
-					gNewTrigger[rSimTriggerData.m_channel] = true;
-					++currentTriggerIndex;
-					++currentIndex;
-					::SetEvent(g_hSignalEvent);
-				}
-			}
-		}
-
-		if(currentTriggerIndex > rSimTriggerData.m_triggerPerObjectID)
-		{
-			if(0 != rSimTriggerData.m_objectDelay)
-			{
-				std::this_thread::sleep_for(std::chrono::microseconds(rSimTriggerData.m_objectDelay));
-			}
-			currentTriggerIndex = 1;
-			objectID++;
-			if(rSimTriggerData.m_objectNumber > 0 && objectID >= rSimTriggerData.m_objectID + rSimTriggerData.m_objectNumber)
-			{
-				rRun = false;
-			}
-			if (0 < rSimTriggerData.m_LoadImageList.size() && currentIndex >= rSimTriggerData.m_LoadImageList.size())
-			{
-				rRun = false;
-			}
-		}
-	}
-	if (nullptr != timerHandle)
-	{
-		::CancelWaitableTimer(timerHandle);
-		::CloseHandle(timerHandle);
-	}
-}
-
 SimulatedTriggerSource::SimulatedTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rSimulateFile) : TriggerSource(pReportTrigger)
 	,m_plcSimulateFile{rSimulateFile}
 {
-
 }
 
 HRESULT SimulatedTriggerSource::initialize()
@@ -192,7 +89,6 @@ HRESULT SimulatedTriggerSource::initialize()
 
 			result = initChannel(cycleParamList);
 		}
-
 	}
 	else
 	{
@@ -209,7 +105,7 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 		{
 			std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
 			//Restart trigger channel
-			if(m_channel[channel].m_runThread == false)
+			if(nullptr == m_channel[channel].m_timerInfo.m_callbackFunction)
 			{
 				///Write result file in same directory as cycles file
 				std::string resultFilename;
@@ -230,27 +126,21 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 						m_channel[channel].m_resultFile.write(fileHeader.c_str(), fileHeader.size());
 					}
 				}
-				m_channel[channel].m_runThread = true;
-				if (nullptr != m_channel[channel].m_simulatedTriggerData.m_shutdown)
-				{
-					::CloseHandle(m_channel[channel].m_simulatedTriggerData.m_shutdown);
-					m_channel[channel].m_simulatedTriggerData.m_shutdown = nullptr;
-				}
-				m_channel[channel].m_simulatedTriggerData.m_shutdown = ::CreateEvent(NULL, false, false, NULL);
-				m_channel[channel].m_timerThread = std::thread(&ChannelTimer, std::ref(m_channel[channel].m_runThread), std::ref(m_channel[channel].m_simulatedTriggerData));
-				::SetThreadPriority(m_channel[channel].m_timerThread.native_handle(), THREAD_PRIORITY_HIGHEST);
+				m_channel[channel].m_timerInfo.m_name = m_channel[channel].m_simulatedTriggerData.m_name;
+				const uint32_t& rPeriod = m_channel[channel].m_simulatedTriggerData.m_period;
+				//Normalize the period to the next 500µs
+				m_channel[channel].m_timerInfo.m_period = rPeriod + cNormalizePeriod - rPeriod % cNormalizePeriod;
+				m_channel[channel].m_timerInfo.m_initialDelay = m_channel[channel].m_simulatedTriggerData.m_initialDelay;
+				m_channel[channel].m_timerInfo.m_callbackFunction = [this](const std::string& rName, double timestamp) {  dispatchTrigger(rName, timestamp); };
+				SvUl::PeriodicTimer::SetTimer(m_channel[channel].m_timerInfo);
 			}
 		}
 		else
 		{
 			std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
-			if (m_channel[channel].m_timerThread.joinable())
+			if (nullptr != m_channel[channel].m_timerInfo.m_callbackFunction)
 			{
-				m_channel[channel].m_runThread = false;
-				::SetEvent(m_channel[channel].m_simulatedTriggerData.m_shutdown);
-				m_channel[channel].m_timerThread.join();
-				::CloseHandle(m_channel[channel].m_simulatedTriggerData.m_shutdown);
-				m_channel[channel].m_simulatedTriggerData.m_shutdown = nullptr;
+				SvUl::PeriodicTimer::CloseTimer(m_channel[channel].m_timerInfo.m_name);
 				if (m_channel[channel].m_resultFile.is_open())
 				{
 					m_channel[channel].m_resultFile.close();
@@ -412,8 +302,102 @@ HRESULT SimulatedTriggerSource::initChannel(const std::vector<std::vector<std::s
 		if (triggerData.m_channel < cNumberOfChannels)
 		{
 			m_channel[triggerData.m_channel].m_simulatedTriggerData = std::move(triggerData);
+			m_channel[triggerData.m_channel].m_intialize = true;
 		}
 	}
 	return S_OK;
 }
+
+void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double timestamp)
+{
+	static uint32_t currentIndex {0UL};
+	static uint8_t currentTriggerIndex {1};
+	static uint32_t objectID {0};
+	int triggerChannel {-1};
+
+	for (int i = 0; i < static_cast<int> (m_channel.size()); ++i)
+	{
+		if (rName == m_channel[i].m_simulatedTriggerData.m_name)
+		{
+			triggerChannel = i;
+			break;
+		}
+	}
+	if (triggerChannel < 0 || triggerChannel >= m_channel.size())
+	{
+		return;
+	}
+	SimulatedTriggerData& rSimTriggerData = m_channel[triggerChannel].m_simulatedTriggerData;
+
+	if (m_channel[triggerChannel].m_intialize)
+	{
+		currentIndex = 0UL;
+		currentTriggerIndex = 1;
+		objectID = rSimTriggerData.m_objectID;
+		m_channel[triggerChannel].m_intialize = false;
+	}
+
+	std::string acquisitionFile;
+	if (currentIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
+	{
+		acquisitionFile = rSimTriggerData.m_LoadImageList[currentIndex];
+	}
+	if (false == acquisitionFile.empty())
+	{
+		size_t pos2 = acquisitionFile.find_last_of('.');
+		size_t pos1 = acquisitionFile.find_last_of('_', pos2);
+		uint8_t triggerIndex {0};
+		if (std::string::npos != pos1 && std::string::npos != pos2)
+		{
+			triggerIndex = static_cast<uint8_t> (std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1 - 1)));
+			pos2 = pos1 - 1;
+		}
+		pos1 = acquisitionFile.find_last_of('_', pos2);
+		if (std::string::npos != pos1 && std::string::npos != pos2 && 0 != triggerIndex)
+		{
+			objectID = std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1));
+			currentTriggerIndex = triggerIndex;
+		}
+	}
+
+	if (false == m_channel[triggerChannel].m_timerInfo.m_pause)
+	{
+		TriggerReport triggerReport;
+		triggerReport.m_triggerTimestamp = timestamp;
+		triggerReport.m_channel = rSimTriggerData.m_channel;
+		triggerReport.m_objectID = objectID;
+		triggerReport.m_objectType = cSingleObjectType;
+		triggerReport.m_triggerPerObjectID = rSimTriggerData.m_triggerPerObjectID;
+		triggerReport.m_triggerIndex = currentTriggerIndex;
+		triggerReport.m_isValid = true;
+		triggerReport.m_acquisitionFile = acquisitionFile;
+		{
+			std::lock_guard<std::mutex> guard {gTriggerDataMutex};
+			gTriggerReport[triggerReport.m_channel] = std::move(triggerReport);
+		}
+		gNewTrigger[rSimTriggerData.m_channel] = true;
+		++currentTriggerIndex;
+		++currentIndex;
+		::SetEvent(g_hSignalEvent);
+	}
+
+	if (currentTriggerIndex > rSimTriggerData.m_triggerPerObjectID)
+	{
+		if (0 != rSimTriggerData.m_objectDelay)
+		{
+			std::this_thread::sleep_for(std::chrono::microseconds(rSimTriggerData.m_objectDelay));
+		}
+		currentTriggerIndex = 1;
+		objectID++;
+		if (rSimTriggerData.m_objectNumber > 0 && objectID >= rSimTriggerData.m_objectID + rSimTriggerData.m_objectNumber)
+		{
+			m_channel[triggerChannel].m_timerInfo.m_pause = true;
+		}
+		if (0 < rSimTriggerData.m_LoadImageList.size() && currentIndex >= rSimTriggerData.m_LoadImageList.size())
+		{
+			m_channel[triggerChannel].m_timerInfo.m_pause = true;
+		}
+	}
+}
+
 } //namespace SvPlc
