@@ -295,7 +295,7 @@ protected:
 	SVProductInfoStruct* IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTriggerInfo);
 	void InitializeProduct( SVProductInfoStruct* pNewProduct);
 	void StartOutputs( SVProductInfoStruct* p_pProduct );
-	void StartInspection(uint32_t inspectionID );
+	bool StartInspection(uint32_t inspectionID );
 
 	void AddResultsToPPQ(SVProductInfoStruct& rProduct);
 	bool SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t inspId);

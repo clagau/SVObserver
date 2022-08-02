@@ -52,7 +52,7 @@
 #include "SVLogLibrary/Logging.h"
 
 #pragma endregion Includes
-//#define TRACE_PPQ2
+//#define TRACE_PPQ
 #pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1868,7 +1868,7 @@ void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 
 }// end IndexPPQ
 
-void SVPPQObject::StartInspection(uint32_t inspectionID)
+bool SVPPQObject::StartInspection(uint32_t inspectionID)
 {
 	SVProductInfoStruct* pProduct {nullptr};
 	size_t count = m_PPQPositions.size();
@@ -1969,7 +1969,8 @@ void SVPPQObject::StartInspection(uint32_t inspectionID)
 		pProduct->m_MissingImageCount = m_MissingImageCount;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->triggerCount());
-		::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d, PPQPos=%d\n"), GetName(), pProduct->triggerCount(), ppqPos).c_str());
+		std::string inspectionName = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->GetName();
+		::OutputDebugString(SvUl::Format(_T("%s Start Inspection %s TRI=%d, PPQPos=%d\n"), GetName(), inspectionName.c_str(), pProduct->triggerCount(), ppqPos).c_str());
 #endif
 
 		if (pProduct->m_triggered == 0)
@@ -1983,6 +1984,8 @@ void SVPPQObject::StartInspection(uint32_t inspectionID)
 			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorStartInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		}
 	}
+
+	return canStartInspection;
 }
 
 void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
@@ -2347,8 +2350,6 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 			// yet) that correlates to this image, based on image time stamp.
 			int cameraID = rElement.m_pCamera->getCameraID();
 
-			bool notPending = (getPPQLength() <= 2);
-
 			long position = m_PPQPositions.GetIndexByTriggerTimeStamp(startTime, cameraID);
 
 			// If trigger has not occurred yet, l_Position will equal -1.
@@ -2388,15 +2389,11 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 					}
 				}
 			}
-			if (position < 0 && !notPending)
+			if (position < 0)
 			{
 				m_PendingCameraResponses[rElement.m_pCamera] = rElement;
 
 				SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
-				l_Status = E_FAIL;
-			}
-			else// if l_Position > than PPQ size.
-			{
 				l_Status = E_FAIL;
 			}
 		}
@@ -2549,6 +2546,11 @@ void __stdcall SVPPQObject::triggerCallback(SvTrig::SVTriggerInfoStruct&& trigge
 #endif
 
 		m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::Trigger]);
+
+		if (0 < m_PendingCameraResponses.size())
+		{
+			m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::CameraResponses]);
+		}
 	}
 }
 
@@ -2783,10 +2785,13 @@ void SVPPQObject::ProcessNotifyInspections()
 
 					if (rInfo.m_CanProcess)
 					{
-						StartInspection(m_arInspections[i]->getObjectId());
+						if (false == StartInspection(m_arInspections[i]->getObjectId()))
+						{
+							notifyRestInspectionList.push_back(triggerCount);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d\n"), GetName(), triggerCount).c_str());
+							::OutputDebugString(SvUl::Format(_T("%s Start Inspection %s failed TRI=%d\n"), GetName(), m_arInspections[i]->GetName(), triggerCount).c_str());
 #endif
+						}
 					}
 					else
 					{
