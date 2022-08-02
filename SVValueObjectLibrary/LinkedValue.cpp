@@ -452,6 +452,13 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					inserter = this;
 					return;
 				}
+				for (auto& pChild : m_children)
+				{
+					if (nullptr != pChild)
+					{
+						pChild->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+					}
+				}
 			}
 			catch (...)
 			{
@@ -1789,6 +1796,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			m_children[pos]->donotCheckForDependency();
 			m_children[pos]->SetObjectOwner(this);
 			m_children[pos]->SetName(pObject->GetName());
+			m_children[pos]->setEmbeddedId(pObject->GetEmbeddedID());
 			m_children[pos]->setIndirectValue(pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
 			m_children[pos]->setDefaultValue(pValue->getDefaultValue());
 			return m_children[pos]->resetAllObjects(pErrorMessages);

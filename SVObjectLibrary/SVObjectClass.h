@@ -236,6 +236,7 @@ protected:
 	void disableEmbeddedObject(SVObjectClass* pObjectToDisable);
 	void RemoveEmbeddedObject(SVObjectClass* pObjectToRemove);
 	bool createEmbeddedChildren();
+	void setEmbeddedId(SvPb::EmbeddedIdEnum id) { m_embeddedID = id; };
 
 	/// Call method createAllObjects for the child object with the right create struct.
 	/// \param rChildObject [in]
@@ -257,12 +258,9 @@ protected:
 
 	// Refer to IsCreated()
 	bool m_isCreated {false};
-	//If object is embedded, set this ID
-	SvPb::EmbeddedIdEnum m_embeddedID;
 	//Owner Info
 	SVObjectClass* m_pOwner = nullptr;
 	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo{};
-	uint32_t m_objectId = SvDef::InvalidObjectId;
 
 	SVObjectPtrVector m_embeddedList;
 
@@ -272,6 +270,8 @@ private:
 	
 	//ATTENTION: order of the parameter (especially m_ObjectName before m_Name) is important, because it is needed for the constructors.
 	int m_resourceID;		//String resource ID, of NOT user changeable name.
+	uint32_t m_objectId = SvDef::InvalidObjectId;
+	SvPb::EmbeddedIdEnum m_embeddedID; //If object is embedded, set this ID
 	std::string m_ObjectName;	//NOT user changeable name
 	std::string m_Name;			//user given name
 	std::set <uint32_t> m_connectedSet;
