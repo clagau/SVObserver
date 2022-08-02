@@ -118,7 +118,7 @@ SvOi::ParametersForML SVMathToolClass::getParameterForMonitorList(SvStl::Message
 
 	if (!isNoError)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		rMessages.push_back(Msg);
 	}
 

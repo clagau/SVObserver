@@ -23,7 +23,7 @@
 #include "Definitions/Color.h"
 #include "Definitions/ObjectDefines.h"
 #include "Definitions\GlobalConst.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 

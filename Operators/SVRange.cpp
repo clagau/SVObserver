@@ -99,7 +99,7 @@ bool SVRange::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -230,7 +230,7 @@ bool SVRange::checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange s
 				messageList.push_back(SvStl::MessageData::convertId2AdditionalText(enumTids[firstType]));
 				messageList.push_back(SvStl::MessageData::convertId2AdditionalText(enumTids[secondType]));
 				SvStl::MessageContainer message;
-				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(message);
 			}
 		}

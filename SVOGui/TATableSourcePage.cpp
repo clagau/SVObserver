@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <afxctl.h>
 #include "TATableSourcePage.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "Definitions/StringTypeDef.h"

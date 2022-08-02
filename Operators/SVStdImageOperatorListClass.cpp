@@ -89,7 +89,7 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -120,7 +120,7 @@ bool SVStdImageOperatorListClass::Run(SvIe::RunStatus& rRunStatus, SvStl::Messag
 	if (nullptr == pInputImage)
 	{
 		bRetVal = false;
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		m_RunErrorMessages.push_back(Msg);
 	}
 
@@ -183,7 +183,7 @@ bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SV
 
 		if (nullptr == input || nullptr == output)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			m_RunErrorMessages.push_back(Msg);
 			SvIe::SVImageProcessingClass::InitBuffer(output);
 			return false;
@@ -194,7 +194,7 @@ bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SV
 		SvOi::SVImageBufferHandlePtr destinationImage = m_milTmpImageObjectInfo2;
 		if (sourceImage->empty() || destinationImage->empty() || !copyBuffer(input, sourceImage))
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			m_RunErrorMessages.push_back(Msg);
 			return false;
 		}
@@ -233,7 +233,7 @@ bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SV
 			else
 			{
 				bRetVal = false;
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				m_RunErrorMessages.push_back(Msg);
 			}
 
@@ -249,7 +249,7 @@ bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SV
 			if (!copyBuffer(sourceImage, output))
 			{
 				bRetVal = false;
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				m_RunErrorMessages.push_back(Msg);
 			}
 		} // if( bFirstFlag ) 
@@ -257,7 +257,7 @@ bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SV
 	else
 	{
 		bRetVal = false;
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetImageBufferToWriteFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetImageBufferToWriteFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		m_RunErrorMessages.push_back(Msg);
 	}	
 	return bRetVal;

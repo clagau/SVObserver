@@ -70,7 +70,7 @@ void PixelAnalyzer::init()
 	else
 	{
 		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 	}
 }
 
@@ -98,7 +98,7 @@ bool PixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
         {
 			
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			isError = true;
 			break;
         }
@@ -112,7 +112,7 @@ bool PixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 		if( M_NULL == m_contextID || M_NULL == m_ResultID )
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			isError = true;
 			break;
         }
@@ -146,7 +146,7 @@ bool PixelAnalyzer::onRun(SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVe
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -158,7 +158,7 @@ bool PixelAnalyzer::onRun(SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVe
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -187,7 +187,7 @@ bool PixelAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		Result = false;
@@ -197,7 +197,7 @@ bool PixelAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		Result = false;
@@ -228,7 +228,7 @@ void PixelAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rM
 
 	if (!isNoError)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		rMessages.push_back(Msg);
 	}
 }

@@ -13,8 +13,7 @@
 #include "SaxParser.h"
 #include "ISaxElementHandler.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 
@@ -43,7 +42,7 @@ namespace SvXml
 		{
 			assert(false);
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_Sax_ConInitializeExFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16073_COINITIALIZE_ );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_Sax_ConInitializeExFailed, SvStl::SourceFileParams(StdMessageParams));
 		}
 		else if(S_FALSE == hr)
 		{

@@ -129,7 +129,7 @@ bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -143,7 +143,7 @@ bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				rRunStatus.SetInvalid();
@@ -202,7 +202,7 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 			{
 				if (S_OK != Result && nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsColorCheckForGrayscaleImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsColorCheckForGrayscaleImage, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				correctModeForImage = false;
@@ -340,7 +340,7 @@ bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMe
 
 	if (nullptr != pErrorMessages)
 	{
-		SvStl::MessageContainer message( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+		SvStl::MessageContainer message( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 		pErrorMessages->push_back(message);
 	}
 	return false;

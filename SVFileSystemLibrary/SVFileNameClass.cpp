@@ -19,7 +19,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
@@ -653,7 +653,7 @@ bool SVFileNameClass::SaveFile()
 						SvDef::StringVector msgList;
 						msgList.push_back(GetFullFileName());
 						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						bDone = IDYES == Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FileName_Exists, msgList, SvStl::SourceFileParams(StdMessageParams), 0, SvDef::InvalidObjectId, MB_YESNO);
+						bDone = IDYES == Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FileName_Exists, msgList, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO);
 					}
 				}
 				else

@@ -182,7 +182,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoShapeHelper, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoShapeHelper, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -200,7 +200,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -715,7 +715,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, errorCode, m_lastErrorPosData, 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, errorCode, m_lastErrorPosData, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...

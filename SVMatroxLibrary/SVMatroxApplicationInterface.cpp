@@ -16,8 +16,7 @@
 
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxImagingLibrary.h"
-#include "SVMessage\SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -123,11 +122,9 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 		bool running = SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 		DWORD OsError = static_cast<DWORD> ( p_rStatusInfo.m_StatusCode );
 		DWORD MessageCode( 0 );
-		DWORD ProgramCode( 0 );
 		if( SUCCEEDED( p_rStatusInfo.m_StatusCode ) ) 
 		{
 			MessageCode = SVMSG_SVMATROXLIBRARY_NO_ERROR;
-			ProgramCode = SvStl::Err_25020_MatroxLibraryNone;
 		}
 		else
 		{
@@ -139,14 +136,13 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 			{
 				MessageCode = SVMSG_SVMATROXLIBRARY_GENERAL_ERROR_NOT_IN_RUNMODE;
 			}
-			ProgramCode = SvStl::Err_25021_MatroxLibraryFatal;
 		}
 		SvDef::StringVector msgList;
 		msgList.push_back( SvUl::Format( _T("%d"), OsError ));
 		msgList.push_back( SvUl::Format( _T("0X%08X"), OsError ));
 		msgList.push_back( p_rStatusInfo.GetCompleteString() );
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
-		Exception.setMessage( MessageCode, SvStl::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams), ProgramCode);
+		Exception.setMessage( MessageCode, SvStl::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -495,7 +491,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 				msgList.push_back(SvUl::Format(_T("%4.2f"), l_MilVersion));
 				
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvStl::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10249 );
+				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvStl::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams));
 				::exit( EXIT_FAILURE );
 			}
 		}

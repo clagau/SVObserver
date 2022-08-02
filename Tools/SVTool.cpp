@@ -1401,7 +1401,7 @@ bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector* pErrorMessages) c
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

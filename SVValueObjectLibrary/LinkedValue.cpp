@@ -545,7 +545,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		if (m_CircularReference)
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			Exception.Throw();
 		}
 		const SvOi::IObjectClass* pObject = m_LinkedObjectRef.getObject();
@@ -616,7 +616,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				else
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					Exception.Throw();
 				}
 				break;
@@ -633,7 +633,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			}
 			default:
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				Exception.Throw();
 		}
 
@@ -648,13 +648,13 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				if (VT_BSTR == value.vt && SvUl::VTGroups::Text != SvUl::getVTGroup(defaultValue.vt).first)
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					Exception.Throw();
 				}
 				if (S_OK != ::VariantChangeTypeEx(&value, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, ~(VT_ARRAY)&defaultValue.vt))
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					Exception.Throw();
 				}
 				if (0 != (defaultValue.vt & VT_ARRAY))
@@ -667,7 +667,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				if (0 == (defaultValue.vt & VT_ARRAY))
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					Exception.Throw();
 				}
 				else
@@ -1130,7 +1130,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					//! This means the linked object is invalid
 					SvDef::StringVector msgList;
 					msgList.push_back(GetName());
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				}
 				Exception.Throw();
 			}
@@ -1147,7 +1147,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					SvDef::StringVector msgList;
 					msgList.push_back(GetName());
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					Exception.Throw();
 				}
 			}
@@ -1259,7 +1259,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 						std::string objectName = GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolObjectType);
 						msgList.push_back(objectName);
 
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -1318,7 +1318,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					Result = false;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -1368,7 +1368,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			}
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1377,7 +1377,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1390,7 +1390,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1402,7 +1402,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1418,7 +1418,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					{
 						SvDef::StringVector msgList;
 						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvPb::TypeDecimal == m_valueType ? SvStl::Tid_aDecimalValue : SvStl::Tid_aTextValue));
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 					return false;
@@ -1431,7 +1431,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					{
 						SvDef::StringVector msgList;
 						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTable));
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 					return false;
@@ -1444,7 +1444,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					{
 						SvDef::StringVector msgList;
 						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aGrayImage));
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 					return false;
@@ -1457,7 +1457,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					{
 						SvDef::StringVector msgList;
 						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aColorImage));
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 					return false;
@@ -1470,7 +1470,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					{
 						SvDef::StringVector msgList;
 						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_anImage));
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 					return false;
@@ -1483,7 +1483,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					{
 						SvDef::StringVector msgList;
 						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTool));
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 					return false;
@@ -1497,7 +1497,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1577,7 +1577,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					{
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 							pErrorMessages->push_back(Msg);
 						}
 						return false;
@@ -1597,7 +1597,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1611,7 +1611,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOrRecursiveLinkedObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOrRecursiveLinkedObject, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1621,7 +1621,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1636,7 +1636,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1650,7 +1650,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(GetName());
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				return false;
@@ -1679,7 +1679,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				else
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedObjectInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedObjectInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					Exception.Throw();
 				}
 			}
@@ -1693,7 +1693,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		else
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedObjectInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedObjectInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			Exception.Throw();
 		}
 	}
@@ -1722,7 +1722,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				}
 				else
 				{
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_FormulaFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_FormulaFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				}
 				Exception.Throw();
 			}
@@ -1731,7 +1731,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		else
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			Exception.Throw();
 		}
 	}

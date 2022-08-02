@@ -49,7 +49,7 @@ namespace SvOp
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -80,7 +80,7 @@ namespace SvOp
 					{
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 							pErrorMessages->push_back(Msg);
 						}
 						rRunStatus.SetInvalid();
@@ -115,7 +115,7 @@ namespace SvOp
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}

@@ -16,7 +16,6 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -105,7 +104,7 @@ namespace SvOg
 					{
 						// Equation must be valid or disabled
 						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10224 );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams));
 						return;
 					}
 				}

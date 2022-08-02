@@ -383,7 +383,7 @@ namespace SvAo
 					else
 					{
 						SvStl::MessageManager Msg(SvStl::MsgType::Log);
-						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateChildBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateChildBufferFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						Delete(pObject->getObjectId());
 					}					
 				}

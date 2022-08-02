@@ -174,12 +174,12 @@ namespace SvAo
 		if (S_OK != SVMatroxBlobInterface::DestroyResult(m_ResultBufferID))
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_MilDestroy, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_MilDestroy, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		}
 		if (S_OK != SVMatroxBlobInterface::DestroyContext(m_BlobContextID))
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_MilDestroy, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_MilDestroy, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		}
 
 		m_ResultBufferID = M_NULL;
@@ -197,7 +197,7 @@ namespace SvAo
 			if (!ImageAnalyzer::CreateObject(rCreateStructure))
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16116, getObjectId());
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				throw;
 			}
 
@@ -209,7 +209,7 @@ namespace SvAo
 				if (!CreateChildObject(m_pResultTable))
 				{
 					SvStl::MessageContainer message;
-					message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					Msg.setMessage(message.getMessage());
 					throw;
@@ -221,7 +221,7 @@ namespace SvAo
 			if (S_OK != MatroxCode || M_NULL == m_ResultBufferID)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, getObjectId());
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				throw;
 			}
 
@@ -230,7 +230,7 @@ namespace SvAo
 			if (S_OK != MatroxCode || M_NULL == m_BlobContextID)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 				throw;
 			}
 
@@ -244,7 +244,7 @@ namespace SvAo
 			if (nullptr == m_pBlobFeatureList)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 				throw;
 			}
 			m_numberOfBlobsFound.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -262,7 +262,7 @@ namespace SvAo
 			if (nullptr == m_pDrawTask)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 				throw;
 			}
 			m_pDrawTask->setResultBufferId(m_ResultBufferID);
@@ -307,7 +307,7 @@ namespace SvAo
 			if (nullptr == pInputImage)
 			{
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
-				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				msg.Throw();
 			}
 			SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
@@ -315,14 +315,14 @@ namespace SvAo
 			{
 				assert(false);
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
-				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				msg.Throw();
 			}
 			if (pImageBuffer->isEmpty())
 			{
 				assert(false);
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
-				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				msg.Throw();
 			}
 
@@ -352,7 +352,7 @@ namespace SvAo
 			{
 				assert(false);
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
-				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				msg.Throw();
 			}
 
@@ -372,7 +372,7 @@ namespace SvAo
 					SvDef::StringVector msgList;
 					msgList.push_back(data.m_name);
 					SvStl::MessageManager  Ex(SvStl::MsgType::Log);
-					Ex.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExcludeBlobUpperBoundLowerThanLowerBound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Ex.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExcludeBlobUpperBoundLowerThanLowerBound, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				}
 			}
 
@@ -384,7 +384,7 @@ namespace SvAo
 			if (S_OK != MatroxCode)
 			{
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
-				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				msg.Throw();
 			}
 
@@ -394,7 +394,7 @@ namespace SvAo
 			if (numberOfBlobs > maxBlobDataArraySize)
 			{
 				SvStl::MessageManager msg(SvStl::MsgType::Log);
-				msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Too_Many_Blobs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Too_Many_Blobs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				rRunStatus.SetFailed();
 				m_pResultTable->setSortContainerDummy(SvVol::DummySortContainer(0));
 				m_numberOfBlobsFound.SetValue(0);
@@ -472,7 +472,7 @@ namespace SvAo
 			result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -491,7 +491,7 @@ namespace SvAo
 				result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -645,7 +645,7 @@ namespace SvAo
 			if (nullptr == m_pResultBlob)
 			{
 				SvStl::MessageManager  Ex(SvStl::MsgType::Log);
-				Ex.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Ex.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				return;
 			}
 
@@ -661,7 +661,7 @@ namespace SvAo
 				if (!CreateChildObject(m_pResultBlob))
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 
 					// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 					uint32_t objectID = m_pResultBlob->getObjectId();

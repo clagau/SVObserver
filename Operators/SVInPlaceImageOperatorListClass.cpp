@@ -52,7 +52,7 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		Result = false;
@@ -61,7 +61,7 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotImageTypePhysical, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotImageTypePhysical, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		Result = false;
@@ -89,7 +89,7 @@ bool SVInPlaceImageOperatorListClass::Run( SvIe::RunStatus& rRunStatus, SvStl::M
 	{
 		// Signal something is wrong...
 		bRetVal = false;
-		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 		m_RunErrorMessages.push_back(Msg);
 	}
 
@@ -143,7 +143,7 @@ bool SVInPlaceImageOperatorListClass::Run( SvIe::RunStatus& rRunStatus, SvStl::M
 			else
 			{
 				bRetVal = false;
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				m_RunErrorMessages.push_back(Msg);
 			}
 

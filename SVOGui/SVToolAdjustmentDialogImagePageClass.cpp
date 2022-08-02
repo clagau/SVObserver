@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
@@ -127,7 +126,7 @@ void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1()
 
 				if (m_ToolsizeHelper.CanResizeToParent())
 				{
-					auto answer = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError_Three_Button, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232, SvDef::InvalidObjectId, MB_YESNOCANCEL);
+					auto answer = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError_Three_Button, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNOCANCEL);
 					switch (answer)
 					{
 						case IDNO:
@@ -148,7 +147,7 @@ void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1()
 				}
 				else
 				{
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232);
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams));
 				}
 
 			}

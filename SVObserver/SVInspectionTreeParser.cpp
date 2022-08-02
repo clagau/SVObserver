@@ -17,7 +17,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -698,8 +697,8 @@ HRESULT SVInspectionTreeParser::CreateInspectionObject(uint32_t& rInspectionId, 
 		else
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10010_TreeParser_InspectionCreateFailed );
-			hr = -SvStl::Err_10010_TreeParser_InspectionCreateFailed;
+			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+			hr = E_FAIL;
 		}
 	}
 	if (S_OK != hr)

@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <algorithm>
 #include "SVPackedFile.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes

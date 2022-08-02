@@ -26,7 +26,6 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVClock.h"
@@ -213,7 +212,7 @@ bool SVImageClass::DestroyImage()
 		if (!bOk)
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImageClass_DestroyError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10051);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImageClass_DestroyError, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 
@@ -413,7 +412,7 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector* pErrorMessag
 	//later should be ignored here S_OK != S_FALSE  &&
 	if (S_OK != hr && S_NoParent != hr && nullptr != pErrorMessages && pErrorMessages->empty())
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		pErrorMessages->push_back(Msg);
 	}
 
@@ -495,7 +494,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector*
 
 	if (S_OK != Result && nullptr != pErrorMessages)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateFromParentInformationFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateFromParentInformationFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		pErrorMessages->push_back(Msg);
 	}
 
@@ -682,7 +681,7 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 				if (nullptr != pTool && isROI)
 				{
 					SvStl::MessageManager e(SvStl::MsgType::Data);
-					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SizeOfChildROIInvalid, SvStl::SourceFileParams(StdMessageParams), 0, childID);
+					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SizeOfChildROIInvalid, SvStl::SourceFileParams(StdMessageParams), childID);
 
 					if (S_OK != l_hrOk)
 					{
@@ -1378,7 +1377,7 @@ SvPb::OverlayDesc SVImageClass::getOverlayStruct() const
 	{
 		return pInsp->getOverlayStruct(*this);
 	}
-	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 	throw msg;
 }
 #pragma endregion virtual method (ISVImage)
@@ -1459,7 +1458,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 				else
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					assert(false);
 					if (nullptr != pErrorMessages)
 					{
@@ -1474,7 +1473,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 				retValue = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -1508,7 +1507,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 			else
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				//@todo[mec] Sometimes the error case is used to check for valid user input 
 				//assert(false);
 				if (nullptr != pErrorMessages)

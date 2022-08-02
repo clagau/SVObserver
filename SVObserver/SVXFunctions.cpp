@@ -467,7 +467,7 @@ bool LoadSvxFilePart1(unsigned long& ulSVOConfigVersion, unsigned long svoVersio
 		msgList.push_back(App);
 
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10128, SvDef::InvalidObjectId, MB_YESNO);
+		INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO);
 		if (IDNO == result)
 		{
 			return false;

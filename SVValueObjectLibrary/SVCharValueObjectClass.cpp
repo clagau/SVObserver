@@ -94,7 +94,7 @@ TCHAR SVCharValueObjectClass::ConvertString2Type( const std::string& rValue ) co
 	msgList.push_back(std::string(rValue));
 	msgList.push_back(GetName());
 	SvStl::MessageManager Exception(SvStl::MsgType::Log );
-	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 	Exception.Throw();
 	return 0; //will never reached, because the exception will throw before. But this line avoids a warning
 }

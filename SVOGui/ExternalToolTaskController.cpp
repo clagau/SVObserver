@@ -12,7 +12,6 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
@@ -237,7 +236,7 @@ bool ExternalToolTaskController::validateValueParameterWrapper(uint32_t taskObje
 		msgList.push_back(_T("<error description missing>"));
 
 		SvStl::MessageContainer msg;
-		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, getExternalToolTaskObjectId());
+		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), getExternalToolTaskObjectId());
 		messageContainers.push_back(msg);
 	}
 

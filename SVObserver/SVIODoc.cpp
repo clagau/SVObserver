@@ -33,7 +33,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -150,7 +149,7 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 	if (!bCanClose)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIODoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10054 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIODoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	return bCanClose;
@@ -275,7 +274,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							if (S_OK != pInputList->DetachInput(pRemoteInput->getObjectId()))
 							{
 								SvStl::MessageManager e(SvStl::MsgType::Log);
-								e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorDetachingInput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17033_ErrorDetachingInput);
+								e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorDetachingInput, SvStl::SourceFileParams(StdMessageParams));
 								DebugBreak();
 							}
 

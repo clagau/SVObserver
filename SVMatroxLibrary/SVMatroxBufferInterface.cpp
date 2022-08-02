@@ -23,7 +23,6 @@
 #include "SVSystemLibrary/SVImageConvertorGDI.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -1250,17 +1249,17 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 	HRESULT Code(S_OK);
 	if (pMemory == nullptr)
 	{
-		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMemoryPointer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMemoryPointer, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
 	else if (rImageProps.Matrox_type == 0)
 	{
-		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMatroxType, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMatroxType, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
 	else if (rImageProps.Attrib == 0)
 	{
-		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMatroxAttribute, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMatroxAttribute, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
 
@@ -1307,7 +1306,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 	{
 		SvDef::StringVector msg;
 		msg.push_back(SvUl::Format("Matrox Code: 0X%08X", Code));
-		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Default, msg, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Default, msg, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
 

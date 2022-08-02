@@ -433,14 +433,14 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 					}
 					else
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						throw Msg;
 					}
 					
 					SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(rData.m_pValueObject);
 					if (pObj && pObj->GetParentID() != getObjectId())
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddedValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddedValue, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						throw Msg;
 					}
 					break;
@@ -453,7 +453,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 					}
 					else
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						throw Msg;
 					}
 					//SvOi::IObjectClass* pObj = (SvOi::IObjectClass*)(rData.m_pValueObject);
@@ -461,7 +461,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 					if (pObj && pObj->GetParentID() != getObjectId())
 					{
 							
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddedValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddedValue, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						throw Msg;
 					}
 					
@@ -1730,11 +1730,11 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetValueStruct& rEntry, 
 		//! Check if general error or specific error for detailed information
 		if (E_FAIL == Result || S_FALSE == Result)
 		{
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		}
 		else
 		{
-			Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		}
 		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = Msg.getMessageContainer();
@@ -1778,11 +1778,11 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry,
 		//! Check if general error or specific error for detailed information
 		if (E_FAIL == Result || S_FALSE == Result)
 		{
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		}
 		else
 		{
-			Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		}
 		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = Msg.getMessageContainer();

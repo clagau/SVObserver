@@ -31,7 +31,6 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVConditional.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/Color.h"
@@ -660,14 +659,14 @@ bool SVInspectionProcess::GoOnline()
 	{
 
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, e.what(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, e.what(), SvStl::SourceFileParams(StdMessageParams));
 		return false;
 	}
 
 	catch (...)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("Unknown error Handler"), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("Unknown error Handler"), SvStl::SourceFileParams(StdMessageParams));
 		return false;
 	}
 	return true;
@@ -1217,7 +1216,7 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 				l_Status = E_FAIL;
 
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_IPDoc_NoCameraColorAttached, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10052);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_IPDoc_NoCameraColorAttached, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -1331,7 +1330,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorM
 		else
 		{
 			Result = false;
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			ErrorMessages.push_back(Msg);
 		}
 
@@ -2442,7 +2441,7 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector* pErrorMessa
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -2480,7 +2479,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 					if (nullptr == Iter->second.getImage())
 					{
 						SvStl::MessageManager Exception(SvStl::MsgType::Data);
-						Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImageBuffer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImageBuffer, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						Exception.Throw();
 					}
 					else
@@ -2516,21 +2515,21 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 					}
 
 					SvStl::MessageManager Exception(SvStl::MsgType::Data);
-					Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_CameraNotFound, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_CameraNotFound, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					Exception.Throw();
 				}
 			}
 			else
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Data);
-				Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidCamera, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidCamera, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				Exception.Throw();
 			}
 		}
 		else
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Data);
-			Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImage, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			Exception.Throw();
 		}
 
@@ -2721,7 +2720,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, const S
 	if (!rIPInfo.m_BeginToolset)
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17027_ErrorGettingTimeStamp);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams));
 		DebugBreak();
 	}
 
@@ -2743,7 +2742,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, const S
 	if (!rIPInfo.m_EndToolset)
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17028_ErrorGettingTimeStamp);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams));
 		DebugBreak();
 	}
 
@@ -3062,7 +3061,7 @@ HRESULT SVInspectionProcess::RunOnce()
 
 	SingleRunModeLoop(true);
 
-	return result ? S_OK : SvStl::cCustomHRSVO_RunOnceFailed;
+	return result ? S_OK : E_FAIL;
 }
 
 HRESULT SVInspectionProcess::SubmitCommand(const SvOi::ICommandPtr& rCommandPtr)
@@ -3172,7 +3171,7 @@ HRESULT SVInspectionProcess::propagateSizeAndPosition()
 	}
 	else
 	{
-		retVal = SvStl::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
+		retVal = E_FAIL;
 	}
 	return retVal;
 }
@@ -3204,7 +3203,7 @@ SvPb::OverlayDesc SVInspectionProcess::getOverlayStruct(const SvOi::ISVImage& rI
 	{
 		return pToolSet->getOverlayStruct(rImage);
 	}
-	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 	throw msg;
 }
 

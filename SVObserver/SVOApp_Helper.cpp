@@ -10,7 +10,7 @@
 #include "SVObserver.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVSetupDialogManager.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/ModelessMessageBox.h"

@@ -27,7 +27,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -66,7 +65,7 @@ HRESULT SVImageProcessingClass::CreateImageBuffer(const SVImageInfoClass& rInfo,
 		if (S_OK != Result && nullptr != pErrorContainer)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10064);
+			message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams));
 			pErrorContainer->push_back(message);
 		}
 	}
@@ -154,7 +153,7 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer(const SVImageInfoClass& r
 	if (S_OK != Result)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10066);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	return Result;
@@ -370,11 +369,11 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 		}
 
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10068);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10069);
+	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams));
 
 	return E_FAIL;
 }
@@ -512,7 +511,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 	rBufferHandle.reset();
 
 	SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10070);
+	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams));
 
 	return S_FALSE;
 }
@@ -813,18 +812,18 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 					SvDef::StringVector msgList;
 					msgList.push_back(std::string(rChildInfo.GetOwner()->GetCompleteName()));
 					msgList.push_back(std::string(rParentInfo.GetOwner()->GetCompleteName()));
-					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer_parent, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10065);
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer_parent, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 				else
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(std::string(rChildInfo.GetOwner()->GetCompleteName()));
-					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer_child, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10065);
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer_child, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
 			else
 			{
-				message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10065);
+				message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer, SvStl::SourceFileParams(StdMessageParams));
 			}
 
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

@@ -14,7 +14,6 @@
 #include "SVPatGeneralPageClass.h"
 #include "AnalyzerOperators/PatternAnalyzer.h"
 #include "SVSetupDialogManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -398,7 +397,7 @@ BOOL SVPatGeneralPageClass::ProcessOnKillfocus(UINT nId)
 			if(dThreshold > 100 || strValue.IsEmpty())
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidThresholdValue, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10183 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidThresholdValue, SvStl::SourceFileParams(StdMessageParams)); 
 				GetDlgItem(nId)->SetFocus();
 				((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
 				return FALSE;

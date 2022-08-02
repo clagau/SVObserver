@@ -48,7 +48,7 @@ bool SVOpeningFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInpu
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 
@@ -64,7 +64,7 @@ bool SVOpeningFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInpu
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "DataControllerLocal.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "ImageBufferController.h"
 #include "TriggerRecord.h"
 #include "TriggerRecordController.h"

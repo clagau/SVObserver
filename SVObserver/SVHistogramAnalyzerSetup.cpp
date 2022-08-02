@@ -16,7 +16,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSetupDialogManager.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
@@ -204,7 +203,7 @@ inline void SVHistogramAnalyzerSetup::SetResultRange(SvPb::EmbeddedIdEnum embedd
 	else
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10234);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 

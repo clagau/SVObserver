@@ -18,7 +18,6 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
@@ -355,13 +354,13 @@ namespace SvOg
 			else
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16088);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 		else
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16087);
+			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 

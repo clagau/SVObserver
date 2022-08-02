@@ -23,7 +23,7 @@
 #include "NavigatorElement.h"
 #include "ObjectInterfaces/ObjectInfo.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageTextEnum.h"
 #pragma endregion Includes
 

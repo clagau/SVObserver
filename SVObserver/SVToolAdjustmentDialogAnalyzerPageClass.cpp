@@ -22,7 +22,6 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "Tools/SVTool.h"
@@ -219,7 +218,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 	else
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Error_NoAnalyzerDetails, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10210);
+		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Error_NoAnalyzerDetails, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -266,7 +265,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 					if (!m_pTool->CreateChildObject(m_pCurrentAnalyzer, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection))
 					{
 						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10211);
+						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams));
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						uint32_t objectID = m_pCurrentAnalyzer->getObjectId();
@@ -286,7 +285,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			else
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerInstantiationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10212);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerInstantiationFailed, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}

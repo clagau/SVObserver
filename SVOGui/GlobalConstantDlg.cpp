@@ -15,7 +15,6 @@
 #include "Definitions/GlobalConst.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -165,7 +164,7 @@ namespace SvOg
 					if( !std::regex_match( NewValue.cbegin(), NewValue.cend(), std::regex( RegExp_AllRealNumbers ) ) )
 					{
 						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25014_GlobalConstantNumber );
+						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, SvStl::SourceFileParams(StdMessageParams));
 						pDX->Fail();
 					}
 				}
@@ -190,7 +189,7 @@ namespace SvOg
 				if( rName == *Iter )
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Exception.setMessage( SVMSG_SVO_66_GLOBAL_NAME_INVALID, rName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25015_GlobalNameAlreadyUsed );
+					Exception.setMessage( SVMSG_SVO_66_GLOBAL_NAME_INVALID, rName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 					Failed = true;
 					break;
 				}
@@ -205,7 +204,7 @@ namespace SvOg
 				if( !std::regex_match( NewName.cbegin(), NewName.cend(), std::regex( RegExp_Name ) ) )
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25016_GlobalNameInvalid );
+					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 					Failed = true;
 				}
 			}

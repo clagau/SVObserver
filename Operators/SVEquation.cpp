@@ -18,7 +18,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVObjectLibrary/ObjectUtilities.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "InspectionEngine/RunStatus.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -451,13 +450,13 @@ SvOi::EquationTestResult SVEquation::Test(SvStl::MessageContainerVector *pErrorM
 				msgList.push_back(fullObjectName);
 				if (S_OK != m_Yacc.m_StatusCode)
 				{
-					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, getObjectId());
+					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				}
 				else
 				{
 					ret.iPositionFailed = m_Yacc.lex_stack[m_Yacc.sIndex - 1].position + 1;
 					msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
-					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10047, getObjectId());
+					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				}
 				m_isDataValid = false;
 			}
@@ -543,7 +542,7 @@ SvOi::EquationTestResult SVEquation::lexicalScan(LPCTSTR inBuffer)
 		SvDef::StringVector msgList;
 		msgList.push_back(fullObjectName);
 		msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
-		m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10198, getObjectId());
+		m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 
 		m_isDataValid = false;
 	}
@@ -626,7 +625,7 @@ bool SVEquation::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVecto
 			retVal = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();

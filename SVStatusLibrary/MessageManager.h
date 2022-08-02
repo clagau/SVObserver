@@ -105,24 +105,22 @@ namespace SvStl
 		//! \param MessageCode [in] is the unique message number
 		//! \param AdditionalText [in] the additional text to the message code
 		//! \param SourceFile <in> the source file standard parameters in which the code set
-		//! \param ProgramCode [in] is the unique program error number
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage(DWORD MessageCode, LPCTSTR sAdditionalText, const SourceFileParams& rSourceFile, DWORD ProgramCode = 0, uint32_t rObjectId = 0, const UINT MsgBoxType = MB_OK);
+		INT_PTR setMessage(DWORD MessageCode, LPCTSTR sAdditionalText, const SourceFileParams& rSourceFile, uint32_t rObjectId = 0, const UINT MsgBoxType = MB_OK);
 
 		//************************************
 		//! Sets the message data
 		//! \param MessageCode [in] is the unique message number
 		//! \param AdditionalTextId <in> Id for the additional text to the message code (without AdditionalTextList)
 		//! \param SourceFile <in> the source file standard parameters in which the code set
-		//! \param ProgramCode [in] is the unique program error number
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, DWORD ProgramCode = 0, uint32_t rObjectId = 0, const UINT MsgBoxType = MB_OK);
+		INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, uint32_t rObjectId = 0, const UINT MsgBoxType = MB_OK);
 
 		//************************************
 		//! Sets the message data
@@ -130,12 +128,11 @@ namespace SvStl
 		//! \param AdditionalTextId <in> Id for the additional text to the message code
 		//! \param rAdditionalTextList <in> reference to list of strings for the additional text to the message code
 		//! \param SourceFile <in> the source file standard parameters in which the code set
-		//! \param ProgramCode [in] is the unique program error number
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, DWORD ProgramCode = 0, uint32_t rObjectId = 0, const UINT MsgBoxType = MB_OK);
+		INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, uint32_t rObjectId = 0, const UINT MsgBoxType = MB_OK);
 
 		//************************************
 		//! Sets the message data

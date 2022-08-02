@@ -271,7 +271,7 @@ void SVVariantValueObjectClass::updateMemBlockData()
 				OutputDebugString("Memory block reserved for value object is to small. This should not happen!");
 				#endif 
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			}
 		}
 	}
@@ -448,7 +448,7 @@ _variant_t SVVariantValueObjectClass::ConvertString2Type(const std::string& rVal
 			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			Exception.Throw();
 		}
 	}

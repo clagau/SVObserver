@@ -17,7 +17,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/NameValueVector.h"
 #include "SVMFCControls/SVMaskEditor.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -254,7 +253,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			m_pMaskEditorCtl = nullptr;
 			
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_MaskPage_StartOCXFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10215 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_MaskPage_StartOCXFailed, SvStl::SourceFileParams(StdMessageParams));
 			return;
 		}
 	}
@@ -341,7 +340,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			SvDef::StringVector msgList;
 			msgList.push_back( m_svfnFileName.GetFullFileName() );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10216 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	// Refresh image view...
@@ -361,7 +360,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			SvDef::StringVector msgList;
 			msgList.push_back( std::string(m_svfnFileName.GetFullFileName()) );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10217 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	// Refresh image view...

@@ -23,7 +23,6 @@
 #include "SVOLibrary/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
@@ -282,12 +281,12 @@ HRESULT SVAcquisitionClass::LoadFiles(const SVFileNameArrayClass &rArray)
 			if (LogOnly)
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed);
+				Exception.setMessage(SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams));
 			}
 			else
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				if (IDYES == Exception.setMessage(SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed, SvDef::InvalidObjectId, MB_YESNO))
+				if (IDYES == Exception.setMessage(SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO))
 				{
 					//All other missing files will only be logged
 					LogOnly = true;

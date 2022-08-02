@@ -14,7 +14,6 @@
 
 #include "SVAsyncProcedure.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
@@ -50,12 +49,12 @@ HRESULT SVAsyncProcedure::Signal(const void* const pData)
 	{
 		if( 0 == ::QueueUserAPC(m_apcHandler, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(pData)))
 		{
-			Exception.setMessage( SVMSG_QUEUE_USER_APC_ERROR, m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25038_AsyncProcedure );
+			Exception.setMessage( SVMSG_QUEUE_USER_APC_ERROR, m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	else
 	{
-		Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25041_AsyncProcedure );
+		Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	return Result;

@@ -15,7 +15,6 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #include "SVVariantConverter.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -75,7 +74,7 @@ namespace SvXml
 			SvDef::StringVector messageList;
 			messageList.push_back(SvUl::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_RestoreVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvStl::Err_16064_RESTOREVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_RestoreVariantError, messageList, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
 		}
 
@@ -327,7 +326,7 @@ namespace SvXml
 		if(bInvalidArgument)
 		{
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,SvStl::Tid_ToVariant_InvalidArgument, SvStl::SourceFileParams(StdMessageParams),SvStl::Err_16066_TOVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,SvStl::Tid_ToVariant_InvalidArgument, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
 		}
 

@@ -15,7 +15,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -95,7 +95,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages(SvIe::SVVirtualCamera
 					msgList.push_back(pCamera->GetName());
 				}
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LightReference_NotAvailable, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10059 );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LightReference_NotAvailable, msgList, SvStl::SourceFileParams(StdMessageParams));
 				DestroyAllPages();
 				return false;
 			}

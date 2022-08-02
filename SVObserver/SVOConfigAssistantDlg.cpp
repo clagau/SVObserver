@@ -47,7 +47,6 @@
 #include "TextDefinesSvO.h"
 #include "SVOGui\GlobalConstantConflictDlg.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -319,7 +318,7 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 				(SVHardwareManifest::isDiscreteIOSystem(newConfigType) != SVHardwareManifest::isDiscreteIOSystem(currentConfigType)))
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchIOQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, SvDef::InvalidObjectId, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchIOQuestion, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = newConfigType;
@@ -1962,7 +1961,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 							SvDef::StringVector msgList;
 							msgList.push_back(SvUl::Format(_T("%d"), hr));
 							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10140);
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 						}
 						pInspectionObj->ClearImportFilename();
 					}

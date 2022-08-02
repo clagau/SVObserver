@@ -308,7 +308,7 @@ bool RankingFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageH
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
@@ -323,7 +323,7 @@ bool RankingFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageH
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -346,7 +346,7 @@ bool RankingFilter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages)
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), lWidth));
 			msgList.push_back(SvUl::Format(_T("%d"), 7));
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -361,7 +361,7 @@ bool RankingFilter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages)
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), lHeight));
 			msgList.push_back(SvUl::Format(_T("%d"), 7));
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

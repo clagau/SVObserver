@@ -59,7 +59,6 @@ namespace SvStl
 		MessageTextEnum m_AdditionalTextId{ SvStl::Tid_Empty }; //The main additional text id
 		SvDef::StringVector m_AdditionalTextList; //String list to be inserted in the main additional text id
 		SourceFileParams m_SourceFile;		//The source file standard parameters
-		DWORD m_ProgramCode{ 0 };			//Program specific code.
 		uint32_t m_ObjectId{ 0UL };			//! The object Id 
 		std::time_t m_DateTime{ 0LL };		//The date and time when the data is set
 	#pragma endregion Member Variables

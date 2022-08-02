@@ -10,7 +10,6 @@
 #include "SaxXMLHandler.h"
 #include "SVNavigateTree.h"
 #include "VariantHelper.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
@@ -213,7 +212,7 @@ HRESULT  SaxXMLHandler::OnStartElement(const wchar_t  *, int , const wchar_t *pw
 			default:
 				{
 					SvStl::MessageContainer Exception;
-					Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_UnexpectedType, SvStl::SourceFileParams(StdMessageParams),SvStl::Err_16067_OnStartElement  );
+					Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_UnexpectedType, SvStl::SourceFileParams(StdMessageParams));
 					throw Exception;
 					break;
 				}
@@ -255,7 +254,7 @@ HRESULT  SaxXMLHandler::OnElementData( const wchar_t *pwchData,  int cchData, in
 		else
 		{
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_UnexpectedOnElementData, SvStl::SourceFileParams(StdMessageParams),SvStl::Err_16068_OnElementData  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_UnexpectedOnElementData, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
 		}
 
@@ -293,7 +292,7 @@ HRESULT  SaxXMLHandler::OnEndElement(const wchar_t  *, int ,const wchar_t *pwchN
 		{
 			assert(m_pCurrentNodeInRevisionTree);
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16069_INVALIDPOINTER );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams));
 
 		}
 		if(nullptr == m_pCurrentNodeInRevisionTree)
@@ -313,7 +312,7 @@ HRESULT  SaxXMLHandler::OnEndElement(const wchar_t  *, int ,const wchar_t *pwchN
 		else
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16070_INVALIDPOINTER );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams));
 			assert(m_pCurrentNodeInEncryptionTree);
 		}
 
@@ -338,7 +337,7 @@ HRESULT  SaxXMLHandler::OnEndElement(const wchar_t  *, int ,const wchar_t *pwchN
 		{
 			assert(false);
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16071_INVALIDPOINTER );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams));
 		}
 
 		if(m_ParseArray && pSaxTreeElement)
@@ -381,7 +380,7 @@ HRESULT  SaxXMLHandler::OnEndElement(const wchar_t  *, int ,const wchar_t *pwchN
 				{
 					assert(false);
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16074_InvalidArrayElement );
+					Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams));
 					break;
 				}
 			}
@@ -412,7 +411,7 @@ HRESULT  SaxXMLHandler::OnEndElement(const wchar_t  *, int ,const wchar_t *pwchN
 			{
 				assert(false);
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16072_INVALID_ARRAYELEMENT );
+				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams));
 			}
 
 			m_ParseArray = false;
@@ -434,7 +433,7 @@ HRESULT  SaxXMLHandler::OnXMLError(int line, int column, const wchar_t *pwchErro
 	messageList.push_back(SvUl::Format(_T("%i"), errorCode));
 	messageList.push_back(SvUl::createStdString(pwchErrorText));
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
-	Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvStl::Tid_XML_Error, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16063_SAXPARSER );
+	Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvStl::Tid_XML_Error, messageList, SvStl::SourceFileParams(StdMessageParams));
 	assert(false);
 	return S_OK;
 }

@@ -9,7 +9,7 @@
 #include "TriggerRecordController.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\SourceFileParams.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 
 namespace SvTrc
 {

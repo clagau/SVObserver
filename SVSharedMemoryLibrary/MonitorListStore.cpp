@@ -11,7 +11,6 @@
 #include "MonitorListStore.h"
 #include "MesManHelper.h"
 #include "SMParameterStruct.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SourceFileParams.h"
 #pragma endregion Includes
 
@@ -44,7 +43,7 @@ void   MonitorListStore::CloseConnection()
 		}
 		else
 		{
-			MesManHelper::LogUnMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16235);
+			MesManHelper::LogUnMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	if (m_hMapFileData)
@@ -55,7 +54,7 @@ void   MonitorListStore::CloseConnection()
 		}
 		else
 		{
-			MesManHelper::LogUnMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16235);
+			MesManHelper::LogUnMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }
@@ -92,13 +91,13 @@ void MonitorListStore::CreateMonitorStore(LPCTSTR StoreName, DWORD datasize, con
 
 	if (nullptr == m_hMapFileData)
 	{
-		MesManHelper::ThrowCreateFileMappingFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		MesManHelper::ThrowCreateFileMappingFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	m_pViewData = MapViewOfFile(m_hMapFileData, FILE_MAP_ALL_ACCESS, 0, 0, m_SharedSize);
 	if (m_pViewData == nullptr)
 	{
-		MesManHelper::ThrowMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16227);
+		MesManHelper::ThrowMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 	}
 	DWORD* pDatasize = reinterpret_cast<DWORD*>(m_pViewData);
 	m_DataSize = datasize;
@@ -122,13 +121,13 @@ bool  MonitorListStore::OpenMonitorStore(LPCTSTR StoreName)
 		}
 		else
 		{
-			MesManHelper::ThrowMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16230);
+			MesManHelper::ThrowMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	m_pViewData = MapViewOfFile(m_hMapFileData, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	if (nullptr == m_pViewData)
 	{
-		MesManHelper::ThrowMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16231);
+		MesManHelper::ThrowMapViewOfFileFailed(m_MapFileName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	DWORD* pDatasize = reinterpret_cast<DWORD*>(m_pViewData);

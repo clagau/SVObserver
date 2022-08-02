@@ -12,7 +12,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #pragma warning( disable: 4244 )	//Disable warning for conversion
 #include "SVProtoBuf/TriggerRecordController.h"

@@ -85,7 +85,7 @@ bool TableLimitAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageConta
 			returnValue = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}

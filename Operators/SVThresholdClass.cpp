@@ -181,7 +181,7 @@ bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -193,7 +193,7 @@ bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -452,7 +452,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 		
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvStl::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvStl::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		rRunStatus.SetCriticalFailure();

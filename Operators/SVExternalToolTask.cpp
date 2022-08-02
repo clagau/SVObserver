@@ -325,7 +325,7 @@ bool SVExternalToolTask::CreateTableObjects()
 			{
 				result = false;
 				SvStl::MessageContainer message;
-				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(message.getMessage());
 				break;
@@ -1363,7 +1363,7 @@ bool SVExternalToolTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		rRunStatus.SetInvalid();
@@ -1428,7 +1428,7 @@ bool SVExternalToolTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 				ok = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_CannotRun, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_CannotRun, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -1452,7 +1452,7 @@ bool SVExternalToolTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 				HRESULT hrError = GetDLLMessageString(hr, bMessage.GetAddress());
 				std::string dllMessageString = (hrError == E_NOTIMPL) ? std::string("<not implemented>") : SvUl::createStdString(bMessage);
 				msgList.push_back(SvUl::Format(_T("%ld: %s"), hr, dllMessageString.c_str()));
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1463,7 +1463,7 @@ bool SVExternalToolTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 			ok = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1813,7 +1813,7 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector* pErrorMessag
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}

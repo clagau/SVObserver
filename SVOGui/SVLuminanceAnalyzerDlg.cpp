@@ -14,7 +14,6 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -107,12 +106,12 @@ namespace SvOg
 		if (S_OK != hr || !responseCmd.has_getobjectidresponse())
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 		}
 		else  if ( S_OK != SvOi::SetupDialogManager(SvPb::LongResultClassId, responseCmd.getobjectidresponse().objectid(), GetSafeHwnd()))
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16091);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 } //namespace SvOg

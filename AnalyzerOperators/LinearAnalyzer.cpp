@@ -107,7 +107,7 @@ bool LinearAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -226,7 +226,7 @@ void LinearAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& r
 		{
 			msgData[0] += "\n" + name;
 		}
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetResultParameterToMonitorListFailed, msgData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetResultParameterToMonitorListFailed, msgData, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		rMessages.push_back(Msg);
 	}
 }
@@ -509,7 +509,7 @@ bool LinearAnalyzer::ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeAFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeAFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -523,7 +523,7 @@ bool LinearAnalyzer::ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeBFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeBFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

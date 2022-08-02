@@ -290,7 +290,7 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SvPb::EmbeddedIdEnum e
 		pObject = nullptr;
 		assert(false);
 		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		e.Throw();
 	}
 	return pRetObject;
@@ -318,7 +318,7 @@ void TableObject::UpdateColumnValueObject(int pos, std::string objectName, int m
 	else
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		e.Throw();
 	}
 }

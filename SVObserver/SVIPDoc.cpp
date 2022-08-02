@@ -826,7 +826,7 @@ BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 	if (!bCanClose)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIPDoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10056);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIPDoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	return bCanClose;
@@ -2035,7 +2035,7 @@ void SVIPDoc::OnSaveResultsToFile()
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string {dlg.GetPathName()});
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }
@@ -2091,7 +2091,7 @@ void SVIPDoc::OnSaveTableResultsToFile()
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string {dlg.GetPathName()});
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }
@@ -2330,7 +2330,7 @@ void SVIPDoc::RunRegressionTest()
 	else
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIPDoc_GoIntoRegTestFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIPDoc_GoIntoRegTestFailed, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 

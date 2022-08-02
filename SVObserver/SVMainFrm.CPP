@@ -937,7 +937,7 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 	else
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_AuthorizationFailed_Modification, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10123);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_AuthorizationFailed_Modification, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -1037,7 +1037,7 @@ void SVMainFrame::OnRunUtility(UINT uiId)
 	else
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_AuthorizationFailed_Execution, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10124);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_AuthorizationFailed_Execution, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -2517,7 +2517,7 @@ void SVMainFrame::startDesiredState(DWORD desiredState)
 				else
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, TheSVObserverApp().m_rInitialInfoSvo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, TheSVObserverApp().m_rInitialInfoSvo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams));
 					SVSVIMStateClass::changeState(prevState, desiredState);
 				}
 			}
@@ -2528,7 +2528,7 @@ void SVMainFrame::startDesiredState(DWORD desiredState)
 				msgList.push_back(TheSVObserverApp().m_rInitialInfoSvo.InitializationFailureDescription(getIniInfoHandler().GetInitializationStatusFlags()));
 
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 				SVSVIMStateClass::changeState(prevState, desiredState);
 			}

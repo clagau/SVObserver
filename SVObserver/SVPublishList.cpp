@@ -20,7 +20,6 @@
 #include "SVInspectionProcess.h"
 #include "SVConfigurationObject.h"
 #include "SVPPQObject.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #pragma endregion Includes
@@ -60,7 +59,7 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 			else
 			{
 				SvStl::MessageManager e(SvStl::MsgType::Log);
-				e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFindingPPQEntries, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17043_ErrorFindingPPQEntries);
+				e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFindingPPQEntries, SvStl::SourceFileParams(StdMessageParams));
 				DebugBreak();
 			}
 			++iter;

@@ -59,7 +59,7 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		{
 			bOk = false;
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
 			Msg.setMessage(message.getMessage());
 		}
@@ -73,7 +73,7 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		{
 			bOk = false;
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
 			Msg.setMessage(message.getMessage());
 		}
@@ -82,7 +82,7 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	{
 		bOk = false;
 		SvStl::MessageContainer message;
-		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		Msg.setMessage(message.getMessage());
 	}
@@ -118,7 +118,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(message);
 		}
 	}
@@ -128,7 +128,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(message);
 		}
 	}
@@ -231,7 +231,7 @@ bool TableAnalyzerTool::ValidateLocal(SvStl::MessageContainerVector * pErrorMess
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(message);
 		}
 	}

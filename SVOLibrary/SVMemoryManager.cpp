@@ -14,7 +14,6 @@
 #include "SVMemoryManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -141,7 +140,7 @@ void SVMemoryManager::InitializeMemoryManager(LPCTSTR poolName, long bufferSize)
 	SvDef::StringVector MessageList;
 	MessageList.push_back(SvUl::Format(_T("%d MB"), ramSizeInMB));
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
-	Msg.setMessage(SVMSG_SVO_54_EMPTY, SvStl::Tid_AmountOfSystemMemoryText, MessageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Memory_Log_45001);
+	Msg.setMessage(SVMSG_SVO_54_EMPTY, SvStl::Tid_AmountOfSystemMemoryText, MessageList, SvStl::SourceFileParams(StdMessageParams));
 
 	CreatePool(poolName, bufferSize * cBytesPerKiloByte);
 }

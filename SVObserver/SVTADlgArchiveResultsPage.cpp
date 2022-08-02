@@ -82,7 +82,7 @@ SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t inspectionId, uint
 		if (nullptr == m_pTool)
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25002_ToolInvalid);
+			e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
 			e.Throw();
 		}
 	}

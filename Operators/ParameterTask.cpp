@@ -33,7 +33,7 @@ namespace SvOp
 	{
 		SvStl::MessageContainerVector messages;
 		SvStl::MessageContainer message;
-		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, textId, additionalText, SvStl::SourceFileParams(StdMessageParams), 0, objectId);
+		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, textId, additionalText, SvStl::SourceFileParams(StdMessageParams), objectId);
 		messages.emplace_back(message);
 		return SvPb::convertMessageVectorToProtobuf(messages);
 	}
@@ -43,7 +43,7 @@ namespace SvOp
 		if (pMessageContainer)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, textId, additionalText, messageParam, 0, objectId);
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, textId, additionalText, messageParam, objectId);
 			SvPb::convertMessageToProtobuf(message, pMessageContainer->add_messages());
 		}
 	}
@@ -426,7 +426,7 @@ namespace SvOp
 				msgList.emplace_back(name);
 				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTable));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), objectIdForErrorMessage);
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -447,7 +447,7 @@ namespace SvOp
 				msgList.emplace_back(name);
 				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_anImage));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), objectIdForErrorMessage);
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -463,7 +463,7 @@ namespace SvOp
 					msgList.emplace_back(name);
 					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aGrayImage));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), objectIdForErrorMessage);
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -477,7 +477,7 @@ namespace SvOp
 					msgList.emplace_back(name);
 					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aColorImage));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), objectIdForErrorMessage);
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -511,7 +511,7 @@ namespace SvOp
 			msgList.emplace_back(GetName());
 			msgList.emplace_back(name);
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectIdForErrorMessage);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), objectIdForErrorMessage);
 			if (nullptr != pErrorMessages)
 			{
 				pErrorMessages->push_back(Msg.getMessageContainer());
@@ -533,7 +533,7 @@ namespace SvOp
 			if (nullptr == m_objects[i] || nullptr == m_TypeObjects[i])
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -557,7 +557,7 @@ namespace SvOp
 					SvDef::StringVector msgList;
 					msgList.emplace_back(GetName());
 					msgList.emplace_back(pObject->GetName());
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputValue, msgList, SvStl::SourceFileParams(StdMessageParams), 0, pObject->getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputValue, msgList, SvStl::SourceFileParams(StdMessageParams), pObject->getObjectId());
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -581,7 +581,7 @@ namespace SvOp
 				msgList.emplace_back(GetName());
 				msgList.emplace_back(std::to_string(i));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), 0, pObject->getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputType, msgList, SvStl::SourceFileParams(StdMessageParams), pObject->getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());

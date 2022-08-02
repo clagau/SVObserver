@@ -466,7 +466,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 		result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -480,7 +480,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 			result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 	}
 		}
@@ -519,7 +519,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 
 			if (!result && nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 
@@ -531,7 +531,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 				result = result && ( S_OK == m_endRadius.SetValue(dEndRadius) );
 				if (!result && nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -542,7 +542,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 			result = result && (S_OK == m_endAngle.GetValue(dEndAngle));
 			if (!result && nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -567,7 +567,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 			result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -593,7 +593,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 
 		if (!result && nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 
@@ -625,7 +625,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -685,7 +685,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 						result = false;
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 							pErrorMessages->push_back(Msg);
 						}
 					}
@@ -701,7 +701,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 					result = false;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 						pErrorMessages->push_back(Msg);
 				}
 				}
@@ -788,7 +788,7 @@ bool SVImagePolarTransform::ResetObject(SvStl::MessageContainerVector *pErrorMes
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -823,7 +823,7 @@ bool SVImagePolarTransform::ValidateLocal(SvStl::MessageContainerVector *pErrorM
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

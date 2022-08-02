@@ -82,7 +82,7 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 	if (SvDef::InvalidObjectId == m_TaskObjectID)
 	{
 		SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16080);
+		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 	}
 	else
 	{
@@ -240,7 +240,7 @@ void SVPixelAnalyzerDlg::OnPixelSetRange()
 		else
 		{
 			SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Exception.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16085);
+			Exception.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }

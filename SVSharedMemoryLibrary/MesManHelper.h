@@ -18,8 +18,8 @@ struct SourceFileParams;
 class MesManHelper
 {
 public:
-	static void ThrowCreateFileMappingFailed(LPCSTR MapfileName, const SvStl::SourceFileParams& rFileParams, DWORD Programmcode);
-	static void ThrowMapViewOfFileFailed(LPCSTR MapfileName, const SvStl::SourceFileParams& rFileParams, DWORD Programmcode);
-	static void LogUnMapViewOfFileFailed(LPCSTR MapfileName, const SvStl::SourceFileParams& rFileParams, DWORD Programmcode);
+	static void ThrowCreateFileMappingFailed(LPCSTR MapfileName, const SvStl::SourceFileParams& rFileParams);
+	static void ThrowMapViewOfFileFailed(LPCSTR MapfileName, const SvStl::SourceFileParams& rFileParams);
+	static void LogUnMapViewOfFileFailed(LPCSTR MapfileName, const SvStl::SourceFileParams& rFileParams);
 };
 

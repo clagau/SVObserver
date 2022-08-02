@@ -24,7 +24,6 @@
 #include "InspectionEngine/SVMatroxGigeAcquisitionClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Triggering/SVDigitizerLoadLibraryClass.h"
@@ -857,7 +856,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 						msgList.push_back(sModel);
 						msgList.push_back(sHardwareModel);
 						SvStl::MessageManager Exception(SvStl::MsgType::Data);
-						Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvStl::Tid_Error_WrongCameraModel, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10026_GoOnline_WrongCameraModel );
+						Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvStl::Tid_Error_WrongCameraModel, msgList, SvStl::SourceFileParams(StdMessageParams));
 						Exception.Throw();
 					}
 				}
@@ -868,7 +867,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 				msgList.push_back(venderName);
 				msgList.push_back(venderNameHardware);
 				SvStl::MessageManager Exception(SvStl::MsgType::Data);
-				Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvStl::Tid_Error_WrongCameraModel, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10027_GoOnline_WrongCameraVender );
+				Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvStl::Tid_Error_WrongCameraModel, msgList, SvStl::SourceFileParams(StdMessageParams));
 				Exception.Throw();
 			}
 		}

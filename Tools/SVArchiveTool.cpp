@@ -401,7 +401,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector* pErrorM
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_PathEmpty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_PathEmpty, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -438,7 +438,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector* pErrorM
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(FileArchivePath);
-					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10036, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				return false;
@@ -463,7 +463,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector* pErrorM
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(FileArchivePath);
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10036, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -516,7 +516,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector* pErrorM
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_WriteToFileFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_WriteToFileFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -678,7 +678,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 						{
 							if (nullptr != pErrorMessages)
 							{
-								SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+								SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 								pErrorMessages->push_back(Msg);
 							}
 							if (nullptr != pResetRaii)
@@ -714,7 +714,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(SvUl::Format(_T("%x"), hrAllocate));
-				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_AllocImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_AllocImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -747,7 +747,7 @@ bool SVArchiveTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 			rRunStatus.SetFailed();
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_InitFlagFalse, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_InitFlagFalse, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -1260,7 +1260,7 @@ bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl:
 			{ //should not ever get here since the path is validated above
 				SvDef::StringVector msgList;
 				msgList.push_back(m_currentImagePathRoot);
-				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10037, objectId);
+				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams), objectId);
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1277,7 +1277,7 @@ bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl:
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string(m_currentImagePathRoot));
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectId);
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), objectId);
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

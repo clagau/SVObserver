@@ -253,7 +253,7 @@ bool BarCodeAnalyzer::InitMil (SvStl::MessageContainerVector *pErrorMessages)
 			// McodeAlloc failed
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeInitFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeInitFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -264,7 +264,7 @@ bool BarCodeAnalyzer::InitMil (SvStl::MessageContainerVector *pErrorMessages)
 		// getInputImage failed
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -353,7 +353,7 @@ bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContaine
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		rRunStatus.SetInvalid ();
@@ -367,7 +367,7 @@ bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContaine
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -438,7 +438,7 @@ bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContaine
 							Result = false;
 							if (nullptr != pErrorMessages)
 							{
-								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 								pErrorMessages->push_back(Msg);
 							}
 						}
@@ -552,7 +552,7 @@ bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContaine
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}// end catch
@@ -593,7 +593,7 @@ bool BarCodeAnalyzer::LoadRegExpression( bool DisplayErrorMessage, SvStl::Messag
 		catch (...)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BarCode_UnableToRead, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10038, getObjectId());
+			message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BarCode_UnableToRead, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			if (nullptr != pErrorMessages)
 			{
 				pErrorMessages->push_back(message);
@@ -639,7 +639,7 @@ bool BarCodeAnalyzer::SaveRegExpression( SvStl::MessageContainerVector *pErrorMe
 		{
 			if (nullptr != pErrorMessage)
 			{
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BarCode_UnableToSave, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10039, getObjectId());
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BarCode_UnableToSave, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessage->push_back(message);
 			}
 			return false;
@@ -659,7 +659,7 @@ bool BarCodeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -687,7 +687,7 @@ bool BarCodeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -709,7 +709,7 @@ bool BarCodeAnalyzer::checkEccAndEncValues(long type, double eccValue, double en
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeECCNotFit, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeECCNotFit, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				return false;
@@ -722,7 +722,7 @@ bool BarCodeAnalyzer::checkEccAndEncValues(long type, double eccValue, double en
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeENCNotFit, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeENCNotFit, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				return false;
@@ -733,7 +733,7 @@ bool BarCodeAnalyzer::checkEccAndEncValues(long type, double eccValue, double en
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeUnknowType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeUnknowType, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

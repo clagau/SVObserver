@@ -20,9 +20,8 @@
 #include "SVMatroxHelper.h"
 #include "SVBufferResource.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -370,7 +369,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 						/*MatroxCode =*/ SVMatroxApplicationInterface::GetLastStatus(l_info);
 						SvDef::StringVector messageList;
 						messageList.push_back(l_info.m_StatusString);
-						SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, getObjectId() );
+						SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams));//, getObjectId() );
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -468,7 +467,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 								/*MatroxCode =*/ SVMatroxApplicationInterface::GetLastStatus(l_info);
 								SvDef::StringVector messageList;
 								messageList.push_back(l_info.m_StatusString);
-								SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, getObjectId() );
+								SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams));//, getObjectId() );
 								pErrorMessages->push_back(Msg);
 							}
 						}
@@ -478,7 +477,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 						retValue = false;
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, getObjectId() );
+							SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams));//, getObjectId() );
 							pErrorMessages->push_back(Msg);
 						}
 					}
@@ -488,7 +487,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 					retValue = false;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10251);//, getObjectId() );
+						SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));//, getObjectId() );
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -498,7 +497,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 				retValue = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10252);//, getObjectId() );
+					SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));//, getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -508,7 +507,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 			retValue = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10253);//, getObjectId() );
+				SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));//, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -520,7 +519,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 		retValue = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10253);//, getObjectId() );
+			SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));//, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

@@ -11,7 +11,6 @@
 #include "stdafx.h"
 #include "TADialogLinearResultRangesPage.h"
 #include "SVObserver/SVSetupDialogManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
@@ -84,7 +83,7 @@ void TADialogLinearResultRangesPage::OnBnClickedBtnRangeMin()
 	if (false == setRanges(SvPb::EmbeddedIdEnum::LinearThresholdMinEId))
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_50004_CannotOpenRangesDialog);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -94,7 +93,7 @@ void TADialogLinearResultRangesPage::OnBnClickedBtnRangeMax()
 	if (false == setRanges(SvPb::EmbeddedIdEnum::LinearThresholdMaxEId))
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_50004_CannotOpenRangesDialog);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -104,7 +103,7 @@ void TADialogLinearResultRangesPage::OnBnClickedBtnRangeDelta()
 	if (false == setRanges(SvPb::EmbeddedIdEnum::LinearThresholdDeltaEId))
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_50004_CannotOpenRangesDialog);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 

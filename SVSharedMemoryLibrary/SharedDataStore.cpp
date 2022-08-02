@@ -11,7 +11,7 @@
 #include "SharedDataStore.h"
 #include "MesManHelper.h"
 #include "SMParameterStruct.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/SourceFileParams.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
@@ -56,7 +56,7 @@ void   SharedDataStore::CloseConnection()
 				}
 				else
 				{
-					MesManHelper::LogUnMapViewOfFileFailed(m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16235);
+					MesManHelper::LogUnMapViewOfFileFailed(m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
 		}
@@ -76,7 +76,7 @@ void   SharedDataStore::CloseConnection()
 		}
 		else
 		{
-			MesManHelper::LogUnMapViewOfFileFailed(m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16235);
+			MesManHelper::LogUnMapViewOfFileFailed(m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }
@@ -131,7 +131,7 @@ void SharedDataStore::CreateDataStore(LPCTSTR StoreName, DWORD slotsize, DWORD  
 
 	if (nullptr == m_hMapFileImage)
 	{
-		MesManHelper::ThrowCreateFileMappingFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		MesManHelper::ThrowCreateFileMappingFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 	}
 	MapViewOfFileWriteInfos();
 }
@@ -141,7 +141,7 @@ void SharedDataStore::MapViewOfFileWriteInfos()
 	m_pViewHeader = MapViewOfFile(m_hMapFileImage, FILE_MAP_ALL_ACCESS, 0, 0, m_DataStoreHeaderSize);
 	if (m_pViewHeader == nullptr)
 	{
-		MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16227);
+		MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	DataStoreHeader* pHeader = reinterpret_cast<DataStoreHeader*>(m_pViewHeader);
@@ -158,7 +158,7 @@ void SharedDataStore::MapViewOfFileWriteInfos()
 			m_pViewData = nullptr;
 			if (nullptr == m_pViewDataVector[i])
 			{
-				MesManHelper::ThrowMapViewOfFileFailed(m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16228);
+				MesManHelper::ThrowMapViewOfFileFailed(m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -175,7 +175,7 @@ void SharedDataStore::MapViewOfFileWriteInfos()
 			m_pViewData = MapViewOfFile(m_hMapFileImage, FILE_MAP_ALL_ACCESS, 0, offset, m_slotSize * m_slotCount);
 			if (nullptr == m_pViewData)
 			{
-				MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16228);
+				MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -198,13 +198,13 @@ bool SharedDataStore::OpenDataStore(LPCTSTR StoreName)
 		}
 		else
 		{
-			MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16230);
+			MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	m_pViewHeader = MapViewOfFile(m_hMapFileImage, FILE_MAP_ALL_ACCESS, 0, 0, m_DataStoreHeaderSize);
 	if (nullptr == m_pViewHeader)
 	{
-		MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16231);
+		MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 	}
 	DataStoreHeader* pHeader = reinterpret_cast<DataStoreHeader*>(m_pViewHeader);
 	m_slotCount = pHeader->slotCount;
@@ -212,7 +212,7 @@ bool SharedDataStore::OpenDataStore(LPCTSTR StoreName)
 	m_bUseOneViewPerSlot = pHeader->UseOneViewPerSlot ? true : false;
 	if (m_slotCount <= 0)
 	{
-		MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16232);
+		MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 	}
 	if (m_bUseOneViewPerSlot)
 	{
@@ -225,7 +225,7 @@ bool SharedDataStore::OpenDataStore(LPCTSTR StoreName)
 
 			if (m_pViewDataVector[i] == nullptr)
 			{
-				MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16233);
+				MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -242,7 +242,7 @@ bool SharedDataStore::OpenDataStore(LPCTSTR StoreName)
 			m_pViewData = MapViewOfFile(m_hMapFileImage, FILE_MAP_ALL_ACCESS, 0, offset, m_slotSize * m_slotCount);
 			if (m_pViewData == nullptr)
 			{
-				MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16236);
+				MesManHelper::ThrowMapViewOfFileFailed( m_MapFileName.c_str(),SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}

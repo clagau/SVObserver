@@ -47,9 +47,6 @@
     <ClInclude Include="CommandLineArgs.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ErrorNumbers.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="GlobalPath.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

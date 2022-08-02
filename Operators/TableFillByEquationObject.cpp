@@ -82,7 +82,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 				if (SvPb::NoEmbeddedId == newId)
 				{
 					SvStl::MessageManager e(SvStl::MsgType::Log);
-					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeID, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeID, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					e.Throw();
 				}
 				createColumnObject(newId, (*forIter)->GetName(), maxArray);

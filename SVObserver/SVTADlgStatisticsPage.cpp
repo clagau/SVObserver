@@ -22,7 +22,6 @@
 #include "Operators/SVResult.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVStatTool.h"
@@ -242,12 +241,12 @@ void SVTADlgStatisticsPage::OnSetRange()
 		if (nullptr == pResult)
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16089);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 		}
 		else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->getObjectId(), this ))
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 		}
     }
 }

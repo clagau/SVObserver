@@ -473,7 +473,7 @@ void SVTADlgExternalSelectDllPage::displayInitializationProblem(std::string erro
 	m_strStatus += cCRLF;
 
 	SvStl::MessageContainer mc;
-	mc.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, m_ToolObjectID);
+	mc.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), m_ToolObjectID);
 
 	m_strStatus += mc.What().c_str();
 	m_strStatus += cCRLF;

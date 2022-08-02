@@ -16,8 +16,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "GuiValueHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "Definitions\GlobalConst.h"
 #include "GridCtrlLibrary\GridCellCheck.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
@@ -514,7 +513,7 @@ void Ranking2FilterDlg::isDataValid() const
 		msgList.push_back(SvUl::Format(_T("%d"), m_KernelArray.size()));
 		msgList.push_back(SvUl::Format(_T("%d"), m_KernelWidth));
 		msgList.push_back(SvUl::Format(_T("%d"), m_KernelHeight));
-		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
+		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
 
@@ -524,7 +523,7 @@ void Ranking2FilterDlg::isDataValid() const
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), m_KernelWidth));
 		msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
-		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
+		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
 	if (1 != m_KernelHeight % 2 || 1 > m_KernelHeight || SvDef::cMaxKernelSize < m_KernelHeight)
@@ -532,7 +531,7 @@ void Ranking2FilterDlg::isDataValid() const
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), m_KernelHeight));
 		msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
-		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
+		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
 }

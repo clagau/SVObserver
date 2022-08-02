@@ -19,10 +19,9 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "Definitions/GlobalConst.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\IRootObject.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "ExtrasEngine.h"
 #pragma endregion Includes
 
@@ -404,7 +403,7 @@ bool RootObject::createRootChild(LPCTSTR ChildName, SvPb::SVObjectSubTypeEnum Ob
 	else
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log );
-		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25017_RootChildCreate, getObjectId() );
+		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 	}
 
 	return Result;

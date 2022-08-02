@@ -34,7 +34,6 @@
 #include "ObjectInterfaces\IResultValueDefinition.h"
 #include "Definitions\ObjectDefines.h"
 #include "Definitions\TextDefineSvDef.h"
-#include "SVStatusLibrary\ErrorNumbers.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
@@ -42,7 +41,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
 #include "SVMatroxLibrary\SVMatroxPatternInterface.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "SVObjectLibrary\SVObjectClass.h"
@@ -108,7 +107,7 @@ SvPb::InspectionCmdResponse DeleteObject(SvPb::DeleteObjectRequest request)
 	}
 	else
 	{
-		cmdResponse.set_hresult(SvStl::Err_10024_DestroyChildObject_InvalidParameter);
+		cmdResponse.set_hresult(E_FAIL);
 	}
 	return cmdResponse;
 }
@@ -183,19 +182,19 @@ SvPb::InspectionCmdResponse CreateModel(SvPb::CreateModelRequest request)
 			if (S_OK != result)
 			{
 				cmdResponse.set_hresult(E_FAIL);
-				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, request.patternanalyzerid());
+				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), request.patternanalyzerid());
 			}
 		}
 		else
 		{
 			cmdResponse.set_hresult(E_FAIL);
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, request.patternanalyzerid());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), request.patternanalyzerid());
 		}
 	}
 	else
 	{
 		cmdResponse.set_hresult(E_FAIL);
-		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, request.patternanalyzerid());
+		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), request.patternanalyzerid());
 	}
 
 	if (S_OK != cmdResponse.hresult())
@@ -840,7 +839,7 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 					// And finally try to create the child object...
 					if (!pObjectApp->CreateChildObject(*pObject, SvDef::SVMFResetObject))
 					{
-						cmdResponse.set_hresult(SvStl::Err_10021_InsertTaskObject_CreateObjectFailed);
+						cmdResponse.set_hresult(E_FAIL);
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						uint32_t objectID = pObject->getObjectId();
@@ -1965,7 +1964,7 @@ SvPb::InspectionCmdResponse validateValueParameterExternalTool(SvPb::ValidateVal
 			}
 			msgList.push_back(dllMessageString);
 			SvStl::MessageContainer msg;
-			msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, request.taskobjectid());
+			msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), request.taskobjectid());
 			messageContainers.push_back(msg);
 			SvPb::ValidateValueParameterExternalToolResponse* pResponse = cmdResponse.mutable_validatevalueparameterexternaltoolresponse();
 			pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));

@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <codecvt>
 //Moved to precompiled header: #include <locale>
 #include "MessageContainer.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "RegistryAccess.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
@@ -41,7 +41,7 @@ constexpr const char* RegPathEventLog = _T("HKEY_LOCAL_MACHINE\\System\\CurrentC
 constexpr const char* EventMsgFile = _T( "EventMessageFile" );
 constexpr const char* SourceCategoryEventFormat = _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n");
 constexpr const char* ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
-constexpr const char* DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d [0X%08X]\r\nCompiled: %s %s\n");
+constexpr const char* DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nCompiled: %s %s\n");
 
 constexpr int SubstituteStringNr = 9;
 
@@ -90,14 +90,14 @@ namespace SvStl
 {
 #pragma region Constructor
 
-	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/ )
+	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, uint32_t objectId /*=0*/ )
 	{
-		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, objectId );
+		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, objectId );
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/  )
+	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, uint32_t objectId /*=0*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, objectId );
+		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, objectId );
 	}
 
 	MessageContainer::MessageContainer(const MessageData& rMessage, uint32_t objectId /*= 0*/, bool clearData /*= true*/)
@@ -118,19 +118,18 @@ namespace SvStl
 #endif
 	}
 
-	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/  )
+	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, uint32_t objectId /*=0*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, objectId );
+		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, objectId );
 	}
 
-	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/  )
+	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, uint32_t objectId /*=0*/  )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
 		m_Message.m_AdditionalTextId = AdditionalTextId;
 		m_Message.m_AdditionalTextList = rAdditionalTextList;
 		m_Message.m_SourceFile = SourceFile;
-		m_Message.m_ProgramCode = ProgramCode;
 
 		setMessage( m_Message, objectId, false );
 	}
@@ -164,7 +163,7 @@ namespace SvStl
 		}
 	}
 
-	void MessageContainer::addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SvDef::StringVector AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
+	void MessageContainer::addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SvDef::StringVector AdditionalTextList, SourceFileParams SourceFile)
 	{
 		//Save the current message to the additional messages
 		m_AdditionalMessages.push_back( m_Message );
@@ -173,7 +172,6 @@ namespace SvStl
 		m_Message.m_AdditionalTextId = AdditionalTextId;
 		m_Message.m_AdditionalTextList = AdditionalTextList;
 		m_Message.m_SourceFile = SourceFile;
-		m_Message.m_ProgramCode = ProgramCode;
 
 		setMessage( m_Message, 0, false );
 	}
@@ -357,8 +355,6 @@ namespace SvStl
 				m_Message.m_SourceFile.m_FileName.c_str(),
 				m_Message.m_SourceFile.m_Line,
 				m_Message.m_SourceFile.m_FileDateTime.c_str(),
-				m_Message.m_ProgramCode,
-				m_Message.m_ProgramCode,
 				m_Message.m_SourceFile.m_CompileDate.c_str(),
 				m_Message.m_SourceFile.m_CompileTime.c_str() );
 		}
@@ -467,11 +463,9 @@ namespace SvStl
 		rSubstituteStrings[1] =  m_Message.m_SourceFile.m_FileName;
 		rSubstituteStrings[2] = SvUl::Format( _T("%d"), m_Message.m_SourceFile.m_Line );
 		rSubstituteStrings[3] = m_Message.m_SourceFile.m_FileDateTime;
-		rSubstituteStrings[4] = SvUl::Format( _T("%d"), m_Message.m_ProgramCode );
-		rSubstituteStrings[5] = SvUl::Format( _T("0x%08x"), m_Message.m_ProgramCode );
-		rSubstituteStrings[6] = m_Message.m_SourceFile.m_CompileDate;
-		rSubstituteStrings[7] = m_Message.m_SourceFile.m_CompileTime;
-		rSubstituteStrings[8] = m_Message.getAdditionalText();
+		rSubstituteStrings[4] = m_Message.m_SourceFile.m_CompileDate;
+		rSubstituteStrings[5] = m_Message.m_SourceFile.m_CompileTime;
+		rSubstituteStrings[6] = m_Message.getAdditionalText();
 	}
 
 	HRESULT MessageContainer::setMessageDll()

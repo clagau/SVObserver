@@ -45,7 +45,7 @@ bool IndexEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(message);
 		}
 	}
@@ -95,7 +95,7 @@ bool IndexEquation::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(message);
 		}
 	}

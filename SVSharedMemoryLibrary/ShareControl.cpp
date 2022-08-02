@@ -11,7 +11,7 @@
 #include "ShareEvents.h"
 #include "ShareControlSetting.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "Definitions\StringTypeDef.h"
 #include "SVProtoBuf/Envelope.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"

@@ -15,10 +15,9 @@
 #include "DependencyManager.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVClassRegisterListClass.h"
 #include "TextDefinesSvOl.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
@@ -302,7 +301,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 	if (0 == rFullName.find(SvOl::ToolSetName))
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25049_DottedName);
+		Exception.setMessage(SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
 		rObjectRef = SVObjectReference();
 		return E_FAIL;

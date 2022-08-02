@@ -21,8 +21,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "GuiValueHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -216,7 +215,7 @@ namespace SvOg
 		if( 0 == m_KernelSum )
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10225 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams));
 		}
 		else
 		{
@@ -336,21 +335,21 @@ namespace SvOg
 						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
 						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_XmlFormatInvalid));
-						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
+						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 					}
 					else if (SvOi::E_CUSTOM_IMPORT_VERSION_MISMATCH == hResult)
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
 						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_VersionMismatch));
-						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
+						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 					}
 					else
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
 						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
-						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
+						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 					}
 				}
 			}
@@ -363,7 +362,7 @@ namespace SvOg
 				SvDef::StringVector msgList;
 				msgList.push_back(pathName);
 				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
-				message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
+				message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 			if( 0 != message.getMessage().m_MessageCode )
 			{
@@ -408,7 +407,7 @@ namespace SvOg
 			catch( ... )
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExportFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10227 );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExportFailed, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -887,7 +886,7 @@ namespace SvOg
 			msgList.push_back(SvUl::Format(_T("%d"),m_KernelArray.size()));
 			msgList.push_back(SvUl::Format(_T("%d"),m_KernelWidth));
 			msgList.push_back(SvUl::Format(_T("%d"),m_KernelHeight));
-			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
+			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams));
 			throw message;
 		}
 
@@ -897,7 +896,7 @@ namespace SvOg
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), m_KernelWidth));
 			msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
-			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
+			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams));
 			throw message;
 		}
 		if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || SvDef::cMaxKernelSize < m_KernelHeight )
@@ -905,13 +904,13 @@ namespace SvOg
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), m_KernelHeight));
 			msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
-			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
+			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams));
 			throw message;
 		}
 		//Normalization Factor is not allowed to be 0 or negative
 		if( 0 >= m_NormalizationFactor )
 		{
-			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
+			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams));
 			throw message;
 		}
 	}

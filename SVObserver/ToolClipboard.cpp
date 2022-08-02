@@ -30,7 +30,6 @@
 #include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -228,7 +227,7 @@ SvDef::StringVector ToolClipboard::streamToolsToXmlFile(const std::vector<uint32
 			if (nullptr == pTool)
 			{
 				SvStl::MessageManager e(SvStl::MsgType::Data);
-				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25002_ToolInvalid);
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
 				e.Throw();
 			}
 
@@ -388,7 +387,7 @@ HRESULT ToolClipboard::checkVersion(SvXml::SVXMLMaterialsTree& rTree) const
 	if (S_OK != Result)
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_Clipboard_VersionMismatch, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25005_VersionMismatch);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_Clipboard_VersionMismatch, SvStl::SourceFileParams(StdMessageParams));
 		e.Throw();
 	}
 	return Result;

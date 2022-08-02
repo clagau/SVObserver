@@ -11,7 +11,6 @@
 #include "SVCommandInspectionExtentUpdater.h"
 #include "SVInspectionProcess.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -59,7 +58,7 @@ HRESULT CommandInspectionExtentUpdater::operator()()
 			retVal = pTool->SetImageExtentToFit(m_ImageExtent);
 			break;
 		default:
-			retVal = SvStl::Err_10004_SVCommandInspectionExtentUpdater_InvalidMode;
+			retVal = E_FAIL;
 			break;
 		}
 
@@ -83,14 +82,14 @@ HRESULT CommandInspectionExtentUpdater::operator()()
 			}
 			else
 			{
-				retVal = SvStl::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
+				retVal = E_FAIL;
 			}
 			pInspection->RemoveResetState(SvDef::SVResetAutoMoveAndResize);
 		}
 	}
 	else
 	{
-		retVal = SvStl::Err_10007_SVCommandInspectionExtentUpdater_InvalidParameter;
+		retVal = E_FAIL;
 	}
 
 	return retVal;

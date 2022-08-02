@@ -14,7 +14,6 @@
 #include "ToolSizeAdjustTask.h"
 #include "Tools/SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/Color.h"
@@ -121,6 +120,7 @@ bool  ToolSizeAdjustTask::Run( SvIe::RunStatus&, SvStl::MessageContainerVector* 
 	return true;
 }
 
+//THB TODO: Maybe make a message for every single one, instead of one for all
 HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rModePosX, long &rModePosY)
 {
 	rModeWidth = rModeHeight = rModePosX = rModePosY = SvDef::ToolSizeModes::TSModeCount;
@@ -145,11 +145,11 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 		{
 			if( ( rModeWidth != SvDef::TSAutoFit)  ||   (rModeHeight != SvDef::TSAutoFit)  ||  (rModePosX != SvDef::TSAutoFit)  ||  (rModePosY != SvDef::TSAutoFit))
 			{
-				hresult = SvStl::Err_16028_InvalidMode;
+				hresult = E_FAIL;
 			}
 			if( false == m_AllowFullSize )
 			{
-				hresult = 	SvStl::Err_16034_InvalidMode;
+				hresult = E_FAIL;
 			}
 		}
 	}
@@ -157,11 +157,11 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 	{
 		if( ((rModeWidth == SvDef::TSFormula) ||  (rModeHeight == SvDef::TSFormula) ) && false == m_AllowAdjustSize)
 		{
-			hresult = 	SvStl::Err_16035_InvalidMode;
+			hresult = E_FAIL;
 		}
 		if( ((rModePosX == SvDef::TSFormula) ||  (rModePosY == SvDef::TSFormula) ) && false== m_AllowAdjustPosition)
 		{
-			hresult = 	SvStl::Err_16036_InvalidMode;
+			hresult = E_FAIL;
 		}
 	}
 	return hresult;
@@ -169,7 +169,7 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 
 HRESULT ToolSizeAdjustTask::GetResultValue(SvDef::ToolSizeAdjustEnum val, long& rValue) const
 {
-	HRESULT hresult = SvStl::Err_16030_InvalidValuePointer;
+	HRESULT hresult = SVMSG_INVALID_VALUE_POINTER;
 	SvVol::SVDoubleValueObjectClass* pValueObject =GetDResultObjects(val);
 	if (nullptr != pValueObject)
 	{
@@ -183,22 +183,22 @@ HRESULT ToolSizeAdjustTask::GetResultValue(SvDef::ToolSizeAdjustEnum val, long& 
 		{
 			if (rValue < MinToolSize)
 			{
-				hresult = SvStl::Err_16031_InvalidSize;
+				hresult = SVMSG_INVALID_SIZE;
 			}
 			else if (rValue > MaxToolSize)
 			{
-				hresult = SvStl::Err_16032_InvalidSize;
+				hresult = SVMSG_INVALID_SIZE;
 			}
 		}
 		else
 		{
 			if (rValue < 0)
 			{
-				hresult = SvStl::Err_16039_NegativePosition;
+				hresult = SVMSG_NEGATIVE_POSITION;
 			}
 			else if (rValue > MaxToolSize)
 			{
-				hresult = SvStl::Err_16040_ToLargePosition;
+				hresult = SVMSG_SVO_TO_LARGE_POSITION;
 			}
 		}
 	}
@@ -237,7 +237,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOwner, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOwner, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -338,7 +338,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			long  PosX;
 			hresult =  GetResultValue(SvDef::ToolSizeAdjustEnum::TSPositionX,PosX);
 			
-			if (SvStl::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
+			if (SVMSG_NEGATIVE_POSITION == hresult && bAllowNegativePostion)
 			{
 				hresult = S_OK;
 			}
@@ -354,7 +354,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			long  PosY;
 			hresult = GetResultValue(SvDef::ToolSizeAdjustEnum::TSPositionY, PosY);
 			
-			if (SvStl::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
+			if (SVMSG_NEGATIVE_POSITION == hresult && bAllowNegativePostion)
 			{
 				hresult = S_OK;
 			}
@@ -394,7 +394,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			msgList.push_back(GetTool()->GetName());
 		}
 		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), hresult, getObjectId() );
+		message.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage( message.getMessage() );
 		if (nullptr != pErrorMessages)
@@ -438,7 +438,7 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 	if (nullptr == pTool)
 	{
 		assert(false);
-		hresult = SvStl::Err_16027_InvalidOwner;
+		hresult = E_FAIL;
 	}
 
 	long ModeWidth(SvDef::TSNone), ModeHeight(SvDef::TSNone), ModeX(SvDef::TSNone), ModeY(SvDef::TSNone);

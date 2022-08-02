@@ -17,7 +17,7 @@
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

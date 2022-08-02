@@ -21,7 +21,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -98,7 +97,7 @@ void SVDiscreteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 		if ( nullptr == pInputList )
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17006_ErrorGettingInputObjectList );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams));
 			DebugBreak();
 			return; 
 		}

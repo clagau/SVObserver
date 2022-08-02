@@ -14,7 +14,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"

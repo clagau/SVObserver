@@ -7,7 +7,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "FormulaController.h"
 #include "SVFormulaEditorSheet.h"
@@ -145,7 +144,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 		}
 		else
 		{
-			hresult = SvStl::Err_16029_InvalidSelection;
+			hresult = E_FAIL;
 		}
 		if (S_OK != hresult)
 		{
@@ -378,7 +377,7 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 				if (formula.GetEquationText().empty())
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Exception.setMessage(SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16038_EmptyFormula);
+					Exception.setMessage(SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 					return false;
 				}
 			}

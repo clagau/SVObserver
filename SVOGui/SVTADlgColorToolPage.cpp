@@ -17,7 +17,6 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
@@ -127,7 +126,7 @@ namespace SvOg
 				if (S_OK != result)
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232);
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
 		}

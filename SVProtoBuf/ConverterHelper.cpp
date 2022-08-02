@@ -393,7 +393,7 @@ SvStl::MessageContainer convertProtobufToMessage(const MessageContainer& message
 	SvStl::SourceFileParams fileParam(messagePB.compiledate().c_str(), messagePB.compiletime().c_str(), messagePB.filename().c_str(), messagePB.fileline(), messagePB.filedatetime().c_str());
 	SvDef::StringVector AdditionalTextList(messagePB.additionaltextlist().size());
 	std::ranges::copy(messagePB.additionaltextlist(), AdditionalTextList.begin());
-	return {messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, messagePB.objectid()};
+	return {messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, messagePB.objectid()};
 }
 
 SvStl::MessageContainerVector convertProtobufToMessageVector(const MessageContainerVector& messagesPB)

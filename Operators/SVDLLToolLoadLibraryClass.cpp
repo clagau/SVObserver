@@ -12,7 +12,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <io.h>
 #include "SVDLLToolLoadLibraryClass.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"

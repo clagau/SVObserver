@@ -13,7 +13,6 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVClock.h"
@@ -67,7 +66,7 @@ void ResultListCtrl::updateList()
 	if (nullptr == m_pDoc)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ResultView_InitFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10197);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ResultView_InitFailed, SvStl::SourceFileParams(StdMessageParams));
 		return;
 	}
 

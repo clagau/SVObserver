@@ -13,7 +13,7 @@
 #include "SharedMemoryStructs.h"
 #include "TriggerRecord.h"
 #include "TriggerRecordData.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"

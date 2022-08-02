@@ -25,7 +25,6 @@
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVGlobal.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/GlobalConst.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVInspectionProcess.h"
@@ -264,7 +263,7 @@ void SVOInspectionSourceDlg::OnBtnImportIpd()
 					msgList.push_back(File);
 					msgList.push_back(App);
 					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, SvStl::Tid_ImportInspectionError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10008_ImportInspectionWrongVersion );
+					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, SvStl::Tid_ImportInspectionError, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 					OnBtnDeleteVi();
 				}

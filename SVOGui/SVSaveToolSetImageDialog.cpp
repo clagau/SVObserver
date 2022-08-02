@@ -15,7 +15,6 @@
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -114,12 +113,12 @@ namespace SvOg
 						if (E_INVALIDARG == hr)
 						{
 							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10071 );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams));
 						}
 						else
 						{
 							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToSaveImage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10072 );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToSaveImage, SvStl::SourceFileParams(StdMessageParams));
 						}
 					}
 				}

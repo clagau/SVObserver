@@ -15,14 +15,13 @@
 #include "SVCommandInspectionExtentUpdater.h"
 #include "SVInspectionProcess.h"
 #include "InspectionEngine/SVTaskObject.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 HRESULT SVGuiExtentUpdater::UpdateImageExtent(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents)
 {
 	CWaitCursor wait;
 
-	HRESULT status = SvStl::Err_10001_SetImageExtent_InvalidParameter;
+	HRESULT status = E_FAIL;
 	if ( nullptr != pTaskObject )
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
@@ -52,7 +51,7 @@ HRESULT SVGuiExtentUpdater::UpdateImageExtent(SvIe::SVTaskObjectClass* pTaskObje
 HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents)
 {
 	CWaitCursor wait;
-	HRESULT status = SvStl::Err_10003_SetImageExtentToFit_InvalidParameter;
+	HRESULT status = E_FAIL;
 
 	if ( nullptr != pTaskObject )
 	{

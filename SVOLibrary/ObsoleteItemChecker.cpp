@@ -10,7 +10,6 @@
 #include "Stdafx.h"
 #include "ObsoleteItemChecker.h"
 #include "SVHardwareManifest.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -169,7 +168,7 @@ bool HasInvalidProductType(SvXml::SVXMLMaterialsTree& rTree, std::string& rItemT
 			if (!SVHardwareManifest::IsValidProductType(static_cast<SVIMProductEnum>(iType)))
 			{
 				bInvalid = true;
-				rErrorCode = SvStl::Err_15043_UnknownProductType;
+				rErrorCode = E_FAIL;
 				rItemType = ITEM_PRODUCTTYPE;
 			}
 		}
@@ -181,16 +180,16 @@ HRESULT HasObsoleteItem(SvXml::SVXMLMaterialsTree& rTree, std::string& rItemType
 {
 	ObsoleteItems cameraItems
 	{
-		{TAG_VIPER, ITEM_ANALOG_CAMERA,	SvStl::Err_15038_AnalogCamera},
-		{TAG_1394, ITEM_1394_CAMERA,	SvStl::Err_15039_1394Camera}
+		{TAG_VIPER, ITEM_ANALOG_CAMERA,	E_FAIL},
+		{TAG_1394, ITEM_1394_CAMERA,	E_FAIL}
 	};
 
 	ObsoleteItems taskItems
 	{
-		{TAG_GAGETOOL,				ITEM_GAGE_TOOL,		SvStl::Err_15040_GageTool},
-		{TAG_PROFILETOOL,			ITEM_PROFILE_TOOL,	SvStl::Err_15041_ProfileTool},
-		{TAG_OCROCVANALYZER,		ITEM_FAST_OCR,		SvStl::Err_15042_FastOCR},
-		{TAG_OCROCVGRAYANALYZER,	ITEM_FAST_OCR,		SvStl::Err_15042_FastOCR}
+		{TAG_GAGETOOL,				ITEM_GAGE_TOOL,		E_FAIL},
+		{TAG_PROFILETOOL,			ITEM_PROFILE_TOOL,	E_FAIL},
+		{TAG_OCROCVANALYZER,		ITEM_FAST_OCR,		E_FAIL},
+		{TAG_OCROCVGRAYANALYZER,	ITEM_FAST_OCR,		E_FAIL}
 	};
 
 	HRESULT hr = S_OK;

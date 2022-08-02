@@ -147,7 +147,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::refresh()
 	if (hres != S_OK)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidValues, SvStl::SourceFileParams(StdMessageParams), 0);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidValues, SvStl::SourceFileParams(StdMessageParams));
 	}
 	
 

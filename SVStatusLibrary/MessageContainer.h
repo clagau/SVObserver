@@ -26,9 +26,9 @@ namespace SvStl
 	public:
 		MessageContainer() = default;
 
-		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, DWORD ProgramCode = 0, uint32_t objectId = 0 );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, uint32_t objectId = 0 );
 
-		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, uint32_t objectId = 0 );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, uint32_t objectId = 0 );
 
 		explicit MessageContainer(const MessageData& rMessage, uint32_t objectId = 0, bool clearData = true);
 
@@ -45,10 +45,10 @@ namespace SvStl
 
 		const std::string& What() const { return m_What; };
 
-		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode=0, uint32_t ojectId=0 );
-		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, uint32_t objectId=0 );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, uint32_t ojectId=0 );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, uint32_t objectId=0 );
 		void setMessage( const MessageData& rMessage, uint32_t objectId=0, bool clearData = true );
-		void addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SvDef::StringVector AdditionalTextList, SourceFileParams SourceFile, DWORD dwProgramCode = 0 );
+		void addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SvDef::StringVector AdditionalTextList, SourceFileParams SourceFile);
 		void addMessage( const MessageData& rMessage, bool replaceMainMessage = true );
 
 		void clearMessage();

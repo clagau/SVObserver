@@ -54,7 +54,6 @@
 #include "Operators/SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "RootObject.h"
@@ -287,7 +286,7 @@ void SVConfigurationPrint::DoPrintConfig()
 					CString message;
 					message.Format(AFX_IDP_FAILED_TO_START_PRINT);
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10238 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams));
 					return;
 				}  // end if( nullptr == printInfo.m_pPD->m_pd.hDC  )
 			}  // end if( pCmdInfo->m_nShellCommand == CCommandLineInfo::FilePrintTo )
@@ -394,7 +393,7 @@ void SVConfigurationPrint::DoPrintConfig()
 			CString message;
 			message.Format(AFX_IDP_FAILED_TO_START_PRINT);
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10239 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams));
 			return;
 		}  // end if( printDC.StartDoc( &docInfo ) == SP_ERROR )
 		
@@ -1842,7 +1841,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		if ( nullptr == pPPQ )
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17000_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams));
 			DebugBreak();
 			continue;
 		}
@@ -2013,7 +2012,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		else
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17001_ErrorGettingInputObjectList );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams));
 			DebugBreak();
 		}
 
@@ -2095,7 +2094,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	else
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Log );
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17003_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams));
 		DebugBreak();
 	}
 
@@ -2132,7 +2131,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( nullptr == pPPQ )
 				{
 					SvStl::MessageManager e(SvStl::MsgType::Log );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17004_ErrorGettingPPQ );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams));
 					DebugBreak();
 				}
 

@@ -157,7 +157,7 @@ public:
 				hr = RunOnce(inspectionID);
 				if(S_OK != hr)
 				{
-					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), 0, taskID);
+					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), taskID);
 					m_MessageFailList.push_back(message);
 				}
 			}
@@ -166,7 +166,7 @@ public:
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"),hr));
-			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams), 0, taskID);
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams), taskID);
 			m_MessageFailList.push_back(message);
 		}
 		if (0 < m_MessageFailList.size())
@@ -252,7 +252,7 @@ public:
 		}
 		if (S_OK != hr && 0 < m_MessageFailList.size())
 		{
-			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, objectID);
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), objectID);
 			m_MessageFailList.push_back(message);
 		}
 		if (0 < m_MessageFailList.size())

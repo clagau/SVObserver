@@ -19,7 +19,6 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/LoadDll.h"
@@ -125,7 +124,7 @@ BOOL SVFormulaEditorPageClass::OnInitDialog()
 	if (S_OK != hOK || nullptr == ScintillaInstance)
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Exception.setMessage(SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10028_LoadOfScintillaDllFailed);
+		Exception.setMessage(SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
 	else
 	{
@@ -724,7 +723,7 @@ void SVFormulaEditorPageClass::onValidate()
 			}
 		}
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, id, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10223);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, id, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	else // Something is wrong
 	{
@@ -768,7 +767,7 @@ BOOL SVFormulaEditorPageClass::OnKillActive()
 	{
 		// Equation must be valid or disabled
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10222);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams));
 		return FALSE;
 	}
 	else

@@ -24,7 +24,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
@@ -123,7 +122,7 @@ void SVRemoteOutputsView::OnUpdate(CView* , LPARAM , CObject* )
 		if( nullptr == pConfig  )
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17051_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams));
 			DebugBreak();
 		}
 		else
@@ -526,12 +525,12 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				if( bFirst && pos != std::string::npos )
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RemoteOutput_TriggerCountDeleteError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10194 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RemoteOutput_TriggerCountDeleteError, SvStl::SourceFileParams(StdMessageParams)); 
 				}
 				else
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10195, SvDef::InvalidObjectId, MB_YESNO);
+					INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO);
 					if( IDYES == result )
 					{
 						pConfig->DeleteRemoteOutputEntry( RemoteGroup, pRemoteOutput );
@@ -558,7 +557,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 					SvDef::StringVector msgList;
 					msgList.push_back(strGroup);
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10196, SvDef::InvalidObjectId, MB_YESNO );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO );
 					if( IDYES == result )
 					{
 						// Delete all DLL entries

@@ -23,7 +23,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces/ILinkedObject.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "InputObject.h"
@@ -485,7 +484,7 @@ HRESULT SVObjectBuilder::SetObjectValue(uint32_t ownerID, uint32_t objectID, con
 		if( S_OK != pOwnerObject->SetValuesForAnObject(objectID, &dataObject) )
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ObjectBuilder_SetObjectValueError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10248 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ObjectBuilder_SetObjectValueError, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	return hr;

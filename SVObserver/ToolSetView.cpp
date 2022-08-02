@@ -819,7 +819,7 @@ bool ToolSetView::ShowDuplicateNameMessage(const std::string& rName) const
 	SvDef::StringVector msgList;
 	msgList.push_back(rName);
 	SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-	INT_PTR res = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10221, SvDef::InvalidObjectId, MB_RETRYCANCEL);
+	INT_PTR res = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_RETRYCANCEL);
 	return (IDRETRY == res);
 }
 

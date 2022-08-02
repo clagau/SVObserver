@@ -38,7 +38,6 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
@@ -742,7 +741,7 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 		SvDef::StringVector msgList;
 		msgList.push_back(m_pTrigger->GetCompleteName());
 
-		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw Msg;
 	}
 	
@@ -765,7 +764,7 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 			SvDef::StringVector msgList;
 			msgList.push_back(l_svIter->first->GetCompleteName());
 
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams));
 			throw Msg;
 		}
 	}
@@ -779,7 +778,7 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 		{
 			if (!RecycleProductInfo(l_pProduct))
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, SvStl::SourceFileParams(StdMessageParams));
 				throw Msg;
 			}
 
@@ -793,13 +792,13 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(SvUl::Format(_T("%X"), hRTemp));
-				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, msgList, SvStl::SourceFileParams(StdMessageParams));
 				throw Msg;
 			}
 		}
 		else
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, SvStl::SourceFileParams(StdMessageParams));
 			throw Msg;
 		}
 	}// end for
@@ -830,14 +829,14 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 			{
 				msgList.push_back(m_arInspections[i]->GetCompleteName());
 			}
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList, sourceFileParam, SvStl::Err_10185);
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList, sourceFileParam);
 			throw Msg;
 		}
 	}// end for
 
 	if (!ResolveConditionalOutput())
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_ConditionalOutput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_ConditionalOutput, SvStl::SourceFileParams(StdMessageParams));
 		throw Msg;
 	}
 }
@@ -913,7 +912,7 @@ void SVPPQObject::GoOnline()
 		SvDef::StringVector msgList;
 		msgList.push_back(FailureObjectName);
 
-		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Inspection, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Inspection, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw Msg;
 	}// end if
 
@@ -955,7 +954,7 @@ void SVPPQObject::GoOnline()
 		SvDef::StringVector msgList;
 		msgList.push_back(FailureObjectName);
 
-		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw Msg;
 	}// end if
 
@@ -982,14 +981,14 @@ void SVPPQObject::GoOnline()
 		SvDef::StringVector msgList;
 		msgList.push_back(FailureObjectName);
 
-		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw Msg;
 	}// end if
 
 	// Create the PPQ's threads
 	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, GetName()))
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreatePPQThread, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
+		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreatePPQThread, SvStl::SourceFileParams(StdMessageParams));
 		throw Msg;
 	}
 
@@ -2745,14 +2744,14 @@ void SVPPQObject::ProcessTrigger()
 						SvDef::StringVector msgList;
 						msgList.push_back(e.what());
 						SvStl::MessageManager Exception(SvStl::MsgType::Log);
-						Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15026);
+						Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams));
 					}
 					catch (...)
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
 						SvStl::MessageManager Exception(SvStl::MsgType::Log);
-						Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15027);
+						Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams));
 					}
 				}
 			}
@@ -3280,14 +3279,14 @@ void SVPPQObject::ReleaseSharedMemory(SVProductInfoStruct& rProduct)
 			SvDef::StringVector msgList;
 			msgList.push_back(e.what());
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15029);
+			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 		catch (...)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15030);
+			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }
@@ -3312,14 +3311,14 @@ void SVPPQObject::CommitSharedMemory(SVProductInfoStruct& rProduct)
 			SvDef::StringVector msgList;
 			msgList.push_back(e.what());
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15032);
+			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 		catch (...)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15033);
+			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }

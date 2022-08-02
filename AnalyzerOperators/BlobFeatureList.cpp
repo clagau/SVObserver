@@ -255,7 +255,7 @@ namespace SvAo
 			{
 				list.erase(iter, list.end());
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RemoveGrayFeature, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				MesMan.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RemoveGrayFeature, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			}
 		}
 
@@ -498,7 +498,7 @@ namespace SvAo
 							SvDef::StringVector msgList;
 							msgList.push_back(excludeData.m_name);
 							msgList.push_back(std::to_string(row)); //the row number is not for display, but for getting the row in the error message.
-							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExcludeBlobUpperBoundLowerThanLowerBound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExcludeBlobUpperBoundLowerThanLowerBound, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 							pErrorMessages->push_back(Msg);
 						}
 					}
@@ -633,7 +633,7 @@ namespace SvAo
 					msgList.push_back(SvStl::MessageData::convertId2AdditionalText(higherId));
 					msgList.push_back(SvStl::MessageData::convertId2AdditionalText(lowerId));
 					msgList.push_back(std::to_string(row)); //the row number is not for display, but for getting the row in the error message.
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RangeBlobUpperBoundLowerThanLowerBound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RangeBlobUpperBoundLowerThanLowerBound, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				return false;

@@ -12,7 +12,6 @@
 #include "Definitions/TextDefineSvDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -114,7 +113,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMin));
 			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMax));
 			msgList.push_back(SvUl::Format("%d", depthVariant.lVal));
-			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvStl::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10013_RingBuffer_DepthValueInvalid, getObjectId() );
+			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvStl::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(message);
 		}
 	}
@@ -162,7 +161,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{ 
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -185,7 +184,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}

@@ -55,7 +55,6 @@
 #include "SVOGui/TATableSourcePage.h"
 #include "SVOGui/ToolAdjustToolSetPage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Tools/SVTool.h"
 #include "SVOGui/TADialogGroupToolResultPage.h"
 #include "TADialogLinearResultRangesPage.h"
@@ -423,7 +422,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		default:
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenTADlg, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10218);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenTADlg, SvStl::SourceFileParams(StdMessageParams));
 			return;
 	}
 
@@ -501,7 +500,7 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 				textList = message.getMessage().m_AdditionalTextList;
 			}
 			SvStl::MessageManager messageMgr(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			INT_PTR result = messageMgr.setMessage(SVMSG_SVO_104_TA_DIALOG_CLOSING_ERROR, textEnum, textList, SvStl::SourceFileParams(StdMessageParams), 0, GetTaskObjectID(), MB_YESNO);
+			INT_PTR result = messageMgr.setMessage(SVMSG_SVO_104_TA_DIALOG_CLOSING_ERROR, textEnum, textList, SvStl::SourceFileParams(StdMessageParams), GetTaskObjectID(), MB_YESNO);
 			if (IDYES == result)
 			{
 				EndDialog(IDOK);
@@ -527,7 +526,7 @@ bool SVToolAdjustmentDialogSheetClass::ValidateAllSheets()
 				{
 					// Equation must be valid or disabled
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10219);
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams));
 					return false;
 				}
 			}

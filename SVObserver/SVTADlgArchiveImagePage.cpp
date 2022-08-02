@@ -104,7 +104,7 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t
 		if (nullptr == m_pTool)
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25002_ToolInvalid);
+			e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
 			e.Throw();
 		}
 	}
@@ -160,7 +160,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		msgList.push_back(SvUl::Format(_T("%ld"), m_ImagesToArchive));
 		msgList.push_back(SvUl::Format(_T("%ld"), UpperLimitImageNumbers));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_Error_you_have_Selected_X_Must_less_then_Y, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16075_ImageNrToBig  );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_Error_you_have_Selected_X_Must_less_then_Y, msgList, SvStl::SourceFileParams(StdMessageParams));
 		return true;
 	}
 

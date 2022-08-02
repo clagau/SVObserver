@@ -21,7 +21,6 @@
 #include "SVParserProgressDialog.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
@@ -458,23 +457,23 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 					}
 					else
 					{
-						hr = -SvStl::Err_15013;
+						hr = E_FAIL;
 					}
 				}
 				else
 				{
-					hr = -SvStl::Err_15019;
+					hr = E_FAIL;
 				}
 			}
 		}
 		else
 		{
-			hr = -SvStl::Err_15014;
+			hr = E_FAIL;
 		}
 	}
 	else
 	{
-		hr = -SvStl::Err_15015;
+		hr = E_FAIL;
 	}
 
 
@@ -547,7 +546,7 @@ HRESULT SVInspectionImporter::Import(const std::string& filename, const std::str
 	}
 	else
 	{
-		result = -SvStl::Err_15017;
+		result = E_FAIL;
 	}
 
 	// cleanup

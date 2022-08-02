@@ -86,7 +86,7 @@ BOOL SVBoolValueObjectClass::ConvertString2Type( const std::string &rValue ) con
 		msgList.push_back(Value);
 		msgList.push_back(GetName());
 		SvStl::MessageManager Exception(SvStl::MsgType::Log );
-		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 		Exception.Throw();
 	}
 

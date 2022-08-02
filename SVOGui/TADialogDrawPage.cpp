@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "TADialogDrawPage.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/Color.h"
 #include "DisplayHelper.h"
@@ -929,7 +928,7 @@ void TADialogDrawPage::OnSelchangeBackGroundCombo()
 			if (bIsValid && S_OK != result)
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams));
 				return;
 			}
 			m_ImageController.ToolRunOnce();

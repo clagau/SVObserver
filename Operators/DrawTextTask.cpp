@@ -61,7 +61,7 @@ bool DrawTextTask::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 				msgList.push_back(m_fontScaleX.GetName());
 				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Greater));
 				msgList.push_back("0");
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Value_MustThan, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Value_MustThan, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -75,7 +75,7 @@ bool DrawTextTask::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 				msgList.push_back(m_fontScaleY.GetName());
 				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Greater));
 				msgList.push_back("0");
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Value_MustThan, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Value_MustThan, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}

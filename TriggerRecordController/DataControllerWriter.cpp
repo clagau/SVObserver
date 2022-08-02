@@ -13,7 +13,7 @@
 #include "TriggerRecord.h"
 #include "TriggerRecordController.h"
 #include "TriggerRecordData.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
 #include "SVSharedMemoryLibrary\SMParameterStruct.h"
 #include "SVStatusLibrary\MessageManager.h"

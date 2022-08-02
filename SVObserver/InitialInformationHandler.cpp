@@ -105,7 +105,7 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 
 		m_InitializationStatusFlags = S_FALSE;
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_ModelNumberInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10236);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_ModelNumberInvalid, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -225,7 +225,7 @@ HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 			if (ErrorMatroxServiceNotRunning == ResultLoadDLL)
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Exception.setMessage(SVMSG_SVO_90_MATROX_SERVICE_NOT_RUNNING, m_InitialInfo.m_DigitizerDLL.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25048_NoMatroxService);
+				Exception.setMessage(SVMSG_SVO_90_MATROX_SERVICE_NOT_RUNNING, m_InitialInfo.m_DigitizerDLL.c_str(), SvStl::SourceFileParams(StdMessageParams));
 			}
 			else
 			{

@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <FCNTL.H>
 
 #include "SVAccessClass.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary\MessageManager.h"

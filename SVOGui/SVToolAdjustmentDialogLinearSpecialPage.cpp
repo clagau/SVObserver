@@ -14,7 +14,6 @@
 #include "SVToolAdjustmentDialogLinearSpecialPage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -136,7 +135,7 @@ namespace SvOg
 			if (cRotationAngle_90 == Angle)
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10213, SvDef::InvalidObjectId, MB_YESNO);
+				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO);
 				bUpdateRotation = (IDYES == result);
 
 				if(!bUpdateRotation)
@@ -152,7 +151,7 @@ namespace SvOg
 				if (bIsRotated)
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10214, SvDef::InvalidObjectId, MB_YESNO );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO );
 					bUpdateRotation = (IDYES == result);
 					if(!bUpdateRotation)
 					{

@@ -108,7 +108,7 @@ bool DrawTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -186,7 +186,7 @@ bool DrawTool::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* p
 		else
 		{
 			bRetVal = false;
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			m_RunErrorMessages.push_back(Msg);
 		}
 	}

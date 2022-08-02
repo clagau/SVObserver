@@ -8,7 +8,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <limits>
 #include "SVOResource\resource.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVTADlgResizePage.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -283,13 +283,13 @@ bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 	if (S_OK != hResult)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidScaleFactor, SvStl::SourceFileParams(StdMessageParams), 0, m_toolID);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidScaleFactor, SvStl::SourceFileParams(StdMessageParams), m_toolID);
 		return false;
 	}
 	if (S_OK != SvCmd::RunOnceSynchronous(m_inspectionID))
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), 0, m_toolID);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), m_toolID);
 		return false;
 	}
 

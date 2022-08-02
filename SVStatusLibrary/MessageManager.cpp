@@ -79,7 +79,7 @@ namespace SvStl
 	}
 
 
-	INT_PTR MessageManager::setMessage(DWORD MessageCode, LPCTSTR AdditionalText, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageManager::setMessage(DWORD MessageCode, LPCTSTR AdditionalText, const SourceFileParams& rSourceFile, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
 		SvDef::StringVector textList;
 		MessageTextEnum id = SvStl::Tid_Empty;
@@ -89,21 +89,21 @@ namespace SvStl
 			id = SvStl::Tid_Default;
 		}
 
-		return setMessage(MessageCode, id, textList, rSourceFile, ProgramCode, objectId, MsgBoxType);
+		return setMessage(MessageCode, id, textList, rSourceFile, objectId, MsgBoxType);
 	}
 
 
-	INT_PTR MessageManager::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageManager::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
-		return setMessage(MessageCode, AdditionalTextId, SvDef::StringVector(), rSourceFile, ProgramCode, objectId, MsgBoxType);
+		return setMessage(MessageCode, AdditionalTextId, SvDef::StringVector(), rSourceFile, objectId, MsgBoxType);
 	}
 
 
-	INT_PTR MessageManager::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageManager::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
 		INT_PTR Result(IDCANCEL);
 
-		m_MessageContainer.setMessage(MessageCode, AdditionalTextId, rAdditionalTextList, rSourceFile, ProgramCode, objectId);
+		m_MessageContainer.setMessage(MessageCode, AdditionalTextId, rAdditionalTextList, rSourceFile, objectId);
 
 		Result = Process(MsgBoxType);
 

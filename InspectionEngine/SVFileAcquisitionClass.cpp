@@ -16,8 +16,8 @@
 #include "Triggering/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVDigitizerProcessingClass.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -272,7 +272,7 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 	if ( S_OK != hrOk )
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Acquisition_SourceInformationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10050 ); 
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Acquisition_SourceInformationFailed, SvStl::SourceFileParams(StdMessageParams)); 
 	}
 
 	return hrOk;

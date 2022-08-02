@@ -18,7 +18,6 @@
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #pragma endregion Includes
@@ -171,7 +170,7 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 		if( nullptr == pConfig )
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17029_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams));
 			DebugBreak();
 		}
 
@@ -211,7 +210,7 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 			else
 			{
 				SvStl::MessageManager e(SvStl::MsgType::Log );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17030_ErrorGettingPPQ );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}// end for
 	}// end if

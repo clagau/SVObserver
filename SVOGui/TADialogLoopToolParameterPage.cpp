@@ -115,7 +115,7 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 					messageList.push_back(std::to_string(LoopCount));
 					
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams));
 					
 					
 					return E_FAIL;

@@ -12,9 +12,8 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <io.h>
 #include "SVDlgBitmap.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -206,7 +205,7 @@ namespace SvMc
 		else
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoDeviceContext, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10233 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoDeviceContext, SvStl::SourceFileParams(StdMessageParams));
 		}
 
 

@@ -38,7 +38,6 @@ namespace SvStl
 		m_AdditionalTextId = SvStl::Tid_Empty;
 		m_AdditionalTextList.clear();
 		m_SourceFile.clear();
-		m_ProgramCode = 0;
 		m_DateTime = 0;
 	}
 

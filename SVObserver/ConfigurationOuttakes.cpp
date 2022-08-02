@@ -342,7 +342,7 @@ bool setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile)
 				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(bLoadFile ? SvStl::Tid_Load : SvStl::Tid_Save));
 				msgList.push_back(g_ConfigFilenames.m_ConfigFileName.GetPathName());
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10132);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableConfig, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -367,7 +367,7 @@ bool fileSaveAsSVXWrapper(const std::string& rFileName, bool resetAutoSave)
 	if (!rFileName.empty() && std::string::npos == rFileName.find(SvDef::cPackedConfigExtension))
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongPathnameEntered, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10134);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongPathnameEntered, SvStl::SourceFileParams(StdMessageParams));
 		return false;
 	}
 
@@ -588,7 +588,7 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 		SvDef::StringVector msgList;
 		msgList.push_back(getConfigFileName());
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10130, SvDef::InvalidObjectId, MB_YESNO);
+		INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO);
 		bClose = IDYES == result;
 		if (!bClose)
 		{
@@ -698,7 +698,7 @@ std::pair<bool, bool> OkToClose(bool AskForSavingOrClosing)
 			SvDef::StringVector msgList;
 			msgList.push_back(getConfigFileName());
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10131, SvDef::InvalidObjectId, MB_YESNOCANCEL);
+			INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNOCANCEL);
 			switch (result)
 			{
 				case IDNO:

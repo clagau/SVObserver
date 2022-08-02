@@ -13,7 +13,7 @@
 #include "StdAfx.h"
 #include "LoadConfiguration.h"
 #include  "SaxXMLHandler.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SaxExtractPropertiesHandler.h"
 #pragma endregion Includes
@@ -34,7 +34,7 @@ HRESULT SVOCMLoadConfiguration(unsigned long& ulSVOConfigVersion, LPCTSTR FileNa
 		{
 
 			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_SVO_97_CONFIGURATION_TOO_OLD, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16079_ConfigurationTooOld );
+			MsgCont.setMessage( SVMSG_SVO_97_CONFIGURATION_TOO_OLD, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 			throw MsgCont;	
 		}
 		else  

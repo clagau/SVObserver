@@ -24,7 +24,6 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
@@ -46,7 +45,7 @@ bool verifyNewName(const std::string& rNewName, uint32_t objectId, std::back_ins
 	if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(rNewName, objectID))
 	{
 		SvStl::MessageContainer message;
-		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RenameError_DuplicateName, {rNewName}, SvStl::SourceFileParams(StdMessageParams), 0, objectId);
+		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RenameError_DuplicateName, {rNewName}, SvStl::SourceFileParams(StdMessageParams), objectId);
 		inserter = message;
 		return false;
 	}
@@ -132,7 +131,7 @@ bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotCreated, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotCreated, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -813,7 +812,7 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 		msgList.push_back(GetName());
 		msgList.push_back(GetCompleteName());
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10209);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 		return false;
 	}
@@ -889,7 +888,7 @@ bool SVObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject
 				if (embeddedID == pObject->GetEmbeddedID())
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10204);
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams));
 					assert(false);
 					return false;
 				}

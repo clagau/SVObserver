@@ -21,7 +21,6 @@
 #include "Custom2FilterDlg.h"
 #include "SVWatershedFilterDlg.h"
 #include "TextDefinesSvOg.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
@@ -227,7 +226,7 @@ namespace SvOg
 			if (S_OK != hr)
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CreationFilterFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10231 );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CreationFilterFailed, SvStl::SourceFileParams(StdMessageParams));
 			}
 
 			// Refresh Dialog...

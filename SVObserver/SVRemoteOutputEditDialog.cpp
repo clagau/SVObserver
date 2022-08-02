@@ -16,7 +16,6 @@
 #include "SVConfigurationObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
@@ -67,7 +66,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 	if( nullptr == pConfig )
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Log );
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17048_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams));
 		DebugBreak();
 	}
 
@@ -79,7 +78,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 		if( nullptr == pPPQ )
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17049_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams));
 			DebugBreak();
 		}
 

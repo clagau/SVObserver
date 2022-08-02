@@ -17,7 +17,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 
@@ -479,7 +478,7 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 		}
 		else
 		{
-			result = SvStl::Err_10029_ValueObject_Parameter_WrongSize;
+			result = E_FAIL;
 		}
 	}
 
@@ -622,7 +621,7 @@ void SVValueObjectClass<T>::validateValue(const _variant_t& rValue, const _varia
 	if(valueVector.size() == 0)
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		Exception.Throw();
 	}
 	if (m_UseMaxMinValue)
@@ -632,7 +631,7 @@ void SVValueObjectClass<T>::validateValue(const _variant_t& rValue, const _varia
 			if (!CheckMaxMin(val))
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_MinMaxInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_MinMaxInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				Exception.Throw();
 			}
 		}

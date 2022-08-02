@@ -88,14 +88,14 @@ namespace SvAo
 				if (nullptr == pAnalyzer)
 				{
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
-					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					msg.Throw();
 				}
 				SvIe::SVImageClass* pInputImage = pAnalyzer->getInputImage(true);
 				if (nullptr == pInputImage)
 				{
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
-					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					msg.Throw();
 				}
 				//use readOnly even if it overwritten the image, because it is already changed by the Analyzer.
@@ -104,14 +104,14 @@ namespace SvAo
 				{
 					assert(false);
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
-					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					msg.Throw();
 				}
 				if (pImageBuffer->isEmpty())
 				{
 					assert(false);
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
-					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					msg.Throw();
 				}
 
@@ -131,7 +131,7 @@ namespace SvAo
 				{
 					assert(false);
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
-					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					msg.Throw();
 				}
 
@@ -203,7 +203,7 @@ namespace SvAo
 			{
 				if (pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				return false;
@@ -213,7 +213,7 @@ namespace SvAo
 			{
 				if (pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				return false;
@@ -253,7 +253,7 @@ namespace SvAo
 					if (pErrorMessages)
 					{
 						auto name = getStepName(i);
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidDrawTypeAfterDeletingFeature, { name }, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidDrawTypeAfterDeletingFeature, { name }, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -328,12 +328,12 @@ namespace SvAo
 					auto name = getStepName(i);
 					if (false == name.empty())
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidDrawTypeWithSelectedFeatures, { name }, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidDrawTypeWithSelectedFeatures, { name }, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 					else
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 				}

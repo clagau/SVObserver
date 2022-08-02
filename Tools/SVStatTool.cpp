@@ -15,7 +15,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Operators/SVResultDouble.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -304,7 +303,7 @@ void SVStatTool::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
 
 		if( nullptr == pResult)
 		{
-			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16207, getObjectId() );
+			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			throw Exception;
 		}
 
@@ -320,7 +319,7 @@ void SVStatTool::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
 
 		if(nullptr == pValue)
 		{
-			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16208, getObjectId() );
+			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			throw Exception;
 		}
 
@@ -348,7 +347,7 @@ void SVStatTool::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
 					delete pResult;
 				}
 
-				SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10200, getObjectId() );
+				SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				throw Exception;
 			}
 		}
@@ -368,8 +367,8 @@ DWORD SVStatTool::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 	else
 	{
 		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16208);
-		LastError = static_cast<DWORD> (-SvStl::Err_16208);
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
+		LastError = static_cast<DWORD> (E_FAIL);
 	}
 		
 	return LastError;
@@ -729,7 +728,7 @@ bool SVStatTool::Test(SvStl::MessageContainerVector *pErrorMessages)
 					SvDef::StringVector msgList;
 					msgList.push_back( CompleteName );
 					SvStl::MessageContainer message;
-					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatToolInvalidVariable, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10201, getObjectId());
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatToolInvalidVariable, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back( message );
 				}
 				return false;
@@ -740,7 +739,7 @@ bool SVStatTool::Test(SvStl::MessageContainerVector *pErrorMessages)
 	//Test failed, if reach this point.
 	if (nullptr != pErrorMessages)
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_StatToolTestFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_StatToolTestFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 		pErrorMessages->push_back(Msg);
 	}
 
@@ -755,7 +754,7 @@ bool SVStatTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) co
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			return false;

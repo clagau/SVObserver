@@ -7,7 +7,6 @@
 #include "stdafx.h"
 #include "ImageAnalyzer.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "InspectionEngine/SVImageClass.h"
 #pragma endregion Includes
 
@@ -74,7 +73,7 @@ unsigned long ImageAnalyzer::GetInputPixelDepth()
 	if (!pImage)
 	{
 		SvStl::MessageManager MesMan( SvStl::MsgType::Data);
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16110, getObjectId());
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		MesMan.Throw();
 	}
 	else
@@ -91,7 +90,7 @@ bool ImageAnalyzer::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

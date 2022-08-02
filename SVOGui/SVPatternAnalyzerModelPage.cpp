@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVPatternAnalyzerModelPage.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "DisplayHelper.h"
@@ -91,7 +90,7 @@ namespace SvOg
 			//Now that we have caught the exception we would like to display it
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( rSvE.getMessage() );
-			INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Pattern_Invalid_ShouldLeave, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10184, SvDef::InvalidObjectId, MB_YESNO);
+			INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Pattern_Invalid_ShouldLeave, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO);
 			if (IDYES == result)
 			{
 				m_bAllowExit = false;
@@ -245,7 +244,7 @@ namespace SvOg
 				if (!ErrorMessages.empty())
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_AnalyzerID );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), m_AnalyzerID );
 				}
 			}
 			else if (responseCmd.has_standardresponse())
@@ -503,7 +502,7 @@ namespace SvOg
 	
 		if (!bRetVal)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10245 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams));
 			throw Msg;
 		}
 	}
@@ -527,7 +526,7 @@ namespace SvOg
 		bool bRetVal = (m_lModelHeight >= minHeight && m_lModelHeight <= lMaxPixels);
 		if (!bRetVal)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10244 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams));
 			throw Msg;
 		}
 	}

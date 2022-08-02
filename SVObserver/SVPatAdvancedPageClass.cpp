@@ -17,8 +17,7 @@
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -507,7 +506,7 @@ void SVPatAdvancedPageClass::ValidateAdditionalCandidatesValue()
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatAdditionalCandidatesErr, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10240 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatAdditionalCandidatesErr, SvStl::SourceFileParams(StdMessageParams));
 			throw Msg;
 		}
 	}
@@ -527,7 +526,7 @@ void SVPatAdvancedPageClass::ValidateCandidatesSpacingXMinValue()
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatCandidateSpaceErr, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10241 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatCandidateSpaceErr, SvStl::SourceFileParams(StdMessageParams));
 			throw Msg;
 		}
 	}
@@ -547,7 +546,7 @@ void SVPatAdvancedPageClass::ValidateCandidatesSpacingYMinValue()
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatCandidateSpaceErr, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10242 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatCandidateSpaceErr, SvStl::SourceFileParams(StdMessageParams));
 			throw Msg;
 		}
 	}
@@ -567,7 +566,7 @@ void SVPatAdvancedPageClass::ValidatePreliminaryAcceptanceThreshold()
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatPreliminaryAcceptanceThresholdErr, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10243 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatPreliminaryAcceptanceThresholdErr, SvStl::SourceFileParams(StdMessageParams));
 			throw Msg;
 		}
 	}
