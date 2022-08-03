@@ -112,14 +112,15 @@ void SheetForExternalToolAdjustment::OnRunOnce()
 {
 	GreyOutHelper goh(m_runOnceButton, _T("<Running>"));
 
-	SetActivePage(c_indexOfOutputValuePage);
+	m_externalToolTaskController.runOnce();
 
 	auto pOutputValuePage = dynamic_cast<SVTADlgExternalResultPage*>(GetActivePage());
 
-	if (nullptr != pOutputValuePage)
+	if (nullptr != pOutputValuePage) // if we are currently on the results page ...
 	{
-		pOutputValuePage->runOnce();
+		pOutputValuePage->DisplayResults(); //... show the current results now ...
 	}
+	// ... otherwise they will be shown when that page becomes active 
 }
 
 void SheetForExternalToolAdjustment::OnReInitialize()
@@ -166,6 +167,7 @@ LRESULT SheetForExternalToolAdjustment::AdaptToTestedDll(WPARAM, LPARAM)
 	AddPage(new SVTADlgExternalResultPage(_T("Result Values"), GetInspectionID(), m_externalToolTaskController.getExternalToolTaskObjectId(), m_externalToolTaskController));
 
 	AddAdditionalPagesForExternalTool();
+
 	return S_OK;
 }
 

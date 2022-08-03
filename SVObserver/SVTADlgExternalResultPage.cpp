@@ -88,9 +88,6 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 
 void SVTADlgExternalResultPage::rebuildPropertyTree()
 {
-	GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_SHOW);
-
 	m_Tree.DeleteAllItems();
 
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
@@ -263,17 +260,15 @@ void SVTADlgExternalResultPage::HandleTables(std::map<std::string, SVRPropertyIt
 }
 
 
-void SVTADlgExternalResultPage::runOnce()
+void SVTADlgExternalResultPage::DisplayResults()
 {
-	if (m_InspectionID > 0)
-	{
-		m_rExternalToolTaskController.runOnce();
-	}
-
 	m_ValueController.Init();
 
 	if (m_rExternalToolTaskController.getNumResultValues() > 0)
 	{
+		GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_SHOW);
+
 		rebuildPropertyTree();
 	}
 	else
@@ -281,8 +276,9 @@ void SVTADlgExternalResultPage::runOnce()
 		GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_HIDE);
 	}
-
 }
+
+
 
 void SVTADlgExternalResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
@@ -362,7 +358,16 @@ void SVTADlgExternalResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plR
 // constant values (if input is not another VO)
 void SVTADlgExternalResultPage::OnOK()
 {
-		CPropertyPage::OnOK();
+	CPropertyPage::OnOK();
+}
+
+BOOL SVTADlgExternalResultPage::OnSetActive()
+{
+	auto ret = CPropertyPage::OnSetActive();
+
+	DisplayResults();
+
+	return ret;
 }
 
 int SVTADlgExternalResultPage::GetItemIndex(SVRPropertyItem* pItem)

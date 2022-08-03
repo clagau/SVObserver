@@ -36,10 +36,11 @@ public:
 	virtual void OnOK() override;
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnSetActive() override;
 	//}}AFX_VIRTUAL
 
 public:
-	void runOnce();
+	void DisplayResults();
 
 protected:
 	int SelectObject(int iIndex);
