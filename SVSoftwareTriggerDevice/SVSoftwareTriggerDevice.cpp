@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVSoftwareTriggerDevice.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
-#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 constexpr uint32_t cConversionMicrosec = 1000;

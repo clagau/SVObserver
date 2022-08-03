@@ -33,7 +33,7 @@ class PeriodicTimer
 {
 public:
 	PeriodicTimer() = default;
-	~PeriodicTimer() = default;
+	~PeriodicTimer();
 
 	static void SetTimer(const TimerInfo& rtimerInfo);
 	static void CloseTimer(const std::string& rName);

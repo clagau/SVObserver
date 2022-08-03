@@ -69,6 +69,11 @@ void CycleTimer(PeriodicTimerInfo& rTimerInfo, std::function<void(double)> dispa
 	}
 }
 
+PeriodicTimer::~PeriodicTimer()
+{
+	KillTimer();
+}
+
 void PeriodicTimer::SetTimer(const TimerInfo& rTimerInfo)
 {
 	bool createTimer {true};
@@ -105,6 +110,7 @@ void PeriodicTimer::SetTimer(const TimerInfo& rTimerInfo)
 	}
 	else if (nullptr != pPeriodicTimer)
 	{
+		std::lock_guard lock {pPeriodicTimer->GetMutex()};
 		pPeriodicTimer->m_timerInfoList.push_back(rTimerInfo);
 	}
 }
@@ -122,7 +128,6 @@ void PeriodicTimer::CloseTimer(const std::string& rName)
 			{
 				if (1 == rTimer->m_timerInfoList.size())
 				{
-					rTimer->KillTimer();
 					removeTimer = true;
 				}
 				else

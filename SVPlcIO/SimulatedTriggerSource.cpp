@@ -10,7 +10,6 @@
 #include "InspectionState.h"
 #include "PowerLinkConnection.h"
 #include "SimulatedTriggerSource.h"
-#include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/FileHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

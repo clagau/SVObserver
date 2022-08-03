@@ -69,6 +69,7 @@
 #include <locale>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <numeric>
 #include <set>
 #include <sstream>
@@ -78,6 +79,7 @@
 #include <string>
 #include <tchar.h>
 #include <utility>
+#include <thread>
 #include <vector>
 
 #include <boost/algorithm/string.hpp>
