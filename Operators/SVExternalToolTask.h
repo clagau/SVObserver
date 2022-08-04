@@ -196,12 +196,12 @@ private:
 	HRESULT InitializeResultObjects();
 
 	bool prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], SvIe::RunStatus& rRunStatus);
-	void getResults(SvOi::ITRCImagePtr pResultImageBuffers[]);
+	bool getResults(SvOi::ITRCImagePtr pResultImageBuffers[]);
 	bool anyImagesResized();
 	void collectInputValues();
 	bool collectInputImages(SvIe::RunStatus& rRunStatus);
 	bool collectMilResultBuffers(SvOi::ITRCImagePtr pResultImageBuffers[]);
-	void collectResultValues();
+	bool collectResultValues();
 	void collectResultImages(SvOi::ITRCImagePtr pResultImageBuffers[]);
 
 	void updateImageInputInfo();

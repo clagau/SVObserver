@@ -491,6 +491,8 @@ enum MessageTextEnum
 	Tid_ExternalTask_CannotRun,
 	Tid_ExternalTask_UnknownException,
 	Tid_ExternalDllSomethingWrongWithInputValue,
+	Tid_ExternalDllErrorWhenTransferringResultValues,
+	Tid_ExternalDllEditModeFreezeSetNoDllLoad,
 	Tid_ExternalDllError,
 	Tid_ExternalDllPassesTheTest,
 	Tid_ExternalDllProblemsOccurred,

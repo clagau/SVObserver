@@ -160,7 +160,7 @@ HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& e
 	else
 	{
 		ownerEnabled = true,
-			equationEnabled = true;
+		equationEnabled = true;
 	}
 	return S_OK;
 }

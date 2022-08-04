@@ -90,6 +90,6 @@ private:
 	void displayInitializationFailure(const SvStl::MessageContainer& e);
 
 	ExternalToolTaskController& m_rExternalToolTaskController;
-	SvOg::ValueController m_valueController;
+	SvOg::ValueController m_valueControllerToolTask;
 };
 

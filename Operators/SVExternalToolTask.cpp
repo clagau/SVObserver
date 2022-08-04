@@ -1417,7 +1417,16 @@ bool SVExternalToolTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 
 			// Result Values
 
-			getResults(pResultImageBuffers);
+			if (false == getResults(pResultImageBuffers))
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalDllErrorWhenTransferringResultValues, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+				okToRun = false;
+				rRunStatus.SetInvalid();
+			}
 
 			if (okToRun)
 			{
@@ -2041,9 +2050,12 @@ bool SVExternalToolTask::prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], 
 }
 
 
-void SVExternalToolTask::getResults(SvOi::ITRCImagePtr pResultImageBuffers[])
+bool SVExternalToolTask::getResults(SvOi::ITRCImagePtr pResultImageBuffers[])
 {
-	collectResultValues();
+	if (false == collectResultValues())
+	{
+		return false;
+	}
 
 	int NumTableResults = m_Data.getNumTableResults();
 	if (S_OK == m_dll.getResultTables(getObjectId(), NumTableResults, NumTableResults ? &(m_InspectionResultTables[0]) : nullptr))
@@ -2083,6 +2095,7 @@ void SVExternalToolTask::getResults(SvOi::ITRCImagePtr pResultImageBuffers[])
 			const_cast<SVImageExtentClass*>(pTool->GetImageExtentPtr())->setTransfermatrix(TMatrix);
 		}
 	}
+	return true;
 }
 
 
@@ -2299,68 +2312,80 @@ bool SVExternalToolTask::collectMilResultBuffers(SvOi::ITRCImagePtr pResultImage
 	return allMilResultsAreOk;
 }
 
-void SVExternalToolTask::collectResultValues()
+bool SVExternalToolTask::collectResultValues()
 {
-
-
 	long Resultsize = static_cast<long>(m_InspectionResultValues.size());
+
 	HRESULT hr = m_dll.GetResultValues(getObjectId(), Resultsize, Resultsize ? &(m_InspectionResultValues[0]) : nullptr);
+
+	assert(S_OK == hr);
+
 	if (S_OK != hr)
 	{
-		throw hr;
+		return false;
 	}
 
 	for (int i = 0; i < Resultsize; i++)
 	{
+		SvVol::SVVariantValueObjectClass* pResultValue = GetResultValueObject(i);
+
+		assert(nullptr != pResultValue);
+
+		if (nullptr == pResultValue)
+		{
+			return false;
+		}
+
 		if (m_InspectionResultValues[i].vt & VT_ARRAY)
 		{
 			try
 			{
 				VARTYPE type = (m_InspectionResultValues[i].vt & (~VT_ARRAY));
-				if (!GetResultValueObject(i)->isArray())
+				if (!pResultValue->isArray())
 				{
 					//if the value object is an array the correct size will be set in setValue
-					GetResultValueObject(i)->SetArraySize(2);
+					pResultValue->SetArraySize(2);
 					assert(false);
 				}
 
-				if (GetResultValueObject(i)->GetDefaultType() != type)
+				if (pResultValue->GetDefaultType() != type)
 				{
 					_variant_t var(0.0);
 					var.ChangeType(type);
-					GetResultValueObject(i)->SetDefaultValue(var);
+					pResultValue->SetDefaultValue(var);
 				}
-				GetResultValueObject(i)->setValue(m_InspectionResultValues[i], -1, true);
+				pResultValue->setValue(m_InspectionResultValues[i], -1, true);
 			}
 			catch (const SvStl::MessageContainer& rSvE)
 			{
 				m_InspectionResultValues[i].Clear();
-				GetResultValueObject(i)->SetResultSize(0);
+				pResultValue->SetResultSize(0);
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(rSvE.getMessage());
 			}
-
 			catch (...)
 			{
 				m_InspectionResultValues[i].Clear();
-				GetResultValueObject(i)->SetResultSize(0);
+				pResultValue->SetResultSize(0);
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
 			}
 
 		}
-		else if (m_InspectionResultValues[i].vt == VT_EMPTY && GetResultValueObject(i)->isArray())
+		else if (m_InspectionResultValues[i].vt == VT_EMPTY && pResultValue->isArray())
 		{
-			GetResultValueObject(i)->SetResultSize(0);
+			pResultValue->SetResultSize(0);
 
 		}
 		else
 		{
-			GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);
+			pResultValue->SetValue(m_InspectionResultValues[i]);
 		}
 		// Clear OleVariant that was created in Dll.
 		m_InspectionResultValues[i].Clear();
 	}
+
+	return true;
 }
 
 void SVExternalToolTask::collectResultImages(SvOi::ITRCImagePtr pResultImageBuffers[])
