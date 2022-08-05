@@ -1421,7 +1421,7 @@ bool SVExternalToolTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalDllErrorWhenTransferringResultValues, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalDllErrorWhenTransferringResultValues, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				okToRun = false;
