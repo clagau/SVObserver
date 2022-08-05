@@ -39,11 +39,12 @@ public:
 	static void CloseTimer(const std::string& rName);
 	std::mutex& GetMutex() {return m_protectTimer;}
 	void KillTimer();
-
 private:
 	static void CreateTimer(const TimerInfo& rtimerInfo);
 	void NotifyTimer(double timestamp);
 
+	static std::vector<std::unique_ptr<PeriodicTimer>> m_periodicTimerList;
+	static bool m_init;
 	PeriodicTimerInfo m_periodicTimerInfo {};
 	std::thread m_thread {};
 	std::mutex m_protectTimer;

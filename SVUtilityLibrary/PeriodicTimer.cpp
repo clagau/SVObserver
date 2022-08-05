@@ -16,7 +16,8 @@ constexpr int cMaxTimers = 10;
 namespace SvUl
 {
 
-static std::vector<std::unique_ptr<PeriodicTimer>> g_periodicTimerList {};
+std::vector<std::unique_ptr<PeriodicTimer>> PeriodicTimer::m_periodicTimerList {};
+bool PeriodicTimer::m_init {false};
 
 void CycleTimer(PeriodicTimerInfo& rTimerInfo, std::function<void(double)> dispatcher)
 {
@@ -78,7 +79,7 @@ void PeriodicTimer::SetTimer(const TimerInfo& rTimerInfo)
 {
 	bool createTimer {true};
 	PeriodicTimer* pPeriodicTimer {nullptr};
-	for (auto& rTimer : g_periodicTimerList)
+	for (auto& rTimer : m_periodicTimerList)
 	{
 		std::lock_guard lock {rTimer->GetMutex()};
 		auto iterTimerInfo = std::find_if(rTimer->m_timerInfoList.begin(), rTimer->m_timerInfoList.end(), [&rTimerInfo](const auto& rEntry) { return rEntry.m_name == rTimerInfo.m_name; });
@@ -91,10 +92,14 @@ void PeriodicTimer::SetTimer(const TimerInfo& rTimerInfo)
 				rTimer->m_periodicTimerInfo.m_newSetting = true;
 				return;
 			}
-			else
+			else if (iterTimerInfo->m_period != rTimerInfo.m_period)
 			{
 				rTimer->m_timerInfoList.erase(iterTimerInfo);
 				break;
+			}
+			else
+			{
+				return;
 			}
 		}
 		if (rTimer->m_periodicTimerInfo.m_initialDelay == rTimerInfo.m_initialDelay && rTimer->m_periodicTimerInfo.m_period == rTimerInfo.m_period)
@@ -117,36 +122,43 @@ void PeriodicTimer::SetTimer(const TimerInfo& rTimerInfo)
 
 void PeriodicTimer::CloseTimer(const std::string& rName)
 {
-	for (auto iterTimer = g_periodicTimerList.begin(); g_periodicTimerList.end() != iterTimer;)
+	for (auto iterTimer = m_periodicTimerList.begin(); m_periodicTimerList.end() != iterTimer;)
 	{
-		const auto& rTimer = *iterTimer;
-		bool removeTimer {false};
+		if (nullptr != *iterTimer)
 		{
-			std::lock_guard lock {rTimer->GetMutex()};
-			auto iterTimerInfo = std::find_if(rTimer->m_timerInfoList.begin(), rTimer->m_timerInfoList.end(), [&rName](const auto& rEntry) { return rEntry.m_name == rName; });
-			if (rTimer->m_timerInfoList.end() != iterTimerInfo)
+			const auto& rTimer = *iterTimer;
+			bool removeTimer {false};
 			{
-				if (1 == rTimer->m_timerInfoList.size())
+				std::lock_guard lock {rTimer->GetMutex()};
+				auto iterTimerInfo = std::find_if(rTimer->m_timerInfoList.begin(), rTimer->m_timerInfoList.end(), [&rName](const auto& rEntry) { return rEntry.m_name == rName; });
+				if (rTimer->m_timerInfoList.end() != iterTimerInfo)
 				{
-					removeTimer = true;
+					if (1 == rTimer->m_timerInfoList.size())
+					{
+						removeTimer = true;
+					}
+					else
+					{
+						rTimer->m_timerInfoList.erase(iterTimerInfo);
+						break;
+					}
 				}
-				else
-				{
-					rTimer->m_timerInfoList.erase(iterTimerInfo);
-					break;
-				}
-			}
 
+			}
+			if (removeTimer)
+			{
+				(*iterTimer)->KillTimer();
+				(*iterTimer).reset();
+			}
 		}
-		if (removeTimer)
-		{
-			iterTimer = g_periodicTimerList.erase(iterTimer);
-		}
-		else
-		{
-			++iterTimer;
-		}
+		++iterTimer;
 	}
+	if (std::all_of(m_periodicTimerList.begin(), m_periodicTimerList.end(), [](const auto& rTimer) { return nullptr == rTimer; }))
+	{
+		m_periodicTimerList.clear();
+		m_init = false;
+	}
+
 }
 
 void PeriodicTimer::KillTimer()
@@ -165,13 +177,12 @@ void PeriodicTimer::KillTimer()
 
 void PeriodicTimer::CreateTimer(const TimerInfo& rTimerInfo)
 {
-	static bool init {false};
-	if (false == init)
+	if (false == m_init)
 	{
-		g_periodicTimerList.reserve(cMaxTimers);
-		init = true;
+		m_periodicTimerList.reserve(cMaxTimers);
+		m_init = true;
 	}
-	auto& rTimer = g_periodicTimerList.emplace_back(std::make_unique<PeriodicTimer>());
+	auto& rTimer = m_periodicTimerList.emplace_back(std::make_unique<PeriodicTimer>());
 	rTimer->m_timerInfoList.reserve(cMaxTimers);
 	rTimer->m_timerInfoList.push_back(rTimerInfo);
 	rTimer->m_periodicTimerInfo.m_shutdown = ::CreateEvent(NULL, false, false, NULL);
