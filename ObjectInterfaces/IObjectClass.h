@@ -199,5 +199,8 @@ namespace SvOi
 		virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const = 0;
 
 		virtual bool allowExtensionCopy() const = 0;
+
+		virtual std::string getComment() const = 0;
+		virtual void setComment(const std::string& rComment) = 0;
 	};
 } //namespace SvOi

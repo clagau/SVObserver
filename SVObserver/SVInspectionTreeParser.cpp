@@ -315,6 +315,17 @@ HRESULT SVInspectionTreeParser::ProcessEmbeddeds(SvXml::SVXMLMaterialsTree::SVBr
 	return hr;
 }
 
+HRESULT SVInspectionTreeParser::setCommentToObject(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID)
+{
+	std::vector<_variant_t> values;
+	bool bVal = GetValues(hItem, scArrayElementsTag, values);
+	if (bVal && 0 < values.size() && VT_BSTR == values[0].vt)
+	{
+		return SVObjectBuilder::SetObjectValue(ownerID, ownerID, scCommentTag, values[0], SV_STRING_Type);
+	}
+	return E_FAIL;
+}
+
 HRESULT SVInspectionTreeParser::ProcessEmbedded(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
@@ -326,6 +337,10 @@ HRESULT SVInspectionTreeParser::ProcessEmbedded(SvXml::SVXMLMaterialsTree::SVBra
 	GetItemValue(scObjectNameTag, hItem, objectName);
 	GetItemValue(scEmbeddedIDTag, hItem, embeddedVariantID);
 	SvPb::EmbeddedIdEnum embeddedId = calcEmbeddedId(embeddedVariantID, objectName);
+	if (SvPb::ToolCommentTypeEId == embeddedId)
+	{	//for configuration saved with 10.20 and older, the comment is saved in an own embedded object.
+		return setCommentToObject(hItem, ownerID);
+	}
 	GetItemValue(scUniqueReferenceIDTag, hItem, uniqueID);
 
 	UpdateProgress(m_count, m_totalSize);
@@ -543,6 +558,12 @@ HRESULT SVInspectionTreeParser::ProcessLeafObjectValues(SvXml::SVXMLMaterialsTre
 HRESULT SVInspectionTreeParser::ProcessAttributes(uint32_t ownerID, uint32_t objectID, SvXml::SVXMLMaterialsTree::SVBranchHandle hItem)
 {
 	HRESULT hr = S_OK;
+
+	_variant_t comment;
+	if (GetItemValue(scCommentTag, hItem, comment))
+	{
+		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scCommentTag, comment, SV_STRING_Type);
+	}
 
 	std::vector<_variant_t> attributes;
 	bool bVal = GetValues(hItem, scAttributesSetTag, attributes);

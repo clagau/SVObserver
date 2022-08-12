@@ -48,6 +48,7 @@ private:
 	HRESULT ProcessFriend(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID);
 	HRESULT ProcessFriends(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID);
 	
+	HRESULT setCommentToObject(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID);
 	HRESULT ProcessEmbeddeds(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID);
 	HRESULT ProcessEmbedded(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID);
 	HRESULT ProcessEmbeddedChilds(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID);

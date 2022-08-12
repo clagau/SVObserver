@@ -568,9 +568,14 @@ HRESULT SVObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 	if (nullptr != pDataObject)
 	{
 		SvCl::SVObjectDWordArrayClass svDWordArray;
-		SvCl::SVObjectStdStringArrayClass StringArray;
+		SvCl::SVObjectStdStringArrayClass stringArray;
 
-		if( true == (bOk = pDataObject->GetAttributeData(scAttributesSetTag, svDWordArray)))
+		if (true == (bOk = pDataObject->GetAttributeData(scCommentTag, stringArray)))
+		{
+			m_comment = (0 < stringArray.size() ? stringArray[0] : "");
+			SvUl::RemoveEscapedSpecialCharacters(m_comment, true);
+		}
+		else if( true == (bOk = pDataObject->GetAttributeData(scAttributesSetTag, svDWordArray)))
 		{
 			int iSize = static_cast<int> (svDWordArray.size());
 			{
@@ -985,6 +990,14 @@ void SVObjectClass::PersistBaseData(SvOi::IObjectWriter& rWriter) const
 		value = GetEmbeddedID();
 		rWriter.WriteAttribute(scEmbeddedIDTag, value);
 		value.Clear();
+	}
+
+	if (false == m_comment.empty())
+	{
+		std::string temp = m_comment;
+		SvUl::AddEscapeSpecialCharacters(temp, true);
+		value.SetString(temp.c_str());
+		rWriter.WriteAttribute(scCommentTag, value);
 	}
 }
 

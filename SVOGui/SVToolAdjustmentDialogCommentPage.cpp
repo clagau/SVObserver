@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogCommentPage.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -22,7 +23,6 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 	SVToolAdjustmentDialogCommentPage::SVToolAdjustmentDialogCommentPage(uint32_t inspectionId, uint32_t taskObjectId) : CPropertyPage(SVToolAdjustmentDialogCommentPage::IDD)
-	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
 	{
@@ -42,9 +42,7 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_values.Init();
-
-		m_strComment = m_values.Get<CString>(SvPb::ToolCommentTypeEId);
+		m_strComment = SvCmd::getComment(m_InspectionID, m_TaskObjectID).c_str();
 
 		UpdateData(false);
 
@@ -58,8 +56,7 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		m_values.Set<CString>(SvPb::ToolCommentTypeEId, m_strComment);
-		m_values.Commit();
+		SvCmd::setComment(m_InspectionID, m_TaskObjectID, std::string {m_strComment});
 
 		return Result;
 	}

@@ -745,8 +745,16 @@ std::make_tuple(
 [](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectName(rRequest.getobjectnamerequest()); },
 [](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
 )
-}
+},
 
+{SvPb::InspectionCmdRequest::kSetObjectCommentRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  setObjectComment(rRequest.setobjectcommentrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+}
 };
 
 }

@@ -747,17 +747,13 @@ void ToolSetView::EditToolComment(uint32_t toolId)
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pToolSet->GetInspection());
 
-		SvOg::ValueController Values {SvOg::BoundValues{ pInspection->getObjectId(), toolId }};
-		Values.Init();
-
 		// Get the tool comment...
-		std::string ToolComment = Values.Get<CString>(SvPb::ToolCommentTypeEId).GetString();
+		std::string ToolComment = SvCmd::getComment(pInspection->getObjectId(), toolId).c_str();
 		SvOg::SVTextEditDialog Dlg(ToolComment.c_str());
 		if (IDOK == Dlg.DoModal())
 		{
-			Values.Set<CString>(SvPb::ToolCommentTypeEId, Dlg.getText());
+			SvCmd::setComment(pInspection->getObjectId(), toolId, std::string{Dlg.getText()});
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-			Values.Commit();
 		}
 	}
 

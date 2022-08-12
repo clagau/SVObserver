@@ -303,6 +303,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		SvPb::ConvertProtobufToVariant(rData.directvalue(), m_directValue);
 		m_indirectValueRef = SVObjectReference{rData.indirectidstring()};
 		m_formulaString = rData.formula();
+		setComment(rData.comment());
 		SvStl::MessageContainerVector errorMessages;
 		bool isOk = UpdateConnection(&errorMessages);
 		if (false == isOk)
@@ -579,6 +580,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		rLinkedValue.set_indirectidstring(m_indirectValueRef.GetObjectIdAndIndexOneBased().c_str());
 		rLinkedValue.set_formula(m_formulaString.c_str());
 		rLinkedValue.set_equationid(m_equation.getObjectId());
+		rLinkedValue.set_comment(getComment());
 		
 		rLinkedValue.clear_min_max();
 		

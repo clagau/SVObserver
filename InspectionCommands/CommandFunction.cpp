@@ -223,6 +223,7 @@ SvPb::InspectionCmdResponse getObjectParameters(SvPb::GetObjectParametersRequest
 			pObjParamResponse->set_isvalid(pTask->isErrorMessageEmpty());
 		}
 		pObjParamResponse->set_embeddedid(pObject->GetEmbeddedID());
+		pObjParamResponse->set_comment(pObject->getComment());
 	}
 	else
 	{
@@ -2148,6 +2149,21 @@ SvPb::InspectionCmdResponse getObjectName(SvPb::GetObjectNameRequest request)
 				pResponse->set_name(pObject->GetName());
 				break;
 		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse setObjectComment(SvPb::SetObjectCommentRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	if (SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid()); nullptr != pObject)
+	{
+		pObject->setComment(request.comment());
 	}
 	else
 	{

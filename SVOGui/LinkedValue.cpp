@@ -23,6 +23,7 @@ LinkedValueData convertLinkedValue(const SvPb::LinkedValue& rValue)
 	data.m_selectedOption = rValue.option();
 	data.m_formula = rValue.formula();
 	data.m_equationId = rValue.equationid();
+	data.m_comment = rValue.comment();
 	return data;
 }
 
@@ -36,6 +37,7 @@ SvPb::LinkedValue convertLinkedValue(const LinkedValueData& rValue)
 	SvPb::ConvertVariantToProtobuf(rValue.m_defaultValue, data.mutable_defaultvalue());
 	SvPb::ConvertVariantToProtobuf(rValue.m_Value, data.mutable_value());
 	data.set_equationid(rValue.m_equationId);
+	data.set_comment(rValue.m_comment);
 	return data;
 }
 

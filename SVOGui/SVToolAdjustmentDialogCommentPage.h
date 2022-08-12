@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -45,7 +44,6 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		ValueController m_values;
 	};
 } //namespace SvOg
 

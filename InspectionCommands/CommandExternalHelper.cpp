@@ -282,4 +282,32 @@ SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vecto
 	return result;
 }
 
+std::string getComment(uint32_t inspectionId, uint32_t objectId)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+	pRequest->set_objectid(objectId);
+
+	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
+	{
+		return responseCmd.getobjectparametersresponse().comment();
+	}
+
+	return {};
+}
+
+HRESULT setComment(uint32_t inspectionId, uint32_t objectId, std::string commentStr)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_setobjectcommentrequest();
+	pRequest->set_objectid(objectId);
+	pRequest->set_comment(commentStr);
+
+	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+	assert(S_OK == hr);
+	return hr;
+}
 } //namespace SvCmd

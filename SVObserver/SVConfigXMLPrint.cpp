@@ -992,11 +992,6 @@ void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject) const
 	{
 		SvPb::EmbeddedIdEnum embeddedID = pObject->GetEmbeddedID();
 		const auto& nPrs = NonPrintEmbeddeds();
-		// This is to prevent the comments from being sent to the SVRC thru GetConfigReport
-		if (embeddedID == SvPb::ToolCommentTypeEId)
-		{
-			return;
-		}
 		// Check for non-printing object type.
 		auto iter = std::find_if(std::begin(nPrs), std::end(nPrs), [&embeddedID](const auto& rEntry) { return embeddedID == rEntry; });
 		if (iter != std::end(nPrs))

@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(TADialogTableDefinesPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_MOVEUP, OnBnClickedMoveUp)
 	ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
+	ON_EN_KILLFOCUS(IDC_EDIT_COMMENT, OnKillFocusComment)
 	ON_NOTIFY(NM_DBLCLK, IDC_GRID, OnGridDblClick)
 	ON_NOTIFY(NM_RCLICK, IDC_GRID, OnGridRClick)
 	ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
@@ -79,6 +80,7 @@ void TADialogTableDefinesPage::DoDataExchange(CDataExchange* pDX)
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(TADialogTableDefinesPage)
 	DDX_Control(pDX, IDC_GRID, m_Grid);
+	DDX_Text(pDX, IDC_EDIT_COMMENT, m_strComment);
 	//}}AFX_DATA_MAP
 }
 
@@ -164,6 +166,16 @@ void TADialogTableDefinesPage::OnBnClickedMoveDown()
 		m_Grid.SetSelectedRange(Selection, true);
 		m_Grid.SetFocusCell(Selection.GetMaxRow(), Selection.GetMaxCol());
 		FillGridControl();
+	}
+}
+
+void TADialogTableDefinesPage::OnKillFocusComment()
+{
+	SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
+	if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && m_gridList.size() >= Selection.GetMaxRow())
+	{
+		UpdateData();
+		SvCmd::setComment(m_InspectionID, m_gridList[Selection.GetMinRow() - 1].second, std::string{m_strComment});
 	}
 }
 
@@ -480,6 +492,20 @@ void TADialogTableDefinesPage::UpdateEnableButtons()
 	{
 		bMoveUpEnable = (1 < Selection.GetMinRow() && Selection.GetMinRow() <= m_gridList.size());
 		bMoveDownEnable = (0 < Selection.GetMinRow() && Selection.GetMinRow() + 2 < m_Grid.GetRowCount());
+		if (0 < Selection.GetMinRow() && Selection.GetMinRow() <= m_gridList.size())
+		{
+			GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_SHOW);
+			m_strComment = SvCmd::getComment(m_InspectionID, m_gridList[Selection.GetMinRow() - 1].second).c_str();
+			UpdateData(false);
+		}
+		else
+		{
+			GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_HIDE);
+		}
+	}
+	else
+	{
+		GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_HIDE);
 	}
 
 	GetDlgItem(IDC_BUTTON_MOVEUP)->EnableWindow(bMoveUpEnable);

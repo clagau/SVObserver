@@ -191,6 +191,7 @@ namespace SvOg
 		ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedButtonAdd)
 		ON_BN_CLICKED(IDC_BUTTON_MOVEUP, OnBnClickedMoveUp)
 		ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
+		ON_EN_KILLFOCUS(IDC_EDIT_COMMENT, OnKillFocusComment)
 		ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
 		ON_NOTIFY(GVN_VALUE_SELCHANGED, IDC_GRID, OnGridValueSelectionChanged)
@@ -224,6 +225,7 @@ namespace SvOg
 		CPropertyPage::DoDataExchange(pDX);
 		//{{AFX_DATA_MAP(TADialogGroupToolInputPage)
 		DDX_Control(pDX, IDC_GRID, m_Grid);
+		DDX_Text(pDX, IDC_EDIT_COMMENT, m_strComment);
 		//}}AFX_DATA_MAP
 	}
 
@@ -403,6 +405,16 @@ namespace SvOg
 			m_Grid.SetSelectedRange(Selection, true);
 			m_Grid.SetFocusCell(Selection.GetMaxRow(), Selection.GetMaxCol());
 			FillGridControl();
+		}
+	}
+
+	void TADialogGroupToolInputPage::OnKillFocusComment()
+	{
+		SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
+		if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && m_inputData.size() >= Selection.GetMaxRow())
+		{
+			UpdateData();
+			m_inputData[Selection.GetMinRow() - 1].m_data.m_comment = m_strComment;
 		}
 	}
 #pragma endregion Protected Methods
@@ -677,6 +689,20 @@ namespace SvOg
 			int pos = Selection.GetMinRow(); //GetMaxRow identically
 			bMoveUpEnable = (1 < pos && pos <= m_inputData.size());
 			bMoveDownEnable = (0 < pos && pos + 1 < m_Grid.GetRowCount());
+			if (0 < Selection.GetMinRow() && Selection.GetMinRow() <= m_inputData.size())
+			{
+				GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_SHOW);
+				m_strComment = m_inputData[Selection.GetMinRow() - 1].m_data.m_comment.c_str();
+				UpdateData(false);
+			}
+			else
+			{
+				GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_HIDE);
+			}
+		}
+		else
+		{
+			GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_HIDE);
 		}
 
 		GetDlgItem(IDC_BUTTON_MOVEUP)->EnableWindow(bMoveUpEnable);

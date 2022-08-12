@@ -16,6 +16,7 @@ namespace SvOg
 		SvPb::LinkedSelectedOption m_selectedOption{ SvPb::LinkedSelectedOption::DirectValue };
 		variant_t m_Value;
 		variant_t m_defaultValue;
+		std::string m_comment;
 		variant_t m_directValue;
 		std::string m_indirectIdName;
 		std::string m_formula;
@@ -26,6 +27,7 @@ namespace SvOg
 			return m_selectedOption == rValue.m_selectedOption
 				&& SvUl::isSameVar(m_Value, rValue.m_Value)
 				&& SvUl::isSameVar(m_defaultValue, rValue.m_defaultValue)
+				&& m_comment == rValue.m_comment
 				&& SvUl::isSameVar(m_directValue, rValue.m_directValue)
 				&& m_indirectIdName == rValue.m_indirectIdName
 				&& m_formula == rValue.m_formula;

@@ -23,7 +23,7 @@ namespace SvOg
 		std::string m_name{ c_inputName };
 		SvPb::EmbeddedIdEnum m_oldEmbeddedId = SvPb::NoEmbeddedId;
 		SvPb::LinkedValueTypeEnum m_type = SvPb::LinkedValueTypeEnum::TypeDecimal;
-		LinkedValueData m_data {SvPb::LinkedSelectedOption::DirectValue, {0.}, {0.}, {0.}};
+		LinkedValueData m_data {SvPb::LinkedSelectedOption::DirectValue, {0.}, {0.}, {}, {0.}};
 		SvDef::StringPairVector m_dependencies;
 		SvStl::MessageData m_errorData;
 	};
@@ -72,6 +72,7 @@ namespace SvOg
 
 		void OnBnClickedButtonRemove();
 		void OnBnClickedButtonAdd();
+		void OnKillFocusComment();
 
 		void OnBnClickedMoveUp();
 		void OnBnClickedMoveDown();
@@ -116,6 +117,7 @@ namespace SvOg
 
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		std::vector<GroupInputData> m_inputData;
+		CString m_strComment;
 
 		SvStl::MessageContainerVector m_errorMessages;
 #pragma endregion Member Variables

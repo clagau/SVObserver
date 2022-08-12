@@ -84,8 +84,6 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_TriggerPerObjectID, SvPb::TriggerPerObjectIDEId, SvDef::c_TriggerPerObjectID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_InspectedObjectID, SvPb::InspectedObjectIDEId, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP);
 	
-	RegisterEmbeddedObject(&m_ToolComment, SvPb::ToolCommentTypeEId, IDS_OBJECTNAME_TOOLSET_COMMENT, false, SvOi::SVResetItemNone);
-
 	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameEId, SvDef::c_InspectionName, false, SvOi::SVResetItemIP);
 
 	RegisterEmbeddedObject(&m_MissingImageCountTS, SvPb::MissingImageCountEId, IDS_OBJECTNAME_MISSING_IMAGE_COUNT, false, SvOi::SVResetItemNone);
@@ -243,10 +241,6 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 
 	m_EnableAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_MainImageObject.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-
-	// Tool Comment attributes...
-	m_ToolComment.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
-	m_ToolComment.SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);	// We do not want this to show up in the results picker.
 
 	//This is only required to be able to read old configurations with auxiliary extents set in the old format
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());

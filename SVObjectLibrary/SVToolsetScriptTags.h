@@ -41,5 +41,6 @@ namespace
 	const TCHAR* const scLinkedDirectValueTag(_T("Direct Value"));
 	const TCHAR* const scLinkedIndirectValueTag(_T("IndirectID"));
 	const TCHAR* const scLinkedFormulaTag(_T("Formula"));
+	const TCHAR* const scCommentTag(_T("Comment"));
 }
 

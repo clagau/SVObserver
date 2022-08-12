@@ -294,9 +294,6 @@ protected:
 	//***** New source image extent value objects
 	SvVol::SVBoolValueObjectClass m_svUpdateAuxiliaryExtents;
 
-	// Tool Comments
-	SvVol::SVStringValueObjectClass m_ToolComment;
-
 	//SVImageExtentClass  is a member of SVToolExtentClass
 	SVToolExtentClass m_toolExtent;
 

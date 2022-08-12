@@ -187,4 +187,5 @@ SvPb::InspectionCmdResponse getResultRangeObject(SvPb::GetResultRangeObjectReque
 SvPb::InspectionCmdResponse getImageInfoExternalTool(SvPb::GetImageInfoExternalToolRequest request);
 SvPb::InspectionCmdResponse getInvalidDependencies(SvPb::GetInvalidDependenciesRequest request);
 SvPb::InspectionCmdResponse getObjectName(SvPb::GetObjectNameRequest request);
+SvPb::InspectionCmdResponse setObjectComment(SvPb::SetObjectCommentRequest request);
 } //namespace SvCmd

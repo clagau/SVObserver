@@ -57,6 +57,7 @@ namespace SvOg
 
 		void OnBnClickedMoveUp();
 		void OnBnClickedMoveDown();
+		void OnKillFocusComment();
 
 		void OnGridDblClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
@@ -105,6 +106,8 @@ namespace SvOg
 
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		SvUl::NameObjectIdList m_gridList;
+
+		CString m_strComment;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

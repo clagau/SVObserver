@@ -1110,7 +1110,7 @@ enum EmbeddedIdEnum
 	BCRawDataEId = 438;
 	BCStringFormatEId = 439;
 	BCThresholdTypeEId = 440;
-	ToolCommentTypeEId = 441;
+	ToolCommentTypeEId = 441; //obsolete since 10.30
 	NotUsed1 = 442;
 	NotUsed2 = 443;
 	ToolSizeAdjustSizeWidthModeEId = 445;

@@ -171,6 +171,8 @@ public:
 
 	virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const override;
 	virtual bool allowExtensionCopy() const override;
+	virtual std::string getComment() const override { return m_comment; };
+	virtual void setComment(const std::string& rComment) override { m_comment = rComment; };
 #pragma endregion virtual method (IObjectClass)
 
 	virtual void SetName(LPCTSTR Name);
@@ -274,6 +276,7 @@ private:
 	SvPb::EmbeddedIdEnum m_embeddedID; //If object is embedded, set this ID
 	std::string m_ObjectName;	//NOT user changeable name
 	std::string m_Name;			//user given name
+	std::string m_comment;	//
 	std::set <uint32_t> m_connectedSet;
 	std::mutex m_inputMutex;
 
