@@ -4408,7 +4408,7 @@ SvTo::SVToolClass* getCorrespondingToolPointer(NavigatorElement* pNaviElement, u
 		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
 			if (SvPb::SVToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().objecttype() ||
-				(responseCmd.getobjectparametersresponse().typeinfo().subtype() && SvPb::GroupToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype()))
+				(SvPb::LoopToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype() && SvPb::GroupToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype()))
 			{
 				return nullptr;
 			}
