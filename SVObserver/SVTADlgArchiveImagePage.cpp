@@ -320,8 +320,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_TotalArchiveImageMemoryAvailable = SVMemoryManager::Instance().SizeOfPoolBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL);
 
 	m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
-	m_maximumImageQueueLengthStaticText.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
-	m_maximumImageQueueLengthEditBox.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
+	m_maximumImageQueueLengthStaticText.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+	m_maximumImageQueueLengthEditBox.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+	m_maximumImageQueueLengthButton.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
 
 	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController);
 	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
@@ -586,8 +587,9 @@ void SVTADlgArchiveImagePage::OnSelchangeWhenToArchive()
 	{
 		m_eSelectedArchiveMethod = static_cast <SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData( iSel ));
 		m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
-		m_maximumImageQueueLengthStaticText.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
-		m_maximumImageQueueLengthEditBox.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
+		m_maximumImageQueueLengthStaticText.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+		m_maximumImageQueueLengthEditBox.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+		m_maximumImageQueueLengthButton.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
 
 		//if changing to SVArchiveGoOffline mode - build m_mapSelectedImageUsage with selected items in the tree
 		if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
