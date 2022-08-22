@@ -11,10 +11,12 @@
 
 namespace SvOg
 {
-	// holds GUI elements and IDs required for linked Values that are to be modified using an MFC dialog
 	class LinkedValueWidgetHelper
 	{
+		/// helpful for handling Linked Values that are to be modified in a MFC dialog
+		/// holds GUI elements and IDs required for linked Values that are to be modified using editboxes
 	public:
+
 		LinkedValueWidgetHelper(CEdit& rValueEdit, CButton& rSelectButton, uint32_t inspectionId, uint32_t taskId, SvPb::EmbeddedIdEnum embeddedId, SvOg::ValueController* pValueController, ValidCheckCallback validCallback = nullptr, ConvertValueCallback convertCallback = nullptr);
 
 		void setValueController(SvOg::ValueController* pValueController);
@@ -45,10 +47,31 @@ namespace SvOg
 		uint32_t m_taskId; 
 		SvPb::EmbeddedIdEnum m_embeddedId;
 		SvOg::ValueController* m_pValueController;
-		bool m_isControllsEnable{ true };
+		bool m_isWidgetEnabled{ true };
 		ValidCheckCallback m_validCheckCallback;
 		ConvertValueCallback m_convertValueCallback;
 	};
 
+
+	class WidgetHelperSource
+	{
+		/// creates unique pointers to LinkedValueWidgetHelpers that refer to the same inspection, task and ValueController
+	private:
+		uint32_t m_inspectionId;
+		uint32_t m_taskId;
+		ValueController* m_pValueController;
+
+	public:
+		WidgetHelperSource(uint32_t inspectionId, uint32_t taskId, ValueController* pValueController) :
+			m_inspectionId(inspectionId),
+			m_taskId(taskId),
+			m_pValueController(pValueController)
+		{}
+
+		auto produce(CEdit& rValueEdit, CButton& rSelectButton, SvPb::EmbeddedIdEnum embeddedId, ValidCheckCallback validCallback = nullptr, ConvertValueCallback convertCallback = nullptr)
+		{
+			return std::make_unique<SvOg::LinkedValueWidgetHelper>(rValueEdit, rSelectButton, m_inspectionId, m_taskId, embeddedId, m_pValueController, validCallback, convertCallback);
+		}
+	};
 
 }  //namespace SvOg

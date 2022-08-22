@@ -156,7 +156,6 @@ void SVArchiveRecordsArray::ValidateImageObjects()
 	m_vecRecords.erase(std::remove_if(m_vecRecords.begin(), m_vecRecords.end(), func), m_vecRecords.end());
 }
 
-
 void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pArchiveTool)
 {
 	m_pArchiveTool = pArchiveTool;
@@ -166,21 +165,22 @@ void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pArchiveTool)
 	}
 }
 
-bool SVArchiveRecordsArray::WriteArchiveImageFiles(const SvOi::ITriggerRecordRPtr& pTriggerRecord )
+long SVArchiveRecordsArray::WriteAllArchiveImages(const SvOi::ITriggerRecordRPtr& pTriggerRecord )
 {
 	assert( nullptr != m_pArchiveTool );
-	bool bOk = true;
+
+	long queueLength = 0;
 
 	for (auto& rRecord : m_vecRecords)
 	{
-		bOk = S_OK == rRecord.WriteImage(pTriggerRecord.get());
-		if (!bOk)
+		queueLength = rRecord.WriteArchiveImage(pTriggerRecord.get());
+		if (queueLength < 0)
 		{
 			break;
 		}
 	}
 	
-	return bOk;
+	return queueLength;
 }
 
 /////////////////////////////////////////////////////////////////////////////

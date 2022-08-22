@@ -48,9 +48,7 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 		enum TupleContent : size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
 		explicit AipCtr(SvOg::ValueController& rValueController, uint32_t inspectionId, uint32_t taskId) :
-			m_inspectionId{inspectionId},
-			m_taskId{taskId},
-			m_rValueController(rValueController)
+			m_source(inspectionId, taskId, &rValueController)
 		{}
 
 		enum Lve ///< (LinkedValueEnums) short name: used only locally
@@ -77,9 +75,8 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 
 	private:
 
-		SvOg::ValueController& m_rValueController;
-		uint32_t m_inspectionId;
-		uint32_t m_taskId;
+		SvOg::WidgetHelperSource m_source;
+
 
 		CEdit	m_EditBaseDirectoryname;
 		CButton m_ButtonBaseDirectoryname;
@@ -127,7 +124,11 @@ protected:
 	afx_msg void OnSelchangeWhenToArchive();
 
 	afx_msg void OnChangeEditMaxImages();
+
 	afx_msg void OnButtonUseAlternativeImagePath(); ///< enables or disables the GUI elements that define alternative image paths depending on m_useAlternativeImagePath
+
+	afx_msg void OnButtonMaxImageQueueLength();
+	afx_msg void OnKillFocusMaxImageQueueLength();
 
 	afx_msg void OnButtonImageFilepathroot1();
 	afx_msg void OnButtonImageFilepathroot2();
@@ -166,6 +167,13 @@ private:
 	CStatic	m_wndAvailableArchiveImageMemory;
 	CComboBox	m_WhenToArchive;
 	SvMc::EditNumbers	m_EditMaxImages;
+
+	CEdit	m_maximumImageQueueLengthEditBox;
+	CButton m_maximumImageQueueLengthButton;
+
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_maximumImageQueueLengthWidgetHelper;
+
+	CStatic	m_maximumImageQueueLengthStaticText;
 
 	CEdit	m_ImageFilepathroot1;
 	CEdit	m_ImageFilepathroot2;

@@ -62,7 +62,7 @@ namespace SvOg
 		, m_convertValueCallback(convertCallback)
 	{
 		EnsureDownArrowBitmapIsLoaded();
-		m_rSelectButton.SetBitmap(static_cast<HBITMAP> (ms_downArrowBitmap)); // Put the Down Arrow on the button
+		m_rSelectButton.SetBitmap(static_cast<HBITMAP> (ms_downArrowBitmap)); // add the "down arrow" to the button
 
 		update();
 	}
@@ -75,7 +75,7 @@ namespace SvOg
 
 	void LinkedValueWidgetHelper::EnableGuiElements(bool enable)
 	{
-		m_isControllsEnable = enable;
+		m_isWidgetEnabled = enable;
 		update();
 	}
 
@@ -101,7 +101,7 @@ namespace SvOg
 		{
 			m_rSelectButton.ShowWindow(SW_SHOW);
 			m_rValueEdit.ShowWindow(SW_SHOW);
-			m_rSelectButton.EnableWindow(m_isControllsEnable);
+			m_rSelectButton.EnableWindow(m_isWidgetEnabled);
 			ValueToEditbox();
 		}
 		else
@@ -190,7 +190,7 @@ namespace SvOg
 			switch (data.m_selectedOption)
 			{
 				case SvPb::LinkedSelectedOption::DirectValue:
-					enableFlag = m_isControllsEnable;
+					enableFlag = m_isWidgetEnabled;
 					break;
 				case SvPb::LinkedSelectedOption::IndirectValue:
 				case SvPb::LinkedSelectedOption::Formula:

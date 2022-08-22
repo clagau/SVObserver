@@ -1239,6 +1239,8 @@ enum EmbeddedIdEnum
 	IsColorImageCheckEId = 588;
 	ArchiveResultFilePathPart2EId = 589;
 	ArchiveResultFilePathPart3EId = 590;
+	MaximumImageQueueLengthEId = 591;
+	CurrentImageQueueLengthEId = 592;
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4

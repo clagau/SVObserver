@@ -133,6 +133,9 @@ private:
 	//
 	bool m_bInitializedForRun;
 
+	SvVol::SVLongValueObjectClass m_currentImageQueueLength; // current _archive_ image queue length
+	SvVol::LinkedValue m_maximumImageQueueLength; // maximum _archive_ image queue length
+
 	SvVol::LinkedValue m_resultFilepathPart1;
 	SvVol::LinkedValue m_resultFilepathPart2;
 	SvVol::LinkedValue m_resultFilepathPart3; 

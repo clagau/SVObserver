@@ -107,6 +107,7 @@ bool SVArchiveRecord::CountImages()
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	m_pArchiveTool->m_dwArchiveStopAtMaxImages.GetValue(dwStopAtMaxCount);
 
+
 	if (m_lCountImages >= (long)dwMaxImages)
 	{
 		if (dwStopAtMaxCount)
@@ -127,7 +128,6 @@ bool SVArchiveRecord::CountImages()
 
 HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile)
 {
-	
 	if (false == CountImages())
 	{
 		return  -1902;
@@ -164,30 +164,25 @@ HRESULT SVArchiveRecord::GetNextAlternativeImageFilePath(std::string& rImageFile
 	return S_OK;
 }
 
-HRESULT SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName, const std::string& rImageDirectoryPath)
+
+long SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName, const std::string& rImageDirectoryPath)
 {
 	assert(nullptr != rImage && !rImage->isEmpty());
-	HRESULT Result = S_OK;
 
 	if (m_eArchiveMethod == SVArchiveAsynchronous)
 	{
 		// the QueueImage function will copy the buffer, so pass in the original here
-		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName,rImageDirectoryPath, m_ImageInfo, m_toolPos);
-		SVArchiveImageThreadClass::Instance().QueueImage(info);
-	}
-	else
-	{
-		if (0 <= m_lLastIndex && m_ImageStoreVector.size() > m_lLastIndex)
-		{
-			m_ImageStoreVector[m_lLastIndex] = rImage;
-		}
-		else
-		{
-			Result = E_FAIL;
-		}
+		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, rImageDirectoryPath, m_ImageInfo, m_toolPos);
+		return SVArchiveImageThreadClass::Instance().QueueImage(info);
 	}
 
-	return Result;
+	if (0 <= m_lLastIndex && m_ImageStoreVector.size() > m_lLastIndex)
+	{
+		m_ImageStoreVector[m_lLastIndex] = rImage;
+		return m_lLastIndex+1;
+	}
+
+	return -1;
 }
 
 // right now called if method == SVArchiveGoOffline or SVArchiveAsynchronous
@@ -256,13 +251,13 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 	return hr;
 }
 
-HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
+long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 {
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getFinalObject());
 
 	if (nullptr == pImage)
 	{
-		return S_OK; //nothing to do
+		return 0; //nothing to do
 	}
 
 	//
@@ -275,7 +270,7 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 	SvOi::ITRCImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord, true);
 	if (nullptr == pImageBuffer || pImageBuffer->isEmpty())
 	{
-		return S_OK; //nothing to do
+		return 0; //nothing to do
 	}
 
 	std::string ImageFilePath;
@@ -296,11 +291,9 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 		hr = GetNextAlternativeImageFilePath(ImageFilePath, imageDirectoryPath);
 	}
 	
-	//std::filesystem::create_directories(imageDirectoryPath);
-
 	if (hr & 0xc000) //@TODO[Arvid] What does this magic number mean?
 	{
-		return hr;
+		return -1;
 	}
 
 	if (m_eArchiveMethod == SVArchiveSynchronous)
@@ -315,15 +308,12 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 		}
 		catch (...)
 		{
-			return E_FAIL;
+			return -1;
 		}
+		return 0;
 	}
-	else	// SVArchiveGoOffline or SVArchiveAsynchronous
-	{
-		QueueImage(pImageBuffer, ImageFilePath, imageDirectoryPath);
-	}
-
-	return S_OK;
+	// SVArchiveGoOffline or SVArchiveAsynchronous
+	return QueueImage(pImageBuffer, ImageFilePath, imageDirectoryPath);
 }
 
 

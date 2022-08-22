@@ -54,7 +54,7 @@ public:
 
 	HRESULT GoOnline();
 	HRESULT GoOffline();
-	HRESULT QueueImage( BufferInfo info );
+	long QueueImage( BufferInfo info ); // returns current queue length (-1 on error)
 	void setMaxNumberOfBuffer(int toolPos, long maxNumber) { m_maxBufferNumber[toolPos] = maxNumber; };
 #pragma endregion Public Methods
 

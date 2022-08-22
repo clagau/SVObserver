@@ -77,8 +77,8 @@ HRESULT SVArchiveImageThreadClass::GoOffline()
 	return S_OK;
 }
 
-// executes in the Inspection thread 
-HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
+// executes in the inspection thread 
+long SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 {
 	std::lock_guard<std::mutex> lock(m_mtxQueue);
 
@@ -110,7 +110,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		}
 	}// end if not found filename in queue else
 
-	return S_OK;
+	return static_cast<long>(m_Queue.size());
 }
 #pragma endregion Public Methods
 

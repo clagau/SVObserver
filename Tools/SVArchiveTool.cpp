@@ -23,10 +23,8 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVLibrary/SVOINIClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
-#include "SVStatusLibrary/GlobalPath.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -43,7 +41,7 @@ namespace SvTo
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr int cAsyncDefaultBufferNumber = 5;
+constexpr long cAsyncDefaultMaximumImageQueueLength = 5;
 #pragma endregion Declarations
 
 
@@ -89,6 +87,12 @@ void SVArchiveTool::initializeArchiveTool()
 		SvPb::ArchiveResultNamesEId,
 		IDS_OBJECTNAME_ARCHIVE_RESULT_NAMES,
 		false, SvOi::SVResetItemTool);
+
+	RegisterEmbeddedObject(&m_maximumImageQueueLength, SvPb::MaximumImageQueueLengthEId, IDS_OBJECTNAME_MAX_IMAGE_QUEUE_LENGTH, false, SvOi::SVResetItemTool);
+	m_maximumImageQueueLength.SetDefaultValue(_variant_t(cAsyncDefaultMaximumImageQueueLength), true);
+
+	RegisterEmbeddedObject(&m_currentImageQueueLength, SvPb::CurrentImageQueueLengthEId, IDS_OBJECTNAME_CURRENT_IMAGE_QUEUE_LENGTH, false, SvOi::SVResetItemTool);
+	m_currentImageQueueLength.SetDefaultValue(_variant_t(0l), true);
 
 	RegisterEmbeddedObject(&m_resultFilepathPart1, SvPb::ArchiveResultFilePathPart1EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH1, true, SvOi::SVResetItemTool);
 	m_resultFilepathPart1.SetDefaultValue(_variant_t(""), true);
@@ -161,7 +165,7 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ARCHIVE_MAX_IMAGES_COUNT,
 		false, SvOi::SVResetItemNone);
 	m_dwArchiveMaxImagesCount.SetOutputFormat(SvVol::OutputFormat_int);
-	m_dwArchiveMaxImagesCount.SetMinMaxValues(1, 10000000);
+	m_dwArchiveMaxImagesCount.SetMinMaxValues(1, 10'000'000);
 
 	RegisterEmbeddedObject(
 		&m_evoArchiveMethod,
@@ -590,25 +594,16 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 		}
 	}
 
-	//
 	// Validate the results objects to be archived in text format.
-	//
 	int nCountResults = m_ResultCollection.ValidateResultsObjects();
 
-	
-
-	//
-	// Don't create/open the results archive file if no results to
-	// archive.
-	//
+	// Don't create/open the results archive file if no results to archive.
 	if (!nCountResults)
 	{
 		return true;
 	}
 
-	//
 	// Create a file to store results in text format.
-	//
 	if (m_fileArchive.is_open())
 	{
 		return true;
@@ -617,9 +612,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if (nullptr != pInspection && pInspection->IsResetStateSet(SvDef::SVResetStateArchiveToolCreateFiles))	// If going online
 	{
-		//
 		// Create and open the results to text Archive file.
-		//
 		return CreateTextArchiveFile(pErrorMessages);
 	}
 
@@ -631,14 +624,14 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL, this);
 	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous)
 	{
-		// async doesn't really allocate any buffers but it does preparation work (initm_ImageInfo)
+		// async doesn't really allocate any buffers but it does preparation work (init m_ImageInfo)
 		DWORD dwMaxImages;
 		m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 		if (m_eArchiveMethod == SVArchiveAsynchronous)
 		{
-			SvLib::SVOINIClass SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
-			DWORD asyncBufferNumber = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferNumber"), cAsyncDefaultBufferNumber);
-			dwMaxImages = std::min(dwMaxImages, asyncBufferNumber);
+			_variant_t maxImageQueueLength;
+			m_maximumImageQueueLength.GetValue(maxImageQueueLength);
+			dwMaxImages = std::min(dwMaxImages, static_cast<DWORD>(maxImageQueueLength.ullVal));
 		}
 		long toolPos = -1;
 		m_ToolPosition.GetValue(toolPos);
@@ -772,10 +765,8 @@ bool SVArchiveTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
 		TRACE(_T("SVArchiveTool::onRun-WriteArchiveImageFiles-Name=%s\n"), GetCompleteName());
 #endif
-		//
-		// Iterate the list of images to archive.
-		//
-		m_ImageCollection.WriteArchiveImageFiles(rRunStatus.m_triggerRecord);
+
+		m_currentImageQueueLength.SetValue(m_ImageCollection.WriteAllArchiveImages(rRunStatus.m_triggerRecord));
 
 		rRunStatus.SetPassed();
 

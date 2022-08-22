@@ -40,38 +40,41 @@ static char THIS_FILE[] = __FILE__;
 
 
 BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
-	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SELECTED, OnDblClickListSelected)
-	ON_BN_CLICKED(IDC_SELECT_BUTTON, OnSelectObjects)
-	ON_BN_CLICKED(IDC_BTN_CLEAR, OnRemoveItem)
-	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL, OnRemoveAllItems)
-	ON_BN_CLICKED(IDC_BROWSE_IMAGE_FILEPATHROOT1, OnBrowseImageFilepathroot1)
-	ON_CBN_SELCHANGE(IDC_WHEN_TO_ARCHIVE, OnSelchangeWhenToArchive)
-	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
-	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX, OnStopAtMaxClicked)
-	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_BASE, OnButton<	AipCtr::Lve::BaseDirectoryname>)
-	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_BASE, OnKillFocus<AipCtr::Lve::BaseDirectoryname>)
-	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_INDEX, OnButton<	AipCtr::Lve::DirectorynameIndex>)
-	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_INDEX, OnKillFocus<AipCtr::Lve::DirectorynameIndex>)
-	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_SELECTION, OnButton<	AipCtr::Lve::SubfolderSelection>)
-	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_SELECTION, OnKillFocus<AipCtr::Lve::SubfolderSelection>)
-	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_LOCATION, OnButton<	AipCtr::Lve::SubfolderLocation>)
-	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_LOCATION, OnKillFocus<AipCtr::Lve::SubfolderLocation>)
-	ON_BN_CLICKED(IDC_BUTTON_FILENAME_BASE, OnButton<	AipCtr::Lve::BaseFilename>)
-	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_BASE, OnKillFocus<AipCtr::Lve::BaseFilename>)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SELECTED,			OnDblClickListSelected)
+	ON_BN_CLICKED(IDC_SELECT_BUTTON,				OnSelectObjects)
+	ON_BN_CLICKED(IDC_BTN_CLEAR,					OnRemoveItem)
+	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL,				OnRemoveAllItems)
+	ON_BN_CLICKED(IDC_BROWSE_IMAGE_FILEPATHROOT1,	OnBrowseImageFilepathroot1)
+	ON_CBN_SELCHANGE(IDC_WHEN_TO_ARCHIVE,			OnSelchangeWhenToArchive)
+	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES,				OnChangeEditMaxImages)
+	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX,			OnStopAtMaxClicked)
+	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_BASE,	OnButton<	AipCtr::Lve::BaseDirectoryname>)
+	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_BASE,	OnKillFocus<AipCtr::Lve::BaseDirectoryname>)
+	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_INDEX,	OnButton<	AipCtr::Lve::DirectorynameIndex>)
+	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_INDEX,	OnKillFocus<AipCtr::Lve::DirectorynameIndex>)
+	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_SELECTION,	OnButton<	AipCtr::Lve::SubfolderSelection>)
+	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_SELECTION,	OnKillFocus<AipCtr::Lve::SubfolderSelection>)
+	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_LOCATION,	OnButton<	AipCtr::Lve::SubfolderLocation>)
+	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_LOCATION,	OnKillFocus<AipCtr::Lve::SubfolderLocation>)
+	ON_BN_CLICKED(IDC_BUTTON_FILENAME_BASE,			OnButton<	AipCtr::Lve::BaseFilename>)
+	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_BASE,			OnKillFocus<AipCtr::Lve::BaseFilename>)
 	ON_BN_CLICKED(	IDC_BUTTON_FILENAME_INDEX1,		OnButton<	AipCtr::Lve::FilenameIndex1>)
 	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_INDEX1,		OnKillFocus<AipCtr::Lve::FilenameIndex1>)
-	ON_BN_CLICKED(IDC_BUTTON_FILENAME_CENTER, OnButton<	AipCtr::Lve::CenterFilename>)
-	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_CENTER, OnKillFocus<AipCtr::Lve::CenterFilename>)
+	ON_BN_CLICKED(IDC_BUTTON_FILENAME_CENTER,		OnButton<	AipCtr::Lve::CenterFilename>)
+	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_CENTER,		OnKillFocus<AipCtr::Lve::CenterFilename>)
 	ON_BN_CLICKED(	IDC_BUTTON_FILENAME_INDEX2,		OnButton<	AipCtr::Lve::FilenameIndex2>)
 	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_INDEX2,		OnKillFocus<AipCtr::Lve::FilenameIndex2>)
 
-	ON_BN_CLICKED(IDC_USE_ALTERNATIVE_IMAGE_PATH, OnButtonUseAlternativeImagePath)
-	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT1, OnButtonImageFilepathroot1)
-	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT2, OnButtonImageFilepathroot2)
-	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT3, OnButtonImageFilepathroot3)
+	ON_BN_CLICKED(IDC_USE_ALTERNATIVE_IMAGE_PATH,	OnButtonUseAlternativeImagePath)
+	ON_BN_CLICKED(IDC_BUTTON_MAX_QUEUE,				OnButtonMaxImageQueueLength)
+	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT1,	OnButtonImageFilepathroot1)
+	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT2,	OnButtonImageFilepathroot2)
+	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT3,	OnButtonImageFilepathroot3)
 	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT1, OnKillFocusImageFilepathroot1)
 	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT2, OnKillFocusImageFilepathroot2)
 	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT3, OnKillFocusImageFilepathroot3)
+	ON_EN_KILLFOCUS(IDC_EDIT_MAX_QUEUE,				OnKillFocusMaxImageQueueLength)
+	
 END_MESSAGE_MAP()
 
 constexpr int UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
@@ -83,7 +86,7 @@ constexpr long MaxImagesWarningLimit = 100L;
 
 #pragma endregion Declarations
 
-bool memoryNeedsToBeConsidered(long mode)
+bool memoryNeedsToBeConsidered(SvTo::SVArchiveMethodEnum mode)
 {
 	return mode == SvTo::SVArchiveGoOffline || mode == SvTo::SVArchiveAsynchronous;
 }
@@ -140,11 +143,9 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		}
 	}
 
-	//update the image path
-
 	if (!validateArchiveImageFilepath())
 	{
-		return false; //don't allow to exit with invalid path
+		return false; //do not exit with an invalid path
 	}
 
 	int iCurSel = m_WhenToArchive.GetCurSel();
@@ -181,6 +182,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_ValueController.Set<DWORD>(SvPb::ArchiveStopAtMaxImagesEId, m_StopAtMaxImagesButton.GetCheck() ? 1 : 0);
 
 	m_pTool->setImageArchiveList(m_ImagesToBeArchived);
+
 	m_ValueController.Commit(SvOg::PostAction::doReset);
 
 	if (nullptr != m_pParent)
@@ -190,6 +192,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	return true;
 }
+
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -201,6 +204,9 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_SELECTED, m_ItemsSelected);
 	DDX_Control(pDX, IDC_SELECT_BUTTON, m_Select);
 	DDX_Control(pDX, IDC_AVAILABLE_ARCHIVE_IMAGE_MEMORY, m_wndAvailableArchiveImageMemory);
+	DDX_Control(pDX, IDC_STATIC_MAX_QUEUE, m_maximumImageQueueLengthStaticText);
+	DDX_Control(pDX, IDC_EDIT_MAX_QUEUE, m_maximumImageQueueLengthEditBox);
+	DDX_Control(pDX, IDC_BUTTON_MAX_QUEUE, m_maximumImageQueueLengthButton);
 	DDX_Control(pDX, IDC_WHEN_TO_ARCHIVE, m_WhenToArchive);
 	DDX_Control(pDX, IDC_EDIT_MAX_IMAGES, m_EditMaxImages);
 	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT1, m_ImageFilepathroot1);
@@ -285,6 +291,8 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_TreeBitmap.LoadBitmap( IDB_TREE );
 	m_Select.SetBitmap( static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()) );
+	
+	m_maximumImageQueueLengthWidgetHelper = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_maximumImageQueueLengthEditBox, m_maximumImageQueueLengthButton, m_inspectionId, m_taskId, SvPb::MaximumImageQueueLengthEId, &m_ValueController);
 
 	CDWordArray dwaIndex;
 	
@@ -311,7 +319,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_ToolImageMemoryUsage = 0;
 	m_TotalArchiveImageMemoryAvailable = SVMemoryManager::Instance().SizeOfPoolBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL);
 
-	m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(lMode));
+	m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+	m_maximumImageQueueLengthStaticText.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
+	m_maximumImageQueueLengthEditBox.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
 
 	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController);
 	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
@@ -576,6 +586,8 @@ void SVTADlgArchiveImagePage::OnSelchangeWhenToArchive()
 	{
 		m_eSelectedArchiveMethod = static_cast <SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData( iSel ));
 		m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+		m_maximumImageQueueLengthStaticText.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
+		m_maximumImageQueueLengthEditBox.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
 
 		//if changing to SVArchiveGoOffline mode - build m_mapSelectedImageUsage with selected items in the tree
 		if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
@@ -755,6 +767,16 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePath()
 	m_alternativeImagePaths.OnButtonUseAlternativeImagePath(m_useAlternativeImagePathButton.GetCheck());
 }
 
+afx_msg void SVTADlgArchiveImagePage::OnButtonMaxImageQueueLength()
+{
+	m_maximumImageQueueLengthWidgetHelper->OnButton();
+}
+
+void SVTADlgArchiveImagePage::OnKillFocusMaxImageQueueLength()
+{
+	m_maximumImageQueueLengthWidgetHelper->EditboxToValue();
+}
+
 void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()
 {
 	m_ImageFilepathrootWidgetHelpers[0]->OnButton();
@@ -787,14 +809,14 @@ void SVTADlgArchiveImagePage::OnKillFocusImageFilepathroot3()
 
 void SVTADlgArchiveImagePage::AipCtr::init()
 {
-	m_WidgetHelpers[Lve::BaseDirectoryname] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditBaseDirectoryname, m_ButtonBaseDirectoryname, m_inspectionId, m_taskId, SvPb::BaseDirectorynameEId, &m_rValueController);
-	m_WidgetHelpers[Lve::DirectorynameIndex] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditDirectorynameIndex, m_ButtonDirectorynameIndex, m_inspectionId, m_taskId, SvPb::DirectorynameIndexEId, &m_rValueController);
-	m_WidgetHelpers[Lve::SubfolderSelection] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderSelection, m_ButtonSubfolderSelection, m_inspectionId, m_taskId, SvPb::SubfolderSelectionEId, &m_rValueController);
-	m_WidgetHelpers[Lve::SubfolderLocation] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderLocation, m_ButtonSubfolderLocation, m_inspectionId, m_taskId, SvPb::SubfolderLocationEId, &m_rValueController);
-	m_WidgetHelpers[Lve::BaseFilename] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditBaseFilename, m_ButtonBaseFilename, m_inspectionId, m_taskId, SvPb::BaseFilenameEId, &m_rValueController);
-	m_WidgetHelpers[Lve::FilenameIndex1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex1, m_ButtonFilenameIndex1, m_inspectionId, m_taskId, SvPb::FilenameIndex1EId, &m_rValueController);
-	m_WidgetHelpers[Lve::CenterFilename] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditCenterFilename, m_ButtonCenterFilename, m_inspectionId, m_taskId, SvPb::CenterFilenameEId, &m_rValueController);
-	m_WidgetHelpers[Lve::FilenameIndex2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex2, m_ButtonFilenameIndex2, m_inspectionId, m_taskId, SvPb::FilenameIndex2EId, &m_rValueController);
+	m_WidgetHelpers[Lve::BaseDirectoryname] = m_source.produce(m_EditBaseDirectoryname, m_ButtonBaseDirectoryname, SvPb::BaseDirectorynameEId);
+	m_WidgetHelpers[Lve::DirectorynameIndex] = m_source.produce(m_EditDirectorynameIndex, m_ButtonDirectorynameIndex, SvPb::DirectorynameIndexEId);
+	m_WidgetHelpers[Lve::SubfolderSelection] = m_source.produce(m_EditSubfolderSelection, m_ButtonSubfolderSelection, SvPb::SubfolderSelectionEId);
+	m_WidgetHelpers[Lve::SubfolderLocation] = m_source.produce(m_EditSubfolderLocation, m_ButtonSubfolderLocation, SvPb::SubfolderLocationEId);
+	m_WidgetHelpers[Lve::BaseFilename] = m_source.produce(m_EditBaseFilename, m_ButtonBaseFilename, SvPb::BaseFilenameEId);
+	m_WidgetHelpers[Lve::FilenameIndex1] = m_source.produce(m_EditFilenameIndex1, m_ButtonFilenameIndex1, SvPb::FilenameIndex1EId);
+	m_WidgetHelpers[Lve::CenterFilename] = m_source.produce(m_EditCenterFilename, m_ButtonCenterFilename, SvPb::CenterFilenameEId);
+	m_WidgetHelpers[Lve::FilenameIndex2] = m_source.produce(m_EditFilenameIndex2, m_ButtonFilenameIndex2, SvPb::FilenameIndex2EId);
 }
 
 void SVTADlgArchiveImagePage::AipCtr::DoDataExchange(CDataExchange* pDX)

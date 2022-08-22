@@ -41,7 +41,8 @@ public:
 
 	HRESULT AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
 
-	bool WriteArchiveImageFiles(const SvOi::ITriggerRecordRPtr& pTriggerRecord);
+	long WriteAllArchiveImages(const SvOi::ITriggerRecordRPtr& pTriggerRecord); //Iterates the list of images to archive. Returns current queue length (-1 on error).
+
 	HRESULT WriteImageQueue();
 
 	int ValidateResultsObjects();
