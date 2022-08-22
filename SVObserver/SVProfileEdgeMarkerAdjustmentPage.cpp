@@ -240,7 +240,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnChangeLowerMaxOffset()
 {
 	if(nullptr != m_LowerMaxOffsetWidget && m_lowerThresholdOption != SvDef::SV_USE_SELECTED)
 	{
-		OnChangeValue(m_UpperMaxDiffWidget);
+		OnChangeValue(m_LowerMaxOffsetWidget);
 	}
 }
 
