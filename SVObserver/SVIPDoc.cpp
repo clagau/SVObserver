@@ -3442,7 +3442,7 @@ void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 
-	Enabled = Enabled && TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
+	Enabled = Enabled && TheSVObserverApp().OkToEdit();
 
 	if (pCmdUI->m_pSubMenu)
 	{
@@ -3458,7 +3458,7 @@ void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 void SVIPDoc::OnUpdateAddTransformationTool(CCmdUI* pCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
-	Enabled = Enabled && TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
+	Enabled = Enabled && TheSVObserverApp().OkToEdit();
 
 	pCmdUI->Enable(Enabled);
 }

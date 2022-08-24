@@ -384,8 +384,6 @@ bool SVCylindricalWarpToolClass::onRun( SvIe::RunStatus& p_rRunStatus, SvStl::Me
 		}
 	}
 
-	assert( l_bOk );
-
 	if ( ! l_bOk )
 	{
 		p_rRunStatus.SetInvalid();
