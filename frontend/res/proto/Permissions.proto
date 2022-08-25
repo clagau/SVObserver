@@ -36,7 +36,6 @@ message Permissions {
 			ImageStripView = 3;
 			ParameterView = 4;
 			ToolSetView = 5;
-			InputToolView = 6;
 		}
 
 		// Note: we can introduce dedicated feature flags per view by introducing dedicated messages
