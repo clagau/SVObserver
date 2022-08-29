@@ -233,6 +233,9 @@ HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index) const
 	return Result;
 }
 
+//@Todo[mec]25_8_2022 Here is m_Arraysize instead of getArraysize
+// because the override of getArraysize in LinkedValue makes problems for linked Array. 
+//The whole thing should be reworked later.  see SVO-3720
 template <typename T>
 HRESULT SVValueObjectClass<T>::SetDefaultValue(const T& rValue, bool bResetAll)
 {
@@ -243,7 +246,7 @@ HRESULT SVValueObjectClass<T>::SetDefaultValue(const T& rValue, bool bResetAll)
 	{
 		if (nullptr != m_pValue)
 		{
-			std::fill(m_pValue, m_pValue + getArraySize(), rValue);
+			std::fill(m_pValue, m_pValue + m_ArraySize, rValue);
 		}
 	}
 	return Result;
