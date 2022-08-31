@@ -1,8 +1,8 @@
 ﻿Notable changes from 10.12.1 to 10.20
 
 Compatible Changes:
+SVO-3717 Online Help / Manual: Documentation for SVIM Type NEO2 is missing
 SVO-3596 Group tool Input/result change the table view
-SVO-3574 Update Baumer Camera Explorer to V3.3.0
 SVO-3572 Add Validation Mode to SVRC interface
 SVO-3549 Rename Seidenader GmbH to Körber Pharma Inspection GmbH
 SVO-3546 Add Input-SelectDialog if tools copy or import
@@ -16,10 +16,9 @@ SVO-3464 CameraFile: Test pattern selector for VCXG cameras
 SVO-3463 Make VCXG Chunk Data available in SVObserver
 SVO-3438 New email address for About menu
 SVO-3420 Add type for Results in GroupTool to return State of Tools
-SVO-3412 Ring Buffer Tool, Cylindrical Warp Tool: Hide Tool Extents (as it is already done for other tools which don't support the image ROI)
 SVO-3408 SVIM Name in Batch Data DLL
 SVO-3395 Multiple image selection in Archive Tool
-SVO-3382 Rework image Extent step1: avoid unecessary call from  ImageExtents.Update() ; avoid unecessary instances of imageeExtents() 
+SVO-3382 Rework image Extent step1: avoid unecessary call from  ImageExtents.Update() ; avoid unecessary instances of imageeExtents()
 SVO-3365 LoadImage Tool: Color Image support
 SVO-3362 Create shared memory based lock implementation
 SVO-3361 Provide SVRC protocol for locking concept
@@ -28,19 +27,17 @@ SVO-3349 GroupTool: Provide Width and Height of Input Images
 SVO-3326 Set Trigger Index and ObjectID im Regression Test Mode
 SVO-3314 Change database table model in DB DLL
 SVO-3304 Improvements for "Tool Size and Position"-dialogs
-SVO-3303 Set value for Math Tool.Equation.Result to use it for Initiliziation
 SVO-3283 Rename Postgres DB DLLs
 SVO-3269 Timeout for Postgres external DLLs
 SVO-3243 SVObserver Version Number in Error Messages Title during startup
-SVO-3242 Function to save Config Report 
+SVO-3242 Function to save Config Report
 SVO-3221 Check for Performance issue in  SVToolClass::updateImageExtent()
-SVO-3220 Extension of error and event logging 
+SVO-3220 Extension of error and event logging
 SVO-3211 Baumer Sequencer Phase 1
 SVO-3209 GUI issue for Group Tool and Loop Tool: Collapsed display of the Tool isn't saved in configuration
 SVO-3200 Use in ProtoBuf-message SetEmbeddedValues also the automatically reset flag
 SVO-3199 Add Min/Max values to the ProtoBuf-message GetEmbeddedValues
 SVO-3168 Unhandy Global Constants Conflict window design (longer strings are truncated)
-SVO-3152 default Folder on SVIM Image (Remove D:\Application Folder)
 SVO-3137 ToolSetGraph export
 SVO-3129 DrawTool Phase 2
 SVO-3128 DrawTool Phase 1
@@ -48,8 +45,7 @@ SVO-3110 Color Tool not first Tool
 SVO-2857 Table Analyzer: Possibility to remove Columns
 SVO-2814 Allow Equations for all linked values
 SVO-2780 Regression Test default selection
-SVO-2773 ImageTool: Add Floating Point Image Subtraction
-SVO-2726 ExternalTool: Support Auxiliary extents 
+SVO-2726 ExternalTool: Support Auxiliary extents
 SVO-2722 ExternalTool: RunOnce Button
 SVO-2624 Improve SetDefaultInputs
 SVO-2535 floating point image arithmetic
@@ -62,9 +58,32 @@ SVO-344 Warning messages for perfomance problems when adjusting Vision configura
 SVO-132 Not processed Counter in SVObserver
 SVO-96 Activate SW trigger in test mode
 
+Web App:
+SVO-3581 WebApp: Math Tool UI
+SVO-3579 WebApp: Partial loading
+SVO-3576 WebApp Top Navigation bar not fully visible in SAMI
+SVO-3552 WebApp: Config upload / download
+SVO-3486 WebApp: Review of files in folder /translations
+SVO-3462 Translate SVOWebApp in spanish
+SVO-3455 WebApp: SVRCWebClient improvements
+SVO-3439 WebApp: Change syntax in translations files to clean json
+SVO-3340 Webapp: Optimise Config Loading
+SVO-3292 WebApp: Improve viewset manager
+SVO-3230 WebApp: SVRC Webclient Phase 1
+SVO-3216 WebApp: Introduce hibernate mode; stop streams and remove images from cache when browser not visible
+SVO-3145 WebApp: Cross-Platform Support Versioning
+SVO-3021 WebApp: remove expand button
+SVO-2954 WebApp: ToolSetTree view does not update if new tools are added
+SVO-2669 ToolsetTree
+SVO-2663 Locking in the WebApp
+SVO-2578 WebApp: ToolsetTree Add Fuzz Search
+SVO-2576 WebApp: ToolsetTree Extend for Interactions
+
 Incompatible Changes:
-SVO-3388 Remove RAID Code Remnants
 SVO-3416 MIL Update to MILX 2102
+SVO-3412 Ring Buffer Tool, Cylindrical Warp Tool: Hide Tool Extents (as it is already done for other tools which don't support the image ROI)
+SVO-3388 Remove RAID Code Remnants
+SVO-3303 Set value for Math Tool.Equation.Result to use it for Initiliziation
 SVO-2919 Remove Code related to File Based Write Filter
 
 Fixed Bugs:
@@ -74,13 +93,15 @@ SVO-3587 Crash deleting a Group Tool
 SVO-3578 Online Help/Manual: Obsolete Screenshot under Topic: Configuration Settings
 SVO-3543 Issues loading externall dll
 SVO-3530 Archive tool Inputs used; do not create a dependecy; do not block the closing of the group
+SVO-3527 Online Help / Manual: Small issue found related to the description of the "File Execution" feature
 SVO-3506 SVRC PutDeviceFile doesn't create the folder if it doesn't exist
+SVO-3496 Tool Time for archive tool sporadically very long
 SVO-3490 Crash with external Tool in Group Tool
 SVO-3489 With X2-GD8A configurations the triggers are delayed when IPD takes long
 SVO-3485 StoreTriggerDataPostgresFS Image Count
 SVO-3483 Delete Group Tool: Internal Dependencies listed in Dependencies Window
 SVO-3480 Copy group Tool in other IPD all inputs are lost
-SVO-3472 Group Tool: Deletion of a Global Constant (of type text); which is set in an Input list; leads to the display of its ObjectID 
+SVO-3472 Group Tool: Deletion of a Global Constant (of type text); which is set in an Input list; leads to the display of its ObjectID
 SVO-3471 Group Tool: Selection of Linked Value: DigInput in InputList gets lost. (Implicitly fixed in SVO 10.20)
 SVO-3469 TriggerDataDLL creates way too many folders
 SVO-3468 Online Help: "Failed to launch help" when you hit the F1 button for the active "Dependencies" window
@@ -94,47 +115,44 @@ SVO-3422 BlobAnalyzer-2 Feature "Feret General" is Defect and Produces Several E
 SVO-3405 Trigger Data DLL pixel analyzer value
 SVO-3402 Error Trigger/Batch Data DLL no connection to DataCollector
 SVO-3390 Group Tool: Issue after the Change of the Order of Input/Result list entries (affects AuditTrail )
-SVO-3386 SVO crash after remove values of Table Analyzer
 SVO-3380 Group Tool: Issues when Input entries are swapped (Root Cause: Not GUI specific)
 SVO-3373 Resize Tool: Linked Value Scale Factor (Image Content) is overwritten if the Formula Result of the ROI Size has been changed
 SVO-3368 ROI of Resize Tool that has become invalid cannot be changed via Mouse Drag
 SVO-3356 Invalid tools after loading a config and initialization calculations
 SVO-3352 GroupTool: GroupTool can access internal images / values from other closed GroupTools
-SVO-3333 Table Analyzer Tool: SVO Crash after Deletion of an Analyzer
 SVO-3322 Issues when you select Input / Result values of Group Tools in Lists (e.g. MonitorList)
 SVO-3320 SVO crash; caused by Group Tool input objects of the type: table
 SVO-3311 Group Tool: Decimal Input Values aren't changeable from Remote
 SVO-3297 Group Tool: Usage of Linked Values as Results (or Inputs) can cause issues
-SVO-3278 Table Analyzer Tool; Exclude Analyzer: Number of Rows Result Value confused with Number of Rows 
+SVO-3278 Table Analyzer Tool; Exclude Analyzer: Number of Rows Result Value confused with Number of Rows
+SVO-3276 Online Help / Manual: Update the screenshot under the topic: "Select External Tool DLL Filename"
 SVO-3265 <inf> Value; used as External Tool Input: Saved Configuration not Loadable
 SVO-3193 In some cases the valid / invalid state of a (sub-)tool within a Loop Tool (Group Tool) isn't instantly updated and passed thru to the Loop (resp. Group-) Tool
 SVO-3130 The function: "Reset Counts All IPs" causes an issue in Regression Test Mode; which is similar to SVO-3039
 SVO-2972 Default values (i.e. "0") in the External Tool Result Page if "Edit Mode Freeze" is set in an External Tool with SVStringReader Dll
-SVO-2969 SVStringreader DLL: Status change to fail after a SVRC: SetItems Command (incl. RunOnce)
 SVO-2961 External Tool: String reader dll produces error entries in the application log file
-SVO-2940 Linear Tool: Missing Result Value Objects of Threshold Calculations
 SVO-2830 Many Errors in Event Log after Standard Test on SVOTestserver
 SVO-2642 Inconsistent image numbers in archive tools with multiple images
 SVO-2447 After save&reload of a configuration: Unwanted "automatic" adaption of an invalid tool - ROI; to the size of it's source image
-SVO-2423 Online Help: Topic: Connecting SVIM X2C Components; Under "Ethernet" there are "Three (3)" ethernet ports mentioned 
-SVO-2358 Invisible Tools
+SVO-2423 Online Help: Topic: Connecting SVIM X2C Components; Under "Ethernet" there are "Three (3)" ethernet ports mentioned
 SVO-2293 Several camera file entries get lost after deleting one camera
 SVO-1983 Restrict GetConfig when Tool Adjust open
 SVO-1765 External Tool: ImageSelect.dll: SVException message when inserted Input01 value is not allowed
 SVO-702 Shift tool Left wrong or counter intuitive
 
 Notable SVIM Image Changes:
+SVO-3706 Gige port settings in NEO1 and NEO2 incorrect
 SVO-3574 Update Baumer Camera Explorer to V3.3.0
 SVO-3560 Image Partition Size for NEO2
 SVO-3550 Update RAM Drive Software
-SVO-3540 Preinstall dependencies for TIA_TF2.6 v100 
+SVO-3540 Preinstall dependencies for TIA_TF2.6 v100
 SVO-3522 Update ImageToSVO to nonMil version (1.3) on Image
 SVO-3396 Set WinRM Service to manual on SVIM image
 SVO-3327 New Model Numbers for NEO2
 SVO-3285 "Turn off the caching of thumbnails in hidden thumbs.db files" is not available
 SVO-3210 Set default Value for PreTriggerTimeWindow
 SVO-3152 default Folder on SVIM Image (Remove D:\Application Folder)
-SVO-2932 Win10: Remove BGInfo 
+SVO-2932 Win10: Remove BGInfo
 SVO-2500 Extras - Utilities - Taskmanager - File -New Task (Run...) : Some old entries in the input history pull down window
 SVO-1685 Synchronize Timezone from HMI to the SVIMs
 
