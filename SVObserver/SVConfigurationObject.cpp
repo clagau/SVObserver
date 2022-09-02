@@ -3800,7 +3800,7 @@ HRESULT SVConfigurationObject::SetModuleReady(bool value)
 			auto* pPPQ = GetPPQ(l);
 			if (nullptr != pPPQ)
 			{
-				pPPQ->setModuleReady(true);
+				pPPQ->setModuleReady(value);
 				requireTimer |= pPPQ->requiresTimer();
 			}
 		}// end for

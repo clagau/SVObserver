@@ -12,35 +12,35 @@
 
 namespace 
 {
-	const TCHAR* const scAttributesSetTag(_T( "AttributesSet" ));
-	const TCHAR* const scAttributeTag(_T( "Attribute" ));
-	const TCHAR* const scDefaultTag(_T("Default"));
-	const TCHAR* const scArrayElementsTag(_T("Array_Elements"));
-	const TCHAR* const scElementTag(_T("Element"));
+	constexpr TCHAR const scAttributesSetTag[](_T( "AttributesSet" ));
+	constexpr TCHAR const scAttributeTag[](_T( "Attribute" ));
+	constexpr TCHAR const scDefaultTag[](_T("Default"));
+	constexpr TCHAR const scArrayElementsTag[](_T("Array_Elements"));
+	constexpr TCHAR const scElementTag[](_T("Element"));
 
-	const TCHAR* const scNameTag(_T( "Name" ));
-	const TCHAR* const scObjectNameTag(_T( "ObjectName" ));
-	const TCHAR* const scUniqueReferenceIDTag(_T( "UniqueReferenceID" ));
-	const TCHAR* const scConntectedIDTag(_T("ConnectedID"));
-	const TCHAR* const scConntectedDotnameTag(_T("ConnectedDotname"));
-	const TCHAR* const scEmbeddedIDTag(_T( "EmbeddedID" ));
-	const TCHAR* const scClassIDTag(_T( "ClassID" ));
-	const TCHAR* const scFriendsTag(_T( "Friends" ));
-	const TCHAR* const scEmbeddedsTag(_T( "Embeddeds" ));
-	const TCHAR* const scLinkedChildsTag(_T("LinkedChilds"));
-	const TCHAR* const scInputsTag(_T( "Inputs" ));
-	const TCHAR* const scInputTag(_T( "Input" ));
-	const TCHAR* const scEquationBufferTag(_T("EquationBuffer"));
-	const TCHAR* const scDigitizerIDTag(_T("DigitizerID"));
-	const TCHAR* const scPixelDepthTag(_T( "PixelDepth" ));
-	const TCHAR* const scBandNumberTag(_T( "BandNumber" ));
-	const TCHAR* const scBandLinkTag(_T( "BandLink" ));
-	const TCHAR* const scMaskDataTag(_T( "MaskData" ));
-	const TCHAR* const scValueTag(_T( "Value" ));
-	const TCHAR* const scArraySizeTag(_T("Array Size"));
-	const TCHAR* const scLinkedDirectValueTag(_T("Direct Value"));
-	const TCHAR* const scLinkedIndirectValueTag(_T("IndirectID"));
-	const TCHAR* const scLinkedFormulaTag(_T("Formula"));
-	const TCHAR* const scCommentTag(_T("Comment"));
+	constexpr TCHAR const scNameTag[](_T( "Name" ));
+	constexpr TCHAR const scObjectNameTag[](_T( "ObjectName" ));
+	constexpr TCHAR const scUniqueReferenceIDTag[](_T( "UniqueReferenceID" ));
+	constexpr TCHAR const scConntectedIDTag[](_T("ConnectedID"));
+	constexpr TCHAR const scConntectedDotnameTag[](_T("ConnectedDotname"));
+	constexpr TCHAR const scEmbeddedIDTag[](_T( "EmbeddedID" ));
+	constexpr TCHAR const scClassIDTag[](_T( "ClassID" ));
+	constexpr TCHAR const scFriendsTag[](_T( "Friends" ));
+	constexpr TCHAR const scEmbeddedsTag[](_T( "Embeddeds" ));
+	constexpr TCHAR const scLinkedChildsTag[](_T("LinkedChilds"));
+	constexpr TCHAR const scInputsTag[](_T( "Inputs" ));
+	constexpr TCHAR const scInputTag[](_T( "Input" ));
+	constexpr TCHAR const scEquationBufferTag[](_T("EquationBuffer"));
+	constexpr TCHAR const scDigitizerIDTag[](_T("DigitizerID"));
+	constexpr TCHAR const scPixelDepthTag[](_T( "PixelDepth" ));
+	constexpr TCHAR const scBandNumberTag[](_T( "BandNumber" ));
+	constexpr TCHAR const scBandLinkTag[](_T( "BandLink" ));
+	constexpr TCHAR const scMaskDataTag[](_T( "MaskData" ));
+	constexpr TCHAR const scValueTag[](_T( "Value" ));
+	constexpr TCHAR const scArraySizeTag[](_T("Array Size"));
+	constexpr TCHAR const scLinkedDirectValueTag[](_T("Direct Value"));
+	constexpr TCHAR const scLinkedIndirectValueTag[](_T("IndirectID"));
+	constexpr TCHAR const scLinkedFormulaTag[](_T("Formula"));
+	constexpr TCHAR const scCommentTag[](_T("Comment"));
 }
 
