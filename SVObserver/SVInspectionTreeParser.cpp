@@ -44,14 +44,15 @@ namespace
 		std::string(scEmbeddedIDTag)
 	};
 
+	static const std::vector< const TCHAR *>   cExcludeTypes = {scDefaultTag, scArrayElementsTag};
+
 	bool checkIfProcess(const std::string& DataName, bool excludeDefaultAndArray)
 	{
 		bool shouldProcess = (cObjectAttributeFilter.find(DataName.c_str()) == cObjectAttributeFilter.end());
-		if (excludeDefaultAndArray)
+		if (shouldProcess && excludeDefaultAndArray)
 		{
-			constexpr auto cExcludeTypes = { scDefaultTag, scArrayElementsTag };
 			auto iter = std::ranges::find(cExcludeTypes, DataName);
-			shouldProcess &= (iter == cExcludeTypes.end());
+			shouldProcess = (iter == cExcludeTypes.end());
 		}
 		return shouldProcess;
 	}

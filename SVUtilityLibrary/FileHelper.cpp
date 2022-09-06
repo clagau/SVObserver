@@ -20,12 +20,11 @@ std::vector<std::string> getFileList(LPCTSTR pPath, LPCTSTR pExtension, bool rec
 
 	if (nullptr != pPath)
 	{
-		auto&& filteredList = std::vector<std::filesystem::directory_entry> {};
+		std::vector<std::filesystem::directory_entry>  filteredList {};
 
 		if (recursive)
 		{
-			auto&& dirList = std::filesystem::recursive_directory_iterator {pPath};
-			filteredList.reserve(dirList->file_size());
+			std::filesystem::recursive_directory_iterator  dirList{pPath};
 			if (nullptr == pExtension)
 			{
 				// cppcheck-suppress danglingTemporaryLifetime
@@ -42,8 +41,7 @@ std::vector<std::string> getFileList(LPCTSTR pPath, LPCTSTR pExtension, bool rec
 		}
 		else
 		{
-			auto&& dirList = std::filesystem::directory_iterator {pPath};
-			filteredList.reserve(dirList->file_size());
+			std::filesystem::recursive_directory_iterator  dirList {pPath};
 			if (nullptr == pExtension)
 			{
 				// cppcheck-suppress danglingTemporaryLifetime
