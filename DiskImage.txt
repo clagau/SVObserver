@@ -146,7 +146,6 @@ SVO-3574 Update Baumer Camera Explorer to V3.3.0
 SVO-3560 Image Partition Size for NEO2
 SVO-3550 Update RAM Drive Software
 SVO-3540 Preinstall dependencies for TIA_TF2.6 v100
-SVO-3522 Update ImageToSVO to nonMil version (1.3) on Image
 SVO-3396 Set WinRM Service to manual on SVIM image
 SVO-3327 New Model Numbers for NEO2
 SVO-3285 "Turn off the caching of thumbnails in hidden thumbs.db files" is not available
