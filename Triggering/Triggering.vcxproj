@@ -86,6 +86,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CifxLoadLibrary.cpp" />
     <ClCompile Include="IODeviceBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -100,6 +101,7 @@
     <ClCompile Include="TriggerDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CifxLoadLibrary.h" />
     <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="ObjectIDParameters.h" />
     <ClInclude Include="Stdafx.h" />

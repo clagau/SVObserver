@@ -1,11 +1,16 @@
-//*****************************************************************************
-/// \copyright COPYRIGHT (c) 2020,2020 by Körber Pharma Inspection GmbH. All Rights Reserved
-/// All Rights Reserved
-/// \file Stdafx.h
-/// \brief include file for standard system include files
+//******************************************************************************
+//* COPYRIGHT (c) 2014 by Körber Pharma Inspection GmbH. All Rights Reserved
+//* All Rights Reserved
+//******************************************************************************
+//* .Module Name     : stdafx
+//* .File Name       : $Workfile:   StdAfx.h  $
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   17 Sep 2014 15:57:32  $
 //******************************************************************************
 
 #pragma once
+
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
 #ifndef WINVER				// Allow use of features specific to Windows XP or later.
@@ -30,6 +35,8 @@
 #define _CRT_SECURE_NO_DEPRECATE 
 #define _CRT_NON_CONFORMING_SWPRINTFS
 
+#define NOMINMAX			// Exclude min/max macros
+
 #ifndef _DEBUG
 #define _SECURE_SCL 0
 #endif
@@ -40,21 +47,27 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
-#include <atomic>
+#include <algorithm>
 #include <array>
-#include <chrono>
+#include <atomic>
 #include <comdef.h>
-#include <comutil.h>
-#include <conio.h>
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
 #include <format>
 #include <fstream>
 #include <functional>
-#include <iostream> 
+#include <iterator>			//Used by static library
 #include <map>
 #include <memory>
 #include <mutex>
 #include <queue>
-#include <stdio.h>
+#include <set>				//Used by static library
+#include <sstream>
 #include <string>
-#include <thread>
+#include <tchar.h>			//Used by static library
+#include <time.h>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
+#include <vector>
 #pragma endregion Precompiled Headers

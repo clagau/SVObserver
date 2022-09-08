@@ -11,6 +11,8 @@
 
 constexpr const char* cCifxDll = "cifX32dll.dll";
 
+namespace SvTrig
+{
 CifxLoadLibrary::~CifxLoadLibrary()
 {
 	Close();
@@ -102,4 +104,4 @@ HRESULT CifxLoadLibrary::Close()
 
 	return result;
 }
-
+} //namespace SvTrig

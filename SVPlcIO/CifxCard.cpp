@@ -7,13 +7,13 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include <cifXErrors.h>
+#include <cifXUser.h>
+#include <Epl_Common_Defines.h>
+#include <EplCn_If_Public.h>
+#include <Hil_ApplicationCmd.h>
 
 #include "CifXCard.h"
-#include "cifXErrors.h"
-#include "cifXUser.h"
-#include "Epl_Common_Defines.h"
-#include "EplCn_If_Public.h"
-#include "Hil_ApplicationCmd.h"
 #include "InspectionState.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -335,7 +335,7 @@ int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
 	}
 	CHANNEL_INFORMATION channelInfo;
 	m_cifxLoadLib.m_pChannelInfo(m_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
-	std::string firmware{ std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision) };
+	std::string firmware{"Power Link FW: " + std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision) };
 	m_notifyType =  (rAdditionalData == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
 	::OutputDebugString(reinterpret_cast<char*> (channelInfo.abFWName));
 	::OutputDebugString((' ' + firmware + '\n').c_str());

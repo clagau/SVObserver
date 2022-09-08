@@ -42,6 +42,9 @@
     <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="CifxLoadLibrary.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h">
@@ -81,6 +84,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectIDParameters.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CifxLoadLibrary.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

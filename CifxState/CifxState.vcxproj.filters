@@ -18,18 +18,12 @@
     <ClInclude Include="Stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\SvPlcIo\CifxLoadLibrary.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="CifxState.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="..\SvPlcIo\CifxLoadLibrary.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

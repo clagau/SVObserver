@@ -8,11 +8,11 @@
 #pragma once
 
 #pragma region Includes
-#include "CifxLoadLibrary.h"
 #include "ConfigDataSet.h"
 #include "InspectionCommand.h"
 #include "Telegram.h"
 #include "SVStatusLibrary/SourceFileParams.h"
+#include "Triggering/CifxLoadLibrary.h"
 #pragma endregion Includes
 
 namespace SvPlc
@@ -90,7 +90,7 @@ private:
 	HANDLE m_hTelegramReadEvent {nullptr};
 
 	std::mutex m_cifxMutex;
-	CifxLoadLibrary m_cifxLoadLib;
+	SvTrig::CifxLoadLibrary m_cifxLoadLib;
 	std::queue<InputData> m_inputDataQueue;
 	InputData m_currentInputData;
 	PlcVersion m_plcVersion{ PlcVersion::PlcDataNone };

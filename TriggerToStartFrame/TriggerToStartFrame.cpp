@@ -22,8 +22,17 @@ constexpr long cFallingEdge = -1L;
 constexpr double cNanoToMilli = 1000000.0;
 
 constexpr LPCTSTR cPlcIoDll = "SVPlcIO.dll";
+constexpr LPCTSTR cEtherCatIoDll = "EtherCatIO.dll";
 constexpr LPCTSTR cLptIoDll = "SVLptIO.dll";
 constexpr LPCTSTR cMatroxGigeDll = "SVMatroxGige.dll";
+
+constexpr LPCTSTR cHelpOption1 = "-h";
+constexpr LPCTSTR cHelpOption2 = "-?";
+constexpr LPCTSTR cTriggerOption = "-t:";
+constexpr LPCTSTR cModeOption = "-m:";
+constexpr LPCTSTR cFileOption = "-f:";
+constexpr LPCTSTR cNegativeTimeOption = "-n:";
+constexpr LPCTSTR cPositiveTimeOption = "-p:";
 
 constexpr std::array<LPCTSTR, cNumberOfChannels> cCameraIpAdresses =
 {
@@ -33,16 +42,25 @@ constexpr std::array<LPCTSTR, cNumberOfChannels> cCameraIpAdresses =
 	"192.168.104.2"
 };
 
-std::mutex g_triggerQueueMutex;
-std::mutex g_cameraTriggerQueueMutex;
-std::queue<double> g_triggerQueue;
-std::queue<double> g_cameraTriggerQueue;
-std::atomic_bool g_triggerStarted {false};
+enum DllMode
+{
+	PlcIOStartFrame,
+	PlcIOLptIO,
+	EthercatLptIO,
+	Count,
+};
+
+std::mutex g_masterQueueMutex;
+std::mutex g_slaveQueueMutex;
+std::queue<double> g_masterTimestampQueue;
+std::queue<double> g_slaveTimestampQueue;
+std::atomic_bool g_masterStarted {false};
 SVAcquisitionBuffer g_Acquisition;
-//Timespan default +-5ms
-double g_timespanPlus {10.0};
-double g_timespanMinus {-1.7};
+//Time window default +5ms -1.7ms
+double g_timeWindowPositive {5.0};
+double g_timeWindowNegative {-1.7};
 uint8_t g_triggerChannel {0};
+std::ofstream g_logFile;
 
 
 double GetTimeStamp()
@@ -52,97 +70,117 @@ double GetTimeStamp()
 
 void TriggerCorrelate()
 {
-	static unsigned long imageCount {0UL};
-	static unsigned long triggerCount {0UL};
+	static unsigned long slaveCount {0UL};
+	static unsigned long prevCount {0UL};
+	static unsigned long masterCount {0UL};
 
-	while (false == g_triggerStarted)
+	while (false == g_masterStarted)
 	{
-		Sleep(1);
+		Sleep(5);
 	}
 
-	while (true == g_triggerStarted)
+	while (true == g_masterStarted)
 	{
-		double cameraTriggerTimestamp {0.0};
-		double triggerTimestamp {0.0};
+		double slaveTimestamp {0.0};
+		double masterTimestamp {0.0};
 
 		{
-			std::lock_guard<std::mutex> guard {g_cameraTriggerQueueMutex};
-			if (false == g_cameraTriggerQueue.empty())
+			std::lock_guard<std::mutex> guard {g_slaveQueueMutex};
+			if (false == g_slaveTimestampQueue.empty())
 			{
-				cameraTriggerTimestamp = g_cameraTriggerQueue.front();
-				g_cameraTriggerQueue.pop();
-				++imageCount;
+				slaveTimestamp = g_slaveTimestampQueue.front();
+				g_slaveTimestampQueue.pop();
+				++slaveCount;
 			}
 		}
+		if (true == g_logFile.is_open() && slaveCount % 10 == 0 && slaveCount != prevCount)
+		{
+			std::cout << "SlaveCount=" << slaveCount << '\n';
+			prevCount = slaveCount;
+		}
 
-		while (0.0 < cameraTriggerTimestamp)
+		while (0.0 < slaveTimestamp)
 		{
 			{
-				std::lock_guard<std::mutex> guard {g_triggerQueueMutex};
-				if (false == g_triggerQueue.empty())
+				std::lock_guard<std::mutex> guard {g_masterQueueMutex};
+				if (false == g_masterTimestampQueue.empty())
 				{
-					triggerTimestamp = g_triggerQueue.front();
-					g_triggerQueue.pop();
-					++triggerCount;
+					masterTimestamp = g_masterTimestampQueue.front();
+					g_masterTimestampQueue.pop();
+					++masterCount;
 				}
 			}
-			if (0.0 < triggerTimestamp)
+			if (0.0 < masterTimestamp)
 			{
-				double diff = cameraTriggerTimestamp - triggerTimestamp;
-				if (diff > g_timespanMinus && diff < g_timespanPlus)
+				std::string line;
+				double diff = slaveTimestamp - masterTimestamp;
+				if (diff > g_timeWindowNegative && diff < g_timeWindowPositive)
 				{
-					printf("%lu; %lu; %f; %f; %f; %d\n", triggerCount, imageCount, triggerTimestamp, cameraTriggerTimestamp, diff, true);
-					cameraTriggerTimestamp = 0.0;
+					line = std::format("{}; {}; {}; {}; {}; {}\n", masterCount, slaveCount, masterTimestamp, slaveTimestamp, diff, 1);
+					slaveTimestamp = 0.0;
 				}
-				else if (diff > g_timespanPlus)
+				else if (diff > g_timeWindowPositive)
 				{
-					printf("%lu; %lu; %f; %f; %f; %d\n", triggerCount, imageCount, triggerTimestamp, cameraTriggerTimestamp, diff, false);
+					line = std::format("{}; {}; {}; {}; {}; {}\n", masterCount, slaveCount, masterTimestamp, slaveTimestamp, diff, 0);
+					slaveTimestamp = 0.0;
 				}
-				else if (diff < g_timespanMinus)
+				else
 				{
-					cameraTriggerTimestamp = 0.0;
-					std::lock_guard<std::mutex> guard {g_triggerQueueMutex};
+					line = std::format("{}; {}; {}; {}; {}; {}\n", masterCount, slaveCount, masterTimestamp, slaveTimestamp, diff, -1);
+					slaveTimestamp = 0.0;
+				}
+				if (false == line.empty())
+				{
+					if (true == g_logFile.is_open())
+					{
+						g_logFile.write(line.c_str(), line.size());
+					}
+					else
+					{
+						std::cout << line.c_str();
+					}
 				}
 			}
-			if (false == g_triggerStarted)
+			if (false == g_masterStarted)
 			{
 				break;
 			}
+			Sleep(0);
 		}
-		Sleep(1);
+		Sleep(0);
 	}
 }
 
 void OnImage(CameraInfo&& cameraInfo)
 {
-	std::lock_guard<std::mutex> guard {g_cameraTriggerQueueMutex};
-	g_cameraTriggerQueue.push(cameraInfo.m_startFrameTimestamp);
+	std::lock_guard<std::mutex> guard {g_slaveQueueMutex};
+	g_slaveTimestampQueue.push(cameraInfo.m_startFrameTimestamp);
 }
 
-void OnLptIO(const TriggerData& rTriggerData)
+void OnSlaveTrigger(const TriggerData& rTriggerData)
 {
-	double lptTimestamp = (VT_EMPTY != rTriggerData[TriggerDataEnum::TimeStamp].vt) ? static_cast<double> (rTriggerData[TriggerDataEnum::TimeStamp]) : GetTimeStamp();
+	double slaveTimestamp = (VT_EMPTY != rTriggerData[TriggerDataEnum::TimeStamp].vt) ? static_cast<double> (rTriggerData[TriggerDataEnum::TimeStamp]) : GetTimeStamp();
 
-	std::lock_guard<std::mutex> guard {g_cameraTriggerQueueMutex};
-	g_cameraTriggerQueue.push(lptTimestamp);
+	std::lock_guard<std::mutex> guard {g_slaveQueueMutex};
+	g_slaveTimestampQueue.push(slaveTimestamp);
 }
 
-void OnPlcTrigger(const TriggerData& rTriggerData)
+void OnMasterTrigger(const TriggerData& rTriggerData)
 {
-	double triggerTimestamp = (VT_EMPTY != rTriggerData[TriggerDataEnum::TimeStamp].vt) ? static_cast<double> (rTriggerData[TriggerDataEnum::TimeStamp]) : GetTimeStamp();
+	double masterTimestamp = (VT_EMPTY != rTriggerData[TriggerDataEnum::TimeStamp].vt) ? static_cast<double> (rTriggerData[TriggerDataEnum::TimeStamp]) : GetTimeStamp();
 
 	{
-		std::lock_guard<std::mutex> guard {g_triggerQueueMutex};
-		g_triggerQueue.push(triggerTimestamp);
+		std::lock_guard<std::mutex> guard {g_masterQueueMutex};
+		g_masterTimestampQueue.push(masterTimestamp);
 	}
 
-	if (false == g_triggerStarted)
+	if (false == g_masterStarted)
 	{
 		{
-			std::lock_guard<std::mutex> guard {g_cameraTriggerQueueMutex};
-			g_cameraTriggerQueue = {};
+			std::lock_guard<std::mutex> guard {g_slaveQueueMutex};
+			g_slaveTimestampQueue = {};
 		}
-		g_triggerStarted = true;
+		g_masterStarted = true;
 	}
 }
 
@@ -163,7 +201,7 @@ HRESULT PlcTriggerToStartFrame()
 			printf("Note that using camera start frame,\nthe camera should be configured using a camera file prior to starting this application\n");
 			int triggerIndex {g_triggerChannel + 1};
 
-			result = PlcIoDll.Register(triggerIndex, &OnPlcTrigger);
+			result = PlcIoDll.Register(triggerIndex, &OnMasterTrigger);
 			if (S_OK == result)
 			{
 				printf("PLC Trigger %d callback registered\n", triggerIndex);
@@ -228,7 +266,15 @@ HRESULT PlcTriggerToStartFrame()
 					PlcIoDll.SetParameterValue(cModuleReadyIndex, moduleReadyState);
 
 					printf("Module Ready sent\nTo exit press x\n");
-					printf("TriggerCount; ImageCount; TriggerTimestamp; StartFrame; TriggerToStartFrame; Match\n");
+					std::string header {"TriggerCount; ImageCount; TriggerTimestamp; StartFrame; TriggerToStartFrame; Match\n"};
+					if (true == g_logFile.is_open())
+					{
+						g_logFile.write(header.c_str(), header.size());
+					}
+					else
+					{
+						std::cout << header.c_str();
+					}
 
 					bool exit {false};
 					while (false == exit)
@@ -256,56 +302,73 @@ HRESULT PlcTriggerToStartFrame()
 	return result;
 }
 
-HRESULT PlcTriggerToCameraTrigger()
+HRESULT Trigger1DllToTrigger2Dll(LPCSTR DllName1, LPCSTR DllName2)
 {
-	SVIOTriggerLoadLibraryClass PlcIoDll;
-	SVIOTriggerLoadLibraryClass LptIODll;
+	SVIOTriggerLoadLibraryClass TriggerDll1;
+	SVIOTriggerLoadLibraryClass TriggerDll2;
 
-	HRESULT result = PlcIoDll.Open(cPlcIoDll);
+	HRESULT result = TriggerDll1.Open(DllName1);
 	if (S_OK == result)
 	{
-		printf("Loaded %s\n", cPlcIoDll);
-
-		result = LptIODll.Open(cLptIoDll);
+		printf("Loaded %s\n", DllName1);
+		result = TriggerDll2.Open(DllName2);
 		if (S_OK == result)
 		{
-			printf("Loaded %s\n", cLptIoDll);
+			printf("Loaded %s\n", DllName2);
 			int triggerIndex {g_triggerChannel + 1};
 
-			_variant_t value {cRabbitBoardType};
-			LptIODll.SetParameterValue(cBoardTypeIndex, value);
-			value = cFallingEdge;
-			LptIODll.TrigSetParameterValue(triggerIndex, cSignalEdgeIndex, value);
-
-			result = PlcIoDll.Register(triggerIndex, &OnPlcTrigger);
-			if (S_OK == result)
+			if (std::string(cLptIoDll) == DllName1)
 			{
-				printf("PLC Trigger %d callback registered\n", triggerIndex);
+				_variant_t value {cRabbitBoardType};
+				TriggerDll1.SetParameterValue(cBoardTypeIndex, value);
+				value = cFallingEdge;
+				TriggerDll1.TrigSetParameterValue(triggerIndex, cSignalEdgeIndex, value);
 			}
-			result = LptIODll.Register(triggerIndex, &OnLptIO);
+			else if (std::string(cLptIoDll) == DllName2)
+			{
+				_variant_t value {cRabbitBoardType};
+				TriggerDll2.SetParameterValue(cBoardTypeIndex, value);
+				value = cFallingEdge;
+				TriggerDll2.TrigSetParameterValue(triggerIndex, cSignalEdgeIndex, value);
+			}
+
+			result = TriggerDll1.Register(triggerIndex, &OnMasterTrigger);
 			if (S_OK == result)
 			{
-				printf("LPT Trigger %d callback registered\n", triggerIndex);
+				printf("%s Trigger %d callback registered\n", DllName1,  triggerIndex);
+			}
+			result = TriggerDll2.Register(triggerIndex, &OnSlaveTrigger);
+			if (S_OK == result)
+			{
+				printf("%s Trigger %d callback registered\n", DllName2,  triggerIndex);
 
-				result = PlcIoDll.Start(triggerIndex);
+				result = TriggerDll1.Start(triggerIndex);
 				if (S_OK == result)
 				{
-					printf("PLC Trigger %d started\n", triggerIndex);
+					printf("%s Trigger %d started\n", DllName1, triggerIndex);
 				}
-				result = LptIODll.Start(triggerIndex);
+				result = TriggerDll2.Start(triggerIndex);
 				if (S_OK == result)
 				{
-					printf("LPT Trigger %d started\n", triggerIndex);
+					printf("%s Trigger %d started\n", DllName2, triggerIndex);
 				}
 
 				_variant_t moduleReadyState {true};
 				if (S_OK == result)
 				{
-					PlcIoDll.SetParameterValue(cModuleReadyIndex, moduleReadyState);
-					LptIODll.SetParameterValue(cModuleReadyIndex, moduleReadyState);
+					TriggerDll1.SetParameterValue(cModuleReadyIndex, moduleReadyState);
+					TriggerDll2.SetParameterValue(cModuleReadyIndex, moduleReadyState);
 
 					printf("Module Ready sent\nTo exit press x\n");
-					printf("TriggerCount; CameraTriggerCount; TriggerTimestamp; CameraTriggerTimeStamp; TriggerToCameraTrigger; Match\n");
+					std::string header {std::format("TriggerCount {}; TriggerCount {}; Timestamp {}; TimeStamp {}; TimestampDiff; Match\n", DllName1, DllName2, DllName1, DllName2)};
+					if (true == g_logFile.is_open())
+					{
+						g_logFile.write(header.c_str(), header.size());
+					}
+					else
+					{
+						std::cout << header.c_str();
+					}
 
 					bool exit {false};
 					while (false == exit)
@@ -318,15 +381,15 @@ HRESULT PlcTriggerToCameraTrigger()
 					}
 				}
 				moduleReadyState = false;
-				PlcIoDll.SetParameterValue(cModuleReadyIndex, moduleReadyState);
-				LptIODll.SetParameterValue(cModuleReadyIndex, moduleReadyState);
+				TriggerDll1.SetParameterValue(cModuleReadyIndex, moduleReadyState);
+				TriggerDll2.SetParameterValue(cModuleReadyIndex, moduleReadyState);
 				printf("Module Ready reset\n");
-				PlcIoDll.Stop(triggerIndex);
-				LptIODll.Stop(triggerIndex);
-				PlcIoDll.Unregister(triggerIndex);
-				LptIODll.Unregister(triggerIndex);
-				PlcIoDll.Close();
-				LptIODll.Close();
+				TriggerDll1.Stop(triggerIndex);
+				TriggerDll2.Stop(triggerIndex);
+				TriggerDll1.Unregister(triggerIndex);
+				TriggerDll2.Unregister(triggerIndex);
+				TriggerDll1.Close();
+				TriggerDll2.Close();
 				printf("Trigger %d stopped\n", triggerIndex);
 			}
 		}
@@ -336,59 +399,134 @@ HRESULT PlcTriggerToCameraTrigger()
 
 int main(int argc, char* args[])
 {
-	bool isLptIODll {false};
-	if (argc >= 2)
+	std::vector<std::string> cmdOptions;
+	cmdOptions.resize(argc - 1);
+	DllMode dllCompareType {DllMode::PlcIOStartFrame};
+
+	for (int i = 1; i < argc; ++i)
 	{
-		g_triggerChannel = static_cast<uint8_t> (std::stoi(args[1]) - 1);
-		if(g_triggerChannel >= cNumberOfChannels)
+		cmdOptions[i-1] = args[i];
+		std::transform(cmdOptions[i-1].begin(), cmdOptions[i-1].end(), cmdOptions[i-1].begin(), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
+	}
+
+	for (const auto& rOption : cmdOptions)
+	{
+		if (rOption == cHelpOption1 || rOption == cHelpOption2)
 		{
-			g_triggerChannel = 0;
+			printf("Cmd Options\n");
+			printf("-h or -? displays all the available options\n");
+			printf("-t:<triggenNumber> where trigger number (1-4) is which trigger is to be used default is trigger=1\n");
+			printf("-m:<mode> where \n\tmode 0=SVPlcIO.dll vs SVMatroxGige.dll (start frame) is default\n");
+			printf("\tmode 1=SVPlcIO.dll vs SVLptIO.dll\n");
+			printf("\tmode 2=SVLptIO.dll vs EtherCatIO.dll\n");
+			printf("-f:<filename> where filename is the name of the file (can be with path) to write the data to\n");
+			printf("-n:<negativeTime> where negativeTime is the pre tigger time window in ms default %0.2f ms\n", g_timeWindowNegative);
+			printf("-p:<positiveTime> where positiveTime is the post tigger time window in ms default %0.2f ms\n", g_timeWindowPositive);
+			return S_OK;
+		}
+		else if (std::string::npos != rOption.find(cTriggerOption))
+		{
+			std::string option = rOption.substr(std::strlen(cTriggerOption));
+			g_triggerChannel = static_cast<uint8_t> (std::stoi(option.c_str()));
+			if (0 == g_triggerChannel || g_triggerChannel > cNumberOfChannels)
+			{
+				printf("Valid values for trigger number are 1-4\n");
+				return E_FAIL;
+			}
+			//Trigger channol is zero based
+			--g_triggerChannel;
+		}
+		else if (std::string::npos != rOption.find(cModeOption))
+		{
+			std::string option = rOption.substr(std::strlen(cModeOption));
+			int modeOption = std::stoi(option.c_str());
+
+			if (modeOption < 0 || modeOption >= static_cast<int> (DllMode::Count))
+			{
+				printf("Valid values for mode are 0-2\n");
+				return E_FAIL;
+			}
+			dllCompareType = static_cast<DllMode> (modeOption);
+		}
+		else if (std::string::npos != rOption.find(cFileOption))
+		{
+			std::string option = rOption.substr(std::strlen(cFileOption));
+			g_logFile.open(option.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+			if (false == g_logFile.is_open())
+			{
+				printf("Could not open file %s\n", option.c_str());
+				return E_FAIL;
+			}
+		}
+		else if (std::string::npos != rOption.find(cNegativeTimeOption))
+		{
+			std::string option = rOption.substr(std::strlen(cNegativeTimeOption));
+			g_timeWindowNegative = std::stof(option.c_str());
+		}
+		else if (std::string::npos != rOption.find(cPositiveTimeOption))
+		{
+			std::string option = rOption.substr(std::strlen(cPositiveTimeOption));
+			g_timeWindowPositive = std::stof(option.c_str());
 		}
 	}
-	if (argc >= 3)
-	{
-		isLptIODll = std::stoi(args[2]) > 0 ? true : false;
-	}
+
 	auto correlateThread = std::thread(&TriggerCorrelate);
 
 	::SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
-	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+	::SetThreadPriority(correlateThread.native_handle(), THREAD_PRIORITY_HIGHEST);
 
 	HRESULT result {S_OK};
 
-	if (isLptIODll)
+	switch (dllCompareType)
 	{
-		result = PlcTriggerToCameraTrigger();
-	}
-	else
-	{
-		result = PlcTriggerToStartFrame();
+		case DllMode::PlcIOStartFrame:
+		{
+			result = PlcTriggerToStartFrame();
+			break;
+		}
+
+		case DllMode::PlcIOLptIO:
+		{
+			result = Trigger1DllToTrigger2Dll(cPlcIoDll, cLptIoDll);
+			break;
+		}
+
+		case DllMode::EthercatLptIO:
+		{
+			result = Trigger1DllToTrigger2Dll(cLptIoDll, cEtherCatIoDll);
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
 	}
 
-	if (false == g_triggerStarted)
+	if (false == g_masterStarted)
 	{
-		g_triggerStarted = true;
+		g_masterStarted = true;
 		Sleep(10);
 	}
 
-	g_triggerStarted = false;
+	g_masterStarted = false;
 	if (correlateThread.joinable())
 	{
 		correlateThread.join();
 
 		{
-			std::lock_guard<std::mutex> guard {g_triggerQueueMutex};
-			if (false == g_triggerQueue.empty())
+			std::lock_guard<std::mutex> guard {g_masterQueueMutex};
+			if (false == g_masterTimestampQueue.empty())
 			{
-				printf("TriggerQueue count = %zu\n", g_triggerQueue.size());
+				printf("Master Queue count = %zu\n", g_masterTimestampQueue.size());
 			}
 		}
 
 		{
-			std::lock_guard<std::mutex> guard {g_cameraTriggerQueueMutex};
-			if (false == g_cameraTriggerQueue.empty())
+			std::lock_guard<std::mutex> guard {g_slaveQueueMutex};
+			if (false == g_slaveTimestampQueue.empty())
 			{
-				printf("CameraQueue count = %zu\n", g_cameraTriggerQueue.size());
+				printf("Slave Queue count = %zu\n", g_slaveTimestampQueue.size());
 			}
 		}
 	}

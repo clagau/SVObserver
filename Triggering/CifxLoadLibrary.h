@@ -9,9 +9,16 @@
 
 #pragma region Includes
 #include <stdint.h>
-#include "cifXUser.h"
 #pragma endregion Includes
 
+//The forward defines below originate from CifxUser.h of the Cifx card
+typedef void* CIFXHANDLE;
+struct CIFX_PACKETtag;
+typedef CIFX_PACKETtag CIFX_PACKET;
+typedef void(APIENTRY* PFN_NOTIFY_CALLBACK)  (uint32_t ulNotification, uint32_t ulDataLen, void* pvData, void* pvUser);
+
+namespace SvTrig
+{
 typedef int32_t (APIENTRY *xDriverOpenPtr)(CIFXHANDLE*);
 typedef int32_t (APIENTRY *xDriverClosePtr)(CIFXHANDLE);
 typedef int32_t (APIENTRY *xDriverGetInformationPtr)(CIFXHANDLE, uint32_t, void*);
@@ -62,4 +69,4 @@ private:
 	HMODULE m_dllHandle {nullptr};
 	bool m_isInitilized{false};
 };
-
+} //namespace SvTrig

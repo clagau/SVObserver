@@ -15,8 +15,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CameraLibrary", "CameraLibr
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CifxState", "CifxState\CifxState.vcxproj", "{08047219-6B21-46BF-913C-285BADB6203E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{12178FE8-6FBA-45F2-A311-0B1659D6C1BE} = {12178FE8-6FBA-45F2-A311-0B1659D6C1BE}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Definitions", "Definitions\Definitions.vcxproj", "{97A52CEE-1E25-48B5-9D50-92EF5F35731C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EtherCatIO", "EtherCatIO\EtherCatIO.vcxproj", "{617C9D3E-D56B-4047-8FEC-5B34A3848EDC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{12178FE8-6FBA-45F2-A311-0B1659D6C1BE} = {12178FE8-6FBA-45F2-A311-0B1659D6C1BE}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FilterOperators", "FilterOperators\FilterOperators.vcxproj", "{F854F11D-EDDB-4795-996A-D9FD0C795744}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -598,6 +606,12 @@ Global
 		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Release|x64.ActiveCfg = Release|x64
 		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Release|x64.Build.0 = Release|x64
 		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Release|x86.ActiveCfg = Release|x64
+		{617C9D3E-D56B-4047-8FEC-5B34A3848EDC}.Debug|x64.ActiveCfg = Debug|x64
+		{617C9D3E-D56B-4047-8FEC-5B34A3848EDC}.Debug|x64.Build.0 = Debug|x64
+		{617C9D3E-D56B-4047-8FEC-5B34A3848EDC}.Debug|x86.ActiveCfg = Debug|x64
+		{617C9D3E-D56B-4047-8FEC-5B34A3848EDC}.Release|x64.ActiveCfg = Release|x64
+		{617C9D3E-D56B-4047-8FEC-5B34A3848EDC}.Release|x64.Build.0 = Release|x64
+		{617C9D3E-D56B-4047-8FEC-5B34A3848EDC}.Release|x86.ActiveCfg = Release|x64
 		{F854F11D-EDDB-4795-996A-D9FD0C795744}.Debug|x64.ActiveCfg = Debug|x64
 		{F854F11D-EDDB-4795-996A-D9FD0C795744}.Debug|x64.Build.0 = Debug|x64
 		{F854F11D-EDDB-4795-996A-D9FD0C795744}.Debug|x86.ActiveCfg = Debug|x64

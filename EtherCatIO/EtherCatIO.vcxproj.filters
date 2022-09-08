@@ -4,10 +4,10 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVPlcIOExports.cpp">
+    <ClCompile Include="EtherCatIOExports.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVPlcIOImpl.cpp">
+    <ClCompile Include="EtherCatIOImpl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SimulatedTriggerSource.cpp">
@@ -36,10 +36,10 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVPlcIOExports.h">
+    <ClInclude Include="EtherCatIOExports.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVPlcIOImpl.h">
+    <ClInclude Include="EtherCatIOImpl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
@@ -49,12 +49,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CifxCard.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Telegram.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="InspectionCommand.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="HardwareTriggerSource.h">
@@ -67,12 +61,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="PowerLinkConnection.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="InspectionState.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigDataSet.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="PlcDataTypes.h">
@@ -91,15 +79,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVPlcIO.def">
+    <None Include="EtherCatIO.def">
       <Filter>Quelldateien</Filter>
     </None>
-    <None Include="res\SVPlcIO.rc2">
+    <None Include="res\EtherCatIO.rc2">
       <Filter>Ressourcendateien</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SVPlcIO.rc">
+    <ResourceCompile Include="EtherCatIO.rc">
       <Filter>Quelldateien</Filter>
     </ResourceCompile>
   </ItemGroup>

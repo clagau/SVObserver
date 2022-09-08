@@ -7,11 +7,12 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVPlcIO/CifxLoadLibrary.h"
-#include "SVPlcIO/cifXErrors.h"
-#include "SVPlcIO/Epl_Common_Defines.h"
-#include "SVPlcIO/EplCn_If_Public.h"
-#include "SVPlcIO/Hil_ApplicationCmd.h"
+#include <cifXErrors.h>
+#include <cifXUser.h>
+#include <Epl_Common_Defines.h>
+#include <EplCn_If_Public.h>
+#include <Hil_ApplicationCmd.h>
+#include "Triggering/CifxLoadLibrary.h"
 #pragma endregion Includes
 
 //This is to avoid CheckInclude false positives EPLCN_IF_QUEUE_NAME
@@ -60,7 +61,7 @@ static const std::map<std::string, uint32_t> cComputerNameNodeID =
 };
 
 
-CifxLoadLibrary g_cifxLoadLib;
+SvTrig::CifxLoadLibrary g_cifxLoadLib;
 CIFXHANDLE g_hDriver {nullptr};
 CIFXHANDLE g_hChannel {nullptr};
 uint32_t g_plcNodeID {cCifXNodeId};

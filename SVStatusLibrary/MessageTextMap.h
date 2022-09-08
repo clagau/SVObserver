@@ -670,7 +670,7 @@ namespace SvStl
 		{Tid_CifxPlcVersion , _T("Cifx send PLC data version %s.%s") },
 		{Tid_CifxPlcConfigData , _T("Cifx send PLC config data: Layout %s") },
 		{Tid_CifxDllLoadError , _T("Cifx error, could not load CifX32DLL.dll") },
-		{Tid_CifxVersionInfo , _T("Cifx Driver %s Powerlink Controlled Node %s") },
+		{Tid_CifxVersionInfo , _T("Cifx Driver %s %s") },
 		{Tid_CifxResponseDataError , _T("Cifx error, writing response data") },
 		{Tid_CifxPlcOpertaion , _T("Cifx, in operation mode") },
 
