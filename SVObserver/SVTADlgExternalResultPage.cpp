@@ -67,6 +67,11 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
+	if (m_InspectionID > 0)
+	{
+		SvCmd::RunOnceSynchronous(m_InspectionID);
+	}
+	
 	DWORD dwStyle;
 	CRect rc;
 

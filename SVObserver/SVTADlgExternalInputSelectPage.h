@@ -33,6 +33,7 @@ public:
 	enum { IDD = IDD_TA_EXTERNAL_INPUT };
 	//}}AFX_DATA
 
+	void updateInputValuesFromPropertyTree();
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -46,7 +47,6 @@ public:
 // Implementation
 protected:
 	void SelectObject( SVRPropertyItemEdit& rItem );
-	void updateInputValuesFromPropertyTree(bool runOnce=false);
 
 	int GetItemIndex(SVRPropertyItem* pItem);
 	const std::unique_ptr<SvPb::InputValueDefinition> GetInputDefinitionPtr(SVRPropertyItem* pItem);

@@ -112,10 +112,15 @@ void SheetForExternalToolAdjustment::OnRunOnce()
 {
 	GreyOutHelper goh(m_runOnceButton, _T("<Running>"));
 
+	//if active page, the inputs must be send to business logic, before the run once will be done.
+	if (auto pInputValuePage = dynamic_cast<SVTADlgExternalInputSelectPage*>(GetActivePage()); nullptr != pInputValuePage)
+	{
+		pInputValuePage->updateInputValuesFromPropertyTree();
+	}
+
 	m_externalToolTaskController.runOnce();
 
 	auto pOutputValuePage = dynamic_cast<SVTADlgExternalResultPage*>(GetActivePage());
-
 	if (nullptr != pOutputValuePage) // if we are currently on the results page ...
 	{
 		pOutputValuePage->DisplayResults(); //... show the current results now ...
