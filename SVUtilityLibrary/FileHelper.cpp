@@ -41,7 +41,7 @@ std::vector<std::string> getFileList(LPCTSTR pPath, LPCTSTR pExtension, bool rec
 		}
 		else
 		{
-			std::filesystem::recursive_directory_iterator  dirList {pPath};
+			std::filesystem::directory_iterator  dirList {pPath};
 			if (nullptr == pExtension)
 			{
 				// cppcheck-suppress danglingTemporaryLifetime
