@@ -93,6 +93,9 @@ void SVArchiveTool::initializeArchiveTool()
 
 	RegisterEmbeddedObject(&m_currentImageQueueLength, SvPb::CurrentImageQueueLengthEId, IDS_OBJECTNAME_CURRENT_IMAGE_QUEUE_LENGTH, false, SvOi::SVResetItemTool);
 	m_currentImageQueueLength.SetDefaultValue(_variant_t(0l), true);
+	
+	UINT cAttribute { SvPb::audittrail};
+	m_currentImageQueueLength.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	RegisterEmbeddedObject(&m_resultFilepathPart1, SvPb::ArchiveResultFilePathPart1EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH1, true, SvOi::SVResetItemTool);
 	m_resultFilepathPart1.SetDefaultValue(_variant_t(""), true);

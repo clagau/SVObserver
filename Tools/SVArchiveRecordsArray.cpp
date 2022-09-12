@@ -92,10 +92,14 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SvVol::SVStringValueObjectClass
 
 			if (nullptr == ObjectRef.getObject())
 			{
-				assert(false);
-#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
-				TRACE(_T("SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n"), m_pArchiveTool->GetCompleteName(), Name);
+				std::string msg = std::format("SVArchiveRecordsArray::InitializeObjects-ToolName={}-ObjectName={}\n", m_pArchiveTool->GetCompleteName(), Name);
+#if defined  _DEBUG
+				OutputDebugString(msg.c_str());
 #endif
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
+				SvDef::StringVector msgList;
+				msgList.push_back(msg);
+				Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 			else
 			{
