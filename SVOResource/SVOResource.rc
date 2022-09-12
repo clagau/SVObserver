@@ -2910,7 +2910,17 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
 CONTROL         "Conflict Table", IDC_GLOBAL_CONFLICT_GRID, "MfcGridCtrl", WS_TABSTOP, 7, 7, 786, 402
 DEFPUSHBUTTON   "OK", IDOK, 743, 429, 50, 14
-//LTEXT           "Please select which Global Constant value should be used:\r\n1. The current value from the loaded configuration or\r\n2.The value being imported from the inspection", IDC_STATIC, 7, 413, 630, 30
+END
+
+IDD_CREATE_INPUT_RESULT_DIALOG DIALOGEX 0, 0, 800, 450
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create Input/Result for GroupTool"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+CONTROL         "Input Table", IDC_GRID, "MfcGridCtrl", WS_TABSTOP, 7, 7, 786, 200
+CONTROL         "Result Table", IDC_RESULT_GRID, "MfcGridCtrl", WS_TABSTOP, 7, 210, 786, 200
+DEFPUSHBUTTON   "OK", IDOK, 691, 429, 50, 14
+DEFPUSHBUTTON   "Cancel", IDCANCEL, 743, 429, 50, 14
 END
 
 IDD_RANKING2_FILTER DIALOGEX 0, 0, 480, 290

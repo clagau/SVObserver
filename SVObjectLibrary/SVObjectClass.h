@@ -177,6 +177,7 @@ public:
 
 	virtual void SetName(LPCTSTR Name);
 	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter);
+	virtual void changeSource(const SVObjectReference& /*rOldObject*/, SVObjectClass& /*rNewObject*/) { assert(false); };
 	const SvDef::SVObjectTypeInfoStruct& getObjectTypeInfo() const { return m_ObjectTypeInfo; };
 
 #pragma region Methods to replace processMessage

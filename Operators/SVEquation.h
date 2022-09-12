@@ -99,7 +99,7 @@ public:
 	//! \param pRequestor [in] the tool who wants to use the variable
 	//! \returns void
 	//************************************
-	void Init(SVObjectClass* pRequestor);
+	void Init(SVObjectClass* pRequestor, bool useOwnerIdForDep);
 
 private:
 	SVEquationSymbolPtrVector m_SVEquationSymbolPtrVector;
@@ -167,6 +167,8 @@ public:
 	
 	bool HasCondition() const;
 
+	void setUseOwnerIdForDep() { m_useOwnerIdForDep = true; };
+
 #pragma region IEquation
 	virtual const std::string& GetEquationText() const override;
 	virtual void SetEquationText(const std::string& text) override;
@@ -193,6 +195,7 @@ public:
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual void changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject) override;
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
@@ -225,6 +228,8 @@ private:
 	SVEquationStruct m_equationStruct;		// the Equation Structure
 	
 	SVEquationSymbolTableClass m_Symbols;		// all symbols ( input and local )
+
+	bool m_useOwnerIdForDep {false};
 };
 
 } //namespace SvOp

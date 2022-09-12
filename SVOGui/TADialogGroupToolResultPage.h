@@ -11,23 +11,13 @@
 #include "GridCtrlLibrary/GridCtrl.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "DataController.h"
+#include "GroupToolHelper.h"
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
 
 
 namespace SvOg
 {
-	const std::string c_resultName = "Result";
-	struct GroupResultData
-	{
-		std::string m_name{ c_resultName };
-		SvPb::EmbeddedIdEnum m_oldEmbeddedId = SvPb::NoEmbeddedId;
-		SvPb::LinkedValueTypeEnum m_type = SvPb::LinkedValueTypeEnum::TypeDecimal;
-		LinkedValueData m_data {SvPb::LinkedSelectedOption::DirectValue, {0.}, {0.}, {}, {0.}};
-		SvDef::StringPairVector m_dependencies;
-		SvStl::MessageData m_errorData;
-	};
-
 	class TADialogGroupToolResultPage : public CPropertyPage, public ISVPropertyPageDialog
 	{
 #pragma region Declarations
@@ -116,7 +106,7 @@ namespace SvOg
 		ValueController m_Values;
 
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
-		std::vector<GroupResultData> m_resultData;
+		std::vector<GroupInputResultData> m_resultData;
 		CString m_strComment;
 
 		SvStl::MessageContainerVector m_errorMessages;

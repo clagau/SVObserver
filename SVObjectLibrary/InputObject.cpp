@@ -310,6 +310,14 @@ void InputObject::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::F
 	}
 }
 
+void InputObject::changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject)
+{
+	if (m_InputObjectInfo.GetObjectReference() == rOldObject)
+	{
+		SetInputObject(&rNewObject);
+	}
+}
+
 void InputObject::correctDependencies()
 {
 	if (IsConnected() && m_InputObjectInfo.getObject())

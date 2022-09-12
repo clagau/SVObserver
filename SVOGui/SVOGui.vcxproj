@@ -129,6 +129,7 @@
     <ClCompile Include="BlobAnalyzer2General.cpp" />
     <ClCompile Include="BlobReconstructFilterDlg.cpp" />
     <ClCompile Include="CDSVPictureDisplay.cpp" />
+    <ClCompile Include="CreateInputResultDlg.cpp" />
     <ClCompile Include="Custom2FilterDlg.cpp" />
     <ClCompile Include="Displayhelper.cpp" />
     <ClCompile Include="DrawTaskTree.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="GlobalConstantConflictDlg.cpp" />
     <ClCompile Include="GlobalConstantDlg.cpp" />
+    <ClCompile Include="GroupToolHelper.cpp" />
     <ClCompile Include="ImageController.cpp" />
     <ClCompile Include="InputConflictDlg.cpp" />
     <ClCompile Include="LinkedValue.cpp" />
@@ -223,6 +225,7 @@
     <ClInclude Include="BlobAnalyzer2Sheet.h" />
     <ClInclude Include="BoundValue.h" />
     <ClInclude Include="CDSVPictureDisplay.h" />
+    <ClInclude Include="CreateInputResultDlg.h" />
     <ClInclude Include="Custom2FilterDlg.h" />
     <ClInclude Include="DataController.h" />
     <ClInclude Include="DisplayHelper.h" />
@@ -234,6 +237,7 @@
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="GlobalConstantConflictDlg.h" />
     <ClInclude Include="GlobalConstantDlg.h" />
+    <ClInclude Include="GroupToolHelper.h" />
     <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="ImageController.h" />
     <ClInclude Include="InputConflictDlg.h" />

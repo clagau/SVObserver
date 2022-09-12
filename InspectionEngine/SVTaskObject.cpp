@@ -296,6 +296,14 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 					l_Status = m_friendList[i]->GetChildObject(rpObject, rNameInfo, Index + 1);
 				}
 			}
+
+			for (size_t i = 0; nullptr == rpObject && i < m_inputs.size(); ++i)
+			{
+				if (nullptr != m_inputs[i])
+				{
+					l_Status = m_inputs[i]->GetChildObject(rpObject, rNameInfo, Index + 1);
+				}
+			}
 		}
 		else
 		{

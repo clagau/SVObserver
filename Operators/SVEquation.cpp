@@ -89,13 +89,13 @@ int SVEquationSymbolTableClass::FindSymbol(LPCTSTR name)
 	return -1;
 }
 
-void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
+void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor, bool useOwnerIdForDep)
 {
 	SVObjectClass* pInspection(nullptr);
 	SvOl::SVObjectAppClass* pAppClass = dynamic_cast<SvOl::SVObjectAppClass*>(pRequestor);
 	if (nullptr != pAppClass)
 	{
-		m_ownerId = pAppClass->getObjectId();
+		m_ownerId = useOwnerIdForDep ? pAppClass->GetParentID() : pAppClass->getObjectId();
 		pInspection = pAppClass->GetInspection();
 	}
 	if (nullptr != pInspection)
@@ -431,7 +431,7 @@ SvOi::EquationTestResult SVEquation::Test(SvStl::MessageContainerVector *pErrorM
 	{
 		// Clear the symbol Tables
 		m_Symbols.ClearAll();
-		m_Symbols.Init(this);
+		m_Symbols.Init(this, m_useOwnerIdForDep);
 
 
 		std::string equationText = GetEquationText();
@@ -707,6 +707,19 @@ bool SVEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	return Result;
+}
+
+void SVEquation::changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject)
+{
+	auto oldName = _T("\"") + rOldObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType) + _T("\"");
+	auto newName = _T("\"") + rNewObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true) + _T("\"");
+	std::string equationBuff = GetEquationText();
+
+	// Replace all occurrences
+	if (GetEquationText() != SvUl::searchAndReplace(equationBuff, oldName.c_str(), newName.c_str()))
+	{
+		SetEquationText(equationBuff);
+	}
 }
 
 void SVEquation::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)

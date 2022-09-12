@@ -146,6 +146,7 @@ SvPb::InspectionCmdResponse getOverlayStruct(SvPb::GetOverlayStructRequest reque
 
 SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest request);
 SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItems2Request request);
+
 SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsRequest request);
 
 SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest request);
@@ -188,4 +189,6 @@ SvPb::InspectionCmdResponse getImageInfoExternalTool(SvPb::GetImageInfoExternalT
 SvPb::InspectionCmdResponse getInvalidDependencies(SvPb::GetInvalidDependenciesRequest request);
 SvPb::InspectionCmdResponse getObjectName(SvPb::GetObjectNameRequest request);
 SvPb::InspectionCmdResponse setObjectComment(SvPb::SetObjectCommentRequest request);
+SvPb::InspectionCmdResponse addParameterAndUseIt(SvPb::AddParameterAndUseItRequest request);
+SvPb::InspectionCmdResponse checkParameterNames(SvPb::CheckParameterNamesRequest request);
 } //namespace SvCmd

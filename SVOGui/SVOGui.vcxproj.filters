@@ -279,6 +279,12 @@
     <ClCompile Include="InputConflictDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="CreateInputResultDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="GroupToolHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -573,6 +579,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="InputConflictDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateInputResultDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GroupToolHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

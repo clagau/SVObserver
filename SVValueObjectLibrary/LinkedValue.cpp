@@ -490,7 +490,11 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		m_refOptionObject.GetValue(lValue);
 		m_refOption = static_cast<SvPb::LinkedSelectedOption>(lValue);
 
-		m_equation.CreateObject(rCreateStructure);
+		m_equation.setUseOwnerIdForDep();
+		SVObjectLevelCreateStruct equationCreateStructure {*this};// = rCreateStructure;
+		equationCreateStructure.m_pInspection = rCreateStructure.m_pInspection;
+		equationCreateStructure.m_pTool = rCreateStructure.m_pTool;
+		m_equation.CreateObject(equationCreateStructure);
 		if (nullptr == m_indirectValueRef.getObject() && SvDef::InvalidObjectId != m_indirectValueRef.getObjectId())
 		{
 			m_indirectValueRef.update();
@@ -751,6 +755,25 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				break;
 			}
 			case SvPb::LinkedSelectedOption::None:
+			default:
+				break;
+		}
+	}
+
+	void LinkedValue::changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject)
+	{
+		switch (getSelectedOption())
+		{
+			case SvPb::LinkedSelectedOption::IndirectValue:
+				if (m_indirectValueRef == rOldObject)
+				{
+					setIndirectValue(SVObjectReference {&rNewObject});
+				}
+				break;
+			case SvPb::LinkedSelectedOption::Formula:
+				m_equation.changeSource(rOldObject, rNewObject);
+				m_formulaString = m_equation.GetEquationText();
+				break;
 			default:
 				break;
 		}

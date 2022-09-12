@@ -147,6 +147,7 @@
 #define IDD_DLG_SELECT_TOOL             5110
 #define IDD_TA_EXTERNAL_DLL_SELECT      5111
 #define IDD_ADJUST_TOOL_SIZE_POSITION_DIALOG 5112
+#define IDD_CREATE_INPUT_RESULT_DIALOG  5113
 #define IDD_CHOOSEGRAYCOLOR             5114
 #define IDD_GIGE_CAMERA_MANAGER_DLG     5115
 #define IDD_GIGE_CAMERA_ROI_DLG         5116
@@ -2253,6 +2254,7 @@
 #define IDC_TRANSLATIONY_EDIT           16005
 #define IDC_COMBO_SHIFT_MODE            16006
 #define IDC_SHIFT_TOOL_VALUES           16008
+#define IDC_RESULT_GRID                 16009
 #define IDC_TRIGGER_LIST                16010
 #define IDC_LST_TOOL_ERRORS             16011
 #define IDC_STATIC_TITLE                16012

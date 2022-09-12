@@ -10,6 +10,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "ObjectInterfaces/IParameterTask.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
@@ -22,7 +23,7 @@ namespace SvVol
 namespace SvOp
 {
 
-	class ParameterTask : public SvIe::SVTaskObjectClass
+	class ParameterTask : public SvIe::SVTaskObjectClass, public SvOi::IParameterTask
 	{
 #pragma region Constructor
 	public:
@@ -41,6 +42,8 @@ namespace SvOp
 
 		SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID);
 
+		virtual SvPb::InspectionCmdResponse addParameterAndUseIt(const SvPb::AddParameterAndUseItRequest& rRequest) override;
+		virtual SvPb::InspectionCmdResponse checkParameterNames(const SvPb::CheckParameterNamesRequest& rRequest) override;
 #pragma endregion Public Methods
 
 	protected:

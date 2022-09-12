@@ -16,8 +16,10 @@
 #include "ObjectInterfaces\IFormulaController.h"
 #include "ObjectInterfaces\ISVFilter.h"
 #include "ObjectInterfaces\IInspectionProcess.h"
+#include "ObjectInterfaces\IInputObject.h"
 #include "ObjectInterfaces\IMask.h"
 #include "ObjectInterfaces\IObjectClass.h"
+#include "ObjectInterfaces\IParameterTask.h"
 #include "ObjectInterfaces\IRootObject.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\ITaskObject.h"
@@ -52,8 +54,6 @@
 #include "ObjectInterfaces\ILinkedObject.h"
 #include "ObjectInterfaces\ISVLinearAnalyzer.h"
 #include <atltypes.h>
-#include "ObjectInterfaces\IInputObject.h"
-
 #pragma endregion Includes
 
 namespace SvCmd
@@ -2143,7 +2143,7 @@ SvPb::InspectionCmdResponse getObjectName(SvPb::GetObjectNameRequest request)
 				pResponse->set_name(pObject->GetObjectNameBeforeObjectType(request.beforetype()));
 				break;
 			case SvPb::GetObjectNameRequest::kToType:
-				pResponse->set_name(pObject->GetObjectNameBeforeObjectType(request.totype()));
+				pResponse->set_name(pObject->GetObjectNameToObjectType(request.totype()));
 				break;
 			default:
 				pResponse->set_name(pObject->GetName());
@@ -2164,6 +2164,37 @@ SvPb::InspectionCmdResponse setObjectComment(SvPb::SetObjectCommentRequest reque
 	if (SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid()); nullptr != pObject)
 	{
 		pObject->setComment(request.comment());
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+
+SvPb::InspectionCmdResponse addParameterAndUseIt(SvPb::AddParameterAndUseItRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	if (auto* pObject = dynamic_cast<SvOi::IParameterTask*>(SvOi::getObject(request.parametertaskid())); nullptr != pObject)
+	{
+		cmdResponse = pObject->addParameterAndUseIt(request);
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse checkParameterNames(SvPb::CheckParameterNamesRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	if (auto* pObject = dynamic_cast<SvOi::IParameterTask*>(SvOi::getObject(request.parametertaskid())); nullptr != pObject)
+	{
+		cmdResponse = pObject->checkParameterNames(request);
 	}
 	else
 	{

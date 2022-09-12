@@ -106,6 +106,7 @@
     <ClInclude Include="IObjectClass.h" />
     <ClInclude Include="IObjectManager.h" />
     <ClInclude Include="IObjectWriter.h" />
+    <ClInclude Include="IParameterTask.h" />
     <ClInclude Include="IPatternAnalyzer.h" />
     <ClInclude Include="IResultValueDefinition.h" />
     <ClInclude Include="IRootObject.h" />

@@ -175,6 +175,29 @@ HRESULT RunOnceSynchronous(uint32_t inspectionID)
 	return SvCmd::InspectionCommands(inspectionID, requestCmd, nullptr);
 }
 
+std::string getDottedName(uint32_t inspectionId, uint32_t objectId, bool includeToolSet/* = false*/)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectnamerequest();
+	pRequest->set_objectid(objectId);
+	if (includeToolSet)
+	{
+		pRequest->set_totype(SvPb::SVToolSetObjectType);
+	}
+	else
+	{
+		pRequest->set_beforetype(SvPb::SVToolSetObjectType);
+	}
+	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+	if (S_OK != hr || false == responseCmd.has_getobjectnameresponse())
+	{
+		assert(false);
+		return {};
+	}
+	return responseCmd.getobjectnameresponse().name();
+}
+
 std::string getDottedName(uint32_t inspectionId, std::string objectIdString)
 {
 	std::string::size_type Pos = objectIdString.find_first_of(_T("["));
@@ -185,19 +208,8 @@ std::string getDottedName(uint32_t inspectionId, std::string objectIdString)
 		return {};
 	}
 
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getobjectnamerequest();
-	pRequest->set_objectid(objectId);
-	pRequest->set_beforetype(SvPb::SVToolSetObjectType);
-	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
-	if (S_OK != hr || false == responseCmd.has_getobjectnameresponse())
-	{
-		assert(false);
-		return {};
-	}
-	std::string name = responseCmd.getobjectnameresponse().name();
-	if (std::string::npos != Pos)
+	std::string name = getDottedName(inspectionId, objectId);
+	if (false == name.empty() && std::string::npos != Pos)
 	{
 		name += objectIdString.substr(Pos, std::string::npos);
 	}

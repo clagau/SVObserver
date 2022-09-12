@@ -61,8 +61,10 @@ HRESULT RunOnceSynchronous(uint32_t inspectionID);
 
 /// Returns the dotted name up to "Tool Set".
 /// \param inspectionId [in] The inspectionId of this object.
+/// \param objectId [in] The objectId as string possible without index.
 /// \param objectIdString [in] The objectId as string possible with index.
 /// \returns std::string
+std::string getDottedName(uint32_t inspectionId, uint32_t objectId, bool includeToolSet = false);
 std::string getDottedName(uint32_t inspectionId, std::string objectIdString);
 
 ///convert protobuf message to a vector of objectinfos

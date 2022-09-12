@@ -10,6 +10,7 @@
 #include "ParameterTask.h"
 #include "TableObject.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #pragma endregion Includes
 
@@ -59,50 +60,54 @@ namespace SvOp
 		}
 	}
 
-	void checkNameForUnique(uint32_t objectId, SvPb::SetAndSortEmbeddedValueRequest request, SvPb::InspectionCmdResponse& rCmd)
+	///  Enter here document comment
+	/// \param objectId [in] ObjectId from the task, is needed for the errormessages.
+	/// \param rNames [in] A container with contains the names.
+	/// \param rCmd [out] Fill the errormessage to the cmd.
+	/// \param nameFunc [in] Function to get the name-string from the rName container.
+	/// \returns int return the error row (-1 = no error)
+	template<typename T>
+	int checkNameForUnique(uint32_t objectId, const std::ranges::input_range auto& rNames, SvPb::InspectionCmdResponse& rCmd, std::function<std::string(const T&)> nameFunc)
 	{
-		auto* pResponse = rCmd.mutable_setandsortembeddedvalueresponse();
-		for (auto iter = request.embeddedlist().begin(); request.embeddedlist().end() != iter; ++iter)
+		for (auto iter = rNames.begin(); rNames.end() != iter; ++iter)
 		{
-			std::string name = iter->name();
+			std::string name = nameFunc(*iter);
 
 			//check if forbitten name (already used by common objects)
 			//if (std::any_of(g_forbittenNames.begin(), g_forbittenNames.end(), [name](const auto& rEntry) { return rEntry == name; }))
 			if (std::ranges::any_of(g_forbittenNames, [name](const auto& rEntry) { return rEntry == name; }))
 			{ //duplicate
-				pResponse->mutable_errormessages()->CopyFrom(createMessages(objectId, SvStl::Tid_ForbittenNameForParameterName, {name}));
-				pResponse->set_errorrow(static_cast<int>(std::distance(request.embeddedlist().begin(), iter)));
+				rCmd.mutable_errormessage()->CopyFrom(createMessages(objectId, SvStl::Tid_ForbittenNameForParameterName, {name}));
 				rCmd.set_hresult(E_FAIL);
-				return;
+				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
 
 			//check name
-			if (1 < std::count_if(request.embeddedlist().begin(), request.embeddedlist().end(), [name](const auto& rEntry) { return rEntry.name() == name; }))
+			if (1 < std::ranges::count_if(rNames, [name, nameFunc](const auto& rEntry) { return nameFunc(rEntry) == name; }))
 			{ //duplicate
-				pResponse->mutable_errormessages()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterName, {name}));
-				pResponse->set_errorrow(static_cast<int>(std::distance(request.embeddedlist().begin(), iter)));
+				rCmd.mutable_errormessage()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterName, {name}));
 				rCmd.set_hresult(E_FAIL);
-				return;
+				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
 			//linked name
-			name = iter->name() + SvDef::cLinkName;
-			if (0 < std::count_if(request.embeddedlist().begin(), request.embeddedlist().end(), [name](const auto& rEntry) { return rEntry.name() == name; }))
+			name = nameFunc(*iter) + SvDef::cLinkName;
+			if (0 < std::ranges::count_if(rNames, [name, nameFunc](const auto& rEntry) { return nameFunc(rEntry) == name; }))
 			{ //duplicate
-				pResponse->mutable_errormessages()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterNameWithLinked, {name}));
-				pResponse->set_errorrow(static_cast<int>(std::distance(request.embeddedlist().begin(), iter)));
+				rCmd.mutable_errormessage()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterNameWithLinked, {name}));
 				rCmd.set_hresult(E_FAIL);
-				return;
+				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
 			//Type name
-			name = iter->name() + cTypeNamePostfix;
-			if (0 < std::count_if(request.embeddedlist().begin(), request.embeddedlist().end(), [name](const auto& rEntry) { return rEntry.name() == name; }))
+			name = nameFunc(*iter) + cTypeNamePostfix;
+			if (0 < std::ranges::count_if(rNames, [name, nameFunc](const auto& rEntry) { return nameFunc(rEntry) == name; }))
 			{ //duplicate
-				pResponse->mutable_errormessages()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterNameWithType, {name}));
-				pResponse->set_errorrow(static_cast<int>(std::distance(request.embeddedlist().begin(), iter)));
+				rCmd.mutable_errormessage()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterNameWithType, {name}));
 				rCmd.set_hresult(E_FAIL);
-				return;
+				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
 		}
+
+		return -1;
 	}
 
 	template <typename T>
@@ -235,14 +240,14 @@ namespace SvOp
 		
 		if (request.embeddedlist_size() > cMaxNumberOfObjects)
 		{
-			pResponse->mutable_errormessages()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_TooManyVariables));
+			cmd.mutable_errormessage()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_TooManyVariables, {GetName()}));
 			cmd.set_hresult(E_FAIL);
 			return cmd;
 		}
 
 		
 		//First check for unique names.
-		checkNameForUnique(getObjectId(), request, cmd);
+		checkNameForUnique<SvPb::EmbeddedValueStruct>(getObjectId(), request.embeddedlist(), cmd, [](const auto& rRequest) { return rRequest.name(); });
 		if (S_OK != cmd.hresult())
 		{
 			return cmd;
@@ -256,7 +261,7 @@ namespace SvOp
 		for (int i = 0; request.embeddedlist_size() > i; ++i)
 		{
 			setObject(i);
-			bool isOk = (nullptr != m_objects[i]) && checkValueAndGetDefault(request.embeddedlist(i), *m_objects[i], defaults[i], pResponse->mutable_errormessages());
+			bool isOk = (nullptr != m_objects[i]) && checkValueAndGetDefault(request.embeddedlist(i), *m_objects[i], defaults[i], cmd.mutable_errormessage());
 			if (false == isOk && S_OK == cmd.hresult())
 			{	//only set the first errorrow
 				pResponse->set_errorrow(i);
@@ -276,9 +281,9 @@ namespace SvOp
 		//Sort values in embedded names and set values and rename.
 		for (int i = 0; pEmbeddedList->size() > i; ++i)
 		{
-			swapElements(*pEmbeddedList, i, *pResponse->mutable_errormessages());
+			swapElements(*pEmbeddedList, i, *cmd.mutable_errormessage());
 
-			bool isOk = (nullptr != m_objects[i]) && setElement(request.embeddedlist(i), i, defaults[i], pResponse->mutable_errormessages());
+			bool isOk = (nullptr != m_objects[i]) && setElement(request.embeddedlist(i), i, defaults[i], cmd.mutable_errormessage());
 			if (false == isOk && S_OK == cmd.hresult())
 			{	//only set the first errorrow
 				pResponse->set_errorrow(i);
@@ -307,6 +312,139 @@ namespace SvOp
 		return __super::OverwriteEmbeddedObject(uniqueID, embeddedID);
 	}
 
+	SvPb::LinkedValueTypeEnum getTypeFromIndirectValue(const SVObjectReference& rObjectRef)
+	{
+		if (nullptr == rObjectRef.getFinalObject())
+		{
+			assert(false);
+			return SvPb::LinkedValueTypeEnum::TypeDecimal;
+		}
+		const auto& typeInfo = rObjectRef.getFinalObject()->getObjectTypeInfo();
+		switch (typeInfo.m_ObjectType)
+		{
+			case SvPb::TableObjectType:
+				return SvPb::LinkedValueTypeEnum::TypeTable;
+			case SvPb::SVImageObjectType:
+			{
+				switch (typeInfo.m_SubType)
+				{
+					case SvPb::SVImageMonoType:
+						return SvPb::LinkedValueTypeEnum::TypeGrayImage;
+					case SvPb::SVImageColorType:
+						return SvPb::LinkedValueTypeEnum::TypeColorImage;
+					default:
+						return SvPb::LinkedValueTypeEnum::TypeImage;
+				}
+			}
+			case SvPb::SVToolObjectType:
+				return SvPb::LinkedValueTypeEnum::TypeStates;
+			default:
+			{
+				variant_t value;
+				HRESULT hr = rObjectRef.getValue(value);
+				if (S_OK == hr && VT_EMPTY != value.vt)
+				{
+					if (value.vt & VT_BSTR)
+					{
+						return SvPb::LinkedValueTypeEnum::TypeText;
+					}
+					else
+					{
+						return SvPb::LinkedValueTypeEnum::TypeDecimal;
+					}
+				}
+				else
+				{
+					assert(false);
+					return SvPb::LinkedValueTypeEnum::TypeText;
+				}
+			}
+		}
+	}
+
+	SvPb::InspectionCmdResponse ParameterTask::addParameterAndUseIt(const SvPb::AddParameterAndUseItRequest& rRequest)
+	{
+		SvPb::InspectionCmdResponse resp;
+
+		size_t pos = m_objects.size();
+		if (cMaxNumberOfObjects <= m_objects.size())
+		{
+			resp.mutable_errormessage()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_TooManyVariables, {GetName()}));
+			resp.set_hresult(E_FAIL);
+			return resp;
+		}
+		
+		auto linkedObjectRef = GetObjectReferenceForDottedName(rRequest.linkedname());
+		if (SvDef::InvalidObjectId == linkedObjectRef.getObjectId())
+		{
+			resp.mutable_errormessage()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_InvalidData));
+			resp.set_hresult(E_FAIL);
+			assert(false);
+			return resp;
+		}
+
+		try
+		{
+			std::string newName = rRequest.parametername();
+			std::vector<std::string> nameVec;
+			std::ranges::transform(m_objects, back_inserter(nameVec), [](const auto& pObj) { return nullptr != pObj ? pObj->GetName() : ""; });
+			nameVec.push_back(newName);
+			if (-1 < checkNameForUnique<std::string>(getObjectId(), nameVec, resp, [](const auto& rRequest) { return rRequest; }))
+			{
+				assert(false);
+				return resp;
+			}
+			setObject(static_cast<int>(pos));
+			if (nullptr == m_objects[pos] || nullptr == m_TypeObjects[pos])
+			{
+				resp.mutable_errormessage()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_InvalidData));
+				resp.set_hresult(E_FAIL);
+				assert(false);
+				return resp;
+			}
+			m_TypeObjects[pos]->SetObjectEmbedded(m_startEmbeddedIdType + pos, this, (newName + cTypeNamePostfix).c_str());
+			m_objects[pos]->SetObjectEmbedded(m_startEmbeddedIdValue + pos, this, newName.c_str());
+			SvPb::LinkedValueTypeEnum type = getTypeFromIndirectValue(linkedObjectRef);
+			m_TypeObjects[pos]->SetValue(type);
+			m_objects[pos]->setValueType(type);
+			SvPb::LinkedValue value;
+			value.set_option(SvPb::LinkedSelectedOption::IndirectValue);
+			value.set_indirectidstring(linkedObjectRef.objectIdToString());
+			m_objects[pos]->setValue(value);
+
+			m_NumberOfObjects.SetValue(static_cast<long>(m_objects.size()));
+
+			for (const auto& rAimName : rRequest.usenamelist())
+			{
+				auto aimObjectRef = GetObjectReferenceForDottedName(rAimName);
+				if (nullptr != aimObjectRef.getObject())
+				{
+					aimObjectRef.getObject()->changeSource(linkedObjectRef, *m_objects[pos]);
+				}
+				else
+				{
+					assert(false);
+				}
+			}
+		}
+		catch (const SvStl::MessageContainer& e)
+		{
+			SvPb::convertMessageToProtobuf(e, resp.mutable_errormessage()->add_messages());
+			resp.set_hresult(E_FAIL);
+			assert(false);
+			return resp;
+		}
+		
+		return resp;
+	}
+
+	SvPb::InspectionCmdResponse ParameterTask::checkParameterNames(const SvPb::CheckParameterNamesRequest& rRequest)
+	{
+		SvPb::InspectionCmdResponse resp;
+		resp.mutable_checkparameternamesresponse()->set_errorrow(checkNameForUnique<std::string>(getObjectId(), rRequest.parameter_names(), resp, [](const auto& rRequest) { return rRequest; }));
+		return resp;
+	}
+
 	void ParameterTask::init()
 	{
 		// Identify our output type
@@ -320,8 +458,8 @@ namespace SvOp
 		RegisterEmbeddedObject(&m_NumberOfObjects, SvPb::NumberOfObjectsEId, IDS_OBJECTNAME_NUMBER_OF_OBJECTS, false, SvOi::SVResetItemNone);
 		m_NumberOfObjects.SetDefaultValue(0);
 
-		m_objects.resize(cMaxNumberOfObjects);
-		m_TypeObjects.resize(cMaxNumberOfObjects);
+		m_objects.reserve(cMaxNumberOfObjects);
+		m_TypeObjects.reserve(cMaxNumberOfObjects);
 		
 		m_statusTag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		m_statusColor.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
@@ -342,6 +480,7 @@ namespace SvOp
 			m_NumberOfObjects.SetValue(number);
 		}
 
+		number = std::min<long>(number, static_cast<long>(m_objects.size()));
 		for (int i = 0; number > i; ++i)
 		{
 			long type;
@@ -393,21 +532,26 @@ namespace SvOp
 			
 			m_TypeObjects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes & (~SvPb::dataDefinitionValue), SvOi::SetAttributeType::OverwriteAttribute);
 		}
-		for (int i = number; cMaxNumberOfObjects > i; ++i)
+		if (number < m_objects.size())
 		{
-			if (nullptr != m_objects[i])
+			for (int i = number; m_objects.size() > i; ++i)
 			{
-				m_objects[i]->DisconnectInput();
-				RemoveEmbeddedObject(m_objects[i].get());
-				m_objects[i]->CloseObject();
-				m_objects[i] = nullptr;
+				if (nullptr != m_objects[i])
+				{
+					m_objects[i]->DisconnectInput();
+					RemoveEmbeddedObject(m_objects[i].get());
+					m_objects[i]->CloseObject();
+					m_objects[i] = nullptr;
+				}
+				if (nullptr != m_TypeObjects[i])
+				{
+					RemoveEmbeddedObject(m_TypeObjects[i].get());
+					m_TypeObjects[i]->CloseObject();
+					m_TypeObjects[i] = nullptr;
+				}
 			}
-			if (nullptr != m_TypeObjects[i])
-			{
-				RemoveEmbeddedObject(m_TypeObjects[i].get());
-				m_TypeObjects[i]->CloseObject();
-				m_TypeObjects[i] = nullptr;
-			}
+			m_objects.erase(m_objects.begin() + number, m_objects.end());
+			m_TypeObjects.erase(m_TypeObjects.begin() + number, m_TypeObjects.end());
 		}
 	}
 
@@ -528,6 +672,7 @@ namespace SvOp
 		bool bRet = true;
 		long number = 0;
 		m_NumberOfObjects.GetValue(number);
+		number = std::min<long>(number, static_cast<long>(m_objects.size()));
 		for (int i = 0; number > i; ++i)
 		{
 			if (nullptr == m_objects[i] || nullptr == m_TypeObjects[i])
@@ -596,6 +741,11 @@ namespace SvOp
 
 	void ParameterTask::setObject(int index)
 	{
+		if (index + 1 >= m_objects.size())
+		{
+			m_objects.resize(index + 1);
+			m_TypeObjects.resize(index + 1);
+		}
 		std::string name = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + index);
 		if (nullptr == m_objects[index])
 		{

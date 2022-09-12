@@ -1076,7 +1076,6 @@ message SetAndSortEmbeddedValueRequest
 message SetAndSortEmbeddedValueResponse
 {
 	int32 errorRow = 1;
-	MessageContainerVector errormessages = 2;
 }
 
 message GetInvalidDependenciesRequest
@@ -1093,6 +1092,27 @@ message SetObjectCommentRequest
 {
 	uint32 objectId = 1;
 	string comment = 2;
+}
+
+//This message add a new parameter (input or Result), set this parameter to a linkedValue and if required replace the old link with the new one.
+message AddParameterAndUseItRequest
+{
+	uint32 parameterTaskId = 1; //objectId from the ParameterTask (Input or Result of GroupTool)
+	string parameterName = 2;
+	string linkedName = 3; //DottedName to with the new parameter should be linked.
+	repeated string useNameList = 4; //List of object which use the "linkedName" and should be switched to new parameter.
+}
+
+//This message check the names of the parameter (input or Result).
+message CheckParameterNamesRequest
+{
+	uint32 parameterTaskId = 1; //objectId from the ParameterTask (Input or Result of GroupTool)
+	repeated string parameter_names = 2;
+}
+
+message CheckParameterNamesResponse
+{
+	int32 errorRow = 1;
 }
 
 message InspectionCmdRequest
@@ -1173,6 +1193,8 @@ message InspectionCmdRequest
 		GetInputDataRequest getInputDataRequest = 72;
 		GetObjectSelectorItems2Request getObjectSelectorItems2Request = 73;
 		SetObjectCommentRequest setObjectCommentRequest = 74;
+		AddParameterAndUseItRequest addParameterAndUseItRequest = 75;
+		CheckParameterNamesRequest checkParameterNamesRequest = 76;
 		}
 }
 
@@ -1236,5 +1258,6 @@ message InspectionCmdResponse
 		ValidateLinkedValueResponse validateLinkedValueResponse = 53;
 		GetInputDataResponse getInputDataResponse = 54;
 		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 55;
+		CheckParameterNamesResponse checkParameterNamesResponse = 56;
 		}
 }

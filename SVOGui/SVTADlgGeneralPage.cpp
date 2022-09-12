@@ -15,6 +15,7 @@
 #include "ObjectInterfaces\NameValueVector.h"
 #include "SVShowDependentsDialog.h"
 #include <numeric>
+#include "CreateInputResultDlg.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -290,11 +291,9 @@ namespace SvOg
 					const auto& rList = responseCmd.getinvaliddependenciesresponse().invaliddependencies();
 					if (0 < rList.size())
 					{
-						std::string messageText = std::accumulate(rList.rbegin(), rList.rend(),
-							std::string{ "There are invalid dependencies. Tool will become invalid, do you still want to continue?\n\nInvalid dependencies:" },
-							[](std::string a, const auto& b) { return std::move(a) + "\n" + b.namefrom() + "  ->  " + b.nameto(); });
-						int retCode = MessageBox(messageText.c_str(), "Invalid Dependencies", MB_YESNO);
-						if (IDNO == retCode)
+						SvOg::CreateInputResultDlg dlg(m_InspectionID, m_TaskObjectID, rList);
+						INT_PTR retCode = dlg.DoModal();
+						if (IDCANCEL == retCode)
 						{
 							m_bCloseTool = false;
 							UpdateData(false);

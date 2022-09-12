@@ -14,7 +14,6 @@
 #include "Definitions/GlobalConst.h"
 #include "LinkedValueSelectorDialog.h"
 #include "SVShowDependentsDialog.h"
-#include "ObjectInterfaces/IDependencyManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -121,11 +120,6 @@ namespace SvOg
 
 			return result;
 		}
-
-		bool isOk(const GroupInputData& rData)
-		{
-			return (SvDef::InvalidObjectId == rData.m_errorData.m_ObjectId);
-		}
 	}
 
 	SvStl::MessageContainerVector getErrorMessage(uint32_t inspectionId, uint32_t toolId)
@@ -142,47 +136,6 @@ namespace SvOg
 		}
 		assert(false);
 		return {};
-	}
-
-	SvStl::MessageData getMessage(const SvStl::MessageContainerVector& rErrorMessages, uint32_t objectId)
-	{
-		auto iter = std::ranges::find_if(rErrorMessages, [objectId](const auto& rEntry) { return rEntry.getObjectId() == objectId; });
-		if (rErrorMessages.end() != iter)
-		{
-			return iter->getMessage();
-		}
-		return {};
-	}
-
-	SvDef::StringPairVector getDependency(uint32_t valueId)
-	{
-		SvDef::StringPairVector dependencyList;
-		SvOi::getObjectDependency(std::back_inserter(dependencyList), {valueId}, SvOi::ToolDependencyEnum::Client);
-		return dependencyList;
-	}
-
-	bool setValue(GroupInputData& data, const std::string& newStr)
-	{
-		if (SvPb::LinkedSelectedOption::DirectValue == data.m_data.m_selectedOption && SvPb::isValueType(data.m_type))
-		{
-			variant_t tmp{ newStr.c_str() };
-			SvStl::MessageContainer msgContainer;
-			bool isValid = (S_OK == ::VariantChangeTypeEx(&data.m_data.m_directValue, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, data.m_data.m_defaultValue.vt));
-			if (false == isValid)
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(data.m_name);
-				msgContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
-				SvStl::MessageManager Msg(SvStl::MsgType::Display);
-				Msg.setMessage(msgContainer.getMessage());
-			}
-			else
-			{
-				data.m_data.m_Value = data.m_data.m_directValue;
-			}
-			return isValid;
-		}
-		return false;
 	}
 
 	BEGIN_MESSAGE_MAP(TADialogGroupToolInputPage, CPropertyPage)
@@ -215,7 +168,12 @@ namespace SvOg
 #pragma region Public Methods
 	bool TADialogGroupToolInputPage::QueryAllowExit()
 	{
-		return setInspectionData();
+		auto* pSheet = dynamic_cast<CPropertySheet*>(GetParent());
+		if (nullptr != pSheet && pSheet->GetActivePage() == this)
+		{
+			return setInspectionData();
+		}
+		return true;
 	}
 #pragma endregion Public Methods
 
@@ -228,8 +186,6 @@ namespace SvOg
 		DDX_Text(pDX, IDC_EDIT_COMMENT, m_strComment);
 		//}}AFX_DATA_MAP
 	}
-
-	constexpr int c_maxValues = 50;
 
 	BOOL TADialogGroupToolInputPage::OnInitDialog()
 	{
@@ -344,21 +300,7 @@ namespace SvOg
 
 	void TADialogGroupToolInputPage::OnBnClickedButtonAdd()
 	{
-		if (m_inputData.size() < c_maxValues)
-		{
-			GroupInputData data;
-			if (0 < std::count_if(m_inputData.begin(), m_inputData.end(), [data](const auto& rEntry) { return rEntry.m_name == data.m_name; }))
-			{ //duplicate
-				std::string newName;
-				int additionalValue = 1;
-				do
-				{
-					newName = c_inputName + std::to_string(additionalValue++);
-				} while (0 < std::count_if(m_inputData.begin(), m_inputData.end(), [newName](const auto& rEntry) { return rEntry.m_name == newName; }));
-				data.m_name = newName;
-			}
-			m_inputData.emplace_back(std::move(data));
-		}
+		addEntry(c_inputName, m_inputData);
 		setInspectionData(false);
 		FillGridControl();
 	}
@@ -425,51 +367,10 @@ namespace SvOg
 		UpdateData(TRUE);
 		try
 		{
-			SvPb::InspectionCmdRequest requestCmd;
-			SvPb::InspectionCmdResponse responseCmd;
-			auto* pRequest = requestCmd.mutable_setandsortembeddedvaluerequest();
-			pRequest->set_ownerid(m_TaskObjectID);
-			for (const auto& data : m_inputData)
-			{
-				auto* pTmp = pRequest->add_embeddedlist();
-				pTmp->set_name(data.m_name);
-				pTmp->set_oldembeddedid(data.m_oldEmbeddedId);
-				pTmp->set_type(data.m_type);
-				*pTmp->mutable_value() = convertLinkedValue(data.m_data);
-			}
-
-			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-			if (S_OK != hr)
-			{
-				if (responseCmd.has_setandsortembeddedvalueresponse())
-				{
-					auto& rMsg = responseCmd.setandsortembeddedvalueresponse();
-					if (rMsg.has_errormessages())
-					{
-						m_errorMessages = convertProtobufToMessageVector(rMsg.errormessages());
-					}
-				}
-
-				if (displayMessageBox)
-				{
-					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					if (0 < m_errorMessages.size())
-					{
-						Msg.setMessage(m_errorMessages[0].getMessage());
-					}
-					else
-					{
-						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
-					}
-				}
-			}
-			else
-			{
-				m_errorMessages.clear();
-			}
+			m_errorMessages = sendValuesToInspection(m_InspectionID, m_TaskObjectID, m_inputData, displayMessageBox);
 			loadDataList();
 			FillGridControl();
-			return S_OK == hr;
+			return m_errorMessages.empty();
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -525,7 +426,7 @@ namespace SvOg
 			auto row = i + 1;
 
 			bool hasDependencies = (0 < m_inputData[i].m_dependencies.size());
-			m_Grid.SetItemBkColour(row, DependencyColumn,  isOk(m_inputData[i]) ? SvDef::White : SvDef::Black);
+			m_Grid.SetItemBkColour(row, DependencyColumn, isOk(m_inputData[i]) ? SvDef::White : SvDef::Black);
 			m_Grid.SetItemFgColour(row, DependencyColumn, isOk(m_inputData[i]) ? SvDef::Black : SvDef::White);
 			m_Grid.SetItemText(row, DependencyColumn, hasDependencies ? "D" : "");
 			m_Grid.SetItemState(row, DependencyColumn, m_Grid.GetItemState(row, DependencyColumn) | GVIS_READONLY);
@@ -535,7 +436,7 @@ namespace SvOg
 			using namespace SvGcl;
 			m_Grid.SetCellType(row, TypeColumn, RUNTIME_CLASS(GridCellCombo));
 			auto* pCell = dynamic_cast<SvGcl::GridCellCombo*>(m_Grid.GetCell(row, TypeColumn));
-			
+
 			pCell->SetOptions(typeOptions);
 			pCell->SetStyle(CBS_DROPDOWNLIST);
 			auto type = m_inputData[i].m_type;
@@ -656,27 +557,7 @@ namespace SvOg
 
 	void TADialogGroupToolInputPage::loadDataList()
 	{
-		m_inputData.clear();
-		m_Values.Init();
-
-		for (int i = 0; c_maxValues > i; ++i)
-		{
-			if (0 == m_Values.GetAllowedAttributeFlags(SvPb::ExternalInputEId + i))
-			{	//stop loading values, because it is hidden.
-				break;
-			}
-
-			GroupInputData data;
-			data.m_name = m_Values.GetName(SvPb::ExternalInputEId + i);
-			data.m_oldEmbeddedId = SvPb::ExternalInputEId + i;
-			data.m_type = static_cast<SvPb::LinkedValueTypeEnum>(m_Values.Get<int>(SvPb::InputObjectTypeEId + i));
-			data.m_data = m_Values.Get<LinkedValueData>(SvPb::ExternalInputEId + i);
-			
-			auto valueId = m_Values.GetObjectID(SvPb::ExternalInputEId + i);
-			data.m_dependencies = getDependency(valueId);
-			data.m_errorData = getMessage(m_errorMessages, valueId);;
-			m_inputData.emplace_back(std::move(data));
-		}
+		SvOg::loadDataList(m_inputData, m_Values, SvPb::ExternalInputEId, SvPb::InputObjectTypeEId, m_errorMessages);
 	}
 
 	void TADialogGroupToolInputPage::UpdateEnableButtons()
@@ -755,7 +636,17 @@ namespace SvOg
 						}
 						else
 						{
+							auto oldName = m_inputData[row - 1].m_name;
 							m_inputData[row - 1].m_name = cellText;
+
+							auto errorMessage = checkParameterNames(m_InspectionID, m_TaskObjectID, m_inputData);
+							if (0 < errorMessage.size())
+							{
+								SvStl::MessageManager Msg(SvStl::MsgType::Display);
+								Msg.setMessage(errorMessage[0].getMessage());
+								m_inputData[row - 1].m_name = oldName;
+								return false;
+							}
 						}
 					}
 					break;

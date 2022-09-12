@@ -498,6 +498,24 @@ std::make_tuple(
 )
 },
 
+{SvPb::InspectionCmdRequest::kAddParameterAndUseItRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  addParameterAndUseIt(rRequest.addparameteranduseitrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kCheckParameterNamesRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  checkParameterNames(rRequest.checkparameternamesrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
 { SvPb::InspectionCmdRequest::kSetDefaultInputsRequest,
 std::make_tuple(
 [] {return ThreadPref::inspection; },

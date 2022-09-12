@@ -88,6 +88,7 @@ public:
 	virtual void disconnectAllInputs() override;
 	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
 	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter) override;
+	virtual void changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject) override;
 
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool, const SvOi::IObjectClass* pRequestor) const override;
 

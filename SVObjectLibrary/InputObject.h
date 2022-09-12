@@ -47,6 +47,7 @@ class InputObject : public SVObjectAppClass, public SvOi::IInputObject
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter) override;
+	virtual void changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject) override;
 	void setDottedNameOfLoadedInput(const std::string& rName) { m_DottedNameOfFailedLoadInput = rName; };
 
 	void setStartSearchId(uint32_t startSearchId) { m_startSearchId = startSearchId; };
