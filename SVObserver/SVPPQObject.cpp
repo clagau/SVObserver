@@ -60,6 +60,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 constexpr double TwentyPercent = .20;
+bool SVPPQObject::m_timerResolution {false};
 #pragma endregion Declarations
 
 void SVPPQObject::ProcessDelayOutputs()
@@ -279,7 +280,7 @@ HRESULT SVPPQObject::ObserverUpdate(const SVInspectionInfoPair& rData)
 	m_lastPPQPosition = m_PPQPositions.GetIndexByTriggerCount(rData.first);
 
 	m_oInspectionQueue.AddTail(rData);
-	m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::CompleteInspections]);
+	m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::CompleteInspections]));
 
 	return S_OK;
 }
@@ -985,15 +986,19 @@ void SVPPQObject::GoOnline()
 		throw Msg;
 	}// end if
 
+	if (m_timerResolution)
+	{
+		::timeBeginPeriod(1);
+	}
 	// Create the PPQ's threads
-	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, GetName()))
+	if (S_OK != m_processThread.Create(&SVPPQObject::ProcessCallback, GetName()))
 	{
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreatePPQThread, SvStl::SourceFileParams(StdMessageParams));
 		throw Msg;
 	}
 
 	// Kick the threads up a notch, for real!
-	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_HIGHEST);
+	m_processThread.SetPriority(THREAD_PRIORITY_HIGHEST);
 
 	if (SvDef::SVPPQNextTriggerMode == m_outputMode)
 	{
@@ -1041,11 +1046,15 @@ bool SVPPQObject::GoOffline()
 		pInspection->GoOffline();
 	}// end for
 
+	if (m_timerResolution)
+	{
+		::timeEndPeriod(1);
+	}
 	m_PPQPositions.setMaxCameraShutterTime(0.0);
 	// Bring the threads back down to earth
-	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
+	m_processThread.SetPriority(THREAD_PRIORITY_NORMAL);
 
-	m_AsyncProcedure.Destroy();
+	m_processThread.Destroy();
 
 	m_bOnline = false;
 
@@ -2441,7 +2450,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 					}
 
 					m_notifyInspectionList.push_back(pProduct->triggerCount());
-					m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::NotifyInspection]);
+					m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::NotifyInspection]));
 				}
 				else
 				{
@@ -2508,7 +2517,7 @@ void SVPPQObject::cameraCallback(ULONG_PTR pCaller, const CameraInfo& rCameraInf
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		::OutputDebugString(SvUl::Format(_T("%s Finished Camera Acquisition %s\n"), GetName(), pCamera->GetName()).c_str());
 #endif
-		m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::CameraResponses]);
+		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::CameraResponses]));
 	}
 }
 
@@ -2544,11 +2553,11 @@ void __stdcall SVPPQObject::triggerCallback(SvTrig::SVTriggerInfoStruct&& trigge
 		::OutputDebugString(SvUl::Format(_T("%s Finished Trigger TRI=%d\n"), GetName(), triggerInfo.lTriggerCount).c_str());
 #endif
 
-		m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::Trigger]);
+		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::Trigger]));
 
 		if (0 < m_PendingCameraResponses.size())
 		{
-			m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::CameraResponses]);
+			m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::CameraResponses]));
 		}
 	}
 }
@@ -2647,9 +2656,9 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 	return l_Status;
 }
 
-void CALLBACK SVPPQObject::APCThreadProcess(ULONG_PTR pData)
+void CALLBACK SVPPQObject::ProcessCallback(ULONG_PTR pCaller)
 {
-	PpqProcessFunction* pProcessFunction = reinterpret_cast<PpqProcessFunction*> (pData);
+	PpqProcessFunction* pProcessFunction = reinterpret_cast<PpqProcessFunction*> (pCaller);
 	if (nullptr != pProcessFunction && nullptr != *pProcessFunction)
 	{
 		(*pProcessFunction)();
@@ -2689,7 +2698,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs() const
 
 	if (nullptr != pProcessFunction)
 	{
-		m_AsyncProcedure.Signal(pProcessFunction);
+		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (pProcessFunction));
 	}
 
 	return l_Status;
@@ -3075,7 +3084,7 @@ HRESULT SVPPQObject::GetProduct(SVProductInfoStruct& p_rProduct, long lProcessCo
 
 	p_rProduct.InitProductInfo();
 
-	if (m_AsyncProcedure.IsActive())
+	if (m_processThread.IsActive())
 	{
 		SVProductInfoStruct* l_pProduct = new SVProductInfoStruct;
 
@@ -3085,7 +3094,7 @@ HRESULT SVPPQObject::GetProduct(SVProductInfoStruct& p_rProduct, long lProcessCo
 
 			if (m_ProductRequests.AddTail(l_Request))
 			{
-				m_AsyncProcedure.Signal(&m_processFunctions[PpqFunction::ProductRequests]);
+				m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::ProductRequests]));
 
 				l_Status = l_Request.second.WaitForRequest();
 

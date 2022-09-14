@@ -16,7 +16,7 @@
 
 #include "SVQueueObject.h"
 #include "CameraInfo.h"
-#include "SVSystemLibrary/SVAsyncProcedure.h"
+#include "SVSystemLibrary/SVThread.h"
 #pragma endregion Includes
 
 typedef std::function<void(ULONG_PTR, const CameraInfo&)> PpqCameraCallBack;
@@ -24,7 +24,7 @@ typedef std::function<void(ULONG_PTR, const CameraInfo&)> PpqCameraCallBack;
 class AcquisitionDevice
 {
 public:
-	static void CALLBACK APCProc(ULONG_PTR pData);
+	static void __stdcall ProcessCallback(ULONG_PTR pData);
 
 	explicit AcquisitionDevice(LPCTSTR deviceName);
 	virtual ~AcquisitionDevice() = default;
@@ -64,7 +64,7 @@ private:
 
 	ULONG_PTR m_pCaller{ 0UL };
 
-	SvSyl::SVAsyncProcedure m_Thread;
+	SvSyl::SVThread m_processThread;
 
 	CameraQueue m_cameraQueue;
 

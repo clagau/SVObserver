@@ -1987,6 +1987,7 @@ void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonit
 	double preTriggerTimeWidow {(0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow};
 	double postTriggerTimeWidow {(0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_postTriggerTimeWindow) ? SvDef::cDefaultPostTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_postTriggerTimeWindow};
 
+	SVPPQObject::SetTimerResolution(TheSVObserverApp().m_rInitialInfoSvo.m_timerResolution);
 	long lSize = pConfig->GetPPQCount();
 
 	bool isLocalStart {false == SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)};

@@ -41,6 +41,7 @@ constexpr const char* DisplaySectionTag = _T("Display");
 constexpr const char* ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
 constexpr const char* PreTriggerTimeWindowTag = _T("PreTriggerTimeWindow");
 constexpr const char* PostTriggerTimeWindowTag = _T("PostTriggerTimeWindow");
+constexpr const char* EnableTimerResolutionTag = _T("EnableTimerResolution");
 constexpr const char* ArchiveBufferSizeTag = _T("ArchiveToolBufferSize");
 constexpr const char* ArchiveGoOfflineBufferSizeTag = _T("ArchiveToolGoOfflineBufferSize");
 constexpr const char* ArchiveAsyncBufferSizeTag = _T("ArchiveToolAsyncBufferSize");
@@ -200,6 +201,8 @@ void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 	m_rInitialInfo.m_diagnostic = (0 != value);
 	value = SvimIni.GetValueInt(SettingsTag, MemoryLeakDetectionTag, 0);
 	m_rInitialInfo.m_memoryLeakDetection = (0 != value);
+	value = SvimIni.GetValueInt(SettingsTag, EnableTimerResolutionTag, 0);
+	m_rInitialInfo.m_timerResolution = (0 != value);
 
 	m_rInitialInfo.m_PreloadTimeDelay = SvimIni.GetValueInt(FileAcquisitionSectionTag, PreloadTimeDelay, DefaultPreloadTimeDelay);
 	m_rInitialInfo.m_MaxPreloadFileNumber = SvimIni.GetValueInt(FileAcquisitionSectionTag, MaxPreloadFileNumber, DefaultMaxPreloadFileNumber);

@@ -141,14 +141,14 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 		m_currentImageIter = m_imageList.begin();
 	}
 
-	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, m_name.c_str());
+	hr = m_processThread.Create(&SVFileCamera::ProcessCallback, m_name.c_str());
 	return hr;
 }
 
 void SVFileCamera::Stop()
 {
 	//stop loader thread
-	m_thread.Destroy();
+	m_processThread.Destroy();
 	if (m_UsePreLoadImages)
 	{
 		for (auto& id : m_imageList)
@@ -169,7 +169,7 @@ void SVFileCamera::Stop()
 
 bool SVFileCamera::IsRunning() const
 {
-	return m_thread.IsActive();
+	return m_processThread.IsActive();
 }
 
 std::string SVFileCamera::GetNextFilename()
@@ -194,6 +194,7 @@ std::string SVFileCamera::GetNextFilename()
 	m_acquisitionFile.clear();
 	return result;
 }
+
 MIL_ID SVFileCamera::GetNextImageId()
 {
 	MIL_ID result {0LL};
@@ -209,13 +210,13 @@ MIL_ID SVFileCamera::GetNextImageId()
 	return result;
 }
 
-HRESULT SVFileCamera::DoOneShot(LPCTSTR pAcquisitionFile)
+void SVFileCamera::DoOneShot(LPCTSTR pAcquisitionFile)
 {
 	{
 		std::lock_guard<std::mutex> guard(m_fileCameraMutex);
 		m_acquisitionFile = pAcquisitionFile;
 	}
-	return m_thread.Signal(reinterpret_cast<void*> (this));
+	m_processThread.Signal(reinterpret_cast<ULONG_PTR> (this));
 }
 
 HRESULT SVFileCamera::CopyImage(SvOi::ITRCImage* pImage)
@@ -224,9 +225,9 @@ HRESULT SVFileCamera::CopyImage(SvOi::ITRCImage* pImage)
 	return hr;
 }
 
-void SVFileCamera::OnAPCEvent(ULONG_PTR pData)
+void __stdcall SVFileCamera::ProcessCallback(ULONG_PTR pCaller)
 {
-	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*> (pData);
+	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*> (pCaller);
 	if (nullptr != pCamera)
 	{
 		std::string acuisitionFile = pCamera->getAcquisitionFile();

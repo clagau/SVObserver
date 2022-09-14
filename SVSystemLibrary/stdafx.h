@@ -67,6 +67,7 @@
 #include <memory>
 #include <mutex>
 #include <Psapi.h>
+#include <queue>
 #include <set>				//Used by static library
 #include <share.h>
 #include <sstream>

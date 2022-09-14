@@ -471,7 +471,7 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 
 	m_NotifyWithLastInspected = false;
 
-	if (S_OK != m_AsyncProcedure.Create(&SVInspectionProcess::APCThreadProcess, GetName()))
+	if (S_OK != m_processThread.Create(&SVInspectionProcess::ProcessCallback, GetName()))
 	{
 		return false;
 	}
@@ -486,9 +486,9 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 	return true;
 }// end Create
 
-void CALLBACK SVInspectionProcess::APCThreadProcess(ULONG_PTR pData)
+void __stdcall SVInspectionProcess::ProcessCallback(ULONG_PTR pCaller)
 {
-	InspectionProcessFunction* pProcessFunction = reinterpret_cast<InspectionProcessFunction*> (pData);
+	InspectionProcessFunction* pProcessFunction = reinterpret_cast<InspectionProcessFunction*> (pCaller);
 	if (nullptr != pProcessFunction && nullptr != *pProcessFunction)
 	{
 		(*pProcessFunction)();
@@ -500,7 +500,7 @@ void SVInspectionProcess::DestroyInspection()
 	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), SVRemoveSubjectStruct());
 	m_NotifyWithLastInspected = false;
 	::Sleep(0);
-	m_AsyncProcedure.Destroy();
+	m_processThread.Destroy();
 	resetLastProduct();
 	if (SvDef::InvalidObjectId != m_PPQId)
 	{
@@ -639,7 +639,7 @@ bool SVInspectionProcess::GoOnline()
 	resetLastProduct();
 	m_offlineRequest = false;
 
-	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
+	m_processThread.SetPriority(THREAD_PRIORITY_NORMAL);
 
 	BuildValueObjectMap();
 
@@ -695,7 +695,7 @@ bool SVInspectionProcess::GoOffline()
 	{
 		m_processActive = false;
 	}
-	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
+	m_processThread.SetPriority(THREAD_PRIORITY_NORMAL);
 
 	//save the last image to have it in the edit-mode
 	if (0 < m_pCurrentToolset->getTriggerCount())
@@ -831,7 +831,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 		}
 		SVObjectManagerClass::Instance().IncrementInspectionIndicator();
 		m_processActive = true;
-		result = m_AsyncProcedure.Signal(&m_processFunctions[InspectionFunction::Inspection]);
+		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[InspectionFunction::Inspection]));
 	}
 	return result;
 }
@@ -2203,7 +2203,7 @@ void SVInspectionProcess::LastProductNotify()
 {
 	m_NotifyWithLastInspected = true;
 
-	m_AsyncProcedure.Signal(&m_processFunctions[InspectionFunction::NotifyLastInspected]);
+	m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[InspectionFunction::NotifyLastInspected]));
 }
 
 bool SVInspectionProcess::CheckAndResetConditionalHistory()
@@ -3070,7 +3070,7 @@ HRESULT SVInspectionProcess::SubmitCommand(const SvOi::ICommandPtr& rCommandPtr)
 
 	if (m_CommandQueue.AddTail(rCommandPtr))
 	{
-		Result = m_AsyncProcedure.Signal(&m_processFunctions[InspectionFunction::ProcessCommand]);
+		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[InspectionFunction::ProcessCommand]));
 	}
 	else
 	{

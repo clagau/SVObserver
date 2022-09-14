@@ -12,23 +12,24 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/IInspectionProcess.h"
-#include "Definitions/SVResetStruct.h"
-#include "ObjectInterfaces/IFormulaController.h"
-#include "SVObjectLibrary/SVObjectClass.h"
-#include "SVOLibrary/SVQueueObject.h"
-#include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
 #include "SVInfoStructs.h"
 #include "SVPublishList.h"
+#include "Definitions/SVResetStruct.h"
+#include "InspectionEngine/RunStatus.h"
+#include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
 #include "InspectionEngine/SVCameraImageTemplate.h"
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "SVValueObjectLibrary/SVValueObjectClass.h"
+#include "ObjectInterfaces/IFormulaController.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVEquation.h"
+#include "SVObjectLibrary/SVObjectClass.h"
+#include "SVOLibrary/SVQueueObject.h"
+#include "SVProtoBuf/TriggerRecordController.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
-#include "SVProtoBuf/TriggerRecordController.h"
+#include "SVSystemLibrary/SVThread.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVValueObjectLibrary/SVValueObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -310,7 +311,7 @@ protected:
 
 	HRESULT copyValues2TriggerRecord(SvIe::RunStatus& rRunStatus);
 
-	static void CALLBACK APCThreadProcess(ULONG_PTR pParam);
+	static void __stdcall ProcessCallback(ULONG_PTR pCaller);
 
 	void ThreadProcess( bool& p_WaitForEvents );
 
@@ -337,7 +338,7 @@ private:
 
 	uint32_t m_PPQId{SvDef::InvalidObjectId};
 
-	mutable SvSyl::SVAsyncProcedure m_AsyncProcedure;
+	mutable SvSyl::SVThread m_processThread;
 	std::atomic_bool m_NotifyWithLastInspected;
 
 	volatile long m_lInputRequestMarkerCount{0L};

@@ -109,7 +109,7 @@ namespace SvLib
 		bool m_enableAutosave {false};
 		bool m_diagnostic {false};
 		bool m_memoryLeakDetection {false};
-
+		bool m_timerResolution {false};
 #pragma endregion Member variables
 	};
 } //namespace SvLib

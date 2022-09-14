@@ -23,8 +23,8 @@ void CycleTimer(PeriodicTimerInfo& rTimerInfo, std::function<void(double)> dispa
 {
 	enum TimerHandles
 	{
-		ShutDown,
 		Timer,
+		ShutDown,
 		HandleCount
 	};
 

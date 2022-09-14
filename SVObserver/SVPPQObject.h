@@ -23,7 +23,7 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "Triggering/TriggerDevice.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
-#include "SVSystemLibrary/SVAsyncProcedure.h"
+#include "SVSystemLibrary/SVThread.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
@@ -101,6 +101,7 @@ public:
 	typedef std::pair< long, SVProductInfoRequestStruct > SVProductRequestPair;
 	typedef std::vector< SVProductInfoStruct* > SVProductPositionQueue;
 
+	static void SetTimerResolution(bool timerResolution) { m_timerResolution = timerResolution; }
 	void SetNAKMode(SvDef::NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
@@ -274,7 +275,7 @@ protected:
 	typedef std::map<SvIe::SVVirtualCamera*, SVCameraInfoElement> SVCameraInfoMap;
 	typedef std::map<SvIe::SVVirtualCamera*, SVCameraQueueElement> SVPendingCameraResponseMap;
 
-	static void CALLBACK APCThreadProcess(ULONG_PTR pData);
+	static void __stdcall ProcessCallback(ULONG_PTR pCaller);
 
 	HRESULT MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& rProduct, SvIe::SVVirtualCamera* pCamera );
 
@@ -319,7 +320,7 @@ protected:
 
 	HRESULT BuildCameraInfos(SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos) const;
 
-	mutable SvSyl::SVAsyncProcedure m_AsyncProcedure;
+	mutable SvSyl::SVThread m_processThread {};
 
 	std::atomic<double> m_NextOutputDelayTimestamp {0.0};
 	std::atomic<double> m_NextOutputResetTimestamp {0.0};
@@ -434,6 +435,7 @@ private:
 	int m_MissingImageCount{ 0 };
 	int m_NotCompleteCount{ 0 };
 	
+	static bool m_timerResolution;
 };
 
 typedef std::vector<SVPPQObject*> SVPPQObjectPtrVector;

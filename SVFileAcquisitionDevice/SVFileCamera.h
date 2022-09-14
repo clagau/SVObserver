@@ -13,7 +13,7 @@
 #pragma region Includes
 #include <mil.h>
 #include "SVFileCameraStruct.h"
-#include "SVSystemLibrary/SVAsyncProcedure.h"
+#include "SVSystemLibrary/SVThread.h"
 #pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
@@ -34,11 +34,11 @@ private:
 	std::vector<std::string> m_fileList;
 	std::vector<std::string>::iterator m_currentFileIter {m_fileList.end()};
 	MIL_ID m_image = M_NULL;
-	SvSyl::SVAsyncProcedure m_thread;
+	SvSyl::SVThread m_processThread;
 	EventHandler m_startFrameEvent;
 	EventHandler m_endFrameEvent;
 
-	static void CALLBACK OnAPCEvent(ULONG_PTR pData);
+	static void __stdcall ProcessCallback(ULONG_PTR pCaller);
 
 	std::string GetNextFilename();
 
@@ -90,7 +90,7 @@ public:
 
 	bool IsRunning() const;
 
-	HRESULT DoOneShot(LPCTSTR pAcquisitionFile);
+	void DoOneShot(LPCTSTR pAcquisitionFile);
 
 	HRESULT CopyImage(SvOi::ITRCImage* pImagePtr);
 

@@ -18,9 +18,9 @@
 namespace SvTrig
 {
 
-void CALLBACK TriggerDevice::APCProc(ULONG_PTR pData)
+void __stdcall TriggerDevice::ProcessCallback(ULONG_PTR pCaller)
 {
-	TriggerDevice* pTriggerDevice = reinterpret_cast<TriggerDevice*> (pData);
+	TriggerDevice* pTriggerDevice = reinterpret_cast<TriggerDevice*> (pCaller);
 	if (nullptr != pTriggerDevice)
 	{
 		bool done {0 == pTriggerDevice->m_triggerQueue.size()};
@@ -94,7 +94,7 @@ void TriggerDevice::ClearDevice()
 HRESULT TriggerDevice::Destroy()
 {
 	m_isStarted = false;
-	m_Thread.Destroy();
+	m_processThread.Destroy();
 	m_pPpqTriggerCallback = nullptr;
 	m_triggerQueue.clear();
 	return S_OK;
@@ -122,13 +122,13 @@ HRESULT TriggerDevice::UnregisterCallback()
 
 HRESULT TriggerDevice::Start()
 {
-	HRESULT result = m_Thread.Create( &TriggerDevice::APCProc, m_DeviceName.c_str());
+	HRESULT result = m_processThread.Create( &TriggerDevice::ProcessCallback, m_DeviceName.c_str());
 
 	if( S_OK == result)
 	{
-		m_Thread.SetPriority( THREAD_PRIORITY_TIME_CRITICAL );
+		m_processThread.SetPriority( THREAD_PRIORITY_TIME_CRITICAL );
 
-		if( m_Thread.IsActive() )
+		if(m_processThread.IsActive() )
 		{
 			Reset();
 			m_isStarted = true;
@@ -141,8 +141,8 @@ HRESULT TriggerDevice::Start()
 HRESULT TriggerDevice::Stop()
 {
 	m_isStarted = false;
-	m_Thread.SetPriority( THREAD_PRIORITY_NORMAL );
-	m_Thread.Destroy();
+	m_processThread.SetPriority( THREAD_PRIORITY_NORMAL );
+	m_processThread.Destroy();
 	Reset();
 
 	return S_OK;
@@ -161,6 +161,6 @@ This method adds the new response to the process queue.
 void TriggerDevice::Notify(const SvTrig::SVTriggerInfoStruct& rTriggerInfo)
 {
 	m_triggerQueue.PushTail(rTriggerInfo);
-	m_Thread.Signal(this);
+	m_processThread.Signal(reinterpret_cast<ULONG_PTR> (this));
 }
 }//namespace SvTrig

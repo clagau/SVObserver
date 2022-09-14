@@ -13,9 +13,9 @@
 
 #pragma region Includes
 #include "ObjectIDParameters.h"
-#include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVTriggerInfoStruct.h"
 #include "SVContainerLibrary/SVRingBuffer.h"
+#include "SVSystemLibrary/SVThread.h"
 #pragma endregion Includes
 
 namespace SvTrig
@@ -26,7 +26,7 @@ typedef std::function<void(SvTrig::SVTriggerInfoStruct&&)> PpqTriggerCallBack;
 class TriggerDevice
 {
 public:
-	static void CALLBACK APCProc(ULONG_PTR pParam);
+	static void __stdcall ProcessCallback(ULONG_PTR pCaller);
 
 	explicit TriggerDevice(LPCTSTR deviceName);
 	virtual ~TriggerDevice() = default;
@@ -70,7 +70,7 @@ private:
 	long m_triggerCount {0L};
 	ObjectIDParameters m_objectIDParams {};
 
-	SvSyl::SVAsyncProcedure m_Thread;
+	SvSyl::SVThread m_processThread;
 
 	TriggerQueue m_triggerQueue {10};
 

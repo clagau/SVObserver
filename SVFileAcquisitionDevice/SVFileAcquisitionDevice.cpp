@@ -470,7 +470,8 @@ HRESULT SVFileAcquisitionDevice::FireOneShot(unsigned long cameraIndex, LPCTSTR 
 
 	if (cameraIndex < MaxFileCameras)
 	{
-		result = m_cameras[cameraIndex].DoOneShot(pAcquisitionFile);
+		m_cameras[cameraIndex].DoOneShot(pAcquisitionFile);
+		result = S_OK;
 	}
 	return result;
 }

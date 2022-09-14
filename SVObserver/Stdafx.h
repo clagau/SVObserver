@@ -134,6 +134,7 @@ namespace Gdiplus
 #include <sys/stat.h>
 #include <tuple>
 #include <typeinfo>
+#include <timeapi.h>
 #include <utility>
 #include <vector>
 #include <thread>

@@ -12,9 +12,9 @@
 #include "stdafx.h"
 #include "AcquisitionDevice.h"
 
-void CALLBACK AcquisitionDevice::APCProc(ULONG_PTR pData)
+void CALLBACK AcquisitionDevice::ProcessCallback(ULONG_PTR pCaller)
 {
-	AcquisitionDevice* pAcquisitionDevice = reinterpret_cast<AcquisitionDevice*> (pData);
+	AcquisitionDevice* pAcquisitionDevice = reinterpret_cast<AcquisitionDevice*> (pCaller);
 	if (nullptr != pAcquisitionDevice)
 	{
 		long queueSize {0L};
@@ -71,7 +71,7 @@ HRESULT AcquisitionDevice::Create()
 HRESULT AcquisitionDevice::Destroy()
 {
 	m_isStarted = false;
-	m_Thread.Destroy();
+	m_processThread.Destroy();
 	m_PpqCameraCallbackList.clear();
 	m_cameraQueue.clear();
 	return S_OK;
@@ -126,13 +126,13 @@ HRESULT AcquisitionDevice::UnregisterCallback(ULONG_PTR pPPQ)
 
 HRESULT AcquisitionDevice::Start()
 {
-	HRESULT result = m_Thread.Create(&AcquisitionDevice::APCProc, m_DeviceName.c_str());
+	HRESULT result = m_processThread.Create(&AcquisitionDevice::ProcessCallback, m_DeviceName.c_str());
 
 	if (S_OK == result)
 	{
-		m_Thread.SetPriority(THREAD_PRIORITY_TIME_CRITICAL);
+		m_processThread.SetPriority(THREAD_PRIORITY_TIME_CRITICAL);
 
-		if (m_Thread.IsActive())
+		if (m_processThread.IsActive())
 		{
 			Reset();
 			m_isStarted = true;
@@ -145,8 +145,8 @@ HRESULT AcquisitionDevice::Start()
 HRESULT AcquisitionDevice::Stop()
 {
 	m_isStarted = false;
-	m_Thread.SetPriority(THREAD_PRIORITY_NORMAL);
-	m_Thread.Destroy();
+	m_processThread.SetPriority(THREAD_PRIORITY_NORMAL);
+	m_processThread.Destroy();
 	Reset();
 
 	return S_OK;
@@ -161,5 +161,5 @@ HRESULT AcquisitionDevice::Reset()
 void AcquisitionDevice::Notify(CameraInfo&& cameraInfo)
 {
 	m_cameraQueue.emplace_back(std::move(cameraInfo));
-	m_Thread.Signal(this);
+	m_processThread.Signal(reinterpret_cast<ULONG_PTR> (this));
 }

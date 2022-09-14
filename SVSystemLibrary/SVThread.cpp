@@ -33,20 +33,22 @@ SVThread::~SVThread()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT SVThread::Create(LPCTSTR tag)
+HRESULT SVThread::Create(SignalFunctor callback, LPCTSTR tag)
 {
 	HRESULT result {S_OK};
 
+	Destroy();
+	m_callback = callback;
 	m_threadName = tag;
 	if (true == m_threadName.empty())
 	{
 		return E_FAIL;
 	}
 
-	if (nullptr == m_hShutdown)
+	for (int i = 0; i < ThreadHandles::HandleCount; ++i)
 	{
-		m_hShutdown = ::CreateEvent( nullptr, true, false, nullptr );
-		if (nullptr == m_hShutdown)
+		m_eventHandles[i] = ::CreateEvent(nullptr, i == ThreadHandles::ShutDown, false, nullptr);
+		if (nullptr == m_eventHandles[i])
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_THREAD_CREATION_ERROR, m_threadName.c_str(), SvStl::SourceFileParams(StdMessageParams));
@@ -57,7 +59,7 @@ HRESULT SVThread::Create(LPCTSTR tag)
 
 	if (nullptr == m_thread.native_handle() && false == m_thread.joinable())
 	{
-		m_thread = std::thread(&SVThread::ThreadProc, reinterpret_cast<LPVOID> (this));
+		m_thread = std::thread(&SVThread::ThreadProc, this);
 	}
 
 	return result;
@@ -67,25 +69,39 @@ void SVThread::Destroy()
 {
 	if( m_thread.joinable() )
 	{
-		if (nullptr != m_hShutdown)
+		if (nullptr != m_eventHandles[ThreadHandles::ShutDown])
 		{
-			::SetEvent(m_hShutdown);
+			::SetEvent(m_eventHandles[ThreadHandles::ShutDown]);
 		}
 		m_thread.join();
 	}
 
-	if(nullptr != m_hShutdown )
+	for (int i = 0; i < ThreadHandles::HandleCount; ++i)
 	{
-		::CloseHandle( m_hShutdown );
-		m_hShutdown = nullptr;
+		if (nullptr != m_eventHandles[i])
+		{
+			::CloseHandle(m_eventHandles[i]);
+			m_eventHandles[i] = nullptr;
+		}
 	}
 	m_threadName.clear();
 }
 
-HANDLE SVThread::GetThreadHandle() const
+void SVThread::Signal(const ULONG_PTR pCaller)
 {
-	HANDLE result = m_thread.native_handle();
-	return result;
+	if (nullptr != m_eventHandles[ThreadHandles::DoSignal])
+	{
+		{
+			std::lock_guard<std::mutex> guard {m_threadMutex};
+			m_signalQueue.push(pCaller);
+		}
+		::SetEvent(m_eventHandles[ThreadHandles::DoSignal]);
+	}
+}
+
+bool SVThread::IsActive() const
+{
+	return m_thread.joinable();
 }
 
 int SVThread::GetPriority() const
@@ -106,28 +122,47 @@ void SVThread::SetPriority(int priority)
 	}
 }
 
-bool SVThread::IsActive() const
+void SVThread::ProcessQueue()
 {
-	return m_thread.joinable();
+	bool process {true};
+	while(process)
+	{
+		ULONG_PTR pCaller {0ULL};
+		{
+			std::lock_guard<std::mutex> guard {m_threadMutex};
+			process = false == m_signalQueue.empty();
+			if (process)
+			{
+				pCaller = m_signalQueue.front();
+				m_signalQueue.pop();
+			}
+		}
+		if (process)
+		{
+			m_callback(pCaller);
+		}
+	}
 }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-DWORD WINAPI SVThread::ThreadProc(LPVOID pParam)
+void SVThread::ThreadProc(SVThread* pThread)
 {
-	HRESULT result{ S_OK };
-
-	SVThread* pThread = reinterpret_cast<SVThread*> (pParam);
 	if (nullptr != pThread)
 	{
 		bool runThread {true};
 		while (runThread)
 		{
-			runThread = ::WaitForSingleObjectEx(pThread->m_hShutdown, INFINITE, TRUE) == WAIT_IO_COMPLETION;
+			if (::WaitForMultipleObjects(ThreadHandles::HandleCount, pThread->m_eventHandles, false, INFINITE) == WAIT_OBJECT_0)
+			{
+				pThread->ProcessQueue();
+			}
+			else
+			{
+				runThread = false;
+			}
 		}
 	}
-
-	return static_cast<DWORD> (result);
 }
 #pragma endregion Private Methods
 } //namespace SvSyl
