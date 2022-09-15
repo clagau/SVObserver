@@ -73,10 +73,13 @@ BOOL SVIOTestApp::InitInstance()
 	l_iniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	bool l_bOk = true;
+	HMODULE dllHandle = ::LoadLibrary(l_iniLoader.GetInitialInfo().m_TriggerResultDll.c_str());
+	// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+	Sleep(0);
 
-	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.GetInitialInfo().m_TriggerDLL.c_str() ) && l_bOk;
+	l_bOk = S_OK == m_svTriggers.Open(dllHandle) && l_bOk;
 
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital(l_iniLoader.GetInitialInfo().m_DigitalIODLL.c_str() ) && l_bOk;
+	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital(dllHandle) && l_bOk;
 
 	if ( ! l_bOk )
 	{
@@ -89,12 +92,14 @@ BOOL SVIOTestApp::InitInstance()
 		m_pMainWnd = &dlg;
 
 		dlg.m_psvTriggers = &m_svTriggers;
-		dlg.m_csDigital = l_iniLoader.GetInitialInfo().m_DigitalIODLL.c_str();
-		dlg.m_csTrigger = l_iniLoader.GetInitialInfo().m_TriggerDLL.c_str();
+		dlg.m_csDigital = l_iniLoader.GetInitialInfo().m_TriggerResultDll.c_str();
+		dlg.m_csTrigger = l_iniLoader.GetInitialInfo().m_TriggerResultDll.c_str();
 		dlg.m_lSystemType = atol(l_iniLoader.GetInitialInfo().m_IOBoard.c_str());
 
 		dlg.DoModal();
 	}
+
+	::FreeLibrary(dllHandle);
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.

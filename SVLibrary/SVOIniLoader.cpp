@@ -63,6 +63,7 @@ constexpr const char* ProcessorSectionTag = _T("Processor");
 constexpr const char* FrameGrabberSectionTag = _T("Frame Grabber");
 constexpr const char* DigitizerDLLTag = _T("DigitizerDLL");
 constexpr const char* TriggerDLLTag = _T("TriggerDLL");
+constexpr const char* TriggerResultDLLTag = _T("TriggerResultDLL");
 
 constexpr const char* SVIM_X2_GD2A = _T("SVIM X2-GD2A");
 constexpr const char* SVIM_X2_GD8A = _T("SVIM X2-GD8A");
@@ -71,7 +72,6 @@ constexpr const char* SVIM_X2_GD1A = _T("SVIM X2-GD1A");
 constexpr const char* PacketSizeTag = _T("PacketSize");
 
 constexpr const char* IOBoardSectionTag = _T("IO Board");
-constexpr const char* DigitalIODLLTag = _T("DigitalIODLL");
 constexpr const char* ReloadDLLTag = _T("ReloadDLL");
 
 constexpr const char* FrameGrabberTag = _T("FrameGrabber");
@@ -238,8 +238,6 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 	{
 		m_rInitialInfo.m_DigitizerDLL = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), DigitizerDLLTag, EmptyString);
 
-		m_rInitialInfo.m_TriggerDLL = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), TriggerDLLTag, EmptyString);
-
 		if (m_rInitialInfo.m_ProductName.empty())
 		{
 			m_rInitialInfo.m_ProductName = SvUl::Trim(HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), ProductNameTag, EmptyString).c_str());
@@ -254,13 +252,6 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 
 		m_rInitialInfo.m_ReloadAcquisitionDLL = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), ReloadDLLTag, YTag);
 
-		if (!m_rInitialInfo.m_TriggerDLL.empty())
-		{
-			m_rInitialInfo.m_Trigger = m_rInitialInfo.m_FrameGrabber;
-			m_rInitialInfo.m_TriggerBoardName = m_rInitialInfo.m_AcquisitionBoardName;
-			m_rInitialInfo.m_ReloadTriggerDLL = m_rInitialInfo.m_ReloadAcquisitionDLL;
-		}
-
 		// Matrox Gige - Get Packet Size
 		int packetSize = 0;
 		packetSize = HardwareINI.GetValueInt(m_rInitialInfo.m_AcquisitionBoardName.c_str(), PacketSizeTag, 0);
@@ -270,19 +261,18 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 	m_rInitialInfo.m_DigitalBoardName = HardwareINI.GetValueString(IOBoardSectionTag, m_rInitialInfo.m_IOBoard.c_str(), EmptyString);
 	if (!m_rInitialInfo.m_DigitalBoardName.empty())
 	{
-		m_rInitialInfo.m_DigitalIODLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), DigitalIODLLTag, EmptyString);
-		m_rInitialInfo.m_ReloadDigitalDLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), ReloadDLLTag, YTag);
+		m_rInitialInfo.m_TriggerResultDll = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), TriggerResultDLLTag, EmptyString);
+		m_rInitialInfo.m_ReloadTriggerResultDLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), ReloadDLLTag, YTag);
 
-		if (m_rInitialInfo.m_TriggerDLL.empty())
+		//For old ini-Files, if TriggerResultDllTag not found use TriggerDllTag
+		if (m_rInitialInfo.m_TriggerResultDll.empty())
 		{
-			m_rInitialInfo.m_TriggerDLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), TriggerDLLTag, EmptyString);
+			m_rInitialInfo.m_TriggerResultDll = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), TriggerDLLTag, EmptyString);
+		}
 
-			if (!m_rInitialInfo.m_TriggerDLL.empty())
-			{
-				m_rInitialInfo.m_TriggerBoardName = m_rInitialInfo.m_DigitalBoardName;
-
-				m_rInitialInfo.m_ReloadTriggerDLL = m_rInitialInfo.m_ReloadAcquisitionDLL;
-			}
+		if (!m_rInitialInfo.m_TriggerResultDll.empty())
+		{
+			m_rInitialInfo.m_TriggerBoardName = m_rInitialInfo.m_DigitalBoardName;
 		}
 
 		std::string Value;
@@ -330,7 +320,7 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 	m_rInitialInfo.m_HardwareOptions = HardwareINI.GetValueString(OptionsSectionTag, m_rInitialInfo.m_Options.c_str(), EmptyString);
 
 	bool l_UseFileAcq = !(m_rInitialInfo.m_DigitizerDLL.empty());
-	bool l_UseSoftTrig = !(m_rInitialInfo.m_TriggerDLL.empty());
+	bool l_UseSoftTrig = !(m_rInitialInfo.m_TriggerResultDll.empty());
 
 #ifdef _DEBUG
 	l_UseFileAcq = true;

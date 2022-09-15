@@ -36,6 +36,7 @@ public:
 	~SVIOTriggerLoadLibraryClass();
 
 	HRESULT Open(LPCTSTR libraryPath);
+	HRESULT Open(HMODULE libraryHandle);
 	HRESULT Close();
 
 	unsigned long GetCount() const;
@@ -51,6 +52,7 @@ public:
 	HRESULT SetParameterValue(unsigned long triggerIndex, unsigned long index, const _variant_t& rValue);
 
 private:
+	bool m_isOpenHandleIntern {false};
 	HMODULE m_Handle {nullptr};
 
 	SVCreatePtr m_pCreate {nullptr};

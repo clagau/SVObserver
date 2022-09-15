@@ -54,11 +54,11 @@ void SVIOConfigurationInterfaceClass::initializeIO(int inputSize, int outputSize
 	m_DigitalOutputs.resize(outputSize);
 }
 
-HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR pName )
+HRESULT SVIOConfigurationInterfaceClass::OpenDigital(HMODULE libraryHandle)
 {
 	HRESULT Result{E_FAIL};
 
-	Result = m_DigitalBoard.Open( pName );
+	Result = m_DigitalBoard.Open( libraryHandle );
 
 	if ( S_OK == Result )
 	{

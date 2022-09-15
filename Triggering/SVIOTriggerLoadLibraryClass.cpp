@@ -27,10 +27,29 @@ HRESULT SVIOTriggerLoadLibraryClass::Open(LPCTSTR libraryPath)
 
 	if (nullptr == m_Handle)
 	{
-		m_Handle = ::LoadLibrary(libraryPath);
+		HMODULE libraryHandle = ::LoadLibrary(libraryPath);
+		m_isOpenHandleIntern = true;
+
 		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 		Sleep(0);
 
+		result = Open(libraryHandle);
+	}
+
+	if (S_OK != result)
+	{
+		Close();
+	}
+	return result;
+}
+
+HRESULT SVIOTriggerLoadLibraryClass::Open(HMODULE libraryHandle)
+{
+	HRESULT result {nullptr != libraryHandle ? S_OK : E_FAIL};
+
+	if (S_OK == result && libraryHandle != m_Handle)
+	{
+		m_Handle = libraryHandle;
 		if (nullptr != m_Handle)
 		{
 			m_pCreate = (SVCreatePtr)::GetProcAddress(m_Handle, "SVCreate");
@@ -86,18 +105,22 @@ HRESULT SVIOTriggerLoadLibraryClass::Close()
 			result = m_pDestroy();
 		}
 
-		if (::FreeLibrary(m_Handle))
+		if (m_isOpenHandleIntern)
 		{
-			// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
-			Sleep(0);
-			m_Handle = nullptr;
+			if (::FreeLibrary(m_Handle))
+			{
+				// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+				Sleep(0);
+			}
+			else
+			{
+				result = S_FALSE;
+			}
 		}
-		else
-		{
-			result = S_FALSE;
-		}
+		m_Handle = nullptr;
 	}
 
+	m_isOpenHandleIntern = false;
 	m_pCreate = nullptr;
 	m_pDestroy = nullptr;
 	m_pGetCount = nullptr;

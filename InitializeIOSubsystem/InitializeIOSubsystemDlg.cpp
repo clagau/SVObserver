@@ -264,7 +264,11 @@ void InitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 	else
 	{
-		HRESULT l_hr = m_IOSystem.Open("SVLptIO.dll");
+		m_dllHandle = ::LoadLibrary("SVLptIO.dll");
+		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+		Sleep(0);
+
+		HRESULT l_hr = m_IOSystem.Open(m_dllHandle);
 		if( S_OK == l_hr )
 		{
 			m_bLptIOInitialized = true;
@@ -325,6 +329,12 @@ void InitializeIOSubsystemDlg::OnDestroy()
 	KillTimer( m_lTimer );
 
 	m_IOSystem.Close();
+	if (::FreeLibrary(m_dllHandle))
+	{
+		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+		Sleep(0);
+	}
+	m_dllHandle = nullptr;
 
 	if( m_bShutdown )
 	{

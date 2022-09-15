@@ -29,7 +29,7 @@ public:
 	void Init();
 	void initializeIO(int inputSize, int outputSize);
 
-	HRESULT OpenDigital( LPCTSTR p_szName );
+	HRESULT OpenDigital(HMODULE libraryHandle);
 	HRESULT CloseDigital();
 
 	long GetDigitalInputCount();

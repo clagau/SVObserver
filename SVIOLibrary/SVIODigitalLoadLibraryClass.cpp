@@ -19,16 +19,13 @@ SVIODigitalLoadLibraryClass::~SVIODigitalLoadLibraryClass()
 	Close();
 }
 
-HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR libraryPath)
+HRESULT SVIODigitalLoadLibraryClass::Open(HMODULE libraryHandle)
 {
-	HRESULT result {S_OK};
+	HRESULT result {nullptr != libraryHandle ? S_OK : E_FAIL};
 
-	if ( nullptr == m_Handle )
+	if (S_OK == result && libraryHandle != m_Handle)
 	{
-		m_Handle = ::LoadLibrary( libraryPath );
-		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
-		Sleep(0);
-
+		m_Handle = libraryHandle;
 		if ( nullptr != m_Handle )
 		{
 			m_pCreate = (SVCreatePtr)::GetProcAddress( m_Handle, "SVCreate" );
@@ -87,17 +84,7 @@ HRESULT SVIODigitalLoadLibraryClass::Close()
 		{
 			result = m_pDestroy();
 		}
-
-		if ( ::FreeLibrary( m_Handle ) )
-		{
-			// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
-			Sleep(0);
-			m_Handle = nullptr;
-		}
-		else
-		{
-			result = E_FAIL;
-		}
+		m_Handle = nullptr;
 	}
 
 	m_pCreate = nullptr;

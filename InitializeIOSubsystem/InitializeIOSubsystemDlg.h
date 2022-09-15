@@ -64,6 +64,7 @@ protected:
 	CString m_strVer;
 	CString m_FanSpeed;
 	SVIODigitalLoadLibraryClass m_IOSystem;
+	HMODULE m_dllHandle {nullptr};
 	bool m_bOldBehavior {false};
 public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

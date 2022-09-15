@@ -357,6 +357,14 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 						pImagePos[pos] = bufferPos;
 					}
 				}
+				else if (-1 == bufferPos)
+				{
+					if (-1 != pImagePos[pos])
+					{
+						rImageController.decreaseImageRefCounter(pImagePos[pos]);
+						pImagePos[pos] = -1;
+					}
+				}
 				else
 				{
 					rImageController.decreaseImageRefCounter(pImagePos[pos]);

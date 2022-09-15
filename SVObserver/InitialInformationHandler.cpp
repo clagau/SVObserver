@@ -92,8 +92,7 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive(i, Value);
 		}
 
-		m_InitializationStatusFlags |= LoadDigitalDLL();
-		m_InitializationStatusFlags |= LoadTriggerDLL();
+		m_InitializationStatusFlags |= LoadTriggerResultDLL();
 		m_InitializationStatusFlags |= LoadSoftwareTriggerDLL();
 		m_InitializationStatusFlags |= LoadCameraTriggerDLL();
 		m_InitializationStatusFlags |= LoadAcquisitionDLL();
@@ -109,44 +108,38 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 	}
 }
 
-
-HRESULT InitialInformationHandler::LoadTriggerDLL()
+HRESULT InitialInformationHandler::LoadTriggerResultDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if (!m_InitialInfo.m_TriggerDLL.empty())
+	if (nullptr != m_triggerDllHandle)
 	{
-		if (S_OK != m_svDLLTriggers.Open(m_InitialInfo.m_TriggerDLL.c_str()))
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
-		}
+		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+		Sleep(0);
+		::FreeLibrary(m_triggerDllHandle);
+		m_triggerDllHandle = nullptr;
 
-		if (S_OK != SvTrig::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLTriggers))
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
-		}
+	}
 
-		for (int i = 0; i < 4; i++)
-		{
-			unsigned long triggerHandle = m_svDLLTriggers.GetHandle(i);
+	if (!m_InitialInfo.m_TriggerResultDll.empty())
+	{
+		m_triggerDllHandle = ::LoadLibrary(m_InitialInfo.m_TriggerResultDll.c_str());
+		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+		Sleep(0);
+	}
 
-			if (0 < triggerHandle)
-			{
-				bool rising;
-
-				SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue(i, rising);
-
-				_variant_t value = rising ? 1L : -1L;
-
-				// SVSignalEdge enum is used here to make the code more clear.
-				// however at some time in the future the Dll parameters may be implemented
-				// as an array and therefore this enum may not apply.
-				m_svDLLTriggers.SetParameterValue(triggerHandle, SVSignalEdge, value);
-			}
-		}
+	if(nullptr != m_triggerDllHandle)
+	{
+		l_hrOk = l_hrOk | LoadDigitalPart();
+		l_hrOk = l_hrOk | LoadTriggerPart();
 	}
 	else
 	{
+		if (m_InitialInfo.m_IOBoard != _T("00"))
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
+		}
+
 		if (m_InitialInfo.m_Trigger != _T("00"))
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
@@ -156,15 +149,27 @@ HRESULT InitialInformationHandler::LoadTriggerDLL()
 	return l_hrOk;
 }
 
-HRESULT InitialInformationHandler::CloseTriggerDLL()
+HRESULT InitialInformationHandler::CloseTriggerResultDLL()
 {
 	SvTrig::SVTriggerProcessingClass::Instance().clear();
 
 	m_svDLLTriggers.Close();
 	m_svDLLSoftwareTriggers.Close();
 	m_svDLLCameraTriggers.Close();
+	SVIOConfigurationInterfaceClass::Instance().CloseDigital();
 
-	return S_OK;
+	if (::FreeLibrary(m_triggerDllHandle))
+	{
+		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+		Sleep(0);
+		m_triggerDllHandle = nullptr;
+		return S_OK;
+	}
+	else
+	{
+		m_triggerDllHandle = nullptr;
+		return E_FAIL;
+	}
 }
 
 HRESULT InitialInformationHandler::LoadSoftwareTriggerDLL()
@@ -282,52 +287,6 @@ HRESULT InitialInformationHandler::LoadFileAcquisitionDLL()
 	return l_hrOk;
 }
 
-HRESULT InitialInformationHandler::LoadDigitalDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if (!m_InitialInfo.m_DigitalIODLL.empty())
-	{
-		if (SVIOConfigurationInterfaceClass::Instance().OpenDigital(m_InitialInfo.m_DigitalIODLL.c_str()) != S_OK)
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
-		}
-		else
-		{	// Send the System type to the IO Board.
-			VARIANT l_vt;
-			l_vt.vt = VT_I4;
-
-			// Hardware.ini has the new IOBoardOption.
-			if (!m_InitialInfo.m_IOBoardOption.empty())
-			{
-				l_vt.lVal = atol(m_InitialInfo.m_IOBoardOption.c_str());
-				SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &l_vt);
-			}
-			else
-			{	// Legacy behavior.... Hardware.Ini file does not have new entry...
-				l_vt.lVal = atol(m_InitialInfo.m_IOBoard.c_str());
-				SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &l_vt);
-			}
-		}
-	}
-	else
-	{
-		if (m_InitialInfo.m_IOBoard != _T("00"))
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT InitialInformationHandler::CloseDigitalDLL()
-{
-	SVIOConfigurationInterfaceClass::Instance().CloseDigital();
-
-	return S_OK;
-}
-
 HRESULT InitialInformationHandler::INIReset()
 {
 	HRESULT l_hrOk = S_OK;
@@ -337,24 +296,11 @@ HRESULT InitialInformationHandler::INIReset()
 		CloseAcquisitionDLL();
 	}
 
-	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadTriggerDLL, _T("Y")))
+	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadTriggerResultDLL, _T("Y")))
 	{
-		CloseTriggerDLL();
-	}
+		CloseTriggerResultDLL();
 
-	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadDigitalDLL, _T("Y")))
-	{
-		CloseDigitalDLL();
-	}
-
-	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadDigitalDLL, _T("Y")))
-	{
-		l_hrOk = l_hrOk | LoadDigitalDLL();
-	}
-
-	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadTriggerDLL, _T("Y")))
-	{
-		l_hrOk = l_hrOk | LoadTriggerDLL();
+		l_hrOk = l_hrOk | LoadTriggerResultDLL();
 		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
 		l_hrOk = l_hrOk | LoadCameraTriggerDLL();
 	}
@@ -380,12 +326,69 @@ HRESULT InitialInformationHandler::INIClose()
 
 	CloseAcquisitionDLL();
 
-	CloseTriggerDLL();
-
-	CloseDigitalDLL();
+	CloseTriggerResultDLL();
 
 	return S_OK;
 }
 #pragma endregion Public Methods
 
+HRESULT InitialInformationHandler::LoadDigitalPart()
+{
+	if (SVIOConfigurationInterfaceClass::Instance().OpenDigital(m_triggerDllHandle) != S_OK)
+	{
+		return SV_HARDWARE_FAILURE_IO;
+	}
+	else
+	{	// Send the System type to the IO Board.
+		VARIANT l_vt;
+		l_vt.vt = VT_I4;
+
+		// Hardware.ini has the new IOBoardOption.
+		if (!m_InitialInfo.m_IOBoardOption.empty())
+		{
+			l_vt.lVal = atol(m_InitialInfo.m_IOBoardOption.c_str());
+			SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &l_vt);
+		}
+		else
+		{	// Legacy behavior.... Hardware.Ini file does not have new entry...
+			l_vt.lVal = atol(m_InitialInfo.m_IOBoard.c_str());
+			SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &l_vt);
+		}
+	}
+	return S_OK;
+}
+
+HRESULT InitialInformationHandler::LoadTriggerPart()
+{
+	HRESULT l_hrOk {S_OK};
+	if (S_OK != m_svDLLTriggers.Open(m_triggerDllHandle))
+	{
+		l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
+	}
+
+	if (S_OK != SvTrig::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLTriggers))
+	{
+		l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		unsigned long triggerHandle = m_svDLLTriggers.GetHandle(i);
+
+		if (0 < triggerHandle)
+		{
+			bool rising;
+
+			SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue(i, rising);
+
+			_variant_t value = rising ? 1L : -1L;
+
+			// SVSignalEdge enum is used here to make the code more clear.
+			// however at some time in the future the Dll parameters may be implemented
+			// as an array and therefore this enum may not apply.
+			m_svDLLTriggers.SetParameterValue(triggerHandle, SVSignalEdge, value);
+		}
+	}
+	return l_hrOk;
+}
 

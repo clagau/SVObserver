@@ -34,16 +34,14 @@ namespace SvLib
 
 	void InitialInformation::ResetDllInformation()
 	{
-		m_TriggerDLL.clear();
 		m_SoftwareTriggerDLL.clear();
 		m_CameraTriggerDLL.clear();
 		m_DigitizerDLL.clear();
 		m_FileAcquisitionDLL.clear();
-		m_DigitalIODLL.clear();
+		m_TriggerResultDll.clear();
 
-		m_ReloadTriggerDLL = _T("Y");
+		m_ReloadTriggerResultDLL = _T("Y");
 		m_ReloadAcquisitionDLL = _T("Y");
-		m_ReloadDigitalDLL = _T("Y");
 	}
 
 
@@ -78,11 +76,11 @@ namespace SvLib
 
 		if ((InitializationStatusFlags & SV_HARDWARE_FAILURE_IO) == SV_HARDWARE_FAILURE_IO)
 		{
-			msgDllLoadFailuresList.push_back(_T("Discrete IO: ") + m_DigitalBoardName + _T("/") + m_DigitalIODLL);
+			msgDllLoadFailuresList.push_back(_T("Discrete IO: ") + m_DigitalBoardName + _T("/") + m_TriggerResultDll);
 		}
 		if ((InitializationStatusFlags & SV_HARDWARE_FAILURE_TRIGGER) == SV_HARDWARE_FAILURE_TRIGGER)
 		{
-			msgDllLoadFailuresList.push_back(_T("Triggering: ") + m_TriggerBoardName + _T("/") + m_TriggerDLL);
+			msgDllLoadFailuresList.push_back(_T("Triggering: ") + m_TriggerBoardName + _T("/") + m_TriggerResultDll);
 		}
 		if ((InitializationStatusFlags & SV_HARDWARE_FAILURE_SOFTWARETRIGGER) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER)
 		{

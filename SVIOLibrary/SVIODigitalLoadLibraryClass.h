@@ -39,7 +39,7 @@ public:
 	SVIODigitalLoadLibraryClass() = default;
 	~SVIODigitalLoadLibraryClass();
 
-	HRESULT Open(LPCTSTR library);
+	HRESULT Open(HMODULE libraryHandle);
 	HRESULT Close();
 	
 	unsigned long GetInputCount() const;

@@ -27,8 +27,8 @@ public:
 
 	void LoadIniFilesAndDlls();
 
-	HRESULT LoadTriggerDLL();
-	HRESULT CloseTriggerDLL();
+	HRESULT LoadTriggerResultDLL();
+	HRESULT CloseTriggerResultDLL();
 
 	HRESULT LoadSoftwareTriggerDLL();
 	HRESULT LoadCameraTriggerDLL();
@@ -38,9 +38,6 @@ public:
 
 	HRESULT LoadFileAcquisitionDLL();
 
-	HRESULT LoadDigitalDLL();
-	HRESULT CloseDigitalDLL();
-
 	HRESULT INIReset();
 	HRESULT INIClose();
 
@@ -49,6 +46,10 @@ public:
 	HRESULT GetInitializationStatusFlags() { return m_InitializationStatusFlags; }
 
 #pragma endregion Public Methods
+
+private:
+	HRESULT LoadDigitalPart();
+	HRESULT LoadTriggerPart();
 
 #pragma region Member variables
 private:
@@ -65,6 +66,8 @@ private:
 	SvTrig::SVIOTriggerLoadLibraryClass m_svDLLCameraTriggers;
 
 	SvLib::InitialInformation m_InitialInfo;
+
+	HMODULE m_triggerDllHandle {nullptr};
 #pragma endregion Member variables
 };
 
