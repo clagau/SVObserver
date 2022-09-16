@@ -473,7 +473,7 @@ bool ToolSizeController::ResetTool()
 
 	return (S_OK == SvCmd::InspectionCommands(m_ipId, requestCmd, nullptr));
 }
-// cppcheck-suppress unusedFunction
+
 bool ToolSizeController::ResetToolSizeAdjustTask()
 {
 	if (m_SizeAdjustTaskId == SvDef::InvalidObjectId)
@@ -518,7 +518,6 @@ double  ToolSizeController::getValueForProperties(bool init, SvPb::SVExtentPrope
 	return  SvCmd::getValueForProperties<double>(m_Extents, eProperty);
 }
 
-// cppcheck-suppress unusedFunction
 bool   ToolSizeController::setValueForProperties(double value, SvPb::SVExtentPropertyEnum  eProperty)
 {
 	SvPb::InspectionCmdRequest requestCmd;
@@ -664,7 +663,7 @@ HRESULT  ToolSizeController::SetExtentsMap(const std::map< SvPb::SVExtentPropert
 	return hr;
 
 }
-// cppcheck-suppress unusedFunction
+
 std::map< SvPb::SVExtentPropertyEnum, double> ToolSizeController::GetExtentValues()
 {
 	std::map< SvPb::SVExtentPropertyEnum, double> ret;

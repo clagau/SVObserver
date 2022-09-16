@@ -67,7 +67,6 @@ long DrawObject::GetEditAllowed() const
 	return m_lEditAllowed;
 }
 
-// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 long DrawObject::AddDrawObjectChild(long p_lHandle, DrawObjectRef p_DrawObject )
 {
 	m_ChildDrawObjects.insert( std::make_pair( p_lHandle, p_DrawObject ) );
@@ -141,13 +140,11 @@ bool DrawObject::RemoveChild( long Handle )
 	return bRet;
 }
 
-// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 const DrawObjectList& DrawObject::GetChildList() const
 {
 	return m_ChildDrawObjects;
 }
 
-// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 HRESULT DrawObject::GetBoundingRect(RECT& rec) const
 {
 	CRect lRect;
@@ -269,13 +266,11 @@ std::unique_ptr<CRgn> DrawObject::GetHotSpot( CPoint pt1, CPoint pt2 ) const
 	return pRegion;
 }
 
-// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 void DrawObject::setImageSize( CSize val )
 {
 	m_imageSize = val;
 }
 
-// cppcheck-suppress unusedFunction; used in SVDisplayPicture.cpp
 void DrawObject::setViewSize( CSize val )
 {
 	m_viewSize = val;

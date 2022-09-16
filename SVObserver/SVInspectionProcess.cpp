@@ -69,7 +69,6 @@ void fillList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> result, con
 					ObjectRef.SetArrayIndex(i);
 					insertItem.set_location(ObjectRef.GetCompleteName(true));
 					insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-					// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
 					result = insertItem;
 				}
 			}
@@ -77,7 +76,6 @@ void fillList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> result, con
 			{
 				insertItem.set_location(ObjectRef.GetCompleteName(true));
 				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-				// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
 				result = insertItem;
 			}
 		}
@@ -2894,7 +2892,6 @@ LPCTSTR SVInspectionProcess::GetToolsetImage()
 	return m_ToolSetCameraName.c_str();
 }
 
-// cppcheck-suppress unusedFunction; used in SVCommand.cpp SVCommand::SVSetSourceImage
 SvIe::SVCameraImageTemplate* SVInspectionProcess::GetToolSetMainImage()
 {
 	SvIe::SVCameraImageTemplate* pImage = nullptr;
@@ -3025,7 +3022,6 @@ void SVInspectionProcess::fillPPQSelectorList(std::back_insert_iterator<std::vec
 				SvUl::searchAndReplace(location, InspectionName.c_str(), SvDef::FqnPPQVariables);
 				insertItem.set_location(location);
 				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-				// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
 				treeInserter = insertItem;
 			}
 		}

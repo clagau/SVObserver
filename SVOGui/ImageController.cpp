@@ -72,7 +72,7 @@ namespace SvOg
 	{ 
 		return m_availableList; 
 	}
-// cppcheck-suppress unusedFunction
+
 	const SvDef::StringVector& ImageController::GetSpecialImageList() const
 	{
 		return m_specialImageList;
@@ -123,7 +123,6 @@ namespace SvOg
 		return m_connectedList;
 	}
 
-	// cppcheck-suppress unusedFunction symbolName=GetInputData ; This method is used sometimes, this cppcheck-error is an error itself.
 	SvPb::InputData ImageController::GetInputData(SvPb::EmbeddedIdEnum embeddedId, uint32_t instanceID) const
 	{
 		uint32_t objectID = m_TaskObjectID;

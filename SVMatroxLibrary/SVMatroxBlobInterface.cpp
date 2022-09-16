@@ -327,7 +327,6 @@ HRESULT SVMatroxBlobInterface::Set(const __int64& rContextId, MIL_INT64 lControl
 @SVOperationDescription This function gets the Foreground control value
 
 */
-// cppcheck-suppress unusedFunction ; get-function can stay as long set-function is used.
 HRESULT SVMatroxBlobInterface::GetForeground(const __int64& rContextId, bool& rIsDarkForeground)
 {
 	HRESULT l_Code(S_OK);

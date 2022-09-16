@@ -32,7 +32,6 @@ bool hasAttributes(const SvOi::IObjectClass* pObject)
 	return (0 != ((SvDef::selectableAttributes | SvPb::archivableImage | SvPb::taskObject) & pObject->ObjectAttributesAllowed())) ? true : false;
 }
 
-// cppcheck-suppress unusedFunction; used in line 117
 bool hasExtension(const SvOi::IObjectClass* pObject, bool&)
 {
 	bool result = false;

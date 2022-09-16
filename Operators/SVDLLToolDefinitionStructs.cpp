@@ -430,7 +430,6 @@ void InputImageInformationStruct::allowBlackAndWhite()
 	AllowedImageTypes |= 1u; //currently this means 'basic' Black and white
 }
 
-// cppcheck-suppress unusedFunction
 void InputImageInformationStruct::allowColor()
 {
 	AllowedImageTypes |= 1llu<<32; //currently this means 'basic' Color

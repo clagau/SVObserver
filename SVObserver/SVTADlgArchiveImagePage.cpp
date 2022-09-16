@@ -312,7 +312,6 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_EditMaxImages.SetWindowText( Temp.c_str() );
 
 	// store the MaxImageNumber
-	// cppcheck-suppress danglingLifetime //this pointer is immediately converted to a CString and does not "dangle"
 	m_sMaxImageNumber = Temp.c_str(); 
 
 	__int64 MemUsed = SVMemoryManager::Instance().ReservedBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL);

@@ -1555,7 +1555,6 @@ void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::b
 		item.set_position(toolPos);
 		item.set_objecttype(pObject->GetObjectType());
 		item.set_objectsubtype(pObject->GetObjectSubType());
-		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = item;
 
 		//For every tool adjust name an entry is made in the config tree with the object id from the parent tool
@@ -1571,7 +1570,6 @@ void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::b
 			item.set_position(toolPos);
 			item.set_objecttype(SvPb::SVNotSetObjectType);
 			item.set_objectsubtype(SvPb::SVNotSetSubObjectType);
-			// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 			inserter = item;
 		}
 	}

@@ -898,7 +898,6 @@ void TriggerRecordController::addImageBuffer(uint32_t ownerID, const SVMatroxBuf
 	return;
 }
 
-// cppcheck-suppress unusedFunction
 bool TriggerRecordController::removeImageBuffer(uint32_t ownerID, const SVMatroxBufferCreateStruct& bufferStruct)
 {
 	if (-1 == m_resetStarted4IP || m_isResetLocked)

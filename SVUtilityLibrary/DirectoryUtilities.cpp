@@ -17,7 +17,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-// cppcheck-suppress unusedFunction
 bool CreateDirPath( LPCTSTR Path)
 {
 	int nBackCount = 0;

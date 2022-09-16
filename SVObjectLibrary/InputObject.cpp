@@ -287,7 +287,6 @@ void InputObject::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::F
 			data.set_parentid(GetParentID());
 			data.set_oldinputvalue(m_DottedNameOfFailedLoadInput);
 			data.set_islinkedvalue(false);
-			// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 			inserter = data;
 
 			SVObjectReference objectRef {GetObjectReferenceForDottedName(m_DottedNameOfFailedLoadInput)};

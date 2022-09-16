@@ -21,7 +21,6 @@ SVImageFile::~SVImageFile()
 	Destroy();
 }
 
-// cppcheck-suppress unusedFunction
 HBITMAP SVImageFile::GetBitmapHandle() const
 {
 	return m_bitmapHandle;
@@ -50,7 +49,6 @@ int SVImageFile::GetBitDepth() const
 	return bitDepth;
 }
 
-// cppcheck-suppress unusedFunction
 const unsigned char* SVImageFile::GetBits() const
 {
 	const unsigned char* pBits = nullptr;

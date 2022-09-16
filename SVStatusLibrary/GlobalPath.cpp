@@ -93,7 +93,6 @@ namespace SvStl
 		}
 	}
 
-	// cppcheck-suppress unusedFunction
 	LPCTSTR GlobalPath::GetIniFolder()
 	{
 		InitializeIniFolder();

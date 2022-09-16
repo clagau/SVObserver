@@ -33,7 +33,6 @@ void SVMatroxGigeCameraParamTracker::TrackCameraParams(const std::string& camera
 	}
 }
 
-// cppcheck-suppress unusedFunction
 void SVMatroxGigeCameraParamTracker::UnTrackCameraParams(const std::string& cameraID)
 {
 	SVMatroxGigeCameraParamCollection::iterator it = m_cameraParamCollection.find(cameraID);

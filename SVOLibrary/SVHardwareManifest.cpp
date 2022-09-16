@@ -201,7 +201,6 @@ std::string SVHardwareManifest::BuildHardwareTriggerDeviceName(int iDig)
 	return SvUl::Format("%s%s%d", cSvimHardwareTriggerSource, cSvimDigName, iDig);
 }
 
-// cppcheck-suppress unusedFunction
 bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType)
 {
 	static const SVIMProductEnumSet list

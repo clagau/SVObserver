@@ -1981,7 +1981,6 @@ void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
 #pragma endregion Private Methods
 
 //this function is here because it requires a PPQMonitorListParameter - and spurious CheckInclude issues appear if it is in SVObserverOuttakes, fo rexample
-// cppcheck-suppress constParameter ; cppCheck doesn't know rPpqMonitorList[] is not a const function
 void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result)
 {
 	double preTriggerTimeWidow {(0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow};

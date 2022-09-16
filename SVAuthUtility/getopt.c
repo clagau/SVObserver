@@ -1152,7 +1152,6 @@ int getopt (int argc, TCHAR *const *argv, const TCHAR *optstring)
 }
 
 #ifdef _LIBC
-// cppcheck-suppress unusedFunction
 int _posix_getopt (int argc, TCHAR *const *argv, const TCHAR *optstring)
 {
   return _getopt_internal (argc, argv, optstring,

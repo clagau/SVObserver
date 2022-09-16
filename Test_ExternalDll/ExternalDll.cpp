@@ -271,7 +271,7 @@ TOOLDLL_API HRESULT __stdcall SVUninitializeRun(GUID guidTool)
 }
 
 #ifdef DEFINE_STRUCTEX 
-// cppcheck-suppress unusedFunction
+
 TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx(long* plArraySize,
 	InputValueDefinitionStructEx** ppaStructs)
 {
@@ -334,7 +334,6 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx(long* plArraySize,
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructuresEx(
 	InputValueDefinitionStructEx* paStructs)
 {
@@ -356,7 +355,6 @@ TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructuresEx(
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructuresEx(ResultValueDefinitionStructEx* paStructs)
 {
 	delete[] paStructs;
@@ -364,7 +362,6 @@ TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructuresEx(ResultV
 }
 #endif 
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVSetInputValues(GUID guidTool, long lArraySize,
 	VARIANT* paInputValues)
 {
@@ -396,7 +393,6 @@ TOOLDLL_API HRESULT __stdcall SVSetInputValues(GUID guidTool, long lArraySize,
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVGetResultValues(GUID guidTool, long lArraySize, VARIANT* paResultValues)
 {
 
@@ -416,7 +412,6 @@ TOOLDLL_API HRESULT __stdcall SVGetResultValues(GUID guidTool, long lArraySize, 
 }
 
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVGetErrorMessageString(unsigned long ulErrorNumber,
 	BSTR* pbstrErrorMessage)
 {
@@ -431,7 +426,6 @@ TOOLDLL_API HRESULT __stdcall SVGetErrorMessageString(unsigned long ulErrorNumbe
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID, long lParameterNumber,
 	VARIANT vParameterValue)
 {
@@ -448,7 +442,6 @@ TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID, long lParameterNumb
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitionsEx(long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues)
 {
 	HRESULT hr = S_OK;
@@ -463,7 +456,6 @@ TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitionsEx(long* plArraySize, R
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVGetNumberOfInputImages(long* plNumberOfInputImages)
 {
 #if _DEBUG
@@ -482,7 +474,6 @@ TOOLDLL_API HRESULT __stdcall SVGetNumberOfInputImages(long* plNumberOfInputImag
 
 
 // Only implement One of the set of InputImages / ResultImages
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVSetMILInputImages(GUID guidTool, long, long* paMILhandles)
 {
 #if _DEBUG
@@ -507,7 +498,6 @@ TOOLDLL_API HRESULT __stdcall SVSetMILInputImages(GUID guidTool, long, long* paM
 }
 
 // Only implement One of the set of InputImages / ResultImages
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVSetMILResultImages(GUID guidTool, long lArraySize, long* paMILhandles)
 {
 #if _DEBUG
@@ -537,7 +527,6 @@ TOOLDLL_API HRESULT __stdcall SVSetMILResultImages(GUID guidTool, long lArraySiz
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVGetResultImageDefinitions(GUID guidTool, long* plArraySize, ImageDefinitionStruct** ppaStructs)
 {
 #if _DEBUG
@@ -570,7 +559,6 @@ TOOLDLL_API HRESULT __stdcall SVGetResultImageDefinitions(GUID guidTool, long* p
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVDestroyImageDefinitionStructure(ImageDefinitionStruct* paStructs)
 {
 #if _DEBUG
@@ -590,7 +578,6 @@ TOOLDLL_API HRESULT __stdcall SVDestroyImageDefinitionStructure(ImageDefinitionS
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall GetResultTableDefinitionsEx(long* pSize, ResultTableDefinitionStructEx** ppaResultTableDefs)
 {
 	HRESULT hr = S_OK;
@@ -615,7 +602,6 @@ TOOLDLL_API HRESULT __stdcall GetResultTableDefinitionsEx(long* pSize, ResultTab
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructuresEx(ResultTableDefinitionStructEx* paStructs)
 {
 	HRESULT hr = S_OK;
@@ -623,7 +609,6 @@ TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructuresEx(ResultTab
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall GetResultTables(GUID guidTool, long lArraySize, VARIANT* paResultValues)
 {
 	HRESULT hr = S_FALSE;
@@ -640,7 +625,6 @@ TOOLDLL_API HRESULT __stdcall GetResultTables(GUID guidTool, long lArraySize, VA
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall GetResultTablesMaxRowSize(GUID guidTool, long Size, int pRowSizes[])
 {
 	HRESULT hr = S_FALSE;
@@ -659,7 +643,6 @@ TOOLDLL_API HRESULT __stdcall GetResultTablesMaxRowSize(GUID guidTool, long Size
 }
 
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall GetResultValuesMaxArraySize(GUID guidTool, long Size, int Arraysize[])
 {
 	HRESULT hr = S_FALSE;
@@ -868,7 +851,6 @@ TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTable
 }
 
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall GetTransformationDefinitions(long* pSize, TransformDefs** ppTransformdefs)
 {
 	HRESULT hr = S_OK;
@@ -888,7 +870,6 @@ TOOLDLL_API HRESULT __stdcall GetTransformationDefinitions(long* pSize, Transfor
 	return hr;
 }
 
-// cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall  DestroyTransformationDefinitions(TransformDefs* pTransformdefs)
 {
 	HRESULT hr = S_OK;

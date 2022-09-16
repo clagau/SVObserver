@@ -272,7 +272,6 @@ BYTE* SharedDataStore::GetPtr(DWORD slot, DWORD offset)
 
 }
 
-// cppcheck-suppress unusedFunction
 LPCTSTR SharedDataStore::GetMapFileName() const
 {
 	return m_MapFileName.c_str();

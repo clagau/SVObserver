@@ -68,7 +68,6 @@ public:
 		return clip<BYTE>(val);
 	}
 
-	// cppcheck-suppress unusedFunction
 	BYTE Pythagoras(double x, double y)
 	{
 

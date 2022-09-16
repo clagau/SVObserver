@@ -933,7 +933,6 @@ void PatternAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& 
 	inserter = SvOi::ParameterPairForML(msv_dpatResultAngle.GetCompleteName(), msv_dpatResultAngle.getObjectId());
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(msv_dpatResultMatchScore.GetCompleteName(), msv_dpatResultMatchScore.getObjectId());
-	// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(msv_lpatNumFoundOccurances.GetCompleteName(), msv_lpatNumFoundOccurances.getObjectId());
 }

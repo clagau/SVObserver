@@ -261,7 +261,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		m_allowVoidReference = set;
 	}
-	// cppcheck-suppress unusedFunction
 	bool  LinkedValue::GetAllowVoidReference() const
 	{
 		return m_allowVoidReference;
@@ -1916,7 +1915,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		data.set_embeddedid(GetEmbeddedID());
 		data.set_oldinputvalue(rOldInput);
 		data.set_islinkedvalue(true);
-		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = data;
 	}
 #pragma endregion Private Methods

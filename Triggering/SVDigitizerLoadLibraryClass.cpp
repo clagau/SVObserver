@@ -153,13 +153,11 @@ namespace SvTrig
 		return l_hrOk;
 	}
 
-	// cppcheck-suppress unusedFunction
 	bool SVDigitizerLoadLibraryClass::IsLoaded() const
 	{
 		return (nullptr != m_handle);
 	}
 
-	// cppcheck-suppress unusedFunction
 	_variant_t SVDigitizerLoadLibraryClass::GetLibraryName() const
 	{
 		_variant_t result;

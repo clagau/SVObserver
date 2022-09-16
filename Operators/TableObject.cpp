@@ -78,7 +78,6 @@ void TableObject::Hide(bool hide)
 	m_statusColor.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 }
 
-// cppcheck-suppress unusedFunction symbolName=addColumnAtPos
 void TableObject::addColumnAtPos(int pos, const std::string& name, SvPb::EmbeddedIdEnum eId)
 {
 	createColumnObject(eId, name.c_str(), 1);
@@ -89,7 +88,6 @@ void TableObject::addColumnAtPos(int pos, const std::string& name, SvPb::Embedde
 	}
 }
 
-// cppcheck-suppress unusedFunction symbolName=changeEIdinOrder
 void TableObject::changeEIdinOrder(SvPb::EmbeddedIdEnum startEId)
 {
 	SvPb::EmbeddedIdEnum currentEId = startEId;

@@ -109,7 +109,6 @@ BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 	m_valueControllerToolTask.Init();
 
 	auto strDllPath = getStdStringFromValueController(SvPb::EmbeddedIdEnum::DllFileNameEId);
-	// cppcheck-suppress danglingLifetime //m_currentExternalDllFilepath is a CString and will not merely hold a copy of a pointer
 	m_currentExternalDllFilepath = strDllPath.c_str();
 
 	CPropertyPage::OnInitDialog();	// create button and list box windows

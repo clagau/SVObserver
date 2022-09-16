@@ -412,7 +412,6 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 
 		if (runState.bRunFlag)
 		{
-			// cppcheck-suppress unreadVariable symbolName=fileNameInserter ; cppCheck doesn't know back_insert_iterator
 			fileNameInserter = runFileStruct;
 
 			const auto& rCameraList = GetCameras(rIP);

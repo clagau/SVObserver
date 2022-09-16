@@ -207,7 +207,6 @@ namespace SvXml
 	}
 
 
-	// cppcheck-suppress unusedFunction
 	std::vector<SVXMLMaterialsTree::SVBranchHandle> SVXMLMaterialsTree::getSubbranches(const SVBranchHandle pParent)
 	{
 		SVBranchHandle pBranch(pParent);

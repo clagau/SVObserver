@@ -223,7 +223,6 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 	return result;
 }
 
-// cppcheck-suppress unusedFunction
 bool TriggerRecord::isValueDataValid() const
 {
 	bool retValue = false;

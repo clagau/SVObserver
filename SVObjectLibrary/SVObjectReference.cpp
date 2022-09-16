@@ -450,7 +450,6 @@ void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<S
 			insertItem.set_location(GetObjectNameToObjectType(nameToType, true, true));
 			insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
 			insertItem.set_selected((AttributesSet & attribute) == attribute);
-			// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
 			treeInserter = insertItem;
 		}
 
@@ -468,7 +467,6 @@ void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<S
 					insertItem.set_location(GetObjectNameToObjectType(nameToType, true, true));
 					insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
 					insertItem.set_selected((AttributesSet & attribute) == attribute);
-					// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
 					treeInserter = insertItem;
 				}
 			}
@@ -481,7 +479,6 @@ void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<S
 		insertItem.set_location(GetObjectNameToObjectType(nameToType, true));
 		insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
 		insertItem.set_selected((AttributesSet & attribute) == attribute);
-		// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
 		treeInserter = insertItem;
 	}
 }

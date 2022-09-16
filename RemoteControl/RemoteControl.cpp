@@ -123,7 +123,6 @@ HRESULT RemoteControl::QueryProductList(LPCTSTR listName, variant_t& rItemNames)
 	return RemoteControlImpl::Instance().QueryMonitorList(listName, SvPb::ListType::productItem, rItemNames);
 }
 
-// cppcheck-suppress unusedFunction
 HRESULT RemoteControl::QueryRejectConditionList(LPCTSTR listName, variant_t& rItemNames) const
 {
 	return RemoteControlImpl::Instance().QueryMonitorList(listName, SvPb::ListType::rejectCondition, rItemNames);
@@ -174,7 +173,6 @@ HRESULT RemoteControl::SoftwareTrigger(const SvRc::TriggerItem& rTrigger) const
 	return RemoteControlImpl::Instance().SoftwareTrigger(rTrigger);
 }
 
-// cppcheck-suppress unusedFunction
 void RemoteControl::SetNotifyCallback(NotifyFunctor pNotifier) const
 {
 	RemoteControlImpl::Instance().SetNotifyFunctor(pNotifier);

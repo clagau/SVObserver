@@ -105,7 +105,6 @@ bool BoolValue(const SVDeviceParamWrapper& w)
 	return 0;
 }
 
-// cppcheck-suppress unusedFunction
 SVDeviceParamWrapper DeviceParam(bool b) 
 {
 	return SVBoolValueDeviceParam(b);

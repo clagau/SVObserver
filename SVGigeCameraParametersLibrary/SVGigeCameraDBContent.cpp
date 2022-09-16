@@ -160,7 +160,6 @@ SVGigeCameraDBContent::~SVGigeCameraDBContent()
 {
 }
 
-// cppcheck-suppress unusedFunction
 HRESULT SVGigeCameraDBContent::startElement(unsigned short* , int , unsigned short* pwchLocalName, int , unsigned short* , int , MSXML2::ISAXAttributes* pAttributes)
 {
 	HRESULT hr = S_OK;
@@ -204,7 +203,6 @@ HRESULT SVGigeCameraDBContent::startElement(unsigned short* , int , unsigned sho
     return hr;
 }
  
-// cppcheck-suppress unusedFunction
 HRESULT SVGigeCameraDBContent::endElement(unsigned short* , int , unsigned short* pwchLocalName, int , unsigned short* , int )
 {
 	std::string elementName {_bstr_t(reinterpret_cast<wchar_t*>(pwchLocalName))};

@@ -74,7 +74,6 @@ namespace SvVol
 	HRESULT BasicValueObject::setValue(const _variant_t& rValue, int  /*= -1*/, bool)
 	{
 		HRESULT	Result = S_OK;
-		// cppcheck-suppress variableScope symbolName=bisArray
 		bool bisArray{ false };
 		_variant_t	TempValue(rValue);
 		

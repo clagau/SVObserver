@@ -620,7 +620,6 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 			{
 				if (pObject->GetObjectType() == ObjectType && pObject->GetObjectSubType() == ObjectSubType)
 				{
-					// cppcheck-suppress unreadVariable symbolName=Inserter ; cppCheck doesn't know inserter
 					Inserter = pObject;
 				}
 			}
@@ -628,7 +627,6 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 			{
 				if (pObject->GetObjectType() == ObjectType)
 				{
-					// cppcheck-suppress unreadVariable symbolName=Inserter ; cppCheck doesn't know inserter
 					Inserter = pObject;
 				}
 			}

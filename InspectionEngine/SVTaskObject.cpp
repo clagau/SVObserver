@@ -1640,7 +1640,7 @@ void SVTaskObjectClass::collectOverlays(const SVImageClass* pImage, SvPb::Overla
 HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray)
 {
 	HRESULT l_Status = E_FAIL;
-	// cppcheck-suppress nullPointer
+
 	if (nullptr != p_Image && nullptr != GetImageExtentPtr() && GetImageExtentPtr()->hasFigure())
 	{
 		// cppcheck-suppress nullPointer
@@ -1744,7 +1744,6 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetValueStruct& rEntry, 
 		{
 			Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		}
-		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = Msg.getMessageContainer();
 	}
 	return Result;
@@ -1761,7 +1760,6 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry,
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 			inserter = rSvE;
 			return E_FAIL;
 		}
@@ -1792,7 +1790,6 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry,
 		{
 			Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		}
-		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = Msg.getMessageContainer();
 	}
 	return Result;

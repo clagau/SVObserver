@@ -195,7 +195,6 @@ void FormulaController::setEditModeFreezeFlag(bool flag)
 }
 
 
-// cppcheck-suppress unusedFunction
 bool  FormulaController::ResetOwner()const
 {
 	SvPb::InspectionCmdRequest requestCmd;

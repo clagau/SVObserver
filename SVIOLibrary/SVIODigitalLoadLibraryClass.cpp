@@ -158,7 +158,6 @@ HRESULT SVIODigitalLoadLibraryClass::SetOutputValue(unsigned long channel, bool 
 	return result;
 }
 
-// cppcheck-suppress unusedFunction
 unsigned long SVIODigitalLoadLibraryClass::GetOutputPortCount() const
 {
 	unsigned long result{ 0UL };

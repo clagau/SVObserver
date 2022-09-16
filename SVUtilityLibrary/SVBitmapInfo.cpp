@@ -267,7 +267,6 @@ unsigned long SVBitmapInfo::GetColorTableSize() const
 	return l_Size;
 }
 
-// cppcheck-suppress unusedFunction
 RGBQUAD* SVBitmapInfo::GetColorTable() const
 {
 	RGBQUAD* l_pColorTable = nullptr;
