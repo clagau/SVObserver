@@ -732,7 +732,7 @@ bool SVOPropertyPageDlg::ScanForImageSize(SIZE& size)
 		Name = m_CameraObj.GetImageDirectoryName();
 	}
 
-	if( S_OK == SVImageFileLoader::LoadFirstFile( Name.c_str(), _T("*.bmp"), FileImage ) )
+	if( S_OK == SVImageFileLoader::LoadFirstFile( Name.c_str(), _T(".bmp"), FileImage ) )
 	{
 		size = FileImage.GetSize();
 		Result = true;

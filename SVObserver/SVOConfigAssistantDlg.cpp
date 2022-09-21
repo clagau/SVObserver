@@ -3603,7 +3603,7 @@ HRESULT SVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFi
 			Name = rCameraObj.GetImageDirectoryName();
 		}
 
-		if( S_OK == SVImageFileLoader::LoadFirstFile( Name.c_str(), _T("*.bmp"), FileImage ) )
+		if( S_OK == SVImageFileLoader::LoadFirstFile( Name.c_str(), _T(".bmp"), FileImage ) )
 		{
 			bool isColorImage = FileImage.GetBitDepth() > GrayScaleBitDepth;
 

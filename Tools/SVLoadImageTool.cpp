@@ -188,7 +188,7 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 		SVImageFile FileImage;
 		std::string ImagePathName;
 		m_currentPathName.GetValue(ImagePathName);
-		if (S_OK == SVImageFileLoader::LoadFirstFile(ImagePathName.c_str(), _T("*.bmp"), FileImage))
+		if (S_OK == SVImageFileLoader::LoadFirstFile(ImagePathName.c_str(), _T(".bmp"), FileImage))
 		{
 			bool selectedFileIsColor = FileImage.GetBitDepth() > GrayScaleBitDepth;
 			if (selectedFileIsColor && SvDef::SVImageFormatBGR888X != imagePropertyFormat)
