@@ -76,7 +76,7 @@ void SVUserMaskOperatorClass::init()
 	RegisterEmbeddedObject( &m_evoDrawCriteria, SvPb::DrawCriteriaEId, IDS_OBJECTNAME_DRAW_CRITERIA, false, SvOi::SVResetItemOwner );
 	RegisterEmbeddedObject(&m_bvoContRecalc, SvPb::ContRecalcEId, IDS_OBJECTNAME_CONTINUOUS_RECALC, false, SvOi::SVResetItemOwner);
 
-	SvOi::NameValueVector EnumVector
+	SvDef::NameValueVector EnumVector
 	{
 		{ _T("AND"), SVImageAnd },
 		{ _T("OR"), SVImageOr },
@@ -96,17 +96,17 @@ void SVUserMaskOperatorClass::init()
 	m_evoCurrentMaskOperator.SetDefaultValue(SVImageAnd, true);
 
 	EnumVector.clear();
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Mask Area"), 0 });
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Background"), 1 });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Mask Area"), 0 });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Background"), 1 });
 	m_evoFillArea.SetEnumTypes(EnumVector);
 	m_evoFillArea.SetDefaultValue(0l, true);	// mask area is default
 
 	m_lvoFillColor.SetDefaultValue(0, true);	// black default
 
 	EnumVector.clear();
-	EnumVector.push_back(SvOi::NameValuePair{ _T("None"), SVNone });
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Non-Black"), SVNonBlackPixels });
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Non-White"), SVNonWhitePixels });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("None"), SVNone });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Non-Black"), SVNonBlackPixels });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Non-White"), SVNonWhitePixels });
 	m_evoDrawCriteria.SetEnumTypes(EnumVector);
 	m_evoDrawCriteria.SetDefaultValue( SVNone, true );
 

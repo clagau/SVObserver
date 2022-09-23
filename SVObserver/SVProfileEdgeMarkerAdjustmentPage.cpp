@@ -18,6 +18,7 @@
 #include "Tools/SVTool.h"
 #include "AnalyzerOperators/Analyzer.h"
 #include "Operators/SVLinearEdgeProcessingClass.h"
+#include "SVHBitmapUtilitiesLibrary/BitmapHelper.h"
 #include "SVUtilityLibrary/RaiiLifeFlag.h"
 #pragma endregion Includes
 
@@ -128,7 +129,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPage::OnInitDialog()
 			if(nullptr != pImage)
 			{
 				m_dialogImage.AddTab("Image");
-				m_dialogImage.setImage(pImage->getLastImage(), 0);
+				m_dialogImage.setImage(convertToBitmap(pImage->getLastImage()), 0);
 				m_dialogImage.Refresh();
 			}
 		}

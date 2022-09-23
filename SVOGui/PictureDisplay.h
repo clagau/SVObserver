@@ -19,7 +19,6 @@
 //Moved to precompiled header: #include <map>
 #include "CDSVPictureDisplay.h"
 #include "DisplayHelper.h"
-#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -37,13 +36,7 @@ namespace SvOg
 
 #pragma region Public Methods
 	public:
-		////************************************
-		////! Set a image to a tab of the activeX-control.
-		////! \param imageData [in] The data container of the image which will be set.
-		////! \param tabNumber [in] The tab number of the activeX-control. Default value = 0.
-		////! \returns void
-		////************************************
-		void setImage( const SvOi::SVImageBufferHandlePtr imageData, long tabNumber = 0 ); //@TODO - this needs to go!
+		void setImage(HBITMAP pHBitmap, long tabNumber = 0);
 
 		//************************************
 		//! Set a image to a tab of the activeX-control.

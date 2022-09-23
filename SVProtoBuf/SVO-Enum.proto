@@ -1480,3 +1480,17 @@ enum ResetType
 	RT_IP  = 4;
 };
 
+enum ToolDependencyEnum
+{
+	NoDependency = 0;
+	Client = 1;
+	Supplier = 2;
+	ClientAndSupplier = 3;
+};
+
+enum DependecyTypeEnum
+{
+	NoDependencyType = 0;
+	Tool = 1;
+	Object = 2;
+}

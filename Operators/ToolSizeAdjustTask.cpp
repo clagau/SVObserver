@@ -52,13 +52,13 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionX], SvPb::ToolSizeAdjustSizePositionXModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionY], SvPb::ToolSizeAdjustSizePositionYModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone );
 
-	SvOi::NameValueVector EnumVector{ {SvDef::SizeAdjustTextNone, SvDef::ToolSizeModes::TSNone} };
+	SvDef::NameValueVector EnumVector{ {SvDef::SizeAdjustTextNone, SvDef::ToolSizeModes::TSNone} };
 	
 	if (m_AllowFullSize == true)
 	{
-		EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextAutoFitSize, SvDef::ToolSizeModes::TSAutoFit });
+		EnumVector.push_back(SvDef::NameValuePair{ SvDef::SizeAdjustTextAutoFitSize, SvDef::ToolSizeModes::TSAutoFit });
 	}
-	EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextFormula, SvDef::ToolSizeModes::TSFormula });
+	EnumVector.push_back(SvDef::NameValuePair{ SvDef::SizeAdjustTextFormula, SvDef::ToolSizeModes::TSFormula });
 
 	for( int vType  = SvDef::ToolSizeAdjustEnum::TSPositionX ; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount ; ++vType)
 	{
@@ -120,7 +120,6 @@ bool  ToolSizeAdjustTask::Run( SvIe::RunStatus&, SvStl::MessageContainerVector* 
 	return true;
 }
 
-//THB TODO: Maybe make a message for every single one, instead of one for all
 HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rModePosX, long &rModePosY)
 {
 	rModeWidth = rModeHeight = rModePosX = rModePosY = SvDef::ToolSizeModes::TSModeCount;

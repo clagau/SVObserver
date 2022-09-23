@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include "BoundValue.h"
-#include "ObjectInterfaces\NameValueVector.h"
+#include "Definitions\NameValueVector.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "LinkedValue.h"
@@ -105,7 +105,7 @@ namespace SvOg
 			}
 		}
 
-		SvOi::NameValueVector GetEnumTypes(SvPb::EmbeddedIdEnum embeddedID) const
+		SvDef::NameValueVector GetEnumTypes(SvPb::EmbeddedIdEnum embeddedID) const
 		{
 			return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(embeddedID));
 		}

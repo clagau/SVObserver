@@ -127,9 +127,9 @@ namespace SvOg
 		int m_color3 = 0;
 		int m_numberOfSteps = 0;
 		std::vector<CString> m_StepNames;
-		SvOi::NameValueVector m_DrawTypeList;
+		SvDef::NameValueVector m_DrawTypeList;
 		std::vector<long> m_DrawTypeArray;
-		SvOi::NameValueVector m_BlobType2List;
+		SvDef::NameValueVector m_BlobType2List;
 		std::vector<long> m_BlobTypeArray;
 		std::vector<byte> m_Color1Array;
 		std::vector<byte> m_Color2Array;

@@ -181,7 +181,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		m_bUseLUT = m_values.Get<bool>(SvPb::UseLUTEId);
 		m_bContinuousRecalcLUT = m_values.Get<bool>(SvPb::ContinuousRecalcLUTEId);
 
-		const SvOi::NameValueVector& rLUTModeList = m_values.GetEnumTypes(SvPb::LUTModeEId);
+		const SvDef::NameValueVector& rLUTModeList = m_values.GetEnumTypes(SvPb::LUTModeEId);
 		m_LUTModeCombo.SetEnumTypes(rLUTModeList);
 
 		m_isFormulaClip = m_LutEquation.Get<bool>(SvPb::LUTEquationClipFlagEId);

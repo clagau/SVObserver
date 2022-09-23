@@ -18,6 +18,7 @@
 #include "SVImageLibrary/SVCameraFormat.h"
 #include "SVOGui/DisplayHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVHBitmapUtilitiesLibrary/BitmapHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -667,7 +668,8 @@ double SVGigeCameraROIDlg::GetScaledValue(long value, double scaleFactor) const
 
 void SVGigeCameraROIDlg::setImages()
 {
-	m_Image.setImage(m_pImageHandle);
+	
+	m_Image.setImage(convertToBitmap(m_pImageHandle));
 	m_Image.Refresh();
 }
 #pragma endregion Private Methods

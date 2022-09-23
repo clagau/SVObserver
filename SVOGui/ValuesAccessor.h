@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "BoundValue.h"
 #include "LinkedValue.h"
-#include "ObjectInterfaces/NameValueVector.h"
+#include "Definitions/NameValueVector.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVProtoBuf/ConverterHelper.h"
@@ -190,7 +190,7 @@ public:
 		return 0;
 	}
 
-	SvOi::NameValueVector GetEnums(uint32_t inspectionID, uint32_t objectID) const
+	SvDef::NameValueVector GetEnums(uint32_t inspectionID, uint32_t objectID) const
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse response;
@@ -200,7 +200,7 @@ public:
 		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &response);
 		if (S_OK == hr && response.has_getvalueobjectenumsresponse())
 		{
-			SvOi::NameValueVector retValue;
+			SvDef::NameValueVector retValue;
 			retValue.reserve(response.getvalueobjectenumsresponse().list().size());
 			for(auto& valuePair: response.getvalueobjectenumsresponse().list())
 			{
@@ -208,7 +208,7 @@ public:
 			}
 			return retValue;
 		}
-		return SvOi::NameValueVector();
+		return SvDef::NameValueVector();
 	}
 
 	std::string GetObjectName(uint32_t inspectionID, uint32_t objectID) const

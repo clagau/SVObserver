@@ -90,6 +90,7 @@
     <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="ImageOperatorEnums.h" />
     <ClInclude Include="LinearEdgeEnums.h" />
+    <ClInclude Include="NameValueVector.h" />
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="ObjectNames.h" />
     <ClInclude Include="RangeEnum.h" />

@@ -8,10 +8,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "GroupTool.h"
-#include "ObjectInterfaces/IDependencyManager.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVConditional.h"
 #include "Operators/ParameterTask.h"
+#include "SVProtoBuf/InspectionCommands.h"
+#include "SVProtoBuf/SVO-Enum.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 //This comment is to avoid that the SVConditional include is marked as not required due to forward declaration from a base class
@@ -303,11 +305,29 @@ namespace SvTo
 	SvDef::StringPairVector GroupTool::getInvalidDependenciesList() const
 	{
 		SvDef::StringPairVector dependencyList;
-		SvOi::ToolDependencyEnum ToolDependency = /*SvOi::ToolDependencyEnum::Client :*/ SvOi::ToolDependencyEnum::ClientAndSupplier;
-		SvOi::getToolDependency(std::back_inserter(dependencyList), { getObjectId() }, SvPb::SVToolSetObjectType, ToolDependency);
-		
-		dependencyList.erase(std::remove_if(dependencyList.begin(), dependencyList.end(),
-			[this](const SvDef::StringPair& rEntry) -> bool { return isValid(rEntry); }), dependencyList.end());
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getdependencyrequest();
+		auto* idSet = pRequest->mutable_idsofobjectsdependedon();
+
+		idSet->Add({getObjectId()});
+		pRequest->set_objecttype(SvPb::SVToolSetObjectType);
+		pRequest->set_tooldependecytype(SvPb::ToolDependencyEnum::ClientAndSupplier);
+
+		HRESULT hr = SvCmd::InspectionCommands(0, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getdependencyresponse())
+		{
+			dependencyList.clear();
+			for (SvPb::DependencyPair dependencyPair : responseCmd.getdependencyresponse().dependencypair())
+			{
+				SvDef::StringPair supplierClientPair(dependencyPair.supplier().name(), dependencyPair.client().name());
+				if (!isValid(supplierClientPair))
+				{
+					dependencyList.push_back(supplierClientPair);
+				}
+			}
+		}
+
 		return dependencyList;
 	}
 

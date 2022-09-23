@@ -393,13 +393,13 @@ bool   ToolSizeController::GetToolSizeMode(bool init, SizeModes& rModes)
 	return true;
 }
 
-SvOi::NameValueVector ToolSizeController::GetEnumTypes(SvDef::ToolSizeAdjustEnum adjustenum) const
+SvDef::NameValueVector ToolSizeController::GetEnumTypes(SvDef::ToolSizeAdjustEnum adjustenum) const
 {
-	SvOi::NameValueVector result(m_pTaskValueController->GetEnumTypes(m_EQAdjustStruct[adjustenum].m_inputModeEmbeddedId));
+	SvDef::NameValueVector result(m_pTaskValueController->GetEnumTypes(m_EQAdjustStruct[adjustenum].m_inputModeEmbeddedId));
 	if (!m_canResizetoparent || !m_isAutofitAllowedFlag) //if (!m_isFullSizeAllowed)
 	{
 		///Remove Auto fit from vector
-		auto cond = [](const SvOi::NameValuePair& pair){return (pair.first == SvDef::SizeAdjustTextAutoFitSize); };
+		auto cond = [](const SvDef::NameValuePair& pair){return (pair.first == SvDef::SizeAdjustTextAutoFitSize); };
 		auto newend = std::remove_if(result.begin(), result.end(), cond);
 		result.erase(newend, result.end());
 	}

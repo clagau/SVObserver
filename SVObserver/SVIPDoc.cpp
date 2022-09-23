@@ -48,7 +48,6 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
-#include "ObjectInterfaces/IDependencyManager.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "Operators/SVConditional.h"
@@ -3387,8 +3386,19 @@ void SVIPDoc::OnToolDependencies()
 			CWaitCursor MouseBusy;
 			std::set<uint32_t> ToolIDSet;
 			pToolSet->GetToolIds(std::inserter(ToolIDSet, ToolIDSet.end()));
-			SvDef::StringPairVector dependencyList;
-			SvOi::getToolDependency(std::back_inserter(dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, false, fileDlg.GetPathName().GetString());
+			
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_getdependencyrequest();
+			auto* idSet = pRequest->mutable_idsofobjectsdependedon();
+
+			idSet->Add(ToolIDSet.begin(), ToolIDSet.end());
+			pRequest->set_objecttype(SvPb::SVToolObjectType);
+			pRequest->set_tooldependecytype(SvPb::ToolDependencyEnum::Client);
+			pRequest->set_alldependecies(true);
+			pRequest->set_filename(fileDlg.GetPathName().GetString());
+
+			SvCmd::InspectionCommands(pToolSet->getInspectedObjectID(), requestCmd, &responseCmd);
 		}
 	}
 }

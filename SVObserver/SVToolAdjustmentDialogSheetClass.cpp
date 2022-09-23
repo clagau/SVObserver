@@ -29,7 +29,6 @@
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "Definitions/StringTypeDef.h"
-#include "ObjectInterfaces/IDependencyManager.h"
 #include "SVOGui/SVToolAdjustmentDialogCommentPage.h"
 #include "SVOGui/SVToolAdjustmentDialogSizePage.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
@@ -565,13 +564,25 @@ bool SVToolAdjustmentDialogSheetClass::ResetTools(SvOi::IObjectClass* pObject)
 		{
 			resetResult = pObject->resetAllObjects();
 		}
-		//Reset all tools dependent on this tool
-		std::set<uint32_t> ToolDependencySet;
-		SvOi::getToolDependency(std::inserter(ToolDependencySet, ToolDependencySet.end()),{pObject->getObjectId()});
-		for (auto const& rEntry : ToolDependencySet)
+		
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getdependencyrequest();
+		auto* idSet = pRequest->mutable_idsofobjectsdependedon();
+
+		idSet->Add({pObject->getObjectId()});
+		pRequest->set_objecttype(SvPb::SVToolObjectType);
+		pRequest->set_tooldependecytype(SvPb::ToolDependencyEnum::Client);
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getdependencyresponse())
 		{
-			SvOi::IObjectClass* pTool = SvOi::getObject(rEntry);
-			pTool->resetAllObjects();
+			for (SvPb::DependencyPair dependencyPair : responseCmd.getdependencyresponse().dependencypair())
+			{
+				uint32_t toolObjectId = dependencyPair.client().toolobjectid();
+				SvOi::IObjectClass* pTool = SvOi::getObject(toolObjectId);
+				pTool->resetAllObjects();
+			}
 		}
 	}
 

@@ -248,7 +248,7 @@ namespace SvOg
 		m_Values.Init();
 		m_useFillBlob = m_Values.Get<bool>(SvPb::BlobUseFillEId);
 
-		const SvOi::NameValueVector& rBlobTypeList = m_Values.GetEnumTypes(SvPb::BlobFillTypeEId);
+		const SvDef::NameValueVector& rBlobTypeList = m_Values.GetEnumTypes(SvPb::BlobFillTypeEId);
 		m_cbBlobType.SetEnumTypes(rBlobTypeList);
 		long CurrentSelection = m_Values.Get<long>(SvPb::BlobFillTypeEId);
 		m_cbBlobType.SetCurSelItemData(CurrentSelection);

@@ -27,9 +27,6 @@
     <ClCompile Include="ArchiveUpdateCallback.cpp">
       <Filter>Quelldateien\7Zip</Filter>
     </ClCompile>
-    <ClCompile Include="BitmapHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="InStreamWrapper.cpp">
       <Filter>Quelldateien\7Zip</Filter>
     </ClCompile>
@@ -100,9 +97,6 @@
     </ClInclude>
     <ClInclude Include="ArchiveUpdateCallback.h">
       <Filter>Headerdateien\7Zip</Filter>
-    </ClInclude>
-    <ClInclude Include="BitmapHelper.h">
-      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="IArchive.h">
       <Filter>Headerdateien\7Zip</Filter>

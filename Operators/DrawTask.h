@@ -37,26 +37,26 @@ enum class DrawArea : long
 	InfiniteArea = 7,
 };
 
-const static SvOi::NameValuePair gInsideAreaPair {gInside, static_cast<long>(DrawArea::InsideArea)};
-const static SvOi::NameValuePair gOutsideAreaPair {gOutside, static_cast<long>(DrawArea::OutsideArea)};
-const static SvOi::NameValuePair gContourAreaPair {gContour, static_cast<long>(DrawArea::ContourArea)};
-const static SvOi::NameValuePair gSectorAreaPair {gSector, static_cast<long>(DrawArea::SectorArea)};
-const static SvOi::NameValuePair gPolylineAreaPair {gPolyline, static_cast<long>(DrawArea::PolylineArea)};
-const static SvOi::NameValuePair gNormalAreaPair {gNormal, static_cast<long>(DrawArea::NormalArea)};
-const static SvOi::NameValuePair gInfinityLinesAreaPair {gInfinityLines, static_cast<long>(DrawArea::InfiniteArea)};
+const static SvDef::NameValuePair gInsideAreaPair {gInside, static_cast<long>(DrawArea::InsideArea)};
+const static SvDef::NameValuePair gOutsideAreaPair {gOutside, static_cast<long>(DrawArea::OutsideArea)};
+const static SvDef::NameValuePair gContourAreaPair {gContour, static_cast<long>(DrawArea::ContourArea)};
+const static SvDef::NameValuePair gSectorAreaPair {gSector, static_cast<long>(DrawArea::SectorArea)};
+const static SvDef::NameValuePair gPolylineAreaPair {gPolyline, static_cast<long>(DrawArea::PolylineArea)};
+const static SvDef::NameValuePair gNormalAreaPair {gNormal, static_cast<long>(DrawArea::NormalArea)};
+const static SvDef::NameValuePair gInfinityLinesAreaPair {gInfinityLines, static_cast<long>(DrawArea::InfiniteArea)};
 
 
 namespace
 {
-const static SvOi::NameValueVector gDrawAreaDefaultList {gInsideAreaPair, gOutsideAreaPair, gContourAreaPair};
+const static SvDef::NameValueVector gDrawAreaDefaultList {gInsideAreaPair, gOutsideAreaPair, gContourAreaPair};
 }
 
 class DrawTask : public SvIe::SVTaskObjectClass
 {
 #pragma region Constructor
 public:
-	explicit DrawTask(LPCTSTR ObjectName, SvOi::NameValueVector rDrawAreaList = gDrawAreaDefaultList, long defaultDrawArea = 1);
-	DrawTask(SVObjectClass* POwner, int StringResourceID, SvOi::NameValueVector rDrawAreaList = gDrawAreaDefaultList, long defaultDrawArea = 1);
+	explicit DrawTask(LPCTSTR ObjectName, SvDef::NameValueVector rDrawAreaList = gDrawAreaDefaultList, long defaultDrawArea = 1);
+	DrawTask(SVObjectClass* POwner, int StringResourceID, SvDef::NameValueVector rDrawAreaList = gDrawAreaDefaultList, long defaultDrawArea = 1);
 	virtual ~DrawTask();
 #pragma endregion Constructor
 
@@ -79,8 +79,8 @@ protected:
 
 #pragma region Private Methods
 private:
-	void initialize(const SvOi::NameValueVector& drawAreaList, long defaultDrawArea);
-	void buildEmbeddedObjectList(const SvOi::NameValueVector& drawAreaList, long defaultDrawArea);
+	void initialize(const SvDef::NameValueVector& drawAreaList, long defaultDrawArea);
+	void buildEmbeddedObjectList(const SvDef::NameValueVector& drawAreaList, long defaultDrawArea);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

@@ -42,35 +42,54 @@ namespace SvOl
 		return DependencyMgr;
 	}
 
-	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, bool onlyExternal /*true*/, LPCTSTR fileName /*= nullptr*/) const
-	{
+	SvPb::GetDependencyResponse DependencyManager::getDependencyList(const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvPb::ToolDependencyEnum ToolDependency /*= SvPb::ToolDependencyEnum::Client*/, bool allDependecies /*false*/, LPCTSTR fileName /*= nullptr*/) const
+	{	 
+	
 		//! Note: Before calling this method the graph index must be updated. This is done in the interface.
 		std::vector<Dependency> DependencyVector;
 		Dependencies ObjectDependencies;
 
-		VertexSet childrenSet = getAllDependents(rSourceSet, JoinType(SvOl::JoinType::Owner));
+		VertexSet childrenSet = getAllDependents(rSourceSet, SvOl::JoinType(SvOl::JoinType::Owner));
 
-		if( SvOi::ToolDependencyEnum::Client == (SvOi::ToolDependencyEnum::Client & ToolDependency) )
+		if (SvPb::ToolDependencyEnum::Client == (SvPb::ToolDependencyEnum::Client & ToolDependency))
 		{
-			getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), JoinType(SvOl::JoinType::Dependent), false);
+			getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType(SvOl::JoinType::Dependent), false);
 		}
-		if( SvOi::ToolDependencyEnum::Supplier == (SvOi::ToolDependencyEnum::Supplier & ToolDependency) ) 
+		if (SvPb::ToolDependencyEnum::Supplier == (SvPb::ToolDependencyEnum::Supplier & ToolDependency))
 		{
 			// Here the pairs need to be reversed
 			Dependencies ToolSuppliers;
-			getDependents(childrenSet, std::inserter(ToolSuppliers, ToolSuppliers.end()), JoinType(SvOl::JoinType::Dependent), true);
-			for (const auto& rDependency :ToolSuppliers)
+			getDependents(childrenSet, std::inserter(ToolSuppliers, ToolSuppliers.end()), SvOl::JoinType(SvOl::JoinType::Dependent), true);
+			for (const auto& rDependency : ToolSuppliers)
 			{
 				ObjectDependencies.insert({rDependency.second, rDependency.first});
 			}
 		}
 
+		std::set<uint32_t> toolIdSet;
+		for (auto& objectId : rSourceSet)
+		{
+			SvOi::IObjectClass* pObject = SvOi::getObject(objectId);
+			SvOi::IObjectClass* parentTool = pObject->GetAncestorInterface(SvPb::SVToolObjectType);
+			SvPb::SVObjectTypeEnum objectType = pObject->GetObjectType();
+			
+			if (nullptr != parentTool && objectType != SvPb::SVObjectTypeEnum::SVToolObjectType)
+			{
+				toolIdSet.insert(parentTool->getObjectId());
+			}
+			else
+			{
+				toolIdSet.insert(objectId);
+			}
+		}
+		
 		//! This filters dependencies which are dependent on the same tool
-		std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [&rSourceSet, onlyExternal](const Dependency& rDependency)
+		std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [&toolIdSet, allDependecies](const Dependency& rDependency)
 		{
 			//copies dependency when true is returned
 			SvOi::IObjectClass* pSupplier = SvOi::getObject(rDependency.first);
 			SvOi::IObjectClass* pClient = SvOi::getObject(rDependency.second);
+
 			if (nullptr != pSupplier && nullptr != pClient)
 			{
 				//Basic value objects don't have tools check if main object is of type ToolObjectType
@@ -89,20 +108,20 @@ namespace SvOl
 				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
 				if (nullptr != pToolSupplier && nullptr != pToolClient)
 				{
-					bool isClientInSourceSet = rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId());
-					isClientInSourceSet |= (pTopToolClient != nullptr) ? rSourceSet.end() != rSourceSet.find(pTopToolClient->getObjectId()) : false;
-					bool isSupplierInSourceSet = rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId());
-					isSupplierInSourceSet |= (pTopToolSupplier != nullptr) ? rSourceSet.end() != rSourceSet.find(pTopToolSupplier->getObjectId()) : false;
+					bool isClientInToolIdSet = toolIdSet.end() != toolIdSet.find(pToolClient->getObjectId());
+					isClientInToolIdSet |= (pTopToolClient != nullptr) ? toolIdSet.end() != toolIdSet.find(pTopToolClient->getObjectId()) : false;
+					bool isSupplierInToolIdSet = toolIdSet.end() != toolIdSet.find(pToolSupplier->getObjectId());
+					isSupplierInToolIdSet |= (pTopToolSupplier != nullptr) ? toolIdSet.end() != toolIdSet.find(pTopToolSupplier->getObjectId()) : false;
 					//If same Tool filter out directly
-					if (onlyExternal && isClientInSourceSet && isSupplierInSourceSet)
+					if (allDependecies == false && isClientInToolIdSet && isSupplierInToolIdSet)
 					{
 						return false;
 					}
 					else
 					{
 						//One of the dependency tools must be in the source set
-						bool isNotParentSupplier = (rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId()) && pToolSupplier != pTopToolClient);
-						if (isNotParentSupplier || rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId()))
+						bool isNotParentSupplier = (toolIdSet.end() != toolIdSet.find(pToolSupplier->getObjectId()) && pToolSupplier != pTopToolClient);
+						if (isNotParentSupplier || toolIdSet.end() != toolIdSet.find(pToolClient->getObjectId()))
 						{
 							return true;
 						}
@@ -110,11 +129,11 @@ namespace SvOl
 				}
 				//This adds the dependency when a loop or group tool is the parent
 				pToolSupplier = pSupplier->GetAncestorInterface(supplierAncestorType, true);
-				pToolClient =pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
+				pToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
 				if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 				{
 					//One of the dependency tools must be in the source set
-					if (rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId()) || rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId()))
+					if (toolIdSet.end() != toolIdSet.find(pToolSupplier->getObjectId()) || toolIdSet.end() != toolIdSet.find(pToolClient->getObjectId()))
 					{
 						return true;
 					}
@@ -126,6 +145,8 @@ namespace SvOl
 		//! First sort the supplier then the clients
 		std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(true));
 		std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(false));
+		
+		SvPb::GetDependencyResponse dependecyList;
 
 		ObjectDependencies.clear();
 		std::vector<Dependency>::const_iterator IterDependency(DependencyVector.begin());
@@ -134,7 +155,7 @@ namespace SvOl
 			SvOi::IObjectClass* pSupplier = SvOi::getObject(IterDependency->first);
 			SvOi::IObjectClass* pClient = SvOi::getObject(IterDependency->second);
 			if (nullptr != pSupplier && nullptr != pClient)
-			{	
+			{
 				SvOi::IObjectClass* pParent = SvOi::getObject(pSupplier->GetParentID());
 				bool isParentToolset = (nullptr != pParent) && (SvPb::SVToolSetObjectType == pParent->GetObjectType());
 				//To add also add the parent tool e.g. LoopTool if available
@@ -146,16 +167,36 @@ namespace SvOl
 					ClientName = pClient->GetObjectNameToObjectType(nameToObjectType);
 				}
 
-				Inserter = SvDef::StringPair(SupplierName, ClientName);
+				bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
+				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
+				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
+				bool isClientInSourceSet = rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId());
+				isClientInSourceSet |= (pTopToolClient != nullptr) ? rSourceSet.end() != rSourceSet.find(pTopToolClient->getObjectId()) : false;
+				
+				SvOi::IObjectClass* pTopToolSupplier = pSupplier->GetAncestorInterface(SvPb::SVToolObjectType, true);
+
+				auto* pDependencyPair = dependecyList.add_dependencypair();
+				pDependencyPair->mutable_supplier()->set_name(SupplierName);
+				pDependencyPair->mutable_supplier()->set_objectid(IterDependency->first);
+				if (nullptr != pTopToolSupplier)
+				{
+					pDependencyPair->mutable_supplier()->set_toolobjectid(pTopToolSupplier->getObjectId());
+				}
+				pDependencyPair->mutable_client()->set_name(ClientName);
+				pDependencyPair->mutable_client()->set_objectid(IterDependency->second);
+				pDependencyPair->mutable_client()->set_toolobjectid(pTopToolClient->getObjectId());
+
+				pDependencyPair->set_sourceisclient(isClientInSourceSet);
+
 
 				// If the file name is not empty we want to save a tool dependency graph
 				if (nullptr != fileName)
 				{
 					//Basic value objects don't have tools check if main object is of type ToolObjectType
 					bool isSupplier = pSupplier->GetObjectType() == SvPb::SVBasicValueObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
-					bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
+					isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
 					SvOi::IObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestorInterface(SvPb::SVToolObjectType);
-					SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
+					pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
 					if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 					{
 						ObjectDependencies.insert({pToolSupplier->getObjectId(), pToolClient->getObjectId()});
@@ -169,35 +210,11 @@ namespace SvOl
 			SvOl::ObjectNameLookup NameLookup;
 			OutputGraph.saveGraphDot(fileName, NameLookup);
 		}
+
+		return dependecyList;
 	}
 
-	void DependencyManager::getToolDependency(SvOi::SvObjectIdSetInserter Inserter, const std::set<uint32_t>& rSourceSet) const
-	{
-		//! Note before calling this method the graph index must be updated this is done in the interface!
-		Dependencies ObjectDependencies;
-
-		VertexSet childrenSet = getAllDependents(rSourceSet, SvOl::JoinType(SvOl::JoinType::Owner));
-		getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType(SvOl::JoinType::Dependent), false);
-
-		for (auto const& rEntry : ObjectDependencies)
-		{
-			SvOi::IObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(rEntry.second);
-			if (nullptr != pClient)
-			{
-				SvOi::IObjectClass* pTool = (SvPb::SVToolObjectType == pClient->GetObjectType()) ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
-				if (nullptr != pTool)
-				{
-					// If tool not in Source add it
-					if (rSourceSet.end() == rSourceSet.find(pTool->getObjectId()))
-					{
-						Inserter = pTool->getObjectId();
-					}
-				}
-			}
-		}
-	}
-
-	void DependencyManager::getObjectDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/) const
+	SvPb::GetDependencyResponse DependencyManager::getObjectDependency(const std::set<uint32_t>& rSourceSet, SvPb::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/) const
 	{
 		//! Note before calling this method the graph index must be updated this is done in the interface!
 		std::vector<Dependency> DependencyVector;
@@ -205,11 +222,11 @@ namespace SvOl
 
 		VertexSet childrenSet = getAllDependents(rSourceSet, SvOl::JoinType(SvOl::JoinType::Owner));
 
-		if (SvOi::ToolDependencyEnum::Client == (SvOi::ToolDependencyEnum::Client & ToolDependency))
+		if (SvPb::ToolDependencyEnum::Client == (SvPb::ToolDependencyEnum::Client & ToolDependency))
 		{
 			getDependents(childrenSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType(SvOl::JoinType::Dependent), false);
 		}
-		if (SvOi::ToolDependencyEnum::Supplier == (SvOi::ToolDependencyEnum::Supplier & ToolDependency))
+		if (SvPb::ToolDependencyEnum::Supplier == (SvPb::ToolDependencyEnum::Supplier & ToolDependency))
 		{
 			// Here the pairs need to be reversed
 			Dependencies ToolSuppliers;
@@ -223,9 +240,11 @@ namespace SvOl
 		//! This filters dependencies which are dependent on the same tool
 		std::copy(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector));
 
-			//! First sort the supplier then the clients
+		//! First sort the supplier then the clients
 		std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(true));
 		std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(false));
+
+		SvPb::GetDependencyResponse dependecyList;
 
 		ObjectDependencies.clear();
 		std::vector<Dependency>::const_iterator IterDependency(DependencyVector.begin());
@@ -241,9 +260,32 @@ namespace SvOl
 				std::string SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				std::string ClientName = pClient->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 
-				Inserter = SvDef::StringPair(SupplierName, ClientName);
+				
+				//Inserter = SvDef::StringPair(SupplierName, ClientName);
+				bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
+				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
+				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
+				bool isClientInSourceSet = rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId());
+				isClientInSourceSet |= (pTopToolClient != nullptr) ? rSourceSet.end() != rSourceSet.find(pTopToolClient->getObjectId()) : false;
+
+				SvOi::IObjectClass* pTopToolSupplier = pSupplier->GetAncestorInterface(SvPb::SVToolObjectType, true);
+
+				auto* pDependencyPair = dependecyList.add_dependencypair();
+				pDependencyPair->mutable_supplier()->set_name(SupplierName);
+				pDependencyPair->mutable_supplier()->set_objectid(IterDependency->first);
+				if (nullptr != pTopToolSupplier)
+				{
+					pDependencyPair->mutable_supplier()->set_toolobjectid(pTopToolSupplier->getObjectId());
+				}
+				pDependencyPair->mutable_client()->set_name(ClientName);
+				pDependencyPair->mutable_client()->set_objectid(IterDependency->second);
+				pDependencyPair->mutable_client()->set_toolobjectid(pTopToolClient->getObjectId());
+
+				pDependencyPair->set_sourceisclient(isClientInSourceSet);
 			}
 		}
+
+		return dependecyList;
 	}
 	#pragma endregion Public Methods
 
@@ -277,25 +319,3 @@ namespace SvOl
 		return isSmaller;
 	}
 } //namespace SvOl
-
-#pragma region IDependencyManager
-void SvOi::getToolDependency( StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, bool externalOnly /*=true*/, LPCTSTR fileName /*= nullptr*/)
-{
-	SvOl::DependencyManager::Instance().updateVertexIndex();
-	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet, nameToObjectType, ToolDependency, externalOnly, fileName);
-}
-
-void SvOi::getToolDependency(SvObjectIdSetInserter Inserter, const std::set<uint32_t>& rSourceSet)
-{
-	SvOl::DependencyManager::Instance().updateVertexIndex();
-	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet);
-}
-
-void SvOi::getObjectDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/)
-{
-	SvOl::DependencyManager::Instance().updateVertexIndex();
-	SvOl::DependencyManager::Instance().getObjectDependency(Inserter, rSourceSet, ToolDependency);
-}
-#pragma endregion IDependencyManager
-
-

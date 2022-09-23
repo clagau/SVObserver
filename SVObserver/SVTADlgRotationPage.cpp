@@ -119,7 +119,7 @@ BOOL SVTADlgRotationPage::OnInitDialog()
 			m_Values.SetTaskID(pImageTransform->getObjectId());
 			m_Values.Init();
 
-			const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
+			const SvDef::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
 			m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
 			long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
 			m_cbInterpolation.SetCurSelItemData(CurrentSelection);

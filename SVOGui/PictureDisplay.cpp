@@ -18,9 +18,7 @@
 #include "PictureDisplay.h"
 #include "Definitions/Color.h"
 //for image copy
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "DisplayHelper.h"
-#include "SVUtilityLibrary/BitmapHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -32,50 +30,19 @@ namespace SvOg
 #pragma endregion Contructor
 
 #pragma region Public Methods
-	//@TODO - needs to go!
-	void PictureDisplay::setImage( const SvOi::SVImageBufferHandlePtr imageData, long tabNumber )
+	void PictureDisplay::setImage(HBITMAP pHBitmap, long tabNumber)
 	{
-		if( nullptr != imageData && !( imageData->empty() ) )
+		if (nullptr != pHBitmap)
 		{
-			SVBitmapInfo dibInfo = imageData->GetBitmapInfo();
-			BYTE* pMilBuffer = static_cast< BYTE* >( imageData->GetBufferAddress() );
-			if (nullptr != pMilBuffer)
+			//convert the hbitmap to an IPictureDisp for the activeX-control.
+			CPictureHolder pic;
+			BOOL bRet = pic.CreateFromBitmap(pHBitmap, 0, true);
+			::DeleteObject(pHBitmap);
+			if (bRet)
 			{
-				//copy the image buffer - because the some images does not support DIB!
-				SVMatroxBuffer newBuffer;
-				SVMatroxBuffer oldBuffer = imageData->GetBuffer();
 
-				HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer, true);
-				if (S_OK == l_Code)
-				{
-					l_Code = SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);
-				}
-				if (S_OK == l_Code)
-				{
-					l_Code = SVMatroxBufferInterface::GetBitmapInfo(dibInfo, newBuffer);
-				}
-
-				if (S_OK == l_Code)
-				{
-					l_Code = SVMatroxBufferInterface::GetHostAddress(&pMilBuffer, newBuffer);
-				}
-				
-				if (S_OK == l_Code && nullptr != pMilBuffer && !dibInfo.empty())
-				{
-					HBITMAP hBitmap = SvUl::CreateDIBitmap(*dibInfo.GetBitmapInfo(), pMilBuffer);
-					if (nullptr != hBitmap)
-					{
-						//convert the hbitmap to an IPictureDisp for the activeX-control.
-						CPictureHolder pic;
-						BOOL bRet = pic.CreateFromBitmap(hBitmap);
-						if (bRet)
-						{
-							LPPICTUREDISP pDispatch = pic.GetPictureDispatch();
-							setImage(pDispatch, tabNumber);
-						}
-					}
-					newBuffer.clear();
-				}
+				LPPICTUREDISP pDispatch = pic.GetPictureDispatch();
+				setImage(pDispatch, tabNumber);
 			}
 		}
 	}

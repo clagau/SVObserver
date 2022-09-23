@@ -80,12 +80,12 @@ namespace SvOg
 
 		m_values.Init();
 
-		const SvOi::NameValueVector& rWarpTypeList = m_values.GetEnumTypes(SvPb::WarpTypeEId);
+		const SvDef::NameValueVector& rWarpTypeList = m_values.GetEnumTypes(SvPb::WarpTypeEId);
 		m_FunctionCombo.SetEnumTypes(rWarpTypeList);
 		m_lLastWarpType = m_values.Get<long>(SvPb::WarpTypeEId);
 		m_FunctionCombo.SetCurSelItemData(m_lLastWarpType);
 
-		const SvOi::NameValueVector& rInterpolationModeList = m_values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
+		const SvDef::NameValueVector& rInterpolationModeList = m_values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
 		m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
 		long CurrentSelection = m_values.Get<long>(SvPb::OutputInterpolationModeEId);
 		m_cbInterpolation.SetCurSelItemData(CurrentSelection);

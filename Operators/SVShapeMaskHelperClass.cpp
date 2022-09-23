@@ -67,7 +67,7 @@ void SVShapeMaskHelperClass::init()
 
 	m_bvoAutoResize.SetDefaultValue( false, false );
 
-	SvOi::NameValueVector EnumVector
+	SvDef::NameValueVector EnumVector
 	{
 		{SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_RECTANGLE), SVMaskShapeTypeRectangle},
 		{SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_OVAL), SVMaskShapeTypeOval},
@@ -78,16 +78,16 @@ void SVShapeMaskHelperClass::init()
 	m_evoShapeType.SetDefaultValue(SVMaskShapeTypeRectangle);
 
 	EnumVector.clear();
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Inside Shape"), 1 });
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Outside Shape"), 2 });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Inside Shape"), 1 });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Outside Shape"), 2 });
 	m_evoMaskArea.SetEnumTypes(EnumVector);
 	m_evoMaskArea.SetDefaultValue(2);
 
 	EnumVector.clear();
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Vertical Axis Top"), 0 });
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Vertical Axis Bottom"), 180 });
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Horizontal Axis Left"), -90 });
-	EnumVector.push_back(SvOi::NameValuePair{ _T("Horizontal Axis Right"), 90 });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Vertical Axis Top"), 0 });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Vertical Axis Bottom"), 180 });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Horizontal Axis Left"), -90 });
+	EnumVector.push_back(SvDef::NameValuePair{ _T("Horizontal Axis Right"), 90 });
 	m_evoXYSymmetry.SetEnumTypes(EnumVector);
 	m_evoXYSymmetry.SetDefaultValue(0l);
 

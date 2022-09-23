@@ -14,13 +14,13 @@
 #include "InspectionEngine/RunStatus.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "ImageAnalyzer.h"
-#include "ObjectInterfaces/NameValueVector.h"
+#include "Definitions/NameValueVector.h"
 #include "Definitions/SVImageFormatEnum.h"
 #pragma endregion Includes
 
 namespace
 {
-	const static SvOi::NameValueVector g_alwaysDrawType{
+	const static SvDef::NameValueVector g_alwaysDrawType{
 		{{"Blob"}, M_DRAW_BLOBS},
 		{{"Blob Contour"}, M_DRAW_BLOBS_CONTOUR},
 		{{"Box"}, M_DRAW_BOX},
@@ -28,7 +28,7 @@ namespace
 		{{"Holes"}, M_DRAW_HOLES},
 		{{"Holes Contour"}, M_DRAW_HOLES_CONTOUR} };
 
-	const static std::vector<std::pair<long, SvOi::NameValuePair>> g_DrawTypeWithRequirements{
+	const static std::vector<std::pair<long, SvDef::NameValuePair>> g_DrawTypeWithRequirements{
 		//Requirement, Name, Long-Value
 		{M_CONVEX_HULL, {{"Convex Hull"}, M_DRAW_CONVEX_HULL }},
 		{M_CONVEX_HULL,{{"Convex Hull Contour"}, M_DRAW_CONVEX_HULL_CONTOUR }},
@@ -306,7 +306,7 @@ namespace SvAo
 	bool BlobDrawTask::setDrawTypeEnums(const BlobAnalyzer2& rAnalyzer, SvStl::MessageContainerVector* pErrorMessages)
 	{
 		bool retValue = true;
-		SvOi::NameValueVector drawList = g_alwaysDrawType;
+		SvDef::NameValueVector drawList = g_alwaysDrawType;
 		const auto& rGroupList = rAnalyzer.getFeatureGroups();
 		for (const auto& rDrawType : g_DrawTypeWithRequirements)
 		{

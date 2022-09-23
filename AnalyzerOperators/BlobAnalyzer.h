@@ -90,7 +90,7 @@ public:
 	virtual ~BlobAnalyzer();
 
 #pragma region IBlobAnalyzer
-	virtual SvOi::NameValueVector getFeatureList(bool isSelected) const override;
+	virtual SvDef::NameValueVector getFeatureList(bool isSelected) const override;
 	virtual SvOi::IObjectClass* getResultObject(int FeatureIndex) override;
 	virtual SvOi::IObjectClass* getResultBlob() override;
 #pragma endregion IBlobAnalyzer

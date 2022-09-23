@@ -43,7 +43,7 @@ public:
 	bool SetFormulas(bool init, bool overwrite);
 	//Insert string from rvalues to  formula if mode is TSFormula
 	bool SetFormulas(bool init, bool overwrite, const SizeValues& rValues);
-	SvOi::NameValueVector GetEnumTypes(SvDef::ToolSizeAdjustEnum adjustenum) const;
+	SvDef::NameValueVector GetEnumTypes(SvDef::ToolSizeAdjustEnum adjustenum) const;
 	void  InitValues();
 	bool IsFullSizeAllowed(bool init);
 	bool IsFullSize(bool init);

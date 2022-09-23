@@ -387,7 +387,7 @@ namespace SvOg
 	void TADialogGroupToolResultPage::FillGridControl()
 	{
 		CStringArray typeOptions;
-		SvOi::NameValueVector typePairs;
+		SvDef::NameValueVector typePairs;
 		int numberOfObjects = static_cast<int>(m_resultData.size());
 		if (0 < numberOfObjects)
 		{
@@ -498,7 +498,7 @@ namespace SvOg
 		}
 	}
 
-	SvOi::NameValuePair TADialogGroupToolResultPage::getType(const std::string& rTypeName)
+	SvDef::NameValuePair TADialogGroupToolResultPage::getType(const std::string& rTypeName)
 	{
 		const auto& rTypePairs = m_Values.GetEnumTypes(SvPb::ResultObjectTypeEId);
 		auto iter = std::find_if(rTypePairs.begin(), rTypePairs.end(), [rTypeName](const auto& rEntry) { return rTypeName == rEntry.first; });

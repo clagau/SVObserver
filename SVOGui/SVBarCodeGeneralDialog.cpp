@@ -294,7 +294,7 @@ namespace SvOg
 		m_szThreshold.Format("%d", m_iThreshold);
 	}
 
-	void SVBarCodeGeneralDialog::SetBarcodeStringFormat(SvOi::NameValueVector&& rStringFormatList, long stringFormatPos)
+	void SVBarCodeGeneralDialog::SetBarcodeStringFormat(SvDef::NameValueVector&& rStringFormatList, long stringFormatPos)
 	{
 		m_stringFormatList = std::move(rStringFormatList);
 		m_stringFormatPos = stringFormatPos;

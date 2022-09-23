@@ -128,7 +128,7 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 				long lDummy = 0L;
 				if ( !EnumString.empty() && !GetEnumerator( EnumString.c_str(), lDummy ) )	// If this fails enumerator was unknown!
 				{
-					m_enumVector.push_back(SvOi::NameValuePair{ EnumString, enumValue });
+					m_enumVector.push_back(SvDef::NameValuePair{ EnumString, enumValue });
 					enumValue++;
 				}
 				else
@@ -143,7 +143,7 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 			free( szList );
 		}
 
-		std::sort(m_enumVector.begin(), m_enumVector.end(), [](const SvOi::NameValuePair& rLhs, const SvOi::NameValuePair& rRhs) -> bool
+		std::sort(m_enumVector.begin(), m_enumVector.end(), [](const SvDef::NameValuePair& rLhs, const SvDef::NameValuePair& rRhs) -> bool
 		{
 			return rLhs.second < rRhs.second;
 		});
@@ -151,7 +151,7 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 	return bRetVal;
 }
 
-bool SVEnumerateValueObjectClass::SetEnumTypes(const SvOi::NameValueVector& rEnumVector)
+bool SVEnumerateValueObjectClass::SetEnumTypes(const SvDef::NameValueVector& rEnumVector)
 {
 	//! Note the enums are not sorted
 	m_enumVector = rEnumVector;

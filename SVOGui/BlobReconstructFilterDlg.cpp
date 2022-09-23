@@ -78,7 +78,7 @@ BOOL BlobReconstructFilterDlg::OnInitDialog()
 	m_values.Init();
 	m_bGrayScale = m_values.Get<bool>(SvPb::GrayOnEId);
 
-	const SvOi::NameValueVector& rBlobColorList = m_values.GetEnumTypes(SvPb::BlobColorEId);
+	const SvDef::NameValueVector& rBlobColorList = m_values.GetEnumTypes(SvPb::BlobColorEId);
 	m_cbBlobColor.SetEnumTypes(rBlobColorList);
 	long CurrentSelection = m_values.Get<long>(SvPb::BlobColorEId);
 	m_cbBlobColor.SetCurSelItemData(CurrentSelection);

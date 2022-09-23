@@ -9,8 +9,8 @@
 
 #pragma region Includes
 #include "JoinType.h"
-#include "ObjectInterfaces/IDependencyManager.h"
 #include "SVContainerLibrary/ObjectGraph.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -37,21 +37,9 @@ namespace SvOl
 	public:
 	static DependencyManager& Instance();
 
-	//! Return the tool dependency of the given sources
-	//! \param Inserter [in] Iterator to insert the named dependency pairs
-	//! \param rSourceSet [in] reference to the source set of IDs
-	//! \param nameToObjectType [in] Object type to define the dotted name start
-	//! \param ToolDependency [in] The tool dependency types to get
-	//! \param only [in] if true only returns external dependencies
-	//! \param FileName [in] Optional file name to save the graph file 
-	void getToolDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, bool onlyExternal = true, LPCTSTR fileName = nullptr) const;
+	SvPb::GetDependencyResponse getDependencyList(const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvPb::ToolDependencyEnum ToolDependency = SvPb::ToolDependencyEnum::Client, bool allDependecies = false, LPCTSTR fileName = nullptr) const;
 
-	//! Return the tool dependency of the given sources
-	//! \param Inserter [in] Iterator to insert the tool ID
-	//! \param rSourceSet [in] reference to the source set of IDs
-	void getToolDependency(SvOi::SvObjectIdSetInserter Inserter, const std::set<uint32_t>& rSourceSet) const;
-
-	void getObjectDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client) const;
+	SvPb::GetDependencyResponse getObjectDependency(const std::set<uint32_t>& rSourceSet, SvPb::ToolDependencyEnum ToolDependency = SvPb::ToolDependencyEnum::Client) const;
 #pragma endregion Public Methods
 
 	#pragma region Private Methods

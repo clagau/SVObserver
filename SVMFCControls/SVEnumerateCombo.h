@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/NameValueVector.h"
+#include "Definitions/NameValueVector.h"
 #pragma endregion Includes
 
 namespace SvMc
@@ -23,7 +23,7 @@ namespace SvMc
 		SVEnumerateCombo();
 		virtual ~SVEnumerateCombo();
 
-		bool SetEnumTypes(const SvOi::NameValueVector& rEnumList);
+		bool SetEnumTypes(const SvDef::NameValueVector& rEnumList);
 
 		int SetCurSelItemData( DWORD_PTR dwItemData );
 		DWORD_PTR  GetCurSelItemData();

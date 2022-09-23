@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include "NameValueVector.h"
+#include "Definitions/NameValueVector.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -87,7 +87,7 @@ class IObjectClass;
 	public:
 		virtual ~IBlobAnalyzer() {}
 
-		virtual NameValueVector getFeatureList(bool isSelected) const = 0;
+		virtual SvDef::NameValueVector getFeatureList(bool isSelected) const = 0;
 		virtual SvOi::IObjectClass* getResultObject(int Feature) = 0;
 		virtual IObjectClass* getResultBlob() = 0;
 	};

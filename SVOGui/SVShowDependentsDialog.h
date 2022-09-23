@@ -14,6 +14,7 @@
 #include "SVOResource/resource.h"
 #include "SVMFCControls/DlgItemResizer.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
@@ -34,7 +35,7 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		explicit SVShowDependentsDialog( const std::set<uint32_t>& rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
+		explicit SVShowDependentsDialog( const std::set<uint32_t>& rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr);
 		explicit SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText = nullptr, DialogType Type = Show, CWnd* pParent = nullptr);
 	#pragma endregion Constructor
 
@@ -65,6 +66,7 @@ namespace SvOg
 		std::string m_DisplayText;
 		DialogType m_DialogType;
 		SvDef::StringSet m_SourceNames;
+		SvPb::GetDependencyResponse m_dependencyResponse;
 	};
 
 	INT_PTR showDependentsDialogIfNecessary(const std::set<uint32_t>& rTaskIds, const std::string& rDisplayString);

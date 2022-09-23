@@ -13,10 +13,8 @@
 //Moved to precompiled header: #include <functional>
 #include "SVShowDependentsDialog.h"
 #include "Definitions/Color.h"
-#include "ObjectInterfaces/IDependencyManager.h"
-#include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IObjectManager.h"
 #include "Definitions/StringTypeDef.h"
+#include "InspectionCommands\CommandExternalHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -31,7 +29,7 @@ BEGIN_MESSAGE_MAP(SVShowDependentsDialog, CDialog)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
-	ON_NOTIFY(NM_CUSTOMDRAW, IDC_DEPENDENCY_LIST, &SVShowDependentsDialog::OnCustomdrawDependencyList)
+ON_NOTIFY(NM_CUSTOMDRAW, IDC_DEPENDENCY_LIST, &SVShowDependentsDialog::OnCustomdrawDependencyList)
 END_MESSAGE_MAP()
 
 const int DependentColumnNumber = 2;
@@ -41,7 +39,7 @@ SVShowDependentsDialog::SVShowDependentsDialog(const std::set<uint32_t>& rIdsOfO
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
 	, m_DisplayText((nullptr != DisplayText) ? DisplayText : std::string())
 	, m_DialogType(Type)
-{
+{	
 	FillDependencyList(rIdsOfObjectsDependedOn, objectType);
 }
 
@@ -177,11 +175,10 @@ void SVShowDependentsDialog::OnCustomdrawDependencyList(NMHDR* pNMHDR, LRESULT* 
 		CString Text = m_ListCtrl.GetItemText(static_cast<int> (pLVCD->nmcd.dwItemSpec), 0);
 		std::string ItemText(Text.GetString());
 
-		SvDef::StringSet::const_iterator Iter(m_SourceNames.begin());
-		for (; m_SourceNames.end() != Iter; ++Iter)
+		for (SvPb::DependencyPair dependencyPair : m_dependencyResponse.dependencypair())
 		{
-			//If item has part of source name then this is the client for suppliers First check if tool name identical or add . then is part of name
-			if (ItemText == *Iter || 0 == ItemText.find(*Iter + '.'))
+			std::string clientName = dependencyPair.client().name();
+			if ((ItemText == clientName || 0 == ItemText.find(clientName + ".")) && dependencyPair.sourceisclient())
 			{
 				TextColor = SvDef::Blue;
 			}
@@ -205,40 +202,22 @@ void SVShowDependentsDialog::setResizeControls()
 }
 
 void SVShowDependentsDialog::FillDependencyList(const std::set<uint32_t>& rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType)
-{
-	for (auto id : rIdsOfObjectsDependedOn)
-	{
-		SvOi::IObjectClass* pSourceObject = SvOi::getObject(id);
-		if (nullptr != pSourceObject)
-		{
-			std::string Name;
-			if (objectType == pSourceObject->GetObjectType())
-			{
-				if (SvPb::SVToolObjectType != objectType)
-				{
-					Name = pSourceObject->GetName();
-				}
-				else
-				{	//To add also add the parent tool e.g. LoopTool if available
-					Name = pSourceObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
-				}
-			}
-			else
-			{
-				pSourceObject->GetCompleteNameToType(objectType, Name);
-			}
-
-			if (!Name.empty())
-			{
-				m_SourceNames.insert(Name);
-			}
-		}
-	}
-
+{	
+	SvPb::ToolDependencyEnum ToolDependencyProto = (DeleteConfirm == m_DialogType) ? SvPb::ToolDependencyEnum::Client : SvPb::ToolDependencyEnum::ClientAndSupplier;
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getdependencyrequest();
+	auto* idSet =  pRequest->mutable_idsofobjectsdependedon();
+	idSet->Add(rIdsOfObjectsDependedOn.begin(), rIdsOfObjectsDependedOn.end());
+	pRequest->set_objecttype(objectType);
+	pRequest->set_tooldependecytype(ToolDependencyProto);
+	
 	m_dependencyList.clear();
-	SvOi::ToolDependencyEnum ToolDependency = (DeleteConfirm == m_DialogType) ? SvOi::ToolDependencyEnum::Client : SvOi::ToolDependencyEnum::ClientAndSupplier;
-
-	SvOi::getToolDependency(std::back_inserter(m_dependencyList), rIdsOfObjectsDependedOn, objectType, ToolDependency);
+	HRESULT hr = SvCmd::InspectionCommands(0, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getdependencyresponse())
+	{
+		m_dependencyResponse = responseCmd.getdependencyresponse();
+	}
 }
 
 void SVShowDependentsDialog::addColumnHeadings()
@@ -254,14 +233,28 @@ void SVShowDependentsDialog::addItems()
 {
 	int index = 0;
 	CListCtrl& rCtrl = m_ListCtrl;
-	std::for_each(m_dependencyList.begin(), m_dependencyList.end(), [&index, &rCtrl](const SvDef::StringPair& rel)->void
+	
+	if (false == m_dependencyList.empty())
 	{
-		//! First item is supplier second client
-		rCtrl.InsertItem(index, rel.second.c_str());
-		rCtrl.SetItemText(index, 1, rel.first.c_str());
-		++index;
+		std::for_each(m_dependencyList.begin(), m_dependencyList.end(), [&index, &rCtrl](const SvDef::StringPair& rel)->void
+		{
+			rCtrl.InsertItem(index, rel.second.c_str());
+			rCtrl.SetItemText(index, 1, rel.first.c_str());
+			++index;
+		}
+		);
 	}
-	);
+
+	if (0 < m_dependencyResponse.dependencypair_size())
+	{
+		for (SvPb::DependencyPair dependencyPair : m_dependencyResponse.dependencypair())
+		{
+			rCtrl.InsertItem(index, dependencyPair.client().name().c_str());
+			rCtrl.SetItemText(index, 1, dependencyPair.supplier().name().c_str());
+			++index;
+		}
+	}
+	
 }
 
 void SVShowDependentsDialog::setColumnWidths()

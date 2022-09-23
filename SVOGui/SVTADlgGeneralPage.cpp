@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgGeneralPage.h"
-#include "ObjectInterfaces\NameValueVector.h"
+#include "Definitions\NameValueVector.h"
 #include "SVShowDependentsDialog.h"
 #include <numeric>
 #include "CreateInputResultDlg.h"
@@ -106,7 +106,7 @@ namespace SvOg
 	
 	void SVTADlgGeneralPage::SetupDrawFlagComboBox()
 	{
-		const SvOi::NameValueVector& rDrawCriteria = m_values.GetEnumTypes(SvPb::ConditionalToolDrawFlagEId);
+		const SvDef::NameValueVector& rDrawCriteria = m_values.GetEnumTypes(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetEnumTypes(rDrawCriteria);
 		long CurrentSelection = m_values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
@@ -354,7 +354,7 @@ namespace SvOg
 	{
 		std::set<uint32_t> DependencySet;
 		DependencySet.insert(m_TaskObjectID);
-		SVShowDependentsDialog Dlg( DependencySet, SvPb::SVToolObjectType, nullptr, SVShowDependentsDialog::Show );
+		SVShowDependentsDialog Dlg( DependencySet, SvPb::SVToolObjectType, nullptr, SVShowDependentsDialog::Show);
 		Dlg.DoModal();
 	}
 

@@ -158,7 +158,6 @@
     <ClCompile Include="ArchiveExtractCallback.cpp" />
     <ClCompile Include="ArchiveUpdateCallback.cpp" />
     <ClCompile Include="AuditFiles.cpp" />
-    <ClCompile Include="BitmapHelper.cpp" />
     <ClCompile Include="DirectoryUtilities.cpp" />
     <ClCompile Include="FileHelper.cpp" />
     <ClCompile Include="GlobalConstantData.cpp" />
@@ -190,7 +189,6 @@
     <ClInclude Include="ArchiveExtractCallback.h" />
     <ClInclude Include="ArchiveUpdateCallback.h" />
     <ClInclude Include="AuditFiles.h" />
-    <ClInclude Include="BitmapHelper.h" />
     <ClInclude Include="DirectoryUtilities.h" />
     <ClInclude Include="FileHelper.h" />
     <ClInclude Include="GlobalConstantData.h" />

@@ -9,16 +9,14 @@
 #pragma once
 
 #pragma region Includes
+#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
-namespace SvUl
-{
-
-	//************************************
-	/// Function to create a DIB from an image buffer
-	/// \param pString, rString or rVariant [in] The source object
-	/// \returns std::string The created object.
-	//************************************
-	HBITMAP CreateDIBitmap(const BITMAPINFO& rDIBInfo, void* pDIBData);
-} // namespace SvUl
+//************************************
+/// Function to create a DIB from an image buffer
+/// \param pString, rString or rVariant [in] The source object
+/// \returns std::string The created object.
+//************************************
+HBITMAP CreateDIBitmap(const BITMAPINFO& rDIBInfo, void* pDIBData);
+HBITMAP convertToBitmap(const SvOi::SVImageBufferHandlePtr imageData);
 

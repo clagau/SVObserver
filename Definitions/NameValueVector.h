@@ -7,12 +7,9 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <utility>
-
 #pragma endregion Includes
 
-namespace SvOi
+namespace SvDef
 {
 	typedef std::pair<std::string, long> NameValuePair;
 	typedef std::vector<NameValuePair> NameValueVector;

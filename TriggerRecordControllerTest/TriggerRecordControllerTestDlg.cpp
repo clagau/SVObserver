@@ -13,6 +13,7 @@
 #include "DeactivedTool.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVStatusLibrary/MessageContainer.h"
+#include "SVHBitmapUtilitiesLibrary/BitmapHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -421,7 +422,7 @@ namespace SvTrcT
 
 			if (nullptr != image)
 			{
-				m_dialogImage.setImage(image->getHandle());
+				m_dialogImage.setImage(convertToBitmap(image->getHandle()));
 				m_dialogImage.Refresh();
 			}
 			else

@@ -82,12 +82,12 @@ namespace SvOg
 
 	void SVFillBlobDlg::FillCombos()
 	{
-		const SvOi::NameValueVector& rBlobFillTypeList = m_rValues.GetEnumTypes(SvPb::BlobFillTypeEId);
+		const SvDef::NameValueVector& rBlobFillTypeList = m_rValues.GetEnumTypes(SvPb::BlobFillTypeEId);
 		m_ctlBlobFillType.SetEnumTypes(rBlobFillTypeList);
 		long CurrentSelection = m_rValues.Get<long>(SvPb::BlobFillTypeEId);
 		m_ctlBlobFillType.SetCurSelItemData(CurrentSelection);
 
-		const SvOi::NameValueVector& rBlobFillColorList = m_rValues.GetEnumTypes(SvPb::BlobFillColorEId);
+		const SvDef::NameValueVector& rBlobFillColorList = m_rValues.GetEnumTypes(SvPb::BlobFillColorEId);
 		m_ctlBlobFillColor.SetEnumTypes(rBlobFillColorList);
 		CurrentSelection = m_rValues.Get<long>(SvPb::BlobFillColorEId);
 		m_ctlBlobFillColor.SetCurSelItemData(CurrentSelection);

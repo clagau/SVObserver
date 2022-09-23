@@ -86,7 +86,7 @@ namespace SvOg
 		/// \param point [in] Mouse position
 		void showContextMenu(CPoint point);
 
-		SvOi::NameValuePair getType(const std::string& rTypeName);
+		SvDef::NameValuePair getType(const std::string& rTypeName);
 
 		void loadDataList();
 

@@ -18,7 +18,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-const SvOi::NameValueVector cOrientationEnums{ {_T("Horizontal"), 0}, {_T("Vertical"), 90}};
+const SvDef::NameValueVector cOrientationEnums{ {_T("Horizontal"), 0}, {_T("Vertical"), 90}};
 #pragma endregion Declarations
 
 namespace SvTo

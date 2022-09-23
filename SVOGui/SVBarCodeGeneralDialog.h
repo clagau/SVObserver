@@ -49,7 +49,7 @@ namespace SvOg
 		double GetBarCodeStringSize();
 
 		void setBarCodeTypeInfos(const SvPb::GetBarCodeTypeInfosResponse& barCodeTypeInfos) { m_barCodeTypeInfos = barCodeTypeInfos; };
-		void SetBarcodeStringFormat(SvOi::NameValueVector&& rStringFormatList, long stringFormatPos);
+		void SetBarcodeStringFormat(SvDef::NameValueVector&& rStringFormatList, long stringFormatPos);
 		CString GetBarcodeStringFormat();
 
 		void SetBarcodeThresholdType(long thresholdType);
@@ -127,7 +127,7 @@ namespace SvOg
 		SvPb::GetBarCodeTypeInfosResponse m_barCodeTypeInfos;
 		long m_lInitialBarCodeType;
 		SvMc::SVEnumerateCombo m_StringFormatCombo;
-		SvOi::NameValueVector m_stringFormatList;
+		SvDef::NameValueVector m_stringFormatList;
 		long m_stringFormatPos = -1;
 		CString m_StringFormat;
 

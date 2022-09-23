@@ -149,7 +149,7 @@ void DrawTextTask::Initialize()
 	BuildEmbeddedObjectList();
 }
 
-SvOi::NameValueVector g_SizeEnumList = {{_T("Small"), 1}, {_T("Medium"), 2}, {_T("Large"), 3}};
+SvDef::NameValueVector g_SizeEnumList = {{_T("Small"), 1}, {_T("Medium"), 2}, {_T("Large"), 3}};
 void DrawTextTask::BuildEmbeddedObjectList()
 {
 	RegisterEmbeddedObject(&m_IsBGTransparentObject, SvPb::IsBackgroundTransparentEId, IDS_OBJECTNAME_IS_BACKGROUND_TRANSPARENT, false, SvOi::SVResetItemOwner);

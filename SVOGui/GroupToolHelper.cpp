@@ -8,7 +8,6 @@
 #include "stdafx.h"
 #include "GroupToolHelper.h"
 #include "DataController.h"
-#include "ObjectInterfaces/IDependencyManager.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
@@ -17,7 +16,27 @@ namespace
 SvDef::StringPairVector getDependency(uint32_t valueId)
 {
 	SvDef::StringPairVector dependencyList;
-	SvOi::getObjectDependency(std::back_inserter(dependencyList), {valueId}, SvOi::ToolDependencyEnum::Client);
+
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getdependencyrequest();
+	auto* idSet = pRequest->mutable_idsofobjectsdependedon();
+
+	idSet->Add(valueId);
+	pRequest->set_objecttype(SvPb::SVToolObjectType);
+	pRequest->set_tooldependecytype(SvPb::ToolDependencyEnum::Client);
+	pRequest->set_alldependecies(true);
+	pRequest->set_dependecytype(SvPb::DependecyTypeEnum::Object);
+
+	HRESULT hr = SvCmd::InspectionCommands(0, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getdependencyresponse())
+	{
+		SvPb::GetDependencyResponse dependencyResponse = responseCmd.getdependencyresponse();
+
+		std::ranges::transform(dependencyResponse.dependencypair(), std::back_inserter(dependencyList),
+		[](SvPb::DependencyPair dependencyPair) {return std::pair<std::string, std::string>{dependencyPair.supplier().name(), dependencyPair.client().name()}; });
+	}
+
 	return dependencyList;
 }
 

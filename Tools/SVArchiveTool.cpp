@@ -252,7 +252,7 @@ void SVArchiveTool::initializeArchiveTool()
 
 	m_evoArchiveMethod.SetDefaultValue(SVArchiveAsynchronous, true);
 
-	SvOi::NameValueVector EnumVector
+	SvDef::NameValueVector EnumVector
 	{
 		{ _T("Synchronous"), SVArchiveSynchronous },
 		{ _T("Change Mode"), SVArchiveGoOffline },

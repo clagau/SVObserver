@@ -69,6 +69,19 @@ message NameNamePair
 	string nameTo = 2;
 } 
 
+message NameObjectIdToolId
+{
+	string name = 1;
+	uint32 objectId = 2;
+	uint32 toolObjectId =3;
+} 
+message DependencyPair
+{
+	NameObjectIdToolId supplier = 1;
+	NameObjectIdToolId client = 2;
+	bool sourceIsClient = 3;
+}
+
 message MinMax
 {
 	Variant minValue =1;
@@ -1115,6 +1128,21 @@ message CheckParameterNamesResponse
 	int32 errorRow = 1;
 }
 
+message GetDependencyRequest
+{
+	repeated uint32 idsOfObjectsDependedOn = 1;
+	SVObjectTypeEnum objectType = 2;
+	ToolDependencyEnum toolDependecyType = 3;
+	bool allDependecies = 4;
+	string FileName = 5;
+	DependecyTypeEnum dependecyType = 6;
+}
+
+message GetDependencyResponse
+{	
+	repeated DependencyPair dependencyPair = 1;
+}
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -1195,6 +1223,7 @@ message InspectionCmdRequest
 		SetObjectCommentRequest setObjectCommentRequest = 74;
 		AddParameterAndUseItRequest addParameterAndUseItRequest = 75;
 		CheckParameterNamesRequest checkParameterNamesRequest = 76;
+		GetDependencyRequest getDependencyRequest = 77;
 		}
 }
 
@@ -1259,5 +1288,6 @@ message InspectionCmdResponse
 		GetInputDataResponse getInputDataResponse = 54;
 		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 55;
 		CheckParameterNamesResponse checkParameterNamesResponse = 56;
+		GetDependencyResponse getDependencyResponse = 57;
 		}
 }

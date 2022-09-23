@@ -25,13 +25,13 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-DrawTask::DrawTask(LPCTSTR ObjectName, SvOi::NameValueVector drawAreaList, long defaultDrawArea)
+DrawTask::DrawTask(LPCTSTR ObjectName, SvDef::NameValueVector drawAreaList, long defaultDrawArea)
 	: SVTaskObjectClass(ObjectName)
 {
 	initialize(drawAreaList, defaultDrawArea);
 }
 
-DrawTask::DrawTask(SVObjectClass* POwner, int StringResourceID, SvOi::NameValueVector drawAreaList, long defaultDrawArea)
+DrawTask::DrawTask(SVObjectClass* POwner, int StringResourceID, SvDef::NameValueVector drawAreaList, long defaultDrawArea)
 	: SVTaskObjectClass(POwner, StringResourceID)
 {
 	initialize(drawAreaList, defaultDrawArea);
@@ -114,13 +114,13 @@ bool DrawTask::isColorImage() const
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-void DrawTask::initialize(const SvOi::NameValueVector& rDrawAreaList, long defaultDrawArea)
+void DrawTask::initialize(const SvDef::NameValueVector& rDrawAreaList, long defaultDrawArea)
 {
 	MgraAlloc(M_DEFAULT_HOST, &m_graphicContextId);
 	buildEmbeddedObjectList(rDrawAreaList, defaultDrawArea);
 }
 
-void DrawTask::buildEmbeddedObjectList(const SvOi::NameValueVector& rDrawAreaList, long defaultDrawArea)
+void DrawTask::buildEmbeddedObjectList(const SvDef::NameValueVector& rDrawAreaList, long defaultDrawArea)
 {
 	RegisterEmbeddedObject(&m_Color1Object, SvPb::Color1EId, IDS_COLOR1, false, SvOi::SVResetItemOwner);
 	m_Color1Object.SetDefaultValue(0, false);

@@ -77,7 +77,7 @@ namespace SvOg
 
 		bool bRotate = m_values.Get<bool>(SvPb::LinearToolUseRotationEId);
 
-		const SvOi::NameValueVector& rProfileOrientationList = m_values.GetEnumTypes(SvPb::ProfileOrientationEId);
+		const SvDef::NameValueVector& rProfileOrientationList = m_values.GetEnumTypes(SvPb::ProfileOrientationEId);
 		m_ctlProfileOrientation.SetEnumTypes(rProfileOrientationList);
 
 		m_ctlUseRotation.SetCheck(bRotate ? BST_CHECKED : BST_UNCHECKED);

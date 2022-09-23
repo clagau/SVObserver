@@ -75,5 +75,8 @@
     <ClInclude Include="TriggerType.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="NameValueVector.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

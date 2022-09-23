@@ -55,6 +55,7 @@
 #include <limits>
 #include <map>				//Used by static library
 #include <math.h>
+#include <memory>
 #include <set>
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library

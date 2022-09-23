@@ -37,7 +37,7 @@ namespace SvMc
 	{
 	}
 
-	bool SVEnumerateCombo::SetEnumTypes(const SvOi::NameValueVector& rEnumList)
+	bool SVEnumerateCombo::SetEnumTypes(const SvDef::NameValueVector& rEnumList)
 	{
 		bool Result{ true };
 	

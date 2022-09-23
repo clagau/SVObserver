@@ -27,9 +27,6 @@
     <ClInclude Include="ICustom2Filter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="IDependencyManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="IEnumerateValueObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -88,9 +85,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="IValueObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NameValueVector.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectInfo.h">

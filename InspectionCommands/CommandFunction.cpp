@@ -48,6 +48,7 @@
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVObjectLibrary\DependencyManager.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "CommandInternalHelper.h"
 #include "ObjectSelectorFilter.h"
@@ -2202,4 +2203,34 @@ SvPb::InspectionCmdResponse checkParameterNames(SvPb::CheckParameterNamesRequest
 	}
 	return cmdResponse;
 }
+
+SvPb::InspectionCmdResponse getDependencyRequest(SvPb::GetDependencyRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+	std::set<uint32_t> setOfIdObjectDepends;
+	std::transform(request.idsofobjectsdependedon().begin(), request.idsofobjectsdependedon().end(),
+		std::inserter(setOfIdObjectDepends, setOfIdObjectDepends.begin()), [](google::protobuf::uint32 id) -> uint32_t {return id;});
+	LPCTSTR filename = (request.filename().empty()) ? nullptr : request.filename().c_str();
+	auto* pResponse = cmdResponse.mutable_getdependencyresponse();
+	if (nullptr != pResponse)
+	{	
+		SvOl::DependencyManager::Instance().updateVertexIndex();
+		*pResponse = SvOl::DependencyManager::Instance().getDependencyList(setOfIdObjectDepends, request.objecttype(), request.tooldependecytype(), request.alldependecies(), filename);
+	}
+
+	
+	if (request.dependecytype() == SvPb::DependecyTypeEnum::Tool)
+	{
+		SvOl::DependencyManager::Instance().updateVertexIndex();
+		*pResponse = SvOl::DependencyManager::Instance().getDependencyList(setOfIdObjectDepends, request.objecttype(), request.tooldependecytype(), request.alldependecies(), filename);
+	}
+	else if (request.dependecytype() == SvPb::DependecyTypeEnum::Object)
+	{
+		SvOl::DependencyManager::Instance().updateVertexIndex();
+		*pResponse = SvOl::DependencyManager::Instance().getObjectDependency(setOfIdObjectDepends, request.tooldependecytype());
+	}
+	
+	return cmdResponse;
+}
+
 } //namespace SvCmd

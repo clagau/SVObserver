@@ -89,6 +89,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BitmapHelper.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -99,6 +100,7 @@
     <ClCompile Include="SVImageFileLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BitmapHelper.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVHBitmapUtilities.h" />
     <ClInclude Include="SVImageDefinitionStruct.h" />

@@ -91,7 +91,6 @@
     <ClInclude Include="IBlobAnalyzer2.h" />
     <ClInclude Include="ICommand.h" />
     <ClInclude Include="ICustom2Filter.h" />
-    <ClInclude Include="IDependencyManager.h" />
     <ClInclude Include="IEnumerateValueObject.h" />
     <ClInclude Include="IEquation.h" />
     <ClInclude Include="IExternalToolTask.h" />
@@ -126,7 +125,6 @@
     <ClInclude Include="ITriggerRecordR.h" />
     <ClInclude Include="ITriggerRecordRW.h" />
     <ClInclude Include="IValueObject.h" />
-    <ClInclude Include="NameValueVector.h" />
     <ClInclude Include="ObjectInfo.h" />
     <ClInclude Include="SVImageBufferHandleInterface.h" />
   </ItemGroup>

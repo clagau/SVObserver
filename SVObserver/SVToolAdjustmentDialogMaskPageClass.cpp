@@ -15,7 +15,7 @@
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "SVMaskShapeEditorDlg.h"
 #include "Definitions/StringTypeDef.h"
-#include "ObjectInterfaces/NameValueVector.h"
+#include "Definitions/NameValueVector.h"
 #include "SVMFCControls/SVMaskEditor.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -97,7 +97,7 @@ SVToolAdjustmentDialogMaskPageClass::~SVToolAdjustmentDialogMaskPageClass()
 
 void SVToolAdjustmentDialogMaskPageClass::SetupMaskOperatorComboBox()
 {
-	const SvOi::NameValueVector& rMaskOperators = m_Values.GetEnumTypes(SvPb::MaskOperatorEId);
+	const SvDef::NameValueVector& rMaskOperators = m_Values.GetEnumTypes(SvPb::MaskOperatorEId);
 	m_cbMaskOperator.SetEnumTypes(rMaskOperators);
 	long CurrentSelection = m_Values.Get<long>(SvPb::MaskOperatorEId);
 	m_cbMaskOperator.SetCurSelItemData(CurrentSelection);
@@ -105,7 +105,7 @@ void SVToolAdjustmentDialogMaskPageClass::SetupMaskOperatorComboBox()
 
 void SVToolAdjustmentDialogMaskPageClass::SetupFillAreaComboBox()
 {
-	const SvOi::NameValueVector& rFillArea = m_Values.GetEnumTypes(SvPb::MaskFillAreaEId);
+	const SvDef::NameValueVector& rFillArea = m_Values.GetEnumTypes(SvPb::MaskFillAreaEId);
 	m_cbFillOptions.SetEnumTypes(rFillArea);
 	long CurrentSelection = m_Values.Get<long>(SvPb::MaskFillAreaEId);
 	m_cbFillOptions.SetCurSelItemData(CurrentSelection);
@@ -113,7 +113,7 @@ void SVToolAdjustmentDialogMaskPageClass::SetupFillAreaComboBox()
 
 void SVToolAdjustmentDialogMaskPageClass::SetupDrawCriteriaCombo()
 {
-	const SvOi::NameValueVector& rDrawCriteria = m_Values.GetEnumTypes(SvPb::DrawCriteriaEId);
+	const SvDef::NameValueVector& rDrawCriteria = m_Values.GetEnumTypes(SvPb::DrawCriteriaEId);
 	m_DrawCriteriaCombo.SetEnumTypes(rDrawCriteria);
 	long CurrentSelection = m_Values.Get<long>(SvPb::DrawCriteriaEId);
 	m_DrawCriteriaCombo.SetCurSelItemData(CurrentSelection);

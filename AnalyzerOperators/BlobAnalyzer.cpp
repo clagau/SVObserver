@@ -233,13 +233,13 @@ BlobAnalyzer::~BlobAnalyzer()
 }
 
 #pragma region IBlobAnalyzer
-SvOi::NameValueVector BlobAnalyzer::getFeatureList(bool isSelected) const
+SvDef::NameValueVector BlobAnalyzer::getFeatureList(bool isSelected) const
 {
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
 	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
-	SvOi::NameValueVector list;
+	SvDef::NameValueVector list;
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
 
@@ -252,7 +252,7 @@ SvOi::NameValueVector BlobAnalyzer::getFeatureList(bool isSelected) const
 			{
 				continue;
 			}
-			list.push_back(SvOi::NameValuePair{ m_Value[i].GetName(), i });
+			list.push_back(SvDef::NameValuePair{ m_Value[i].GetName(), i });
 		}
 	}
 	return list;

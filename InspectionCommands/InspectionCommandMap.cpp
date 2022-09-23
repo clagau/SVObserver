@@ -765,6 +765,15 @@ std::make_tuple(
 )
 },
 
+{SvPb::InspectionCmdRequest::kGetDependencyRequest,
+std::make_tuple(
+	[] {return ThreadPref::async; },
+	[] {return std::chrono::seconds {120}; },
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getDependencyRequest(rRequest.getdependencyrequest()); },
+	[](){return  (SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION); }
+)
+},
+
 {SvPb::InspectionCmdRequest::kSetObjectCommentRequest,
 std::make_tuple(
 [] {return ThreadPref::inspection; },

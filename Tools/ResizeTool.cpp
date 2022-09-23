@@ -54,7 +54,7 @@ void ResizeTool::LocalInitialize()
 
 	BuildEmbeddedObjectList();
 
-	SvOi::NameValueVector interpolationEnumVector;
+	SvDef::NameValueVector interpolationEnumVector;
 
 	std::copy(c_interpolationNamesAndModes.begin(), c_interpolationNamesAndModes.end(),
 		std::back_inserter(interpolationEnumVector));
@@ -62,7 +62,7 @@ void ResizeTool::LocalInitialize()
 	m_ResizeInterpolationMode.SetEnumTypes(interpolationEnumVector);
 	m_ResizeInterpolationMode.SetDefaultValue(InterpolationMode::Default, true);
 
-	SvOi::NameValueVector overscanEnumVector;
+	SvDef::NameValueVector overscanEnumVector;
 
 	std::copy(c_overscanNamesAndModes.begin(), c_overscanNamesAndModes.end(),
 		std::back_inserter(overscanEnumVector));

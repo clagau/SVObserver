@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include "NameValueVector.h"
+#include "Definitions/NameValueVector.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -16,6 +16,6 @@ namespace SvOi
 	{
 	public:
 		virtual ~IEnumerateValueObject() {}
-		virtual const NameValueVector& GetEnumVector() const = 0;
+		virtual const SvDef::NameValueVector& GetEnumVector() const = 0;
 	};
 } //namespace SvOi

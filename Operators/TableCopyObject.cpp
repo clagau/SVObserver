@@ -10,10 +10,11 @@
 #include "stdafx.h"
 #include "TableCopyObject.h"
 #include "Tools/SVTool.h"
-#include "ObjectInterfaces/IDependencyManager.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "InspectionCommands/CommandFunction.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -421,14 +422,28 @@ bool TableCopyObject::ResetNewColumns(int valueListPos, int arraySize, SvStl::Me
 
 void TableCopyObject::sendChangedEmbeddedIDToUser(SvPb::EmbeddedIdEnum oldEmbeddedId, SvPb::EmbeddedIdEnum newEmbeddedId)
 {
-	std::set<uint32_t> dependencyList;
-	SvOi::getToolDependency(std::inserter(dependencyList, dependencyList.begin()), {getObjectId()});
-	for (auto id : dependencyList)
+	SvPb::InspectionCmdResponse responseCmd;
+	SvPb::GetDependencyRequest dependencyRequest;
+	dependencyRequest.mutable_idsofobjectsdependedon();
+	auto* idSet = dependencyRequest.mutable_idsofobjectsdependedon();
+
+	idSet->Add({getObjectId()});
+	dependencyRequest.set_objecttype(SvPb::SVToolObjectType);
+	dependencyRequest.set_tooldependecytype(SvPb::ToolDependencyEnum::ClientAndSupplier);
+	dependencyRequest.set_alldependecies(true);
+
+	responseCmd = SvCmd::getDependencyRequest(dependencyRequest);
+
+	if (responseCmd.has_getdependencyresponse())
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(SvOi::getObject(id));
-		if(nullptr != pTool)
+		for (SvPb::DependencyPair dependencyPair : responseCmd.getdependencyresponse().dependencypair())
 		{
-			pTool->OnEmbeddedIDChanged(this, oldEmbeddedId, newEmbeddedId);
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(SvOi::getObject(dependencyPair.client().toolobjectid()));
+			if (nullptr != pTool)
+			{
+				pTool->OnEmbeddedIDChanged(this, oldEmbeddedId, newEmbeddedId);
+			}
+			
 		}
 	}
 }

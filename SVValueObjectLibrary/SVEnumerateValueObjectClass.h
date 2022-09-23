@@ -40,7 +40,7 @@ public:
 	bool GetEnumeratorName( long lValue, std::string& rEnumerator ) const;
 	bool GetEnumTypes( std::string& rEnumList ) const;
 
-	bool SetEnumTypes( const SvOi::NameValueVector& rVec );
+	bool SetEnumTypes( const SvDef::NameValueVector& rVec );
 	bool SetEnumTypes( LPCTSTR szEnumList );
 	bool SetEnumTypes( int StringResourceID );
 
@@ -49,7 +49,7 @@ public:
 	virtual HRESULT SetDefaultValue( const long& rValue, bool bResetAll = true ) override { return __super::SetDefaultValue( rValue, bResetAll ); };
 
 #pragma region IEnumerateValueObject
-	virtual const SvOi::NameValueVector& GetEnumVector() const override { return m_enumVector; };
+	virtual const SvDef::NameValueVector& GetEnumVector() const override { return m_enumVector; };
 #pragma endregion IEnumerateValueObject
 
 	//IMPLEMENT_VALUE_OBJECT_GET_SET()
@@ -77,7 +77,7 @@ private:
 	
 #pragma region Member Variables
 private:
-	SvOi::NameValueVector m_enumVector;
+	SvDef::NameValueVector m_enumVector;
 #pragma endregion Member Variables
 };
 
