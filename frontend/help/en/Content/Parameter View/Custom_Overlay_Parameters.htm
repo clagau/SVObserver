@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns:MadCap="http://www.madcapsoftware.com/Schemas/MadCap.xsd" lang="en-us" xml:lang="en-us" class="topic" data-mc-search-type="Stem" data-mc-help-system-file-name="SVOWebApp_WebHelp.xml" data-mc-path-to-help-system="../../" data-mc-target-type="WebHelp2" data-mc-runtime-file-type="Topic" data-mc-preload-images="false" data-mc-in-preview-mode="false" data-mc-toc-path="[%=System.LinkedTitle%]">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>Custom Overlay Parameters</title>
+        <link href="../../Skins/Default/Stylesheets/Slideshow.css" rel="stylesheet" />
+        <link href="../../Skins/Default/Stylesheets/TextEffects.css" rel="stylesheet" />
+        <link href="../../Skins/Default/Stylesheets/Topic.css" rel="stylesheet" />
+        <link href="../../Skins/Default/Stylesheets/Components/Styles.css" rel="stylesheet" />
+        <link href="../../Skins/Default/Stylesheets/Components/Tablet.css" rel="stylesheet" />
+        <link href="../../Skins/Default/Stylesheets/Components/Mobile.css" rel="stylesheet" />
+        <link href="../Resources/Stylesheets/Styles.css" rel="stylesheet" />
+        <link href="../Resources/TableStyles/Note.css" rel="stylesheet" />
+        <link href="../Resources/TableStyles/Instruction.css" rel="stylesheet" />
+        <link href="../Resources/TableStyles/Basic.css" rel="stylesheet" />
+        <script src="../../Resources/Scripts/jquery.min.js">
+        </script>
+        <script src="../../Resources/Scripts/require.min.js" defer="defer">
+        </script>
+        <script src="../../Resources/Scripts/require.config.js" defer="defer">
+        </script>
+        <script src="../../Resources/Scripts/foundation.min.js" defer="defer">
+        </script>
+        <script src="../../Resources/Scripts/plugins.min.js" defer="defer">
+        </script>
+        <script src="../../Resources/Scripts/MadCapAll.js" defer="defer">
+        </script>
+    </head>
+    <body>
+        <div class="nocontent">
+            <div class="MCBreadcrumbsBox_0 breadcrumbs" role="navigation" aria-label="Breadcrumbs" data-mc-breadcrumbs-divider=" &gt; " data-mc-breadcrumbs-count="3" data-mc-toc="True"><span class="MCBreadcrumbsPrefix">You are here: </span>
+            </div>
+        </div>
+        <div role="main" id="mc-main-content">
+            <h1><a name="kanchor43"></a>Custom Overlay Parameters</h1>
+            <p><a class="MCPopupThumbnailLink MCPopupThumbnailHover" href="../Resources/Images/ParamView.png"><img class="MCPopupThumbnail img" data-mc-width="653" data-mc-height="491" src="../Resources/Images/ParamView_thumb_216_0.png" style="mc-thumbnail-max-width: 216px;mc-thumbnail-max-height: auto;mc-thumbnail: hover;" tabindex="" /></a>
+            </p>
+            <p>
+                <img src="../Resources/Images/Hand.png" /> Hover over image to enlarge</p>
+            <hr />
+            <p>You can create and configure custom overlays in a parameter view. The <a href="#TargetImage">target image</a> and the overlay are featured in an image view. You can apply multiple custom overlays to one instance of an image view.</p>
+            <p style="font-size: 10pt;"><span class="boolean">You can find more details on custom overlays and their difference to inspection overlays in <a href="../Image View/Overlays.htm">Overlays</a>.</span>
+            </p>
+            <p>The parameter view for custom overlays includes the following specific components:</p>
+            <ol>
+                <li value="1"><a href="#Overlay_List_in_Parameter_View">Overlay list</a>
+                </li>
+                <li value="2"><a href="#Overlay_Parameters">Overlay parameters</a>
+                </li>
+                <li value="3"><a href="#Parameter_View_Controls">Parameter controls</a>
+                </li>
+            </ol>
+            <p class="Zwischenüberschrift"><a name="Overlay_List_in_Parameter_View"></a><span style="font-size: 18pt; font-weight: bold;">Overlay List </span>
+            </p>
+            <p>This list indicates all custom overlays for the target image. Inspection overlays are not listed in the overlay list. You have to add custom overlays by using the <a href="#Parameter_View_Controls">Parameter Controls</a> at the bottom of the view.</p>
+            <p>
+                <img src="../Resources/Images/ParamView_overlay_list.png" style="mc-thumbnail-max-height: auto;mc-thumbnail-max-width: 216px;" />
+            </p>
+            <table style="width: 100%;mc-table-style: url('../Resources/TableStyles/Note.css');margin-left: 0;margin-right: auto;" class="TableStyle-Note" cellspacing="0">
+                <tbody>
+                    <tr class="TableStyle-Note-Body-Body1">
+                        <td class="TableStyle-Note-BodyA--Body1">
+                            <img src="../Resources/Images/sticky_notes_38x38.png" /><b>Note</b>
+                            <p><i>There might be no entry in the overlay list until you have created a custom overlay.</i>
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Hide custom overlays in image view</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>You have two options to hide custom overlays in the image:</p>
+                    <p><u>Hide all custom overlays</u>
+                    </p>
+                    <p>
+                        <p>→ Uncheck the checkbox next to the heading <b>Overlays</b>.</p>
+                        <p>→   Custom overlays are no longer displayed with the image.</p>
+                    </p>
+                    <p><b style="text-decoration: underline; font-weight: normal;">Hide individual custom overlays</b>
+                    </p>
+                    <p style="font-style: normal;">
+                        <p>→ Uncheck the checkbox next to the custom overlay you want to hide <img src="../Resources/Images/Image_view_ov_list_uncheck.png" />.</p>
+                        <p>→ The respective custom overlay is no longer displayed with the image.</p>
+                    </p>
+                </div>
+            </div>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Show custom overlays in image view</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>You have two options to display custom overlays in the featured image:</p>
+                    <p><u>Show all custom overlays</u>
+                    </p>
+                    <p>
+                        <p>→ Activate the checkbox next to the heading <b>Overlays</b>.</p>
+                        <p>→   Custom overlays are displayed in the image.</p>
+                    </p>
+                    <p><u>Show individual custom overlays</u>
+                    </p>
+                    <p style="font-style: normal;">
+                        <p>→   Check the checkbox next to the custom overlay you want to show <img src="../Resources/Images/Image_view_ov_list_check.png" />.</p>
+                        <p>→   The respective custom overlay is displayed in the image.</p>
+                    </p>
+                </div>
+            </div>
+            <table style="width: 100%;mc-table-style: url('../Resources/TableStyles/Note.css');margin-left: 0;margin-right: auto;" class="TableStyle-Note" cellspacing="0">
+                <tbody>
+                    <tr class="TableStyle-Note-Body-Body1">
+                        <td class="TableStyle-Note-BodyA--Body1">
+                            <img src="../Resources/Images/sticky_notes_38x38.png" /><b>Note</b>
+                            <p><i>The overlay list indicates only the custom overlays that refer to the currently selected image view of the same inspection. This means that the custom overlays shown in the list change when you switch between the image views.</i>
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="Zwischenüberschrift"><a name="Overlay_Parameters"></a><span style="font-size: 18pt; font-weight: bold;">Overlay parameters</span>
+            </p>
+            <p>There are various input fields to add parameters of the custom overlay. You can change the parameters for the selected custom overlay.</p>
+            <p>Certain fields allow to enter constant values. These values stay the same when in run mode.</p>
+            <p>You can select variable values in certain fields that have a small "x" at the end. The values of these variables are updated when in run mode depending on the SVObserver configuration.</p>
+            <p>For more information about how to edit parameters, see <a href="#Edit_parameters_custom_overlay">Edit parameters for a custom overlay</a>.</p>
+            <p>The following overlay parameters are available:</p>
+            <table class="TableStyle-Basic" style="mc-table-style: url('../Resources/TableStyles/Basic.css');caption-side: top;margin-left: 0;margin-right: auto;" cellspacing="0">
+                <col class="TableStyle-Basic-Column-Column1" />
+                <col class="TableStyle-Basic-Column-Column1" />
+                <tbody>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1"><b>Parameter field</b>
+                        </td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1"><b>Description</b>
+                        </td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Label</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Name of custom overlay</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">X</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">X coordinate value [px] of the shape (only numbers are allowed)</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">X Variable</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">
+                            <p>X variable as selected from the <a href="#Parameter_tree_view">parameters tree</a></p>
+                        </td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Offset Left</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Left position of X [px] relative to the left edge of the featured image (only numbers are allowed)</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Offset Left Variable</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Offset left variable as selected from the <a href="#Parameter_List"><a href="#Parameter_tree_view">parameters tree</a></a></td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Y</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Y coordinate value [px] of the shape (only numbers are allowed)</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Y Variable</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Y variable as selected from the <a href="#Parameter_tree_view">parameters tree</a></td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Offset Top</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Top position of Y [px] relative to the top edge of the featured image (only numbers are allowed)</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Offset Top Variable</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Offset top variable as selected from the <a href="#Parameter_List"><a href="#Parameter_tree_view">parameters tree</a></a></td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Width</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Width of the shape [px] (only numbers are allowed)</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Width Variable</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Width variable as selected from the <a href="#Parameter_List"><a href="#Parameter_tree_view">parameters tree</a></a></td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Height</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Height of the shape [px] (only numbers are allowed)</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Height Variable</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Height variable as selected from the <a href="#Parameter_List"><a href="#Parameter_tree_view">parameters tree</a></a></td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Color</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Hexadecimal color of the shape, e.g. #ebfc02</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">Color Variable</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Color variable as selected from the <a href="#Parameter_List"><a href="#Parameter_tree_view">parameters tree</a></a></td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyB-Column1-Body1"><span style="font-size: 14px;">Line Style</span>
+                        </td>
+                        <td class="TableStyle-Basic-BodyA-Column1-Body1">
+                            <p>Line style of the rectangle. The following line styles can be applied:</p>
+                            <ul>
+                                <li value="1">solid</li>
+                                <li value="2">dotted</li>
+                                <li value="3">dashed</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="font-weight: bold;text-decoration: underline;">Exceeding maximum allowed values</p>
+            <p>The maximum value for dimensions-related parameters (X, Y, Offset Left, Offset Top, Width and Height) is fixed to two times the image size.</p>
+            <p>If you enter a fixed value for one of these parameters, the value changes automatically to the maximum allowed value.</p>
+            <p>If the value for a variable exceeds the allowed maximum, you see in the notifications area a notification specifying the allowed range. If you expand the list of notifications, you see a counter that shows how often the value has already exceeded the maximum. The maximum allowed value is used to visualize the overlay.</p>
+            <p style="font-style: italic;">Example:</p>
+            <p>The image has a size of 100 px. The maximum value is 200 px. When the variable entered for X has a value of 250 px, the overlay is positioned at 200 px as it is the maximum value. You see a notification specifying that the value should be within a range of minus 200 to 200 px.</p>
+            <p class="Zwischenüberschrift"><a name="Parameter_View_Controls"></a><b style="font-size: 18pt;">Parameter Controls</b>&#160;</p>
+            <p class="MyStyle">
+                <img src="../Resources/Images/ParamView_controls_all.png" />
+            </p>
+            <p>The parameter view offers the following elements to control the parameters (from left to right):</p>
+            <table style="caption-side: top;mc-table-style: url('../Resources/TableStyles/Basic.css');margin-left: 0;margin-right: auto;" class="TableStyle-Basic" cellspacing="0">
+                <col class="TableStyle-Basic-Column-Column1" />
+                <col class="TableStyle-Basic-Column-Column1" />
+                <tbody>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1"><b>Element</b>
+                        </td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1"><b>Description</b>
+                        </td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
+                            <p>
+                                <img src="../Resources/Images/src_assets_icons_plus.svg" />
+                            </p>
+                        </td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Add custom overlay</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyB-Column1-Body1">
+                            <img src="../Resources/Images/src_assets_icons_delete-dustbin.svg" />
+                        </td>
+                        <td class="TableStyle-Basic-BodyA-Column1-Body1">
+                            <p>Delete custom overlay</p>
+                            <p><b>Note: </b>Clicking this button deletes the custom overlay that is currently selected. The custom overlay is no longer available for future use and the parameter set is permanently erased.</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="TableStyle_Instruction" style="mc-table-style: url('../Resources/TableStyles/Instruction.css');caption-side: top;width: 100%;" cellspacing="0">
+                <col style="width: 525px;" />
+                <tbody>
+                    <tr>
+                        <td class="TableStyle_Instruction_Body_0_0_RowEnd_ColEnd">
+                            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Add custom overlay</a></span>
+                                <div class="MCDropDownBody dropDownBody">
+                                    <p>You can create several overlays for a target image by adding them to the overlay list in the respective parameter view.
+</p>
+                                    <p>
+                                        <p>→ In the view menu, click on the button <b>Add overlay</b><img src="../Resources/Images/src_assets_icons_plus.svg" />.</p>
+                                        <p style="font-style: normal;">→ A new custom overlay is added to the overlay list.   </p>
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Edit parameters for a custom overlay</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p><a name="Edit_parameters_custom_overlay"></a>After you added a custom overlay, you can edit all parameters for this custom overlay. You can choose to enter constant or variable values.</p>
+                    <p>→ Click in the parameter field to enter or change a value.</p>
+                    <p>→ If the cursor is placed inside the field, you can enter a value manually. (Refer to <a href="#Overlay_Parameters">Overlay Parameters</a> for more information and character restrictions.)</p>
+                    <p>→ <a name="Parameter_tree_view"></a>If a selection tree opens in a pop-up window, navigate through the parameters tree to the parameter you want to select. Click in the box next to the desired parameter. (For more information about how to navigate through the selection tree, see <a href="../General structure/Selection Tree.htm">Selection Tree</a>)</p>
+                    <p>→ If a drop-down list opens, select the desired parameter by clicking on it.</p>
+                    <p>All changes are applied immediately on the custom overlay in the associated image view.</p>
+                    <p>The actual parameter value is not indicated in the parameter list. In some cases, it might be useful to view the value referring to the applied parameter. You have to create a view of the type <i>list</i> for the same inspection. You can find more information about how to display the parameter values under <a href="../List_view.htm#Show_values_of_selected_parameters">Show values of selected parameters</a> in <a href="../List_view.htm">List View</a>.</p>
+                </div>
+            </div>
+            <table style="width: 100%;mc-table-style: url('../Resources/TableStyles/Instruction.css');" class="TableStyle_Instruction" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <td class="TableStyle_Instruction_Body_0_0_RowEnd_ColEnd">
+                            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Delete custom overlay </a></span>
+                                <div class="MCDropDownBody dropDownBody">
+                                    <p>Besides the option of hiding a custom overlay in the image view, you can also delete a custom overlay.</p>
+                                    <p>
+                                        <p>→ In the overlay list, click on the custom overlay you want to delete.</p>
+                                        <p>→ In the parameters control, click on the button <b>Delete</b><img src="../Resources/Images/src_assets_icons_delete-dustbin.svg" />.</p>
+                                        <p>
+                                            <img src="../Resources/Images/sticky_notes_38x38.png" /><b>Note</b>
+                                        </p>
+                                        <p><i>Clicking this button deletes the custom overlay that is currently selected. The custom overlay is no longer available for future use and the parameter set is permanently erased.</i>
+                                        </p>
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="Zwischenüberschrift"><a name="TargetImage"></a><span style="font-size: 18pt; font-weight: bold;">Target Image</span>
+            </p>
+            <p>The dependency between the custom overlay parameters and the target image featured in an image view is visualized by a green frame around the target image view.</p>
+            <p><a class="MCPopupThumbnailLink MCPopupThumbnailHover" href="../Resources/Images/ParamView_ImageView.png"><img class="MCPopupThumbnail img" data-mc-width="642" data-mc-height="757" src="../Resources/Images/ParamView_ImageView_thumb_216_0.png" style="mc-thumbnail-max-width: 216px;mc-thumbnail-max-height: auto;mc-thumbnail: hover;" tabindex="" /></a>
+            </p>
+            <p>
+                <img src="../Resources/Images/Hand.png" /> Hover over image to enlarge</p>
+            <hr />
+            <p class="Zwischenüberschrift"><span style="font-size: 18pt; font-weight: bold;">Display custom overlay in image view</span>
+            </p>
+            <p>To view one or more custom overlays on an image as well as the overlay parameters, following views are required:</p>
+            <ol>
+                <li value="1">
+                    <p>One instance of <i>image view</i> that features the target image as well as the custom overlays</p>
+                </li>
+                <li value="2">
+                    <p>One instance of <i>parameter view</i> for the same inspection to edit the parameters for the custom overlay</p>
+                </li>
+            </ol>
+            <p>Both instances of <i>image view </i>and <i>parameter view</i> have to refer to the same inspection as indicated in the view title.</p>
+            <p>If you add a parameter view for a specific inspection and there is no image view for this inspection in the current view set, the following message appears: "Please select a source for this parameter view."</p>
+            <table style="width: 100%;">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Associate parameter view and image views</a></span>
+                                <div class="MCDropDownBody dropDownBody">
+                                    <p>You can establish the dependency between one instance of parameter view and several instances of image view referring to the same inspection by following these steps:</p>
+                                    <p>
+                                        <p>→ Add the instances of image view that you want to display for one inspection.</p>
+                                    </p>
+                                    <p>→ Add one parameter view for the same inspection.</p>
+                                    <p>→ Click on the instance of the image view in which you want to add a custom overlay. A green frame is displayed to show that this image view is selected.</p>
+                                    <p>→ You can now add a custom overlay and edit its parameters.</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

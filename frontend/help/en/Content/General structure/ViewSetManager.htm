@@ -14,7 +14,6 @@
         <link href="../Resources/Stylesheets/Styles.css" rel="stylesheet" />
         <link href="../Resources/TableStyles/Note.css" rel="stylesheet" />
         <link href="../Resources/TableStyles/Instruction.css" rel="stylesheet" />
-        <link href="../Resources/TableStyles/Basic.css" rel="stylesheet" />
         <script src="../../Resources/Scripts/jquery.min.js">
         </script>
         <script src="../../Resources/Scripts/require.min.js" defer="defer">
@@ -49,69 +48,12 @@
                 <img src="../Resources/Images/ViewSetManager.png" data-mc-conditions="Default.PDF-and-HTML" />
             </p>
             <p>&#160;</p>
-            <p><span style="font-size: 18pt; font-weight: bold;">View Set Manager Controls</span>
-            </p>
-            <p class="MyStyle">
-                <img src="../Resources/Images/ViewSetManager_controls.png" />
-            </p>
-            <p>The view set manager includes the following specific components and controls:</p>
-            <table style="width: 100%;mc-table-style: url('../Resources/TableStyles/Basic.css');" class="TableStyle-Basic" cellspacing="0">
-                <col style="width: 104px;" class="TableStyle-Basic-Column-Column1" />
-                <col class="TableStyle-Basic-Column-Column1" />
-                <tbody>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1"><b>Element</b>
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1"><b>Description</b>
-                        </td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
-                            <img src="../Resources/Images/check.svg" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">
-                            <p>Apply changes</p>
-                        </td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
-                            <img src="../Resources/Images/src_assets_icons_plus.svg" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Add new view set</td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
-                            <img src="../Resources/Images/src_assets_icons_delete.svg" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Delete view set</td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
-                            <img src="../Resources/Images/src_assets_icons_save.svg" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">
-                            <p>Save all view sets and settings (organization of views, zoom factor and position of image, overlays and much more)</p>
-                        </td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
-                            <img src="../Resources/Images/Export.svg" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Export current view set</td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyB-Column1-Body1">
-                            <img src="../Resources/Images/Import.svg" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyA-Column1-Body1">Import view set</td>
-                    </tr>
-                </tbody>
-            </table>
             <p style="page-break-after: avoid;line-height: 1.5em;">
                 <img src="../Resources/Images/sticky_notes_38x38.png" /><b>Note</b>
             </p>
             <p><i>Settings saved via the SVOWebApp interface are only saved in the SVOWebApp configuration and have no effect on SVObserver. If you want to save your settings in the SVObserver configuration, you can do so by using the SVObserver interface.</i>
             </p>
+            <p>&#160;</p>
             <div class="MCDropDown MCDropDown_Closed dropDown" style="page-break-inside: avoid;padding-left: 0px;padding-right: 0px;padding-top: 10px;padding-bottom: 10px;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: #d0d3d5;"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Add new view set</a></span>
                 <div class="MCDropDownBody dropDownBody">
                     <p>
@@ -120,10 +62,14 @@
                     <p>
                         <img src="../Resources/Images/Bottom-bar_ViewSetManager.png" />
                     </p>
-                    <p>→ Enter in the input field <i>Name</i> the desired name for the view set you want to create. The maximum length for the name is 20 characters.</p>
+                    <p>→ Click on the button <b>Create new View Set</b> <img src="../Resources/Images/plus.svg" />.</p>
+                    <p>→ Click on the button <b>Edit View Set name</b>.</p>
+                    <p>→ Enter in the column <i>Name</i> the desired name for the view set you want to create. The maximum length for the name is 20 characters.</p>
+                    <p>→ Click on the button <b>Change View Set name</b> <img src="../Resources/Images/check.svg" />.</p>
                     <p>
-                        <p>→ Click on the button <b>Add View Set</b><img src="../Resources/Images/src_assets_icons_plus.svg" />.</p>
+                        <p>→ Close the pop-up window.</p>
                         <p>→ The new view set appears in the bottom bar.</p>
+                        <p>You can now edit the content of the View Set.</p>
                     </p>
                 </div>
             </div>
@@ -134,27 +80,21 @@
                             <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Rename existing view set</a></span>
                                 <div class="MCDropDownBody dropDownBody">
                                     <p>
-                                        <p>→ In the view set navigation (bottom bar), click on the button indicating the view set name you want to rename</p>
                                         <p>
-                                            <img src="../Resources/Images/Bottom_bar_view_set_buttons.png" />
+                                            <p>→ Click on the button <b>View Set Manager</b> (bottom right corner of the screen).</p>
                                         </p>
-                                        <p>→ The selected view set is displayed in the center of the screen. The view set button is highlighted in gray.</p>
-                                    </p>
-                                    <p>
-                                        <p>→ Click on the button <b>View Set Manager</b> (bottom right corner of the screen).</p>
                                         <p>
                                             <img src="../Resources/Images/Bottom-bar_ViewSetManager.png" />
                                         </p>
+                                        <p>→ Click in the row of the View Set that you want to rename on the button <b>Edit View Set name</b>.</p>
+                                        <p>→ Change the name of the view set.</p>
+                                    </p>
+                                    <p>→ Click on the button <b>Change View Set name</b> <img src="../Resources/Images/check.svg" />.</p>
+                                    <p>
+                                        <p>→ Close the pop-up window.</p>
                                     </p>
                                     <p>
-                                        <p>→ The view set manager opens in a pop-up window.</p>
-                                    </p>
-                                    <p>
-                                        <p>→ In the input field <i>Name</i>, replace the old title with the desired new title.</p>
-                                    </p>
-                                    <p>
-                                        <p>→ Click on the button <b>Apply changes</b> <img src="../Resources/Images/check.svg" />.</p>
-                                        <p>→ The selected view set is renamed. You can see the new name in the bottom bar.</p>
+                                        <p>→ The view set is renamed. You can see the new name in the bottom bar.</p>
                                     </p>
                                 </div>
                             </div>
@@ -168,7 +108,8 @@
                                         </p>
                                     </p>
                                     <p>
-                                        <p>→ The view set manager opens in a pop-up window. </p>In the input field "Name", the selected view set is indicated.</p>
+                                        <p>→ The view set manager opens in a pop-up window. </p>
+                                    </p>
                                     <p>
                                         <p>→ Click on the button <b>Save All View Sets</b> <img src="../Resources/Images/src_assets_icons_save.svg" />.</p>
                                         <p>→    All changes to the view sets are saved in the web app configuration.</p>
@@ -190,15 +131,6 @@
             <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Export view set</a></span>
                 <div class="MCDropDownBody dropDownBody">
                     <p>
-                        <p>→    Click on the view set button in the bottom bar indicating the name of the view set you want to export.</p>
-                        <p>
-                            <img src="../Resources/Images/Bottom_bar_view_set_buttons.png">
-                            </img>
-                        </p>
-                        <p>→    The selected view set is displayed in the center of the screen.</p>
-                        <p>→    The view set button is highlighted in gray.</p>
-                    </p>
-                    <p>
                         <p>→ Click on the button <b>View Set Manager</b> (bottom right corner of the screen).</p>
                         <p>
                             <img src="../Resources/Images/Bottom-bar_ViewSetManager.png">
@@ -209,7 +141,7 @@
                         <p>→ The view set manager opens in a pop-up window.</p>
                     </p>
                     <p>
-                        <p> In the input field <i>Name</i>, the selected view set is indicated.</p>
+                        <p> In the column <i>Name</i>, select the view set that you want to export.</p>
                         <p>→ Click on the button <b>Export current view layout</b> <img src="../Resources/Images/Export.svg" />.</p>
                         <p>→ If the export is successful, the view set file is saved in the Downloads folder of your browser.</p>
                     </p>
@@ -217,7 +149,7 @@
             </div>
             <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Import view set</a></span>
                 <div class="MCDropDownBody dropDownBody">
-                    <p>→ When you import a view set, the currently selected view set is overwritten. If you do not want to overwrite a view set, you must create a new one by adding a view set.</p>
+                    <p>When you import a view set, the currently selected view set is overwritten. If you do not want to overwrite a view set, you must create a new one by adding a view set.</p>
                     <p>
                         <p>→    Click on the view set button in the bottom bar indicating the name of the view set you want to overwrite.</p>
                         <p>
@@ -249,14 +181,6 @@
             <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Delete view set</a></span>
                 <div class="MCDropDownBody dropDownBody">
                     <p>
-                        <p>→    Click on the view set button in the bottom bar indicating the name of the view set you want to delete</p>
-                        <p>
-                            <img src="../Resources/Images/Bottom_bar_view_set_buttons.png" />
-                        </p>
-                        <p>→    The selected view set is displayed in the center of the screen.</p>
-                        <p>→    The view set button is highlighted in gray.</p>
-                    </p>
-                    <p>
                         <p>→ Click on the button <b>View Set Manager</b> (bottom right corner of the screen).</p>
                         <p>
                             <img src="../Resources/Images/Bottom-bar_ViewSetManager.png">
@@ -267,7 +191,7 @@
                         <p>→ The view set manager opens in a pop-up window.</p>
                     </p>
                     <p>
-                        <p> In the input field <i>Name</i>, the selected view set is indicated.</p>
+                        <p> In the column <i>Name</i>, select the view set that you want to delete.</p>
                     </p>
                     <p>
                         <p>→    Click on the button <b>Delete View Set</b> <img src="../Resources/Images/src_assets_icons_delete-dustbin.svg" />.</p>
