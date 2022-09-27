@@ -183,7 +183,7 @@ bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SV
 
 		if (nullptr == input || nullptr == output)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, ((nullptr == input) ? SvStl::Tid_InvalidInputImage : SvStl::Tid_InvalidOutputImage), SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			m_RunErrorMessages.push_back(Msg);
 			SvIe::SVImageProcessingClass::InitBuffer(output);
 			return false;

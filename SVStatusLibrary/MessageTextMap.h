@@ -559,7 +559,7 @@ namespace SvStl
 		{Tid_Error_CreateEvent, _T("Could not create the Event Handler")},
 		{Tid_ZipFileFailed, _T("Failed to create %s zip file.")},
 		{Tid_UnzipFileFailed, _T("Failed to unzip %s file.")},
-		{ Tid_SizeOfChildROIInvalid, _T("Invalid size of child ROI") },
+		{Tid_SizeOfChildROIInvalid, _T("Invalid size of child ROI") },
 		{Tid_GetImageFailed_NoTR, _T("Get image failed, because there is no trigger record")},
 		{Tid_SM_SlotNotFound, _T("Shared memory slot with the MonitorList name: %s not found")},
 
@@ -704,6 +704,9 @@ namespace SvStl
 
 		{Tid_SVRC_AccessDenied, _T("SVRC Access denied: Current state = %s, Check state = %s") },
 		{Tid_InvalidValues, _T("Invalid input values")},
+		{Tid_InvalidInputImage, _T("Invalid input image")},
+		{Tid_InvalidOutputImage, _T("Invalid output image")},
+
 		{Tid_InvalidParameterValue, _T("%s: Invalid value. The value must between %s and %s.")},
 		
 		{Tid_ProductMissingNak, _T("NAK has been caused by a missing PPQ product")},

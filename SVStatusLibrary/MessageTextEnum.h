@@ -300,6 +300,8 @@ enum MessageTextEnum
 	Tid_Pattern_DontCare2Small,
 	Tid_Pattern_Invalid_ShouldLeave,
 	Tid_ErrorGettingInputs,
+	Tid_InvalidInputImage,
+	Tid_InvalidOutputImage,
 	Tid_ErrorFindingPPQEntries,
 	Tid_InvalidReference,
 

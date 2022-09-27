@@ -465,7 +465,8 @@ namespace SvStl
 		rSubstituteStrings[3] = m_Message.m_SourceFile.m_FileDateTime;
 		rSubstituteStrings[4] = m_Message.m_SourceFile.m_CompileDate;
 		rSubstituteStrings[5] = m_Message.m_SourceFile.m_CompileTime;
-		rSubstituteStrings[6] = m_Message.getAdditionalText();
+		rSubstituteStrings[6] = SvUl::Format(_T("Object ID = %ld"), m_Message.m_ObjectId);
+		rSubstituteStrings[7] = m_Message.getAdditionalText();
 	}
 
 	HRESULT MessageContainer::setMessageDll()
