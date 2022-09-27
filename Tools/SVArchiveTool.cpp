@@ -318,11 +318,11 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 	return bOk;
 }
 
-bool SVArchiveTool::InitializeAndValidate()
+bool SVArchiveTool::InitializeAndValidate(SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (m_ImageCollection.GetSize() > 0)
 	{
-		if (!updateCurrentImagePathRoot()) //needed for m_ImageCollection.InitializeObjects()
+		if (!updateCurrentImagePathRoot(pErrorMessages)) //needed for m_ImageCollection.InitializeObjects()
 		{
 			return false;
 		}
@@ -355,7 +355,7 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	m_evoArchiveMethod.GetValue(l_lArchiveMethod);
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>(l_lArchiveMethod);
 
-	if (false == InitializeAndValidate())
+	if (false == InitializeAndValidate(pErrorMessages))
 	{
 		return false;
 	}
@@ -364,6 +364,7 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	if (pInspection && pInspection->IsResetStateSet(SvDef::SVResetStateArchiveToolCreateFiles))
 	{
 		m_bInitializedForRun = initializeOnRun(pErrorMessages);
+
 		result = result && m_bInitializedForRun;
 	}
 	else
@@ -565,7 +566,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 		{
 			return false;
 		}
-		if (!ensureArchiveImageDirectoryExists())
+		if (!ensureArchiveImageDirectoryExists(pErrorMessages))
 		{
 			return false;
 		}
@@ -611,7 +612,6 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 	{
 		return true;
 	}
-
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if (nullptr != pInspection && pInspection->IsResetStateSet(SvDef::SVResetStateArchiveToolCreateFiles))	// If going online
 	{
@@ -1150,7 +1150,7 @@ void SVArchiveTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const s
 }
 
 
-bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords)
+bool SVArchiveTool::updateCurrentImagePathRoot(SvStl::MessageContainerVector* pErrorMessages, bool displayMessageOnInvalidKeywords)
 {
 	m_currentImagePathRoot = getUntranslatedImagePathRoot();
 
@@ -1165,10 +1165,19 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 		}
 		else
 		{
-			if (displayMessageOnInvalidKeywords)
+			if (pErrorMessages || displayMessageOnInvalidKeywords)
 			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidKeywordsInPath, SvStl::SourceFileParams(StdMessageParams));
+				auto type = SvStl::MsgType::Log;
+				if (displayMessageOnInvalidKeywords)
+				{
+					type = type | SvStl::MsgType::Display;
+				}
+				SvStl::MessageManager msg(type);
+				msg.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidKeywordsInPath, SvStl::SourceFileParams(StdMessageParams));
+				if (nullptr != pErrorMessages)
+				{
+					pErrorMessages->push_back(msg.getMessageContainer());
+				}
 			}
 			return false;
 		}
@@ -1189,7 +1198,7 @@ std::string SVArchiveTool::archiveImageDirectory()
 }
 
 
-bool SVArchiveTool::ensureArchiveImageDirectoryExists()
+bool SVArchiveTool::ensureArchiveImageDirectoryExists(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool ok = false;
 
@@ -1213,10 +1222,19 @@ bool SVArchiveTool::ensureArchiveImageDirectoryExists()
 	catch (std::exception& e)
 	{
 		ok = false;
+		imageDirectoryPath = e.what(); //use imageDirectoryPath as problem description
+	}
+	if (!ok)
+	{
 		SvDef::StringVector msgList;
-		msgList.push_back(e.what());
+		msgList.push_back(imageDirectoryPath);
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
+
+		if(pErrorMessages)
+		{
+			pErrorMessages->push_back(Exception.getMessageContainer());
+		}
 	}
 
 	return ok;
@@ -1225,16 +1243,15 @@ bool SVArchiveTool::ensureArchiveImageDirectoryExists()
 
 bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl::MessageContainerVector* pErrorMessages)
 {
-	if (!updateCurrentImagePathRoot())
+	if (!updateCurrentImagePathRoot(pErrorMessages))
 	{
 		return false;
 	}
 
-	if (!ensureArchiveImageDirectoryExists())
+	if (!ensureArchiveImageDirectoryExists(pErrorMessages))
 	{
 		return false;
 	}
-
 
 	ULARGE_INTEGER lFreeBytesAvailableToCaller;
 	ULARGE_INTEGER lTotalNumberOfBytes;

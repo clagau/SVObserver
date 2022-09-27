@@ -247,7 +247,7 @@ bool SVTADlgArchiveImagePage::validateArchiveImageFilepath()
 	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePathButton.GetCheck() ? true : false);
 	m_ValueController.Commit(SvOg::PostAction::doNothing); //changes need to be committed before paths can be built
 
-	if (!m_pTool->updateCurrentImagePathRoot(true))
+	if (!m_pTool->updateCurrentImagePathRoot(nullptr, true))
 	{
 		return false; // the current image path root cannot even be determined
 	}

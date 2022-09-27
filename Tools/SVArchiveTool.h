@@ -53,9 +53,9 @@ public:
 	std::string getUntranslatedImagePathRoot() const;
 	/// used by SVArchiveRecord::BuildArchiveImageFilePath
 	const std::string getCurrentImagePathRoot() const;
-	bool updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords = false);
+	bool updateCurrentImagePathRoot(SvStl::MessageContainerVector* pErrorMessages, bool displayMessageOnInvalidKeywords = false);
 	std::string archiveImageDirectory(); //the directory into which the next archive image is to be placed
-	bool ensureArchiveImageDirectoryExists();
+	bool ensureArchiveImageDirectoryExists(SvStl::MessageContainerVector* pErrorMessages);
 
 	std::string getNextImageFileName();
 	
@@ -108,7 +108,7 @@ private:
 	bool ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	bool ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl::MessageContainerVector* pErrorMessages);///< Checks the directory and the available space for storing image archive files.
-	bool InitializeAndValidate();
+	bool InitializeAndValidate(SvStl::MessageContainerVector* pErrorMessages);
 
 	std::string GetResultFilepathPart1() const;
 	std::string GetResultFilepathPart2() const;
