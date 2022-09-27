@@ -342,14 +342,12 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 	pRequest->set_objectid(m_TaskObjectID);
 
 	HRESULT hResult = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	if (hResult == S_OK && responseCmd.has_standardresponse())
+	
+	SvStl::MessageContainerVector errorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+	if (0 < errorMessageList.size())
 	{
-		SvStl::MessageContainerVector errorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
-		if (0 < errorMessageList.size())
-		{
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(errorMessageList[0].getMessage());
-		}
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(errorMessageList[0].getMessage());
 	}
 
 	if (hResult == S_OK)

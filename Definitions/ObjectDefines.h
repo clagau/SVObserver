@@ -49,4 +49,5 @@ namespace SvDef
 
 	constexpr int c_maxTableColumn = 50;
 	constexpr int c_numberOfSortFeature = 3;
+	constexpr int c_maxLoopGroupDepth = 3;
 } //namespace SvDef

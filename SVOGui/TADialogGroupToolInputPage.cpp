@@ -130,9 +130,9 @@ namespace SvOg
 		pGetMessageListRequest->set_objectid(toolId);
 
 		HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
-		if (hr == S_OK && responseCmd.has_standardresponse())
+		if (hr == S_OK)
 		{
-			return SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
+			return SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 		}
 		assert(false);
 		return {};

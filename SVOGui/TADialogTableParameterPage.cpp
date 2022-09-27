@@ -181,14 +181,11 @@ void TADialogTableParameterPage::resetInspection()
 	pRequest->set_objectid(m_TaskObjectID);
 
 	HRESULT hres = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	if (hres == S_OK && responseCmd.has_standardresponse())
+	SvStl::MessageContainerVector messages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+	if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 	{
-		SvStl::MessageContainerVector messages = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
-		if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
-		{
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(messages[0].getMessage());
-		}
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(messages[0].getMessage());
 	}
 
 	if (hres == S_OK)

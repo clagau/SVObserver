@@ -28,7 +28,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOGui/SVTextEditDialog.h"
-#include "Tools/LoopTool.h"
 #include "Tools/SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "Definitions/GlobalConst.h"
@@ -602,15 +601,12 @@ void ToolSetView::RenameItem()
 	{
 
 		case NavElementType::SubTool:
-		case NavElementType::SubLoopTool:
 			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
 				TheSVObserverApp().OnObjectRenamed(m_LabelSaved, toolId);
 				pNavElement->m_DisplayName = m_LabelEdited;
 			}
 			break;
-		case NavElementType::GroupTool:
-		case NavElementType::LoopTool:
 		case NavElementType::Tool:
 			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
@@ -685,25 +681,6 @@ bool ToolSetView::EditToolGroupingComment(const std::string& groupingName)
 	return bRetVal;
 }
 
-bool ToolSetView::IsSubToolSelected() const
-{
-	PtrNavigatorElement  pNavElement = Get1stSelNavigatorElement();
-
-	if (!pNavElement)
-	{
-		return false;
-	}
-	switch (pNavElement->m_Type)
-	{
-		case NavElementType::SubTool:
-		case NavElementType::SubLoopTool:
-		case NavElementType::EndDelimiterTool:
-			return true;
-	}
-	return false;
-}
-
-
 void ToolSetView::OnSelectComment()
 {
 
@@ -716,10 +693,7 @@ void ToolSetView::OnSelectComment()
 	uint32_t toolId(pNavElement->m_navigatorObjectId);
 	switch (pNavElement->m_Type)
 	{
-		case NavElementType::SubLoopTool:
 		case NavElementType::SubTool:
-		case NavElementType::GroupTool:
-		case NavElementType::LoopTool:
 		case NavElementType::Tool:
 			EditToolComment(toolId);
 			break;
@@ -875,7 +849,6 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 				break;
 			}
 			case NavElementType::SubTool:
-			case NavElementType::SubLoopTool:
 				IsSubTool = true;
 				pLoopGroupTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(pNavElement->m_OwnerId));
 				if (nullptr == pLoopGroupTool || (false == pLoopGroupTool->isLoopOrGroupTool()))
@@ -883,8 +856,6 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 					pLoopGroupTool = nullptr;
 				}
 				[[fallthrough]];
-			case NavElementType::LoopTool:
-			case NavElementType::GroupTool:
 			case NavElementType::Tool:
 				pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(pNavElement->m_navigatorObjectId));
 				if (nullptr == pTool)
@@ -1069,6 +1040,21 @@ void ToolSetView::OnSetFocus(CWnd* pOldWnd)
 	}
 }
 
+void ToolSetView::HandleExpandCollapse(uint32_t toolId, bool bCollapse)
+{
+	SVIPDoc* pDoc = GetIPDoc();
+	if (nullptr != pDoc)
+	{
+		SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
+		bool bState = rGroupings.IsCollapsed(toolId);
+		if (bState != bCollapse)
+		{
+			rGroupings.Collapse(toolId, bCollapse);
+			OnUpdate(this, ExpandCollapseHint, nullptr);
+		}
+	}
+}
+
 void ToolSetView::HandleExpandCollapse(const std::string& rName, bool bCollapse)
 {
 	SVIPDoc* pDoc = GetIPDoc();
@@ -1095,13 +1081,22 @@ void ToolSetView::ToggleExpandCollapse(int item)
 		lvItem.iSubItem = 0;
 		SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
 		m_toolSetListCtrl.GetItem(&lvItem);
-		std::string Name = m_toolSetListCtrl.GetItemText(item, 0).GetString();
 
-		bool bState = rGroupings.IsCollapsed(Name.c_str());
-		if (rGroupings.Collapse(Name.c_str(), bState ? false : true))
+		int index = static_cast<int>(lvItem.lParam); //index of the m_taskList, else -1
+		auto pElement = m_toolSetListCtrl.GetNavigatorElement(index);
+		if (nullptr != pElement && SvDef::InvalidObjectId != pElement->m_navigatorObjectId)
 		{
-			OnUpdate(this, ExpandCollapseHint, nullptr);
+			bool bState = rGroupings.IsCollapsed(pElement->m_navigatorObjectId);
+			rGroupings.Collapse(pElement->m_navigatorObjectId, bState ? false : true);
 		}
+		else
+		{
+			std::string Name = m_toolSetListCtrl.GetItemText(item, 0).GetString();
+			bool bState = rGroupings.IsCollapsed(Name.c_str());
+			rGroupings.Collapse(Name.c_str(), bState ? false : true);
+		}
+				
+		OnUpdate(this, ExpandCollapseHint, nullptr);
 	}
 }
 
@@ -1123,7 +1118,6 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 	switch (pNavElement->m_Type)
 	{
 		case NavElementType::SubTool:
-		case NavElementType::SubLoopTool:
 		case NavElementType::EndDelimiterTool:
 			return false;
 			break;
@@ -1167,11 +1161,7 @@ bool ToolSetView::enterSelectedEntry()
 
 	switch (pNavElement->m_Type)
 	{
-
-		case NavElementType::SubLoopTool:
 		case NavElementType::SubTool:
-		case NavElementType::GroupTool:
-		case NavElementType::LoopTool:
 		case NavElementType::Tool:
 			if (SvDef::InvalidObjectId != toolId)
 			{

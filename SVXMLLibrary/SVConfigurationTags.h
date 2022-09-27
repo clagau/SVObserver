@@ -163,6 +163,7 @@ namespace  SvXml
 	constexpr const char* CTAG_FILENAME                       = _T("Filename");
 
 	constexpr const char* CTAG_TOOLGROUPINGS                  = _T("ToolGroupings");
+	constexpr const char* CTAG_TOOLCOLLAPSED				  = _T("ToolCollapsed");
 	constexpr const char* CTAG_GROUP                          = _T("Group");
 	constexpr const char* CTAG_STARTGROUP                     = _T("StartGroup");
 	constexpr const char* CTAG_TOOLS                          = _T("Tools");
@@ -200,6 +201,7 @@ namespace  SvXml
 	/// These are tool copy / paste tags
 	constexpr const char* ToolCopyTag = _T( "Tool-Copy" );
 	constexpr const char* ToolsTag = _T( "Tools" );
+	constexpr const char* ToolDepthTag = _T("ToolDepth");
 	constexpr const char* ClassIdTag = _T("ClassID");
 	constexpr const char* FullToolNameTag = _T("FullToolName%d");
 	constexpr const char* BaseTag = _T( "Base" );

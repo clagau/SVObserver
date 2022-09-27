@@ -189,10 +189,6 @@ public:
 	afx_msg void OnAddColorTool();
 	afx_msg void OnAddExternalTool();
 	afx_msg void OnAddLinearTool();
-	afx_msg void OnUpdateAddStartToolGrouping(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateAddEndToolGrouping(CCmdUI* pCmdUI);
-	afx_msg void OnAddStartToolGrouping();
-	afx_msg void OnAddEndToolGrouping();
 	afx_msg void OnEditAdjustToolPosition();
 	afx_msg void OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI);
 	afx_msg void OnAddPerspectiveTool();
@@ -297,8 +293,6 @@ protected:
 	bool AddTool(SvPb::ClassIdEnum classId);
 	bool deleteTool(SvTo::SVToolClass* pTool);
 
-	bool AddToolGrouping(bool bStartGroup = true);
-
 	CView* getView() const;
 	SVImageView* GetImageView( int p_Index = 0 );
 	ResultTabbedView* GetResultView();
@@ -384,4 +378,4 @@ void SetAllIPDocumentsOnline();
 
 CDocTemplate* CreateIpDocMultiDocTemplate();
 bool mayDeleteCurrentlySelectedTools(const std::set<uint32_t>& rIdsOfObjectsDependedOn);
-SvTo::SVToolClass* getCorrespondingToolPointer(NavigatorElement* pNaviElement, uint32_t inspectionID);
+SvTo::SVToolClass* getCorrespondingToolPointer(NavigatorElement* pNaviElement);

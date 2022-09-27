@@ -145,7 +145,7 @@ HRESULT AuxiliaryExtentsController::SetAuxSourceImage(const std::string& rName)
 		pRequest->set_sourceimageid(imageID);
 
 		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		if (SUCCEEDED(hr) && responseCmd.has_standardresponse())
+		if (SUCCEEDED(hr))
 		{
 			hr = RunOnce();
 		}

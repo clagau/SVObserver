@@ -120,8 +120,7 @@ SvPb::InspectionCmdResponse GetMessageList(SvPb::GetMessageListRequest request)
 	SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(request.objectid()));
 	if (pTask)
 	{
-		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
-		pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(pTask->getErrorMessages()));
+		cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(pTask->getErrorMessages()));
 	}
 	else
 	{
@@ -141,8 +140,7 @@ SvPb::InspectionCmdResponse ResetObject(SvPb::ResetObjectRequest request)
 		SvStl::MessageContainerVector messageContainers;
 		HRESULT result = pObject->resetAllObjects(&messageContainers) ? S_OK : E_FAIL;
 		cmdResponse.set_hresult(result);
-		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
-		pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
+		cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 	}
 	else
 	{
@@ -200,8 +198,7 @@ SvPb::InspectionCmdResponse CreateModel(SvPb::CreateModelRequest request)
 
 	if (S_OK != cmdResponse.hresult())
 	{
-		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
-		SvPb::convertMessageToProtobuf(message, pResponse->mutable_errormessages()->add_messages());
+		SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
 	}
 	return cmdResponse;
 }
@@ -536,8 +533,7 @@ SvPb::InspectionCmdResponse setAuxImageObject(SvPb::SetAuxImageObjectRequest req
 		{
 			cmdResponse.set_hresult(result);
 			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams));
-			SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
-			SvPb::convertMessageToProtobuf(message, pResponse->mutable_errormessages()->add_messages());
+			SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
 		}
 	}
 	else
@@ -826,6 +822,20 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 
 			if (nullptr != pParentTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
 			{
+				if (SvPb::SVToolObjectType == pObject->GetObjectType() &&
+				(SvPb::GroupToolObjectType == pObject->GetObjectSubType() || SvPb::LoopToolObjectType == pObject->GetObjectSubType()))
+				{
+					auto depth = pParentTaskObjectList->getToolDepth();
+					if (SvDef::c_maxLoopGroupDepth <= depth)
+					{
+						delete pTaskObject;
+						cmdResponse.set_hresult(E_FAIL);
+						SvStl::MessageContainer message;
+						message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MaxDepthOfToolsError, SvStl::SourceFileParams(StdMessageParams));
+						SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
+						break;
+					}
+				}
 				if (SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId == request.message_case())
 				{
 					pParentTaskObjectList->InsertBefore(request.taskobjectinsertbeforeid(), *pTaskObject);
@@ -1114,13 +1124,11 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 #ifdef USE_EMBEDDED_VALUE_RESPONSE
 		SvPb::SetEmbeddedValuesResponse* pResponse = cmdResponse.mutable_setembeddedvaluesresponse();
 		pResponse->set_resettype(resetParameter.result);
-#else
-		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
 #endif 	
 
 		if (0 != messageContainers.size())
 		{
-			pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
+			cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 
 			cmdResponse.set_hresult(E_FAIL);
 		}
@@ -2233,4 +2241,25 @@ SvPb::InspectionCmdResponse getDependencyRequest(SvPb::GetDependencyRequest requ
 	return cmdResponse;
 }
 
+SvPb::InspectionCmdResponse getToolDepth(SvPb::GetToolDepthRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	if (auto* pObject = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(request.objectid())); nullptr != pObject)
+	{
+		if (request.goupward())
+		{
+			cmdResponse.mutable_gettooldepthresponse()->set_depthupward(pObject->getToolDepth(true));
+		}
+		else
+		{
+			cmdResponse.mutable_gettooldepthresponse()->set_depthdownward(pObject->getToolDepth(false));
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
 } //namespace SvCmd

@@ -247,9 +247,9 @@ namespace SvOg
 					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), m_AnalyzerID );
 				}
 			}
-			else if (responseCmd.has_standardresponse())
+			else
 			{
-				SvStl::MessageContainerVector ErrorMessages = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
+				SvStl::MessageContainerVector ErrorMessages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 				if (!ErrorMessages.empty())
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );

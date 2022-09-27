@@ -12,11 +12,8 @@ enum class NavElementType
 {
 	StartGrouping,
 	EndGrouping,
-	LoopTool,
-	GroupTool,
 	Tool,
 	SubTool,
-	SubLoopTool,
 	EndDelimiterToolSet,
 	EndDelimiterTool,
 	Empty
@@ -36,9 +33,7 @@ struct NavigatorElement
 		{
 			case NavElementType::StartGrouping:
 			case NavElementType::EndGrouping:
-			case NavElementType::LoopTool:
 			case NavElementType::Tool:
-			case NavElementType::GroupTool:
 			case NavElementType::SubTool:
 				return true;
 		}
@@ -51,6 +46,7 @@ struct NavigatorElement
 	uint32_t m_navigatorObjectId{ SvDef::InvalidObjectId };
 	uint32_t m_OwnerId {SvDef::InvalidObjectId};
 	NavElementType m_Type {NavElementType::Tool};
+	bool m_canHaveChildren {false}; //< Can it have children (e.g. GroupTool or LoopTool)
 	bool m_Collapsed {false};
 	bool m_Valid {true};
 	int m_indent {cUndefinedIndentationValue};

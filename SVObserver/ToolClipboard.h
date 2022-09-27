@@ -116,22 +116,6 @@ protected:
 	//************************************
 	HRESULT checkVersion(SvXml::SVXMLMaterialsTree& rTree ) const;
 
-	/// This method reads the tools data
-	/// \param rXmlData [in,out] Reference to the XML data to search and replace
-	/// \param rTree [in] Reference to the tree generated from the clipboard
-	/// \param postId [in] The id of the object currently selected where the new object should be inserted
-	/// \param ownerId [in] The id of the owner of the new object.
-	void readTool(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree, uint32_t ownerId) const;
-
-	/// This method validates the tools IDs
-	/// \param rXmlData [in,out] Reference to the XML data to search and replace
-	/// \param postId [in] The id of the object currently selected where the new object should be inserted
-	/// \param ownerId [in] The id of the owner of the new object.
-	/// \param inspectionId [in] The id of the inspection
-	/// \param toolClassId [in] The class Id of the tool
-	/// \param rInputImages [in] The input images of the tool
-	void validateIds(std::string& rXmlData, uint32_t ownerId, SvPb::ClassIdEnum toolClassId) const;
-
 	/// This method replaces the tool name and the dotted name (e.g. in equations)
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
 	/// \param rTree [in] Reference to the tree generated from the clipboard

@@ -397,7 +397,7 @@ namespace SvStl
 		{Tid_Clipboard_VersionMismatch, _T("The current SVObserver Version does not match the version coming from the clipboard.")},
 		{Tid_ColorToolInsertFailed, _T("A color tool cannot be inserted into a non-color system.")},
 		{Tid_MonoToolInsertFailed, _T("A tool which requires a mono source cannot be inserted in this position as no mono source is available.") },
-		{Tid_LoopToolInsertLoopToolFailed, _T("A %s cannot be inserted into a %s.")},
+		{Tid_LoopToolInsertLoopToolFailed, _T("Too many nesting levels (%s) of tools. Only %s allowed.")},
 		{Tid_LoopTool, _T("loop tool")},
 		{Tid_GroupTool, _T("group tool") },
 		{Tid_RenameError_DuplicateName, _T("A duplicate name was found for the item being renamed\n%s")},
@@ -729,5 +729,6 @@ namespace SvStl
 		{Tid_NameContainsInvalidChars, _T("Name contains invalid special characters.")},
 		{Tid_ProductNotTriggered, _T("SVPPQObject::StartInspection product not triggerd")},
 		{Tid_ErrorStartInspection, _T("Insepection coul not be started")},
+		{Tid_MaxDepthOfToolsError, _T("Too many tools nested.")},
 };
 } //namespace SvStl

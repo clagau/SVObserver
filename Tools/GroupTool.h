@@ -45,6 +45,7 @@ public:
 	virtual bool isValidDependency(const std::pair<std::string, std::string>& rEntry) const override;
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
+	virtual int getToolDepth(bool goUpwards = true) const override;
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };

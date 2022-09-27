@@ -368,9 +368,9 @@ namespace SvOg
 		pRequest->set_objectid(m_TaskObjectID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		if (hr == S_OK && responseCmd.standardresponse().has_errormessages())
+		if (responseCmd.has_errormessage())
 		{
-			messages = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
+			messages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 		}
 		return hr;
 	}

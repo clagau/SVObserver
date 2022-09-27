@@ -192,4 +192,5 @@ SvPb::InspectionCmdResponse setObjectComment(SvPb::SetObjectCommentRequest reque
 SvPb::InspectionCmdResponse addParameterAndUseIt(SvPb::AddParameterAndUseItRequest request);
 SvPb::InspectionCmdResponse checkParameterNames(SvPb::CheckParameterNamesRequest request);
 SvPb::InspectionCmdResponse getDependencyRequest(SvPb::GetDependencyRequest request);
+SvPb::InspectionCmdResponse getToolDepth(SvPb::GetToolDepthRequest request);
 } //namespace SvCmd

@@ -118,26 +118,35 @@ int SVToolSetListCtrl::InsertSubTools(int itemNo, int indent, uint32_t toolId)
 	SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
 	SvOi::ObjectInfoVector  ObjectInfos;
 	SvCmd::ResponseToObjectInfo(responseCmd, ObjectInfos);
+	ToolSetView* pView = GetView();
+	SVToolGrouping* pGroupings {nullptr};
+	if (pView)
+	{
+		pGroupings = &pView->GetToolGroupings();
+	}
 	for (auto &ObjectInfo : ObjectInfos)
 	{
 		if (ObjectInfo.ObjectType == SvPb::SVToolObjectType)
 		{
 			auto pNavElement = std::make_shared<NavigatorElement>(ObjectInfo.DisplayName.c_str());
-			pNavElement->m_Collapsed = false;
+			pNavElement->m_Collapsed = (nullptr != pGroupings && pGroupings->IsCollapsed(ObjectInfo.m_objectId));
 			pNavElement->m_OwnerId = toolId;
 			pNavElement->m_navigatorObjectId = ObjectInfo.m_objectId;
 			pNavElement->m_Valid = ObjectInfo.isValid;
-			pNavElement->m_Type = ObjectInfo.ObjectSubType == SvPb::LoopToolObjectType ?
-				NavElementType::SubLoopTool : NavElementType::SubTool;
+			pNavElement->m_Type = NavElementType::SubTool;
+			pNavElement->m_canHaveChildren = SvPb::GroupToolObjectType == ObjectInfo.ObjectSubType || SvPb::LoopToolObjectType == ObjectInfo.ObjectSubType;
 			itemNo = InsertElement(itemNo, indent, pNavElement);
-			//if loopTool would be allowed in a LoopTool this has to be insert here.
+			if (pNavElement->m_canHaveChildren && false == pNavElement->m_Collapsed)
+			{
+				itemNo = InsertSubTools(itemNo, indent+1, pNavElement->m_navigatorObjectId);
+			}
 		}
 	}
 	itemNo = InsertDelimiter(itemNo, indent, NavElementType::EndDelimiterTool, toolId);
 	return itemNo;
 }
 
-void SVToolSetListCtrl::Rebuild( bool checkGrouping)
+void SVToolSetListCtrl::Rebuild(bool checkGrouping)
 {
 	ToolSetView* pView = GetView();
 
@@ -220,24 +229,14 @@ void SVToolSetListCtrl::Rebuild( bool checkGrouping)
 						continue;
 					}
 
-					switch (ToolSetIt->ObjectSubType)
-					{
-					case SvPb::LoopToolObjectType:
-						pNavElement->m_Type = NavElementType::LoopTool;
-						break;
-					case SvPb::GroupToolObjectType:
-						pNavElement->m_Type = NavElementType::GroupTool;
-						break;					
-					default:
-						pNavElement->m_Type = NavElementType::Tool;
-						pNavElement->m_OwnerId = m_ToolSetId;
-						break;
-					}
-					pNavElement->m_Collapsed = GroupingIt->second.m_bCollapsed;
+					pNavElement->m_canHaveChildren = (SvPb::LoopToolObjectType == ToolSetIt->ObjectSubType || SvPb::GroupToolObjectType == ToolSetIt->ObjectSubType);
+					pNavElement->m_Type = NavElementType::Tool;
+					pNavElement->m_OwnerId = m_ToolSetId;
+					pNavElement->m_Collapsed = groupings.IsCollapsed(ToolSetIt->m_objectId);
 					pNavElement->m_Valid = ToolSetIt->isValid;
 					pNavElement->m_navigatorObjectId = ToolSetIt->m_objectId;
 					itemNo = InsertElement(itemNo, indent, pNavElement);
-					if ((pNavElement->m_Type == NavElementType::LoopTool || pNavElement->m_Type == NavElementType::GroupTool) && pNavElement->m_Collapsed == false)
+					if (pNavElement->m_canHaveChildren && pNavElement->m_Collapsed == false)
 					{
 						indent++;
 						itemNo = InsertSubTools(itemNo, indent, pNavElement->m_navigatorObjectId);
@@ -274,21 +273,23 @@ int SVToolSetListCtrl::InsertElement(int itemNo, int indent, PtrNavigatorElement
 				return itemNo;////don't show empty end group 
 			}
 			break;
-		case NavElementType::GroupTool:
-		case NavElementType::LoopTool:
-			if (rpNaviElement->m_Valid)
+		case NavElementType::Tool:
+		case NavElementType::SubTool:
+			if (rpNaviElement->m_canHaveChildren)
 			{
-				img = (rpNaviElement->m_Collapsed) ? m_expandState : m_collapseState;
+				if (rpNaviElement->m_Valid)
+				{
+					img = (rpNaviElement->m_Collapsed) ? m_expandState : m_collapseState;
+				}
+				else
+				{
+					img = (rpNaviElement->m_Collapsed) ? m_expandStateInvalid : m_collapseStateInvalid;
+				}
 			}
 			else
 			{
-				img = (rpNaviElement->m_Collapsed) ? m_expandStateInvalid : m_collapseStateInvalid;
+				img = (rpNaviElement->m_Valid) ? m_iNone : m_iInvalid;
 			}
-
-			break;
-		case NavElementType::Tool:
-		case NavElementType::SubTool:
-			img = (rpNaviElement->m_Valid) ? m_iNone : m_iInvalid;
 			break;
 	}
 
@@ -371,11 +372,11 @@ bool SVToolSetListCtrl::displayErrorBox(uint32_t toolId) const
 	auto* pRequest = requestCmd.mutable_getmessagelistrequest();
 	pRequest->set_objectid(toolId);
 
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
 	SvStl::MessageContainerVector messageList;
-	if (hr == S_OK && responseCmd.has_standardresponse())
+	if (responseCmd.has_errormessage())
 	{
-		messageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
+		messageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 	}
 
 	if (0 < messageList.size())
@@ -438,14 +439,8 @@ void SVToolSetListCtrl::RebuildImages()
 		{
 			break;
 		}
-		bool isLoopGroupTool(false);
 		switch (NavElement->m_Type)
 		{
-			case NavElementType::GroupTool:
-			case NavElementType::LoopTool:
-			case NavElementType::SubLoopTool:
-				isLoopGroupTool = true;
-				[[fallthrough]];
 			case NavElementType::SubTool:
 			case NavElementType::Tool:
 			{
@@ -453,7 +448,7 @@ void SVToolSetListCtrl::RebuildImages()
 				if (SvDef::InvalidObjectId != id)
 				{
 					NavElement->m_Valid = isToolValid(id);
-					if (isLoopGroupTool)
+					if (NavElement->m_canHaveChildren)
 					{
 						if (NavElement->m_Collapsed)
 						{
@@ -727,9 +722,7 @@ bool SVToolSetListCtrl::mayBeEdited() const
 		case NavElementType::StartGrouping:
 		case NavElementType::EndGrouping:
 		case NavElementType::SubTool:
-		case NavElementType::GroupTool:
 		case NavElementType::Tool:
-		case NavElementType::LoopTool:
 			return true;
 		default:
 			return false;
@@ -881,12 +874,22 @@ void SVToolSetListCtrl::CollapseItem(int item)
 	lvItem.iSubItem = 0;
 
 	GetItem(&lvItem);
-	std::string Name = GetItemText(item, 0).GetString();
-	// Send to View...
 	ToolSetView* pView = GetView();
 	if (pView)
 	{
-		pView->HandleExpandCollapse(Name, true);
+		std::string Name = GetItemText(item, 0).GetString();
+		int index = static_cast<int>(lvItem.lParam); //index of the m_taskList, else -1
+		if (-1 < index && m_NavigatorElementVector.size() > index)
+		{
+			if (SvDef::InvalidObjectId != m_NavigatorElementVector[index]->m_navigatorObjectId)
+			{
+				pView->HandleExpandCollapse(m_NavigatorElementVector[index]->m_navigatorObjectId, true);
+			}
+			else
+			{
+				pView->HandleExpandCollapse(Name, true);
+			}
+		}
 	}
 }
 
@@ -898,11 +901,21 @@ void SVToolSetListCtrl::ExpandItem(int item)
 	lvItem.iSubItem = 0;
 
 	GetItem(&lvItem);
-	std::string Name = GetItemText(item, 0).GetString();
-	// Send to View...
 	ToolSetView* pView = GetView();
 	if (pView)
 	{
-		pView->HandleExpandCollapse(Name, false);
+		std::string Name = GetItemText(item, 0).GetString();
+		int index = static_cast<int>(lvItem.lParam); //index of the m_taskList, else -1
+		if (-1 < index && m_NavigatorElementVector.size() > index)
+		{
+			if (SvDef::InvalidObjectId != m_NavigatorElementVector[index]->m_navigatorObjectId)
+			{
+				pView->HandleExpandCollapse(m_NavigatorElementVector[index]->m_navigatorObjectId, false);
+			}
+			else
+			{
+				pView->HandleExpandCollapse(Name, false);
+			}
+		}
 	}
 }

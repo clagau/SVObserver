@@ -57,6 +57,12 @@ bool SVToolGrouping::Correct(const SvOi::ObjectInfoVector& toolsetinfo, int& rNc
 				std::string name = toolsetinfo.at(toolsetindex).DisplayName;
 				if (name == it->first.c_str())
 				{
+					//set collapse if saved with 10.20
+					if (auto objectId = toolsetinfo.at(toolsetindex).m_objectId; it->second.m_bCollapsed && SvDef::InvalidObjectId != objectId)
+					{
+						Collapse(objectId, true);
+					}
+
 					//ok  
 					it++;
 					toolsetindex++;
@@ -431,6 +437,11 @@ bool SVToolGrouping::IsEndTag(const std::string& rName) const
 	return bRetVal;
 }
 
+bool SVToolGrouping::IsCollapsed(uint32_t toolId) const
+{
+	return std::ranges::any_of(m_CollapseToolIds, [toolId](const auto& rEntry) {return rEntry == toolId;});
+}
+
 bool SVToolGrouping::IsCollapsed(const std::string& rName) const
 {
 	bool bCollapsed = false;
@@ -445,6 +456,26 @@ bool SVToolGrouping::IsCollapsed(const std::string& rName) const
 		bCollapsed = it->second.m_bCollapsed;
 	}
 	return bCollapsed;
+}
+
+bool SVToolGrouping::Collapse(uint32_t toolId, bool bCollapse)
+{
+	auto iter = std::ranges::find(m_CollapseToolIds, toolId);
+	if (m_CollapseToolIds.end() == iter)
+	{
+		if (bCollapse)
+		{
+			m_CollapseToolIds.push_back(toolId);
+		}
+	}
+	else
+	{
+		if (false == bCollapse)
+		{
+			m_CollapseToolIds.erase(iter);
+		}
+	}
+	return true;
 }
 
 bool SVToolGrouping::Collapse(const std::string& rName, bool bCollapse)
@@ -480,7 +511,7 @@ HRESULT SVToolGrouping::LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 					std::string toolName = SvUl::createStdString(Value.GetVARIANT());
 					bool collapse = false;
 					if (0 < toolName.size() && '+' == toolName[0])
-					{
+					{ //this + is for 10.20 configs 
 						toolName.erase(0,1);
 						collapse = true;
 					}
@@ -591,6 +622,22 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 				// Read The Tools
 				hr = LoadTools(rTree, htiSubChild, groupings);
 			}
+			else if (SvXml::CTAG_TOOLCOLLAPSED == name)
+			{
+				SVTreeType::SVBranchHandle htiCollapseChild(rTree.getFirstBranch(htiSubChild));
+				while (S_OK == hr && nullptr != htiCollapseChild)
+				{
+					// Will be either Tools or Group
+					uint32_t objectId;
+					std::string objectIdString = rTree.getBranchName(htiCollapseChild);
+					int ret = std::sscanf(objectIdString.c_str(), "%u", &objectId);
+					if (1 == ret)
+					{
+						m_CollapseToolIds.push_back(objectId);
+					}
+					htiCollapseChild = rTree.getNextBranch(htiSubChild, htiCollapseChild);
+				}
+			}
 			htiSubChild = rTree.getNextBranch(htiChild, htiSubChild);
 		}
 		if (S_OK == hr)
@@ -598,6 +645,7 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 			m_ToolGroups.swap(groupings.m_ToolGroups);
 		}
 	}
+
 	return hr;
 }
 
@@ -702,10 +750,6 @@ bool SVToolGrouping::GetParameters(SvOi::IObjectWriter& rWriter)
 					bToolListActive = true;
 				}
 				_bstr_t name(it->first.c_str());
-				if (it->second.m_bCollapsed)
-				{
-					name = "+" + name;
-				}
 				_variant_t value(name);
 				rWriter.WriteAttribute(SvXml::CTAG_TOOL, value);
 			}
@@ -718,6 +762,15 @@ bool SVToolGrouping::GetParameters(SvOi::IObjectWriter& rWriter)
 		{
 			rWriter.EndElement();
 		}
+
+		rWriter.StartElement(SvXml::CTAG_TOOLCOLLAPSED);
+		for (auto value : m_CollapseToolIds)
+		{
+			rWriter.StartElement(std::to_string(value).c_str());
+			rWriter.EndElement();
+		}
+		rWriter.EndElement();
+
 		// End Element for Toolgroupings
 		rWriter.EndElement();
 	}

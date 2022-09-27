@@ -58,7 +58,11 @@ public:
 	virtual void moveTaskObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) = 0;
 
 	///Fills the responseMessage  with ObjectInfos for the objects in m_TaskObjectVector
-	virtual void   GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const = 0;
+	virtual void GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const = 0;
 
+	/// Return how many tools (include is object if it is a tool) are nested up to the tool set.
+	/// \param goUpwards [in] True, search up to toolset, false down to the children.
+	/// \returns int
+	virtual int getToolDepth(bool goUpwards = true) const = 0;
 };
 } //namespace SvOi

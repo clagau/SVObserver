@@ -137,9 +137,9 @@ void ReconstructFilterDlg::OnSelchangeImageCombo()
 		pRequest->set_objectid(m_filterID);
 
 		HRESULT hrOk = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		if (S_OK != hrOk && responseCmd.has_standardresponse())
+		if (S_OK != hrOk)
 		{
-			SvStl::MessageContainerVector errorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
+			SvStl::MessageContainerVector errorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			if (0 < errorMessageList.size())
 			{

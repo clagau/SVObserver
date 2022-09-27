@@ -532,6 +532,37 @@ void SVTaskObjectListClass::getToolsWithReplaceableSourceImage(SvPb::GetToolsWit
 	}
 }
 
+int SVTaskObjectListClass::getToolDepth(bool goUpwards) const
+{
+	int depth = 0;
+	if (goUpwards)
+	{
+		const SVObjectClass* pObject = this;
+		while (nullptr != pObject && SvPb::SVToolSetObjectType != pObject->GetObjectType())
+		{
+			if (SvPb::SVToolObjectType == pObject->GetObjectType())
+			{
+				++depth;
+			}
+			pObject = pObject->GetParent();
+		}
+	}
+	else
+	{
+		if (SvPb::SVToolObjectType == GetObjectType())
+		{
+			for (auto* pObject : m_TaskObjectVector)
+			{
+				if (auto* pTaskList = dynamic_cast<SVTaskObjectListClass*>(pObject); nullptr != pTaskList)
+				{
+					depth = std::max(depth, pTaskList->getToolDepth(false));
+				}
+			}
+		}
+	}
+	return depth;
+}
+
 void SVTaskObjectListClass::Delete(uint32_t objectID)
 {
 	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(objectID));

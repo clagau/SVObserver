@@ -1143,6 +1143,18 @@ message GetDependencyResponse
 	repeated DependencyPair dependencyPair = 1;
 }
 
+message GetToolDepthRequest
+{
+	uint32 objectId = 1;
+	bool goUpward = 2; //true, go up to tool set; false means search to the children.
+}
+
+message GetToolDepthResponse
+{
+	int32 depthUpward = 1; //only set if goUpward is true
+	int32 depthDownward = 2; //only set if goUpward is false
+}
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -1224,17 +1236,17 @@ message InspectionCmdRequest
 		AddParameterAndUseItRequest addParameterAndUseItRequest = 75;
 		CheckParameterNamesRequest checkParameterNamesRequest = 76;
 		GetDependencyRequest getDependencyRequest = 77;
+		GetToolDepthRequest getToolDepthRequest = 78;
 		}
 }
 
 message InspectionCmdResponse
 {
 	sfixed32 hResult = 1;				//The request result (0 = no error)
-	MessageContainerVector errorMessage = 1000;
+	MessageContainerVector errorMessage = 2;
 		
 	oneof message
 	{
-		StandardResponse standardResponse = 2;
 		GetObjectParametersResponse getObjectParametersResponse = 3;
 		GetEquationResponse  getEquationResponse = 4;
 		ValidateAndSetEquationResponse  validateAndSetEquationResponse = 5;
@@ -1289,5 +1301,6 @@ message InspectionCmdResponse
 		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 55;
 		CheckParameterNamesResponse checkParameterNamesResponse = 56;
 		GetDependencyResponse getDependencyResponse = 57;
+		GetToolDepthResponse getToolDepthResponse = 58;
 		}
 }

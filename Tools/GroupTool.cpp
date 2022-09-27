@@ -291,6 +291,12 @@ namespace SvTo
 		}
 	}
 
+	int GroupTool::getToolDepth(bool goUpwards) const
+	{
+		int depth = (false == goUpwards) ? 1 : 0;
+		return __super::getToolDepth(goUpwards) + depth;
+	}
+
 	void GroupTool::Initialize()
 	{
 		RegisterEmbeddedObject(&m_isClosed, SvPb::IsClosedEId, IDS_OBJECTNAME_ISCLOSED, false, SvOi::SVResetItemTool);

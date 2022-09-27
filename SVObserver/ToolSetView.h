@@ -58,6 +58,7 @@ public:
 
 	///Get Navigator Element Pointer for the index in the ListCtrl
 	PtrNavigatorElement GetNavigatorElement(int index) const;
+	void HandleExpandCollapse(uint32_t toolId, bool bCollapse);
 	void HandleExpandCollapse(const std::string& rName, bool bCollapse);
 	bool IsEndToolGroupAllowed() const;
 	SVToolSetListCtrl& getListCtrl() { return m_toolSetListCtrl; };
@@ -93,8 +94,6 @@ public:
 	void addParameter2MonitorList(LPCTSTR ppqName);
 	void removeParameter2MonitorList(LPCTSTR ppqName);
 
-	///return true if a subtool or subtoolDeleimiter is selected
-	bool IsSubToolSelected() const;
 	void RefreshTimestamp();
 	double GetTimeStamp() const { return m_timestamp; } ;
 

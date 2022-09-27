@@ -751,9 +751,9 @@ HRESULT TaTableAnalyzerPage::checkAllAnaylzer()
 			pRequest->set_objectid(analyzerID);
 
 			hrOk = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-			if (S_OK != hrOk && responseCmd.has_standardresponse())
+			if (S_OK != hrOk)
 			{
-				SvStl::MessageContainerVector errorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
+				SvStl::MessageContainerVector errorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				if (0 < errorMessageList.size())
 				{
@@ -814,9 +814,9 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 				pRequest->set_objectid(m_TaskObjectID);
 
 				hrOk = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-				if (S_OK != hrOk && responseCmd.has_standardresponse())
+				if (S_OK != hrOk)
 				{
-					SvStl::MessageContainerVector taskResetMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
+					SvStl::MessageContainerVector taskResetMessageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 					for (const auto& rMessage : taskResetMessageList)
 					{
 						const auto& rMessageData = rMessage.getMessage();
@@ -835,11 +835,8 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 						auto* pGetMessageListRequest = requestCmd.mutable_getmessagelistrequest();
 						pGetMessageListRequest->set_objectid(m_selectedAnalyzerID);
 
-						HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-						if (hr == S_OK && responseCmd.has_standardresponse())
-						{
-							rErrorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
-						}
+						SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+						rErrorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 						if (0 < rErrorMessageList.size())
 						{
 							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

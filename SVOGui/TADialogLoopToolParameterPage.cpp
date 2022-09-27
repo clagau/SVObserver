@@ -155,12 +155,7 @@ void TADialogLoopToolParameterPage::resetInspection()
 	pRequest->set_objectid(m_TaskObjectID);
 
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvStl::MessageContainerVector messages;
-	if (responseCmd.has_standardresponse())
-	{
-		messages = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
-	}
-
+	SvStl::MessageContainerVector messages {SvPb::convertProtobufToMessageVector(responseCmd.errormessage())};
 	if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

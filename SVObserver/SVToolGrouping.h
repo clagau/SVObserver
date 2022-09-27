@@ -78,7 +78,21 @@ public:
 	bool IsStartTag(const std::string& rName, bool& bState) const;
 	bool IsStartTag(const std::string& rName) const;
 	bool IsEndTag(const std::string& rName) const;
+
+	/// Return if object is collapsed. I
+	/// If it is a real tool, use toolId, because unique. Only if it is not a tool (grouping) use name.)
+	/// \param toolId [in]
+	/// \param rName [in]
+	/// \returns bool
+	bool IsCollapsed(uint32_t toolId) const;
 	bool IsCollapsed(const std::string& rName) const;
+	/// Set the state if a object is collapsed or not.
+	/// If it is a real tool, use toolId, because unique. Only if it is not a tool (grouping) use name.)
+	/// \param toolId [in]
+	/// \param rName [in]
+	/// \param bCollapse [in]
+	/// \returns bool Return if set succeeded.
+	bool Collapse(uint32_t toolId, bool bCollapse);
 	bool Collapse(const std::string& rName, bool bCollapse);
 
 	typedef ToolGroupList::iterator iterator;
@@ -109,5 +123,6 @@ public:
 	void clear() { m_ToolGroups.clear(); }
 private:
 	HRESULT LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVToolGrouping& rGroupings);
+	std::vector<uint32_t> m_CollapseToolIds;
 };
 

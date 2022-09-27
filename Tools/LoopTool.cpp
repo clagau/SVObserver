@@ -322,4 +322,10 @@ void LoopTool::resetCounters()
 	}
 }
 
+int LoopTool::getToolDepth(bool goUpwards) const
+{
+	int depth = (false == goUpwards) ? 1 : 0;
+	return __super::getToolDepth(goUpwards) + depth;
+}
+
 } //namespace SvTo

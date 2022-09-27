@@ -688,5 +688,6 @@ enum MessageTextEnum
 	Tid_NameContainsInvalidChars,
 	Tid_ProductNotTriggered,
 	Tid_ErrorStartInspection,
+	Tid_MaxDepthOfToolsError,
 };
 } //namespace SvStl
