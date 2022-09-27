@@ -8,10 +8,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <algorithm>
-//Moved to precompiled header: #include <locale>
-//Moved to precompiled header: #include <sstream>
-//Moved to precompiled header: #include <boost\algorithm\string\case_conv.hpp>
 #include "StringHelper.h"
 #include "LoadDll.h"
 #pragma endregion Includes

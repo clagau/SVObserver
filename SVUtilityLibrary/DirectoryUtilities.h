@@ -14,5 +14,8 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <string>
 
-bool CreateDirPath( LPCTSTR Path);
-
+namespace SvUl
+{
+bool CreateDirPath(LPCTSTR Path);
+bool ensureDirectoryExists(std::string& rDirectoryPath);
+}

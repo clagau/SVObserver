@@ -161,6 +161,7 @@
     <ClCompile Include="DirectoryUtilities.cpp" />
     <ClCompile Include="FileHelper.cpp" />
     <ClCompile Include="GlobalConstantData.cpp" />
+    <ClCompile Include="Heapwalk.cpp" />
     <ClCompile Include="InStreamWrapper.cpp" />
     <ClCompile Include="LoadDll.cpp" />
     <ClCompile Include="ModuleInfo.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="DirectoryUtilities.h" />
     <ClInclude Include="FileHelper.h" />
     <ClInclude Include="GlobalConstantData.h" />
+    <ClInclude Include="Heapwalk.h" />
     <ClInclude Include="IArchive.h" />
     <ClInclude Include="ICoder.h" />
     <ClInclude Include="IDecl.h" />

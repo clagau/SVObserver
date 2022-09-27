@@ -5094,7 +5094,6 @@ bool SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription
 	}
 
 
-
 	OutputDebugString(info.str().c_str());
 
 	return isBigDelta;

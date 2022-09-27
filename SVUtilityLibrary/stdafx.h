@@ -61,6 +61,7 @@
 #include <direct.h>
 #include <iostream>
 #include <filesystem>
+#include <fstream>
 #include <functional>
 #include <guiddef.h>
 #include <io.h>

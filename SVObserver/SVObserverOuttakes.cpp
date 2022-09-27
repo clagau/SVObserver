@@ -41,12 +41,12 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVUtilityLibrary/Heapwalk.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Triggering/SVTriggerObject.h"
 #include "Triggering/SVTriggerProcessingClass.h"
 #pragma endregion Includes
-
 
 long g_OfflineCount = 0;
 
@@ -148,6 +148,10 @@ void StopSvo()
 	{
 		return;
 	}
+
+#ifdef LOG_HEAP_INFO
+	SvUl::logHeap(_T("Leaving run mode"));
+#endif
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_STOPING))
 	{

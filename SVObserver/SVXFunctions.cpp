@@ -23,6 +23,7 @@
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SHA256.h"
+#include "SVUtilityLibrary/Heapwalk.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -497,6 +498,10 @@ HRESULT LoadSvxFile(unsigned long svoVersion, const std::string& rSvxFilePath, c
 	{
 		return hr;
 	}
+
+#ifdef LOG_HEAP_INFO
+	SvUl::logHeap(std::format(_T("Configuration '{}' loaded"), rSvxFilePath));
+#endif
 
 	wait.Restore();
 

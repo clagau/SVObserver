@@ -715,7 +715,9 @@ namespace SvStl
 		{Tid_ProductIncompleteNak, _T("NAK caused by product incomplete (usually PPQ full)")},
 		{Tid_IsColorCheckForGrayscaleImage, _T("Color image checkbox selected, but image is grayscale")},
 		{Tid_WrongParentForEmbeddedValue, _T("wrong Parent for Embedded Value ") },
-		{Tid_FileNameInvalid, _T("File name is invalid %s") },
+		{Tid_FileNameInvalid, _T("File name is invalid %s")},
+		{Tid_LoggingFileNotOpen, _T("Logging file name not open")},
+			
 		{Tid_WrongParentForEmbeddedValue, _T("Wrong Parent for Embedded Value ")},
 		{Tid_ErrorWrite, _T("Error writing Archive data '%s'!") },
 		{Tid_ErrorArchiveQueueFull, _T("Error writing Archive Queue is full!")},

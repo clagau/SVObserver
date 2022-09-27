@@ -269,7 +269,6 @@ BYTE* SharedDataStore::GetPtr(DWORD slot, DWORD offset)
 		res = ((BYTE*)m_pViewData) + slot * m_slotSize + offset;
 	}
 	return res;
-
 }
 
 LPCTSTR SharedDataStore::GetMapFileName() const

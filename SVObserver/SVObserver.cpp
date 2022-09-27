@@ -72,6 +72,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVThread.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
+#include "SVUtilityLibrary/Heapwalk.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -203,6 +204,9 @@ BOOL SVObserverApp::InitInstance()
 		exit(SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED);
 	}
 
+#ifdef LOG_HEAP_INFO
+	SvUl::startHeaplogs();
+#endif 
 	SvStl::MessageManager::setShowDisplayFunction(SvMc::DisplayMessageBox::showDialog);
 
 	//Set the resource instance to the resource dll
@@ -505,6 +509,10 @@ int SVObserverApp::ExitInstance()
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_26_SVOBSERVER_STOPPED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	CloseHandle(m_hEvent);
+
+#ifdef LOG_HEAP_INFO
+	SvUl::endHeaplogs();
+#endif 
 
 #if !defined(_WIN32_WCE) || defined(_CE_DCOM)
 	if (m_ATLInited)

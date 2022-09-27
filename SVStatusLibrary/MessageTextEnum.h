@@ -677,6 +677,7 @@ enum MessageTextEnum
 	Tid_IsColorCheckForGrayscaleImage,
 	Tid_WrongParentForEmbeddedValue,
 	Tid_FileNameInvalid,
+	Tid_LoggingFileNotOpen,
 	Tid_ErrorWrite,
 	Tid_ErrorArchiveQueueFull,
 

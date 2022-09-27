@@ -328,7 +328,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 
 	try
 	{
-		if (CreateDirPath(SvStl::GlobalPath::Inst().GetTempPath().c_str()))
+		if (SvUl::CreateDirPath(SvStl::GlobalPath::Inst().GetTempPath().c_str()))
 		{
 			bool bRet = false;
 			CFileException* ex = new CFileException;
@@ -516,7 +516,7 @@ STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlo
 	Path = szDrive;
 	Path += szDir;
 
-	CreateDirPath(Path.c_str());
+	SvUl::CreateDirPath(Path.c_str());
 
 	CFile binFile;
 	CFileException l_FileException;

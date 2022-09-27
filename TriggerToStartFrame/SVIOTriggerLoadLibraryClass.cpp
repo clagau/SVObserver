@@ -193,7 +193,6 @@ HRESULT SVIOTriggerLoadLibraryClass::Stop(unsigned long triggerIndex)
 	return result;
 }
 	
-// cppcheck-suppress unusedFunction
 unsigned long SVIOTriggerLoadLibraryClass::TrigGetParameterCount(unsigned long triggerIndex) const
 {
 	unsigned long result {0UL};
@@ -205,7 +204,6 @@ unsigned long SVIOTriggerLoadLibraryClass::TrigGetParameterCount(unsigned long t
 	return result;
 }
 
-// cppcheck-suppress unusedFunction
 _variant_t SVIOTriggerLoadLibraryClass::TrigGetParameterName(unsigned long triggerIndex, unsigned long index) const
 {
 	_variant_t result;
@@ -217,7 +215,6 @@ _variant_t SVIOTriggerLoadLibraryClass::TrigGetParameterName(unsigned long trigg
 	return result;
 }
 
-// cppcheck-suppress unusedFunction
 _variant_t SVIOTriggerLoadLibraryClass::TrigGetParameterValue( unsigned long triggerIndex, unsigned long index) const
 {
 	_variant_t result;
