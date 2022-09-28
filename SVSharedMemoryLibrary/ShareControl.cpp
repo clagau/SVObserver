@@ -31,7 +31,6 @@ ShareControl::ShareControl(const ShareControlSettings& ControlParameter )
 	{
 		m_DelayBeforeClearShare = ControlParameter.DelayBeforeClearShare;
 	}
-	m_pLastResponseData = std::make_unique<LastResponseData>();
 	std::function<bool(DWORD)> eventHandler = [this](DWORD event) { return EventHandler(event); };
 	SvSml::ShareEvents::GetInstance().SetParameter(ControlParameter);
 	SvSml::ShareEvents::GetInstance().SetCallbackFunction(eventHandler);
@@ -86,9 +85,9 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 	SvSml::vecpProd* pLastFailstatus(nullptr);
 	std::unique_ptr<SvSml::vecpProd>  new_FailstatusPtr(new SvSml::vecpProd);
 	{
-		std::lock_guard<std::mutex> guard(m_pLastResponseData->m_ProtectLastFailstatus);
-		auto it = m_pLastResponseData->m_LastFailstatus.find(listName);
-		if (it != m_pLastResponseData->m_LastFailstatus.end())
+		std::lock_guard<std::mutex> guard(m_lastResponseData.m_ProtectLastFailstatus);
+		auto it = m_lastResponseData.m_LastFailstatus.find(listName);
+		if (it != m_lastResponseData.m_LastFailstatus.end())
 		{
 			pLastFailstatus = it->second.get();
 		}
@@ -103,7 +102,7 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 				{
 					return false;
 				}
-				m_pLastResponseData->m_LastFailstatus[listName.c_str()] = std::move(new_FailstatusPtr);
+				m_lastResponseData.m_LastFailstatus[listName.c_str()] = std::move(new_FailstatusPtr);
 			}
 			break;
 			case SvSml::SharedMemReader::last:
@@ -185,7 +184,7 @@ bool ShareControl::EventHandler(DWORD event)
 			{
 				DWORD version = SvSml::ShareEvents::GetInstance().GetReadyCounter();
 				m_MemReader.Reload(version);
-				m_pLastResponseData->ClearHeld();
+				m_lastResponseData.ClearHeld();
 				res = true;
 			}
 			catch (std::exception& rExp)
@@ -248,8 +247,8 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 	const SvSml::MLProduct* pLastProduct {nullptr};
 	SvSml::pProd new_productPtr(new SvSml::MLProduct());
 	{
-		std::mutex& rProtectLast = isReject ? m_pLastResponseData->m_ProtectLastReject : m_pLastResponseData->m_ProtectLastProduct;
-		std::map<std::string, SvSml::pProd>& rLastMap = isReject ? m_pLastResponseData->m_LastReject : m_pLastResponseData->m_LastProduct;
+		std::mutex& rProtectLast = isReject ? m_lastResponseData.m_ProtectLastReject : m_lastResponseData.m_ProtectLastProduct;
+		std::map<std::string, SvSml::pProd>& rLastMap = isReject ? m_lastResponseData.m_LastReject : m_lastResponseData.m_LastProduct;
 
 		std::lock_guard<std::mutex> guard(rProtectLast);
 
@@ -262,36 +261,22 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 		SvSml::SharedMemReader::retvalues ret(SvSml::SharedMemReader::fail);
 		if(isReject)
 		{
-			ret = m_MemReader.GetRejectData(rListName.c_str(), triggerCount, new_productPtr.get(), pLastProduct, false);
+			ret = m_MemReader.GetRejectData(rListName.c_str(), triggerCount, new_productPtr.get(), false);
 		}
 		else
 		{
-			ret = m_MemReader.GetProductData(rListName.c_str(), triggerCount, new_productPtr.get(), pLastProduct, false);
+			ret = m_MemReader.GetProductData(rListName.c_str(), triggerCount, new_productPtr.get(), false);
 		}
 
 		switch (ret)
 		{
 			case SvSml::SharedMemReader::success:
 			{
-				int index = m_MemReader.GetSlotManagerIndexForMonitorList(rListName.c_str());
-				if (nullptr != pLastProduct)
+				if (nullptr != pLastProduct && peviousTrigger == pLastProduct->m_trigger)
 				{
-					///release Readerslot for last product
-					if (index < 0)
-					{
-						SvStl::MessageManager exception(SvStl::MsgType::Log);
-						SvDef::StringVector msgList;
-						msgList.emplace_back(rListName);
-						exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_SM_SlotNotFound, msgList, SvStl::SourceFileParams(StdMessageParams));
-				
-						rError.set_errorcode(SvPenv::ErrorCode::internalError);
-						rError.set_message(exception.getMessageContainer().what());
-						return false;
-					}
-					m_MemReader.GetSlotManager(index)->ReleaseReaderSlot(pLastProduct->m_slot);
+					pProductMsg->set_status(SvPb::State::unchanged);
 				}
-
-				if (SetProductResponse(nameInResponse, new_productPtr.get(), pProductMsg, rError))
+				else if (SetProductResponse(nameInResponse, new_productPtr.get(), pProductMsg, rError))
 				{
 					rLastMap[rListName].reset();
 					rLastMap[rListName] = std::move(new_productPtr);
@@ -301,22 +286,6 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 					return false;
 				}
 
-				return true;
-			}
-			break;
-			case SvSml::SharedMemReader::last:
-			{
-				if (peviousTrigger == pLastProduct->m_trigger)
-				{
-					pProductMsg->set_status(SvPb::State::unchanged);
-				}
-				else
-				{
-					if (!SetProductResponse(nameInResponse, pLastProduct, pProductMsg, rError))
-					{
-						return false;
-					}
-				}
 				return true;
 			}
 			break;
@@ -374,6 +343,14 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 		{
 			pImage->set_trid(mapIter->second->getId());
 		}
+		else
+		{
+			SV_LOG_GLOBAL(trace) << "TR for inspection " << MeP->data.m_inspectionStoreId << "not found.";
+			rError.set_errorcode(SvPenv::ErrorCode::notFound);
+			pImage->set_trid(-1);
+			return false;
+		}
+		
 		pImage->set_imageindex(MeP->data.m_triggerRecordPos);
 		pImage->set_inspectionid(MeP->data.m_inspectionTRCPos);
 

@@ -94,13 +94,11 @@
     <ClCompile Include="MonitorListCpy.cpp" />
     <ClCompile Include="MonitorListStore.cpp" />
     <ClCompile Include="ShareControl.cpp" />
-    <ClCompile Include="SharedDataContainer.cpp" />
     <ClCompile Include="SharedDataStore.cpp" />
     <ClCompile Include="SharedMemoryLock.cpp" />
     <ClCompile Include="SharedMemReader.cpp" />
     <ClCompile Include="SharedMemWriter.cpp" />
     <ClCompile Include="ShareEvents.cpp" />
-    <ClCompile Include="SMRingbuffer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -120,7 +118,6 @@
     <ClInclude Include="MonitorListStore.h" />
     <ClInclude Include="ShareControl.h" />
     <ClInclude Include="ShareControlSetting.h" />
-    <ClInclude Include="SharedDataContainer.h" />
     <ClInclude Include="SharedDataStore.h" />
     <ClInclude Include="SharedMemIniFileTags.h" />
     <ClInclude Include="SharedMemoryLock.h" />
@@ -128,7 +125,6 @@
     <ClInclude Include="SharedMemWriter.h" />
     <ClInclude Include="ShareEvents.h" />
     <ClInclude Include="SMParameterStruct.h" />
-    <ClInclude Include="SMRingbuffer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVProductFilterEnum.h" />
     <ClInclude Include="SVShared.h" />

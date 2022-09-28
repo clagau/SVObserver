@@ -301,7 +301,6 @@ void SVInspectionProcess::BuildWatchlist()
 	{
 		return;
 	}
-	SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(GetPPQ()->GetName()));
 	const SvSml::MonitorListCpy* pMonitorlist(nullptr);
 	pMonitorlist = SvSml::SharedMemWriter::Instance().GetMonitorListCpyPointerForPPQ(GetPPQ()->GetName());
 	if (!pMonitorlist)
@@ -429,7 +428,6 @@ SVInspectionProcess::~SVInspectionProcess()
 	DestroyInspection();
 	m_PPQId = SvDef::InvalidObjectId;
 	m_WatchListDatas.clear();
-	m_SlotManager.reset();
 	m_RegressionTestPlayEquation.CloseObject();
 }
 
@@ -3523,15 +3521,6 @@ bool SVInspectionProcess::shouldPauseRegressionTestByCondition()
 	return false;
 }
 
-void SVInspectionProcess::SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager)
-{
-	if (m_SlotManager.get())
-	{
-		m_SlotManager.reset();
-	}
-	m_SlotManager = Slotmanager;
-}
-
 void SVInspectionProcess::buildValueObjectData()
 {
 	SvPb::DataDefinitionList dataDefList;
@@ -3621,11 +3610,6 @@ void SVInspectionProcess::buildValueObjectData()
 void SVInspectionProcess::setIOObjectIdMap(std::map<std::string, uint32_t>&& ioObjectMap)
 {
 	m_ioObjectMap = std::move(ioObjectMap);
-}
-
-SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()
-{
-	return m_SlotManager;
 }
 
 void SVInspectionProcess::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)

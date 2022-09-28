@@ -120,9 +120,8 @@ BOOL ProductDlg::AppendProduct(SvSml::MLProduct* pProduct, int& line)
 		m_ListCtrl.SetItemText(line++, data, "");
 		for (int ImItem = 0; ImItem < Nimage; ImItem++)
 		{
-			int slot = pProduct->m_slot;
 			int StoreIndex = pProduct->m_ImageEntries[ImItem]->data.m_inspectionStoreId;
-			std::string filename = SvUl::Format(_T("%i %i  %i"), StoreIndex, -1, slot);
+			std::string filename = SvUl::Format(_T("%i %i"), StoreIndex, -1);
 
 			csobj.Format("%i", pProduct->m_ImageEntries[ImItem].get()->data.ObjectType);
 			csize.Format("%i", pProduct->m_ImageEntries[ImItem].get()->data.ByteSize);

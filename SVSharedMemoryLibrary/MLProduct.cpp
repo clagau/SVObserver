@@ -19,8 +19,6 @@ namespace SvSml
 	{
 		m_status = E_FAIL;
 		m_trigger = -1;
-		m_SlotManagerIndex = -1;
-		m_slot = -1;
 		m_triggerRecordMap.clear();
 	};
 }

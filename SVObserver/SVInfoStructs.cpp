@@ -35,7 +35,6 @@ void SVInspectionInfoStruct::Init()
 	m_ToolSetAvgTime = 0.0;
 
 	clearTRCs();
-	m_lastInspectedSlot = -1;
 	m_ObjectID = 0;
 	m_bReject = false;
 }
@@ -100,7 +99,6 @@ void SVInspectionInfoStruct::setTriggerRecordIncompleted()
 
 SVProductInfoStruct::SVProductInfoStruct()
 	: m_ProductActive(0)
-	, m_monitorListSMSlot(-1)
 	, m_lastPPQPosition {0L}
 	, m_prevTriggerNAK {false}
 	,m_MissingImageCount {0}
@@ -119,7 +117,6 @@ SVProductInfoStruct::SVProductInfoStruct(const SVProductInfoStruct& rRhs)
 	, m_svCameraInfos(rRhs.m_svCameraInfos)
 	, m_svInspectionInfos(rRhs.m_svInspectionInfos)
 	, m_ProductActive(0)
-	, m_monitorListSMSlot(rRhs.m_monitorListSMSlot)
 	, m_lastPPQPosition {rRhs.m_lastPPQPosition}
 	, m_CantProcessReason {rRhs.m_CantProcessReason}
 	,m_MissingImageCount {rRhs.m_MissingImageCount}
@@ -159,7 +156,6 @@ SVProductInfoStruct& SVProductInfoStruct::operator=(const SVProductInfoStruct& r
 
 		m_svCameraInfos = rRhs.m_svCameraInfos;
 		m_svInspectionInfos = rRhs.m_svInspectionInfos;
-		m_monitorListSMSlot = rRhs.m_monitorListSMSlot;
 
 		if (rRhs.IsProductActive())
 		{
@@ -192,7 +188,6 @@ HRESULT SVProductInfoStruct::Assign(const SVProductInfoStruct& rData, bool shoul
 		m_triggerInfo = rData.m_triggerInfo;
 		m_outputsInfo = rData.m_outputsInfo;
 		m_pPPQ = rData.m_pPPQ;
-		m_monitorListSMSlot = rData.m_monitorListSMSlot;
 		m_svCameraInfos = rData.m_svCameraInfos;
 		m_svInspectionInfos.clear();
 
@@ -243,7 +238,6 @@ void SVProductInfoStruct::InitProductInfo()
 	m_triggered = false;
 	m_dataComplete = false;
 	m_prevTriggerNAK = false;
-	m_monitorListSMSlot = -1;
 	m_outputsInfo.clear();
 	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});
 	
@@ -269,7 +263,6 @@ void SVProductInfoStruct::Reset()
 	m_triggered = false;
 	m_dataComplete = false;
 	m_prevTriggerNAK = false;
-	m_monitorListSMSlot = -1;
 	m_outputsInfo.clear();
 	m_pPPQ = nullptr;
 	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});

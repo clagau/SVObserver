@@ -12,10 +12,7 @@
 #include "MonitorListCpy.h"
 #include "SVSharedMemorySettings.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-
-#include "SharedDataContainer.h"
 #include "MonitorListStore.h"
-
 #pragma endregion Includes
 
 
@@ -29,10 +26,6 @@ namespace SvSml
 		static SharedMemWriter& Instance();
 		~SharedMemWriter();
 
-		int CreateManagment();
-
-		RingBufferPointer GetSlotManager(LPCTSTR PPQname);
-		
 		const SVSharedMemorySettings& GetSettings() const;
 	
 	
@@ -61,7 +54,6 @@ namespace SvSml
 		void ReadSettings();
 	private:
 		MonitorListStore	m_monitorListStore;		
-		SharedDataContainer m_DataContainer;
 		MLCpyContainer m_MLContainer;  //<Container holds MonitorlistInformation  
 		SVSharedMemorySettings m_settings;
 	};

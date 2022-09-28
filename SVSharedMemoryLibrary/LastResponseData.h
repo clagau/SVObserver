@@ -29,7 +29,7 @@ public:
 		}
 		{
 			std::lock_guard<std::mutex> guard(m_ProtectLastReject);
-			m_LastReject.clear();;
+			m_LastReject.clear();
 		}
 		{
 			std::lock_guard<std::mutex> guard(m_ProtectLastProduct);

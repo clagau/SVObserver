@@ -36,27 +36,6 @@ namespace SvSml
 		ReadSettings();
 	}
 
-	int SharedMemWriter::CreateManagment()
-	{
-		const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();
-		SMParameterStruct Param(rSettings.GetCreateTimeout(), rSettings.GetCreateWaitTime());
-
-		return m_DataContainer.CreateSlotManagment(m_MLContainer, Param);
-	}
-
-	RingBufferPointer SharedMemWriter::GetSlotManager(LPCTSTR PPQname)
-	{
-		if (m_MLContainer.m_PPQInfoMap.find(PPQname) != m_MLContainer.m_PPQInfoMap.end() && m_MLContainer.m_PPQInfoMap[PPQname].get())
-		{
-			int index = m_MLContainer.m_PPQInfoMap[PPQname]->SlotManagerIndex;
-			return m_DataContainer.GetSlotManager(index);
-		}
-		else
-		{
-			return nullptr;
-		}
-	}
-
 	void SharedMemWriter::ReadSettings()
 	{
 		SvLib::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
@@ -75,14 +54,8 @@ namespace SvSml
 
 	void SharedMemWriter::Destroy()
 	{
-		CloseDataConnection();
 		m_monitorListStore.CloseConnection();
 		ClearMonitorListCpyVector();
-	}
-
-	void SharedMemWriter::CloseDataConnection()
-	{
-		m_DataContainer.CloseConnection();
 	}
 
 	DWORD SharedMemWriter::GetInspectionStoreId(const std::string& InspectionName)

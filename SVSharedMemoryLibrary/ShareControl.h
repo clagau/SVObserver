@@ -40,7 +40,7 @@ private:
 	bool GetFailstatus(SvSml::vecpProd* pFailstatus, const SvPb::GetFailStatusRequest& rRequest, SvPb::GetFailStatusResponse& rResponse, SvPenv::Error& rError);
 private:
 	SvSml::SharedMemReader   m_MemReader;
-	std::unique_ptr<LastResponseData> m_pLastResponseData;
+	LastResponseData m_lastResponseData;
 	DWORD m_DelayBeforeClearShare {30};
 };
 }

@@ -26,7 +26,6 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
-#include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVSystemLibrary/SVThread.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
@@ -90,11 +89,6 @@ public:
 	void SetPPQIdentifier(uint32_t PPQId);
 	uint32_t GetPPQIdentifier() const;
 	SVPPQObject* GetPPQ() const;
-
-	///Set sharedPointer for m_SlotManager
-	void SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager);
-	///gets the shared Pointer in m_SlotManager
-	SvSml::RingBufferPointer GetSlotmanager();
 
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) override;
 
@@ -385,7 +379,6 @@ private:
 	std::vector<WatchlistelementPtr> m_WatchListDatas;
 	
 	int m_StoreIndex{-1}; 
-	SvSml::RingBufferPointer m_SlotManager;
 
 	//For RegressionTest
 	SvOp::SVEquation m_RegressionTestPlayEquation;

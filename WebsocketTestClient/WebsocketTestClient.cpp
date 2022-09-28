@@ -548,7 +548,7 @@ int main(int argc, char* argv[])
 			{
 				if (wordsize <= 3)
 				{
-					SV_LOG_GLOBAL(error) << "StoreNr imageNr slotNr Eingeben";
+					SV_LOG_GLOBAL(error) << "IPId imageNr triggerRecordId Eingeben";
 					continue;
 				}
 

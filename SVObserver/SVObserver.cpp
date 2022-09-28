@@ -1504,10 +1504,6 @@ void SVObserverApp::PrepareForStart(SVConfigurationObject* pConfig)
 		//clear the shared memory.
 		//this is only really necessary when the Monitorlist has changed
 
-		SvSml::SharedMemWriter::Instance().CloseDataConnection();
-
-		SvSml::SharedMemWriter::Instance().CreateManagment();
-
 		CreateImageStores(pConfig, ppqMonitorList, Result);
 
 		SvSml::SharedMemWriter::Instance().WriteMonitorList();
@@ -2012,7 +2008,6 @@ void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonit
 			// Do this before calling CanGoOnline 
 			const MonitorListAttributeStruct& rActiveList = rPpqMonitorList[pPPQ->GetName()];
 			pPPQ->SetMonitorList(rActiveList);
-			pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
 
 			bool softwareTrigger {false};
 			RootObject::getRootChildValue(SvDef::FqnEnvironmentSoftwareTrigger, softwareTrigger);

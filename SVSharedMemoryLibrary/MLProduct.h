@@ -22,8 +22,6 @@ namespace SvSml
 
 		int m_status;
 		int m_trigger;
-		int m_SlotManagerIndex; //<Datenmanager Index
-		int m_slot;
 		
 		std::vector<MonitorEntryPointer> m_dataEntries;
 		std::vector<MonitorEntryPointer> m_ImageEntries;

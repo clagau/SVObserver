@@ -140,7 +140,6 @@ struct SVInspectionInfoStruct
 
 	double m_ToolSetEndTime {0.0};
 	double m_ToolSetAvgTime {0.0};
-	long m_lastInspectedSlot {-1}; // Shared Memory
 	DWORD m_ObjectID{0};
 	bool m_bReject = false;
 };
@@ -199,7 +198,6 @@ struct SVProductInfoStruct
 
 	SvIe::SVObjectIdSVCameraInfoStructMap m_svCameraInfos;
 	ObjectIdSVInspectionInfoStructMap	m_svInspectionInfos;
-	long m_monitorListSMSlot; // Shared Memory
 
 protected:
 	mutable std::atomic_bool m_ProductActive;

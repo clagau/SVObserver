@@ -209,7 +209,6 @@ SVPPQObject::~SVPPQObject()
 	m_pTriggerToggle.reset();
 	m_pOutputToggle.reset();
 	m_pDataValid.reset();
-	m_SlotManager.reset();
 }
 
 void SVPPQObject::init()
@@ -307,11 +306,11 @@ bool SVPPQObject::Create()
 	m_notifyInspectionList.clear();
 	calcUseProcessingOffset4InterestFlag();
 
-	// Force the Inspections to rebuild
-	for (auto pInspection : m_arInspections)
-	{
-		pInspection->RebuildInspection();
-	}// end for
+		// Force the Inspections to rebuild
+		for (auto pInspection : m_arInspections)
+		{
+			pInspection->RebuildInspection();
+		}// end for
 
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
@@ -2213,7 +2212,6 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
 
-	CommitSharedMemory(rProduct);
 	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 	if (rProduct.IsProductActive())
 	{
@@ -2270,10 +2268,7 @@ bool SVPPQObject::SetProductIncomplete(long p_PPQIndex)
 bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 {
 	bool isNak = rProduct.m_outputsInfo.m_NakResult;
-	
 	bool l_Status = true;
-	// Release from Shared Memory
-	ReleaseSharedMemory(rProduct);
 
 	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 	if (rProduct.IsProductActive())
@@ -2715,7 +2710,7 @@ void SVPPQObject::ProcessTrigger()
 
 	while (0 < m_oTriggerQueue.size())
 	{
-		SvTrig::SVTriggerInfoStruct triggerInfo;;
+		SvTrig::SVTriggerInfoStruct triggerInfo;
 		if (m_bOnline && S_OK == m_oTriggerQueue.PopHead(triggerInfo))
 		{
 			SVProductInfoStruct* pProduct = IndexPPQ(std::move(triggerInfo));
@@ -2733,36 +2728,6 @@ void SVPPQObject::ProcessTrigger()
 				}
 
 				m_notifyInspectionList.push_back(pProduct->triggerCount());
-
-				// Get Shared Memory Slot
-				if (HasActiveMonitorList() && GetSlotmanager().get())
-				{
-					try
-					{
-
-						long writerslot = GetSlotmanager()->GetNextWriteSlot();
-						//TRACE("Get Writeslot %i\n", writerslot);
-						pProduct->m_monitorListSMSlot = writerslot;
-						for (auto& mapElement : pProduct->m_svInspectionInfos)
-						{
-							mapElement.second.m_lastInspectedSlot = writerslot;
-						}
-					}
-					catch (const std::exception& e)
-					{
-						SvDef::StringVector msgList;
-						msgList.push_back(e.what());
-						SvStl::MessageManager Exception(SvStl::MsgType::Log);
-						Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams));
-					}
-					catch (...)
-					{
-						SvDef::StringVector msgList;
-						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
-						SvStl::MessageManager Exception(SvStl::MsgType::Log);
-						Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams));
-					}
-				}
 			}
 		}
 	}
@@ -2799,7 +2764,7 @@ void SVPPQObject::ProcessNotifyInspections()
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 							::OutputDebugString(SvUl::Format(_T("%s Start Inspection %s failed TRI=%d\n"), GetName(), m_arInspections[i]->GetName(), triggerCount).c_str());
 #endif
-						}
+					}
 					}
 					else
 					{
@@ -2814,7 +2779,7 @@ void SVPPQObject::ProcessNotifyInspections()
 		else
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-			::OutputDebugString(SvUl::Format(_T("%s Removed Notify Inspection TRI=%d\n"), GetName(), triggerCount).c_str());
+		::OutputDebugString(SvUl::Format(_T("%s Removed Notify Inspection TRI=%d\n"), GetName(), triggerCount).c_str());
 #endif
 		}
 	}
@@ -3226,19 +3191,6 @@ bool SVPPQObject::HasActiveMonitorList() const
 	return m_bActiveMonitorList;
 }
 
-void SVPPQObject::SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager)
-{
-	if (m_SlotManager.get())
-	{
-		m_SlotManager.reset();
-	}
-	m_SlotManager = Slotmanager;
-}
-SvSml::RingBufferPointer SVPPQObject::GetSlotmanager()
-{
-	return m_SlotManager;
-}
-
 const std::string& SVPPQObject::GetConditionalOutputName() const
 {
 	return m_conditionalOutputName;
@@ -3266,70 +3218,6 @@ void SVPPQObject::ResetOutputValueObjects()
 	m_PpqOutputs[PpqOutputEnums::MasterWarning].SetValue(BOOL(true));
 	m_PpqOutputs[PpqOutputEnums::NotInspected].SetValue(BOOL(true));
 	m_PpqOutputs[PpqOutputEnums::DataValid].SetValue(BOOL(false));
-}
-
-// This method is for releasing the writer lock for Inspections when the product is incomplete
-void SVPPQObject::ReleaseSharedMemory(SVProductInfoStruct& rProduct)
-{
-	if (HasActiveMonitorList())
-	{
-		try
-		{
-			long shareSlotIndex = rProduct.m_monitorListSMSlot;
-			if (shareSlotIndex >= 0 && GetSlotmanager().get())
-			{
-				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.triggerCount(), true);
-				rProduct.m_monitorListSMSlot = -1;
-			}
-
-		}
-		catch (const std::exception& e)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(e.what());
-			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams));
-		}
-		catch (...)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
-			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams));
-		}
-	}
-}
-
-// This method writes the inspection info to the PPQ shared memory when the product is Complete
-void SVPPQObject::CommitSharedMemory(SVProductInfoStruct& rProduct)
-{
-	if (HasActiveMonitorList())
-	{
-		try
-		{
-			long shareSlotIndex = rProduct.m_monitorListSMSlot;
-			if (shareSlotIndex >= 0 && GetSlotmanager().get())
-			{
-				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.triggerCount(), true);
-				rProduct.m_monitorListSMSlot = -1;
-			}
-
-		}
-		catch (const std::exception& e)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(e.what());
-			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams));
-		}
-		catch (...)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
-			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams));
-		}
-	}
 }
 
 DWORD SVPPQObject::GetObjectColor() const
@@ -3504,30 +3392,10 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isIn
 
 	try
 	{
-		bool isReject {false};
 		auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
 		if (nullptr != pTrc)
 		{
-			isReject = pTrc->setTrsOfInterest(trVec, isInterest);
-		}
-		if (HasActiveMonitorList())
-		{
-			long slotindex = rProduct.m_monitorListSMSlot;
-
-			if (rProduct.triggerCount() > 0 && slotindex >= 0)
-			{
-				if (isReject)
-				{
-					GetSlotmanager()->SetToReject(slotindex);
-				}
-			}
-			else
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format("Error in getting next Slot  %d, Trigger count: %d", slotindex, rProduct.triggerCount()));
-				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
-			}
+			pTrc->setTrsOfInterest(trVec, isInterest);
 		}
 	}
 	catch (const std::exception& e)

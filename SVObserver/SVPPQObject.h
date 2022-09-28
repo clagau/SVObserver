@@ -22,7 +22,6 @@
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "Triggering/TriggerDevice.h"
-#include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVSystemLibrary/SVThread.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
@@ -212,12 +211,6 @@ public:
 	void SetMonitorList(const MonitorListAttributeStruct& rActiveList);
 	bool HasActiveMonitorList() const;
 	
-	///Set the slotmanager 
-	void SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager);
-	
-	///Get the SlotManager
-	SvSml::RingBufferPointer GetSlotmanager();
-
 	virtual DWORD GetObjectColor() const override;
 
 	bool setRejectDepth(long depth, SvStl::MessageContainerVector *pErrorMessages =nullptr);
@@ -263,7 +256,6 @@ protected:
 
 	bool m_bActiveMonitorList {false};
 	long m_rejectCount = 0;
-	SvSml::RingBufferPointer m_SlotManager;
 	
 	typedef SVTQueueObject< SVCameraQueueElement > SVCameraResponseQueue;
 	typedef SVTQueueObject< SVProductInfoStruct* > SVProductPointerQueue;
@@ -379,8 +371,6 @@ private:
 	void init();
 
 	void ResetOutputValueObjects();
-	void ReleaseSharedMemory(SVProductInfoStruct& rProduct);
-	void CommitSharedMemory( SVProductInfoStruct& rProduct);
 
 	bool SetupProductInfoStructs();
 

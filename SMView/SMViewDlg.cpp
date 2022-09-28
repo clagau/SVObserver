@@ -298,11 +298,11 @@ void SMViewDlg::DisplayProduct(bool isreject)
 	m_EditTrigger.SetWindowTextA(text.GetString());
 	if (isreject)
 	{
-		m_MemReader.GetRejectData(MonitorListName.GetString(), trigger, productPtr.get(), nullptr,true);
+		m_MemReader.GetRejectData(MonitorListName.GetString(), trigger, productPtr.get(),true);
 	}
 	else
 	{
-		m_MemReader.GetProductData(MonitorListName.GetString(), trigger, productPtr.get(), nullptr, true);
+		m_MemReader.GetProductData(MonitorListName.GetString(), trigger, productPtr.get(), true);
 	}
 	ProductDlg prod(productPtr.get());
 	prod.DoModal();

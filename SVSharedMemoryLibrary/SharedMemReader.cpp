@@ -16,6 +16,31 @@
 
 //#define TRACE_TRC
 
+namespace
+{
+void fillDataFromTR(const SvSml::MonitorEntries& rProdEnties, SvSml::MLProduct& rProduct)
+{
+	for (SvSml::MonitorEntryPointer mep : rProdEnties)
+	{
+		auto pTr = rProduct.m_triggerRecordMap[mep->data.m_inspectionStoreId];
+		variant_t valueV = (nullptr != pTr) ? pTr->getDataValue(mep->data.m_triggerRecordPos) : variant_t();
+		bool isArray = (VT_ARRAY == (valueV.vt & VT_ARRAY));
+		if (isArray && mep->data.arrayIndex >= 0)
+		{
+			std::unique_ptr<_variant_t> TempVariant(new _variant_t);
+			SvUl::getSingleVariantFromArrayOneDim<_variant_t>(valueV, mep->data.arrayIndex, *TempVariant.get());
+			rProduct.m_dataV.push_back(std::move(TempVariant));
+			rProduct.m_dataEntries.push_back(mep);
+		}
+		else
+		{
+			rProduct.m_dataV.push_back(std::make_unique<_variant_t>(valueV));
+			rProduct.m_dataEntries.push_back(mep);
+		}
+	}
+}
+}
+
 namespace SvSml
 {
 SharedMemReader::SharedMemReader(void)
@@ -28,8 +53,6 @@ SharedMemReader::~SharedMemReader(void)
 
 void SharedMemReader::Clear(void)
 {
-	
-	m_DataContainer.CloseConnection();
 	m_MonitorListStore.CloseConnection();
 	m_MLContainer.Clear();
 }
@@ -42,51 +65,86 @@ void SharedMemReader::Reload(DWORD )
 	SvPml::MesMLCpyContainer MesMLCpyCont;
 	MesMLCpyCont.ParseFromArray(m_MonitorListStore.GetPtr(), size);
 	m_MLContainer.BuildFromProtoMessage(MesMLCpyCont);
+}
 
-	m_DataContainer.CloseConnection();
-	m_DataContainer.OpenSlotManagment(m_MLContainer);
-	m_SlotManagerIndexMap.clear();
-
-	for (const auto &it : m_MLContainer.m_MonitorListCpyMap)
+SharedMemReader::retvalues SharedMemReader::fillProductWithTR(int trigger, SvOi::ITriggerRecordControllerR& rTRC, const MonitorListCpy& rML, MLProduct& rProduct, bool firstAlreadySet)
+{
+	bool firstIp = true;
+	for (const auto& ipPair : rML.m_InspectionIdsVector)
 	{
-		if (it.second.get() && it.second->GetIsActive())
+		if (false == firstAlreadySet || false == firstIp)
 		{
-			int Slotmanagerindex = GetSlotManagerIndexForPPQName(it.second->GetPPQname().c_str());
-			if (Slotmanagerindex >= 0)
-			{
-				m_SlotManagerIndexMap[it.first] = Slotmanagerindex;
-			}
+			rProduct.m_triggerRecordMap[ipPair.first] = rTRC.createTriggerRecordObjectPerTriggerCount(ipPair.second, trigger);
+		}
+		firstIp = false;
+
+		if (nullptr == rProduct.m_triggerRecordMap[ipPair.first])
+		{
+			SV_LOG_GLOBAL(trace) << SvUl::Format(_T("fillProductWithTR: TRC is null; %d\n"), ipPair.first);
+			return fail;
 		}
 	}
-
+	rProduct.m_trigger = trigger;
+	return success;
 }
 
-
-RingBufferPointer SharedMemReader::GetSlotManager(int index)
+SharedMemReader::retvalues SharedMemReader::fillProductWithLastTR(SvOi::ITriggerRecordControllerR& rTRC, const MonitorListCpy& rML, MLProduct& rProduct)
 {
-	if (index >= 0 && index < m_MLContainer.m_PPQInfoMap.size())
+	if (0 < rML.m_InspectionIdsVector.size())
 	{
-		return m_DataContainer.GetSlotManager(index);
+		for (const auto& ipPair : rML.m_InspectionIdsVector)
+		{
+			rProduct.m_triggerRecordMap[ipPair.first] = rTRC.createTriggerRecordObject(ipPair.second, rTRC.getLastTrId(ipPair.second));
+			if (nullptr == rProduct.m_triggerRecordMap[ipPair.first])
+			{
+				SV_LOG_GLOBAL(trace) << SvUl::Format(_T("fillProductWithLastTR: TRC is null; %d\n"), ipPair.first);
+				return fail;
+			}
+		}
+		auto ipIter = rProduct.m_triggerRecordMap.begin();
+		auto lowestTriggerCount = ipIter->second->getTriggerData().m_TriggerCount;
+		bool allCountsEqual = true;
+		for (++ipIter; rProduct.m_triggerRecordMap.end() != ipIter; ++ipIter)
+		{
+			if (ipIter->second->getTriggerData().m_TriggerCount != lowestTriggerCount)
+			{
+				allCountsEqual = false;
+				lowestTriggerCount = std::min(lowestTriggerCount, ipIter->second->getTriggerData().m_TriggerCount);
+			}
+		}
+		if (false == allCountsEqual)
+		{
+			for (auto& trPair : rProduct.m_triggerRecordMap)
+			{
+				if (trPair.second->getTriggerData().m_TriggerCount != lowestTriggerCount)
+				{
+					auto iter = std::find_if(rML.m_InspectionIdsVector.begin(), rML.m_InspectionIdsVector.end(), [trPair](const auto& rEntry) { return trPair.first == rEntry.first; });
+					if (rML.m_InspectionIdsVector.end() != iter)
+					{
+						trPair.second = rTRC.createTriggerRecordObjectPerTriggerCount(iter->second, lowestTriggerCount);
+						if (nullptr == trPair.second)
+						{
+							SV_LOG_GLOBAL(trace) << SvUl::Format(_T("fillProductWithLastTR: TRC is null; %d\n"), trPair.first);
+							return fail;
+						}
+					}
+					else
+					{
+						return fail;
+					}
+				}
+			}
+		}
+		rProduct.m_trigger = lowestTriggerCount;
+		return success;
 	}
 	else
 	{
-		return RingBufferPointer(nullptr);
-	}
-}
-int SharedMemReader::GetSlotManagerIndexForPPQName(LPCTSTR PPQname)
-{
-	auto it = m_MLContainer.m_PPQInfoMap.find(PPQname);
-	if (it != m_MLContainer.m_PPQInfoMap.end() && it->second.get())
-	{
-		return it->second->SlotManagerIndex;
-	}
-	else
-	{
-		return -1;
+		return fail;
 	}
 }
 
-SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, LPCTSTR Monitorlist, int trigger, MLProduct* pProduct, const MLProduct* pLastProduct)
+SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, LPCTSTR Monitorlist, int trigger, MLProduct* pProduct)
 {
 	if (nullptr == pProduct)
 	{
@@ -100,115 +158,111 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 		SV_LOG_GLOBAL(trace) << "no MonitorlistMetadat or no active Monitorlist";
 		return fail;
 	}
-	int SlotManagerIndex = GetSlotManagerIndexForMonitorList(Monitorlist);
-	if (SlotManagerIndex < 0)
-	{
-		SV_LOG_GLOBAL(trace) << "no slotmanager for " << Monitorlist;
-		assert(false);
-		return fail;
-	}
-	RingBufferPointer rBp = GetSlotManager(SlotManagerIndex);
-	if (FALSE == rBp.get())
-	{
-		assert(false);
-		return fail;
-	}
-	//get readerslot
-	int slot(-1);
-	if (-1 < trigger)
-	{
-		slot = rBp->GetReaderSlotByTrigger(trigger);
-	}
-	else if (par.reject)
-	{
-		slot = rBp->GetReaderSlotLastWritten(SMRingBuffer::Reject);
-	}
-	else
-	{
-		slot = rBp->GetReaderSlotLastWritten(SMRingBuffer::Last);
-	}
-	if (0 > slot)
-	{
-		
-		SV_LOG_GLOBAL(trace) << "no slot  for  product" ;
-		return fail;
-	}
-	if (nullptr != pLastProduct)
-	{
-		if (rBp->GetTriggerNumber(slot) == pLastProduct->m_trigger && pLastProduct->m_status == S_OK)
-		{
-			/// the last Product holds the information we can return here;
-			rBp->ReleaseReaderSlot(slot);
-			return last;
-		}
-	}
 
-	pProduct->m_slot = slot;
-	pProduct->m_SlotManagerIndex = SlotManagerIndex;
-	pProduct->m_trigger = rBp->GetTriggerNumber(slot);
 	auto* pTRC = SvOi::getTriggerRecordControllerRInstance();
 	if (nullptr != pTRC)
 	{
-		for (auto ipPair : pML->m_InspectionIdsVector)
+		if (-1 < trigger)
 		{
-			pProduct->m_triggerRecordMap[ipPair.first] = pTRC->createTriggerRecordObjectPerTriggerCount(ipPair.second, pProduct->m_trigger);
-
-			if (nullptr == pProduct->m_triggerRecordMap[ipPair.first])
+			auto ret = fillProductWithTR(trigger, *pTRC, *pML, *pProduct);
+			if (success != ret)
 			{
-				SV_LOG_GLOBAL(trace)  << SvUl::Format(_T("_GetProduct: TRC is null; %d\n"), ipPair.first);
-				
+				return ret;
 			}
-
+		}
+		else if (par.reject)
+		{
+			if (0 < pML->m_InspectionIdsVector.size())
+			{
+				auto ipPair = pML->m_InspectionIdsVector.begin();
+				const auto& trList = pTRC->getTrsOfInterest(ipPair->second, 1);
+				if (trList.size() && nullptr != trList[0])
+				{
+					pProduct->m_triggerRecordMap[ipPair->first] = trList[0];
+					auto ret = fillProductWithTR(trList[0]->getTriggerData().m_TriggerCount, *pTRC, *pML, *pProduct, true);
+					if (success != ret)
+					{
+						return ret;
+					}
+				}
+				else
+				{
+					SV_LOG_GLOBAL(trace) << SvUl::Format(_T("_GetProduct: TRC is null; Reject\n"));
+					return fail;
+				}				
+			}
+		}
+		else
+		{
+			auto ret = fillProductWithLastTR(*pTRC, *pML, *pProduct);
+			if (success != ret)
+			{
+				return ret;
+			}
 		}
 	}
 	pProduct->m_status = S_OK;
 
-	ListType::typ t = par.failstatus ? ListType::failStatus : ListType::productItemsData;
-	const MonitorEntries& ProdEnties = pML->GetMonitorEntries(t);
-	for (MonitorEntryPointer mep : ProdEnties)
-	{
-		auto pTr = pProduct->m_triggerRecordMap[mep->data.m_inspectionStoreId];
-		variant_t valueV = (nullptr != pTr) ? pTr->getDataValue(mep->data.m_triggerRecordPos) : variant_t();
-		bool isArray = (VT_ARRAY == (valueV.vt & VT_ARRAY));
-		if (isArray && mep->data.arrayIndex >= 0)
-		{
-			std::unique_ptr<_variant_t> TempVariant(new _variant_t);
-			SvUl::getSingleVariantFromArrayOneDim<_variant_t>(valueV, mep->data.arrayIndex, *TempVariant.get());
-			pProduct->m_dataV.push_back( std::move(TempVariant) );
-			pProduct->m_dataEntries.push_back(mep);
-		}
-		else
-		{
-			pProduct->m_dataV.push_back(std::make_unique<_variant_t>(valueV));
-			pProduct->m_dataEntries.push_back(mep);
-		}
-	}
+	const MonitorEntries& ProdEnties = pML->GetMonitorEntries(ListType::productItemsData);
+	fillDataFromTR(ProdEnties, *pProduct);
+
 	const MonitorEntries& ProdImageEntries = pML->GetMonitorEntries(ListType::productItemsImage);
-	if (!par.failstatus)
+	for (MonitorEntryPointer mep : ProdImageEntries)
 	{
-		for (MonitorEntryPointer mep : ProdImageEntries)
-		{
-			pProduct->m_ImageEntries.push_back(mep);
-		}
+		pProduct->m_ImageEntries.push_back(mep);
 	}
+
 	if (par.releaseTrigger)
 	{
-		rBp->ReleaseReaderSlot(slot);
 		pProduct->m_triggerRecordMap.clear();
 	}
 	return success;
-
 }
 
-
-
-bool SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber, MLProduct* pProduct)
+SharedMemReader::retvalues SharedMemReader::fillTrcInFailstatusList(LPCTSTR Monitorlist, vecpProd& rFailstatus)
 {
-	GetProdPar par;
-	par.reject = false;
-	par.releaseTrigger = true;
-	par.failstatus = true;
-	return (success == _GetProduct(par, Monitorlist, TriggerNumber, pProduct, nullptr));
+	const MonitorListCpy* pML = m_MLContainer.GetMonitorListCpyPointer(Monitorlist);
+	if (nullptr == pML || FALSE == pML->GetIsActive())
+	{
+		SV_LOG_GLOBAL(trace) << "no MonitorlistMetadat or no active Monitorlist";
+		return fail;
+	}
+
+	auto* pTRC = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr == pTRC)
+	{
+		SV_LOG_GLOBAL(trace) << "no TriggerRecordController";
+		return fail;
+	}
+
+	if (0 < pML->m_InspectionIdsVector.size())
+	{
+		int rejectDepth = pTRC->getInspections().list(pML->m_InspectionIdsVector[0].second).numberrecordsofinterest();
+		for (const auto& ipPair : pML->m_InspectionIdsVector)
+		{
+			auto tmpTrcs = pTRC->getTrsOfInterest(ipPair.second, rejectDepth);
+			for (int i = 0; i < tmpTrcs.size(); ++i)
+			{
+				auto& pTr = tmpTrcs[tmpTrcs.size() - 1 - i];
+				if (rFailstatus.size() <= i)
+				{
+					const auto& tmp = rFailstatus.emplace_back(std::make_unique<MLProduct>());
+					if (nullptr != pTr)
+					{
+						tmp->m_trigger = pTr->getTriggerData().m_TriggerCount;
+					}
+					else
+					{
+						SV_LOG_GLOBAL(trace) << SvUl::Format(_T("fillTrcInFailstatusList: TRC is null; %d\n"), ipPair.first);
+						return fail;
+					}
+				}
+				rFailstatus[i]->m_triggerRecordMap[ipPair.first] = pTr;
+			}
+		}
+	}
+
+	return success;	
 }
 
 SVMatroxBuffer SharedMemReader::GetImageBuffer(int triggerRecordId, int inspectionId, int imageIndex)
@@ -234,84 +288,68 @@ SVMatroxBuffer SharedMemReader::GetImageBuffer(int triggerRecordId, int inspecti
 	return {};
 }
 
-int SharedMemReader::GetSlotManagerIndexForMonitorList(LPCTSTR Monitorlist)
-{
-	auto it = m_SlotManagerIndexMap.find(Monitorlist);
-	if (it == m_SlotManagerIndexMap.end())
-	{
-		return -1;
-	}
-	else
-	{
-		return it->second;
-	}
-}
-
 SharedMemReader::retvalues SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, vecpProd* pFailstatus, vecpProd*  pLastFailstatus)
 {
-	int SlotManagerIndex = GetSlotManagerIndexForMonitorList(Monitorlist);
-	if (nullptr == pFailstatus || SlotManagerIndex < 0)
+	if (nullptr == pFailstatus)
 	{
 		return fail;
 	}
-	std::vector<int> rejectsTrigger;
-	m_DataContainer.GetSlotManager(SlotManagerIndex)->GetRejects(rejectsTrigger);
-	int max = m_DataContainer.GetSlotManager(SlotManagerIndex)->GetRejectSlotCount();
-	max -= (MLPPQInfo::NumRejectSizeDelta);
-	max = std::min(max, static_cast<int>(rejectsTrigger.size()));
+
 	pFailstatus->clear();
-	if (nullptr != pLastFailstatus)
+	fillTrcInFailstatusList(Monitorlist, *pFailstatus);
+	if (nullptr != pLastFailstatus && pFailstatus->size() == pLastFailstatus->size())
 	{
-		if (pLastFailstatus->size() == max)
+		bool equal(true);
+		for (int i = 0; i < pFailstatus->size(); i++)
 		{
-			bool equal(true);
-			for (int i = 0; i < max; i++)
+			if ((*pLastFailstatus)[i]->m_trigger != (*pFailstatus)[i]->m_trigger)
 			{
-				if ((*pLastFailstatus)[i]->m_trigger != rejectsTrigger[i])
-				{
-					equal = false;
-					break;
-				}
+				equal = false;
+				break;
 			}
+		}
 
-			if (equal)
-			{
-				return last;
-			}
+		if (equal)
+		{
+			pFailstatus->clear();
+			return last;
 		}
 	}
 
-	for (int i = max - 1; i >= 0; i--)
+	const MonitorListCpy* pML = m_MLContainer.GetMonitorListCpyPointer(Monitorlist);
+	if (nullptr == pML || FALSE == pML->GetIsActive())
 	{
-		pProd productPtr = pProd(new MLProduct);
-		if (GetFailStatusData(Monitorlist, rejectsTrigger[i], productPtr.get()))
+		SV_LOG_GLOBAL(trace) << "no MonitorlistMetadat or no active Monitorlist";
+		return fail;
+	}
+
+	const MonitorEntries& ProdEnties = pML->GetMonitorEntries(ListType::failStatus);
+	for(auto& pProduct : *pFailstatus)
+	{
+		if (nullptr != pProduct)
 		{
-			pFailstatus->push_back(std::move(productPtr));
-		}
-		else
-		{
-			productPtr.reset();
+			fillDataFromTR(ProdEnties, *pProduct);
+			pProduct->m_triggerRecordMap.clear();
 		}
 	}
+
 	return success;
 }
 
-SharedMemReader::retvalues SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseSlot)
+SharedMemReader::retvalues SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseSlot)
 {
 	GetProdPar par;
-	par.failstatus = false;
 	par.reject = true;
 	par.releaseTrigger = releaseSlot;
-	return _GetProduct(par, Monitorlist, TriggerNumber, pProduct, pLastProduct);
+	return _GetProduct(par, Monitorlist, TriggerNumber, pProduct);
 }
 
-SharedMemReader::retvalues SharedMemReader::GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool  releaseSlot)
+SharedMemReader::retvalues SharedMemReader::GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool  releaseSlot)
 {
 	GetProdPar par;
-	par.failstatus = false;
 	par.reject = false;
 	par.releaseTrigger = releaseSlot;
-	return _GetProduct(par, Monitorlist, TriggerNumber, pProduct, pLastProduct);
+	return _GetProduct(par, Monitorlist, TriggerNumber, pProduct);
 }
 
 } //namespace SvSml
