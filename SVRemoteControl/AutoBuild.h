@@ -24,7 +24,7 @@
 //    d is used for the revision number underlying the build (if zero it is ignored)
 
 
-#define FILEVER        10,30,0,5
+#define FILEVER        10,30,0,6
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
