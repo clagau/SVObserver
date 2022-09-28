@@ -21,10 +21,17 @@ message ChildImageDefinition
 	uint32 parentImageID = 4;		//ID of the parent image.
 }
 
+message LinkedImageDefinition
+{
+	uint32 sourceID = 1;			//ID of the object which is linked to the image.
+	uint32 destinationID = 2;		//ID of the linked image.
+}
+
 message ImageList
 {
 	repeated ImageDefinition list = 1;
 	repeated ChildImageDefinition childList = 2;
+	repeated LinkedImageDefinition linkedList = 3;
 }
 
 message ImageStructData

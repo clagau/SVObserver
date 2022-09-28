@@ -181,6 +181,8 @@ private:
 	void tryToFixIndirectInput(SvDef::SVObjectTypeInfoStruct info);
 	void tryToFixInput();
 	void addFixedData(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter, const std::string& rOldInput);
+
+	void setOrRemoveLinkedImageToTRC();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

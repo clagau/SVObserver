@@ -133,7 +133,7 @@ private:
 	void collect_historical_triggers(product_stream_t&);
 	void schedule_historical_triggers(std::shared_ptr<product_stream_t>);
 	void collect_value_pos(std::vector<int>&, const std::unordered_map<uint32_t, int>&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
-	void collect_image_pos(std::vector<std::pair<bool, int>>&, const std::unordered_map<uint32_t,int>&, const std::unordered_map<uint32_t, int>&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
+	void collect_image_pos(std::vector<std::pair<bool, int>>&, const std::unordered_map<uint32_t,int>&, const std::unordered_map<uint32_t, int>&, const std::unordered_map<uint32_t, std::pair<bool, int>>&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
 
 private:
 	struct notification_stream_t

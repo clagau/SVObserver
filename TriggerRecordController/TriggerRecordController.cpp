@@ -113,7 +113,7 @@ const SvPb::ImageList& TriggerRecordController::getImageDefList(int inspectionPo
 	Exception.Throw();
 }
 
-const std::unordered_map<uint32_t, int>& TriggerRecordController::getImageDefMap(int inspectionPos)
+const std::unordered_map<uint32_t, int>& TriggerRecordController::getImageDefMap(int inspectionPos) const
 {
 	if (-1 == m_resetStarted4IP)
 	{
@@ -126,11 +126,24 @@ const std::unordered_map<uint32_t, int>& TriggerRecordController::getImageDefMap
 	Exception.Throw();
 }
 
-const std::unordered_map<uint32_t, int>& TriggerRecordController::getChildImageDefMap(int inspectionPos)
+const std::unordered_map<uint32_t, int>& TriggerRecordController::getChildImageDefMap(int inspectionPos) const
 {
 	if (-1 == m_resetStarted4IP)
 	{
 		return m_pDataController->getChildImageMap(inspectionPos);
+	}
+
+	assert(false);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
+}
+
+const std::unordered_map<uint32_t, std::pair<bool, int>>& TriggerRecordController::getLinkedImageDefMap(int inspectionPos) const
+{
+	if (-1 == m_resetStarted4IP)
+	{
+		return m_pDataController->getLinkedImageMap(inspectionPos);
 	}
 
 	assert(false);
@@ -756,27 +769,7 @@ int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBu
 
 int TriggerRecordController::addOrChangeChildImage(uint32_t imageId, uint32_t parentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos /* = -1*/)
 {
-	ResetEnum resetEnum = calcResetEnum(inspectionPos);
-	if (ResetEnum::Invalid == resetEnum)
-	{   //Not possible to add and change image.
-		assert(false);
-		SvStl::MessageManager Exception(SvStl::MsgType::Data);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
-		Exception.Throw();
-	}
-
-	if (ResetEnum::NewReset == resetEnum)
-	{
-		try
-		{
-			m_imageListResetTmp = m_pDataController->getImageDefList(inspectionPos, false);
-		}
-		catch (const SvStl::MessageContainer&)
-		{
-			//nothing to do, because if 
-			m_imageListResetTmp.Clear();
-		}
-	}
+	ResetEnum resetEnum = prepareChangingSubImage(inspectionPos);
 
 	auto* pList = m_imageListResetTmp.mutable_childlist();
 	//check if image with this ID already in list (this is not allowed.)
@@ -807,6 +800,68 @@ int TriggerRecordController::addOrChangeChildImage(uint32_t imageId, uint32_t pa
 		m_pDataController->setImageDefList(inspectionPos, std::move(m_imageListResetTmp));
 	}
 	return imagePos;
+}
+
+int TriggerRecordController::addOrChangeLinkedImage(uint32_t sourceId, uint32_t destinationId, int inspectionPos)
+{
+	ResetEnum resetEnum = prepareChangingSubImage(inspectionPos);
+
+	auto* pList = m_imageListResetTmp.mutable_linkedlist();
+	//check if image with this ID already in list
+	auto imageIter = std::find_if(pList->begin(), pList->end(), [&sourceId](const auto& rData)->bool
+	{
+		return (rData.sourceid() == sourceId);
+	});
+
+	int imagePos = -1;
+	SvPb::LinkedImageDefinition* pImageDefinition = nullptr;
+	if (pList->end() != imageIter)
+	{
+		pImageDefinition = &(*imageIter);
+		imagePos = static_cast<int> (std::distance(pList->begin(), imageIter));
+	}
+	else
+	{
+		pImageDefinition = m_imageListResetTmp.add_linkedlist();
+		imagePos = pList->size() - 1;
+	}
+	pImageDefinition->set_sourceid(sourceId);
+	pImageDefinition->set_destinationid(destinationId);
+	
+	if (ResetEnum::NewReset == resetEnum)
+	{
+		m_pDataController->setImageDefList(inspectionPos, std::move(m_imageListResetTmp));
+	}
+	return imagePos;
+}
+
+void TriggerRecordController::removeLinkedImage(uint32_t sourceId, int inspectionPos)
+{
+	ResetEnum resetEnum = prepareChangingSubImage(inspectionPos);
+
+	auto* pList = m_imageListResetTmp.mutable_linkedlist();
+	if (nullptr == pList || pList->empty())
+	{	//nothing to do
+		return;
+	}
+
+	//check if this ID is in list
+	auto imageIter = std::find_if(pList->begin(), pList->end(), [&sourceId](const auto& rData)->bool
+	{
+		return (rData.sourceid() == sourceId);
+	});
+
+	if (pList->end() == imageIter)
+	{	//not in the list, nothing to do
+		return;
+	}
+
+	pList->erase(imageIter, imageIter);
+
+	if (ResetEnum::NewReset == resetEnum)
+	{
+		m_pDataController->setImageDefList(inspectionPos, std::move(m_imageListResetTmp));
+	}
 }
 
 void TriggerRecordController::addImageBuffer(uint32_t ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer)
@@ -1352,6 +1407,32 @@ void TriggerRecordController::reduceRequiredImageBuffer(const std::map<int, int>
 	}
 }
 
+TriggerRecordController::ResetEnum TriggerRecordController::prepareChangingSubImage(int inspectionPos)
+{
+	ResetEnum resetEnum = calcResetEnum(inspectionPos);
+	if (ResetEnum::Invalid == resetEnum)
+	{   //Not possible to add and change image.
+		assert(false);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	if (ResetEnum::NewReset == resetEnum)
+	{
+		try
+		{
+			m_imageListResetTmp = m_pDataController->getImageDefList(inspectionPos, false);
+		}
+		catch (const SvStl::MessageContainer&)
+		{
+			//nothing to do, because if 
+			m_imageListResetTmp.Clear();
+		}
+	}
+
+	return resetEnum;
+}
 #pragma endregion Private Methods
 
 std::shared_ptr<TriggerRecordController> g_pTriggerRecordController = nullptr;

@@ -161,6 +161,8 @@ protected:
 
 	void setImageSubType();
 	bool hasStorage() const;
+	uint32_t getInspectionPosInTRC() const { return m_inspectionPosInTRC; };
+
 private:
 	void init();
 

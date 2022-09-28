@@ -73,12 +73,27 @@ void TRControllerReaderDataPerIP::reloadData()
 	{
 		m_ImageDefMap[rTmp.objectid()] = pos++;
 	}
+
 	m_ChildImageDefMap.clear();
 	pos = 0;
 	for (const auto& rTmp : m_ImageList.childlist())
 	{
 		m_ChildImageDefMap[rTmp.objectid()] = pos++;
 	}
+
+	m_LinkedImageDefMap.clear();
+	for (const auto& rTmp : m_ImageList.linkedlist())
+	{
+		if (auto iter = m_ImageDefMap.find(rTmp.destinationid()); m_ImageDefMap.end() != iter)
+		{
+			m_LinkedImageDefMap[rTmp.sourceid()] = {false, iter->second};
+		}
+		else if (auto childIter = m_ChildImageDefMap.find(rTmp.destinationid()); m_ChildImageDefMap.end() != childIter)
+		{
+			m_LinkedImageDefMap[rTmp.sourceid()] = {true, childIter->second};
+		}
+	}
+
 	m_DataDefList.ParsePartialFromArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
 	m_DataDefMap.clear();
 	pos = 0;

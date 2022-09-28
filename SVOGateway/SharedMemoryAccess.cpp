@@ -673,7 +673,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataR
 	std::vector<int> valuePositions;
 	try
 	{
-		collect_image_pos(imagePositions, pTrc->getImageDefMap(inspectionPos), pTrc->getChildImageDefMap(inspectionPos), req.imageids());
+		collect_image_pos(imagePositions, pTrc->getImageDefMap(inspectionPos), pTrc->getChildImageDefMap(inspectionPos), pTrc->getLinkedImageDefMap(inspectionPos), req.imageids());
 		collect_value_pos(valuePositions, pTrc->getDataDefMap(inspectionPos), req.valueids());
 	}
 	catch (...)
@@ -935,10 +935,11 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 			const auto& rDataDefMap = pTrc->getDataDefMap(inspectionPos);
 			const auto& rImageDefMap = pTrc->getImageDefMap(inspectionPos);
 			const auto& rChildImageDefMap = pTrc->getChildImageDefMap(inspectionPos);
+			const auto& rLinkedImageDefMap = pTrc->getLinkedImageDefMap(inspectionPos);
 			collect_value_pos(stream.valuePositions, rDataDefMap, stream.req.valueids());
 			collect_value_pos(stream.rejectValuePositions, rDataDefMap, stream.req.rejectvalueids());
-			collect_image_pos(stream.imagePositions, rImageDefMap, rChildImageDefMap, stream.req.imageids());
-			collect_image_pos(stream.rejectImagePositions, rImageDefMap, rChildImageDefMap, stream.req.rejectimageids());
+			collect_image_pos(stream.imagePositions, rImageDefMap, rChildImageDefMap, rLinkedImageDefMap, stream.req.imageids());
+			collect_image_pos(stream.rejectImagePositions, rImageDefMap, rChildImageDefMap, rLinkedImageDefMap, stream.req.rejectimageids());
 		}
 	}
 	catch (...)
@@ -996,6 +997,7 @@ void SharedMemoryAccess::collect_image_pos(
 	std::vector<std::pair<bool, int>>& positions,
 	const std::unordered_map<uint32_t, int>& imageMap,
 	const std::unordered_map<uint32_t, int>& childImageMap,
+	const std::unordered_map<uint32_t, std::pair<bool,int>>& linkedImageMap,
 	const ::google::protobuf::RepeatedField<uint32_t>& ids
 )
 {
@@ -1006,15 +1008,17 @@ void SharedMemoryAccess::collect_image_pos(
 	positions.clear();
 	for (const auto& id : ids)
 	{
-		auto iter = imageMap.find(id);
-		auto childIter = childImageMap.find(id);
-		if (imageMap.end() != iter)
+		if (auto iter = imageMap.find(id); imageMap.end() != iter)
 		{
 			positions.push_back(std::make_pair(false, iter->second));
 		}
-		else if (childImageMap.end() != childIter)
+		else if (auto childIter = childImageMap.find(id); childImageMap.end() != childIter)
 		{
 			positions.push_back(std::make_pair(true, childIter->second));
+		}
+		else if (auto linkedIter = linkedImageMap.find(id); linkedImageMap.end() != linkedIter)
+		{
+			positions.push_back(linkedIter->second);
 		}
 		else
 		{

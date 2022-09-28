@@ -155,6 +155,19 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 	{
 		m_ChildImageDefMap[rTmp.objectid()] = pos++;
 	}
+
+	m_LinkedImageDefMap.clear();
+	for (const auto& rTmp : m_ImageList.linkedlist())
+	{
+		if (auto iter = m_ImageDefMap.find(rTmp.destinationid()); m_ImageDefMap.end() != iter)
+		{
+			m_LinkedImageDefMap[rTmp.sourceid()] = {false, iter->second};
+		}
+		else if (auto childIter = m_ChildImageDefMap.find(rTmp.destinationid()); m_ChildImageDefMap.end() != childIter)
+		{
+			m_LinkedImageDefMap[rTmp.sourceid()] = {true, childIter->second};
+		}
+	}
 }
 
 void TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trNumbers)

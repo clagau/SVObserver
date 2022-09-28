@@ -53,8 +53,9 @@ public:
 	virtual int getLastTrId(int inspectionPos) const override { return m_pDataController->getLastTrId(inspectionPos); };
 
 	virtual const SvPb::ImageList& getImageDefList(int inspectionPos) override;
-	virtual const std::unordered_map<uint32_t, int>& getImageDefMap(int inspectionPos) override;
-	virtual const std::unordered_map<uint32_t, int>& getChildImageDefMap(int inspectionPos) override;
+	virtual const std::unordered_map<uint32_t, int>& getImageDefMap(int inspectionPos) const override;
+	virtual const std::unordered_map<uint32_t, int>& getChildImageDefMap(int inspectionPos) const override;
+	virtual const std::unordered_map<uint32_t, std::pair<bool, int>>& getLinkedImageDefMap(int inspectionPos) const override;
 
 	virtual const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) override;
 	virtual const std::unordered_map<uint32_t, int>& getDataDefMap(int inspectionPos) override;
@@ -94,6 +95,9 @@ public:
 
 	virtual int addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1) override;
 	virtual int addOrChangeChildImage(uint32_t imageId, uint32_t parentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) override;
+
+	virtual int addOrChangeLinkedImage(uint32_t sourceId, uint32_t destinationId, int inspectionPos = -1) override;
+	virtual void removeLinkedImage(uint32_t sourceId, int inspectionPos = -1) override;
 
 	virtual void addImageBuffer(uint32_t ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer = false) override;
 	virtual bool removeImageBuffer(uint32_t ownerID, const SVMatroxBufferCreateStruct& bufferStruct) override;
@@ -154,6 +158,8 @@ private:
 	void sendInterestTrIdCall(std::vector<SvOi::TrInterestEventData>&& data);
 
 	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
+
+	ResetEnum prepareChangingSubImage(int inspectionPos);
 #pragma endregion Private Methods
 
 #pragma region Member variables

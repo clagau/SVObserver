@@ -16,6 +16,7 @@
 #include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/ITableObject.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
@@ -25,7 +26,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
-
 #pragma endregion Includes
 
 namespace SvVol
@@ -1625,6 +1625,12 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				pErrorMessages->push_back(Msg);
 			}
 		}
+
+		if (Result)
+		{
+			setOrRemoveLinkedImageToTRC();
+		}
+
 		return Result;
 	}
 
@@ -1916,6 +1922,34 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		data.set_oldinputvalue(rOldInput);
 		data.set_islinkedvalue(true);
 		inserter = data;
+	}
+
+	void LinkedValue::setOrRemoveLinkedImageToTRC()
+	{
+		auto* pTRC = SvOi::getTriggerRecordControllerRWInstance();
+		auto* pInsp = GetAncestorInterface(SvPb::SVInspectionObjectType);
+		assert(nullptr != pTRC && nullptr != pInsp);
+		//if not created, do not set anything to TRC
+		if (m_isCreated && nullptr != pTRC && nullptr != pInsp)
+		{
+			auto inspectionPosInTRC = SvOi::getInspectionPos(pInsp->getObjectId());
+			uint32_t linkedImageId = SvDef::InvalidObjectId;
+			if (SvPb::LinkedSelectedOption::IndirectValue == getSelectedOption())
+			{
+				if (auto* pObject = m_LinkedObjectRef.getFinalObject(); nullptr != pObject && SvPb::SVImageObjectType == pObject->GetObjectType())
+				{
+					linkedImageId = pObject->getObjectId();
+				}
+			}
+			if (SvDef::InvalidObjectId == linkedImageId)
+			{
+				pTRC->removeLinkedImage(getObjectId(), inspectionPosInTRC);
+			}
+			else
+			{
+				pTRC->addOrChangeLinkedImage(getObjectId(), linkedImageId, inspectionPosInTRC);
+			}
+		}
 	}
 #pragma endregion Private Methods
 

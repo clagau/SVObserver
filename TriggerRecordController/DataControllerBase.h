@@ -125,6 +125,7 @@ public:
 	virtual const SvPb::ImageList& getImageList() const = 0;
 	const std::unordered_map<uint32_t, int>& getImageMap() const { return m_ImageDefMap; };
 	const std::unordered_map<uint32_t, int>& getChildImageMap() const { return m_ChildImageDefMap; };
+	const std::unordered_map<uint32_t, std::pair<bool, int>>& getLinkedImageMap() const { return m_LinkedImageDefMap; };
 	virtual const SvPb::DataDefinitionList& getDataList() const = 0;
 	const std::unordered_map<uint32_t, int>& getDataMap() const { return m_DataDefMap; };
 	virtual void createTriggerRecordsBuffer(int ) { assert(false); throw E_NOTIMPL; };
@@ -141,6 +142,7 @@ protected:
 protected:
 	std::unordered_map<uint32_t, int> m_ImageDefMap;
 	std::unordered_map<uint32_t, int> m_ChildImageDefMap;
+	std::unordered_map<uint32_t, std::pair<bool, int>> m_LinkedImageDefMap; //first: isChild; second position
 	std::unordered_map<uint32_t, int> m_DataDefMap;
 };
 
@@ -180,6 +182,7 @@ public:
 	const SvPb::ImageList& getImageDefList(int inspectionPos, bool onlyIfInit = true) const;
 	const std::unordered_map<uint32_t, int>& getImageMap(int inspectionPos) const;
 	const std::unordered_map<uint32_t, int>& getChildImageMap(int inspectionPos) const;
+	const std::unordered_map<uint32_t, std::pair<bool, int>>& getLinkedImageMap(int inspectionPos) const;
 	virtual void setImageDefList(int , SvPb::ImageList&& ) { assert(false); throw E_NOTIMPL; };
 
 	virtual const SvPb::ImageStructList& getImageStructList() const = 0;

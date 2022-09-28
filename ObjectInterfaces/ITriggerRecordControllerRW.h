@@ -110,6 +110,15 @@ using TRC_RAIIPtr = std::unique_ptr<ITRC_Raii>;
 		/// \returns int Return the position in the child list. May use it for getChildImage.
 		virtual int addOrChangeChildImage(uint32_t imageId, uint32_t parentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) = 0;
 
+		/// Change the destination of the linkedObject, if for this linkedObject no entry available it will be added. It must not be in the reset state (called startResetTriggerRecordStructure before.)
+		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
+		/// \param sourceId [in] ID of the linkedObject.
+		/// \param destinationId [in] ID of the image.
+		/// \param inspectionPos [in]
+		/// \returns int Return the position in the linked list.
+		virtual int addOrChangeLinkedImage(uint32_t sourceId, uint32_t destinationId, int inspectionPos = -1) = 0;
+		virtual void removeLinkedImage(uint32_t sourceId, int inspectionPos = -1) = 0;
+
 		/// Add additional image buffer independent of inspections.  
 		/// ATTENTION: All old Tr-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.

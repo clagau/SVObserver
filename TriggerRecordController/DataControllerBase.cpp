@@ -174,6 +174,20 @@ const std::unordered_map<uint32_t, int>& DataControllerBase::getChildImageMap(in
 	Exception.Throw();
 }
 
+const std::unordered_map<uint32_t, std::pair<bool, int>>& DataControllerBase::getLinkedImageMap(int inspectionPos) const
+{
+	auto* pData = getTRControllerData(inspectionPos);
+	assert(nullptr != pData);
+	if (nullptr != pData && pData->getBasicData().m_bInit)
+	{
+		return pData->getLinkedImageMap();
+	}
+
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
+}
+
 int DataControllerBase::getTriggerRecordNumber(int inspectionPos) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
