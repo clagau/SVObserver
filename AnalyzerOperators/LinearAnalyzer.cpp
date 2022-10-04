@@ -28,21 +28,21 @@ static char THIS_FILE[] = __FILE__;
 //SV_IMPLEMENT_CLASS( LinearAnalyzer, SVLinearAnalyzerClassGuid );
 
 
-LinearAnalyzer::LinearAnalyzer( SVObjectClass* POwner, int StringResourceID )
-					            :Analyzer( POwner, StringResourceID )
+LinearAnalyzer::LinearAnalyzer(SVObjectClass* POwner, int StringResourceID)
+	:Analyzer(POwner, StringResourceID)
 {
 	// Identify yourself
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	registerInputObject( &m_InputImage, _T( "LinearAnalyzerImage" ), SvPb::ImageInputEId);
+	registerInputObject(&m_InputImage, _T("LinearAnalyzerImage"), SvPb::ImageInputEId);
 
 	m_InputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
-	registerInputObject( &m_InputProfileOrientation, _T( "LinearAnalyzerOrientation" ), SvPb::ProfileOrientationInputEId);
+	registerInputObject(&m_InputProfileOrientation, _T("LinearAnalyzerOrientation"), SvPb::ProfileOrientationInputEId);
 	m_InputProfileOrientation.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_InputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::LinearToolUseRotationEId);
-	registerInputObject( &m_InputUseRotationAngle, _T( "LinearAnalyzerUseRotationAngle" ), SvPb::UseRoationAngleInputEId);
+	registerInputObject(&m_InputUseRotationAngle, _T("LinearAnalyzerUseRotationAngle"), SvPb::UseRoationAngleInputEId);
 	m_InputUseRotationAngle.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_lPixelDepth = 0;
@@ -56,15 +56,14 @@ LinearAnalyzer::LinearAnalyzer( SVObjectClass* POwner, int StringResourceID )
 	m_bEnablePosition = false;
 	m_bEnableThreshold = false;
 
-	m_svShowAllEdgeAOverlays.SetDefaultValue( BOOL(false), true );
-	m_svShowAllEdgeBOverlays.SetDefaultValue( BOOL(false), true);
+	m_svShowAllEdgeAOverlays.SetDefaultValue(BOOL(false), true);
+	m_svShowAllEdgeBOverlays.SetDefaultValue(BOOL(false), true);
 }
 
 LinearAnalyzer::~LinearAnalyzer()
-{
-}
+{}
 
-bool LinearAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool LinearAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	SVImageInfoClass ImageInfo;
 
@@ -94,7 +93,7 @@ bool LinearAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	return bOk;
 }
 
-bool LinearAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearAnalyzer::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -126,82 +125,89 @@ bool LinearAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-HRESULT LinearAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_rsvMiltiLine )
+HRESULT LinearAnalyzer::GetSelectedEdgeOverlays(SVExtentMultiLineStruct& p_rsvMiltiLine)
 {
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
-	if(nullptr != GetEdgeA())
+	if (nullptr != GetEdgeA())
 	{
 		SVExtentLineStruct l_svLine;
 
-		if( S_OK == GetEdgeA()->GetSelectedEdgeOverlay( l_svLine ) )
+		if (S_OK == GetEdgeA()->GetSelectedEdgeOverlay(l_svLine))
 		{
-			rAnalyzerExtents.TranslateFromOutputSpace( l_svLine, l_svLine );
+			rAnalyzerExtents.TranslateFromOutputSpace(l_svLine, l_svLine);
 
-			p_rsvMiltiLine.m_svLineArray.push_back( l_svLine );
+			p_rsvMiltiLine.m_svLineArray.push_back(l_svLine);
 		}
 	}
 
-	if(nullptr != GetEdgeB())
+	if (nullptr != GetEdgeB())
 	{
 		SVExtentLineStruct l_svLine;
 
-		if( S_OK == GetEdgeB()->GetSelectedEdgeOverlay( l_svLine ) )
+		if (S_OK == GetEdgeB()->GetSelectedEdgeOverlay(l_svLine))
 		{
-			rAnalyzerExtents.TranslateFromOutputSpace( l_svLine, l_svLine );
+			rAnalyzerExtents.TranslateFromOutputSpace(l_svLine, l_svLine);
 
-			p_rsvMiltiLine.m_svLineArray.push_back( l_svLine );
+			p_rsvMiltiLine.m_svLineArray.push_back(l_svLine);
 		}
 	}
 
 	return S_OK;
 }
 
-HRESULT LinearAnalyzer::updateImageExtent(bool /*init*/ )
+HRESULT LinearAnalyzer::updateImageExtent(bool init)
 {
-	//@TODO[MEC][10.20][02.11.2021] Check if we can use init  
-	HRESULT result{S_OK};
 
-	long Width( 0 );
-	long Height( 0 );
-	long Angle( 0 );
-	bool bUseRotation( false );
+	if (!init)
+		return S_OK;
+
+	///@TODO[MEC] note the difference Between toolextent and  lokal imageextent
+	HRESULT result {S_OK};
+
+	long Width(0);
+	long Height(0);
+	long Angle(0);
+	bool bUseRotation(false);
 
 	m_imageExtent.Initialize();
 
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
-	if( nullptr == pTool || 
-	    ( S_OK != GetInputUseRotationAngle( bUseRotation ) ) ||
-	    ( S_OK != GetInputProfileOrientation( Angle ) ) ||
-			S_OK != pTool->GetImageExtent().GetExtentProperty( SvPb::SVExtentPropertyOutputWidth, Width ) ||
-			S_OK != pTool->GetImageExtent().GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, Height ) )
+	
+	auto pToolExtent = getToolExtentPtr();
+	if (nullptr == pToolExtent ||
+		(S_OK != GetInputUseRotationAngle(bUseRotation)) ||
+		(S_OK != GetInputProfileOrientation(Angle)) ||
+			S_OK != pToolExtent->GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, Width) ||
+			S_OK != pToolExtent->GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, Height))
 	{
 		result = S_FALSE;
 	}
 
-	if( S_OK == result )
+	if (S_OK == result)
 	{
-		m_imageExtent.SetTranslation(SvPb::SVExtentTranslationLinear );
+		m_imageExtent.SetTranslation(SvPb::SVExtentTranslationLinear);
 
 		SVPoint<double> position;
-		if( !bUseRotation )
+		if (!bUseRotation)
 		{
-			if( 90 == Angle )
+			if (90 == Angle)
 			{
 				position.m_x = Width - 1;
-				std::swap( Width, Height );
+				std::swap(Width, Height);
 			}
-			else if( 0 != Angle )
+			else if (0 != Angle)
 			{
 				return S_FALSE;
 			}
 		}
-		m_imageExtent.SetExtentProperty( SvPb::SVExtentPropertyRotationAngle, static_cast<double> (Angle) );
-		m_imageExtent.SetExtentProperty( SvPb::SVExtentPropertyPositionPoint, position );
-		m_imageExtent.SetExtentProperty( SvPb::SVExtentPropertyWidth, static_cast<double> (Width) );
-		m_imageExtent.SetExtentProperty( SvPb::SVExtentPropertyHeight, static_cast<double> (Height) );
+		m_imageExtent.SetExtentProperty(SvPb::SVExtentPropertyRotationAngle, static_cast<double> (Angle));
+		m_imageExtent.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
+		m_imageExtent.SetExtentProperty(SvPb::SVExtentPropertyWidth, static_cast<double> (Width));
+		m_imageExtent.SetExtentProperty(SvPb::SVExtentPropertyHeight, static_cast<double> (Height));
 
-		result = m_imageExtent.UpdateData();
+		//@Todo[MEC] check if this is always necessary
+		result = m_imageExtent.UpdateDataRecalculateOutput();
+
 	}
 
 	return result;
@@ -231,18 +237,18 @@ void LinearAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& r
 	}
 }
 
-SvOp::SVLinearEdgeProcessingClass *LinearAnalyzer::GetEdgeA() const
+SvOp::SVLinearEdgeProcessingClass* LinearAnalyzer::GetEdgeA() const
 {
 	SvDef::SVObjectTypeInfoStruct  info {SvPb::SVLinearEdgeProcessingObjectType, SvPb::SVLinearEdgeAProcessingObjectType};
-	SvOp::SVLinearEdgeProcessingClass* pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass *>(getFirstObject(info));
+	SvOp::SVLinearEdgeProcessingClass* pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass*>(getFirstObject(info));
 	return pEdge;
 }
 
-SvOp::SVLinearEdgeProcessingClass *LinearAnalyzer::GetEdgeB() const
+SvOp::SVLinearEdgeProcessingClass* LinearAnalyzer::GetEdgeB() const
 {
 
 	SvDef::SVObjectTypeInfoStruct  info {SvPb::SVLinearEdgeProcessingObjectType, SvPb::SVLinearEdgeBProcessingObjectType};;
-	SvOp::SVLinearEdgeProcessingClass* pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass *>(getFirstObject(info));
+	SvOp::SVLinearEdgeProcessingClass* pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass*>(getFirstObject(info));
 	return pEdge;
 }
 
@@ -251,11 +257,11 @@ HRESULT LinearAnalyzer::GetPixelDepth()
 	HRESULT l_hrOk = S_FALSE;
 
 	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
-	if(nullptr != pInputImage)
+	if (nullptr != pInputImage)
 	{
 		SVImageInfoClass ImageInfo = pInputImage->GetImageInfo();
 
-		l_hrOk = ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, m_lPixelDepth );
+		l_hrOk = ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, m_lPixelDepth);
 	}
 
 	return l_hrOk;
@@ -296,7 +302,7 @@ SvPb::GetNormalizerValuesResponse LinearAnalyzer::setNormalizerRanges(const SvPb
 HRESULT LinearAnalyzer::GetInputProfileOrientation(long& rProfileOrientation) const
 {
 	HRESULT Result(E_FAIL);
-	if( m_InputProfileOrientation.IsConnected() && nullptr != m_InputProfileOrientation.GetInputObjectInfo().getObject() )
+	if (m_InputProfileOrientation.IsConnected() && nullptr != m_InputProfileOrientation.GetInputObjectInfo().getObject())
 	{
 		double Value(0.0);
 		Result = m_InputProfileOrientation.GetInputObjectInfo().getObject()->getValue(Value);
@@ -309,7 +315,7 @@ HRESULT LinearAnalyzer::GetInputProfileOrientation(long& rProfileOrientation) co
 HRESULT LinearAnalyzer::GetInputUseRotationAngle(bool& rUseRotationAngle)
 {
 	HRESULT Result(E_FAIL);
-	if( m_InputUseRotationAngle.IsConnected() && nullptr != m_InputUseRotationAngle.GetInputObjectInfo().getObject())
+	if (m_InputUseRotationAngle.IsConnected() && nullptr != m_InputUseRotationAngle.GetInputObjectInfo().getObject())
 	{
 		double Value(0.0);
 		Result = m_InputUseRotationAngle.GetInputObjectInfo().getObject()->getValue(Value);
@@ -319,100 +325,110 @@ HRESULT LinearAnalyzer::GetInputUseRotationAngle(bool& rUseRotationAngle)
 	return Result;
 }
 
-HRESULT LinearAnalyzer::onCollectOverlays(SvIe::SVImageClass*,SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT LinearAnalyzer::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_hrRet = S_OK;
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
-	bool bOk = nullptr != pTool;
-	const SVImageExtentClass& rToolExtents = bOk ? pTool->GetImageExtent() : SVImageExtentClass{};
+	SvOi::ITool* pTool = GetToolInterface();
+	if (nullptr == pTool)
+	{
+		return  S_FALSE;
+	}
+
+	const SvTo::SVToolExtentClass& rToolExtent = pTool->GetToolExtent();
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
-	
+
+
 	if (rAnalyzerExtents.hasFigure())
 	{
 		COLORREF l_Color = 0;
 
 		SVExtentFigureStruct figure = rAnalyzerExtents.GetFigure();
 
-		m_statusColor.GetValue( l_Color );
+		m_statusColor.GetValue(l_Color);
 		SVExtentMultiLineStruct l_svMultiLine;
 		l_svMultiLine.m_Color = l_Color;
 
-		rToolExtents.TranslateFromOutputSpace(figure,figure);
-		l_svMultiLine.AssignExtentFigure( figure, l_Color );
+
+		rToolExtent.TranslateFromOutputSpace(figure, figure);
+		l_svMultiLine.AssignExtentFigure(figure, l_Color);
 
 		l_svMultiLine.m_csString = "";
 
-		UpdateOverlayIDs( l_svMultiLine );
+		UpdateOverlayIDs(l_svMultiLine);
 
-		rMultiLineArray.push_back( l_svMultiLine );
-	
+		rMultiLineArray.push_back(l_svMultiLine);
+
 		l_svMultiLine.Initialize();
 
 		BOOL l_bShow = false;
-		if ( nullptr != GetEdgeA() )
-		{ 
-			if( nullptr != m_svShowAllEdgeAOverlays.GetParent() && 
-				( S_OK == m_svShowAllEdgeAOverlays.GetValue(l_bShow) ) && l_bShow )
+		if (nullptr != GetEdgeA())
+		{
+			if (nullptr != m_svShowAllEdgeAOverlays.GetParent() &&
+				(S_OK == m_svShowAllEdgeAOverlays.GetValue(l_bShow)) && l_bShow)
 			{
 				SVExtentLineStruct l_svLine;
 
 				l_svLine.m_dwColor = l_Color;
 
-				if ( S_OK == GetEdgeA()->GetHistogramOverlay(l_svLine) )
+				if (S_OK == GetEdgeA()->GetHistogramOverlay(l_svLine))
 				{
-					rAnalyzerExtents.TranslateFromOutputSpace(l_svLine,l_svLine);
-					rToolExtents.TranslateFromOutputSpace(l_svLine,l_svLine);
+
+					rAnalyzerExtents.TranslateFromOutputSpace(l_svLine, l_svLine);
+
+					rToolExtent.TranslateFromOutputSpace(l_svLine, l_svLine);
 					l_svMultiLine.m_svLineArray.push_back(l_svLine);
 					rMultiLineArray.push_back(l_svMultiLine);
 					l_svMultiLine.Initialize();
 				}
-				
-				if ( S_OK == GetEdgeA()->GetThresholdBarsOverlay(l_svMultiLine) )
+
+				if (S_OK == GetEdgeA()->GetThresholdBarsOverlay(l_svMultiLine))
 				{
-					rAnalyzerExtents.TranslateFromOutputSpace(l_svMultiLine,l_svMultiLine);
-					rToolExtents.TranslateFromOutputSpace(l_svMultiLine,l_svMultiLine);
+
+					rAnalyzerExtents.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
+					rToolExtent.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
 					rMultiLineArray.push_back(l_svMultiLine);
 					l_svMultiLine.Initialize();
 				}
-				if ( S_OK == GetEdgeA()->GetEdgesOverlay(l_svMultiLine) )
+				if (S_OK == GetEdgeA()->GetEdgesOverlay(l_svMultiLine))
 				{
-					rAnalyzerExtents.TranslateFromOutputSpace(l_svMultiLine,l_svMultiLine);
-					rToolExtents.TranslateFromOutputSpace(l_svMultiLine,l_svMultiLine);
+
+					rAnalyzerExtents.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
+					rToolExtent.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
 					rMultiLineArray.push_back(l_svMultiLine);
 					l_svMultiLine.Initialize();
 				}
 
 			}
 		}
-		if ( nullptr != GetEdgeB() )
-		{ 
-			if( nullptr != m_svShowAllEdgeBOverlays.GetParent() && 
-				( S_OK == m_svShowAllEdgeBOverlays.GetValue(l_bShow) ) && l_bShow )
+		if (nullptr != GetEdgeB())
+		{
+			if (nullptr != m_svShowAllEdgeBOverlays.GetParent() &&
+				(S_OK == m_svShowAllEdgeBOverlays.GetValue(l_bShow)) && l_bShow)
 			{
 				SVExtentLineStruct svLine;
 
 				svLine.m_dwColor = l_Color;
 
-				if ( S_OK == GetEdgeB()->GetHistogramOverlay(svLine) )
+				if (S_OK == GetEdgeB()->GetHistogramOverlay(svLine))
 				{
-					rAnalyzerExtents.TranslateFromOutputSpace(svLine,svLine);
-					rToolExtents.TranslateFromOutputSpace(svLine,svLine);
+					rAnalyzerExtents.TranslateFromOutputSpace(svLine, svLine);
+					rToolExtent.TranslateFromOutputSpace(svLine, svLine);
 					l_svMultiLine.m_svLineArray.push_back(svLine);
 					rMultiLineArray.push_back(l_svMultiLine);
 					l_svMultiLine.Initialize();
 				}
-				
-				if ( S_OK == GetEdgeB()->GetThresholdBarsOverlay(l_svMultiLine) )
+
+				if (S_OK == GetEdgeB()->GetThresholdBarsOverlay(l_svMultiLine))
 				{
-					rAnalyzerExtents.TranslateFromOutputSpace(l_svMultiLine,l_svMultiLine);
-					rToolExtents.TranslateFromOutputSpace(l_svMultiLine,l_svMultiLine);
+					rAnalyzerExtents.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
+					rToolExtent.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
 					rMultiLineArray.push_back(l_svMultiLine);
 					l_svMultiLine.Initialize();
 				}
-				if ( S_OK == GetEdgeB()->GetEdgesOverlay(l_svMultiLine) )
+				if (S_OK == GetEdgeB()->GetEdgesOverlay(l_svMultiLine))
 				{
-					rAnalyzerExtents.TranslateFromOutputSpace(l_svMultiLine,l_svMultiLine);
-					rToolExtents.TranslateFromOutputSpace(l_svMultiLine,l_svMultiLine);
+					rAnalyzerExtents.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
+					rToolExtent.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
 					rMultiLineArray.push_back(l_svMultiLine);
 					l_svMultiLine.Initialize();
 				}
@@ -427,35 +443,35 @@ HRESULT LinearAnalyzer::onCollectOverlays(SvIe::SVImageClass*,SVExtentMultiLineS
 		l_hrRet = S_FALSE;
 	}
 
-	if ( bOk )
+	SVExtentMultiLineStruct l_svMultiLine;
+
+	if (S_OK == GetSelectedEdgeOverlays(l_svMultiLine))
 	{
-		SVExtentMultiLineStruct l_svMultiLine;
+		rToolExtent.TranslateFromOutputSpace(l_svMultiLine, l_svMultiLine);
 
-		if ( S_OK == GetSelectedEdgeOverlays( l_svMultiLine ) )
-		{
-			rToolExtents.TranslateFromOutputSpace( l_svMultiLine, l_svMultiLine );
+		m_statusColor.GetValue(l_svMultiLine.m_Color);
 
-			m_statusColor.GetValue(l_svMultiLine.m_Color);
+		UpdateOverlayIDs(l_svMultiLine);
 
-			UpdateOverlayIDs( l_svMultiLine );
-
-			rMultiLineArray.push_back( l_svMultiLine );
-		}
+		rMultiLineArray.push_back(l_svMultiLine);
 	}
+
 	return l_hrRet;
 }
 
 void LinearAnalyzer::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
 {
+
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
 	//Arrow overlay
 	if (rAnalyzerExtents.hasFigure())
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
-		const SVImageExtentClass& rToolExtents = (nullptr != pTool) ? pTool->GetImageExtent() : SVImageExtentClass {};
 		SVExtentFigureStruct figure = rAnalyzerExtents.GetFigure();
-		rToolExtents.TranslateFromOutputSpace(figure, figure);
+		if ( auto pToolExtent = getToolExtentPtr(); nullptr !=	pToolExtent )
+		{
+			pToolExtent->TranslateFromOutputSpace(figure, figure);
+		}
 		if (SvDef::SVExtentShapeArrow == figure.m_eShape)
 		{
 			auto* pGroup = rOverlay.add_shapegroups();
@@ -503,13 +519,13 @@ void LinearAnalyzer::addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVer
 	}
 }
 
-bool LinearAnalyzer::ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearAnalyzer::ValidateEdgeA(SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (nullptr == GetEdgeA())
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeAFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeAFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -517,13 +533,13 @@ bool LinearAnalyzer::ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages
 	return true;
 }
 
-bool LinearAnalyzer::ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearAnalyzer::ValidateEdgeB(SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (nullptr == GetEdgeB())
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeBFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeBFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -536,7 +552,7 @@ bool LinearAnalyzer::setParameterToList(const std::string& rName, std::back_inse
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
 	//Value objects need to have the SV_VIEWABLE attribute to insert it to the monitor list
-	if (nullptr != pObject && 0 != (pObject->ObjectAttributesAllowed() &  SvPb::viewable))
+	if (nullptr != pObject && 0 != (pObject->ObjectAttributesAllowed() & SvPb::viewable))
 	{
 		inserter = SvOi::ParameterPairForML(pObject->GetCompleteName(), pObject->getObjectId());
 		return true;

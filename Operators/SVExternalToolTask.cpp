@@ -126,7 +126,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
 		pImage->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::OverwriteAttribute);
 		pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
-		pImage->UpdateImage(SvDef::InvalidObjectId, imageInfo);
+		pImage->UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, imageInfo);
 	}
 
 	// Result Objects
@@ -1123,7 +1123,7 @@ void SVExternalToolTask::initializeResultImages(std::vector<std::string>& rStatu
 			imageInfo.setDibBufferFlag(true);
 		}
 
-		pImage->UpdateImage(parentId, imageInfo);
+		pImage->UpdateImageSetParentAndImageInfo(parentId, imageInfo);
 		if (parentId != SvDef::InvalidObjectId)
 		{
 			pImage->setTransfermatrix(std::vector<double>(SvIe::SVImageClass::UnitMatrix));

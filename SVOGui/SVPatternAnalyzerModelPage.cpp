@@ -25,6 +25,7 @@
 #include "Definitions/GlobalConst.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "SVUtilityLibrary/GeoHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -583,7 +584,7 @@ namespace SvOg
 			if (0 < ResultAngleArray.size())
 			{
 				double angle = ResultAngleArray[0];
-				SVPoint<double> moveVector = SVRotatePoint(SVPoint<double>(0, 0), SVPoint<double>(m_CenterX, m_CenterY), -angle);
+				SVPoint<double> moveVector = SvUl::SVRotatePoint(SVPoint<double>(0, 0), SVPoint<double>(m_CenterX, m_CenterY), -angle);
 				m_nXPos = static_cast<int>(dPosX - moveVector.m_x);
 				m_nYPos = static_cast<int>(dPoxY - moveVector.m_y);
 			}

@@ -50,6 +50,8 @@ public:
 	const SVImageInfoClass& GetImageInfo() const; //@TODO: Change the logic so that this is never needed outside this class
 
 	HRESULT InitializeImage( SvPb::SVImageTypeEnum ImageType );
+	
+	//Set the parent and Update Image with Parentinfos
 	HRESULT InitializeImage( SVImageClass* pParentImage );
 
 	//@WARNING [Jim][8 July 2015] - Look into and evaluate this behavior.
@@ -57,8 +59,9 @@ public:
 	//-  UpdateFromParentInformation() which overwrites the extents I just 
 	//-  sent in anyhow????
 	HRESULT UpdateImage( const SVImageExtentClass& rExtent, bool doNotRebuildStorage = false );
-	HRESULT UpdateImage(uint32_t parentID, const SVImageInfoClass& rImageInfo);
-	HRESULT UpdateImage( SvPb::SVImageTypeEnum ImageType );
+	//Set the parent And ImageInfoClass
+	HRESULT UpdateImageSetParentAndImageInfo(uint32_t parentID, const SVImageInfoClass& rImageInfo);
+	HRESULT UpdateImageType( SvPb::SVImageTypeEnum ImageType );
 
 	virtual const double& GetLastResetTimeStamp() const;
 	
@@ -83,6 +86,9 @@ public:
 
 	const SVImageClass* const GetRootImage() const;
 	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const;
+	
+	//Same functionality as TranslateFromOutputSpaceToImage but uses only the extents connected to the tool 
+	HRESULT TranslateFromOutputSpaceToImageFromTool(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const;
 
 	void SetTranslationOffset(double offsetX, double offsetY);
 

@@ -14,6 +14,8 @@
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/ITool.h"
+#include "Tools/SVToolExtentclass.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -42,6 +44,21 @@ public:
 	{
 		return &(m_imageExtent);
 	};
+
+	const SvTo::SVToolExtentClass* getToolExtentPtr() const
+	{
+		auto *pTool = GetToolInterface();
+		if (pTool)
+		{
+			return &(pTool->GetToolExtent());
+
+		}
+		else
+		{
+			return nullptr;
+		}
+
+	}
 protected:
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 

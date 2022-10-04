@@ -163,7 +163,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 		}
 
 		// Build Output Extents...
-		if( S_OK != (l_hr = imageExtents.UpdateData()) )
+		if( S_OK != (l_hr = imageExtents.UpdateDataRecalculateOutput()) )
 		{
 			l_hrOk = l_hr;
 		}
@@ -180,7 +180,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 
 		m_OutputImage.SetObjectOwner( this );
 
-		l_hrOk = m_OutputImage.UpdateImage( inputID, l_ImageInfo );
+		l_hrOk = m_OutputImage.UpdateImageSetParentAndImageInfo( inputID, l_ImageInfo );
 
 		if( S_OK != l_hrOk )
 		{
@@ -232,7 +232,7 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 	/*l_hrOk = */rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, l_dValue );
 	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_dValue );
 
-	/*l_hrOk = */OutputExtents.UpdateData();
+	/*l_hrOk = */OutputExtents.UpdateDataRecalculateOutput();
 
 	/*l_hrOk = */SetImageExtent( OutputExtents );
 
@@ -247,7 +247,7 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 
 	l_ImageInfo.SetExtents( OutputExtents );
 
-	return m_OutputImage.UpdateImage(inputID, l_ImageInfo );
+	return m_OutputImage.UpdateImageSetParentAndImageInfo(inputID, l_ImageInfo );
 }
 
 bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

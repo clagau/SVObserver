@@ -1062,7 +1062,7 @@ HRESULT HistogramAnalyzer::createHistogramImage()
 	ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone );
 
 	// Try to create image object...
-	if( S_OK != m_histogramImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo ) )
+	if( S_OK != m_histogramImage.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, ImageInfo ) )
 	{
 		return Err_SetImageInfo;
 	}

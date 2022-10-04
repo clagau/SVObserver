@@ -90,7 +90,7 @@ bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned);
 
-		bOk = (S_OK == m_fileImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo));
+		bOk = (S_OK == m_fileImage.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, ImageInfo));
 	}
 
 	// Set / Reset Printable Flags
@@ -195,7 +195,7 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 			{
 				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
 				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
-				m_fileImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
+				m_fileImage.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, ImageInfo);
 				m_fileImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 			}
 			else if (false == selectedFileIsColor && SvDef::SVImageFormatBGR888X == imagePropertyFormat)
@@ -215,7 +215,7 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 		{
 			ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8);
 			ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
-			m_fileImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
+			m_fileImage.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, ImageInfo);
 			m_fileImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 		}
 	}
@@ -246,7 +246,7 @@ bool SVLoadImageToolClass::isInputImage(uint32_t imageId) const
 
 SVToolClass* SVLoadImageToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
 	{
 		return this;
 	}

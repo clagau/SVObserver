@@ -15,6 +15,7 @@
 #include "SVExtentMultiLineStruct.h"
 #include "SVExtentFigureStruct.h"
 #include "SVImageExtentClass.h"
+#include "SVUtilityLibrary/GeoHelper.h"
 #pragma endregion Includes
 
 //////////////////////////////////////////////////////////////////////
@@ -216,11 +217,11 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 
 			double l_dAngle( 0.0 );
 
-			double l_dStartAngle = SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomRight );
-			double l_dEndAngle = SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomLeft );
+			double l_dStartAngle = SvUl::SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomRight );
+			double l_dEndAngle = SvUl::SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomLeft );
 
-			double l_dInnerRadius = SVGetRadius( rValue.m_svTopCenter, rValue.m_svCenterRight );
-			double l_dOuterRadius = SVGetRadius( rValue.m_svTopCenter, rValue.m_svBottomRight );
+			double l_dInnerRadius = SvUl::SVGetRadius( rValue.m_svTopCenter, rValue.m_svCenterRight );
+			double l_dOuterRadius = SvUl::SVGetRadius( rValue.m_svTopCenter, rValue.m_svBottomRight );
 
 			if ( l_dStartAngle < l_dEndAngle )
 			{
@@ -264,14 +265,14 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 			svLine.m_PointVector.clear();
 			for( l_dAngle = l_dMinAngle; l_dAngle < l_dMaxAngle; l_dAngle += l_dLoopStep )
 			{
-				point = SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius, l_dLoopAngle );
+				point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius, l_dLoopAngle );
 
 				svLine.m_PointVector.push_back( point );
 
 				l_dLoopAngle += l_dStep;
 			}
 
-			point = SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius, l_dMinAngle );
+			point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius, l_dMinAngle );
 
 			svLine.m_PointVector.push_back( point );
 
@@ -302,14 +303,14 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 
 			for( l_dAngle = l_dMinAngle; l_dAngle < l_dMaxAngle; l_dAngle += l_dLoopStep )
 			{
-				point = SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius, l_dLoopAngle );
+				point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius, l_dLoopAngle );
 
 				svLine.m_PointVector.push_back( point );
 
 				l_dLoopAngle -= l_dStep;
 			}
 
-			point = SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius, l_dMaxAngle );
+			point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius, l_dMaxAngle );
 
 			svLine.m_PointVector.push_back( point );
 
@@ -323,11 +324,11 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 
 			double l_dAngle( 0.0 );
 
-			double l_dStartAngle = SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomRight );
-			double l_dEndAngle = SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomLeft );
+			double l_dStartAngle = SvUl::SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomRight );
+			double l_dEndAngle = SvUl::SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomLeft );
 
-			double l_dInnerRadius = SVGetRadius( rValue.m_svTopCenter, rValue.m_svCenterRight );
-			double l_dOuterRadius = SVGetRadius( rValue.m_svTopCenter, rValue.m_svBottomRight );
+			double l_dInnerRadius = SvUl::SVGetRadius( rValue.m_svTopCenter, rValue.m_svCenterRight );
+			double l_dOuterRadius = SvUl::SVGetRadius( rValue.m_svTopCenter, rValue.m_svBottomRight );
 
 			if ( l_dStartAngle < l_dEndAngle )
 			{
@@ -372,14 +373,14 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 			svLine.m_PointVector.clear();
 			for( l_dAngle = l_dMinAngle; l_dAngle < l_dMaxAngle; l_dAngle += l_dLoopStep )
 			{
-				point = SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0) , l_dLoopAngle );
+				point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0) , l_dLoopAngle );
 
 				svLine.m_PointVector.push_back( point );
 
 				l_dLoopAngle += l_dStep;
 			}
 
-			point = SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0) , l_dMinAngle );
+			point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0) , l_dMinAngle );
 
 			svLine.m_PointVector.push_back( point );
 
@@ -409,14 +410,14 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 			svLine.m_PointVector.clear();
 			for( l_dAngle = l_dMinAngle; l_dAngle < l_dMaxAngle; l_dAngle += l_dLoopStep )
 			{
-				point = SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0), l_dLoopAngle );
+				point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0), l_dLoopAngle );
 
 				svLine.m_PointVector.push_back( point );
 
 				l_dLoopAngle -= l_dStep;
 			}
 
-			point = SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0), l_dMaxAngle );
+			point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0), l_dMaxAngle );
 
 			svLine.m_PointVector.push_back( point );
 
@@ -430,11 +431,11 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 
 			double l_dAngle( 0.0 );
 
-			double l_dStartAngle = SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomRight );
-			double l_dEndAngle = SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomLeft );
+			double l_dStartAngle = SvUl::SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomRight );
+			double l_dEndAngle = SvUl::SVGetRotationAngle( rValue.m_svTopCenter, rValue.m_svBottomLeft );
 
-			double l_dInnerRadius = SVGetRadius( rValue.m_svTopCenter, rValue.m_svCenterRight );
-			double l_dOuterRadius = SVGetRadius( rValue.m_svTopCenter, rValue.m_svBottomRight );
+			double l_dInnerRadius = SvUl::SVGetRadius( rValue.m_svTopCenter, rValue.m_svCenterRight );
+			double l_dOuterRadius = SvUl::SVGetRadius( rValue.m_svTopCenter, rValue.m_svBottomRight );
 
 			if ( l_dStartAngle < l_dEndAngle )
 			{
@@ -477,7 +478,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 			svLine.m_PointVector.clear();
 			for( l_dAngle = 0; l_dAngle < 360.0; l_dAngle += l_dLoopStep )
 			{
-				point = SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius  , l_dLoopAngle );
+				point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius  , l_dLoopAngle );
 				svLine.m_PointVector.push_back( point );
 
 				l_dLoopAngle += l_dStep;
@@ -485,7 +486,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 
 			for( l_dAngle = 0; l_dAngle < 360.0; l_dAngle += l_dLoopStep )
 			{
-				point = SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius +  4.0 , l_dLoopAngle );
+				point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dInnerRadius +  4.0 , l_dLoopAngle );
 				svLine.m_PointVector.push_back( point );
 
 				l_dLoopAngle += l_dStep;
@@ -517,7 +518,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 			{
 				l_dLoopAngle -= l_dStep;
 
-				point = SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius , l_dLoopAngle );
+				point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius , l_dLoopAngle );
 				svLine.m_PointVector.push_back( point );
 			}
 
@@ -525,7 +526,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 			{
 				l_dLoopAngle -= l_dStep;
 
-				point = SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius + 4.0 , l_dLoopAngle );
+				point = SvUl::SVRotatePoint( rValue.m_svTopCenter, l_dOuterRadius + 4.0 , l_dLoopAngle );
 				svLine.m_PointVector.push_back( point );
 			}
 

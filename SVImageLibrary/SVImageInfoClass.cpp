@@ -57,7 +57,7 @@ SVImageInfoClass &SVImageInfoClass::operator=(const SVImageInfoClass & rRhs)
 		m_svProperties = rRhs.m_svProperties;
 		m_isDibBuffer = rRhs.m_isDibBuffer;
 
-		m_svExtents.UpdateData();
+		m_svExtents.UpdateDataRecalculateOutput();
 	}
 	return (*this);
 }
@@ -204,7 +204,7 @@ HRESULT SVImageInfoClass::SetExtents(const SVImageExtentClass& rExtents)
 {
 	m_svExtents = rExtents;
 
-	HRESULT l_hrOk = m_svExtents.UpdateData();
+	HRESULT l_hrOk = m_svExtents.UpdateDataRecalculateOutput();
 
 	return l_hrOk;
 }
@@ -217,7 +217,7 @@ SvPb::SVExtentTranslationEnum SVImageInfoClass::GetTranslation()
 HRESULT SVImageInfoClass::SetTranslation(SvPb::SVExtentTranslationEnum p_eTranslation)
 {
 	m_svExtents.SetTranslation(p_eTranslation);
-	return m_svExtents.UpdateData();
+	return m_svExtents.UpdateDataRecalculateOutput();
 }
 
 HRESULT SVImageInfoClass::GetImageProperty(SvDef::SVImagePropertyEnum p_eProperty, int &p_riValue) const
@@ -269,7 +269,7 @@ HRESULT SVImageInfoClass::SetExtentProperty(SvPb::SVExtentPropertyEnum p_eProper
 
 	if (S_OK == result)
 	{
-		result = m_svExtents.UpdateData();
+		result = m_svExtents.UpdateDataRecalculateOutput();
 	}
 
 	return result;
@@ -281,7 +281,7 @@ HRESULT SVImageInfoClass::SetExtentProperty(SvPb::SVExtentPropertyEnum eProperty
 
 	if (S_OK == result)
 	{
-		result = m_svExtents.UpdateData();
+		result = m_svExtents.UpdateDataRecalculateOutput();
 	}
 
 	return result;

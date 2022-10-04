@@ -30,6 +30,7 @@
 #include "InspectionEngine/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
+#include "SVUtilityLibrary/GeoHelper.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -940,7 +941,7 @@ void PatternAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& 
 HRESULT PatternAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
+	auto  pTool = GetToolInterface();
 	if (pTool && pTool->WasEnabled())
 	{
 		long lOccurances;
@@ -1004,8 +1005,8 @@ void PatternAnalyzer::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay&
 	pRectArray->set_centerx(centerX);
 	pRectArray->set_centery(centerY);
 	SVPoint<double> startPos{ 0., 0. }, centerPos{ static_cast<double>(centerX), static_cast<double>(centerY) };
-	pRectArray->set_centerradius(SVGetRadius(startPos, centerPos));
-	pRectArray->set_centerangle(SVGetRotationAngle(startPos, centerPos));
+	pRectArray->set_centerradius(SvUl::SVGetRadius(startPos, centerPos));
+	pRectArray->set_centerangle(SvUl::SVGetRotationAngle(startPos, centerPos));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1147,8 +1148,8 @@ std::vector<SVExtentFigureStruct> PatternAnalyzer::GetResultExtentFigureList( lo
 	std::vector<SVExtentFigureStruct> retList;
 	if (lOccurances > 0)
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
-		if (nullptr != pTool)
+		const SvTo::SVToolExtentClass* pToolExtent = getToolExtentPtr();
+		if (nullptr != pToolExtent)
 		{
 			long lpatModelWidth = 0;
 			long lpatModelHeight = 0;
@@ -1184,7 +1185,7 @@ std::vector<SVExtentFigureStruct> PatternAnalyzer::GetResultExtentFigureList( lo
 				msv_dpatResultX.GetValue( dResultXPos, i );
 				msv_dpatResultY.GetValue( dResultYPos, i );
 				msv_dpatResultAngle.GetValue( dResultAngle, i );
-				SVPoint<double> moveVector = SVRotatePoint(SVPoint<double>(0, 0), SVPoint<double>(centerX, centerY), -dResultAngle);
+				SVPoint<double> moveVector = SvUl::SVRotatePoint(SVPoint<double>(0, 0), SVPoint<double>(centerX, centerY), -dResultAngle);
 				dResultXPos -= moveVector.m_x;
 				dResultYPos -= moveVector.m_y;
 				bError = dResultXPos < 0.0 || dResultYPos < 0.0	||dResultAngle < 0.0;
@@ -1199,10 +1200,10 @@ std::vector<SVExtentFigureStruct> PatternAnalyzer::GetResultExtentFigureList( lo
 					patternExtents.SetExtentProperty( SvPb::SVExtentPropertyWidth, lpatModelWidth );
 					patternExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, lpatModelHeight );
 					patternExtents.SetExtentProperty( SvPb::SVExtentPropertyRotationAngle, dResultAngle );
-					patternExtents.UpdateData();
+					patternExtents.UpdateDataRecalculateOutput();
 					SVExtentFigureStruct figure=patternExtents.GetFigure();
 
-					pTool->GetImageExtent().TranslateFromOutputSpace(figure, figure);
+					pToolExtent->TranslateFromOutputSpace(figure, figure);
 
 					retList.push_back(figure);
 				}
@@ -1495,11 +1496,12 @@ bool PatternAnalyzer::IsValidSize(long modelWidth, long modelHeight, bool useDon
 {
 	bool bRet = true;
 
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
-	if (nullptr != pTool)
+	auto pToolExtent = getToolExtentPtr();
+	
+	if (nullptr != pToolExtent)
 	{
 		RECT oRec;
-		HRESULT hrOk = pTool->GetImageExtent().GetOutputRectangle(oRec);
+		HRESULT hrOk = pToolExtent ->GetOutputRectangle(oRec);
 
 		if (S_OK == hrOk)
 		{

@@ -107,6 +107,7 @@ namespace Gdiplus
 #include <direct.h>
 #include <filesystem>
 #include <float.h>
+#include <format>
 #include <fstream>
 #include <functional>
 #include <future>

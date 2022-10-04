@@ -104,7 +104,7 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		//Set input name to source image name to display it in result picker
 		m_SourceImageName.SetValue( pInputImage->GetCompleteName() );
 
-		m_OutputImage.UpdateImage(pInputImage->getObjectId(), pInputImage->GetImageInfo());
+		m_OutputImage.UpdateImageSetParentAndImageInfo(pInputImage->getObjectId(), pInputImage->GetImageInfo());
 	}
 	else
 	{
@@ -137,7 +137,7 @@ SvVol::SVStringValueObjectClass* SVShiftTool::GetInputImageNames()
 
 SVToolClass* SVShiftTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
 	{
 		return this;
 	}

@@ -19,6 +19,7 @@
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
+#include "Tools/SVToolExtentClass.h"
 
 struct IDirectDrawSurface7;
 
@@ -163,6 +164,8 @@ public:
 	/// \param showOverlays show overlays in saved image. ignored if ViewOnly is false
 	void SaveViewOrImageToDisk(bool ViewOnly,bool showOverlays);
 
+	const SvTo::SVToolExtentClass* getToolExtentPtr();
+
 protected:
 	void Initialize();
 	bool GetScrollPosition( CPoint& point );
@@ -182,7 +185,7 @@ protected:
 	HICON GetObjectCursor( POINT point );
 	HICON GetObjectCursor( SvPb::SVExtentLocationPropertyEnum svLocation, POINT point);
 
-	HRESULT GetToolExtents(SVImageExtentClass& svToolExtents);
+
 
 #ifdef _DEBUG
 	virtual void AssertValid() const override;

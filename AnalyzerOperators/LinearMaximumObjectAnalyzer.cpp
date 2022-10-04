@@ -140,6 +140,7 @@ bool LinearMaximumObjectAnalyzer::ResetObject(SvStl::MessageContainerVector *pEr
 HRESULT LinearMaximumObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
 {
 	double dDistance = 0.0;
+	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
 	if(nullptr != GetEdgeA() && S_OK == m_svLinearDistanceA.GetValue(dDistance))
 	{
@@ -147,7 +148,7 @@ HRESULT LinearMaximumObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineS
 
 		if( S_OK == GetEdgeA()->GetEdgeOverlayFromDistance(dDistance, line) )
 		{
-			GetImageExtent().TranslateFromOutputSpace(line, line);
+			rAnalyzerExtents.TranslateFromOutputSpace(line, line);
 
 			p_MultiLine.m_svLineArray.emplace_back( line );
 		}
@@ -159,7 +160,7 @@ HRESULT LinearMaximumObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineS
 
 		if( S_OK == GetEdgeB()->GetEdgeOverlayFromDistance(dDistance, line) )
 		{
-			GetImageExtent().TranslateFromOutputSpace(line, line);
+			rAnalyzerExtents.TranslateFromOutputSpace(line, line);
 
 			p_MultiLine.m_svLineArray.push_back(line);
 		}
@@ -215,7 +216,8 @@ void LinearMaximumObjectAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, boo
 
 bool LinearMaximumObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVImageExtentClass Extents;
+
+	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 	
 	SVPoint<double> edgePointA;
 	SVPoint<double> edgePointB;
@@ -336,12 +338,13 @@ bool LinearMaximumObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::Mes
 		Result &= S_OK == GetEdgeB()->GetPointFromDistance( DistanceB, edgePointB );
 	}
 
-	Result &= S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
-			S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
+	Result &= S_OK == rAnalyzerExtents.TranslateFromOutputSpace(edgePointA, edgePointA) &&
+			S_OK == rAnalyzerExtents.TranslateFromOutputSpace(edgePointB, edgePointB);
 
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
-	Result &= pTool && S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
-			S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
+	
+	const SvTo::SVToolExtentClass* pToolExtent = getToolExtentPtr();
+	Result &= pToolExtent && S_OK == pToolExtent->TranslateFromOutputSpace(edgePointA, edgePointA) &&
+			S_OK == pToolExtent->TranslateFromOutputSpace(edgePointB, edgePointB);
 
 	SVPoint<double> centerPoint
 	{

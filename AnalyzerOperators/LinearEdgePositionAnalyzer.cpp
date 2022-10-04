@@ -137,11 +137,19 @@ bool LinearEdgePositionAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::Mess
 		{
 			rRunStatus.SetFailed();	
 		}
+		const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
-		Result &= S_OK == GetImageExtent().TranslateFromOutputSpace( edgePoint, edgePoint );
+		Result &= S_OK == rAnalyzerExtents.TranslateFromOutputSpace( edgePoint, edgePoint );
 
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
-		Result &= pTool && S_OK == pTool->GetImageExtent().TranslateFromOutputSpace( edgePoint, edgePoint );
+		
+		if (auto pToolExtent = getToolExtentPtr(); Result &&  nullptr != pToolExtent)
+		{
+			Result = S_OK == pToolExtent->TranslateFromOutputSpace(edgePoint, edgePoint);;
+		}
+		else 
+		{ 
+			Result = false;
+		}
 
 		if (!Result && nullptr != pErrorMessages)
 		{

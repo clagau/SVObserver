@@ -9,6 +9,8 @@
 //* .Check In Date   : $Date:   26 Jun 2014 17:41:18  $
 //******************************************************************************
 
+
+
 #pragma region Includes
 #include "stdafx.h"
 #include "Definitions/GlobalConst.h"
@@ -31,9 +33,12 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "ObjectInterfaces/ILinkedObject.h"
+
+
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
 #include "SVUtilityLibrary/StringHelper.h"
 #endif
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -293,7 +298,7 @@ HRESULT SVImageClass::UpdateImage(const SVImageExtentClass& rExtent, bool doNotR
 	return Result;
 }
 
-HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rImageInfo)
+HRESULT SVImageClass::UpdateImageSetParentAndImageInfo(uint32_t parentID, const SVImageInfoClass& rImageInfo)
 {
 	HRESULT Result {S_OK};
 
@@ -326,7 +331,7 @@ HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rIm
 	return Result;
 }
 
-HRESULT SVImageClass::UpdateImage(SvPb::SVImageTypeEnum ImageType)
+HRESULT SVImageClass::UpdateImageType(SvPb::SVImageTypeEnum ImageType)
 {
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
 	OutputDebugString(SvUl::Format("Set new Type for Image %s\n", GetCompleteName().c_str()).c_str());
@@ -1234,14 +1239,13 @@ HRESULT SVImageClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttribu
 	return __super::SetValuesForAnObject(aimObjectID, pDataObject);
 }
 
+
 HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
 {
-	HRESULT l_hr = E_FAIL;
 
+	
+	HRESULT l_hr = E_FAIL;
 	rOutPoint.clear();
-#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-	OutputDebugString(SvUl::Format("Translate from outputspace  begin for %s \n", GetCompleteName().c_str()).c_str());
-#endif 
 
 	if (nullptr != pImage)
 	{
@@ -1252,18 +1256,77 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPo
 			const SVImageExtentClass rExtents = pCurrentImage->GetImageExtents();
 			rExtents.TranslateFromOutputSpace(inPoint, inPoint);
 			pCurrentImage = pCurrentImage->GetParentImage();
-#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-			if (pCurrentImage)
-				OutputDebugString(SvUl::Format("Translate from outputspace next Parent  %s \n", pCurrentImage->GetCompleteName().c_str()).c_str());
-#endif 
-
-
 
 		} while (pImage != pCurrentImage && nullptr != pCurrentImage);
 
+
+		if (pImage == pCurrentImage)
+		{
+			rOutPoint = inPoint;
+			l_hr = S_OK;
+		}
+	}
+
+
+	
+	return l_hr;
+}
+
+HRESULT SVImageClass::TranslateFromOutputSpaceToImageFromTool(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
+{
+	HRESULT l_hr = E_FAIL;
+
+	rOutPoint.clear();
+
+	if (nullptr != pImage)
+	{
+		const SVImageClass* pCurrentImage {this};
+		SvOi::ITool*  pTool = pCurrentImage->GetToolInterface();
+		
+		bool newTool {true}; //This is to avoid counting color tool twice because parent of Band 1 is image 1 but this is same tool
+		do
+		{
+			SVPoint<double> InPoint2 = inPoint;
+			
+
+			if (pTool && newTool)
+			{
+				 SVImageExtentClass& rExtentsFromTool = pTool->GetImageExtentRef();
+
+				
+				if (rExtentsFromTool.getIsUpdated() == false)
+				{
+
+					rExtentsFromTool.UpdateDataRecalculateOutput();
+				}
+				rExtentsFromTool.TranslateFromOutputSpace(inPoint, inPoint);
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-		OutputDebugString(SvUl::Format("Translate from outputspace  end for %s \n", GetCompleteName().c_str()).c_str());
-#endif 
+
+				std::string name = pTool->GetName();
+				std::string imagename = pCurrentImage->GetCompleteName();
+				std::string  msg = std::format("Translate from Imagename: {}  ToolName {}\n", imagename, name);
+				OutputDebugString(msg.c_str());
+#endif
+
+			}
+
+			pCurrentImage = pCurrentImage->GetParentImage();
+			if (pCurrentImage)
+			{
+				SvOi::ITool*  pNextTool =  pCurrentImage->GetToolInterface();
+				if (pNextTool != pTool)
+				{
+					pTool = pNextTool;
+					newTool = true;
+				}
+				else
+				{
+					newTool = false;
+				}
+			}
+
+		} while (pImage != pCurrentImage && nullptr != pCurrentImage);
+
 
 		if (pImage == pCurrentImage)
 		{

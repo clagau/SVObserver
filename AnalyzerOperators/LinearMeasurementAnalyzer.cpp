@@ -175,7 +175,8 @@ bool LinearMeasurementAnalyzer::onRun(SvIe::RunStatus& rRunStatus, SvStl::Messag
 
 	if ( Result )
 	{
-		SVImageExtentClass l_svExtents;
+	
+		const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
 		SVPoint<double> edgePointA;
 		if ( S_OK != GetEdgeA()->GetOutputEdgePoint(edgePointA) )
@@ -201,12 +202,13 @@ bool LinearMeasurementAnalyzer::onRun(SvIe::RunStatus& rRunStatus, SvStl::Messag
 			rRunStatus.SetFailed();
 		}
 
-		Result &= S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
-				S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
+		Result &= S_OK == rAnalyzerExtents.TranslateFromOutputSpace(edgePointA, edgePointA) &&
+				S_OK == rAnalyzerExtents.TranslateFromOutputSpace(edgePointB, edgePointB);
 
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
-		Result &= pTool && S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
-				S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
+	
+		const SvTo::SVToolExtentClass* pToolExtent = getToolExtentPtr();
+		Result &= pToolExtent && S_OK == pToolExtent->TranslateFromOutputSpace(edgePointA, edgePointA) &&
+				S_OK == pToolExtent->TranslateFromOutputSpace(edgePointB, edgePointB);
 
 		SVPoint<double> CenterPoint
 		{

@@ -224,7 +224,7 @@ namespace SvAo
 			imageInfo.SetImageProperty(SvDef::SVImagePropertyBandNumber, isColorAdditionalImage ? 3 : 1);
 			imageInfo.SetImageProperty(SvDef::SVImagePropertyFormat, isColorAdditionalImage ? SvDef::SVImageFormatBGR888 : SvDef::SVImageFormatMono8);
 			imageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
-			m_AdditionalImages.UpdateImage(SvDef::InvalidObjectId, imageInfo);
+			m_AdditionalImages.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, imageInfo);
 			m_AdditionalImages.SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::OverwriteAttribute);
 
 			result = setDrawTypeEnums(*pAnalyzer, pErrorMessages) && result;

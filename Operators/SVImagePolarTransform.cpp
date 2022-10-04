@@ -142,17 +142,20 @@ SVImagePolarTransform::~SVImagePolarTransform()
 bool SVImagePolarTransform::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool result = SVPolarTransform::CreateObject(rCreateStructure);
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
+	auto pTool = GetToolInterface();
+	
 	result = result && nullptr != pTool;
 
-	if(result)
+	if(result )
 	{
-		pTool->SetImageExtentProperty( SvPb::SVExtentPropertyPositionPointX, &m_centerX );
-		pTool->SetImageExtentProperty( SvPb::SVExtentPropertyPositionPointY, &m_centerY );
-		pTool->SetImageExtentProperty( SvPb::SVExtentPropertyInnerRadius, &m_endRadius );
-		pTool->SetImageExtentProperty( SvPb::SVExtentPropertyOuterRadius, &m_startRadius );
-		pTool->SetImageExtentProperty( SvPb::SVExtentPropertyStartAngle, &m_startAngle );
-		pTool->SetImageExtentProperty( SvPb::SVExtentPropertyEndAngle, &m_endAngle );
+		SvTo::SVToolExtentClass& rtoolextent = pTool->GetToolExtent();
+
+		rtoolextent.SetExtentObject( SvPb::SVExtentPropertyPositionPointX, &m_centerX );
+		rtoolextent.SetExtentObject( SvPb::SVExtentPropertyPositionPointY, &m_centerY );
+		rtoolextent.SetExtentObject( SvPb::SVExtentPropertyInnerRadius, &m_endRadius );
+		rtoolextent.SetExtentObject( SvPb::SVExtentPropertyOuterRadius, &m_startRadius );
+		rtoolextent.SetExtentObject( SvPb::SVExtentPropertyStartAngle, &m_startAngle );
+		rtoolextent.SetExtentObject( SvPb::SVExtentPropertyEndAngle, &m_endAngle );
 	}
 
 	result &= S_OK == ( m_outputImage.InitializeImage(m_inputImage.getInput<SvIe::SVImageClass>()));

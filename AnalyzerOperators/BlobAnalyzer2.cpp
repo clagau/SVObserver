@@ -426,8 +426,10 @@ namespace SvAo
 		if ( S_OK == m_numberOfBlobsFound.GetValue(currentNbrOfBlobs) && 0 != currentNbrOfBlobs && 
 			nullptr != m_ResultColumnForOverlayArray[0] && nullptr != m_ResultColumnForOverlayArray[1] && nullptr != m_ResultColumnForOverlayArray[2] && nullptr != m_ResultColumnForOverlayArray[3])
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
-			if (nullptr != pTool)
+		
+			auto pToolExtent = getToolExtentPtr();
+		
+			if (nullptr != pToolExtent)
 			{
 				std::vector<double> minXArray;
 				m_ResultColumnForOverlayArray[0]->GetArrayValues(minXArray);
@@ -449,7 +451,8 @@ namespace SvAo
 					l_oRect.right = static_cast<long>(maxXArray[i]);
 					
 					SVExtentFigureStruct l_svFigure{ l_oRect };
-					pTool->GetImageExtent().TranslateFromOutputSpace( l_svFigure, l_svFigure );
+				
+					pToolExtent->TranslateFromOutputSpace(l_svFigure, l_svFigure);
 	
 					if( S_OK == l_svFigure.IsPointOverFigure( SVPoint<double>(rPoint) ) )
 					{
@@ -511,9 +514,15 @@ namespace SvAo
 	HRESULT BlobAnalyzer2::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& rMultiLineArray)
 	{
 		// only if ToolSet/Tool was not Disabled
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
+		
+		auto pTool = GetToolInterface();
 		if (pTool && pTool->WasEnabled())
 		{
+			auto pToolExtend = getToolExtentPtr();
+			if (nullptr == pToolExtend)
+			{
+				return E_FAIL;
+			}
 			if (nullptr == m_ResultColumnForOverlayArray[0] || nullptr == m_ResultColumnForOverlayArray[1] || nullptr == m_ResultColumnForOverlayArray[2] || nullptr == m_ResultColumnForOverlayArray[3])
 			{
 				assert(false);
@@ -529,7 +538,7 @@ namespace SvAo
 			m_ResultColumnForOverlayArray[3]->GetArrayValues(maxYArray);
 
 			size_t numberOfBlobs = std::min({ minXArray.size(), maxXArray.size(), minYArray.size(), maxYArray.size() });
-			const SVImageExtentClass& rImageExtents = pTool->GetImageExtent();
+		
 
 			// if running only show N Blob Figures according to the specified
 			// MaxBlobDataArraySize variable
@@ -547,8 +556,8 @@ namespace SvAo
 				l_oRect.right = static_cast<long> (maxXArray[i]+1);
 
 				SVExtentFigureStruct l_svFigure{ l_oRect };
-				rImageExtents.TranslateFromOutputSpace(l_svFigure, l_svFigure);
-
+			
+				pToolExtend->TranslateFromOutputSpace(l_svFigure, l_svFigure);;
 				SVExtentMultiLineStruct l_multiLine;
 				l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
 

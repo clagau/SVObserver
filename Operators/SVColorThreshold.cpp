@@ -374,7 +374,7 @@ bool SVColorThreshold::createOutputImage(SvIe::SVImageClass* pInputImage, SvIe::
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 
-	Result = (S_OK == pOutputImage->UpdateImage(InputID, ImageInfo));
+	Result = (S_OK == pOutputImage->UpdateImageSetParentAndImageInfo(InputID, ImageInfo));
 
 	return Result;
 }

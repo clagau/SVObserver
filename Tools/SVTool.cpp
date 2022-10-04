@@ -488,7 +488,8 @@ void SVToolClass::UpdateAuxiliaryExtents()
 			SvIe::SVImageClass* pImage = m_toolExtent.GetToolImage();
 			if (nullptr != pImage && nullptr != pAuxSourceImage)
 			{
-				pImage->TranslateFromOutputSpaceToImage(pAuxSourceImage, point, point);
+				//check
+				pImage->TranslateFromOutputSpaceToImageFromTool(pAuxSourceImage, point, point);
 			}
 			m_pEmbeddedExtents->m_svAuxiliarySourceX.SetValue(point.m_x);
 			m_pEmbeddedExtents->m_svAuxiliarySourceY.SetValue(point.m_y);
@@ -852,11 +853,12 @@ SvPb::EAutoSize SVToolClass::GetAutoSizeEnabled() const
 
 HRESULT SVToolClass::updateExtentFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eAction, long dx, long dy)
 {
-	auto imageExtents = GetImageExtent();
-	imageExtents.UpdateFromOutputSpace(eAction, dx, dy);
-	HRESULT retVal = SetImageExtent(imageExtents);
+	
+	m_toolExtent.UpdateFromOutputSpace(eAction, dx, dy);
+
+	HRESULT retVal {S_OK};
 	auto* pInspection = GetInspectionInterface();
-	if (S_OK == retVal && nullptr != pInspection)
+	if ( nullptr != pInspection)
 	{
 		retVal = pInspection->resetTool(*this);
 	}
@@ -872,7 +874,7 @@ HRESULT SVToolClass::setExtentProperty(SvPb::SVExtentPropertyEnum eProperty, dou
 {
 	auto imageExtents = GetImageExtent();
 	imageExtents.SetExtentProperty(eProperty, value);
-	imageExtents.UpdateData();
+	imageExtents.UpdateDataRecalculateOutput();
 	HRESULT retVal = SetImageExtent(imageExtents);
 	auto* pInspection = GetInspectionInterface();
 	if (S_OK == retVal && nullptr != pInspection)
@@ -894,7 +896,7 @@ HRESULT SVToolClass::setExtentList(const ::google::protobuf::RepeatedPtrField<::
 	{
 		imageExtents.SetExtentProperty(data.type(), data.value());
 	}
-	imageExtents.UpdateData();
+	imageExtents.UpdateDataRecalculateOutput();
 	HRESULT retVal = SetImageExtent(imageExtents);
 	auto* pInspection = GetInspectionInterface();
 	if (S_OK == retVal && nullptr != pInspection)
@@ -940,10 +942,20 @@ const SVImageExtentClass& SVToolClass::GetImageExtent() const
 	return m_toolExtent.getImageExtent();
 }
 
+SVImageExtentClass& SVToolClass::GetImageExtentRef() 
+{
+	return m_toolExtent.getImageExtent();
+}
+
+SvTo::SVToolExtentClass& SVToolClass::GetToolExtent()
+{
+	return m_toolExtent;
+}
 const SVImageExtentClass* SVToolClass::GetImageExtentPtr() const
 {
 	return &(m_toolExtent.getImageExtent());
 };
+
 
 
 

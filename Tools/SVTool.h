@@ -103,7 +103,7 @@ public:
 
 	bool IsEnabled() const;
 
-	bool WasEnabled() const;
+	virtual bool WasEnabled() const override;
 
 	virtual bool allowExtensionCopy() const override
 	{
@@ -122,8 +122,10 @@ public:
 
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) ;
 	const SVImageExtentClass& GetImageExtent() const;
-
-
+	virtual SVImageExtentClass& GetImageExtentRef() ;
+	virtual SvTo::SVToolExtentClass& GetToolExtent();
+	
+	
 	void SetAlwaysUpdate(bool p_bAlwaysUpdate);
 
 	HRESULT GetRootOffsetData(SVExtentOffsetStruct& p_rsvOffsetData);
@@ -184,7 +186,8 @@ public:
 	/// \param embeddedId [in] The EmbeddedId of the object
 	bool addEntryToMonitorList(SvOi::ParametersForML &retList, SvPb::EmbeddedIdEnum embeddedID) const;
 	
-	SVToolExtentClass& getToolExtent() {return m_toolExtent;}
+	SvTo::SVToolExtentClass& getToolExtent() {return m_toolExtent;}
+	
 	HRESULT UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SvIe::SVImageClass* p_svToolImage);
 
 	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& ) { return nullptr; };
@@ -244,6 +247,7 @@ protected:
 	virtual bool useOverlayColorTool() const { return true; };
 
 	void setStateValueToOverlay(SvPb::Overlay& rOverlay) const;
+
 
 private:
 	void init();

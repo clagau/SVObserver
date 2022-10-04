@@ -192,6 +192,7 @@
     <ClInclude Include="AuditFiles.h" />
     <ClInclude Include="DirectoryUtilities.h" />
     <ClInclude Include="FileHelper.h" />
+    <ClInclude Include="GeoHelper.h" />
     <ClInclude Include="GlobalConstantData.h" />
     <ClInclude Include="Heapwalk.h" />
     <ClInclude Include="IArchive.h" />

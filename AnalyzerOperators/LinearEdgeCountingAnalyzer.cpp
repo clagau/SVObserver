@@ -118,7 +118,9 @@ HRESULT LinearEdgeCountingAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineSt
 	{
 		if( S_OK == GetEdgeA()->GetEdgesOverlay( p_MultiLine ) )
 		{
-			GetImageExtent().TranslateFromOutputSpace( p_MultiLine, p_MultiLine );
+			
+			const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
+			rAnalyzerExtents.TranslateFromOutputSpace( p_MultiLine, p_MultiLine );
 
 			return S_OK;
 		}

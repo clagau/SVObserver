@@ -231,7 +231,7 @@ std::vector<std::string> SVColorToolClass::getToolAdjustNameList() const
 
 SVToolClass* SVColorToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
 	{
 		return this;
 	}
@@ -340,9 +340,9 @@ void SVColorToolClass::LocalInitialize()
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
 	ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
-	m_LogicalROIImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
+	m_LogicalROIImage.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, ImageInfo);
 	m_LogicalROIImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeLogical);
-	m_OutputImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
+	m_OutputImage.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, ImageInfo);
 	m_OutputImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 
 	for (SvDef::BandEnum Band : SvDef::BandList)
@@ -372,7 +372,7 @@ bool SVColorToolClass::createBandChildLayer(SvDef::BandEnum Band)
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, static_cast<long> (Band));
 
-	bool l_bOk = (S_OK == m_bandImage[Band].UpdateImage(m_OutputImage.getObjectId(), ImageInfo));
+	bool l_bOk = (S_OK == m_bandImage[Band].UpdateImageSetParentAndImageInfo(m_OutputImage.getObjectId(), ImageInfo));
 
 	return l_bOk;
 }

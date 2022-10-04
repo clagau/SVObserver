@@ -13,12 +13,20 @@
 #pragma endregion Includes
 
 
+
 #pragma region Declarations
 namespace SvStl
 {
 class MessageContainer;
 typedef std::vector<MessageContainer> MessageContainerVector;
 }
+class SVImageExtentClass;
+namespace  SvTo
+{
+class SVToolExtentClass;
+}
+
+
 #pragma endregion Declarations
 
 namespace SvOi
@@ -56,5 +64,8 @@ typedef std::vector<ParameterPairForML> ParametersForML;
 		virtual SvPb::InspectionCmdResponse getInvalidDependencies() const = 0;
 		virtual std::vector<std::string> getToolAdjustNameList() const = 0;
 		virtual bool isToolActive() const = 0;
+		virtual SVImageExtentClass& GetImageExtentRef() = 0;
+		virtual SvTo::SVToolExtentClass& GetToolExtent() = 0;
+		virtual bool WasEnabled() const =0;
 	};
 } //namespace SvOi

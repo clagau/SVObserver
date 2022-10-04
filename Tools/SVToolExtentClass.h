@@ -71,6 +71,7 @@ public:
 
 	SvPb::SVExtentTranslationEnum GetTranslation() const;
 	void SetTranslation( SvPb::SVExtentTranslationEnum eTranslation );
+	
 	HRESULT SetLinearTranslation(SvPb::SVExtentTranslationEnum eTranslation);
 
 	HRESULT GetExtentObject( SvPb::SVExtentPropertyEnum extentProperty, SvOi::IValueObject*& rpValueObject ) const;
@@ -84,11 +85,7 @@ public:
 
 	void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const;
 
-//- updateImageExtent -----------------------------------------------------------
-//- There appears to be little direct connection between the SVToolExtentClass
-//- and the SVImageExtentClass.  This function appears to attempt to translate  
-//- between the two.  Translating and copying from the SVToolExtentClass based 
-//- structure into the SVImageExtentClass based structure. -------------------
+	//innitialize and recalculate the imageExtent if necessary 
 	HRESULT updateImageExtent(bool init);
 
 	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent);
@@ -109,8 +106,76 @@ public:
 	std::string GetAuxiliaryDrawTypeString() const;
 
 	HRESULT ensureValidScaleFactorIfDirectValue(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty);
+	//What is at the cursor 
+	SvPb::SVExtentLocationPropertyEnum GetLocationPropertyAt(const SVPoint<double>& rPoint) const;
+	//drag and drop some ROI boundary
+	HRESULT UpdateDraggingROI( SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStartPoint, const SVPoint<double>& rEndPoint);
+
+	//ROI was changed 
+	HRESULT UpdateFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eLocation, long lX, long lY);
+
+	//Where is the point in the output
+	HRESULT TranslateToOutputSpace(SVPoint<double> value, SVPoint<double> &rResult) const;
+
+
+	HRESULT GetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, long& rValue) const
+	{
+		return m_ImageExtent.GetExtentProperty(eProperty, rValue);
+	}
+	HRESULT GetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, double& rValue) const
+	{
+		return m_ImageExtent.GetExtentProperty(eProperty, rValue);
+	}
+	HRESULT GetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, POINT& rValue) const
+	{
+		return m_ImageExtent.GetExtentProperty(eProperty, rValue);
+	}
+	HRESULT GetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, SVPoint<double>& rValue) const
+	{
+		return m_ImageExtent.GetExtentProperty(eProperty, rValue);
+	}
+
+	HRESULT SetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, double dValue, bool clearOutputData = true)
+	{
+		return m_ImageExtent.SetExtentProperty(eProperty, dValue, clearOutputData);
+	}
+	HRESULT SetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue, bool clearOutputData = true)
+	{
+		return m_ImageExtent.SetExtentProperty(eProperty, rValue, clearOutputData);
+	}
+
+
+	
+	HRESULT TranslateFromOutputSpace(SVPoint<double> value, SVPoint<double>& rResult) const
+	{
+		return m_ImageExtent.TranslateFromOutputSpace(value, rResult);
+	}
+	HRESULT TranslateFromOutputSpace(SVExtentFigureStruct value, SVExtentFigureStruct& rResult) const
+	{
+		return m_ImageExtent.TranslateFromOutputSpace(value, rResult);
+	}
+	HRESULT TranslateFromOutputSpace(SVExtentLineStruct value, SVExtentLineStruct& rResult) const
+	{
+		return m_ImageExtent.TranslateFromOutputSpace(value, rResult);
+	}
+	HRESULT TranslateFromOutputSpace(SVExtentMultiLineStruct value, SVExtentMultiLineStruct& rResult) const
+	{
+		return m_ImageExtent.TranslateFromOutputSpace( value, rResult);
+	}
+	HRESULT GetOutputRectangle(RECT& p_roRect) const
+	{
+		return m_ImageExtent.GetOutputRectangle(p_roRect);
+	}
+
 
 private:
+	HRESULT TranslateToLocalSpace(SVPoint<double> value, SVPoint<double>& rResult);
+	HRESULT UpdateLine(SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd);
+	HRESULT UpdatePolar(SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd);
+	HRESULT UpdatePolarFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eLocation, long p_dX, long p_dY);
+	HRESULT UpdateHorizontalPerspective(SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd);
+	HRESULT UpdateVerticalPerspective(SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd);
+
 	bool isDirectValue(SvPb::SVExtentPropertyEnum extentProperty) const;
 
 	typedef std::set< SvPb::SVExtentTranslationEnum > SVTranslationFilterSet;
@@ -120,31 +185,32 @@ private:
 	// * These are local run operation variables
 	// * Do not use these variables unless for specific source extent uses
 	// *
-	// *******
+  // *******
+	
+	bool m_bAlwaysUpdate {true};
 
-	bool m_bAlwaysUpdate;
-
-	SvIe::SVImageClass* m_pSelectedImage; //auxtoolimage
-	SvTo::SVToolClass* m_pTool;
+	SvIe::SVImageClass* m_pSelectedImage {nullptr}; //auxtoolimage
+	SvTo::SVToolClass* m_pTool {nullptr};
+	
 
 	SVExtentOffsetStruct m_svRootOffsetData;
 	SVExtentOffsetStruct m_svSelectedOffsetData;
 
 	// ******* End Source Extent Data
 
-	SvIe::SVImageClass* m_pToolImage;
+	//OUTPUT IMAGE
+	SvIe::SVImageClass* m_pToolImage {nullptr};
 
-	SvPb::SVExtentTranslationEnum m_eTranslation;
-	SvDef::SVExtentShapeEnum m_eShape;
+	SvPb::SVExtentTranslationEnum m_eTranslation {SvPb::SVExtentTranslationUnknown};
+	SvDef::SVExtentShapeEnum m_eShape {SvDef::SVExtentShapeUnknown};
 
 	SVToolExtentPropertiesClass m_Properties;
 
 	
 
 	SVImageExtentClass m_ImageExtent;
-	static SVTranslationFilterSet m_LinearToolTranslations;
 
-	mutable bool m_CircularReference = false;					//! Use this flag during UpdateOffsetDataToImage to make sure no circular references are present
+	mutable bool m_CircularReference {false};					//! Use this flag during UpdateOffsetDataToImage to make sure no circular references are present
 	
 };
 

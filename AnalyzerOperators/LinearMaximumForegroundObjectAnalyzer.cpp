@@ -139,6 +139,7 @@ bool LinearMaximumForegroundObjectAnalyzer::ResetObject(SvStl::MessageContainerV
 HRESULT LinearMaximumForegroundObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct& rMultiLine )
 {
 	double dDistance = 0.0;
+	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
 	if(nullptr != GetEdgeA() && S_OK == m_svLinearDistanceA.GetValue( dDistance ))
 	{
@@ -146,7 +147,7 @@ HRESULT LinearMaximumForegroundObjectAnalyzer::GetSelectedEdgeOverlays( SVExtent
 
 		if( S_OK == GetEdgeA()->GetEdgeOverlayFromDistance( dDistance, line ) )
 		{
-			GetImageExtent().TranslateFromOutputSpace( line, line );
+			rAnalyzerExtents.TranslateFromOutputSpace( line, line );
 
 			rMultiLine.m_svLineArray.push_back( line );
 		}
@@ -158,7 +159,7 @@ HRESULT LinearMaximumForegroundObjectAnalyzer::GetSelectedEdgeOverlays( SVExtent
 
 		if( S_OK == GetEdgeB()->GetEdgeOverlayFromDistance( dDistance, line ) )
 		{
-			GetImageExtent().TranslateFromOutputSpace( line, line );
+			rAnalyzerExtents.TranslateFromOutputSpace( line, line );
 
 			rMultiLine.m_svLineArray.push_back( line );
 		}
@@ -221,6 +222,7 @@ bool LinearMaximumForegroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, 
 	double DistanceB( 0.0 );
 
 	bool l_bOk = __super::onRun( rRunStatus, pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
+	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 	
 	if (nullptr == GetTool() )
 	{
@@ -285,12 +287,13 @@ bool LinearMaximumForegroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, 
 		l_bOk &= S_OK == GetEdgeB()->GetPointFromDistance( DistanceB, edgePointB );
 	}
 
-	l_bOk &= S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
-			S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
+	l_bOk &= S_OK == rAnalyzerExtents.TranslateFromOutputSpace(edgePointA, edgePointA) &&
+			S_OK == rAnalyzerExtents.TranslateFromOutputSpace(edgePointB, edgePointB);
 
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
-	l_bOk &= pTool && S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
-			S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
+	
+	const SvTo::SVToolExtentClass* pToolExtent = getToolExtentPtr();
+	l_bOk &= pToolExtent && S_OK == pToolExtent->TranslateFromOutputSpace(edgePointA, edgePointA) &&
+			S_OK == pToolExtent->TranslateFromOutputSpace(edgePointB, edgePointB);
 
 	SVPoint<double> centerPoint
 	{

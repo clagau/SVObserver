@@ -1442,8 +1442,8 @@ bool BlobAnalyzer::IsPtOverResult( const POINT& rPoint )
 	if (( S_OK == m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs ) ) &&
 		(0 != l_lCurrentNbrOfBlobs))
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
-		if (nullptr != pTool)
+		auto pToolExtent = getToolExtentPtr();
+		if (nullptr != pToolExtent)
 		{
 			double* pxMax = &(m_vec2dBlobResults[SvOi::SV_BOXX_MAX][0]);
 			double* pxMin = &(m_vec2dBlobResults[SvOi::SV_BOXX_MIN][0]);
@@ -1464,7 +1464,7 @@ bool BlobAnalyzer::IsPtOverResult( const POINT& rPoint )
 				l_oRect.right = static_cast<long>(pxMax[l]);
 				
 				SVExtentFigureStruct l_svFigure{ l_oRect };
-				pTool->GetImageExtent().TranslateFromOutputSpace( l_svFigure, l_svFigure );
+				pToolExtent->TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 				if( S_OK == l_svFigure.IsPointOverFigure( SVPoint<double>(rPoint) ) )
 				{
@@ -1578,15 +1578,15 @@ bool BlobAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 HRESULT BlobAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
-	if (pTool && pTool->WasEnabled())
+	auto pTool = GetToolInterface();
+	const SvTo::SVToolExtentClass* pToolExtent = getToolExtentPtr();
+	if (pTool && pToolExtent && pTool->WasEnabled())
 	{
 		long l_lCurrentNbrOfBlobs = 0;
 		m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs );
 
 		if ( l_lCurrentNbrOfBlobs > 0 )
 		{
-			const SVImageExtentClass& rImageExtents = pTool->GetImageExtent();
 
 			// if running only show N Blob Figures according to the specified
 			// MaxBlobDataArraySize variable
@@ -1611,7 +1611,7 @@ HRESULT BlobAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineS
 
 					SVExtentFigureStruct l_svFigure{ Rect };
 					
-					rImageExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
+					pToolExtent->TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 					SVExtentMultiLineStruct l_multiLine;
 
@@ -1642,7 +1642,7 @@ HRESULT BlobAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineS
 					l_oRect.right = static_cast<long> (pxMax[l]);
 
 					SVExtentFigureStruct l_svFigure{ l_oRect };
-					rImageExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
+					pToolExtent->TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 					SVExtentMultiLineStruct l_multiLine;
 					l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;

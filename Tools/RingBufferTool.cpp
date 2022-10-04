@@ -131,7 +131,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 			for (int i = 0; i < SvDef::cRingBufferNumberOutputImages; i++)
 			{
-				m_OutputImages[i].UpdateImage(pInputImage->getObjectId(), ImageInfo);
+				m_OutputImages[i].UpdateImageSetParentAndImageInfo(pInputImage->getObjectId(), ImageInfo);
 			}
 
 			//Set input name to source image name to display it in result picker

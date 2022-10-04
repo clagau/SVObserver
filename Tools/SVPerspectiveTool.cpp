@@ -106,7 +106,7 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 		OutputExtents.SetTranslation(SvPb::SVExtentTranslationVerticalPerspective);
 		l_bHideX = true;
 	}
-	/*l_hrOk = */OutputExtents.UpdateData();
+	/*l_hrOk = */OutputExtents.UpdateDataRecalculateOutput();
 
 
 	// Set Position Points to zero for output image.
@@ -122,7 +122,7 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 	/*l_hrOk = */SetImageExtent(OutputExtents);
 
 
-	/*l_hrOk = */OutputExtents.UpdateData();
+	/*l_hrOk = */OutputExtents.UpdateDataRecalculateOutput();
 
 	uint32_t inputID = SvDef::InvalidObjectId;
 	if(nullptr != pInputImage)
@@ -134,7 +134,7 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 
 	l_ImageInfo.SetExtents( OutputExtents );
 
-	HRESULT l_hrOk = m_OutputImage.UpdateImage(inputID, l_ImageInfo);
+	HRESULT l_hrOk = m_OutputImage.UpdateImageSetParentAndImageInfo(inputID, l_ImageInfo);
 
 	// Enable / Disable Extent Properties..
 	SvIe::SVExtentPropertyInfoStruct info;
@@ -273,7 +273,7 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 SVToolClass* SVPerspectiveToolClass::GetObjectAtPoint( const SVPoint<double>& rPoint )
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
 	{
 		return this;
 	}

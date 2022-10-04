@@ -126,7 +126,7 @@ bool DrawTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		imageInfo.SetImageProperty(SvDef::SVImagePropertyBandNumber, m_isColorImage ? 3 : 1);
 		imageInfo.SetImageProperty(SvDef::SVImagePropertyFormat, m_isColorImage ? SvDef::SVImageFormatBGR888 : SvDef::SVImageFormatMono8);
 		imageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
-		m_OutputImage.UpdateImage(SvDef::InvalidObjectId, imageInfo);
+		m_OutputImage.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, imageInfo);
 
 		for (auto* pTaskObj : m_TaskObjectVector)
 		{
