@@ -14,10 +14,11 @@
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/ITool.h"
-#include "Tools/SVToolExtentclass.h"
-#include "Tools/SVTool.h"
 #pragma endregion Includes
-
+namespace SvTo
+{
+class SVToolExtentClass;
+}
 namespace SvAo
 {
 
