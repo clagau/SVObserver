@@ -586,9 +586,9 @@ void SVTADlgArchiveImagePage::OnSelchangeWhenToArchive()
 	{
 		m_eSelectedArchiveMethod = static_cast <SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData( iSel ));
 		m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
-		m_maximumImageQueueLengthStaticText.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
-		m_maximumImageQueueLengthEditBox.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
-		m_maximumImageQueueLengthButton.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+		m_maximumImageQueueLengthStaticText.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
+		m_maximumImageQueueLengthEditBox.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
+		m_maximumImageQueueLengthButton.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
 
 		//if changing to SVArchiveGoOffline mode - build m_mapSelectedImageUsage with selected items in the tree
 		if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
