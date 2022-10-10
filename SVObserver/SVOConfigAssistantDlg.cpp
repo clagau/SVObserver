@@ -93,7 +93,6 @@ constexpr const char* MESSAGE_NOT_COLOR_CAM        ( _T("The physical camera is 
 constexpr const char* MESSAGE_NOT_MONO_CAM_FILE    (_T("The selected camera file is not a mono camera file."));
 constexpr const char* MESSAGE_ONE_INVERT_CONTROL   ( _T("There is only one Invert control on a SVIM X-Series for all triggers and strobes.") );
 constexpr const char* MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED ( _T("The camera does not support Software Triggering.") );
-constexpr const char* MESSAGE_CAMERA_TRIGGER_NOT_ALLOWED(_T("Camera trigger is not allowed PPQ Length <= 2."));
 constexpr const char* MESSAGE_CAMERA_TRIGGER_TO_MANY_CAMERAS(_T("Camera trigger only works with 1 hardware camera attached to the PPQ"));
 constexpr const char* MESSAGE_FILE_ACQUISITION_NOT_ALLOWED ( _T("File Acquisition is not allowed.") );
 constexpr const char* MESSAGE_FILE_ACQUISITION_INVALID_FILE ( _T("The Image Filename specified is Invalid.") );
@@ -841,32 +840,6 @@ bool SVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR TriggerName) const
 		}
 	}
 	return bRetVal;
-}
-
-bool SVOConfigAssistantDlg::IsCameraTriggerAllowed(LPCTSTR TriggerName) const
-{
-	bool result{ true };
-
-	// Get cameras attached to this trigger
-	// this is done by getting the ppq for this trigger and iterating the cameras attached to the same ppq
-	int iPpq = GetPPQListCount();
-	for (int i = 0;i < iPpq;i++)
-	{
-		const SVOPPQObjPtr pPPQObj = m_PPQList.GetPPQObjectByPosition(i);
-		if( nullptr != pPPQObj )
-		{
-			std::string attachedTriggerName = pPPQObj->GetAttachedTriggerName();
-			if( 0 == SvUl::CompareNoCase( attachedTriggerName, std::string(TriggerName) ) )
-			{
-				///Camera Trigger needs PPQ > 2
-				if (2 >= pPPQObj->GetPPQLength())
-				{
-					result = false;
-				}
-			}
-		}
-	}
-	return result;
 }
 
 bool SVOConfigAssistantDlg::HasExactlyOneHWCameraForTrigger(LPCTSTR TriggerName) const
@@ -3759,11 +3732,9 @@ bool SVOConfigAssistantDlg::CheckTrigger( const SvTrig::SVOTriggerObj& rTriggerO
 	bool bRet = true;
 	std::string TriggerName = rTriggerObj.GetTriggerDisplayName();
 	std::string MessageNoSoftwareTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED);
-	std::string MessageNoCameraTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_CAMERA_TRIGGER_NOT_ALLOWED);
 	std::string MessageToManyCamerasWithCameraTrigger = BuildDisplayMessage(MESSAGE_TYPE_WARNING, TriggerName.c_str(), MESSAGE_CAMERA_TRIGGER_TO_MANY_CAMERAS);
 
 	RemoveMessageFromList(MessageNoSoftwareTriggerAllowed.c_str());
-	RemoveMessageFromList(MessageNoCameraTriggerAllowed.c_str());
 	RemoveMessageFromList(MessageToManyCamerasWithCameraTrigger.c_str());
 
 	if (SvDef::TriggerType::SoftwareTrigger == rTriggerObj.getTriggerType())
@@ -3776,18 +3747,10 @@ bool SVOConfigAssistantDlg::CheckTrigger( const SvTrig::SVOTriggerObj& rTriggerO
 	}
 	if (SvDef::TriggerType::CameraTrigger == rTriggerObj.getTriggerType())
 	{
-		bRet = IsCameraTriggerAllowed(TriggerName.c_str());
+		bRet = HasExactlyOneHWCameraForTrigger(TriggerName.c_str());
 		if (false == bRet)
 		{
-			AddMessageToList(TRIGGER_DLG, MessageNoCameraTriggerAllowed.c_str());
-		}
-		else
-		{
-			bRet = HasExactlyOneHWCameraForTrigger(TriggerName.c_str());
-			if (false == bRet)
-			{
-				AddMessageToList(TRIGGER_DLG, MessageToManyCamerasWithCameraTrigger.c_str());
-			}
+			AddMessageToList(TRIGGER_DLG, MessageToManyCamerasWithCameraTrigger.c_str());
 		}
 	}
 	return  bRet;
