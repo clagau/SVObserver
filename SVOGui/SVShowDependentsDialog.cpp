@@ -211,6 +211,7 @@ void SVShowDependentsDialog::FillDependencyList(const std::set<uint32_t>& rIdsOf
 	idSet->Add(rIdsOfObjectsDependedOn.begin(), rIdsOfObjectsDependedOn.end());
 	pRequest->set_objecttype(objectType);
 	pRequest->set_tooldependecytype(ToolDependencyProto);
+	pRequest->set_dependecytype(SvPb::DependecyTypeEnum::Tool);
 	
 	m_dependencyList.clear();
 	HRESULT hr = SvCmd::InspectionCommands(0, requestCmd, &responseCmd);

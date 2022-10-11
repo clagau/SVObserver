@@ -37,7 +37,6 @@ namespace SvOg
 			//convert the hbitmap to an IPictureDisp for the activeX-control.
 			CPictureHolder pic;
 			BOOL bRet = pic.CreateFromBitmap(pHBitmap, 0, true);
-			::DeleteObject(pHBitmap);
 			if (bRet)
 			{
 

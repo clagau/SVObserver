@@ -573,6 +573,8 @@ bool SVToolAdjustmentDialogSheetClass::ResetTools(SvOi::IObjectClass* pObject)
 		idSet->Add({pObject->getObjectId()});
 		pRequest->set_objecttype(SvPb::SVToolObjectType);
 		pRequest->set_tooldependecytype(SvPb::ToolDependencyEnum::Client);
+		pRequest->set_dependecytype(SvPb::DependecyTypeEnum::Tool);
+		pRequest->set_alldependecies(true);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getdependencyresponse())
@@ -581,7 +583,11 @@ bool SVToolAdjustmentDialogSheetClass::ResetTools(SvOi::IObjectClass* pObject)
 			{
 				uint32_t toolObjectId = dependencyPair.client().toolobjectid();
 				SvOi::IObjectClass* pTool = SvOi::getObject(toolObjectId);
-				pTool->resetAllObjects();
+				if (pTool)
+				{
+					pTool->resetAllObjects();
+				}
+				
 			}
 		}
 	}

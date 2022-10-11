@@ -72,7 +72,6 @@ HBITMAP convertToBitmap(const SvOi::SVImageBufferHandlePtr imageData)
 
 			if (S_OK == l_Code && nullptr != pMilBuffer && !dibInfo.empty())
 			{
-				newBuffer.clear();
 				return CreateDIBitmap(*dibInfo.GetBitmapInfo(), pMilBuffer);
 			}
 		}

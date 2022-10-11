@@ -184,8 +184,10 @@ namespace SvOl
 				}
 				pDependencyPair->mutable_client()->set_name(ClientName);
 				pDependencyPair->mutable_client()->set_objectid(IterDependency->second);
-				pDependencyPair->mutable_client()->set_toolobjectid(pTopToolClient->getObjectId());
-
+				if (nullptr != pTopToolClient)
+				{
+					pDependencyPair->mutable_client()->set_toolobjectid(pTopToolClient->getObjectId());
+				}
 				pDependencyPair->set_sourceisclient(isClientInSourceSet);
 
 
@@ -279,7 +281,11 @@ namespace SvOl
 				}
 				pDependencyPair->mutable_client()->set_name(ClientName);
 				pDependencyPair->mutable_client()->set_objectid(IterDependency->second);
-				pDependencyPair->mutable_client()->set_toolobjectid(pTopToolClient->getObjectId());
+				if (nullptr != pTopToolClient)
+				{
+					pDependencyPair->mutable_client()->set_toolobjectid(pTopToolClient->getObjectId());
+				}
+				
 
 				pDependencyPair->set_sourceisclient(isClientInSourceSet);
 			}

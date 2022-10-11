@@ -3284,6 +3284,7 @@ void SVIPDoc::OnToolDependencies()
 			pRequest->set_tooldependecytype(SvPb::ToolDependencyEnum::Client);
 			pRequest->set_alldependecies(true);
 			pRequest->set_filename(fileDlg.GetPathName().GetString());
+			pRequest->set_dependecytype(SvPb::DependecyTypeEnum::Tool);
 
 			SvCmd::InspectionCommands(pToolSet->getInspectedObjectID(), requestCmd, &responseCmd);
 		}

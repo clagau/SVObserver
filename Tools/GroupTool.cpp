@@ -319,6 +319,7 @@ namespace SvTo
 		idSet->Add({getObjectId()});
 		pRequest->set_objecttype(SvPb::SVToolSetObjectType);
 		pRequest->set_tooldependecytype(SvPb::ToolDependencyEnum::ClientAndSupplier);
+		pRequest->set_dependecytype(SvPb::DependecyTypeEnum::Tool);
 
 		HRESULT hr = SvCmd::InspectionCommands(0, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getdependencyresponse())

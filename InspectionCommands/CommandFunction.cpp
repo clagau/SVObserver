@@ -2221,23 +2221,18 @@ SvPb::InspectionCmdResponse getDependencyRequest(SvPb::GetDependencyRequest requ
 	LPCTSTR filename = (request.filename().empty()) ? nullptr : request.filename().c_str();
 	auto* pResponse = cmdResponse.mutable_getdependencyresponse();
 	if (nullptr != pResponse)
-	{	
-		SvOl::DependencyManager::Instance().updateVertexIndex();
-		*pResponse = SvOl::DependencyManager::Instance().getDependencyList(setOfIdObjectDepends, request.objecttype(), request.tooldependecytype(), request.alldependecies(), filename);
-	}
-
-	
-	if (request.dependecytype() == SvPb::DependecyTypeEnum::Tool)
 	{
-		SvOl::DependencyManager::Instance().updateVertexIndex();
-		*pResponse = SvOl::DependencyManager::Instance().getDependencyList(setOfIdObjectDepends, request.objecttype(), request.tooldependecytype(), request.alldependecies(), filename);
+		if (request.dependecytype() == SvPb::DependecyTypeEnum::Tool)
+		{
+			SvOl::DependencyManager::Instance().updateVertexIndex();
+			*pResponse = SvOl::DependencyManager::Instance().getDependencyList(setOfIdObjectDepends, request.objecttype(), request.tooldependecytype(), request.alldependecies(), filename);
+		}
+		else if (request.dependecytype() == SvPb::DependecyTypeEnum::Object)
+		{
+			SvOl::DependencyManager::Instance().updateVertexIndex();
+			*pResponse = SvOl::DependencyManager::Instance().getObjectDependency(setOfIdObjectDepends, request.tooldependecytype());
+		}
 	}
-	else if (request.dependecytype() == SvPb::DependecyTypeEnum::Object)
-	{
-		SvOl::DependencyManager::Instance().updateVertexIndex();
-		*pResponse = SvOl::DependencyManager::Instance().getObjectDependency(setOfIdObjectDepends, request.tooldependecytype());
-	}
-	
 	return cmdResponse;
 }
 
