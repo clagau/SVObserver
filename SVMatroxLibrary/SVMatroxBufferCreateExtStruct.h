@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 
 /**
 @SVObjectName Matrox Buffer Create External Structure
@@ -32,9 +32,9 @@ public:
 	long					m_lSizeBand;
 	long					m_lSizeX;
 	long					m_lSizeY;
-	SVMatroxBufferTypeEnum	m_eType;
-	SVMatroxBufferAttributeEnum	m_eAttribute;
-	SVMatroxBufferInfoEnum	m_eControlFlag;
+	SVMatroxBufferTypeEnum	m_eType {SV8BitUnsigned};
+	SVMatroxBufferAttributeEnum	m_eAttribute {SVBufAttUnknown};
+	SVMatroxBufferInfoEnum	m_eControlFlag {SVBufInfoUnknown};
 	long					m_PitchWidth;
 	void **		m_ppArrayOfDataPtr;
 

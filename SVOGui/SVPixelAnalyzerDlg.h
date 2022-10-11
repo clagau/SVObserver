@@ -12,15 +12,12 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOGui/DataController.h"
+#include "DataController.h"
 #pragma endregion Includes
 
 
-namespace SvAo
+namespace SvOg
 {
-class PixelAnalyzer;
-}
-
 class SVPixelAnalyzerDlg : public CDialog
 {
 // Construction
@@ -59,7 +56,6 @@ public:
 
     void SetGrayscale(long lGrayscale);
 
-	SvAo::PixelAnalyzer*   m_pAnalyzer{ nullptr };
 	unsigned long           msvulMaxGrayscale{ 0L };
 	unsigned long           msvulMinGrayscale{ 0L };
 
@@ -78,5 +74,6 @@ protected:
 private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
-	SvOg::ValueController m_Values;
+	ValueController m_Values;
 };
+} //namespace SvOg

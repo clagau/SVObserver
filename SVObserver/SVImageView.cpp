@@ -20,7 +20,7 @@
 #include "SVObserver.h"
 #include "SVObserverOuttakes.h"
 #include "SVSecurity/SVSecurityManager.h"
-#include "SVPatResultDlgClass.h"
+#include "SVOGui/SVPatResultDlgClass.h"
 #include "SVSetupDialogManager.h"
 #include "SVMainFrm.h"
 #include "SVIPSplitterFrame.h"
@@ -851,7 +851,7 @@ void SVImageView::OnRButtonDblClk(UINT nFlags, CPoint point)
 				SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(pTool->getFirstObject(l_svInfo));
 				if (nullptr != pAnalyzer)
 				{
-					SVSetupDialogManager::Instance().SetupDialog(pAnalyzer->GetClassID(), pAnalyzer->getObjectId(), this);
+					SVSetupDialogManager::Instance().SetupDialog(pAnalyzer->GetClassID(), l_psvIPDoc->GetInspectionID(), pAnalyzer->getObjectId(), this);
 
 					l_psvIPDoc->RunOnce();
 				}
@@ -1205,7 +1205,7 @@ void SVImageView::DisplayAnalyzerResult(const SvDef::StringVector& rAnalyzerResu
 
 			case SvPb::SVPatternAnalyzerObjectType:
 			{
-				SVPatResultDlgClass resultDlg;
+				SvOg::SVPatResultDlgClass resultDlg;
 				if (rAnalyzerResults.size() >= cPatternResults)
 				{
 					if (!rAnalyzerResults[0].empty())

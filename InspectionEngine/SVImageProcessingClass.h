@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 class SVImageInfoClass;

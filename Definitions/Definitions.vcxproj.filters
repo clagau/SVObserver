@@ -78,5 +78,8 @@
     <ClInclude Include="NameValueVector.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVMatroxSimpleEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

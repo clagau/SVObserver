@@ -21,9 +21,6 @@ SVMatroxBufferCreateExtStruct::SVMatroxBufferCreateExtStruct()
 : m_lSizeBand( 1 ), m_lSizeX(10), m_lSizeY(10),
  m_PitchWidth(0), m_ppArrayOfDataPtr(nullptr)
 {
-	m_eType = SV8BitUnsigned;
-	m_eAttribute = SVBufAttUnknown;
-	m_eControlFlag = SVBufInfoUnknown;
 }
 
 SVMatroxBufferCreateExtStruct::~SVMatroxBufferCreateExtStruct()

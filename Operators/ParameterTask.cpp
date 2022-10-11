@@ -28,16 +28,7 @@ namespace SvOp
 	constexpr long cMaxNumberOfObjects = 50;
 	constexpr const char* cObjectTypeEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5,States=6");
 	constexpr const char* cTypeNamePostfix = _T(" Type");
-	const std::array<std::string, 3> g_forbittenNames {"Number of Objects" /*IDS_OBJECTNAME_NUMBER_OF_OBJECTS*/, "State" /*IDS_OBJECTNAME_STATUS*/, "Color" /*IDS_OBJECTNAME_COLOR*/};
-
-	SvPb::MessageContainerVector createMessages(uint32_t objectId, SvStl::MessageTextEnum textId, SvDef::StringVector additionalText = {})
-	{
-		SvStl::MessageContainerVector messages;
-		SvStl::MessageContainer message;
-		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, textId, additionalText, SvStl::SourceFileParams(StdMessageParams), objectId);
-		messages.emplace_back(message);
-		return SvPb::convertMessageVectorToProtobuf(messages);
-	}
+	const std::array<std::string, 3> g_forbiddenNames {"Number of Objects" /*IDS_OBJECTNAME_NUMBER_OF_OBJECTS*/, "State" /*IDS_OBJECTNAME_STATUS*/, "Color" /*IDS_OBJECTNAME_COLOR*/};
 
 	void fillMessageToProtobuf(SvPb::MessageContainerVector* pMessageContainer, uint32_t objectId, SvStl::MessageTextEnum textId, const SvStl::SourceFileParams& messageParam, SvDef::StringVector additionalText = {})
 	{
@@ -74,10 +65,9 @@ namespace SvOp
 			std::string name = nameFunc(*iter);
 
 			//check if forbitten name (already used by common objects)
-			//if (std::any_of(g_forbittenNames.begin(), g_forbittenNames.end(), [name](const auto& rEntry) { return rEntry == name; }))
-			if (std::ranges::any_of(g_forbittenNames, [name](const auto& rEntry) { return rEntry == name; }))
+			if (std::ranges::any_of(g_forbiddenNames, [name](const auto& rEntry) { return rEntry == name; }))
 			{ //duplicate
-				rCmd.mutable_errormessage()->CopyFrom(createMessages(objectId, SvStl::Tid_ForbittenNameForParameterName, {name}));
+				rCmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(objectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_ForbiddenNameForParameterName, {name}));
 				rCmd.set_hresult(E_FAIL);
 				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
@@ -85,7 +75,7 @@ namespace SvOp
 			//check name
 			if (1 < std::ranges::count_if(rNames, [name, nameFunc](const auto& rEntry) { return nameFunc(rEntry) == name; }))
 			{ //duplicate
-				rCmd.mutable_errormessage()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterName, {name}));
+				rCmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(objectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_DuplicateParameterName, {name}));
 				rCmd.set_hresult(E_FAIL);
 				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
@@ -93,7 +83,7 @@ namespace SvOp
 			name = nameFunc(*iter) + SvDef::cLinkName;
 			if (0 < std::ranges::count_if(rNames, [name, nameFunc](const auto& rEntry) { return nameFunc(rEntry) == name; }))
 			{ //duplicate
-				rCmd.mutable_errormessage()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterNameWithLinked, {name}));
+				rCmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(objectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_DuplicateParameterNameWithLinked, {name}));
 				rCmd.set_hresult(E_FAIL);
 				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
@@ -101,7 +91,7 @@ namespace SvOp
 			name = nameFunc(*iter) + cTypeNamePostfix;
 			if (0 < std::ranges::count_if(rNames, [name, nameFunc](const auto& rEntry) { return nameFunc(rEntry) == name; }))
 			{ //duplicate
-				rCmd.mutable_errormessage()->CopyFrom(createMessages(objectId, SvStl::Tid_DuplicateParameterNameWithType, {name}));
+				rCmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(objectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_DuplicateParameterNameWithType, {name}));
 				rCmd.set_hresult(E_FAIL);
 				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
@@ -240,7 +230,7 @@ namespace SvOp
 		
 		if (request.embeddedlist_size() > cMaxNumberOfObjects)
 		{
-			cmd.mutable_errormessage()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_TooManyVariables, {GetName()}));
+			cmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_TooManyVariables, {GetName()}));
 			cmd.set_hresult(E_FAIL);
 			return cmd;
 		}
@@ -369,7 +359,7 @@ namespace SvOp
 		size_t pos = m_objects.size();
 		if (cMaxNumberOfObjects <= m_objects.size())
 		{
-			resp.mutable_errormessage()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_TooManyVariables, {GetName()}));
+			resp.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_TooManyVariables, {GetName()}));
 			resp.set_hresult(E_FAIL);
 			return resp;
 		}
@@ -377,7 +367,7 @@ namespace SvOp
 		auto linkedObjectRef = GetObjectReferenceForDottedName(rRequest.linkedname());
 		if (SvDef::InvalidObjectId == linkedObjectRef.getObjectId())
 		{
-			resp.mutable_errormessage()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_InvalidData));
+			resp.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_InvalidData));
 			resp.set_hresult(E_FAIL);
 			assert(false);
 			return resp;
@@ -397,7 +387,7 @@ namespace SvOp
 			setObject(static_cast<int>(pos));
 			if (nullptr == m_objects[pos] || nullptr == m_TypeObjects[pos])
 			{
-				resp.mutable_errormessage()->CopyFrom(createMessages(getObjectId(), SvStl::Tid_InvalidData));
+				resp.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_InvalidData));
 				resp.set_hresult(E_FAIL);
 				assert(false);
 				return resp;

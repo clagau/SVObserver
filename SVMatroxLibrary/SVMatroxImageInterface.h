@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 #include "LookUp.h"
 

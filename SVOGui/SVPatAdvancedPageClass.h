@@ -10,13 +10,11 @@
 //******************************************************************************
 
 #pragma once
+#include <Mil.h>
 
-class SVToolClass;
-class PatternAnalyzer;
+namespace SvOg
+{
 class SVPatAnalyzeSetupDlgSheet;
-
-/////////////////////////////////////////////////////////////////////////////
-// SVPatAdvancedPageClass dialog
 
 class SVPatAdvancedPageClass : public CPropertyPage
 {
@@ -45,11 +43,11 @@ public:
 	CEdit m_CandidateSpacingYMinEditCtrl;
 	
 	// Editable Fields
-	long m_lAdditionalCandidates;				// 1 – 100, or auto (M_DEFAULT)
-	double m_dCandidateSpacingXMin;				// 1.0 – 100.0, or auto (M_DEFAULT)
-	double m_dCandidateSpacingYMin;				// 1.0 – 100.0, or auto (M_DEFAULT
-	double m_dPreliminaryAcceptanceThreshold;	// 1.0 – 100.0, or auto (M_DEFAULT)
-
+	long m_lAdditionalCandidates {1};				// 1 – 100, or auto (M_DEFAULT)
+	double m_dCandidateSpacingXMin {1.0};				// 1.0 – 100.0, or auto (M_DEFAULT)
+	double m_dCandidateSpacingYMin {1.0};				// 1.0 – 100.0, or auto (M_DEFAULT
+	double m_dPreliminaryAcceptanceThreshold {1.0};	// 1.0 – 100.0, or auto (M_DEFAULT)
+	
 	// Editable Fields - Display representation
 	CString m_AdditionalCandidatesStr;
 	CString m_CandidateSpacingXMinStr;
@@ -57,11 +55,10 @@ public:
 	CString m_PreliminaryAcceptanceThresholdStr;
 
 	// Combobox dropdownlist selections...
-	long m_lFastFind;						// M_ENABLE | M_DISABLE | M_DEFAULT (auto)
-	long m_lModelStep;						// 1, 2, or Auto (M_DEFAULT)
-	long m_lBeginningResolutionLevel;		// 0 - 7, or auto (M_DEFAULT)
-	long m_lFinalResolutionLevel;			// 0 - 7, or auto (M_DEFAULT)
-	
+	long m_lFastFind {M_DEFAULT};						// M_ENABLE | M_DISABLE | M_DEFAULT (auto)
+	long m_lModelStep {M_DEFAULT};						// 1, 2, or Auto (M_DEFAULT)
+	long m_lBeginningResolutionLevel {M_DEFAULT};		// 0 - 7, or auto (M_DEFAULT)
+	long m_lFinalResolutionLevel {M_DEFAULT};			// 0 - 7, or auto (M_DEFAULT)
 	//}}AFX_DATA
 	
 // Overrides
@@ -77,7 +74,7 @@ public:
 
 // Implementation
 protected:
-	SVPatAnalyzeSetupDlgSheet* m_pSheet;
+	SVPatAnalyzeSetupDlgSheet* m_pSheet {nullptr};
 
 	void InitializeControlValues();
 	void SetSelection(CComboBox& rComboBox, long value);
@@ -127,3 +124,4 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+} //namespace SvOg

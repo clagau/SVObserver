@@ -7,7 +7,7 @@
 #pragma region Includes 
 #include "stdafx.h"
 #include "LookUp.h"
-#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 namespace

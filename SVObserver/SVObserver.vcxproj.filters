@@ -42,9 +42,6 @@
     <ClCompile Include="MonitorListView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="RangeXDialogClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="RemoteCommand.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -270,21 +267,6 @@
     <ClCompile Include="SVParserProgressDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVPatAdvancedPageClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPatAnalyzeSetupDlgSheet.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPatGeneralPageClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPatResultDlgClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPixelAnalyzerDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVPPQBar.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -301,9 +283,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVPPQShiftRegister.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVProgressDialog.cpp">
@@ -560,9 +539,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="NavigatorElement.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeXDialogClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RemoteCommand.h">
@@ -823,21 +799,6 @@
     <ClInclude Include="SVParserProgressStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVPatAdvancedPageClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPatAnalyzeSetupDlgSheet.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPatGeneralPageClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPatResultDlgClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPixelAnalyzerDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVPPQBar.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -854,9 +815,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVPPQShiftRegister.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVProgressDialog.h">

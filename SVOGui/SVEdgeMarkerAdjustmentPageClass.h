@@ -50,11 +50,12 @@ namespace SvOg
 		UpperThresholdMaxMinusOffset,
 		UpperThresholdMinPlusOffset,
 		LinearEdgesClass,
+		EdgeDistance,
 
 		EdgeIdCount
 	};
 
-	constexpr auto g_EdgeAEmbeddedIds = std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>
+	constexpr auto g_EdgeAEmbeddedIds = std::array<SvPb::EmbeddedIdEnum, EdgeEmbeddedEnum::EdgeIdCount>
 	{
 		SvPb::EdgeADirectionEId, SvPb::EdgeAPolarisationEId, SvPb::EdgeAEdgeSelectEId, SvPb::EdgeAEdgeSelectThisValueEId,
 		SvPb::EdgeAIsFixedEdgeMarkerEId, SvPb::EdgeAPositionEId, SvPb::EdgeAPositionOffsetEId, SvPb::UseLowerThresholdSelectableEId,
@@ -63,7 +64,7 @@ namespace SvOg
 		SvPb::LowerThresholdMinPlusOffsetEId, SvPb::UseUpperThresholdSelectableEId, SvPb::UseUpperThresholdMaxMinusPercentDiffEId,
 		SvPb::UseUpperThresholdMaxMinusOffsetEId, SvPb::UseUpperThresholdMinPlusOffsetEId, SvPb::EdgeAUpperThresholdValueEId, SvPb::EdgeAUpperThresholdSelectedValueEId,
 		SvPb::UpperThresholdMaxMinusPercentDiffEId, SvPb::UpperThresholdMaxMinusOffsetEId, SvPb::UpperThresholdMinPlusOffsetEId,
-		SvPb::LinearEdgesEId
+		SvPb::LinearEdgesEId, SvPb::LinearDistanceEdgeAEId
 	};
 
 	constexpr auto g_EdgeBEmbeddedIds = std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>
@@ -75,7 +76,7 @@ namespace SvOg
 		SvPb::LowerThresholdMinPlusOffsetBEId, SvPb::UseUpperThresholdSelectableBEId, SvPb::UseUpperThresholdMaxMinusPercentDiffBEId,
 		SvPb::UseUpperThresholdMaxMinusOffsetBEId, SvPb::UseUpperThresholdMinPlusOffsetBEId, SvPb::EdgeBUpperThresholdValueEId, SvPb::EdgeBUpperThresholdSelectedValueEId,
 		SvPb::UpperThresholdMaxMinusPercentDiffBEId, SvPb::UpperThresholdMaxMinusOffsetBEId, SvPb::UpperThresholdMinPlusOffsetBEId,
-		SvPb::LinearEdgesEId
+		SvPb::LinearEdgesEId, SvPb::LinearDistanceEdgeBEId
 	};
 
 	class SVEdgeMarkerAdjustmentPageClass : public CPropertyPage
@@ -161,7 +162,8 @@ namespace SvOg
 		const std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>& m_rEdgeEmbeddedIds;
 
 		const uint32_t m_InspectionID;
-		const uint32_t m_TaskObjectID;
+		const uint32_t m_analyzerId;
+		const uint32_t m_edgeObjectId;
 		ValueController m_values;
 		NormalizerController m_normalizerController;
 		NormalizerController m_lowerNormalizerController;

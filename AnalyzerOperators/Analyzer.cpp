@@ -64,6 +64,15 @@ SvOi::IObjectClass* Analyzer::GetResultObject()
 	return getFirstObject(TypeInfo);
 }
 
+SvPb::InspectionCmdResponse Analyzer::getAnalyzerExtentProperties() const
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+	SvPb::GetExtentParameterResponse* pResponse = cmdResponse.mutable_getextentparameterresponse();
+	m_imageExtent.getExtentProperties(*pResponse->mutable_parameters());
+	pResponse->set_translationtype(m_imageExtent.GetTranslation());
+	return cmdResponse;
+}
+
 bool Analyzer::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
 	SVObjectLevelCreateStruct createStruct(*this);

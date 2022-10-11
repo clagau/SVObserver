@@ -221,9 +221,6 @@
     <ClInclude Include="SVMatroxResourceMonitor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxSimpleEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVMatroxStatusInformation.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

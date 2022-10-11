@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVGlobalHandles.h"
-#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 namespace SvIe

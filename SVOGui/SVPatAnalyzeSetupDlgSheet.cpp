@@ -18,6 +18,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+namespace SvOg
+{
 SVPatAnalyzeSetupDlgSheet::SVPatAnalyzeSetupDlgSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 : CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
@@ -70,3 +72,4 @@ void SVPatAnalyzeSetupDlgSheet::OnSysCommand(UINT nID, LPARAM lParam)
 	CPropertySheet::OnSysCommand(nID, lParam);
 }
 
+} //namespace SvOg

@@ -10,11 +10,14 @@
 #pragma region Includes
 #include "SVProtoBuf/Variant.h"
 #include "SVProtoBuf/SVRC.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvStl
 {
 class MessageContainer;
+struct SourceFileParams;
 typedef std::vector<MessageContainer> MessageContainerVector;
 }
 
@@ -23,6 +26,8 @@ namespace SvPb
 HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbVariant);
 /// simpleType is required for the script tester (SVRemoteControl.ocx) which can only handle VT_I4 (signed) and VT_UI4 (unsigned) for all integer types
 HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant, bool simpleType = false);
+
+SvPb::MessageContainerVector createErrorMessages(uint32_t objectId, const SvStl::SourceFileParams& rSFParams, SvStl::MessageTextEnum textId, SvDef::StringVector additionalText = {});
 
 // Converts a list into a protobuf Variant by generating a semicolon separated string (The list should not contain any ;)
 void ConvertStringListToProtobuf(const std::set<std::string>& rList, SvPb::Variant* pVariant);

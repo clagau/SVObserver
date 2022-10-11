@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 
 /**
 @SVObjectName Matrox Buffer Create Line Structure
@@ -29,10 +29,7 @@ public:
 	bool SetImageDepth( long p_lDepth);
 
 	// See help on MbufAlloc1d.
-	long					m_lSizeX;
-	SVMatroxBufferTypeEnum	m_eType;
-	SVMatroxBufferAttributeEnum	m_eAttribute;
-
+	long					m_lSizeX {10};
+	SVMatroxBufferTypeEnum	m_eType {SVUnknownBufferType};
+	SVMatroxBufferAttributeEnum	m_eAttribute {SVBufAttUnknown};
 };
-
-

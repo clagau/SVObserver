@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #include "SVRankingFilterDlg.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

@@ -65,6 +65,18 @@ namespace SvOg
 			return m_Data.getLinkedData(embeddedID);
 		}
 
+		template<typename DataType>
+		DataType GetMinValue(SvPb::EmbeddedIdEnum embeddedID) const
+		{
+			return static_cast<DataType>(m_Data.GetMinValue(embeddedID));
+		}
+
+		template<typename DataType>
+		DataType GetMaxValue(SvPb::EmbeddedIdEnum embeddedID) const
+		{
+			return static_cast<DataType>(m_Data.GetMaxValue(embeddedID));
+		}
+
 		uint32_t GetAllowedAttributeFlags(SvPb::EmbeddedIdEnum embeddedID) const
 		{
 			return GetAllowedAttribute(m_Data.GetInspectionID(), m_Data.GetObjectID(embeddedID));

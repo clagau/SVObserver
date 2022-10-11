@@ -237,13 +237,14 @@ void SVTADlgStatisticsPage::OnSetRange()
 	{
 		DWORD_PTR index = m_lbSelectedList.GetItemData( item );
 		SvOp::SVResult* pResult = m_pTool->GetResult(static_cast<SvTo::SVStatisticsFeatureEnum> (index));
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
 
-		if (nullptr == pResult)
+		if (nullptr == pResult || nullptr == pInspection)
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
 		}
-		else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->getObjectId(), this ))
+		else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pInspection->getObjectId(), pResult->getObjectId(), this ))
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));

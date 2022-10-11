@@ -137,13 +137,13 @@ enum SVObjectSubTypeEnum
 	PixelAnalyzerResultObjectType		        = 0x00000200;
 	SVPixelCountObjectType						= 0x00000201;
 
-	SVLinePixelCountingAnalyzerObjectType		= 0x00000300;
-	SVLineEdgeCountingAnalyzerObjectType		= 0x00000301;
-	SVLineEdgePositionAnalyzerObjectType		= 0x00000302;
-	SVLineLinearMeasurementAnalyzerObjectType	= 0x00000303;
-	SVLineMaximumForegroundObjectAnalyzerObjectType = 0x00000304;
+	SVLinePixelCountingAnalyzerObjectType		= 0x00000300;  //obsolete
+	SVLineEdgeCountingAnalyzerObjectType		= 0x00000301;  //obsolete
+	SVLineEdgePositionAnalyzerObjectType		= 0x00000302;  //obsolete
+	SVLineLinearMeasurementAnalyzerObjectType	= 0x00000303;  //obsolete
+	SVLineMaximumForegroundObjectAnalyzerObjectType = 0x00000304; //obsolete
 	SVLineMaximumBackgroundObjectAnalyzerObjectType = 0x00000305;
-	SVLineMaximumObjectAnalyzerObjectType		= 0x00000306;
+	SVLineMaximumObjectAnalyzerObjectType		= 0x00000306; //obsolete
 
 	SVLinearEdgeAProcessingObjectType			= 0x00000380;
 	SVLinearEdgeBProcessingObjectType			= 0x00000381;

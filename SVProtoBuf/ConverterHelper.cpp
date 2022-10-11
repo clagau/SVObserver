@@ -13,6 +13,7 @@
 #include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -334,6 +335,14 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 	return Result;
 }
 
+SvPb::MessageContainerVector createErrorMessages(uint32_t objectId, const SvStl::SourceFileParams& rSFParams, SvStl::MessageTextEnum textId, SvDef::StringVector additionalText)
+{
+	SvStl::MessageContainerVector messages;
+	SvStl::MessageContainer message;
+	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, textId, additionalText, rSFParams, objectId);
+	messages.emplace_back(message);
+	return SvPb::convertMessageVectorToProtobuf(messages);
+}
 
 void ConvertStringListToProtobuf(const std::set<std::string>& rList, SvPb::Variant* pVariant)
 {

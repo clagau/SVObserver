@@ -42,7 +42,7 @@ namespace SvOg
 				SafeArrayUnaccessData(var.parray);
 			}
 		}
-		else
+		else if (VT_EMPTY != var.vt)
 		{
 			T value = static_cast<T>(var);
 			vec.push_back(value);

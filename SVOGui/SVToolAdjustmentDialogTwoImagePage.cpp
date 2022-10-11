@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogTwoImagePage.h"
-#include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 #include "Definitions\ImageOperatorEnums.h"
 #include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #pragma endregion Includes

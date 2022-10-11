@@ -13,12 +13,13 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "BarCodeAnalyzer.h"
-#include "ObjectInterfaces\IBarCode.h"
+#include "ObjectInterfaces/IBarCode.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "Operators/SVBarCodeResult.h"   
 #include "InspectionEngine/SVBarCodeBuffer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBarCodeInterface.h"
@@ -742,9 +743,6 @@ bool BarCodeAnalyzer::checkEccAndEncValues(long type, double eccValue, double en
 }
 
 } //namespace SvAo
-#include <array>
-#include <tuple>
-#include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
 
 SvPb::GetBarCodeTypeInfosResponse SvOi::getBarCodeTypeInfo()
 {

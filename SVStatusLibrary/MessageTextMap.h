@@ -645,7 +645,7 @@ namespace SvStl
 		{Tid_aDecimalValue, _T("a decimal value")},
 		{Tid_aTextValue, _T("a text value")},
 
-		{Tid_ForbittenNameForParameterName, _T("The name \"%s\" is already used for another object in this parameter task.")},
+		{Tid_ForbiddenNameForParameterName, _T("The name \"%s\" is already used for another object in this parameter task.")},
 		{Tid_DuplicateParameterName, _T("It is not allowed to have duplicated parameter names:\n %s") },
 		{Tid_DuplicateParameterNameWithLinked, _T("It is not allowed to have a parameter name which is already used\nby a linked parameter name: %s") },
 		{Tid_DuplicateParameterNameWithType, _T("It is not allowed to have a parameter name which is already used\nby a type parameter name: %s.") },
@@ -728,5 +728,6 @@ namespace SvStl
 		{Tid_ProductNotTriggered, _T("SVPPQObject::StartInspection product not triggerd")},
 		{Tid_ErrorStartInspection, _T("Insepection coul not be started")},
 		{Tid_MaxDepthOfToolsError, _T("Too many tools nested.")},
+		{Tid_NoParentExtentForAnalyzer, _T("For Analyzer is not a parent extent possible.")},
 };
 } //namespace SvStl

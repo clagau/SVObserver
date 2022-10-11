@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <comdef.h>
-#include "SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 class SVCommandDataHolder;

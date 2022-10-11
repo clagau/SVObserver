@@ -11,9 +11,8 @@
 
 #pragma once
 
-/////////////////////////////////////////////////////////////////////////////
-// SVPatResultDlgClass dialog
-
+namespace SvOg
+{
 class SVPatResultDlgClass : public CDialog
 {
 // Construction
@@ -24,12 +23,11 @@ public:
 // Dialog Data
 	//{{AFX_DATA(SVPatResultDlgClass)
 	enum { IDD = IDD_PAT_RESULT_DIALOG };
-	CString	m_strAngle;
-	CString	m_strScore;
-	CString	m_strXPos;
-	CString	m_strYPos;
+	CString	m_strAngle {_T("0.0")};
+	CString	m_strScore {_T("0.0")};
+	CString	m_strXPos {_T("0.0")};
+	CString	m_strYPos {_T("0.0")};
 	//}}AFX_DATA
-
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -50,3 +48,4 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+} //namespace SvOg

@@ -54,10 +54,11 @@ namespace SvOi
 
 	//! Calls the setup dialog manager
 	//! \param classID [in] The class ID to the corresponding dialog
-	//! \param rObjectId [in] The object id as parameter
+	//! \param inspectionId [in] The inspection id as parameter
+	//! \param objectId [in] The object id as parameter
 	//! \param pParentWnd [in] Pointer to the parent window
 	/// \returns result
-	HRESULT SetupDialogManager(SvPb::ClassIdEnum classId, uint32_t objectId, HWND hWnd);
+	HRESULT SetupDialogManager(SvPb::ClassIdEnum classId, uint32_t inspectionId, uint32_t objectId, HWND hWnd);
 
 	//! Shows the modeless license manager dialog
 	//! \param rMessage [in] the message to display

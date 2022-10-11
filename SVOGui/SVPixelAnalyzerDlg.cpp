@@ -11,10 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPixelAnalyzerDlg.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVInspectionProcess.h"
-#include "AnalyzerOperators/PixelAnalyzer.h"        // Required for PixelAnalyzer
-#include "SVSetupDialogManager.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -23,6 +20,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+namespace SvOg
+{
 BEGIN_MESSAGE_MAP(SVPixelAnalyzerDlg, CDialog)
 	//{{AFX_MSG_MAP(SVPixelAnalyzerDlg)
 	ON_BN_CLICKED(IDC_WHITE_RAD, OnWhiteRad)
@@ -38,7 +37,7 @@ SVPixelAnalyzerDlg::SVPixelAnalyzerDlg(uint32_t inspectionId, uint32_t taskObjec
 : CDialog(SVPixelAnalyzerDlg::IDD, pParent)
 , m_InspectionID{ inspectionId }
 , m_TaskObjectID{ taskObjectId }
-, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+, m_Values{ BoundValues{ inspectionId, taskObjectId } }
 {
 }
 
@@ -86,24 +85,10 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 	}
 	else
 	{
-		m_pAnalyzer = dynamic_cast<SvAo::PixelAnalyzer*> (SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
-		msvulMinGrayscale = 0;
-		if (nullptr != m_pAnalyzer)
-		{
-			try
-			{
-				msvulMaxGrayscale = (1 << m_pAnalyzer->GetInputPixelDepth()) - 1;
-			}
-			catch (const SvStl::MessageContainer& rContain)
-			{
-				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(rContain.getMessage());
-				return TRUE;
-
-			}
-		}
-		m_HighGrayscaleValue.Format (_T("%d"), msvulMaxGrayscale);
-		m_LowGrayscaleValue.Format (_T("%d"), msvulMinGrayscale);
+		msvulMinGrayscale = m_Values.GetMinValue<BYTE>(SvPb::PixelColorIndexEId);
+		msvulMaxGrayscale = m_Values.GetMaxValue<BYTE>(SvPb::PixelColorIndexEId);
+		m_HighGrayscaleValue.Format (_T("%lu"), msvulMaxGrayscale);
+		m_LowGrayscaleValue.Format (_T("%lu"), msvulMinGrayscale);
 
 		BYTE Grayscale = m_Values.Get<BYTE>(SvPb::PixelColorIndexEId);
 
@@ -187,12 +172,7 @@ void SVPixelAnalyzerDlg::OnBlackRad()
 
 void SVPixelAnalyzerDlg::OnOtherRad() 
 {
-	BYTE    byGrayscale{ 0 };
-
-	if (nullptr != m_pAnalyzer)
-	{
-		m_pAnalyzer->m_pixelCountColor.GetValue(byGrayscale);
-	}
+	BYTE    byGrayscale = m_Values.Get<BYTE>(SvPb::PixelColorIndexEId);
     SetOther (byGrayscale);	
 }
 
@@ -227,21 +207,21 @@ void SVPixelAnalyzerDlg::OnCancel()
 
 void SVPixelAnalyzerDlg::OnPixelSetRange() 
 {
-	if (nullptr != m_pAnalyzer)
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
+	pRequest->set_ownerid(m_TaskObjectID);
+	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVResultObjectType);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK != hr || !responseCmd.has_getobjectidresponse())
 	{
-		SvOi::IObjectClass* pAnalyzerResult;
-
-		pAnalyzerResult = m_pAnalyzer->GetResultObject();
-
-		if (nullptr != pAnalyzerResult)
-		{
-			SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->getObjectId(), this);
-		}
-		else
-		{
-			SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Exception.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
-		}
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+		MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
+	}
+	else
+	{
+		SvOi::SetupDialogManager(responseCmd.getobjectidresponse().classid(), m_InspectionID, responseCmd.getobjectidresponse().objectid(), GetSafeHwnd()); //if directly call of SetupDialog this-pointer is possible.
 	}
 }
 
+} //namespace SvOg

@@ -11,13 +11,13 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "SVProtoBuf/SVO-Enum.h"
+#include "Definitions/ObjectDefines.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
-namespace SvAo
+namespace SvOg
 {
-class PatternAnalyzer;
-}
 class SVPatAnalyzeSetupDlgSheet;
 
 class SVPatGeneralPageClass : public CPropertyPage
@@ -36,22 +36,23 @@ public:
 	CSliderCtrl	m_AngleDeltaPositiveSliderCtrl;
 	CSliderCtrl	m_AngleDeltaNegativeSliderCtrl;
 	CSliderCtrl	m_SearchAngleSliderCtrl;
-	BOOL	m_bAngleSearch;
-	double	m_dSearchAngle;
-	double	m_dAngleDeltaNegative;
-	double	m_dAngleDeltaPositive;
-	double	m_dAngleTolerance;
-	double	m_dAngularAccuracy;
-	long	m_lAcceptance;
-	long	m_lCertainty;
-	long	m_lOccurances;
-	BOOL	m_bAccuracy;
+	BOOL	m_bAngleSearch {FALSE};
+	double	m_dSearchAngle {0.0};
+	double	m_dAngleDeltaNegative {0.0};
+	double	m_dAngleDeltaPositive {0.0};
+	double	m_dAngleTolerance {5.0};
+	double	m_dAngularAccuracy {0.1};
+	long	m_lAcceptance {0};
+	long	m_lCertainty {0};
+	long	m_lOccurances {0};
+	BOOL	m_bAccuracy {false};
+	SvPb::ClassIdEnum m_resultClassId = SvPb::ClassIdEnum::NoObjectClassId;
+	uint32_t m_resultObjectId = SvDef::InvalidObjectId;
+	uint32_t m_inspectionId = SvDef::InvalidObjectId;
 	//}}AFX_DATA
-	SVImageOperationTypeEnum	m_dInterpolationMode;
-	int		m_nPosAccuracyIndex;
-	int		m_nSpeedIndex;
-
-	SvAo::PatternAnalyzer* m_pPatAnalyzer;
+	SVImageOperationTypeEnum	m_dInterpolationMode {SVNearestNeighbor};
+	int		m_nPosAccuracyIndex {1};
+	int		m_nSpeedIndex {3};
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -66,7 +67,7 @@ public:
 
 // Implementation
 protected:
-	SVPatAnalyzeSetupDlgSheet	*m_pSheet;
+	SVPatAnalyzeSetupDlgSheet* m_pSheet {nullptr};
 
 	void SetControlTextLength();
 	void EnableAngleControls(BOOL bEnable); 
@@ -98,4 +99,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-
+} //namespace SvOg

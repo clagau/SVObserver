@@ -24,17 +24,18 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+namespace SvOg
+{
 RangeXDialogClass::RangeXDialogClass(uint32_t inspectionID, uint32_t toolId, uint32_t taskID, uint32_t rangeID, CWnd* parent /*=nullptr*/)
-: CDialog(RangeXDialogClass::IDD, parent)
-, m_rangeController(inspectionID, taskID, rangeID)
-, m_toolId (toolId)
+	: CDialog(RangeXDialogClass::IDD, parent)
+	, m_rangeController(inspectionID, taskID, rangeID)
+	, m_toolId(toolId)
 {
 	m_rangeController.Init();
 }
 
 RangeXDialogClass::~RangeXDialogClass()
-{
-}
+{}
 
 void RangeXDialogClass::DoDataExchange(CDataExchange* pDX)
 {
@@ -87,16 +88,16 @@ BOOL RangeXDialogClass::OnInitDialog()
 	}
 
 	std::string Title = m_rangeController.GetOwnerName();
-	SetWindowText( Title.c_str() );
+	SetWindowText(Title.c_str());
 
 	// Ensure the title is readable
 	CRect rect;
 	CSize size;
 	GetWindowRect(&rect);
 	CDC* pDC = GetDC();
-	if(nullptr != pDC )
+	if (nullptr != pDC)
 	{
-		size = pDC->GetTextExtent( Title.c_str() );
+		size = pDC->GetTextExtent(Title.c_str());
 		ReleaseDC(pDC);
 	}
 
@@ -145,3 +146,4 @@ HRESULT RangeXDialogClass::SetInspectionData()
 
 	return m_rangeController.Commit();
 }
+} //namespace SvOg

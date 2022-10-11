@@ -32,27 +32,27 @@ public:
 
 	static SVSetupDialogManager& Instance();
 
-	HRESULT SetupDialog(SvPb::ClassIdEnum classId, uint32_t objectId, CWnd* pParentWnd );
+	HRESULT SetupDialog(SvPb::ClassIdEnum classId, uint32_t inspectionId, uint32_t objectId, CWnd* pParentWnd );
 
 
 protected:
 	SVSetupDialogManager() = default;
 
-	static HRESULT SVBarCodeAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT SVBlobAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT BlobAnalyzer2SetupDialog(uint32_t objectId, CWnd* pParentWnd);
-	static HRESULT SVColorToolClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT HistogramAnalyzerSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT SVLinearAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT SVLuminanceAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT SVOCVAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT SVPatternAnalyzerClassSetupDialog( uint32_t objectId, CWnd* pParentWnd );
-	static HRESULT PixelAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT SVResultClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVBarCodeAnalyzerClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVBlobAnalyzerClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT BlobAnalyzer2SetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* pParentWnd);
+	static HRESULT SVColorToolClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT HistogramAnalyzerSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVLinearAnalyzerClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVLuminanceAnalyzerClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVOCVAnalyzerClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVPatternAnalyzerClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* pParentWnd );
+	static HRESULT PixelAnalyzerClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVResultClassSetupDialog(uint32_t inspectionId, uint32_t objectId, CWnd* PParentWnd );
 
 private:
 
-	using SVSetupDialogFunction = std::function<HRESULT(uint32_t, CWnd*)>;
+	using SVSetupDialogFunction = std::function<HRESULT(uint32_t, uint32_t, CWnd*)>; //<< inspectionId, taskId, Wnd
 
 	std::array<std::pair<SvPb::ClassIdEnum, SVSetupDialogFunction>, 25> m_SetupDialogs
 	{

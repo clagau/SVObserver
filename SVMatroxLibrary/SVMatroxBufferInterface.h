@@ -15,7 +15,7 @@
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxErrorEnum.h"
-#include "SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 #include "SVMatroxBufferCreateExtStruct.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes

@@ -19,10 +19,6 @@
 
 SVMatroxBufferCreateLineStruct::SVMatroxBufferCreateLineStruct()
 {
-	m_lSizeX		= 10;
-	m_eType			= SVUnknownBufferType;
-	m_eAttribute	= SVBufAttUnknown;
-
 }
 
 SVMatroxBufferCreateLineStruct::~SVMatroxBufferCreateLineStruct()

@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <cstdlib>
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
-#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
@@ -26,26 +26,24 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+namespace
+{
 constexpr const char* scAUTO = _T("Auto");
 constexpr const char* scENABLE = _T("Enable");
 constexpr const char* scDISABLE = _T("Disable");
+}
 
+namespace SvOg
+{
 IMPLEMENT_DYNCREATE(SVPatAdvancedPageClass, CPropertyPage)
 
 SVPatAdvancedPageClass::SVPatAdvancedPageClass() 
 : CPropertyPage(SVPatAdvancedPageClass::IDD)
+, m_AdditionalCandidatesStr {scAUTO}
+, m_CandidateSpacingXMinStr {scAUTO}
+, m_CandidateSpacingYMinStr {scAUTO}
+, m_PreliminaryAcceptanceThresholdStr {scAUTO}
 {
-	m_lAdditionalCandidates = 1;
-	m_dCandidateSpacingXMin = 1.0;
-	m_dCandidateSpacingYMin = 1.0;
-	m_dPreliminaryAcceptanceThreshold = 1.0;
-
-	//{{AFX_DATA_INIT(SVPatAdvancedPageClass)
-	m_AdditionalCandidatesStr = scAUTO;
-	m_CandidateSpacingXMinStr = scAUTO;
-	m_CandidateSpacingYMinStr = scAUTO;
-	m_PreliminaryAcceptanceThresholdStr = scAUTO;
-	//}}AFX_DATA_INIT
 }
 
 SVPatAdvancedPageClass::~SVPatAdvancedPageClass()
@@ -197,7 +195,7 @@ void SVPatAdvancedPageClass::UpdateAdditionalCandidatesString()
 	bool bEnable = (m_lAdditionalCandidates != SVValueDefault);
 	if (bEnable)
 	{
-		m_AdditionalCandidatesStr.Format(_T("%d"), m_lAdditionalCandidates);
+		m_AdditionalCandidatesStr.Format(_T("%ld"), m_lAdditionalCandidates);
 	}
 	else
 	{
@@ -236,7 +234,7 @@ void SVPatAdvancedPageClass::UpdatePreliminaryAcceptanceThresholdString()
 	bool bEnable = (static_cast<SVMatroxBufferValues>(m_dPreliminaryAcceptanceThreshold) != SVValueDefault);
 	if (bEnable)
 	{
-		m_PreliminaryAcceptanceThresholdStr.Format(_T("%d"), static_cast<long>(m_dPreliminaryAcceptanceThreshold));
+		m_PreliminaryAcceptanceThresholdStr.Format(_T("%ld"), static_cast<long>(m_dPreliminaryAcceptanceThreshold));
 	}
 	else
 	{
@@ -438,7 +436,7 @@ void SVPatAdvancedPageClass::OnKillPreliminaryAcceptanceThreshold()
 
 BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId) 
 {
-	if (GetActiveWindow() != (CWnd *)m_pSheet ||
+	if (GetActiveWindow() != static_cast<CWnd *>(m_pSheet) ||
 		m_pSheet->GetActiveIndex() != 0)
 		return TRUE;
 	
@@ -478,7 +476,7 @@ BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId)
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Msg.setMessage( rSvE.getMessage() );
 		GetDlgItem(nId)->SetFocus();
-		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
+		(static_cast<CEdit *>(GetDlgItem(nId)))->SetSel(0, -1);
 		return FALSE;
 	}
 	return TRUE;
@@ -608,7 +606,7 @@ void SVPatAdvancedPageClass::OnOK()
 
 void SVPatAdvancedPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
-	CSliderCtrl *pSlider = (CSliderCtrl *)pScrollBar;
+	CSliderCtrl* pSlider = reinterpret_cast<CSliderCtrl*>(pScrollBar);
 	int iNewPos = pSlider->GetPos();
 
 	switch (nSBCode)
@@ -688,7 +686,7 @@ BOOL SVPatAdvancedPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	
-	m_pSheet = (SVPatAnalyzeSetupDlgSheet *)GetParent();
+	m_pSheet = static_cast<SVPatAnalyzeSetupDlgSheet *>(GetParent());
 	
 	InitializeControlValues();
 
@@ -724,4 +722,4 @@ void SVPatAdvancedPageClass::SetSliderPosition(UINT nId)
 		pSlider->SetPos(nPos);
 	}
 }
-
+} //namespace SvOg

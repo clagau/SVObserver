@@ -12,7 +12,7 @@
 #pragma once
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #include "ImageAnalyzer.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"

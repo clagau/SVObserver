@@ -55,10 +55,15 @@ public:
 				{
 				case SvPb::ValueObjectValues::ValueDataCase::kValue:
 				{
-					_variant_t value, defaultValue;
+					_variant_t value, defaultValue, minValue, maxValue;
 					SvPb::ConvertProtobufToVariant(rItem.value().value(), value);
 					SvPb::ConvertProtobufToVariant(rItem.value().defaultvalue(), defaultValue);
-					rValues[rItem.embeddedid()] = BoundValue{ rItem.objectid(), value, defaultValue };
+					if (rItem.value().has_min_max())
+					{
+						SvPb::ConvertProtobufToVariant(rItem.value().min_max().minvalue(), minValue);
+						SvPb::ConvertProtobufToVariant(rItem.value().min_max().maxvalue(), maxValue);
+					}
+					rValues[rItem.embeddedid()] = BoundValue{ rItem.objectid(), value, defaultValue, std::move(minValue), std::move(maxValue) };
 					break;
 				}
 				case SvPb::ValueObjectValues::ValueDataCase::kLinkedValue:

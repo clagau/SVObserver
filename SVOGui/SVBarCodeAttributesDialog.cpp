@@ -13,7 +13,7 @@
 
 #include "SVBarCodeAttributesDialog.h"
 #include "SVBarCodeProperties.h"
-#include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -323,7 +323,7 @@ void SVChildrenSetupDialog::OnSetupButton()
 			SVObjectClass* pObject = reinterpret_cast< SVObjectClass* >( m_ChildrenListCtrl.GetItemData( item ) );
 			if( nullptr != pObject )
 			{
-				SVSetupDialogManager::Instance().SetupDialog( pObject->GetClassID(), pObject->getObjectId(), this );
+				SVSetupDialogManager::Instance().SetupDialog( pObject->GetClassID(), m_pDocument->GetInspectionID(), pObject->getObjectId(), this );
 			}
 		}
 

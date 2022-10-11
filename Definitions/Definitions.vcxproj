@@ -100,6 +100,7 @@
     <ClInclude Include="SVImageEnums.h" />
     <ClInclude Include="SVImageFormatEnum.h" />
     <ClInclude Include="SVIMCommand.h" />
+    <ClInclude Include="SVMatroxSimpleEnums.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />
     <ClInclude Include="SVPPQEnums.h" />
     <ClInclude Include="SVResetStruct.h" />

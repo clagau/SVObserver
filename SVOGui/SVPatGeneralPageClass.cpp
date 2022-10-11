@@ -12,10 +12,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPatGeneralPageClass.h"
-#include "AnalyzerOperators/PatternAnalyzer.h"
-#include "SVSetupDialogManager.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVMessage/SVMessage.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -24,29 +24,13 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVPatGeneralPageClass property page
-
+namespace SvOg
+{
 IMPLEMENT_DYNCREATE(SVPatGeneralPageClass, CPropertyPage)
 
 SVPatGeneralPageClass::SVPatGeneralPageClass() 
-: CPropertyPage(SVPatGeneralPageClass::IDD), m_pPatAnalyzer(nullptr)
+: CPropertyPage(SVPatGeneralPageClass::IDD)
 {
-	//{{AFX_DATA_INIT(SVPatGeneralPageClass)
-	m_bAngleSearch = FALSE;
-	m_dSearchAngle = 0.0;
-	m_dAngleDeltaNegative = 0.0;
-	m_dAngleDeltaPositive = 0.0;
-	m_dAngleTolerance = 5.0;
-	m_dAngularAccuracy = 0.1;
-	m_lAcceptance = 0;
-	m_lCertainty = 0;
-	m_lOccurances = 0;
-	m_bAccuracy = false;
-	//}}AFX_DATA_INIT
-	m_dInterpolationMode = SVNearestNeighbor;
-	m_nPosAccuracyIndex = 1; 
-	m_nSpeedIndex = 3;
 }
 
 SVPatGeneralPageClass::~SVPatGeneralPageClass()
@@ -112,7 +96,7 @@ void SVPatGeneralPageClass::OnOK()
 
 void SVPatGeneralPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
-	CSliderCtrl *pSlider = (CSliderCtrl *)pScrollBar;
+	CSliderCtrl *pSlider = reinterpret_cast<CSliderCtrl*>(pScrollBar);
 	int iNewPos;
 
 	iNewPos = pSlider->GetPos();
@@ -206,7 +190,7 @@ BOOL SVPatGeneralPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	
-	m_pSheet = (SVPatAnalyzeSetupDlgSheet *)GetParent();
+	m_pSheet = reinterpret_cast<SVPatAnalyzeSetupDlgSheet*>(GetParent());
 
 	m_SearchAngleSliderCtrl.SetRange(0, 3600, TRUE);
 	m_SearchAngleSliderCtrl.SetPageSize(36);
@@ -229,15 +213,15 @@ BOOL SVPatGeneralPageClass::OnInitDialog()
 	EnableAngleAccuracyControls(m_bAccuracy);
 
 	if(	m_dInterpolationMode == SVNearestNeighbor )
-		((CButton *)GetDlgItem(IDC_PAT_ANG_INTERPOLE_MODE1))->SetCheck(1);
+		static_cast<CButton*>(GetDlgItem(IDC_PAT_ANG_INTERPOLE_MODE1))->SetCheck(1);
 	else if(m_dInterpolationMode == SVBilinear)
-		((CButton *)GetDlgItem(IDC_PAT_ANG_INTERPOLE_MODE2))->SetCheck(1);
+		static_cast<CButton*>(GetDlgItem(IDC_PAT_ANG_INTERPOLE_MODE2))->SetCheck(1);
 	else
-		((CButton *)GetDlgItem(IDC_PAT_ANG_INTERPOLE_MODE3))->SetCheck(1);
+		static_cast<CButton*>(GetDlgItem(IDC_PAT_ANG_INTERPOLE_MODE3))->SetCheck(1);
 
 // Set Combo Box selections.
-	((CComboBox *)GetDlgItem(IDC_PAT_POS_ACCURACY))->SetCurSel(m_nPosAccuracyIndex);
-	((CComboBox *)GetDlgItem(IDC_PAT_SPEED))->SetCurSel(m_nSpeedIndex);
+	static_cast<CComboBox*>(GetDlgItem(IDC_PAT_POS_ACCURACY))->SetCurSel(m_nPosAccuracyIndex);
+	static_cast<CComboBox*>(GetDlgItem(IDC_PAT_SPEED))->SetCurSel(m_nSpeedIndex);
 // Set limits for edit control Text
 	SetControlTextLength(); 
 
@@ -247,14 +231,14 @@ BOOL SVPatGeneralPageClass::OnInitDialog()
 
 void SVPatGeneralPageClass::SetControlTextLength() 
 {
-	((CEdit *)GetDlgItem(IDC_PAT_OCCURANCE_NUMBER))->SetLimitText(2);
-	((CEdit *)GetDlgItem(IDC_PAT_MDL_CERT_THRESHOLD))->SetLimitText(3);
-	((CEdit *)GetDlgItem(IDC_PAT_MDL_ACC_THRESHOLD))->SetLimitText(3);
-	((CEdit *)GetDlgItem(IDC_PAT_SEARCH_ANGLE_VALUE))->SetLimitText(5);
-	((CEdit *)GetDlgItem(IDC_PAT_ANGLE_DELTA_NEGATIVE_VALUE))->SetLimitText(5);
-	((CEdit *)GetDlgItem(IDC_PAT_ANGLE_DELTA_POSITIVE_VALUE))->SetLimitText(5);
-	((CEdit *)GetDlgItem(IDC_PAT_ANGLE_TOLERANCE_VALUE))->SetLimitText(5);
-	((CEdit *)GetDlgItem(IDC_PAT_ANGULAR_ACCURACY_VALUE))->SetLimitText(5);
+	static_cast<CEdit*>(GetDlgItem(IDC_PAT_OCCURANCE_NUMBER))->SetLimitText(2);
+	static_cast<CEdit*>(GetDlgItem(IDC_PAT_MDL_CERT_THRESHOLD))->SetLimitText(3);
+	static_cast<CEdit*>(GetDlgItem(IDC_PAT_MDL_ACC_THRESHOLD))->SetLimitText(3);
+	static_cast<CEdit*>(GetDlgItem(IDC_PAT_SEARCH_ANGLE_VALUE))->SetLimitText(5);
+	static_cast<CEdit*>(GetDlgItem(IDC_PAT_ANGLE_DELTA_NEGATIVE_VALUE))->SetLimitText(5);
+	static_cast<CEdit*>(GetDlgItem(IDC_PAT_ANGLE_DELTA_POSITIVE_VALUE))->SetLimitText(5);
+	static_cast<CEdit*>(GetDlgItem(IDC_PAT_ANGLE_TOLERANCE_VALUE))->SetLimitText(5);
+	static_cast<CEdit*>(GetDlgItem(IDC_PAT_ANGULAR_ACCURACY_VALUE))->SetLimitText(5);
 }
 
 void SVPatGeneralPageClass::EnableAngleControls(BOOL bEnable) 
@@ -341,11 +325,11 @@ void SVPatGeneralPageClass::OnKillValue5()
 
 void SVPatGeneralPageClass::OnAngularSearch() 
 {
-	m_bAngleSearch = (BOOL)((CButton *)GetDlgItem(IDC_PAT_ANG_MODE))->GetCheck();
+	m_bAngleSearch = (BOOL)(static_cast<CButton*>(GetDlgItem(IDC_PAT_ANG_MODE))->GetCheck());
 	EnableAngleControls(m_bAngleSearch);
 	if(!m_bAngleSearch)
 	{
-		((CButton *)GetDlgItem(IDC_PAT_ANGULAR_ACCURACY))->SetCheck(0);
+		static_cast<CButton*>(GetDlgItem(IDC_PAT_ANGULAR_ACCURACY))->SetCheck(0);
 		m_bAccuracy = false;
 		EnableAngleAccuracyControls(m_bAccuracy);
 	}
@@ -353,7 +337,7 @@ void SVPatGeneralPageClass::OnAngularSearch()
 
 void SVPatGeneralPageClass::OnAngAccuracy() 
 {
-	m_bAccuracy = (BOOL)((CButton *)GetDlgItem(IDC_PAT_ANGULAR_ACCURACY))->GetCheck();
+	m_bAccuracy = (BOOL)(static_cast<CButton*>(GetDlgItem(IDC_PAT_ANGULAR_ACCURACY))->GetCheck());
 	EnableAngleAccuracyControls(m_bAccuracy);
 }
 
@@ -376,7 +360,7 @@ BOOL SVPatGeneralPageClass::OnKillActive()
 
 BOOL SVPatGeneralPageClass::ProcessOnKillfocus(UINT nId) 
 {
-	if(GetActiveWindow() != (CWnd *)m_pSheet)
+	if(GetActiveWindow() != reinterpret_cast<CWnd*>(m_pSheet))
 		return TRUE;
 
 	CString		strValue;
@@ -399,7 +383,7 @@ BOOL SVPatGeneralPageClass::ProcessOnKillfocus(UINT nId)
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidThresholdValue, SvStl::SourceFileParams(StdMessageParams)); 
 				GetDlgItem(nId)->SetFocus();
-				((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
+				static_cast<CEdit*>(GetDlgItem(nId))->SetSel(0, -1);
 				return FALSE;
 			}
 		}
@@ -472,14 +456,14 @@ void SVPatGeneralPageClass::OnInterpoleMode3()
 
 void SVPatGeneralPageClass::OnSelchangePosAccuracy() 
 {
-	int	nSel = ((CComboBox *)GetDlgItem(IDC_PAT_POS_ACCURACY))->GetCurSel();
+	int	nSel = static_cast<CComboBox*>(GetDlgItem(IDC_PAT_POS_ACCURACY))->GetCurSel();
 	if(nSel != CB_ERR)
 		m_nPosAccuracyIndex = nSel;
 }
 
 void SVPatGeneralPageClass::OnSelchangeSpeed() 
 {
-	int	nSel = ((CComboBox *)GetDlgItem(IDC_PAT_SPEED))->GetCurSel();
+	int	nSel = static_cast<CComboBox *>(GetDlgItem(IDC_PAT_SPEED))->GetCurSel();
 	if(nSel != CB_ERR)
 		m_nSpeedIndex = nSel;
 }
@@ -487,14 +471,9 @@ void SVPatGeneralPageClass::OnSelchangeSpeed()
 void SVPatGeneralPageClass::OnSetRangeClicked()
 {
 	// Show result dlg
-	if ( m_pPatAnalyzer )
+	if ( SvPb::NoObjectClassId != m_resultClassId && SvDef::InvalidObjectId != m_inspectionId && SvDef::InvalidObjectId != m_resultObjectId)
 	{
-		SvOi::IObjectClass* pAnalyzerResult = m_pPatAnalyzer->GetResultObject();
-
-		if (pAnalyzerResult)
-		{
-			SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->getObjectId(), this );
-		}
+		SvOi::SetupDialogManager(m_resultClassId, m_inspectionId, m_resultObjectId, GetSafeHwnd()); //if directly call of SetupDialog this-pointer is possible.
 	}
 }
-
+} //namespace SvOg

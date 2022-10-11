@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/IAnalyzer.h"
 #include "ObjectInterfaces/ITool.h"
 #pragma endregion Includes
 namespace SvTo
@@ -22,7 +23,7 @@ class SVToolExtentClass;
 namespace SvAo
 {
 
-class Analyzer : public SvIe::SVTaskObjectListClass
+class Analyzer : public SvIe::SVTaskObjectListClass, public SvOi::IAnalyzer
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS
@@ -46,6 +47,8 @@ public:
 		return &(m_imageExtent);
 	};
 
+	virtual SvPb::InspectionCmdResponse getAnalyzerExtentProperties() const override;
+
 	const SvTo::SVToolExtentClass* getToolExtentPtr() const
 	{
 		auto *pTool = GetToolInterface();
@@ -60,6 +63,7 @@ public:
 		}
 
 	}
+	
 protected:
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 

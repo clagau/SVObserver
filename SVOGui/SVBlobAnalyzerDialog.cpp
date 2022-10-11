@@ -349,7 +349,7 @@ namespace SvOg
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK == hr && responseCmd.has_getblobanalyzerinforesponse())
 			{
-				SvOi::SetupDialogManager(responseCmd.getblobanalyzerinforesponse().resultobjectclassid(), responseCmd.getblobanalyzerinforesponse().resultobjectid(), GetSafeHwnd());
+				SvOi::SetupDialogManager(responseCmd.getblobanalyzerinforesponse().resultobjectclassid(), m_InspectionID, responseCmd.getblobanalyzerinforesponse().resultobjectid(), GetSafeHwnd());
 			}
 			else
 			{
@@ -484,7 +484,7 @@ namespace SvOg
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getblobanalyzerinforesponse())
 		{
-			SvOi::SetupDialogManager(responseCmd.getblobanalyzerinforesponse().resultblobclassid(), responseCmd.getblobanalyzerinforesponse().resultblobid(), GetSafeHwnd());
+			SvOi::SetupDialogManager(responseCmd.getblobanalyzerinforesponse().resultblobclassid(), m_InspectionID, responseCmd.getblobanalyzerinforesponse().resultblobid(), GetSafeHwnd());
 		}
 		else
 		{

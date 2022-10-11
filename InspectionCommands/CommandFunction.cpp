@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "CommandFunction.h"
+#include "ObjectInterfaces\IAnalyzer.h"
 #include "ObjectInterfaces\IBarCode.h"
 #include "ObjectInterfaces\IBlobAnalyzer2.h"
 #include "ObjectInterfaces\IEnumerateValueObject.h"
@@ -41,7 +42,7 @@
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 #include "SVMatroxLibrary\SVMatroxPatternInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
@@ -222,6 +223,7 @@ SvPb::InspectionCmdResponse getObjectParameters(SvPb::GetObjectParametersRequest
 		}
 		pObjParamResponse->set_embeddedid(pObject->GetEmbeddedID());
 		pObjParamResponse->set_comment(pObject->getComment());
+		pObjParamResponse->set_classid(pObject->GetClassID());
 	}
 	else
 	{
@@ -790,6 +792,9 @@ SvPb::InspectionCmdResponse getObjectId(SvPb::GetObjectIdRequest request)
 	{
 		SvPb::GetObjectIdResponse* pResponse = cmdResponse.mutable_getobjectidresponse();
 		pResponse->set_objectid(pObject->getObjectId());
+		pResponse->set_classid(pObject->GetClassID());
+		pResponse->mutable_typeinfo()->set_objecttype(pObject->GetObjectType());
+		pResponse->mutable_typeinfo()->set_subtype(pObject->GetObjectSubType());
 	}
 	else
 	{
@@ -1044,10 +1049,14 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 					pElement->set_objectid(rEntry);
 					pElement->set_embeddedid(pObject->GetEmbeddedID());
 					auto* pValue = pElement->mutable_linkedvalue();
-					pLinkedObject->fillLinkedData(*pValue);
-					
+					pLinkedObject->fillLinkedData(*pValue);					
 				}
 			}
+		}
+
+		if (auto* pList = pResponse->mutable_list(); nullptr != pList)
+		{
+			pTaskObj->fillInputInList(*pList);
 		}
 	}
 	else
@@ -1247,11 +1256,11 @@ SvPb::InspectionCmdResponse getExtentParameter(SvPb::GetExtentParameterRequest r
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(request.objectid()));
-	SvPb::GetExtentParameterResponse* pResponse = cmdResponse.mutable_getextentparameterresponse();
-	auto* pParameter = pResponse->mutable_parameters();
-	if (nullptr != pTool && nullptr != pParameter)
+	auto* pObject = SvOi::getObject(request.objectid());
+	if (auto* pTool = dynamic_cast<SvOi::ITool*> (pObject); nullptr != pTool)
 	{
+		SvPb::GetExtentParameterResponse* pResponse = cmdResponse.mutable_getextentparameterresponse();
+		auto* pParameter = pResponse->mutable_parameters();
 		SvPb::SVExtentTranslationEnum translationType = SvPb::SVExtentTranslationUnknown;
 		if (request.shouldfromparent())
 		{
@@ -1262,6 +1271,18 @@ SvPb::InspectionCmdResponse getExtentParameter(SvPb::GetExtentParameterRequest r
 			pTool->getExtentProperties(*pParameter, translationType);
 		}
 		pResponse->set_translationtype(translationType);
+	}
+	else if (auto* pAnalyzer = dynamic_cast<SvOi::IAnalyzer*> (pObject); nullptr != pAnalyzer)
+	{
+		if (false == request.shouldfromparent())
+		{
+			cmdResponse = pAnalyzer->getAnalyzerExtentProperties();
+		}
+		else
+		{
+			cmdResponse.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(pObject->getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_NoParentExtentForAnalyzer));
+			assert(false);
+		}
 	}
 	else
 	{

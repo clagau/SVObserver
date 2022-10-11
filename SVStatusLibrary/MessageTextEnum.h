@@ -609,7 +609,7 @@ enum MessageTextEnum
 	Tid_aDecimalValue,
 	Tid_aTextValue,
 	
-	Tid_ForbittenNameForParameterName,
+	Tid_ForbiddenNameForParameterName,
 	Tid_DuplicateParameterName,
 	Tid_DuplicateParameterNameWithLinked,
 	Tid_DuplicateParameterNameWithType,
@@ -687,5 +687,6 @@ enum MessageTextEnum
 	Tid_ProductNotTriggered,
 	Tid_ErrorStartInspection,
 	Tid_MaxDepthOfToolsError,
+	Tid_NoParentExtentForAnalyzer,
 };
 } //namespace SvStl

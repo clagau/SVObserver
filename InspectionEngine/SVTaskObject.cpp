@@ -30,6 +30,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVObjectLibrary/InputObject.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -610,6 +611,31 @@ std::vector<uint32_t> SVTaskObjectClass::getEmbeddedList() const
 	std::vector<uint32_t> Result(m_embeddedList.size());
 	std::transform(m_embeddedList.begin(), m_embeddedList.end(), Result.begin(), [](const auto& rEntry) { return rEntry->getObjectId(); });
 	return Result;
+}
+
+void SVTaskObjectClass::fillInputInList(::google::protobuf::RepeatedPtrField< SvPb::ValueObjectValues >& rList) const
+{
+	for (auto* pInput : m_inputs)
+	{
+		if (nullptr != pInput && pInput->IsConnected() && nullptr != pInput->GetInputObjectInfo().getFinalObject())
+		{
+			auto* pValue = dynamic_cast<SvOi::IValueObject*>(pInput->GetInputObjectInfo().getFinalObject());
+			if (nullptr != pValue)
+			{
+				_variant_t Value;
+				HRESULT result = pValue->getValue(Value);
+				if (S_OK == result)
+				{
+					auto* pElement = rList.Add();
+					pElement->set_objectid(pInput->getObjectId());
+					pElement->set_embeddedid(pInput->GetEmbeddedID());
+					auto* pValueMsg = pElement->mutable_value();
+					SvPb::ConvertVariantToProtobuf(Value, pValueMsg->mutable_value());
+					//@TODO[MZA][10.30][10.10.2022] this values are always readonly. If a readonly-flag for the ValueObjectValues is added, it has to be true.
+				}
+			}
+		}
+	}
 }
 
 bool SVTaskObjectClass::AddFriend(uint32_t friendId, uint32_t addPreId)

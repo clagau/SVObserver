@@ -19,7 +19,7 @@
 #include "SVMessage/SVMessage.h"
 #include "Definitions\GlobalConst.h"
 #include "GridCtrlLibrary\GridCellCheck.h"
-#include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
+	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t edgeObjectId, const std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
 	: CPropertyPage(ID, nIDCaption)
 	, m_bEnableDirection(false)
 	, m_bEnableEdgeSelect(false)
@@ -31,9 +31,10 @@ namespace SvOg
 	, m_bEnablePosition(false)
 	, m_bEnableThreshold(false)
 	, m_bEdgeA(false)
-	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, edgeObjectId } }
 	, m_InspectionID{ inspectionId }
-	, m_TaskObjectID{ taskObjectId }
+	, m_analyzerId{analyzerID}
+	, m_edgeObjectId{ edgeObjectId }
     , m_normalizerController(inspectionId, analyzerID)
 	, m_lowerNormalizerController(inspectionId, analyzerID)
 	, m_rEdgeEmbeddedIds{ rEdgeEmbeddedIds }
@@ -484,7 +485,7 @@ namespace SvOg
 
 		m_values.Init();
 
-		if (SvDef::InvalidObjectId == m_TaskObjectID)
+		if (SvDef::InvalidObjectId == m_edgeObjectId)
 		{
 			GetParent()->SendMessage(WM_CLOSE);
 		}

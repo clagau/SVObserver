@@ -24,6 +24,11 @@ LinkedValueData convertLinkedValue(const SvPb::LinkedValue& rValue)
 	data.m_formula = rValue.formula();
 	data.m_equationId = rValue.equationid();
 	data.m_comment = rValue.comment();
+	if (rValue.has_min_max())
+	{
+		SvPb::ConvertProtobufToVariant(rValue.min_max().minvalue(), data.m_minValue);
+		SvPb::ConvertProtobufToVariant(rValue.min_max().maxvalue(), data.m_maxValue);
+	}
 	return data;
 }
 

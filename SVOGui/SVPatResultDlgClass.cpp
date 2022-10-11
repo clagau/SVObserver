@@ -19,18 +19,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVPatResultDlgClass dialog
-
+namespace SvOg
+{
 SVPatResultDlgClass::SVPatResultDlgClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVPatResultDlgClass::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(SVPatResultDlgClass)
-	m_strAngle = _T("0.0");
-	m_strScore = _T("0.0");
-	m_strXPos = _T("0.0");
-	m_strYPos = _T("0.0");
-	//}}AFX_DATA_INIT
 }
 
 SVPatResultDlgClass::~SVPatResultDlgClass()
@@ -53,3 +46,4 @@ BEGIN_MESSAGE_MAP(SVPatResultDlgClass, CDialog)
 		// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+} //namespace SvOg

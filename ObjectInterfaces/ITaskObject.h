@@ -105,6 +105,10 @@ public:
 	/// \returns a list of embedded IDs
 	virtual std::vector<uint32_t> getEmbeddedList() const = 0;
 
+	/// Fill the inputs to the SvPb ValueObject-List.
+	/// \param pList [inout]
+	virtual void fillInputInList(::google::protobuf::RepeatedPtrField< SvPb::ValueObjectValues >& rList) const = 0;
+
 	virtual bool isErrorMessageEmpty() const = 0;
 
 	/// Add the object to the friend list.

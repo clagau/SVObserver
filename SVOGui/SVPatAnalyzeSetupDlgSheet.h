@@ -10,7 +10,8 @@
 //******************************************************************************
 
 #pragma once
-
+namespace SvOg
+{
 class SVPatAnalyzeSetupDlgSheet : public CPropertySheet
 {
 public:
@@ -36,3 +37,4 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+} //namespace SvOg

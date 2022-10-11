@@ -143,7 +143,7 @@ namespace SvOg
 		SvOi::IObjectClass* pObject = SvOi::getObject(m_TaskObjectID);
 		if (nullptr != pObject)
 		{
-			SvOi::SetupDialogManager(pObject->GetClassID(), m_TaskObjectID, GetSafeHwnd());
+			SvOi::SetupDialogManager(pObject->GetClassID(), m_InspectionID, m_TaskObjectID, GetSafeHwnd());
 		}
 	}
 

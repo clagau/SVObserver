@@ -268,6 +268,7 @@ message GetObjectParametersResponse
 	SVObjectTypeInfoStruct typeInfo = 4;
 	EmbeddedIdEnum embeddedID = 5;
 	string comment = 6;
+	ClassIdEnum classId = 7;
 }
 
 //This is the message to return the object-dotted-name to a defined position.
@@ -515,6 +516,8 @@ message GetObjectIdRequest
 message GetObjectIdResponse
 {
 	uint32 objectId = 1;
+	ClassIdEnum classId = 2;
+	SVObjectTypeInfoStruct typeInfo = 3;
 }
 
 message CreateObjectRequest
@@ -1038,7 +1041,7 @@ message GetTableResultsExternalToolResponse
 
 message GetResultRangeObjectRequest
 {
-	uint32 objectId = 1;
+	uint32 objectId = 1; //By now this command works only for ExternalToolTask
 	sint32 index = 2;
 }
 

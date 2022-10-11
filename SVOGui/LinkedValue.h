@@ -21,6 +21,8 @@ namespace SvOg
 		std::string m_indirectIdName;
 		std::string m_formula;
 		uint32_t m_equationId = SvDef::InvalidObjectId;
+		variant_t m_minValue;
+		variant_t m_maxValue;
 
 		bool operator==(const LinkedValueData& rValue) const //= default;
 		{
@@ -55,6 +57,18 @@ namespace SvOg
 #pragma region Public Methods
 	public:
 		variant_t GetValue() const
+		{
+			assert(false);
+			return {};
+		}
+
+		variant_t GetMinValue() const
+		{
+			assert(false);
+			return {};
+		}
+
+		variant_t GetMaxValue() const
 		{
 			assert(false);
 			return {};

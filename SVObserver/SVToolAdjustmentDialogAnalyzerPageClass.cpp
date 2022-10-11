@@ -198,7 +198,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 		uint32_t analyzerId = m_pCurrentAnalyzer->getObjectId();
 
 		// Show Dialog
-		SVSetupDialogManager::Instance().SetupDialog(m_pCurrentAnalyzer->GetClassID(), m_pCurrentAnalyzer->getObjectId(), this);
+		SVSetupDialogManager::Instance().SetupDialog(m_pCurrentAnalyzer->GetClassID(), m_InspectionID, m_pCurrentAnalyzer->getObjectId(), this);
 
 		// Restore the pointer (in case of Cancel)
 		m_pCurrentAnalyzer = dynamic_cast<SvAo::Analyzer*> (SVObjectManagerClass::Instance().GetObject(analyzerId));

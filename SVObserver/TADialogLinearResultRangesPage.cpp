@@ -109,7 +109,7 @@ void TADialogLinearResultRangesPage::OnBnClickedBtnRangeDelta()
 
 bool TADialogLinearResultRangesPage::setRanges(SvPb::EmbeddedIdEnum embeddedId)
 {
-	auto resultSetup = SVSetupDialogManager::Instance().SetupDialog(SvPb::DoubleResultClassId, m_ValueEmbeddedIdResultMap[embeddedId], this);
+	auto resultSetup = SVSetupDialogManager::Instance().SetupDialog(SvPb::DoubleResultClassId, m_InspectionID, m_ValueEmbeddedIdResultMap[embeddedId], this);
 	// SetupDialog() returns S_FALSE if the user press Cancel, which is NOT an error! Therefore the test below. 
 	if (S_OK != resultSetup && S_FALSE != resultSetup)
 	{

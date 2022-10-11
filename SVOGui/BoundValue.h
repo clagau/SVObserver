@@ -41,8 +41,8 @@ class BoundValue
 #pragma region Constructor
 public:
 	BoundValue() {};
-	BoundValue(uint32_t instanceID, const variant_t& rValue, const variant_t& rDefaultValue)
-		: m_instanceID(instanceID), m_Value(rValue), m_DefaultValue(rDefaultValue)
+	BoundValue(uint32_t instanceID, const variant_t& rValue, const variant_t& rDefaultValue, variant_t&& rMinValue, variant_t&& rMaxValue)
+		: m_instanceID(instanceID), m_Value(rValue), m_DefaultValue(rDefaultValue), m_minValue(rMinValue), m_maxValue(rMaxValue)
 	{
 	}
 
@@ -53,6 +53,8 @@ public:
 public:
 	const variant_t& GetDefaultValue() const { return m_DefaultValue; }
 	const variant_t& GetValue() const { return m_Value; }
+	const variant_t& GetMinValue() const { return m_minValue; }
+	const variant_t& GetMaxValue() const { return m_maxValue; }
 	int GetArrayIndex() const { return m_ArrayIndex; }
 
 	void SetDefaultValue(const variant_t& rDefaultValue)
@@ -93,6 +95,8 @@ private:
 	uint32_t m_instanceID{ SvDef::InvalidObjectId };
 	variant_t m_DefaultValue;
 	variant_t m_Value;
+	variant_t m_minValue;
+	variant_t m_maxValue;
 	mutable bool m_bModified {false};
 	mutable bool m_bDefaultModified {false};
 	mutable int m_ArrayIndex {-1};
@@ -155,6 +159,28 @@ public:
 		if (m_values.end() != it)
 		{
 			return std::visit([](const auto& val) -> variant_t { return val.GetValue(); }, it->second);
+		}
+		return variant_t();
+	}
+
+	variant_t GetMinValue(SvPb::EmbeddedIdEnum embeddedID) const
+	{
+		Container::const_iterator it = m_values.find(embeddedID);
+		assert(m_values.end() != it);
+		if (m_values.end() != it)
+		{
+			return std::visit([](const auto& val) -> variant_t { return val.GetMinValue(); }, it->second);
+		}
+		return variant_t();
+	}
+
+	variant_t GetMaxValue(SvPb::EmbeddedIdEnum embeddedID) const
+	{
+		Container::const_iterator it = m_values.find(embeddedID);
+		assert(m_values.end() != it);
+		if (m_values.end() != it)
+		{
+			return std::visit([](const auto& val) -> variant_t { return val.GetMaxValue(); }, it->second);
 		}
 		return variant_t();
 	}

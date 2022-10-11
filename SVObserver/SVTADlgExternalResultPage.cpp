@@ -337,7 +337,7 @@ int SVTADlgExternalResultPage::SelectObject(int iIndex)
 
 	if (response.classid() != SvPb::ClassIdEnum::NoObjectClassId && response.objectid() > 0)
 	{
-		SVSetupDialogManager::Instance().SetupDialog(response.classid(), response.objectid(), this);
+		SVSetupDialogManager::Instance().SetupDialog(response.classid(), m_InspectionID, response.objectid(), this);
 	}
 
 	return 0;

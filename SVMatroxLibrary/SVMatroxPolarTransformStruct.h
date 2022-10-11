@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxSimpleEnums.h"
+#include "Definitions\SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 class SVMatroxBuffer;

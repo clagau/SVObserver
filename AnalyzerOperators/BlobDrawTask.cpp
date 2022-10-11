@@ -10,7 +10,7 @@
 #include "BlobDrawTask.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "ImageAnalyzer.h"

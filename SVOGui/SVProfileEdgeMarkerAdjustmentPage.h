@@ -15,32 +15,22 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVOGui/SVEdgeMarkerAdjustmentPageClass.h"
-#include "SVOGui/PictureDisplay.h"
+#include "SVEdgeMarkerAdjustmentPageClass.h"
+#include "PictureDisplay.h"
+#include "LinkedValueWidgetHelper.h"
 #pragma endregion Includes
-#include "SVOGui/LinkedValueWidgetHelper.h"
+
 
 #pragma region Declarations
-//@TODO[gra][8.00][25.01.2018]: This class should move to SVOGui
-namespace SvAo
-{
-class Analyzer;
-}
-namespace SvOp
-{
-class SVLinearEdgeProcessingClass;
-}
-namespace SvTo
-{
-class SVToolClass;
-}
 #pragma endregion Declarations
 
-class SVProfileEdgeMarkerAdjustmentPage : public SvOg::SVEdgeMarkerAdjustmentPageClass
+namespace SvOg
+{
+class SVProfileEdgeMarkerAdjustmentPage : public SVEdgeMarkerAdjustmentPageClass
 {
 #pragma region Constructor
 public:
-	SVProfileEdgeMarkerAdjustmentPage(uint32_t inspectionID, uint32_t taskObjectID, const std::array<SvPb::EmbeddedIdEnum, SvOg::EdgeIdCount>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0 );
+	SVProfileEdgeMarkerAdjustmentPage(uint32_t inspectionID, uint32_t egdeObjectId, const std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0);
 	virtual ~SVProfileEdgeMarkerAdjustmentPage();
 #pragma endregion Constructor
 
@@ -102,9 +92,9 @@ private:
 	/// \param value [in] The position of the marker.
 	/// \param bVertical [in] If true it spin the graph to vertical.
 	/// \param allowType [in] Set the allowType to the control. Default is none change allowed.
-	void setMarkerOverlayToPicture( DWORD value, bool bVertical, long allowType = CDSVPictureDisplay::AllowNone );
+	void setMarkerOverlayToPicture(DWORD value, bool bVertical, long allowType = CDSVPictureDisplay::AllowNone);
 
-	void OnChangeValue(std::unique_ptr<SvOg::LinkedValueWidgetHelper>& rWidget);
+	void OnChangeValue(std::unique_ptr<LinkedValueWidgetHelper>& rWidget);
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -117,36 +107,33 @@ private:
 	enum { IDD = IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG };
 	CEdit	m_LowerSelectedEditCtrl;
 	CButton m_LowerSelectedButton;
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_LowerSelectedWidget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_LowerSelectedWidget;
 	CEdit	m_LowerMinOffsetEditCtrl;
 	CButton m_LowerMinOffsetButton;
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_LowerMinOffsetWidget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_LowerMinOffsetWidget;
 	CEdit	m_LowerMaxOffsetEditCtrl;
 	CButton m_LowerMaxOffsetButton;
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_LowerMaxOffsetWidget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_LowerMaxOffsetWidget;
 	CEdit	m_LowerMaxDiffEditCtrl;
 	CButton m_LowerMaxDiffButton;
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_LowerMaxDiffWidget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_LowerMaxDiffWidget;
 	CEdit	m_UpperSelectedEditCtrl;
 	CButton m_UpperSelectedButton;
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_UpperSelectedWidget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_UpperSelectedWidget;
 	CEdit	m_UpperMinOffsetEditCtrl;
 	CButton m_UpperMinOffsetButton;
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_UpperMinOffsetWidget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_UpperMinOffsetWidget;
 	CEdit	m_UpperMaxOffsetEditCtrl;
 	CButton m_UpperMaxOffsetButton;
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_UpperMaxOffsetWidget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_UpperMaxOffsetWidget;
 	CEdit	m_UpperMaxDiffEditCtrl;
 	CButton m_UpperMaxDiffButton;
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_UpperMaxDiffWidget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_UpperMaxDiffWidget;
 	int		m_lowerThresholdOption = 0;
 	int		m_upperThresholdOption = 0;
-	SvOg::PictureDisplay m_dialogImage;
 
-	//@TODO[gra][8.00][25.01.2018]: This should be changed when access is possible through Inspection commands
-	SvTo::SVToolClass* m_pTool{ nullptr };
-	SvAo::Analyzer* m_pAnalyzer {nullptr};
-	SvOp::SVLinearEdgeProcessingClass* m_pEdge{ nullptr };
-	std::shared_ptr<SvOg::ValueController> m_pAnalyzerValues;
+	PictureDisplay m_dialogImage;
+	ValueController m_analyzerValues;
 #pragma endregion Member variables
 };
+}  //namespace SvOg
