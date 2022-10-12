@@ -97,17 +97,21 @@ void SVArchiveTool::initializeArchiveTool()
 	UINT cAttribute { SvPb::audittrail};
 	m_currentImageQueueLength.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
-	RegisterEmbeddedObject(&m_resultFilepathPart1, SvPb::ArchiveResultFilePathPart1EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH1, true, SvOi::SVResetItemTool);
-	m_resultFilepathPart1.SetDefaultValue(_variant_t(""), true);
-	m_resultFilepathPart1.setValueType(SvPb::TypeText);
+	RegisterEmbeddedObject(&m_resultFilepath, SvPb::ArchiveResultFilepathEId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH, true, SvOi::SVResetItemTool);
+	m_resultFilepath.SetDefaultValue(_variant_t(""), true);
+	m_resultFilepath.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_resultFilepathPart2, SvPb::ArchiveResultFilePathPart2EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH2, true, SvOi::SVResetItemTool);
-	m_resultFilepathPart2.SetDefaultValue(_variant_t(""), true);
-	m_resultFilepathPart2.setValueType(SvPb::TypeText);
+	RegisterEmbeddedObject(&m_resultFolderpathPart1, SvPb::ArchiveResultFolderpathPart1EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FOLDERPATH1, true, SvOi::SVResetItemTool);
+	m_resultFolderpathPart1.SetDefaultValue(_variant_t(""), true);
+	m_resultFolderpathPart1.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_resultFilepathPart3, SvPb::ArchiveResultFilePathPart3EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH3, true, SvOi::SVResetItemTool);
-	m_resultFilepathPart3.SetDefaultValue(_variant_t(""), true);
-	m_resultFilepathPart3.setValueType(SvPb::TypeText);
+	RegisterEmbeddedObject(&m_resultFolderpathPart2, SvPb::ArchiveResultFolderpathPart2EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FOLDERPATH2, true, SvOi::SVResetItemTool);
+	m_resultFolderpathPart2.SetDefaultValue(_variant_t(""), true);
+	m_resultFolderpathPart2.setValueType(SvPb::TypeText);
+
+	RegisterEmbeddedObject(&m_ResultFilename, SvPb::ArchiveResultFilenameEId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILENAME, true, SvOi::SVResetItemTool);
+	m_ResultFilename.SetDefaultValue(_variant_t(""), true);
+	m_ResultFilename.setValueType(SvPb::TypeText);
 
 	RegisterEmbeddedObject(&m_imageFileRootPath1, SvPb::ArchiveImageFileRootPart1EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART1, true, SvOi::SVResetItemTool);
 	m_imageFileRootPath1.SetDefaultValue(_variant_t(""), true);
@@ -226,20 +230,14 @@ void SVArchiveTool::initializeArchiveTool()
 	//
 	// Use the user changeable tool name as the results archive name.
 	//
-	SVFileNameClass FileClass;
-	FileClass.SetExtension(_T(".txt"));
-	FileClass.SetPathName(_T("D:\\TEMP"));
-
-	std::string FileName = SvUl::Format(_T("%s__0"), GetName());
-	FileClass.SetFileNameOnly(FileName.c_str());
 
 	// Set Embedded defaults
-
 	m_svoArchiveImageNames.SetDefaultValue(_T(""), true);
 	m_svoArchiveResultNames.SetDefaultValue(_T(""), true);
-	m_resultFilepathPart1.SetDefaultValue(_bstr_t(FileClass.GetFullFileName().c_str()), true);
-	m_resultFilepathPart2.SetDefaultValue(_bstr_t(""), true);
-	m_resultFilepathPart3.SetDefaultValue(_bstr_t(""), true);
+	m_resultFilepath.SetDefaultValue(_bstr_t(SvUl::Format("D:\\TEMP\\%s__0.txt", GetName()).c_str()), true);
+	m_resultFolderpathPart1.SetDefaultValue(_bstr_t(""), true);
+	m_resultFolderpathPart2.SetDefaultValue(_bstr_t(""), true);
+	m_ResultFilename.SetDefaultValue(_bstr_t(""), true);
 	m_imageFileRootPath1.SetDefaultValue(_bstr_t("D:\\TEMP"), true);
 	m_imageFileRootPath2.SetDefaultValue(_bstr_t(""), true);
 	m_imageFileRootPath3.SetDefaultValue(_bstr_t(""), true);
@@ -292,9 +290,11 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_resultFilepathPart1.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-	m_resultFilepathPart2.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-	m_resultFilepathPart3.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	m_resultFilepath.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
+	m_resultFolderpathPart1.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
+	m_resultFolderpathPart2.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
+	m_ResultFilename.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
+
 	m_imageFileRootPath1.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_imageFileRootPath2.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_imageFileRootPath3.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
@@ -313,10 +313,13 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
+	updateResultFilepathInformation(true);
+
 	m_isCreated = bOk;
 
 	return bOk;
 }
+
 
 bool SVArchiveTool::InitializeAndValidate(SvStl::MessageContainerVector* pErrorMessages)
 {
@@ -343,17 +346,37 @@ bool SVArchiveTool::InitializeAndValidate(SvStl::MessageContainerVector* pErrorM
 }
 
 
+void SVArchiveTool::updateResultFilepathInformation(bool considerOldConfigurations)
+{
+	if (considerOldConfigurations)
+	{
+		if (GetResultFilename().empty()) //i.e. we do not currently have all the information on folder and filename (possibly because we have been reading a conficuration from SVO 10.20 or before?)
+		{
+			std::filesystem::path filepath = GetResultFilepath();
+			auto filename = filepath.filename();
+			// not checking for a valid filename here to satisfy existing script tests that contain configurations with invalid archive result paths
+			auto newFolderpath = filepath.remove_filename();
+			m_resultFolderpathPart1.setValue(_bstr_t(newFolderpath.string().c_str()));
+			m_ResultFilename.setValue(_bstr_t(filename.string().c_str()));
+		}
+	}
+
+	m_resultFilepath.SetValue(_bstr_t(GetUntranslatedFullResultFilepath().c_str())); //make sure the full filepath is available
+}
+
+
 bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool result = SVToolClass::ResetObject(pErrorMessages);
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
 		m_lastBufferMap.clear();
+		updateResultFilepathInformation(false);
 	}
 
-	long l_lArchiveMethod = 0;
-	m_evoArchiveMethod.GetValue(l_lArchiveMethod);
-	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>(l_lArchiveMethod);
+	long archiveMethod = 0;
+	m_evoArchiveMethod.GetValue(archiveMethod);
+	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>(archiveMethod);
 
 	if (false == InitializeAndValidate(pErrorMessages))
 	{
@@ -867,32 +890,39 @@ std::vector<std::string> SVArchiveTool::getToolAdjustNameList() const
 	return {cToolAdjustNameList.begin(), cToolAdjustNameList.end()};
 }
 
-
 std::string SVArchiveTool::GetUntranslatedFullResultFilepath()
 {
-	return GetResultFilepathPart1() + GetResultFilepathPart2() + GetResultFilepathPart3();
+	auto filepath = GetResultFolderpathPart1() + GetResultFolderpathPart2() + _T("\\") + GetResultFilename();
+
+	return std::regex_replace(filepath, std::regex(_T("\\\\\\\\")), _T("\\")); //remove double backslashes
 }
 
-
-std::string SVArchiveTool::GetResultFilepathPart1() const
+std::string SVArchiveTool::GetResultFolderpathPart1() const
 {
 	std::string pathPart1;
-	m_resultFilepathPart1.getValue(pathPart1);
+	m_resultFolderpathPart1.getValue(pathPart1);
 	return pathPart1;
 }
 
-std::string SVArchiveTool::GetResultFilepathPart2() const
+std::string SVArchiveTool::GetResultFolderpathPart2() const
 {
 	std::string pathPart2;
-	m_resultFilepathPart2.getValue(pathPart2);
+	m_resultFolderpathPart2.getValue(pathPart2);
 	return pathPart2;
 }
 
-std::string SVArchiveTool::GetResultFilepathPart3() const
+std::string SVArchiveTool::GetResultFilename() const
 {
-	std::string pathPart3;
-	m_resultFilepathPart3.getValue(pathPart3);
-	return pathPart3;
+	std::string filename;
+	m_ResultFilename.getValue(filename);
+	return filename;
+}
+
+std::string SVArchiveTool::GetResultFilepath() const
+{
+	std::string resultFilepath;
+	m_resultFilepath.getValue(resultFilepath);
+	return resultFilepath;
 }
 
 std::string SVArchiveTool::GetImageDirectoryPathPart1() const

@@ -984,7 +984,7 @@ std::unordered_map<GUID, SvPb::EmbeddedIdEnum> g_ExchangeEmbeddedID = {
 	{ SVOCVExtentWidthGuid, SvPb::OCVExtentWidthEId },
 	{ SVOCVExtentHeightGuid, SvPb::OCVExtentHeightEId },
 	{ SVOCVMatchScoreGuid, SvPb::OCVMatchScoreEId },
-	{ SVArchiveFilePathObjectGuid, SvPb::ArchiveResultFilePathPart1EId },
+	{ SVArchiveFilePathObjectGuid, SvPb::ArchiveResultFilepathEId },
 	{ SVArchiveImageGuidsObjectGuid, SvPb::ArchiveImageGuids_OBSOLETE_EId },
 	{ SVArchiveImageFileRootPathGuid, SvPb::ArchiveImageFileRootPart1EId },
 	{ SVArchiveResultGuidsObjectGuid, SvPb::ArchiveResultGuids_OBSOLETE_EId },

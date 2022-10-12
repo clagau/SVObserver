@@ -110,9 +110,12 @@ private:
 	bool ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl::MessageContainerVector* pErrorMessages);///< Checks the directory and the available space for storing image archive files.
 	bool InitializeAndValidate(SvStl::MessageContainerVector* pErrorMessages);
 
-	std::string GetResultFilepathPart1() const;
-	std::string GetResultFilepathPart2() const;
-	std::string GetResultFilepathPart3() const;
+	void updateResultFilepathInformation(bool considerOldConfigurations);
+
+	std::string GetResultFolderpathPart1() const;
+	std::string GetResultFolderpathPart2() const;
+	std::string GetResultFilename() const;
+	std::string GetResultFilepath() const;
 
 	std::string GetImageDirectoryPathPart1() const;
 	std::string GetImageDirectoryPathPart2() const;
@@ -136,9 +139,10 @@ private:
 	SvVol::SVLongValueObjectClass m_currentImageQueueLength; // current _archive_ image queue length
 	SvVol::LinkedValue m_maximumImageQueueLength; // maximum _archive_ image queue length
 
-	SvVol::LinkedValue m_resultFilepathPart1;
-	SvVol::LinkedValue m_resultFilepathPart2;
-	SvVol::LinkedValue m_resultFilepathPart3; 
+	SvVol::LinkedValue m_resultFolderpathPart1;
+	SvVol::LinkedValue m_resultFolderpathPart2;
+	SvVol::LinkedValue m_ResultFilename; 
+	SvVol::LinkedValue m_resultFilepath;
 
 	SvVol::LinkedValue m_imageFileRootPath1; 
 	SvVol::LinkedValue m_imageFileRootPath2;

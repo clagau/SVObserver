@@ -45,13 +45,12 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveResultsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_HEADER_BTN, &SVTADlgArchiveResultsPage::OnBnClickedHeaderBtn)
 	ON_BN_CLICKED(IDC_HEADER_CHECK, &SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck)
 
-	ON_BN_CLICKED(IDC_BUTTON_RESULT_FILEPATH1, OnButtonResultFilepath1)
-	ON_EN_KILLFOCUS(IDC_ARCHIVE_RESULT_FILEPATH1, OnKillFocusResultFilepath1)
-	ON_BN_CLICKED(IDC_BUTTON_RESULT_FILEPATH2, OnButtonResultFilepathPart2)
-	ON_EN_KILLFOCUS(IDC_ARCHIVE_RESULT_FILEPATH2, OnKillFocusResultFilepathPart2)
-	ON_BN_CLICKED(IDC_BUTTON_RESULT_FILEPATH3, OnButtonResultFilepath3)
-	ON_EN_KILLFOCUS(IDC_ARCHIVE_RESULT_FILEPATH3, OnKillFocusResultFilepath3)
-
+	ON_BN_CLICKED(IDC_BUTTON_RESULT_FOLDERPATH1, OnButtonResultFolderpathPart1)
+	ON_EN_KILLFOCUS(IDC_ARCHIVE_RESULT_FOLDERPATH1, OnKillFocusResultFolderpathPart1)
+	ON_BN_CLICKED(IDC_BUTTON_RESULT_FOLDERPATH2, OnButtonResultFolderpathPart2)
+	ON_EN_KILLFOCUS(IDC_ARCHIVE_RESULT_FOLDERPATH2, OnKillFocusResultFolderpathPart2)
+	ON_BN_CLICKED(IDC_BUTTON_RESULT_FILENAME, OnButtonResultFilename)
+	ON_EN_KILLFOCUS(IDC_ARCHIVE_RESULT_FILENAME, OnKillFocusResultFilename)
 
 END_MESSAGE_MAP()
 
@@ -99,8 +98,6 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	UpdateData(TRUE); 
 
 	m_ValueController.Commit(SvOg::PostAction::doReset);
-
-	// Check the file path to the archive file for associated archive tool.
 
 	std::string ArchiveFilepath = m_pTool->GetUntranslatedFullResultFilepath();
 
@@ -181,12 +178,12 @@ void SVTADlgArchiveResultsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_HEADER_CHECK, m_ColumnHeaders);                  
 	DDX_Control(pDX, IDC_TOTAL_WIDTH, m_TotalWidthEdit);
 	DDX_Control(pDX, IDC_DECIMAL, m_DecimalsEdit);
-	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FILEPATH1, m_ResultFilepathPart1Edit);
-	DDX_Control(pDX, IDC_BUTTON_RESULT_FILEPATH1, m_ResultFilepathPart1Button);
-	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FILEPATH2, m_ResultFilepathPart2Edit);
-	DDX_Control(pDX, IDC_BUTTON_RESULT_FILEPATH2, m_ResultFilepathPart2Button);
-	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FILEPATH3, m_ResultFilepathPart3Edit);
-	DDX_Control(pDX, IDC_BUTTON_RESULT_FILEPATH3, m_ResultFilepathPart3Button);
+	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FOLDERPATH1, m_resultFolderpathPart1Edit);
+	DDX_Control(pDX, IDC_BUTTON_RESULT_FOLDERPATH1, m_resultFolderpathPart1Button);
+	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FOLDERPATH2, m_resultFolderpathPart2Edit);
+	DDX_Control(pDX, IDC_BUTTON_RESULT_FOLDERPATH2, m_resultFolderpathPart2Button);
+	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FILENAME, m_ResultFilenameEdit);
+	DDX_Control(pDX, IDC_BUTTON_RESULT_FILENAME, m_ResultFilenameButton);
 	m_DecimalsEdit.EnableWindow(m_FormatResults);
 	m_TotalWidthEdit.EnableWindow(m_FormatResults);
 }
@@ -222,10 +219,9 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_pTool->m_bvoFormatResults.GetValue(dwTemp);
 	m_FormatResults = (BOOL)dwTemp;
 
-	m_ResultFilepathWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ResultFilepathPart1Edit, m_ResultFilepathPart1Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFilePathPart1EId, &m_ValueController);
-	m_ResultFilepathWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ResultFilepathPart2Edit, m_ResultFilepathPart2Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFilePathPart2EId, &m_ValueController);
-	m_ResultFilepathWidgetHelpers[2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ResultFilepathPart3Edit, m_ResultFilepathPart3Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFilePathPart3EId, &m_ValueController);
-
+	m_ResultFolderpathWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_resultFolderpathPart1Edit, m_resultFolderpathPart1Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFolderpathPart1EId, &m_ValueController);
+	m_ResultFolderpathWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_resultFolderpathPart2Edit, m_resultFolderpathPart2Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFolderpathPart2EId, &m_ValueController);
+	m_ResultFolderpathWidgetHelpers[2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ResultFilenameEdit, m_ResultFilenameButton, m_inspectionId, m_taskId, SvPb::ArchiveResultFilenameEId, &m_ValueController);
 
 	m_pTool->m_dwArchiveResultsMinimumNumberOfCharacters.GetValue(m_TotalWidth);
 
@@ -350,7 +346,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 
 	//get current path
 	CString Text;
-	m_ResultFilepathPart1Edit.GetWindowText( Text );
+	m_resultFolderpathPart1Edit.GetWindowText( Text );
 	std::string ArchiveFullName = Text.GetString();
 
 	SVCheckPathDir( ArchiveFullName.c_str(), TRUE );
@@ -359,7 +355,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	svfncArchiveFileName.SetDefaultFullFileName( ArchiveFullName.c_str() );
 	if (svfncArchiveFileName.SelectFile())
 	{
-		m_ResultFilepathPart1Edit.SetWindowText(svfncArchiveFileName.GetFullFileName().c_str()); 
+		m_resultFolderpathPart1Edit.SetWindowText(svfncArchiveFileName.GetFullFileName().c_str()); 
 	}
 }
 
@@ -462,35 +458,35 @@ void SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck()
 }
 
 
-void SVTADlgArchiveResultsPage::OnButtonResultFilepath1()
+void SVTADlgArchiveResultsPage::OnButtonResultFolderpathPart1()
 {
-	m_ResultFilepathWidgetHelpers[0]->OnButton();
+	m_ResultFolderpathWidgetHelpers[0]->OnButton();
 }
 
-void SVTADlgArchiveResultsPage::OnKillFocusResultFilepath1()
+void SVTADlgArchiveResultsPage::OnKillFocusResultFolderpathPart1()
 {
-	m_ResultFilepathWidgetHelpers[0]->EditboxToValue();
+	m_ResultFolderpathWidgetHelpers[0]->EditboxToValue();
 }
 
-void SVTADlgArchiveResultsPage::OnButtonResultFilepathPart2()
+void SVTADlgArchiveResultsPage::OnButtonResultFolderpathPart2()
 {
-	m_ResultFilepathWidgetHelpers[1]->OnButton();
+	m_ResultFolderpathWidgetHelpers[1]->OnButton();
 }
 
-void SVTADlgArchiveResultsPage::OnKillFocusResultFilepathPart2()
+void SVTADlgArchiveResultsPage::OnKillFocusResultFolderpathPart2()
 {
-	m_ResultFilepathWidgetHelpers[1]->EditboxToValue();
+	m_ResultFolderpathWidgetHelpers[1]->EditboxToValue();
 }
 
 
-void SVTADlgArchiveResultsPage::OnButtonResultFilepath3()
+void SVTADlgArchiveResultsPage::OnButtonResultFilename()
 {
-	m_ResultFilepathWidgetHelpers[2]->OnButton();
+	m_ResultFolderpathWidgetHelpers[2]->OnButton();
 }
 
-void SVTADlgArchiveResultsPage::OnKillFocusResultFilepath3()
+void SVTADlgArchiveResultsPage::OnKillFocusResultFilename()
 {
-	m_ResultFilepathWidgetHelpers[2]->EditboxToValue();
+	m_ResultFolderpathWidgetHelpers[2]->EditboxToValue();
 }
 
 

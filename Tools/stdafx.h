@@ -56,6 +56,7 @@
 #pragma warning(disable : 4996)
 #include <sequential_tree.h>
 #pragma warning(pop)
+#include <regex>
 #include <set>
 #include <string>
 #include <tchar.h>

@@ -796,7 +796,7 @@ enum EmbeddedIdEnum
 	OCVExtentWidthEId = 119;
 	OCVExtentHeightEId = 120;
 	OCVMatchScoreEId = 121;
-	ArchiveResultFilePathPart1EId = 122;
+	ArchiveResultFilepathEId = 122;
 	ArchiveImageGuids_OBSOLETE_EId = 123;
 	ArchiveImageFileRootPart1EId = 124;
 	ArchiveResultGuids_OBSOLETE_EId = 125;
@@ -1237,10 +1237,11 @@ enum EmbeddedIdEnum
 	FontScaleYEId = 586;
 	XAxisAngleEId = 587;
 	IsColorImageCheckEId = 588;
-	ArchiveResultFilePathPart2EId = 589;
-	ArchiveResultFilePathPart3EId = 590;
+	ArchiveResultFolderpathPart2EId = 589;
+	ArchiveResultFilenameEId = 590;
 	MaximumImageQueueLengthEId = 591;
 	CurrentImageQueueLengthEId = 592;
+  	ArchiveResultFolderpathPart1EId = 593;
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4

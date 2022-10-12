@@ -60,12 +60,12 @@ protected:
 	afx_msg void OnBnClickedHeaderCheck();
 	afx_msg void OnBnClickedHeaderBtn();
 
-	afx_msg void OnButtonResultFilepath1();
-	afx_msg void OnButtonResultFilepathPart2();
-	afx_msg void OnButtonResultFilepath3();
-	afx_msg void OnKillFocusResultFilepath1();
-	afx_msg void OnKillFocusResultFilepathPart2();
-	afx_msg void OnKillFocusResultFilepath3();
+	afx_msg void OnButtonResultFolderpathPart1();
+	afx_msg void OnButtonResultFolderpathPart2();
+	afx_msg void OnButtonResultFilename();
+	afx_msg void OnKillFocusResultFolderpathPart1();
+	afx_msg void OnKillFocusResultFolderpathPart2();
+	afx_msg void OnKillFocusResultFilename();
 
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
@@ -93,15 +93,15 @@ private:
 	uint32_t m_taskId;
 
 	//edit boxes for the parts of the archive file path and buttons to manipulate them
-	CEdit	m_ResultFilepathPart1Edit;					
-	CButton m_ResultFilepathPart1Button;
-	CEdit	m_ResultFilepathPart2Edit;
-	CButton m_ResultFilepathPart2Button;
-	CEdit	m_ResultFilepathPart3Edit;
-	CButton m_ResultFilepathPart3Button;
+	CEdit	m_resultFolderpathPart1Edit;					
+	CButton m_resultFolderpathPart1Button;
+	CEdit	m_resultFolderpathPart2Edit;
+	CButton m_resultFolderpathPart2Button;
+	CEdit	m_ResultFilenameEdit;
+	CButton m_ResultFilenameButton;
 
 	SvOg::ValueController m_ValueController;
-	std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, 3> m_ResultFilepathWidgetHelpers;
+	std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, 3> m_ResultFolderpathWidgetHelpers;
 
 #pragma endregion Private Members
 };
