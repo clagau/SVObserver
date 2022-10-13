@@ -36,7 +36,7 @@ public:
 	~PeriodicTimer();
 
 	static void SetTimer(const TimerInfo& rtimerInfo);
-	static void CloseTimer(const std::string& rName);
+	static void CloseTimer(LPCTSTR name);
 	std::mutex& GetMutex() {return m_protectTimer;}
 	void KillTimer();
 private:

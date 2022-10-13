@@ -120,7 +120,7 @@ void PeriodicTimer::SetTimer(const TimerInfo& rTimerInfo)
 	}
 }
 
-void PeriodicTimer::CloseTimer(const std::string& rName)
+void PeriodicTimer::CloseTimer(LPCTSTR name)
 {
 	for (auto iterTimer = m_periodicTimerList.begin(); m_periodicTimerList.end() != iterTimer;)
 	{
@@ -130,7 +130,7 @@ void PeriodicTimer::CloseTimer(const std::string& rName)
 			bool removeTimer {false};
 			{
 				std::lock_guard lock {rTimer->GetMutex()};
-				auto iterTimerInfo = std::find_if(rTimer->m_timerInfoList.begin(), rTimer->m_timerInfoList.end(), [&rName](const auto& rEntry) { return rEntry.m_name == rName; });
+				auto iterTimerInfo = std::find_if(rTimer->m_timerInfoList.begin(), rTimer->m_timerInfoList.end(), [&name](const auto& rEntry) { return rEntry.m_name == name; });
 				if (rTimer->m_timerInfoList.end() != iterTimerInfo)
 				{
 					if (1 == rTimer->m_timerInfoList.size())

@@ -163,7 +163,7 @@ void SVSoftwareTriggerDevice::beforeStopTrigger(unsigned long triggerIndex)
 {
 	int triggerChannel = triggerIndex - 1;
 	SvUl::TimerInfo& rTimer = m_timerList[triggerChannel];
-	SvUl::PeriodicTimer::CloseTimer(rTimer.m_name);
+	SvUl::PeriodicTimer::CloseTimer(rTimer.m_name.c_str());
 	rTimer.m_callbackFunction = nullptr;
 	
 	if (std::none_of(m_timerList.begin(), m_timerList.end(), [](const auto& rTimer) { return nullptr != rTimer.m_callbackFunction; }))

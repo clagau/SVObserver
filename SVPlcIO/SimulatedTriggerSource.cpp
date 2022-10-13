@@ -139,7 +139,7 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 			std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
 			if (nullptr != m_channel[channel].m_timerInfo.m_callbackFunction)
 			{
-				SvUl::PeriodicTimer::CloseTimer(m_channel[channel].m_timerInfo.m_name);
+				SvUl::PeriodicTimer::CloseTimer(m_channel[channel].m_timerInfo.m_name.c_str());
 				if (m_channel[channel].m_resultFile.is_open())
 				{
 					m_channel[channel].m_resultFile.close();

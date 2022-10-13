@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <regex>
 #include "ConfigurationOuttakes.h"
 #include "ExtrasEngine.h"
 #include "RemoteMonitorListHelper.h"
@@ -39,8 +37,12 @@
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVAcquisitionDevice.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
+#include "InspectionEngine/SVFileAcquisitionClass.h"
 #include "InspectionEngine/SVVirtualCamera.h"
+#include "ObjectInterfaces/ICommand.h"
 #include "ObjectInterfaces/IObjectWriter.h"
+#include "SVFileAcquisitionDevice/SVFileAcquisitionDeviceParamEnum.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVIOLibrary/PlcOutputObject.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
@@ -48,11 +50,12 @@
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVRemoteInputObject.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVOLibrary/SVHardwareManifest.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVClock.h"
@@ -66,15 +69,10 @@
 #include "Triggering/SVTriggerClass.h"
 #include "Triggering/SVTriggerObject.h"
 #include "Triggering/SVTriggerProcessingClass.h"
-#include "SVOLibrary/SVHardwareManifest.h"
 #include "Tools/SVColorTool.h"
-#include "ObjectInterfaces/ICommand.h"
 #include "SVUtilityLibrary/AuditFiles.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/PeriodicTimer.h"
 #include "SVUtilityLibrary/ZipHelper.h"
-#include "InspectionEngine/SVFileAcquisitionClass.h"
-#include "SVFileAcquisitionDevice/SVFileAcquisitionDeviceParamEnum.h"
-
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -85,7 +83,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr int cOneMilliSecTimer = 10000;
+constexpr uint32_t cOneMilliSecTimer = 1000;
 constexpr int cModuleReadyChannel = 15;
 constexpr int cDiscreteInputCount = 8;
 constexpr int cDiscreteOutputCount = 16;
@@ -95,43 +93,6 @@ constexpr int cPlcOutputCount = 14;
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
 //SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectId);
 #pragma endregion Declarations
-
-void CycleTimer(std::atomic_bool& rRun, std::vector<SVPPQObject*> ppqPtrList)
-{
-	HANDLE timerHandle = ::CreateWaitableTimerEx(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
-	if (nullptr != timerHandle)
-	{
-		LARGE_INTEGER pauseTime;
-		pauseTime.QuadPart = -static_cast<int64_t>(cOneMilliSecTimer);
-		while (rRun)
-		{
-			if (0 == ::SetWaitableTimer(timerHandle, &pauseTime, 0, nullptr, nullptr, FALSE))
-			{
-				::CancelWaitableTimer(timerHandle);
-				::CloseHandle(timerHandle);
-				timerHandle = nullptr;
-				rRun = false;
-			}
-
-			if (nullptr != timerHandle)
-			{
-				if (WaitForSingleObject(timerHandle, INFINITE) == WAIT_OBJECT_0)
-				{
-					if (rRun)
-					{
-						for (const auto* pPpq : ppqPtrList)
-						{
-							pPpq->NotifyProcessTimerOutputs();
-						}
-					}
-				}
-			}
-		}
-		::CancelWaitableTimer(timerHandle);
-		::CloseHandle(timerHandle);
-	}
-}
-
 
 #pragma region Constructor
 SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(ObjectName)
@@ -3807,16 +3768,15 @@ HRESULT SVConfigurationObject::SetModuleReady(bool value)
 
 		if (requireTimer && value)
 		{
-			m_runTimer = true;
-			m_timerThread = std::thread(&CycleTimer, std::ref(m_runTimer), m_arPPQArray);
+			SvUl::TimerInfo timerInfo;
+			timerInfo.m_name = GetName();
+			timerInfo.m_period = cOneMilliSecTimer;
+			timerInfo.m_callbackFunction = [this](const std::string& rName, double timestamp) {  PpqTimer(rName, timestamp); };
+			SvUl::PeriodicTimer::SetTimer(timerInfo);
 		}
 		else
 		{
-			m_runTimer = false;
-			if (m_timerThread.joinable())
-			{
-				m_timerThread.join();
-			}
+			SvUl::PeriodicTimer::CloseTimer(GetName());
 		}
 
 		l_Status = m_pIOController->SetModuleReady(value);
@@ -5749,6 +5709,16 @@ void SVConfigurationObject::setIOIds(SVTreeType& rTree, SVTreeType::SVBranchHand
 	}
 }
 
+void SVConfigurationObject::PpqTimer(const std::string&, double timestamp) const
+{
+	for (auto* pPpq : m_arPPQArray)
+	{
+		if (nullptr != pPpq)
+		{
+			pPpq->NotifyProcessTimerOutputs(timestamp);
+		}
+	}
+}
 
 void RemoveFileFromConfig(LPCTSTR FilePath) //@TODO [Arvid][10.20][26.10.2021] this should be a member of SVConfigurationObject
 {

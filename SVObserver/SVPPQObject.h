@@ -219,7 +219,7 @@ public:
 
 	const SVIOEntryHostStructPtrVector& getUsedOutputs() const { return m_UsedOutputs; }
 
-	HRESULT NotifyProcessTimerOutputs() const;
+	void NotifyProcessTimerOutputs(double timestamp);
 
 	bool requiresTimer() const;
 	HRESULT setModuleReady(bool set);

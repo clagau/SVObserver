@@ -492,6 +492,8 @@ private:
 
 	void setIOIds(SVTreeType& rTree, SVTreeType::SVBranchHandle hInspectionProcess, SVInspectionProcess* pInspection) const;
 
+	void PpqTimer(const std::string& rName, double timestamp) const;
+
 #pragma region Member Variables
 	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	std::unique_ptr<SVIOController> m_pIOController;
@@ -501,7 +503,6 @@ private:
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
-	std::thread m_timerThread;
 	SVIMProductEnum m_eProductType{ SVIM_PRODUCT_TYPE_UNKNOWN };
 	volatile bool m_bConfigurationValid = false;
 
@@ -511,7 +512,6 @@ private:
 
 	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;
 	SvPb::InspectionList m_inspList4TRC;
-	std::atomic_bool m_runTimer {false};
 
 	///list with additional files for audit trail
 	mutable SvUl::AuditFiles m_AuditWhiteList;

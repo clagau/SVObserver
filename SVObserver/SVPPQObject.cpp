@@ -63,93 +63,6 @@ constexpr double TwentyPercent = .20;
 bool SVPPQObject::m_timerResolution {false};
 #pragma endregion Declarations
 
-void SVPPQObject::ProcessDelayOutputs()
-/// Used in data completion mode, but not in next trigger mode.
-/// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
-/// from m_ppPPQPositions via GetProductInfoStruct()
-/// If the delay time is already over, calls ProcessTimeDelay/AndDataComplete/Outputs().
-/// from where WriteOutputs() will be called.
-/// Otherwise, puts the trigger count back into the outputs delay queue, 
-{
-	double currentTime {SvUl::GetTimeStamp()};
-
-	SVProductInfoStruct* pProduct {nullptr};
-	while (0 < m_oOutputsDelayQueue.GetCount() && nullptr == pProduct)
-	{
-		long l_ProcessCount = 0;
-
-		if (m_oOutputsDelayQueue.RemoveHead(&l_ProcessCount))
-		{
-			pProduct = GetProductInfoStruct(l_ProcessCount);
-		}
-		else
-		{
-			break;
-		}
-
-		if (nullptr != pProduct)
-		{
-			if (0 < m_oOutputsDelayQueue.GetCount())
-			{
-				SVProductInfoStruct* l_pNextProduct = nullptr;
-
-				if (m_oOutputsDelayQueue.GetHead(&l_ProcessCount))
-				{
-					l_pNextProduct = GetProductInfoStruct(l_ProcessCount);
-				}
-
-				if (0 < m_outputDelay && nullptr != l_pNextProduct && l_pNextProduct->m_outputsInfo.m_EndOutputDelay <= currentTime)
-				{
-					pProduct = nullptr;
-				}
-			}
-		}
-
-		if (nullptr != pProduct)
-		{
-			// if time delay has not expired yet, then put back on the 
-			// m_oOutputsDelayQueue.  Then why did we remove it to begin with?
-			if (currentTime < pProduct->m_outputsInfo.m_EndOutputDelay)
-			{
-				m_NextOutputDelayTimestamp = pProduct->m_outputsInfo.m_EndOutputDelay;
-
-				m_oOutputsDelayQueue.AddHead(pProduct->triggerCount());
-
-				pProduct = nullptr;
-
-				break;
-			}
-			else
-			{
-				m_NextOutputDelayTimestamp = 0.0;
-			}
-		}
-	}
-
-	if (nullptr != pProduct)
-	{
-		switch (getPPQOutputMode())
-		{
-			case SvDef::SVPPQTimeDelayMode:
-			case SvDef::SVPPQExtendedTimeDelayMode:
-			{
-				ProcessOutputs(*pProduct);
-				break;
-			}
-			case SvDef::SVPPQTimeDelayAndDataCompleteMode:
-			case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
-			{
-				ProcessTimeDelayAndDataCompleteOutputs(*pProduct);
-				break;
-			}
-			default:
-			{
-				break;
-			}
-		}
-	}
-}
-
 void SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 {
 	if (false == rProduct.m_dataComplete)
@@ -165,23 +78,9 @@ void SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 			rProduct.m_outputsInfo.m_EndResetDelay = rProduct.m_outputsInfo.m_EndProcess + m_resetDelay;
 
 			m_oOutputsResetQueue.AddTail(rProduct.triggerCount());
-
+			m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::ResetOutputDelay]));
 		}
 		SetProductComplete(rProduct);
-	}
-}
-
-void SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct& p_rProduct)
-{
-	if (p_rProduct.m_dataComplete)
-	{
-		ProcessOutputs(p_rProduct);
-		m_NextOutputDelayTimestamp = 0.0;
-	}
-	else
-	{
-		m_NextOutputDelayTimestamp = p_rProduct.m_outputsInfo.m_EndOutputDelay;
-		m_oOutputsDelayQueue.AddHead(p_rProduct.triggerCount());
 	}
 }
 
@@ -1523,6 +1422,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 			// Set output data valid expire time
 			pProduct->m_outputsInfo.m_EndDataValidDelay = SvUl::GetTimeStamp() + m_DataValidDelay;
 			m_DataValidDelayQueue.AddTail(pProduct->triggerCount());
+			m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::DataValidDelay]));
 		}
 	}
 
@@ -2016,17 +1916,23 @@ void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
 			case SvDef::SVPPQExtendedTimeDelayMode:
 			case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 			{
+				long triggerCount {-1L};
 				if (0 == m_outputDelay)
 				{
-					m_oOutputsDelayQueue.AddTail(pProduct->triggerCount());
+					triggerCount = pProduct->triggerCount();
 				}
 				else if (0 < m_outputDelay)
 				{
 					pProduct->m_outputsInfo.m_EndOutputDelay = pProduct->m_triggerInfo.m_ToggleTimeStamp + m_outputDelay;
 					if (pProduct->m_outputsInfo.m_BeginProcess < pProduct->m_outputsInfo.m_EndOutputDelay)
 					{
-						m_oOutputsDelayQueue.AddTail(pProduct->triggerCount());
+						triggerCount = pProduct->triggerCount();
 					}
+				}
+				if (triggerCount > 0L)
+				{
+					m_oOutputsDelayQueue.AddTail(triggerCount);
+					m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::DelayOutputs]));
 				}
 				break;
 			}
@@ -2179,7 +2085,8 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t 
 		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_outputMode) ||
 			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_outputMode))
 		{
-			NotifyProcessTimerOutputs();
+			m_NextOutputDelayTimestamp = 0.0;
+			m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::DelayOutputs]));
 		}
 
 		setTRofInterest(rProduct, isReject);
@@ -2660,33 +2567,33 @@ void CALLBACK SVPPQObject::ProcessCallback(ULONG_PTR pCaller)
 	}
 }
 
-HRESULT SVPPQObject::NotifyProcessTimerOutputs() const
+void SVPPQObject::NotifyProcessTimerOutputs(double timestamp)
 {
-	HRESULT l_Status = S_OK;
-
 	const PpqProcessFunction* pProcessFunction {nullptr};
 
-	double currentTime = SvUl::GetTimeStamp();
 	if (0 < m_DataValidDelay)
 	{
-		if (0.0 < m_NextDataValidDelayTimestamp && m_NextDataValidDelayTimestamp <= currentTime)
+		if (0.0 < m_NextDataValidDelayTimestamp && m_NextDataValidDelayTimestamp <= timestamp)
 		{
+			m_NextDataValidDelayTimestamp = 0.0;
 			pProcessFunction = &m_processFunctions[PpqFunction::DataValidDelay];
 		}
 	}
 
 	if (nullptr == pProcessFunction && 0 < m_resetDelay)
 	{
-		if (0.0 < m_NextOutputResetTimestamp && m_NextOutputResetTimestamp <= currentTime)
+		if (0.0 < m_NextOutputResetTimestamp && m_NextOutputResetTimestamp <= timestamp)
 		{
+			m_NextOutputResetTimestamp = 0.0;
 			pProcessFunction = &m_processFunctions[PpqFunction::ResetOutputDelay];
 		}
 	}
 
 	if (nullptr == pProcessFunction && 0 < m_outputDelay)
 	{
-		if (0.0 < m_NextOutputDelayTimestamp && m_NextOutputDelayTimestamp <= currentTime)
+		if (0.0 < m_NextOutputDelayTimestamp && m_NextOutputDelayTimestamp <= timestamp)
 		{
+			m_NextOutputDelayTimestamp = 0.0;
 			pProcessFunction = &m_processFunctions[PpqFunction::DelayOutputs];
 		}
 	}
@@ -2695,8 +2602,6 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs() const
 	{
 		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (pProcessFunction));
 	}
-
-	return l_Status;
 }
 
 void SVPPQObject::ProcessTrigger()
@@ -2787,6 +2692,67 @@ void SVPPQObject::ProcessNotifyInspections()
 	std::swap(m_notifyInspectionList, notifyRestInspectionList);
 }
 
+void SVPPQObject::ProcessDelayOutputs()
+/// Used in data completion mode, but not in next trigger mode.
+/// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
+/// from m_ppPPQPositions via GetProductInfoStruct()
+/// If the delay time is already over, calls ProcessTimeDelay/AndDataComplete/Outputs().
+/// from where WriteOutputs() will be called.
+/// Otherwise, puts the trigger count back into the outputs delay queue, 
+{
+	double currentTime {SvUl::GetTimeStamp()};
+
+	while (0 < m_oOutputsDelayQueue.GetCount() && 0.0 == m_NextOutputDelayTimestamp)
+	{
+		SVProductInfoStruct* pProduct {nullptr};
+		long processCount = 0;
+
+		if (m_oOutputsDelayQueue.GetHead(&processCount))
+		{
+			pProduct = GetProductInfoStruct(processCount);
+		}
+
+		if (nullptr != pProduct)
+		{
+			if (currentTime >= pProduct->m_outputsInfo.m_EndOutputDelay)
+			{
+				m_oOutputsDelayQueue.RemoveHead(&processCount);
+				ProcessOutputs(*pProduct);
+			}
+			else
+			{
+				switch (getPPQOutputMode())
+				{
+					case SvDef::SVPPQTimeDelayMode:
+					case SvDef::SVPPQExtendedTimeDelayMode:
+					{
+						m_NextOutputDelayTimestamp = pProduct->m_outputsInfo.m_EndOutputDelay;
+						break;
+					}
+					case SvDef::SVPPQTimeDelayAndDataCompleteMode:
+					case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
+					{
+						if (pProduct->m_dataComplete)
+						{
+							m_oOutputsDelayQueue.RemoveHead(&processCount);
+							ProcessOutputs(*pProduct);
+						}
+						else
+						{
+							m_NextOutputDelayTimestamp = pProduct->m_outputsInfo.m_EndOutputDelay;
+						}
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
 void SVPPQObject::ProcessResetOutputs()
 {
 /// Removes the "head process count" from the outputs reset queue
@@ -2797,7 +2763,7 @@ void SVPPQObject::ProcessResetOutputs()
 /// If not, puts the original "head process count" back onto the outputs reset queue
 	double currentTime {SvUl::GetTimeStamp()};
 
-	while (0 < m_oOutputsResetQueue.GetCount())
+	while (0 < m_oOutputsResetQueue.GetCount() && 0.0 == m_NextOutputResetTimestamp)
 	{
 		SVProductInfoStruct* pProduct {nullptr};
 		long processCount {0L};
@@ -2806,10 +2772,6 @@ void SVPPQObject::ProcessResetOutputs()
 		{
 			pProduct = GetProductInfoStruct(processCount);
 		}
-		else
-		{
-			break;
-		}
 
 		if (nullptr != pProduct)
 		{
@@ -2817,12 +2779,10 @@ void SVPPQObject::ProcessResetOutputs()
 			{
 				m_oOutputsResetQueue.RemoveHead(&processCount);
 				ResetOutputs();
-				m_NextOutputResetTimestamp = 0.0;
 			}
 			else
 			{
 				m_NextOutputResetTimestamp = pProduct->m_outputsInfo.m_EndResetDelay;
-				break;
 			}
 		}
 		else
@@ -2836,58 +2796,38 @@ void SVPPQObject::ProcessDataValidDelay()
 {
 	double currentTime {SvUl::GetTimeStamp()};
 
-	SVProductInfoStruct* pProduct(nullptr);
-	while (0 < m_DataValidDelayQueue.GetCount() && nullptr == pProduct)
+	while (0 < m_DataValidDelayQueue.GetCount() && 0.0 == m_NextDataValidDelayTimestamp)
 	{
-		long ProcessCount = 0;
+		SVProductInfoStruct* pProduct {nullptr};
+		long processCount {0L};
 
-		if (m_DataValidDelayQueue.RemoveHead(&ProcessCount))
+		if (m_DataValidDelayQueue.GetHead(&processCount))
 		{
-			pProduct = GetProductInfoStruct(ProcessCount);
-		}
-		else
-		{
-			break;
-		}
-
-		if (nullptr != pProduct && 0 < m_DataValidDelayQueue.GetCount())
-		{
-			SVProductInfoStruct* pNextProduct(nullptr);
-
-			if (m_DataValidDelayQueue.GetHead(&ProcessCount))
-			{
-				pNextProduct = GetProductInfoStruct(ProcessCount);
-			}
-			if (nullptr != pNextProduct && pNextProduct->m_outputsInfo.m_EndDataValidDelay <= currentTime)
-			{
-				pProduct = nullptr;
-			}
+			pProduct = GetProductInfoStruct(processCount);
 		}
 
 		if (nullptr != pProduct)
 		{
-			if (currentTime < pProduct->m_outputsInfo.m_EndDataValidDelay)
+			if (currentTime >= pProduct->m_outputsInfo.m_EndDataValidDelay)
+			{
+				m_DataValidDelayQueue.RemoveHead(&processCount);
+				if (nullptr != m_pDataValid)
+				{
+					m_pOutputList->WriteOutputValue(m_pDataValid, pProduct->m_outputsInfo.m_DataValidResult);
+				}
+				if (nullptr != m_pOutputToggle)
+				{
+					m_pOutputList->WriteOutputValue(m_pOutputToggle, pProduct->m_outputsInfo.m_OutputToggleResult);
+				}
+			}
+			else
 			{
 				m_NextDataValidDelayTimestamp = pProduct->m_outputsInfo.m_EndDataValidDelay;
-
-				m_DataValidDelayQueue.AddHead(pProduct->triggerCount());
-
-				pProduct = nullptr;
-				break;
 			}
 		}
-	}
-
-	if (nullptr != pProduct)
-	{
-		m_NextDataValidDelayTimestamp = 0.0;
-		if (nullptr != m_pDataValid)
+		else
 		{
-			m_pOutputList->WriteOutputValue(m_pDataValid, pProduct->m_outputsInfo.m_DataValidResult);
-		}
-		if (nullptr != m_pOutputToggle)
-		{
-			m_pOutputList->WriteOutputValue(m_pOutputToggle, pProduct->m_outputsInfo.m_OutputToggleResult);
+			m_DataValidDelayQueue.RemoveHead(&processCount);
 		}
 	}
 }
