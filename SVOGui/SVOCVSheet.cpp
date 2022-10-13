@@ -27,7 +27,7 @@ namespace SvOg
 	, m_MatchStringParamsDlg{ *this }
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
-	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	{
 		m_psh.dwFlags |= PSH_NOAPPLYNOW;
 

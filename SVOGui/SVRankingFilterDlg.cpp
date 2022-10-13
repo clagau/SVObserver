@@ -26,7 +26,7 @@ namespace SvOg
 	SVRankingFilterDlg::SVRankingFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent) : CDialog(SVRankingFilterDlg::IDD, pParent)
 		,m_filterID(filterId)
 		,m_InspectionID(inspectionId)
-		,m_values{ SvOg::BoundValues{ inspectionId, filterId } }
+		,m_values{ SvOgu::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVRankingFilterDlg)
 		//}}AFX_DATA_INIT
@@ -62,7 +62,7 @@ namespace SvOg
 			}// end for
 		}// end for
 
-		m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
 

@@ -7,8 +7,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "BlobAnalyzer2Draw.h"
-#include "BoundValue.h"
-#include "GuiValueHelper.h"
+#include "SVOGuiUtility/BoundValue.h"
+#include "SVOGuiUtility/GuiValueHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -46,7 +46,7 @@ namespace SvOg
 		, m_InspectionID(inspectionId)
 		, m_analyzerID(analyzerId)
 		, m_drawTaskId(drawTaskId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, drawTaskId } }
+		, m_Values{ SvOgu::BoundValues{ inspectionId, drawTaskId } }
 	{
 	}
 
@@ -264,11 +264,11 @@ namespace SvOg
 		m_background_color2 = m_Values.Get<long>(SvPb::BackgroundColor2EId);
 		m_background_color3 = m_Values.Get<long>(SvPb::BackgroundColor3EId);
 		fillStepNames();
-		m_DrawTypeArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(SvPb::DrawTypesEId));
-		m_BlobTypeArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(SvPb::BlobTypesEId));
-		m_Color1Array = ConvertVariantSafeArrayToVector<byte>(m_Values.Get<_variant_t>(SvPb::Color1EId));
-		m_Color2Array = ConvertVariantSafeArrayToVector<byte>(m_Values.Get<_variant_t>(SvPb::Color2EId));
-		m_Color3Array = ConvertVariantSafeArrayToVector<byte>(m_Values.Get<_variant_t>(SvPb::Color3EId));
+		m_DrawTypeArray = SvOgu::ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(SvPb::DrawTypesEId));
+		m_BlobTypeArray = SvOgu::ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(SvPb::BlobTypesEId));
+		m_Color1Array = SvOgu::ConvertVariantSafeArrayToVector<byte>(m_Values.Get<_variant_t>(SvPb::Color1EId));
+		m_Color2Array = SvOgu::ConvertVariantSafeArrayToVector<byte>(m_Values.Get<_variant_t>(SvPb::Color2EId));
+		m_Color3Array = SvOgu::ConvertVariantSafeArrayToVector<byte>(m_Values.Get<_variant_t>(SvPb::Color3EId));
 
 		reset();
 
@@ -305,15 +305,15 @@ namespace SvOg
 			}
 		}
 		m_Values.Set<CString>(SvPb::DrawAdditionalImageStepNamesEId, tmpString);
-		_variant_t value = ConvertVectorToVariantSafeArray<std::vector<long>>(m_DrawTypeArray);
+		_variant_t value = SvOgu::ConvertVectorToVariantSafeArray<std::vector<long>>(m_DrawTypeArray);
 		m_Values.Set<_variant_t>(SvPb::DrawTypesEId, value);
-		value = ConvertVectorToVariantSafeArray<std::vector<long>>(m_BlobTypeArray);
+		value = SvOgu::ConvertVectorToVariantSafeArray<std::vector<long>>(m_BlobTypeArray);
 		m_Values.Set<_variant_t>(SvPb::BlobTypesEId, value);
-		value = ConvertVectorToVariantSafeArray<std::vector<byte>>(m_Color1Array);
+		value = SvOgu::ConvertVectorToVariantSafeArray<std::vector<byte>>(m_Color1Array);
 		m_Values.Set<_variant_t>(SvPb::Color1EId, value);
-		value = ConvertVectorToVariantSafeArray<std::vector<byte>>(m_Color2Array);
+		value = SvOgu::ConvertVectorToVariantSafeArray<std::vector<byte>>(m_Color2Array);
 		m_Values.Set<_variant_t>(SvPb::Color2EId, value);
-		value = ConvertVectorToVariantSafeArray<std::vector<byte>>(m_Color3Array);
+		value = SvOgu::ConvertVectorToVariantSafeArray<std::vector<byte>>(m_Color3Array);
 		m_Values.Set<_variant_t>(SvPb::Color3EId, value);
 		m_Values.Commit();
 		

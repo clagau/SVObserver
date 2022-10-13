@@ -97,7 +97,7 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t
 , m_pParent(Parent)
 , m_inspectionId(inspectionId)
 , m_taskId(taskObjectId)
-, m_ValueController{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+, m_ValueController{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 , m_alternativeImagePaths(m_ValueController, inspectionId, taskObjectId)
 {
 	m_strCaption = m_psp.pszTitle;
@@ -183,7 +183,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	m_pTool->setImageArchiveList(m_ImagesToBeArchived);
 
-	m_ValueController.Commit(SvOg::PostAction::doReset);
+	m_ValueController.Commit(SvOgu::PostAction::doReset);
 
 	if (nullptr != m_pParent)
 	{
@@ -245,7 +245,7 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 bool SVTADlgArchiveImagePage::validateArchiveImageFilepath()
 {
 	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePathButton.GetCheck() ? true : false);
-	m_ValueController.Commit(SvOg::PostAction::doNothing); //changes need to be committed before paths can be built
+	m_ValueController.Commit(SvOgu::PostAction::doNothing); //changes need to be committed before paths can be built
 
 	if (!m_pTool->updateCurrentImagePathRoot(nullptr, true))
 	{
@@ -292,7 +292,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_TreeBitmap.LoadBitmap( IDB_TREE );
 	m_Select.SetBitmap( static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()) );
 	
-	m_maximumImageQueueLengthWidgetHelper = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_maximumImageQueueLengthEditBox, m_maximumImageQueueLengthButton, m_inspectionId, m_taskId, SvPb::MaximumImageQueueLengthEId, &m_ValueController);
+	m_maximumImageQueueLengthWidgetHelper = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_maximumImageQueueLengthEditBox, m_maximumImageQueueLengthButton, m_inspectionId, m_taskId, SvPb::MaximumImageQueueLengthEId, &m_ValueController);
 
 	CDWordArray dwaIndex;
 	
@@ -323,9 +323,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_maximumImageQueueLengthEditBox.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
 	m_maximumImageQueueLengthButton.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
 
-	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController);
-	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
-	m_ImageFilepathrootWidgetHelpers[2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot3, m_ImageFilepathroot3Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart3EId, &m_ValueController);
+	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController);
+	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
+	m_ImageFilepathrootWidgetHelpers[2] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ImageFilepathroot3, m_ImageFilepathroot3Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart3EId, &m_ValueController);
 	m_alternativeImagePaths.init();
 
 	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
@@ -568,11 +568,11 @@ void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 		}
 	}
 
-	auto data = m_ValueController.Get<SvOg::LinkedValueData>(SvPb::ArchiveImageFileRootPart1EId);
+	auto data = m_ValueController.Get<SvOgu::LinkedValueData>(SvPb::ArchiveImageFileRootPart1EId);
 	data.m_selectedOption = SvPb::DirectValue;
 	data.m_directValue = firstPartOfImageArchivePathRoot;
 	data.m_Value = data.m_directValue;
-	m_ValueController.Set<SvOg::LinkedValueData>(SvPb::ArchiveImageFileRootPart1EId, data);
+	m_ValueController.Set<SvOgu::LinkedValueData>(SvPb::ArchiveImageFileRootPart1EId, data);
 	m_ImageFilepathrootWidgetHelpers[0]->update();
 }
 

@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVFillBlobDlg.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 
 #pragma endregion Includes
 
@@ -31,7 +31,7 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVFillBlobDlg::SVFillBlobDlg(ValueController& rValues, CWnd* pParent /*=nullptr*/)
+	SVFillBlobDlg::SVFillBlobDlg(SvOgu::ValueController& rValues, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVFillBlobDlg::IDD, pParent)
 	, m_rValues(rValues)
 	{

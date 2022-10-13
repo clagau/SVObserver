@@ -38,7 +38,7 @@ namespace SvOg
 	: CPropertyPage(IDD)
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
-	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 
@@ -75,8 +75,8 @@ namespace SvOg
 			m_values.Set<long>(SvPb::WarpTypeEId, Value);
 		}
 		m_values.Set<double>(SvPb::WarpAngleEId, m_dWarpAngle);
-		SvOg::PostAction commitAction {SvOg::PostAction::doRunOnce};
-		commitAction = commitAction | (ResetTool ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
+		SvOgu::PostAction commitAction {SvOgu::PostAction::doRunOnce};
+		commitAction = commitAction | (ResetTool ? SvOgu::PostAction::doReset : SvOgu::PostAction::doNothing);
 		Result = m_values.Commit(commitAction);
 
 		return Result;

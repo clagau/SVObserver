@@ -12,8 +12,8 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/Color.h"
-#include "DisplayHelper.h"
-#include "DrawToolHelper.h"
+#include "SVOGuiUtility/DisplayHelper.h"
+#include "SVOGuiUtility/DrawToolHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -67,7 +67,7 @@ TADialogDrawPage::TADialogDrawPage(uint32_t inspectionId, uint32_t taskObjectId)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
 	, m_ImageController {inspectionId, taskObjectId, SvPb::SVNotSetSubObjectType}
-	, m_pValues {std::make_shared<ValueController>(SvOg::BoundValues {inspectionId, taskObjectId})}
+	, m_pValues {std::make_shared<SvOgu::ValueController>(SvOgu::BoundValues {inspectionId, taskObjectId})}
 	, m_treeCtrl(inspectionId)
 	, m_drawToolController{*m_pValues, m_editCtrlDataList}
 {
@@ -161,14 +161,14 @@ BOOL TADialogDrawPage::OnInitDialog()
 			[](const auto& rEntry) -> SvUl::NameClassIdPair { return {rEntry.objectname(), rEntry.classid()}; });
 	}
 
-	auto hItem = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::MainNode}, TVI_ROOT, "Base Image");
-	m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::GeneralData, m_pValues}, hItem, "");
-	auto hLastInterNode = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::SizeData, m_pValues}, hItem, "");
+	auto hItem = m_treeCtrl.InsertNode({m_TaskObjectID, SvOgu::DrawNodeType::BaseImage, SvOgu::DrawNodeSubType::MainNode}, TVI_ROOT, "Base Image");
+	m_treeCtrl.InsertNode({m_TaskObjectID, SvOgu::DrawNodeType::BaseImage, SvOgu::DrawNodeSubType::GeneralData, m_pValues}, hItem, "");
+	auto hLastInterNode = m_treeCtrl.InsertNode({m_TaskObjectID, SvOgu::DrawNodeType::BaseImage, SvOgu::DrawNodeSubType::SizeData, m_pValues}, hItem, "");
 	if (false == m_drawToolController.isAutoFit() || false == m_drawToolController.useBackgroundImage())
 	{
-		hLastInterNode = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::Color, m_pValues}, hItem, "");
+		hLastInterNode = m_treeCtrl.InsertNode({m_TaskObjectID, SvOgu::DrawNodeType::BaseImage, SvOgu::DrawNodeSubType::Color, m_pValues}, hItem, "");
 	}
-	auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(hItem));
+	auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(hItem));
 	if (nullptr != pData)
 	{
 		pData->m_lastInternItem = hLastInterNode;
@@ -259,15 +259,15 @@ void TADialogDrawPage::OnButtonCheck(UINT nID)
 	int index(nID - IDC_CHECK1);
 	if (0 <= index && 5 > index && 0 != m_currentItem)
 	{
-		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData)
 		{
 			switch (pData->m_type)
 			{
-				case DrawNodeType::BaseImage:
+				case SvOgu::DrawNodeType::BaseImage:
 					switch (pData->m_subType)
 					{
-						case DrawNodeSubType::GeneralData:
+						case SvOgu::DrawNodeSubType::GeneralData:
 							m_drawToolController.setIsColor( reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check1])->GetCheck() );
 							m_drawToolController.setUseBackgroundImage( reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check2])->GetCheck() );
 							m_drawToolController.setAutoFit(reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check5])->GetCheck());
@@ -276,7 +276,7 @@ void TADialogDrawPage::OnButtonCheck(UINT nID)
 							setBaseImageGeneralCtrl();
 							m_drawToolController.setBaseImageGeneralData();
 							break;
-						case DrawNodeSubType::SizeData:
+						case SvOgu::DrawNodeSubType::SizeData:
 							m_drawToolController.setAutoFit(reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check1])->GetCheck());
 							m_drawToolController.setBaseImageSizeData();
 							setOrRemoveColorItemForBase();
@@ -286,10 +286,10 @@ void TADialogDrawPage::OnButtonCheck(UINT nID)
 							break;
 					}
 					break;
-				case DrawNodeType::Text:
+				case SvOgu::DrawNodeType::Text:
 					switch (pData->m_subType)
 					{
-						case DrawNodeSubType::Color:
+						case SvOgu::DrawNodeSubType::Color:
 							if (nullptr != pData->m_pValues)
 							{
 								pData->m_pValues->Set<bool>(SvPb::IsBackgroundTransparentEId, reinterpret_cast<CButton*>(&m_BSOAControls[BOSAEnum::Check2])->GetCheck());
@@ -312,12 +312,12 @@ void TADialogDrawPage::OnButtonButton(UINT nID)
 	int index(nID - IDC_BUTTON1);
 	if (0 <= index && 6 > index && 0 != m_currentItem)
 	{
-		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData)
 		{
 			switch (pData->m_subType)
 			{
-				case DrawNodeSubType::MainNode:
+				case SvOgu::DrawNodeSubType::MainNode:
 					SvPb::ClassIdEnum classID = static_cast<SvPb::ClassIdEnum>(m_comboBox2.getSelectedValue());
 					switch (index)
 					{
@@ -334,38 +334,38 @@ void TADialogDrawPage::OnButtonButton(UINT nID)
 						case 3: //add begin
 							switch (pData->m_type)
 							{
-								case DrawNodeType::BaseImage:
-									addNodeInto(m_currentItem, classID, DrawTaskTree::addPosEnum::IntoBegin);
+								case SvOgu::DrawNodeType::BaseImage:
+									addNodeInto(m_currentItem, classID, SvOgu::DrawTaskTree::addPosEnum::IntoBegin);
 									break;
-								case DrawNodeType::Rectangle:
-								case DrawNodeType::Oval:
-								case DrawNodeType::Segment:
-								case DrawNodeType::Triangle:
-								case DrawNodeType::Lines:
-								case DrawNodeType::Points:
-								case DrawNodeType::Polygon:
-								case DrawNodeType::Text:
-								case DrawNodeType::BucketFill:
-									addNodeInto(m_currentItem, classID, DrawTaskTree::addPosEnum::Before);
+								case SvOgu::DrawNodeType::Rectangle:
+								case SvOgu::DrawNodeType::Oval:
+								case SvOgu::DrawNodeType::Segment:
+								case SvOgu::DrawNodeType::Triangle:
+								case SvOgu::DrawNodeType::Lines:
+								case SvOgu::DrawNodeType::Points:
+								case SvOgu::DrawNodeType::Polygon:
+								case SvOgu::DrawNodeType::Text:
+								case SvOgu::DrawNodeType::BucketFill:
+									addNodeInto(m_currentItem, classID, SvOgu::DrawTaskTree::addPosEnum::Before);
 									break;
 							}
 							break;
 						case 4: //add end
 							switch (pData->m_type)
 							{
-								case DrawNodeType::BaseImage:
-									addNodeInto(m_currentItem, classID, DrawTaskTree::addPosEnum::IntoEnd);
+								case SvOgu::DrawNodeType::BaseImage:
+									addNodeInto(m_currentItem, classID, SvOgu::DrawTaskTree::addPosEnum::IntoEnd);
 									break;
-								case DrawNodeType::Rectangle:
-								case DrawNodeType::Oval:
-								case DrawNodeType::Segment:
-								case DrawNodeType::Triangle:
-								case DrawNodeType::Lines:
-								case DrawNodeType::Points:
-								case DrawNodeType::Polygon:
-								case DrawNodeType::Text:
-								case DrawNodeType::BucketFill:
-									addNodeInto(m_currentItem, classID, DrawTaskTree::addPosEnum::After);
+								case SvOgu::DrawNodeType::Rectangle:
+								case SvOgu::DrawNodeType::Oval:
+								case SvOgu::DrawNodeType::Segment:
+								case SvOgu::DrawNodeType::Triangle:
+								case SvOgu::DrawNodeType::Lines:
+								case SvOgu::DrawNodeType::Points:
+								case SvOgu::DrawNodeType::Polygon:
+								case SvOgu::DrawNodeType::Text:
+								case SvOgu::DrawNodeType::BucketFill:
+									addNodeInto(m_currentItem, classID, SvOgu::DrawTaskTree::addPosEnum::After);
 									break;
 							}
 							break;
@@ -383,7 +383,7 @@ void TADialogDrawPage::OnColorButton(UINT nID)
 	int index(nID - IDC_COLOR_BUTTON);
 	if (0 <= index && 2 > index && 0 != m_currentItem)
 	{
-		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData && nullptr != pData->m_pValues)
 		{
 			if (m_drawToolController.isColor())
@@ -401,7 +401,7 @@ void TADialogDrawPage::OnColorButton(UINT nID)
 					pData->m_pValues->Set(redId, GetRValue(dlg.GetColor()));
 					pData->m_pValues->Set(greenId, GetGValue(dlg.GetColor()));
 					pData->m_pValues->Set(blueId, GetBValue(dlg.GetColor()));
-					pData->m_pValues->Commit(PostAction::doReset | PostAction::doRunOnce, true);
+					pData->m_pValues->Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce, true);
 					refresh();
 					setBOSACtrl();
 				}
@@ -443,15 +443,15 @@ void TADialogDrawPage::OnKillFocusEdit(UINT nID)
 		setBOSAData();
 		if (0 != m_currentItem)
 		{
-			auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
-			if (nullptr != pData && DrawNodeSubType::Color == pData->m_subType && nullptr != pData->m_pValues)
+			auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+			if (nullptr != pData && SvOgu::DrawNodeSubType::Color == pData->m_subType && nullptr != pData->m_pValues)
 			{
 				byte redValue = pData->m_pValues->Get<byte>(SvPb::Color1EId);
 				byte greenValue = pData->m_pValues->Get<byte>(SvPb::Color2EId);
 				byte blueValue = pData->m_pValues->Get<byte>(SvPb::Color3EId);
 				m_colorButton.SetFaceColor(RGB(redValue, greenValue, blueValue));
 
-				if (DrawNodeType::Text == pData->m_type)
+				if (SvOgu::DrawNodeType::Text == pData->m_type)
 				{
 					redValue = pData->m_pValues->Get<byte>(SvPb::BackgroundColor1EId);
 					greenValue = pData->m_pValues->Get<byte>(SvPb::BackgroundColor2EId);
@@ -470,7 +470,7 @@ bool TADialogDrawPage::setBOSAData()
 	UpdateData();
 	if (0 != m_currentItem)
 	{
-		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData)
 		{
 			return m_drawToolController.setBOSAData(*pData);
@@ -483,10 +483,10 @@ void TADialogDrawPage::setBOSACtrl()
 {
 	if (0 != m_currentItem)
 	{
-		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData)
 		{
-			if (DrawNodeSubType::MainNode == pData->m_subType)
+			if (SvOgu::DrawNodeSubType::MainNode == pData->m_subType)
 			{
 				setAddTaskCtrl(*pData);
 			}
@@ -494,16 +494,16 @@ void TADialogDrawPage::setBOSACtrl()
 			{
 				switch (pData->m_type)
 				{
-					case DrawNodeType::BaseImage:
+					case SvOgu::DrawNodeType::BaseImage:
 						switch (pData->m_subType)
 						{
-							case DrawNodeSubType::GeneralData:
+							case SvOgu::DrawNodeSubType::GeneralData:
 								setBaseImageGeneralCtrl();
 								break;
-							case DrawNodeSubType::SizeData:
+							case SvOgu::DrawNodeSubType::SizeData:
 								setBaseImageSizeCtrl();
 								break;
-							case DrawNodeSubType::Color:
+							case SvOgu::DrawNodeSubType::Color:
 								setColorCtrl(*pData);
 								break;
 							default:
@@ -513,22 +513,22 @@ void TADialogDrawPage::setBOSACtrl()
 					default:
 						switch (pData->m_subType)
 						{
-							case DrawNodeSubType::GeneralData:
+							case SvOgu::DrawNodeSubType::GeneralData:
 								setGeneralCtrl(*pData);
 								break;
-							case DrawNodeSubType::Position:
+							case SvOgu::DrawNodeSubType::Position:
 								setPositionCtrl(*pData);
 								break;
-							case DrawNodeSubType::Points:
+							case SvOgu::DrawNodeSubType::Points:
 								setPointsCtrl(*pData);
 								break;
-							case DrawNodeSubType::SizeData:
+							case SvOgu::DrawNodeSubType::SizeData:
 								setSizeCtrl(*pData);
 								break;
-							case DrawNodeSubType::Color:
+							case SvOgu::DrawNodeSubType::Color:
 								setColorCtrl(*pData);
 								break;
-							case DrawNodeSubType::Angle:
+							case SvOgu::DrawNodeSubType::Angle:
 								setAngleCtrl(*pData);
 								break;
 							default:
@@ -543,11 +543,11 @@ void TADialogDrawPage::setBOSACtrl()
 	}
 }
 
-void TADialogDrawPage::setAddTaskCtrl(const TreeNodeData& rData)
+void TADialogDrawPage::setAddTaskCtrl(const SvOgu::TreeNodeData& rData)
 {
 	switch (rData.m_type)
 	{
-		case DrawNodeType::BaseImage:
+		case SvOgu::DrawNodeType::BaseImage:
 			m_BSOAControls[BOSAEnum::Button1].ShowWindow(SW_SHOW);
 			m_BSOAControls[BOSAEnum::Button1].SetWindowText("Clear all");
 			m_BSOAControls[BOSAEnum::Button4].ShowWindow(SW_SHOW);
@@ -555,15 +555,15 @@ void TADialogDrawPage::setAddTaskCtrl(const TreeNodeData& rData)
 			m_BSOAControls[BOSAEnum::Button5].ShowWindow(SW_SHOW);
 			m_BSOAControls[BOSAEnum::Button5].SetWindowText("Add End");
 			break;
-		case DrawNodeType::Rectangle:
-		case DrawNodeType::Oval:
-		case DrawNodeType::Segment:
-		case DrawNodeType::Triangle:
-		case DrawNodeType::Lines:
-		case DrawNodeType::Points:
-		case DrawNodeType::Polygon:
-		case DrawNodeType::Text:
-		case DrawNodeType::BucketFill:
+		case SvOgu::DrawNodeType::Rectangle:
+		case SvOgu::DrawNodeType::Oval:
+		case SvOgu::DrawNodeType::Segment:
+		case SvOgu::DrawNodeType::Triangle:
+		case SvOgu::DrawNodeType::Lines:
+		case SvOgu::DrawNodeType::Points:
+		case SvOgu::DrawNodeType::Polygon:
+		case SvOgu::DrawNodeType::Text:
+		case SvOgu::DrawNodeType::BucketFill:
 			m_BSOAControls[BOSAEnum::Button2].ShowWindow(SW_SHOW);
 			m_BSOAControls[BOSAEnum::Button2].SetWindowText("Delete Item");
 			m_BSOAControls[BOSAEnum::Button4].ShowWindow(SW_SHOW);
@@ -624,7 +624,7 @@ void TADialogDrawPage::setBaseImageGeneralCtrl()
 				auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[BOSAEnum::Edit3]);
 				auto* pButton = static_cast<CButton*>(&m_BSOAControls[BOSAEnum::LinkedValueButton3]);
 				assert(pEdit && pButton);
-				ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionXEId, m_pValues.get());
+				ctrlDataIter->m_Widget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionXEId, m_pValues.get());
 			}
 
 			nId = static_cast<UINT>(m_BSOAControls[BOSAEnum::Edit4].GetDlgCtrlID());
@@ -635,7 +635,7 @@ void TADialogDrawPage::setBaseImageGeneralCtrl()
 				auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[BOSAEnum::Edit4]);
 				auto* pButton = static_cast<CButton*>(&m_BSOAControls[BOSAEnum::LinkedValueButton4]);
 				assert(pEdit && pButton);
-				ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionYEId, m_pValues.get());
+				ctrlDataIter->m_Widget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionYEId, m_pValues.get());
 			}
 		}
 		else
@@ -681,7 +681,7 @@ void TADialogDrawPage::setBaseImageSizeCtrl()
 	UpdateData(false);
 }
 
-void TADialogDrawPage::setSizeCtrl(TreeNodeData& rData)
+void TADialogDrawPage::setSizeCtrl(SvOgu::TreeNodeData& rData)
 {
 	assert(rData.m_pValues);
 	setControl(BOSAEnum::Static2, "Width:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::WidthEId, rData);
@@ -689,14 +689,14 @@ void TADialogDrawPage::setSizeCtrl(TreeNodeData& rData)
 	UpdateData(false);
 }
 
-void TADialogDrawPage::setGeneralCtrl(TreeNodeData& rData)
+void TADialogDrawPage::setGeneralCtrl(SvOgu::TreeNodeData& rData)
 {
 	assert(rData.m_pValues);
 	if (nullptr != rData.m_pValues)
 	{
 		switch (rData.m_type)
 		{
-			case DrawNodeType::Text:
+			case SvOgu::DrawNodeType::Text:
 			{
 				setControl(BOSAEnum::Static1, "Text:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::TextEId, rData);
 				auto list = rData.m_pValues->GetEnumTypes(SvPb::FontSizeEId);
@@ -747,12 +747,12 @@ void TADialogDrawPage::setGeneralCtrl(TreeNodeData& rData)
 	}
 }
 
-void TADialogDrawPage::setPositionCtrl(TreeNodeData& rData)
+void TADialogDrawPage::setPositionCtrl(SvOgu::TreeNodeData& rData)
 {
 	switch (rData.m_type)
 	{
-		case DrawNodeType::Oval:
-		case DrawNodeType::Segment:
+		case SvOgu::DrawNodeType::Oval:
+		case SvOgu::DrawNodeType::Segment:
 			setControl(BOSAEnum::Static2, "CenterX:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::CenterXEId, rData);
 			setControl(BOSAEnum::Static3, "CenterY:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::CenterYEId, rData);
 			break;
@@ -764,12 +764,12 @@ void TADialogDrawPage::setPositionCtrl(TreeNodeData& rData)
 	UpdateData(false);
 }
 
-void TADialogDrawPage::setPointsCtrl(TreeNodeData& rData)
+void TADialogDrawPage::setPointsCtrl(SvOgu::TreeNodeData& rData)
 {
 	assert(rData.m_pValues);
 	switch (rData.m_type)
 	{
-		case DrawNodeType::Triangle:
+		case SvOgu::DrawNodeType::Triangle:
 		{
 			setControl(BOSAEnum::Static1, "Point 1:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, rData);
 			setControl(BOSAEnum::Static2, "Point 2:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::X2EId, rData);
@@ -779,7 +779,7 @@ void TADialogDrawPage::setPointsCtrl(TreeNodeData& rData)
 			setControl(BOSAEnum::Edit8, BOSAEnum::LinkedValueButton8, SvPb::Y3EId, rData);
 		}
 		break;
-		case DrawNodeType::Lines:
+		case SvOgu::DrawNodeType::Lines:
 		{
 			setControl(BOSAEnum::Static1, "Points 1:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, rData);
 			setControl(BOSAEnum::Static2, "Points 2:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::X2EId, rData);
@@ -787,15 +787,15 @@ void TADialogDrawPage::setPointsCtrl(TreeNodeData& rData)
 			setControl(BOSAEnum::Edit7, BOSAEnum::LinkedValueButton7, SvPb::Y2EId, rData);
 		}
 		break;
-		case DrawNodeType::Points:
-		case DrawNodeType::Polygon:
+		case SvOgu::DrawNodeType::Points:
+		case SvOgu::DrawNodeType::Polygon:
 		{
 			setControl(BOSAEnum::Static1, "Points X:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, rData);
 			setControl(BOSAEnum::Static2, "Points Y:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::Y1EId, rData);
 		}
 		break;
-		case DrawNodeType::Text:
-		case DrawNodeType::BucketFill:
+		case SvOgu::DrawNodeType::Text:
+		case SvOgu::DrawNodeType::BucketFill:
 		{
 			setControl(BOSAEnum::Static1, "Point:", BOSAEnum::Edit1, BOSAEnum::LinkedValueButton1, SvPb::X1EId, rData);
 			setControl(BOSAEnum::Edit6, BOSAEnum::LinkedValueButton6, SvPb::Y1EId, rData);
@@ -808,7 +808,7 @@ void TADialogDrawPage::setPointsCtrl(TreeNodeData& rData)
 	UpdateData(false);
 }
 
-void TADialogDrawPage::setColorCtrl(TreeNodeData& rData)
+void TADialogDrawPage::setColorCtrl(SvOgu::TreeNodeData& rData)
 {
 	assert(rData.m_pValues);
 	if (m_drawToolController.isColor())
@@ -835,7 +835,7 @@ void TADialogDrawPage::setColorCtrl(TreeNodeData& rData)
 		setValueCtrlData(SvPb::Color1EId, *rData.m_pValues, BOSAEnum::Edit2, 0, 255, "Gray");
 	}
 	
-	if (DrawNodeType::Text == rData.m_type && nullptr != rData.m_pValues)
+	if (SvOgu::DrawNodeType::Text == rData.m_type && nullptr != rData.m_pValues)
 	{
 		m_BSOAControls[BOSAEnum::Check2].ShowWindow(SW_SHOW);
 		m_BSOAControls[BOSAEnum::Check2].SetWindowText("Background Transparent");
@@ -862,10 +862,10 @@ void TADialogDrawPage::setColorCtrl(TreeNodeData& rData)
 	}
 }
 
-void TADialogDrawPage::setAngleCtrl(TreeNodeData& rData)
+void TADialogDrawPage::setAngleCtrl(SvOgu::TreeNodeData& rData)
 {
 	assert(rData.m_pValues);
-	assert(SvOg::DrawNodeType::Segment == rData.m_type);
+	assert(SvOgu::DrawNodeType::Segment == rData.m_type);
 
 	setControl(BOSAEnum::Static2, "Start Angle:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::StartAngleEId, rData);
 	setControl(BOSAEnum::Static3, "Stop Angle:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::EndAngleEId, rData);
@@ -876,18 +876,18 @@ void TADialogDrawPage::OnSelchangeCombo2()
 {
 	if (0 != m_currentItem)
 	{
-		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData)
 		{
 			switch (pData->m_type)
 			{
-				case DrawNodeType::BaseImage:
+				case SvOgu::DrawNodeType::BaseImage:
 					switch (pData->m_subType)
 					{
-						case DrawNodeSubType::MainNode:
+						case SvOgu::DrawNodeSubType::MainNode:
 							//Nothing to do, because the value is only needed if a button is pressed
 							break;
-						case DrawNodeSubType::GeneralData:
+						case SvOgu::DrawNodeSubType::GeneralData:
 							OnSelchangeBackGroundCombo();
 							break;
 					}
@@ -895,7 +895,7 @@ void TADialogDrawPage::OnSelchangeCombo2()
 				default:
 					switch (pData->m_subType)
 					{
-						case DrawNodeSubType::GeneralData:
+						case SvOgu::DrawNodeSubType::GeneralData:
 							OnSelchangeGeneralCombo(*pData);
 							break;
 					}
@@ -937,7 +937,7 @@ void TADialogDrawPage::OnSelchangeBackGroundCombo()
 	}
 }
 
-void TADialogDrawPage::OnSelchangeGeneralCombo(TreeNodeData& rData)
+void TADialogDrawPage::OnSelchangeGeneralCombo(SvOgu::TreeNodeData& rData)
 {
 	UpdateData(TRUE); // get data from dialog
 
@@ -948,7 +948,7 @@ void TADialogDrawPage::OnSelchangeGeneralCombo(TreeNodeData& rData)
 		{
 			switch (rData.m_type)
 			{
-				case DrawNodeType::Text:
+				case SvOgu::DrawNodeType::Text:
 				{
 					rData.m_pValues->Set<long>(SvPb::FontSizeEId, static_cast<long>(m_comboBox2Enum.GetCurSelItemData()));
 					break;
@@ -1021,12 +1021,12 @@ void TADialogDrawPage::OnLButtonUp(UINT nFlags, CPoint point)
 
 void TADialogDrawPage::refreshNodeText(HTREEITEM hItem)
 {
-	auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(hItem));
+	auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(hItem));
 	if (0 != hItem && nullptr != pData)
 	{
 		std::string textStr = m_drawToolController.getNodeText(*pData);
 
-		if (DrawNodeType::BaseImage == pData->m_type && DrawNodeSubType::GeneralData == pData->m_subType && m_drawToolController.useBackgroundImage())
+		if (SvOgu::DrawNodeType::BaseImage == pData->m_type && SvOgu::DrawNodeSubType::GeneralData == pData->m_subType && m_drawToolController.useBackgroundImage())
 		{
 			auto [_, selectedImageName] = getBGImageNamePair();
 			textStr += selectedImageName;
@@ -1075,7 +1075,7 @@ void TADialogDrawPage::resetOverlay()
 	m_handleToOverlayObjects = -1;
 	if (0 != m_currentItem)
 	{
-		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData && pData->m_pValues)
 		{
 			auto parMap = createOverlayData(pData->m_type, *pData->m_pValues);
@@ -1083,7 +1083,7 @@ void TADialogDrawPage::resetOverlay()
 			{
 				m_dialogImage.SetBoundaryCheck(false);
 				COleSafeArray saPar, saVal;
-				SvOg::DisplayHelper::CreateSafeArrayFromMap(parMap, saPar, saVal);
+				SvOgu::DisplayHelper::CreateSafeArrayFromMap(parMap, saPar, saVal);
 				m_dialogImage.AddOverlay(0, static_cast<LPVARIANT>(saPar), static_cast<LPVARIANT>(saVal), &m_handleToOverlayObjects);
 				m_dialogImage.EditOverlay(0, m_handleToOverlayObjects, static_cast<LPVARIANT>(saPar), static_cast<LPVARIANT>(saVal));
 				saVal.Destroy();
@@ -1093,7 +1093,7 @@ void TADialogDrawPage::resetOverlay()
 	}
 }
 
-void TADialogDrawPage::addNodeInto(HTREEITEM item, SvPb::ClassIdEnum classId, DrawTaskTree::addPosEnum posEnum)
+void TADialogDrawPage::addNodeInto(HTREEITEM item, SvPb::ClassIdEnum classId, SvOgu::DrawTaskTree::addPosEnum posEnum)
 {
 	auto iter = std::ranges::find_if(c_typeConvVec, [classId](const auto& rEntry) { return rEntry.first == classId; });
 	assert(c_typeConvVec.end() != iter);
@@ -1167,7 +1167,7 @@ void TADialogDrawPage::hideAllBOSACtrl()
 	}
 }
 
-void TADialogDrawPage::setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, ValueController& rValueController, TADialogDrawPage::BOSAEnum ctrlEnum, int min, int max, const std::string& fieldName, bool readOnly)
+void TADialogDrawPage::setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, SvOgu::ValueController& rValueController, TADialogDrawPage::BOSAEnum ctrlEnum, int min, int max, const std::string& fieldName, bool readOnly)
 {
 	auto nId = static_cast<UINT>(m_BSOAControls[ctrlEnum].GetDlgCtrlID());
 	auto ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nId](const auto& rEntry){ return rEntry.m_nIDC == nId; });
@@ -1190,7 +1190,7 @@ void TADialogDrawPage::ObjectChangedExDialogImage(long, long, VARIANT* Parameter
 {
 	if (0 != m_currentItem)
 	{
-		auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
+		auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(m_currentItem));
 		if (nullptr != pData && pData->m_pValues)
 		{
 			setOverlayProperties(pData->m_type, *pData->m_pValues, ParameterList, ParameterValue);
@@ -1202,7 +1202,7 @@ void TADialogDrawPage::ObjectChangedExDialogImage(long, long, VARIANT* Parameter
 	}
 }
 
-void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData, ValidCheckCallback validCallback /*= nullptr*/)
+void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, SvOgu::TreeNodeData& rData, SvOgu::ValidCheckCallback validCallback /*= nullptr*/)
 {
 	auto nId = static_cast<UINT>(m_BSOAControls[editEnum].GetDlgCtrlID());
 	auto ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nId](const auto& rEntry){ return rEntry.m_nIDC == nId; });
@@ -1212,11 +1212,11 @@ void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogD
 		auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[editEnum]);
 		auto* pButton = static_cast<CButton*>(&m_BSOAControls[buttonEnum]);
 		assert(pEdit && pButton);
-		ctrlDataIter->m_Widget = std::make_unique<LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, rData.m_objectId, embeddedId, rData.m_pValues.get(), validCallback);
+		ctrlDataIter->m_Widget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, rData.m_objectId, embeddedId, rData.m_pValues.get(), validCallback);
 	}
 }
 
-void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData, ValidCheckCallback validCallback /*= nullptr*/)
+void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, SvOgu::TreeNodeData& rData, SvOgu::ValidCheckCallback validCallback /*= nullptr*/)
 {
 	m_BSOAControls[staticEnum].ShowWindow(SW_SHOW);
 	m_BSOAControls[staticEnum].SetWindowText(staticText);
@@ -1226,29 +1226,29 @@ void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR 
 void TADialogDrawPage::setOrRemoveColorItemForBase()
 {
 	HTREEITEM hBaseItem = m_treeCtrl.GetNextItem(nullptr, TVGN_ROOT);
-	auto* pBaseData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(hBaseItem));
-	assert(nullptr != hBaseItem && nullptr != pBaseData && DrawNodeType::BaseImage == pBaseData->m_type);
-	if (nullptr == pBaseData || DrawNodeType::BaseImage != pBaseData->m_type)
+	auto* pBaseData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(hBaseItem));
+	assert(nullptr != hBaseItem && nullptr != pBaseData && SvOgu::DrawNodeType::BaseImage == pBaseData->m_type);
+	if (nullptr == pBaseData || SvOgu::DrawNodeType::BaseImage != pBaseData->m_type)
 	{
 		return;
 	}
 
 	auto currentItem = pBaseData->m_lastInternItem;
-	auto* pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(currentItem));
+	auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(currentItem));
 	assert(nullptr != pData);
 	if (nullptr == pData)
 	{
 		return;
 	}
-	bool isLastItem = DrawNodeSubType::Color == pData->m_subType;
+	bool isLastItem = SvOgu::DrawNodeSubType::Color == pData->m_subType;
 	bool existColorItem = isLastItem;
 	while (nullptr != currentItem && false == existColorItem)
 	{
 		currentItem = m_treeCtrl.GetNextItem(currentItem, TVGN_PREVIOUS);
 		if (nullptr != currentItem)
 		{
-			pData = reinterpret_cast<TreeNodeData*>(m_treeCtrl.GetItemData(currentItem));
-			existColorItem = (nullptr != pData && DrawNodeSubType::Color == pData->m_subType);
+			pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(currentItem));
+			existColorItem = (nullptr != pData && SvOgu::DrawNodeSubType::Color == pData->m_subType);
 		}
 	}
 
@@ -1261,7 +1261,7 @@ void TADialogDrawPage::setOrRemoveColorItemForBase()
 		}
 		else
 		{
-			pBaseData->m_lastInternItem = m_treeCtrl.InsertNode({m_TaskObjectID, DrawNodeType::BaseImage, DrawNodeSubType::Color, m_pValues}, hBaseItem, "", pBaseData->m_lastInternItem);
+			pBaseData->m_lastInternItem = m_treeCtrl.InsertNode({m_TaskObjectID, SvOgu::DrawNodeType::BaseImage, SvOgu::DrawNodeSubType::Color, m_pValues}, hBaseItem, "", pBaseData->m_lastInternItem);
 		}
 	}
 	else

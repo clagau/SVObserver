@@ -10,7 +10,7 @@
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
 
@@ -102,7 +102,7 @@ namespace SvOg
 	private:
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		ValueController m_Values;
+		SvOgu::ValueController m_Values;
 
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		google::protobuf::RepeatedPtrField< SvPb::FeatureData > m_featureData;

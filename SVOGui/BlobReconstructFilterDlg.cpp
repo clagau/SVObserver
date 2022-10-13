@@ -23,7 +23,7 @@ BlobReconstructFilterDlg::BlobReconstructFilterDlg(UINT caption, uint32_t inspec
 	, m_filterID(filterId)
 	, m_InspectionID(inspectionId)
 	, m_captionId(caption)
-	, m_values {SvOg::BoundValues {inspectionId, filterId}}
+	, m_values {SvOgu::BoundValues {inspectionId, filterId}}
 {
 	//{{AFX_DATA_INIT(BlobReconstructFilterDlg)
 	m_bGrayScale = false;

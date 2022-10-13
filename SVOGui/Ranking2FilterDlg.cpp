@@ -11,15 +11,15 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <limits.h>
 #include "Ranking2FilterDlg.h"
-#include "BoundValue.h"
+#include "SVOGuiUtility/BoundValue.h"
+#include "SVOGuiUtility/GuiValueHelper.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "GuiValueHelper.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "Definitions\GlobalConst.h"
-#include "GridCtrlLibrary\GridCellCheck.h"
-#include "Definitions\SVMatroxSimpleEnums.h"
+#include "Definitions/GlobalConst.h"
+#include "GridCtrlLibrary/GridCellCheck.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -59,7 +59,7 @@ Ranking2FilterDlg::Ranking2FilterDlg(uint32_t inspectionId, uint32_t filterId, C
 	, m_GridStatus(_T(""))
 	, m_filterID(filterId)
 	, m_InspectionID(inspectionId)
-	, m_values(SvOg::BoundValues(inspectionId, filterId))
+	, m_values(SvOgu::BoundValues(inspectionId, filterId))
 {
 }
 
@@ -73,10 +73,10 @@ HRESULT Ranking2FilterDlg::SetInspectionData()
 {
 	m_values.Set<long>(SvPb::FilterKernelWidthEId, m_KernelWidth);
 	m_values.Set<long>(SvPb::FilterKernelHeightEId, m_KernelHeight);
-	_variant_t value = ConvertVectorToVariantSafeArray<std::vector<long>>(m_KernelArray);
+	_variant_t value = SvOgu::ConvertVectorToVariantSafeArray<std::vector<long>>(m_KernelArray);
 	m_values.Set<_variant_t>(SvPb::FilterKernelEId, value);
 	m_values.Set<long>(SvPb::RankingFilterRankingRankEId, m_RankingRank);
-	return m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+	return m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 }
 #pragma endregion Public Methods
 
@@ -213,7 +213,7 @@ void Ranking2FilterDlg::initializeFilter()
 	m_KernelHeight = m_values.Get<long>(SvPb::FilterKernelHeightEId);
 
 	m_KernelArray.clear();
-	m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_values.Get<_variant_t>(SvPb::FilterKernelEId));
+	m_KernelArray = SvOgu::ConvertVariantSafeArrayToVector<long>(m_values.Get<_variant_t>(SvPb::FilterKernelEId));
 }
 
 bool Ranking2FilterDlg::inputGridCtrlKey(WPARAM Key)

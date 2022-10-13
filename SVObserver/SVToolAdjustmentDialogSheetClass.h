@@ -7,8 +7,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SvOGui/FormulaController.h"
-#include "SVOGui/ExternalToolTaskController.h"
+#include "SVOGuiUtility/FormulaController.h"
+#include "SVOGuiUtility/ExternalToolTaskController.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -77,7 +77,7 @@ private:
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;
 
-	typedef std::shared_ptr<SvOg::FormulaController> ControllerPtr;
+	typedef std::shared_ptr<SvOgu::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;
 };
 

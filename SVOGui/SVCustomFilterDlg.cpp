@@ -33,7 +33,7 @@ namespace SvOg
 		CDialog(SVCustomFilterDlg::IDD, pParent)
 		, m_filterID(filterId)
 		, m_InspectionID(inspectionId)
-		, m_values{ SvOg::BoundValues{ inspectionId, filterId } }
+		, m_values{ SvOgu::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVCustomFilterDlg)
 		m_bAbsoluteValue = TRUE;
@@ -76,7 +76,7 @@ namespace SvOg
 
 		}// end for
 
-		m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
 

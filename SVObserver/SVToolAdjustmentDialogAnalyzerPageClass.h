@@ -13,11 +13,11 @@
 
 #pragma region Includes
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "Definitions\ObjectDefines.h"
-#include "SVOGui\PictureDisplay.h"
-#include "SVOGui/ImageController.h"
-#include "SVProtoBuf\SVO-Enum.h"
-#include "SVMFCControls\AvailableObjectListComboBox.h"
+#include "Definitions/ObjectDefines.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVProtoBuf/SVO-Enum.h"
+#include "SVMFCControls/AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -85,7 +85,7 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogAnalyzerPageClass)
 	enum { IDD = IDD_TA_ANALYZER_DIALOG };
 	SvMc::AvailableObjectListComboBox<SvPb::ClassIdEnum>	m_availableAnalyzerCombobox;
-	SvOg::PictureDisplay	m_dialogImage;
+	SvOgu::PictureDisplay	m_dialogImage;
 	//}}AFX_DATA
 
 	//******************************************************************************
@@ -103,7 +103,7 @@ protected:
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
 
-	SvOg::ImageController m_ImageController;
+	SvOgu::ImageController m_ImageController;
 	uint32_t m_resultImageID = SvDef::InvalidObjectId;
 };
 

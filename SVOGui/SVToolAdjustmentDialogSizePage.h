@@ -10,7 +10,7 @@
 #include "Definitions/SVExtentEnums.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #include "ISVPropertyPageDialog.h"
-#include "ToolSizeController.h"
+#include "SVOGuiUtility/ToolSizeController.h"
 #include "SVMFCControls/AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
@@ -65,7 +65,7 @@ private:
 	uint32_t m_toolId {SvDef::InvalidObjectId}; ;
 	CButton m_Button[SvDef::ToolSizeAdjustEnum::TSValuesCount];
 	CEdit m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSValuesCount];
-	ToolSizeController m_ToolSizeHelper;
+	SvOgu::ToolSizeController m_ToolSizeHelper;
 	CButton m_Button_Full_Image;
 	CButton m_Button_FormulaFrom;
 

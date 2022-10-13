@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma region Includes
 
@@ -56,7 +56,7 @@ private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_filterID;
 	const UINT m_captionId;
-	ValueController m_values;
+	SvOgu::ValueController m_values;
 };
 } //namespace SvOg
 

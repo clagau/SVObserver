@@ -13,9 +13,9 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVMFCControls\SVUpDownButton.h"
-#include "DataController.h"
-#include "ToolSizeController.h"
+#include "SVMFCControls/SVUpDownButton.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/ToolSizeController.h"
 #pragma endregion Includes
 
 
@@ -112,7 +112,7 @@ private:
 	//! \returns bool
 	//************************************
 	bool UsePropagate();
-	bool  IsReadonly(const ::SvPb::ExtentParameter& rExtentParameter, SizeModes& Modes) const;
+	bool IsReadonly(const ::SvPb::ExtentParameter& rExtentParameter, const SvOgu::SizeModes& Modes) const;
 	
 #pragma endregion Private Methods
 
@@ -159,7 +159,7 @@ private:
 	SvMc::SVUpDownButton* m_pButton = nullptr;
 	std::string m_Title;
 
-	ToolSizeController m_ToolSizeHelper;
+	SvOgu::ToolSizeController m_ToolSizeHelper;
 	std::map < SvPb::SVExtentPropertyEnum, std::string> m_PreviousTreeEntries;
 	HRESULT m_hResultFromSetExtent {S_OK};
 #pragma endregion Member variables

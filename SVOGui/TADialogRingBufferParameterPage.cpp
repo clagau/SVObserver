@@ -73,7 +73,7 @@ namespace SvOg
 		: CPropertyPage(TADialogRingBufferParameterPage::IDD)
 		, m_InspectionID(inspectionID)
 		, m_TaskObjectID(taskID)
-		, m_values{ SvOg::BoundValues{ inspectionID, taskID } }
+		, m_values{ SvOgu::BoundValues{ inspectionID, taskID } }
 	{
 	}
 
@@ -108,10 +108,10 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 		m_values.Init();
 
-		m_DepthWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditRingDepth, m_ButtonRingDepth, m_InspectionID, m_TaskObjectID, SvPb::RingBuffer_DepthEId, &m_values, checkDepthValue);
+		m_DepthWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditRingDepth, m_ButtonRingDepth, m_InspectionID, m_TaskObjectID, SvPb::RingBuffer_DepthEId, &m_values, checkDepthValue);
 		for (int i=0; i < m_ImageIndexWidget.size(); ++i)
 		{
-			m_ImageIndexWidget[i] = std::make_unique<LinkedValueWidgetHelper>(m_EditImageIndex[i], m_ButtonImageIndex[i], m_InspectionID, m_TaskObjectID, SvPb::RingBufferIndexEId + i, &m_values);
+			m_ImageIndexWidget[i] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditImageIndex[i], m_ButtonImageIndex[i], m_InspectionID, m_TaskObjectID, SvPb::RingBufferIndexEId + i, &m_values);
 		}
 
 		return TRUE;
@@ -194,7 +194,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	HRESULT TADialogRingBufferParameterPage::SetRingDepth()
 	{
 		HRESULT Result( S_OK );
-		auto data = m_values.Get<LinkedValueData>(SvPb::RingBuffer_DepthEId);
+		auto data = m_values.Get<SvOgu::LinkedValueData>(SvPb::RingBuffer_DepthEId);
 		if (SvPb::DirectValue == data.m_selectedOption)
 		{
 			SvStl::MessageContainer messageContainer;

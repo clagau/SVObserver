@@ -16,7 +16,7 @@
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVImageLibrary/SVCameraFormat.h"
-#include "SVOGui/DisplayHelper.h"
+#include "SVOGuiUtility/DisplayHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVHBitmapUtilitiesLibrary/BitmapHelper.h"
 #pragma endregion Includes
@@ -456,7 +456,7 @@ void SVGigeCameraROIDlg::OnChangeBinningHoriz()
 void SVGigeCameraROIDlg::ObjectChangedExDialogImage(long, long, VARIANT* ParameterList, VARIANT* ParameterValue)
 {
 	std::map<long,_variant_t> ParaMap;
-	SvOg::DisplayHelper::FillParameterMap(ParaMap,ParameterList,ParameterValue);
+	SvOgu::DisplayHelper::FillParameterMap(ParaMap,ParameterList,ParameterValue);
 
 	m_iWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
 	m_iHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;

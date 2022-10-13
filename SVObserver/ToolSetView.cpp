@@ -34,7 +34,7 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVInspectionProcess.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVBarCodeGeneralDialog.h"		// Added by ClassView
 #include "SVBarCodeStringMatchDialog.h"	// Added by ClassView
 #include "SVBarCodeAttributesDialog.h"	// Added by ClassView
@@ -51,8 +51,8 @@ namespace SvOg
 		uint32_t m_inspectionId;
 		uint32_t m_analyzerId;
 		uint32_t m_resultId;
-		ValueController m_analyzerValues;
-		ValueController m_resultValues;
+		SvOgu::ValueController m_analyzerValues;
+		SvOgu::ValueController m_resultValues;
 	};
 }
 

@@ -13,10 +13,10 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "PictureDisplay.h"
-#include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "ImageController.h"
-#include "SVMFCControls\ObjectsListBox.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVMFCControls/AvailableObjectListComboBox.h"
+#include "SVMFCControls/ObjectsListBox.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -78,7 +78,7 @@ namespace SvOg
 		CButton	m_btnProperties;
 		CButton	insertFilter;
 		SvMc::ObjectsListBox m_filterListBox;
-		PictureDisplay	dialogImage;
+		SvOgu::PictureDisplay	dialogImage;
 		SvMc::AvailableObjectListComboBox<SvPb::ClassIdEnum> m_availableFilterCB;
 		//}}AFX_DATA
 
@@ -89,6 +89,6 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		uint32_t m_UnaryImageOperatorID;
-		ImageController m_ImageController;
+		SvOgu::ImageController m_ImageController;
 	};
 } //namespace SvOg

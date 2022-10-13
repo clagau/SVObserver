@@ -22,7 +22,7 @@ ReconstructFilterDlg::ReconstructFilterDlg(uint32_t inspectionID, uint32_t taskO
 	CDialog(ReconstructFilterDlg::IDD, pParent)
 	, m_filterID(filterID)
 	, m_InspectionID(inspectionID)
-	, m_values {SvOg::BoundValues {inspectionID, filterID}}
+	, m_values {SvOgu::BoundValues {inspectionID, filterID}}
 	, m_imageController(inspectionID, taskObjectId)
 {
 	//{{AFX_DATA_INIT(ReconstructFilterDlg)

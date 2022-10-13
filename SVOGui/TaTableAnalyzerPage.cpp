@@ -16,7 +16,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "FormulaController.h"
+#include "SVOGuiUtility/FormulaController.h"
 #include "SVFormulaEditorSheet.h"
 #include "SVShowDependentsDialog.h"
 #pragma endregion Includes
@@ -76,7 +76,7 @@ std::pair <uint32_t,std::string> getValueObjectIdNamePairFromColumn(uint32_t ins
 	auto [embeddedId, name] = getEmbeddedIdNamePair(inspectionId, columnId);
 	if (SvDef::InvalidObjectId != resultTableId && SvPb::NoEmbeddedId != embeddedId)
 	{
-		ValueController valueController {SvOg::BoundValues{ inspectionId, resultTableId }};
+		SvOgu::ValueController valueController {SvOgu::BoundValues{ inspectionId, resultTableId }};
 		valueController.Init();
 
 		return {valueController.GetObjectID(embeddedId), name};
@@ -223,9 +223,9 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 
 	m_availableAnaylzerCB.Init(availableList, _T(""), Analyzer_NoAnalyzerAvailable);
 
-	m_ExcludeHighWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeHigh, m_ButtonExcludeHigh, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeHighEId, nullptr);
-	m_ExcludeLowWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeLow, m_ButtonExcludeLow, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeLowEId, nullptr);
-	m_LimitWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLimitValue, m_ButtonLimitValue, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerLimitValueEId, nullptr);
+	m_ExcludeHighWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditExcludeHigh, m_ButtonExcludeHigh, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeHighEId, nullptr);
+	m_ExcludeLowWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditExcludeLow, m_ButtonExcludeLow, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeLowEId, nullptr);
+	m_LimitWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditLimitValue, m_ButtonLimitValue, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerLimitValueEId, nullptr);
 
 	setSourceTableObjectId();
 	RetrieveAvailableColumnList();
@@ -447,19 +447,19 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 				break;
 			case SvPb::TableAnalyzerExcludeType:
 			{
-				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+				hrOk = m_pValues->Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
 			break;
 			case SvPb::TableAnalyzerLimitType:
 			{
-				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+				hrOk = m_pValues->Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
 			break;
 			case SvPb::TableAnalyzerDeleteColumnType:
 			{
-				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+				hrOk = m_pValues->Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
 			break;
@@ -617,7 +617,7 @@ void TaTableAnalyzerPage::updateValueController()
 {
 	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
 	{
-		auto pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
+		auto pValues = std::shared_ptr<SvOgu::ValueController> {new SvOgu::ValueController{ SvOgu::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
 		pValues->Init();
 		switch (m_selectedSubType)
 		{
@@ -670,7 +670,7 @@ void TaTableAnalyzerPage::setAddColumnProperties()
 	{
 		m_pSelectedAddEquationFormula.reset();
 		SvDef::SVObjectTypeInfoStruct Info {SvPb::SVEquationObjectType, SvPb::IndexEquationObjectType };
-		m_pSelectedAddEquationFormula = SvOi::IFormulaControllerPtr {new FormulaController {m_InspectionID, m_selectedAnalyzerID, Info}};
+		m_pSelectedAddEquationFormula = SvOi::IFormulaControllerPtr {new SvOgu::FormulaController {m_InspectionID, m_selectedAnalyzerID, Info}};
 	}
 
 	if (nullptr != m_pSelectedAddEquationFormula)

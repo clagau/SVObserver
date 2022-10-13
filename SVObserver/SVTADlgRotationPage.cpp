@@ -42,7 +42,7 @@ SVTADlgRotationPage::SVTADlgRotationPage( uint32_t inspectionId, uint32_t taskOb
 , m_InspectionID{ inspectionId }
 , m_TaskObjectID{ taskObjectId }
 //TaskID is set later
-, m_Values{ SvOg::BoundValues{inspectionId, SvDef::InvalidObjectId} }
+, m_Values{ SvOgu::BoundValues{inspectionId, SvDef::InvalidObjectId} }
 {
 }
 #pragma endregion

@@ -33,7 +33,7 @@
 #include "SVOGui/SVToolAdjustmentDialogSizePage.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
 #include "SVOGui/SVCylindricalWarpDlg.h"
-#include "SvOGui/SVFormulaEditorPage.h"
+#include "SVOGuiUtility/SVFormulaEditorPage.h"
 #include "SVOGui/SVToolAdjustmentDialogFilterPageClass.h"
 #include "SVOGui/SVTADlgColorToolPage.h"
 #include "SVOGui/SVTADlgFileImageSourcePage.h"
@@ -116,10 +116,10 @@ void SVToolAdjustmentDialogSheetClass::addConditionalDialog()
 	SvDef::SVObjectTypeInfoStruct ObjectInfo;
 	ObjectInfo.m_ObjectType = SvPb::SVEquationObjectType;
 	ObjectInfo.m_SubType = SvPb::SVConditionalObjectType;
-	SvOi::IFormulaControllerPtr pFormulaController{ new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, ObjectInfo) };
+	SvOi::IFormulaControllerPtr pFormulaController{ new SvOgu::FormulaController(m_InspectionID, m_TaskObjectID, ObjectInfo) };
 	UINT disableExtensionID = (SvPb::SVObjectTypeEnum::SVToolSetObjectType == GetTaskObject()->GetObjectType()) ? IDS_CLASSNAME_SVTOOLSET : IDS_TOOL_STRING;
 
-	AddPage(new SvOg::SVFormulaEditorPageClass{ pFormulaController, true, IDS_CONDITIONAL_STRING, disableExtensionID });
+	AddPage(new SvOgu::SVFormulaEditorPageClass{ pFormulaController, true, IDS_CONDITIONAL_STRING, disableExtensionID });
 }
 
 
@@ -270,8 +270,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		{
 			if (nullptr != pMathEquation)
 			{
-				SvOi::IFormulaControllerPtr pFormulaController2 {new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, pMathEquation->getObjectId())};
-				AddPage(new SvOg::SVFormulaEditorPageClass(pFormulaController2, false));
+				SvOi::IFormulaControllerPtr pFormulaController2 {new SvOgu::FormulaController(m_InspectionID, m_TaskObjectID, pMathEquation->getObjectId())};
+				AddPage(new SvOgu::SVFormulaEditorPageClass(pFormulaController2, false));
 			}
 			AddPage(new SvOg::SVTADlgPassFailPage(m_InspectionID, m_TaskObjectID));
 			addConditionalDialog();
@@ -519,7 +519,7 @@ bool SVToolAdjustmentDialogSheetClass::ValidateAllSheets()
 		CPropertyPage* pPage = GetPage(i);
 		if (pPage && pPage->GetSafeHwnd())
 		{
-			if (SvOg::SVFormulaEditorPageClass* pFormulaEditor = dynamic_cast <SvOg::SVFormulaEditorPageClass*> (pPage))
+			if (SvOgu::SVFormulaEditorPageClass* pFormulaEditor = dynamic_cast <SvOgu::SVFormulaEditorPageClass*> (pPage))
 			{
 				if (!pFormulaEditor->validateAndSetEquation())
 				{

@@ -15,7 +15,7 @@
 #include "SVFormulaEditorSheet.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "GuiValueHelper.h"
+#include "SVOGuiUtility/GuiValueHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -75,8 +75,8 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 	: CPropertyPage(SVToolAdjustmentLUTPage::IDD)
 	, m_InspectionID{ inspectionID }
 	, m_TaskObjectID{ taskObjectID }
-	, m_values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
-	, m_LutEquation{ SvOg::BoundValues{ inspectionID, lutEquationID } }
+	, m_values{ SvOgu::BoundValues{ inspectionID, taskObjectID } }
+	, m_LutEquation{ SvOgu::BoundValues{ inspectionID, lutEquationID } }
 	, m_bUseLUT{ false }
 	, m_bContinuousRecalcLUT{ false }
 	, m_isFormulaClip{true}
@@ -96,7 +96,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		UpdateData(true); // get data from dialog
 
 		m_LutEquation.Set<bool>(SvPb::LUTEquationClipFlagEId, m_isFormulaClip ? true : false);
-		m_LutEquation.Commit(SvOg::PostAction::doNothing);
+		m_LutEquation.Commit(SvOgu::PostAction::doNothing);
 
 		long lUpperClip = static_cast<long> (m_upperSlider.GetPos());
 		m_values.Set<long>(SvPb::LUTUpperClipEId, lUpperClip);
@@ -120,7 +120,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 			m_values.Set<long>(SvPb::LUTModeEId, lValue);
 		}
 	
-		Result = m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		Result = m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 		return Result;
 	}
@@ -446,7 +446,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 
 	void SVToolAdjustmentLUTPage::refreshLUTGraph()
 	{
-		std::vector<BYTE> byteVector = ConvertVariantSafeArrayToVector<BYTE>(m_values.Get<_variant_t>(SvPb::OutputLUTVectorEId));
+		std::vector<BYTE> byteVector = SvOgu::ConvertVariantSafeArrayToVector<BYTE>(m_values.Get<_variant_t>(SvPb::OutputLUTVectorEId));
 		m_LUTGraph.SetPoints(byteVector);
 	}
 

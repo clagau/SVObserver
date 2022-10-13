@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary\GridCtrl.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 
@@ -49,12 +49,12 @@ private:
 	uint32_t m_inspectionId {SvDef::InvalidObjectId};
 	uint32_t m_toolId {SvDef::InvalidObjectId};
 	uint32_t m_inputId {SvDef::InvalidObjectId};
-	ValueController m_inputValueCtrl;
+	SvOgu::ValueController m_inputValueCtrl;
 	DataMapType m_inputMap;
 	std::vector<std::string> m_inputParameterNames;
 	SvGcl::GridCtrl m_InputGrid;
 	uint32_t m_resultId {SvDef::InvalidObjectId}; 
-	ValueController m_resultValueCtrl;
+	SvOgu::ValueController m_resultValueCtrl;
 	DataMapType m_resultMap;
 	std::vector<std::string> m_resultParameterNames;
 	SvGcl::GridCtrl m_ResultGrid;

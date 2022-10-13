@@ -13,7 +13,7 @@
 //Moved to precompiled header: #include <algorithm>
 #include "SVDlgImage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "DisplayHelper.h"
+#include "SVOGuiUtility/DisplayHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -247,7 +247,7 @@ namespace SvOg
 			{
 				CComPtr<IPictureDisp> picDisp;
 				long width, height;
-				hr = DisplayHelper::convertPBImageToIPictureDisp(responseCmd.getimageresponse().imagedata(), width, height, &picDisp);
+				hr = SvOgu::DisplayHelper::convertPBImageToIPictureDisp(responseCmd.getimageresponse().imagedata(), width, height, &picDisp);
 				
 				if (picDisp)
 				{

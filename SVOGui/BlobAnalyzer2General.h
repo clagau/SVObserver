@@ -9,10 +9,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "ISVPropertyPageDialog.h"
-#include "PictureDisplay.h"
+#include "SVOGuiUtility/PictureDisplay.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "DataController.h"
-#include "ImageController.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/ImageController.h"
 #pragma endregion Includes
 
 
@@ -67,8 +67,8 @@ namespace SvOg
 	protected:
 		//{{AFX_DATA(BlobAnalyzer2General)
 		enum { IDD = IDD_BLOB2_GENERAL_DIALOG };
-		PictureDisplay	m_resultImage;
-		PictureDisplay	m_grayImage;
+		SvOgu::PictureDisplay	m_resultImage;
+		SvOgu::PictureDisplay	m_grayImage;
 		SvMc::AvailableObjectListComboBox<uint32_t> m_availableGrayImageListBox;
 		//}}AFX_DATA
 
@@ -80,9 +80,9 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_toolId;
 		const uint32_t m_TaskObjectID;
-		ImageController m_AnalyzerImageController;
-		ImageController m_ToolImageController;
-		ValueController m_Values;
+		SvOgu::ImageController m_AnalyzerImageController;
+		SvOgu::ImageController m_ToolImageController;
+		SvOgu::ValueController m_Values;
 
 		int m_blobColor = 0;
 		int m_connectivityType = 0;

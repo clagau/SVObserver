@@ -10,11 +10,11 @@
 
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxEnums.h"
-#include "SVOGui/PictureDisplay.h"
+#include "SVOGuiUtility/PictureDisplay.h"
 #include "SVOGui/ISVPropertyPageDialog.h"  // for QueryAllowExit()
-#include "SVOGui/ImageController.h"
-#include "SVOGui/DataController.h"
-#include "SVOGui/LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
@@ -57,22 +57,22 @@ private:
 	long m_ROITabHandle;
 	long m_OutputTabHandle;
 
-	SvOg::ImageController m_ImageController;
+	SvOgu::ImageController m_ImageController;
 	uint32_t m_ROIImageID = SvDef::InvalidObjectId;
 	uint32_t m_OutputImageID = SvDef::InvalidObjectId;
 
 	const uint32_t m_inspectionID;
 	const uint32_t m_toolID;
 
-	SvOg::ValueController m_resizeValueController;
+	SvOgu::ValueController m_resizeValueController;
 
 	CEdit m_contentScaleEdit[ScaleFactorDimension::Max];
 	CButton m_contentScaleButton[ScaleFactorDimension::Max];
-	std::array<std::unique_ptr<SvOg::LinkedValueWidgetHelper>, ScaleFactorDimension::Max > m_contentScaleWidgets;
+	std::array<std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, ScaleFactorDimension::Max > m_contentScaleWidgets;
 
 	CEdit m_formatScaleEdit[ScaleFactorDimension::Max];
 	CButton m_formatScaleButton[ScaleFactorDimension::Max];
-	std::array<std::unique_ptr<SvOg::LinkedValueWidgetHelper>, ScaleFactorDimension::Max > m_formatScaleWidgets;
+	std::array<std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, ScaleFactorDimension::Max > m_formatScaleWidgets;
 
 	CComboBox m_InterpolationModeCombo;
 	std::vector<std::string> m_InterpolationModeNames;
@@ -81,7 +81,7 @@ private:
 
 	//{{AFX_DATA(SVTADlgResizePage)
 	enum { IDD = IDD_TA_RESIZE_DIALOG };
-	SvOg::PictureDisplay m_DialogImage;
+	SvOgu::PictureDisplay m_DialogImage;
 	//}}AFX_DATA
 
 	// Overrides

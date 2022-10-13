@@ -13,10 +13,10 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "PictureDisplay.h"
-#include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "ImageController.h"
-#include "ToolSizeController.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/ToolSizeController.h"
+#include "SVMFCControls/AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
 
@@ -31,7 +31,7 @@ namespace SvOg
 
 	protected:
 		void refresh();
-		ImageController& getImageController() { return m_ImageController; }
+		SvOgu::ImageController& getImageController() { return m_ImageController; }
 
 		//{{AFX_MSG(SVToolAdjustmentDialogImagePageClass)
 		virtual BOOL OnInitDialog() override;
@@ -47,13 +47,13 @@ namespace SvOg
 		//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)
 		enum { IDD = IDD_TA_IMAGE_DIALOG };
 		SvMc::AvailableObjectListComboBox<uint32_t> m_availableSourceImageListBox;
-		PictureDisplay m_dialogImage;
+		SvOgu::PictureDisplay m_dialogImage;
 		//}}AFX_DATA
 	
 	private:
 		std::string m_inputName;
 		
-		ImageController m_ImageController;
-		ToolSizeController m_ToolsizeHelper;
+		SvOgu::ImageController m_ImageController;
+		SvOgu::ToolSizeController m_ToolsizeHelper;
 	};
 } //namespace SvOg

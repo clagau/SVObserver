@@ -14,8 +14,8 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVMFCControls/EditNumbers.h"
-#include "DataController.h"
-#include "NormalizerController.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/NormalizerController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -164,8 +164,8 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_analyzerId;
 		const uint32_t m_edgeObjectId;
-		ValueController m_values;
-		NormalizerController m_normalizerController;
-		NormalizerController m_lowerNormalizerController;
+		SvOgu::ValueController m_values;
+		SvOgu::NormalizerController m_normalizerController;
+		SvOgu::NormalizerController m_lowerNormalizerController;
 	};
 } //namespace SvOg

@@ -14,11 +14,11 @@
 //Moved to precompiled header: #include <colordlg.h>
 #include "SVMaskShapeEditorDlg.h"
 #include "Definitions/Color.h"
-#include "SVOGui/DisplayHelper.h"
+#include "SVOGuiUtility/DisplayHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOGui/LinkedValueSelectorDialog.h"
+#include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -61,8 +61,8 @@ SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(uint32_t inspectionId, uint32_t taskO
 : CDialog(SVMaskShapeEditorDlg::IDD, pParent)
 , m_InspectionID{ inspectionId }
 , m_TaskObjectID{ taskObjectId }
-, m_Values{ SvOg::BoundValues{ inspectionId, maskOperatorId } }
-, m_ShapeHelperValues{ SvOg::BoundValues{ inspectionId, shapeMaskHelperId } }
+, m_Values{ SvOgu::BoundValues{ inspectionId, maskOperatorId } }
+, m_ShapeHelperValues{ SvOgu::BoundValues{ inspectionId, shapeMaskHelperId } }
 , m_sFillColor( _T( "" ) )
 , m_sCoordinates( _T( "" ) )
 , m_bAutoResize( FALSE )
@@ -126,7 +126,7 @@ void SVMaskShapeEditorDlg::SetInspectionData()
 
 	//This needs to be called due to SetInspectionData being called by UpdateMask which has values set but not committed
 	m_Values.Set<bool>(SvPb::ContRecalcEId, m_bContRecalc ? true : false);
-	m_Values.Commit(SvOg::PostAction::doRunOnce | SvOg::PostAction::doReset);
+	m_Values.Commit(SvOgu::PostAction::doRunOnce | SvOgu::PostAction::doReset);
 
 	m_ShapeHelperValues.Init();
 	RefreshProperties();
@@ -385,7 +385,7 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 		}
 		else
 		{
-			auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
+			auto data = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(embeddedId);
 			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				_variant_t newVal;
@@ -408,12 +408,12 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 				}
 
 				data.m_Value = data.m_directValue;
-				m_ShapeHelperValues.Set<SvOg::LinkedValueData>(embeddedId, data);
+				m_ShapeHelperValues.Set<SvOgu::LinkedValueData>(embeddedId, data);
 			}
 		}
 
 		
-		bool fail = (S_OK != m_ShapeHelperValues.Commit(SvOg::PostAction::doNothing, true));
+		bool fail = (S_OK != m_ShapeHelperValues.Commit(SvOgu::PostAction::doNothing, true));
 		if (fail)
 		{
 			*plResult = E_FAIL;
@@ -442,9 +442,9 @@ void SVMaskShapeEditorDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plRe
 	{
 		int iPropertyID = pEditItem->GetCtrlID();
 		auto embeddedId = GetPropertyEmbeddedId(iPropertyID);
-		auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
+		auto data = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(embeddedId);
 
-		SvOg::LinkedValueSelectorDialog dlg(m_InspectionID, m_ShapeHelperValues.GetObjectID(embeddedId),
+		SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_ShapeHelperValues.GetObjectID(embeddedId),
 			m_ShapeHelperValues.GetName(embeddedId),
 			data, data.m_defaultValue.vt);
 		if (IDOK == dlg.DoModal())
@@ -461,7 +461,7 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* Par
 	////////////////////////////////////////////////////////
 	// SET SHAPE PROPERTIES
 	VariantParamMap ParaMap;
-	SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+	SvOgu::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 	bool isResizeable = 0 != (static_cast<int>(ParaMap[CDSVPictureDisplay::P_AllowEdit]) & static_cast<int>(CDSVPictureDisplay::AllowResize));
 	bool isMoveable = 0 != (static_cast<int>(ParaMap[CDSVPictureDisplay::P_AllowEdit]) & static_cast<int>(CDSVPictureDisplay::AllowMove));
 
@@ -520,7 +520,7 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* Par
 		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyTopBottomThicknessEId, ParaMap[CDSVPictureDisplay::P_TopThickness].lVal);
 	}
 
-	m_ShapeHelperValues.Commit(SvOg::PostAction::doReset);
+	m_ShapeHelperValues.Commit(SvOgu::PostAction::doReset);
 	RefreshProperties();
 	UpdateMask();
 }
@@ -759,7 +759,7 @@ void SVMaskShapeEditorDlg::UpdateMask()
 	resetShapeOverlay();
 }
 
-void SVMaskShapeEditorDlg::FillComboBox(const SvOg::ValueController& rValueController, SvPb::EmbeddedIdEnum embeddedId, CComboBox& rCombo)
+void SVMaskShapeEditorDlg::FillComboBox(const SvOgu::ValueController& rValueController, SvPb::EmbeddedIdEnum embeddedId, CComboBox& rCombo)
 {
 	for (auto const& rEntry : rValueController.GetEnumTypes(embeddedId))
 	{
@@ -853,7 +853,7 @@ void SVMaskShapeEditorDlg::setShapeType(SvOp::SVShapeMaskHelperClass::ShapeTypeE
 		}
 
 		COleSafeArray saPar, saVal;
-		SvOg::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+		SvOgu::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 
 		for (int i = 0; i < m_numberOfTabs; i++)
 		{
@@ -909,19 +909,19 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 		default:
 			break; // Do nothing.
 		}
-		ParMap[ CDSVPictureDisplay::P_Offset ] = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyOffsetEId).m_Value;
+		ParMap[ CDSVPictureDisplay::P_Offset ] = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(SvPb::ShapeMaskPropertyOffsetEId).m_Value;
 		break;
 	case SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut:
 		ParMap[ CDSVPictureDisplay::P_Type ] = CDSVPictureDisplay::DoughnutROI;
-		ParMap[ CDSVPictureDisplay::P_SideThickness ] = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertySideThicknessEId).m_Value;
-		ParMap[ CDSVPictureDisplay::P_TopThickness ] = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyTopBottomThicknessEId).m_Value;
+		ParMap[ CDSVPictureDisplay::P_SideThickness ] = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(SvPb::ShapeMaskPropertySideThicknessEId).m_Value;
+		ParMap[ CDSVPictureDisplay::P_TopThickness ] = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(SvPb::ShapeMaskPropertyTopBottomThicknessEId).m_Value;
 		break;
 	default:
 		break; // Do nothing.
 	}
 
 	COleSafeArray saPar, saVal;
-	SvOg::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+	SvOgu::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 	for (int i = 0; i < m_numberOfTabs; i++)
 	{
 		m_dialogImage.EditOverlay( i, m_handleToActiveObjects[i], static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );
@@ -939,10 +939,10 @@ RECT SVMaskShapeEditorDlg::getRect() const
 	}
 	else
 	{
-		long lCenterX = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::CenterXEId).m_Value;
-		long lCenterY = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::CenterYEId).m_Value;
-		long lWidth = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::WidthEId).m_Value;
-		long lHeight = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::HeightEId).m_Value;
+		long lCenterX = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(SvPb::CenterXEId).m_Value;
+		long lCenterY = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(SvPb::CenterYEId).m_Value;
+		long lWidth = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(SvPb::WidthEId).m_Value;
+		long lHeight = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(SvPb::HeightEId).m_Value;
 		long lHalfWidth = lWidth / 2;
 		long lHalfHeight = lHeight / 2;
 
@@ -986,7 +986,7 @@ CDSVPictureDisplay::AllowType SVMaskShapeEditorDlg::getDrawChangeType() const
 
 void SVMaskShapeEditorDlg::setValueColumn(SvPb::EmbeddedIdEnum embeddedId, SVRPropertyItemEdit& rEdit)
 {
-	auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
+	auto data = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(embeddedId);
 	CString valueString = SvUl::VariantToString(data.m_Value).c_str();
 
 	rEdit.SetBackColorReadOnly(false, SvDef::WhiteSmoke);
@@ -998,7 +998,7 @@ void SVMaskShapeEditorDlg::setValueColumn(SvPb::EmbeddedIdEnum embeddedId, SVRPr
 
 bool SVMaskShapeEditorDlg::isChangable(SvPb::EmbeddedIdEnum embeddedId) const
 {
-	auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
+	auto data = m_ShapeHelperValues.Get<SvOgu::LinkedValueData>(embeddedId);
 	return SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption;
 }
 #pragma endregion Private Methods

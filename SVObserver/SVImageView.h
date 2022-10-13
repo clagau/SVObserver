@@ -15,11 +15,11 @@
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVProtoBuf/SVO-Enum.h"
-#include "SVOGui/ZoomHelper.h"
+#include "SVOGuiUtility/ZoomHelper.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#pragma endregion Includes
 #include "Tools/SVToolExtentClass.h"
+#pragma endregion Includes
 
 struct IDirectDrawSurface7;
 

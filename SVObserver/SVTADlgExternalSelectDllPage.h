@@ -11,19 +11,21 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOGui\ISVPropertyPageDialog.h"
-#include "SVOGui/DataController.h"
+#include "SVOGui/ISVPropertyPageDialog.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
-
+namespace SvOgu
+{
 class ExternalToolTaskController;
+}
 class SVToolAdjustmentDialogSheetClass;
 struct SVCancelData;
 
 class SVTADlgExternalSelectDllPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
-	SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, CWnd& rParent, ExternalToolTaskController& rExternalToolTaskController);   // standard constructor
+	SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, CWnd& rParent, SvOgu::ExternalToolTaskController& rExternalToolTaskController);   // standard constructor
 	virtual ~SVTADlgExternalSelectDllPage() {};
 
 	// ISVPropertyPageDialog
@@ -89,7 +91,7 @@ private:
 	void displayInitializationProblem(std::string error);
 	void displayInitializationFailure(const SvStl::MessageContainer& e);
 
-	ExternalToolTaskController& m_rExternalToolTaskController;
-	SvOg::ValueController m_valueControllerToolTask;
+	SvOgu::ExternalToolTaskController& m_rExternalToolTaskController;
+	SvOgu::ValueController m_valueControllerToolTask;
 };
 

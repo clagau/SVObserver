@@ -14,10 +14,10 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVOResource/resource.h"
-#include "ImageController.h"
-#include "PictureDisplay.h"
+#include "SVOGuiUtility/ExternalToolTaskController.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "ExternalToolTaskController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -63,7 +63,7 @@ namespace SvOg
 		// Description: Sets the images to the image control.
 		// Returns:   void
 		//************************************
-		void setImages(ImageController &imgCtrl);
+		void setImages(SvOgu::ImageController &imgCtrl);
 
 	#pragma endregion Private Methods
 
@@ -72,13 +72,13 @@ namespace SvOg
 		// Dialog Data
 		//{{AFX_DATA(SVTADlgExternalToolImageSelectPage)
 		enum { IDD = IDD_TA_EXTERNAL_IMAGES };
-		PictureDisplay m_ImageDisplay;
+		SvOgu::PictureDisplay m_ImageDisplay;
 		//}}AFX_DATA
 
 		SVRPropTree	m_Tree;
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		ExternalToolTaskController m_externalToolTaskController;
+		SvOgu::ExternalToolTaskController m_externalToolTaskController;
 		size_t m_numImages;
 		ImageInputList m_imageInputList;
 		

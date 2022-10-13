@@ -31,7 +31,7 @@ namespace SvOg
 
 	SVTADlgTransformImagePage::SVTADlgTransformImagePage(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*= IDD*/)
 	: SVToolAdjustmentDialogImagePageClass(inspectionId, toolId, SubType, id)
-		, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+		, m_values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	{
 		//{{AFX_DATA_INIT(SVTADlgTransformImagePage)
 		m_useExtentsOnly = FALSE;

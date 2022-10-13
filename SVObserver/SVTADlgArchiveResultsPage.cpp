@@ -70,7 +70,7 @@ SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t inspectionId, uint
 , m_FormatResults(false)
 , m_inspectionId(inspectionId)
 , m_taskId(taskObjectId)
-, m_ValueController {SvOg::BoundValues{ inspectionId, taskObjectId }}
+, m_ValueController {SvOgu::BoundValues{ inspectionId, taskObjectId }}
 , m_TotalWidth(8)
 , m_Decimals(2)
 {
@@ -97,7 +97,9 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 {
 	UpdateData(TRUE); 
 
-	m_ValueController.Commit(SvOg::PostAction::doReset);
+	m_ValueController.Commit(SvOgu::PostAction::doReset);
+
+	// Check the file path to the archive file for associated archive tool.
 
 	std::string ArchiveFilepath = m_pTool->GetUntranslatedFullResultFilepath();
 
@@ -219,9 +221,10 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_pTool->m_bvoFormatResults.GetValue(dwTemp);
 	m_FormatResults = (BOOL)dwTemp;
 
-	m_ResultFolderpathWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_resultFolderpathPart1Edit, m_resultFolderpathPart1Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFolderpathPart1EId, &m_ValueController);
-	m_ResultFolderpathWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_resultFolderpathPart2Edit, m_resultFolderpathPart2Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFolderpathPart2EId, &m_ValueController);
-	m_ResultFolderpathWidgetHelpers[2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ResultFilenameEdit, m_ResultFilenameButton, m_inspectionId, m_taskId, SvPb::ArchiveResultFilenameEId, &m_ValueController);
+	m_ResultFolderpathWidgetHelpers[0] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_resultFolderpathPart1Edit, m_resultFolderpathPart1Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFolderpathPart1EId, &m_ValueController);
+	m_ResultFolderpathWidgetHelpers[1] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_resultFolderpathPart2Edit, m_resultFolderpathPart2Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFolderpathPart2EId, &m_ValueController);
+	m_ResultFolderpathWidgetHelpers[2] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ResultFilenameEdit, m_ResultFilenameButton, m_inspectionId, m_taskId, SvPb::ArchiveResultFilenameEId, &m_ValueController);
+
 
 	m_pTool->m_dwArchiveResultsMinimumNumberOfCharacters.GetValue(m_TotalWidth);
 

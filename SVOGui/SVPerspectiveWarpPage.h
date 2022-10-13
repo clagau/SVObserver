@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
 
@@ -44,7 +44,7 @@ namespace SvOg
 		bool setExtentImageProperty(SvPb::SVExtentPropertyEnum eProperty, double value);
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		ValueController m_values;
+		SvOgu::ValueController m_values;
 		long m_lLastWarpType;
 	};
 } //namespace SvOg

@@ -44,7 +44,7 @@ namespace SvOg
 	, m_Images(inspectionId, taskObjectId, SvPb::SVImageColorType)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
-	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	, m_convertToHSI{ false }
 	, m_InputName{ SvDef::cColorToolInputImage }
 	{
@@ -60,7 +60,7 @@ namespace SvOg
 		UpdateData( true ); // get data from dialog
 
 		m_values.Set<bool>(SvPb::ConvertToHSIEId, m_convertToHSI ? true : false);
-		Result = m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		Result = m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 		UpdateData( false );
 		return Result;

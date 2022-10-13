@@ -13,14 +13,13 @@
 
 #pragma region Includes
 #include "Operators/SVShapeMaskHelperClass.h"
-//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "SVOGui/PictureDisplay.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/CDSVPictureDisplay.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/LinkedValue.h"
+#include "SVOGuiUtility/MaskController.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVOGui/CDSVPictureDisplay.h"
-#include "SVOGui/DataController.h"
-#include "SVOGui/LinkedValue.h"
-#include "SVOGui/MaskController.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -56,7 +55,7 @@ public:
 	//************************************
 	void setSelectedTab(long tabNumber);
 
-	SvOg::ValueController& GetValues() { return m_Values; }
+	SvOgu::ValueController& GetValues() { return m_Values; }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -119,7 +118,7 @@ private:
 
 	void SetInspectionData();
 	void UpdateMask();
-	void FillComboBox(const SvOg::ValueController& rValueController, SvPb::EmbeddedIdEnum embeddedId, CComboBox& rCombo);
+	void FillComboBox(const SvOgu::ValueController& rValueController, SvPb::EmbeddedIdEnum embeddedId, CComboBox& rCombo);
 
 	//************************************
 	// Method:    setImages
@@ -163,7 +162,7 @@ private:
 	CString	m_sCoordinates;
 	BOOL	m_bContRecalc;
 	BOOL	m_bAutoResize;
-	SvOg::PictureDisplay m_dialogImage;
+	SvOgu::PictureDisplay m_dialogImage;
 	SVRPropTree          m_Tree;
 	//}}AFX_DATA
 
@@ -174,13 +173,13 @@ private:
 	long m_currentTabNumber; //only use until m_isInit is true
 	long m_handleToActiveObjects[m_numberOfTabs];
 	SvOp::SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
-	SvOg::MaskController m_maskController;
-	std::vector<std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, SvOg::LinkedValueData>>> m_ValuesSaved;
-	std::vector<std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, SvOg::LinkedValueData>>> m_ShapeHelperValuesSaved;
+	SvOgu::MaskController m_maskController;
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, SvOgu::LinkedValueData>>> m_ValuesSaved;
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, SvOgu::LinkedValueData>>> m_ShapeHelperValuesSaved;
 	
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
-	SvOg::ValueController m_Values;
-	SvOg::ValueController m_ShapeHelperValues;
+	SvOgu::ValueController m_Values;
+	SvOgu::ValueController m_ShapeHelperValues;
 #pragma endregion Member Variables
 };

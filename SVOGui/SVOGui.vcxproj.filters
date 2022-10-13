@@ -15,40 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AuxiliaryExtentsController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="BlobReconstructFilterDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="CDSVPictureDisplay.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="Custom2FilterDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="Displayhelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="FormulaController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="GlobalConstantConflictDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="GlobalConstantDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="MaskController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="PictureDisplay.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="RangeController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Ranking2FilterDlg.cpp">
@@ -100,9 +76,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVFillBlobDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFormulaEditorPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVFormulaEditorSheet.cpp">
@@ -207,12 +180,6 @@
     <ClCompile Include="ToolAdjustToolSetPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ZoomHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="NormalizerController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="BlobAnalyzer2Sheet.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -234,9 +201,6 @@
     <ClCompile Include="SelectToolForNewSourceImageDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ExternalToolTaskController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="AuditFilesDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -246,43 +210,16 @@
     <ClCompile Include="TADialogGroupToolResultPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="LinkedValueWidgetHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="LinkedValueSelectorDialog.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="LinkedValue.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="BlobAnalyzer2Helper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TADialogDrawPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ToolSizeController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgExternalToolImageSelectPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawTaskTree.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawToolController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawToolHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="InputConflictDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="CreateInputResultDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="GroupToolHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="RangeXDialogClass.cpp">
@@ -308,28 +245,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AuxiliaryExtentsController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="BlobReconstructFilterDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="BoundValue.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="CDSVPictureDisplay.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Custom2FilterDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DataController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DisplayHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="FormulaController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="GlobalConstantConflictDlg.h">
@@ -338,22 +257,7 @@
     <ClInclude Include="GlobalConstantDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GuiValueHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="ISVPropertyPageDialog.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="MaskController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="PictureDisplay.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Ranking2FilterDlg.h">
@@ -363,15 +267,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ResultTableSelectionDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Sci_Position.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SciLexer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Scintilla.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h">
@@ -414,9 +309,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFillBlobDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFormulaEditorPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFormulaEditorSheet.h">
@@ -521,16 +413,7 @@
     <ClInclude Include="TextDefinesSvOg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ValuesAccessor.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ZoomHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="ToolAdjustToolSetPage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NormalizerController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BlobAnalyzer2Sheet.h">
@@ -554,25 +437,10 @@
     <ClInclude Include="SelectToolForNewSourceImageDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ExternalToolTaskController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="AuditFilesDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADialogGroupToolInputPage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="LinkedValue.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="LinkedValueWidgetHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="LinkedValueSelectorDialog.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="BlobAnalyzer2Helper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADialogGroupToolResultPage.h">
@@ -581,31 +449,13 @@
     <ClInclude Include="TADialogDrawPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ToolSizeController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVTADlgExternalToolImageSelectPage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawTaskTree.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawToolController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawToolHelperStructs.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawToolHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="InputConflictDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CreateInputResultDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GroupToolHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RangeXDialogClass.h">

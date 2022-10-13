@@ -9,13 +9,13 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "SVMFCControls\ObjectsListBox.h"
-#include "SVUtilityLibrary\NameObjectIdList.h"
-#include "DataController.h"
-#include "LinkedValueWidgetHelper.h"
+#include "SVMFCControls/AvailableObjectListComboBox.h"
+#include "SVMFCControls/ObjectsListBox.h"
+#include "SVUtilityLibrary/NameObjectIdList.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #include "ISVPropertyPageDialog.h"
-#include "ObjectInterfaces\IFormulaController.h"
+#include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -127,9 +127,9 @@ namespace SvOg
 		CButton m_ButtonExcludeHigh;
 		CButton m_ButtonExcludeLow;
 		CButton m_ButtonLimitValue;
-		std::unique_ptr<LinkedValueWidgetHelper> m_ExcludeHighWidget;
-		std::unique_ptr<LinkedValueWidgetHelper> m_ExcludeLowWidget;
-		std::unique_ptr<LinkedValueWidgetHelper> m_LimitWidget;
+		std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_ExcludeHighWidget;
+		std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_ExcludeLowWidget;
+		std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_LimitWidget;
 		CEdit m_EditAddColumnName;
 		CString m_AddFormulaString;
 
@@ -143,7 +143,7 @@ namespace SvOg
 		std::string m_inputName; 
 		uint32_t m_sourceTableObjectId = SvDef::InvalidObjectId;
 
-		std::shared_ptr<ValueController> m_pValues;
+		std::shared_ptr<SvOgu::ValueController> m_pValues;
 
 		SvOi::IFormulaControllerPtr m_pSelectedAddEquationFormula;
 #pragma endregion Member Variables

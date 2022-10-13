@@ -11,8 +11,8 @@
 #include "GridCtrlLibrary\GridCellCombo.h"
 #include "Definitions\Color.h"
 #include "Definitions\GlobalConst.h"
-#include "DisplayHelper.h"
-#include "LinkedValueSelectorDialog.h"
+#include "SVOGuiUtility/DisplayHelper.h"
+#include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -89,7 +89,7 @@ BOOL InputConflictDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
+	SvOgu::DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 	m_Grid.SetRedraw(false);
 	m_Grid.SetFixedRowCount(cHeaderSize);
@@ -125,12 +125,12 @@ void InputConflictDlg::setLinkedValueColumns(int pos)
 	{
 		if (nullptr == m_valuesControllerMap[m_rInputDataVector[pos].parentid()])
 		{
-			std::unique_ptr<ValueController> valueCtrl = std::make_unique<ValueController>(SvOg::BoundValues{m_inspectionId, m_rInputDataVector[pos].parentid() });
+			std::unique_ptr<SvOgu::ValueController> valueCtrl = std::make_unique<SvOgu::ValueController>(SvOgu::BoundValues{m_inspectionId, m_rInputDataVector[pos].parentid() });
 			valueCtrl->Init();
 			m_valuesControllerMap[m_rInputDataVector[pos].parentid()] = std::move(valueCtrl);
 		}
 
-		auto valueData = m_valuesControllerMap[m_rInputDataVector[pos].parentid()]->Get<LinkedValueData>(m_rInputDataVector[pos].embeddedid());
+		auto valueData = m_valuesControllerMap[m_rInputDataVector[pos].parentid()]->Get<SvOgu::LinkedValueData>(m_rInputDataVector[pos].embeddedid());
 		bool isChangeable {false};
 		CString valueString;
 		switch (valueData.m_selectedOption)
@@ -268,8 +268,8 @@ void InputConflictDlg::OnGridClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/)
 				{
 					if (nullptr != m_valuesControllerMap[m_rInputDataVector[pos].parentid()])
 					{
-						auto valueData = m_valuesControllerMap[m_rInputDataVector[pos].parentid()]->Get<LinkedValueData>(m_rInputDataVector[pos].embeddedid());
-						LinkedValueSelectorDialog dlg(m_inspectionId, m_rInputDataVector[pos].objectid(), m_rInputDataVector[pos].name(), valueData, valueData.m_defaultValue.vt);
+						auto valueData = m_valuesControllerMap[m_rInputDataVector[pos].parentid()]->Get<SvOgu::LinkedValueData>(m_rInputDataVector[pos].embeddedid());
+						SvOgu::LinkedValueSelectorDialog dlg(m_inspectionId, m_rInputDataVector[pos].objectid(), m_rInputDataVector[pos].name(), valueData, valueData.m_defaultValue.vt);
 						if (IDOK == dlg.DoModal())
 						{
 							commitLinkedData(pos, dlg.getData());
@@ -301,7 +301,7 @@ void InputConflictDlg::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 				{
 					if (nullptr != m_valuesControllerMap[m_rInputDataVector[pItem->iRow - 1].parentid()])
 					{
-						auto valueData = m_valuesControllerMap[m_rInputDataVector[pItem->iRow - 1].parentid()]->Get<LinkedValueData>(m_rInputDataVector[pItem->iRow - 1].embeddedid());
+						auto valueData = m_valuesControllerMap[m_rInputDataVector[pItem->iRow - 1].parentid()]->Get<SvOgu::LinkedValueData>(m_rInputDataVector[pItem->iRow - 1].embeddedid());
 						bAcceptChange = setLinkedValue(cellText, "m_valuesControllerMap[m_rInputDataVector[pItem->iRow - 1].parentid()].name()", valueData);
 						if (bAcceptChange)
 						{
@@ -332,7 +332,7 @@ void InputConflictDlg::OnGridValueSelectionChanged(NMHDR* pNotifyStruct, LRESULT
 	}
 }
 
-bool InputConflictDlg::setLinkedValue(const std::string& rNewStr, const std::string& rName, LinkedValueData& rData)
+bool InputConflictDlg::setLinkedValue(const std::string& rNewStr, const std::string& rName, SvOgu::LinkedValueData& rData)
 {
 	if (SvPb::LinkedSelectedOption::DirectValue == rData.m_selectedOption /*&& SvPb::isValueType(data.m_type)*/)
 	{
@@ -356,9 +356,9 @@ bool InputConflictDlg::setLinkedValue(const std::string& rNewStr, const std::str
 	return false;
 }
 
-void InputConflictDlg::commitLinkedData(int pos, const LinkedValueData& rData)
+void InputConflictDlg::commitLinkedData(int pos, const SvOgu::LinkedValueData& rData)
 {
-	m_valuesControllerMap[m_rInputDataVector[pos].parentid()]->Set<LinkedValueData>(m_rInputDataVector[pos].embeddedid(), rData);
+	m_valuesControllerMap[m_rInputDataVector[pos].parentid()]->Set<SvOgu::LinkedValueData>(m_rInputDataVector[pos].embeddedid(), rData);
 	m_valuesControllerMap[m_rInputDataVector[pos].parentid()]->Commit();
 	setLinkedValueColumns(pos);
 	m_Grid.Refresh();

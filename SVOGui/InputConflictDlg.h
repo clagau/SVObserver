@@ -9,8 +9,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
-#include "GridCtrlLibrary\GridCtrl.h"
-#include "DataController.h"
+#include "GridCtrlLibrary/GridCtrl.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -41,8 +41,8 @@ protected:
 	void OnGridClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/);
 	void OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
 	void OnGridValueSelectionChanged(NMHDR* pNotifyStruct, LRESULT* pResult);
-	bool setLinkedValue(const std::string& rNewStr, const std::string& name, LinkedValueData& rData);
-	void commitLinkedData(int pos, const LinkedValueData& rData);
+	bool setLinkedValue(const std::string& rNewStr, const std::string& name, SvOgu::LinkedValueData& rData);
+	void commitLinkedData(int pos, const SvOgu::LinkedValueData& rData);
 	void commitInputObject(int pos, const std::string& rText);
 	void updateSelections();
 #pragma endregion Protected Methods
@@ -56,7 +56,7 @@ private:
 	CBitmap m_downArrowBitmap;
 	CImageList m_ImageList;
 
-	std::map<uint32_t, std::unique_ptr<ValueController>> m_valuesControllerMap;
+	std::map<uint32_t, std::unique_ptr<SvOgu::ValueController>> m_valuesControllerMap;
 	std::map<uint32_t, std::vector<SvPb::ObjectNameIdPair>> m_inputObjectValueMap;
 #pragma endregion Member variables
 };

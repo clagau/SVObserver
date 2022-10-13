@@ -16,8 +16,8 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVEdgeMarkerAdjustmentPageClass.h"
-#include "PictureDisplay.h"
-#include "LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 
@@ -94,7 +94,7 @@ private:
 	/// \param allowType [in] Set the allowType to the control. Default is none change allowed.
 	void setMarkerOverlayToPicture(DWORD value, bool bVertical, long allowType = CDSVPictureDisplay::AllowNone);
 
-	void OnChangeValue(std::unique_ptr<LinkedValueWidgetHelper>& rWidget);
+	void OnChangeValue(std::unique_ptr<SvOgu::LinkedValueWidgetHelper>& rWidget);
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -107,33 +107,33 @@ private:
 	enum { IDD = IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG };
 	CEdit	m_LowerSelectedEditCtrl;
 	CButton m_LowerSelectedButton;
-	std::unique_ptr<LinkedValueWidgetHelper> m_LowerSelectedWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_LowerSelectedWidget;
 	CEdit	m_LowerMinOffsetEditCtrl;
 	CButton m_LowerMinOffsetButton;
-	std::unique_ptr<LinkedValueWidgetHelper> m_LowerMinOffsetWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_LowerMinOffsetWidget;
 	CEdit	m_LowerMaxOffsetEditCtrl;
 	CButton m_LowerMaxOffsetButton;
-	std::unique_ptr<LinkedValueWidgetHelper> m_LowerMaxOffsetWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_LowerMaxOffsetWidget;
 	CEdit	m_LowerMaxDiffEditCtrl;
 	CButton m_LowerMaxDiffButton;
-	std::unique_ptr<LinkedValueWidgetHelper> m_LowerMaxDiffWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_LowerMaxDiffWidget;
 	CEdit	m_UpperSelectedEditCtrl;
 	CButton m_UpperSelectedButton;
-	std::unique_ptr<LinkedValueWidgetHelper> m_UpperSelectedWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_UpperSelectedWidget;
 	CEdit	m_UpperMinOffsetEditCtrl;
 	CButton m_UpperMinOffsetButton;
-	std::unique_ptr<LinkedValueWidgetHelper> m_UpperMinOffsetWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_UpperMinOffsetWidget;
 	CEdit	m_UpperMaxOffsetEditCtrl;
 	CButton m_UpperMaxOffsetButton;
-	std::unique_ptr<LinkedValueWidgetHelper> m_UpperMaxOffsetWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_UpperMaxOffsetWidget;
 	CEdit	m_UpperMaxDiffEditCtrl;
 	CButton m_UpperMaxDiffButton;
-	std::unique_ptr<LinkedValueWidgetHelper> m_UpperMaxDiffWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_UpperMaxDiffWidget;
 	int		m_lowerThresholdOption = 0;
 	int		m_upperThresholdOption = 0;
 
-	PictureDisplay m_dialogImage;
-	ValueController m_analyzerValues;
+	SvOgu::PictureDisplay m_dialogImage;
+	SvOgu::ValueController m_analyzerValues;
 #pragma endregion Member variables
 };
 }  //namespace SvOg

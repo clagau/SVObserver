@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVTADlgExternalSelectDllPage.h"
-#include "SVOGui/ExternalToolTaskController.h"
+#include "SVOGuiUtility/ExternalToolTaskController.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -67,13 +67,13 @@ BEGIN_MESSAGE_MAP(SVTADlgExternalSelectDllPage, CPropertyPage)
 	ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
 
-SVTADlgExternalSelectDllPage::SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, CWnd& rParent, ExternalToolTaskController& rExternalToolTaskController)
+SVTADlgExternalSelectDllPage::SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, CWnd& rParent, SvOgu::ExternalToolTaskController& rExternalToolTaskController)
 	: CPropertyPage(IDD)
 	, m_InspectionID(inspectionID)
 	, m_ToolObjectID(toolObjectID) //attention: SVToolAdjustmentDialogSheetClass::m_TaskObjectID is passed to this value when this constructor is called by SVToolAdjustmentDialogSheetClass!
 	, m_rParent(rParent)
 	, m_rExternalToolTaskController(rExternalToolTaskController)
-	, m_valueControllerToolTask {SvOg::BoundValues{ inspectionID, m_rExternalToolTaskController.getExternalToolTaskObjectId() }}
+	, m_valueControllerToolTask {SvOgu::BoundValues{ inspectionID, m_rExternalToolTaskController.getExternalToolTaskObjectId() }}
 {
 	//{{AFX_DATA_INIT(SVTADlgExternalSelectDllPage)
 	m_currentExternalDllFilepath = _T("");
@@ -123,7 +123,7 @@ BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 
 	InitializeDllAndDisplayResults(true);
 	
-	for (auto i = 0; i < ExternalToolTaskController::NUM_TOOL_DEPENDENCIES; ++i)
+	for (auto i = 0; i < SvOgu::ExternalToolTaskController::NUM_TOOL_DEPENDENCIES; ++i)
 	{
 		auto tempDependency = m_valueControllerToolTask.Get<_variant_t>(SvPb::EmbeddedIdEnum::DllDependencyFileNameEId + i);
 		auto dependency = SvUl::VariantToString(tempDependency);
@@ -160,7 +160,7 @@ void SVTADlgExternalSelectDllPage::OnOK()
 	{
 	}
 
-	m_valueControllerToolTask.Commit(SvOg::PostAction::doNothing);
+	m_valueControllerToolTask.Commit(SvOgu::PostAction::doNothing);
 
 	m_rParent.SendMessage(SV_UPDATE_IPDOC_VIEWS);
 
@@ -223,7 +223,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 {
 	UpdateData();
 
-	SvOg::ValueController valueControllerTool {SvOg::BoundValues{ m_InspectionID, m_ToolObjectID}};
+	SvOgu::ValueController valueControllerTool {SvOgu::BoundValues{ m_InspectionID, m_ToolObjectID}};
 
 	valueControllerTool.Init();
 
@@ -262,7 +262,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 		//thus a commit is necessary after set and an init is necessary before get in order to fetch the processed value.
 		std::string dllPath(m_currentExternalDllFilepath.GetString());
 		m_valueControllerToolTask.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
-		m_valueControllerToolTask.Commit(SvOg::PostAction::doNothing);
+		m_valueControllerToolTask.Commit(SvOgu::PostAction::doNothing);
 
 		m_valueControllerToolTask.Init();
 		auto runpath{ getStdStringFromValueController(SvPb::EmbeddedIdEnum::DllFileNameEId) };
@@ -272,7 +272,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 		{
 			//Unload current dll  
 			m_valueControllerToolTask.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, CString());
-			m_valueControllerToolTask.Commit(SvOg::PostAction::doNothing);
+			m_valueControllerToolTask.Commit(SvOgu::PostAction::doNothing);
 
 			InitializeDllAndDisplayResults(false, false);
 			m_valueControllerToolTask.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
@@ -313,7 +313,7 @@ void SVTADlgExternalSelectDllPage::testExternalDll(bool setDefaultValues)
 	// DLL Path
 	m_valueControllerToolTask.SetDefault<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 	// ensure that all data are available for initialize dll
-	m_valueControllerToolTask.Commit(SvOg::PostAction::doNothing);
+	m_valueControllerToolTask.Commit(SvOgu::PostAction::doNothing);
 	InitializeDllAndDisplayResults(false, setDefaultValues);
 }
 
@@ -326,7 +326,7 @@ void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
 	{
 		auto& rInputDef = inputDefinitions.inputvaluesdefinition()[i];
 		int LinkValueIndex = rInputDef.linkedvalueindex();
-		auto data = m_valueControllerToolTask.Get<SvOg::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex);
+		auto data = m_valueControllerToolTask.Get<SvOgu::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex);
 		if (rInputDef.type() == SvPb::ExDllInterfaceType::Scalar || rInputDef.type() == SvPb::ExDllInterfaceType::Array)
 		{
 			_variant_t value;
@@ -344,7 +344,7 @@ void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
 			data.m_selectedOption = SvPb::IndirectValue;
 			data.m_indirectIdName = "VOID";
 		}
-		m_valueControllerToolTask.Set<SvOg::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, data);
+		m_valueControllerToolTask.Set<SvOgu::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, data);
 	}
 }
 
@@ -364,7 +364,7 @@ void SVTADlgExternalSelectDllPage::SetDependencies()
 {
 	int i(0);
 	
-	for (auto idxDep = 0; idxDep < ExternalToolTaskController::NUM_TOOL_DEPENDENCIES; ++idxDep)
+	for (auto idxDep = 0; idxDep < SvOgu::ExternalToolTaskController::NUM_TOOL_DEPENDENCIES; ++idxDep)
 	{
 		//GetDefault() could be called only once if the condition "all dependencies have the same defaut value" holds TRUE always. 
 		//Assumption: the existing default value is correct, so use it to "reset" the actual value with the existing default value
@@ -541,7 +541,7 @@ BOOL SVTADlgExternalSelectDllPage::OnKillActive()
 	// Since the ValueController used here share the same data with the one used on another page (see SVTADlgExternalInputSelectPage),
 	// we need to avoid unwanted interactions between the two (e.g. during navigation between tabs). 
 	// Therefore, ensure a Commit() w/o call for each controller by page leave.
-	m_valueControllerToolTask.Commit(SvOg::PostAction::doNothing);
+	m_valueControllerToolTask.Commit(SvOgu::PostAction::doNothing);
 
 	return __super::OnKillActive();
 }

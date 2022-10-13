@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #include "SVMFCControls/SVDlgGraph.h"
 #include "SVMFCControls/CLabel.h"
@@ -35,7 +35,7 @@ namespace SvOg
 	#pragma region Public Methods
 	public:
 		HRESULT SetInspectionData();
-		ValueController& GetValues() { return m_values; }
+		SvOgu::ValueController& GetValues() { return m_values; }
 	#pragma endregion Public Methods
 
 	#pragma region Protected Methods
@@ -156,8 +156,8 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		ValueController m_values;
-		ValueController m_LutEquation;
+		SvOgu::ValueController m_values;
+		SvOgu::ValueController m_LutEquation;
 	#pragma endregion Member variables
 	};
 } //namespace SvOg

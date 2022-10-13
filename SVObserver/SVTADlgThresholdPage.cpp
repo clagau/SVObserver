@@ -20,7 +20,7 @@
 #include "Operators/SVThresholdClass.h"
 #include "Operators/SVUpperThresholdEquation.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMFCControls/SVHistogram.h"
@@ -134,7 +134,7 @@ HRESULT SVTADlgThresholdPage::SetInspectionData()
 	if (nullptr != m_pCurrentThreshold)
 	{
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-		SvOg::ValueController Values{ SvOg::BoundValues{ m_pCurrentThreshold->GetInspection()->getObjectId(), m_pCurrentThreshold->getObjectId() } };
+		SvOgu::ValueController Values{ SvOgu::BoundValues{ m_pCurrentThreshold->GetInspection()->getObjectId(), m_pCurrentThreshold->getObjectId() } };
 		Values.Init();
 
 		Values.Set<long>(m_pCurrentThreshold->m_upperThresh.GetEmbeddedID(), m_upperThreshold.GetPos());

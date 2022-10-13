@@ -13,8 +13,8 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "PictureDisplay.h"
-#include "ImageController.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/ImageController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -43,10 +43,10 @@ namespace SvOg
 	private:
 		//{{AFX_DATA(SVSaveToolSetImageDialogClass)
 		enum { IDD = IDD_SELECT_TOOLSET_IMAGE_TO_SAVE_DIALOG };
-		PictureDisplay m_currentSelectedImageCtrl;
+		SvOgu::PictureDisplay m_currentSelectedImageCtrl;
 		CComboBox m_availableImagesComboCtrl;
 		//}}AFX_DATA
 
-		ImageController m_ImageController;
+		SvOgu::ImageController m_ImageController;
 	};
 } //namespace SvOg

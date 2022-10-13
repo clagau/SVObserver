@@ -13,14 +13,14 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <limits.h>
 #include "Custom2FilterDlg.h"
-#include "BoundValue.h"
+#include "SVOGuiUtility/BoundValue.h"
+#include "SVOGuiUtility/GuiValueHelper.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
-#include "ObjectInterfaces\ICustom2Filter.h"
-#include "Definitions\GlobalConst.h"
+#include "ObjectInterfaces/ICustom2Filter.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "GuiValueHelper.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
@@ -78,7 +78,7 @@ namespace SvOg
 		, m_GridStatus( _T("") )
 		,m_filterID(filterId)
 		,m_InspectionID(inspectionId)
-		,m_values(SvOg::BoundValues(inspectionId, filterId))
+		,m_values(SvOgu::BoundValues(inspectionId, filterId))
 	{
 	}
 
@@ -97,9 +97,9 @@ namespace SvOg
 		m_values.Set<long>(SvPb::CustomFilterTransformEId, m_NormalizationFactor);
 		m_values.Set<bool>(SvPb::CustomFilterAbsoluteEId, m_AbsoluteValue ? true : false);
 		m_values.Set<bool>(SvPb::CustomFilterClippingEId, m_ClippingEnabled ? true : false);
-		_variant_t value = ConvertVectorToVariantSafeArray<std::vector<long>>(m_KernelArray);
+		_variant_t value = SvOgu::ConvertVectorToVariantSafeArray<std::vector<long>>(m_KernelArray);
 		m_values.Set<_variant_t>(SvPb::FilterKernelEId, value);
-		m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 		return Result;
 	}
@@ -439,7 +439,7 @@ namespace SvOg
 		m_ClippingEnabled = m_values.Get<bool>(SvPb::CustomFilterClippingEId);
 
 		m_KernelArray.clear();
-		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_values.Get<_variant_t>(SvPb::FilterKernelEId));
+		m_KernelArray = SvOgu::ConvertVariantSafeArrayToVector<long>(m_values.Get<_variant_t>(SvPb::FilterKernelEId));
 	}
 
 	bool Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )

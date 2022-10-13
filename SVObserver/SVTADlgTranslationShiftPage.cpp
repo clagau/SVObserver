@@ -38,7 +38,7 @@ SVTADlgTranslationShiftPage::SVTADlgTranslationShiftPage(uint32_t inspectionId, 
 , pEvaluateTranslationY( nullptr ) // This needs to change
 , m_lShiftType( 0 )
 //TaskID is set later
-, m_Values{ SvOg::BoundValues{inspectionId, SvDef::InvalidObjectId} }
+, m_Values{ SvOgu::BoundValues{inspectionId, SvDef::InvalidObjectId} }
 {
 	if(nullptr != m_pParentDialog)
 	{

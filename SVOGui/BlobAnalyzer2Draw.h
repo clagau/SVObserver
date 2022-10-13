@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "ISVPropertyPageDialog.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVMFCControls/SVEditableListBox.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
@@ -112,7 +112,7 @@ namespace SvOg
 		const uint32_t m_analyzerID;
 		const uint32_t m_drawTaskId;
 
-		ValueController m_Values;
+		SvOgu::ValueController m_Values;
 
 		int m_fillColor = 0;
 		BOOL	m_useFillBlob = false;

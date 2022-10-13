@@ -11,7 +11,7 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "ISVPropertyPageDialog.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
@@ -79,7 +79,7 @@ namespace SvOg
 		SvOi::IFormulaControllerPtr m_pFormulaController;
 		CString m_clearString;
 
-		ValueController m_values;
+		SvOgu::ValueController m_values;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

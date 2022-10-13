@@ -12,14 +12,14 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
-#include "ImageController.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/ImageController.h"
 
 #pragma endregion Includes
 
 namespace SvOg
 {
-	class SVWatershedFilterDlg : public CDialog, protected SvOg::ImageController
+	class SVWatershedFilterDlg : public CDialog, protected SvOgu::ImageController
 	{
 		// Construction
 	public:
@@ -67,6 +67,6 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		const uint32_t m_filterID;
-		ValueController m_values;
+		SvOgu::ValueController m_values;
 	};
 } //namespace SvOg

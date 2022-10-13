@@ -28,8 +28,8 @@ namespace SvOg
 		, m_inspectionId(inspectionId)
 		, m_analyzerId(analyzerId)
 		, m_resultId(resultId)
-		, m_analyzerValues{ SvOg::BoundValues{ inspectionId, analyzerId } }
-		, m_resultValues{ SvOg::BoundValues{ inspectionId, resultId } }
+		, m_analyzerValues{ SvOgu::BoundValues{ inspectionId, analyzerId } }
+		, m_resultValues{ SvOgu::BoundValues{ inspectionId, resultId } }
 	{
 		AddPage(&m_dlgBarCodeGeneral);
 		AddPage(&m_dlgBarCodeStringMatch);

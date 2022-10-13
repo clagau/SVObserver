@@ -36,7 +36,7 @@ TADialogLoopToolParameterPage::TADialogLoopToolParameterPage(uint32_t inspection
 	: CPropertyPage(TADialogLoopToolParameterPage::IDD)
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskObjectID)
-	, m_values {SvOg::BoundValues{ inspectionID, taskObjectID }}
+	, m_values {SvOgu::BoundValues{ inspectionID, taskObjectID }}
 {
 }
 
@@ -73,8 +73,8 @@ BOOL TADialogLoopToolParameterPage::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	m_values.Init();
 	m_MaxLoopCount = m_values.Get<long>(SvPb::MaxLoopsEId);
-	m_LoopsValueWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLoopsValue, m_ButtonLoopsValue, m_InspectionID, m_TaskObjectID, SvPb::LinkedLoopsEId, &m_values);
-	m_BreakConditionWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditBreakCondition, m_ButtonBreakCondition, m_InspectionID, m_TaskObjectID, SvPb::LoopBreakEId, &m_values);
+	m_LoopsValueWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditLoopsValue, m_ButtonLoopsValue, m_InspectionID, m_TaskObjectID, SvPb::LinkedLoopsEId, &m_values);
+	m_BreakConditionWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditBreakCondition, m_ButtonBreakCondition, m_InspectionID, m_TaskObjectID, SvPb::LoopBreakEId, &m_values);
 	UpdateData(FALSE);
 	return TRUE;
 }
@@ -102,7 +102,7 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 		hResult = m_values.Commit();
 		if (S_OK == hResult)
 		{
-			auto data = m_values.Get<LinkedValueData>(SvPb::LinkedLoopsEId);
+			auto data = m_values.Get<SvOgu::LinkedValueData>(SvPb::LinkedLoopsEId);
 			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				long MaxLoopCount = m_values.Get<long>(SvPb::MaxLoopsEId);

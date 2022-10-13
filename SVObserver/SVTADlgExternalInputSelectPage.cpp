@@ -13,17 +13,17 @@
 #include "stdafx.h"
 #include "SVTADlgExternalInputSelectPage.h"
 #include "Definitions/SVUserMessage.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "SVOGui\SVTADlgExternalToolImageSelectPage.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVOGui/SVTADlgExternalToolImageSelectPage.h"
 #include "SVTADlgExternalResultPage.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOGui/BoundValue.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
-#include "SVOGui/LinkedValue.h"
-#include "SVOGui/LinkedValueSelectorDialog.h"
+#include "SVOGuiUtility/BoundValue.h"
+#include "SVOGuiUtility/LinkedValue.h"
+#include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -93,13 +93,13 @@ BEGIN_MESSAGE_MAP(SVTADlgExternalInputSelectPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 
-SVTADlgExternalInputSelectPage::SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, ExternalToolTaskController& rExternalToolTaskController)
+SVTADlgExternalInputSelectPage::SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, SvOgu::ExternalToolTaskController& rExternalToolTaskController)
 	: CPropertyPage(IDD)
 	, m_InspectionID(inspectionID)
 	, m_ToolObjectID(toolObjectID)
 	, m_rExternalToolTaskController(rExternalToolTaskController)
 	, m_TaskObjectID(m_rExternalToolTaskController.getExternalToolTaskObjectId())
-	, m_InputValues{ SvOg::BoundValues{ inspectionID, m_TaskObjectID } }
+	, m_InputValues{ SvOgu::BoundValues{ inspectionID, m_TaskObjectID } }
 {
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_TaskObjectID, pObject);
@@ -321,9 +321,9 @@ void SVTADlgExternalInputSelectPage::SelectObject(SVRPropertyItemEdit& rItem)
 	{
 		VARTYPE vtType = (SvPb::ExDllInterfaceType::TableArray == pDef->type()) ? VT_EMPTY : static_cast<VARTYPE>(pDef->vt());
 		SvPb::EmbeddedIdEnum eId = SvPb::ExternalInputEId + pDef->linkedvalueindex();
-		SvOg::LinkedValueSelectorDialog dlg(m_InspectionID, m_InputValues.GetObjectID(eId), 
+		SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_InputValues.GetObjectID(eId), 
 			m_InputValues.GetName(eId),
-			m_InputValues.Get<SvOg::LinkedValueData>(eId),
+			m_InputValues.Get<SvOgu::LinkedValueData>(eId),
 			vtType);
 		if (IDOK == dlg.DoModal())
 		{
@@ -365,7 +365,7 @@ void SVTADlgExternalInputSelectPage::updateInputValuesFromPropertyTree()
 		m_Tree.SaveState(propTreeState);
 		m_rExternalToolTaskController.setPropTreeState(propTreeState);
 
-		m_InputValues.Commit(SvOg::PostAction::doNothing);
+		m_InputValues.Commit(SvOgu::PostAction::doNothing);
 	}
 }
 
@@ -416,7 +416,7 @@ BOOL SVTADlgExternalInputSelectPage::OnKillActive()
 
 void SVTADlgExternalInputSelectPage::setValueColumn(SvPb::EmbeddedIdEnum eId, SvPb::ExDllInterfaceType type, SVRPropertyItemEdit& rEdit)
 {
-	auto data = m_InputValues.Get<SvOg::LinkedValueData>(eId);
+	auto data = m_InputValues.Get<SvOgu::LinkedValueData>(eId);
 	bool isReadOnly{ true };
 	CString valueString;
 	switch (type)
@@ -453,7 +453,7 @@ bool SVTADlgExternalInputSelectPage::setStringToData(SVRPropertyItem& rItem)
 
 	SvPb::ExDllInterfaceType type = pDef->type();
 	SvPb::EmbeddedIdEnum eId = SvPb::ExternalInputEId + pDef->linkedvalueindex();
-	auto data = m_InputValues.Get<SvOg::LinkedValueData>(eId);
+	auto data = m_InputValues.Get<SvOgu::LinkedValueData>(eId);
 	if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 	{
 		_variant_t newVal;
@@ -468,11 +468,11 @@ bool SVTADlgExternalInputSelectPage::setStringToData(SVRPropertyItem& rItem)
 		}
 		else
 		{
-			bool isOk = SvOg::LinkedValueSelectorDialog::createVariantFromString(static_cast<VARTYPE>(pDef->vt()), std::string {Name}, data.m_directValue);
+			bool isOk = SvOgu::LinkedValueSelectorDialog::createVariantFromString(static_cast<VARTYPE>(pDef->vt()), std::string {Name}, data.m_directValue);
 			if (isOk)
 			{
 				data.m_Value = data.m_directValue;
-				m_InputValues.Set<SvOg::LinkedValueData>(eId, data);
+				m_InputValues.Set<SvOgu::LinkedValueData>(eId, data);
 			}
 		}
 	}

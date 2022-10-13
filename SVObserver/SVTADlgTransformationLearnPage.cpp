@@ -15,7 +15,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "Operators/SVEvaluate.h"
 #include "Operators/SVImageTransform.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -83,7 +83,7 @@ HRESULT SVTADlgTransformationLearnPage::SetInspectionData()
 		UpdateData( true ); // get data from dialog
 
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-		SvOg::ValueController Values{ SvOg::BoundValues{ m_pImageTransform->GetInspection()->getObjectId(), m_pImageTransform->getObjectId() } };
+		SvOgu::ValueController Values{ SvOgu::BoundValues{ m_pImageTransform->GetInspection()->getObjectId(), m_pImageTransform->getObjectId() } };
 		Values.Init();
 
 		Values.Set<double>(m_pLearnedTranslationX->GetEmbeddedID(), m_translationXValue);

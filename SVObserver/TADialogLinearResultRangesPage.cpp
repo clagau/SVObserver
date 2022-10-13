@@ -11,7 +11,7 @@
 #include "stdafx.h"
 #include "TADialogLinearResultRangesPage.h"
 #include "SVObserver/SVSetupDialogManager.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -53,7 +53,7 @@ BOOL TADialogLinearResultRangesPage::OnInitDialog()
 	auto operatorListObjectId = getOperatorListObjectId();
 	if (0 != operatorListObjectId)
 	{
-		m_pValueController = std::make_unique<SvOg::ValueController>(SvOg::BoundValues{ m_InspectionID, operatorListObjectId, true });
+		m_pValueController = std::make_unique<SvOgu::ValueController>(SvOgu::BoundValues{ m_InspectionID, operatorListObjectId, true });
 		m_pValueController->Init();
 	}
 	std::map<uint32_t, SvPb::EmbeddedIdEnum> valueObjectIdEmbeddedIdMap {

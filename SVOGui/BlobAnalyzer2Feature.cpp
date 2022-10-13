@@ -13,11 +13,11 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCheck.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "BoundValue.h"
+#include "SVOGuiUtility/BoundValue.h"
+#include "SVOGuiUtility/BlobAnalyzer2Helper.h"
+#include "SVOGuiUtility/DisplayHelper.h"
 #include "SVFormulaEditorSheet.h"
-#include "DisplayHelper.h"
 #include "Definitions/GlobalConst.h"
-#include "BlobAnalyzer2Helper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -91,7 +91,7 @@ namespace SvOg
 		: CPropertyPage(BlobAnalyzer2Feature::IDD)
 		, m_InspectionID(inspectionId)
 		, m_TaskObjectID(taskObjectId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+		, m_Values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 
@@ -120,7 +120,7 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
+		SvOgu::DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 		HRESULT result = loadFeatureData();
 		if (S_OK != result)
@@ -357,7 +357,7 @@ namespace SvOg
 			{
 				auto iter = g_columnFeatureDefArray.find(UpperBoundColumn);
 				auto name = g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "ObjectSelector";
-				startObjectSelector(m_Grid, name, pItem->iRow, UpperBoundColumn, m_InspectionID, m_featureData[pItem->iRow - 1].upper_bound_id(), *m_featureData[pItem->iRow - 1].mutable_upper_bound());
+				SvOgu::startObjectSelector(m_Grid, name, pItem->iRow, UpperBoundColumn, m_InspectionID, m_featureData[pItem->iRow - 1].upper_bound_id(), *m_featureData[pItem->iRow - 1].mutable_upper_bound());
 			}
 			break;
 		case LowerBoundButtonColumn:
@@ -365,7 +365,7 @@ namespace SvOg
 			{
 				auto iter = g_columnFeatureDefArray.find(LowerBoundColumn);
 				auto name = g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "ObjectSelector";
-				startObjectSelector(m_Grid, name, pItem->iRow, LowerBoundColumn, m_InspectionID, m_featureData[pItem->iRow - 1].lower_bound_id(), *m_featureData[pItem->iRow - 1].mutable_lower_bound());
+				SvOgu::startObjectSelector(m_Grid, name, pItem->iRow, LowerBoundColumn, m_InspectionID, m_featureData[pItem->iRow - 1].lower_bound_id(), *m_featureData[pItem->iRow - 1].mutable_lower_bound());
 			}
 			break;
 		default:
@@ -656,13 +656,13 @@ namespace SvOg
 						pCell->SetCheck(m_featureData[i].is_exclude_inner());
 					}
 					m_Grid.SetItemState(row, ExcludeInnerColumn, m_Grid.GetItemState(row, ExcludeInnerColumn) & (~GVIS_READONLY));
-					setValueColumn(m_Grid, row, LowerBoundColumn, convertLinkedValue(m_featureData[i].lower_bound()));
+					setValueColumn(m_Grid, row, LowerBoundColumn, SvOgu::convertLinkedValue(m_featureData[i].lower_bound()));
 					buttonItem.mask = GVIF_IMAGE;
 					buttonItem.iImage = 0;
 					buttonItem.row = row;
 					buttonItem.col = LowerBoundButtonColumn;
 					m_Grid.SetItem(&buttonItem);
-					setValueColumn(m_Grid, row, UpperBoundColumn, convertLinkedValue(m_featureData[i].upper_bound()));
+					setValueColumn(m_Grid, row, UpperBoundColumn, SvOgu::convertLinkedValue(m_featureData[i].upper_bound()));
 					buttonItem.col = UpperBoundButtonColumn;
 					m_Grid.SetItem(&buttonItem);
 				}

@@ -12,12 +12,15 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVOGui/DataController.h"
-#include "SVOGui/LinkedValueSelectorDialog.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
 class SVRPropertyItemEdit;
+namespace SvOgu
+{
 class ExternalToolTaskController;
+}
 
 class SVTADlgExternalInputSelectPage : public CPropertyPage
 {
@@ -25,7 +28,7 @@ class SVTADlgExternalInputSelectPage : public CPropertyPage
 
 // Construction
 public:
-	SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, ExternalToolTaskController& rExternalToolTaskController);
+	SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, SvOgu::ExternalToolTaskController& rExternalToolTaskController);
 	virtual ~SVTADlgExternalInputSelectPage() = default;
 
 	// Dialog Data
@@ -84,8 +87,8 @@ private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_ToolObjectID;
 
-	ExternalToolTaskController& m_rExternalToolTaskController;
+	SvOgu::ExternalToolTaskController& m_rExternalToolTaskController;
 	const uint32_t m_TaskObjectID;
-	SvOg::ValueController m_InputValues;
+	SvOgu::ValueController m_InputValues;
 };
 

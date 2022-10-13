@@ -34,7 +34,7 @@ namespace SvOg
 
 	SVToolAdjustmentDialogLinearSpecialPage::SVToolAdjustmentDialogLinearSpecialPage( uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(SVToolAdjustmentDialogLinearSpecialPage::IDD)
-	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
 	{
@@ -57,7 +57,7 @@ namespace SvOg
 			long lValue = static_cast<long> (m_ctlProfileOrientation.GetItemData(iCurSel));
 			m_values.Set<long>(SvPb::ProfileOrientationEId, lValue);
 		}
-		Result = m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		Result = m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 		return Result;
 	}

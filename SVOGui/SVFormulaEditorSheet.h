@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include "SVFormulaEditorPage.h"
+#include "SVOGuiUtility/SVFormulaEditorPage.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
@@ -51,7 +51,7 @@ namespace SvOg
 	protected:
 		afx_msg void OnOK();
 
-		typedef std::shared_ptr<SVFormulaEditorPageClass> FormulaEditorPagePtr;
+		typedef std::shared_ptr<SvOgu::SVFormulaEditorPageClass> FormulaEditorPagePtr;
 		FormulaEditorPagePtr m_formulaPage;
 	};
 } //namespace SvOg

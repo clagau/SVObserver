@@ -146,7 +146,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 }
 bool SVAdjustToolSizePositionDlg::IsAutofit()
 {
-	SizeModes Modes;
+	SvOgu::SizeModes Modes;
 	if (!m_ToolSizeHelper.GetToolSizeMode(false, Modes))
 	{
 		return false;
@@ -426,30 +426,39 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(bool overwrite)
 	GetDlgItem(IDOK)->EnableWindow(m_hResultFromSetExtent == S_OK);
 }
 
-bool  SVAdjustToolSizePositionDlg::IsReadonly(const ::SvPb::ExtentParameter& item, SizeModes& Modes ) const
+bool  SVAdjustToolSizePositionDlg::IsReadonly(const ::SvPb::ExtentParameter& item, const SvOgu::SizeModes& Modes ) const
 {
 	bool bReadonly(false);
 	if (m_ToolSizeHelper.GetAutoSizeEnabled() != SvPb::EnableNone)
 	{
 		bReadonly = item.issetbyreset();
 	}
+	
+	try
+	{
+		if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyHeight) && Modes.at(SvDef::TSHeight) != SvDef::TSNone)
+		{
+			bReadonly = true;
+		}
+		else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyWidth) && Modes.at(SvDef::TSWidth) != SvDef::TSNone)
+		{
+			bReadonly = true;
+		}
+		else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointX) && Modes.at(SvDef::TSPositionX) != SvDef::TSNone)
+		{
+			bReadonly = true;
+		}
+		else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointY) && Modes.at(SvDef::TSPositionY) != SvDef::TSNone)
+		{
+			bReadonly = true;
+		}
+	}
+	catch (...)
+	{
+		assert(false);
+		bReadonly = true;
+	}
 
-	if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyHeight) && Modes[SvDef::TSHeight] != SvDef::TSNone)
-	{
-		bReadonly = true;
-	}
-	else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyWidth) && Modes[SvDef::TSWidth] != SvDef::TSNone)
-	{
-		bReadonly = true;
-	}
-	else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointX) && Modes[SvDef::TSPositionX] != SvDef::TSNone)
-	{
-		bReadonly = true;
-	}
-	else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointY) && Modes[SvDef::TSPositionY] != SvDef::TSNone)
-	{
-		bReadonly = true;
-	}
 	return bReadonly;
 }
 
@@ -461,7 +470,7 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 	{
 		m_hResultFromSetExtent = m_ToolSizeHelper.CheckExtents();
 	}
-	SizeModes Modes;
+	SvOgu::SizeModes Modes;
 	m_ToolSizeHelper.GetToolSizeMode(false, Modes);
 
 	for (auto item : m_ToolSizeHelper.GetExtents(false))

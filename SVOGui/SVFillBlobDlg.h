@@ -16,13 +16,17 @@
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
 
+namespace SvOgu
+{
+class ValueController;
+}
+
 namespace SvOg
 {
-	class ValueController;
 	class SVFillBlobDlg : public CDialog
 	{
 	public:
-		explicit SVFillBlobDlg(ValueController& rValues, CWnd* pParent = nullptr);   // standard constructor
+		explicit SVFillBlobDlg(SvOgu::ValueController& rValues, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVFillBlobDlg();
 		HRESULT SetInspectionData();
 
@@ -55,6 +59,6 @@ namespace SvOg
 		void FillCombos();
 
 		//This is a reference to the controller from the parent dialog which has already been initialized
-		ValueController& m_rValues;
+		SvOgu::ValueController& m_rValues;
 	};
 } //namespace SvOg

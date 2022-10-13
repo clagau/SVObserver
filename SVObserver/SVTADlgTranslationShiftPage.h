@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
 
@@ -98,7 +98,7 @@ public:
 	CStatic m_ShiftValueStatic;
 
 private:
-	SvOg::ValueController m_Values;
+	SvOgu::ValueController m_Values;
 
 	long m_lShiftType;
 };

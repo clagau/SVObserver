@@ -15,7 +15,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
-#include "SVOGui/LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -100,8 +100,8 @@ private:
 	CEdit	m_ResultFilenameEdit;
 	CButton m_ResultFilenameButton;
 
-	SvOg::ValueController m_ValueController;
-	std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, 3> m_ResultFolderpathWidgetHelpers;
+	SvOgu::ValueController m_ValueController;
+	std::array < std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, 3> m_ResultFolderpathWidgetHelpers;
 
 #pragma endregion Private Members
 };

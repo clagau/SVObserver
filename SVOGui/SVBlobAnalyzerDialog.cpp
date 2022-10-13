@@ -51,7 +51,7 @@ namespace SvOg
 	: CDialog( SVBlobAnalyzerDialog::IDD, pParent )
 	, m_InspectionID{ InspectionID }
 	, m_TaskObjectID{ TaskObjectID }
-	, m_values{ SvOg::BoundValues{ InspectionID, TaskObjectID } }
+	, m_values{ SvOgu::BoundValues{ InspectionID, TaskObjectID } }
 	{
 	}
 
@@ -251,7 +251,7 @@ namespace SvOg
 			m_values.Set<CString>(SvPb::BlobEnabledFeaturesEId, m_FeaturesEnabled.c_str());
 
 			//! Reset the Blob Analyzer
-			m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+			m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 			//List of not enabled.
 			initFeatureListBox(m_lbAvailableFeatures, false);
@@ -315,7 +315,7 @@ namespace SvOg
 			}
 
 			//! Reset the Blob Analyzer and then call initFeatureListBox to display the new feature lists
-			m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+			m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 			//List of not enabled.
 			initFeatureListBox(m_lbAvailableFeatures, false);

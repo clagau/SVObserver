@@ -8,7 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "CreateInputResultDlg.h"
-#include "GroupToolHelper.h"
+#include "SVOGuiUtility/GroupToolHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -161,9 +161,9 @@ CreateInputResultDlg::CreateInputResultDlg(uint32_t inspectionId, uint32_t toolI
 	, m_inspectionId {inspectionId}
 	, m_toolId {toolId}
 	, m_inputId { getObjectId(inspectionId, toolId, SvPb::ParameterInputObjectType)}
-	, m_inputValueCtrl{SvOg::BoundValues{ inspectionId, m_inputId }}
+	, m_inputValueCtrl{SvOgu::BoundValues{ inspectionId, m_inputId }}
 	, m_resultId {getObjectId(inspectionId, toolId, SvPb::ParameterResultObjectType)}
-	, m_resultValueCtrl {SvOg::BoundValues{ inspectionId, m_resultId }}
+	, m_resultValueCtrl {SvOgu::BoundValues{ inspectionId, m_resultId }}
 {
 	auto groupToolName {SvCmd::getDottedName(m_inspectionId, m_toolId, true)+"."};
 	for (const auto& rDepPair : rDependencyPairs)
@@ -196,7 +196,7 @@ void CreateInputResultDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RESULT_GRID, m_ResultGrid);
 }
 
-void fillParameterNameList(const std::vector<GroupInputResultData>& oldDataList, const std::string& baseName, size_t number, std::vector<std::string>& list)
+void fillParameterNameList(const std::vector<SvOgu::GroupInputResultData>& oldDataList, const std::string& baseName, size_t number, std::vector<std::string>& list)
 {
 	list.clear();
 	std::ranges::transform(oldDataList, back_inserter(list), [](const auto& rEntry) { return rEntry.m_name; });
@@ -218,32 +218,32 @@ BOOL CreateInputResultDlg::OnInitDialog()
 {
 	if (0 < m_inputMap.size())
 	{
-		std::vector<GroupInputResultData> inputOldDataList;
+		std::vector<SvOgu::GroupInputResultData> inputOldDataList;
 		loadDataList(inputOldDataList, m_inputValueCtrl, SvPb::ExternalInputEId, SvPb::InputObjectTypeEId, {});
 		if (SvDef::c_maxTableColumn < inputOldDataList.size() + m_inputMap.size())
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, {c_inputName}, SvStl::SourceFileParams(StdMessageParams));
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, {SvOgu::c_inputName}, SvStl::SourceFileParams(StdMessageParams));
 			CDialog::OnCancel();
 			return false;
 		}
 
-		fillParameterNameList(inputOldDataList, c_inputName, m_inputMap.size(), m_inputParameterNames);
-		assert(0 == checkParameterNames(m_inspectionId, m_inputId, m_inputParameterNames).size());
+		fillParameterNameList(inputOldDataList, SvOgu::c_inputName, m_inputMap.size(), m_inputParameterNames);
+		assert(0 == SvOgu::checkParameterNames(m_inspectionId, m_inputId, m_inputParameterNames).size());
 	}
 	if (0 < m_resultMap.size())
 	{
-		std::vector<GroupInputResultData> resultOldDataList;
+		std::vector<SvOgu::GroupInputResultData> resultOldDataList;
 		loadDataList(resultOldDataList, m_resultValueCtrl, SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, {});
 		if (SvDef::c_maxTableColumn < resultOldDataList.size() + m_resultMap.size())
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, {c_resultName}, SvStl::SourceFileParams(StdMessageParams));
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, {SvOgu::c_resultName}, SvStl::SourceFileParams(StdMessageParams));
 			CDialog::OnCancel();
 			return false;
 		}
-		fillParameterNameList(resultOldDataList, c_resultName, m_resultMap.size(), m_resultParameterNames);
-		assert(0 == checkParameterNames(m_inspectionId, m_resultId, m_resultParameterNames).size());
+		fillParameterNameList(resultOldDataList, SvOgu::c_resultName, m_resultMap.size(), m_resultParameterNames);
+		assert(0 == SvOgu::checkParameterNames(m_inspectionId, m_resultId, m_resultParameterNames).size());
 	}
 
 	CDialog::OnInitDialog();
@@ -295,7 +295,7 @@ bool checkAndSetName(uint32_t ipId, uint32_t taskId, const std::string& rNewName
 			auto oldName = parameterNames[namePos];
 			parameterNames[namePos] = rNewName;
 
-			auto errorMessage = checkParameterNames(ipId, taskId, parameterNames);
+			auto errorMessage = SvOgu::checkParameterNames(ipId, taskId, parameterNames);
 			if (0 < errorMessage.size())
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Display);

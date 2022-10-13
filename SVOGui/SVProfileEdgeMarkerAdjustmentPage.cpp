@@ -15,8 +15,8 @@
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/LinearEdgeEnums.h"
-#include "GuiValueHelper.h"
-#include "ImageController.h"
+#include "SVOGuiUtility/GuiValueHelper.h"
+#include "SVOGuiUtility/ImageController.h"
 #include "SVUtilityLibrary/RaiiLifeFlag.h"
 #pragma endregion Includes
 
@@ -57,7 +57,7 @@ namespace SvOg
 #pragma region Constructor
 SVProfileEdgeMarkerAdjustmentPage::SVProfileEdgeMarkerAdjustmentPage(uint32_t inspectionID, uint32_t egdeObjectId, const std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /* = 0 */ )
 : SVEdgeMarkerAdjustmentPageClass(inspectionID, egdeObjectId, rEdgeEmbeddedIds, analyzerID, nIDCaption, SVProfileEdgeMarkerAdjustmentPage::IDD )
-, m_analyzerValues{BoundValues {inspectionID, analyzerID}}
+, m_analyzerValues{SvOgu::BoundValues {inspectionID, analyzerID}}
 {
 	//{{AFX_DATA_INIT(SVProfileEdgeMarkerAdjustmentPage)
 	//}}AFX_DATA_INIT
@@ -126,18 +126,18 @@ BOOL SVProfileEdgeMarkerAdjustmentPage::OnInitDialog()
 
 	m_analyzerValues.Init();
 
-	m_LowerSelectedWidget = std::make_unique<LinkedValueWidgetHelper>(m_LowerSelectedEditCtrl, m_LowerSelectedButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[EdgeLowerThresholdSelected], &m_values, LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
-	m_LowerMinOffsetWidget = std::make_unique<LinkedValueWidgetHelper>(m_LowerMinOffsetEditCtrl, m_LowerMinOffsetButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[LowerThresholdMinPlusOffset], &m_values, LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
-	m_LowerMaxOffsetWidget = std::make_unique<LinkedValueWidgetHelper>(m_LowerMaxOffsetEditCtrl, m_LowerMaxOffsetButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[LowerThresholdMaxMinusOffset], &m_values, LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
-	m_LowerMaxDiffWidget = std::make_unique<LinkedValueWidgetHelper>(m_LowerMaxDiffEditCtrl, m_LowerMaxDiffButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[LowerThresholdMaxMinusPercentDiff], &m_values, LinkedValueWidgetHelper::getCheckValueFunction(0, 100));
-	m_UpperSelectedWidget = std::make_unique<LinkedValueWidgetHelper>(m_UpperSelectedEditCtrl, m_UpperSelectedButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[EdgeUpperThresholdSelected], &m_values, LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
-	m_UpperMinOffsetWidget = std::make_unique<LinkedValueWidgetHelper>(m_UpperMinOffsetEditCtrl, m_UpperMinOffsetButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[UpperThresholdMinPlusOffset], &m_values, LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
-	m_UpperMaxOffsetWidget = std::make_unique<LinkedValueWidgetHelper>(m_UpperMaxOffsetEditCtrl, m_UpperMaxOffsetButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[UpperThresholdMaxMinusOffset], &m_values, LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
-	m_UpperMaxDiffWidget = std::make_unique<LinkedValueWidgetHelper>(m_UpperMaxDiffEditCtrl, m_UpperMaxDiffButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[UpperThresholdMaxMinusPercentDiff], &m_values, LinkedValueWidgetHelper::getCheckValueFunction(0, 100));
+	m_LowerSelectedWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_LowerSelectedEditCtrl, m_LowerSelectedButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[EdgeLowerThresholdSelected], &m_values, SvOgu::LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
+	m_LowerMinOffsetWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_LowerMinOffsetEditCtrl, m_LowerMinOffsetButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[LowerThresholdMinPlusOffset], &m_values, SvOgu::LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
+	m_LowerMaxOffsetWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_LowerMaxOffsetEditCtrl, m_LowerMaxOffsetButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[LowerThresholdMaxMinusOffset], &m_values, SvOgu::LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
+	m_LowerMaxDiffWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_LowerMaxDiffEditCtrl, m_LowerMaxDiffButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[LowerThresholdMaxMinusPercentDiff], &m_values, SvOgu::LinkedValueWidgetHelper::getCheckValueFunction(0, 100));
+	m_UpperSelectedWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_UpperSelectedEditCtrl, m_UpperSelectedButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[EdgeUpperThresholdSelected], &m_values, SvOgu::LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
+	m_UpperMinOffsetWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_UpperMinOffsetEditCtrl, m_UpperMinOffsetButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[UpperThresholdMinPlusOffset], &m_values, SvOgu::LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
+	m_UpperMaxOffsetWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_UpperMaxOffsetEditCtrl, m_UpperMaxOffsetButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[UpperThresholdMaxMinusOffset], &m_values, SvOgu::LinkedValueWidgetHelper::getCheckValueFunction(0, 255));
+	m_UpperMaxDiffWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_UpperMaxDiffEditCtrl, m_UpperMaxDiffButton, m_InspectionID, m_edgeObjectId, m_rEdgeEmbeddedIds[UpperThresholdMaxMinusPercentDiff], &m_values, SvOgu::LinkedValueWidgetHelper::getCheckValueFunction(0, 100));
 
 	GetInspectionData();
 
-	ImageController imageCtrl {m_InspectionID, m_analyzerId};
+	SvOgu::ImageController imageCtrl {m_InspectionID, m_analyzerId};
 	const auto& rInputData = imageCtrl.GetInputData(SvPb::ImageInputEId, m_analyzerId);
 	auto analyzerImageID = rInputData.connected_objectid();
 	auto* pPicture = imageCtrl.GetImage(analyzerImageID);
@@ -161,7 +161,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnHScroll( UINT nSBCode, UINT nPos, CScr
 		auto embeddedId = getValueEIdFromThresholdOption(true);
 		if (SvPb::NoEmbeddedId != embeddedId)
 		{
-			auto data = m_values.Get<LinkedValueData>(embeddedId);
+			auto data = m_values.Get<SvOgu::LinkedValueData>(embeddedId);
 			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				byte value = static_cast<unsigned char>(m_normalizerController.calcRealValueFromLocalValues((double)UpperSliderCtrl.GetPos()));
@@ -178,7 +178,7 @@ void SVProfileEdgeMarkerAdjustmentPage::OnHScroll( UINT nSBCode, UINT nPos, CScr
 		auto embeddedId = getValueEIdFromThresholdOption(false);
 		if (SvPb::NoEmbeddedId != embeddedId)
 		{
-			auto data = m_values.Get<LinkedValueData>(embeddedId);
+			auto data = m_values.Get<SvOgu::LinkedValueData>(embeddedId);
 			if (SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption)
 			{
 				byte value = static_cast<unsigned char>(m_normalizerController.calcRealValueFromLocalValues((double)LowerSliderCtrl.GetPos()));
@@ -529,7 +529,7 @@ HRESULT SVProfileEdgeMarkerAdjustmentPage::UpdateSliderData()
 	SvPb::EmbeddedIdEnum upperEmbeddedId = getValueEIdFromThresholdOption(true);
 	if (SvPb::NoEmbeddedId != upperEmbeddedId)
 	{
-		auto data = m_values.Get<LinkedValueData>(upperEmbeddedId);
+		auto data = m_values.Get<SvOgu::LinkedValueData>(upperEmbeddedId);
 		upper = data.m_Value;
 		UpperSliderCtrl.EnableWindow(SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption);
 	}
@@ -541,7 +541,7 @@ HRESULT SVProfileEdgeMarkerAdjustmentPage::UpdateSliderData()
 	SvPb::EmbeddedIdEnum lowerEmbeddedId = getValueEIdFromThresholdOption(false);
 	if (SvPb::NoEmbeddedId != lowerEmbeddedId)
 	{
-		auto data = m_values.Get<LinkedValueData>(lowerEmbeddedId);
+		auto data = m_values.Get<SvOgu::LinkedValueData>(lowerEmbeddedId);
 		lower = data.m_Value;
 		LowerSliderCtrl.EnableWindow(SvPb::LinkedSelectedOption::DirectValue == data.m_selectedOption);
 	}
@@ -638,7 +638,7 @@ void SVProfileEdgeMarkerAdjustmentPage::setGraphOverlayToPicture(bool bVertical)
 {
 	m_analyzerValues.Init();
 
-	auto HistogramData = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::LinearDataInputEId));
+	auto HistogramData = SvOgu::ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::LinearDataInputEId));
 	long handle = -1;
 	size_t sizePointsArray = HistogramData.size();
 	double* points = new double[sizePointsArray * 2];
@@ -669,7 +669,7 @@ void SVProfileEdgeMarkerAdjustmentPage::setGraphOverlayToPicture(bool bVertical)
 	m_dialogImage.AddOverlay(0, ParMap, &handle);
 
 	//set linear Edge lines
-	auto LinearEdges = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::LinearEdgesEId));
+	auto LinearEdges = SvOgu::ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::LinearEdgesEId));
 	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long> (SvDef::DefaultSubFunctionColor2);
 	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long> (SvDef::DefaultSubFunctionColor2);
 	ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = false;
@@ -719,7 +719,7 @@ void SVProfileEdgeMarkerAdjustmentPage::setMarkerOverlayToPicture(DWORD value, b
 	m_dialogImage.AddOverlay(0, ParMap, &handle);
 }
 
-void SVProfileEdgeMarkerAdjustmentPage::OnChangeValue(std::unique_ptr<LinkedValueWidgetHelper>& rWidget)
+void SVProfileEdgeMarkerAdjustmentPage::OnChangeValue(std::unique_ptr<SvOgu::LinkedValueWidgetHelper>& rWidget)
 {
 	static bool isStarted = false;
 	//Check if function already start to avoid endless recursive calls of this function.

@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOGui/ExternalToolTaskController.h"
+#include "SVOGuiUtility/ExternalToolTaskController.h"
 #pragma endregion Includes
 
 class SheetForExternalToolAdjustment :public SVToolAdjustmentDialogSheetClass
@@ -45,7 +45,7 @@ protected:
 	LRESULT UpdateIpDocViews(WPARAM, LPARAM);
 
 private:
-	ExternalToolTaskController m_externalToolTaskController;
+	SvOgu::ExternalToolTaskController m_externalToolTaskController;
 };
 
 

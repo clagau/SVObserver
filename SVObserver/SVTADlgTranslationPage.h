@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion
 
 #pragma region Declarations
@@ -65,6 +65,6 @@ protected:
 
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
-	SvOg::ValueController m_Values;
+	SvOgu::ValueController m_Values;
 #pragma endregion
 };

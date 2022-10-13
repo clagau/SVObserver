@@ -34,7 +34,7 @@ namespace SvOg
 	: CDialog(SVLuminanceAnalyzerDlg::IDD, pParent)
 	, m_InspectionID{ inspectionID }
 	, m_TaskObjectID{ taskObjectID }
-	, m_values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
+	, m_values{ SvOgu::BoundValues{ inspectionID, taskObjectID } }
 	{
 		//{{AFX_DATA_INIT(SVLuminanceAnalyzerDlg)
 		m_calcStdDev = FALSE;

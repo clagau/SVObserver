@@ -9,14 +9,14 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "PictureDisplay.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/DrawTaskTree.h"
+#include "SVOGuiUtility/DrawToolController.h"
+#include "SVOGuiUtility/DrawToolHelperStructs.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/PictureDisplay.h"
 #include "SVMFCControls/AvailableObjectListComboBox.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "DataController.h"
-#include "DrawTaskTree.h"
-#include "DrawToolController.h"
-#include "DrawToolHelperStructs.h"
-#include "ImageController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -70,7 +70,7 @@ namespace SvOg
 
 	protected:
 		void refresh();
-		ImageController& getImageController() { return m_ImageController; }
+		SvOgu::ImageController& getImageController() { return m_ImageController; }
 
 		//{{AFX_MSG(TADialogDrawPage)
 		virtual BOOL OnInitDialog() override;
@@ -84,7 +84,7 @@ namespace SvOg
 		void OnKillFocusEdit(UINT nID);
 		void OnSelchangeCombo2();
 		void OnSelchangeBackGroundCombo();
-		void OnSelchangeGeneralCombo(TreeNodeData& rData);
+		void OnSelchangeGeneralCombo(SvOgu::TreeNodeData& rData);
 		void OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 		void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 		void OnDragTree(NMHDR* pNMHDR, LRESULT* pResult);
@@ -104,8 +104,8 @@ namespace SvOg
 		SvMc::AvailableObjectListComboBox<uint32_t> m_comboBox2;
 		SvMc::SVEnumerateCombo m_comboBox2Enum;
 		std::string m_availableSourceInputName;
-		DrawTaskTree m_treeCtrl;
-		PictureDisplay m_dialogImage;
+		SvOgu::DrawTaskTree m_treeCtrl;
+		SvOgu::PictureDisplay m_dialogImage;
 		//}}AFX_DATA
 
 
@@ -117,32 +117,32 @@ namespace SvOg
 		void resetOverlay();
 		bool setBOSAData();
 		void setBOSACtrl();
-		void setAddTaskCtrl(const TreeNodeData& rData);
+		void setAddTaskCtrl(const SvOgu::TreeNodeData& rData);
 		void setBaseImageGeneralCtrl();
 		void setBaseImageSizeCtrl();
-		void setSizeCtrl(TreeNodeData& rData);
-		void setColorCtrl(TreeNodeData& rData);
-		void setAngleCtrl(TreeNodeData& rData);
-		void setGeneralCtrl(TreeNodeData& rData);
-		void setPositionCtrl(TreeNodeData& rData);
-		void setPointsCtrl(TreeNodeData& rData);
-		void addNodeInto(HTREEITEM item, SvPb::ClassIdEnum classId, DrawTaskTree::addPosEnum atBegin);
+		void setSizeCtrl(SvOgu::TreeNodeData& rData);
+		void setColorCtrl(SvOgu::TreeNodeData& rData);
+		void setAngleCtrl(SvOgu::TreeNodeData& rData);
+		void setGeneralCtrl(SvOgu::TreeNodeData& rData);
+		void setPositionCtrl(SvOgu::TreeNodeData& rData);
+		void setPointsCtrl(SvOgu::TreeNodeData& rData);
+		void addNodeInto(HTREEITEM item, SvPb::ClassIdEnum classId, SvOgu::DrawTaskTree::addPosEnum atBegin);
 		void loadNode(HTREEITEM item, uint32_t objectId);
 		void hideAllBOSACtrl();
-		void setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, ValueController& rValueController, TADialogDrawPage::BOSAEnum ctrlEnum, int min, int max, const std::string& fieldName, bool readOnly = false);
+		void setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, SvOgu::ValueController& rValueController, TADialogDrawPage::BOSAEnum ctrlEnum, int min, int max, const std::string& fieldName, bool readOnly = false);
 		std::pair<std::string, std::string> getBGImageNamePair();
 		void ObjectChangedExDialogImage(long, long, VARIANT* ParameterList, VARIANT* ParameterValue);
-		void setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData, ValidCheckCallback validCallback = nullptr);
-		void setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, TreeNodeData& rData, ValidCheckCallback validCallback = nullptr);
+		void setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, SvOgu::TreeNodeData& rData, SvOgu::ValidCheckCallback validCallback = nullptr);
+		void setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, SvOgu::TreeNodeData& rData, SvOgu::ValidCheckCallback validCallback = nullptr);
 		void setOrRemoveColorItemForBase();
 	
 	private:
 		uint32_t m_InspectionID;
 		uint32_t m_TaskObjectID;
 		
-		ImageController m_ImageController;
+		SvOgu::ImageController m_ImageController;
 		long m_OutputTabHandle {0};
-		std::shared_ptr<ValueController> m_pValues;
+		std::shared_ptr<SvOgu::ValueController> m_pValues;
 
 		std::vector<std::pair<std::string, uint32_t>> m_availableList;
 
@@ -155,9 +155,9 @@ namespace SvOg
 		//overlay
 		long m_handleToOverlayObjects = -1;
 
-		std::array<EditCtrlData, NumberOfCtrls> m_editCtrlDataList = {EditCtrlData{IDC_EDIT1}, EditCtrlData{IDC_EDIT2}, EditCtrlData{IDC_EDIT3}, EditCtrlData{IDC_EDIT4}, EditCtrlData{IDC_EDIT5},
-			EditCtrlData{IDC_EDIT6}, EditCtrlData{IDC_EDIT7}, EditCtrlData{IDC_EDIT8}, EditCtrlData{IDC_EDIT9}, EditCtrlData{IDC_EDIT10}};
-		DrawToolController m_drawToolController;
+		std::array<SvOgu::EditCtrlData, SvOgu::NumberOfCtrls> m_editCtrlDataList = {SvOgu::EditCtrlData{IDC_EDIT1}, SvOgu::EditCtrlData{IDC_EDIT2}, SvOgu::EditCtrlData{IDC_EDIT3}, SvOgu::EditCtrlData{IDC_EDIT4}, SvOgu::EditCtrlData{IDC_EDIT5},
+			SvOgu::EditCtrlData{IDC_EDIT6}, SvOgu::EditCtrlData{IDC_EDIT7}, SvOgu::EditCtrlData{IDC_EDIT8}, SvOgu::EditCtrlData{IDC_EDIT9}, SvOgu::EditCtrlData{IDC_EDIT10}};
+		SvOgu::DrawToolController m_drawToolController;
 
 		std::array<CWnd, BOSAEnum::NUM_OF_CONTROL> m_BSOAControls;
 	};

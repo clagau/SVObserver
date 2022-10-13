@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgExternalResultPage.h"
-#include "SVOGui/ExternalToolTaskController.h"
+#include "SVOGuiUtility/ExternalToolTaskController.h"
 #include "SVObserver/SVSetupDialogManager.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -32,13 +32,13 @@ BEGIN_MESSAGE_MAP(SVTADlgExternalResultPage, CPropertyPage)
 	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_RESULT_LIST, OnItemButtonClick)
 END_MESSAGE_MAP()
 
-SVTADlgExternalResultPage::SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, ExternalToolTaskController& rExternalToolTaskController)
+SVTADlgExternalResultPage::SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, SvOgu::ExternalToolTaskController& rExternalToolTaskController)
 	: CPropertyPage(SVTADlgExternalResultPage::IDD)
 	, m_rExternalToolTaskController(rExternalToolTaskController)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
 	, m_sTitle(Title)
-	, m_ValueController{ SvOg::BoundValues{ inspectionId, m_TaskObjectID } }
+	, m_ValueController{ SvOgu::BoundValues{ inspectionId, m_TaskObjectID } }
 {
 	m_psp.pszTitle = m_sTitle.c_str();
 	m_psp.dwFlags |= PSP_USETITLE;

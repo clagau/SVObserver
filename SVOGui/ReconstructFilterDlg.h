@@ -9,10 +9,10 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
-#include "ImageController.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/ImageController.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "PictureDisplay.h"
+#include "SVOGuiUtility/PictureDisplay.h"
 #pragma region Includes
 
 #pragma region Declarations
@@ -61,10 +61,10 @@ protected:
 private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_filterID;
-	ValueController m_values;
+	SvOgu::ValueController m_values;
 	std::string m_seedImageName;
-	ImageController m_imageController;
-	SvOg::PictureDisplay m_pictureDisplay;
+	SvOgu::ImageController m_imageController;
+	SvOgu::PictureDisplay m_pictureDisplay;
 };
 } //namespace SvOg
 

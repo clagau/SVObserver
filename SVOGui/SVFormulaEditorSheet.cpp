@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVFormulaEditorSheet.h"
-#include "FormulaController.h"
+#include "SVOGuiUtility/FormulaController.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -31,13 +31,13 @@ namespace SvOg
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(uint32_t inspectionId, uint32_t taskObjectId, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: CPropertySheet(pCaption, pParentWnd, iSelectPage)
 	{
-		init(SvOi::IFormulaControllerPtr {new FormulaController(inspectionId, taskObjectId, rInfo)});
+		init(SvOi::IFormulaControllerPtr {new SvOgu::FormulaController(inspectionId, taskObjectId, rInfo)});
 	}
 
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(uint32_t inspectionId, uint32_t taskObjectId, uint32_t equationId, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 		: CPropertySheet(pCaption, pParentWnd, iSelectPage)
 	{
-		init(SvOi::IFormulaControllerPtr {new FormulaController(inspectionId, taskObjectId, equationId)});
+		init(SvOi::IFormulaControllerPtr {new SvOgu::FormulaController(inspectionId, taskObjectId, equationId)});
 	}
 
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(SvOi::IFormulaControllerPtr formulaController, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
@@ -52,7 +52,7 @@ namespace SvOg
 
 	void SVFormulaEditorSheetClass::init(SvOi::IFormulaControllerPtr formulaController)
 	{
-		m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(formulaController));
+		m_formulaPage = FormulaEditorPagePtr(new SvOgu::SVFormulaEditorPageClass(formulaController));
 		m_psh.dwFlags |= PSH_NOAPPLYNOW;
 		AddPage(m_formulaPage.get());
 	}
@@ -98,7 +98,7 @@ namespace SvOg
 			CPropertyPage* pPage = GetPage(i);
 			if( pPage && pPage->GetSafeHwnd() ) 
 			{
-				if( SVFormulaEditorPageClass* pFormulaPage = dynamic_cast<SVFormulaEditorPageClass*>( pPage ) )
+				if(SvOgu::SVFormulaEditorPageClass* pFormulaPage = dynamic_cast<SvOgu::SVFormulaEditorPageClass*>( pPage ) )
 				{
 					if( !pFormulaPage->validateAndSetEquation() )
 					{

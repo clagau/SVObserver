@@ -33,7 +33,7 @@ END_MESSAGE_MAP()
 
 ToolAdjustToolSetPage::ToolAdjustToolSetPage(uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(ToolAdjustToolSetPage::IDD)
-	, m_values {SvOg::BoundValues {inspectionId, taskObjectId}}
+	, m_values {SvOgu::BoundValues {inspectionId, taskObjectId}}
 	, m_InspectionID {inspectionId}
 	, m_TaskObjectID {taskObjectId}
 {
@@ -46,10 +46,10 @@ HRESULT ToolAdjustToolSetPage::SetInspectionData()
 	UpdateData(true); // get data from dialog
 
 	//We need to set the main LinkedValue object
-	auto data = m_values.Get<LinkedValueData>(SvPb::InspectedObjectIDEId);
+	auto data = m_values.Get<SvOgu::LinkedValueData>(SvPb::InspectedObjectIDEId);
 	data.m_indirectIdName = m_inspectedObjectId_IdString;
 	data.m_selectedOption = SvPb::IndirectValue;
-	m_values.Set<LinkedValueData>(SvPb::InspectedObjectIDEId, data);
+	m_values.Set<SvOgu::LinkedValueData>(SvPb::InspectedObjectIDEId, data);
 	m_values.Commit();
 
 	return Result;
@@ -71,7 +71,7 @@ BOOL ToolAdjustToolSetPage::OnInitDialog()
 	m_values.Init();
 
 	//We need to get the linked object Id to get the dotted name
-	const auto& data = m_values.Get<LinkedValueData>(SvPb::InspectedObjectIDEId);
+	const auto& data = m_values.Get<SvOgu::LinkedValueData>(SvPb::InspectedObjectIDEId);
 	m_inspectedObjectId_IdString = data.m_indirectIdName;
 	m_inspectedObjectId_NameString = SvCmd::getDottedName(m_InspectionID, m_inspectedObjectId_IdString).c_str();
 

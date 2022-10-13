@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVProtoBuf/SVO-Enum.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 
@@ -55,6 +55,6 @@ private:
 private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
-	std::unique_ptr<SvOg::ValueController> m_pValueController;
+	std::unique_ptr<SvOgu::ValueController> m_pValueController;
 	std::unordered_map< SvPb::EmbeddedIdEnum, uint32_t> m_ValueEmbeddedIdResultMap;
 };

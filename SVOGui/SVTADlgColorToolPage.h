@@ -14,9 +14,9 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "PictureDisplay.h"
-#include "ImageController.h"
-#include "DataController.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -51,7 +51,7 @@ namespace SvOg
 
 	protected:
 		enum { IDD = IDD_TA_COLOR_TOOL_DIALOG };
-		SvOg::PictureDisplay	m_dialogImage;
+		SvOgu::PictureDisplay	m_dialogImage;
 		SvMc::AvailableObjectListComboBox<uint32_t> m_availableSourceImageListBox;
 
 		BOOL	m_convertToHSI;
@@ -61,8 +61,8 @@ namespace SvOg
 		const uint32_t m_TaskObjectID;
 		uint32_t m_ResultImageID = SvDef::InvalidObjectId;
 		
-		ImageController m_Images;
-		ValueController m_values;
+		SvOgu::ImageController m_Images;
+		SvOgu::ValueController m_values;
 	};
 } //namespace SvOg
 

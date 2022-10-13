@@ -13,8 +13,8 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
-#include "AuxiliaryExtentsController.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/AuxiliaryExtentsController.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVMFCControls\SVEnumerateCombo.h"
 #pragma endregion Includes
@@ -77,7 +77,7 @@ namespace SvOg
 		const uint32_t m_TaskObjectID;
 		const SvPb::SVObjectSubTypeEnum m_subType;
 
-		SvOg::AuxiliaryExtentsController m_AuxExtentsController;
-		ValueController m_values;
+		SvOgu::AuxiliaryExtentsController m_AuxExtentsController;
+		SvOgu::ValueController m_values;
 	};
 } //namespace SvOg

@@ -37,7 +37,7 @@ namespace SvOg
 		, m_InspectionID(inspectionID)
 		, m_toolId(toolId)
 		, m_TaskObjectID(taskObjectID)
-		, m_Values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
+		, m_Values{ SvOgu::BoundValues{ inspectionID, taskObjectID } }
 	{
 	}
 
@@ -54,7 +54,7 @@ namespace SvOg
 		m_Values.Set<long>(SvPb::MaxBlobDataArraySizeEId, m_maxBlobArraySize);
 		m_Values.Set<bool>(SvPb::IsGrayImageEId, (TRUE == m_useGrayImage));
 
-		return m_Values.Commit(PostAction::doReset | PostAction::doRunOnce);
+		return m_Values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 	}
 
 	void BlobAnalyzer2General::setImages()

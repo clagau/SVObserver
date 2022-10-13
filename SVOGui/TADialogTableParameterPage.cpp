@@ -11,8 +11,8 @@
 #include "TADialogTableParameterPage.h"
 #include "SVFormulaEditorSheet.h"
 #include "Definitions/TextDefineSVDef.h"
-#include "FormulaController.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVOGuiUtility/FormulaController.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
@@ -37,7 +37,7 @@ TADialogTableParameterPage::TADialogTableParameterPage(uint32_t inspectionID, ui
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskID)
 	, m_pFormulaController(nullptr)
-	, m_values {SvOg::BoundValues{ inspectionID, taskID }}
+	, m_values {SvOgu::BoundValues{ inspectionID, taskID }}
 {
 }
 
@@ -87,7 +87,7 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 			if (SvDef::TableClearEquationName == entry.first)
 			{
 				m_ClearEquationID = entry.second;
-				m_pFormulaController = SvOi::IFormulaControllerPtr {new FormulaController(m_InspectionID, m_TaskObjectID, m_ClearEquationID)};
+				m_pFormulaController = SvOi::IFormulaControllerPtr {new SvOgu::FormulaController(m_InspectionID, m_TaskObjectID, m_ClearEquationID)};
 				break;
 			}
 		}

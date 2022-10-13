@@ -13,8 +13,8 @@
 
 #pragma region Includes
 #include "Definitions/RangeEnum.h"
-#include "RangeController.h"
-#include "LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/RangeController.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -48,11 +48,11 @@ public:
 	void OnKillFocusRange(UINT nID);
 
 protected:
-	std::array<std::unique_ptr<LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
+	std::array<std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
 	std::array<CButton, RangeEnum::ER_COUNT> m_RangeButtons;
 	std::array<CEdit, RangeEnum::ER_COUNT> m_RangeEdits;
 
-	RangeController m_rangeController;
+	SvOgu::RangeController m_rangeController;
 	uint32_t m_toolId;
 };
 } //namespace SvOg

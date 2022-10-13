@@ -10,9 +10,9 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCombo.h"
-#include "DisplayHelper.h"
+#include "SVOGuiUtility/DisplayHelper.h"
+#include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #include "Definitions/GlobalConst.h"
-#include "LinkedValueSelectorDialog.h"
 #include "SVShowDependentsDialog.h"
 #pragma endregion Includes
 
@@ -160,7 +160,7 @@ namespace SvOg
 		, m_InspectionID(inspectionId)
 		, m_toolId(toolId)
 		, m_TaskObjectID(taskId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, taskId }}
+		, m_Values{ SvOgu::BoundValues{ inspectionId, taskId }}
 	{
 	}
 #pragma endregion Constructor
@@ -191,7 +191,7 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
+		SvOgu::DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 		m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
 
@@ -262,7 +262,7 @@ namespace SvOg
 		}
 		case ValueButtonColumn:
 		{
-			LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ExternalInputEId+(pItem->iRow - 1)), m_inputData[pItem->iRow - 1].m_name, m_inputData[pItem->iRow - 1].m_data, m_inputData[pItem->iRow - 1].m_data.m_defaultValue.vt);
+			SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ExternalInputEId+(pItem->iRow - 1)), m_inputData[pItem->iRow - 1].m_name, m_inputData[pItem->iRow - 1].m_data, m_inputData[pItem->iRow - 1].m_data.m_defaultValue.vt);
 			if (IDOK == dlg.DoModal())
 			{
 				m_inputData[pItem->iRow - 1].m_data = dlg.getData();
@@ -300,7 +300,7 @@ namespace SvOg
 
 	void TADialogGroupToolInputPage::OnBnClickedButtonAdd()
 	{
-		addEntry(c_inputName, m_inputData);
+		addEntry(SvOgu::c_inputName, m_inputData);
 		setInspectionData(false);
 		FillGridControl();
 	}
@@ -557,7 +557,7 @@ namespace SvOg
 
 	void TADialogGroupToolInputPage::loadDataList()
 	{
-		SvOg::loadDataList(m_inputData, m_Values, SvPb::ExternalInputEId, SvPb::InputObjectTypeEId, m_errorMessages);
+		SvOgu::loadDataList(m_inputData, m_Values, SvPb::ExternalInputEId, SvPb::InputObjectTypeEId, m_errorMessages);
 	}
 
 	void TADialogGroupToolInputPage::UpdateEnableButtons()

@@ -52,7 +52,7 @@ END_MESSAGE_MAP()
 SVTADlgColorThresholdAdjustment::SVTADlgColorThresholdAdjustment() 
 : SVTADlgColorThresholdBasePage(SVTADlgColorThresholdAdjustment::IDD)
 //InspectionID and TaskID are set later
-, m_Values {SvOg::BoundValues{ SvDef::InvalidObjectId, SvDef::InvalidObjectId }}
+, m_Values {SvOgu::BoundValues{ SvDef::InvalidObjectId, SvDef::InvalidObjectId }}
 {
 	//{{AFX_DATA_INIT(SVTADlgColorThresholdAdjustment)
 	StrUpper = _T("");

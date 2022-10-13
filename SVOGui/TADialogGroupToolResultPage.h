@@ -10,8 +10,8 @@
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "DataController.h"
-#include "GroupToolHelper.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/GroupToolHelper.h"
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
 
@@ -103,10 +103,10 @@ namespace SvOg
 
 		CBitmap m_downArrowBitmap;
 		CImageList m_ImageList;
-		ValueController m_Values;
+		SvOgu::ValueController m_Values;
 
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
-		std::vector<GroupInputResultData> m_resultData;
+		std::vector<SvOgu::GroupInputResultData> m_resultData;
 		CString m_strComment;
 
 		SvStl::MessageContainerVector m_errorMessages;

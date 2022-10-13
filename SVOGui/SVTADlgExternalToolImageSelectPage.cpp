@@ -87,7 +87,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 			GetDlgItem(IDC_IMAGE_LIST)->ShowWindow(SW_SHOW);
 
 			buildPropertyTree();
-			ImageController ImgCtrlDisplay(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
+			SvOgu::ImageController ImgCtrlDisplay(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
 			ImgCtrlDisplay.Init();
 			setImages(ImgCtrlDisplay);
 
@@ -113,7 +113,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 				UINT ctrlID = pItem->GetCtrlID();
 				if (static_cast<int>(ctrlID) < m_numImages)
 				{
-					ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(imageInfoList[ctrlID].maybecolor(), imageInfoList[ctrlID].maybeblackandwhite()));
+					SvOgu::ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(imageInfoList[ctrlID].maybecolor(), imageInfoList[ctrlID].maybeblackandwhite()));
 					
 					ImgCtrl.Init();
 					const SvUl::NameObjectIdList& availImages = ImgCtrl.GetAvailableImageList();
@@ -186,14 +186,14 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 		//we need to iterate over an InputImageList
 		//these are the same for all ImageControllers so let's generate one of them immediately
 		//to obtain such a list
-		ImageController justForInputImageListGeneration(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
+		SvOgu::ImageController justForInputImageListGeneration(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
 		justForInputImageListGeneration.Init();
 		const auto& rNameObjectIdPairs = justForInputImageListGeneration.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
 
 		int i = 0;
 		for (const auto& rData: rNameObjectIdPairs)
 		{
-			ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(imageInfoList[i].maybecolor(), imageInfoList[i].maybeblackandwhite()));
+			SvOgu::ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(imageInfoList[i].maybecolor(), imageInfoList[i].maybeblackandwhite()));
 			ImgCtrl.Init();
 			const SvUl::NameObjectIdList& availImages = ImgCtrl.GetAvailableImageList();
 			std::string Temp = imageInfoList[i].displayname();
@@ -227,7 +227,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 	}
 
 
-	void SVTADlgExternalToolImageSelectPage::setImages(ImageController &imgCtrl)
+	void SVTADlgExternalToolImageSelectPage::setImages(SvOgu::ImageController &imgCtrl)
 	{
 		imgCtrl.ToolRunOnce();
 		const auto& rInputDataList = imgCtrl.GetInputImageList(SvDef::InvalidObjectId, m_numImages);

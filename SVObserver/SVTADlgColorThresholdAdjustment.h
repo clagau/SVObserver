@@ -17,7 +17,7 @@
 #include "SVTADlgColorThresholdBasePage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVLibrary/SVValueBaseNormalizerClass.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -97,7 +97,7 @@ protected:
 	SVValueBaseNormalizerClass m_Normalizer;
 
 private:
-	SvOg::ValueController m_Values;
+	SvOgu::ValueController m_Values;
 
 	SvDef::BandEnum m_band{SvDef::Band0};
 	SvOi::SVImageBufferHandlePtr m_histogramImage;

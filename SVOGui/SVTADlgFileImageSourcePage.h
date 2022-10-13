@@ -14,9 +14,9 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "PictureDisplay.h"
-#include "ImageController.h"
-#include "DataController.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -55,11 +55,11 @@ namespace SvOg
 	#pragma region Member variables
 	private:
 		SVFileNameClass m_svfncImageSourceFile;
-		SvOg::ImageController m_ImageController;
-		ValueController m_values;
+		SvOgu::ImageController m_ImageController;
+		SvOgu::ValueController m_values;
 		//{{AFX_DATA(SVTADlgFileImageSourcePage)
 		enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
-		SvOg::PictureDisplay m_imageCtrl;
+		SvOgu::PictureDisplay m_imageCtrl;
 		CString	m_PathName;
 		BOOL m_BContinuousReload{ false };
 		BOOL m_BIsColorImage{ false };

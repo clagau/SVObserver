@@ -26,7 +26,7 @@ namespace SvOg
 	SVTADlgFileImageSourcePage::SVTADlgFileImageSourcePage(uint32_t inspectionId, uint32_t taskObjectId)
 		: CPropertyPage(SVTADlgFileImageSourcePage::IDD)
 		, m_ImageController(inspectionId, taskObjectId)
-		, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+		, m_values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	{
 		//{{AFX_DATA_INIT(SVTADlgFileImageSourcePage)
 		//}}AFX_DATA_INIT
@@ -41,7 +41,7 @@ namespace SvOg
 		HRESULT hr = S_OK;
 
 		SetData();
-		hr = m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		hr = m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 		GetData();
 
 		return hr;

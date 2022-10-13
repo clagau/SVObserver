@@ -6,8 +6,8 @@
 #include "resource.h"
 #include "ToolObject.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
-#include "SVMFCControls\ObjectsListBox.h"
-#include "SVOGui\PictureDisplay.h"
+#include "SVMFCControls/ObjectsListBox.h"
+#include "SVOGuiUtility/PictureDisplay.h"
 
 namespace SvTrcT
 {
@@ -83,7 +83,7 @@ namespace SvTrcT
 		CComboBox	m_ToolSelectCombo;
 		CComboBox	m_ImageCombo;
 		CComboBox	m_ValueCombo;
-		SvOg::PictureDisplay m_dialogImage;
+		SvOgu::PictureDisplay m_dialogImage;
 		const int m_inspectionPos = 0;
 		bool m_isReader = false;
 		SvOi::RAIIPtr m_resetCallbackRAII;

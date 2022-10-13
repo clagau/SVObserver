@@ -17,8 +17,7 @@
 #include "CameraLibrary/SVDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
-//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "SVOGui/PictureDisplay.h"
+#include "SVOGuiUtility/PictureDisplay.h"
 #pragma endregion Includes
 
 class SVCameraFormat;
@@ -126,7 +125,7 @@ private:
 
 	//{{AFX_DATA(SVGigeCameraROIDlg)
 	enum { IDD = IDD_GIGE_CAMERA_ROI_DLG };
-	SvOg::PictureDisplay m_Image;
+	SvOgu::PictureDisplay m_Image;
 	CSpinButtonCtrl m_SpinHeight;
 	CSpinButtonCtrl m_SpinLeft;
 	CSpinButtonCtrl m_SpinWidth;

@@ -10,8 +10,8 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCombo.h"
-#include "DisplayHelper.h"
-#include "LinkedValueSelectorDialog.h"
+#include "SVOGuiUtility/DisplayHelper.h"
+#include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #include "SVShowDependentsDialog.h"
 #include "Definitions/Color.h"
 #pragma endregion Includes
@@ -86,7 +86,7 @@ namespace SvOg
 		, m_InspectionID(inspectionId)
 		, m_toolId(toolId)
 		, m_TaskObjectID(taskId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, taskId } }
+		, m_Values{ SvOgu::BoundValues{ inspectionId, taskId } }
 	{
 	}
 #pragma endregion Constructor
@@ -117,7 +117,7 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
+		SvOgu::DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 		m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
 
@@ -174,7 +174,7 @@ namespace SvOg
 		{
 		case DependencyColumn:
 		{
-			if (false == isOk(m_resultData[pItem->iRow - 1]))
+			if (false == SvOgu::isOk(m_resultData[pItem->iRow - 1]))
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Display);
 				Msg.setMessage(m_resultData[pItem->iRow - 1].m_errorData);
@@ -188,7 +188,7 @@ namespace SvOg
 		}
 		case ValueButtonColumn:
 		{
-			LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1].m_name, m_resultData[pItem->iRow - 1].m_data, m_resultData[pItem->iRow - 1].m_data.m_defaultValue.vt);
+			SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1].m_name, m_resultData[pItem->iRow - 1].m_data, m_resultData[pItem->iRow - 1].m_data.m_defaultValue.vt);
 			if (IDOK == dlg.DoModal())
 			{
 				m_resultData[pItem->iRow - 1].m_data = dlg.getData();
@@ -277,7 +277,7 @@ namespace SvOg
 
 	void TADialogGroupToolResultPage::OnBnClickedButtonAdd()
 	{
-		addEntry(c_resultName, m_resultData);
+		addEntry(SvOgu::c_resultName, m_resultData);
 		setInspectionData(false);
 		FillGridControl();
 	}
@@ -515,7 +515,7 @@ namespace SvOg
 
 	void TADialogGroupToolResultPage::loadDataList()
 	{
-		SvOg::loadDataList(m_resultData, m_Values, SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, m_errorMessages);
+		SvOgu::loadDataList(m_resultData, m_Values, SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, m_errorMessages);
 	}
 
 	void TADialogGroupToolResultPage::UpdateEnableButtons()

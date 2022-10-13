@@ -15,8 +15,8 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
-#include "DisplayHelper.h"
-#include "GuiValueHelper.h"
+#include "SVOGuiUtility/DisplayHelper.h"
+#include "SVOGuiUtility/GuiValueHelper.h"
 #include "Definitions/Color.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVMessage/SVMessage.h"
@@ -60,8 +60,8 @@ namespace SvOg
 	, m_nYPos( 0 )
 	, m_lModelWidth( m_sourceImageWidth/2 )
 	, m_lModelHeight( m_sourceImageHeight/2 )
-	, SvOg::ImageController(inspectionID, analyzerID)
-	, m_values{ SvOg::BoundValues{ inspectionID, analyzerID } }
+	, SvOgu::ImageController(inspectionID, analyzerID)
+	, m_values{ SvOgu::BoundValues{ inspectionID, analyzerID } }
 	{
 	}
 
@@ -417,7 +417,7 @@ namespace SvOg
 			////////////////////////////////////////////////////////
 			// SET SHAPE PROPERTIES
 			VariantParamMap ParaMap;
-			SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+			SvOgu::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 			if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
 				ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
@@ -437,7 +437,7 @@ namespace SvOg
 		else if (ModelImageTab == Tab && m_handleToModelCenterOverlay == Handle)
 		{
 			VariantParamMap ParaMap;
-			SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+			SvOgu::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 			if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_ARRAY_XY) && VT_ARRAY == (ParaMap[CDSVPictureDisplay::P_ARRAY_XY].vt & VT_ARRAY) 
 				&& (VT_I4 == (ParaMap[CDSVPictureDisplay::P_ARRAY_XY].vt & VT_I4) ))
@@ -568,19 +568,19 @@ namespace SvOg
 		{
 			double dPosX = 0;
 			double dPoxY = 0;
-			std::vector<double> ResultXArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultXEId));
+			std::vector<double> ResultXArray = SvOgu::ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultXEId));
 			if (0 < ResultXArray.size())
 			{
 				dPosX = ResultXArray[0];
 			}
 
-			std::vector<double> ResultYArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultYEId));
+			std::vector<double> ResultYArray = SvOgu::ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultYEId));
 			if (0 < ResultYArray.size())
 			{
 				dPoxY = ResultYArray[0];
 			}
 
-			std::vector<double> ResultAngleArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultAngleEId));
+			std::vector<double> ResultAngleArray = SvOgu::ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultAngleEId));
 			if (0 < ResultAngleArray.size())
 			{
 				double angle = ResultAngleArray[0];
@@ -1082,8 +1082,8 @@ namespace SvOg
 		m_values.Set<CString>(SvPb::PatDontCareImageFileEId, m_strDontCareName);
 		m_values.Set<bool>(SvPb::PatDontCareEId, m_bDontCare ? true : false);
 
-		SvOg::PostAction commitAction {SvOg::PostAction::doRunOnce};
-		commitAction = commitAction | (shouldResetTask ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
+		SvOgu::PostAction commitAction {SvOgu::PostAction::doRunOnce};
+		commitAction = commitAction | (shouldResetTask ? SvOgu::PostAction::doReset : SvOgu::PostAction::doNothing);
 		HRESULT result = m_values.Commit(commitAction);
 		if (S_OK != result && nullptr != pErrorMessages)
 		{

@@ -10,8 +10,8 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCheck.h"
-#include "DisplayHelper.h"
-#include "BlobAnalyzer2Helper.h"
+#include "SVOGuiUtility/DisplayHelper.h"
+#include "SVOGuiUtility/BlobAnalyzer2Helper.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
@@ -120,7 +120,7 @@ namespace SvOg
 		CPropertyPage::OnInitDialog();
 
 		//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
-		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
+		SvOgu::DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 		for (int i = 0; i < m_RangeWidgets.size(); ++i)
 		{
 			m_RangeWidgets[i] = m_NumberRangeController.createWidget(static_cast<RangeEnum::ERange>(i), m_RangeEdits[i], m_RangeButtons[i]);
@@ -213,28 +213,28 @@ namespace SvOg
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
 				Title += RangeEnum::ERange2String(RangeEnum::ER_FailHigh);
-				startObjectSelector(m_Grid, Title, pItem->iRow, FailHighColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_fail_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_high());
+				SvOgu::startObjectSelector(m_Grid, Title, pItem->iRow, FailHighColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_fail_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_high());
 			}
 			break;
 		case WarnHighButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
 				Title += RangeEnum::ERange2String(RangeEnum::ER_WarnHigh);
-				startObjectSelector(m_Grid, Title, pItem->iRow, WarnHighColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_warn_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_high());
+				SvOgu::startObjectSelector(m_Grid, Title, pItem->iRow, WarnHighColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_warn_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_high());
 			}
 			break;
 		case WarnLowButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
 				Title += RangeEnum::ERange2String(RangeEnum::ER_WarnLow);
-				startObjectSelector(m_Grid, Title, pItem->iRow, WarnLowColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_warn_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_low());
+				SvOgu::startObjectSelector(m_Grid, Title, pItem->iRow, WarnLowColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_warn_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_low());
 			}
 			break;
 		case FailLowButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
 				Title += RangeEnum::ERange2String(RangeEnum::ER_FailLow);
-				startObjectSelector(m_Grid, Title, pItem->iRow, FailLowButtonColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_fail_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_low());
+				SvOgu::startObjectSelector(m_Grid, Title, pItem->iRow, FailLowButtonColumn, m_InspectionID, m_featureData[pItem->iRow - 1].range_fail_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_low());
 			}
 			break;
 		default:
@@ -439,20 +439,20 @@ namespace SvOg
 			}
 			if (m_featureData[i].is_range())
 			{
-				setValueColumn(m_Grid, row, FailHighColumn, convertLinkedValue(m_featureData[i].range_fail_high()));
+				setValueColumn(m_Grid, row, FailHighColumn, SvOgu::convertLinkedValue(m_featureData[i].range_fail_high()));
 				SvGcl::GV_ITEM buttonItem;
 				buttonItem.mask = GVIF_IMAGE;
 				buttonItem.iImage = 0;
 				buttonItem.row = row;
 				buttonItem.col = FailHighButtonColumn;
 				m_Grid.SetItem(&buttonItem);
-				setValueColumn(m_Grid, row, WarnHighColumn, convertLinkedValue(m_featureData[i].range_warn_high()));
+				setValueColumn(m_Grid, row, WarnHighColumn, SvOgu::convertLinkedValue(m_featureData[i].range_warn_high()));
 				buttonItem.col = WarnHighButtonColumn;
 				m_Grid.SetItem(&buttonItem);
-				setValueColumn(m_Grid, row, WarnLowColumn, convertLinkedValue(m_featureData[i].range_warn_low()));
+				setValueColumn(m_Grid, row, WarnLowColumn, SvOgu::convertLinkedValue(m_featureData[i].range_warn_low()));
 				buttonItem.col = WarnLowButtonColumn;
 				m_Grid.SetItem(&buttonItem);
-				setValueColumn(m_Grid, row, FailLowColumn, convertLinkedValue(m_featureData[i].range_fail_low()));
+				setValueColumn(m_Grid, row, FailLowColumn, SvOgu::convertLinkedValue(m_featureData[i].range_fail_low()));
 				buttonItem.col = FailLowButtonColumn;
 				m_Grid.SetItem(&buttonItem);
 			}

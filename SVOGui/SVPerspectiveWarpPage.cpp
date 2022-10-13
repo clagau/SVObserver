@@ -34,7 +34,7 @@ namespace SvOg
 	: CPropertyPage( ID )
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
-	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 

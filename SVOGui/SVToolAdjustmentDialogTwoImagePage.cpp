@@ -86,10 +86,10 @@ END_MESSAGE_MAP()
 #pragma region Constructor
 SVToolAdjustmentDialogTwoImagePageClass::SVToolAdjustmentDialogTwoImagePageClass(uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(SVToolAdjustmentDialogTwoImagePageClass::IDD)
-	, SvOg::ImageController(inspectionId, taskObjectId, SvPb::SVImageMonoType, false)
+	, SvOgu::ImageController(inspectionId, taskObjectId, SvPb::SVImageMonoType, false)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
-	, m_values {SvOg::BoundValues{ inspectionId, taskObjectId }}
+	, m_values {SvOgu::BoundValues{ inspectionId, taskObjectId }}
 {
 }
 
@@ -117,7 +117,7 @@ HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 	m_values.Set<bool>(SvPb::ImageToolEnabledGainId, m_IsGainEnabled);
 	m_values.Set<bool>(SvPb::ImageToolRecalculateOnceId, m_RecalculateOnce);
 
-	hr = m_values.Commit(SvOg::PostAction::doRunOnce | SvOg::PostAction::doReset);
+	hr = m_values.Commit(SvOgu::PostAction::doRunOnce | SvOgu::PostAction::doReset);
 	
 	ShowGainAndOffset(lOperator);
 
@@ -185,8 +185,8 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 	Init();
 	m_values.Init();
 
-	m_GainWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditGainValue, m_ButtonGainLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolGainId, &m_values);
-	m_OffsetWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditOffsetValue, m_ButtonOffsetLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolOffsetId, &m_values);
+	m_GainWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditGainValue, m_ButtonGainLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolGainId, &m_values);
+	m_OffsetWidget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_EditOffsetValue, m_ButtonOffsetLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolOffsetId, &m_values);
 	const SvUl::NameObjectIdList& rAvailableImageList = GetAvailableImageList();
 	RetreiveCurrentlySelectedImageNames();
 	RetreiveResultImageNames();

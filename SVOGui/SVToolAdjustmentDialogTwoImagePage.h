@@ -13,16 +13,16 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "PictureDisplay.h"
-#include "ImageController.h"
-#include "DataController.h"
-#include "LinkedValueWidgetHelper.h"
+#include "SVMFCControls/AvailableObjectListComboBox.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
-class SVToolAdjustmentDialogTwoImagePageClass : public CPropertyPage, protected SvOg::ImageController
+class SVToolAdjustmentDialogTwoImagePageClass : public CPropertyPage, protected SvOgu::ImageController
 {
 	DECLARE_MESSAGE_MAP()
 
@@ -77,8 +77,8 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogTwoImagePageClass)
 	enum { IDD = IDD_TA_TWO_IMAGE_DIALOG };
 	CComboBox m_operatorCtrl;
-	SvOg::PictureDisplay m_secondImageCtrl;
-	SvOg::PictureDisplay m_firstImageCtrl;
+	SvOgu::PictureDisplay m_secondImageCtrl;
+	SvOgu::PictureDisplay m_firstImageCtrl;
 	SvMc::AvailableObjectListComboBox<uint32_t> m_firstAvailableSourceImageListBoxCtl;
 	SvMc::AvailableObjectListComboBox<uint32_t> m_secondAvailableSourceImageListBoxCtl;
 	//}}AFX_DATA
@@ -89,10 +89,10 @@ private:
 
 	CButton m_ButtonGainLink;
 	CEdit m_EditGainValue;
-	std::unique_ptr<LinkedValueWidgetHelper> m_GainWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_GainWidget;
 	CButton m_ButtonOffsetLink;
 	CEdit m_EditOffsetValue;
-	std::unique_ptr<LinkedValueWidgetHelper> m_OffsetWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_OffsetWidget;
 
 	bool m_IgnoreNotification {false};
 
@@ -104,7 +104,7 @@ private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
 
-	ValueController m_values;
+	SvOgu::ValueController m_values;
 #pragma endregion Member variables
 };
 } //namespace SvOg

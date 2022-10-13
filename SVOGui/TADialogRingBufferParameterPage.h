@@ -12,8 +12,8 @@
 #include "SVOResource/resource.h"
 #include "Definitions/GlobalConst.h"
 #include "ISVPropertyPageDialog.h"
-#include "DataController.h"
-#include "LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -80,11 +80,11 @@ namespace SvOg
 
 		CEdit m_EditRingDepth;
 		CButton m_ButtonRingDepth;
-		std::unique_ptr<LinkedValueWidgetHelper> m_DepthWidget;
+		std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_DepthWidget;
 		CEdit m_EditImageIndex[SvDef::cRingBufferNumberOutputImages];
 		CButton m_ButtonImageIndex[SvDef::cRingBufferNumberOutputImages];
-		std::array<std::unique_ptr<LinkedValueWidgetHelper>, SvDef::cRingBufferNumberOutputImages> m_ImageIndexWidget;
-		ValueController m_values;
+		std::array<std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, SvDef::cRingBufferNumberOutputImages> m_ImageIndexWidget;
+		SvOgu::ValueController m_values;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

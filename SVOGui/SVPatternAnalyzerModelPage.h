@@ -14,9 +14,9 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "PictureDisplay.h"
-#include "ImageController.h"
-#include "DataController.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/ImageController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -24,7 +24,7 @@
 
 namespace SvOg
 {
-	class SVPatternAnalyzerModelPage : public CPropertyPage, protected ImageController
+	class SVPatternAnalyzerModelPage : public CPropertyPage, protected SvOgu::ImageController
 	{
 	#pragma region Constructor
 	public:
@@ -136,7 +136,7 @@ namespace SvOg
 		bool m_bAllowExit = false;
 
 		CButton m_CircularOverscanCheckbox;
-		SvOg::PictureDisplay m_dialogImage;
+		SvOgu::PictureDisplay m_dialogImage;
 		CString	m_strModelName;
 		BOOL m_bCircularOverscan = false;
 		CString	m_strDontCareName;
@@ -164,7 +164,7 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_AnalyzerID;
-		ValueController m_values;
+		SvOgu::ValueController m_values;
 	#pragma endregion Member Variables
 	};
 } //namespace SvOg

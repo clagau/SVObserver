@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TADialogTableDefinesPage.h"
-#include "FormulaController.h"
+#include "SVOGuiUtility/FormulaController.h"
 #include "SVFormulaEditorSheet.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
@@ -416,7 +416,7 @@ void TADialogTableDefinesPage::FillGridControl()
 			m_Grid.SetItem(&Item);
 
 			Item.col = cFormulaColumn;
-			FormulaController formulaController(m_InspectionID, m_TaskObjectID, m_gridList[i].second);
+			SvOgu::FormulaController formulaController(m_InspectionID, m_TaskObjectID, m_gridList[i].second);
 			Item.strText = formulaController.GetEquationText().c_str();
 			m_Grid.SetItem(&Item);
 			m_Grid.SetItemState(Item.row, cFormulaColumn, m_Grid.GetItemState(Item.row, cFormulaColumn) | GVIS_READONLY);

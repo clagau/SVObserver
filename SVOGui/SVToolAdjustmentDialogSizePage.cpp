@@ -8,9 +8,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "FormulaController.h"
+#include "SVOGuiUtility/FormulaController.h"
 #include "SVFormulaEditorSheet.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVToolAdjustmentDialogSizePage.h"
 #pragma endregion Includes
 
@@ -130,7 +130,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 {
 	HRESULT hresult = S_OK;
 	UpdateData(true); // get data from dialog
-	SizeModes modes;
+	SvOgu::SizeModes modes;
 
 	for (const auto vType : SvDef::AllToolSizeAdjustEnum)
 	{
@@ -194,8 +194,8 @@ void SVToolAdjustmentDialogSizePage::Refresh(bool bSave /*= true*/)
 	m_Button_FormulaFrom.ShowWindow(bShowFormulaFrom ? SW_SHOW : SW_HIDE);
 
 
-	SizeModes Modes;
-	SizeValues Values;
+	SvOgu::SizeModes Modes;
+	SvOgu::SizeValues Values;
 	m_ToolSizeHelper.GetToolSizeMode(true, Modes, Values);
 	for (const auto vType : SvDef::AllToolSizeAdjustEnum)
 	{
@@ -218,7 +218,7 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(SvDef::ToolSizeAdj
 		return;
 	}
 
-	ToolSizeController::EQAdjustStruct  EqStruct = m_ToolSizeHelper.GetEquationStruct(mode);
+	SvOgu::ToolSizeController::EQAdjustStruct  EqStruct = m_ToolSizeHelper.GetEquationStruct(mode);
 	CString strCaption = EqStruct.m_name.c_str();
 	strCaption += _T(" Formula");
 
@@ -335,7 +335,7 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormulaFrom()
 	std::string toolName;
 	if (GetToolNameFromImageList(toolName))
 	{
-		SizeValues values;
+		SvOgu::SizeValues values;
 		for (auto en : SvDef::AllToolSizeAdjustEnum)
 		{
 			values[en] = "\"" + toolName + "." +
@@ -373,7 +373,7 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 			if (SvDef::TSFormula == Value)
 			{
 				DWORD eqId = m_ToolSizeHelper.GetEquationStruct(vType).m_Id;
-				FormulaController formula(m_ipId, m_toolId, eqId);
+				SvOgu::FormulaController formula(m_ipId, m_toolId, eqId);
 				if (formula.GetEquationText().empty())
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);

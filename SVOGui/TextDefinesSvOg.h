@@ -20,5 +20,4 @@ namespace SvOg
 	const TCHAR* const Table_NoSelected = _T("(No Table Selected)");
 	const TCHAR* const Analyzer_NoAnalyzerAvailable = _T( "(No Analyzer Available)" );
 	const TCHAR* const Analyzer_NoAnalyzer = _T( "(No Analyzer)" );
-	const TCHAR* const ScintillaControlName = _T("Scintilla");
 } //namespace SvOg

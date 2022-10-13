@@ -35,8 +35,8 @@ namespace SvOg
 		,m_filterID(filterId)
 		,m_InspectionID(inspectionId)
 		,m_TaskObjectID(taskObjectId)
-		, SvOg::ImageController(inspectionId, taskObjectId)
-		, m_values{ SvOg::BoundValues{ inspectionId, filterId } }
+		, SvOgu::ImageController(inspectionId, taskObjectId)
+		, m_values{ SvOgu::BoundValues{ inspectionId, filterId } }
 	{
 
 		//{{AFX_DATA_INIT(SVWatershedFilterDlg)
@@ -74,7 +74,7 @@ namespace SvOg
 		m_values.Set<long>(SvPb::WatershedFilterControlFlagEId, lControlFlag);
 		m_values.Set<long>(SvPb::WatershedFilterMinVariationEId, m_lMinVariation);
 		m_values.Set<bool>(SvPb::WatershedFilterUseMarkerEId, m_bUseMarker ? true : false);
-		m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
 

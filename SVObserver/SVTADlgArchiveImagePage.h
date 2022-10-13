@@ -17,8 +17,8 @@
 #include "SVOGui/ISVPropertyPageDialog.h"
 #include "SVMFCControls/EditNumbers.h"
 #include "Tools/ArchiveMethodEnum.h"
-#include "SVOGui/DataController.h"
-#include "SVOGui/LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 
@@ -47,7 +47,7 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 	{
 		enum TupleContent : size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
-		explicit AipCtr(SvOg::ValueController& rValueController, uint32_t inspectionId, uint32_t taskId) :
+		explicit AipCtr(SvOgu::ValueController& rValueController, uint32_t inspectionId, uint32_t taskId) :
 			m_source(inspectionId, taskId, &rValueController)
 		{}
 
@@ -71,11 +71,11 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 		void OnButton(Lve widgetEnum);
 		void OnKillFocus(Lve widgetEnum);
 
-		std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, Lve::__Num__> m_WidgetHelpers;
+		std::array < std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, Lve::__Num__> m_WidgetHelpers;
 
 	private:
 
-		SvOg::WidgetHelperSource m_source;
+		SvOgu::WidgetHelperSource m_source;
 
 
 		CEdit	m_EditBaseDirectoryname;
@@ -171,7 +171,7 @@ private:
 	CEdit	m_maximumImageQueueLengthEditBox;
 	CButton m_maximumImageQueueLengthButton;
 
-	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_maximumImageQueueLengthWidgetHelper;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_maximumImageQueueLengthWidgetHelper;
 
 	CStatic	m_maximumImageQueueLengthStaticText;
 
@@ -200,8 +200,8 @@ private:
 	MapSelectedImageType m_mapSelectedImageMemUsage;
 	MapSelectedImageType m_mapInitialSelectedImageMemUsage;
 
-	SvOg::ValueController m_ValueController;
-	std::array < std::unique_ptr<SvOg::LinkedValueWidgetHelper>, 3> m_ImageFilepathrootWidgetHelpers;
+	SvOgu::ValueController m_ValueController;
+	std::array < std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, 3> m_ImageFilepathrootWidgetHelpers;
 
 	bool m_Init = false;
 	AipCtr m_alternativeImagePaths;

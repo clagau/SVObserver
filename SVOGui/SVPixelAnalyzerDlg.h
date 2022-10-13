@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 
@@ -74,6 +74,6 @@ protected:
 private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
-	ValueController m_Values;
+	SvOgu::ValueController m_Values;
 };
 } //namespace SvOg

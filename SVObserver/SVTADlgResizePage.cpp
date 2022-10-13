@@ -14,7 +14,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
-#include "SVOGui/LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 
@@ -36,7 +36,7 @@ END_MESSAGE_MAP()
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
 
-void traceScalefactorValues(uint32_t inspectionId, const std::string& rHeading, const SvOg::ValueController& rVC)
+void traceScalefactorValues(uint32_t inspectionId, const std::string& rHeading, const SvOgu::ValueController& rVC)
 {
 	const std::vector<SvPb::EmbeddedIdEnum> allScaleFactorEIDs
 	{
@@ -54,7 +54,7 @@ void traceScalefactorValues(uint32_t inspectionId, const std::string& rHeading, 
 	{
 		traceStream << "\t" << "'" << rVC.GetName(eid) << " (id=" << eid << ")': ";
 
-		SvOg::LinkedValueData lvd = rVC.Get<SvOg::LinkedValueData>(eid);
+		SvOgu::LinkedValueData lvd = rVC.Get<SvOgu::LinkedValueData>(eid);
 
 		if (lvd.m_selectedOption == SvPb::LinkedSelectedOption::None)
 		{
@@ -97,7 +97,7 @@ SVTADlgResizePage::SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectI
 	, m_ImageController(inspectionID, taskObjectID)
 	, m_inspectionID(inspectionID)
 	, m_toolID(taskObjectID)
-	, m_resizeValueController{ SvOg::BoundValues{ inspectionID, taskObjectID } }
+	, m_resizeValueController{ SvOgu::BoundValues{ inspectionID, taskObjectID } }
 {
 	m_resizeValueController.Init();
 }
@@ -137,11 +137,11 @@ BOOL SVTADlgResizePage::OnInitDialog()
 	HRESULT hr = S_OK;
 	m_ImageController.Init();
 
-	m_contentScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[0], m_contentScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorContentEId, &m_resizeValueController);
-	m_contentScaleWidgets[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[1], m_contentScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorContentEId, &m_resizeValueController);
+	m_contentScaleWidgets[0] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_contentScaleEdit[0], m_contentScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorContentEId, &m_resizeValueController);
+	m_contentScaleWidgets[1] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_contentScaleEdit[1], m_contentScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorContentEId, &m_resizeValueController);
 
-	m_formatScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_formatScaleEdit[0], m_formatScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorFormatEId, &m_resizeValueController);
-	m_formatScaleWidgets[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_formatScaleEdit[1], m_formatScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorFormatEId, &m_resizeValueController);
+	m_formatScaleWidgets[0] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_formatScaleEdit[0], m_formatScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorFormatEId, &m_resizeValueController);
+	m_formatScaleWidgets[1] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_formatScaleEdit[1], m_formatScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorFormatEId, &m_resizeValueController);
 	
 	if (nullptr == m_ParentDialog)
 	{

@@ -31,7 +31,7 @@ namespace SvOg
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
 	, m_subType(subType)
-	, m_values(SvOg::BoundValues(inspectionId, taskObjectId))
+	, m_values(SvOgu::BoundValues(inspectionId, taskObjectId))
 	, m_AuxExtentsController(inspectionId, taskObjectId)
 	{
 		//{{AFX_DATA_INIT(SVTADlgGeneralPage)

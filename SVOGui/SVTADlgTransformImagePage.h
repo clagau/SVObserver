@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #pragma endregion Includes
 
@@ -45,6 +45,6 @@ namespace SvOg
 		HRESULT SetInspectionData();
 
 	private:
-		ValueController m_values;
+		SvOgu::ValueController m_values;
 	};
 } //namespace SvOg

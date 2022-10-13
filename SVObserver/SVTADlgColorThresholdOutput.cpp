@@ -16,7 +16,7 @@
 #include "SVTADlgColorThresholdOutput.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVInspectionProcess.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -96,10 +96,10 @@ void SVTADlgColorThresholdOutput::OnEnabledThreshold()
 	if (nullptr != m_pThreshold)
 	{
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-		SvOg::ValueController Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->getObjectId(), m_pThreshold->getObjectId() } };
+		SvOgu::ValueController Values{ SvOgu::BoundValues{ m_pThreshold->GetInspection()->getObjectId(), m_pThreshold->getObjectId() } };
 		Values.Init();
 		Values.Set<bool>(m_pEnabled->GetEmbeddedID(), m_Enabled ? true : false);
-		Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		Values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 	};
 	m_svDlgImage.refresh();
 }

@@ -12,9 +12,9 @@
 #include "SVUtilityLibrary/NameObjectIdList.h"
 #include "ISVPropertyPageDialog.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "RangeController.h"
+#include "SVOGuiUtility/RangeController.h"
 #include "Definitions/RangeEnum.h"
-#include "LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -85,8 +85,8 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 
-		RangeController m_NumberRangeController;
-		std::array<std::unique_ptr<LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
+		SvOgu::RangeController m_NumberRangeController;
+		std::array<std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
 		std::array<CButton, RangeEnum::ER_COUNT> m_RangeButtons;
 		std::array<CEdit, RangeEnum::ER_COUNT> m_RangeEdits;
 		CBitmap m_downArrowBitmap;

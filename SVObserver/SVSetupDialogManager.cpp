@@ -15,7 +15,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "AnalyzerOperators/Analyzer.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #include "SVOGui/SVLuminanceAnalyzerDlg.h"
 #include "SVOGui/SVBarCodeProperties.h"
 #include "AnalyzerOperators/BarCodeAnalyzer.h"
@@ -580,7 +580,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(uint32_t inspect
 			l_pAnalyzer->m_bAngleAccuracy = GeneralPage.m_bAccuracy ? true : false;
 
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
-			SvOg::ValueController Values {SvOg::BoundValues{ inspectionId, objectId }};
+			SvOgu::ValueController Values {SvOgu::BoundValues{ inspectionId, objectId }};
 			Values.Init();
 
 			// Save General Page

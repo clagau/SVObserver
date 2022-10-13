@@ -18,7 +18,7 @@
 #include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -71,7 +71,7 @@ void SVTADlgPolarTransformPage::SetInspectionData()
 		UpdateData( true ); // get data from dialog
 
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-		SvOg::ValueController PolarTransformValues{ SvOg::BoundValues{m_pParentDialog->GetInspectionID(), m_ImagePolarTransformID} };
+		SvOgu::ValueController PolarTransformValues{ SvOgu::BoundValues{m_pParentDialog->GetInspectionID(), m_ImagePolarTransformID} };
 		PolarTransformValues.Init();
 
 		PolarTransformValues.Set<bool>(m_pUseFormula->GetEmbeddedID(), bUseFormula ? true : false);
@@ -88,7 +88,7 @@ void SVTADlgPolarTransformPage::SetInspectionData()
 		if (0 <= sel)
 		{
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-			SvOg::ValueController Values {SvOg::BoundValues {m_pParentDialog->GetInspectionID(), m_pTaskObject->getObjectId()}};
+			SvOgu::ValueController Values {SvOgu::BoundValues {m_pParentDialog->GetInspectionID(), m_pTaskObject->getObjectId()}};
 			Values.Init();
 
 			long lValue = static_cast<long>  (m_AngularMethodCombo.GetItemData(sel));

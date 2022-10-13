@@ -12,9 +12,9 @@
 
 #pragma region Includes
 #include "ISVPropertyPageDialog.h"
-#include "RangeController.h"
+#include "SVOGuiUtility/RangeController.h"
 #include "Definitions/RangeEnum.h"
-#include "LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -57,7 +57,7 @@ namespace SvOg
 	protected:
 		//{{AFX_DATA(SVTADlgPassFailPage)
 		enum { IDD = IDD_TA_PASS_FAIL_DIALOG };
-		std::array<std::unique_ptr<SvOg::LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
+		std::array<std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
 		std::array<CButton, RangeEnum::ER_COUNT> m_RangeButtons;
 		std::array<CEdit, RangeEnum::ER_COUNT> m_RangeEdits;
 		//}}AFX_DATA
@@ -65,7 +65,7 @@ namespace SvOg
 	private:
 		HRESULT SetInspectionData();
 		bool UpdateRangeValues();
-		SvOg::RangeController m_rangeController;
+		SvOgu::RangeController m_rangeController;
 		uint32_t m_toolId;
 #pragma endregion Member Variables
 	};

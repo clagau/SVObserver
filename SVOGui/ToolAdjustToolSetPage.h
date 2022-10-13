@@ -9,7 +9,7 @@
 #pragma once
 
 #pragma region Includes
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -37,7 +37,7 @@ private:
 
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;
-	ValueController m_values;
+	SvOgu::ValueController m_values;
 };
 
 } //namespace SvOg

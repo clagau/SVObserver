@@ -11,8 +11,8 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "ISVPropertyPageDialog.h"
-#include "DataController.h"
-#include "LinkedValueWidgetHelper.h"
+#include "SVOGuiUtility/DataController.h"
+#include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 
@@ -53,15 +53,15 @@ private:
 private:
 	CButton m_ButtonLoopsValue;
 	CEdit m_EditLoopsValue;
-	std::unique_ptr<LinkedValueWidgetHelper> m_LoopsValueWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_LoopsValueWidget;
 	CButton m_ButtonBreakCondition;
 	CEdit m_EditBreakCondition;
-	std::unique_ptr<LinkedValueWidgetHelper> m_BreakConditionWidget;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_BreakConditionWidget;
 
 
 	long m_MaxLoopCount;
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;
-	ValueController m_values;
+	SvOgu::ValueController m_values;
 };
 } //namespace SvOg

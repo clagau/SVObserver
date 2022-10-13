@@ -13,13 +13,12 @@
 
 #pragma region Includes
 #include "SVFileSystemLibrary/SVFileNameClass.h"
-//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "SVOGui\PictureDisplay.h"
+#include "SVOGuiUtility\PictureDisplay.h"
+#include "SVOGuiUtility\ImageController.h"
+#include "SVOGuiUtility\DataController.h"
+#include "SVOGuiUtility\MaskController.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVMFCControls\SVEnumerateCombo.h"
-#include "SVOGui\ImageController.h"
-#include "SVOGui\DataController.h"
-#include "SVOGui\MaskController.h"
 #pragma endregion Includes
 
 namespace SvMc
@@ -81,7 +80,7 @@ protected:
 	CButton	m_btnFillColorMore;
 	SvMc::AvailableObjectListComboBox<uint32_t> m_cbAvailableSourceImageList;
 	SvMc::SVEnumerateCombo m_cbMaskOperator;
-	SvOg::PictureDisplay m_dialogImage;
+	SvOgu::PictureDisplay m_dialogImage;
 	BOOL m_bActivateMask;
 	int m_iMaskType;
 	CString	m_sFillColor;
@@ -107,9 +106,9 @@ private:
 	static SVToolAdjustmentDialogMaskPageClass* m_pThis;
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
-	SvOg::ImageController m_ImageController;
-	SvOg::ValueController m_Values;
-	SvOg::MaskController m_maskController;
+	SvOgu::ImageController m_ImageController;
+	SvOgu::ValueController m_Values;
+	SvOgu::MaskController m_maskController;
 	std::string m_imageInputName;
 	std::string m_imageName;
 };

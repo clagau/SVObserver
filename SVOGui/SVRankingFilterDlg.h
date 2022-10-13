@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -62,6 +62,6 @@ namespace SvOg
 		long m_lRankingCells[49];
 		const uint32_t m_InspectionID;
 		const uint32_t m_filterID;
-		ValueController m_values;
+		SvOgu::ValueController m_values;
 	};
 } //namespace SvOg

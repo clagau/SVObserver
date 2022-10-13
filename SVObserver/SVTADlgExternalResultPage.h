@@ -13,15 +13,18 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVOGui/DataController.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
+namespace SvOgu
+{
 class ExternalToolTaskController;
+}
 
 class SVTADlgExternalResultPage : public CPropertyPage
 {
 public:
-	SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, ExternalToolTaskController& rExternalToolTaskController);
+	SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, SvOgu::ExternalToolTaskController& rExternalToolTaskController);
 	virtual ~SVTADlgExternalResultPage();
 
 	//{{AFX_DATA(SVTADlgExternalResultPage)
@@ -52,8 +55,8 @@ protected:
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
 	std::string	m_sTitle;
-	ExternalToolTaskController& m_rExternalToolTaskController;
-	SvOg::ValueController m_ValueController;
+	SvOgu::ExternalToolTaskController& m_rExternalToolTaskController;
+	SvOgu::ValueController m_ValueController;
 
 	enum
 	{

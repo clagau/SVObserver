@@ -37,7 +37,7 @@ SVPixelAnalyzerDlg::SVPixelAnalyzerDlg(uint32_t inspectionId, uint32_t taskObjec
 : CDialog(SVPixelAnalyzerDlg::IDD, pParent)
 , m_InspectionID{ inspectionId }
 , m_TaskObjectID{ taskObjectId }
-, m_Values{ BoundValues{ inspectionId, taskObjectId } }
+, m_Values{SvOgu::BoundValues{ inspectionId, taskObjectId } }
 {
 }
 

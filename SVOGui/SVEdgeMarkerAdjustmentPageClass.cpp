@@ -31,7 +31,7 @@ namespace SvOg
 	, m_bEnablePosition(false)
 	, m_bEnableThreshold(false)
 	, m_bEdgeA(false)
-	, m_values{ SvOg::BoundValues{ inspectionId, edgeObjectId } }
+	, m_values{ SvOgu::BoundValues{ inspectionId, edgeObjectId } }
 	, m_InspectionID{ inspectionId }
 	, m_analyzerId{analyzerID}
 	, m_edgeObjectId{ edgeObjectId }
@@ -373,7 +373,7 @@ namespace SvOg
 			}
 		}
 
-		m_values.Commit(PostAction::doRunOnce|PostAction::doReset);
+		m_values.Commit(SvOgu::PostAction::doRunOnce| SvOgu::PostAction::doReset);
 
 		if( S_OK != GetInspectionData() )
 		{
@@ -400,7 +400,7 @@ namespace SvOg
 
 	void SVEdgeMarkerAdjustmentPageClass::setScrollRange( CSliderCtrl* pSliderCtrl, int min, int max )
 	{
-		NormalizerController* pNormalizerController = nullptr;
+		SvOgu::NormalizerController* pNormalizerController = nullptr;
 		if (pSliderCtrl == &UpperSliderCtrl)
 			pNormalizerController = &m_normalizerController;
 		else
@@ -425,7 +425,7 @@ namespace SvOg
 
 	void SVEdgeMarkerAdjustmentPageClass::setScrollPos( CSliderCtrl* pSliderCtrl, int pos )
 	{
-		NormalizerController* pNormalizerController = nullptr;
+		SvOgu::NormalizerController* pNormalizerController = nullptr;
 		if (pSliderCtrl == &UpperSliderCtrl)
 			pNormalizerController = &m_normalizerController;
 		else

@@ -16,8 +16,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
-#include "GridCtrlLibrary\GridCtrl.h"
-#include "DataController.h"
+#include "GridCtrlLibrary/GridCtrl.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -183,7 +183,7 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_filterID;
-		ValueController m_values;
+		SvOgu::ValueController m_values;
 #pragma endregion Member Variables
 	};
 }  //namespace SvOg

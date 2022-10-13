@@ -15,13 +15,13 @@
 #include "SVInspectionProcess.h"
 #include "SVInspectionProcessResetStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVImageLibrary\SVImagingDeviceParams.h"
+#include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVIOLibrary/SVInputObject.h"
-#include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 
-#include "SVXMLLibrary\SVConfigurationTags.h"
-#include "SVUtilityLibrary\NaturalStringCompare.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVUtilityLibrary/NaturalStringCompare.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVObserver.h"
 #include "SVToolSet.h"
@@ -31,11 +31,11 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVConditional.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/Color.h"
 #include "SVSharedMemoryLibrary\SharedMemWriter.h"
-#include "SVOGui\FormulaController.h"
+#include "SVOGuiUtility/FormulaController.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVUtilityLibrary/SVClock.h"
@@ -3505,7 +3505,7 @@ SvOi::IFormulaControllerPtr SVInspectionProcess::getRegressionTestPlayConditionC
 {
 	if (nullptr == m_pRegressionTestPlayEquationController)
 	{
-		m_pRegressionTestPlayEquationController = SvOi::IFormulaControllerPtr{ new SvOg::FormulaController(getObjectId(), getObjectId(), m_RegressionTestPlayEquation.getObjectId()) };
+		m_pRegressionTestPlayEquationController = SvOi::IFormulaControllerPtr{ new SvOgu::FormulaController(getObjectId(), getObjectId(), m_RegressionTestPlayEquation.getObjectId()) };
 	}
 	return m_pRegressionTestPlayEquationController;
 }

@@ -11,11 +11,10 @@
 
 #pragma once
 #pragma region Includes
-#include "SVMFCControls\EditNumbers.h"
-#include "SVMFCControls\SVHistogram.h"
-//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "SVOGui/PictureDisplay.h"
-#include "SVOGui/ImageController.h"
+#include "SVMFCControls/EditNumbers.h"
+#include "SVMFCControls/SVHistogram.h"
+#include "SVOGuiUtility/PictureDisplay.h"
+#include "SVOGuiUtility/ImageController.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -109,7 +108,7 @@ protected:
 	CButton	m_autoThresholdWhiteRadio;
 	CButton	m_autoThresholdBlackRadio;
 	CSliderCtrl	m_autoThresholdCtrl;
-	SvOg::PictureDisplay m_dialogImage;
+	SvOgu::PictureDisplay m_dialogImage;
 	CSliderCtrl	m_lowerThreshold;
 	CSliderCtrl	m_upperThreshold;
 	BOOL	m_upperThresholdActive;
@@ -144,7 +143,7 @@ private:
 	long m_upperThres;	// current slider pos...
 	long m_lowerThres;	// current slider pos...
 	long m_histState;
-	SvOg::ImageController m_ImageController;
+	SvOgu::ImageController m_ImageController;
 	uint32_t m_resultImageID = SvDef::InvalidObjectId;
 
 public:
