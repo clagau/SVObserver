@@ -568,7 +568,6 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 		{  
 			//check to make sure we don't go over the amount of free memory
 			if (SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
-			if (SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
 			{
 				__int64 llFreeMem = recalculateRemainingImageMemory();
 
