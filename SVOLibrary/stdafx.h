@@ -55,6 +55,7 @@
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>
+#include <format>
 #include <functional>		//Used by static library
 #include <iterator>			//Used by static library
 #include <list>				//Used by static library

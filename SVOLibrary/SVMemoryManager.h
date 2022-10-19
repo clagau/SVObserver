@@ -18,20 +18,23 @@
 // but an individual owner is not thread-safe.
 // this may be changed if needed.
 // just make the iter->second.lSize operations use the InterlockedExchange APIs.
-class SVMemoryPool // manages a single pool of memory
+
+class SVObjectClass;
+
+class SVMemoryPool // manages a single pool of memory 
 {
 public:
 	explicit SVMemoryPool(std::mutex& rMutex) : m_rMemoryMutex {rMutex} {}
 
 	HRESULT Create(__int64 lPoolSizeKBytes);
 
-	HRESULT ReservePoolMemory(void* pOwner, __int64 sizeInBytes);
+	HRESULT ReservePoolMemory(uint32_t ownerId, __int64 sizeInBytes);
+	HRESULT ReleasePoolMemory(uint32_t ownerId);
+	std::vector<std::string> poolInfo();
+	bool hasOwner(uint32_t ownerId);
 
-	HRESULT ReleasePoolMemory(void* pOwner);
-	HRESULT ReleasePoolMemory(void* pOwner, long sizeInBytes);
-
-	__int64 FreeBytes();
-	__int64 SizeOfPoolBytes();
+	__int64 remainingMemoryInBytes() const;
+	__int64 SizeOfPoolBytes() const;
 
 private:
 	// manages memory in a pool for one owner
@@ -40,8 +43,7 @@ private:
 		__int64   lSize {0LL};
 		SVMemoryPoolEntry() : lSize(0) {}
 	};// end class SVMemoryPoolEntry
-	typedef std::pair <void*, SVMemoryPoolEntry> SVMemoryPoolEntryPair;
-	typedef std::map <void*, SVMemoryPoolEntry> SVMemoryPoolEntryMap;
+	typedef std::map <uint32_t, SVMemoryPoolEntry> SVMemoryPoolEntryMap;
 
 	SVMemoryPoolEntryMap m_mapEntries;
 	volatile __int64 m_lPoolSize {0LL};
@@ -77,19 +79,21 @@ class SVMemoryManager
 public:
 	static SVMemoryManager& Instance();
 
-	void InitializeMemoryManager(LPCTSTR poolName, long bufferSize);
-	HRESULT CreatePool( LPCTSTR poolName, __int64 lPoolSizeKBytes );
-	HRESULT ReservePoolMemory( LPCTSTR poolName, void* pOwner, __int64 sizeInBytes );
-	bool    CanReservePoolMemory( LPCTSTR poolName, __int64 sizeInBytes );
-	HRESULT ReleasePoolMemory( LPCTSTR poolName, void* pOwner );
-	HRESULT ReleasePoolMemory( LPCTSTR poolName, void* pOwner, long sizeInBytes );
-	__int64 FreeBytes( LPCTSTR poolName );
-	__int64 SizeOfPoolBytes( LPCTSTR poolName );
-	__int64 ReservedBytes( LPCTSTR poolName ){ return SizeOfPoolBytes(poolName) - FreeBytes(poolName);}
+	SVMemoryManager():m_pool {m_memoryMutex} {};
+
+	void InitializeMemoryManager(long bufferSize);
+	HRESULT ReserveMemory( uint32_t ownerId, __int64 sizeInBytes );
+	HRESULT ReleaseMemory( uint32_t ownerId );
+	bool hasOwner(uint32_t ownerId) {return m_pool.hasOwner(ownerId);}
+	__int64 remainingMemoryInBytes() const ;
+	__int64 TotalBytes() const;
+	__int64 ReservedBytes()const { return TotalBytes() - remainingMemoryInBytes();}
+
+	std::vector<std::string> poolInfo() {return m_pool.poolInfo();}
 
 private:
-	typedef std::map <std::string, SVMemoryPool> SVMemoryPoolMap;
-	SVMemoryPoolMap m_mapPools;
 	std::mutex m_memoryMutex;
+	SVMemoryPool m_pool;
+
 };// end class SVMemoryManager
 

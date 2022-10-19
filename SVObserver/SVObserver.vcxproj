@@ -222,7 +222,6 @@ echo %time%
     </ClCompile>
     <ClCompile Include="SVAboutDialogClass.cpp" />
     <ClCompile Include="SVArchiveHeaderEditDlg.cpp" />
-    <ClCompile Include="SVArchiveWritingDlg.cpp" />
     <ClCompile Include="SVChildrenSetupDialog.cpp" />
     <ClCompile Include="SVCommand.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
@@ -411,7 +410,6 @@ echo %time%
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAboutDialogClass.h" />
     <ClInclude Include="SVArchiveHeaderEditDlg.h" />
-    <ClInclude Include="SVArchiveWritingDlg.h" />
     <ClInclude Include="SVChildrenSetupDialog.h" />
     <ClInclude Include="SVCommand.h" />
     <ClInclude Include="SVCommandInspectionCollectImageData.h" />

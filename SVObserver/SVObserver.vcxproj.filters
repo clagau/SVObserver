@@ -87,9 +87,6 @@
     <ClCompile Include="SVArchiveHeaderEditDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVArchiveWritingDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVChildrenSetupDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -587,9 +584,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVArchiveHeaderEditDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVArchiveWritingDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVChildrenSetupDialog.h">

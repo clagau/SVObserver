@@ -2137,6 +2137,8 @@
 #define IDC_BTN_CLEAR_ALL               15871
 #define IDC_BTN_CLEAR                   15872
 #define IDC_EDIT_MAX_HISTORY            15873
+#define IDC_BTN_CLEAR2                  15873
+#define IDC_BTN_DETAILS                 15873
 #define IDC_CHECK_OVERWRITE             15874
 #define IDC_LIST_SELECTED               15875
 #define IDC_TREE                        15876

@@ -13,20 +13,26 @@
 #include "stdafx.h"
 #include "SVMemoryManager.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/GlobalConst.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+
 #pragma endregion Includes
 
-constexpr int cBytesPerKiloByte = 1024;
+std::string objectName(uint32_t ownerId)
+{
+	return SVObjectManagerClass::Instance().GetCompleteObjectName(ownerId);
+}
 
 HRESULT SVMemoryPool::Create(__int64 lPoolSizeKBytes)
 {
-	m_lPoolSize = lPoolSizeKBytes * 1024;
+	m_lPoolSize = lPoolSizeKBytes * SvDef::cBytesPerKilobyte;
 	return S_OK;
 }
 
-HRESULT SVMemoryPool::ReservePoolMemory(void* pOwner, __int64 sizeInBytes)
+HRESULT SVMemoryPool::ReservePoolMemory(uint32_t ownerId, __int64 sizeInBytes)
 {
 	HRESULT hr = SVMSG_SVO_32_ARCHIVE_TOOL_OUT_OF_MEMORY;
 
@@ -35,88 +41,69 @@ HRESULT SVMemoryPool::ReservePoolMemory(void* pOwner, __int64 sizeInBytes)
 		hr = S_OK;
 	}
 
-	//Add the amount of Memory even if you are over the limit.  The Archive Tool Dialog will handle negative memory properly
-	typename SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(pOwner);
-	if (iter == m_mapEntries.end())
-	{
-		std::lock_guard<std::mutex> lock(m_rMemoryMutex);
-		iter = m_mapEntries.insert(SVMemoryPoolEntryPair(pOwner, SVMemoryPoolEntry())).first;
-	}
+	//Add the amount of memory even if you are over the limit.  The Archive Tool Adjustment Dialog will handle negative memory properly
+	std::lock_guard<std::mutex> lock(m_rMemoryMutex);
 	::InterlockedExchangeAdd64(const_cast <PLONGLONG> (&m_lUsed), sizeInBytes);
-	iter->second.lSize += sizeInBytes;
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY_POOL)
+	::OutputDebugString(std::format(_T("   >>>   reserve {} B for {}\n"), sizeInBytes, objectName(ownerId).c_str()).c_str());
+#endif
+	m_mapEntries[ownerId].lSize += sizeInBytes;
 
 	return hr;
 }
 
-HRESULT SVMemoryPool::ReleasePoolMemory(void* pOwner)
+HRESULT SVMemoryPool::ReleasePoolMemory(uint32_t ownerId)
 {
 	HRESULT hr = S_FALSE;
 
-	typename SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(pOwner);
+	typename SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(ownerId);
 	if (iter != m_mapEntries.end())
 	{
 		::InterlockedExchangeAdd64(const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize);
 
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-		::OutputDebugString(_T("SVMemoryPool::ReleasePoolMemory %08X - %d\n"), owner, iter->second.lSize);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY_POOL)
+		::OutputDebugString(std::format(_T("   >>>   {} releases {} B\n"), objectName(ownerId).c_str(), iter->second.lSize).c_str());
 #endif
 		std::lock_guard<std::mutex> lock(m_rMemoryMutex);
-		m_mapEntries.erase(m_mapEntries.find(pOwner));
+		m_mapEntries.erase(m_mapEntries.find(ownerId));
 		hr = S_OK;
 	}
 	else
 	{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-		::OutputDebugString(_T("SVMemoryPool::ReleasePoolMemory %08X - NOT FOUND\n"), owner);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE) || defined (TRACE_MEMORY_POOL)
+		::OutputDebugString(std::format(_T("   >>>   cannot release memory - {} NOT FOUND\n"), objectName(ownerId)).c_str());
 #endif
 	}
 	return hr;
 }
 
-HRESULT SVMemoryPool::ReleasePoolMemory(void* pOwner, long sizeInBytes)
-{
-	HRESULT hr = S_FALSE;
-
-	typename SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(pOwner);
-	if (iter != m_mapEntries.end())
-	{
-		if (sizeInBytes >= iter->second.lSize)
-		{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-			::OutputDebugString(_T("SVMemoryPool::ReleasePoolMemory %08X - %d >= %d\n"), owner, sizeInBytes, iter->second.lSize);
-#endif
-		}
-
-		::InterlockedExchangeAdd64(const_cast <PLONGLONG> (&m_lUsed), -sizeInBytes);
-
-		iter->second.lSize -= sizeInBytes;
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-		::OutputDebugString(_T("SVMemoryPool::ReleasePoolMemory %08X - %d, remaining = %d\n"), owner, sizeInBytes, iter->second.lSize);
-#endif
-		if (iter->second.lSize <= 0)	// check less than for safety
-		{
-			std::lock_guard<std::mutex> lock(m_rMemoryMutex);
-			m_mapEntries.erase(iter);
-			hr = S_OK;
-		}
-	}
-	else
-	{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-		::OutputDebugString(SvUl::Format(_T("SVMemoryPool::ReleasePoolMemory %08X - NOT FOUND\n"), pOwner).c_str());
-#endif
-	}
-	return hr;
-}
-
-__int64 SVMemoryPool::FreeBytes()
+__int64 SVMemoryPool::remainingMemoryInBytes() const
 {
 	return m_lPoolSize - m_lUsed;
 }
 
-__int64 SVMemoryPool::SizeOfPoolBytes()
+__int64 SVMemoryPool::SizeOfPoolBytes() const
 {
 	return m_lPoolSize;
+}
+
+std::vector<std::string> SVMemoryPool::poolInfo()
+{
+	auto first = std::format(_T("{:.1f} MB total for images\n"), static_cast<double>(m_lPoolSize) / SvDef::cBytesPerMegabyte);
+	std::vector<std::string> memoryInformation {first};
+
+	std::ranges::transform(m_mapEntries, back_inserter(memoryInformation), [](const auto& rOwnerAndSize)
+		{
+			auto info = std::format(_T("{:.2f}  MB used by {}\n"), static_cast<double>(rOwnerAndSize.second.lSize) / SvDef::cBytesPerMegabyte, objectName(rOwnerAndSize.first));
+			return info;
+		});
+
+	return memoryInformation;
+}
+
+bool SVMemoryPool::hasOwner(uint32_t ownerId)
+{
+	return m_mapEntries.find(ownerId) != m_mapEntries.end();
 }
 
 SVMemoryManager& SVMemoryManager::Instance()
@@ -126,121 +113,40 @@ SVMemoryManager& SVMemoryManager::Instance()
 	return object;
 }
 
-void SVMemoryManager::InitializeMemoryManager(LPCTSTR poolName, long bufferSize)
+void SVMemoryManager::InitializeMemoryManager(long bufferSize)
 {
 	//Get Amount of System Memory
 	MEMORYSTATUSEX statex;
 	statex.dwLength = sizeof(statex);
 	GlobalMemoryStatusEx(&statex);
-	DWORDLONG ramSizeInMB = (statex.ullTotalPhys / cBytesPerKiloByte) / cBytesPerKiloByte;
-
-	// 'allocate' a pool in the 'memory manager'
+	DWORDLONG ramSizeInMB = statex.ullTotalPhys / SvDef::cBytesPerMegabyte;
 
 	//Log amount of physical memory - may help in debugging issues in the future.
 	SvDef::StringVector MessageList;
-	MessageList.push_back(SvUl::Format(_T("%d MB"), ramSizeInMB));
+	MessageList.push_back(SvUl::Format(_T("%ld MB"), ramSizeInMB));
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_54_EMPTY, SvStl::Tid_AmountOfSystemMemoryText, MessageList, SvStl::SourceFileParams(StdMessageParams));
 
-	CreatePool(poolName, bufferSize * cBytesPerKiloByte);
+	m_pool.Create(bufferSize * SvDef::cBytesPerKilobyte);
 }
 
-HRESULT SVMemoryManager::CreatePool( LPCTSTR poolName, __int64 lPoolSizeKBytes )
+HRESULT SVMemoryManager::ReserveMemory( uint32_t ownerId, __int64 sizeInBytes )
 {
-	HRESULT hr = S_FALSE;
-
-	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(poolName) );
-	if ( iter == m_mapPools.end() )// ensure it doesn't already exist
-	{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-		::OutputDebugString(SvUl::Format(_T("SVMemoryManager::CreatePool(%s, %d)\n"), poolName, lPoolSizeKBytes*1024).c_str());
-#endif
-		auto [it, success] = m_mapPools.insert({std::string(poolName), SVMemoryPool {m_memoryMutex}});
-		hr = it->second.Create(lPoolSizeKBytes);
-	}
-	return hr;
+	return  m_pool.ReservePoolMemory(ownerId, sizeInBytes);
 }
 
-HRESULT SVMemoryManager::ReservePoolMemory( LPCTSTR poolName, void* pOwner, __int64 sizeInBytes )
+HRESULT SVMemoryManager::ReleaseMemory( uint32_t ownerId )
 {
-	HRESULT hr = S_FALSE;
-
-	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(poolName) );
-	if ( iter != m_mapPools.end() )// make sure it exists
-	{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-		::OutputDebugString(SvUl::Format(_T("SVMemoryManager::ReservePoolMemory(%s, %08X, %d)\n"), poolName, owner, sizeInBytes).c_str);
-#endif
-		hr = iter->second.ReservePoolMemory(pOwner, sizeInBytes );
-	}
-
-	return hr;
+	return m_pool.ReleasePoolMemory(ownerId);
 }
 
-HRESULT SVMemoryManager::ReleasePoolMemory( LPCTSTR poolName, void* pOwner )
+__int64 SVMemoryManager::remainingMemoryInBytes() const
 {
-	HRESULT hr = S_FALSE;
-
-	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(poolName) );
-	if ( iter != m_mapPools.end() )// make sure it exists
-	{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-		::OutputDebugString(SvUl::Format(_T("SVMemoryManager::ReleasePoolMemory(%s, %08X)\n"), poolName, owner).c_str());
-#endif
-		hr = iter->second.ReleasePoolMemory(pOwner);
-	}
-
-	return hr;
-}
-
-HRESULT SVMemoryManager::ReleasePoolMemory( LPCTSTR poolName, void* pOwner, long sizeInBytes )
-{
-	HRESULT hr = S_FALSE;
-
-	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(poolName) );
-	if ( iter != m_mapPools.end() )// make sure it exists
-	{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-		::OutputDebugString(SvUl::Format(_T("SVMemoryManager::ReleasePoolMemory(%s, %08X, %d)\n"), poolName, owner, sizeInBytes).c_str());
-#endif
-		hr = iter->second.ReleasePoolMemory(pOwner, sizeInBytes );
-	}
-
-	return hr;
-}
-
-bool SVMemoryManager::CanReservePoolMemory( LPCTSTR poolName, __int64 lReserveSizeInBytes )
-{
-	__int64 lFreeBytes = FreeBytes( poolName );
-	return lFreeBytes - lReserveSizeInBytes > 0;
-}
-
-__int64 SVMemoryManager::FreeBytes( LPCTSTR poolName )
-{
-	__int64 lSize = 0;
-
-	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(poolName) );
-	if ( iter != m_mapPools.end() )// make sure it exists
-	{
-		lSize = iter->second.FreeBytes( );
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
-		::OutputDebugString(SvUl::Format(_T("SVMemoryManager::FreeBytes(%s, %d)\n"), poolName, lSize).c_str());
-#endif
-	}
-
+	auto lSize = m_pool.remainingMemoryInBytes();
 	return lSize;
 }
 
-__int64 SVMemoryManager::SizeOfPoolBytes( LPCTSTR poolName )
+__int64 SVMemoryManager::TotalBytes() const
 {
-	__int64 lSize = 0;
-
-	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(poolName) );
-	if ( iter != m_mapPools.end() )// make sure it exists
-	{
-		lSize = iter->second.SizeOfPoolBytes();
-	}
-
-	return lSize;
+	return m_pool.SizeOfPoolBytes();
 }
-

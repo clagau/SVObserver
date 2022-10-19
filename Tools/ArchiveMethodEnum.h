@@ -15,4 +15,6 @@ enum SVArchiveMethodEnum
 	SVArchiveGoOffline     = 3,
 };
 
+bool memoryNeedsToBeConsidered(SVArchiveMethodEnum mode);
+
 } //namespace SvTo

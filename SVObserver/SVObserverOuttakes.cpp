@@ -8,7 +8,6 @@
 #include "stdafx.h"
 #include "ExtrasEngine.h"
 #include "RootObject.h"
-#include "SVArchiveWritingDlg.h"
 #include "SVConfigurationObject.h"
 #include "SVDirectX.h"
 #include "SVGlobal.h"
@@ -26,7 +25,6 @@
 #include "CameraLibrary/SVDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSVDef.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVLibrary/SVWinUtility.h"
@@ -138,8 +136,6 @@ void StopSvo()
 	CWaitCursor wait;
 	SVSVIMStateClass::SVRCBlocker block;
 
-	SVArchiveWritingDlg* pArchiveWriteDlg = nullptr;
-
 	GetSvoMainFrame()->SetStatusInfoText(_T(""));
 
 	EnableTriggerSettings(false);
@@ -148,6 +144,10 @@ void StopSvo()
 	{
 		return;
 	}
+
+	CDialog infoDlg;
+	infoDlg.Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
+	infoDlg.ShowWindow(SW_SHOW);
 
 #ifdef LOG_HEAP_INFO
 	SvUl::logHeap(_T("Leaving run mode"));
@@ -168,13 +168,7 @@ void StopSvo()
 		return;
 	}
 
-	if (SVMemoryManager::Instance().ReservedBytes(SvDef::ARCHIVE_TOOL_MEMORY_POOL) > 0)
-	{
-		pArchiveWriteDlg = new SVArchiveWritingDlg;
-		pArchiveWriteDlg->Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
-		pArchiveWriteDlg->ShowWindow(SW_SHOW);
-		SVYieldPaintMessages();
-	}
+	SVYieldPaintMessages();
 
 	bool wasInRunMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 
@@ -233,12 +227,6 @@ void StopSvo()
 	}
 
 	RootObject::setRootChildValue(SvDef::FqnEnvironmentSoftwareTrigger, false);
-
-	if (pArchiveWriteDlg)
-	{
-		pArchiveWriteDlg->DestroyWindow();
-		delete pArchiveWriteDlg;
-	}
 }
 
 void StopAll()

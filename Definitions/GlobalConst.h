@@ -21,6 +21,8 @@ constexpr int			cTableMaxRowMin = 1;
 constexpr int			cTableMaxRowMax = 10000;
 constexpr int			cMaxStringByteSize = 200;
 
+constexpr long			cBytesPerKilobyte = 1024;
+constexpr long			cBytesPerMegabyte = 1024*1024;
 constexpr long			cMin8BitPixelValue = 0;
 constexpr long			cMax8BitPixelValue = 255;
 constexpr long			cDefaultToolUpperThreshold = cMax8BitPixelValue;

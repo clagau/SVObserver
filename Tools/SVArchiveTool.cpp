@@ -18,7 +18,6 @@
 #include "SVArchiveImageThreadClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Definitions/SVResetStruct.h"
-#include "Definitions/TextDefineSvDef.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
@@ -48,6 +47,10 @@ constexpr long cAsyncDefaultMaximumImageQueueLength = 5;
 SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
 
+bool memoryNeedsToBeConsidered(SVArchiveMethodEnum mode)
+{
+	return mode == SVArchiveGoOffline || mode == SVArchiveAsynchronous;
+}
 
 SVArchiveTool::SVArchiveTool(SVObjectClass* POwner, int StringResourceID)
 	:SVToolClass(ToolExtType::None, POwner, StringResourceID)
@@ -60,7 +63,7 @@ SVArchiveTool::~SVArchiveTool()
 {
 	ArchiveDataAsynchron::Instance().GoOffline();
 	SVArchiveImageThreadClass::Instance().GoOffline();
-	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL, this);
+	SVMemoryManager::Instance().ReleaseMemory(getObjectId());
 	m_ResultCollection.SetArchiveTool(nullptr);
 	m_ImageCollection.SetArchiveTool(nullptr);
 }
@@ -402,6 +405,14 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 
 	m_uiValidateCount = 0;
 
+	if (SVMemoryManager::Instance().remainingMemoryInBytes() < 0)
+	{
+		SvDef::StringVector msgList;
+		SvStl::MessageContainer Msg(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryPleaseDeselect, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+		pErrorMessages->push_back(Msg);
+		result = false;
+	}
+
 	return result;
 }
 
@@ -647,17 +658,20 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 
 bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMessages)
 {
-	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL, this);
+	if (SVMemoryManager::Instance().hasOwner(getObjectId()))
+	{
+		SVMemoryManager::Instance().ReleaseMemory(getObjectId());
+	}
 	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous)
 	{
-		// async doesn't really allocate any buffers but it does preparation work (init m_ImageInfo)
 		DWORD dwMaxImages;
 		m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 		if (m_eArchiveMethod == SVArchiveAsynchronous)
 		{
 			_variant_t maxImageQueueLength;
 			m_maximumImageQueueLength.GetValue(maxImageQueueLength);
-			dwMaxImages = std::min(dwMaxImages, static_cast<DWORD>(maxImageQueueLength.ullVal));
+			dwMaxImages = std::min(dwMaxImages, static_cast<DWORD>(maxImageQueueLength.ullVal)); //even if the max. queue length is higher, we never will need more than the maximum number of images
+
 		}
 		long toolPos = -1;
 		m_ToolPosition.GetValue(toolPos);
@@ -692,7 +706,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 					{
 						long bufferNumber = iter.second * dwMaxImages;
 						__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
-						hrAllocate = SVMemoryManager::Instance().ReservePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL, this, l_lImageBufferSize);
+						hrAllocate = SVMemoryManager::Instance().ReserveMemory(getObjectId(), l_lImageBufferSize);
 						if (S_OK != hrAllocate)
 						{
 							if (nullptr != pErrorMessages)

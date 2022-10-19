@@ -47,7 +47,9 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BROWSE_IMAGE_FILEPATHROOT1,	OnBrowseImageFilepathroot1)
 	ON_CBN_SELCHANGE(IDC_WHEN_TO_ARCHIVE,			OnSelchangeWhenToArchive)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES,				OnChangeEditMaxImages)
+	ON_EN_CHANGE(IDC_EDIT_MAX_QUEUE,				OnChangeMaxImageQueueLength)
 	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX,			OnStopAtMaxClicked)
+	ON_BN_CLICKED(IDC_BTN_DETAILS,					OnDetails)
 	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_BASE,	OnButton<	AipCtr::Lve::BaseDirectoryname>)
 	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_BASE,	OnKillFocus<AipCtr::Lve::BaseDirectoryname>)
 	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_INDEX,	OnButton<	AipCtr::Lve::DirectorynameIndex>)
@@ -73,7 +75,6 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT1, OnKillFocusImageFilepathroot1)
 	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT2, OnKillFocusImageFilepathroot2)
 	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT3, OnKillFocusImageFilepathroot3)
-	ON_EN_KILLFOCUS(IDC_EDIT_MAX_QUEUE,				OnKillFocusMaxImageQueueLength)
 	
 END_MESSAGE_MAP()
 
@@ -85,11 +86,6 @@ constexpr int IconGrowBy = 1;
 constexpr long MaxImagesWarningLimit = 100L;
 
 #pragma endregion Declarations
-
-bool memoryNeedsToBeConsidered(SvTo::SVArchiveMethodEnum mode)
-{
-	return mode == SvTo::SVArchiveGoOffline || mode == SvTo::SVArchiveAsynchronous;
-}
 
 #pragma region Constructor
 SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent) 
@@ -128,12 +124,11 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
 	{
 		//check to see if any items are selected in the image tree
-		
 		int iSize = static_cast<int> (m_ImagesToBeArchived.size());
 		if( 0 < iSize )
 		{
 			//if memory usage < 0 do not all them to exit
-			__int64 FreeMemory = CalculateFreeMem();
+			__int64 FreeMemory = recalculateRemainingImageMemory();
 			if (0 > FreeMemory)
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
@@ -172,18 +167,14 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		SvStl::MessageManager Exception(SvStl::MsgType::Log );
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_WarningMaxImages, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
-	//Max images must be at least 1
+
+	//max images must be at least 1
 	if( 1L > m_ImagesToArchive)
 	{
 		m_ImagesToArchive= 1L;
 	}
 
-	m_ValueController.Set<DWORD>(SvPb::ArchiveMaxImagesCountEId, static_cast<DWORD> (m_ImagesToArchive));
-	m_ValueController.Set<DWORD>(SvPb::ArchiveStopAtMaxImagesEId, m_StopAtMaxImagesButton.GetCheck() ? 1 : 0);
-
-	m_pTool->setImageArchiveList(m_ImagesToBeArchived);
-
-	m_ValueController.Commit(SvOgu::PostAction::doReset);
+	updateAndCommitImageValues();
 
 	if (nullptr != m_pParent)
 	{
@@ -273,6 +264,19 @@ bool SVTADlgArchiveImagePage::validateArchiveImageFilepath()
 	return false;
 }
 
+void SVTADlgArchiveImagePage::updateAndCommitImageValues()
+{
+	int iCurSel = m_WhenToArchive.GetCurSel();
+	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData(iCurSel));
+	m_ValueController.Set<long>(SvPb::ArchiveMethodEId, static_cast<long> (m_eSelectedArchiveMethod));
+	m_ValueController.Set<DWORD>(SvPb::ArchiveMaxImagesCountEId, static_cast<DWORD> (m_ImagesToArchive));
+	m_ValueController.Set<DWORD>(SvPb::ArchiveStopAtMaxImagesEId, m_StopAtMaxImagesButton.GetCheck() ? 1 : 0);
+
+	m_pTool->setImageArchiveList(m_ImagesToBeArchived);
+
+	m_ValueController.Commit(SvOgu::PostAction::doReset);
+}
+
 BOOL SVTADlgArchiveImagePage::OnInitDialog() 
 {
 	CWaitCursor Wait;
@@ -314,14 +318,10 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	// store the MaxImageNumber
 	m_sMaxImageNumber = Temp.c_str(); 
 
-	__int64 MemUsed = SVMemoryManager::Instance().ReservedBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL);
-	m_ToolImageMemoryUsage = 0;
-	m_TotalArchiveImageMemoryAvailable = SVMemoryManager::Instance().SizeOfPoolBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL);
-
-	m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
-	m_maximumImageQueueLengthStaticText.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
-	m_maximumImageQueueLengthEditBox.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
-	m_maximumImageQueueLengthButton.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+	m_wndAvailableArchiveImageMemory.ShowWindow(SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+	m_maximumImageQueueLengthStaticText.ShowWindow(SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+	m_maximumImageQueueLengthEditBox.ShowWindow(SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+	m_maximumImageQueueLengthButton.ShowWindow(SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
 
 	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController);
 	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
@@ -334,23 +334,10 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	SVObjectReferenceVector imageVector{m_pTool->getImageArchiveList()};
 	m_ImagesToBeArchived.swap(imageVector);
 
-	MemoryUsage();
-	m_mapInitialSelectedImageMemUsage = m_mapSelectedImageMemUsage;
-	m_ToolImageMemoryUsage = CalculateToolMemoryUsage();
-	m_InitialToolImageMemoryUsage = m_ToolImageMemoryUsage;
-
-	m_InitialArchiveImageMemoryUsageExcludingThisTool = MemUsed;
-
-	// calculate free mem if in SVArchiveGoOffline or SVArchiveAsynchronous mode
-	if (memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
-	{
-		m_InitialArchiveImageMemoryUsageExcludingThisTool -= m_ToolImageMemoryUsage;
-	}
-
-	ReadSelectedObjects();
-
 	m_Init = false;
 	UpdateData(FALSE);
+
+	ReadSelectedObjects();
 
 	OnButtonUseAlternativeImagePath();
 
@@ -399,36 +386,9 @@ void SVTADlgArchiveImagePage::OnRemoveItem()
 	UpdateData(FALSE);
 }
 
-void SVTADlgArchiveImagePage::MemoryUsage()
-{
-	m_mapSelectedImageMemUsage.clear();
-
-	for (auto const& rEntry : m_ImagesToBeArchived )
-	{
-		SVObjectClass* pObject( nullptr );
-		SVObjectManagerClass::Instance().GetObjectByIdentifier(rEntry.getObjectId(), pObject );
-
-		if( nullptr != pObject )
-		{
-			SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( pObject );
-			if ( nullptr != pImage )
-			{
-				m_mapSelectedImageMemUsage[ pImage ] = SvTo::SVArchiveTool::CalculateImageMemory( pImage );
-			}
-		}
-	}
-}
-
-
 void SVTADlgArchiveImagePage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
-
-	MemoryUsage();
-	if(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
-	{
-		CalculateFreeMem();
-	}
 
 	std::string Prefix = SvUl::Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), SvUl::LoadedStrings::g_ToolSetName.c_str() );
 
@@ -456,6 +416,8 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 			0);
 		Index++;
 	}
+
+	recalculateRemainingImageMemory();
 }
 
 void SVTADlgArchiveImagePage::ShowObjectSelector()
@@ -488,32 +450,13 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	if( IDOK == Result )
 	{
 		const SvDef::StringVector& rSelectedList = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
-		//We need to check the memory requirements for the images
-		for(auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
-		{
-			try
-			{
-				uint32_t ImageId = calcObjectId(rEntry);
-				bool isSelected = rSelectedList.end() != std::find(rSelectedList.begin(), rSelectedList.end(), rEntry);
-				if (!checkImageMemory(ImageId, isSelected))
-				{
-					//If memory check failed then the original image selection remains
-					return;
-				}
-			}
-			catch (...)
-			{
-				//If memory check failed then the original image selection remains
-				return;
-			}
-		}
 
 		m_ImagesToBeArchived.clear();
 		for (auto const& rEntry : rSelectedList)
 		{
 			if (m_useAlternativeImagePathButton.GetCheck() && m_ImagesToBeArchived.size() > 0)
 			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Display);
+				SvStl::MessageManager Exception(SvStl::MsgType::Display); 
 				Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_OnlyOneArchiveImageWhenAlternativeImagePath, SvStl::SourceFileParams(StdMessageParams));
 				break;
 			}
@@ -524,6 +467,8 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 		ReadSelectedObjects();
 		UpdateData(FALSE);
 	}
+
+	recalculateRemainingImageMemory();
 }
 
 
@@ -585,33 +530,32 @@ void SVTADlgArchiveImagePage::OnSelchangeWhenToArchive()
 	if (iSel != CB_ERR)
 	{
 		m_eSelectedArchiveMethod = static_cast <SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData( iSel ));
-		m_wndAvailableArchiveImageMemory.ShowWindow(memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
+		m_wndAvailableArchiveImageMemory.ShowWindow(SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod));
 		m_maximumImageQueueLengthStaticText.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
 		m_maximumImageQueueLengthEditBox.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
 		m_maximumImageQueueLengthButton.ShowWindow(SvTo::SVArchiveAsynchronous == m_eSelectedArchiveMethod);
 
-		//if changing to SVArchiveGoOffline mode - build m_mapSelectedImageUsage with selected items in the tree
-		if (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod)
-		{
-			MemoryUsage();
-			//check to make sure they did not go over the available memory
-			__int64 FreeMem = CalculateFreeMem();
-			if ( 0 > FreeMem )
-			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryWhenChangingMode, SvStl::SourceFileParams(StdMessageParams) );
-			}
-		}
-		else if(SvTo::SVArchiveSynchronous == m_eSelectedArchiveMethod )
+		if(SvTo::SVArchiveSynchronous == m_eSelectedArchiveMethod )
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Exception.setMessage( SVMSG_SVO_89_ARCHIVE_TOOL_SYNCHRONOUS_MODE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
+
+	recalculateRemainingImageMemory();
+
 	UpdateData();
 }
 
-void SVTADlgArchiveImagePage::OnChangeEditMaxImages() 
+
+void SVTADlgArchiveImagePage::OnDetails()
+{
+	auto poolInfo = SVMemoryManager::Instance().poolInfo();
+	std::string memoryInformation = std::accumulate(poolInfo.begin(), poolInfo.end(), std::string(), [](const auto& a, const auto& b){return a + b; });
+	AfxMessageBox(memoryInformation.c_str());
+}
+
+void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 {
 	CString strNumImages;
 	m_EditMaxImages.GetWindowText(strNumImages);
@@ -623,9 +567,11 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 		if ( 0 < m_ImagesToArchive )
 		{  
 			//check to make sure we don't go over the amount of free memory
-			if (memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
+			if (SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
+			if (SvTo::memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
 			{
-				__int64 llFreeMem = CalculateFreeMem();
+				__int64 llFreeMem = recalculateRemainingImageMemory();
+
 				if( 0 <= llFreeMem )
 				{
 					m_sMaxImageNumber = strNumImages;
@@ -637,6 +583,7 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 					msgList.push_back(std::string(strNumImages));
 					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughImageMemoryWhenChangingMode, msgList, SvStl::SourceFileParams(StdMessageParams) );
+
 					m_ImagesToArchive = atol(m_sMaxImageNumber);
 					if(m_sMaxImageNumber != strNumImages)
 					{
@@ -656,110 +603,29 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 	}
 }
 
-bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
+
+__int64 SVTADlgArchiveImagePage::recalculateRemainingImageMemory()
 {
-	UpdateData();
-	bool bOk = true;
+	UpdateData(true);
+	updateAndCommitImageValues(); 
 
-	SVObjectReference objectRef(imageId);
-	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (objectRef.getFinalObject());
-	assert(pImage);
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_resetobjectrequest();
+	pRequest->set_objectid(m_taskId);
+	SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 
-	//Get amount of memory needed for the selected image.
-	long MemoryForSelectedImage = SvTo::SVArchiveTool::CalculateImageMemory( pImage );
-	MemoryForSelectedImage *= m_ImagesToArchive;
+	__int64 FreeMem = SVMemoryManager::Instance().remainingMemoryInBytes();
 
-	if( bNewState )// want to select
-	{	
-		bool bAddItem = true;
+	LPCSTR formatText = (FreeMem < 0 ? SvO::AvailableArchiveImageMemoryExceeded : SvO::AvailableArchiveImageMemory);
 
-		if (memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
-		{
-			__int64 CurrentToolFreeMem = CalculateFreeMem();
-			//lDelta is the total amount of memory that will need to be allocated. Only gets commited once the tool's reset object gets called.
-			__int64 lDelta = MemoryForSelectedImage - m_InitialToolImageMemoryUsage + m_ToolImageMemoryUsage;			
-			__int64 Difference = CurrentToolFreeMem - MemoryForSelectedImage;
+	double megabytes = (double)FreeMem / (double)(SvDef::cBytesPerMegabyte);
 
-			bool bCanReserve = false;
-			if( 0 <= Difference )
-			{
-				bCanReserve = true;
-			}
-
-			if (bCanReserve && (0 < lDelta))
-			{
-				bCanReserve = SVMemoryManager::Instance().CanReservePoolMemory( SvDef::ARCHIVE_TOOL_MEMORY_POOL, lDelta );
-			}
-
-			if (bCanReserve)
-			{
-				bAddItem = true;
-				m_mapSelectedImageMemUsage[ pImage ] = MemoryForSelectedImage / m_ImagesToArchive;
-				CalculateFreeMem();
-			}
-			else
-			{
-				bAddItem = false;
-				bOk = false;
-				SvDef::StringVector msgList;
-				msgList.push_back(std::string(pImage->GetCompleteName()));
-				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughImageMemoryToSelect, msgList, SvStl::SourceFileParams(StdMessageParams) );
-			}
-		}
-		if (bAddItem)
-		{
-			m_mapSelectedImageMemUsage[ pImage ] = MemoryForSelectedImage / m_ImagesToArchive;
-		}
-	}
-	else	// want to deselect
-	{
-		m_mapSelectedImageMemUsage.erase( pImage );
-
-		if (memoryNeedsToBeConsidered(m_eSelectedArchiveMethod))
-		{
-			__int64 FreeMem = CalculateFreeMem();
-
-			if( 0 > FreeMem )
-			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryPleaseDeselectImage, SvStl::SourceFileParams(StdMessageParams) );
-
-			}
-		}
-	}
-	return bOk;
-}
-
-__int64 SVTADlgArchiveImagePage::CalculateToolMemoryUsage()
-{
-	__int64 ToolImageMemoryUsage( 0 );
-
-	MapSelectedImageType::const_iterator iter;
-	for (iter = m_mapSelectedImageMemUsage.begin(); iter != m_mapSelectedImageMemUsage.end(); ++iter)
-	{
-		ToolImageMemoryUsage += iter->second;
-	}
-	ToolImageMemoryUsage *= m_ImagesToArchive;
-
-	return ToolImageMemoryUsage;
-}
-
-__int64 SVTADlgArchiveImagePage::CalculateFreeMem()
-{
-	m_ToolImageMemoryUsage = CalculateToolMemoryUsage();
-	__int64 FreeMem( -1 );
-
-	if( 0 <= m_ToolImageMemoryUsage )
-	{
-		FreeMem = m_TotalArchiveImageMemoryAvailable - (m_ToolImageMemoryUsage + m_InitialArchiveImageMemoryUsageExcludingThisTool);
-		std::string AvailableMemory = SvUl::Format( SvO::AvailableArchiveImageMemory, (double) FreeMem / (double) (1024 * 1024) );
-		m_wndAvailableArchiveImageMemory.SetWindowText( AvailableMemory.c_str() );
-	}
+	std::string availableMemory = SvUl::Format(formatText, fabs(megabytes));
+	m_wndAvailableArchiveImageMemory.SetWindowText(availableMemory.c_str());
 
 	return FreeMem;
 }
-
 
 afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePath()
 {
@@ -773,9 +639,13 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonMaxImageQueueLength()
 	m_maximumImageQueueLengthWidgetHelper->OnButton();
 }
 
-void SVTADlgArchiveImagePage::OnKillFocusMaxImageQueueLength()
+void SVTADlgArchiveImagePage::OnChangeMaxImageQueueLength()
 {
-	m_maximumImageQueueLengthWidgetHelper->EditboxToValue();
+	if (nullptr != m_maximumImageQueueLengthWidgetHelper)
+	{
+		m_maximumImageQueueLengthWidgetHelper->EditboxToValue();
+		recalculateRemainingImageMemory();
+	}
 }
 
 void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()

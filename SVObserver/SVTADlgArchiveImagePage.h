@@ -122,13 +122,14 @@ protected:
 	afx_msg void OnBrowseImageFilepathroot1();
 	afx_msg void OnStopAtMaxClicked();
 	afx_msg void OnSelchangeWhenToArchive();
+	afx_msg void OnDetails();
 
 	afx_msg void OnChangeEditMaxImages();
 
 	afx_msg void OnButtonUseAlternativeImagePath(); ///< enables or disables the GUI elements that define alternative image paths depending on m_useAlternativeImagePath
 
 	afx_msg void OnButtonMaxImageQueueLength();
-	afx_msg void OnKillFocusMaxImageQueueLength();
+	afx_msg void OnChangeMaxImageQueueLength();
 
 	afx_msg void OnButtonImageFilepathroot1();
 	afx_msg void OnButtonImageFilepathroot2();
@@ -137,19 +138,17 @@ protected:
 	afx_msg void OnKillFocusImageFilepathroot2();
 	afx_msg void OnKillFocusImageFilepathroot3();
 
-	void MemoryUsage();
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
 	bool validateArchiveImageFilepath();  ///< makes sure that the directory as defined in the Archive Tool Adjustment Dialog is available
+	void updateAndCommitImageValues();
 
 	template<AipCtr::Lve lve>
 	void OnButton() { m_alternativeImagePaths.OnButton(lve); }
 	template<AipCtr::Lve lve>
 	void OnKillFocus() { m_alternativeImagePaths.OnKillFocus(lve); }
 
-	bool checkImageMemory(uint32_t imageId, bool bNewState);
-	__int64 CalculateToolMemoryUsage();
-	__int64 CalculateFreeMem();
+	__int64 recalculateRemainingImageMemory();
 
 #pragma endregion Protected Methods
 
@@ -191,14 +190,8 @@ private:
 	int		m_WhenToArchiveIndex = -1;
 	SvTo::SVArchiveMethodEnum m_eSelectedArchiveMethod = SvTo::SVArchiveInvalidMethod;
 	long m_ImagesToArchive = 0;
-	__int64 m_TotalArchiveImageMemoryAvailable = 0;
-	__int64 m_InitialArchiveImageMemoryUsageExcludingThisTool = 0;
-	__int64 m_InitialToolImageMemoryUsage = 0;
-	__int64 m_ToolImageMemoryUsage = 0;
 
 	typedef std::map <SvIe::SVImageClass*, long> MapSelectedImageType;
-	MapSelectedImageType m_mapSelectedImageMemUsage;
-	MapSelectedImageType m_mapInitialSelectedImageMemUsage;
 
 	SvOgu::ValueController m_ValueController;
 	std::array < std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, 3> m_ImageFilepathrootWidgetHelpers;
