@@ -122,6 +122,7 @@ protected:
 	afx_msg void OnBrowseImageFilepathroot1();
 	afx_msg void OnStopAtMaxClicked();
 	afx_msg void OnSelchangeWhenToArchive();
+	afx_msg void OnSelchangeImageFormat();
 	afx_msg void OnDetails();
 
 	afx_msg void OnChangeEditMaxImages();
@@ -165,6 +166,7 @@ private:
 
 	CStatic	m_wndAvailableArchiveImageMemory;
 	CComboBox	m_WhenToArchive;
+	CComboBox	m_imageFormat;
 	SvMc::EditNumbers	m_EditMaxImages;
 
 	CEdit	m_maximumImageQueueLengthEditBox;
@@ -188,7 +190,9 @@ private:
 	uint32_t m_taskId;
 
 	int		m_WhenToArchiveIndex = -1;
-	SvTo::SVArchiveMethodEnum m_eSelectedArchiveMethod = SvTo::SVArchiveInvalidMethod;
+	int		m_FormatIndex = -1;
+	SvTo::ArchiveMode m_selectedMode = SvTo::ArchiveMode::invalid;
+	SvTo::ImageFileFormat m_selectedFormat = SvTo::ImageFileFormat::invalid;
 	long m_ImagesToArchive = 0;
 
 	typedef std::map <SvIe::SVImageClass*, long> MapSelectedImageType;

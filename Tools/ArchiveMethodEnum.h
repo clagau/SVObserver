@@ -1,20 +1,26 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved /// All Rights Reserved 
-/// \Author	Robert Yoho
+/// \copyright COPYRIGHT (c) 2015,2022 by Körber Pharma Inspection GmbH. All Rights Reserved /// All Rights Reserved
+/// \file ArchiveMethodEnum.h
 //*****************************************************************************
 
 #pragma once
 namespace SvTo
 {
 
-enum SVArchiveMethodEnum
+enum class ArchiveMode
 {
-	SVArchiveInvalidMethod = 0,
-	SVArchiveSynchronous   = 1,
-	SVArchiveAsynchronous  = 2,
-	SVArchiveGoOffline     = 3,
+	invalid			= 0,
+	synchronous		= 1,
+	asynchronous	= 2,
+	goOffline		= 3,
 };
 
-bool memoryNeedsToBeConsidered(SVArchiveMethodEnum mode);
+
+enum class ImageFileFormat
+{
+	invalid = 0,
+	bmp		= 1,
+	png		= 2,
+};
 
 } //namespace SvTo

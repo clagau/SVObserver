@@ -267,6 +267,7 @@ enum SVMatroxFileTypeEnum
 	SVFileMIL					= 0L,			// M_MIL
 	SVFileTiff					= 2L,			// M_TIFF
 	SVFileBitmap				= 4L,			// M_BITMAP
+	SVFilePng					= 0x2000L		// M_PNG
 
 };
 

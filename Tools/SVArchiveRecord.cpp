@@ -1,4 +1,6 @@
-//*****************************************************************************
+//**************************************************************************
+
+
 /// \copyright COPYRIGHT (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved /// All Rights Reserved 
 /// \Author	Robert Yoho
 //*****************************************************************************
@@ -17,11 +19,23 @@
 #include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
 
+
 namespace SvTo
 {
 
-#pragma region Constructor
-#pragma endregion Constructor
+SVMatroxFileTypeEnum ImageFileTypeByFormat(ImageFileFormat format)
+{
+	switch (format)
+	{
+		case ImageFileFormat::invalid:
+		default:
+			return SVFileUnknown;
+		case ImageFileFormat::bmp:
+			return SVFileBitmap;
+		case ImageFileFormat::png:
+			return SVFilePng;
+	}
+}
 
 #pragma region Public Methods
 void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectReference rObject)
@@ -68,7 +82,6 @@ void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectRef
 			}
 		}
 	}
-
 }
 
 void SVArchiveRecord::BuildImageFileName()
@@ -93,7 +106,7 @@ void SVArchiveRecord::BuildDefaultImageFilePaths()
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	for (DWORD i = 0; i < dwMaxImages; i++)
 	{
-		std::string FileName = SvUl::Format(_T("%s__%06ld.bmp"), m_ImageFileName.c_str(), i + 1);
+		std::string FileName = SvUl::Format(_T("%s__%06ld%s"), m_ImageFileName.c_str(), i + 1, imageFileNameExtension(imageFileFormat()).c_str());
 		svFileName.SetFileName(FileName.c_str());
 		m_FileNames.push_back(svFileName.GetFullFileName());
 	}
@@ -169,10 +182,10 @@ long SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& 
 {
 	assert(nullptr != rImage && !rImage->isEmpty());
 
-	if (m_eArchiveMethod == SVArchiveAsynchronous)
+	if (archiveMode() == ArchiveMode::asynchronous)
 	{
 		// the QueueImage function will copy the buffer, so pass in the original here
-		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, rImageDirectoryPath, m_ImageInfo, m_toolPos);
+		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, imageFileFormat(), rImageDirectoryPath, m_ImageInfo, m_toolPos);
 		return SVArchiveImageThreadClass::Instance().QueueImage(info);
 	}
 
@@ -185,7 +198,7 @@ long SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& 
 	return -1;
 }
 
-// right now called if method == SVArchiveGoOffline or SVArchiveAsynchronous
+// right now called if method == ArchiveMode::goOffline or ArchiveMode::asynchronous
 HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap, int toolPos)
 {
 	m_toolPos = toolPos;
@@ -217,7 +230,7 @@ HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMa
 			}
 
 			// now create buffer if reserve OK
-			if (SVArchiveAsynchronous != m_eArchiveMethod)
+			if (ArchiveMode::asynchronous != archiveMode())
 			{
 				m_ImageStoreVector.clear();
 				m_ImageStoreVector.resize(lBufferNumber);
@@ -239,7 +252,7 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 	{
 		if (nullptr != m_ImageStoreVector[i] && !m_ImageStoreVector[i]->isEmpty())
 		{
-			WriteImageToFile(m_ImageStoreVector[i]->getHandle()->GetBuffer(), m_FileNames[i]);
+			WriteImageToFile(m_ImageStoreVector[i]->getHandle()->GetBuffer(), m_FileNames[i], imageFileFormat());
 			m_ImageStoreVector[i] = nullptr;
 		}
 		else
@@ -264,7 +277,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 	// An image in our list is archivable.
 	//
 	//
-	// Create a file and convert the image to a .bmp type 
+	// Create a file and convert the image to a .bmp or .png type
 	// file.
 	//
 	SvOi::ITRCImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord, true);
@@ -296,7 +309,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 		return -1;
 	}
 
-	if (m_eArchiveMethod == SVArchiveSynchronous)
+	if (archiveMode() == ArchiveMode::synchronous)
 	{
 		try
 		{
@@ -304,7 +317,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 			{
 				std::filesystem::create_directories(imageDirectoryPath);
 			}
-			SVMatroxBufferInterface::Export(pImageBuffer->getHandle()->GetBuffer(), ImageFilePath, SVFileBitmap);
+			SVMatroxBufferInterface::Export(pImageBuffer->getHandle()->GetBuffer(), ImageFilePath, ImageFileTypeByFormat(imageFileFormat()));
 		}
 		catch (...)
 		{
@@ -312,12 +325,12 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 		}
 		return 0;
 	}
-	// SVArchiveGoOffline or SVArchiveAsynchronous
+	// ArchiveMode::goOffline or ArchiveMode::asynchronous
 	return QueueImage(pImageBuffer, ImageFilePath, imageDirectoryPath);
 }
 
 
-/*static*/ HRESULT SVArchiveRecord::WriteImageToFile(const SVMatroxBuffer& milBuffer, const std::string& rFileName)
+/*static*/ HRESULT SVArchiveRecord::WriteImageToFile(const SVMatroxBuffer& milBuffer, const std::string& rFileName, ImageFileFormat format)
 {
 	HRESULT Result = S_OK;
 
@@ -325,7 +338,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 	{
 		try
 		{
-			Result = SVMatroxBufferInterface::Export(milBuffer, rFileName, SVFileBitmap);
+			Result = SVMatroxBufferInterface::Export(milBuffer, rFileName, ImageFileTypeByFormat(format));
 		}
 		catch (...)
 		{
@@ -339,11 +352,20 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 void SVArchiveRecord::SetArchiveTool(SVArchiveTool* pTool)
 {
 	m_pArchiveTool = pTool;
-	if (pTool)
-	{
-		m_eArchiveMethod = pTool->m_eArchiveMethod;
-	}
 }
+
+
+ArchiveMode SVArchiveRecord::archiveMode() const
+{
+	return (nullptr != m_pArchiveTool) ? m_pArchiveTool->m_archiveMode : ArchiveMode::invalid;
+}
+
+
+ImageFileFormat  SVArchiveRecord::imageFileFormat() const
+{
+	return (nullptr != m_pArchiveTool) ? m_pArchiveTool->m_imageFileFormat : ImageFileFormat::invalid; 
+}
+
 
 SvIe::SVImageClass* SVArchiveRecord::GetImage()
 {

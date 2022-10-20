@@ -33,7 +33,7 @@ namespace SvO
 
 	const TCHAR* const NoneString= 	_T("<none>");
 	const TCHAR* const AvailableArchiveImageMemory = _T("Remaining Archive Image Memory:  %8.1f MB");
-	const TCHAR* const AvailableArchiveImageMemoryExceeded = _T("Available Archive Image Memory EXCEEDED by 6.1f MB!!!");
+	const TCHAR* const AvailableArchiveImageMemoryExceeded = _T("Available Archive Image Memory EXCEEDED by %6.1f MB!!!");
 
 	const TCHAR* const cInspectionProcessTag = _T( "SVInspectionProcess" );
 	const TCHAR* const cPPQObjectTag = _T( "SVPPQObject" );

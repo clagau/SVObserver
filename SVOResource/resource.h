@@ -2136,8 +2136,6 @@
 #define IDC_SOURCE_IMAGE_TEXT           15870
 #define IDC_BTN_CLEAR_ALL               15871
 #define IDC_BTN_CLEAR                   15872
-#define IDC_EDIT_MAX_HISTORY            15873
-#define IDC_BTN_CLEAR2                  15873
 #define IDC_BTN_DETAILS                 15873
 #define IDC_CHECK_OVERWRITE             15874
 #define IDC_LIST_SELECTED               15875
@@ -2496,6 +2494,8 @@
 #define IDS_OBJECTNAME_MAX_IMAGE_QUEUE_LENGTH 16253
 #define IDS_OBJECTNAME_CURRENT_IMAGE_QUEUE_LENGTH 16254
 #define IDS_OBJECTNAME_ARCHIVE_RESULT_FOLDERPATH1 16255
+#define IDS_OBJECTNAME_ARCHIVE_TOOL_FORMAT 16256
+#define IDC_IMAGE_FORMAT                16257
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002

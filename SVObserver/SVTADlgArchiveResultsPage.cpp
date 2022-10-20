@@ -211,8 +211,6 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_TreeBitmap.LoadBitmap( IDB_TREE );
 	m_Select.SetBitmap( static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()) );
 
-	CDWordArray dwaIndex;
-	
 	DWORD dwTemp = 0;
 	m_pTool->m_dwAppendArchiveFile.GetValue(dwTemp);
 	m_AppendArchive = (int)dwTemp;

@@ -11,6 +11,7 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVLibrary/SVTemplate.h"
 #include "ObjectInterfaces/ITRCImage.h"
+#include "Tools/ArchiveMethodEnum.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -18,6 +19,8 @@ namespace SvTo
 
 class SVArchiveTool;
 class SVArchiveRecord;
+
+std::string imageFileNameExtension(ImageFileFormat format);
 
 class SVArchiveImageThreadClass
 {
@@ -27,6 +30,7 @@ public:
 		// passed into the thread class
 		SvOi::ITRCImagePtr m_pImageBuffer = nullptr;
 		std::string m_FileName;
+		ImageFileFormat m_format = ImageFileFormat::invalid;
 		std::string m_ImageDirectoryPath;
 		SVImageInfoClass info;
 		int m_toolPos= -1;
@@ -38,8 +42,8 @@ public:
 
 		BufferInfo(const BufferInfo& rhs) = default;
 
-		BufferInfo(SvOi::ITRCImagePtr pImageBuffer, const std::string& rFileName, const std::string& rImageDirectoryPath, SVImageInfoClass p_info, int pos)
-			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), m_ImageDirectoryPath(rImageDirectoryPath), info(p_info), m_toolPos(pos) {}
+		BufferInfo(SvOi::ITRCImagePtr pImageBuffer, const std::string& rFileName, ImageFileFormat format, const std::string& rImageDirectoryPath, SVImageInfoClass p_info, int pos)
+			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), m_format(format),m_ImageDirectoryPath(rImageDirectoryPath), info(p_info), m_toolPos(pos) {}
 
 		BufferInfo& operator = (const BufferInfo& rhs) = default;
 	};

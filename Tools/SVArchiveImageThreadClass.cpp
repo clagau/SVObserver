@@ -15,6 +15,22 @@
 namespace SvTo
 {
 
+std::string imageFileNameExtension(ImageFileFormat format)
+{
+	switch (format)
+	{
+		case ImageFileFormat::invalid:
+		default:
+			return ".unknown";
+		case ImageFileFormat::bmp:
+			return ".bmp";
+		case ImageFileFormat::png:
+			return ".png";
+	}
+}
+
+
+
 #pragma region Constructor
 SVArchiveImageThreadClass::SVArchiveImageThreadClass()
 {
@@ -173,10 +189,10 @@ void SVArchiveImageThreadClass::PopAndWrite()
 		if (false == info.m_ImageDirectoryPath.empty())
 		{
 			std::filesystem::create_directories(info.m_ImageDirectoryPath);
-			//@TODO[MEC][10.20][14.03.2022] possible optimation is to save information if path exist
+			//@TODO[MEC][10.20][14.03.2022] possible optimisation is to save information if path exist
 		}
 		const SVMatroxBuffer& buf = info.m_pImageBuffer->getHandle()->GetBuffer();
-		SVArchiveRecord::WriteImageToFile(buf, info.m_FileName);
+		SVArchiveRecord::WriteImageToFile(buf, info.m_FileName, info.m_format);
 		{
 			std::lock_guard<std::mutex> lock(m_mtxQueue);
 			--m_currentBufferNumber[info.m_toolPos];

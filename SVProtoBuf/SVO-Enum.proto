@@ -1242,6 +1242,8 @@ enum EmbeddedIdEnum
 	MaximumImageQueueLengthEId = 591;
 	CurrentImageQueueLengthEId = 592;
   	ArchiveResultFolderpathPart1EId = 593;
+	ArchiveImageFileFormatEId = 594;
+
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4

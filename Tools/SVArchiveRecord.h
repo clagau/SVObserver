@@ -44,7 +44,6 @@ public:
 	void BuildDefaultImageFilePaths(); ///> assemble the filepaths that will be used _unless_ the "Alternative Image Paths" is checked
 	HRESULT	GetNextImageFilePath(std::string& rImageFile);
 
-
 	HRESULT  GetNextAlternativeImageFilePath(std::string&  ImageFilePath, std::string&  imageDirectoryPath);
 	void BuildImageFileName();            // For images only
 
@@ -53,7 +52,7 @@ public:
 	
 	HRESULT WriteImageQueue();
 	long WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRecord); // returns current queue length (-1 on error)
-	static HRESULT WriteImageToFile( const SVMatroxBuffer& buf, const std::string& rFileName );
+	static HRESULT WriteImageToFile( const SVMatroxBuffer& buf, const std::string& rFileName, ImageFileFormat format);
 
 	void SetArchiveTool( SVArchiveTool* pArchiveTool );
 
@@ -80,12 +79,14 @@ private:
 	std::string			m_formatString = _T("");
 
 	//Attributes
-	SVArchiveMethodEnum m_eArchiveMethod {SVArchiveInvalidMethod};
 	SVArchiveTool*      m_pArchiveTool {nullptr};
 	int m_toolPos = -1;
 
 	friend class SVArchiveRecordsArray;
 #pragma endregion Private Members
+
+	ArchiveMode archiveMode() const ;
+	ImageFileFormat  imageFileFormat() const ;
 };
 
 } //namespace SvTo

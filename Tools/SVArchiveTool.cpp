@@ -47,11 +47,6 @@ constexpr long cAsyncDefaultMaximumImageQueueLength = 5;
 SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
 
-bool memoryNeedsToBeConsidered(SVArchiveMethodEnum mode)
-{
-	return mode == SVArchiveGoOffline || mode == SVArchiveAsynchronous;
-}
-
 SVArchiveTool::SVArchiveTool(SVObjectClass* POwner, int StringResourceID)
 	:SVToolClass(ToolExtType::None, POwner, StringResourceID)
 {
@@ -178,10 +173,17 @@ void SVArchiveTool::initializeArchiveTool()
 	m_dwArchiveMaxImagesCount.SetMinMaxValues(1, 10'000'000);
 
 	RegisterEmbeddedObject(
-		&m_evoArchiveMethod,
+		&m_evoArchiveMode,
 		SvPb::ArchiveMethodEId,
 		IDS_OBJECTNAME_ARCHIVE_TOOL_METHOD,
 		false, SvOi::SVResetItemNone);
+
+	RegisterEmbeddedObject(
+		&m_evoImageFileFormat,
+		SvPb::ArchiveImageFileFormatEId,
+		IDS_OBJECTNAME_ARCHIVE_TOOL_FORMAT,
+		false, SvOi::SVResetItemNone);
+	
 
 	RegisterEmbeddedObject(
 		&m_HeaderLabelNames,
@@ -251,21 +253,34 @@ void SVArchiveTool::initializeArchiveTool()
 	m_dwArchiveStopAtMaxImages.SetDefaultValue(1, true);
 	m_dwArchiveMaxImagesCount.SetDefaultValue(10, true);
 
-	m_evoArchiveMethod.SetDefaultValue(SVArchiveAsynchronous, true);
+	long async = static_cast<long>(ArchiveMode::asynchronous); //must cast to use class enum with SVEnumerateValueObjectClass...
+	m_evoArchiveMode.SetDefaultValue(async, true); 
 
-	SvDef::NameValueVector EnumVector
+	SvDef::NameValueVector EnumVectorWhen
 	{
-		{ _T("Synchronous"), SVArchiveSynchronous },
-		{ _T("Change Mode"), SVArchiveGoOffline },
-		{ _T("Asynchronous"), SVArchiveAsynchronous }
+		{ _T("Synchronous"), static_cast<long>(ArchiveMode::synchronous) }, //... or NameValueVector
+		{ _T("Change Mode"), static_cast<long>(ArchiveMode::goOffline) },
+		{ _T("Asynchronous"), static_cast<long>(ArchiveMode::asynchronous) }
 	};
-	m_evoArchiveMethod.SetEnumTypes(EnumVector);
+
+	m_evoArchiveMode.SetEnumTypes(EnumVectorWhen);
+
+	long bmp = static_cast<long>(ImageFileFormat::bmp); //must cast to use class enum with SVEnumerateValueObjectClass
+	m_evoImageFileFormat.SetDefaultValue(bmp, true);
+
+	SvDef::NameValueVector EnumVectorFormat
+	{
+		{ _T("BMP"), static_cast<long>(ImageFileFormat::bmp)}, //... or NameValueVector
+		{ _T("PNG"), static_cast<long>(ImageFileFormat::png)},
+	};
+
+	m_evoImageFileFormat.SetEnumTypes(EnumVectorFormat);
 
 	m_svoArchiveImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute);
 	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute);
 	m_HeaderObjectIDs.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	m_bInitializedForRun = false;
-	m_eArchiveMethod = SVArchiveInvalidMethod;
+	m_archiveMode = ArchiveMode::invalid;
 	m_uiValidateCount = 0;
 
 }
@@ -277,9 +292,13 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 
 	if (bOk)
 	{
-		long Method = SVArchiveInvalidMethod;
-		m_evoArchiveMethod.GetValue(Method);
-		m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
+		long Method = static_cast<long>(ArchiveMode::invalid);
+		m_evoArchiveMode.GetValue(Method);
+		m_archiveMode = static_cast<ArchiveMode> (Method);
+
+		long Format = static_cast<long>(ImageFileFormat::invalid);
+		m_evoImageFileFormat.GetValue(Format);
+		m_imageFileFormat = static_cast<ImageFileFormat> (Format);
 	}
 
 	m_FilenameIndex1.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
@@ -307,7 +326,8 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 
 	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_evoArchiveMethod.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_evoArchiveMode.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_evoImageFileFormat.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_HeaderLabelNames.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_HeaderObjectIDs.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_bvoUseHeaders.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
@@ -377,9 +397,13 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 		updateResultFilepathInformation(false);
 	}
 
-	long archiveMethod = 0;
-	m_evoArchiveMethod.GetValue(archiveMethod);
-	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>(archiveMethod);
+	long archiveMode = 0;
+	m_evoArchiveMode.GetValue(archiveMode);
+	m_archiveMode = static_cast<ArchiveMode>(archiveMode);
+
+	long imageFileFormat = 0;
+	m_evoImageFileFormat.GetValue(imageFileFormat);
+	m_imageFileFormat = static_cast<ImageFileFormat>(imageFileFormat);
 
 	if (false == InitializeAndValidate(pErrorMessages))
 	{
@@ -606,9 +630,9 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 		}
 	}
 
-	long Method(SVArchiveInvalidMethod);
-	m_evoArchiveMethod.GetValue(Method);
-	m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
+	long Method(static_cast<long>(ArchiveMode::invalid));
+	m_evoArchiveMode.GetValue(Method);
+	m_archiveMode = static_cast<ArchiveMode> (Method);
 
 	m_ImageCollection.ResetImageCounts();
 
@@ -618,14 +642,14 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 	m_ImageCollection.ValidateImageObjects();
 
 	ArchiveDataAsynchron::Instance().GoOnline();
-	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous)
+	if (m_archiveMode == ArchiveMode::goOffline || m_archiveMode == ArchiveMode::asynchronous)
 	{
 		if (!AllocateImageBuffers(pErrorMessages))
 		{
 			return false;
 		}
 
-		if (m_eArchiveMethod == SVArchiveAsynchronous)
+		if (m_archiveMode == ArchiveMode::asynchronous)
 		{
 			/*HRESULT hrThreadOnline =*/ SVArchiveImageThreadClass::Instance().GoOnline();
 			
@@ -662,11 +686,11 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 	{
 		SVMemoryManager::Instance().ReleaseMemory(getObjectId());
 	}
-	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous)
+	if (m_archiveMode == ArchiveMode::goOffline || m_archiveMode == ArchiveMode::asynchronous)
 	{
 		DWORD dwMaxImages;
 		m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
-		if (m_eArchiveMethod == SVArchiveAsynchronous)
+		if (m_archiveMode == ArchiveMode::asynchronous)
 		{
 			_variant_t maxImageQueueLength;
 			m_maximumImageQueueLength.GetValue(maxImageQueueLength);
@@ -678,7 +702,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 		BufferStructCountMap bufferMap;
 		HRESULT hrAllocate = m_ImageCollection.AllocateBuffers(dwMaxImages, bufferMap, toolPos);
 
-		if (SVArchiveAsynchronous == m_eArchiveMethod)
+		if (ArchiveMode::asynchronous == m_archiveMode)
 		{
 			long imageCount = std::accumulate(bufferMap.begin(), bufferMap.end(), 0, [](long sum, std::pair<SVMatroxBufferCreateStruct, long> val) { return sum + val.second; });
 			if (imageCount > 0)
@@ -1045,7 +1069,7 @@ std::string SVArchiveTool::getNextImageFileName()
 	m_FilenameIndex2.getValue(index);
 	uint32_t Index2 = static_cast<uint32_t> (index);
 
-	return SvUl::Format(_T("%s%08ld%s%04ld.bmp"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2);
+	return SvUl::Format(_T("%s%08ld%s%04ld%s"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2, imageFileNameExtension(m_imageFileFormat).c_str());
 }
 
 
@@ -1098,13 +1122,12 @@ void SVArchiveTool::disconnectObjectInput(uint32_t objectId)
 void SVArchiveTool::goingOffline()
 {
 	ArchiveDataAsynchron::Instance().GoOffline();
-	if (m_eArchiveMethod == SVArchiveAsynchronous)
+	if (m_archiveMode == ArchiveMode::asynchronous)
 	{
 		SVArchiveImageThreadClass::Instance().GoOffline();
-	
 	}
 
-	if (m_eArchiveMethod == SVArchiveGoOffline)
+	if (m_archiveMode == ArchiveMode::goOffline)
 	{
 		WriteBuffers();
 	}

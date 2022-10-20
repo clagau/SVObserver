@@ -79,9 +79,12 @@ public:
 
 	SvVol::SVDWordValueObjectClass m_dwArchiveStopAtMaxImages;
 	SvVol::SVDWordValueObjectClass m_dwArchiveMaxImagesCount;
-	SvVol::SVEnumerateValueObjectClass m_evoArchiveMethod;
+	SvVol::SVEnumerateValueObjectClass m_evoArchiveMode;
+	SvVol::SVEnumerateValueObjectClass m_evoImageFileFormat;
 
-	SVArchiveMethodEnum m_eArchiveMethod;
+	ArchiveMode m_archiveMode;
+	ImageFileFormat m_imageFileFormat;
+
 	SvVol::SVBoolValueObjectClass m_bvoUseHeaders;
 	SvVol::SVBoolValueObjectClass m_useAlternativeImagePath;
 	
