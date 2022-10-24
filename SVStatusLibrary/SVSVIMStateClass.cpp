@@ -13,8 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
-#include "Definitions/StringTypeDef.h"	
-#include "SVUtilityLibrary/StringHelper.h"
+#include "Definitions/StringTypeDef.h"
 #include "MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
@@ -219,8 +218,8 @@ HRESULT SVSVIMStateClass::CheckNotAllowedState(DWORD States /*=SV_DefaultNotAllo
 	if (accessDenied)
 	{
 		SvDef::StringVector msgList;
-		msgList.emplace_back(std::move(SvUl::Format(_T("0X%X"), SVSVIMStateClass::GetState())));
-		msgList.emplace_back(std::move(SvUl::Format(_T("0X%X"), States)));
+		msgList.emplace_back(std::move(std::format(_T("{:#X}"), SVSVIMStateClass::GetState())));
+		msgList.emplace_back(std::move(std::format(_T("{:#X}"), States)));
 		SvStl::MessageManager message(SvStl::MsgType::Log);
 		message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVRC_AccessDenied, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}

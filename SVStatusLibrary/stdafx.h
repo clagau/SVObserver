@@ -57,6 +57,7 @@
 #include <comutil.h>			//Used by static library
 #include <direct.h>
 #include <exception>
+#include <format>
 #include <functional>
 #include <io.h>
 #include <iterator>

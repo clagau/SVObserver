@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "MessageTextGenerator.h"
 #include "MessageTextMap.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -40,15 +39,15 @@ namespace SvStl
 		if (it != cMessageTextMap.end())
 		{
 			retString = it->second;
-			//replace %s with additionalList-strings
+
 			for (int i = 0; i < static_cast<int> (additionalList.size()); i++)
 			{
-				size_t pos = retString.find(_T("%s"));
+				std::string search {std::format("{{{}}}", i)};
+				size_t pos = retString.find(search.c_str());
 
 				if (std::string::npos != pos)
 				{
-					std::string addMessage = convertAddtionalListTextToString(additionalList[i]);
-					retString.replace(pos, strlen(_T("%s")), addMessage);
+					retString.replace(pos, search.size(), additionalList[i]);
 				}
 			}
 		}
@@ -57,7 +56,7 @@ namespace SvStl
 
 	std::string MessageTextGenerator::convertId2AddtionalText(MessageTextEnum id)
 	{
-		return SvUl::Format(_T("[***%d***]"), id);
+		return std::format(_T("[***{}***]"), static_cast<int>(id));
 	}
 
 	MessageTextEnum MessageTextGenerator::convertAdditionalText2Id(const std::string& text)

@@ -36,12 +36,12 @@ constexpr const char* c_ShowDisplay = _T("g_ShowDisplay");
 constexpr const char* c_Notify = _T("g_Notify");
 
 constexpr const char* DetailsToken = _T("#Details#");
-constexpr const char* DebugLogFormat = _T( "Exception: ErrorCode: %d\nMessage: %s\n" );
+constexpr const char* DebugLogFormat = _T( "Exception: ErrorCode: {}\nMessage: {}\n" );
 constexpr const char* RegPathEventLog = _T("HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\EventLog\\Application\\");
 constexpr const char* EventMsgFile = _T( "EventMessageFile" );
-constexpr const char* SourceCategoryEventFormat = _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n");
-constexpr const char* ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
-constexpr const char* DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nCompiled: %s %s\n");
+constexpr const char* SourceCategoryEventFormat = _T("Source: {}\r\nCategory: {}\r\nEventID: {}\r\n");
+constexpr const char* ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: {:#x}");
+constexpr const char* DefaultEventFormat = _T("Source File: {} [{}] ({})\r\nCompiled: {} {}\n");
 
 constexpr int SubstituteStringNr = 9;
 
@@ -206,7 +206,7 @@ namespace SvStl
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
-		std::string DebugString = SvUl::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.getAdditionalText().c_str() );
+		std::string DebugString = std::format( DebugLogFormat, m_Message.m_MessageCode, m_Message.getAdditionalText().c_str() );
 		::OutputDebugString( DebugString.c_str() );
 #endif
 
@@ -299,7 +299,7 @@ namespace SvStl
 
 		rMessage.clear();
 		//Default result
-		Result = SvUl::Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
+		Result = std::format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
 
 		if (nullptr != m_MessageDll )
 		{
@@ -349,9 +349,9 @@ namespace SvStl
 
 		if (rMessage.empty())
 		{
-			rMessage = SvUl::Format( ErrorLoadingDll, m_Message.m_MessageCode);
+			rMessage = std::format( ErrorLoadingDll, m_Message.m_MessageCode);
 
-			MsgDetails = SvUl::Format( DefaultEventFormat,
+			MsgDetails = std::format( DefaultEventFormat,
 				m_Message.m_SourceFile.m_FileName.c_str(),
 				m_Message.m_SourceFile.m_Line,
 				m_Message.m_SourceFile.m_FileDateTime.c_str(),
@@ -461,11 +461,11 @@ namespace SvStl
 		rSubstituteStrings.resize( SubstituteStringNr );
 		rSubstituteStrings[0] = _T("\r\n");
 		rSubstituteStrings[1] =  m_Message.m_SourceFile.m_FileName;
-		rSubstituteStrings[2] = SvUl::Format( _T("%d"), m_Message.m_SourceFile.m_Line );
+		rSubstituteStrings[2] = std::format( _T("{}"), m_Message.m_SourceFile.m_Line );
 		rSubstituteStrings[3] = m_Message.m_SourceFile.m_FileDateTime;
 		rSubstituteStrings[4] = m_Message.m_SourceFile.m_CompileDate;
 		rSubstituteStrings[5] = m_Message.m_SourceFile.m_CompileTime;
-		rSubstituteStrings[6] = SvUl::Format(_T("Object ID = %ld"), m_Message.m_ObjectId);
+		rSubstituteStrings[6] = std::format(_T("Object ID = {}"), m_Message.m_ObjectId);
 		rSubstituteStrings[7] = m_Message.getAdditionalText();
 	}
 
