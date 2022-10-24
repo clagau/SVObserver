@@ -258,14 +258,10 @@ std::string ToolClipboard::createToolDefinitionString(const std::vector<uint32_t
 		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
 		e.Throw();
 	}
-	for (const auto& XmlFileName : filepaths)
-	{
-		::DeleteFile(XmlFileName.c_str());
-	}
+	
+	::DeleteFile(xmlFilePath().c_str());
 
-	auto zippedToolDataForAllTools = readContentFromFileAndDelete(m_zipFilePath);
-
-	return zippedToolDataForAllTools;
+	return readContentFromFileAndDelete(m_zipFilePath);
 }
 
 SvDef::StringVector ToolClipboard::streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds) const
