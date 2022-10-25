@@ -71,11 +71,11 @@ void Serialize(SVGraphixDrawObjectClass* pObject, CArchive& rArchive)
 std::string SVConvertToHexString(DWORD size, char* buff)
 {
 	// put len in string first
-	std::string result = SvUl::Format(_T("0x%08x"), size);
+	std::string result = std::format(_T("{:#08x}"), size);
 
 	for (DWORD i = 0; i < size; i++)
 	{
-		result += SvUl::Format(_T(",0x%02x"), buff[i]);
+		result += std::format(_T(",{:#02x}"), buff[i]);
 	}
 
 	return result;

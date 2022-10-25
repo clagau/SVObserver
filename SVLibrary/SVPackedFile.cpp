@@ -66,11 +66,11 @@ bool SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 							std::string pathPackedFile{ SvUl::createStdString(reinterpret_cast<wchar_t*> (Buffer)) };
 							if( nullptr == UnPackDir )
 							{
-								Path = SvUl::Format (_T("%s%s"), pathPackedFile.c_str(), SvUl::createStdString( FindData.cFileName).c_str());
+								Path = std::format(_T("{}{}"), pathPackedFile, SvUl::createStdString( FindData.cFileName));
 							}
 							else
 							{
-								Path = SvUl::Format (_T("%s\\%s"), UnPackDir, SvUl::createStdString( FindData.cFileName).c_str());
+								Path = std::format(_T("{}\\{}"), UnPackDir, SvUl::createStdString( FindData.cFileName));
 							}
 
 							_tsplitpath (Path.c_str(), szDrive, szDir, szFName, szExt);

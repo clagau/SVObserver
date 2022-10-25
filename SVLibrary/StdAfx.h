@@ -66,7 +66,12 @@
 #include <ctime>			//Used by static library
 #include <deque>
 #include <direct.h>
+#include <format>
 #include <io.h>
+
+#include <iostream>
+#include <fstream>
+
 #include <iterator>
 #include <map>				//Used by static library
 #include <set>				//Used by static library

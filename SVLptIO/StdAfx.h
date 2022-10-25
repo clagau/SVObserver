@@ -51,6 +51,7 @@
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
+#include <format>
 #include <fstream>
 #include <functional>
 #include <iterator>			//Used by static library

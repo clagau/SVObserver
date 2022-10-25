@@ -699,7 +699,7 @@ std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const
 		Result.second = Value;
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OUTPUT_VALUES)
-		std::string DebugString = SvUl::Format(_T("%s, %c, %d\r\n"), pOutput->GetName(), bValue ? '1' : '0', lDataIndex);
+		std::string DebugString = std::format(_T("{}, {:c}, {}\r\n"), pOutput->GetName(), bValue ? '1' : '0', lDataIndex);
 		::OutputDebugString(DebugString.c_str());
 #endif
 	}

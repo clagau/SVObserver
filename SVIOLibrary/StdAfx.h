@@ -51,6 +51,7 @@
 #include <concrt.h>							//Used by static library
 #include <ctime>							//Used by static library
 #include <deque>
+#include <format>
 #include <map>
 #include <memory>
 #include <ppl.h>							//Used by static library

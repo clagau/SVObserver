@@ -223,7 +223,7 @@ void SimulatedTriggerSource::setOutput(uint8_t , bool )
 	//{
 	//	resultString += std::to_string(rResult) + ' ';
 	//}
-	//std::string fileData = SvUl::Format(_T("%lu;%s;%s\r\n"), channelOut.m_objectID, resultString.c_str(), acuisitionFile.c_str());
+	//std::string fileData = std::format(_T("{};{};{}\r\n"), channelOut.m_objectID, resultString.c_str(), acuisitionFile.c_str());
 	//
 	//{
 	//	std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };

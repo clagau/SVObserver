@@ -33,9 +33,9 @@ constexpr const char* SingleCameraTag = _T("SingleCamera");
 constexpr const char* SVIMInfoSectionTag = _T("SVIM Information");
 constexpr const char* SettingsTag = _T("Settings");
 constexpr const char* LegacyEquationParsingTag = _T("LegacyEquationParsing");
-constexpr const char* TriggerEdgeCameraTag = _T("Trigger Edge Camera_%d");
-constexpr const char* StrobeEdgeCameraTag = _T("Strobe Edge Camera_%d");
-constexpr const char* UseStrobeasStartFrameCameraTag = _T("Use Strobe as Start Frame Camera_%d");
+constexpr const char* TriggerEdgeCameraTag = _T("Trigger Edge Camera_{}");
+constexpr const char* StrobeEdgeCameraTag = _T("Strobe Edge Camera_{}");
+constexpr const char* UseStrobeasStartFrameCameraTag = _T("Use Strobe as Start Frame Camera_{}");
 constexpr const char* ShowUpdateFirmwareTag = _T("ShowUpdateFirmware");
 constexpr const char* DisplaySectionTag = _T("Display");
 constexpr const char* ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
@@ -155,17 +155,17 @@ void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 		std::string TagName;
 
 		// Get the Trigger Edge type
-		TagName = SvUl::Format(TriggerEdgeCameraTag, i);
+		TagName = std::format(TriggerEdgeCameraTag, i);
 		m_TriggerEdge[i] = SvimIni.GetValueString(SVIMInfoSectionTag, TagName.c_str(), RTag);
 		SvimIni.SetValueString(SVIMInfoSectionTag, TagName.c_str(), m_TriggerEdge[i].c_str());
 
 		// Get the Strobe Edge type
-		TagName = SvUl::Format(StrobeEdgeCameraTag, i);
+		TagName = std::format(StrobeEdgeCameraTag, i);
 		m_StrobeEdge[i] = SvimIni.GetValueString(SVIMInfoSectionTag, TagName.c_str(), RTag);
 		SvimIni.SetValueString(SVIMInfoSectionTag, TagName.c_str(), m_StrobeEdge[i].c_str());
 
 		// Use Strobe as Start Frame=Y/N
-		TagName = SvUl::Format(UseStrobeasStartFrameCameraTag, i);
+		TagName = std::format(UseStrobeasStartFrameCameraTag, i);
 		m_StartFrameType[i] = SvimIni.GetValueString(SVIMInfoSectionTag, TagName.c_str(), NTag);
 		SvimIni.SetValueString(SVIMInfoSectionTag, TagName.c_str(), m_StartFrameType[i].c_str());
 	}
@@ -423,7 +423,7 @@ bool readSerialNumberFromSystem(std::string& serialNumber)
 
 	fclose(fp);          //cleanup temp file
 	remove(snFileName.c_str());
-	serialNumber = SvUl::Trim(SvUl::Format("%ws", sn).c_str());
+	serialNumber = SvUl::Trim(SvUl::createStdString(sn).c_str());
 	return (8 == serialNumber.size() || 9 == serialNumber.size());
 }
 } //namespace SvLib

@@ -18,7 +18,6 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 constexpr int cPortNumber = 2;
@@ -113,7 +112,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 				if( 0 == m_lBoardVersion )
 				{
 					SvStl::MessageManager Exception(SvStl::MsgType::Log );
-					Exception.setMessage( SVMSG_IO_BOARD_VERSION, SvUl::Format( _T("%d"), m_lBoardVersion).c_str() , SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( SVMSG_IO_BOARD_VERSION, std::format( _T("{}"), m_lBoardVersion).c_str() , SvStl::SourceFileParams(StdMessageParams) );
 					return SVMSG_IO_BOARD_VERSION;
 				}
 				// Tom says he's not sure what these numbers represent...
@@ -689,7 +688,7 @@ _variant_t SVLptIOImpl::TriggerGetParameterValue(unsigned long triggerIndex, uns
 		{
 			long lVer = GetBoardVersion();
 			std::string version;
-			version = SvUl::Format(_T("Dedicated I/O Processor board %ld.%02ld firmware %ld.%02ld"),
+			version = std::format(_T("Dedicated I/O Processor board {}.{:02d} firmware {}.{:02d}"),
 				lVer >> 24 & 0xff,
 				lVer >> 16 & 0xff,
 				lVer >> 8 & 0xff,
@@ -837,7 +836,7 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 		case SVIOParameterEnum::SVBoardVersion:
 		{
 			long lVer = GetBoardVersion();
-			std::string version = SvUl::Format(_T("Dedicated I/O Processor board %d.%02d firmware %d.%02d"),
+			std::string version = std::format(_T("Dedicated I/O Processor board {}.{:02d} firmware {}.{:02d}"),
 				lVer >> 24 & 0xff,
 				lVer >> 16 & 0xff,
 				lVer >> 8 & 0xff,
