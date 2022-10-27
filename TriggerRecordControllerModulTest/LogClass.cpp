@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "SVUtilityLibrary\StringHelper.h"
 #include "LogClass.h"
 
 #ifdef _DEBUG
@@ -87,7 +86,7 @@ bool LogClass::Log(LPCTSTR strEntry, const LogLevel logLevel, const LogType logT
 	{
 		CountResults(logType);
 		std::string strTmp = BuildLogString(logLevel, logType);
-		strTmp = SvUl::Format(_T("%s[%s][%d] "), strTmp.c_str(), strTestName, lineNumber);
+		strTmp = std::format(_T("{}[{}][{}] "), strTmp.c_str(), strTestName, lineNumber);
 		std::lock_guard<std::mutex> guard(m_logMutex);
 		if (m_File)
 		{
@@ -122,7 +121,7 @@ bool LogClass::LogText(LPCTSTR strEntry, const LogLevel logLevel, const LogType 
 
 bool LogClass::logException(LPCTSTR strEntry, const SvStl::MessageContainer& rExp, int lineNumber, LPCTSTR strTestName, const LogLevel logLevel, const LogType logType)
 {
-	std::string strTmp = SvUl::Format("%s\n\tFollowing Exception was caught: %s\n\tFileinfo: %s (%d)", strEntry, rExp.what(), rExp.getMessage().m_SourceFile.m_FileName.c_str(), rExp.getMessage().m_SourceFile.m_Line);
+	std::string strTmp = std::format("{}\n\tFollowing Exception was caught: {}\n\tFileinfo: {} ({})", strEntry, rExp.what(), rExp.getMessage().m_SourceFile.m_FileName.c_str(), rExp.getMessage().m_SourceFile.m_Line);
 	return Log(strTmp.c_str(), logLevel, logType, lineNumber, strTestName);
 }
 
@@ -155,13 +154,13 @@ void LogClass::PrintSummary()
 	std::string strTmp;
 
 	_ftprintf(m_File,_T("---------------------------------------------\n"));
-	strTmp = SvUl::Format(_T("[ Summary  ] Passed %lu Steps"), GetPassCount());
+	strTmp = std::format(_T("[ Summary  ] Passed {} Steps"), GetPassCount());
 	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
-	strTmp = SvUl::Format(_T("[ Summary  ] Failed %lu Steps"), GetFailCount());
+	strTmp = std::format(_T("[ Summary  ] Failed {} Steps"), GetFailCount());
 	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
-	strTmp = SvUl::Format(_T("[ Summary  ] Warning %lu Steps"), GetWarnCount());
+	strTmp = std::format(_T("[ Summary  ] Warning {} Steps"), GetWarnCount());
 	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
-	strTmp = SvUl::Format(_T("[ Summary  ] Abort %lu Steps"), GetAbortCount());
+	strTmp = std::format(_T("[ Summary  ] Abort {} Steps"), GetAbortCount());
 	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
 	constexpr int cStrLength = 128;
 	TCHAR szTime[cStrLength];
@@ -175,9 +174,9 @@ void LogClass::PrintSummary()
 #endif
 
 	if (m_uiAbort)
-		strTmp = SvUl::Format(_T("[ Summary  ] Script Aborted !!!"));
+		strTmp = (_T("[ Summary  ] Script Aborted !!!"));
 	else
-		strTmp = SvUl::Format(_T("[ Summary  ] Completed %s %s"), szTime, szDate);
+		strTmp = std::format(_T("[ Summary  ] Completed {} {}"), szTime, szDate);
 
 	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
 	_ftprintf(m_File,_T("---------------------------------------------\n"));

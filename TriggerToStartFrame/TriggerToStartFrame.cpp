@@ -192,19 +192,19 @@ HRESULT PlcTriggerToStartFrame()
 	HRESULT result = PlcIoDll.Open(cPlcIoDll);
 	if (S_OK == result)
 	{
-		printf("Loaded %s\n", cPlcIoDll);
+		std::cout << std::format("Loaded {}\n", cPlcIoDll);
 
 		result = DigitizerDll.Open(cMatroxGigeDll);
 		if (S_OK == result)
 		{
-			printf("Loaded %s\n", cMatroxGigeDll);
-			printf("Note that using camera start frame,\nthe camera should be configured using a camera file prior to starting this application\n");
+			std::cout << std::format("Loaded {}\n", cMatroxGigeDll);
+			std::cout << "Note that using camera start frame,\nthe camera should be configured using a camera file prior to starting this application\n";
 			int triggerIndex {g_triggerChannel + 1};
 
 			result = PlcIoDll.Register(triggerIndex, &OnMasterTrigger);
 			if (S_OK == result)
 			{
-				printf("PLC Trigger %d callback registered\n", triggerIndex);
+				std::cout << std::format("PLC Trigger {} callback registered\n", triggerIndex);
 			}
 			unsigned long cameraCount = DigitizerDll.GetCount();
 
@@ -241,23 +241,23 @@ HRESULT PlcTriggerToStartFrame()
 			result = DigitizerDll.RegisterBufferInterface(cameraHandle, dynamic_cast<SVAcquisitionBufferInterface*> (&g_Acquisition));
 			if (S_OK == result)
 			{
-				printf("Camera %d callback registered\n", triggerIndex);
+				std::cout << std::format("Camera {} callback registered\n", triggerIndex);
 				result = PlcIoDll.Start(triggerIndex);
 				if (S_OK == result)
 				{
-					printf("PLC Trigger %d started\n", triggerIndex);
+					std::cout << std::format("PLC Trigger {} started\n", triggerIndex);
 				}
 
 				result = DigitizerDll.CreateBuffers(cameraHandle);
 				if (S_OK == result)
 				{
-					printf("Camera Buffers created for camera %lu\n", cameraHandle);
+					std::cout << std::format("Camera Buffers created for camera {}\n", cameraHandle);
 				}
 
 				result = DigitizerDll.Start(cameraHandle);
 				if (S_OK == result)
 				{
-					printf("Camera %lu started\n", cameraHandle);
+					std::cout << std::format("Camera {} started\n", cameraHandle);
 				}
 
 				_variant_t moduleReadyState {true};
@@ -265,7 +265,7 @@ HRESULT PlcTriggerToStartFrame()
 				{
 					PlcIoDll.SetParameterValue(cModuleReadyIndex, moduleReadyState);
 
-					printf("Module Ready sent\nTo exit press x\n");
+					std::cout << "Module Ready sent\nTo exit press x\n";
 					std::string header {"TriggerCount; ImageCount; TriggerTimestamp; StartFrame; TriggerToStartFrame; Match\n"};
 					if (true == g_logFile.is_open())
 					{
@@ -288,14 +288,14 @@ HRESULT PlcTriggerToStartFrame()
 				}
 				moduleReadyState = false;
 				PlcIoDll.SetParameterValue(cModuleReadyIndex, moduleReadyState);
-				printf("Module Ready reset\n");
+				std::cout << "Module Ready reset\n";
 				PlcIoDll.Stop(triggerIndex);
 				DigitizerDll.Stop(cameraHandle);
 				PlcIoDll.Unregister(triggerIndex);
 				PlcIoDll.Close();
 				DigitizerDll.UnregisterBufferInterface(cameraHandle);
 				DigitizerDll.Close();
-				printf("Trigger %d stopped\n", triggerIndex);
+				std::cout << std::format("Trigger {} stopped\n", triggerIndex);
 			}
 		}
 	}
@@ -310,11 +310,11 @@ HRESULT Trigger1DllToTrigger2Dll(LPCSTR DllName1, LPCSTR DllName2)
 	HRESULT result = TriggerDll1.Open(DllName1);
 	if (S_OK == result)
 	{
-		printf("Loaded %s\n", DllName1);
+		std::cout << std::format("Loaded {}\n", DllName1);
 		result = TriggerDll2.Open(DllName2);
 		if (S_OK == result)
 		{
-			printf("Loaded %s\n", DllName2);
+			std::cout << std::format("Loaded {}\n", DllName2);
 			int triggerIndex {g_triggerChannel + 1};
 
 			if (std::string(cLptIoDll) == DllName1)
@@ -335,22 +335,22 @@ HRESULT Trigger1DllToTrigger2Dll(LPCSTR DllName1, LPCSTR DllName2)
 			result = TriggerDll1.Register(triggerIndex, &OnMasterTrigger);
 			if (S_OK == result)
 			{
-				printf("%s Trigger %d callback registered\n", DllName1,  triggerIndex);
+				std::cout << std::format("{} Trigger {} callback registered\n", DllName1,  triggerIndex);
 			}
 			result = TriggerDll2.Register(triggerIndex, &OnSlaveTrigger);
 			if (S_OK == result)
 			{
-				printf("%s Trigger %d callback registered\n", DllName2,  triggerIndex);
+				std::cout << std::format("{} Trigger {} callback registered\n", DllName2,  triggerIndex);
 
 				result = TriggerDll1.Start(triggerIndex);
 				if (S_OK == result)
 				{
-					printf("%s Trigger %d started\n", DllName1, triggerIndex);
+					std::cout << std::format("{} Trigger {} started\n", DllName1, triggerIndex);
 				}
 				result = TriggerDll2.Start(triggerIndex);
 				if (S_OK == result)
 				{
-					printf("%s Trigger %d started\n", DllName2, triggerIndex);
+					std::cout << std::format("{} Trigger {} started\n", DllName2, triggerIndex);
 				}
 
 				_variant_t moduleReadyState {true};
@@ -359,7 +359,7 @@ HRESULT Trigger1DllToTrigger2Dll(LPCSTR DllName1, LPCSTR DllName2)
 					TriggerDll1.SetParameterValue(cModuleReadyIndex, moduleReadyState);
 					TriggerDll2.SetParameterValue(cModuleReadyIndex, moduleReadyState);
 
-					printf("Module Ready sent\nTo exit press x\n");
+					std::cout << "Module Ready sent\nTo exit press x\n";
 					std::string header {std::format("TriggerCount {}; TriggerCount {}; Timestamp {}; TimeStamp {}; TimestampDiff; Match\n", DllName1, DllName2, DllName1, DllName2)};
 					if (true == g_logFile.is_open())
 					{
@@ -383,14 +383,14 @@ HRESULT Trigger1DllToTrigger2Dll(LPCSTR DllName1, LPCSTR DllName2)
 				moduleReadyState = false;
 				TriggerDll1.SetParameterValue(cModuleReadyIndex, moduleReadyState);
 				TriggerDll2.SetParameterValue(cModuleReadyIndex, moduleReadyState);
-				printf("Module Ready reset\n");
+				std::cout << "Module Ready reset\n";
 				TriggerDll1.Stop(triggerIndex);
 				TriggerDll2.Stop(triggerIndex);
 				TriggerDll1.Unregister(triggerIndex);
 				TriggerDll2.Unregister(triggerIndex);
 				TriggerDll1.Close();
 				TriggerDll2.Close();
-				printf("Trigger %d stopped\n", triggerIndex);
+				std::cout << std::format("Trigger {} stopped\n", triggerIndex);
 			}
 		}
 	}
@@ -413,15 +413,15 @@ int main(int argc, char* args[])
 	{
 		if (rOption == cHelpOption1 || rOption == cHelpOption2)
 		{
-			printf("Cmd Options\n");
-			printf("-h or -? displays all the available options\n");
-			printf("-t:<triggenNumber> where trigger number (1-4) is which trigger is to be used default is trigger=1\n");
-			printf("-m:<mode> where \n\tmode 0=SVPlcIO.dll vs SVMatroxGige.dll (start frame) is default\n");
-			printf("\tmode 1=SVPlcIO.dll vs SVLptIO.dll\n");
-			printf("\tmode 2=SVLptIO.dll vs EtherCatIO.dll\n");
-			printf("-f:<filename> where filename is the name of the file (can be with path) to write the data to\n");
-			printf("-n:<negativeTime> where negativeTime is the pre tigger time window in ms default %0.2f ms\n", g_timeWindowNegative);
-			printf("-p:<positiveTime> where positiveTime is the post tigger time window in ms default %0.2f ms\n", g_timeWindowPositive);
+			std::cout << "Cmd Options\n";
+			std::cout << "-h or -? displays all the available options\n";
+			std::cout << "-t:<triggenNumber> where trigger number (1-4) is which trigger is to be used default is trigger=1\n";
+			std::cout << "-m:<mode> where \n\tmode 0=SVPlcIO.dll vs SVMatroxGige.dll (start frame) is default\n";
+			std::cout << "\tmode 1=SVPlcIO.dll vs SVLptIO.dll\n";
+			std::cout << "\tmode 2=SVLptIO.dll vs EtherCatIO.dll\n";
+			std::cout << "-f:<filename> where filename is the name of the file (can be with path) to write the data to\n";
+			std::cout << std::format("-n:<negativeTime> where negativeTime is the pre tigger time window in ms default {:.2f} ms\n", g_timeWindowNegative);
+			std::cout << std::format("-p:<positiveTime> where positiveTime is the post tigger time window in ms default {:.2f} ms\n", g_timeWindowPositive);
 			return S_OK;
 		}
 		else if (std::string::npos != rOption.find(cTriggerOption))
@@ -430,7 +430,7 @@ int main(int argc, char* args[])
 			g_triggerChannel = static_cast<uint8_t> (std::stoi(option.c_str()));
 			if (0 == g_triggerChannel || g_triggerChannel > cNumberOfChannels)
 			{
-				printf("Valid values for trigger number are 1-4\n");
+				std::cout << "Valid values for trigger number are 1-4\n";
 				return E_FAIL;
 			}
 			//Trigger channol is zero based
@@ -443,7 +443,7 @@ int main(int argc, char* args[])
 
 			if (modeOption < 0 || modeOption >= static_cast<int> (DllMode::Count))
 			{
-				printf("Valid values for mode are 0-2\n");
+				std::cout << "Valid values for mode are 0-2\n";
 				return E_FAIL;
 			}
 			dllCompareType = static_cast<DllMode> (modeOption);
@@ -454,7 +454,7 @@ int main(int argc, char* args[])
 			g_logFile.open(option.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
 			if (false == g_logFile.is_open())
 			{
-				printf("Could not open file %s\n", option.c_str());
+				std::cout << std::format("Could not open file {}\n", option.c_str());
 				return E_FAIL;
 			}
 		}
@@ -518,7 +518,7 @@ int main(int argc, char* args[])
 			std::lock_guard<std::mutex> guard {g_masterQueueMutex};
 			if (false == g_masterTimestampQueue.empty())
 			{
-				printf("Master Queue count = %zu\n", g_masterTimestampQueue.size());
+				std::cout << std::format("Master Queue count = {}\n", g_masterTimestampQueue.size());
 			}
 		}
 
@@ -526,14 +526,14 @@ int main(int argc, char* args[])
 			std::lock_guard<std::mutex> guard {g_slaveQueueMutex};
 			if (false == g_slaveTimestampQueue.empty())
 			{
-				printf("Slave Queue count = %zu\n", g_slaveTimestampQueue.size());
+				std::cout << std::format("Slave Queue count = {}\n", g_slaveTimestampQueue.size());
 			}
 		}
 	}
 
 	if (S_OK != result)
 	{
-		printf("Error = 0%X08\n", static_cast<unsigned int> (result));
+		std::cout << std::format("Error = {:#x}\n", static_cast<unsigned int> (result));
 	}
 
 	return result;

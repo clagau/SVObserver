@@ -7,7 +7,6 @@
 #include "TrcTester.h"
 #include "TrcTesterConfiguration.h"
 #include "SVLibrary\SVOINIClass.h"
-#include "SVUtilityLibrary\StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 
 
@@ -46,12 +45,12 @@ int main(int argc, const char* argv[])
 				TrcTesterConfiguration config(g_logClass, testIni, isLocal);
 				int maxSpecfiyBufferFactor = config.getMaxSpecifyBufferFactor();
 				TrcTester trc_ut(config, g_logClass);
-				std::string tmpString = SvUl::Format(_T("Testing TRC (Type:%s, Runs:%d, %d iterations per step, %d number of add one records, %d number of keep free records, maxSpecfiyBufferFactor = %d)"), isLocal ? _T("Local") : _T("Writer"), config.getNumberOfRuns(), config.getNoOfRepetitionsPerStep(), config.getNumberOfRecordsAddOne(), config.getNumberOfKeepFreeRecords(), maxSpecfiyBufferFactor);
+				std::string tmpString = std::format(_T("Testing TRC (Type:{}, Runs:{}, {} iterations per step, {} number of add one records, {} number of keep free records, maxSpecfiyBufferFactor = {})"), isLocal ? _T("Local") : _T("Writer"), config.getNumberOfRuns(), config.getNoOfRepetitionsPerStep(), config.getNumberOfRecordsAddOne(), config.getNumberOfKeepFreeRecords(), maxSpecfiyBufferFactor);
 				g_logClass.LogText0(tmpString.c_str(), LogLevel::Information_Level1);
 				for (int i = 0; i < config.getNumberOfRuns(); i++)
 				{
 					bool ok = trc_ut.fullTest();
-					tmpString = SvUl::Format(_T("%2d of %d tests complete: %sok."), i + 1, config.getNumberOfRuns(), ok ? _T("") : _T("NOT "));
+					tmpString = std::format(_T("{:2d} of {} tests complete: {}OK."), i + 1, config.getNumberOfRuns(), ok ? _T("") : _T("NOT "));
 					g_logClass.LogText(tmpString.c_str(), LogLevel::Information_Level1, ok ? LogType::PASS : LogType::FAIL);
 					g_logClass.LogText("--------------------------------------\n", LogLevel::Information_Level1, LogType::BLANK_RET);
 					g_logClass.Flush();

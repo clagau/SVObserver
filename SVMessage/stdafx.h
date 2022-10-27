@@ -45,6 +45,7 @@
 #include <windows.h>
 
 #include <functional>
+#include <iostream>
 #include <stdio.h>
 #include <tchar.h>
 

@@ -73,7 +73,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		0, nullptr, REG_OPTION_NON_VOLATILE,
 		KEY_WRITE, nullptr, &hk, &dwDisp ) ) 
 	{
-		printf( "Could not create the registry key." ); 
+		std::cout <<  "Could not create the registry key."; 
 
 		return S_FALSE;
 	}
@@ -87,7 +87,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		(LPBYTE)( &g_dwData ),  // pointer to value data 
 		sizeof( DWORD ) ) )    // length of value data 
 	{
-		printf( "Could not set the supported types." ); 
+		std::cout << "Could not set the supported types." ; 
 
 		::RegCloseKey( hk ); 
 
@@ -103,7 +103,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		(LPBYTE)( &g_dwCatagoryCount ),   // pointer to value data 
 		sizeof( DWORD ) ) )    // length of value data 
 	{
-		printf( "Could not set the category count." ); 
+		std::cout << "Could not set the category count."; 
 
 		::RegCloseKey( hk ); 
 
@@ -123,7 +123,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		(LPBYTE) MessageFile,        // pointer to value data 
 		(DWORD) wcsnlen( MessageFile, 1024) + 1 ) ) // length of value data 
 	{
-		printf( "Could not set the category message file." ); 
+		std::cout << "Could not set the category message file."; 
 
 		::RegCloseKey( hk ); 
 
@@ -139,7 +139,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		(LPBYTE) MessageFile,        // pointer to value data 
 		(DWORD) wcsnlen( MessageFile, 1024 ) + 1 ) ) // length of value data 
 	{
-		printf( "Could not set the parameter message file." ); 
+		std::cout << "Could not set the parameter message file."; 
 
 		::RegCloseKey( hk ); 
 
@@ -155,7 +155,7 @@ HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 		(LPBYTE) MessageFile,        // pointer to value data 
 		(DWORD) wcsnlen( MessageFile, 1024 ) + 1 ) ) // length of value data 
 	{
-		printf( "Could not set the event message file." ); 
+		std::cout << "Could not set the event message file."; 
 
 		::RegCloseKey( hk ); 
 

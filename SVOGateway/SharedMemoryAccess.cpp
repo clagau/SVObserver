@@ -479,8 +479,8 @@ void SharedMemoryAccess::flush_product_stream_queue(std::shared_ptr<product_stre
 			if (!tro)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
-				msgList.push_back(SvUl::Format(_T("%d"), trId));
+				msgList.push_back(std::format(_T("{}"), inspectionPos));
+				msgList.push_back(std::format(_T("{}"), trId));
 				SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_TRC_CreateTriggerRecordObjectFailed, msgList);
 				SvStl::MessageManager Exception(SvStl::MsgType::Notify);
 				Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_TRC_CreateTriggerRecordObjectFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -748,8 +748,8 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 		if (!read_image(img, imgPtr))
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%u"), imageId));
-			msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
+			msgList.push_back(std::format(_T("{}"), imageId));
+			msgList.push_back(std::format(_T("{}"), inspectionPos));
 			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_ReadImageFailed, msgList);
 			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
 			Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_ReadImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -793,7 +793,7 @@ void SharedMemoryAccess::collect_values(
 		{
 			const auto valueId = valueIds.Get(static_cast<int>(i));
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%u"), valueId));
+			msgList.push_back(std::format(_T("{}"), valueId));
 			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_ReadValueFailed, msgList);
 			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
 			Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_ReadValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -1682,7 +1682,7 @@ bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& r
 	if (!m_rUserDatabase.getUserPermissions(rSessionContext.username(), permissions))
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), rEnvelope.payloadtype()));
+		msgList.push_back(std::format(_T("{}"), rEnvelope.payloadtype()));
 		msgList.push_back(username);
 		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_UserPermissionsNotConfigured, msgList);
 		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
@@ -1697,7 +1697,7 @@ bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& r
 	if (!is_request_allowed(rEnvelope, permissions))
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), rEnvelope.payloadtype()));
+		msgList.push_back(std::format(_T("{}"), rEnvelope.payloadtype()));
 		msgList.push_back(username);
 		SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_RequestNotAllowed, msgList);
 		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
@@ -1739,7 +1739,7 @@ bool SharedMemoryAccess::CheckStreamPermissions(const SvAuth::SessionContext& rS
 	if (!m_rUserDatabase.getUserPermissions(rSessionContext.username(), permissions))
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%ld"), rEnvelope.payloadtype()));
+		msgList.push_back(std::format(_T("{}"), rEnvelope.payloadtype()));
 		msgList.push_back(username);
 		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_UserPermissionsNotConfigured, msgList);
 		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
@@ -1754,7 +1754,7 @@ bool SharedMemoryAccess::CheckStreamPermissions(const SvAuth::SessionContext& rS
 	if (!is_request_allowed(rEnvelope, permissions))
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%ld"), rEnvelope.payloadtype()));
+		msgList.push_back(std::format(_T("{}"), rEnvelope.payloadtype()));
 		msgList.push_back(username);
 		SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_RequestNotAllowed, msgList);
 		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
@@ -1875,7 +1875,7 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 
 		default:
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), payloadType));
+			msgList.push_back(std::format(_T("{}"), payloadType));
 			SV_LOG_GLOBAL(error) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_RequestPermissionsNotConfigured, msgList);
 			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
 			Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_RequestPermissionsNotConfigured, msgList, SvStl::SourceFileParams(StdMessageParams));

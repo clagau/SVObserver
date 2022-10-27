@@ -13,7 +13,6 @@
 #include "TrcTesterConfiguration.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
-#include "SVUtilityLibrary\StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -42,7 +41,7 @@ std::vector<MIL_ID> loadImages(const std::vector<std::string>& fileNames)
 		if (M_NULL == retValue[i])
 		{
 			retValue.clear();
-			std::string errorStr = SvUl::Format(_T("LoadImages failed by image %d with \"%s\""), i, fileNames[i].c_str());
+			std::string errorStr = std::format(_T("LoadImages failed by image {} with \"{}\""), i, fileNames[i].c_str());
 			throw errorStr;
 		}
 	}

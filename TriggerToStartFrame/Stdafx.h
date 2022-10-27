@@ -53,6 +53,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <iostream>
 #include <queue>
 #include <stdio.h>
 #include <string>

@@ -57,7 +57,7 @@ void SVCommandDataHolder::clear()
 	while( l_Iter != m_Data.end() )
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
-		std::string l_Data = SvUl::Format(_T("SVCommandDataHolder::clear() - Erase %s\n"), l_Iter->first.c_str());
+		std::string l_Data = std::format(_T("SVCommandDataHolder::clear() - Erase {}\n"), l_Iter->first.c_str());
 		::OutputDebugString( l_Data.c_str() );
 #endif
 

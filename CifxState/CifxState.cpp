@@ -26,8 +26,8 @@ constexpr uint16_t cMaxHostTries = 50;
 constexpr uint32_t cTimeout = 2;
 
 constexpr const char* cBoardName = "CIFx0";
-constexpr const char* cResult = "Result=%d\n";
-constexpr const char* cMissingMessageID = "Message ID %d missing\n";
+constexpr const char* cResult = "Result={}\n";
+constexpr const char* cMissingMessageID = "Message ID {} missing\n";
 constexpr const char* cCheckPlcC = "-CHECKPLCCOMS";
 constexpr const char* cPlcIniFilePath = "C:\\SVObserver\\Bin\\SVPlcIO.ini";
 constexpr const char* cSettingsGroup ="Settings";
@@ -107,10 +107,10 @@ enum CifxMessage : int
 
 static const std::map<CifxMessage, LPCTSTR> cErrorMessages
 {
-	{CifxMessage::LoadLibrarySuccess, "Successfully loaded cifX32DLL.dll with NodeID=%s\n"},
-	{CifxMessage::OpenDriverSuccess, "Driver version %s opened\n"},
+	{CifxMessage::LoadLibrarySuccess, "Successfully loaded cifX32DLL.dll with NodeID={}\n"},
+	{CifxMessage::OpenDriverSuccess, "Driver version {} opened\n"},
 	{CifxMessage::OpenChannelSuccess, "Channel opened succesfully\n"},
-	{CifxMessage::CifxSystemStartSuccess, "Cifx card successfully started system with Firmware %s\n"},
+	{CifxMessage::CifxSystemStartSuccess, "Cifx card successfully started system with Firmware {}\n"},
 	{CifxMessage::CifxDeviceReadySuccess, "Cifx card device ready\n"},
 	{CifxMessage::CifxSendConfigSuccess, "Cifx successfully sent config\n"},
 	{CifxMessage::CifxResetSuccess, "Cifx card successfully reset\n"},
@@ -120,21 +120,21 @@ static const std::map<CifxMessage, LPCTSTR> cErrorMessages
 	{CifxMessage::CifxDMASuccess, "DMA successfully set\n"},
 	{CifxMessage::CifxRegisterNotifySyncSuccess, "Sync notify successfully registered\n"},
 	{CifxMessage::CifxBusStateOnSuccess, "Bus state on successfully set\n"},
-	{CifxMessage::CifxNotificationsReceived, "Notifications received %s\n"},
-	{CifxMessage::CifxTestSuccess, "Cfix test successful %s\n"},
-	{CifxMessage::LoadLibraryError, "Could not load cifX32DLL.dll [0x%x]\n"},
-	{CifxMessage::OpenDriverError, "Driver could not be opened [0x%x]\n"},
-	{CifxMessage::OpenChannelError, "Channel could not be opened [0x%x]\n"},
-	{CifxMessage::CifxSystemStartError, "Cifx card could not start system [0x%x]\n"},
-	{CifxMessage::CifxDeviceReadyError, "Cifx card device not ready error [0x%x]\n"},
-	{CifxMessage::CifxSendConfigError, "Cifx could not send config [0x%x]\n"},
-	{CifxMessage::CifxResetError, "Cifx card could not be reset [0x%x]\n"},
-	{CifxMessage::CifxDeviceRunningError, "Cifx card device not running error [0x%x]\n"},
-	{CifxMessage::CifxRegisterAppError, "Cifx could not register app [0x%x]\n"},
-	{CifxMessage::CifxSetTriggerTypeError, "Cifx could not set trigger type [0x%x]\n"},
-	{CifxMessage::CifxDMAError, "DMA could not be set [0x%x]\n"},
-	{CifxMessage::CifxRegisterNotifySyncError, "Sync Notify could not be registered [0x%x]\n"},
-	{CifxMessage::CifxBusStateOnError, "Bus state on could not be set [0x%x]\n"},
+	{CifxMessage::CifxNotificationsReceived, "Notifications received {}\n"},
+	{CifxMessage::CifxTestSuccess, "Cfix test successful {}\n"},
+	{CifxMessage::LoadLibraryError, "Could not load cifX32DLL.dll [{:#x}]\n"},
+	{CifxMessage::OpenDriverError, "Driver could not be opened [{:#x}]\n"},
+	{CifxMessage::OpenChannelError, "Channel could not be opened [{:#x}]\n"},
+	{CifxMessage::CifxSystemStartError, "Cifx card could not start system [{:#x}]\n"},
+	{CifxMessage::CifxDeviceReadyError, "Cifx card device not ready error [{:#x}]\n"},
+	{CifxMessage::CifxSendConfigError, "Cifx could not send config [{:#x}]\n"},
+	{CifxMessage::CifxResetError, "Cifx card could not be reset [{:#x}]\n"},
+	{CifxMessage::CifxDeviceRunningError, "Cifx card device not running error [{:#x}]\n"},
+	{CifxMessage::CifxRegisterAppError, "Cifx could not register app [{:#x}]\n"},
+	{CifxMessage::CifxSetTriggerTypeError, "Cifx could not set trigger type [{:#x}]\n"},
+	{CifxMessage::CifxDMAError, "DMA could not be set [{:#x}]\n"},
+	{CifxMessage::CifxRegisterNotifySyncError, "Sync Notify could not be registered [{:#x}]\n"},
+	{CifxMessage::CifxBusStateOnError, "Bus state on could not be set [{:#x}]\n"},
 };
 
 double GetTimeStamp()
@@ -152,21 +152,21 @@ void printMessage(CifxMessage messageID, int32_t result = 0, LPCTSTR pText = nul
 			//result can only be not 0 when pText is nullptr
 			if(0 != result)
 			{
-				printf(iter->second, result);
+				std::cout << std::vformat(iter->second, std::make_format_args(result));
 			}
 			else
 			{
-				printf(iter->second);
+				std::cout << iter->second;
 			}
 		}
 		else
-		{
-			printf(iter->second, pText);
+		{	
+			std::cout << std::vformat(iter->second, std::make_format_args(pText));
 		}
 	}
 	else
 	{
-		printf(cMissingMessageID, messageID);
+		std::cout << std::vformat(cMissingMessageID, std::make_format_args(static_cast<int>(messageID)));
 	}
 }
 
@@ -308,7 +308,7 @@ int processError(CifxMessage messageID, int32_t result)
 	closeCifX();
 	printMessage(messageID, result);
 
-	printf(cResult, messageID);
+	std::cout << std::format(cResult, static_cast<int>(messageID));
 	return messageID;
 }
 
@@ -391,11 +391,11 @@ int main(int argc, char* args[])
 		}
 		else
 		{
-			printf("CifxState -CheckPlcComs -h\n");
-			printf("Calling the program without options shall load the Hilscher driver and open it (Hilscher card must be present) then open Channel 0\n");
-			printf("-CheckPlcComs => this option shall additionally test the communication with the PLC\n");
-			printf("-h => this option shows the help\n");
-			printf("\n\nThe possible return values for CifxState are as follows:\n0\t= Successful\n");
+			std::cout << "CifxState -CheckPlcComs -h\n";
+			std::cout << "Calling the program without options shall load the Hilscher driver and open it (Hilscher card must be present) then open Channel 0\n";
+			std::cout << "-CheckPlcComs => this option shall additionally test the communication with the PLC\n";
+			std::cout << "-h => this option shows the help\n";
+			std::cout << "\n\nThe possible return values for CifxState are as follows:\n0\t= Successful\n";
 			CifxMessage messageID{CifxMessage::LoadLibraryError};
 
 			
@@ -409,7 +409,7 @@ int main(int argc, char* args[])
 					text = text.substr(0, pos - 1);
 					text += '\n';
 				}
-				printf("%d\t= %s", iter->first, text.c_str());
+				std::cout << std::format("{}\t= {}", static_cast<int>(iter->first), text.c_str());
 				messageID = static_cast<CifxMessage> (messageID + 1);
 				iter = cErrorMessages.find(messageID);
 			}
@@ -619,6 +619,6 @@ int main(int argc, char* args[])
 
 	closeCifX();
 	printMessage(CifxMessage::CifxTestSuccess, 0, g_version.c_str());
-	printf(cResult, 0);
+	std::cout << std::format(cResult, 0);
 	return 0;
 }
