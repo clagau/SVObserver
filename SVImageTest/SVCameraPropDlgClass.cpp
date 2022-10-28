@@ -102,22 +102,22 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 						{
 							case VT_I4:
 							{
-								Data = SvUl::Format( _T("%d"), varValue.lVal );
+								Data = std::format( _T("{}"), varValue.lVal );
 								break;
 							}
 							case VT_UI4:
 							{
-								Data = SvUl::Format( _T("0x%04X"), varValue.ulVal );
+								Data = std::format( _T("{:#04x}"), varValue.ulVal );
 								break;
 							}
 							case VT_R4:
 							{
-								Data = SvUl::Format( _T("%f"), varValue.fltVal );
+								Data = std::format( _T("{}"), varValue.fltVal );
 								break;
 							}
 							case VT_R8:
 							{
-								Data = SvUl::Format( _T("%lf"), varValue.dblVal );
+								Data = std::format( _T("{}"), varValue.dblVal );
 								break;
 							}
 							case VT_BSTR:

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVHardwareManifest.h"
 #include "Definitions/TriggerType.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 constexpr const char* cSvimTriggerSourceIoBoard = _T("IO_Board_1");
@@ -183,22 +182,22 @@ std::string SVHardwareManifest::BuildTriggerDeviceName(SVIMProductEnum productTy
 
 std::string SVHardwareManifest::BuildSoftwareTriggerDeviceName(int iDig)
 {
-	return SvUl::Format("%s%s%d", cSvimSoftwareTriggerSource, cSvimDigName, iDig);
+	return std::format("{}{}{}", cSvimSoftwareTriggerSource, cSvimDigName, iDig);
 }
 
 std::string SVHardwareManifest::BuildAcquisitionTriggerDeviceName(int iDig)
 {
-	return SvUl::Format("%s%s%d", cSvimCameraTriggerSource, cSvimDigName, iDig);
+	return std::format("{}{}{}", cSvimCameraTriggerSource, cSvimDigName, iDig);
 }
 
 std::string SVHardwareManifest::BuildIOBoardTriggerDeviceName(int iDig)
 {
-	return SvUl::Format("%s%s%d", cSvimTriggerSourceIoBoard, cSvimDigName, iDig);
+	return std::format("{}{}{}", cSvimTriggerSourceIoBoard, cSvimDigName, iDig);
 }
 
 std::string SVHardwareManifest::BuildHardwareTriggerDeviceName(int iDig)
 {
-	return SvUl::Format("%s%s%d", cSvimHardwareTriggerSource, cSvimDigName, iDig);
+	return std::format("{}{}{}", cSvimHardwareTriggerSource, cSvimDigName, iDig);
 }
 
 bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType)

@@ -19,7 +19,6 @@
 #include "SVStatusLibrary/ErrorUtil.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
-#include "SVUtilityLibrary/StringHelper.h"
 
 namespace SvRpc
 {
@@ -60,8 +59,8 @@ void RPCServer::onBinaryMessage(int id, std::vector<char>&& buf)
 	if (buf.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%z"), buf.size()));
-		msgList.push_back(SvUl::Format(_T("%u"), std::numeric_limits<int>::max()));
+		msgList.push_back(std::format(_T("{:0d}"), buf.size()));
+		msgList.push_back(std::format(_T("{}"), std::numeric_limits<int>::max()));
 		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_RPC_MessageTooLarge, msgList);
 		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
 		Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_RPC_MessageTooLarge, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -92,7 +91,7 @@ void RPCServer::onBinaryMessage(int id, std::vector<char>&& buf)
 
 		default:
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), type));
+			msgList.push_back(std::format(_T("{}"), static_cast<int>(type)));
 			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_RPC_InvalidMessageType, msgList);
 			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
 			Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_RPC_InvalidMessageType, msgList, SvStl::SourceFileParams(StdMessageParams));

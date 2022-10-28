@@ -58,6 +58,7 @@
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>
+#include <format>
 #include <map>
 #include <mil.h>
 #include <math.h>

@@ -22,7 +22,6 @@
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -88,10 +87,10 @@ HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SvOi::ITRCImagePtr& )
 {
 	std::string Count;
 
-	Count = SvUl::Format( _T("%d"), ++m_lStartCount );
+	Count = std::format( _T("{}"), ++m_lStartCount );
 	m_StartFrameCount.SetWindowText( Count.c_str() );
 
-	Count = SvUl::Format( _T("%d"), ++m_lEndCount );
+	Count = std::format( _T("{}"), ++m_lEndCount );
 	m_EndFrameCount.SetWindowText( Count.c_str() );
 
 	m_CameraImage.Invalidate();

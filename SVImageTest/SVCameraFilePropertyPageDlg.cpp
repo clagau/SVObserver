@@ -17,7 +17,6 @@
 #include "SVCameraFilePropertyPageDlg.h"
 #include "SVImageTestApp.h"
 #include "SVTestAcquisitionClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
@@ -579,9 +578,9 @@ void SVCameraFilePropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot,
 						{
 							Label = pCamFileParam->Name();
 						}
-						Label = SvUl::Format(_T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str());
+						Label = std::format(_T("{} ({})"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str());
 						pEdit->SetLabelText(Label.c_str());
-						std::string Description = SvUl::Format(_T("%s   Min = %d, Max = %d; default = %d"), pCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil(pCamFileParam->lValue * pCamFileParam->info.multiplier)));
+						std::string Description = std::format(_T("{}   Min = {}, Max = {}; default = {}"), pCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil(pCamFileParam->lValue * pCamFileParam->info.multiplier)));
 						pEdit->SetInfoText(Description.c_str());
 
 						pEdit->SetItemValue(pCamDeviceParam->GetScaledValue());

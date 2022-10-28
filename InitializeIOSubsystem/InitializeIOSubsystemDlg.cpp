@@ -352,7 +352,7 @@ long Shutdown()
  
 	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) 
 	{
-		printf("OpenProcessToken"); 
+		std::cout << "OpenProcessToken"; 
 		return 0;
 	}
  
@@ -372,7 +372,7 @@ long Shutdown()
  
 	if (GetLastError() != ERROR_SUCCESS) 
 	{
-		printf("AdjustTokenPrivileges"); 
+		std::cout << "AdjustTokenPrivileges"; 
 		return 0;
 	}
 

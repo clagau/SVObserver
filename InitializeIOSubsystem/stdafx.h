@@ -58,6 +58,7 @@
 
 #include <comutil.h>					//Used by static library
 #include <map>							//Used by static library
+#include <iostream>
 
 #ifdef _UNICODE
 #if defined _M_IX86

@@ -73,7 +73,7 @@ SVImageTestApp::SVImageTestApp()
 	TCHAR SystemDir[ MAX_PATH + 1 ];
 
 	::GetSystemDirectory( SystemDir, MAX_PATH + 1 );
-	m_oemIniFile = SvUl::Format( _T("%s\\OEMINFO.INI"), SystemDir);
+	m_oemIniFile = std::format( _T("{}\\OEMINFO.INI"), SystemDir);
 }
 
 SVImageTestApp::~SVImageTestApp()
@@ -116,7 +116,7 @@ BOOL SVImageTestApp::InitInstance()
 			TCHAR pBuffer[128];
 			memset(pBuffer, 0, 128);
 
-			CameraName = SvUl::Format(_T("%s%d"), SvDef::cCameraFixedName, i + 1);
+			CameraName = std::format(_T("{}{}"), SvDef::cCameraFixedName, i + 1);
 			GetPrivateProfileString(cCameraMapping, CameraName.c_str(), "", pBuffer, 128, SvStl::GlobalPath::Inst().GetSVIMIniPath());
 			if (i < 4)
 			{

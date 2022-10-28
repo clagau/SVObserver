@@ -42,6 +42,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <format>
 #include <functional>
 #include <iostream>
 #include <map>
