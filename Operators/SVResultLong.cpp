@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVResultLong.h"
 #include "SVRange.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

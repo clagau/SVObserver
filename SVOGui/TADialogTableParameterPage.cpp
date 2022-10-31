@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "TADialogTableParameterPage.h"
 #include "SVFormulaEditorSheet.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVOGuiUtility/FormulaController.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/GlobalConst.h"

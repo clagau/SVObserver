@@ -28,7 +28,7 @@ enum RegressionFileEnum
 struct RegressionTestStruct
 {
 	std::string Name {};
-	std::string FirstFile {};
+	std::string firstFilepath {};
 	uint32_t objectId{ SvDef::InvalidObjectId };
 	RegressionFileEnum iFileMethod {};
 	SvDef::StringVector stdVectorFile {};

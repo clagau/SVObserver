@@ -48,7 +48,7 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/FilepathUtilities.h"

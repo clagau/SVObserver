@@ -23,7 +23,6 @@
 #include "SVMatroxResourceMonitor.h"
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "LookUp.h"
 #pragma endregion Includes
 
@@ -1764,28 +1763,6 @@ HRESULT SVMatroxImageInterface::Resize(
 #endif
 	assert(l_Code == S_OK);
 	return l_Code;
-}
-
-SVMatroxFileTypeEnum SVMatroxImageInterface::getFileType(LPCTSTR FileExt)
-{
-	SVMatroxFileTypeEnum Result(SVFileUnknown);
-
-	std::string strExtension(FileExt);
-
-	if (SvUl::CompareNoCase(strExtension, std::string(_T(".mim"))) == 0)
-	{
-		Result = SVFileMIL;
-	}
-	if (SvUl::CompareNoCase(strExtension, std::string(_T(".tif"))) == 0)
-	{
-		Result = SVFileTiff;
-	}
-	if (SvUl::CompareNoCase(strExtension, std::string(_T(".bmp"))) == 0)
-	{
-		Result = SVFileBitmap;
-	}
-
-	return Result;
 }
 
 bool SVMatroxImageInterface::isFloatBufferAllowed(long operation)

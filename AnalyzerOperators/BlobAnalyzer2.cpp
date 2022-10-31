@@ -7,7 +7,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "Definitions/Color.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVResultLong.h"
 #include "Operators/TableObject.h"

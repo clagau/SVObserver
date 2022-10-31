@@ -16,7 +16,7 @@
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVTestGigeAcquisitionSubsystem.h"
 #include "SVUnloadDeviceDialog.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include <google\protobuf\stubs\common.h>

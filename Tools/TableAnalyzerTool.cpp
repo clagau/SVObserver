@@ -9,9 +9,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableAnalyzerTool.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "Operators/SVResultLong.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "AnalyzerOperators/TableAddColumnAnalyzer.h"
 #pragma endregion Includes

@@ -177,10 +177,13 @@ namespace SvUl
 
 	///case-insensitive comparison
 	bool isStringInList(const std::string& rToBeFound, const std::vector<std::string>& rStringsToBeSearched, const std::string& rExclude = _T("")); 
+
 	namespace LoadedStrings
 	{
-		//SVOResource/resource.h can not be included, because some apps have its own resource.h and this would lead to macro redefinition
+		//SVOResource/resource.h cannot be included because some apps have its own resource.h and this would lead to macro redefinition
 		static const std::string g_ToolSetName{ SvUl::LoadStdString(10151/*IDS_CLASSNAME_SVTOOLSET*/) };
 	}
+
+	std::string getLowerCaseExtension(const std::string& rFilepath);
 } // namespace SvUl
 

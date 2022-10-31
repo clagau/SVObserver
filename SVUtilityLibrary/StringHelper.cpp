@@ -566,4 +566,26 @@ namespace SvUl
 		return found;
 	}
 
+
+	std::string getLowerCaseExtension(const std::string& rFilepath)
+	{ 
+		size_t pos = rFilepath.rfind(_T("."));
+
+		if (std::string::npos == pos)
+		{
+			return "";
+		}
+
+		auto extension = rFilepath.substr(pos); 
+
+		auto x = [](char c){ return static_cast<char>(std::tolower(static_cast<unsigned char>(c))); };
+
+		std::string lowercaseExtension;
+
+		std::transform(extension.begin(), extension.end(), std::back_inserter(lowercaseExtension), x);
+
+		return lowercaseExtension;
+	}
+
+
 } // namespace SvUl

@@ -8,7 +8,7 @@
 #include "StdAfx.h"
 #include "ResizeTool.h"
 #include "Operators/ToolSizeAdjustTask.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"

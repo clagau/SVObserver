@@ -15,7 +15,7 @@
 #include "SVShapeMaskHelperClass.h"
 #include "SVUnaryImageOperatorList.h"
 #include "SVUserMaskOperatorClass.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
@@ -534,7 +534,7 @@ bool SVUserMaskOperatorClass::Refresh()
 					try
 					{
 						/*HRESULT l_Code = */
-						SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage, ( char* )_T("C:\\Temp\\MaskBuffer.bmp"), SVFileBitmap );
+						SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage, ( char* )_T("C:\\Temp\\MaskBuffer.bmp"), ImageFileFormat::bmp );
 					}
 					catch(...)
 					{

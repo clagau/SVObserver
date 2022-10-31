@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved /// All Rights Reserved 
-/// \Author	Robert Yoho
+/// \file SVArchiveImageThreadClass.cpp
 //*****************************************************************************
 
 #pragma region Includes
@@ -14,22 +14,6 @@
 
 namespace SvTo
 {
-
-std::string imageFileNameExtension(ImageFileFormat format)
-{
-	switch (format)
-	{
-		case ImageFileFormat::invalid:
-		default:
-			return ".unknown";
-		case ImageFileFormat::bmp:
-			return ".bmp";
-		case ImageFileFormat::png:
-			return ".png";
-	}
-}
-
-
 
 #pragma region Constructor
 SVArchiveImageThreadClass::SVArchiveImageThreadClass()

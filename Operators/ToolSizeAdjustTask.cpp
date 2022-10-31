@@ -18,7 +18,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/Color.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVValueObjectLibrary\SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 

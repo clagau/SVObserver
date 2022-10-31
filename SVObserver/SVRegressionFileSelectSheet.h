@@ -72,7 +72,7 @@ private: //methods
 	/// \param rStruct [in,out] The struct which should to be filled
 	/// \param rCurrentPath [in] The current path of this recursive call.
 	/// \returns int Number of images
-	int FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath);
+	int FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath, ImageFileFormat fileFormat);
 
 	SvPb::GetToolsWithReplaceableSourceImageResponse createToolNameList() const;
 

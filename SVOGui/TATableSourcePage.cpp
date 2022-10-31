@@ -12,7 +12,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

@@ -15,6 +15,7 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
@@ -22,20 +23,6 @@
 
 namespace SvTo
 {
-
-SVMatroxFileTypeEnum ImageFileTypeByFormat(ImageFileFormat format)
-{
-	switch (format)
-	{
-		case ImageFileFormat::invalid:
-		default:
-			return SVFileUnknown;
-		case ImageFileFormat::bmp:
-			return SVFileBitmap;
-		case ImageFileFormat::png:
-			return SVFilePng;
-	}
-}
 
 #pragma region Public Methods
 void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectReference rObject)
@@ -317,7 +304,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 			{
 				std::filesystem::create_directories(imageDirectoryPath);
 			}
-			SVMatroxBufferInterface::Export(pImageBuffer->getHandle()->GetBuffer(), ImageFilePath, ImageFileTypeByFormat(imageFileFormat()));
+			SVMatroxBufferInterface::Export(pImageBuffer->getHandle()->GetBuffer(), ImageFilePath, imageFileFormat());
 		}
 		catch (...)
 		{
@@ -330,7 +317,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 }
 
 
-/*static*/ HRESULT SVArchiveRecord::WriteImageToFile(const SVMatroxBuffer& milBuffer, const std::string& rFileName, ImageFileFormat format)
+/*static*/ HRESULT SVArchiveRecord::WriteImageToFile(const SVMatroxBuffer& milBuffer, const std::string& rFileName, ImageFileFormat fileFormat)
 {
 	HRESULT Result = S_OK;
 
@@ -338,7 +325,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 	{
 		try
 		{
-			Result = SVMatroxBufferInterface::Export(milBuffer, rFileName, ImageFileTypeByFormat(format));
+			Result = SVMatroxBufferInterface::Export(milBuffer, rFileName, fileFormat);
 		}
 		catch (...)
 		{

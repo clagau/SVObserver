@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "Definitions/ObjectDefines.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVMessage/SVMessage.h"

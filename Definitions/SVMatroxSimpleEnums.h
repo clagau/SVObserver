@@ -1,22 +1,17 @@
 //*****************************************************************************
 /// \copyright (c) 2016,2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
-//*****************************************************************************
-//Enums used in SVMatroxlibrary moved from SVMatroxEnum.h to reduce dependends between header files 
+/// Enums used in SVMatroxlibrary moved from SVMatroxEnum.h to reduce dependends between header files 
+///\file SVMatroxSimpleEnums.h
 //******************************************************************************
 #pragma once
 
+
+
+
 #include <mil.h>
 
-/**
-@SVObjectName Matrox Buffer Type Enum
-
-@SVObjectOverview This enum is used for creating a buffer
-
-@SVObjectOperations None
-
-*/
-enum SVMatroxBufferTypeEnum
+enum SVMatroxBufferTypeEnum ///< Used for creating a buffer
 {
 	SVUnknownBufferType		= 0x0000,
 	SVBufferSize			= 0x00ff,
@@ -39,15 +34,7 @@ enum SVMatroxBufferTypeEnum
 };
 
 
-/**
-@SVObjectName Matrox Buffer Attribute Enum
-
-@SVObjectOverview This enum is used for creating a buffer
-
-@SVObjectOperations None
-
-*/
-enum SVMatroxBufferAttributeEnum
+enum SVMatroxBufferAttributeEnum ///< Used for creating a buffer
 {
 	SVBufAttUnknown					= 0x00000000L,
 
@@ -115,15 +102,8 @@ enum SVMatroxBufferAttributeEnum
 	SVBufAttGrabImageProc		= SVBufAttGrab | SVBufAttImage | SVBufAttProc,
 };
 
-/**
-@SVObjectName Matrox Value Enum
 
-@SVObjectOverview This enum is used for values that may get stored with the configuration.
-
-@SVObjectOperations None
-
-*/
-enum SVMatroxBufferValues
+enum SVMatroxBufferValues ///<Used for values that may get stored with the configuration.
 {
 	SVValueAllBands						= 0xffffffffL,	// M_ALL_BAND(-1)
 	SVValueDefault						= 0x10000000L,	// M_DEFAULT
@@ -197,15 +177,8 @@ enum SVMatroxBufferValues
 };
 
 // Used with MbufInquire / MbufControl "Get / Set"
-/**
-@SVObjectName Matrox Buffer Info Enum
 
-@SVObjectOverview This enum is used for Getting and Setting buffer settings.
-
-@SVObjectOperations None
-
-*/
-enum SVMatroxBufferInfoEnum
+enum SVMatroxBufferInfoEnum ///< Used for Getting and Setting buffer settings.
 {
 	SVBufInfoUnknown			= 0000000000L,
 
@@ -253,36 +226,18 @@ enum SVMatroxBufferInfoEnum
 
 
 // Mbuf Import / Export function
-/**
-@SVObjectName Matrox File Type Enum
-
-@SVObjectOverview This enum is used to set the file type for importing and exporting images buffers.
-
-@SVObjectOperations None
-
-*/
-enum SVMatroxFileTypeEnum
+enum class ImageFileFormat : long ///< Used to set the file type for importing and exporting image buffers
 {
-	SVFileUnknown				= -1,
-	SVFileMIL					= 0L,			// M_MIL
-	SVFileTiff					= 2L,			// M_TIFF
-	SVFileBitmap				= 4L,			// M_BITMAP
-	SVFilePng					= 0x2000L		// M_PNG
-
+	invalid = 0,
+	bmp = 1,
+	png = 2,
+	tiff = 3,
+	mim = 4
 };
 
 
-
 // ******* Blob Enums 
-/**
-@SVObjectName Matrox Blob Criterion Enum
-
-@SVObjectOverview This enum is used for the Matrox Blob Interface.
-
-@SVObjectOperations None
-
-*/
-enum SVBlobSelectionEnum
+enum SVBlobSelectionEnum ///< Used for the Matrox Blob Interface.
 {
 
 	SVEBlobArea					= M_AREA,
@@ -341,15 +296,8 @@ enum SVBlobSelectionEnum
 
 };
 
-/**
-@SVObjectName Matrox Condition Enum
 
-@SVObjectOverview This enum is used to control selections in both binarize Image operations and blob selection.
-
-@SVObjectOperations None
-
-*/
-enum SVConditionEnum
+enum SVConditionEnum ///<Used to control selections in both binarize Image operations and blob selection.
 {
 	// Condition
 	SVECondInRange				= M_IN_RANGE,
@@ -362,15 +310,8 @@ enum SVConditionEnum
 	SVECondLessOrEqual			= M_LESS_OR_EQUAL,
 };
 
-/**
-@SVObjectName Matrox Blob Control Enum
 
-@SVObjectOverview This enum is used to control criterion in a blob result.
-
-@SVObjectOperations None
-
-*/
-enum SVBlobControlEnum
+enum SVBlobControlEnum ///< Used to control criterion in a blob result.
 {
 	// Selection 
 	SVEBlobAll					= M_ALL_BLOBS,
@@ -380,15 +321,8 @@ enum SVBlobControlEnum
 	SVEBlobIdentifier			= M_IDENTIFIER_TYPE,
 };
 
-/**
-@SVObjectName Matrox Blob Operation Enum
 
-@SVObjectOverview This enum is used to select blobs in a blob result.
-
-@SVObjectOperations None
-
-*/
-enum SVBlobOperationEnum
+enum SVBlobOperationEnum //<Used to select blobs in a blob result.
 {
 
 	// Operation
@@ -397,15 +331,8 @@ enum SVBlobOperationEnum
 	SVEBlobInclude				= M_INCLUDE,
 };
 
-/**
-@SVObjectName Matrox Bar Code Control Enum
 
-@SVObjectOverview This enum is used to set and get information for the Matrox Bar Code..
-
-@SVObjectOperations None
-
-*/
-enum SVBarCodeControlTypeEnum
+enum SVBarCodeControlTypeEnum ///<Used to set and get information for the Matrox Bar Code.
 {	
 	//	SVBCBaseType				= 0x00000fff,
 
@@ -437,15 +364,7 @@ enum SVBarCodeControlTypeEnum
 };
 
 
-/**
-@SVObjectName Bar Code Types Enum
-
-@SVObjectOverview This enum is used when creating a barcode.
-
-@SVObjectOperations None
-
-*/
-enum SVBarCodeTypesEnum
+enum SVBarCodeTypesEnum  ///<Used when creating a barcode.
 {
 	SVCode39					= M_CODE39, 
 	SVDataMatrix				= M_DATAMATRIX, 
@@ -465,15 +384,8 @@ enum SVBarCodeTypesEnum
 	SVQRCode					= M_QRCODE
 };
 
-/**
-@SVObjectName Bar Code Status Enum
 
-@SVObjectOverview This enum is used when getting status from the barcode result.
-
-@SVObjectOperations None
-
-*/
-enum SVBarCodeStatusEnum
+enum SVBarCodeStatusEnum ///<Used when getting status from the barcode result.
 {
 	SVBCStatusReadOK		= 0,			// M_STATUS_READ_OK 
 	SVBCStatusCRCFailed		= 1,			// M_STATUS_CRC_FAILED 
@@ -482,15 +394,8 @@ enum SVBarCodeStatusEnum
 	SVBCStatusNotFound		= 6,			// M_STATUS_NOT_FOUND 
 };
 
-/**
-@SVObjectName Matrox Display Control Enum
 
-@SVObjectOverview This enum is used to setup a Matrox Display.
-
-@SVObjectOperations None
-
-*/
-enum SVDisplayCntrlEnum
+enum SVDisplayCntrlEnum ///< Used to setup a Matrox Display.
 {
 	SVDispDouble                    = 0x10000L, // Double Stuff
 	SVDispUpdate					= 0x00001L, // 3199L, // M_UPDATE
@@ -508,15 +413,8 @@ enum SVDisplayCntrlEnum
 };
 
 // ************************** Ocr Related enums *********************
-/**
-@SVObjectName Matrox Ocr Type Enum
 
-@SVObjectOverview This enum is used when Creating a Matrox Ocr.
-
-@SVObjectOperations None
-
-*/
-enum SVOcrTypeEnum
+enum SVOcrTypeEnum ///< @SVObjectOverview Used when Creating a Matrox Ocr.
 {	
 	// Font types
 	SVBasics					= 0x000000ff,
@@ -531,29 +429,15 @@ enum SVOcrTypeEnum
 	SVUserDefinedConstrained	= SVUserDefined | SVConstrained,
 };
 
-/**
-@SVObjectName Matrox Ocr Init Flag Enum
 
-@SVObjectOverview This enum is used when Creating a Matrox Ocr.
-
-@SVObjectOperations None
-
-*/
-enum SVOcrInitFlag
+enum SVOcrInitFlag  ///< Used when Creating a Matrox Ocr.
 {
 	SVOcrForegroundBlack		= 0x100L,		// M_FOREGROUND_BLACK 
 	SVOcrForegroundWhite		= 0x80L,		// M_FOREGROUND_WHITE 
 };
 
-/**
-@SVObjectName Matrox Ocr Operation Enum
 
-@SVObjectOverview This enum is used for the Ocr CopyFont, SaveFont, and RestoreFont.
-
-@SVObjectOperations None
-
-*/
-enum SVOcrOperationEnum
+enum SVOcrOperationEnum ///< Used for the Ocr CopyFont, SaveFont, and RestoreFont.
 {
 	SVOcrOperation				= 0x00ff,
 	SVOcrCopyFromFont			= 2L,			// M_COPY_FROM_FONT 
@@ -573,15 +457,8 @@ enum SVOcrOperationEnum
 };
 
 
-/**
-@SVObjectName Matrox Ocr Control Enum
 
-@SVObjectOverview This enum is used for the Matrox Ocr Font.
-
-@SVObjectOperations None
-
-*/
-enum SVOcrControlEnum
+enum SVOcrControlEnum ///<Used for the Matrox Ocr Font.
 {
 	// MocrControl - For the charactersistics of the font
 	SVOcrCharErase = 45L,   // M_CHAR_ERASE
@@ -635,15 +512,8 @@ enum SVOcrControlEnum
 
 };
 
-/**
-@SVObjectName Matrox Ocr Result Enum
 
-@SVObjectOverview This enum is used for the Matrox Ocr results.
-
-@SVObjectOperations None
-
-*/
-enum SVOcrResultEnum
+enum SVOcrResultEnum ///< Used for the Matrox Ocr results.
 {
 	// Result types
 	SVOcrStringValidFlag		= 1L,			// M_STRING_VALID_FLAG  
@@ -666,29 +536,14 @@ enum SVOcrResultEnum
 
 //************************** Pattern Module *****************
 
-/**
-@SVObjectName Matrox Pattern Model Allocation Type Enum
-
-@SVObjectOverview This enum is used for specifying the Matrox Pattern Model Allocation parameter.
-
-@SVObjectOperations None
-
-*/
-enum SVPatternModelAllocationTypeEnum
+enum SVPatternModelAllocationTypeEnum ///<Used for specifying the Matrox Pattern Model Allocation parameter.
 {
 	SVPatModelTypeNormalized		= 0x00000002L, // M_NORMALIZED
 	SVPatModelTypeCircularOverscan	= 0x00010000L  // M_CIRCULAR_OVERSCAN
 };
 
-/**
-@SVObjectName Matrox Pattern Type Enum
 
-@SVObjectOverview This enum is used for setting a Matrox Pattern Model.
-
-@SVObjectOperations None
-
-*/
-enum SVPatternTypeEnum
+enum SVPatternTypeEnum ///<Used for setting a Matrox Pattern Model.
 {
 	SVPatBaseType				= 0x0000ffff,
 	SVPatResultType				= 0x01000000,
@@ -702,16 +557,8 @@ enum SVPatternTypeEnum
 	SVPatSearchAngleTolerance	= M_SEARCH_ANGLE_TOLERANCE,
 }; 
 
-/**
-@SVObjectName Matrox Pattern Serch Parameter Enum
 
-@SVObjectOverview This enum is used for setting Matrox Pattern Search Parameters.
-
-@SVObjectOperations None
-
-*/
-
-enum SVPatternSearchParameterTypeEnum
+enum SVPatternSearchParameterTypeEnum ///<Used for setting Matrox Pattern Search Parameters.
 {
 	// Search Parameters (MpatSearchParameters)
 	SVPatFirstLevel				= 31L, // M_FIRST_LEVEL
@@ -724,15 +571,8 @@ enum SVPatternSearchParameterTypeEnum
 	SVPatExtraCandidates		= 46L, // M_EXTRA_CANDIDATES
 };
 
-/**
-@SVObjectName Matrox Pattern Result Enum
 
-@SVObjectOverview This enum is used for setting a Matrox Pattern Results.
-
-@SVObjectOperations None
-
-*/
-enum SVPatternResultEnum
+enum SVPatternResultEnum ///<Used for setting a Matrox Pattern Results.
 {
 	// Result types
 	SVCountList					= 0x00020000L , // M_COUNT_LIST
@@ -747,6 +587,7 @@ enum SVPatternResultEnum
 	SVPatPosY					= 0x00004400L , // M_POSITION_Y 
 	SVPatScore					= 0x00001400L , // M_SCORE 
 };
+
 
 enum SVImageOperationTypeEnum
 {
@@ -840,15 +681,7 @@ enum SVImageOperationTypeEnum
 };
 
 
-/**
-@SVObjectName Matrox Image Flip Enum
-
-@SVObjectOverview This enum is used to select the type of flip for the Flip function.
-
-@SVObjectOperations None
-
-*/
-enum SVImageFlipEnum
+enum SVImageFlipEnum ///< Used to select the type of flip for the Flip function.
 {
 	// Image Flip Flags
 	SVImageFlipVertical			= 1L, // M_FLIP_VERTICAL 
@@ -856,15 +689,7 @@ enum SVImageFlipEnum
 };
 
 
-/**
-@SVObjectName Matrox Image Water Shed Enum
-
-@SVObjectOverview This enum is used to set behavior in the watershed filter.
-
-@SVObjectOperations None
-
-*/
-enum SVImageWaterShedEnum
+enum SVImageWaterShedEnum ///< Used to set behavior in the watershed filter.
 {
 	SVImageWSWatershed			= 0x0001, // M_WATERSHED 
 	SVImageWSBasin				= 0x0002, // M_BASIN 
@@ -887,15 +712,7 @@ enum SVImageWaterShedEnum
 	// Combination
 };
 
-/**
-@SVObjectName Matrox Image Water Shed Enum
-
-@SVObjectOverview This enum is used to set behavior in the watershed filter.
-
-@SVObjectOperations None
-
-*/
-enum SVFilterOperationEnum
+enum SVFilterOperationEnum ///< Used to set behavior in the watershed filter.
 {
 	SVFilterOpEdge				= SVImageDefaultKernel + 7L,	// M_EDGE_DETECT 
 	SVFilterOpEdgeDet2			= SVImageDefaultKernel + 8L,	// M_EDGE_DETECT2 

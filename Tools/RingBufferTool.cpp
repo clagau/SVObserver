@@ -9,7 +9,7 @@
 #include "StdAfx.h"
 #include "RingBufferTool.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/MessageManager.h"

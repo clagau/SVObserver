@@ -18,7 +18,7 @@
 #include "SVRemoteOutputObject.h"
 #include "SVOutputObjectList.h"
 #include "SVMessage/SVMessage.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

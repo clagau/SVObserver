@@ -11,7 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "WaterShedFilter.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"

@@ -9,7 +9,7 @@
 #include "InspectionCommands\CommandExternalHelper.h"
 #include "InspectionCommands\GetMaskData.h"
 #include "InspectionCommands\SetMaskData.h"
-#include "Definitions\TextDefineSvDef.h"
+#include "Definitions\TextDefinesSvDef.h"
 #include "ObjectInterfaces\IInspectionProcess.h"
 #pragma endregion Includes
 

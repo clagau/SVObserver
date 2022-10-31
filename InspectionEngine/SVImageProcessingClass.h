@@ -48,10 +48,10 @@ public:
 
 	static HRESULT InitBuffer( SvOi::SVImageBufferHandlePtr rHandle, DWORD dwValue = 0 );
 
-	static HRESULT LoadImageBuffer( LPCTSTR tstrImagePathName, SVImageInfoClass& rInfo, SvOi::SVImageBufferHandlePtr& rHandle );
+	static HRESULT LoadImageBuffer(const TCHAR* pImageFilepath, SVImageInfoClass& rInfo, SvOi::SVImageBufferHandlePtr& rHandle );
 	static HRESULT LoadImageBuffer( void* pBuffer, SVImageInfoClass& rBufferInfo, SvOi::SVImageBufferHandlePtr& rBufferHandle, SVImageInfoClass& rCameraInfo );
 
-	static HRESULT SaveImageBuffer( LPCTSTR tstrImagePathName, SVMatroxFileTypeEnum efileFormat,const SvOi::SVImageBufferHandlePtr& rHandle );
+	static HRESULT SaveImageBuffer(const TCHAR* pImageFilepath, ImageFileFormat efileFormat,const SvOi::SVImageBufferHandlePtr& rHandle );
 
 	static HRESULT CreateDataBuffer( SVDataBufferInfoClass* pDataInfo );
 	static HRESULT DestroyDataBuffer( SVDataBufferInfoClass* pDataInfo );

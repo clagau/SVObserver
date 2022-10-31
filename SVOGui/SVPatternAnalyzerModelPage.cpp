@@ -18,7 +18,7 @@
 #include "SVOGuiUtility/DisplayHelper.h"
 #include "SVOGuiUtility/GuiValueHelper.h"
 #include "Definitions/Color.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #include "SVImageLibrary/SVImageExtentClass.h"

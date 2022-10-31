@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved /// All Rights Reserved 
-/// \Author	Robert Yoho
+/// \file SVArchiveImageThreadClass.h
 //*****************************************************************************
 
 #pragma once
@@ -12,6 +12,8 @@
 #include "SVLibrary/SVTemplate.h"
 #include "ObjectInterfaces/ITRCImage.h"
 #include "Tools/ArchiveMethodEnum.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
+
 #pragma endregion Includes
 
 namespace SvTo
@@ -19,8 +21,6 @@ namespace SvTo
 
 class SVArchiveTool;
 class SVArchiveRecord;
-
-std::string imageFileNameExtension(ImageFileFormat format);
 
 class SVArchiveImageThreadClass
 {
@@ -42,8 +42,8 @@ public:
 
 		BufferInfo(const BufferInfo& rhs) = default;
 
-		BufferInfo(SvOi::ITRCImagePtr pImageBuffer, const std::string& rFileName, ImageFileFormat format, const std::string& rImageDirectoryPath, SVImageInfoClass p_info, int pos)
-			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), m_format(format),m_ImageDirectoryPath(rImageDirectoryPath), info(p_info), m_toolPos(pos) {}
+		BufferInfo(SvOi::ITRCImagePtr pImageBuffer, const std::string& rFileName, ImageFileFormat fileFormat, const std::string& rImageDirectoryPath, SVImageInfoClass p_info, int pos)
+			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), m_format(fileFormat),m_ImageDirectoryPath(rImageDirectoryPath), info(p_info), m_toolPos(pos) {}
 
 		BufferInfo& operator = (const BufferInfo& rhs) = default;
 	};

@@ -66,9 +66,6 @@
     <ClInclude Include="SVUserMessage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TextDefineSvDef.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectNames.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -79,6 +76,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxSimpleEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TextDefinesSvDef.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

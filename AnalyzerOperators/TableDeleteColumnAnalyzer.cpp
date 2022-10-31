@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "TableDeleteColumnAnalyzer.h"
 #include "Tools/TableAnalyzerTool.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #pragma endregion Includes
 
 namespace SvAo

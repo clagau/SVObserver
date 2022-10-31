@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVResultDouble.h"
 #include "Operators/SVResultLong.h"

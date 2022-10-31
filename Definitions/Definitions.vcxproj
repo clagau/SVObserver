@@ -105,7 +105,7 @@
     <ClInclude Include="SVPPQEnums.h" />
     <ClInclude Include="SVResetStruct.h" />
     <ClInclude Include="SVUserMessage.h" />
-    <ClInclude Include="TextDefineSvDef.h" />
+    <ClInclude Include="TextDefinesSvDef.h" />
     <ClInclude Include="TriggerType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

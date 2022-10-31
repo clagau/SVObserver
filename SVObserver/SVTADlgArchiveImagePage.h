@@ -19,6 +19,7 @@
 #include "Tools/ArchiveMethodEnum.h"
 #include "SVOGuiUtility/DataController.h"
 #include "SVOGuiUtility/LinkedValueWidgetHelper.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 
@@ -192,7 +193,7 @@ private:
 	int		m_WhenToArchiveIndex = -1;
 	int		m_FormatIndex = -1;
 	SvTo::ArchiveMode m_selectedMode = SvTo::ArchiveMode::invalid;
-	SvTo::ImageFileFormat m_selectedFormat = SvTo::ImageFileFormat::invalid;
+	ImageFileFormat m_selectedFormat = ImageFileFormat::invalid;
 	long m_ImagesToArchive = 0;
 
 	typedef std::map <SvIe::SVImageClass*, long> MapSelectedImageType;

@@ -674,7 +674,7 @@ namespace SvTrcT
 			auto imageHandle = pImage->getHandle();
 			if (nullptr != imageHandle)
 			{
-				HRESULT hr = SVMatroxBufferInterface::Import(imageHandle->GetBuffer(), std::string(rPath), SVFileBitmap, false);
+				HRESULT hr = SVMatroxBufferInterface::Import(imageHandle->GetBuffer(), std::string(rPath), ImageFileFormat::bmp, false);
 				assert(S_OK == hr);
 				if (S_OK != hr)
 				{

@@ -176,7 +176,7 @@ namespace SvOgu
 	{
 		if (!ms_downArrowBitmapWasLoaded)
 		{
-			ms_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW); //AB this can only be done once!
+			ms_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW); //this can only be done once!
 			ms_downArrowBitmapWasLoaded = true;
 		}
 	}

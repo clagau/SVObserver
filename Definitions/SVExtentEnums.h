@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #pragma once
-#include "TextDefineSvDef.h"
+#include "TextDefinesSvDef.h"
 namespace SvDef
 {
 

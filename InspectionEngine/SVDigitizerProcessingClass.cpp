@@ -25,7 +25,7 @@
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #include "Definitions/GlobalConst.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVColorTool.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVColorThreshold.h"
 #include "Operators/ToolSizeAdjustTask.h"

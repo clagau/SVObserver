@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <utility>
 #pragma endregion Includes
 
-#include "Definitions\TextDefineSvDef.h"
+#include "Definitions\TextDefinesSvDef.h"
 
 //// Image processing enums
 /**

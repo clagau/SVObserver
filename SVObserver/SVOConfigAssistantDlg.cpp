@@ -48,7 +48,7 @@
 #include "SVOGui\GlobalConstantConflictDlg.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/GlobalConst.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/AcquisitionName.h"

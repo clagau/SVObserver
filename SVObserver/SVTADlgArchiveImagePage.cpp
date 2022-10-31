@@ -153,7 +153,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_ValueController.Set<long>(SvPb::ArchiveMethodEId, static_cast<long> (m_selectedMode));
 
 	iCurSel = m_imageFormat.GetCurSel();
-	m_selectedFormat = static_cast<SvTo::ImageFileFormat> (m_imageFormat.GetItemData(iCurSel));
+	m_selectedFormat = static_cast<ImageFileFormat> (m_imageFormat.GetItemData(iCurSel));
 	m_ValueController.Set<long>(SvPb::ArchiveImageFileFormatEId, static_cast<long> (m_selectedFormat));
 
 	CString Temp;
@@ -331,7 +331,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 		fileFormatNameArray.SetAtGrow(rEntry.second, iIndex);
 	}
 	lMode = m_ValueController.Get<long>(SvPb::ArchiveImageFileFormatEId);
-	m_selectedFormat = static_cast<SvTo::ImageFileFormat>(lMode);
+	m_selectedFormat = static_cast<ImageFileFormat>(lMode);
 	m_FormatIndex = fileFormatNameArray.GetAt(lMode);
 
 
@@ -581,7 +581,7 @@ void SVTADlgArchiveImagePage::OnSelchangeImageFormat()
 
 	if (iSel != CB_ERR)
 	{
-		m_selectedFormat = static_cast <SvTo::ImageFileFormat> (m_WhenToArchive.GetItemData(iSel));
+		m_selectedFormat = static_cast <ImageFileFormat> (m_WhenToArchive.GetItemData(iSel));
 	}
 	UpdateData();
 }

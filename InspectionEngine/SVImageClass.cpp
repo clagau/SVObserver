@@ -19,11 +19,10 @@
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVTaskObject.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
@@ -816,14 +815,13 @@ HRESULT SVImageClass::LoadImage(LPCTSTR fileName, const SvOi::ITriggerRecordRWPt
 		{
 			if (0 < strlen(fileName))
 			{
-				SVFileNameClass	svfncImageFile(fileName);
-				SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType(svfncImageFile.GetExtension().c_str());
+				ImageFileFormat fileFormat = inferMilImageFileFormat(fileName);
 
-				if (fileformatID != -1 && 0 == _access(fileName, 0))
+				if (fileFormat != ImageFileFormat::invalid && 0 == _access(fileName, 0))
 				{
 					std::string l_strFile(fileName);
 
-					l_Code = SVMatroxBufferInterface::Import(pBuffer->getHandle()->GetBuffer(), l_strFile, fileformatID, false);
+					l_Code = SVMatroxBufferInterface::Import(pBuffer->getHandle()->GetBuffer(), l_strFile, fileFormat, false);
 
 					if (l_Code == S_OK)
 					{
@@ -1394,18 +1392,12 @@ HRESULT SVImageClass::Save(const std::string& rFilename)
 	SvOi::SVImageBufferHandlePtr pImage = getLastImage();
 	if (nullptr != pImage && !pImage->empty())
 	{
-		std::string ext;
-		size_t pos = rFilename.find_last_of(".");
-		if (std::string::npos != pos)
-		{
-			ext = rFilename.substr(pos, rFilename.size() - pos);
-		}
-		SVMatroxFileTypeEnum efileformat(SVMatroxImageInterface::getFileType(ext.c_str()));
+		ImageFileFormat fileFormat(inferMilImageFileFormat(rFilename));
 
-		if (efileformat != SVFileUnknown)
+		if (fileFormat != ImageFileFormat::invalid)
 		{
 			std::string strPath = rFilename.c_str();
-			hr = SVMatroxBufferInterface::Export(pImage->GetBuffer(), strPath, efileformat);
+			hr = SVMatroxBufferInterface::Export(pImage->GetBuffer(), strPath, fileFormat);
 		}
 		else
 		{

@@ -21,7 +21,7 @@
 #include "SVClsids.h"
 #include "SVObjectManagerClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations

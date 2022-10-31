@@ -18,12 +18,12 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVBarCodeBuffer.h"
 #include "SVDataBuffer.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -288,88 +288,81 @@ HRESULT SVImageProcessingClass::InitBuffer(SvOi::SVImageBufferHandlePtr rHandle,
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVImageInfoClass& rInfo, SvOi::SVImageBufferHandlePtr& rHandle)
+HRESULT SVImageProcessingClass::LoadImageBuffer(const TCHAR* pImageFilepath, SVImageInfoClass& rInfo, SvOi::SVImageBufferHandlePtr& rHandle)
 {
-	SVFileNameClass	svfncImageFile(tstrImagePathName);
-	std::string strImagePathName = svfncImageFile.GetFullFileName();
+	ImageFileFormat fileFormat(inferMilImageFileFormat(pImageFilepath));
 
-	if (!strImagePathName.empty())
+	if (fileFormat != ImageFileFormat::invalid)
 	{
-		if (0 != _access(strImagePathName.c_str(), 0))
+		if (0 != _access(pImageFilepath, 0))
 		{
 			return E_FAIL;
 		}
 
-		SVMatroxFileTypeEnum fileformat(SVMatroxImageInterface::getFileType(svfncImageFile.GetExtension().c_str()));
+		HRESULT l_Code;
+		std::string l_strPath = (pImageFilepath);
 
-		strImagePathName = svfncImageFile.GetFullFileName();
-		if (fileformat != SVFileUnknown && 0 == _access(strImagePathName.c_str(), 0))
+		if (nullptr != rHandle)
 		{
-			HRESULT l_Code;
-			std::string l_strPath = strImagePathName;
+			// Load...
 
-			if (nullptr != rHandle)
+			l_Code = SVMatroxBufferInterface::Import(rHandle->GetBuffer(), l_strPath, fileFormat);
+			if (l_Code == S_OK)
 			{
-				// Load...
+				return S_OK;
+			}
+			else
+			{
+				return E_FAIL;
+			}
+		}
 
-				l_Code = SVMatroxBufferInterface::Import(rHandle->GetBuffer(), l_strPath, fileformat);
-				if (l_Code == S_OK)
-				{
-					return S_OK;
-				}
-				else
-				{
-					return E_FAIL;
-				}
+		// Restore
+		SVMatroxBuffer newBuffer;
+		/*l_Code = */SVMatroxBufferInterface::Import(newBuffer, l_strPath, fileFormat, true);
+		if (!newBuffer.empty())
+		{
+			// Get buffer data...
+			long l_lSizeX = 0;
+			long l_lSizeY = 0;
+			long l_lBandSize = 0;
+			long l_lPixelDepth = 0;
+			long l_DataFormat = 0;
+
+			/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeX, l_lSizeX);
+			/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeY, l_lSizeY);
+			/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVType, l_lPixelDepth);
+			/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeBand, l_lBandSize);
+			l_Code = SVMatroxBufferInterface::Get(newBuffer, SVDataFormat, l_DataFormat);
+
+			if (M_EQUIVALENT_INTERNAL_FORMAT(M_BGR24, l_DataFormat))
+			{
+				rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888);
+			}
+			else if (M_EQUIVALENT_INTERNAL_FORMAT(M_BGR32, l_DataFormat))
+			{
+				rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
 			}
 
-			// Restore
-			SVMatroxBuffer newBuffer;
-			/*l_Code = */SVMatroxBufferInterface::Import(newBuffer, l_strPath, fileformat, true);
-			if (!newBuffer.empty())
+			rInfo.SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
+			rInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, l_lSizeX);
+			rInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, l_lSizeY);
+
+			rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandSize);
+			rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lPixelDepth);
+
+			newBuffer.clear();
+
+			assert(S_OK == l_Code);
+			if (S_OK == CreateImageBuffer(rInfo, rHandle) &&
+				S_OK == LoadImageBuffer(pImageFilepath, rInfo, rHandle))
 			{
-				// Get buffer data...
-				long l_lSizeX = 0;
-				long l_lSizeY = 0;
-				long l_lBandSize = 0;
-				long l_lPixelDepth = 0;
-				long l_DataFormat = 0;
-
-				/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeX, l_lSizeX);
-				/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeY, l_lSizeY);
-				/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVType, l_lPixelDepth);
-				/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeBand, l_lBandSize);
-				l_Code = SVMatroxBufferInterface::Get(newBuffer, SVDataFormat, l_DataFormat);
-
-				if (M_EQUIVALENT_INTERNAL_FORMAT(M_BGR24, l_DataFormat))
-				{
-					rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888);
-				}
-				else if (M_EQUIVALENT_INTERNAL_FORMAT(M_BGR32, l_DataFormat))
-				{
-					rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
-				}
-
-				rInfo.SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
-				rInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, l_lSizeX);
-				rInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, l_lSizeY);
-
-				rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandSize);
-				rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lPixelDepth);
-
-				newBuffer.clear();
-
-				assert(S_OK == l_Code);
-				if (S_OK == CreateImageBuffer(rInfo, rHandle) &&
-					S_OK == LoadImageBuffer(strImagePathName.c_str(), rInfo, rHandle))
-				{
-					return S_OK;
-				}
+				return S_OK;
 			}
 		}
 
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams));
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownFileFormat, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -516,16 +509,15 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 	return S_FALSE;
 }
 
-HRESULT SVImageProcessingClass::SaveImageBuffer(LPCTSTR tstrImagePathName, SVMatroxFileTypeEnum efileFormat, const SvOi::SVImageBufferHandlePtr& rHandle)
+HRESULT SVImageProcessingClass::SaveImageBuffer(const TCHAR* pImageFilepath, ImageFileFormat fileFormat, const SvOi::SVImageBufferHandlePtr& rHandle)
 {
 	HRESULT Result(S_OK);
 
 	if (nullptr != rHandle)
 	{
-		if (efileFormat != SVFileUnknown)
+		if (fileFormat != ImageFileFormat::invalid)
 		{
-			std::string l_strPath = tstrImagePathName;
-			Result = SVMatroxBufferInterface::Export(rHandle->GetBuffer(), l_strPath, efileFormat);
+			Result = SVMatroxBufferInterface::Export(rHandle->GetBuffer(), pImageFilepath, fileFormat);
 		}
 	}
 	else

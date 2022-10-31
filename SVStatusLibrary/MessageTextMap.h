@@ -168,7 +168,7 @@ namespace SvStl
 			"should be saved to prevent this message from appearing "
 			"again.")},
 		{Tid_MatroxImage_UnableToFindFile, _T("Unable to locate image file:\n{0}\n\nBrowse...")},
-		{Tid_UnKnownFileFormat, _T("Unknown File Format!")},
+		{Tid_UnknownFileFormat, _T("Unknown File Format!")},
 		{Tid_FailedToLoadImage, _T("Failed to load an image!")},
 		{Tid_FailedToSaveImage, _T("Unable to Save Image")},
 
@@ -341,7 +341,7 @@ namespace SvStl
 		{Tid_ErrorFindingPPQEntries, _T("Error finding PPQ entries.")},
 		{Tid_InvalidReference, _T("%s: Invalid reference")},
 
-		{Tid_RegressionTest_NoBmpFileSelected, _T("Selection Error: A .bmp file must be selected.")},
+		{Tid_InvalidImageFileType, _T("Invalid image file type.")},
 		{Tid_RegressionTest_WrongListSize, _T("Selection Error: Lists must be the same size.  Please select again.")},
 		{Tid_RegressionTest_NoFileSelected, _T("Selection Error in {0}: \"Use single file\" is selected for one of the cameras but a file was not selected. Select again?")},
 		{Tid_RegressionTest_WrongFormat, _T("Selection Error in {0}: \"Use list of files\" selected, but the file name does not match\n the acceptable format (<file name>_<sequence number>.bmp). Select again?")},

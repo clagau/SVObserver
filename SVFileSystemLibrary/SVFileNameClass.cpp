@@ -22,6 +22,7 @@
 #include "SVMessage/SVMessage.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
+#include "Definitions/TextDefinesSvDef.h"
 #pragma endregion Includes
 
 SVFileNameClass::SVFileNameClass()
@@ -202,7 +203,7 @@ bool SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetDefaultPathName( _T("C:\\IMAGES") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( _T("Bitmap File Format (*.bmp)|*.bmp|MIL Image Format File (*.mim)|*.mim|TIFF Image Format (*.tif)|*.tif||") );
+			SetFileExtensionFilterList(SvDef::fileDlgFilterMilSupportedImageFilesTypes);
 
 			bOk = true;
 			break;
@@ -216,7 +217,7 @@ bool SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( "Bitmap File Format (*.bmp)|*.bmp|MIL Image Format File (*.mim)|*.mim|TIFF Image Format (*.tif)|*.tif||" );
+			SetFileExtensionFilterList(SvDef::fileDlgFilterMilSupportedImageFilesTypes);
 
 			bOk = true;
 			break;
@@ -558,7 +559,7 @@ bool SVFileNameClass::SelectFile()
 		Path = GetDefaultPathName();
 	}
 
-	//The dot is removed from the defaultFileExtension, because that can lead too two dots after the filename in specific use cases
+	//The dot is removed from the defaultFileExtension, because that can lead to two dots after the filename in specific use cases
 	std::string defaultFileExtension = GetDefaultFileExtension();
 	size_t positionOfDot = defaultFileExtension.find(".");
 

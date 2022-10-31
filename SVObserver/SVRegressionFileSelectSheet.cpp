@@ -15,6 +15,7 @@
 #include "SVRegressionFileSelectDlg.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVVirtualCamera.h"
+#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -29,7 +30,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr size_t cReseverveNumber = 1000;
+constexpr size_t cReserveNumber = 1000;
 
 SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(UINT nIDCaption, uint32_t inspectionID, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
@@ -123,10 +124,10 @@ void SVRegressionFileSelectSheet::OnOK()
 			if ( pPage->GetFileSelectType() != RegNone )
 			{
 				RegressionTestStruct regStruct;
-				regStruct.stdVectorFile.reserve(cReseverveNumber);
+				regStruct.stdVectorFile.reserve(cReserveNumber);
 				regStruct.iFileMethod = pPage->GetFileSelectType();
 				regStruct.Name = pPage->GetPageName();
-				regStruct.FirstFile = pPage->GetSelectedFile();
+				regStruct.firstFilepath = pPage->GetSelectedFile();
 				regStruct.objectId = pPage->getToolId();
 				if (pPage->isCamera())
 				{
@@ -266,7 +267,7 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 	case RegressionFileEnum::RegSingleFile:
 	{
 		//check to see if a selection has been made...
-		if (rStruct.FirstFile.empty())
+		if (rStruct.firstFilepath.empty())
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(rStruct.Name);
@@ -276,7 +277,7 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 		else
 		{
 			//check to make sure name is a file that exists
-			if (0 != ::_access(rStruct.FirstFile.c_str(), 0))
+			if (0 != ::_access(rStruct.firstFilepath.c_str(), 0))
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(rStruct.Name);
@@ -284,12 +285,12 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 				throw Exception;
 			}
 
-			if (0 != SvUl::CompareNoCase(SvUl::Right(rStruct.FirstFile.c_str(), 4), std::string(_T(".bmp"))))
+			if (ImageFileFormat::invalid == inferMilImageFileFormat(rStruct.firstFilepath))
 			{
-				SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams));
+				SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidImageFileType, SvStl::SourceFileParams(StdMessageParams));
 				throw Exception;
 			}
-			rStruct.stdVectorFile.push_back(rStruct.FirstFile);
+			rStruct.stdVectorFile.push_back(rStruct.firstFilepath);
 			isFileSet = true;
 		}
 	}
@@ -326,7 +327,7 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 	case RegressionFileEnum::RegSingleDirectory:
 	case RegressionFileEnum::RegSubDirectories:
 	{
-		if (rStruct.FirstFile.empty())
+		if (rStruct.firstFilepath.empty())
 		{
 			SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoFilesSelected, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
@@ -368,7 +369,7 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 int SVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 {
 	int count = 0;
-	std::string fileMask = MakeFileNameMask(rStruct.FirstFile);
+	std::string fileMask = MakeFileNameMask(rStruct.firstFilepath);
 	if (fileMask.empty())
 	{
 		return 0;
@@ -385,36 +386,44 @@ int SVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 	return count;
 }
 
+
+
 int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct)
 {
-	std::string currentPath = rStruct.FirstFile;
+	std::string currentPath = rStruct.firstFilepath;
+
+	ImageFileFormat fileFormat = inferMilImageFileFormat(currentPath);
 	if (RegressionFileEnum::RegSingleDirectory == rStruct.iFileMethod)
 	{
-		//For Single Directory a bmp-File is selected. For this reason the filename has to be removed.
-		if (0 != SvUl::CompareNoCase(SvUl::Right(currentPath.c_str(), 4), std::string(_T(".bmp"))))
+		if (ImageFileFormat::invalid == fileFormat)
 		{
-			SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams));
+			SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidImageFileType, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
 		}
 	}
 
-	if (0 == SvUl::CompareNoCase(SvUl::Right(currentPath.c_str(), 4), std::string(_T(".bmp"))))
-	{
+	if (ImageFileFormat::invalid != fileFormat)
+	{ 
 		size_t Pos = currentPath.rfind('\\');
 		if (std::string::npos != Pos)
 		{
 			currentPath = currentPath.substr(0, Pos);
 		}
 	}
-	int count = FillFileListFromDirectory(rStruct, currentPath);
+	else
+	{
+		fileFormat = ImageFileFormat::bmp;
+		//in this case we assume a directory path is contained in rStruct.firstFilepath and that the appropriate file type is bitmap
+	}
+	int count = FillFileListFromDirectory(rStruct, currentPath, fileFormat);
 	return count;
 }
 
-int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath)
+int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath, ImageFileFormat fileFormat)
 {
 	int count = 0;
 
-	std::string fileMask = rCurrentPath + _T("\\*.bmp");
+	std::string fileMask = rCurrentPath + _T("\\*") + imageFileNameExtension(fileFormat);
 	CFileFind fileFinder;
 	BOOL bFound = fileFinder.FindFile(fileMask.c_str());
 	std::string firstFile;
@@ -437,7 +446,7 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 		fileMask = rCurrentPath + _T("\\*");
 		bFound = fileFinder.FindFile(fileMask.c_str());
 		SvDef::StringVector folderList;
-		folderList.reserve(cReseverveNumber);
+		folderList.reserve(cReserveNumber);
 		while (bFound)
 		{
 			bFound = fileFinder.FindNextFile();
@@ -454,7 +463,7 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 		//StrCmpLogicalW is the sorting function used by Windows Explorer
 		auto FolderCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t{ rLhs.c_str() }, _bstr_t{ rRhs.c_str() }) < 0; };
 		std::sort(folderList.begin(), folderList.end(), FolderCompare);
-		count = std::accumulate(folderList.begin(), folderList.end(), count, [this, &rStruct](int sum, const auto& rFolder) {return sum + FillFileListFromDirectory(rStruct, rFolder);} );
+		count = std::accumulate(folderList.begin(), folderList.end(), count, [this, &rStruct, fileFormat](int sum, const auto& rFolder) {return sum + FillFileListFromDirectory(rStruct, rFolder, fileFormat);} );
 	}
 
 	return count;

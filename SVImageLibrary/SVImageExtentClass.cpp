@@ -16,9 +16,9 @@
 #include "SVImageExtentClass.h"
 #include "SVExtentOffsetStruct.h"
 #include "Definitions/SVExtentEnums.h"
-#include "SVFileSystemLibrary\SVFileNameClass.h"
-#include "SVMatroxLibrary\SVMatroxImageInterface.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVUtilityLibrary/GeoHelper.h"
 #pragma endregion Includes
 
@@ -1859,10 +1859,9 @@ HRESULT SVImageExtentClass::SetDataFromFile(LPCTSTR pFileName)
 
 	if (0 < strlen(pFileName))
 	{
-		SVFileNameClass	svfncImageFile(pFileName);
-		SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType(svfncImageFile.GetExtension().c_str());
+		ImageFileFormat fileFormat = inferMilImageFileFormat(pFileName);
 
-		if (fileformatID != SVFileUnknown && 0 == _access(pFileName, 0))
+		if (fileFormat != ImageFileFormat::invalid && 0 == _access(pFileName, 0))
 		{
 
 			std::string strFile(pFileName);

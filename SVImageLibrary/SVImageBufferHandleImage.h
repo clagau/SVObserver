@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
+#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 
 class SVImageBufferHandleImage : public SvOi::SVImageBufferHandleInterface
 {

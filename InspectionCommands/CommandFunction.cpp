@@ -36,14 +36,15 @@
 #include "ObjectInterfaces\IInputValueDefinition.h"
 #include "ObjectInterfaces\IResultValueDefinition.h"
 #include "Definitions\ObjectDefines.h"
-#include "Definitions\TextDefineSvDef.h"
+#include "Definitions\TextDefinesSvDef.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "Definitions\SVMatroxSimpleEnums.h"
-#include "SVMatroxLibrary\SVMatroxPatternInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxHelper.h"
+#include "Definitions/SVMatroxSimpleEnums.h"
+#include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
@@ -164,21 +165,11 @@ SvPb::InspectionCmdResponse CreateModel(SvPb::CreateModelRequest request)
 		if (nullptr != pTaskObject && pTaskObject->getSpecialImage(SvDef::PatternModelImageName, imageHandle) && !imageHandle->empty())
 		{
 			std::string FileName = request.filename();
-			TCHAR FileExtension[_MAX_EXT];
-			_tsplitpath(FileName.c_str(), nullptr, nullptr, nullptr, FileExtension);
 			// Now save the Model Image buffer to a file
-			SVMatroxFileTypeEnum FileFormatID = SVFileMIL; // Set as default.
-			if (0 == SvUl::CompareNoCase(std::string(FileExtension), std::string(_T(".bmp"))))
-			{
-				FileFormatID = SVFileBitmap;
-			}
-			if (0 == SvUl::CompareNoCase(std::string(FileExtension), std::string(_T(".tif"))))
-			{
-				FileFormatID = SVFileTiff;
-			}
+			ImageFileFormat fileFormat = inferMilImageFileFormat(FileName);
 
 			SVMatroxBuffer milBuffer = imageHandle->GetBuffer();
-			HRESULT result = SVMatroxBufferInterface::Export(milBuffer, FileName, FileFormatID);
+			HRESULT result = SVMatroxBufferInterface::Export(milBuffer, FileName, fileFormat);
 			if (S_OK != result)
 			{
 				cmdResponse.set_hresult(E_FAIL);

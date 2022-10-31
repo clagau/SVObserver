@@ -52,7 +52,7 @@ public:
 	
 	HRESULT WriteImageQueue();
 	long WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRecord); // returns current queue length (-1 on error)
-	static HRESULT WriteImageToFile( const SVMatroxBuffer& buf, const std::string& rFileName, ImageFileFormat format);
+	static HRESULT WriteImageToFile( const SVMatroxBuffer& buf, const std::string& rFileName, ImageFileFormat fileFormat);
 
 	void SetArchiveTool( SVArchiveTool* pArchiveTool );
 

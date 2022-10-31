@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 

@@ -167,7 +167,7 @@ HRESULT SVGigeCameraDBContent::startElement(unsigned short* , int , unsigned sho
 	std::string elementName {_bstr_t(reinterpret_cast<wchar_t*>(pwchLocalName))};
 	
 	ElementTagEnums enumValue {ElementTagEnums::GigeParameterMap};
-	bool bRetVal = StringToEnum::GetEnum(cElements, elementName.c_str(), enumValue);
+	bool bRetVal = SvUl::GetEnum(cElements, elementName.c_str(), enumValue);
 	if (bRetVal)
 	{
 		switch (enumValue)
@@ -208,7 +208,7 @@ HRESULT SVGigeCameraDBContent::endElement(unsigned short* , int , unsigned short
 	std::string elementName {_bstr_t(reinterpret_cast<wchar_t*>(pwchLocalName))};
 
 	ElementTagEnums enumValue {ElementTagEnums::GigeParameterMap};
-	bool bRetVal = StringToEnum::GetEnum(cElements, elementName.c_str(), enumValue);
+	bool bRetVal = SvUl::GetEnum(cElements, elementName.c_str(), enumValue);
 	if (bRetVal)
 	{
 		switch (enumValue)
@@ -259,7 +259,7 @@ void SVGigeCameraDBContent::GetGigeParameterAttributes(MSXML2::ISAXAttributes* p
 		{
 			std::string textValue {_bstr_t(value)};
 			SvDef::SVGigeParameterEnum enumValue{ SvDef::SVGigeParameterEnum::SVGigeParameterStart };
-			bool bRetVal = StringToEnum::GetEnum(cGigeParameterEnums, textValue.c_str(), enumValue);
+			bool bRetVal = SvUl::GetEnum(cGigeParameterEnums, textValue.c_str(), enumValue);
 			if (bRetVal)
 			{
 				m_GigeParameterEnum = enumValue;
@@ -342,7 +342,7 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 		{
 			std::string textValue {_bstr_t(value)};
 			SVFeatureTypeEnum enumValue{ SVFeatureTypeEnum::SVTypeCommand};
-			bool bRetVal = StringToEnum::GetEnum(cFeatureTypeStringEnums, textValue.c_str(), enumValue);
+			bool bRetVal = SvUl::GetEnum(cFeatureTypeStringEnums, textValue.c_str(), enumValue);
 			if (bRetVal)
 			{
 				m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_GigeFeatureType = enumValue;
@@ -352,7 +352,7 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 		{
 			std::string textValue {_bstr_t(value)};
 			SVGigeFeature::FeatureSupportedEnum enumValue;
-			bool bRetVal = StringToEnum::GetEnum(cFeatureSupportedStringEnums, textValue.c_str(), enumValue);
+			bool bRetVal = SvUl::GetEnum(cFeatureSupportedStringEnums, textValue.c_str(), enumValue);
 			if (bRetVal)
 			{
 				m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_FeatureSupported = enumValue;
@@ -362,7 +362,7 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 		{
 			std::string textValue {_bstr_t(value)};
 			SVGigeFeature::FeatureAccessEnum enumValue;
-			bool bRetVal = StringToEnum::GetEnum(cFeatureAccessStringEnums, textValue.c_str(), enumValue);
+			bool bRetVal = SvUl::GetEnum(cFeatureAccessStringEnums, textValue.c_str(), enumValue);
 			if (bRetVal)
 			{
 				m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_FeatureAccess = enumValue;
@@ -550,7 +550,7 @@ VARTYPE SVGigeCameraDBContent::GetVarType(wchar_t* vartypeString) const
 		}
 		std::string varName {_bstr_t(vartypeString)};
 		VARENUM enumValue {VT_EMPTY};
-		bool bRetVal = StringToEnum::GetEnum(cVariantTypeEnum, varName.c_str(), enumValue);
+		bool bRetVal = SvUl::GetEnum(cVariantTypeEnum, varName.c_str(), enumValue);
 		if (bRetVal)
 		{
 			varType = static_cast<VARTYPE> (enumValue | VT_ARRAY);
@@ -560,7 +560,7 @@ VARTYPE SVGigeCameraDBContent::GetVarType(wchar_t* vartypeString) const
 	{
 		std::string varName {_bstr_t(vartypeString)};
 		VARENUM enumValue {VT_EMPTY};
-		bool bRetVal = StringToEnum::GetEnum(cVariantTypeEnum, varName.c_str(), enumValue);
+		bool bRetVal = SvUl::GetEnum(cVariantTypeEnum, varName.c_str(), enumValue);
 		if (bRetVal)
 		{
 			varType = static_cast<VARTYPE> (enumValue);

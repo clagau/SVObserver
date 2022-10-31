@@ -26,6 +26,7 @@
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
@@ -290,13 +291,12 @@ void SVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 		pCombo->SetItemValue(m_CameraObj.GetFileLoadingMode());
 	}
 
-	LPCTSTR fileFilter = _T("Image Files (*.bmp)|*.bmp||");
 	SVFileNameClass FileName;
 	FileName.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 	
 	bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
-									fileFilter, FileName.GetDefaultPathName().c_str(), true), pRoot);
+			SvDef::fileDlgFilterMilSupportedImageFilesTypes, FileName.GetDefaultPathName().c_str(), true), pRoot);
 	if (pFile)
 	{
 		pFile->SetCtrlID(PROP_FILECAMERA_FILENAME);

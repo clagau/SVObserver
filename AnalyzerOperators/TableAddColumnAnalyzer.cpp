@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "TableAddColumnAnalyzer.h"
 #include "Tools/TableAnalyzerTool.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "Operators/IndexEquation.h"
 #pragma endregion Includes
 

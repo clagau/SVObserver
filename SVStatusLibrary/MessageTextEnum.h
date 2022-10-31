@@ -145,7 +145,7 @@ enum MessageTextEnum
 	Tid_CreateImageChildBuffer_child,
 	Tid_CreateImageChildBuffer,
 	Tid_MatroxImage_UnableToFindFile,
-	Tid_UnKnownFileFormat,
+	Tid_UnknownFileFormat,
 	Tid_FailedToLoadImage,
 	Tid_FailedToSaveImage,
 
@@ -303,7 +303,7 @@ enum MessageTextEnum
 	Tid_ErrorFindingPPQEntries,
 	Tid_InvalidReference,
 
-	Tid_RegressionTest_NoBmpFileSelected,
+	Tid_InvalidImageFileType,
 	Tid_RegressionTest_WrongListSize,
 	Tid_RegressionTest_NoFileSelected,
 	Tid_RegressionTest_WrongFormat,

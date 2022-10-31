@@ -22,6 +22,7 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "InspectionEngine/RunStatus.h"
@@ -258,7 +259,7 @@ void SVArchiveTool::initializeArchiveTool()
 
 	SvDef::NameValueVector EnumVectorWhen
 	{
-		{ _T("Synchronous"), static_cast<long>(ArchiveMode::synchronous) }, //... or NameValueVector
+		{ _T("Synchronous"), static_cast<long>(ArchiveMode::synchronous) }, //... or with NameValueVector
 		{ _T("Change Mode"), static_cast<long>(ArchiveMode::goOffline) },
 		{ _T("Asynchronous"), static_cast<long>(ArchiveMode::asynchronous) }
 	};
@@ -270,8 +271,10 @@ void SVArchiveTool::initializeArchiveTool()
 
 	SvDef::NameValueVector EnumVectorFormat
 	{
-		{ _T("BMP"), static_cast<long>(ImageFileFormat::bmp)}, //... or NameValueVector
+		{ _T("BMP"), static_cast<long>(ImageFileFormat::bmp)}, //... or with NameValueVector
 		{ _T("PNG"), static_cast<long>(ImageFileFormat::png)},
+		{ _T("TIFF"), static_cast<long>(ImageFileFormat::tiff)},
+		{ _T("MIM"), static_cast<long>(ImageFileFormat::mim)},
 	};
 
 	m_evoImageFileFormat.SetEnumTypes(EnumVectorFormat);

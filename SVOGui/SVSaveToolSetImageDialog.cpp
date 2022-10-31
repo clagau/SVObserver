@@ -113,7 +113,7 @@ namespace SvOg
 						if (E_INVALIDARG == hr)
 						{
 							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams));
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownFileFormat, SvStl::SourceFileParams(StdMessageParams));
 						}
 						else
 						{

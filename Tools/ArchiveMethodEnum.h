@@ -15,12 +15,4 @@ enum class ArchiveMode
 	goOffline		= 3,
 };
 
-
-enum class ImageFileFormat
-{
-	invalid = 0,
-	bmp		= 1,
-	png		= 2,
-};
-
 } //namespace SvTo

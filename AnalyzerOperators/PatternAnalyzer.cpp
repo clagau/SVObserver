@@ -1404,7 +1404,7 @@ bool PatternAnalyzer::validateNewDontCareFileName(const SvOi::SetValueStructVect
 		std::string newFileName = SvUl::createStdString(rValueStruct.m_Value.bstrVal);
 
 		SVMatroxBuffer importHandle;
-		if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
+		if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, ImageFileFormat::bmp, true) ||
 			S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeX, rDontCareWidth) ||
 			S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeY, rDontCareHeight))
 		{
@@ -1450,7 +1450,7 @@ bool PatternAnalyzer::validateNewModelFileName(const SvOi::SetValueStructVector 
 		if (fileName != newFileName)
 		{
 			SVMatroxBuffer importHandle;
-			if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
+			if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, ImageFileFormat::bmp, true) ||
 				S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeX, rModelWidth) ||
 				S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeY, rModelHeight))
 			{
@@ -1571,7 +1571,7 @@ bool PatternAnalyzer::ReloadImage(const std::string& rImageFile, SvVol::SVLongVa
 	bool bOk = true;
 	SVMatroxBuffer importHandle;
 
-	HRESULT MatroxCode = SVMatroxBufferInterface::Import(importHandle, rImageFile, SVFileBitmap, true);
+	HRESULT MatroxCode = SVMatroxBufferInterface::Import(importHandle, rImageFile, ImageFileFormat::bmp, true);
 
 	if (S_OK == MatroxCode)
 	{

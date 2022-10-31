@@ -1,25 +1,23 @@
 // ******************************************************************************
 // * COPYRIGHT (c) 2005 by Körber Pharma Inspection GmbH. All Rights Reserved
 // * All Rights Reserved
-// ******************************************************************************
-// * .Module Name     : SVRegressionFileSelectDlg
-// * .File Name       : $Workfile:   SVRegressionFileSelectDlg.cpp  $
-// * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.3  $
-// * .Check In Date   : $Date:   08 Oct 2014 13:46:16  $
-// ******************************************************************************
+/// \file SVRegressionFileSelectDlg.cpp
+// SVRegressionFileSelectDlg property page
 
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRegressionFileSelectDlg.h"
 #include "SVRegressionFileSelectSheet.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/SVFileDialog.h"
+#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "Definitions/TextDefinesSvDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -34,7 +32,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// SVRegressionFileSelectDlg property page
 
 IMPLEMENT_DYNCREATE(SVRegressionFileSelectDlg, CPropertyPage)
 
@@ -180,15 +177,14 @@ void SVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataStr
 {
 	//set data from the struct...
 	m_iSelectFileRadio = pDataStruct->iFileMethod;
-	m_RegTestFiles = pDataStruct->FirstFile.c_str();
+	m_RegTestFiles = pDataStruct->firstFilepath.c_str();
 
 	UpdateData(FALSE);
 }
 
 void SVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 {
-	static TCHAR Filter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
-	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, Filter, nullptr);
+	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, SvDef::fileDlgFilterMilSupportedImageFilesTypes, nullptr);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 
 	TCHAR FileName[PathBufferLen];
@@ -211,10 +207,10 @@ void SVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 		m_RegTestFiles = dlg.GetPathName();
 		if (!m_RegTestFiles.IsEmpty())
 		{
-			if (0 != m_RegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
+			if (ImageFileFormat::invalid == inferMilImageFileFormat(m_RegTestFiles.GetString()))
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams));
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidImageFileType, SvStl::SourceFileParams(StdMessageParams));
 				m_RegTestFiles = _T("");
 			}
 		}
@@ -233,4 +229,3 @@ void SVRegressionFileSelectDlg::ShowSelectDirectoryDlg(bool bFullAccess)
 		m_RegTestFiles = dlg.GetPathName();
 	}
 }
-

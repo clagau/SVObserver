@@ -14,7 +14,7 @@
 #include "Operators/TableFillByEquationObject.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

@@ -1,8 +1,8 @@
 //*****************************************************************************
 // \copyright COPYRIGHT (c) 2016 by Körber Pharma Inspection GmbH. All Rights Reserved
 // All Rights Reserved
+/// \file TextDefinesSvDef.h
 //*****************************************************************************
-
 // This is the central location for strings used in the Definitions project and also if this string is used in different projects.
 //******************************************************************************
 
@@ -61,6 +61,8 @@ constexpr const char* cInputTag_LongResultValue = _T("LongResultValue");
 constexpr const char* SizeAdjustTextNone = _T("Manual");
 constexpr const char* SizeAdjustTextFormula = _T("Formula");
 constexpr const char* SizeAdjustTextAutoFitSize = _T("Auto Fit");
+
+constexpr const char* fileDlgFilterMilSupportedImageFilesTypes = _T("Bitmap Files(*.bmp)|*.bmp|MIL Image Files (*.mim)|*.mim|PNG Files (*.png)|*.png|TIFF Files (*.tif)|*.tif||");
 
 static std::initializer_list<const char*> c_allInterpolationModeNames
 {
