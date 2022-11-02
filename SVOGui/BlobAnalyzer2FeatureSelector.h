@@ -77,7 +77,6 @@ namespace SvOg
 
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		CStatic m_numberLabel;
-		SvUl::NameObjectIdList m_gridList;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

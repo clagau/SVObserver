@@ -247,6 +247,8 @@ namespace SvOg
 			}
 		}
 
+		std::ranges::sort(features, [](const auto& rA, const auto& rB) { return rA.m_name < rB.m_name; });
+
 		BlobAnalyzer2FeatureSelector dlg(features, m_featureData.size());
 		if (IDOK == dlg.DoModal())
 		{
