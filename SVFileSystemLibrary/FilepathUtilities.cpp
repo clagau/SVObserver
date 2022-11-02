@@ -175,7 +175,18 @@ bool pathCanProbablyBeCreatedOrExistsAlready(const std::string& rFilePath)
 
 	//since it is very hard to reliably determine whether a directory path can be created:
 	//we just do some basic checks
-	if (isFilepathOnRegularPartition(rFilePath)|| isFilepathOnNetwork(rFilePath))
+
+	std::filesystem::path filepath {rFilePath};
+	auto parentPath = filepath.parent_path();
+
+	if (exists(parentPath) && !is_directory(parentPath))
+	{
+		// if there already is something at the location of the parent directory it must be a directory - otherwise the path cannot be created!
+
+		return false;
+	}
+
+	if (isFilepathOnRegularPartition(rFilePath) || isFilepathOnNetwork(rFilePath))
 	{
 		return true;
 	}

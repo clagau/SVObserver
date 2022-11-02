@@ -343,20 +343,20 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 
 void SVTADlgArchiveResultsPage::OnBrowse() 
 {
-	SVFileNameClass	svfncArchiveFileName;
+	SVFileNameClass	folderpathPart1;
 
 	//get current path
 	CString Text;
 	m_resultFolderpathPart1Edit.GetWindowText( Text );
-	std::string ArchiveFullName = Text.GetString();
+	std::string firstPart = Text.GetString();
 
-	SVCheckPathDir( ArchiveFullName.c_str(), TRUE );
+	SVCheckPathDir( firstPart.c_str(), TRUE );
 
-	svfncArchiveFileName.SetFileType(SV_DEFAULT_FILE_TYPE);
-	svfncArchiveFileName.SetDefaultFullFileName( ArchiveFullName.c_str() );
-	if (svfncArchiveFileName.SelectFile())
+	folderpathPart1.SetFileType(SV_DEFAULT_FILE_TYPE);
+	folderpathPart1.SetDefaultPathName(firstPart.c_str() );
+	if (folderpathPart1.SelectPath())
 	{
-		m_resultFolderpathPart1Edit.SetWindowText(svfncArchiveFileName.GetFullFileName().c_str()); 
+		m_resultFolderpathPart1Edit.SetWindowText(folderpathPart1.GetPathName().c_str());
 	}
 }
 
