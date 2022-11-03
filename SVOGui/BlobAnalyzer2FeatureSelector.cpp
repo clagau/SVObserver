@@ -8,6 +8,7 @@
 #include "stdafx.h"
 #include "BlobAnalyzer2FeatureSelector.h"
 #include "GridCtrlLibrary/GridCellCheck.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

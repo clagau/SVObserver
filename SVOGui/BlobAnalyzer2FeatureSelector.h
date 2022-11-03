@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
-#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
