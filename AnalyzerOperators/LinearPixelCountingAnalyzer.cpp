@@ -57,9 +57,9 @@ void LinearPixelCountingAnalyzer::init()
 	}
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &blackPixelCount, SvPb::BlackPixelEId, IDS_OBJECTNAME_BLACKPIXELCOUNT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &whitePixelCount, SvPb::WhitePixelEId, IDS_OBJECTNAME_WHITEPIXELCOUNT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SvPb::ShowAllEdgeAOverlaysEId, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject( &blackPixelCount, SvPb::BlackPixelEId, IDS_OBJECTNAME_BLACKPIXELCOUNT, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &whitePixelCount, SvPb::WhitePixelEId, IDS_OBJECTNAME_WHITEPIXELCOUNT, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SvPb::ShowAllEdgeAOverlaysEId, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone, true);
 
 	// Set Embedded defaults
 	blackPixelCount.SetDefaultValue( 0, true );

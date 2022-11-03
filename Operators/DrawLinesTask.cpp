@@ -94,13 +94,13 @@ void DrawLinesTask::Initialize()
 
 void DrawLinesTask::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_x1Values, SvPb::X1EId, IDS_OBJECTNAME_X_POINTS, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_x1Values, SvPb::X1EId, IDS_OBJECTNAME_X_POINTS, true, SvOi::SVResetItemOwner, true);
 	m_x1Values.SetDefaultValue(SvUl::vectorToSafeArray<double>({0.}), true);
-	RegisterEmbeddedObject(&m_y1Values, SvPb::Y1EId, IDS_OBJECTNAME_Y_POINTS, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_y1Values, SvPb::Y1EId, IDS_OBJECTNAME_Y_POINTS, true, SvOi::SVResetItemOwner, true);
 	m_y1Values.SetDefaultValue(SvUl::vectorToSafeArray<double>({0.}), true);
-	RegisterEmbeddedObject(&m_x2Values, SvPb::X2EId, IDS_OBJECTNAME_X2_POINTS, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_x2Values, SvPb::X2EId, IDS_OBJECTNAME_X2_POINTS, true, SvOi::SVResetItemOwner, true);
 	m_x2Values.SetDefaultValue(SvUl::vectorToSafeArray<double>({10.}), true);
-	RegisterEmbeddedObject(&m_y2Values, SvPb::Y2EId, IDS_OBJECTNAME_Y2_POINTS, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_y2Values, SvPb::Y2EId, IDS_OBJECTNAME_Y2_POINTS, true, SvOi::SVResetItemOwner, true);
 	m_y2Values.SetDefaultValue(SvUl::vectorToSafeArray<double>({50.}), true);
 }
 #pragma endregion Private Methods

@@ -39,8 +39,8 @@ void ThickeningFilter::init()
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::SVThickeningFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoItterations, SvPb::ThickeningFilterItterationsEId, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_bvoGrayOn, SvPb::ThickeningFilterGrayOnEId, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoItterations, SvPb::ThickeningFilterItterationsEId, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_bvoGrayOn, SvPb::ThickeningFilterGrayOnEId, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SvOi::SVResetItemNone, true);
 
 	m_lvoItterations.SetDefaultValue( 1L );
 	m_bvoGrayOn.SetDefaultValue(BOOL(false));

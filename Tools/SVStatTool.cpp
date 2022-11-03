@@ -55,67 +55,67 @@ void SVStatTool::init(void)
 			&m_Value [SV_STATS_MIN_VALUE], 
 			SvPb::StatMinEId,
 			IDS_OBJECTNAME_STATMIN,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false);
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_MAX_VALUE], 
 			SvPb::StatMaxEId,
 			IDS_OBJECTNAME_STATMAX,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false);
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_AVERAGEOF_VALUES], 
 			SvPb::StatAverageEId,
 			IDS_OBJECTNAME_STATAVERAGE,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false);
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_STANDARD_DEVIATION], 
 			SvPb::StatStdDevEId,
 			IDS_OBJECTNAME_STATSTDDEV,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false);
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_VARIANCEIN_VALUES], 
 			SvPb::StatVarianceEId,
 			IDS_OBJECTNAME_STATVARIANCE,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false);
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_NUMBEROF_OCCURANCES], 
 			SvPb::StatNbrOfOccurancesEId,
 			IDS_OBJECTNAME_STATNBROFOCCURANCES,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false);
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_PERCENTOF_OCCURANCES], 
 			SvPb::StatPercentOfOccurancesEId,
 			IDS_OBJECTNAME_STATPERCENTOFOCCURANCES,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false);
 		
 		RegisterEmbeddedObject(
 			&m_Value[SV_STATS_NUMBEROF_VALIDSAMPLES],
 			SvPb::StatNumberOfValidSamplesEId,
 			IDS_OBJECTNAME_STAT_NUMBEROF_VALID_SAMPLES,
-			false, SvOi::SVResetItemNone);
+			false, SvOi::SVResetItemNone, false);
 		
 		RegisterEmbeddedObject(
 			&m_OccurenceValue, 
 			SvPb::StatTestValueEId,
 			IDS_OBJECTNAME_STATTESTVALUE,
-			false, SvOi::SVResetItemTool );
+			false, SvOi::SVResetItemTool, true);
 		
 		RegisterEmbeddedObject(
 			&m_VariableName, 
 			SvPb::StatVariableNameToMonitorEId,
 			IDS_OBJECTNAME_STAT_VARIABLE_NAME,
-			false, SvOi::SVResetItemTool );
+			false, SvOi::SVResetItemTool, true);
 		
 		RegisterEmbeddedObject(
 			&m_PersistantFeaturesEnabled, 
 			SvPb::StatEnabledFeaturesEId,
 			IDS_OBJECTNAME_ENABLEDFEATURES,
-			false, SvOi::SVResetItemTool );
+			false, SvOi::SVResetItemTool, true);
 
 	// Save default attributes
 	m_Value[SV_STATS_MIN_VALUE].SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);

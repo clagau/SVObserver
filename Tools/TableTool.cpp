@@ -251,7 +251,7 @@ void TableTool::LocalInitialize ()
 
 void TableTool::BuildEmbeddedObjectList ()
 {
-	RegisterEmbeddedObject( &m_MaxRow, SvPb::TableTool_MaxRowEId, IDS_OBJECTNAME_TABLE_MAXROW, true, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_MaxRow, SvPb::TableTool_MaxRowEId, IDS_OBJECTNAME_TABLE_MAXROW, true, SvOi::SVResetItemTool, true);
 	m_MaxRow.SetDefaultValue( c_defaultMaxRow );
 }
 #pragma endregion Private Methods

@@ -49,7 +49,7 @@ namespace SvOgu
 #pragma region Constructor
 	public:
 		LinkedValue() = delete;// {};
-		LinkedValue(uint32_t instanceID, LinkedValueData&& data);
+		LinkedValue(uint32_t instanceID, LinkedValueData&& data, bool isReadOnly);
 
 		~LinkedValue() {}
 #pragma endregion Constructor
@@ -81,6 +81,7 @@ namespace SvOgu
 
 		uint32_t GetObjectID() const { return m_instanceID; }
 
+		bool isReadOnly() const { return m_isReadOnly; };
 		bool isModified() const { return m_bModified; }
 		bool isDefaultModified() const { return false; }
 		//Need to make this const to be able to clear the flag in other const methods
@@ -93,6 +94,7 @@ namespace SvOgu
 	private:
 		uint32_t m_instanceID{ SvDef::InvalidObjectId };
 		LinkedValueData m_data;
+		bool m_isReadOnly {false};
 		mutable bool m_bModified{ false };
 		mutable int m_ArrayIndex{ -1 };
 #pragma endregion Member Variables

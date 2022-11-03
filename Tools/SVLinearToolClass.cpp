@@ -374,12 +374,12 @@ void SVLinearToolClass::init()
 	m_svRotationAngle.SetTypeName( _T("Extent Angle") );
 	m_voUseProfileRotation.SetTypeName( _T("Extent Angle") );
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_svRotationAngle, SvPb::RotationAngleEId, IDS_OBJECTNAME_ROTATION_ANGLE, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_svRotationPointX, SvPb::RotationPointXEId, IDS_OBJECTNAME_ROTATION_POINT_X, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_svRotationPointY, SvPb::RotationPointYEId, IDS_OBJECTNAME_ROTATION_POINT_Y, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_voProfileOrientation, SvPb::ProfileOrientationEId,IDS_OBJECTNAME_LINEARTOOL_ORIENTATION, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_voUseProfileRotation, SvPb::LinearToolUseRotationEId, IDS_OBJECTNAME_LINEAR_TOOL_USE_ROTATION, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_svRotationAngle, SvPb::RotationAngleEId, IDS_OBJECTNAME_ROTATION_ANGLE, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject( &m_svRotationPointX, SvPb::RotationPointXEId, IDS_OBJECTNAME_ROTATION_POINT_X, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject( &m_svRotationPointY, SvPb::RotationPointYEId, IDS_OBJECTNAME_ROTATION_POINT_Y, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject( &m_voProfileOrientation, SvPb::ProfileOrientationEId,IDS_OBJECTNAME_LINEARTOOL_ORIENTATION, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_voUseProfileRotation, SvPb::LinearToolUseRotationEId, IDS_OBJECTNAME_LINEAR_TOOL_USE_ROTATION, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false);
 
 	// Set Embedded defaults
 	m_svRotationAngle.SetDefaultValue( 0.0, true );

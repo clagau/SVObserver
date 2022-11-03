@@ -61,7 +61,7 @@ void SVWindowToolClass::init()
 void SVWindowToolClass::BuildEmbeddedObjectList ()
 {
 	// Register Embedded Object
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId,	IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId,	IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false);
 }
 
 void SVWindowToolClass::BuildAvailableAnalyzerList ()

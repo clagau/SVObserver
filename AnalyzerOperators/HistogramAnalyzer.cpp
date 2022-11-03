@@ -213,133 +213,133 @@ void HistogramAnalyzer::init()
 			&msvHistogramValue, 
 			SvPb::HistogramValueEId,
 			IDS_OBJECTNAME_HISTOGRAM,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvMeanValue,
 			SvPb::HistogramMeanEId,
 			IDS_OBJECTNAME_HISTOGRAM_MEAN,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvStdDevValue,
 			SvPb::HistogramStdDevEId,
 			IDS_OBJECTNAME_HISTOGRAM_STDDEV,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvRangeStartValue,
 			SvPb::HistogramRangeStartEId,
 			IDS_OBJECTNAME_HISTOGRAM_RANGESTART,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvRangeEndValue,
 			SvPb::HistogramRangeEndEId,
 			IDS_OBJECTNAME_HISTOGRAM_RANGEEND,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvMaxPixelValue,
 			SvPb::HistogramMaxPixelEId,
 			IDS_OBJECTNAME_HISTOGRAM_MAXPIXEL,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvMinPixelValue,
 			SvPb::HistogramMinPixelEId,
 			IDS_OBJECTNAME_HISTOGRAM_MINPIXEL,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvPixelCountValue,
 			SvPb::HistogramPixelCountEId,
 			IDS_OBJECTNAME_HISTOGRAM_PIXELCOUNT,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvRangeSizeValue,
 			SvPb::HistogramRangeSizeEId,
 			IDS_OBJECTNAME_HISTOGRAM_RANGESIZE,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvScaleValue,
 			SvPb::HistogramScaleEId,
 			IDS_OBJECTNAME_HISTOGRAM_SCALE,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvHighPeak,
 			SvPb::HistogramHighPeakEId,
 			IDS_OBJECTNAME_HISTOGRAM_HIGHPEAK,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvLowPeak,
 			SvPb::HistogramLowPeakEId,
 			IDS_OBJECTNAME_HISTOGRAM_LOWPEAK,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvValley,
 			SvPb::HistogramValleyEId,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEY,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvPeakThreshold,
 			SvPb::HistogramPeakThresholdEId,
 			IDS_OBJECTNAME_HISTOGRAM_PEAKTHRESHOLD,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvDefaultPeak,
 			SvPb::HistogramDefaultPeakEId,
 			IDS_OBJECTNAME_HISTOGRAM_DEFAULTPEAK,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvMinPeakHeight,
 			SvPb::HistogramMinPeakHeightEId,
 			IDS_OBJECTNAME_HISTOGRAM_MINPEAKHEIGHT,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvAccumulateCounts,
 			SvPb::HistogramAccumulateEId,
 			IDS_OBJECTNAME_HISTOGRAM_ACCUMULATE,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvValleyLowerBound,
 			SvPb::HistogramValleyLowerBoundEId,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYLOW,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvValleyUpperBound,
 			SvPb::HistogramValleyUpperBoundEId,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYHIGH,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvValleyDefault,
 			SvPb::HistogramValleyDefaultEId,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYDEFAULT,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvDynamicHeight,
 			SvPb::HistogramDynamicHeightEId,
 			IDS_OBJECTNAME_HISTOGRAM_DYNAHEIGHT,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedObject( 
 			&msvFixedHeightValue,
 			SvPb::HistogramFixedHeightValueEId,
 			IDS_OBJECTNAME_HISTOGRAM_FIXEDHEIGHT,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, false );
 
 		RegisterEmbeddedImage(
 			&m_histogramImage,

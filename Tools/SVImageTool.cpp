@@ -113,23 +113,23 @@ SVImageToolClass::~SVImageToolClass()
 
 void SVImageToolClass::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_outputOperator, SvPb::ArithmeticOperatorEId, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_outputOperator, SvPb::ArithmeticOperatorEId, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SvOi::SVResetItemTool, true);
 	m_outputOperator.SetDefaultValue(SVImageSubSaturation);
 
-	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false);
 	m_SourceImageNames.SetArraySize(2);
 
-	RegisterEmbeddedObject(&m_IsGainOffsetEnabled, SvPb::ImageToolEnabledGainId, IDS_OBJECTNAME_IMAGETOOL_ENABLE_GAIN, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_IsGainOffsetEnabled, SvPb::ImageToolEnabledGainId, IDS_OBJECTNAME_IMAGETOOL_ENABLE_GAIN, false, SvOi::SVResetItemTool, true);
 	m_IsGainOffsetEnabled.SetDefaultValue(FALSE);
 
-	RegisterEmbeddedObject(&m_UseLut, SvPb::ImageToolRecalculateOnceId, IDS_OBJECTNAME_RECALCULATE_ONCE, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_UseLut, SvPb::ImageToolRecalculateOnceId, IDS_OBJECTNAME_RECALCULATE_ONCE, false, SvOi::SVResetItemTool, true);
 	m_UseLut.SetDefaultValue(FALSE);
 
-	RegisterEmbeddedObject(&m_LinkedGain, SvPb::ImageToolGainId, IDS_OBJECTNAME_IMAGETOOL_GAIN, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_LinkedGain, SvPb::ImageToolGainId, IDS_OBJECTNAME_IMAGETOOL_GAIN, false, SvOi::SVResetItemTool, true);
 
 	m_LinkedGain.SetDefaultValue(_variant_t(1.0), true);
 	
-	RegisterEmbeddedObject(&m_LinkedOffset, SvPb::ImageToolOffsetId, IDS_OBJECTNAME_IMAGETOOL_OFFSET, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_LinkedOffset, SvPb::ImageToolOffsetId, IDS_OBJECTNAME_IMAGETOOL_OFFSET, false, SvOi::SVResetItemTool, true);
 	m_LinkedOffset.SetDefaultValue(_variant_t(0.0), true);
 }
 

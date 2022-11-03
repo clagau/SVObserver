@@ -30,7 +30,7 @@ SVEvaluateStartAngleClass::SVEvaluateStartAngleClass( SVObjectClass* pOwner, int
 	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateStartAngleObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateStartAngleResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateStartAngleResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

@@ -48,19 +48,19 @@ void LoopTool::Initialize()
 
 void LoopTool::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_MaxLoops, SvPb::MaxLoopsEId, IDS_OBJECTNAME_LOOPTOOL_MAXLOOPS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_MaxLoops, SvPb::MaxLoopsEId, IDS_OBJECTNAME_LOOPTOOL_MAXLOOPS, false, SvOi::SVResetItemNone, true);
 	m_MaxLoops.SetDefaultValue(DefaultMaxLoops);
-	RegisterEmbeddedObject(&m_LoopCounter, SvPb::LoopCounterEId, IDS_OBJECTNAME_LOOPTOOL_LOOPCOUNTER, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LoopCounter, SvPb::LoopCounterEId, IDS_OBJECTNAME_LOOPTOOL_LOOPCOUNTER, false, SvOi::SVResetItemNone, false);
 	m_LoopCounter.SetDefaultValue(0);
 
-	RegisterEmbeddedObject(&m_LinkedLoops, SvPb::LinkedLoopsEId, IDS_OBJECTNAME_LOOPTOOL_LINKEDLOOPS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedLoops, SvPb::LinkedLoopsEId, IDS_OBJECTNAME_LOOPTOOL_LINKEDLOOPS, false, SvOi::SVResetItemNone, true);
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = VT_I4;
 	vtTemp.lVal = DefaultLinkedLoops;
 	m_LinkedLoops.SetDefaultValue(vtTemp, true);
 
-	RegisterEmbeddedObject(&m_LinkedBreak, SvPb::LoopBreakEId, IDS_OBJECTNAME_LOOPTOOL_BREAK, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedBreak, SvPb::LoopBreakEId, IDS_OBJECTNAME_LOOPTOOL_BREAK, false, SvOi::SVResetItemNone, true);
 	::VariantInit(&vtTemp);
 	vtTemp.vt = VT_I4;
 	vtTemp.lVal = DefaultLinkedBreak;

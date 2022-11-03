@@ -59,14 +59,14 @@ SVTransform::SVTransform( SVObjectClass* POwner, int StringResourceID )
 	m_inputRotationAngleResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_performTranslation, SvPb::PerformTranslationEId, IDS_OBJECTNAME_PERFORM_TRANSLATION, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_performRotation, SvPb::PerformRotationEId, IDS_OBJECTNAME_PERFORM_ROTATION, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_performTranslation, SvPb::PerformTranslationEId, IDS_OBJECTNAME_PERFORM_TRANSLATION, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_performRotation, SvPb::PerformRotationEId, IDS_OBJECTNAME_PERFORM_ROTATION, false, SvOi::SVResetItemTool, true);
 
-	RegisterEmbeddedObject( &m_learnedTranslationX, SvPb::LearnedTranslationXEId, IDS_OBJECTNAME_LEARNED_TRANSLATION_X, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_learnedTranslationY, SvPb::LearnedTranslationYEId, IDS_OBJECTNAME_LEARNED_TRANSLATION_Y, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_learnedRotationX, SvPb::LearnedRotationXEId, IDS_OBJECTNAME_LEARNED_ROTATION_X, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_learnedRotationY, SvPb::LearnedRotationYEId, IDS_OBJECTNAME_LEARNED_ROTATION_Y, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_learnedRotationAngle, SvPb::LearnedRotationAngleEId, IDS_OBJECTNAME_LEARNED_ROTATION_ANGLE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_learnedTranslationX, SvPb::LearnedTranslationXEId, IDS_OBJECTNAME_LEARNED_TRANSLATION_X, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_learnedTranslationY, SvPb::LearnedTranslationYEId, IDS_OBJECTNAME_LEARNED_TRANSLATION_Y, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_learnedRotationX, SvPb::LearnedRotationXEId, IDS_OBJECTNAME_LEARNED_ROTATION_X, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_learnedRotationY, SvPb::LearnedRotationYEId, IDS_OBJECTNAME_LEARNED_ROTATION_Y, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_learnedRotationAngle, SvPb::LearnedRotationAngleEId, IDS_OBJECTNAME_LEARNED_ROTATION_ANGLE, false, SvOi::SVResetItemTool, true);
 
 	// Set Embedded defaults
 	m_performTranslation.SetDefaultValue( BOOL(false) );

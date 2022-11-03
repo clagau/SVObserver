@@ -122,16 +122,16 @@ void DrawTask::initialize(const SvDef::NameValueVector& rDrawAreaList, long defa
 
 void DrawTask::buildEmbeddedObjectList(const SvDef::NameValueVector& rDrawAreaList, long defaultDrawArea)
 {
-	RegisterEmbeddedObject(&m_Color1Object, SvPb::Color1EId, IDS_COLOR1, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_Color1Object, SvPb::Color1EId, IDS_COLOR1, false, SvOi::SVResetItemOwner, true);
 	m_Color1Object.SetDefaultValue(0, false);
-	RegisterEmbeddedObject(&m_Color2Object, SvPb::Color2EId, IDS_COLOR2, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_Color2Object, SvPb::Color2EId, IDS_COLOR2, false, SvOi::SVResetItemOwner, true);
 	m_Color2Object.SetDefaultValue(0, false);
-	RegisterEmbeddedObject(&m_Color3Object, SvPb::Color3EId, IDS_COLOR3, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_Color3Object, SvPb::Color3EId, IDS_COLOR3, false, SvOi::SVResetItemOwner, true);
 	m_Color3Object.SetDefaultValue(0, false);
 
 	if (false == rDrawAreaList.empty())
 	{
-		RegisterEmbeddedObject(&m_drawAreaObject, SvPb::DrawAreaEId, IDS_OBJECT_DRAW_AREA, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_drawAreaObject, SvPb::DrawAreaEId, IDS_OBJECT_DRAW_AREA, false, SvOi::SVResetItemOwner, true);
 		m_drawAreaObject.SetEnumTypes(rDrawAreaList);
 		m_drawAreaObject.SetDefaultValue(defaultDrawArea);
 	}

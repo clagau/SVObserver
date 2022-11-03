@@ -53,20 +53,20 @@ void SVThresholdClass::init()
 	m_ObjectTypeInfo.m_SubType = SvPb::SVThresholdObjectType;
 
 	// Register Embedded Object(s)
-	RegisterEmbeddedObject( &m_upperThresh, SvPb::UpperThresholdEId, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_lowerThresh, SvPb::LowerThresholdEId, IDS_OBJECTNAME_LOWERTHRESHOLD, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_threshActivate, SvPb::ThresholdActivateEId, IDS_OBJECTNAME_THRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_upperThreshActivate, SvPb::UpperThresholdActivateEId, IDS_OBJECTNAME_UPPERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_lowerThreshActivate, SvPb::LowerThresholdActivateEId, IDS_OBJECTNAME_LOWERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_upperThresh, SvPb::UpperThresholdEId, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_lowerThresh, SvPb::LowerThresholdEId, IDS_OBJECTNAME_LOWERTHRESHOLD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_threshActivate, SvPb::ThresholdActivateEId, IDS_OBJECTNAME_THRESHOLDACTIVATE, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_upperThreshActivate, SvPb::UpperThresholdActivateEId, IDS_OBJECTNAME_UPPERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_lowerThreshActivate, SvPb::LowerThresholdActivateEId, IDS_OBJECTNAME_LOWERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone, true);
 
-	RegisterEmbeddedObject( &m_autoThreshold, SvPb::AutoThresholdEId, IDS_OBJECTNAME_AUTOTHRESHOLD, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_blackBackground, SvPb::BlackBackgroundEId, IDS_OBJECTNAME_BLACKBACKGROUND, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_autoThreshold, SvPb::AutoThresholdEId, IDS_OBJECTNAME_AUTOTHRESHOLD, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_blackBackground, SvPb::BlackBackgroundEId, IDS_OBJECTNAME_BLACKBACKGROUND, false, SvOi::SVResetItemNone, true);
 
-	RegisterEmbeddedObject( &m_dAutoThresholdMultiplier, SvPb::AutoThresholdMultiplierEId, IDS_OBJECTNAME_AUTOTHRESHOLDMULTIPLIER, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_dAutoThresholdMultiplier, SvPb::AutoThresholdMultiplierEId, IDS_OBJECTNAME_AUTOTHRESHOLDMULTIPLIER, false, SvOi::SVResetItemNone, true);
 
-	RegisterEmbeddedObject( &m_useExternalATM, SvPb::UseExternalATMEId, IDS_OBJECTNAME_USE_EXTERN_ATM, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_useExternalLT, SvPb::UseExternalLTEId, IDS_OBJECTNAME_USE_EXTERN_LT, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_useExternalUT, SvPb::UseExternalUTEId, IDS_OBJECTNAME_USE_EXTERN_UT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_useExternalATM, SvPb::UseExternalATMEId, IDS_OBJECTNAME_USE_EXTERN_ATM, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_useExternalLT, SvPb::UseExternalLTEId, IDS_OBJECTNAME_USE_EXTERN_LT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_useExternalUT, SvPb::UseExternalUTEId, IDS_OBJECTNAME_USE_EXTERN_UT, false, SvOi::SVResetItemOwner, true);
 
 	// Set Embedded defaults
 	m_upperThresh.SetDefaultValue( SvDef::cDefaultToolUpperThreshold );

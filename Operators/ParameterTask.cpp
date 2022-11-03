@@ -445,7 +445,7 @@ namespace SvOp
 
 	void ParameterTask::BuildEmbeddedObjectList()
 	{
-		RegisterEmbeddedObject(&m_NumberOfObjects, SvPb::NumberOfObjectsEId, IDS_OBJECTNAME_NUMBER_OF_OBJECTS, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_NumberOfObjects, SvPb::NumberOfObjectsEId, IDS_OBJECTNAME_NUMBER_OF_OBJECTS, false, SvOi::SVResetItemNone, false);
 		m_NumberOfObjects.SetDefaultValue(0);
 
 		m_objects.reserve(cMaxNumberOfObjects);
@@ -742,7 +742,7 @@ namespace SvOp
 			m_objects[index] = std::make_unique<SvVol::LinkedValue>();
 			CreateChildObject(m_objects[index].get());
 			m_objects[index]->setSaveDefaultValueFlag(true);
-			RegisterEmbeddedObject(m_objects[index].get(), m_startEmbeddedIdValue + index, name.c_str(), false, SvOi::SVResetItemTool);
+			RegisterEmbeddedObject(m_objects[index].get(), m_startEmbeddedIdValue + index, name.c_str(), false, SvOi::SVResetItemTool, false);
 			m_objects[index]->setExcludeSameLineageListForObjectSelector({SvPb::ParameterResultObjectType == m_ObjectTypeInfo.m_SubType ? this : GetAncestor(SvPb::SVToolObjectType)});
 		}
 
@@ -750,7 +750,7 @@ namespace SvOp
 		{
 			m_TypeObjects[index] = std::make_unique <SvVol::SVEnumerateValueObjectClass>();
 			CreateChildObject(m_TypeObjects[index].get());
-			RegisterEmbeddedObject(m_TypeObjects[index].get(), m_startEmbeddedIdType + index, (name + cTypeNamePostfix).c_str(), false, SvOi::SVResetItemOwner);
+			RegisterEmbeddedObject(m_TypeObjects[index].get(), m_startEmbeddedIdType + index, (name + cTypeNamePostfix).c_str(), false, SvOi::SVResetItemOwner, false);
 			m_TypeObjects[index]->SetEnumTypes(m_objectTypeEnumString);
 			m_TypeObjects[index]->SetDefaultValue(0l, true);
 		}

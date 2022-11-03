@@ -90,8 +90,8 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		const LPCSTR g_strTypeEnums = _T("None=0,Value=1,Link=2,Formula=3");
 		m_refOptionObject.SetEnumTypes(g_strTypeEnums);
 
-		RegisterEmbeddedObject(&m_Content, SvPb::LinkedValueContentEId, IDS_OBJECTNAME_LINKEDVALUE_CONTENT, false, SvOi::SVResetItemNone);
-		RegisterEmbeddedObject(&m_refOptionObject, SvPb::LinkedValueTypeEId, IDS_OBJECTNAME_LINKEDVALUE_OPTION, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_Content, SvPb::LinkedValueContentEId, IDS_OBJECTNAME_LINKEDVALUE_CONTENT, false, SvOi::SVResetItemNone, false);
+		RegisterEmbeddedObject(&m_refOptionObject, SvPb::LinkedValueTypeEId, IDS_OBJECTNAME_LINKEDVALUE_OPTION, false, SvOi::SVResetItemNone, false);
 
 		m_Content.SetDefaultValue("", true);
 		m_refOptionObject.SetDefaultValue(static_cast<long>(SvPb::LinkedSelectedOption::None), true);

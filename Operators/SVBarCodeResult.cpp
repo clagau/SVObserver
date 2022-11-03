@@ -55,31 +55,31 @@ SVBarCodeResult::SVBarCodeResult(SVObjectClass* POwner, int StringResourceID)
 		&msv_bUseSingleMatchString,
 		SvPb::BCUseSingleMatchStringEId,
 		IDS_OBJECTNAME_BC_USE_SINGLE_MATCH_STRING,
-		false, SvOi::SVResetItemOwner);
+		false, SvOi::SVResetItemOwner, true);
 
 	RegisterEmbeddedObject(
 		&msv_bUseMatchStringFile,
 		SvPb::BCUseMatchStringFileEId,
 		IDS_OBJECTNAME_BC_USE_MATCH_STRING_FILE,
-		false, SvOi::SVResetItemOwner);
+		false, SvOi::SVResetItemOwner, true);
 
 	RegisterEmbeddedObject(
 		&msv_szMatchStringFileName,
 		SvPb::BCMatchStringFileNameEId,
 		IDS_OBJECTNAME_BC_MATCH_STRING_FILE_NAME,
-		false, SvOi::SVResetItemOwner);
+		false, SvOi::SVResetItemOwner, true);
 
 	RegisterEmbeddedObject(
 		&msv_lMatchStringLine,
 		SvPb::BCMatchStringLineEId,
 		IDS_OBJECTNAME_BC_MATCH_STRING_LINE,
-		false, SvOi::SVResetItemNone);
+		false, SvOi::SVResetItemNone, false);
 
 	RegisterEmbeddedObject(
 		&m_dReadScore,
 		SvPb::BCMatchScoreEId,
 		IDS_OBJECTNAME_BC_READ_SCORE,
-		false, SvOi::SVResetItemNone);
+		false, SvOi::SVResetItemNone, false);
 
 	msv_bUseSingleMatchString.SetDefaultValue(BOOL(true), true);
 	msv_szMatchStringFileName.SetDefaultValue(_T(""), true);

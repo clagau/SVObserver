@@ -27,12 +27,9 @@
 
 
 #pragma region Declarations
-class SVConditional;
 class SVResultList;
 class SVToolSet;
 class SVInspectionProcess;
-class SVRegressionRunDlg;
-class SVRegressionFileSelectSheet;
 class SVImageView;
 class ToolSetView;
 class ResultTabbedView;

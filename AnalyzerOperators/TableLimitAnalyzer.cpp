@@ -109,7 +109,7 @@ void TableLimitAnalyzer::Initialize()
 void TableLimitAnalyzer::BuildEmbeddedObjectList()
 {
 	//set excludeHigh-Value
-	RegisterEmbeddedObject( &m_LimitValue, SvPb::TableAnaylzerLimitValueEId, IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE, true, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_LimitValue, SvPb::TableAnaylzerLimitValueEId, IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE, true, SvOi::SVResetItemTool, true);
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = cVarType_Value;

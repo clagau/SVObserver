@@ -472,16 +472,16 @@ void SVShiftTool::LocalInitialize()
 	m_LeftResult.SetTypeName( _T("Extent X") );
 	m_TopResult.SetTypeName( _T("Extent Y") );
 	//Register Embedded Objects
-	RegisterEmbeddedObject( &m_evoShiftMode, SvPb::ShiftToolModeEId, IDS_OBJECTNAME_SHIFT_TOOL_MODE, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_SourceImageName, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_TranslationX, SvPb::TranslationXEId, IDS_OBJECTNAME_TRANSLATION_X_RESULT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_TranslationY, SvPb::TranslationYEId, IDS_OBJECTNAME_TRANSLATION_Y_RESULT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_LearnedTranslationX, SvPb::ShiftToolReferenceXEId, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_X, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_LearnedTranslationY, SvPb::ShiftToolReferenceYEId, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_Y, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_DisplacementX, SvPb::ImageTransformDisplacementXEId, IDS_TRANSFORM_DISPLACEMENTX, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_DisplacementY, SvPb::ImageTransformDisplacementYEId, IDS_TRANSFORM_DISPLACEMENTY, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_LeftResult, SvPb::LeftResultEId, IDS_OBJECTNAME_LEFT_RESULT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_TopResult, SvPb::TopResultEId, IDS_OBJECTNAME_TOP_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_evoShiftMode, SvPb::ShiftToolModeEId, IDS_OBJECTNAME_SHIFT_TOOL_MODE, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_SourceImageName, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_TranslationX, SvPb::TranslationXEId, IDS_OBJECTNAME_TRANSLATION_X_RESULT, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_TranslationY, SvPb::TranslationYEId, IDS_OBJECTNAME_TRANSLATION_Y_RESULT, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_LearnedTranslationX, SvPb::ShiftToolReferenceXEId, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_X, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_LearnedTranslationY, SvPb::ShiftToolReferenceYEId, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_Y, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_DisplacementX, SvPb::ImageTransformDisplacementXEId, IDS_TRANSFORM_DISPLACEMENTX, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_DisplacementY, SvPb::ImageTransformDisplacementYEId, IDS_TRANSFORM_DISPLACEMENTY, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_LeftResult, SvPb::LeftResultEId, IDS_OBJECTNAME_LEFT_RESULT, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_TopResult, SvPb::TopResultEId, IDS_OBJECTNAME_TOP_RESULT, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedImage( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 
 	m_LearnedTranslationX.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );

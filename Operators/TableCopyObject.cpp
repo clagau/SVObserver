@@ -205,7 +205,7 @@ void TableCopyObject::changeEmbeddedId(SvPb::EmbeddedIdEnum oldId, SvPb::Embedde
 			}
 
 			std::string  name = valueIter->get()->GetName();
-			RegisterEmbeddedObject(valueIter->get(), newId, valueIter->get()->GetObjectName(), true, SvOi::SVResetItemTool);
+			RegisterEmbeddedObject(valueIter->get(), newId, valueIter->get()->GetObjectName(), true, SvOi::SVResetItemTool, false);
 			valueIter->get()->SetName(name.c_str());
 			sendChangedEmbeddedIDToUser(oldId, newId);
 		}
@@ -349,7 +349,7 @@ int TableCopyObject::ResetCopyColumn()
 				if (SvPb::NoEmbeddedId != newEmbeddedId)
 				{
 					std::string  name = newColumnIter->get()->GetName();
-					RegisterEmbeddedObject(newColumnIter->get(), newEmbeddedId, newColumnIter->get()->GetObjectName(), true, SvOi::SVResetItemTool);
+					RegisterEmbeddedObject(newColumnIter->get(), newEmbeddedId, newColumnIter->get()->GetObjectName(), true, SvOi::SVResetItemTool, false);
 					newColumnIter->get()->SetName(name.c_str());
 					sendChangedEmbeddedIDToUser(pSourceColumn->GetEmbeddedID(), newEmbeddedId);
 				}
@@ -410,7 +410,7 @@ bool TableCopyObject::ResetNewColumns(int valueListPos, int arraySize, SvStl::Me
 		{
 			SvPb::EmbeddedIdEnum embeddedId = getNextFreeEmbeddedColumID();
 			std::string name = pNewColumn.get()->GetName();
-			RegisterEmbeddedObject(pNewColumn.get(), embeddedId, pNewColumn.get()->GetObjectName(), true, SvOi::SVResetItemTool);
+			RegisterEmbeddedObject(pNewColumn.get(), embeddedId, pNewColumn.get()->GetObjectName(), true, SvOi::SVResetItemTool, false);
 			pNewColumn.get()->SetName(name.c_str());
 			m_ValueList.push_back(pNewColumn);
 			//move object from last position to wanted

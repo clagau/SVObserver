@@ -94,9 +94,9 @@ void DrawPolygonTask::Initialize()
 
 void DrawPolygonTask::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_xValues, SvPb::X1EId, IDS_OBJECTNAME_X_POINTS, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_xValues, SvPb::X1EId, IDS_OBJECTNAME_X_POINTS, true, SvOi::SVResetItemOwner, true);
 	m_xValues.SetDefaultValue(SvUl::vectorToSafeArray<double>({0.,10.,50.}), true);
-	RegisterEmbeddedObject(&m_yValues, SvPb::Y1EId, IDS_OBJECTNAME_Y_POINTS, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_yValues, SvPb::Y1EId, IDS_OBJECTNAME_Y_POINTS, true, SvOi::SVResetItemOwner, true);
 	m_yValues.SetDefaultValue(SvUl::vectorToSafeArray<double>({0.,50.,50.}), true);
 }
 #pragma endregion Private Methods

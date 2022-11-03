@@ -30,7 +30,7 @@ SVEvaluateTranslationYClass::SVEvaluateTranslationYClass( SVObjectClass* pOwner,
 	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateTranslationYObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateTranslationYResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateTranslationYResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

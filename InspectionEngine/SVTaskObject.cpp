@@ -69,8 +69,8 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 	SetObjectAttributesAllowed(SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_statusTag, SvPb::StatusEId, IDS_OBJECTNAME_STATUS, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_statusColor, SvPb::ColorEId, IDS_OBJECTNAME_COLOR, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_statusTag, SvPb::StatusEId, IDS_OBJECTNAME_STATUS, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_statusColor, SvPb::ColorEId, IDS_OBJECTNAME_COLOR, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_statusColor.SetDefaultValue(static_cast<DWORD> (SvDef::DefaultInactiveColor), true);
@@ -631,7 +631,7 @@ void SVTaskObjectClass::fillInputInList(::google::protobuf::RepeatedPtrField< Sv
 					pElement->set_embeddedid(pInput->GetEmbeddedID());
 					auto* pValueMsg = pElement->mutable_value();
 					SvPb::ConvertVariantToProtobuf(Value, pValueMsg->mutable_value());
-					//@TODO[MZA][10.30][10.10.2022] this values are always readonly. If a readonly-flag for the ValueObjectValues is added, it has to be true.
+					pElement->set_is_readonly(true);
 				}
 			}
 		}

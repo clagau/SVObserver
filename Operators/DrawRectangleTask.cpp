@@ -94,13 +94,13 @@ void DrawRectangleTask::Initialize()
 
 void DrawRectangleTask::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_leftValue, SvPb::LeftEId, IDS_OBJECTNAME_EXTENT_LEFT, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_leftValue, SvPb::LeftEId, IDS_OBJECTNAME_EXTENT_LEFT, true, SvOi::SVResetItemOwner, true);
 	m_leftValue.SetDefaultValue(_variant_t(10L), true);
-	RegisterEmbeddedObject(&m_topValue, SvPb::TopEId, IDS_OBJECTNAME_EXTENT_TOP, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_topValue, SvPb::TopEId, IDS_OBJECTNAME_EXTENT_TOP, true, SvOi::SVResetItemOwner, true);
 	m_topValue.SetDefaultValue(_variant_t(10L), true);
-	RegisterEmbeddedObject(&m_width, SvPb::WidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_width, SvPb::WidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, true, SvOi::SVResetItemOwner, true);
 	m_width.SetDefaultValue(_variant_t(80L), true);
-	RegisterEmbeddedObject(&m_height, SvPb::HeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_height, SvPb::HeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, true, SvOi::SVResetItemOwner, true);
 	m_height.SetDefaultValue(_variant_t(80L), true);
 }
 #pragma endregion Private Methods

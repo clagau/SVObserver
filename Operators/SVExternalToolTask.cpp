@@ -74,27 +74,27 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		registerInputObject(&m_Data.m_aInputImageInfo[i], l_Name, SvPb::ImageInputEId + i);
 		m_Data.m_aInputImageInfo[i].setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 	}
-	RegisterEmbeddedObject(&m_Data.m_voDllPath, SvPb::DllFileNameEId, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_Data.m_UseUnitMapping, SvPb::UseUnitMappingEId, "Use Unit Mapping", false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_Data.m_voDllPath, SvPb::DllFileNameEId, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_Data.m_UseUnitMapping, SvPb::UseUnitMappingEId, "Use Unit Mapping", false, SvOi::SVResetItemTool, true);
 	m_Data.m_UseUnitMapping.setDefaultValue(FALSE);
 	// Initialize Dll Dependencies 
 	m_Data.m_aDllDependencies.resize(SVExternalToolTaskData::NUM_TOOL_DEPENDENCIES);
 	for (i = 0; i < m_Data.m_aDllDependencies.size(); i++)
 	{
-		RegisterEmbeddedObject(&m_Data.m_aDllDependencies[i], SvPb::DllDependencyFileNameEId + i, IDS_OBJECTNAME_DLL_DEP_FILE_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
+		RegisterEmbeddedObject(&m_Data.m_aDllDependencies[i], SvPb::DllDependencyFileNameEId + i, IDS_OBJECTNAME_DLL_DEP_FILE_01 + static_cast<int>(i), false, SvOi::SVResetItemTool, true);
 	}
 	// init Tool Name
-	RegisterEmbeddedObject(&m_Data.m_voToolName, SvPb::DllToolNameEId, IDS_OBJECTNAME_DLL_TOOL_NAME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Data.m_voToolName, SvPb::DllToolNameEId, IDS_OBJECTNAME_DLL_TOOL_NAME, false, SvOi::SVResetItemNone, false);
 	m_Data.m_voToolName.setSaveValueFlag(false);
 
 	// Init Tool Version
-	RegisterEmbeddedObject(&m_Data.m_voToolVersion, SvPb::DllToolVersionEId, IDS_OBJECTNAME_DLL_TOOL_VERSION, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Data.m_voToolVersion, SvPb::DllToolVersionEId, IDS_OBJECTNAME_DLL_TOOL_VERSION, false, SvOi::SVResetItemNone, false);
 	m_Data.m_voToolVersion.setSaveValueFlag(false);
 
 	// Init Input Object Info array
 	for (i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
-		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i], SvPb::ExternalInputEId + i, IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
+		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i], SvPb::ExternalInputEId + i, IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemTool, true);
 
 		// set default values
 		VARIANT vtTemp;
@@ -135,7 +135,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	for (i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
 		// Register
-		RegisterEmbeddedObject(&m_Data.m_aResultObjects[i], SvPb::ExternalResultEId + i, IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i), false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_Data.m_aResultObjects[i], SvPb::ExternalResultEId + i, IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i), false, SvOi::SVResetItemNone, false);
 
 		// Defaults
 		VARIANT vtTemp;

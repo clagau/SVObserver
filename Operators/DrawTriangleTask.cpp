@@ -92,17 +92,17 @@ void DrawTriangleTask::Initialize()
 
 void DrawTriangleTask::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_x1Value, SvPb::X1EId, IDS_OBJECTNAME_EXTENT_X1, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_x1Value, SvPb::X1EId, IDS_OBJECTNAME_EXTENT_X1, true, SvOi::SVResetItemOwner, true);
 	m_x1Value.SetDefaultValue(_variant_t(10L), true);
-	RegisterEmbeddedObject(&m_y1Value, SvPb::Y1EId, IDS_OBJECTNAME_EXTENT_Y1, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_y1Value, SvPb::Y1EId, IDS_OBJECTNAME_EXTENT_Y1, true, SvOi::SVResetItemOwner, true);
 	m_y1Value.SetDefaultValue(_variant_t(10L), true);
-	RegisterEmbeddedObject(&m_x2Value, SvPb::X2EId, IDS_OBJECTNAME_EXTENT_X2, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_x2Value, SvPb::X2EId, IDS_OBJECTNAME_EXTENT_X2, true, SvOi::SVResetItemOwner, true);
 	m_x2Value.SetDefaultValue(_variant_t(50L), true);
-	RegisterEmbeddedObject(&m_y2Value, SvPb::Y2EId, IDS_OBJECTNAME_EXTENT_Y2, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_y2Value, SvPb::Y2EId, IDS_OBJECTNAME_EXTENT_Y2, true, SvOi::SVResetItemOwner, true);
 	m_y2Value.SetDefaultValue(_variant_t(10L), true);
-	RegisterEmbeddedObject(&m_x3Value, SvPb::X3EId, IDS_OBJECTNAME_X3, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_x3Value, SvPb::X3EId, IDS_OBJECTNAME_X3, true, SvOi::SVResetItemOwner, true);
 	m_x3Value.SetDefaultValue(_variant_t(50L), true);
-	RegisterEmbeddedObject(&m_y3Value, SvPb::Y3EId, IDS_OBJECTNAME_Y3, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_y3Value, SvPb::Y3EId, IDS_OBJECTNAME_Y3, true, SvOi::SVResetItemOwner, true);
 	m_y3Value.SetDefaultValue(_variant_t(50L), true);
 }
 #pragma endregion Private Methods

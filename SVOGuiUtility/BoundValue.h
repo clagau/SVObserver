@@ -41,8 +41,8 @@ class BoundValue
 #pragma region Constructor
 public:
 	BoundValue() {};
-	BoundValue(uint32_t instanceID, const variant_t& rValue, const variant_t& rDefaultValue, variant_t&& rMinValue, variant_t&& rMaxValue)
-		: m_instanceID(instanceID), m_Value(rValue), m_DefaultValue(rDefaultValue), m_minValue(rMinValue), m_maxValue(rMaxValue)
+	BoundValue(uint32_t instanceID, const variant_t& rValue, const variant_t& rDefaultValue, variant_t&& rMinValue, variant_t&& rMaxValue, bool isReadOnly)
+		: m_instanceID(instanceID), m_Value(rValue), m_DefaultValue(rDefaultValue), m_minValue(rMinValue), m_maxValue(rMaxValue), m_isReadOnly(isReadOnly)
 	{
 	}
 
@@ -82,6 +82,7 @@ public:
 
 	uint32_t GetObjectID() const { return m_instanceID; }
 
+	bool isReadOnly() const { return m_isReadOnly; }
 	bool isModified() const { return m_bModified; }
 	bool isDefaultModified() const { return m_bDefaultModified; }
 	//Need to make this const to be able to clear the flag in other const methods
@@ -97,6 +98,7 @@ private:
 	variant_t m_Value;
 	variant_t m_minValue;
 	variant_t m_maxValue;
+	bool m_isReadOnly {false};
 	mutable bool m_bModified {false};
 	mutable bool m_bDefaultModified {false};
 	mutable int m_ArrayIndex {-1};
@@ -222,8 +224,16 @@ public:
 			assert(m_values.end() != it && 0 == it->second.index());
 			if (m_values.end() != it && 0 == it->second.index())
 			{
-				std::get<0>(it->second).SetDefaultValue(rDefaultValue);
-				return true;
+				if (auto& rValue = std::get<0>(it->second); false == rValue.isReadOnly())
+				{
+					rValue.SetDefaultValue(rDefaultValue);
+					return true;
+				}
+				else
+				{
+					assert(false);
+					return false;
+				}
 			}
 		}
 		return false;
@@ -237,15 +247,20 @@ public:
 			assert(m_values.end() != it);
 			if (m_values.end() != it)
 			{
-				if (0 == it->second.index())
+				bool isReadonly = std::visit([](const auto& val) -> uint32_t { return val.isReadOnly(); }, it->second);
+				assert(false == isReadonly);
+				if (false == isReadonly)
 				{
-					std::get<0>(it->second).SetValue(rValue, ArrayIndex);
-					return true;
-				}
-				else
-				{
-					//ArrayIndex have not to set in LinkedValues
-					return -1 == ArrayIndex && std::get<1>(it->second).setValue(rValue);
+					if (0 == it->second.index())
+					{
+						std::get<0>(it->second).SetValue(rValue, ArrayIndex);
+						return true;
+					}
+					else
+					{
+						//ArrayIndex have not to set in LinkedValues
+						return -1 == ArrayIndex && std::get<1>(it->second).setValue(rValue);
+					}
 				}
 			}
 		}
@@ -257,8 +272,8 @@ public:
 		if (!m_ReadOnly)
 		{
 			Container::iterator it = m_values.find(embeddedID);
-			assert(m_values.end() != it && 1 == it->second.index());
-			if (m_values.end() != it && 1 == it->second.index())
+			assert(m_values.end() != it && 1 == it->second.index() && false == std::get<1>(it->second).isReadOnly());
+			if (m_values.end() != it && 1 == it->second.index() && false == std::get<1>(it->second).isReadOnly())
 			{
 				std::get<1>(it->second).setLinkedData(data);
 				return true;

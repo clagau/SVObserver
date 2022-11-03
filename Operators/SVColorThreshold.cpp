@@ -259,7 +259,7 @@ void SVColorThreshold::LocalInitialize()
 	m_ObjectTypeInfo.m_SubType = SvPb::SVColorThresholdObjectType;
 
 	// Register Embedded Object(s)
-	RegisterEmbeddedObject(&m_OutputThresholdEnabled, SvPb::ColorThresholdEnabledEId, IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_OutputThresholdEnabled, SvPb::ColorThresholdEnabledEId, IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED, false, SvOi::SVResetItemNone, true);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Image Outputs
@@ -272,26 +272,26 @@ void SVColorThreshold::LocalInitialize()
 	/////////////////////////////////////////////////////////////////////////
 	// Band 0 Threshold
 	/////////////////////////////////////////////////////////////////////////
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_UpperThreshold, SvPb::Band0UpperThresholdEId, IDS_OBJECTNAME_BAND0_UPPERTHRESHOLD, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_LowerThreshold, SvPb::Band0LowerThresholdEId, IDS_OBJECTNAME_BAND0_LOWERTHRESHOLD, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_ThresholdExclude, SvPb::Band0ThresholdExcludeEId, IDS_OBJECTNAME_BAND0_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_ThresholdEnabled, SvPb::Band0ThresholdEnabledEId, IDS_OBJECTNAME_BAND0_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_UpperThreshold, SvPb::Band0UpperThresholdEId, IDS_OBJECTNAME_BAND0_UPPERTHRESHOLD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_LowerThreshold, SvPb::Band0LowerThresholdEId, IDS_OBJECTNAME_BAND0_LOWERTHRESHOLD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_ThresholdExclude, SvPb::Band0ThresholdExcludeEId, IDS_OBJECTNAME_BAND0_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_ThresholdEnabled, SvPb::Band0ThresholdEnabledEId, IDS_OBJECTNAME_BAND0_THRESHOLDENABLED, false, SvOi::SVResetItemNone, true);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Band 1 Threshold
 	/////////////////////////////////////////////////////////////////////////
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_UpperThreshold, SvPb::Band1UpperThresholdEId, IDS_OBJECTNAME_BAND1_UPPERTHRESHOLD, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_LowerThreshold, SvPb::Band1LowerThresholdEId, IDS_OBJECTNAME_BAND1_LOWERTHRESHOLD, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_ThresholdExclude, SvPb::Band1ThresholdExcludeEId, IDS_OBJECTNAME_BAND1_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_ThresholdEnabled, SvPb::Band1ThresholdEnabledEId, IDS_OBJECTNAME_BAND1_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_UpperThreshold, SvPb::Band1UpperThresholdEId, IDS_OBJECTNAME_BAND1_UPPERTHRESHOLD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_LowerThreshold, SvPb::Band1LowerThresholdEId, IDS_OBJECTNAME_BAND1_LOWERTHRESHOLD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_ThresholdExclude, SvPb::Band1ThresholdExcludeEId, IDS_OBJECTNAME_BAND1_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_ThresholdEnabled, SvPb::Band1ThresholdEnabledEId, IDS_OBJECTNAME_BAND1_THRESHOLDENABLED, false, SvOi::SVResetItemNone, true);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Band 2 Threshold
 	/////////////////////////////////////////////////////////////////////////
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_UpperThreshold, SvPb::Band2UpperThresholdEId, IDS_OBJECTNAME_BAND2_UPPERTHRESHOLD, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_LowerThreshold, SvPb::Band2LowerThresholdEId, IDS_OBJECTNAME_BAND2_LOWERTHRESHOLD, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_ThresholdExclude, SvPb::Band2ThresholdExcludeEId, IDS_OBJECTNAME_BAND2_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_ThresholdEnabled, SvPb::Band2ThresholdEnabledEId, IDS_OBJECTNAME_BAND2_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_UpperThreshold, SvPb::Band2UpperThresholdEId, IDS_OBJECTNAME_BAND2_UPPERTHRESHOLD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_LowerThreshold, SvPb::Band2LowerThresholdEId, IDS_OBJECTNAME_BAND2_LOWERTHRESHOLD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_ThresholdExclude, SvPb::Band2ThresholdExcludeEId, IDS_OBJECTNAME_BAND2_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_ThresholdEnabled, SvPb::Band2ThresholdEnabledEId, IDS_OBJECTNAME_BAND2_THRESHOLDENABLED, false, SvOi::SVResetItemNone, true);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Train Color ROI extents
@@ -301,10 +301,10 @@ void SVColorThreshold::LocalInitialize()
 	m_ExtentHeight.SetTypeName(_T("Extent Height"));
 	m_ExtentLeft.SetTypeName(_T("Extent X"));
 	m_ExtentTop.SetTypeName(_T("Extent Y"));
-	RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemOwner, true);
 
 	m_ExtentLeft.SetDefaultValue(SvDef::cDefaultWindowToolLeft, true);
 	m_ExtentTop.SetDefaultValue(SvDef::cDefaultWindowToolTop, true);

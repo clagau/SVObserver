@@ -119,68 +119,68 @@ void BlobAnalyzer::init()
 		&m_PersistantFeaturesEnabled, 
 		SvPb::BlobEnabledFeaturesEId,
 		IDS_OBJECTNAME_ENABLEDFEATURES,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 
 	RegisterEmbeddedObject(
 		&m_lvoBlobSampleSize, 
 		SvPb::NbrOfBlobsEId,
 		IDS_OBJECTNAME_NBROFBLOBS,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 
 	RegisterEmbeddedObject(
 		&m_lvoMaxBlobDataArraySize, 
 		SvPb::MaxBlobDataArraySizeEId,
 		IDS_OBJECTNAME_MAX_BLOB_DATA_ARRAY_SIZE,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 
 	RegisterEmbeddedObject(
 		&m_SortFeature, 
 		SvPb::SortFeatureEId,
 		IDS_OBJECTNAME_SORTFEATURE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 
 	RegisterEmbeddedObject(
 		&m_lvoNumberOfBlobsFound, 
 		SvPb::NbrOfBlobsFoundEId,
 		IDS_OBJECTNAME_NBROFBLOBSFOUND,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false );
 	m_lvoNumberOfBlobsFound.setSaveValueFlag(false);
 
 	RegisterEmbeddedObject(
 		&m_SortAscending, 
 		SvPb::SortAscendingEId,
 		IDS_OBJECTNAME_SORTASCENDING,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 
 	RegisterEmbeddedObject(
 		&m_bExcludeFailed, 
 		SvPb::ExcludeFailedEId,
 		IDS_OBJECTNAME_EXCLUDEFAILED,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 
 	RegisterEmbeddedObject(
 		&m_bvoFillBlobs,
 		SvPb::BlobUseFillEId,
 		IDS_BLOB_USE_FILL,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 
 	RegisterEmbeddedObject(
 		&m_colorBlobEnumValue,
 		SvPb::BlobColorEId,
 		IDS_BLACK_BLOBS,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 
 	RegisterEmbeddedObject(
 		&m_evoBlobFillColor,
 		SvPb::BlobFillColorEId,
 		IDS_BLOB_FILL_COLOR,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 
 	RegisterEmbeddedObject(
 		&m_evoBlobType,
 		SvPb::BlobFillTypeEId,
 		IDS_BLOB_FILL_TYPE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
@@ -188,7 +188,7 @@ void BlobAnalyzer::init()
 			&m_Value[i], 
 			BlobFeatureConstants[i].embeddedID,
 			BlobFeatureConstants[i].NewStringResourceID,
-			false, SvOi::SVResetItemNone );
+			false, SvOi::SVResetItemNone, true);
 
 		m_Value[i].SetDefaultValue(0, true);
 		m_Value[i].setSaveValueFlag(false);
@@ -814,7 +814,7 @@ void BlobAnalyzer::EnableFeature(int Feature)
 	auto iter = std::ranges::find(m_embeddedList, &m_Value[Feature]);
 	if (iter == m_embeddedList.end())
 	{
-		RegisterEmbeddedObject(&m_Value[Feature], BlobFeatureConstants[Feature].embeddedID, BlobFeatureConstants[Feature].NewStringResourceID, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_Value[Feature], BlobFeatureConstants[Feature].embeddedID, BlobFeatureConstants[Feature].NewStringResourceID, false, SvOi::SVResetItemNone, true);
 	}
 
 	if (SvDef::InvalidObjectId == m_ResultIds[Feature])

@@ -77,9 +77,9 @@ void DrawBucketFillTask::Initialize()
 
 void DrawBucketFillTask::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_xValue, SvPb::X1EId, IDS_OBJECTNAME_X, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_xValue, SvPb::X1EId, IDS_OBJECTNAME_X, true, SvOi::SVResetItemOwner, true);
 	m_xValue.SetDefaultValue(10, true);
-	RegisterEmbeddedObject(&m_yValue, SvPb::Y1EId, IDS_OBJECTNAME_Y, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_yValue, SvPb::Y1EId, IDS_OBJECTNAME_Y, true, SvOi::SVResetItemOwner, true);
 	m_yValue.SetDefaultValue(10, true);
 }
 #pragma endregion Private Methods

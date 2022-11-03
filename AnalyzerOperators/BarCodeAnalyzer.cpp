@@ -67,33 +67,33 @@ void BarCodeAnalyzer::init()
 	m_ObjectTypeInfo.m_SubType = SvPb::SVBarCodeAnalyzerObjectType;
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject (&msv_szBarCodeValue, SvPb::BarCodeEId, IDS_OBJECTNAME_BARCODEVALUE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject (&msv_szRegExpressionValue, SvPb::RegExpressionEId, IDS_OBJECTNAME_CONTROLVALUE, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_lBarCodeType, SvPb::BCTypeEId, IDS_OBJECTNAME_BARCODETYPE, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dOrientation, SvPb::BCOrientationEId, IDS_OBJECTNAME_ORIENTATION, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dSkewNegative, SvPb::BCSkewNegativeEId, IDS_OBJECTNAME_SKEWNEGATIVE, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dSkewPositive, SvPb::BCSkewPositiveEId, IDS_OBJECTNAME_SKEWPOSITIVE, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dCellMinSize, SvPb::BCCellMinSizeEId, IDS_OBJECTNAME_CELLMINSIZE, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dCellMaxSize, SvPb::BCCellMaxSizeEId, IDS_OBJECTNAME_CELLMAXSIZE, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dCellNumberX, SvPb::BCCellNumberXEId, IDS_OBJECTNAME_CELLNUMBERX, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dCellNumberY, SvPb::BCCellNumberYEId, IDS_OBJECTNAME_CELLNUMBERY, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dSpeed, SvPb::BCSpeedEId, IDS_OBJECTNAME_SPEED, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dThreshold, SvPb::BCThresholdEId, IDS_OBJECTNAME_THRESHOLD, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dStringSize, SvPb::BCStringSizeEId, IDS_OBJECTNAME_STRINGSIZE, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dErrorCorrection, SvPb::BCErrorCorrectionEId, IDS_OBJECTNAME_ERRORCORRECTION, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dEncoding, SvPb::BCEncodingEId, IDS_OBJECTNAME_ENCODING, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dForegroundColor, SvPb::BCForegroundColorEId, IDS_OBJECTNAME_FOREGROUNDCOLOR, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_bSaveStringInFile, SvPb::BCSaveStringInFileEId, IDS_OBJECTNAME_SAVESTRINGINFILE, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_szStringFileName, SvPb::BCStringFileNameEId, IDS_OBJECTNAME_STRINGFILENAME, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&m_bWarnOnFailedRead, SvPb::BCWarnOnFailedReadEId, IDS_OBJECTNAME_WARNONFAILEDREAD, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_lBarcodeTimeout, SvPb::BCTimeoutEId, IDS_OBJECTNAME_BARCODETIMEOUT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_szBarCodeValue, SvPb::BarCodeEId, IDS_OBJECTNAME_BARCODEVALUE, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject (&msv_szRegExpressionValue, SvPb::RegExpressionEId, IDS_OBJECTNAME_CONTROLVALUE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_lBarCodeType, SvPb::BCTypeEId, IDS_OBJECTNAME_BARCODETYPE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dOrientation, SvPb::BCOrientationEId, IDS_OBJECTNAME_ORIENTATION, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dSkewNegative, SvPb::BCSkewNegativeEId, IDS_OBJECTNAME_SKEWNEGATIVE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dSkewPositive, SvPb::BCSkewPositiveEId, IDS_OBJECTNAME_SKEWPOSITIVE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dCellMinSize, SvPb::BCCellMinSizeEId, IDS_OBJECTNAME_CELLMINSIZE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dCellMaxSize, SvPb::BCCellMaxSizeEId, IDS_OBJECTNAME_CELLMAXSIZE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dCellNumberX, SvPb::BCCellNumberXEId, IDS_OBJECTNAME_CELLNUMBERX, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dCellNumberY, SvPb::BCCellNumberYEId, IDS_OBJECTNAME_CELLNUMBERY, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dSpeed, SvPb::BCSpeedEId, IDS_OBJECTNAME_SPEED, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dThreshold, SvPb::BCThresholdEId, IDS_OBJECTNAME_THRESHOLD, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dStringSize, SvPb::BCStringSizeEId, IDS_OBJECTNAME_STRINGSIZE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dErrorCorrection, SvPb::BCErrorCorrectionEId, IDS_OBJECTNAME_ERRORCORRECTION, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dEncoding, SvPb::BCEncodingEId, IDS_OBJECTNAME_ENCODING, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_dForegroundColor, SvPb::BCForegroundColorEId, IDS_OBJECTNAME_FOREGROUNDCOLOR, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_bSaveStringInFile, SvPb::BCSaveStringInFileEId, IDS_OBJECTNAME_SAVESTRINGINFILE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_szStringFileName, SvPb::BCStringFileNameEId, IDS_OBJECTNAME_STRINGFILENAME, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&m_bWarnOnFailedRead, SvPb::BCWarnOnFailedReadEId, IDS_OBJECTNAME_WARNONFAILEDREAD, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_lBarcodeTimeout, SvPb::BCTimeoutEId, IDS_OBJECTNAME_BARCODETIMEOUT, false, SvOi::SVResetItemOwner, true);
 	// IDS_OBJECTNAME_BARCODEUNEVENGRID
-	RegisterEmbeddedObject (&msv_bUnEvenGrid, SvPb::BCUnevenGridEId,IDS_OBJECTNAME_BARCODEUNEVENGRID, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_bUnEvenGrid, SvPb::BCUnevenGridEId,IDS_OBJECTNAME_BARCODEUNEVENGRID, false, SvOi::SVResetItemOwner, true);
 
 	// To support special DMCs May 2008.
-	RegisterEmbeddedObject (&msv_RawData, SvPb::BCRawDataEId, IDS_OBJECTNAME_BARCODERAWDATA, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_eStringFormat, SvPb::BCStringFormatEId, IDS_OBJECTNAME_BARCODESTRINGFORMAT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_lThresholdType, SvPb::BCThresholdTypeEId, IDS_OBJECTNAME_BARCODETHRESHOLDTYPE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_RawData, SvPb::BCRawDataEId, IDS_OBJECTNAME_BARCODERAWDATA, false, SvOi::SVResetItemOwner, false);
+	RegisterEmbeddedObject (&msv_eStringFormat, SvPb::BCStringFormatEId, IDS_OBJECTNAME_BARCODESTRINGFORMAT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject (&msv_lThresholdType, SvPb::BCThresholdTypeEId, IDS_OBJECTNAME_BARCODETHRESHOLDTYPE, false, SvOi::SVResetItemOwner, true);
 
 	// Set default values
 	msv_szBarCodeValue.SetDefaultValue (_T(""));

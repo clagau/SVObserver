@@ -61,13 +61,6 @@ SVTADlgTransformationLearnPage::SVTADlgTransformationLearnPage( uint32_t, uint32
 
 	m_pEvaluateRotationAngle	= nullptr;
 	m_pRotationAngleResult	= nullptr;
-
-	m_pImageTransform			= nullptr;
-	m_pLearnedTranslationX	= nullptr;
-	m_pLearnedTranslationY	= nullptr;
-	m_pLearnedRotationX		= nullptr;
-	m_pLearnedRotationY		= nullptr;
-	m_pLearnedRotationAngle	= nullptr;
 }
 
 SVTADlgTransformationLearnPage::~SVTADlgTransformationLearnPage()
@@ -76,25 +69,18 @@ SVTADlgTransformationLearnPage::~SVTADlgTransformationLearnPage()
 
 HRESULT SVTADlgTransformationLearnPage::SetInspectionData()
 {
-	HRESULT l_hrOk = S_FALSE;
+	UpdateData(true); // get data from dialog
 
-	if(nullptr != m_pImageTransform)
-	{
-		UpdateData( true ); // get data from dialog
+	//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+	SvOgu::ValueController Values {SvOgu::BoundValues{ m_inspectionId, m_imageTransformId }};
+	Values.Init();
 
-		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-		SvOgu::ValueController Values{ SvOgu::BoundValues{ m_pImageTransform->GetInspection()->getObjectId(), m_pImageTransform->getObjectId() } };
-		Values.Init();
-
-		Values.Set<double>(m_pLearnedTranslationX->GetEmbeddedID(), m_translationXValue);
-		Values.Set<double>(m_pLearnedTranslationY->GetEmbeddedID(), m_translationYValue);
-		Values.Set<double>(m_pLearnedRotationX->GetEmbeddedID(), m_rotationXValue);
-		Values.Set<double>(m_pLearnedRotationY->GetEmbeddedID(), m_rotationYValue);
-		Values.Set<double>(m_pLearnedRotationAngle->GetEmbeddedID(), m_rotationAngleValue);
-		Values.Commit();
-	}
-
-	return l_hrOk;
+	Values.Set<double>(SvPb::LearnedTranslationXEId, m_translationXValue);
+	Values.Set<double>(SvPb::LearnedTranslationYEId, m_translationYValue);
+	Values.Set<double>(SvPb::LearnedRotationXEId, m_rotationXValue);
+	Values.Set<double>(SvPb::LearnedRotationYEId, m_rotationYValue);
+	Values.Set<double>(SvPb::LearnedRotationAngleEId, m_rotationAngleValue);
+	return Values.Commit();
 }
 
 
@@ -272,35 +258,7 @@ BOOL SVTADlgTransformationLearnPage::OnInitDialog()
 		transformObjectInfo.m_ObjectType = SvPb::SVTransformObjectType;
 		transformObjectInfo.m_SubType = SvPb::SVImageTransformObjectType;
 
-		m_pImageTransform = dynamic_cast<SvOp::SVImageTransform*>(m_pTaskObject->getFirstObject(transformObjectInfo));
-		if( m_pImageTransform )
-		{
-			// Get learned Objects...
-			SvDef::SVObjectTypeInfoStruct learnedObjectInfo;
-			learnedObjectInfo.m_ObjectType = SvPb::SVValueObjectType;
-			learnedObjectInfo.m_SubType = SvPb::SVDoubleValueObjectType;
-
-			// Get learned Translation X Object...
-			learnedObjectInfo.m_EmbeddedID = SvPb::LearnedTranslationXEId;
-			m_pLearnedTranslationX = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
-
-			// Get learned Translation Y Object...
-			learnedObjectInfo.m_EmbeddedID = SvPb::LearnedTranslationYEId;
-			m_pLearnedTranslationY = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
-
-			// Get learned Rotation X Object...
-			learnedObjectInfo.m_EmbeddedID = SvPb::LearnedRotationXEId;
-			m_pLearnedRotationX = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
-
-			// Get learned Translation Y Object...
-			learnedObjectInfo.m_EmbeddedID = SvPb::LearnedRotationYEId;
-			m_pLearnedRotationY = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
-
-			// Get learned Rotation Angle Object...
-			learnedObjectInfo.m_EmbeddedID = SvPb::LearnedRotationAngleEId;
-			m_pLearnedRotationAngle = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
-		}
-
+		auto* pImageTransform = dynamic_cast<SvOp::SVImageTransform*>(m_pTaskObject->getFirstObject(transformObjectInfo));
 
 		UpdateData( FALSE );
 	
@@ -311,10 +269,11 @@ BOOL SVTADlgTransformationLearnPage::OnInitDialog()
 			m_pEvaluateRotationX && m_pRotationXResult &&
 			m_pEvaluateRotationY && m_pRotationYResult &&
 			m_pEvaluateRotationAngle && m_pRotationAngleResult &&
-			m_pImageTransform && m_pLearnedTranslationX && m_pLearnedTranslationY && 
-			m_pLearnedRotationX && m_pLearnedRotationY && m_pLearnedRotationAngle
-		  )
+			pImageTransform )
 		{
+			m_inspectionId = pImageTransform->GetInspection()->getObjectId();
+			m_imageTransformId = pImageTransform->getObjectId();
+
 			// Run the Tool - Get Updated Results
 			refresh();
 
@@ -343,10 +302,7 @@ void SVTADlgTransformationLearnPage::OnLearnButton()
 
 	if( m_pTranslationXResult && m_pTranslationYResult &&
 		m_pRotationXResult && m_pRotationYResult && 
-		m_pRotationAngleResult &&
-		m_pLearnedTranslationX && m_pLearnedTranslationY && 
-		m_pLearnedRotationX && m_pLearnedRotationY && m_pLearnedRotationAngle
-	  )
+		m_pRotationAngleResult )
 	{
 		// Run Tool - Get Updated Results
 		refresh();
@@ -359,62 +315,14 @@ void SVTADlgTransformationLearnPage::OnLearnButton()
 
 void SVTADlgTransformationLearnPage::refreshLearnedValues()
 {
-	std::string Value;
-	// refresh Learned Translation X settings...
-	if( nullptr != m_pLearnedTranslationX )
-	{
-		m_pLearnedTranslationX->getValue(	Value );
-		m_LearnedTranslationXValue = Value.c_str();
-	}
-	else
-	{
-		m_LearnedTranslationXValue = _T("");
-	}
-	
-	// refresh Learned Translation Y settings...
-	if( nullptr != m_pLearnedTranslationY )
-	{
-		m_pLearnedTranslationY->getValue(	Value );
-		m_LearnedTranslationYValue = Value.c_str();
-	}
-	else
-	{
-		m_LearnedTranslationYValue = _T("");
-	}
+	SvOgu::ValueController Values {SvOgu::BoundValues{ m_inspectionId, m_imageTransformId }};
+	Values.Init();
 
-	// refresh Learned Rotation X settings...
-	if( nullptr != m_pLearnedRotationX )
-	{
-		m_pLearnedRotationX->getValue( Value );
-		m_LearnedRotationXValue = Value.c_str();
-	}
-	else
-	{
-		m_LearnedRotationXValue = _T("");
-	}
-	
-	// refresh Learned Rotation Y settings...
-	if( nullptr != m_pLearnedRotationY )
-	{
-		m_pLearnedRotationY->getValue( Value );
-		m_LearnedRotationYValue = Value.c_str();
-	}
-	else
-	{
-		m_LearnedRotationYValue = _T("");
-	}
-
-	// refresh Learned Rotation Angle settings...
-	if( nullptr != m_pLearnedRotationAngle )
-	{
-		m_pLearnedRotationAngle->getValue( Value );
-
-		m_LearnedRotationAngleValue = Value.c_str();
-	}
-	else
-	{
-		m_LearnedRotationAngleValue = _T("");
-	}
+	m_LearnedTranslationXValue = Values.Get<CString>(SvPb::LearnedTranslationXEId);
+	m_LearnedTranslationYValue = Values.Get<CString>(SvPb::LearnedTranslationYEId);
+	m_LearnedRotationXValue = Values.Get<CString>(SvPb::LearnedRotationXEId);
+	m_LearnedRotationYValue = Values.Get<CString>(SvPb::LearnedRotationYEId);
+	m_LearnedRotationAngleValue = Values.Get<CString>(SvPb::LearnedRotationAngleEId);
 
 	UpdateData( FALSE );
 }

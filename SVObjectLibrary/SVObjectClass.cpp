@@ -676,19 +676,20 @@ bool SVObjectClass::checkIfValidDependency(const SVObjectClass* pObject) const
 // The only place that this is ever set to true is for the color HSI 
 // conversion value (Color Tool) and it is probably not necessary there.
 //
-bool SVObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
+bool SVObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset, bool isExternallySettable)
 {
 	std::string Name = SvUl::LoadStdString(StringResourceID);
-	return RegisterEmbeddedObject(pEmbeddedObject, embeddedID, Name.c_str(), ResetAlways, RequiredReset);
+	return RegisterEmbeddedObject(pEmbeddedObject, embeddedID, Name.c_str(), ResetAlways, RequiredReset, isExternallySettable);
 }
 
-bool SVObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR Name, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
+bool SVObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR Name, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset, bool isExternallySettable)
 {
 	bool Result(false);
 
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pEmbeddedObject);
 	if (nullptr != pValueObject)
 	{
+		pValueObject->setExternallySettable(isExternallySettable);
 		pValueObject->setResetOptions(ResetAlways, RequiredReset);
 
 		Result = RegisterEmbeddedObjectAsClass(pEmbeddedObject, embeddedID, Name);

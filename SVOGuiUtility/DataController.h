@@ -86,20 +86,41 @@ namespace SvOgu
 		bool SetDefault(SvPb::EmbeddedIdEnum embeddedID, const DataType& rValue)
 		{
 			_variant_t Value(rValue);
-			return m_Data.SetDefaultValue(embeddedID, Value);
+			bool retVal = m_Data.SetDefaultValue(embeddedID, Value);
+			if (false == retVal)
+			{
+				SvStl::MessageManager e(SvStl::MsgType::Display);
+				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetOfValueFailed, {std::to_string(embeddedID)}, SvStl::SourceFileParams(StdMessageParams));
+			}
+
+			return retVal;
 		}
 
 		template<typename DataType>
 		bool Set(SvPb::EmbeddedIdEnum embeddedID, const DataType& rValue, int ArrayIndex = -1)
 		{
 			_variant_t Value(rValue);
-			return m_Data.SetValue(embeddedID, Value, ArrayIndex);
+			bool retVal = m_Data.SetValue(embeddedID, Value, ArrayIndex);
+			if (false == retVal)
+			{
+				SvStl::MessageManager e(SvStl::MsgType::Display);
+				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetOfValueFailed, {std::to_string(embeddedID)}, SvStl::SourceFileParams(StdMessageParams));
+			}
+			
+			return retVal;
 		}
 
 		template<>
 		bool Set(SvPb::EmbeddedIdEnum embeddedID, const LinkedValueData& data, int /*ArrayIndex = -1*/)
 		{
-			return m_Data.setLinkedData(embeddedID, data);
+			bool retVal = m_Data.setLinkedData(embeddedID, data);
+			if (false == retVal)
+			{
+				SvStl::MessageManager e(SvStl::MsgType::Display);
+				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetOfValueFailed, {std::to_string(embeddedID)}, SvStl::SourceFileParams(StdMessageParams));
+			}
+
+			return retVal;
 		}
 
 		void setValues(const std::vector< std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, LinkedValueData>>>& values)

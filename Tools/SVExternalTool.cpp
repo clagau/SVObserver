@@ -65,7 +65,7 @@ void SVExternalTool::Initialize()
 	m_ObjectTypeInfo.m_SubType    = SvPb::SVExternalToolObjectType;
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false );
 
 	SvOp::SVExternalToolTask* l_pTask = new SvOp::SVExternalToolTask;
 	if ( nullptr != l_pTask )

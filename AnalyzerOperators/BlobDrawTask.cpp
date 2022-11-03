@@ -267,39 +267,39 @@ namespace SvAo
 		//Identify our output type.
 		m_ObjectTypeInfo.m_ObjectType = SvPb::BlobDrawObjectType;
 
-		RegisterEmbeddedObject(&m_isFillBlobs, SvPb::BlobUseFillEId, IDS_BLOB_USE_FILL, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_isFillBlobs, SvPb::BlobUseFillEId, IDS_BLOB_USE_FILL, false, SvOi::SVResetItemOwner, true);
 		m_isFillBlobs.SetDefaultValue(BOOL(false), true);
-		RegisterEmbeddedObject(&m_blobFillColor, SvPb::BlobFillColorEId, IDS_BLOB_FILL_COLOR, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_blobFillColor, SvPb::BlobFillColorEId, IDS_BLOB_FILL_COLOR, false, SvOi::SVResetItemNone, true);
 		m_blobFillColor.SetDefaultValue(0, true);
-		RegisterEmbeddedObject(&m_evoBlobType, SvPb::BlobFillTypeEId, IDS_BLOB_FILL_TYPE, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_evoBlobType, SvPb::BlobFillTypeEId, IDS_BLOB_FILL_TYPE, false, SvOi::SVResetItemNone, true);
 		m_evoBlobType.SetEnumTypes(g_strBlobFillTypeEnums);
 		m_evoBlobType.SetDefaultValue(SV_BLOB_FILL_EXCLUDED, true);
 
-		RegisterEmbeddedObject(&m_useAdditionalImage, SvPb::UseAdditionalImageEId, IDS_USE_ADDITIONAL_IMAGE, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_useAdditionalImage, SvPb::UseAdditionalImageEId, IDS_USE_ADDITIONAL_IMAGE, false, SvOi::SVResetItemOwner, true);
 		m_useAdditionalImage.SetDefaultValue(BOOL(false), true);
 		m_AdditionalImages.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
 		RegisterEmbeddedImage(&m_AdditionalImages, SvPb::OutputImageEId, "Additional Image");
-		RegisterEmbeddedObject(&m_isColorAdditionalImage, SvPb::IsColorAdditionalImageEId, IDS_IS_COLOR_ADDITIONALIMAGE, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_isColorAdditionalImage, SvPb::IsColorAdditionalImageEId, IDS_IS_COLOR_ADDITIONALIMAGE, false, SvOi::SVResetItemOwner, true);
 		m_isColorAdditionalImage.SetDefaultValue(BOOL(false), true);
-		RegisterEmbeddedObject(&m_backgroundColor1, SvPb::BackgroundColor1EId, IDS_BACKGROUND_COLOR1, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_backgroundColor1, SvPb::BackgroundColor1EId, IDS_BACKGROUND_COLOR1, false, SvOi::SVResetItemOwner, true);
 		m_backgroundColor1.SetDefaultValue(0, false);
-		RegisterEmbeddedObject(&m_backgroundColor2, SvPb::BackgroundColor2EId, IDS_BACKGROUND_COLOR2, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_backgroundColor2, SvPb::BackgroundColor2EId, IDS_BACKGROUND_COLOR2, false, SvOi::SVResetItemOwner, true);
 		m_backgroundColor2.SetDefaultValue(0, false);
-		RegisterEmbeddedObject(&m_backgroundColor3, SvPb::BackgroundColor3EId, IDS_BACKGROUND_COLOR3, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_backgroundColor3, SvPb::BackgroundColor3EId, IDS_BACKGROUND_COLOR3, false, SvOi::SVResetItemOwner, true);
 		m_backgroundColor3.SetDefaultValue(0, false);
 
-		RegisterEmbeddedObject(&m_additionalImage_StepNames, SvPb::DrawAdditionalImageStepNamesEId, IDS_ADDITONAL_IMAGE_STEPNAMES, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_additionalImage_DrawTypes, SvPb::DrawTypesEId, IDS_ADDITONAL_IMAGE_DRAW_TYPES, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_additionalImage_StepNames, SvPb::DrawAdditionalImageStepNamesEId, IDS_ADDITONAL_IMAGE_STEPNAMES, false, SvOi::SVResetItemOwner, true);
+		RegisterEmbeddedObject(&m_additionalImage_DrawTypes, SvPb::DrawTypesEId, IDS_ADDITONAL_IMAGE_DRAW_TYPES, false, SvOi::SVResetItemOwner, true);
 		m_additionalImage_DrawTypes.SetEnumTypes(g_alwaysDrawType);
 		m_additionalImage_DrawTypes.SetDefaultValue(M_DRAW_BLOBS);
-		RegisterEmbeddedObject(&m_additionalImage_BlobTypes, SvPb::BlobTypesEId, IDS_ADDITONAL_IMAGE_BLOB_TYPES, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_additionalImage_BlobTypes, SvPb::BlobTypesEId, IDS_ADDITONAL_IMAGE_BLOB_TYPES, false, SvOi::SVResetItemOwner, true);
 		m_additionalImage_BlobTypes.SetEnumTypes(g_strBlobFillTypeEnums);
 		m_additionalImage_BlobTypes.SetDefaultValue(SV_BLOB_FILL_INCLUDED);
-		RegisterEmbeddedObject(&m_additionalImage_Color1, SvPb::Color1EId, IDS_ADDITONAL_IMAGE_COLOR1, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_additionalImage_Color1, SvPb::Color1EId, IDS_ADDITONAL_IMAGE_COLOR1, false, SvOi::SVResetItemOwner, true);
 		m_additionalImage_Color1.SetDefaultValue(255);
-		RegisterEmbeddedObject(&m_additionalImage_Color2, SvPb::Color2EId, IDS_ADDITONAL_IMAGE_COLOR2, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_additionalImage_Color2, SvPb::Color2EId, IDS_ADDITONAL_IMAGE_COLOR2, false, SvOi::SVResetItemOwner, true);
 		m_additionalImage_Color2.SetDefaultValue(255);
-		RegisterEmbeddedObject(&m_additionalImage_Color3, SvPb::Color3EId, IDS_ADDITONAL_IMAGE_COLOR3, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_additionalImage_Color3, SvPb::Color3EId, IDS_ADDITONAL_IMAGE_COLOR3, false, SvOi::SVResetItemOwner, true);
 		m_additionalImage_Color3.SetDefaultValue(255);
 	}
 

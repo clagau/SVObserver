@@ -47,10 +47,10 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVNotSetSubObjectType;
 
-	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSWidth], SvPb::ToolSizeAdjustSizeWidthModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSHeight], SvPb::ToolSizeAdjustSizeHeightModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionX], SvPb::ToolSizeAdjustSizePositionXModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionY], SvPb::ToolSizeAdjustSizePositionYModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSWidth], SvPb::ToolSizeAdjustSizeWidthModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSHeight], SvPb::ToolSizeAdjustSizeHeightModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionX], SvPb::ToolSizeAdjustSizePositionXModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionY], SvPb::ToolSizeAdjustSizePositionYModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone, true);
 
 	SvDef::NameValueVector EnumVector{ {SvDef::SizeAdjustTextNone, SvDef::ToolSizeModes::TSNone} };
 	
@@ -64,7 +64,7 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	{
 		m_InputModes[vType].SetEnumTypes(EnumVector);
 		m_InputModes[vType].SetDefaultValue(SvDef::ToolSizeModes::TSNone, true );
-		m_InputModes[vType].SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+		m_InputModes[vType].SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	}
 
 	//Add Evaluation Objects 

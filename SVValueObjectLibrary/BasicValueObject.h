@@ -157,6 +157,9 @@ public:
 
 	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
 
+	virtual bool isExternallySettable() const override { return m_externallySettableFlag; };
+	virtual void setExternallySettable(bool flag) override { m_externallySettableFlag = flag; };
+
 	void setStandardFormatString() override {} //not currently used in this class
 
 #pragma endregion Public Methods
@@ -207,6 +210,7 @@ private:
 	bool				m_Created {false};	//Object is created
 	bool				m_Node {false};		//Object is only a node in the tree structure
 	bool				m_hasChanged {true};//Flag to determine data has changed since last update
+	bool				m_externallySettableFlag {false};
 	int32_t				m_memOffset {-1L};	//The trigger record memory offset
 	int32_t				m_memSizeReserved {0L};///The block memory size reserved
 	int32_t				m_trPos {-1L};		//The trigger record position

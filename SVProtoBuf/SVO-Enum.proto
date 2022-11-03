@@ -686,7 +686,7 @@ enum EmbeddedIdEnum
 	RootEId = 3;
 	ToolSetEnabledEId = 4;
 	ToolEnabledEId = 5;
-	ToolSelectedForOperatorMoveEId = 6;
+	ToolSelectedForOperatorMoveEId = 6; //obsolete, but needed for loading configs older than 10.20
 	ToolPositionEId = 7;
 	ToolTimeEId = 8;
 	MinToolSetTimeEId = 9;

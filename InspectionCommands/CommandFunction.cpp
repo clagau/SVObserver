@@ -61,6 +61,19 @@
 
 namespace SvCmd
 {
+namespace
+{
+auto addEmbeddedListEntry(SvPb::GetEmbeddedValuesResponse& rResp, SvOi::IObjectClass& rObject, bool isExternallySettable)
+{
+	auto* pElement = rResp.add_list();
+	pElement->set_objectid(rObject.getObjectId());
+	pElement->set_embeddedid(rObject.GetEmbeddedID());
+	pElement->set_is_readonly(false == isExternallySettable);
+	return pElement;
+}
+}
+
+
 SvPb::InspectionCmdResponse InspectionRunOnce(SvPb::InspectionRunOnceRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
@@ -1003,9 +1016,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 					
 					if (S_OK == result)
 					{
-						auto* pElement = pResponse->add_list();
-						pElement->set_objectid(rEntry);
-						pElement->set_embeddedid(pObject->GetEmbeddedID());
+						auto* pElement = addEmbeddedListEntry(*pResponse, *pObject, pValueObject->isExternallySettable());
 						auto* pValue = pElement->mutable_value();
 						ConvertVariantToProtobuf(Value, pValue->mutable_value());
 						ConvertVariantToProtobuf(DefaultValue, pValue->mutable_defaultvalue());
@@ -1022,9 +1033,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 					else if (E_BOUNDS == result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result || SVMSG_SVO_105_CIRCULAR_REFERENCE == result)
 					{
 						Value.Clear();
-						auto* pElement = pResponse->add_list();
-						pElement->set_objectid(rEntry);
-						pElement->set_embeddedid(pObject->GetEmbeddedID());
+						auto* pElement = addEmbeddedListEntry(*pResponse, *pObject, pValueObject->isExternallySettable());
 						auto* pValue = pElement->mutable_value();
 						ConvertVariantToProtobuf(Value, pValue->mutable_value());
 						ConvertVariantToProtobuf(DefaultValue, pValue->mutable_defaultvalue());
@@ -1036,9 +1045,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 				}
 				else
 				{
-					auto* pElement = pResponse->add_list();
-					pElement->set_objectid(rEntry);
-					pElement->set_embeddedid(pObject->GetEmbeddedID());
+					auto* pElement = addEmbeddedListEntry(*pResponse, *pObject, pValueObject->isExternallySettable());
 					auto* pValue = pElement->mutable_linkedvalue();
 					pLinkedObject->fillLinkedData(*pValue);					
 				}
@@ -1071,40 +1078,49 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 			SvOi::ILinkedObject* pLinkedObject = dynamic_cast<SvOi::ILinkedObject*> (pObject);
 			if (nullptr != pValueObject && rItem.has_values())
 			{
-				auto& rValues = rItem.values();
-				switch (rValues.valueData_case())
+				if (pValueObject->isExternallySettable())
 				{
-					case SvPb::ValueObjectValues::kValue:
-						if (nullptr == pLinkedObject)
-						{
-							variant_t value;
-							SvPb::ConvertProtobufToVariant(rValues.value().value(), value);
-							// Default value has no array index
-							_variant_t defaultValue;
-							SvPb::ConvertProtobufToVariant(rValues.value().defaultvalue(), defaultValue);
-							ChangedValues.push_back(SvOi::SetValueStruct {pValueObject, value, defaultValue, rItem.arrayindex()});
-						}
-						else
-						{
+					auto& rValues = rItem.values();
+					switch (rValues.valueData_case())
+					{
+						case SvPb::ValueObjectValues::kValue:
+							if (nullptr == pLinkedObject)
+							{
+								variant_t value;
+								SvPb::ConvertProtobufToVariant(rValues.value().value(), value);
+								// Default value has no array index
+								_variant_t defaultValue;
+								SvPb::ConvertProtobufToVariant(rValues.value().defaultvalue(), defaultValue);
+								ChangedValues.push_back(SvOi::SetValueStruct {pValueObject, value, defaultValue, rItem.arrayindex()});
+							}
+							else
+							{
+								assert(false);
+								cmdResponse.set_hresult(E_FAIL);
+							}
+							break;
+						case SvPb::ValueObjectValues::kLinkedValue:
+							if (nullptr != pLinkedObject)
+							{
+								ChangedValues.push_back(SvOi::SetLinkedStruct {pLinkedObject, rValues.linkedvalue()});
+							}
+							else
+							{
+								assert(false);
+								cmdResponse.set_hresult(E_FAIL);
+							}
+							break;
+						default:
 							assert(false);
 							cmdResponse.set_hresult(E_FAIL);
-						}
-						break;
-					case SvPb::ValueObjectValues::kLinkedValue:
-						if (nullptr != pLinkedObject)
-						{
-							ChangedValues.push_back(SvOi::SetLinkedStruct {pLinkedObject, rValues.linkedvalue()});
-						}
-						else
-						{
-							assert(false);
-							cmdResponse.set_hresult(E_FAIL);
-						}
-						break;
-					default:
-						assert(false);
-						cmdResponse.set_hresult(E_FAIL);
-						break;
+							break;
+					}
+				}
+				else
+				{
+					assert(false);
+					cmdResponse.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(pObject->getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_SetOfReadOnlyValueFailed));
+					cmdResponse.set_hresult(E_FAIL);
 				}
 			}
 			else

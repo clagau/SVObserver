@@ -32,7 +32,7 @@ SV_IMPLEMENT_CLASS( SVConditional, SvPb::ConditionalClassId);
 // 
 ////////////////////////////////////////////////////////////////////////////////
 SVConditional::SVConditional( SVObjectClass* POwner, int StringResourceID ) 
-: SVEquation( POwner, StringResourceID )
+: SVEquation( POwner, StringResourceID, true )
 {
 	init();
 }
@@ -52,7 +52,7 @@ void SVConditional::init()
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SvPb::ConditionalResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &result, SvPb::ConditionalResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false );
 
 	// Set Embedded defaults
 	result.SetDefaultValue( BOOL(false), true );

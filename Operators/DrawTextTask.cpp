@@ -152,29 +152,29 @@ void DrawTextTask::Initialize()
 SvDef::NameValueVector g_SizeEnumList = {{_T("Small"), 1}, {_T("Medium"), 2}, {_T("Large"), 3}};
 void DrawTextTask::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_IsBGTransparentObject, SvPb::IsBackgroundTransparentEId, IDS_OBJECTNAME_IS_BACKGROUND_TRANSPARENT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_IsBGTransparentObject, SvPb::IsBackgroundTransparentEId, IDS_OBJECTNAME_IS_BACKGROUND_TRANSPARENT, false, SvOi::SVResetItemOwner, true);
 	m_IsBGTransparentObject.SetDefaultValue(true, true);
-	RegisterEmbeddedObject(&m_BGColor1Object, SvPb::BackgroundColor1EId, IDS_BACKGROUND_COLOR1, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_BGColor1Object, SvPb::BackgroundColor1EId, IDS_BACKGROUND_COLOR1, false, SvOi::SVResetItemOwner, true);
 	m_BGColor1Object.SetDefaultValue(0, true);
-	RegisterEmbeddedObject(&m_BGColor2Object, SvPb::BackgroundColor2EId, IDS_BACKGROUND_COLOR2, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_BGColor2Object, SvPb::BackgroundColor2EId, IDS_BACKGROUND_COLOR2, false, SvOi::SVResetItemOwner, true);
 	m_BGColor2Object.SetDefaultValue(0, true);
-	RegisterEmbeddedObject(&m_BGColor3Object, SvPb::BackgroundColor3EId, IDS_BACKGROUND_COLOR3, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_BGColor3Object, SvPb::BackgroundColor3EId, IDS_BACKGROUND_COLOR3, false, SvOi::SVResetItemOwner, true);
 	m_BGColor3Object.SetDefaultValue(0, true);
 
-	RegisterEmbeddedObject(&m_xValue, SvPb::X1EId, IDS_OBJECTNAME_X, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_xValue, SvPb::X1EId, IDS_OBJECTNAME_X, true, SvOi::SVResetItemOwner, true);
 	m_xValue.SetDefaultValue(10, true);
-	RegisterEmbeddedObject(&m_yValue, SvPb::Y1EId, IDS_OBJECTNAME_Y, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_yValue, SvPb::Y1EId, IDS_OBJECTNAME_Y, true, SvOi::SVResetItemOwner, true);
 	m_yValue.SetDefaultValue(10, true);
-	RegisterEmbeddedObject(&m_text, SvPb::TextEId, IDS_OBJECTNAME_DRAW_TEXT, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_text, SvPb::TextEId, IDS_OBJECTNAME_DRAW_TEXT, true, SvOi::SVResetItemOwner, true);
 	m_text.SetDefaultValue("", true);
 	m_text.setValueType(SvPb::TypeText);
 	
-	RegisterEmbeddedObject(&m_fontSizeEnumObject, SvPb::FontSizeEId, IDS_OBJECTNAME_FONTSIZE, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_fontSizeEnumObject, SvPb::FontSizeEId, IDS_OBJECTNAME_FONTSIZE, true, SvOi::SVResetItemOwner, true);
 	m_fontSizeEnumObject.SetEnumTypes(g_SizeEnumList);
 	m_fontSizeEnumObject.SetDefaultValue(2);
-	RegisterEmbeddedObject(&m_fontScaleX, SvPb::FontScaleXEId, IDS_OBJECTNAME_FONT_SCALEX, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_fontScaleX, SvPb::FontScaleXEId, IDS_OBJECTNAME_FONT_SCALEX, true, SvOi::SVResetItemOwner, true);
 	m_fontScaleX.SetDefaultValue(1., true);
-	RegisterEmbeddedObject(&m_fontScaleY, SvPb::FontScaleYEId, IDS_OBJECTNAME_FONT_SCALEY, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_fontScaleY, SvPb::FontScaleYEId, IDS_OBJECTNAME_FONT_SCALEY, true, SvOi::SVResetItemOwner, true);
 	m_fontScaleY.SetDefaultValue(1., true);
 }
 #pragma endregion Private Methods

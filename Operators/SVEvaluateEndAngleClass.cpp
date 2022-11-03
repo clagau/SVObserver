@@ -30,7 +30,7 @@ SVEvaluateEndAngleClass::SVEvaluateEndAngleClass( SVObjectClass* pOwner, int Str
 	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateEndAngleObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateEndAngleResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateEndAngleResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false );
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

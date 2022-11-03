@@ -333,11 +333,11 @@ void SVLinearImageOperatorList::init()
 
 	m_svLinearData.SetLegacyVectorObjectCompatibility();
 
-	RegisterEmbeddedObject(&m_svLinearData, SvPb::LinearDataClassEId, IDS_CLASSNAME_SVLINEARDATACLASS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_svLinearData, SvPb::LinearDataClassEId, IDS_CLASSNAME_SVLINEARDATACLASS, false, SvOi::SVResetItemNone, false);
 	m_svLinearData.setSaveValueFlag(false);
-	RegisterEmbeddedObject(&m_MinProfile, SvPb::LinearThresholdMinEId, IDS_OBJECTNAME_LINEAR_PROFILE_MINVALUE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_MaxProfile, SvPb::LinearThresholdMaxEId, IDS_OBJECTNAME_LINEAR_PROFILE_MAXVALUE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_ProfileDelta, SvPb::LinearThresholdDeltaEId, IDS_OBJECTNAME_LINEAR_PROFILE_DELTA, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_MinProfile, SvPb::LinearThresholdMinEId, IDS_OBJECTNAME_LINEAR_PROFILE_MINVALUE, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_MaxProfile, SvPb::LinearThresholdMaxEId, IDS_OBJECTNAME_LINEAR_PROFILE_MAXVALUE, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_ProfileDelta, SvPb::LinearThresholdDeltaEId, IDS_OBJECTNAME_LINEAR_PROFILE_DELTA, false, SvOi::SVResetItemNone, false);
 	
 
 	m_MinProfile.SetDefaultValue(0.0);

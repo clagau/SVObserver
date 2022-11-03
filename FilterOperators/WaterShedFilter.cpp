@@ -43,9 +43,9 @@ void WatershedFilter::init()
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::SVWatershedFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoMinVariation, SvPb::WatershedFilterMinVariationEId, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_lvoControlFlag, SvPb::WatershedFilterControlFlagEId, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_bvoUseMarker, SvPb::WatershedFilterUseMarkerEId,    IDS_OBJECTNAME_WATERSHEDFILTER_USEMARKER, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoMinVariation, SvPb::WatershedFilterMinVariationEId, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_lvoControlFlag, SvPb::WatershedFilterControlFlagEId, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_bvoUseMarker, SvPb::WatershedFilterUseMarkerEId,    IDS_OBJECTNAME_WATERSHEDFILTER_USEMARKER, false, SvOi::SVResetItemNone, true);
 
 
 	// Default Values

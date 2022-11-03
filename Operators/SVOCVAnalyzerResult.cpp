@@ -79,75 +79,75 @@ void SVOCVAnalyzerResult::clearAll()
 		&m_svoMatchString, 
 		SvPb::OCVMatchStringEId,
 		IDS_OBJECTNAME_OCV_MATCH_STRING,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 	
 	RegisterEmbeddedObject( 
 		&m_svoFoundString, 
 		SvPb::OCVFoundStringEId,
 		IDS_OBJECTNAME_OCV_FOUND_STRING,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false);
 	
 	RegisterEmbeddedObject( 
 		&m_bvoPerformOCR,
 		SvPb::OCVPerformOCREId,
 		IDS_OBJECTNAME_OCV_PERFORM_OCR,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 	
 	RegisterEmbeddedObject( 
 		&m_lvoMatchLineNumber,
 		SvPb::OCVMatchLineNumberEId,
 		IDS_OBJECTNAME_OCV_MATCH_LINE_NUMBER,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false);
 	
 	// Exposing OCV Match Scores
 	RegisterEmbeddedObject( 
 		&m_dvoHighestMatchScore,
 		SvPb::OCVHighestMatchScoreEId,
 		IDS_OBJECTNAME_OCV_HIGHEST_MATCH_SCORE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false);
 	
 	RegisterEmbeddedObject( 
 		&m_dvoLowestMatchScore,
 		SvPb::OCVLowestMatchScoreEId,
 		IDS_OBJECTNAME_OCV_LOWEST_MATCH_SCORE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false);
 	
 	RegisterEmbeddedObject( 
 		&m_dvoAverageMatchScore,
 		SvPb::OCVAverageMatchScoreEId,
 		IDS_OBJECTNAME_OCV_AVERAGE_MATCH_SCORE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false);
 	
 	// OCV File Names
 	RegisterEmbeddedObject( 
 		&m_fnvoFontFileName,
 		SvPb::OCVFontFileNameEId,
 		IDS_OBJECTNAME_OCV_FONT_FILE_NAME,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 	
 	RegisterEmbeddedObject( 
 		&m_fnvoConstraintsFileName,
 		SvPb::OCVConstraintsFileNameEId,
 		IDS_OBJECTNAME_OCV_CONSTRAINTS_FILE_NAME,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 	
 	RegisterEmbeddedObject( 
 		&m_fnvoControlsFileName,
 		SvPb::OCVControlsFileNameEId,
 		IDS_OBJECTNAME_OCV_CONTROLS_FILE_NAME,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 	
 	RegisterEmbeddedObject(
 		&m_fnvoMatchStringFileName,
 		SvPb::OCVMatchStringFileNameEId,
 		IDS_OBJECTNAME_OCV_MATCH_STRING_FILE_NAME,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 	
 	RegisterEmbeddedObject( 
 		&m_bvoUseMatchFile,
 		SvPb::OCVUseMatchFileEId,
 		IDS_OBJECTNAME_OCV_USE_MATCH_FILE,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner, true);
 	
 	for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 	{

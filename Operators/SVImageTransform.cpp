@@ -61,14 +61,14 @@ SVImageTransform::SVImageTransform( SVObjectClass* POwner, int StringResourceID 
 	m_extentRotationAngle.SetTypeName( _T("Extent Angle") );
 	// Register Embedded Objects
 	RegisterEmbeddedImage( &m_outputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
-	RegisterEmbeddedObject( &m_useExtentsOnly, SvPb::UseExtentsOnlyEId, IDS_OBJECTNAME_USE_EXTENTS_ONLY, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_extentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_extentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_extentDisplacementX, SvPb::ImageTransformDisplacementXEId, IDS_TRANSFORM_DISPLACEMENTX, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_extentDisplacementY, SvPb::ImageTransformDisplacementYEId, IDS_TRANSFORM_DISPLACEMENTY, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_extentSourceX, SvPb::ImageTransformSourceXEId, IDS_TRANSFORM_SOURCE_X, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_extentSourceY, SvPb::ImageTransformSourceYEId, IDS_TRANSFORM_SOURCE_Y, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_extentRotationAngle, SvPb::RotationAngleEId, IDS_OBJECTNAME_ROTATION_ANGLE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_useExtentsOnly, SvPb::UseExtentsOnlyEId, IDS_OBJECTNAME_USE_EXTENTS_ONLY, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_extentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_extentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_extentDisplacementX, SvPb::ImageTransformDisplacementXEId, IDS_TRANSFORM_DISPLACEMENTX, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_extentDisplacementY, SvPb::ImageTransformDisplacementYEId, IDS_TRANSFORM_DISPLACEMENTY, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_extentSourceX, SvPb::ImageTransformSourceXEId, IDS_TRANSFORM_SOURCE_X, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_extentSourceY, SvPb::ImageTransformSourceYEId, IDS_TRANSFORM_SOURCE_Y, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_extentRotationAngle, SvPb::RotationAngleEId, IDS_OBJECTNAME_ROTATION_ANGLE, false, SvOi::SVResetItemNone, false);
 
 	// Interpolation mode object
 	// Set Default Interpolation Mode to use Nearest Neighbor
@@ -90,7 +90,7 @@ SVImageTransform::SVImageTransform( SVObjectClass* POwner, int StringResourceID 
 	// And now set enum types...
 	m_interpolationMode.SetEnumTypes( EnumTypes.c_str() );
 	m_interpolationMode.SetDefaultValue( SVNearestNeighOverScanClear );	// Refer to MIL...
-	RegisterEmbeddedObject( &m_interpolationMode, SvPb::OutputInterpolationModeEId, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_interpolationMode, SvPb::OutputInterpolationModeEId, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone, true);
 
 	// Set Embedded defaults
 	m_useExtentsOnly.SetDefaultValue( BOOL(false) );

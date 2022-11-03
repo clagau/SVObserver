@@ -127,6 +127,7 @@ message ValueObjectValues
 		StandardValue value = 3;
 		LinkedValue linkedValue = 4;
 	}
+	bool is_readonly = 5;
 }
 
 message SetValueObjectValues

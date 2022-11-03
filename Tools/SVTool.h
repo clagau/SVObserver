@@ -257,11 +257,8 @@ protected:
 
 	std::unique_ptr<EmbeddedExtents> m_pEmbeddedExtents = nullptr;
 	
-	SvVol::SVBoolValueObjectClass ToolSelectedForOperatorMove;
 	SvOp::SVConditional* m_pToolConditional;
-
 	SvVol::SVBoolValueObjectClass enabled;
-
 
 	SvOi::IToolSet* m_pCurrentToolSet;
 

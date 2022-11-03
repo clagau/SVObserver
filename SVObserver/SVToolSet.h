@@ -21,11 +21,6 @@
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma region Includes
 
-namespace SvOp
-{
-class SVConditional;
-}
-
 enum ToolSetTimes
 {
 	TriggerDelta,				///The time interval between the trigger that started the product and the previous trigger

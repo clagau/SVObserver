@@ -52,12 +52,12 @@ void SVOCVCharacterResult::init()
 	m_dvoOverlayLeft.SetTypeName( _T("Extent X") );
 	m_dvoOverlayTop.SetTypeName( _T("Extent Y") );
 
-	RegisterEmbeddedObject( &m_cvoLabelValue, SvPb::OCVCharacterValueEId, IDS_OBJECTNAME_OCV_CHARACTER_VALUE, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoOverlayLeft, SvPb::OCVExtentLeftEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoOverlayTop, SvPb::OCVExtentTopEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoOverlayWidth, SvPb::OCVExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoOverlayHeight, SvPb::OCVExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoMatchScore, SvPb::OCVMatchScoreEId, IDS_OBJECTNAME_OCV_MATCH_SCORE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_cvoLabelValue, SvPb::OCVCharacterValueEId, IDS_OBJECTNAME_OCV_CHARACTER_VALUE, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_dvoOverlayLeft, SvPb::OCVExtentLeftEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_dvoOverlayTop, SvPb::OCVExtentTopEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_dvoOverlayWidth, SvPb::OCVExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_dvoOverlayHeight, SvPb::OCVExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_dvoMatchScore, SvPb::OCVMatchScoreEId, IDS_OBJECTNAME_OCV_MATCH_SCORE, false, SvOi::SVResetItemNone, false);
 	m_cvoLabelValue.setSaveValueFlag(false);
 	m_dvoOverlayLeft.setSaveValueFlag(false);
 	m_dvoOverlayTop.setSaveValueFlag(false);

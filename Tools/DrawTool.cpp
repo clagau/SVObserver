@@ -275,24 +275,24 @@ void DrawTool::BuildInputObjectList ()
 
 void DrawTool::BuildEmbeddedObjectList ()
 {
-	RegisterEmbeddedObject(&m_useBGImageObject, SvPb::UseBackgroundImageEId, IDS_USE_BACKGROUND_IMAGE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_useBGImageObject, SvPb::UseBackgroundImageEId, IDS_USE_BACKGROUND_IMAGE, false, SvOi::SVResetItemOwner, true);
 	m_useBGImageObject.SetDefaultValue(BOOL(false), true);
-	RegisterEmbeddedObject(&m_isColorImageObject, SvPb::IsColorImageEId, IDS_IS_COLOR_IMAGE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_isColorImageObject, SvPb::IsColorImageEId, IDS_IS_COLOR_IMAGE, false, SvOi::SVResetItemOwner, true);
 	m_isColorImageObject.SetDefaultValue(BOOL(false), true);
-	RegisterEmbeddedObject(&m_autoFitSizeObject, SvPb::AutoFitSizeEId, IDS_USE_AUTOFIT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_autoFitSizeObject, SvPb::AutoFitSizeEId, IDS_USE_AUTOFIT, false, SvOi::SVResetItemOwner, true);
 	m_autoFitSizeObject.SetDefaultValue(BOOL(false), true);
 
-	RegisterEmbeddedObject(&m_BackgroundImageX, SvPb::PositionXEId, IDS_POSITION_X, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_BackgroundImageX, SvPb::PositionXEId, IDS_POSITION_X, false, SvOi::SVResetItemTool, true);
 	variant_t vtTemp {0l};
 	m_BackgroundImageX.SetDefaultValue(vtTemp);
-	RegisterEmbeddedObject(&m_BackgroundImageY, SvPb::PositionYEId, IDS_POSITION_Y, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_BackgroundImageY, SvPb::PositionYEId, IDS_POSITION_Y, false, SvOi::SVResetItemTool, true);
 	m_BackgroundImageY.SetDefaultValue(vtTemp);
 
-	RegisterEmbeddedObject(&m_backgroundColor1Object, SvPb::Color1EId, IDS_BACKGROUND_COLOR1, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_backgroundColor1Object, SvPb::Color1EId, IDS_BACKGROUND_COLOR1, false, SvOi::SVResetItemOwner, true);
 	m_backgroundColor1Object.SetDefaultValue(0, false);
-	RegisterEmbeddedObject(&m_backgroundColor2Object, SvPb::Color2EId, IDS_BACKGROUND_COLOR2, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_backgroundColor2Object, SvPb::Color2EId, IDS_BACKGROUND_COLOR2, false, SvOi::SVResetItemOwner, true);
 	m_backgroundColor2Object.SetDefaultValue(0, false);
-	RegisterEmbeddedObject(&m_backgroundColor3Object, SvPb::Color3EId, IDS_BACKGROUND_COLOR3, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_backgroundColor3Object, SvPb::Color3EId, IDS_BACKGROUND_COLOR3, false, SvOi::SVResetItemOwner, true);
 	m_backgroundColor3Object.SetDefaultValue(0, false);
 
 	m_OutputImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);

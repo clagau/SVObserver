@@ -52,7 +52,7 @@ void SVLowerThresholdEquation::init()
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SvPb::LowerThresholdEquationResultEId, IDS_OBJECTNAME_LOWER_THRESHOLD_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &result, SvPb::LowerThresholdEquationResultEId, IDS_OBJECTNAME_LOWER_THRESHOLD_RESULT, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0 );

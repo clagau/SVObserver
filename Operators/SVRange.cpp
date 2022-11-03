@@ -52,10 +52,10 @@ void SVRange::init()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVRangeObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailHigh], SvPb::RangeClassFailHighEId, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnHigh], SvPb::RangeClassWarnHighEId, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailLow], SvPb::RangeClassFailLowEId, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnLow], SvPb::RangeClassWarnLowEId, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailHigh], SvPb::RangeClassFailHighEId, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnHigh], SvPb::RangeClassWarnHighEId, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailLow], SvPb::RangeClassFailLowEId, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnLow], SvPb::RangeClassWarnLowEId, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone, true);
 
 	// Set Embedded defaults
 	_variant_t vtTemp;

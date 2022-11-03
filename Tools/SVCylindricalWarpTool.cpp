@@ -87,12 +87,12 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	RegisterEmbeddedImage( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false );
 
 	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set Default Warp Method to Use Horizontal
-	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool, true);
 	std::string EnumTypes = SvUl::Format( _T("%s=%d,%s=%d"), CYLINDRICAL_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
 	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
@@ -120,7 +120,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	// And now set enum types...
 	m_svInterpolationMode.SetEnumTypes( EnumTypes.c_str() );
 	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor, true);	// Refer to MIL...
-	RegisterEmbeddedObject( &m_svInterpolationMode, SvPb::OutputInterpolationModeEId, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svInterpolationMode, SvPb::OutputInterpolationModeEId, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone, true);
 
 
 
@@ -129,7 +129,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	// allow an unequal warp tool.
 	// Currently we double the start angle and make it symetrical
 	// the work is done in SVImageExtentClass.
-	RegisterEmbeddedObject( &m_svWarpAngle, SvPb::WarpAngleEId, IDS_OBJECTNAME_WARPANGLE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_svWarpAngle, SvPb::WarpAngleEId, IDS_OBJECTNAME_WARPANGLE, false, SvOi::SVResetItemTool, true);
 	m_svWarpAngle.SetDefaultValue( 180.0, true);
 	m_svWarpAngle.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyStartAngle, &m_svWarpAngle );

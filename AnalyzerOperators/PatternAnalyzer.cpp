@@ -88,46 +88,46 @@ PatternAnalyzer::PatternAnalyzer(SVObjectClass* POwner, int StringResourceID)
 	m_nPatternIndex = -1;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&msv_dpatAcceptanceThreshold, SvPb::PatAcceptThresholdEId, IDS_OBJECTNAME_PAT_ACCEPTTHRESHOLD, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatCertaintyThreshold, SvPb::PatCertainThresholdEId, IDS_OBJECTNAME_PAT_CERTAINTHRESHOLD, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatAccuracy, SvPb::PatAccuracyEId, IDS_OBJECTNAME_PAT_ACCURACY, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatMaxOccurances, SvPb::PatMaxOccurancesEId, IDS_OBJECTNAME_PAT_MAXOCCURANCES, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_bpatSearchAngleMode, SvPb::PatSearchAngleModeEId, IDS_OBJECTNAME_PAT_SEARCHANGLEMODE, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatSpeed, SvPb::PatSpeedEId, IDS_OBJECTNAME_PAT_SPEED, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_szModelImageFile, SvPb::PatModelImageFileEId, IDS_OBJECTNAME_PAT_MODELIMAGEFILE, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&m_DontCareImageFile, SvPb::PatDontCareImageFileEId, IDS_OBJECTNAME_PAT_DONT_CARE_IMAGEFILE, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatAcceptanceThreshold, SvPb::PatAcceptThresholdEId, IDS_OBJECTNAME_PAT_ACCEPTTHRESHOLD, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_dpatCertaintyThreshold, SvPb::PatCertainThresholdEId, IDS_OBJECTNAME_PAT_CERTAINTHRESHOLD, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_lpatAccuracy, SvPb::PatAccuracyEId, IDS_OBJECTNAME_PAT_ACCURACY, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_lpatMaxOccurances, SvPb::PatMaxOccurancesEId, IDS_OBJECTNAME_PAT_MAXOCCURANCES, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_bpatSearchAngleMode, SvPb::PatSearchAngleModeEId, IDS_OBJECTNAME_PAT_SEARCHANGLEMODE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_lpatSpeed, SvPb::PatSpeedEId, IDS_OBJECTNAME_PAT_SPEED, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_szModelImageFile, SvPb::PatModelImageFileEId, IDS_OBJECTNAME_PAT_MODELIMAGEFILE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_DontCareImageFile, SvPb::PatDontCareImageFileEId, IDS_OBJECTNAME_PAT_DONT_CARE_IMAGEFILE, false, SvOi::SVResetItemOwner, true);
 
-	RegisterEmbeddedObject(&msv_dpatSearchAngle, SvPb::PatSearchAngleEId, IDS_OBJECTNAME_PAT_SEARCHANGLE, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleDeltaNeg, SvPb::PatAngleDeltaNegEId, IDS_OBJECTNAME_PAT_DELTANEG, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleDeltaPos, SvPb::PatAngleDeltaPosEId, IDS_OBJECTNAME_PAT_DELTAPOS, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleTolerance, SvPb::PatAngleToleranceEId, IDS_OBJECTNAME_PAT_ANGLETOLERANCE, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleAccuracy, SvPb::PatAngleAccuracyEId, IDS_OBJECTNAME_PAT_ANGLEACCURACY, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleInterpolation, SvPb::PatAngleInterpolationEId, IDS_OBJECTNAME_PAT_INTERPOLATION, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatSearchAngle, SvPb::PatSearchAngleEId, IDS_OBJECTNAME_PAT_SEARCHANGLE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_dpatAngleDeltaNeg, SvPb::PatAngleDeltaNegEId, IDS_OBJECTNAME_PAT_DELTANEG, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_dpatAngleDeltaPos, SvPb::PatAngleDeltaPosEId, IDS_OBJECTNAME_PAT_DELTAPOS, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_dpatAngleTolerance, SvPb::PatAngleToleranceEId, IDS_OBJECTNAME_PAT_ANGLETOLERANCE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_dpatAngleAccuracy, SvPb::PatAngleAccuracyEId, IDS_OBJECTNAME_PAT_ANGLEACCURACY, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_dpatAngleInterpolation, SvPb::PatAngleInterpolationEId, IDS_OBJECTNAME_PAT_INTERPOLATION, false, SvOi::SVResetItemOwner, true);
 
-	RegisterEmbeddedObject(&msv_bpatCircularOverscan, SvPb::PatCircularOverscanEId, IDS_OBJECTNAME_PAT_CIRCULAROVERSCAN, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&m_bpatDontCare, SvPb::PatDontCareEId, IDS_OBJECTNAME_PAT_USE_DONT_CARE, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_bpatCircularOverscan, SvPb::PatCircularOverscanEId, IDS_OBJECTNAME_PAT_CIRCULAROVERSCAN, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_bpatDontCare, SvPb::PatDontCareEId, IDS_OBJECTNAME_PAT_USE_DONT_CARE, false, SvOi::SVResetItemOwner, true);
 
-	RegisterEmbeddedObject(&msv_dpatPreliminaryAcceptanceThreshold, SvPb::PatPreliminaryAcceptanceThresholdEId, IDS_OBJECTNAME_PAT_PRELIMINARYACCEPTANCETHRESHOLD, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatFastFind, SvPb::PatFastFindEId, IDS_OBJECTNAME_PAT_FASTFIND, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatModelStep, SvPb::PatModelStepEId, IDS_OBJECTNAME_PAT_MODELSTEP, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatBeginningResolutionLevel, SvPb::PatBeginningResolutionLevelEId, IDS_OBJECTNAME_PAT_BEGINNINGRESOLUTIONLEVEL, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatFinalResolutionLevel, SvPb::PatFinalResolutionLevelEId, IDS_OBJECTNAME_PAT_FINALRESOLUTIONLEVEL, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatAdditionalCandidates, SvPb::PatAdditionalCandidatesEId, IDS_OBJECTNAME_PAT_ADDITIONALCANDIDATES, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatCandidateSpacingXMin, SvPb::PatCandidateSpacingXMinEId, IDS_OBJECTNAME_PAT_CANDIDATESPACINGXMIN, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatCandidateSpacingYMin, SvPb::PatCandidateSpacingYMinEId, IDS_OBJECTNAME_PAT_CANDIDATESPACINGYMIN, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatPreliminaryAcceptanceThreshold, SvPb::PatPreliminaryAcceptanceThresholdEId, IDS_OBJECTNAME_PAT_PRELIMINARYACCEPTANCETHRESHOLD, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_lpatFastFind, SvPb::PatFastFindEId, IDS_OBJECTNAME_PAT_FASTFIND, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_lpatModelStep, SvPb::PatModelStepEId, IDS_OBJECTNAME_PAT_MODELSTEP, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_lpatBeginningResolutionLevel, SvPb::PatBeginningResolutionLevelEId, IDS_OBJECTNAME_PAT_BEGINNINGRESOLUTIONLEVEL, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_lpatFinalResolutionLevel, SvPb::PatFinalResolutionLevelEId, IDS_OBJECTNAME_PAT_FINALRESOLUTIONLEVEL, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_lpatAdditionalCandidates, SvPb::PatAdditionalCandidatesEId, IDS_OBJECTNAME_PAT_ADDITIONALCANDIDATES, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_dpatCandidateSpacingXMin, SvPb::PatCandidateSpacingXMinEId, IDS_OBJECTNAME_PAT_CANDIDATESPACINGXMIN, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&msv_dpatCandidateSpacingYMin, SvPb::PatCandidateSpacingYMinEId, IDS_OBJECTNAME_PAT_CANDIDATESPACINGYMIN, false, SvOi::SVResetItemOwner, true);
 
-	RegisterEmbeddedObject(&msv_dpatResultMatchScore, SvPb::PatResultMatchScoreEId, IDS_OBJECTNAME_PAT_MATCHSCORE, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&msv_dpatResultX, SvPb::PatResultXEId, IDS_OBJECTNAME_PAT_RESULTX, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&msv_dpatResultY, SvPb::PatResultYEId, IDS_OBJECTNAME_PAT_RESULTY, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&msv_dpatResultAngle, SvPb::PatResultAngleEId, IDS_OBJECTNAME_PAT_RESULTANGLE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&msv_dpatResultMatchScore, SvPb::PatResultMatchScoreEId, IDS_OBJECTNAME_PAT_MATCHSCORE, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&msv_dpatResultX, SvPb::PatResultXEId, IDS_OBJECTNAME_PAT_RESULTX, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&msv_dpatResultY, SvPb::PatResultYEId, IDS_OBJECTNAME_PAT_RESULTY, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&msv_dpatResultAngle, SvPb::PatResultAngleEId, IDS_OBJECTNAME_PAT_RESULTANGLE, false, SvOi::SVResetItemNone, false);
 
-	RegisterEmbeddedObject(&msv_lpatNumFoundOccurances, SvPb::PatResultNumFoundOccurancesEId, IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&m_lpatModelWidth, SvPb::PatModelWidthEId, IDS_OBJECTNAME_PAT_MODELWIDTH, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&m_lpatModelHeight, SvPb::PatModelHeightEId, IDS_OBJECTNAME_PAT_MODELHEIGHT, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&m_lpatModelCenterX, SvPb::PatModelCenterXEId, IDS_OBJECTNAME_PAT_MODELCENTERX, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&m_lpatModelCenterY, SvPb::PatModelCenterYEId, IDS_OBJECTNAME_PAT_MODELCENTERY, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&m_dontCareWidth, SvPb::PatDontCareWidthEId, IDS_OBJECTNAME_PAT_DONTCAREWIDTH, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_dontCareHeight, SvPb::PatDontCareHeightEId, IDS_OBJECTNAME_PAT_DONTCAREHEIGHT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&msv_lpatNumFoundOccurances, SvPb::PatResultNumFoundOccurancesEId, IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_lpatModelWidth, SvPb::PatModelWidthEId, IDS_OBJECTNAME_PAT_MODELWIDTH, false, SvOi::SVResetItemOwner, false);
+	RegisterEmbeddedObject(&m_lpatModelHeight, SvPb::PatModelHeightEId, IDS_OBJECTNAME_PAT_MODELHEIGHT, false, SvOi::SVResetItemOwner, false);
+	RegisterEmbeddedObject(&m_lpatModelCenterX, SvPb::PatModelCenterXEId, IDS_OBJECTNAME_PAT_MODELCENTERX, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_lpatModelCenterY, SvPb::PatModelCenterYEId, IDS_OBJECTNAME_PAT_MODELCENTERY, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_dontCareWidth, SvPb::PatDontCareWidthEId, IDS_OBJECTNAME_PAT_DONTCAREWIDTH, false, SvOi::SVResetItemOwner, false);
+	RegisterEmbeddedObject(&m_dontCareHeight, SvPb::PatDontCareHeightEId, IDS_OBJECTNAME_PAT_DONTCAREHEIGHT, false, SvOi::SVResetItemOwner, false);
 
   // Set default values for search parameters
 	SetDefaultSearchValues ();

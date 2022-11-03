@@ -160,7 +160,7 @@ class SVEquation : public SvIe::SVTaskObjectClass, public SVEquationBase, public
 	};
 
 public:
-	SVEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEQUATION );
+	SVEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEQUATION, bool enableFlagRemoteSettable = false);
 	virtual ~SVEquation();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

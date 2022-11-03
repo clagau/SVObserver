@@ -38,7 +38,7 @@ SVPolarTransformationToolClass::SVPolarTransformationToolClass( SVObjectClass* P
 							   :SVToolClass(ToolExtType::None,POwner, StringResourceID )
 {
 	// BoolValueObject to use new method
-	RegisterEmbeddedObject( &m_svAngularMethod, SvPb::OutputAngularMethodEId, IDS_OBJECTNAME_ANGULAR_METHOD,	false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svAngularMethod, SvPb::OutputAngularMethodEId, IDS_OBJECTNAME_ANGULAR_METHOD, false, SvOi::SVResetItemNone, true);
 
 	init();
 }
@@ -58,7 +58,7 @@ void SVPolarTransformationToolClass::init()
 	
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false);
 		
 
 	// Default taskObjectList items:

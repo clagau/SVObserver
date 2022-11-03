@@ -326,16 +326,16 @@ void RingBufferTool::BuildInputObjectList ()
 
 void RingBufferTool::BuildEmbeddedObjectList ()
 {
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false );
 	
-	RegisterEmbeddedObject( &m_BufferDepth, SvPb::RingBuffer_DepthEId, IDS_OBJECTNAME_RINGBUFFER_DEPTH, true, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_BufferDepth, SvPb::RingBuffer_DepthEId, IDS_OBJECTNAME_RINGBUFFER_DEPTH, true, SvOi::SVResetItemTool, true);
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = cVarType_imageIndex;
 	vtTemp.lVal = cDefaultRingBufferDepth;
 	m_BufferDepth.SetDefaultValue(vtTemp, true);
 
-	RegisterEmbeddedObject( &m_FlagOfOutputImage, SvPb::RingBuffer_FlagOfOutputImagesEId, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_FlagOfOutputImage, SvPb::RingBuffer_FlagOfOutputImagesEId, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SvOi::SVResetItemNone, false );
 	m_FlagOfOutputImage.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_FlagOfOutputImage.SetDefaultValue( 0, true );
 	m_FlagOfOutputImage.setSaveValueFlag(false);
@@ -344,7 +344,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	int ImageNames[SvDef::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2};
 	for( int i = 0; i < SvDef::cRingBufferNumberOutputImages; i++)
 	{
-		RegisterEmbeddedObject( &m_ImageIndexManager[i], SvPb::RingBufferIndexEId+i, RingbufferIndexNames[i], true, SvOi::SVResetItemTool );
+		RegisterEmbeddedObject( &m_ImageIndexManager[i], SvPb::RingBufferIndexEId+i, RingbufferIndexNames[i], true, SvOi::SVResetItemTool, true);
 		::VariantInit(&vtTemp);
 		vtTemp.vt = cVarType_imageIndex;
 		vtTemp.lVal = cDefaultIndexValue[i];

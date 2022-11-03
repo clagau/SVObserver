@@ -54,7 +54,7 @@ void SVMathEquation::init()
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_result, SvPb::MathEquationResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_result, SvPb::MathEquationResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_result.SetDefaultValue( 0.0 );

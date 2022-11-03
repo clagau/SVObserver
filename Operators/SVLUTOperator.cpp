@@ -51,16 +51,16 @@ void SVLUTOperator::init()
 	m_ObjectTypeInfo.m_SubType = SvPb::SVLUTOperatorObjectType;
 
 	// Register Embedded Object(s)
-	RegisterEmbeddedObject( &m_lutVector, SvPb::OutputLUTVectorEId, IDS_OBJECTNAME_LUTVECTOR, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_useLUT, SvPb::UseLUTEId, IDS_OBJECTNAME_USE_LUT, false, SvOi::SVResetItemOwner  );
-	RegisterEmbeddedObject( &m_continuousRecalcLUT, SvPb::ContinuousRecalcLUTEId, IDS_OBJECTNAME_CONTINUOUS_RECALC_LUT, false, SvOi::SVResetItemOwner  );
-	RegisterEmbeddedObject( &m_lutMode, SvPb::LUTModeEId, IDS_OBJECTNAME_LUT_MODE, false, SvOi::SVResetItemOwner  );
-	RegisterEmbeddedObject( &m_upperClip, SvPb::LUTUpperClipEId, IDS_OBJECTNAME_LUT_UPPER_CLIP, false, SvOi::SVResetItemOwner  );
-	RegisterEmbeddedObject( &m_lowerClip, SvPb::LUTLowerClipEId, IDS_OBJECTNAME_LUT_LOWER_CLIP, false, SvOi::SVResetItemOwner  );
-	RegisterEmbeddedObject(&m_minInput, SvPb::LUTMinInputEId, IDS_OBJECTNAME_LUT_MIN_INPUT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_maxInput, SvPb::LUTMaxInputEId, IDS_OBJECTNAME_LUT_MAX_INPUT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_minOutput, SvPb::LUTMinOutputEId, IDS_OBJECTNAME_LUT_MIN_OUTPUT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_maxOutput, SvPb::LUTMaxOutputEId, IDS_OBJECTNAME_LUT_MAX_OUTPUT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject( &m_lutVector, SvPb::OutputLUTVectorEId, IDS_OBJECTNAME_LUTVECTOR, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_useLUT, SvPb::UseLUTEId, IDS_OBJECTNAME_USE_LUT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_continuousRecalcLUT, SvPb::ContinuousRecalcLUTEId, IDS_OBJECTNAME_CONTINUOUS_RECALC_LUT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_lutMode, SvPb::LUTModeEId, IDS_OBJECTNAME_LUT_MODE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_upperClip, SvPb::LUTUpperClipEId, IDS_OBJECTNAME_LUT_UPPER_CLIP, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_lowerClip, SvPb::LUTLowerClipEId, IDS_OBJECTNAME_LUT_LOWER_CLIP, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_minInput, SvPb::LUTMinInputEId, IDS_OBJECTNAME_LUT_MIN_INPUT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_maxInput, SvPb::LUTMaxInputEId, IDS_OBJECTNAME_LUT_MAX_INPUT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_minOutput, SvPb::LUTMinOutputEId, IDS_OBJECTNAME_LUT_MIN_OUTPUT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_maxOutput, SvPb::LUTMaxOutputEId, IDS_OBJECTNAME_LUT_MAX_OUTPUT, false, SvOi::SVResetItemOwner, true);
 
 	// Set Embedded defaults...
 

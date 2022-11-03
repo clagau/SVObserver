@@ -93,21 +93,21 @@ void ResizeTool::BuildEmbeddedObjectList()
 		SvPb::SourceImageNamesEId, 
 		IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, 
 		false, 
-		SvOi::SVResetItemTool);
+		SvOi::SVResetItemTool, false);
 
 	RegisterEmbeddedObject(
 		&m_ResizeInterpolationMode, 
 		SvPb::ResizeInterpolationModeEId, 
 		IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE, 
 		false, 
-		SvOi::SVResetItemTool);
+		SvOi::SVResetItemTool, true);
 
 	RegisterEmbeddedObject(
 		&m_ResizeOverscanMode,
 		SvPb::ResizeOverscanEId, 
 		IDS_OBJECTNAME_RESIZE_OVERSCAN, 
 		false, 
-		SvOi::SVResetItemTool);
+		SvOi::SVResetItemTool, true);
 
 	RegisterEmbeddedImage(
 		&m_OutputImage,

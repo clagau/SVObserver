@@ -46,9 +46,10 @@ SvPb::LinkedValue convertLinkedValue(const LinkedValueData& rValue)
 	return data;
 }
 
-LinkedValue::LinkedValue(uint32_t instanceID, LinkedValueData&& data)
+LinkedValue::LinkedValue(uint32_t instanceID, LinkedValueData&& data, bool isReadOnly)
 	: m_instanceID(instanceID)
 	, m_data(data)
+	, m_isReadOnly(isReadOnly)
 {}
 
 void LinkedValue::setLinkedData(const LinkedValueData& data)

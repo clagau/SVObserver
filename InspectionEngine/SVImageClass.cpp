@@ -179,8 +179,8 @@ void SVImageClass::init()
 	m_width.SetTypeName(_T("Image Width"));
 	m_height.SetTypeName(_T("Image Height"));
 
-	RegisterEmbeddedObject(&m_width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject(&m_height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool, false);
 
 	m_width.SetDefaultValue(100, true);
 	m_height.SetDefaultValue(100, true);

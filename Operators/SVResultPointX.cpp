@@ -44,7 +44,7 @@ SVPointXResult::SVPointXResult( SVObjectClass* POwner, int StringResourceID )
 
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_X, SvPb::XEId, IDS_OBJECTNAME_X, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_X, SvPb::XEId, IDS_OBJECTNAME_X, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_X.SetDefaultValue( 0 );

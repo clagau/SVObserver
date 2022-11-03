@@ -326,13 +326,13 @@ void SVColorToolClass::LocalInitialize()
 	RegisterEmbeddedImage(&m_bandImage[SvDef::Band1], SvPb::Band1ImageEId, IDS_OBJECTNAME_BAND1_IMAGE);
 	RegisterEmbeddedImage(&m_bandImage[SvDef::Band2], SvPb::Band2ImageEId, IDS_OBJECTNAME_BAND2_IMAGE);
 
-	RegisterEmbeddedObject(&m_convertToHSI, SvPb::ConvertToHSIEId, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SvOi::SVResetItemIP);
-	RegisterEmbeddedObject(&m_hasROI, SvPb::HasROIEId, IDS_OBJECTNAME_HAS_ROI, true, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_convertToHSI, SvPb::ConvertToHSIEId, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SvOi::SVResetItemIP, true);
+	RegisterEmbeddedObject(&m_hasROI, SvPb::HasROIEId, IDS_OBJECTNAME_HAS_ROI, true, SvOi::SVResetItemIP, false);
 	m_convertToHSI.SetDefaultValue(BOOL(false), true);
 	m_hasROI.SetDefaultValue(BOOL(false), true);
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false);
 
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();
 	//! Set Output image to color

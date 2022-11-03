@@ -30,7 +30,7 @@ SVEvaluateRotationYClass::SVEvaluateRotationYClass( SVObjectClass* pOwner, int S
 	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateRotationYObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateRotationYResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateRotationYResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

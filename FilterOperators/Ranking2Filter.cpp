@@ -144,11 +144,11 @@ void Ranking2Filter::init()
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::Ranking2FilterObjectType;
 
-	RegisterEmbeddedObject(&m_KernelArray, SvPb::FilterKernelEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_KernelArray, SvPb::FilterKernelEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner, true);
 
-	RegisterEmbeddedObject(&m_KernelWidth, SvPb::FilterKernelWidthEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGWIDTH, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_KernelHeight, SvPb::FilterKernelHeightEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGHEIGHT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_RankingRank, SvPb::RankingFilterRankingRankEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGRANK, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_KernelWidth, SvPb::FilterKernelWidthEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGWIDTH, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_KernelHeight, SvPb::FilterKernelHeightEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGHEIGHT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_RankingRank, SvPb::RankingFilterRankingRankEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGRANK, false, SvOi::SVResetItemOwner, true);
 
 	m_KernelArray.SetArraySize(SvDef::cStandardKernelSize*SvDef::cStandardKernelSize);
 	m_KernelArray.SetDefaultValue(1);

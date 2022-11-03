@@ -52,9 +52,9 @@ void SVLoadImageToolClass::init()
 	
 	// Register Embedded Objects
 	RegisterEmbeddedImage( &m_fileImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
-	RegisterEmbeddedObject( &m_currentPathName, SvPb::PathNameEId, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_continuousReload, SvPb::ContinuousReloadEId, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&m_isColorImage, SvPb::IsColorImageCheckEId, IDS_OBJECTNAME_COLOR_IMAGE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject( &m_currentPathName, SvPb::PathNameEId, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_continuousReload, SvPb::ContinuousReloadEId, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_isColorImage, SvPb::IsColorImageCheckEId, IDS_OBJECTNAME_COLOR_IMAGE, false, SvOi::SVResetItemNone, true);
 
 
 	// Set Embedded defaults

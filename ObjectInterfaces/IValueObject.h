@@ -164,8 +164,8 @@ namespace SvOi
 		// Creates a format string yielding a fixed length output string to be used when the value of the object value needs to be output
 		virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) = 0;
 
-	
-
+		virtual bool isExternallySettable() const = 0;
+		virtual void setExternallySettable(bool flag) = 0;
 	};
 
 	struct SetValueStruct 

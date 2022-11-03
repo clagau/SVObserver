@@ -5557,8 +5557,6 @@ BEGIN
     IDS_OBJECTNAME_EDGE_PARAMETERS9 "Edge Parameters as String9"
     IDS_OBJECTNAME_EDGE_PARAMETERS10 "Edge Parameters as String10"
     IDS_OBJECTNAME_REGRESSIONTESTMODE "Regression Test Mode"
-    IDS_OBJECTNAME_TOOL_SELECTED_FOR_OPERATOR_MOVE 
-                            "Tool Selected For Operator Move"
     IDS_TOOLDRAW_ENUMOBJECT_LIST 
                             "Always=0,If Current,If Warned,If Failed,If Passed,Never"
     IDS_TOOLSETDRAW_ENUMOBJECT_LIST 

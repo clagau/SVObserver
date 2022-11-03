@@ -43,8 +43,8 @@ BlobReconstructBasicFilter::~BlobReconstructBasicFilter()
 
 void BlobReconstructBasicFilter::init()
 {
-	RegisterEmbeddedObject(&m_blobColor, SvPb::BlobColorEId, IDS_BLACK_BLOBS, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_isGrayOn, SvPb::GrayOnEId, IDS_OBJECTNAME_GRAYON, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_blobColor, SvPb::BlobColorEId, IDS_BLACK_BLOBS, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_isGrayOn, SvPb::GrayOnEId, IDS_OBJECTNAME_GRAYON, false, SvOi::SVResetItemNone, true);
 
 	m_blobColor.SetEnumTypes(g_strBlobColorEnums);
 	m_blobColor.SetDefaultValue(SV_BLOB_WHITE, true);

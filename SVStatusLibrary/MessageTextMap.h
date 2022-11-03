@@ -722,5 +722,7 @@ namespace SvStl
 		{Tid_ErrorStartInspection, _T("Insepection coul not be started")},
 		{Tid_MaxDepthOfToolsError, _T("Too many tools nested.")},
 		{Tid_NoParentExtentForAnalyzer, _T("For Analyzer is not a parent extent possible.")},
+		{Tid_SetOfReadOnlyValueFailed, _T("Value is readOnly. Set is forbidden.")},
+		{Tid_SetOfValueFailed, _T("Set of embeddedValue with the ID {0} failed.")},
 };
 } //namespace SvStl

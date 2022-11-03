@@ -50,9 +50,9 @@ void SVResult::init()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_Warned, SvPb::WarnedEId, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_Warned, SvPb::WarnedEId, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_Passed.SetDefaultValue(BOOL(false), true);		// Default for Passed is FALSE !!!

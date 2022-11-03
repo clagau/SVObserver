@@ -685,5 +685,7 @@ enum MessageTextEnum
 	Tid_ErrorStartInspection,
 	Tid_MaxDepthOfToolsError,
 	Tid_NoParentExtentForAnalyzer,
+	Tid_SetOfReadOnlyValueFailed,
+	Tid_SetOfValueFailed,
 };
 } //namespace SvStl

@@ -102,19 +102,19 @@ void DrawSegmentTask::Initialize()
 
 void DrawSegmentTask::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_centerX, SvPb::CenterXEId, IDS_OBJECTNAME_CENTER_X, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_centerX, SvPb::CenterXEId, IDS_OBJECTNAME_CENTER_X, true, SvOi::SVResetItemOwner, true);
 	m_centerX.SetDefaultValue(_variant_t(50L), true);
-	RegisterEmbeddedObject(&m_centerY, SvPb::CenterYEId, IDS_OBJECTNAME_CENTER_Y, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_centerY, SvPb::CenterYEId, IDS_OBJECTNAME_CENTER_Y, true, SvOi::SVResetItemOwner, true);
 	m_centerY.SetDefaultValue(_variant_t(50L), true);
-	RegisterEmbeddedObject(&m_width, SvPb::WidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_width, SvPb::WidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, true, SvOi::SVResetItemOwner, true);
 	m_width.SetDefaultValue(_variant_t(80L), true);
-	RegisterEmbeddedObject(&m_height, SvPb::HeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_height, SvPb::HeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, true, SvOi::SVResetItemOwner, true);
 	m_height.SetDefaultValue(_variant_t(80L), true);
-	RegisterEmbeddedObject(&m_startAngle, SvPb::StartAngleEId, IDS_OBJECTNAME_START_ANGLE, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_startAngle, SvPb::StartAngleEId, IDS_OBJECTNAME_START_ANGLE, true, SvOi::SVResetItemOwner, true);
 	m_startAngle.SetDefaultValue(_variant_t(0.), true);
-	RegisterEmbeddedObject(&m_stopAngle, SvPb::EndAngleEId, IDS_OBJECTNAME_END_ANGLE, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_stopAngle, SvPb::EndAngleEId, IDS_OBJECTNAME_END_ANGLE, true, SvOi::SVResetItemOwner, true);
 	m_stopAngle.SetDefaultValue(_variant_t(360.), true);
-	RegisterEmbeddedObject(&m_XAxisAngle, SvPb::XAxisAngleEId, IDS_OBJECTNAME_XAXIS_ANGLE, true, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_XAxisAngle, SvPb::XAxisAngleEId, IDS_OBJECTNAME_XAXIS_ANGLE, true, SvOi::SVResetItemOwner, true);
 	m_XAxisAngle.SetDefaultValue(_variant_t(0.), true);
 }
 #pragma endregion Private Methods

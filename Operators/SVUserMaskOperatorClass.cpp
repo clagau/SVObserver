@@ -68,13 +68,13 @@ void SVUserMaskOperatorClass::init()
 	assert( bAddFriend );	UNREFERENCED_PARAMETER(bAddFriend);
 
 
-	RegisterEmbeddedObject( &m_bvoActivated, SvPb::MaskEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemIP );
-	RegisterEmbeddedObject( &m_dwvoMaskType, SvPb::MaskUseImageMaskEId, IDS_MASK_TYPE, false, SvOi::SVResetItemIP );
-	RegisterEmbeddedObject( &m_evoCurrentMaskOperator, SvPb::MaskOperatorEId, IDS_OBJECTNAME_MASK_OPERATOR, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_evoFillArea, SvPb::MaskFillAreaEId, IDS_OBJECTNAME_MASK_FILL_AREA, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoFillColor, SvPb::MaskFillColorEId, IDS_OBJECTNAME_MASK_FILL_COLOR, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_evoDrawCriteria, SvPb::DrawCriteriaEId, IDS_OBJECTNAME_DRAW_CRITERIA, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject(&m_bvoContRecalc, SvPb::ContRecalcEId, IDS_OBJECTNAME_CONTINUOUS_RECALC, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject( &m_bvoActivated, SvPb::MaskEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemIP, true);
+	RegisterEmbeddedObject( &m_dwvoMaskType, SvPb::MaskUseImageMaskEId, IDS_MASK_TYPE, false, SvOi::SVResetItemIP, true);
+	RegisterEmbeddedObject( &m_evoCurrentMaskOperator, SvPb::MaskOperatorEId, IDS_OBJECTNAME_MASK_OPERATOR, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_evoFillArea, SvPb::MaskFillAreaEId, IDS_OBJECTNAME_MASK_FILL_AREA, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_lvoFillColor, SvPb::MaskFillColorEId, IDS_OBJECTNAME_MASK_FILL_COLOR, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_evoDrawCriteria, SvPb::DrawCriteriaEId, IDS_OBJECTNAME_DRAW_CRITERIA, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject(&m_bvoContRecalc, SvPb::ContRecalcEId, IDS_OBJECTNAME_CONTINUOUS_RECALC, false, SvOi::SVResetItemOwner, true);
 
 	SvDef::NameValueVector EnumVector
 	{

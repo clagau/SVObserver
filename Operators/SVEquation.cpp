@@ -264,12 +264,16 @@ SV_IMPLEMENT_CLASS(SVEquation, SvPb::EquationClassId);
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVEquation::SVEquation(SVObjectClass* POwner, int StringResourceID)
+SVEquation::SVEquation(SVObjectClass* POwner, int StringResourceID, bool enableFlagRemoteSettable)
 	:SVTaskObjectClass(POwner, StringResourceID)
 {
 	// Give SVEquationLexClass and SVEquationYaccClass a pointer to us
 	m_Lex.setEquation(this);
 	m_Yacc.setEquation(this);
+	if (enableFlagRemoteSettable)
+	{
+		m_enabled.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	}
 
 	init();
 }
@@ -289,7 +293,7 @@ void SVEquation::init()
 	// So the input will be identified when the script is created.
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_enabled, SvPb::EquationEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_enabled, SvPb::EquationEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone, true);
 
 	// Set Embedded defaults
 	m_enabled.SetDefaultValue(BOOL(true), true);
@@ -315,18 +319,6 @@ bool SVEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 
 	// Set / Reset Printable Flag
 	m_enabled.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
-
-	SVObjectClass *owner = m_enabled.GetParent();
-	if (nullptr != owner)
-	{
-		std::string conditionalString = SvUl::LoadStdString(IDS_CLASSNAME_SVCONDITIONAL);
-
-		if (owner->GetName() == conditionalString)
-		{
-			// Set / Reset Remotely Setable Flag, if owner is conditional class.
-			m_enabled.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-		}
-	}
 
 	m_isCreated = bOk;
 

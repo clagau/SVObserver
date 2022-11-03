@@ -117,7 +117,8 @@ public:
 	virtual void setStandardFormatString() override = 0;
 	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
 
-
+	virtual bool isExternallySettable() const override { return m_externallySettableFlag; };
+	virtual void setExternallySettable(bool flag) override { m_externallySettableFlag = flag; };
 
 #pragma endregion virtual method (IObjectClass/IValueObject)
 
@@ -216,6 +217,7 @@ private:
 	bool m_ResetAlways {false};
 	bool m_LegacyVectorObjectCompatibility {false};
 	std::string m_OutFormat;				//This is used to format the value object to a string
+	bool m_externallySettableFlag {false};
 
 	SvOi::SVResetItemEnum m_eResetItem {SvOi::SVResetItemIP};
 

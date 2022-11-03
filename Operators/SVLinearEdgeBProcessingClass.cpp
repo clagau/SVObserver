@@ -37,50 +37,50 @@ SVLinearEdgeBProcessingClass::SVLinearEdgeBProcessingClass( SVObjectClass* POwne
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearEdgeBProcessingObjectType;
 
-	RegisterEmbeddedObject( &m_svDirection, SvPb::EdgeBDirectionEId, IDS_OBJECTNAME_EDGE_B_DIRECTION, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svPolarisation, SvPb::EdgeBPolarisationEId, IDS_OBJECTNAME_EDGE_B_POLARISATION, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svEdgeSelect, SvPb::EdgeBEdgeSelectEId, IDS_OBJECTNAME_EDGE_B_EDGE_SELECT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svEdgeSelectThisValue, SvPb::EdgeBEdgeSelectThisValueEId, IDS_OBJECTNAME_EDGE_B_EDGE_SELECT_THIS_VALUE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svDirection, SvPb::EdgeBDirectionEId, IDS_OBJECTNAME_EDGE_B_DIRECTION, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svPolarisation, SvPb::EdgeBPolarisationEId, IDS_OBJECTNAME_EDGE_B_POLARISATION, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svEdgeSelect, SvPb::EdgeBEdgeSelectEId, IDS_OBJECTNAME_EDGE_B_EDGE_SELECT, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svEdgeSelectThisValue, SvPb::EdgeBEdgeSelectThisValueEId, IDS_OBJECTNAME_EDGE_B_EDGE_SELECT_THIS_VALUE, false, SvOi::SVResetItemNone, true);
 
-	RegisterEmbeddedObject( &m_svIsFixedEdgeMarker, SvPb::EdgeBIsFixedEdgeMarkerEId, IDS_OBJECTNAME_EDGE_B_IS_FIXED_EDGE_MARKER, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svPosition, SvPb::EdgeBPositionEId, IDS_OBJECTNAME_EDGE_B_POSITION, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svPositionOffsetValue, SvPb::EdgeBPositionOffsetEId, IDS_OBJECTNAME_EDGE_B_POSITION_OFFSET, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svIsFixedEdgeMarker, SvPb::EdgeBIsFixedEdgeMarkerEId, IDS_OBJECTNAME_EDGE_B_IS_FIXED_EDGE_MARKER, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svPosition, SvPb::EdgeBPositionEId, IDS_OBJECTNAME_EDGE_B_POSITION, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svPositionOffsetValue, SvPb::EdgeBPositionOffsetEId, IDS_OBJECTNAME_EDGE_B_POSITION_OFFSET, false, SvOi::SVResetItemNone, true);
 
-	RegisterEmbeddedObject( &m_svUseLowerThresholdSelectable, SvPb::UseLowerThresholdSelectableBEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_SELECTABLE_B, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svUseLowerThresholdMaxMinusPercentDiff, SvPb::UseLowerThresholdMaxMinusPercentDiffBEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MAXMINUSPERCENTDIFF_B, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svUseLowerThresholdMaxMinusOffset, SvPb::UseLowerThresholdMaxMinusOffsetBEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MAXMINUSOFFSET_B, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svUseLowerThresholdMinPlusOffset, SvPb::UseLowerThresholdMinPlusOffsetBEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MINPLUSOFFSET_B, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&m_svLowerThresholdValueObject, SvPb::EdgeBLowerThresholdValueEId, IDS_OBJECTNAME_EDGE_B_LOWER_THRESHOLD_VALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject( &m_svUseLowerThresholdSelectable, SvPb::UseLowerThresholdSelectableBEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_SELECTABLE_B, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svUseLowerThresholdMaxMinusPercentDiff, SvPb::UseLowerThresholdMaxMinusPercentDiffBEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MAXMINUSPERCENTDIFF_B, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svUseLowerThresholdMaxMinusOffset, SvPb::UseLowerThresholdMaxMinusOffsetBEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MAXMINUSOFFSET_B, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svUseLowerThresholdMinPlusOffset, SvPb::UseLowerThresholdMinPlusOffsetBEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MINPLUSOFFSET_B, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_svLowerThresholdValueObject, SvPb::EdgeBLowerThresholdValueEId, IDS_OBJECTNAME_EDGE_B_LOWER_THRESHOLD_VALUE, false, SvOi::SVResetItemNone, true);
 	m_svLowerThresholdValueObject.SetOutputFormat(SvVol::OutputFormat_int);
 	m_svLowerThresholdValueObject.setSaveValueFlag(false);
 	m_svLowerThresholdValueObject.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-	RegisterEmbeddedObject( &m_svLowerThresholdSelected, SvPb::EdgeBLowerThresholdSelectedValueEId, IDS_OBJECTNAME_EDGE_B_LOWER_THRESHOLD_SELECTED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLowerThresholdSelected, SvPb::EdgeBLowerThresholdSelectedValueEId, IDS_OBJECTNAME_EDGE_B_LOWER_THRESHOLD_SELECTED, false, SvOi::SVResetItemNone, true);
 	m_svLowerThresholdSelected.SetOutputFormat(SvVol::OutputFormat_int);
-	RegisterEmbeddedObject( &m_svLowerMaxMinusPercentDiffValue, SvPb::LowerThresholdMaxMinusPercentDiffBEId, IDS_OBJECTNAME_LOWERTHRESHOLD_PERCENTDIFF_B, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLowerMaxMinusPercentDiffValue, SvPb::LowerThresholdMaxMinusPercentDiffBEId, IDS_OBJECTNAME_LOWERTHRESHOLD_PERCENTDIFF_B, false, SvOi::SVResetItemNone, true);
 	m_svLowerMaxMinusPercentDiffValue.SetOutputFormat(SvVol::OutputFormat_int);
-	RegisterEmbeddedObject( &m_svLowerMaxMinusOffsetValue, SvPb::LowerThresholdMaxMinusOffsetBEId, IDS_OBJECTNAME_LOWERTHRESHOLD_MAXOFFSET_B, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLowerMaxMinusOffsetValue, SvPb::LowerThresholdMaxMinusOffsetBEId, IDS_OBJECTNAME_LOWERTHRESHOLD_MAXOFFSET_B, false, SvOi::SVResetItemNone, true);
 	m_svLowerMaxMinusOffsetValue.SetOutputFormat(SvVol::OutputFormat_int);
-	RegisterEmbeddedObject( &m_svLowerMinPlusOffsetValue, SvPb::LowerThresholdMinPlusOffsetBEId, IDS_OBJECTNAME_LOWERTHRESHOLD_MINOFFSET_B, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLowerMinPlusOffsetValue, SvPb::LowerThresholdMinPlusOffsetBEId, IDS_OBJECTNAME_LOWERTHRESHOLD_MINOFFSET_B, false, SvOi::SVResetItemNone, true);
 	m_svLowerMinPlusOffsetValue.SetOutputFormat(SvVol::OutputFormat_int);
 
-	RegisterEmbeddedObject( &m_svUseUpperThresholdSelectable, SvPb::UseUpperThresholdSelectableBEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_SELECTABLE_B, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svUseUpperThresholdMaxMinusPercentDiff, SvPb::UseUpperThresholdMaxMinusPercentDiffBEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSPERCENTDIFF_B, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svUseUpperThresholdMaxMinusOffset, SvPb::UseUpperThresholdMaxMinusOffsetBEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSOFFSET_B, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svUseUpperThresholdMinPlusOffset, SvPb::UseUpperThresholdMinPlusOffsetBEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MINPLUSOFFSET_B, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&m_svUpperThresholdValueObject, SvPb::EdgeBUpperThresholdValueEId, IDS_OBJECTNAME_EDGE_B_UPPER_THRESHOLD_VALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject( &m_svUseUpperThresholdSelectable, SvPb::UseUpperThresholdSelectableBEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_SELECTABLE_B, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svUseUpperThresholdMaxMinusPercentDiff, SvPb::UseUpperThresholdMaxMinusPercentDiffBEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSPERCENTDIFF_B, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svUseUpperThresholdMaxMinusOffset, SvPb::UseUpperThresholdMaxMinusOffsetBEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSOFFSET_B, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svUseUpperThresholdMinPlusOffset, SvPb::UseUpperThresholdMinPlusOffsetBEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MINPLUSOFFSET_B, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_svUpperThresholdValueObject, SvPb::EdgeBUpperThresholdValueEId, IDS_OBJECTNAME_EDGE_B_UPPER_THRESHOLD_VALUE, false, SvOi::SVResetItemNone, true);
 	m_svUpperThresholdValueObject.SetOutputFormat(SvVol::OutputFormat_int);
 	m_svUpperThresholdValueObject.setSaveValueFlag(false);
 	m_svUpperThresholdValueObject.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-	RegisterEmbeddedObject( &m_svUpperThresholdSelected, SvPb::EdgeBUpperThresholdSelectedValueEId, IDS_OBJECTNAME_EDGE_B_UPPER_THRESHOLD_SELECTED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svUpperThresholdSelected, SvPb::EdgeBUpperThresholdSelectedValueEId, IDS_OBJECTNAME_EDGE_B_UPPER_THRESHOLD_SELECTED, false, SvOi::SVResetItemNone, true);
 	m_svUpperThresholdSelected.SetOutputFormat(SvVol::OutputFormat_int);
-	RegisterEmbeddedObject( &m_svUpperMaxMinusPercentDiffValue, SvPb::UpperThresholdMaxMinusPercentDiffBEId, IDS_OBJECTNAME_UPPERTHRESHOLD_PERCENTDIFF_B, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svUpperMaxMinusPercentDiffValue, SvPb::UpperThresholdMaxMinusPercentDiffBEId, IDS_OBJECTNAME_UPPERTHRESHOLD_PERCENTDIFF_B, false, SvOi::SVResetItemNone, true);
 	m_svUpperMaxMinusPercentDiffValue.SetOutputFormat(SvVol::OutputFormat_int);
-	RegisterEmbeddedObject( &m_svUpperMaxMinusOffsetValue, SvPb::UpperThresholdMaxMinusOffsetBEId, IDS_OBJECTNAME_UPPERTHRESHOLD_MAXOFFSET_B, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svUpperMaxMinusOffsetValue, SvPb::UpperThresholdMaxMinusOffsetBEId, IDS_OBJECTNAME_UPPERTHRESHOLD_MAXOFFSET_B, false, SvOi::SVResetItemNone, true);
 	m_svUpperMaxMinusOffsetValue.SetOutputFormat(SvVol::OutputFormat_int);
-	RegisterEmbeddedObject( &m_svUpperMinPlusOffsetValue, SvPb::UpperThresholdMinPlusOffsetBEId, IDS_OBJECTNAME_UPPERTHRESHOLD_MINOFFSET_B, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svUpperMinPlusOffsetValue, SvPb::UpperThresholdMinPlusOffsetBEId, IDS_OBJECTNAME_UPPERTHRESHOLD_MINOFFSET_B, false, SvOi::SVResetItemNone, true);
 	m_svUpperMinPlusOffsetValue.SetOutputFormat(SvVol::OutputFormat_int);
 
-	RegisterEmbeddedObject(&m_svLinearEdges, SvPb::LinearEdgesEId, IDS_CLASSNAME_SVLINEAREDGESCLASS, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&m_svLinearEdges, SvPb::LinearEdgesEId, IDS_CLASSNAME_SVLINEAREDGESCLASS, false, SvOi::SVResetItemNone, false );
 
 	m_svDirection.SetEnumTypes(SvDef::cDirectionEnums);
 	m_svPolarisation.SetEnumTypes(SvDef::cPolarisationEnums);

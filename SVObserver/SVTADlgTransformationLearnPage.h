@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -20,7 +21,6 @@ namespace SvOi
 }
 namespace SvOp
 {
-class SVImageTransform;
 class SVEvaluate;
 }
 namespace SvVol
@@ -104,13 +104,8 @@ protected:
 	SvOp::SVEvaluate* m_pEvaluateRotationAngle;
 	SvVol::SVDoubleValueObjectClass* m_pRotationAngleResult;
 
-	SvOp::SVImageTransform* m_pImageTransform;
-
-	SvVol::SVDoubleValueObjectClass* m_pLearnedTranslationX;
-	SvVol::SVDoubleValueObjectClass* m_pLearnedTranslationY;
-	SvVol::SVDoubleValueObjectClass* m_pLearnedRotationX;
-	SvVol::SVDoubleValueObjectClass* m_pLearnedRotationY;
-	SvVol::SVDoubleValueObjectClass* m_pLearnedRotationAngle;
+	uint32_t m_inspectionId {SvDef::InvalidObjectId};
+	uint32_t m_imageTransformId {SvDef::InvalidObjectId};
 
 	CFont angleFont;
 

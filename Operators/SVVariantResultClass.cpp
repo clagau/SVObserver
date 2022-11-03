@@ -41,11 +41,11 @@ SVVariantResultClass::SVVariantResultClass(BOOL , SVObjectClass*, int)
 	// Identify our input type needs
 	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVVariantValueObjectType);
 	registerInputObject( &m_inputObject, _T( "VariantResultValue" ), SvPb::ResultInputEId);
-	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_Value, SvPb::ValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Value, SvPb::ValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	_variant_t vt;

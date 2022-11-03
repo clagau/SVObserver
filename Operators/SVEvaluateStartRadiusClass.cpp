@@ -30,7 +30,7 @@ SVEvaluateStartRadiusClass::SVEvaluateStartRadiusClass( SVObjectClass* POwner, i
 	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateStartRadiusObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateStartRadiusResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateStartRadiusResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

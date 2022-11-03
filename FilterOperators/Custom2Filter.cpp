@@ -178,13 +178,13 @@ void Custom2Filter::init()
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::SVCustom2FilterObjectType;
 
-	RegisterEmbeddedObject( &m_KernelArray, SvPb::FilterKernelEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_KernelArray, SvPb::FilterKernelEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner, true);
 
-	RegisterEmbeddedObject( &m_KernelWidth, SvPb::FilterKernelWidthEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_KernelHeight, SvPb::FilterKernelHeightEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_NormalizationFactor, SvPb::CustomFilterTransformEId, IDS_OBJECTNAME_CUSTOMFILTER_TRANSFORM, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_AbsoluteValue, SvPb::CustomFilterAbsoluteEId, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_ClippingEnabled, SvPb::CustomFilterClippingEId, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_KernelWidth, SvPb::FilterKernelWidthEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_KernelHeight, SvPb::FilterKernelHeightEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_NormalizationFactor, SvPb::CustomFilterTransformEId, IDS_OBJECTNAME_CUSTOMFILTER_TRANSFORM, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_AbsoluteValue, SvPb::CustomFilterAbsoluteEId, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, false, SvOi::SVResetItemOwner, true);
+	RegisterEmbeddedObject( &m_ClippingEnabled, SvPb::CustomFilterClippingEId, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SvOi::SVResetItemOwner, true);
 
 	m_KernelArray.SetArraySize(SvDef::cStandardKernelSize*SvDef::cStandardKernelSize );
 	m_KernelArray.SetDefaultValue( 1 );

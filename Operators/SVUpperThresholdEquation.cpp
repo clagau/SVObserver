@@ -52,7 +52,7 @@ void SVUpperThresholdEquation::init()
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SvPb::UpperThresholdEquationResultEId, IDS_OBJECTNAME_UPPER_THRESHOLD_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &result, SvPb::UpperThresholdEquationResultEId, IDS_OBJECTNAME_UPPER_THRESHOLD_RESULT, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0, true );

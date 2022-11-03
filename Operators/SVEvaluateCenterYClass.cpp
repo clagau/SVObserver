@@ -30,7 +30,7 @@ SVEvaluateCenterYClass::SVEvaluateCenterYClass( SVObjectClass* pOwner, int Strin
 	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateCenterYObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateCenterYResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateCenterYResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false );
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

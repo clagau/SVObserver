@@ -51,9 +51,9 @@ void PixelAnalyzer::init()
 	// Identify our input type needs
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_pixelCount, SvPb::PixelCountEId, IDS_OBJECTNAME_PIXEL_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_pixelCount, SvPb::PixelCountEId, IDS_OBJECTNAME_PIXEL_COUNT, false, SvOi::SVResetItemNone, false);
 
-	RegisterEmbeddedObject(&m_pixelCountColor, SvPb::PixelColorIndexEId,	IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_pixelCountColor, SvPb::PixelColorIndexEId, IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SvOi::SVResetItemNone, true);
 
 	// Set Embedded defaults
 	m_pixelCountColor. SetDefaultValue( 255, true ); // White

@@ -40,7 +40,7 @@ SVStringResult::SVStringResult( SVObjectClass* POwner, int StringResourceID )
 	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_Value, SvPb::StringValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Value, SvPb::StringValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	m_Value.SetDefaultValue (_T(""));

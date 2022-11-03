@@ -47,7 +47,7 @@ SVDPointYResult::SVDPointYResult( SVObjectClass* POwner, int StringResourceID )
 	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &y, SvPb::DYEId, IDS_OBJECTNAME_DY, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &y, SvPb::DYEId, IDS_OBJECTNAME_DY, false, SvOi::SVResetItemNone, false );
 
 	// Set Embedded defaults
 	y.SetDefaultValue( 0.0, true);

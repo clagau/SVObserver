@@ -71,28 +71,28 @@ void LuminanceAnalyzer::init()
 		&msvLuminanceValue, 
 		SvPb::LuminanceValueEId,
 		IDS_OBJECTNAME_LUMINANCE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvCalcStdDevValue,
 		SvPb::CalcStdDevEId,
 		IDS_OBJECTNAME_CALCSTDDEV,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, true);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvVarianceValue,
 		SvPb::StatVarianceEId,
 		IDS_OBJECTNAME_STATVARIANCE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvStdDevValue,
 		SvPb::StatStdDevEId,
 		IDS_OBJECTNAME_STATSTDDEV,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone, false);
 
 	// Set Embedded defaults
 	msvLuminanceValue.SetDefaultValue (0, TRUE);

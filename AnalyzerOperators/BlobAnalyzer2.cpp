@@ -61,13 +61,13 @@ namespace SvAo
 		//Indentify our output type.
 		m_ObjectTypeInfo.m_SubType = SvPb::BlobAnalyzer2ObjectType;
 
-		RegisterEmbeddedObject(&m_maxBlobDataArraySize, SvPb::MaxBlobDataArraySizeEId, IDS_OBJECTNAME_MAX_BLOB_DATA_ARRAY_SIZE, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_numberOfBlobsFound, SvPb::NbrOfBlobsFoundEId, IDS_OBJECTNAME_NBROFBLOBSFOUND, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_maxBlobDataArraySize, SvPb::MaxBlobDataArraySizeEId, IDS_OBJECTNAME_MAX_BLOB_DATA_ARRAY_SIZE, false, SvOi::SVResetItemOwner, true);
+		RegisterEmbeddedObject(&m_numberOfBlobsFound, SvPb::NbrOfBlobsFoundEId, IDS_OBJECTNAME_NBROFBLOBSFOUND, false, SvOi::SVResetItemNone, false);
 		m_numberOfBlobsFound.setSaveValueFlag(false);
 
-		RegisterEmbeddedObject(&m_isGrayImageValue, SvPb::IsGrayImageEId, IDS_BLOB_IS_GRAY_IMAGE, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_colorBlobEnumValue, SvPb::BlobColorEId, IDS_BLACK_BLOBS, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_connectivityEnumValue, SvPb::ConnectivityBlobEId, IDS_BLOB_CONNECTIVITY, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_isGrayImageValue, SvPb::IsGrayImageEId, IDS_BLOB_IS_GRAY_IMAGE, false, SvOi::SVResetItemOwner, true);
+		RegisterEmbeddedObject(&m_colorBlobEnumValue, SvPb::BlobColorEId, IDS_BLACK_BLOBS, false, SvOi::SVResetItemOwner, true);
+		RegisterEmbeddedObject(&m_connectivityEnumValue, SvPb::ConnectivityBlobEId, IDS_BLOB_CONNECTIVITY, false, SvOi::SVResetItemOwner, true);
 
 		m_grayImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 		registerInputObject(&m_grayImageInput, SvDef::GrayImageConnectionName, SvPb::GrayImageInputEId);
