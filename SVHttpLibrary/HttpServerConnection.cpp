@@ -792,7 +792,7 @@ void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& err
 	ws_send_next_frame();
 }
 
-void HttpServerConnection::ws_on_error(const boost::system::error_code& error, const char*)
+void HttpServerConnection::ws_on_error(const boost::system::error_code& error, const char* text)
 {
 	if (!error)
 	{
@@ -807,8 +807,9 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error, c
 		error == boost::beast::websocket::error::closed ||
 		error.value() == WSAEBADF) // bad file descriptor, when connection already closed
 	{
-		SV_LOG_GLOBAL(info) << "[ws] Client disconnected";
-	}
+		std::string strText {text};
+		SV_LOG_GLOBAL(info) << "[ws] Client disconnected"  << " : " << strText  << " : " <<  error;
+ 	}
 	else
 	{
 		std::stringstream ss;

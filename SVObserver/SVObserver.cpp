@@ -386,8 +386,7 @@ BOOL SVObserverApp::InitInstance()
 	}
 	m_pMainWnd = pMainFrame;
 
-	//m_pMainWnd has already been checked for null due to pMainFrame check
-	SVVisionProcessorHelper::Instance().setMainhWnd(m_pMainWnd->GetSafeHwnd());
+	
 	// Load Utilities Menu
 	SVUtilities util;
 	CMenu* pMenu = util.FindSubMenuByName(m_pMainWnd->GetMenu(), _T("&Utilities"));
@@ -409,6 +408,13 @@ BOOL SVObserverApp::InitInstance()
 	pMainFrame->ShowWindow(SW_SHOWMAXIMIZED);
 	pMainFrame->UpdateWindow();
 
+	//m_pMainWnd has already been checked for null due to pMainFrame check
+	SVVisionProcessorHelper::Instance().setMainhWnd(m_pMainWnd->GetSafeHwnd());
+
+	if (!IsWindow(SVVisionProcessorHelper::Instance().getMainhWnd()))
+	{
+		Log_Error("Invalid Mainwindow!");
+	}
 	//
 	// Init user list...
 
@@ -581,6 +587,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	HRESULT result = DestroyConfig();
 	if (S_OK != result)
 	{
+		Log_Error("DestroyConfig Issue");
 		return result;	//keep the cancel state so it does not remove from MRU
 	}
 
@@ -659,6 +666,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	}
 	else
 	{
+		Log_Error("Wrong Extension in OpenFile");
 		result = E_INVALIDARG;
 	}
 
@@ -680,6 +688,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 
 HRESULT SVObserverApp::OpenSVXFile()
 {
+	
 	HRESULT hr = S_OK;
 
 	bool bOk = true; 
@@ -703,12 +712,16 @@ HRESULT SVObserverApp::OpenSVXFile()
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(rExp.getMessage());
+				Log_Error("OpenSVXFile Exception");
 			}
 
 			hr = LoadSvxFile(m_CurrentVersion, GetFullSvxFileName(), getConfigFullFileName(), GetSVIMType(), dynamic_cast<SVMainFrame*>(m_pMainWnd), std::move(globalInitPtr));
 
 			if (hr & SvDef::svErrorCondition)
+
 			{
+				Log_Error("LoadSvxFile error");
+				
 				// If there was an error during configuration loading...
 				SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 
@@ -736,6 +749,8 @@ HRESULT SVObserverApp::OpenSVXFile()
 		} // try
 		catch (CUserException* pUE)
 		{
+			
+			Log_Error("CUserException");
 			delete pUE;
 
 			bOk = false;
@@ -756,6 +771,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 	{
 		setConfigFullFileName(nullptr, true);
 		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
+		Log_Error("!OK");
 	}
 
 	if (S_OK == hr)

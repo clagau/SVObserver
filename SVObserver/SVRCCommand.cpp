@@ -140,6 +140,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 		if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
 		{
+			Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
 			result = SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
@@ -201,7 +202,7 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 {
 	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
-
+	Log_Info("SVRCCommand::PutConfig");
 	// Check if we are in an allowed state first
 	// Not allowed to perform if in Regression or Test
 	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
@@ -228,6 +229,12 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 			result = SVEncodeDecodeUtilities::StringContentToFile(TempFileName, rRequest.filedata());
 			if (S_OK == result)
 			{
+				
+#ifdef LOG_LOADING
+				std::string msg = std::format("SVRCCommand::PutConfig: Write {}", TempFileName);
+				Log_Info(msg.c_str());
+#endif				
+				
 				//For old .pac file format the first 4 bytes are always 1
 				DWORD fileVersion = (rRequest.filedata().length() > sizeof(DWORD)) ? *(reinterpret_cast<const DWORD*> (rRequest.filedata().c_str())) : 0;
 				//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
@@ -240,6 +247,13 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 				}
 				::remove(TempFileName.c_str());
 			}
+			else
+			{
+				::remove(TempFileName.c_str());
+				std::string msg = std::format("SVRCCommand::PutConfig: Could not write {}", TempFileName);
+				Log_Error(msg.c_str());
+				result = E_FAIL;
+			}
 		}
 		else
 		{
@@ -250,6 +264,11 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 	Response.set_hresult(result);
 
 	task.finish(std::move(Response));
+#ifdef LOG_LOADING
+	std::string  msg = std::format("SVRCCommand::PutConfig RESULT:{}  ", result);
+	Log_Info(msg.c_str());
+#endif 	
+	
 }
 
 void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Task<SvPb::GetOfflineCountResponse> task)
@@ -952,6 +971,7 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 		}
 		else
 		{
+			Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
 			result = SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 	}

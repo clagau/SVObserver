@@ -18,39 +18,37 @@
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
-std::atomic_long SVSVIMStateClass::m_SVIMState{SV_STATE_AVAILABLE};
+std::atomic_long SVSVIMStateClass::m_SVIMState {SV_STATE_AVAILABLE};
 
-bool SVSVIMStateClass::m_AutoSaveRequired{false};
-std::atomic<__time64_t> SVSVIMStateClass::m_lastModifiedTime{0LL};
-std::atomic<__time64_t> SVSVIMStateClass::m_loadedSinceTime{ 0LL };
+bool SVSVIMStateClass::m_AutoSaveRequired {false};
+std::atomic<__time64_t> SVSVIMStateClass::m_lastModifiedTime {0LL};
+std::atomic<__time64_t> SVSVIMStateClass::m_loadedSinceTime {0LL};
 std::mutex SVSVIMStateClass::m_protectHash;
 std::string SVSVIMStateClass::m_hash;
 
-std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode{SvPb::DeviceModeType::unknownMode};
-NotifyFunctor SVSVIMStateClass::m_pNotify{nullptr};
+std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode {SvPb::DeviceModeType::unknownMode};
+NotifyFunctor SVSVIMStateClass::m_pNotify {nullptr};
 
 std::atomic<int>  SVSVIMStateClass::m_LockCountSvrc {0};
 
 
 
 SVSVIMStateClass::SVSVIMStateClass()
-{
-}
+{}
 
 SVSVIMStateClass::~SVSVIMStateClass()
+{}
+
+bool SVSVIMStateClass::isSvrcBlocked()
 {
+	return m_LockCountSvrc > 0;
 }
 
-bool SVSVIMStateClass::isSvrcBlocked() 
-{ 
-	return m_LockCountSvrc > 0; 
-}
-
-void SVSVIMStateClass::AddState( DWORD dwState )
+void SVSVIMStateClass::AddState(DWORD dwState)
 {
 	m_SVIMState |= dwState;
 
-	if( dwState & SV_STATE_MODIFIED )
+	if (dwState & SV_STATE_MODIFIED)
 	{
 		setLastModifiedTime();
 		SetAutoSaveRequired(true);
@@ -62,7 +60,7 @@ void SVSVIMStateClass::AddState( DWORD dwState )
 	CheckModeNotify();
 }
 
-void SVSVIMStateClass::RemoveState( DWORD dwState )
+void SVSVIMStateClass::RemoveState(DWORD dwState)
 {
 	m_SVIMState &= ~dwState;
 	CheckModeNotify();
@@ -86,19 +84,19 @@ void SVSVIMStateClass::changeState(DWORD addStates, DWORD removeStates)
 	CheckModeNotify();
 }
 
-bool SVSVIMStateClass::CheckState( DWORD dwState )
+bool SVSVIMStateClass::CheckState(DWORD dwState)
 {
-	bool l_Status = ( dwState & m_SVIMState ) != 0;
+	bool l_Status = (dwState & m_SVIMState) != 0;
 
 	return l_Status;
 }
 
 SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 {
-	SvPb::DeviceModeType result{SvPb::DeviceModeType::unknownMode};
+	SvPb::DeviceModeType result {SvPb::DeviceModeType::unknownMode};
 
 	// Pending conditions...
-	if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING |
+	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING |
 		SV_STATE_STARTING |
 		SV_STATE_STOP_PENDING |
 		SV_STATE_STOPING |
@@ -106,29 +104,29 @@ SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 		SV_STATE_LOADING |
 		SV_STATE_SAVING |
 		SV_STATE_CLOSING |
-	    SV_STATE_UNAVAILABLE |
+		SV_STATE_UNAVAILABLE |
 		SV_STATE_EDITING |
-		SV_STATE_CANCELING ) )
+		SV_STATE_CANCELING))
 	{
 		result = SvPb::DeviceModeType::modeChanging;
 	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	else if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
 		result = SvPb::DeviceModeType::editMode;
 	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	else if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
 		result = SvPb::DeviceModeType::runMode;
 	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+	else if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 	{
 		result = SvPb::DeviceModeType::regressionMode;
 	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+	else if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
 	{
 		result = SvPb::DeviceModeType::testMode;
 	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_STOP ) )
+	else if (SVSVIMStateClass::CheckState(SV_STATE_STOP))
 	{
 		result = SvPb::DeviceModeType::stopMode;
 	}
@@ -163,10 +161,11 @@ void SVSVIMStateClass::CheckModeNotify()
 		m_CurrentMode = NewMode;
 
 		if (nullptr != m_pNotify)
-		{ 
+		{
 			(m_pNotify)(SvPb::NotifyType::currentMode, _variant_t(static_cast<long> (m_CurrentMode)));
 		}
 	}
+	//OutputDebugState();
 }
 
 void SVSVIMStateClass::setLastModifiedTime()
@@ -224,4 +223,55 @@ HRESULT SVSVIMStateClass::CheckNotAllowedState(DWORD States /*=SV_DefaultNotAllo
 		message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVRC_AccessDenied, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return  accessDenied ? SVMSG_SVO_ACCESS_DENIED : S_OK;
+}
+
+void SVSVIMStateClass::OutputDebugState()
+{
+
+	std::unordered_map<DWORD, std::string> StateNames =
+	{
+	{SV_STATE_AVAILABLE, "SV_STATE_AVAILABLE"},
+	{SV_STATE_READY, "SV_STATE_READY"},
+	{SV_STATE_RUNNING, "SV_STATE_RUNNING"},
+	{SV_STATE_UNAVAILABLE, "SV_STATE_UNAVAILABLE"},
+	{SV_STATE_CREATING, "SV_STATE_CREATING"},
+	{SV_STATE_LOADING, "SV_STATE_LOADING"},
+
+	{SV_STATE_SAVING, "SV_STATE_SAVING"},
+		{SV_STATE_CLOSING, "SV_STATE_CLOSING"},
+		{SV_STATE_EDITING, "SV_STATE_EDITING"},
+	{SV_STATE_CANCELING, "SV_STATE_CANCELING"},
+	{SV_STATE_INTERNAL_RUN, "SV_STATE_INTERNAL_RUN"},
+	{SV_STATE_START_PENDING, "SV_STATE_START_PENDING"},
+	{SV_STATE_STARTING, "SV_STATE_STARTING"},
+	{SV_STATE_STOP_PENDING, "SV_STATE_STOP_PENDING"},
+	{SV_STATE_STOPING, "SV_STATE_STOPING"},
+	{SV_STATE_TEST, "SV_STATE_TEST"},
+	{SV_STATE_REGRESSION, "SV_STATE_REGRESSION"},
+	{SV_STATE_EDIT, "SV_STATE_EDIT"},
+	{SV_STATE_STOP, "SV_STATE_STOP"},
+	{SV_STATE_MODIFIED, "SV_STATE_MODIFIED"},
+	{SV_STATE_REMOTE_CMD, "SV_STATE_REMOTE_CMD"}
+	};
+
+	
+	std::string msg {"SV_STATE_UNKNOWN"};
+	int count {0};
+	for (auto& entry : StateNames)
+	{
+		if (entry.first & m_SVIMState)
+		{
+			if (count++ == 0)
+				msg = entry.second;
+			else
+			{
+				msg += " | ";
+				msg += entry.second;
+			}
+		}
+	}
+	msg += "\n";
+	OutputDebugString(msg.c_str());
+	
+
 }

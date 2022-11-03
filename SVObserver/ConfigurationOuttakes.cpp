@@ -500,6 +500,12 @@ void GetAndDestroyConfigurationObject()
 
 HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 {
+	
+#ifdef LOG_LOADING
+	std::string filename(pFileName);
+	std::string  msg = std::format("LoadPackedConfiguration: {} ", filename);
+	Log_Info(msg.c_str());
+#endif	
 	HRESULT l_Status = S_OK;
 	std::string fileName {pFileName};
 
@@ -540,7 +546,10 @@ HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 	{
 		l_Status = TheSVObserverApp().OpenFile(fileName.c_str(), false, fileType);
 	}
-
+#ifdef LOG_LOADING	
+	msg = std::format("LoadPackedConfiguration RESULT:{}  ", l_Status);
+	Log_Info(msg.c_str());
+#endif 	
 	return l_Status;
 }
 

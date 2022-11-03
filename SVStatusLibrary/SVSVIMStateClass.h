@@ -96,7 +96,7 @@ public:
 		DWORD m_state;
 	};
 
-
+	static void OutputDebugState();
 	static long GetState() { return m_SVIMState; }
 
 	//This operation adds a sub-state to the existing state 

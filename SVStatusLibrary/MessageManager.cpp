@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include "MessageManager.h"
 #include "SVSVIMStateClass.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -226,4 +227,25 @@ namespace SvStl
 		return Result;
 	}
 	#pragma endregion Private Methods
+
+
+	void MessageManagerHelper::LogError(LPCSTR errortext, const SvStl::SourceFileParams& rFileParams, int level)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(errortext);
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+		switch (level)
+		{
+			case 0:
+				MesMan.setMessage(SVMSG_SVO_111_GENERAL_ERROR, SvStl::Tid_Default, msgList, rFileParams);
+				break;
+			case 1:
+				MesMan.setMessage(SVMSG_SVO_112_GENERAL_WARNING, SvStl::Tid_Default, msgList, rFileParams);
+				break;
+			default:
+				MesMan.setMessage(SVMSG_SVO_113_GENERAL_INFORMATIONAL, SvStl::Tid_Default, msgList, rFileParams);
+				break;
+		}
+	}
+
 }

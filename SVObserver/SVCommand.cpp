@@ -717,6 +717,7 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long, SAFEARRAY** pp
 
 		if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
 		{
+			Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
@@ -1028,6 +1029,7 @@ STDMETHODIMP SVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaN
 
 	if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
 	{
+		Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
 		hr = SVMSG_CONFIGURATION_NOT_LOADED;
 		return hr;
 	}
@@ -1259,6 +1261,7 @@ STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psa
 
 		if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
 		{
+			Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
