@@ -308,7 +308,7 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::toolsetItems }, InspectionId, SvPb::archivable, 
+		{ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::toolsetItems }, InspectionId, SvPb::viewable, 
 		SvDef::InvalidObjectId, false, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId());
 
 	SvCmd::InspectionCommands(InspectionId, requestCmd, &responseCmd);

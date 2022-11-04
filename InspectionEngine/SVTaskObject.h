@@ -88,8 +88,6 @@ public:
 
 	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
 	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter) override;
-	std::vector<SvOi::IObjectClass*> getOutputListFiltered(UINT uiAttributes = SvPb::noAttributes, bool bAND = true) const; /* true means AND, false means OR */
-	void GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvPb::noAttributes, bool bAND = true) const; /* true means AND, false means OR */
 
 	virtual void SetDisabled() override;
 
@@ -182,7 +180,7 @@ public:
 
 	const std::vector<SvOl::InputObject*>& GetPrivateInputList() const { return m_inputs; };
 
-	HRESULT GetImageList(SVImageClassPtrVector& p_rImageList, UINT uiAttributes = SvPb::noAttributes, bool bAND = true);
+	HRESULT GetImageList(SVImageClassPtrVector& p_rImageList);
 
 	virtual HRESULT RegisterSubObject(SVObjectClass* pObject) override;
 	virtual HRESULT UnregisterSubObject(SVObjectClass* pObject) override;

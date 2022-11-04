@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVChildrenSetupDialog.h"
 #include "InspectionEngine/SVTaskObjectList.h"
-#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVOGui/SVShowDependentsDialog.h"
@@ -22,7 +21,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -124,7 +122,6 @@ void SVChildrenSetupDialog::redrawLists()
 			}
 		}
 
-		GetAndEnableWindow( this, IDC_PUBLISH_BUTTON, FALSE );
 		GetAndEnableWindow( this, IDC_SETUP_BUTTON, FALSE );
 		GetAndEnableWindow( this, IDC_ADD_BUTTON, FALSE );
 		GetAndEnableWindow( this, IDC_REMOVE_BUTTON, FALSE );
@@ -151,7 +148,6 @@ BEGIN_MESSAGE_MAP(SVChildrenSetupDialog, CDialog)
 	ON_BN_CLICKED(IDC_ADD_BUTTON, OnAddButton)
 	ON_BN_CLICKED(IDC_REMOVE_BUTTON, OnRemoveButton)
 	ON_BN_CLICKED(IDC_SETUP_BUTTON, OnSetupButton)
-	ON_BN_CLICKED(IDC_PUBLISH_BUTTON, OnPublishButton)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_CHILDREN_LIST, OnItemChangedChildrenList)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_AVAILABLE_CHILDREN_LIST, OnItemChangedAvailableChildrenList)
 	//}}AFX_MSG_MAP
@@ -332,46 +328,6 @@ void SVChildrenSetupDialog::OnSetupButton()
 	}
 }
 
-void SVChildrenSetupDialog::OnPublishButton()
-{
-	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
-
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, m_pDocument->GetInspectionID(),
-		SvPb::publishable, m_pParentObject->getObjectId());
-
-	SvCmd::InspectionCommands(m_pDocument->GetInspectionID(), requestCmd, &responseCmd);
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	if (responseCmd.has_getobjectselectoritemsresponse())
-	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
-	}
-
-	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
-	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pParentOwner->GetName() );
-	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this );
-
-	if( IDOK == Result )
-	{
-		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
-		{
-			SVObjectReference ObjectRef{rEntry};
-			bool previousState = SvPb::publishable == (SvPb::publishable & ObjectRef.ObjectAttributesSet());
-			SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-			ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
-		}
-		
-		// refresh the publish list
-		if( m_pDocument )
-		{
-			m_pDocument->RefreshPublishedList();
-		}
-	}
-}
-
 void SVChildrenSetupDialog::OnItemChangedChildrenList(NMHDR*, LRESULT* pResult)
 {
 	//
@@ -399,7 +355,6 @@ void SVChildrenSetupDialog::OnItemChangedChildrenList(NMHDR*, LRESULT* pResult)
 		//
 		// Disable the inappropriate buttons.
 		//
-		GetAndEnableWindow( this, IDC_PUBLISH_BUTTON, FALSE );
 		GetAndEnableWindow( this, IDC_SETUP_BUTTON, FALSE );
 		GetAndEnableWindow( this, IDC_REMOVE_BUTTON, FALSE );
 	}
@@ -408,7 +363,6 @@ void SVChildrenSetupDialog::OnItemChangedChildrenList(NMHDR*, LRESULT* pResult)
 		//
 		// Enable the appropriate buttons.
 		//
-		GetAndEnableWindow( this, IDC_PUBLISH_BUTTON );
 		GetAndEnableWindow( this, IDC_SETUP_BUTTON );
 		GetAndEnableWindow( this, IDC_REMOVE_BUTTON );
 	}

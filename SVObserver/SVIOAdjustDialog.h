@@ -26,7 +26,7 @@ class SVIOAdjustDialog : public CDialog
 protected:
 	virtual void OnOK() override;
 	virtual BOOL OnInitDialog() override;
-	afx_msg void OnSelChangeIOCombo();
+	afx_msg void OnObjectSelector();
 	
 public:
 	SVIOAdjustDialog( CWnd* pParent = nullptr );
@@ -38,7 +38,8 @@ public:
 	//}}AFX_VIRTUAL
 
 public:
-	SVIOEntryHostStructPtr m_pIOEntry;
+	SVObjectClass* m_pLinkedObject {nullptr};
+	SVIOObjectType m_ioObjectType {SVIOObjectType::IO_INVALID_OBJECT};
 	SVDigitalInputObject* m_pDigInput {nullptr};
 	SVDigitalOutputObject* m_pDigOutput {nullptr};
 	PlcOutputObject* m_pPlcOutput {nullptr};
@@ -46,22 +47,22 @@ public:
 
 	//{{AFX_DATA(SVIOAdjustDialog)
 	enum { IDD = IDD_IOADJUST_DIALOG };
-	CComboBox	IOCombo;
-	CString		IOName;
-	CString		IOValue;
-	BOOL		IsForced {false};
-	BOOL		IsInverted {false};
-	BOOL		IsForcedTrue {false};
-	BOOL		IsForcedFalse {false};
-	BOOL		IsCombined {false};
-	BOOL		IsCombinedACK {false};
-	BOOL		IsCombinedNAK {false};
+	CComboBox	m_inspectionCtrl;
+	CString		m_IOName;
+	CString		m_IOValue;
+	BOOL		m_isForced {false};
+	BOOL		m_isInverted {false};
+	BOOL		m_isForcedTrue {false};
+	BOOL		m_isForcedFalse {false};
+	BOOL		m_sCombined {false};
+	BOOL		m_isCombinedACK {false};
+	BOOL		m_isCombinedNAK {false};
 	//}}AFX_DATA
 
 private:
+	void UpdateGroups();
 	void showForcedGroup(int showState);
 	void showInvertGroup(int showState);
 	void showCombinedGroup(int showState);
-	std::map<std::string, SVIOEntryHostStructPtr> m_Items;
 };
 

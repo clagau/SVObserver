@@ -85,7 +85,6 @@ namespace SvStl
 		{Tid_MsgIOTypeIsMissing, _T("an IO Type is missing")},
 		{Tid_MsgIONameIsMissing, _T("an Item Name is missing")},
 		{Tid_MsgPPQPOsitionIsMissing, _T("a PPQ Position is missing")},
-		{Tid_MsgRemoteIndexIsMissing, _T("a Remote Index is missing")},
 
 		{Tid_CouldNotExecuteFormatString, _T("could not execute '{0}'")},
 
@@ -724,5 +723,6 @@ namespace SvStl
 		{Tid_NoParentExtentForAnalyzer, _T("For Analyzer is not a parent extent possible.")},
 		{Tid_SetOfReadOnlyValueFailed, _T("Value is readOnly. Set is forbidden.")},
 		{Tid_SetOfValueFailed, _T("Set of embeddedValue with the ID {0} failed.")},
+		{Tid_DuplicateObjectId, _T("By creating an object, there is a duplicate of the objectId %s found.")},
 };
 } //namespace SvStl

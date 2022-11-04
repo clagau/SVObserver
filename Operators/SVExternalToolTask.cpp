@@ -166,7 +166,7 @@ void SVExternalToolTask::SetAllAttributes()
 	for (int i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
 		//Use add attributes because linked value objects can change the attributes if linked type 
-		UINT attribute = (i < m_Data.m_NumLinkedValue) ? SvPb::remotelySetable | SvPb::setableOnline | SvPb::viewable | SvPb::selectableForEquation | SvPb::audittrail : SvPb::noAttributes;
+		UINT attribute = (i < m_Data.m_NumLinkedValue) ? SvPb::remotelySetable | SvPb::setableOnline | SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
 		SvOi::SetAttributeType addOverwriteType = (i < m_Data.m_NumLinkedValue) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::OverwriteAttribute;
 		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed(attribute, addOverwriteType);
 	}
@@ -181,9 +181,8 @@ void SVExternalToolTask::SetAllAttributes()
 		{
 			int LinkValueIndex = rInputDef.getLinkedValueIndex();
 
-			UINT attribute = SvPb::taskObject;
 			SvOi::SetAttributeType addOverwriteType = SvOi::SetAttributeType::OverwriteAttribute;
-			m_Data.m_aInputObjects[LinkValueIndex].SetObjectAttributesAllowed(attribute, addOverwriteType);
+			m_Data.m_aInputObjects[LinkValueIndex].SetObjectAttributesAllowed(SvDef::viewableAndUseable, addOverwriteType);
 		}
 	}
 
@@ -820,7 +819,7 @@ std::vector<SVImageDefinitionStruct> SVExternalToolTask::initializeInputImages(s
 	m_aPreviousInputImageRect.clear();
 	for (int i = 0; i < m_Data.m_lNumInputImages; i++)
 	{
-		m_Data.m_aInputImageInfo[i].SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+		m_Data.m_aInputImageInfo[i].SetObjectAttributesAllowed(SvPb::audittrail | SvPb::viewable, SvOi::SetAttributeType::OverwriteAttribute);
 		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getFinalObject());
 		if (pImage)
 		{
@@ -1093,7 +1092,7 @@ void SVExternalToolTask::initializeResultImages(std::vector<std::string>& rStatu
 	{
 		m_Data.m_aResultImageDefinitions[i] = paResultImageDefs[i];
 		SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
-		pImage->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::OverwriteAttribute);
+		pImage->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::OverwriteAttribute);
 		//! Check is Feature already in embedded list	
 		SVObjectPtrVector::const_iterator Iter = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [i](const SVObjectPtrVector::value_type pEntry)->bool
 		{
@@ -1677,8 +1676,7 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 			throw - 12347;
 		}
 
-		constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
-		pValue->SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+		pValue->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 		// Ensure this Object's inputs get connected
 		pResult->connectAllInputs();

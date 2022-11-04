@@ -12,11 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVInfoStructs.h"
-#include "SVPublishList.h"
 #include "Definitions/SVResetStruct.h"
 #include "InspectionEngine/RunStatus.h"
 #include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
+#include "SVInfoStructs.h"
 #include "InspectionEngine/SVCameraImageTemplate.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "ObjectInterfaces/IFormulaController.h"
@@ -26,7 +25,6 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
-#include "SVSystemLibrary/SVThread.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
 #pragma endregion Includes
@@ -144,12 +142,6 @@ public:
 	HRESULT AddInputImageRequestByCameraName( const std::string& rCameraName, const std::string& rFileName);
 	void AddInputImageRequestToTool(const std::string& rName, uint32_t toolId, const std::string& rFileName);
 
-	//************************************
-	//! Checks if the configuration has conditional history attributes and resets them as they are deprecated
-	//! \returns true if conditional history attributes are set
-	//************************************
-	bool CheckAndResetConditionalHistory();
-
 	void DisconnectToolSetMainImage();
 	void ConnectToolSetMainImage();
 
@@ -172,13 +164,9 @@ public:
 
 	SVResultList* GetResultList() const;
 
-	const SVIOEntryHostStructPtrVector& getPpqInputs() const { return m_PPQInputs; }
-
 	HRESULT RebuildInspection(bool shouldCreateAllObject = true);
 	void ValidateAndInitialize( bool p_Validate );
 	void SetResetCounts( );
-
-	SVPublishList& GetPublishList();
 
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szDeviceName );
@@ -244,7 +232,6 @@ public:
 	bool DestroyChildObject(SVObjectClass* pChildcontext);
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
-	virtual void disconnectObjectInput(uint32_t objectId) override;
 	virtual bool connectAllInputs() override;
 	virtual void disconnectAllInputs() override;
 	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) override;
@@ -340,9 +327,6 @@ private:
 	SVInputImageRequestQueue m_InputImageRequests;
 
 	SvIe::SVCameraImagePtrSet m_CameraImages;
-
-	// Published List
-	SVPublishList m_publishList;
 
 	// Run status of last tool set run, if any...
 	SvIe::RunStatus m_runStatus;

@@ -68,17 +68,17 @@ void SVOCVCharacterResult::init()
 
 void SVOCVCharacterResult::HideResults()
 {
-	m_statusColor.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
-	m_statusTag.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_statusColor.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_statusTag.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
-	m_cvoLabelValue.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_cvoLabelValue.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
-	m_dvoOverlayLeft.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
-	m_dvoOverlayTop.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
-	m_dvoOverlayWidth.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
-	m_dvoOverlayHeight.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_dvoOverlayLeft.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_dvoOverlayTop.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_dvoOverlayWidth.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_dvoOverlayHeight.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
-	m_dvoMatchScore.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_dvoMatchScore.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 }
 
 void SVOCVCharacterResult::UnhideResults()

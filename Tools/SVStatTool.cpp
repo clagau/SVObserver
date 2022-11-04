@@ -157,8 +157,7 @@ bool SVStatTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure 
 	m_VariableName.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	// These values will not be exposed for the this Tool.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
-	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_drawToolFlag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 	std::string Name;
 	m_VariableName.GetValue( Name );
@@ -265,8 +264,6 @@ DWORD SVStatTool::DisableFeature (SVStatisticsFeatureEnum aIndex)
 {
 
 	m_Value[aIndex].SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
-
-	m_Value[aIndex].SetObjectAttributesSet( 0, SvOi::SetAttributeType::OverwriteAttribute );
 
 	std::string FeatureString;
 	m_PersistantFeaturesEnabled.GetValue( FeatureString );
@@ -528,7 +525,7 @@ bool SVStatTool::HasVariable() const
 	{
 		// Special Check for BlobAnalyzer/StatTool Features
 		// which don't really go away they just change attributes
-		if ( refObject.ObjectAttributesAllowed() & SvPb::selectableForStatistics )
+		if (SvDef::viewableAndUseable == (refObject.ObjectAttributesAllowed() & SvDef::viewableAndUseable))
 		{
 			bRetVal = true;
 		}

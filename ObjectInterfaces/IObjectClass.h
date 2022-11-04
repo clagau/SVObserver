@@ -114,12 +114,6 @@ namespace SvOi
 		virtual UINT ObjectAttributesAllowed() const = 0;
 		virtual UINT SetObjectAttributesAllowed( UINT Attributes, SetAttributeType Type ) = 0;
 
-		/**********
-		This method gets the attributes set for the object.
-		***********/
-		virtual UINT ObjectAttributesSet(int iIndex=0) const = 0;
-		virtual UINT SetObjectAttributesSet( UINT Attributes, SetAttributeType Type, int Index=0 ) = 0;
-
 		/*
 		This method returns the object's Global Unique Identifier (uint32_t) of this object instance.
 		*/

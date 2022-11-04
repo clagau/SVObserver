@@ -27,7 +27,6 @@
 #include "SVIPDoc.h"
 #include "SVObserver.h"
 #include "SVStorageResult.h"
-#include "SVToolSet.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVUserMessage.h"
@@ -711,164 +710,28 @@ SVInspectionProcess* SVConfigurationObject::GetInspection(long lIndex) const
 	return pResult;
 }// end GetInspection
 
-// Add the (Imported) Input if it doesn't exists
-// Do not adjust the ppqPosition if the position is greater than the PPQ length
-HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& p_Value)
+void SVConfigurationObject::AddInspectionRemoteInput(const std::string& name, long ppqIndex, const _variant_t& p_Value)
 {
-	HRESULT hr = S_OK;
+	std::string indexString = name.substr(std::string(SvO::cRemoteInputNumberLabel).length());
+	int index = std::stoi(indexString);
 
-	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != pPPQ);
-
-	SVIOEntryHostStructPtr pIOEntry = pPPQ->GetInput(name);
-	if (nullptr == pIOEntry)
+	SVRemoteInputObject* pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, index - 1).get());
+	if (nullptr != pRemoteInput)
 	{
-		hr = AddRemoteInput(pPPQ, name, ppqPosition, index, p_Value);
+		pRemoteInput->SetPpqIndex(ppqIndex);
+		pRemoteInput->SetChannel(index);
+		pRemoteInput->writeCache(p_Value);
 	}
-	else
-	{
-		if (!pIOEntry->m_Enabled)
-		{
-			pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-			pIOEntry->m_PPQIndex = ppqPosition;
-			pIOEntry->m_Enabled = ppqPosition != -1;
-
-			SVRemoteInputObject* pRemoteInput = nullptr;
-			int number = -1;
-			sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
-			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1).get());
-			if (nullptr != pRemoteInput)
-			{
-				pRemoteInput->SetChannel(index);
-				pRemoteInput->writeCache(p_Value);
-			}
-		}
-	}
-	return hr;
 }
 
-// Add the (Imported) Input if it doesn't exists
-// Do not adjust the ppqPosition if the position is greater than the PPQ length
-HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition)
+void SVConfigurationObject::AddInspectionDigitalInput(const std::string& name, long ppqIndex)
 {
-	HRESULT hr = S_OK;
+	SVInputObject* pDiscreateInput = m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType).get();
 
-	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != pPPQ);
-
-	SVIOEntryHostStructPtr pIOEntry = pPPQ->GetInput(name);
-	if (nullptr == pIOEntry)
+	if (nullptr != pDiscreateInput)
 	{
-		hr = AddDigitalInput(pPPQ, name, ppqPosition);
+		pDiscreateInput->SetPpqIndex(ppqIndex);
 	}
-	else
-	{
-		if (!pIOEntry->m_Enabled)
-		{
-			m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType);
-
-			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
-			pIOEntry->m_PPQIndex = ppqPosition;
-			pIOEntry->m_Enabled = ppqPosition != -1;
-
-		}
-	}
-	return hr;
-}
-
-HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& rValue)
-{
-	HRESULT result{ S_OK };
-
-	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != pPPQ);
-
-	// Add Remote Inputs to the InputObjectList
-	//first check to see if remote input is there, check by name...
-	SVRemoteInputObject* pRemoteInput = nullptr;
-	int number = -1;
-	sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
-	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1).get());
-
-	// Add Remote Input to the PPQ
-	std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
-	if (nullptr != pInputValueObject)
-	{
-		SvVol::SVVariantValueObjectClass* pValueObject = dynamic_cast<SvVol::SVVariantValueObjectClass*> (pInputValueObject.get());
-		pValueObject->SetName(name.c_str());
-		pValueObject->SetObjectOwner(pPPQ);
-		pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-		variant_t defaultValue;
-		defaultValue.ChangeType(rValue.vt);
-		pValueObject->SetDefaultValue(defaultValue, false);
-		pValueObject->ResetObject();
-
-		SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-		pIOEntry->setValueObject(pInputValueObject);
-		pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-		pIOEntry->m_PPQIndex = ppqPosition;
-		pIOEntry->m_Enabled = ppqPosition != -1;
-
-		if (nullptr != pRemoteInput)
-		{
-			pRemoteInput->SetChannel(index);
-			pRemoteInput->writeCache(rValue);
-
-			pIOEntry->m_IOId = pRemoteInput->getObjectId();
-		}
-
-		pPPQ->AddInput(pIOEntry);
-	}
-	else
-	{
-		result = E_POINTER;
-	}
-
-	return result;
-}
-
-HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition)
-{
-	HRESULT result{ S_OK };
-
-	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != pPPQ);
-
-	SVDigitalInputObject* pDigitalInput = nullptr;
-
-	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType).get());
-
-	// Add Digital Input to the PPQ
-	std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-	if (nullptr != pInputValueObject)
-	{
-		SvVol::SVBoolValueObjectClass* pValueObject = dynamic_cast<SvVol::SVBoolValueObjectClass*> (pInputValueObject.get());
-		pValueObject->SetName(name.c_str());
-		pValueObject->SetObjectOwner(pPPQ);
-		pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-		pValueObject->ResetObject();
-
-		SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-		pIOEntry->setValueObject(pInputValueObject);
-		pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
-		pIOEntry->m_PPQIndex = ppqPosition;
-		pIOEntry->m_Enabled = ppqPosition != -1;
-
-		if (nullptr != pDigitalInput)
-		{
-			pIOEntry->m_IOId = pDigitalInput->getObjectId();
-		}
-
-		pPPQ->AddInput(pIOEntry);
-	}
-	else
-	{
-		result = E_POINTER;
-	}
-
-	return result;
 }
 
 void SVConfigurationObject::LoadEnvironment(SVTreeType& rTree, bool& ConfigurationColor)
@@ -1089,15 +952,17 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		{
 			if (bOutput)
 			{
+				SVOutputObject* pOutput {nullptr};
 				if (SvPb::SVDigitalOutputObjectType == ioType)
 				{
-					SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get());
-					if (nullptr != pOutput)
+					pOutput = m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get();
+					SVDigitalOutputObject* pDigitalOutput = dynamic_cast<SVDigitalOutputObject*> (pOutput);
+					if (nullptr != pDigitalOutput)
 					{
-						pOutput->SetChannel(channel);
-						pOutput->Force(bForced, (dwForcedValue != FALSE));
-						pOutput->Invert(bInverted);
-						pOutput->Combine(bCombined, bCombinedACK);
+						pDigitalOutput->SetChannel(channel);
+						pDigitalOutput->Force(bForced, (dwForcedValue != FALSE));
+						pDigitalOutput->Invert(bInverted);
+						pDigitalOutput->Combine(bCombined, bCombinedACK);
 
 						if (SvDef::cModuleReady == IOName)
 						{
@@ -1107,11 +972,12 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 				}
 				else if (SvPb::PlcOutputObjectType == ioType)
 				{
-					PlcOutputObject* pOutput = dynamic_cast<PlcOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get());
+					pOutput = m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get();
+					PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get());
 					if (nullptr != pOutput)
 					{
-						pOutput->SetChannel(channel);
-						pOutput->Combine(bCombined, bCombinedACK);
+						pPlcOutput->SetChannel(channel);
+						pPlcOutput->Combine(bCombined, bCombinedACK);
 					}
 				}
 			}
@@ -2157,9 +2023,6 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 		{
 			std::string DataName = rTree.getBranchName(hDataChild);
 
-			long lIndex{ 0L };
-			long lPPQPosition{ 0L };
-
 			if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_TYPE, hDataChild, Value))
 			{
 
@@ -2175,7 +2038,6 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 			{
 				if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ITEM_NAME, hDataChild, Value))
 				{
-
 					SvStl::MessageContainer MsgCont;
 					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED, SvStl::Tid_MsgIONameIsMissing, SvStl::SourceFileParams(StdMessageParams));
 					throw MsgCont;
@@ -2186,21 +2048,17 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 				if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_POSITION, hDataChild, Value))
 				{
-
 					SvStl::MessageContainer MsgCont;
 					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED, SvStl::Tid_MsgPPQPOsitionIsMissing, SvStl::SourceFileParams(StdMessageParams));
 					throw MsgCont;
 				}
-				lPPQPosition = Value;
+				long ppqIndex = Value;
 
-
-				// Add Digital Input to the PPQ
-				AddDigitalInput(pPPQ, DataName, lPPQPosition);
+				AddInspectionDigitalInput(DataName, ppqIndex);
 			}
 			// This means it is a Remote input
 			else if (SvXml::cRemoteType == Type)
 			{
-				_variant_t RemoteValue = 0.0;
 				if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ITEM_NAME, hDataChild, Value))
 				{
 					SvStl::MessageContainer MsgCont;
@@ -2216,25 +2074,14 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 					throw MsgCont;
 				}
 
-				lPPQPosition = Value;
+				long ppqIndex = Value;
 
-				if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_INDEX, hDataChild, Value))
-				{
-					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED, SvStl::Tid_MsgRemoteIndexIsMissing, SvStl::SourceFileParams(StdMessageParams));
-					throw MsgCont;
-				}
-				lIndex = Value;
-
-
+				_variant_t RemoteValue = 0.0;
 				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_INITIAL_VALUE, hDataChild, Value))
 				{
 					RemoteValue = Value;
 				}
-
-				// Add Remote Inputs to the InputObjectList
-				//first check to see if remote input is there, check by name...
-				AddRemoteInput(pPPQ, DataName, lPPQPosition, lIndex, RemoteValue);
+				AddInspectionRemoteInput(DataName, ppqIndex, RemoteValue);
 			}
 
 			hDataChild = rTree.getNextBranch(hDeviceChild, hDataChild);
@@ -3092,7 +2939,7 @@ void SVConfigurationObject::SaveTrigger(SvOi::IObjectWriter& rWriter) const
 	rWriter.EndElement();  // SvXml::CTAG_TRIGGER
 }
 
-void SVConfigurationObject::SaveInspection(SvOi::IObjectWriter& rWriter, AttributesSetMap& rAttributeSetPairVector) const
+void SVConfigurationObject::SaveInspection(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_INSPECTION);
 
@@ -3103,7 +2950,6 @@ void SVConfigurationObject::SaveInspection(SvOi::IObjectWriter& rWriter, Attribu
 
 		if (nullptr != pInspection)
 		{
-			getInspectionObjectAttributesSet(pInspection, rAttributeSetPairVector);
 			rWriter.StartElement(pInspection->GetName());
 
 			_variant_t svVariant;
@@ -3244,9 +3090,8 @@ void SVConfigurationObject::SavePPQ_Cameras(SvOi::IObjectWriter& rWriter, const 
 
 void SVConfigurationObject::SavePPQ_Inspections(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ) const
 {
-	long lInspectCount;
-	rPPQ.GetInspectionCount(lInspectCount);
-	if (lInspectCount)
+	long lInspectCount {rPPQ.GetInspectionCount()};
+	if (0L < lInspectCount)
 	{
 		rWriter.StartElement(SvXml::CTAG_INSPECTION);
 		SVInspectionProcess* pInspection(nullptr);
@@ -3258,11 +3103,11 @@ void SVConfigurationObject::SavePPQ_Inspections(SvOi::IObjectWriter& rWriter, co
 				std::string strName = pInspection->GetName();
 				rWriter.StartElement(strName.c_str());
 				rWriter.EndElement();
-			}// end if
-		}// end for( lInspect = 0; lInspect < lInspectCount; lInspect++ )
+			}
+		}
 
 		rWriter.EndElement(); //SvXml::CTAG_INSPECTION
-	}// end if
+	}
 }
 
 bool SVConfigurationObject::SaveRemoteMonitorList(SvOi::IObjectWriter& rWriter) const
@@ -3365,85 +3210,6 @@ void SVConfigurationObject::SaveGlobalConstants(SvOi::IObjectWriter& rWriter) co
 	rWriter.EndElement(); //SvXml::CTAG_GLOBAL_CONSTANTS
 }
 
-void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const
-{
-	const std::map<UINT, std::string> AttributeSetTypes
-	{
-		{ SvPb::publishable, std::string(_T("Publishable Value")) },
-		{ SvPb::publishResultImage, std::string(_T("Publishable Image")) },
-		{ SvPb::dataDefinitionValue, std::string(_T("Data Definition Value")) },
-		{ SvPb::dataDefinitionImage, std::string(_T("Data Definition Image")) }
-	};
-
-	rWriter.StartElement(SvXml::CTAG_OBJECT_ATTRIBUTES_SET);
-	for (auto const& rEntry : rAttributesSetMap)
-	{
-		std::map<UINT, std::string>::const_iterator Iter = AttributeSetTypes.find(rEntry.first);
-		if (AttributeSetTypes.end() != Iter)
-		{
-			rWriter.StartElement(Iter->second.c_str());
-			uint32_t arrayId{ SvDef::InvalidObjectId };
-			std::string ArrayIndexList;
-			int StartIndex{ -1 };
-			int EndIndex{ -1 };
-			for (auto const& rObjectRef : rEntry.second)
-			{
-				//!If previous object is an array and new object is different then we need to save the array values
-				if (SvDef::InvalidObjectId != arrayId && rObjectRef.getObjectId() != arrayId)
-				{
-					ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
-					_variant_t Value{ ArrayIndexList.c_str() };
-					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
-
-					arrayId = SvDef::InvalidObjectId;
-					StartIndex = -1;
-					EndIndex = -1;
-					ArrayIndexList.clear();
-				}
-				if (!rObjectRef.isArray())
-				{
-					//Not an array element is saved directly
-					_variant_t Value{ rObjectRef.GetObjectIdAndIndexOneBased().c_str() };
-					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
-				}
-				else
-				{
-					//If an array element then bundle the zero based indexes in the format 2-15,20,25-30 etc..
-					if (SvDef::InvalidObjectId == arrayId)
-					{
-						arrayId = rObjectRef.getObjectId();
-						ArrayIndexList = convertObjectIdToString(arrayId);
-						StartIndex = rObjectRef.ArrayIndex();
-						EndIndex = rObjectRef.ArrayIndex();
-					}
-					else if (arrayId == rObjectRef.getObjectId())
-					{
-						if (EndIndex + 1 == rObjectRef.ArrayIndex())
-						{
-							EndIndex = rObjectRef.ArrayIndex();
-						}
-						else
-						{
-							ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
-							StartIndex = rObjectRef.ArrayIndex();
-							EndIndex = rObjectRef.ArrayIndex();
-						}
-					}
-				}
-			}
-			//! Last object is of array then we need to save the object
-			if (SvDef::InvalidObjectId != arrayId)
-			{
-				ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
-				_variant_t Value{ ArrayIndexList.c_str() };
-				rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
-			}
-			rWriter.EndElement();
-		}
-	}
-	rWriter.EndElement(); //SvXml::CTAG_OBJECT_ATTRIBUTES_SET
-}
-
 void SVConfigurationObject::SaveAdditionalFiles(SvOi::IObjectWriter& rWriter) const
 {
 	if (m_AdditionalFiles.size() > 0)
@@ -3457,21 +3223,6 @@ void SVConfigurationObject::SaveAdditionalFiles(SvOi::IObjectWriter& rWriter) co
 		}
 
 		rWriter.EndElement(); //SvXml::CTAG_ADDITIONAL_CONFIG_FILES
-	}
-}
-
-void SVConfigurationObject::getInspectionObjectAttributesSet(const SVInspectionProcess* pInspection, AttributesSetMap& rAttributesSetMap) const
-{
-	if (nullptr != pInspection)
-	{
-		SVToolSet* pToolSet = pInspection->GetToolSet();
-		if (nullptr != pToolSet)
-		{
-			pToolSet->GetOutputListFiltered(rAttributesSetMap[SvPb::publishable], SvPb::publishable);
-			pToolSet->GetOutputListFiltered(rAttributesSetMap[SvPb::publishResultImage], SvPb::publishResultImage);
-			pToolSet->GetOutputListFiltered(rAttributesSetMap[SvPb::dataDefinitionValue], SvPb::dataDefinitionValue);
-			pToolSet->GetOutputListFiltered(rAttributesSetMap[SvPb::dataDefinitionImage], SvPb::dataDefinitionImage);
-		}
 	}
 }
 
@@ -3500,18 +3251,16 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	std::string versionString = SvUl::Format("%d.%d", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
 	rWriter.WriteRevisionHistory(versionString.c_str(), 1);
 	rWriter.WriteStartOfBase();
-	AttributesSetMap AttributeSetPairVector;
 
 	SaveEnvironment(rWriter);
 	SaveIO(rWriter);
 	SaveAcquisitionDevice(rWriter);
 	SaveCamera(rWriter);
 	SaveTrigger(rWriter);
-	SaveInspection(rWriter, AttributeSetPairVector);
+	SaveInspection(rWriter);
 	SavePPQ(rWriter);
 	SaveRemoteMonitorList(rWriter);
 	SaveGlobalConstants(rWriter);
-	SaveObjectAttributesSet(rWriter, AttributeSetPairVector);
 	SaveAdditionalFiles(rWriter);
 	SaveAuditList(rWriter);
 	rWriter.EndElement(); // end of BaseNode
@@ -3777,7 +3526,7 @@ HRESULT SVConfigurationObject::SetModuleReady(bool value)
 		else
 		{
 			SvUl::PeriodicTimer::CloseTimer(GetName());
-		}
+			}
 
 		l_Status = m_pIOController->SetModuleReady(value);
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
@@ -5225,11 +4974,6 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 					pValue->setDescription(Description.c_str());
 					//All Global constants can be remotely settable
 					pValue->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-					// If type string then remove Selectable for Equation flag.
-					if (VT_BSTR == Value.vt)
-					{
-						pValue->SetObjectAttributesAllowed(SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute);
-					}
 				}
 			}
 
@@ -5237,112 +4981,6 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 		}
 	}
 	return Result;
-}
-
-HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree, ObjectAttributeInserter inserter)
-{
-	HRESULT Result{ S_OK };
-
-	const std::map<std::string, UINT> AttributeSetTypes
-	{
-		{  std::string(_T("Publishable Value")), SvPb::publishable },
-		{  std::string(_T("Publishable Image")), SvPb::publishResultImage },
-		{ std::string(_T("Data Definition Value")), SvPb::dataDefinitionValue },
-		{ std::string(_T("Data Definition Image")), SvPb::dataDefinitionImage }
-	};
-
-	SVTreeType::SVBranchHandle hBranch(nullptr);
-	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_OBJECT_ATTRIBUTES_SET, nullptr, hBranch))
-	{
-		SVTreeType::SVBranchHandle hChild(nullptr);
-		hChild = rTree.getFirstBranch(hBranch);
-
-		while (S_OK == Result && nullptr != hChild)
-		{
-			auto const Iter = AttributeSetTypes.find(rTree.getBranchName(hChild));
-			if (AttributeSetTypes.end() != Iter)
-			{
-				SVTreeType::SVLeafHandle hLeaf(rTree.getFirstLeaf(hChild));
-
-				while (S_OK == Result && rTree.isValidLeaf(hChild, hLeaf))
-				{
-					if (scUniqueReferenceIDTag == rTree.getLeafName(hLeaf))
-					{
-						_variant_t Value;
-						if (S_OK == rTree.getLeafData(hLeaf, Value))
-						{
-							std::string ValueText{ SvUl::createStdString(Value.bstrVal) };
-							std::string objectIdString;
-							auto Pos = ValueText.find('}');
-							if (std::string::npos != Pos)
-							{
-								Pos++;
-								objectIdString = SvUl::Left(ValueText, Pos);
-								ValueText = SvUl::Mid(ValueText, Pos);
-							}
-							ObjectAttribute objectAttribute;
-							objectAttribute.m_attributeIndex.reserve(100);
-							objectAttribute.m_objectID = calcObjectId(objectIdString);
-							objectAttribute.m_Attribute = Iter->second;
-							if (false == ValueText.empty())
-							{
-								auto StartPos = 0LL;
-								auto EndPos = ValueText.find(',');
-								while (std::string::npos != EndPos)
-								{
-									std::string Range = ValueText.substr(StartPos, EndPos - StartPos);
-									auto RangePos = Range.find('-');
-									if (std::string::npos != RangePos)
-									{
-										int IndexStart = atoi(SvUl::Left(Range, RangePos).c_str());
-										int IndexEnd = atoi(SvUl::Mid(Range, RangePos + 1).c_str());
-										for (int i = IndexStart; i <= IndexEnd; i++)
-										{
-											objectAttribute.m_attributeIndex.push_back(i);
-										}
-									}
-									else
-									{
-										objectAttribute.m_attributeIndex.push_back(atoi(Range.c_str()));
-									}
-									StartPos = EndPos + 1;
-									EndPos = ValueText.find(',', StartPos);
-								}
-							}
-							inserter = objectAttribute;
-						}
-					}
-					hLeaf = rTree.getNextLeaf(hChild, hLeaf);
-				}
-			}
-
-			hChild = rTree.getNextBranch(hBranch, hChild);
-		}
-	}
-	return Result;
-}
-
-void SVConfigurationObject::SetObjectAttributes(const ObjectAttributeList& rObjectAttributeList) const
-{
-	for (const auto& rObjectAttribute : rObjectAttributeList)
-	{
-		SVObjectReference ObjectRef{ SVObjectManagerClass::Instance().GetObject(rObjectAttribute.m_objectID) };
-		if (nullptr != ObjectRef.getObject())
-		{
-			if (0 == rObjectAttribute.m_attributeIndex.size())
-			{
-				ObjectRef.SetObjectAttributesSet(rObjectAttribute.m_Attribute, SvOi::AddAttribute);
-			}
-			else
-			{
-				for (auto index : rObjectAttribute.m_attributeIndex)
-				{
-					ObjectRef.SetArrayIndex(index);
-					ObjectRef.SetObjectAttributesSet(rObjectAttribute.m_Attribute, SvOi::AddAttribute);
-				}
-			}
-		}
-	}
 }
 
 HRESULT SVConfigurationObject::LoadAdditionalFiles(SVTreeType& rTree)
@@ -5465,7 +5103,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 	///Need to change the output type
 	for (auto& pPPQ : m_arPPQArray)
 	{
-		SVIOEntryHostStructPtrVector IOEntriesVector {pPPQ->GetAllOutputs()};
+		SVIOEntryHostStructPtrVector IOEntriesVector {pPPQ->getUsedOutputs()};
 
 		for (auto& pIoEntry : IOEntriesVector)
 		{

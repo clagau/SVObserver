@@ -117,7 +117,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 			}
 			else
 			{
-				for (long j=0; j < m_maxOutputNumber; ++j)
+				for (long j = 0; j < m_maxOutputNumber; ++j)
 				{
 					int indexRow = j + m_maxOutputNumber * i;
 					std::string Item = SvUl::Format(_T("PLC Output %d"), j + 1);
@@ -128,9 +128,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 									   1, 0);
 
 					m_rCtrl.SetItemText(indexRow, 1, pPPQ->GetName());
-					// Get list of available outputs
-
-					for(const auto& pIOEntry : pPPQ->GetAllOutputs())
+					for (const auto& pIOEntry : pPPQ->getUsedOutputs())
 					{
 						if (pIOEntry->m_ObjectType != SVIOObjectType::IO_PLC_OUTPUT) { continue; }
 
@@ -206,11 +204,12 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 			if (nullptr != pPlcOutput)
 			{
 				SVIOAdjustDialog dlg;
-				dlg.IOName = _T("Result ") + m_rCtrl.GetItemText(item, 0);
-				dlg.IOName += _T(", ") + m_rCtrl.GetItemText(item, 1);
-				dlg.m_pIOEntry = pIOEntry;
+				dlg.m_IOName = m_rCtrl.GetItemText(item, 2);
+				SVObjectClass* pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;
+				dlg.m_pLinkedObject = pLinkedObject;
 				dlg.m_pPlcOutput = pPlcOutput;
 				dlg.m_PpqIndex = item / m_maxOutputNumber;
+				dlg.m_ioObjectType = SVIOObjectType::IO_PLC_OUTPUT;
 
 				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 				if (IDOK == dlg.DoModal())
@@ -218,37 +217,43 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 
 					// Check if they picked a new output
-					if (dlg.m_pIOEntry != pIOEntry)
+					if (dlg.m_pLinkedObject != pLinkedObject)
 					{
-						if (nullptr != pIOEntry)
+						if (nullptr == pIOEntry)
+						{
+							pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+						}
+						else
 						{
 							// Make sure that we first reset the old output
 							if (nullptr != pOutputList)
 							{
 								pOutputList->ResetOutput(pIOEntry);
-							}// end if
-
-							pIOEntry->m_Enabled = FALSE;
+							}
+							pIOEntry->m_Enabled = false;
 							pIOEntry->m_IOId = SvDef::InvalidObjectId;
-						}// end if
+						}
 
-						if (nullptr == dlg.m_pIOEntry)
+						if (nullptr == dlg.m_pLinkedObject)
 						{
 							if (nullptr != pOutputList)
 							{
 								pOutputList->DetachOutput(pOutput->getObjectId());
 							}
 							pOutput = nullptr;
-						}// end if
+							pIOEntry->clear();
+							pIOEntry.reset();
+						}
 						else
 						{
-							dlg.m_pIOEntry->m_Enabled = TRUE;
-							dlg.m_pPlcOutput->SetName(dlg.m_pIOEntry->getObject()->GetCompleteName().c_str());
-							if (nullptr == pIOEntry && nullptr != pOutputList)
+							pIOEntry->m_Enabled = true;
+							pIOEntry->setLinkedObject(dlg.m_pLinkedObject);
+							if (nullptr != pOutput && nullptr != pOutputList)
 							{
+								pOutput->SetName(dlg.m_pLinkedObject->GetCompleteName().c_str());
 								pOutputList->AttachOutput(pOutput);
-							}// end if
-						}// end else
+							}
+						}
 
 						// Rebuild Outputs
 						SVPPQObject* pPPQ = pConfig->GetPPQ(dlg.m_PpqIndex);
@@ -265,8 +270,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 			else
 			{
 				SVIOAdjustDialog dlg;
-				dlg.IOName = _T("");
-				dlg.IOValue.Format("%d", 0);
+				dlg.m_IOName = _T("");
 
 				if (IDOK == dlg.DoModal())
 				{

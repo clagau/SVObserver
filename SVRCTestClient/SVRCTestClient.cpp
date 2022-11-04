@@ -71,9 +71,7 @@ void PrintTreeItems(const SvPb::TreeItem& rTreeItem, std::string& rData, const s
 	for (int i = 0; i < rTreeItem.children_size(); i++)
 	{
 		const SvPb::TreeItem& rChildItem = rTreeItem.children(i);
-		std::string selected = rChildItem.selected() ? _T("\tSelected\n") : _T("\tNot selected\n");
 		rData += rSpacing + SvUl::to_ansi(rChildItem.name()) + _T("\n");
-		rData += rSpacing + selected;
 		rData += rSpacing + _T("\t") + rChildItem.type() + _T("\n");
 		rData += rSpacing + _T("\t") + rChildItem.objectidindex() + _T("\n");
 		PrintTreeItems(rChildItem, rData, rSpacing + _T("\t"));

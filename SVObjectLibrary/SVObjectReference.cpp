@@ -353,38 +353,12 @@ UINT SVObjectReference::ObjectAttributesAllowed() const
 	}
 }
 
-UINT SVObjectReference::ObjectAttributesSet() const
-{
-	assert(nullptr != m_pObject);
-	if (nullptr != m_pObject)
-	{
-		return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0);
-	}
-	else
-	{
-		return 0;
-	}
-}
-
 UINT SVObjectReference::SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type)
 {
 	assert(nullptr != m_pObject);
 	if (nullptr != m_pObject)
 	{
 		return m_pObject->SetObjectAttributesAllowed(Attributes, Type);
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-UINT SVObjectReference::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeType Type)
-{
-	assert(nullptr != m_pObject);
-	if (nullptr != m_pObject)
-	{
-		return m_pObject->SetObjectAttributesSet(Attributes, Type, m_ArrayIndex >= 0 ? m_ArrayIndex : 0);
 	}
 	else
 	{
@@ -446,10 +420,8 @@ void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<S
 		{
 			SetEntireArray();
 			insertItem.set_name(GetName(true));
-			UINT AttributesSet = ObjectAttributesSet();
 			insertItem.set_location(GetObjectNameToObjectType(nameToType, true, true));
 			insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
-			insertItem.set_selected((AttributesSet & attribute) == attribute);
 			treeInserter = insertItem;
 		}
 
@@ -463,10 +435,8 @@ void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<S
 				{
 					SetArrayIndex(i);
 					insertItem.set_name(GetName(true));
-					UINT AttributesSet = ObjectAttributesSet();
 					insertItem.set_location(GetObjectNameToObjectType(nameToType, true, true));
 					insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
-					insertItem.set_selected((AttributesSet & attribute) == attribute);
 					treeInserter = insertItem;
 				}
 			}
@@ -475,10 +445,8 @@ void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<S
 	else if (pFunctor(getObject(), attribute, 0))
 	{
 		insertItem.set_name(GetName());
-		UINT AttributesSet = ObjectAttributesSet();
 		insertItem.set_location(GetObjectNameToObjectType(nameToType, true));
 		insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
-		insertItem.set_selected((AttributesSet & attribute) == attribute);
 		treeInserter = insertItem;
 	}
 }

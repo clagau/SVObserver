@@ -85,7 +85,7 @@ void SVFileNameValueObjectClass::LocalInitialize()
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::SVStringValueObjectType;
 	
-	SetObjectAttributesAllowed( SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::audittrail | SvPb::dataDefinitionValue, SvOi::SetAttributeType::OverwriteAttribute );
+	SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SetMaxByteSize(c_PathMaxSize);
 

@@ -184,9 +184,6 @@ private:
 	afx_msg void OnUpdateExtrasLogout(CCmdUI* PCmdUI);
 	afx_msg void OnRunMostRecentMRU();
 	afx_msg void OnUpdateExtraUtilities(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditPublishedResults(CCmdUI* PCmdUI);
-	afx_msg void OnUpdatePublishedResultsPicker(CCmdUI* pCmdUI);
-	afx_msg void OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateResultsPicker(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateRegressionTest(CCmdUI* pCmdUI);
 	afx_msg void OnEditMonitorList();
@@ -205,7 +202,6 @@ private:
 	afx_msg void OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI);
 	afx_msg void OnEditRemoteOutputs();
 	afx_msg void OnRCCloseAndCleanUpDownloadDirectory();
-	afx_msg void OnEditPublishedResults(UINT nID);
 
 	afx_msg void OnViewToolBar();
 	afx_msg void OnUpdateViewPPQBar(CCmdUI* pCmdUI);

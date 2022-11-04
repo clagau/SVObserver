@@ -80,8 +80,6 @@ bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 
 	bOk &= (S_OK == UpdateFromToolInformation());
 
-	SetObjectAttributesAllowed(SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);	// add this to older configs
-
 	m_isCreated = bOk;
 
 	return bOk;
@@ -161,7 +159,7 @@ void SVImageClass::init()
 
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::OverwriteAttribute);
+	SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_ParentImageInfo.second = nullptr;
 
@@ -1217,7 +1215,7 @@ void SVImageClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 
 void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {
-	if (0 != (ObjectAttributesAllowed() & ~SvPb::embedable))
+	if (attribute == (ObjectAttributesAllowed() & attribute))
 	{
 		nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
 		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
@@ -1226,7 +1224,7 @@ void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::
 
 void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 {
-	if (0 != (ObjectAttributesAllowed() & ~SvPb::embedable) || addHidden)
+	if (0 != (ObjectAttributesAllowed() & SvPb::viewable) || addHidden)
 	{
 		__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 	}

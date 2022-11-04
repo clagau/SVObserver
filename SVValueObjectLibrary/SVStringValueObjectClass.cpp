@@ -316,7 +316,7 @@ void SVStringValueObjectClass::LocalInitialize()
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::SVStringValueObjectType;
 	
-	SetObjectAttributesAllowed( SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::audittrail | SvPb::dataDefinitionValue, SvOi::SetAttributeType::OverwriteAttribute );
+	SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	SetTypeName(cTextType);
 
 	init();

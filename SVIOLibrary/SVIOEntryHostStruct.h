@@ -40,6 +40,7 @@ struct SVIOEntryHostStruct
 
 	void clear();
 
+	std::string m_name {};
 	bool m_Enabled{false};
 	long m_PPQIndex{-1L};
 
@@ -57,10 +58,6 @@ struct SVIOEntryHostStruct
 	static bool PtrGreater( std::shared_ptr< SVIOEntryHostStruct > elem1, std::shared_ptr< SVIOEntryHostStruct > elem2 );
 
 private:
-	SVIOEntryHostStruct( const SVIOEntryHostStruct& p_rsvObject ) = default;
-
-	SVIOEntryHostStruct& operator=( const SVIOEntryHostStruct& p_rsvObject ) = default;
-
 	SVObjectClass* m_pObject{nullptr};
 	///m_pLinkedValueObject is not owned while m_pValueObject is owned by IO entry
 	SvOi::IValueObject* m_pLinkedValueObject {nullptr};

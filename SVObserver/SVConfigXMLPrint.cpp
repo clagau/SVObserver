@@ -428,9 +428,8 @@ void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject* pPPQ) const
 void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject* pPPQ) const
 {
 	InspectionMap inspections;
-	long lSize = 0;
-	pPPQ->GetInspectionCount(lSize);
-	for (int intInspection = 0; intInspection < lSize; intInspection++)
+
+	for (int intInspection = 0; intInspection < pPPQ->GetInspectionCount(); intInspection++)
 	{
 		SVInspectionProcess* pInspection(nullptr);
 		pPPQ->GetInspection(intInspection, pInspection);
@@ -566,7 +565,7 @@ void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 				if (nullptr != pPPQ)
 				{
 					// Find each digital output
-					for (const auto& pIoEntry : pPPQ->GetAllOutputs())
+					for (const auto& pIoEntry : pPPQ->getUsedOutputs())
 					{
 						if (pIoEntry->m_ObjectType != IO_DIGITAL_OUTPUT)
 						{
@@ -857,12 +856,12 @@ void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 					}
 				}
 
-				if (0 == pPPQ->GetAllInputs().size())
+				if (0 == pPPQ->GetUsedInputs().size())
 				{
 					writer->WriteComment(L"No IO Entries");
 				}
 
-				for (const auto& pEntry : pPPQ->GetAllInputs())
+				for (const auto& pEntry : pPPQ->GetUsedInputs())
 				{
 					if (pEntry->m_PPQIndex == intPPQPos)
 					{

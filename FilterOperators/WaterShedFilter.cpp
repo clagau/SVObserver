@@ -72,7 +72,7 @@ bool WatershedFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	m_bvoUseMarker.GetValue(bUseMarker);
 	if (bUseMarker)
 	{
-		m_MarkerImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+		m_MarkerImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
 		m_MarkerImageInput.validateInput();
 	}
 	else

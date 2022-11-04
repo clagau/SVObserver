@@ -318,20 +318,20 @@ enum ObjectAttributes
 {
 	noAttributes				= 0x00000000;	//None
 	viewable					= 0x00000001;	//Object is viewable in object selector
-	publishable					= 0x00000002;	//Object value can be published
-	archivable					= 0x00000004;	//Object value is displayed in the object selector when used for archiving
-	selectableForEquation		= 0x00000008;	//Object is displayed in the object selector when used for equations
-	embedable					= 0x00000010;	//Object is an embedded value
-	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
-	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
+	//publishable					= 0x00000002;	//obsolete (Object value can be published)
+	//archivable					= 0x00000004;	//obsolete (Object value is displayed in the object selector when used for archiving)
+	useable						= 0x00000008;	//Object can be used (displayed in the object selector when e.g. used for equations)
+	//embedable					= 0x00000010;	//obsolete (Object is an embedded value)
+	//selectableForStatistics		= 0x00000020;	//obselete (Object is displayed in the object selector when used for statistics tool)
+	//archivableImage				= 0x00000040;	//obsolete (Object image is displayed in the object selector when used for archiving)
 	audittrail					= 0x00000080;	//Object is printed in the configuration report
 	remotelySetable				= 0x00000100;	//Object can be set remotely  //@TODO[Arvid]: this is a typo. 'remotelySettable' would be correct
 	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online //@TODO[Arvid]: this is a typo. 'settableOnline' would be correct
-	extentObject				= 0x00000400;	//Object is an extent value object
-	taskObject					= 0x00000800;	//Object is a task object
-	publishResultImage			= 0x00001000;	//Object result image can be published
-	dataDefinitionValue			= 0x00010000;	//Object is selected for the data definition list
-	dataDefinitionImage			= 0x00020000;	//Object is selected for the data definition list
+	//extentObject				= 0x00000400;	//obsolete (Object is an extent value object)
+	//taskObject					= 0x00000800;	//obsolete (Object is a task object)
+	//publishResultImage			= 0x00001000;	//obsolete (Object result image can be published)
+	//dataDefinitionValue			= 0x00010000;	//obsolete (Object is selected for the data definition list)
+	//dataDefinitionImage			= 0x00020000;	//obselete (Object is selected for the data definition list)
 }
 
 ///Object selector types
@@ -353,6 +353,7 @@ enum ObjectSelectorType
 	grayImageObjects = 6;
 	colorImageObjects = 7;
 	toolObjects = 8;
+	boolValueObjects = 9;		//All ValueObjects which are of type bool
 }
 
 enum SVExtentPropertyEnum

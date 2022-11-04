@@ -1796,7 +1796,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Inspection:"));
 			
-			pPPQ->GetInspectionCount(lSize);
+			lSize = pPPQ->GetInspectionCount();
 			for (int intInspection = 0; intInspection < lSize; intInspection++)
 			{
 				SVInspectionProcess* pInspection{ nullptr };
@@ -1877,7 +1877,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 				}
 			}
 
-			for(const auto& pEntry : pPPQ->GetAllInputs())
+			for(const auto& pEntry : pPPQ->GetUsedInputs())
 			{
 				if (pEntry->m_PPQIndex == intPPQPos)
 				{
@@ -2066,7 +2066,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 			{
 				if (inputEntryVector[k]->m_ObjectType != IO_REMOTE_INPUT) { continue; }
 
-				std::string Label = SvUl::Format(SvO::cRemoteInputNumberLabel, (l++) +1 );
+				std::string Label = SvO::cRemoteInputNumberLabel + std::to_string ( (++l) +1 );
 				PrintIOEntryObject(pDC, ptCurPos, nIndentLevel+1, Label.c_str(), inputEntryVector[k]);
 			}
 		}
@@ -2131,7 +2131,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				}
 
 				// Find each digital output
-				for (const auto& pIOEntry : pPPQ->GetAllOutputs())
+				for (const auto& pIOEntry : pPPQ->getUsedOutputs())
 				{
 					if ( pIOEntry->m_ObjectType != IO_DIGITAL_OUTPUT ) { continue; }
 

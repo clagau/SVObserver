@@ -182,11 +182,11 @@ void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 			if( pDigInput )
 			{
 				SVIOAdjustDialog dlg;
-				dlg.IOName = _T( "Module " ) + m_rCtrl.GetItemText( item, 0 );
-				dlg.IOName += _T( ", " ) + m_rCtrl.GetItemText( item, 1 );
-				dlg.IOValue.Format( "%d", pDigInput->GetValue() ? 1 : 0 );
+				dlg.m_IOName = m_rCtrl.GetItemText( item, 1 );
+				dlg.m_IOValue.Format( "%d", pDigInput->GetValue() ? 1 : 0 );
 				dlg.m_pDigInput = pDigInput;
-				dlg.m_pIOEntry  = pIOEntry;
+				dlg.m_pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;
+				dlg.m_ioObjectType = SVIOObjectType::IO_DIGITAL_INPUT;
 
 				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 				if(ID_OK == dlg.DoModal())

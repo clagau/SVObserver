@@ -200,7 +200,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				// Add new ones until we have enough
 				for(int i = count; i < oDlg.m_lRemoteInputCount; ++i )
 				{
-					std::string RemoteInputName = SvUl::Format(SvO::cRemoteInputNumberLabel, i + 1);
+					std::string RemoteInputName = SvO::cRemoteInputNumberLabel + std::to_string(i + 1);
 
 					SVRemoteInputObject* pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SvPb::SVRemoteInputObjectType, i).get());
 					if( nullptr != pRemoteInput )
@@ -242,7 +242,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				// Remove all the extra ones
 				for(int i = 0; i < lSize; ++i)
 				{
-					std::string RemoteInputName = SvUl::Format( SvO::cRemoteInputNumberLabel, remoteIndex + 1 );
+					std::string RemoteInputName = SvO::cRemoteInputNumberLabel + std::to_string(remoteIndex + 1);
 
 					bool bFound = false;
 

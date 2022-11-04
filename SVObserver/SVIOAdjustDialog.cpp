@@ -14,11 +14,12 @@
 #include "SVIOAdjustDialog.h"
 #include "SVConfigurationObject.h"
 #include "SVPPQObject.h"
+#include "InspectionCommands/CommandExternalHelper.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVIOLibrary/PlcOutputObject.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #pragma endregion Includes
 
@@ -31,9 +32,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(SVIOAdjustDialog, CDialog)
-	//{{AFX_MSG_MAP(SVIOAdjustDialog)
-	ON_CBN_SELCHANGE(IDC_IONAME_COMBO, OnSelChangeIOCombo)
-	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_BUTTON_SELECTOR, OnObjectSelector)
 END_MESSAGE_MAP()
 
 SVIOAdjustDialog::SVIOAdjustDialog(CWnd* pParent /*=nullptr*/) : CDialog(SVIOAdjustDialog::IDD, pParent)
@@ -44,15 +43,16 @@ void SVIOAdjustDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVIOAdjustDialog)
-	DDX_Control(pDX, IDC_IONAME_COMBO, IOCombo);
-	DDX_Text(pDX, IDC_VALUE_STATIC, IOValue);
-	DDX_Check(pDX, IDC_FORCE_CHECK, IsForced);
-	DDX_Check(pDX, IDC_INVERT_CHECK, IsInverted);
-	DDX_Check(pDX, IDC_FORCE_1_RADIO, IsForcedTrue);
-	DDX_Check(pDX, IDC_FORCE_0_RADIO, IsForcedFalse);
-	DDX_Check(pDX, IDC_COMBINE_CHECK, IsCombined);
-	DDX_Check(pDX, IDC_COMBINE_ACK_RADIO, IsCombinedACK);
-	DDX_Check(pDX, IDC_COMBINE_NAK_RADIO, IsCombinedNAK);
+	DDX_Control(pDX, IDC_COMBO_INSPECTION, m_inspectionCtrl);
+	DDX_Text(pDX, IDC_IONAME, m_IOName);
+	DDX_Text(pDX, IDC_VALUE_STATIC, m_IOValue);
+	DDX_Check(pDX, IDC_FORCE_CHECK, m_isForced);
+	DDX_Check(pDX, IDC_INVERT_CHECK, m_isInverted);
+	DDX_Check(pDX, IDC_FORCE_1_RADIO, m_isForcedTrue);
+	DDX_Check(pDX, IDC_FORCE_0_RADIO, m_isForcedFalse);
+	DDX_Check(pDX, IDC_COMBINE_CHECK, m_sCombined);
+	DDX_Check(pDX, IDC_COMBINE_ACK_RADIO, m_isCombinedACK);
+	DDX_Check(pDX, IDC_COMBINE_NAK_RADIO, m_isCombinedNAK);
 	//}}AFX_DATA_MAP
 }
 
@@ -60,39 +60,20 @@ void SVIOAdjustDialog::OnOK()
 {
 	CDialog::OnOK();
 
-	int curSel = IOCombo.GetCurSel();
-	if( curSel == CB_ERR )
+	if(nullptr != m_pDigInput)
 	{
-		return;
+		m_pDigInput->Force( m_isForced != FALSE, m_isForcedTrue != FALSE );
+		m_pDigInput->Invert( m_isInverted != FALSE );
 	}
-
-	CString selection;
-	IOCombo.GetLBText(curSel, selection);
-
-	const auto iter = m_Items.find(std::string(selection));
-	if (m_Items.end() != iter)
+	else if(nullptr != m_pDigOutput )
 	{
-		m_pIOEntry = iter->second;
-
-		if(nullptr != m_pDigInput)
-		{
-			m_pDigInput->Force( IsForced != FALSE, IsForcedTrue != FALSE );
-			m_pDigInput->Invert( IsInverted != FALSE );
-		}
-		else if(nullptr != m_pDigOutput )
-		{
-			m_pDigOutput->Force( IsForced != FALSE, IsForcedTrue != FALSE );
-			m_pDigOutput->Invert( IsInverted != FALSE );
-			m_pDigOutput->Combine( IsCombined != FALSE, IsCombinedACK != FALSE );
-		}
-		else if (nullptr != m_pPlcOutput)
-		{
-			m_pPlcOutput->Combine(IsCombined != FALSE, IsCombinedACK != FALSE);
-		}
+		m_pDigOutput->Force( m_isForced != FALSE, m_isForcedTrue != FALSE );
+		m_pDigOutput->Invert( m_isInverted != FALSE );
+		m_pDigOutput->Combine( m_sCombined != FALSE, m_isCombinedACK != FALSE );
 	}
-	else
+	else if (nullptr != m_pPlcOutput)
 	{
-		m_pIOEntry.reset();
+		m_pPlcOutput->Combine(m_sCombined != FALSE, m_isCombinedACK != FALSE);
 	}
 }
 
@@ -100,212 +81,141 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SVIOObjectType outputType{SVIOObjectType::IO_INVALID_OBJECT};
-
-	// Add an empty item...
-	if(nullptr != m_pIOEntry)
+	SVConfigurationObject* pConfig = nullptr;
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	if (nullptr != pConfig)
 	{
-		IOCombo.SetItemData( IOCombo.AddString( _T( "" ) ), 0 );
-	}
-
-	if(nullptr != m_pDigInput)
-	{
-		std::string name{m_pDigInput->GetName()};
-		IOCombo.AddString(name.c_str());
-		m_Items[name] = m_pIOEntry;
-		if(false == name.empty())
-		{
-			IOCombo.SelectString(0, name.c_str());
-		}
-		else
-		{
-			IOCombo.SetCurSel(0);
-		}
-		OnSelChangeIOCombo();
-	}
-	else if (nullptr != m_pDigOutput)
-	{
-		outputType = IO_DIGITAL_OUTPUT;
-		std::string name {m_pDigOutput->GetName()};
-		IOCombo.AddString(name.c_str());
-		m_Items[name] = m_pIOEntry;
-		if (false == name.empty())
-		{
-			IOCombo.SelectString(0, name.c_str());
-		}
-		else
-		{
-			IOCombo.SetCurSel(0);
-		}
-		OnSelChangeIOCombo();
-	}
-	else if (nullptr != m_pPlcOutput)
-	{
-		outputType = IO_PLC_OUTPUT;
-		std::string name {m_pPlcOutput->GetName()};
-		IOCombo.AddString(name.c_str());
-		m_Items[name] = m_pIOEntry;
-		if (false == name.empty())
-		{
-			IOCombo.SelectString(0, name.c_str());
-		}
-		else
-		{
-			IOCombo.SetCurSel(0);
-		}
-		OnSelChangeIOCombo();
-	}
-	else
-	{
-		showForcedGroup(SW_HIDE);
-		showInvertGroup(SW_HIDE);
-	}
-
-	if(nullptr != m_pDigOutput || nullptr != m_pPlcOutput)
-	{
-		SVConfigurationObject* pConfig = nullptr;
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-		// Get the number of PPQs
-		if( nullptr == pConfig )
-		{
-			SvStl::MessageManager e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams));
-			DebugBreak();
-		}
-
-		// Check Module Ready first
-		SVIOEntryHostStructPtr pIOModuleReady = pConfig->GetModuleReady();
-
-		if (nullptr != pIOModuleReady && SvDef::InvalidObjectId == pIOModuleReady->m_IOId && SV_IS_KIND_OF(pIOModuleReady->getObject(), SvVol::SVBoolValueObjectClass) )
-		{
-			std::string name{pIOModuleReady->getObject()->GetCompleteName()};
-			IOCombo.AddString(name.c_str());
-			m_Items[name] = pIOModuleReady;
-		}// end if
-
-		for(int i = 0; i <  pConfig->GetPPQCount(); ++i )
+		for (long i = 0; i < pConfig->GetPPQCount(); ++i)
 		{
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if (nullptr != pPPQ)
 			{
-				// Init IO combo from m_ppIOEntries;
-				for (const auto& pIOEntry : pPPQ->GetAllOutputs())
+				for (long j = 0; j < pPPQ->GetInspectionCount(); ++j)
 				{
-					///For PLC Output only insert items from the same PPQ
-					if (nullptr != m_pPlcOutput && i != m_PpqIndex)
+					SVInspectionProcess* pInspection(nullptr);
+					pPPQ->GetInspection(j, pInspection);
+					if (nullptr != pInspection)
 					{
-						continue;
+						std::string name {pPPQ->GetName()};
+						name += ": ";
+						name += pInspection->GetName();
+						int index = m_inspectionCtrl.AddString(name.c_str());
+						m_inspectionCtrl.SetItemData(index, pInspection->getObjectId());
 					}
-					///Note entries with IO_INVALID_OBJECT have not yet been set and shall either become IO_DIGITAL_OUPUT or IO_PLC_OUTPUT
-					if (SvDef::InvalidObjectId == pIOEntry->m_IOId && pIOEntry->m_ObjectType == outputType && pIOEntry->isAimObjectBool())
-					{
-						std::string name {pIOEntry->getObject()->GetCompleteName()};
-						IOCombo.AddString(name.c_str());
-						m_Items[name] = pIOEntry;
-					}// end if
-				}// end for
-
+				}
 			}
-			else
-			{
-				SvStl::MessageManager e(SvStl::MsgType::Log );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams));
-			}
-		}// end for
-	}// end if
-	else
-	{
-		// Current selection should not be changed...
-		// ...deactivate combo...
-		IOCombo.EnableWindow( FALSE );
+		}
 	}
+	m_inspectionCtrl.SetCurSel(0);
 
-	UpdateData( FALSE );
+	UpdateGroups();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }// end OnInitDialog
 
-void SVIOAdjustDialog::OnSelChangeIOCombo()
+void SVIOAdjustDialog::OnObjectSelector()
 {
-	int curSel = IOCombo.GetCurSel();
-	if(curSel != CB_ERR)
+	int inspectionIndex {m_inspectionCtrl.GetCurSel()};
+
+	if (CB_ERR == inspectionIndex)
 	{
-		CString selection;
-		IOCombo.GetLBText(curSel, selection);
-		SVIOEntryHostStructPtr pIOEntry;
-		const auto iter = m_Items.find(std::string(selection));
-		if (m_Items.end() != iter)
+		return;
+	}
+	uint32_t inspectionID {static_cast<uint32_t> (m_inspectionCtrl.GetItemData(inspectionIndex))};
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems}, inspectionID, SvPb::useable, SvDef::InvalidObjectId, false, SvPb::boolValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed);
+
+	SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	if (responseCmd.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
+	}
+
+	if (nullptr != m_pLinkedObject)
+	{
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems({m_pLinkedObject->GetObjectNameToObjectType()});
+	}
+	CString inspectionSelection;
+	m_inspectionCtrl.GetLBText(m_inspectionCtrl.GetCurSel(), inspectionSelection);
+	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
+	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
+
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(inspectionSelection.GetString(), ToolsetOutput.c_str(), Filter.c_str(), this);
+
+	if (IDOK == Result)
+	{
+		SVObjectReference ObjectRef {SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
+		m_pLinkedObject = ObjectRef.getObject();
+		m_IOName = ObjectRef.GetCompleteName(true).c_str();
+	}
+	UpdateGroups();
+}
+
+void SVIOAdjustDialog::UpdateGroups()
+{
+	if (nullptr != m_pDigInput)
+	{
+		m_isForced = m_pDigInput->IsForced();
+		m_isInverted = m_pDigInput->IsInverted();
+		m_isForcedFalse = !m_pDigInput->GetForcedValue();
+		m_isForcedTrue = m_pDigInput->GetForcedValue();
+	}
+	else if (nullptr != m_pDigOutput)
+	{
+		m_isForced = m_pDigOutput->IsForced();
+		m_isInverted = m_pDigOutput->IsInverted();
+		m_isForcedFalse = !m_pDigOutput->GetForcedValue();
+		m_isForcedTrue = m_pDigOutput->GetForcedValue();
+
+		m_sCombined = m_pDigOutput->isCombined();
+		m_isCombinedACK = m_pDigOutput->isAndACK();
+		m_isCombinedNAK = !m_isCombinedACK;
+	}
+	else if (nullptr != m_pPlcOutput)
+	{
+		m_sCombined = m_pPlcOutput->isCombined();
+		m_isCombinedACK = m_pPlcOutput->isAndACK();
+		m_isCombinedNAK = !m_isCombinedACK;
+	}
+
+	SvPb::SVObjectTypeEnum objectType = (nullptr != m_pLinkedObject) ? m_pLinkedObject->GetParent()->GetObjectType() : SvPb::SVObjectTypeEnum::SVNotSetObjectType;
+	switch (m_ioObjectType)
+	{
+		case SVIOObjectType::IO_DIGITAL_INPUT:
 		{
-			pIOEntry = iter->second;
+			showForcedGroup(SW_SHOW);
+			showInvertGroup(SW_SHOW);
+			showCombinedGroup(SW_HIDE);
+			m_inspectionCtrl.ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_SELECTOR)->ShowWindow(SW_HIDE);
+			break;
 		}
-
-		if(nullptr != pIOEntry)
+		case SVIOObjectType::IO_DIGITAL_OUTPUT:
 		{
-			if(nullptr != m_pDigInput)
-			{
-				IsForced	  = m_pDigInput->IsForced();
-				IsInverted	  = m_pDigInput->IsInverted();
-				IsForcedFalse = !m_pDigInput->GetForcedValue();
-				IsForcedTrue  = m_pDigInput->GetForcedValue();
-			}
-			else if(nullptr != m_pDigOutput)
-			{
-				IsForced	  = m_pDigOutput->IsForced();
-				IsInverted	  = m_pDigOutput->IsInverted();
-				IsForcedFalse = !m_pDigOutput->GetForcedValue();
-				IsForcedTrue  = m_pDigOutput->GetForcedValue();
-
-				IsCombined	  = m_pDigOutput->isCombined();
-				IsCombinedACK = m_pDigOutput->isAndACK();
-				IsCombinedNAK = !IsCombinedACK;
-			}
-			else if (nullptr != m_pPlcOutput)
-			{
-				IsCombined = m_pPlcOutput->isCombined();
-				IsCombinedACK = m_pPlcOutput->isAndACK();
-				IsCombinedNAK = !IsCombinedACK;
-			}
-
-			switch(pIOEntry->m_ObjectType)
-			{
-				case SVIOObjectType::IO_DIGITAL_INPUT:
-				{
-					showForcedGroup(SW_SHOW);
-					showInvertGroup(SW_SHOW);
-					showCombinedGroup(SW_HIDE);
-					break;
-				}
-				case SVIOObjectType::IO_DIGITAL_OUTPUT:
-				{
-					showForcedGroup(SW_SHOW);
-					showInvertGroup(SW_SHOW);
-					showCombinedGroup(SV_IS_KIND_OF(pIOEntry->getObject()->GetParent(), SVPPQObject) ? SW_HIDE : SW_SHOW);
-					break;
-				}
-				case SVIOObjectType::IO_PLC_OUTPUT:
-				{
-					showForcedGroup(SW_HIDE);
-					showInvertGroup(SW_HIDE);
-					showCombinedGroup(SV_IS_KIND_OF(pIOEntry->getObject()->GetParent(), SVPPQObject) ? SW_HIDE : SW_SHOW);
-					break;
-				}
-				default:
-					break;
-			}
-		}// end if
-		else
+			showForcedGroup(SW_SHOW);
+			showInvertGroup(SW_SHOW);
+			showCombinedGroup(SvPb::SVObjectTypeEnum::SVPPQObjectType == objectType ? SW_HIDE : SW_SHOW);
+			break;
+		}
+		case SVIOObjectType::IO_PLC_OUTPUT:
 		{
 			showForcedGroup(SW_HIDE);
 			showInvertGroup(SW_HIDE);
-			showCombinedGroup(SW_HIDE);
+			showCombinedGroup(SvPb::SVObjectTypeEnum::SVPPQObjectType == objectType ? SW_HIDE : SW_SHOW);
+			break;
+		}
+		default:
+		{
+			break;
 		}
 	}
 
-	UpdateData( FALSE );
-
-}// end OnSelChangeIOCombo
+	UpdateData(FALSE);
+}
 
 void SVIOAdjustDialog::showForcedGroup(int showState)
 {

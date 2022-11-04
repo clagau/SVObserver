@@ -62,7 +62,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 			{
 				//! We do not want the Logical ROI image showing up as an output image.
 				m_LogicalROIImage.InitializeImage(pInputImage);
-				m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+				m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
 				m_OutputImage.InitializeImage(pInputImage);
 
 				BOOL hasROI(false);
@@ -114,13 +114,9 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	SvOp::ToolSizeAdjustTask::EnsureInFriendList(this, true, true, true);
 
 	// Set / Reset Printable Flag
-	m_convertToHSI.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
-	m_hasROI.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_hasROI.SetObjectAttributesAllowed(SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
-
 	m_isCreated = bOk;
 
 	return bOk;

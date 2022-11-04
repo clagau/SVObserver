@@ -336,8 +336,7 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 	m_bvoUseHeaders.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
 	// These values will not be exposed for this tool.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
-	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_drawToolFlag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 	updateResultFilepathInformation(true);
 
@@ -856,7 +855,7 @@ SVObjectReferenceVector SVArchiveTool::assembleResultReferenceVector()
 	for (const auto& rRecord : rRecVec)
 	{
 		const SVObjectReference& rObjectRef = rRecord.GetObjectReference();
-		if (rObjectRef.ObjectAttributesAllowed() & SvPb::archivable)
+		if (rObjectRef.ObjectAttributesAllowed() & SvPb::viewable)
 		{
 			Result.push_back(rObjectRef);
 		}
@@ -909,7 +908,7 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (rRecord.GetObjectReference().getFinalObject());
 		if (nullptr != pImage)
 		{
-			if (SvPb::archivableImage == (pImage->ObjectAttributesAllowed() & SvPb::archivableImage))
+			if (SvPb::viewable == (pImage->ObjectAttributesAllowed() & SvPb::viewable))
 			{
 				Result.emplace_back(rRecord.GetObjectReference());
 			}

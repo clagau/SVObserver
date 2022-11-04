@@ -104,9 +104,7 @@ public:
 	const SVObjectNameInfo& GetObjectNameInfo() const;
 
 	UINT ObjectAttributesAllowed() const;
-	UINT ObjectAttributesSet() const;
 	UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type );
-	UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type );
 
 	bool operator < ( const SVObjectReference& rhs ) const;
 

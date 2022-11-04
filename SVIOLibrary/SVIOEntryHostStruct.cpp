@@ -21,10 +21,15 @@
 
 void SVIOEntryHostStruct::clear()
 {
+	if (nullptr != m_pObject && SvDef::InvalidObjectId != m_inspectionId)
+	{
+		m_pObject->disconnectObject(m_inspectionId);
+	}
 	m_Enabled = false;
 	m_PPQIndex = -1;
 	m_ObjectType = IO_INVALID_OBJECT;
 	m_IOId = SvDef::InvalidObjectId;
+	m_inspectionId = SvDef::InvalidObjectId;
 	m_pObject = nullptr;
 	m_pValueObject.reset();
 }
@@ -53,6 +58,7 @@ void SVIOEntryHostStruct::setLinkedObject(SVObjectClass* pObject)
 	if (nullptr != pInspection)
 	{
 		m_inspectionId = pInspection->getObjectId();
+		pObject->connectObject(m_inspectionId);
 	}
 }
 

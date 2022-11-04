@@ -152,8 +152,6 @@ public:
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) const override;
 	virtual UINT ObjectAttributesAllowed() const override;
 	virtual UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
-	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
-	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 	virtual uint32_t getObjectId() const override {	return m_objectId; };
 	void setObjectId(uint32_t objectId);
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
@@ -215,8 +213,6 @@ public:
 	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType) const;
 	bool checkIfValidDependency(const SVObjectClass* pObject) const;
 
-	size_t getObjectAttributesSetSize() const { return m_ObjectAttributesSet.size(); };
-
 	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset, bool isExternallySettable);
 	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset, bool isExternallySettable);
 
@@ -256,8 +252,6 @@ private:
 protected:
 	//This attribute holds the enumerated bits of allowed object attributes.
 	UINT m_ObjectAttributesAllowed;
-	//This attribute holds the array enumerated bits of set object attributes based on object array depth.
-	std::vector<UINT> m_ObjectAttributesSet;
 
 	// Refer to IsCreated()
 	bool m_isCreated {false};

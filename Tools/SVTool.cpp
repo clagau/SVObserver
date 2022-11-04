@@ -140,12 +140,12 @@ void EmbeddedExtents::SetDefaults()
 void EmbeddedExtents::SetAttributes()
 {
 
-	m_ExtentLeft.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentTop.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentLeft.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentTop.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_ExtentRight.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_ExtentBottom.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentWidth.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentHeight.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentWidth.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentHeight.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 
 	// Defaults for the Scale Factors should be hidden but NOT removed at this time
 	m_ExtentWidthFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
@@ -320,8 +320,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	}
 
 	// Set / Reset Printable Flags
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
-	m_isObjectValid.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_isObjectValid.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	enabled.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_Passed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_Failed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -350,7 +349,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	{
 		BOOL bEnabled {false};
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
-		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled ? SvPb::audittrail | SvPb::embedable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled ? SvPb::audittrail | SvPb::useable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 	else
 	{
@@ -744,14 +743,18 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 
 	if (areAuxExtentsAvailable())
 	{
-		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 		BOOL bEnabled {false};
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
 		if (bEnabled)
 		{
 			m_AuxSourceImageInput.validateInput();
+			m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
 		}
-		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled ? SvPb::audittrail | SvPb::embedable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		else
+		{
+			m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		}
+		
 	}
 	else
 	{

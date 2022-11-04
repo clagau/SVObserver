@@ -17,13 +17,11 @@
 #include "SVIPDoc.h"
 #include "SVSetupDialogManager.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVToolSet.h"
 #include "AnalyzerOperators/Analyzer.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVOResource/ConstGlobalSvOr.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -39,7 +37,6 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogAnalyzerPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_DETAILS_BUTTON, OnButtonDetails)
 	ON_CBN_SELCHANGE(IDC_ANALYZER_COMBO, OnSelchangeCurrentAnalyzer)
 	ON_BN_CLICKED(IDC_RESULT_BUTTON, OnResultButton)
-	ON_BN_CLICKED(IDC_PUBLISH_BUTTON, OnPublishButton)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -102,11 +99,6 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		switch (subType)
 		{
 			case SvPb::SVLinearToolObjectType:
-				if (nullptr != (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON)))
-				{
-					pWnd->EnableWindow(FALSE);
-					pWnd->ShowWindow(SW_HIDE);
-				}
 				break;
 
 			case SvPb::SVWindowToolObjectType:  // fall through...
@@ -115,14 +107,6 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 				{
 					pWnd->EnableWindow(FALSE);
 					pWnd->ShowWindow(SW_HIDE);
-				}
-
-				if (!m_pCurrentAnalyzer)
-				{
-					if (nullptr != (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON)))
-					{
-						pWnd->EnableWindow(FALSE);
-					}
 				}
 				break;
 		}
@@ -357,12 +341,6 @@ void SVToolAdjustmentDialogAnalyzerPageClass::updateButtons()
 		if (pWnd->IsWindowVisible())
 			pWnd->EnableWindow(state);
 	}
-
-	if (nullptr != (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON)))
-	{
-		if (pWnd->IsWindowVisible())
-			pWnd->EnableWindow(state);
-	}
 }
 
 void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
@@ -406,51 +384,3 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		m_pCurrentAnalyzer = dynamic_cast<SvAo::Analyzer*> (SVObjectManagerClass::Instance().GetObject(analyzerId));
 	}
 }
-
-void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
-{
-	if (nullptr == m_pCurrentAnalyzer || nullptr == m_pTool) { return; }
-
-
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
-	if (nullptr == pInspection) { return; }
-
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::publishable, m_pCurrentAnalyzer->getObjectId());
-
-	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	if (responseCmd.has_getobjectselectoritemsresponse())
-	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
-	}
-
-	std::string PublishableResults = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULTS);
-	std::string Title = SvUl::Format(_T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName());
-	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
-
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this);
-
-	if (IDOK == Result)
-	{
-		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
-		{
-			SVObjectReference ObjectRef {rEntry};
-			bool previousState = SvPb::publishable == (SvPb::publishable & ObjectRef.ObjectAttributesSet());
-			SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-			ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
-		}
-
-		SVPublishList& PublishList = pInspection->GetPublishList();
-		//GetToolSet return SVToolSet and for this it needs #include "SVToolSet.h"
-		PublishList.Refresh(static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()));
-
-		if (nullptr != m_pParentDialog)
-		{
-			m_pParentDialog->markDocumentAsDirty();
-		}
-	}
-}
-

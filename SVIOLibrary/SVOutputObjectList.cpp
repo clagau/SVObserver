@@ -74,13 +74,11 @@ SVOutputObjectPtr SVOutputObjectList::GetOutputFlyweight(const std::string& rNam
 		case SvPb::SVDigitalOutputObjectType:
 		{
 			pResult = std::make_shared<SVDigitalOutputObject>();
-			pResult->updateObjectId(index);
 			break;
 		}
 		case SvPb::PlcOutputObjectType:
 		{
 			pResult = std::make_shared<PlcOutputObject>();
-			pResult->updateObjectId(index);
 			break;
 		}
 		case SvPb::SVRemoteOutputObjectType:
@@ -90,6 +88,7 @@ SVOutputObjectPtr SVOutputObjectList::GetOutputFlyweight(const std::string& rNam
 
 		if (nullptr != pResult)
 		{
+			pResult->updateObjectId(index);
 			pResult->SetName(rName.c_str());
 
 			if(S_OK != AttachOutput(pResult))
@@ -97,6 +96,10 @@ SVOutputObjectPtr SVOutputObjectList::GetOutputFlyweight(const std::string& rNam
 				pResult.reset();
 			}
 		}
+	}
+	else
+	{
+		pResult->updateObjectId(index);
 	}
 
 	return pResult;
@@ -359,6 +362,7 @@ SVIOEntryHostStructPtrVector SVOutputObjectList::getOutputList() const
 			SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 
 			pIOEntry->m_IOId = rOutput.second->getObjectId();
+			pIOEntry->m_name = rOutput.second->GetName();
 
 			switch (rOutput.second->GetObjectSubType())
 			{
@@ -561,20 +565,11 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 
 bool SVOutputObjectList::OutputIsNotValid(const std::string& rName )
 {
-	bool l_bRet = true;
-	
 	SVObjectClass* l_pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByDottedName( rName, l_pObject );
-	// Check if the object exists.
-	if( nullptr != l_pObject )
-	{
-		if( l_pObject->ObjectAttributesSet() & SvPb::publishable )
-		{
-			l_bRet = false;
-		}
-	}
-	// Return true if object does not exist or is not published.
-	return l_bRet;
+
+	// Return true if object does not exist.
+	return nullptr == l_pObject;
 }
 
 

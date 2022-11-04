@@ -108,7 +108,6 @@ static bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListIn
 				std::string inputType;
 				_variant_t inputValue = 0.0;
 				long PPQPosition{ -1L };
-				long index = 0;
 
 				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_TYPE, htiDataChild, value);
 				if (bOk)
@@ -125,16 +124,11 @@ static bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListIn
 				{
 					PPQPosition = value;
 				}
-				//These values are only required for remote inputs and are optional
-				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_INDEX, htiDataChild, value))
-				{
-					index = value;
-				}
 				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_INITIAL_VALUE, htiDataChild, value))
 				{
 					inputValue = value;
 				}
-				inputInserter = ImportedInput{ DataName, inputType, PPQPosition, inputValue, index};
+				inputInserter = ImportedInput{ DataName, inputType, PPQPosition, inputValue};
 				htiDataChild = rTree.getNextBranch(hItemIO, htiDataChild);
 			}
 		}
@@ -307,10 +301,6 @@ static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& 
 					SVObjectManagerClass::Instance().ChangeUniqueObjectID(pGlobalConstant.get(), rGlobalImport.m_objectId);
 				}
 				pGlobalConstant->setDescription(rGlobalImport.m_Description.c_str());
-				if (rGlobalImport.m_Value.vt == VT_BSTR)
-				{
-					pGlobalConstant->SetObjectAttributesAllowed(SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute);
-				}
 				rGlobalImport.m_objectId = pGlobalConstant->getObjectId();
 			}
 		}
@@ -372,16 +362,6 @@ static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& 
 	}
 }
 
-static void ImportObjectAttributes(SvXml::SVXMLMaterialsTree& rTree, ObjectAttributeInserter attributeInserter)
-{
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	if (nullptr != pConfig)
-	{
-		pConfig->LoadObjectAttributesSet(rTree, attributeInserter);
-	}
-}
-
 HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SVIProgress& rProgress, int& currentOp)
 {
 	HRESULT hr = S_OK;
@@ -401,9 +381,6 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 
 	rProgress.UpdateText(_T("Importing object attributes..."));
 	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
-
-	ObjectAttributeInserter attributeInserter(inspectionInfo.m_objectAttributeList, inspectionInfo.m_objectAttributeList.end());
-	ImportObjectAttributes(rXmlTree, attributeInserter);
 
 	rProgress.UpdateText(_T("Creating Inspection object..."));
 	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);

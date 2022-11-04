@@ -23,7 +23,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteInputsView, CListView)
@@ -100,7 +99,7 @@ void SVRemoteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 		// Find each remote input
 		for(int i = 0; i < static_cast<int>(inputEntryVector.size()); ++i)
 		{
-			std::string Item = SvUl::Format(SvO::cRemoteInputNumberLabel, itemIndex + 1 );
+			std::string Item = SvO::cRemoteInputNumberLabel + std::to_string(itemIndex + 1);
 
 			bool bFound = false;
 			SVIOEntryHostStructPtr pIOEntryFound;

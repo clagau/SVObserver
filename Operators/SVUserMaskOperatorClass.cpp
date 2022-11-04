@@ -924,7 +924,7 @@ void SVUserMaskOperatorClass::updateMaskImageFlags(DWORD dwMaskType)
 	if (dwMaskType == MASK_TYPE_IMAGE)
 	{
 		m_userMaskImageInput.validateInput();
-		m_userMaskImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+		m_userMaskImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 	else
 	{

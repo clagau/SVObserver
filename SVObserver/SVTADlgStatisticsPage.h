@@ -43,7 +43,6 @@ protected:
 	afx_msg void OnButtonAdd();
 	afx_msg void OnButtonRemove();
 	afx_msg void OnSetRange();
-	afx_msg void OnPublishButton();
 	afx_msg void OnBtnObjectPicker();
 	//}}AFX_MSG
 

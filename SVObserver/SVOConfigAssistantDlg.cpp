@@ -1198,8 +1198,7 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 			}
 			else
 			{
-				long lInsCnt;
-				pPPQ->GetInspectionCount(lInsCnt);
+				long lInsCnt {pPPQ->GetInspectionCount()};
 				
 				//loop thru inspections to see if they exist in dlg
 				//if not, delete them from ppqobj
@@ -2142,8 +2141,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 					const SVOInspectionObjPtr pInspectionObj = m_InspectList.GetInspectionByOriginalName(PpqInspectionName.c_str());
 					if( nullptr != pInspectionObj )
 					{
-						long lInsCnt{0L};
-						pPPQ->GetInspectionCount(lInsCnt);
+						long lInsCnt {pPPQ->GetInspectionCount()};
 						for (long l = 0; l < lInsCnt; ++l)
 						{
 							SVInspectionProcess* pInspection(nullptr);
@@ -2186,16 +2184,15 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 				}
 
 				const SVImportedInspectionInfo& rImportedInspectionInfo = pPPQObj->GetImportedInspectionInfo();
-				pConfig->SetObjectAttributes(rImportedInspectionInfo.m_objectAttributeList);
 				for (const auto& rImportInput : rImportedInspectionInfo.m_inputList)
 				{
 					if(SvXml::cRemoteType == rImportInput.m_type)
 					{
-						pConfig->AddImportedRemoteInput(pPPQ, rImportInput.m_name, rImportInput.m_ppqPosition, rImportInput.m_index, rImportInput.m_value);
+						pConfig->AddInspectionRemoteInput(rImportInput.m_name, rImportInput.m_ppqPosition, rImportInput.m_value);
 					}
 					else if(SVHardwareManifest::isDiscreteIOSystem(m_lConfigurationType) && SvXml::cDigitalType == rImportInput.m_type)
 					{
-						pConfig->AddImportedDigitalInput(pPPQ, rImportInput.m_name, rImportInput.m_ppqPosition);
+						pConfig->AddInspectionDigitalInput(rImportInput.m_name, rImportInput.m_ppqPosition);
 					}
 				}
 				for (const auto& rImportOutput : rImportedInspectionInfo.m_outputList)
@@ -2580,11 +2577,8 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 		{
 			std::string PPQName = pcfgPPQ->GetName();
 			m_PPQList.AddPPQToList(PPQName.c_str());
-			long lppqIns;
-			pcfgPPQ->GetInspectionCount(lppqIns);
 
 			SvIe::SVVirtualCameraPtrVector cameraVector = pcfgPPQ->GetVirtualCameras();
-
 			for(auto* pcfgCamera : cameraVector)
 			{
 				if ( nullptr != pcfgCamera && (nullptr != pcfgCamera->GetAcquisitionDevice()) )
@@ -2593,6 +2587,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 				}
 			}
 
+			long lppqIns {pcfgPPQ->GetInspectionCount()};
 			for (long lpIns = 0; lpIns <lppqIns; ++lpIns)
 			{
 				SVInspectionProcess* pcfgInspection {nullptr};
@@ -3982,10 +3977,6 @@ void SVOConfigAssistantDlg::resolveGlobalConflicts( SvUl::GlobalConflictPairVect
 						pGlobalObject->setValue( Iter->second.m_Value );
 						pGlobalObject->setDescription( Iter->second.m_Description.c_str() );
 						pGlobalObject->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute );
-						if( Iter->second.m_Value.vt == VT_BSTR )
-						{
-							pGlobalObject->SetObjectAttributesAllowed( SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute );
-						}
 					}
 				}
 				++Iter;

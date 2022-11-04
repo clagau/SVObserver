@@ -112,18 +112,18 @@ bool SVShapeMaskHelperClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	const UINT cAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::remotelySetable | SvPb::setableOnline | SvPb::audittrail;
+	const UINT cAttributes = SvPb::viewable  | SvPb::remotelySetable | SvPb::setableOnline | SvPb::audittrail;
 	m_bvoAutoResize.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_evoShapeType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_evoMaskArea.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voCenterX.SetObjectAttributesAllowed( cAttributes | SvPb::selectableForEquation, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voCenterY.SetObjectAttributesAllowed( cAttributes | SvPb::selectableForEquation, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voWidth.SetObjectAttributesAllowed( cAttributes | SvPb::selectableForEquation, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voHeight.SetObjectAttributesAllowed( cAttributes | SvPb::selectableForEquation, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voSideThickness.SetObjectAttributesAllowed( cAttributes | SvPb::selectableForEquation, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voTopBottomThickness.SetObjectAttributesAllowed( cAttributes | SvPb::selectableForEquation, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voOffset.SetObjectAttributesAllowed( cAttributes | SvPb::selectableForEquation, SvOi::SetAttributeType::OverwriteAttribute );
-	m_evoXYSymmetry.SetObjectAttributesAllowed( cAttributes | SvPb::selectableForEquation, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voCenterX.SetObjectAttributesAllowed( cAttributes | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voCenterY.SetObjectAttributesAllowed( cAttributes | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voWidth.SetObjectAttributesAllowed( cAttributes | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voHeight.SetObjectAttributesAllowed( cAttributes | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voSideThickness.SetObjectAttributesAllowed( cAttributes | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voTopBottomThickness.SetObjectAttributesAllowed( cAttributes | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voOffset.SetObjectAttributesAllowed( cAttributes | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_evoXYSymmetry.SetObjectAttributesAllowed( cAttributes | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
 	
 
 	// Set / Reset Printable Flag

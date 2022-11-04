@@ -25,11 +25,13 @@ public:
 		m_isCreated = true;
 	}
 
-
 	virtual ~SVInputObject() = default;
 
 	virtual HRESULT Read(_variant_t& rValue) const = 0;
 	virtual long GetChannel() const = 0;
+
+	void SetPpqIndex(long ppqIndex) { m_ppqIndex = ppqIndex; }
+	long GetPpqIndex() const { return m_ppqIndex; }
 
 	/// Update the objectId to a fix ID depend of a position (must between 0 and 0x100).
 	/// \param position [in]
@@ -43,6 +45,7 @@ public:
 
 protected:
 	uint32_t m_startID{SvDef::InvalidObjectId};
+	long m_ppqIndex {-1L};
 };
 
 typedef std::shared_ptr<SVInputObject> SVInputObjectPtr;

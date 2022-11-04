@@ -207,8 +207,7 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	bool bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
-	m_isObjectValid.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_isObjectValid.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	m_Enabled.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_Passed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_Failed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -222,7 +221,7 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_RegressionTestMode.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_DrawFlag.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_ToolTime.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-	m_ResetCountsObject.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+	m_ResetCountsObject.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::OverwriteAttribute);
 	m_TriggerCount.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_PPQIndexAtCompletion.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	for (int i = 0; i < ToolSetTimes::MaxCount; ++i)

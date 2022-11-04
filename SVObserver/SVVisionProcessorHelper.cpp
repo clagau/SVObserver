@@ -149,24 +149,19 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList(const std::string& rInspe
 	long l_ValueFilter = -1;
 	long l_ImageFilter = -1;
 
-	if (0 != (rListType & SelectedValues))
+	if (SelectedValues == rListType || SelectedImages == rListType || SelectedValuesAndSelectedImages == rListType)
 	{
-		l_ValueFilter = SvPb::dataDefinitionValue;
+		return E_NOTIMPL;
 	}
 
 	if (0 != (rListType & AllValues))
 	{
-		l_ValueFilter = SvPb::dataDefinitionValue | SvPb::viewable;
-	}
-
-	if (0 != (rListType & SelectedImages))
-	{
-		l_ImageFilter = SvPb::dataDefinitionImage;
+		l_ValueFilter = SvPb::viewable;
 	}
 
 	if (0 != (rListType & AllImages))
 	{
-		l_ImageFilter = SvPb::dataDefinitionImage | SvPb::viewable;
+		l_ImageFilter = SvPb::viewable;
 	}
 
 	SVInspectionProcess* pInspection = nullptr;
@@ -185,7 +180,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList(const std::string& rInspe
 
 			for (auto* pObject : outputList)
 			{
-				if (pObject)
+				if (pObject && (SvPb::SVBasicValueObjectType == pObject->GetObjectType() || SvPb::SVValueObjectType == pObject->GetObjectType()))
 				{
 					SVDataDefinitionStruct l_DataDefinition;
 					if (S_OK == GetObjectDefinition(*pObject, l_ValueFilter, l_DataDefinition))
@@ -706,19 +701,10 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SvOi::IObjectClass& r
 	HRESULT l_Status = S_OK;
 
 	//Check using the filter if object should be included
-	bool includeValue = false;
-	if ((SvPb::dataDefinitionValue == Filter) || (SvPb::dataDefinitionImage == Filter))
-	{
-		//This is called when selected values or images
-		includeValue = (rObject.ObjectAttributesSet() & Filter) != 0;
-	}
-	else
-	{
-		//This is called when all values or all images
-		includeValue = (rObject.ObjectAttributesAllowed() & Filter) != 0;
-	}
+	bool includeValue = (rObject.ObjectAttributesAllowed() & Filter) != 0;		//This is called when all values or all images
+
 	//Is valid if it has selectable or archivable image attribute
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::archivableImage};
+	constexpr UINT cAttribute {SvDef::viewableAndUseable};
 	includeValue = includeValue && 0 != (rObject.ObjectAttributesAllowed() & cAttribute);
 	if (includeValue)
 	{
@@ -726,7 +712,6 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SvOi::IObjectClass& r
 		Temp = _T("Inspections.") + rObject.GetCompleteName();
 		rDataDef.m_Name = Temp;
 		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable;
-		rDataDef.m_Published = (rObject.ObjectAttributesSet() & SvPb::publishable) != 0;
 		//If null we assume its an image
 		const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (&rObject);
 		if (nullptr != pValueObject)

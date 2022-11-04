@@ -36,7 +36,6 @@ const SVDataDefinitionStruct& SVDataDefinitionStruct::operator = (const SVDataDe
 		Clear();
 		m_Name  = rhs.m_Name;
 		m_Writable = rhs.m_Writable;
-		m_Published = rhs.m_Published;
 		m_Type = rhs.m_Type;
 		if ( m_AdditionalInfo.size() != rhs.m_AdditionalInfo.size() )
 		{
@@ -56,7 +55,6 @@ void SVDataDefinitionStruct::Init( )
 {
 	m_Name = _T("");
 	m_Writable = false;
-	m_Published = false;
 	m_Type = _T("");
 	m_AdditionalInfo.clear();
 }
@@ -67,7 +65,6 @@ bool SVDataDefinitionStruct::operator == (const SVDataDefinitionStruct& rhs)
 	
 	bEqual = bEqual && (m_Name == rhs.m_Name);
 	bEqual = bEqual && (m_Writable == rhs.m_Writable);
-	bEqual = bEqual && (m_Published == rhs.m_Published);
 	bEqual = bEqual && (m_Type == rhs.m_Type);
 
 	return bEqual;

@@ -41,7 +41,6 @@ protected:
 	virtual void OnCancel() override;
 	virtual void OnOK() override;
 	afx_msg void OnSetupButton();
-	afx_msg void OnPublishButton();
 	afx_msg void OnItemChangedChildrenList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChangedAvailableChildrenList(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG

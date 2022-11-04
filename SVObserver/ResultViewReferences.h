@@ -136,22 +136,6 @@ public:
 	/// \return boolean true=viewable, false=not viewable
 	//************************************
 	bool IsViewable(const SVObjectReference& objectRef) const;
-
-	//************************************
-	//! To read deprecated Configuration gets all variable from tooloutputlist with  with attribute IsView
-	//! \param pInspection [in]
-	//! \returns void
-	//************************************
-	void InsertFromOutputList(SVInspectionProcess* pInspection);
-	
-	
-	//************************************
-	//!To read deprecated Configuration gets all variable from m_PPQInputs with attribute IsView
-	//! \param pInspection [in]
-	//! \returns void
-	//************************************
-	void InsertFromPPQInputs(SVInspectionProcess* pInspection);
-
 #pragma endregion Public Methods
 
 protected:

@@ -61,8 +61,7 @@ bool DrawTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 	bOk &= (nullptr != GetInspection());
 
 	// These values will not be exposed for this Tool.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
-	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_drawToolFlag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_isCreated = bOk;
 
@@ -91,7 +90,7 @@ bool DrawTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		if (m_useBGImage)
 		{
 			m_InputBGImage.validateInput();
-			m_InputBGImage.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+			m_InputBGImage.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
 			SvIe::SVImageClass* pInputImage = m_InputBGImage.getInput<SvIe::SVImageClass>(true);
 			if (nullptr != pInputImage)
 			{

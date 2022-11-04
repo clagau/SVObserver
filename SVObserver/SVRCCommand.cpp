@@ -856,7 +856,6 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 			{
 				pDataDefinition->set_name(SvUl::to_utf8(rEntry.m_Name));
 				pDataDefinition->set_writable(rEntry.m_Writable);
-				pDataDefinition->set_published(rEntry.m_Published);
 				pDataDefinition->set_type(SvUl::to_utf8(rEntry.m_Type));
 				for (const auto& rAddInfo : rEntry.m_AdditionalInfo)
 				{
@@ -1276,9 +1275,7 @@ void SVRCCommand::SoftwareTrigger(const SvPb::SoftwareTriggerRequest& rRequest, 
 				SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 				if (nullptr != pPPQ && nullptr != pPPQ->GetTrigger())
 				{
-					long inspectionCount{ 0L };
-					pPPQ->GetInspectionCount(inspectionCount);
-					for (long j = 0; j < inspectionCount; ++j)
+					for (long j = 0; j < pPPQ->GetInspectionCount(); ++j)
 					{
 						SVInspectionProcess* pInspection{ nullptr };
 						pPPQ->GetInspection(j, pInspection);

@@ -142,7 +142,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* , LPARAM , CObject*  )
 				if (nullptr != pPPQ)
 				{
 					// Find each digital output
-					for (const auto& pIOEntry : pPPQ->GetAllOutputs())
+					for (const auto& pIOEntry : pPPQ->getUsedOutputs())
 					{
 						if (pIOEntry->m_ObjectType != SVIOObjectType::IO_DIGITAL_OUTPUT)
 						{
@@ -227,102 +227,91 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 
 			if( nullptr != pDigitalOutput )
 			{
-				dlg.IOName = _T( "Result " ) + m_rCtrl.GetItemText( item, 0 );
-				dlg.IOName += _T( ", " ) + m_rCtrl.GetItemText( item, 1 );
-				dlg.IOValue.Format( "%d", pDigitalOutput->GetValue() ? 1 : 0 );
-				dlg.m_pIOEntry   = pIOEntry;
+				dlg.m_IOName = m_rCtrl.GetItemText( item, 1 );
+				dlg.m_IOValue.Format( "%d", pDigitalOutput->GetValue() ? 1 : 0 );
+				SVObjectClass* pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;
+				dlg.m_pLinkedObject = pLinkedObject;
 				dlg.m_pDigOutput = pDigitalOutput;
+				dlg.m_ioObjectType = SVIOObjectType::IO_DIGITAL_OUTPUT;
 
 				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-				switch( dlg.DoModal() )
+				if(IDOK == dlg.DoModal())
 				{
-				case IDOK:
+					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+
+					if(dlg.m_pLinkedObject != pLinkedObject)
 					{
-						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-
-						// Check if they picked a new output
-						if( dlg.m_pIOEntry != pIOEntry )
+						if (nullptr == pIOEntry)
 						{
-							if(nullptr != pIOEntry)
-							{									
-								// Make sure that we first reset the old output
-								if( nullptr != pOutputList )
-								{
-									pOutputList->ResetOutput( pIOEntry );
-								}// end if
-
-								pIOEntry->m_Enabled = FALSE;
-								pIOEntry->m_IOId = SvDef::InvalidObjectId;
-							}// end if
-
-							if(nullptr == dlg.m_pIOEntry)
+							pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+						}
+						else
+						{									
+							// Make sure that we first reset the old output
+							if( nullptr != pOutputList )
 							{
-								if( nullptr != pOutputList )
-								{
-									pOutputList->DetachOutput( pOutput->getObjectId() );
-								}
-								pOutput = nullptr;
+								pOutputList->ResetOutput( pIOEntry );
+							}
+							pIOEntry->m_Enabled = false;
+							pIOEntry->m_IOId = SvDef::InvalidObjectId;
+						}
 
-								if( pIOEntry == pIOController->GetModuleReady() )
-								{
-									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
-									pIOEntry->m_IOId = SvDef::InvalidObjectId;
-								}// end if
-
-							}// end if
-							else
-							{
-								dlg.m_pIOEntry->m_Enabled = TRUE;
-								dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->getObject()->GetCompleteName().c_str() );
-								if(nullptr == pIOEntry && nullptr != pOutputList )
-								{
-									pOutputList->AttachOutput( pOutput );
-								}// end if
-
-								if( dlg.m_pIOEntry == pIOController->GetModuleReady() )
-								{
-									dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-									dlg.m_pIOEntry->m_IOId = dlg.m_pDigOutput->getObjectId();
-								}// end if
-
-							}// end else
-
-							long lPPQSize = 0;
-							// Force the PPQs to rebuild
-							if ( nullptr != pConfig ){ lPPQSize = pConfig->GetPPQCount( ); }
-
-							// Rebuild Outputs
-							for(long k = 0; k < lPPQSize; k++ )
-							{
-								SVPPQObject* pPPQ = pConfig->GetPPQ( k );
-
-								if( nullptr != pPPQ ){ pPPQ->RebuildOutputList(); }
-							}// end for
-
-						}// end if
-
-						// Force IO board to update if they still have one selected
-						if(nullptr != dlg.m_pIOEntry)
+						if(nullptr == dlg.m_pLinkedObject)
 						{
 							if( nullptr != pOutputList )
 							{
-								pOutputList->ResetOutput( dlg.m_pIOEntry );
-							}// end if
-						}// end if
-						break;
+								pOutputList->DetachOutput( pOutput->getObjectId() );
+							}
+							pOutput = nullptr;
+							pIOEntry->clear();
+							pIOEntry.reset();
+						}
+						else
+						{
+							pIOEntry->m_Enabled = true;
+							pIOEntry->setLinkedObject(dlg.m_pLinkedObject);
+							if(nullptr != pOutput && nullptr != pOutputList )
+							{
+								pOutput->SetName(dlg.m_pLinkedObject->GetCompleteName().c_str());
+								pOutputList->AttachOutput( pOutput );
+							}
+
+							if( pIOEntry == pIOController->GetModuleReady() )
+							{
+								pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
+								pIOEntry->m_IOId = dlg.m_pDigOutput->getObjectId();
+							}
+
+						}
+
+						long lPPQSize = 0;
+						// Force the PPQs to rebuild
+						if ( nullptr != pConfig ){ lPPQSize = pConfig->GetPPQCount( ); }
+
+						// Rebuild Outputs
+						for(long k = 0; k < lPPQSize; k++ )
+						{
+							SVPPQObject* pPPQ = pConfig->GetPPQ( k );
+
+							if( nullptr != pPPQ ){ pPPQ->RebuildOutputList(); }
+						}
 					}
 
-				case IDCANCEL:
-				default:
-					break;
-				}// end switch
+					// Force IO board to update if they still have one selected
+					if(nullptr != pIOEntry)
+					{
+						if( nullptr != pOutputList )
+						{
+							pOutputList->ResetOutput( pIOEntry );
+						}// end if
+					}// end if
+				}
 
 				OnUpdate( nullptr, 0, nullptr );
 			}
 			else
 			{
-				dlg.IOName	= _T( "" );
-				dlg.IOValue.Format( "%d", 0 );
+				dlg.m_IOName	= _T( "" );
 
 				if(IDOK == dlg.DoModal())
 				{

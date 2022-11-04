@@ -11,16 +11,14 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVTADlgStatisticsPage.h"
 #include "SVInspectionProcess.h"
-#include "SVIPDoc.h"
 #include "SVSetupDialogManager.h"
+#include "SVTADlgStatisticsPage.h"
 #include "SVToolSet.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "Operators/SVResult.h"
-#include "SVOResource/ConstGlobalSvOr.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -39,7 +37,6 @@ BEGIN_MESSAGE_MAP(SVTADlgStatisticsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_ADD_BUTTON, OnButtonAdd)
 	ON_BN_CLICKED(IDC_REMOVE_BUTTON, OnButtonRemove)
 	ON_BN_CLICKED(IDC_SET_RANGE, OnSetRange)
-	ON_BN_CLICKED(IDC_PUBLISH_BUTTON, OnPublishButton)
 	ON_BN_CLICKED(IDC_BTN_OBJECT_PICKER, OnBtnObjectPicker)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -252,53 +249,6 @@ void SVTADlgStatisticsPage::OnSetRange()
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-void SVTADlgStatisticsPage::OnPublishButton()
-{
-	if( nullptr == m_pTool ) { return; }
-
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
-	if( nullptr == pInspection ) { return; }
-
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::publishable, m_pTool->getObjectId());
-	
-	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	if (responseCmd.has_getobjectselectoritemsresponse())
-	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
-	}
-
-	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
-	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
-	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
-	
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this );
-
-	if( IDOK == Result )
-	{
-		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
-		{
-			SVObjectReference ObjectRef {rEntry};
-			bool previousState = SvPb::publishable == (SvPb::publishable & ObjectRef.ObjectAttributesSet());
-			SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-			ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
-		}
-
-		SVPublishList& PublishList = pInspection->GetPublishList();
-		PublishList.Refresh( static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()) );
-
-		if (nullptr != m_pParent)
-		{
-			m_pParent->markDocumentAsDirty();
-		}
-	}
-}
-
 void SVTADlgStatisticsPage::OnBtnObjectPicker()
 {
 	if( nullptr == m_pTool) { return; }
@@ -309,7 +259,7 @@ void SVTADlgStatisticsPage::OnBtnObjectPicker()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::selectableForStatistics, SvDef::InvalidObjectId, false, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId());
+		{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::useable, SvDef::InvalidObjectId, false, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId());
 
 	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);

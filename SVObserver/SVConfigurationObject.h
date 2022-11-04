@@ -14,7 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "MonitorListAttributeStruct.h"
-#include "ObjectAttribute.h"
 #include "RemoteMonitorList.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
@@ -100,7 +99,6 @@ class SVConfigurationObject : public SVObjectClass
 
 public:
 	typedef std::map<std::string, SvIe::SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
-	typedef std::map<UINT, SVObjectReferenceVector> AttributesSetMap;
 
 	explicit SVConfigurationObject(LPCSTR ObjectName);
 	SVConfigurationObject(SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT);
@@ -280,10 +278,8 @@ public:
 	HRESULT DeleteRemoteOutputEntry(const std::string& rRemoteGroupID, SVRemoteOutputObject* p_pOutputObject);
 	HRESULT RemoteOutputValidateInputs();
 
-	HRESULT AddImportedRemoteInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& p_Value);
-	HRESULT AddImportedDigitalInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition);
-	HRESULT AddRemoteInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& p_Value);
-	HRESULT AddDigitalInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition);
+	void AddInspectionRemoteInput(const std::string& name, long ppqIndex, const _variant_t& p_Value);
+	void AddInspectionDigitalInput(const std::string& name, long ppqIndex);
 
 	bool SetupRemoteMonitorList();
 	RemoteMonitorListMap GetRemoteMonitorList() const;
@@ -325,15 +321,6 @@ public:
 	//! \returns S_OK, if loading successful
 	//************************************
 	HRESULT LoadGlobalConstants(SVTreeType& rTree);
-
-	//************************************
-	//! The method loads the ObjectAttributesSet
-	//! \param rTree <in> a reference to the XML-tree which it will be loaded from
-	//! \param inserter <out> a container inserter to add entries to list of objects to set 
-	//! \returns S_OK, if loading successful
-	//************************************
-	HRESULT LoadObjectAttributesSet(SVTreeType& rTree, ObjectAttributeInserter inserter);
-	void SetObjectAttributes(const ObjectAttributeList& rObjectAttributeList) const;
 
 	//************************************
 	//! The method loads the Additional File list
@@ -396,13 +383,6 @@ public:
 	const std::string& getPreRunExecutionFilePath() const {return m_preRunExecutionFile;}
 	const std::string& getPostRunExecutionFilePath() const {return m_postRunExecutionFile;}
 
-	//************************************
-	//! The method saves the Object Attributes Set list
-	//! \param rWriter <in> a reference to the xml-writer
-	//! \param rAttributesSetMap <in> a reference to attribute set map
-	//************************************
-	void SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const;
-	void getInspectionObjectAttributesSet(const SVInspectionProcess* pInspection, AttributesSetMap& rAttributesSetMap) const;
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
 
@@ -413,7 +393,7 @@ private:
 	void SaveAcquistionConfiguration(SvOi::IObjectWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const;
 	void SaveCamera(SvOi::IObjectWriter& rWriter) const;
 	void SaveTrigger(SvOi::IObjectWriter& rWriter) const;
-	void SaveInspection(SvOi::IObjectWriter& rWriter, AttributesSetMap& rAttributeSetVector) const;
+	void SaveInspection(SvOi::IObjectWriter& rWriter) const;
 	void SavePPQ(SvOi::IObjectWriter& rWriter) const;
 	void SavePPQ_Attributes(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ) const;
 	void SavePPQ_Cameras(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ) const;

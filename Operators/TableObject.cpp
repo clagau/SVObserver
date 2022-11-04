@@ -65,14 +65,8 @@ bool TableObject::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 
 void TableObject::Hide(bool hide)
 {
-	UINT attributeTaskObject = SvPb::taskObject;
-	UINT attribute = SvDef::defaultValueObjectAttributes & ~SvPb::audittrail;
-	if (hide)
-	{
-		attributeTaskObject = SvPb::noAttributes;
-		attribute = SvPb::noAttributes;
-	}
-	SetObjectAttributesAllowed(attributeTaskObject, SvOi::OverwriteAttribute);
+	UINT attribute = hide ? SvPb::noAttributes : SvDef::viewableAndUseable;
+	SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	m_NumberOfRows.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	m_statusTag.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	m_statusColor.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
@@ -106,7 +100,7 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	bool Result = __super::ResetObject(pErrorMessages);
 
 	//Avoid time consuming not necessary function calls 
-	if (ObjectAttributesAllowed() & SvPb::taskObject)
+	if (ObjectAttributesAllowed() & SvPb::useable)
 	{
 		clearTable();	
 	}

@@ -211,7 +211,6 @@ echo %time%
     </ClCompile>
     <ClCompile Include="RootChildren.cpp" />
     <ClCompile Include="RootObject.cpp" />
-    <ClCompile Include="SelectedObjectsPage.cpp" />
     <ClCompile Include="SheetForExternalToolAdjustment.cpp" />
     <ClCompile Include="SoftwareTriggerDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
@@ -233,7 +232,6 @@ echo %time%
     <ClCompile Include="SVConfigurationObject.cpp" />
     <ClCompile Include="SVConfigurationPrint.cpp" />
     <ClCompile Include="SVConfigXMLPrint.cpp" />
-    <ClCompile Include="SVDataDefinitionSheet.cpp" />
     <ClCompile Include="SVDataDefinitionStruct.cpp" />
     <ClCompile Include="SVDirectX.cpp" />
     <ClCompile Include="SVDiscreteInputsView.cpp" />
@@ -304,7 +302,6 @@ echo %time%
     <ClCompile Include="SVPPQObject.cpp" />
     <ClCompile Include="SVPPQShiftRegister.cpp" />
     <ClCompile Include="SVProgressDialog.cpp" />
-    <ClCompile Include="SVPublishList.cpp" />
     <ClCompile Include="SVRCCommand.cpp" />
     <ClCompile Include="SVRCRequestHandler.cpp" />
     <ClCompile Include="SVRCWebsocketServer.cpp" />
@@ -389,7 +386,6 @@ echo %time%
     <ClInclude Include="MonitorListSelector.h" />
     <ClInclude Include="MonitorListView.h" />
     <ClInclude Include="NavigatorElement.h" />
-    <ClInclude Include="ObjectAttribute.h" />
     <ClInclude Include="PlcOutputsView.h" />
     <ClInclude Include="RegressionTestController.h" />
     <ClInclude Include="RemoteCommand.h" />
@@ -404,7 +400,6 @@ echo %time%
     <ClInclude Include="ResultViewReferences.h" />
     <ClInclude Include="RootChildren.h" />
     <ClInclude Include="RootObject.h" />
-    <ClInclude Include="SelectedObjectsPage.h" />
     <ClInclude Include="SheetForExternalToolAdjustment.h" />
     <ClInclude Include="SoftwareTriggerDlg.h" />
     <ClInclude Include="StdAfx.h" />
@@ -419,7 +414,6 @@ echo %time%
     <ClInclude Include="SVConfigurationPrint.h" />
     <ClInclude Include="SVConfigurationTreeWriter.h" />
     <ClInclude Include="SVConfigXMLPrint.h" />
-    <ClInclude Include="SVDataDefinitionSheet.h" />
     <ClInclude Include="SVDataDefinitionStruct.h" />
     <ClInclude Include="SVDirectX.h" />
     <ClInclude Include="SVDiscreteInputsView.h" />
@@ -490,7 +484,6 @@ echo %time%
     <ClInclude Include="SVPPQObject.h" />
     <ClInclude Include="SVPPQShiftRegister.h" />
     <ClInclude Include="SVProgressDialog.h" />
-    <ClInclude Include="SVPublishList.h" />
     <ClInclude Include="SVRCCommand.h" />
     <ClInclude Include="SVRCRequestHandler.h" />
     <ClInclude Include="SVRCWebsocketServer.h" />

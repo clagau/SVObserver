@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectAttribute.h"
 #include "Definitions/ObjectDefines.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
@@ -22,14 +21,12 @@ struct ImportedInput
 	std::string m_type;
 	long m_ppqPosition{ -1L };
 	_variant_t m_value;
-	long m_index{ 0L };
 
-	explicit ImportedInput(const std::string& rName, const std::string& rType, long ppqPos, const _variant_t& rValue, long index)
+	explicit ImportedInput(const std::string& rName, const std::string& rType, long ppqPos, const _variant_t& rValue)
 		: m_name{ rName }
 		, m_type{ rType }
 		, m_ppqPosition{ ppqPos }
 		, m_value{ rValue }
-		, m_index{ index }
 	{}
 	~ImportedInput() = default;
 };
@@ -62,7 +59,6 @@ public:
 	uint32_t m_inspectionId{ SvDef::InvalidObjectId };
 	ImportedInputList m_inputList;
 	ImportedOutputList m_outputList;
-	ObjectAttributeList m_objectAttributeList;
 	SVMaterialsTree m_materialsTree;
 
 	SVImportedInspectionInfo() = default;

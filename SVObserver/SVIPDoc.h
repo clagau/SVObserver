@@ -95,8 +95,6 @@ public:
 	HRESULT RemoveImage(SvIe::SVImageClass* pImage);
 	HRESULT RemoveImage(uint32_t imageId);
 
-	void RefreshPublishedList();
-
 	SvIe::SVVirtualCameraPtrVector GetCameras() const;
 
 	HRESULT UpdateWithLastProduct();
@@ -175,7 +173,6 @@ public:
 	afx_msg void OnResultsTablePicker();
 	afx_msg void OnSaveResultsToFile();
 	afx_msg void OnSaveTableResultsToFile();
-	afx_msg void OnPublishedResultsPicker();
 	afx_msg void OnAddLoadImageTool();
 	afx_msg void RunRegressionTest();
 	afx_msg void OnAddAcquisitionTool();
@@ -195,12 +192,9 @@ public:
 	afx_msg void OnViewResetCountsCurrentIP();
 	afx_msg void OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewResetCountsCurrentIP(CCmdUI* pCmdUI);
-	afx_msg void OnEditDataDefinitionLists();
-	afx_msg void OnUpdateEditDataDefinitionLists(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateRunRegressionTest( CCmdUI *pCmdUI );
 	afx_msg void OnChangeToolSetDrawFlag( UINT nId );
 	afx_msg void OnUpdateViewToolSetDrawSubMenus( CCmdUI* PCmdUI );
-	afx_msg void OnPublishedResultImagesPicker();
 	afx_msg void OnAddRingBufferTool();
 	afx_msg void OnAddTableTool();
 	afx_msg void OnAddTableAnalyzerTool();

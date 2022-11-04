@@ -44,14 +44,14 @@ namespace SvOl
 		: SVObjectAppClass(objectName)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::InputConnectedType;
-		SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+		SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 	InputObject::InputObject(SVObjectClass* pOwner, int stringResourceID)
 		: SVObjectAppClass(pOwner, stringResourceID)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::InputConnectedType;
-		SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+		SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 

@@ -274,7 +274,7 @@ void SVOCVAnalyzerResult::HideResults()
 		for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 		{
 			SVOCVCharacterResult *pResult = dynamic_cast<SVOCVCharacterResult*>(getTaskObject( l ));
-			pResult->SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
+			pResult->SetObjectAttributesAllowed( SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute );
 
 			if( l < m_lFontStringLength )
 			{

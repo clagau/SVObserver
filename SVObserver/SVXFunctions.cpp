@@ -339,18 +339,6 @@ namespace
 			return {false, hr};
 		}
 
-		ObjectAttributeList objectAttributeList;
-		hr = pConfig->LoadObjectAttributesSet(rXMLTree, std::inserter(objectAttributeList, objectAttributeList.end()));
-		if (S_OK == hr)
-		{
-			//Set ObjectAttributes needs before RebuildInputOutputLists, because digital Output will be set in this method and then the attributes must be set.
-			pConfig->SetObjectAttributes(objectAttributeList);
-		}
-		else if (hr & SvDef::svErrorCondition)
-		{
-			return {false, hr};
-		}
-
 		try
 		{
 			//the globalInit have to be finished before RebuildInputOutputLists called, because it will do a reset and this need the images and memory.
@@ -369,11 +357,6 @@ namespace
 		}
 
 		pConfig->RebuildInputOutputLists(true);
-		if (S_OK == hr)
-		{
-			//Set ObjectAttributes also after RebuildInputOutputLists, because the LinkedValue-Children will be create in this function.
-			pConfig->SetObjectAttributes(objectAttributeList);
-		}
 
 		hr = pConfig->LoadRemoteMonitorList(rXMLTree);
 		if (hr & SvDef::svErrorCondition)

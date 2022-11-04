@@ -74,7 +74,6 @@ enum MessageTextEnum
 	Tid_MsgIOTypeIsMissing,
 	Tid_MsgIONameIsMissing,
 	Tid_MsgPPQPOsitionIsMissing,
-	Tid_MsgRemoteIndexIsMissing,
 
 	Tid_CouldNotExecuteFormatString,
 
@@ -687,5 +686,6 @@ enum MessageTextEnum
 	Tid_NoParentExtentForAnalyzer,
 	Tid_SetOfReadOnlyValueFailed,
 	Tid_SetOfValueFailed,
+	Tid_DuplicateObjectId,
 };
 } //namespace SvStl

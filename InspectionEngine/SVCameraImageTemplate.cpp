@@ -35,10 +35,6 @@ SVCameraImageTemplate::SVCameraImageTemplate(LPCSTR ObjectName)
 	, m_digitizerObjectID()
 {
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
-
-	// SVMainImageClass is not a result image.
-	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed(SvPb::publishResultImage, SvOi::SetAttributeType::RemoveAttribute);
 }
 
 SVCameraImageTemplate::SVCameraImageTemplate(SVObjectClass* POwner, int StringResourceID)
@@ -47,10 +43,6 @@ SVCameraImageTemplate::SVCameraImageTemplate(SVObjectClass* POwner, int StringRe
 	, m_digitizerObjectID()
 {
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
-
-	// SVMainImageClass is not a result image.
-	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed(SvPb::publishResultImage, SvOi::SetAttributeType::RemoveAttribute);
 }
 
 SVCameraImageTemplate::~SVCameraImageTemplate()
@@ -95,11 +87,6 @@ bool SVCameraImageTemplate::CreateObject(const SVObjectLevelCreateStruct& rCreat
 	bool l_bOk = SVImageClass::CreateObject(rCreateStructure);
 
 	l_bOk = l_bOk && (S_OK == RebuildCameraImage());
-
-	// SVMainImageClass is not a result image.
-	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed(SvPb::publishResultImage, SvOi::SetAttributeType::RemoveAttribute);
-	SetObjectAttributesAllowed(SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = l_bOk;
 

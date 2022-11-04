@@ -531,6 +531,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					case SvPb::allValueObjects:
 					case SvPb::allNumberValueObjects:
 					case SvPb::stringValueObjects:
+					case SvPb::boolValueObjects:
 						return false; //by ValueObjects the defaultType must not be VT_EMPTY
 					default:
 						return pValue->isCorrectType(requiredType);
@@ -849,17 +850,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				rChild->DisconnectInput();
 			}
 		}
-	}
-
-	UINT LinkedValue::ObjectAttributesSet(int iIndex) const
-	{
-		if (getObjectAttributesSetSize() <= iIndex)
-		{
-			assert(false);
-			iIndex = 0;
-		}
-
-		return __super::ObjectAttributesSet(iIndex);
 	}
 
 	HRESULT LinkedValue::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index/* = 0*/) const

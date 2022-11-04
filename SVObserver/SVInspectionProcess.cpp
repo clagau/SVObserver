@@ -420,7 +420,6 @@ void SVInspectionProcess::Init()
 	// Set up your type...
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVInspectionObjectType;
 	m_svReset.RemoveState(SvDef::SVResetStateAll);
-	m_publishList.setInspection(this);
 }
 
 SVInspectionProcess::~SVInspectionProcess()
@@ -498,11 +497,6 @@ void SVInspectionProcess::DestroyInspection()
 	::Sleep(0);
 	m_processThread.Destroy();
 	resetLastProduct();
-	if (SvDef::InvalidObjectId != m_PPQId)
-	{
-		// Release all published outputs before we destroy the toolset
-		m_publishList.Release(m_pCurrentToolset);
-	}
 	if (nullptr != m_pCurrentToolset)
 	{
 		DestroyChildObject(m_pCurrentToolset);
@@ -933,7 +927,6 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 					SVObjectManagerClass::Instance().ChangeUniqueObjectID(pNewObject, findIter->second);
 				}
 				pNewObject->SetObjectOwner(this);
-				pNewObject->SetObjectAttributesSet(pNewObject->ObjectAttributesSet() & SvPb::publishable, SvOi::SetAttributeType::OverwriteAttribute);
 				pNewObject->ResetObject();
 				CreateChildObject(pNewObject);
 			}
@@ -948,7 +941,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			}
 		}// end if
 
-		m_PPQInputs[iList]->getObject()->SetObjectAttributesAllowed(SvPb::selectableForEquation | SvPb::viewable, SvOi::SetAttributeType::AddAttribute);
+		m_PPQInputs[iList]->getObject()->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::AddAttribute);
 	}// end for
 
 	SVResultList* pResultlist = GetResultList();
@@ -1227,15 +1220,6 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 
 	SetDefaultInputs();
 
-	if (CheckAndResetConditionalHistory())
-	{
-		//Configuration has changed need to set the modified flag
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-
-		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-	}
-
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
 	int iCount = static_cast<int>(m_mapValueObjects.size());
 	std::string Text = SvUl::Format(_T("%s value object count=%d\n"), GetName(), iCount);
@@ -1433,12 +1417,6 @@ HRESULT SVInspectionProcess::GetChildObject(SVObjectClass*& rpObject, const SVOb
 
 void SVInspectionProcess::SetPPQIdentifier(uint32_t PPQId)
 {
-	if (SvDef::InvalidObjectId != m_PPQId && (m_PPQId != PPQId))
-	{
-		// Release all published outputs before we destroy the toolset
-		m_publishList.Release(m_pCurrentToolset);
-	}
-
 	m_PPQId = PPQId;
 }
 
@@ -2202,47 +2180,6 @@ void SVInspectionProcess::LastProductNotify()
 	m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[InspectionFunction::NotifyLastInspected]));
 }
 
-bool SVInspectionProcess::CheckAndResetConditionalHistory()
-{
-	//Conditional History has been deprecated, these are used to check and reset the attributes of previously saved configurations
-	constexpr UINT SV_CH_CONDITIONAL = 0x00002000;
-	constexpr UINT SV_CH_IMAGE = 0x00004000;
-	constexpr UINT SV_CH_VALUE = 0x00008000;
-
-	bool Result(false);
-
-	SvIe::SVTaskObjectListClass* pToolSet = static_cast <SvIe::SVTaskObjectListClass*> (m_pCurrentToolset);
-	if (nullptr != pToolSet)
-	{
-		SVObjectReferenceVector vecObjects;
-		pToolSet->GetOutputListFiltered(vecObjects, SV_CH_CONDITIONAL | SV_CH_VALUE, false);
-		if (0 < vecObjects.size())
-		{
-			SVObjectReferenceVector::iterator iter;
-			for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
-			{
-				iter->SetObjectAttributesSet(SV_CH_CONDITIONAL | SV_CH_VALUE, SvOi::SetAttributeType::RemoveAttribute);
-			}
-			Result = true;
-		}
-
-		SvIe::SVImageClassPtrVector listImages;
-		pToolSet->GetImageList(listImages, SV_CH_IMAGE);
-		int NumberOfImages = static_cast<int> (listImages.size());
-		if (0 < NumberOfImages)
-		{
-			for (int i = 0; i < NumberOfImages; i++)
-			{
-				SVObjectReference refImage(listImages[i]);
-				refImage.getObject()->SetObjectAttributesSet(SV_CH_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
-			}
-			Result = true;
-		}
-
-	}
-	return Result;
-}
-
 bool SVInspectionProcess::IsColorCamera() const
 {
 	SvIe::SVVirtualCamera* pCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(getFirstCamera()));
@@ -2767,14 +2704,6 @@ void SVInspectionProcess::SetDefaultInputs()
 	}// end if
 
 	BuildValueObjectMap();
-
-	// Update published List
-	GetPublishList().Refresh(m_pCurrentToolset);
-}
-
-SVPublishList& SVInspectionProcess::GetPublishList()
-{
-	return m_publishList;
 }
 
 LPCTSTR SVInspectionProcess::GetDeviceName() const
@@ -3384,11 +3313,6 @@ void SVInspectionProcess::OnObjectRenamed(const SVObjectClass& rRenamedObject, c
 	{
 		GetToolSet()->OnObjectRenamed(rRenamedObject, rOldName);
 	}
-}
-
-void SVInspectionProcess::disconnectObjectInput(uint32_t objectId)
-{
-	m_publishList.RemovePublishedEntry(objectId);
 }
 
 bool SVInspectionProcess::connectAllInputs()

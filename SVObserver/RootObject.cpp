@@ -152,7 +152,7 @@ bool RootObject::createConfigurationObject(std::recursive_mutex* pMutex)
 	{
 		//Need to set the attributes to settable remotely and online but should not be selectable
 		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 	}
 
 	pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentResultUpdate, Update);
@@ -160,7 +160,7 @@ bool RootObject::createConfigurationObject(std::recursive_mutex* pMutex)
 	{
 		//Need to set the attributes to settable remotely and online but should not be selectable
 		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 	}
 
 	pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentSoftwareTrigger, false);
@@ -168,21 +168,21 @@ bool RootObject::createConfigurationObject(std::recursive_mutex* pMutex)
 	{
 		//Need to set the attributes to settable remotely but should not be selectable
 		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 	}
 	pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentFileAcquisition, false);
 	if (nullptr != pValueObject)
 	{
 		//Need to set the attributes to settable remotely but should not be selectable
 		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 	}
 	pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentCameraSoftwareTrigger, false);
 	if (nullptr != pValueObject)
 	{
 		//Need to set the attributes to settable remotely but should not be selectable
 		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 	}
 	return true;
 }
@@ -329,24 +329,24 @@ bool RootObject::createRootChildren()
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModelNumber, _T(""));
 		if (nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentSerialNumber, _T(""));
 		if (nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentWinKey, _T(""));
 		if (nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentAutoSave, true);
 		if (nullptr != pValueObject)
 		{
 			//Need to set the attributes to settable remotely and online but should not be selectable
 			pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		// Load special profile settings
 		bool StartLastConfiguration = (1 == AfxGetApp()->GetProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), 0));
@@ -355,32 +355,14 @@ bool RootObject::createRootChildren()
 		{
 			//Need to set the attributes to settable remotely but should not be selectable
 			pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 		}
 
-		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationName, _T(""));
-		if (pValueObject != nullptr)
-		{
-			pValueObject->SetObjectAttributesAllowed({ SvPb::selectableForEquation | SvPb::selectableForStatistics }, SvOi::SetAttributeType::RemoveAttribute);
-		}
+		m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationName, _T(""));
+		m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationFileName, _T(""));
+		m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentDate, _T(""));
+		m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentTime, _T(""));
 
-		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationFileName, _T(""));
-		if (pValueObject != nullptr)
-		{
-			pValueObject->SetObjectAttributesAllowed({ SvPb::selectableForEquation | SvPb::selectableForStatistics }, SvOi::SetAttributeType::RemoveAttribute);
-		}
-
-		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentDate, _T(""));
-		if (pValueObject != nullptr)
-		{
-			pValueObject->SetObjectAttributesAllowed({ SvPb::selectableForEquation | SvPb::selectableForStatistics }, SvOi::SetAttributeType::RemoveAttribute);
-		}
-
-		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentTime, _T(""));
-		if (pValueObject != nullptr)
-		{
-			pValueObject->SetObjectAttributesAllowed({ SvPb::selectableForEquation | SvPb::selectableForStatistics }, SvOi::SetAttributeType::RemoveAttribute);
-		}
 		Result = createRootChild(SvDef::FqnGlobal, SvPb::SVGlobalConstantObjectType);
 	}
 

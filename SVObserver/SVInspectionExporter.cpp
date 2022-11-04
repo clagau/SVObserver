@@ -147,18 +147,6 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, const SVInspectio
 	rWriter.EndElement();
 }
 
-static void WriteObjectAttributes(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
-{
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	if (nullptr != pConfig)
-	{
-		SVConfigurationObject::AttributesSetMap attributeSetPairVector;
-		pConfig->getInspectionObjectAttributesSet(&rInspection, attributeSetPairVector);
-		pConfig->SaveObjectAttributesSet(rWriter, attributeSetPairVector);
-	}
-}
-
 static bool ShouldExcludeFile(LPCTSTR filename)
 {
 	bool bRetVal = false;
@@ -294,8 +282,6 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 						WritePPQInputOutputs(writer, *pInspection);
 
 						WriteGlobalConstants(writer, *pInspection);
-
-						WriteObjectAttributes(writer, *pInspection);
 
 						hasDependentFiles = WriteDependentFileList(writer, dstDependencyZipFile);
 

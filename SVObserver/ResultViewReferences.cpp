@@ -13,7 +13,6 @@
 #include "StdAfx.h"
 #include "ResultViewReferences.h"
 #include "SVInspectionProcess.h"
-#include "SVToolSet.h"
 #include "Definitions/Color.h"
 #include "InspectionEngine/SVIPResultData.h"
 #include "InspectionEngine/SVIPResultItemDefinition.h"
@@ -23,6 +22,7 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
@@ -327,65 +327,4 @@ HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionVector &r
 	}
 
 	return S_OK;
-}
-
-
-
-
-void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection)
-{
-	SVToolSet* pToolSet = nullptr;
-	if( nullptr != pInspection )
-	{
-		pToolSet = pInspection->GetToolSet();
-	}
-
-	if(nullptr == pToolSet)
-	{
-		assert(FALSE);
-		return;
-	}
-
-
-
-	SVObjectReferenceVector RefVector;
-
-	// Find all outputs marked as selected for viewing
-	pToolSet->GetOutputListFiltered(RefVector, SvPb::viewable);
-	for(SVObjectReferenceVector::const_iterator iter = RefVector.begin(); iter != RefVector.end(); ++iter)
-	{
-		if( nullptr != iter->getObject() && iter->ObjectAttributesSet() & SvPb::viewable )
-		{
-			m_ReferenceVector.push_back(*iter);
-			SvIe::ResultViewItemDef item(*iter);
-			m_ResultViewItemDefList.push_back(item);
-		}
-	}
-
-	m_LastUpdateTimeStamp = SvUl::GetTimeStamp();
-}
-
-
-void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
-{
-	// Insert all PPQ input items that are picked for viewing
-	
-	if( nullptr != pInspection )
-	{
-		for(const auto& rpInputEntry : pInspection->getPpqInputs())
-		{
-			if(nullptr != rpInputEntry)
-			{
-				SVObjectClass* pObject  = rpInputEntry->getObject();
-				if( nullptr != pObject && pObject->ObjectAttributesSet() & SvPb::viewable )
-				{
-					SVObjectReference ObjectRef(pObject);
-					SvIe::ResultViewItemDef item(ObjectRef);
-					m_ReferenceVector.push_back(ObjectRef);
-					m_ResultViewItemDefList.push_back(item);
-				}
-			}
-		}
-	}
-	m_LastUpdateTimeStamp = SvUl::GetTimeStamp();
 }

@@ -60,7 +60,6 @@ bool SVAcquisitionToolClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 	if( bOk )
 	{
 		bOk = ( S_OK == SetImageExtent( mainImageObject.GetImageExtents() ) );
-		mainImageObject.SetObjectAttributesAllowed( SvPb::publishResultImage, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	m_SourceImageNames.setSaveValueFlag(false);

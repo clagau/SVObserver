@@ -146,7 +146,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 		return -1;
 	}
 
-	if (0 == (ObjectReference.ObjectAttributesAllowed() & SvPb::selectableForEquation))
+	if (0 == (ObjectReference.ObjectAttributesAllowed() & SvPb::useable))
 	{
 		return -1;
 	}

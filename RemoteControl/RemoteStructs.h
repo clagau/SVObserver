@@ -30,7 +30,6 @@ struct DataDefinition
 	DataDefinition() = default;
 	std::string m_name;
 	bool m_writeable{ false };
-	bool m_published{ false };
 	std::string m_type;
 	std::vector<std::string> m_additionalInfo;
 };

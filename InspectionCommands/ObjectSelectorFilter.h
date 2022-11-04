@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "SVProtoBuf/SVO-Enum.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -42,44 +41,6 @@ public:
 		return Result;
 	}
 };
-
-class AttributesSetFilter
-{
-public:
-	AttributesSetFilter(const AttributesSetFilter&) = default;
-	AttributesSetFilter& operator=(const AttributesSetFilter&) = delete;
-
-	AttributesSetFilter() {};
-
-	virtual ~AttributesSetFilter() {};
-
-	bool operator()(const SvOi::IObjectClass* pObject, unsigned int Attribute, int ArrayIndex) const
-	{
-		bool Result(false);
-
-		if (SvPb::noAttributes == Attribute)
-		{
-			Result = true;
-		}
-		else
-		{
-			if (nullptr != pObject)
-			{
-				const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (pObject);
-				if (nullptr != pValueObject && pValueObject->isArray())
-				{
-					Result = (Attribute == (pObject->ObjectAttributesSet(ArrayIndex) & Attribute));
-				}
-				else
-				{
-					Result = (Attribute == (pObject->ObjectAttributesSet() & Attribute));
-				}
-			}
-		}
-		return Result;
-	}
-};
-
 
 class ExcludeSameLineageSelectorFilter
 {

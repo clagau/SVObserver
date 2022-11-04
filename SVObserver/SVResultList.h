@@ -77,7 +77,7 @@ public:
 	//************************************
 	HRESULT GetResultDefinitions( ResultViewReferences::SVResultDefinitionVector& rDefinitions ) const; 
 
-	bool LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent);
+	void LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent);
 	
 	const SVObjectReferenceVector& GetSelectedObjects() const;
 	bool Insert(const std::string& rDottedName);

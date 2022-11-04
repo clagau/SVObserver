@@ -62,13 +62,11 @@ SVInputObjectPtr SVInputObjectList::GetInputFlyweight(const std::string& rInputN
 		case SvPb::SVDigitalInputObjectType:
 		{
 			pResult = std::make_shared<SVDigitalInputObject>();
-			pResult->updateObjectId(index);
 			break;
 		}
 		case SvPb::SVRemoteInputObjectType:
 		{
 			pResult = std::make_shared<SVRemoteInputObject>();
-			pResult->updateObjectId(index);
 			break;
 		}
 		default:
@@ -79,6 +77,7 @@ SVInputObjectPtr SVInputObjectList::GetInputFlyweight(const std::string& rInputN
 
 		if (nullptr != pResult)
 		{
+			pResult->updateObjectId(index);
 			pResult->SetName(rInputName.c_str());
 
 			if (S_OK != AttachInput(pResult))
@@ -86,6 +85,10 @@ SVInputObjectPtr SVInputObjectList::GetInputFlyweight(const std::string& rInputN
 				pResult.reset();
 			}
 		}
+	}
+	else
+	{
+		pResult->updateObjectId(index);
 	}
 
 	return pResult;
@@ -185,6 +188,9 @@ SVIOEntryHostStructPtrVector SVInputObjectList::getInputList() const
 		SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 
 		pIOEntry->m_IOId = rInput.second->getObjectId();
+		pIOEntry->m_name = rInput.second->GetName();
+		pIOEntry->m_PPQIndex = rInput.second->GetPpqIndex();
+		pIOEntry->m_Enabled = (-1l != pIOEntry->m_PPQIndex);
 
 		switch (rInput.second->GetObjectSubType())
 		{

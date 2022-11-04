@@ -26,27 +26,9 @@ namespace SvDef
 	};
 
 	//Combined object attributes
-	const UINT defaultValueObjectAttributes =
-	{
-		SvPb::viewable |
-		SvPb::publishable |
-		SvPb::archivable |
-		SvPb::selectableForEquation |
-		SvPb::embedable |
-		SvPb::selectableForStatistics |
-		SvPb::audittrail |
-		SvPb::dataDefinitionValue
-	};
-
-	const UINT selectableAttributes =
-	{
-		SvPb::viewable |
-		SvPb::publishable |
-		SvPb::archivable |
-		SvPb::selectableForEquation |
-		SvPb::selectableForStatistics
-	};
-
+	constexpr UINT viewableAndUseable = SvPb::viewable | SvPb::useable;
+	constexpr UINT defaultValueObjectAttributes = viewableAndUseable | SvPb::audittrail;
+	
 	constexpr int c_maxTableColumn = 50;
 	constexpr int c_numberOfSortFeature = 3;
 	constexpr int c_maxLoopGroupDepth = 3;

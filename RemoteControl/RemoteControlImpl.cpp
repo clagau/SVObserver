@@ -687,7 +687,6 @@ HRESULT RemoteControlImpl::GetDataDefinitionList(LPCTSTR inspectionName, long li
 				DataDefinition dataDef;
 				dataDef.m_name = SvUl::to_ansi(Response.list(i).name());
 				dataDef.m_writeable = Response.list(i).writable();
-				dataDef.m_published = Response.list(i).published();
 				dataDef.m_type = SvUl::to_ansi(Response.list(i).type());
 				for (int j = 0; j < Response.list(i).additionalinfo_size(); j++)
 				{

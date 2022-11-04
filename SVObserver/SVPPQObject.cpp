@@ -112,23 +112,22 @@ SVPPQObject::~SVPPQObject()
 
 void SVPPQObject::init()
 {
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVPPQObjectType;
 	m_DataValidDelay = TheSVObserverApp().getDataValidDelay();
 
 	for (auto& rOutput : m_PpqOutputs)
 	{
-		rOutput.SetObjectAttributesAllowed(SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+		rOutput.SetObjectAttributesAllowed(SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
 		m_childObjects.push_back(&rOutput);
 	}
-
-	//PPQ Trigger Count should never be used as it is not synchronous to the inspection rather use the Tool Set.Trigger Count
-	UINT Attribute2Remove = SvPb::selectableForEquation | SvPb::selectableForStatistics | SvPb::archivable;
 
 	auto InitPPQCounter = [&](SvVol::BasicValueObjectPtr& counter, LPCSTR CounterName)
 	{
 		counter = m_PpqValues.setValueObject(CounterName, 0L, this);
 		if (nullptr != counter)
 		{
-			counter->SetObjectAttributesAllowed(Attribute2Remove, SvOi::SetAttributeType::RemoveAttribute);
+			//PPQ Trigger Count should never be used as it is not synchronous to the inspection rather use the Tool Set.Trigger Count
+			counter->SetObjectAttributesAllowed(SvPb::useable, SvOi::SetAttributeType::RemoveAttribute);
 			m_childObjects.push_back(counter.get());
 		}
 	};
@@ -285,9 +284,7 @@ void SVPPQObject::Destroy()
 
 	m_pMasterProductInfos = nullptr;
 
-	m_AllInputs.clear();
 	m_UsedInputs.clear();
-	m_AllOutputs.clear();
 	m_UsedOutputs.clear();
 
 	m_isCreated = false;
@@ -531,9 +528,9 @@ bool SVPPQObject::AddSharedCamera(SvIe::SVVirtualCamera* pCamera)
 	return l_Status;
 }
 
-void SVPPQObject::GetInspectionCount(long& lSize) const
+long SVPPQObject::GetInspectionCount() const
 {
-	lSize = static_cast<long> (m_arInspections.size());
+	return static_cast<long> (m_arInspections.size());
 }
 
 size_t SVPPQObject::GetCameraCount() const
@@ -980,13 +977,12 @@ bool SVPPQObject::IsOnline() const
 
 void SVPPQObject::AddInput(SVIOEntryHostStructPtr pInput)
 {
-	m_AllInputs.push_back(pInput);
+	m_UsedInputs.push_back(pInput);
 }// end AddInput
 
 bool SVPPQObject::RemoveInput(SVIOEntryHostStructPtr pInput)
 {
-	bool l_Status = false;
-
+	bool result {false};
 	std::string strName;
 
 	if (nullptr != pInput->getObject())
@@ -1000,23 +996,14 @@ bool SVPPQObject::RemoveInput(SVIOEntryHostStructPtr pInput)
 		strName = l_pObject->GetName();
 	}
 
-	SVIOEntryHostStructPtrVector::iterator l_Iter = m_AllInputs.begin();
-
-	while (l_Iter != m_AllInputs.end())
+	auto iter = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), [&strName](const auto& rEntry) {return rEntry->getObject()->GetName() == strName; });
+	if (m_UsedInputs.end() != iter)
 	{
-		l_Status = (strName == (*l_Iter)->getObject()->GetName());
-
-		if (l_Status)
-		{
-			m_AllInputs.erase(l_Iter);
-
-			break;
-		}
-
-		++l_Iter;
+		m_UsedInputs.erase(iter);
+		result = true;
 	}
 
-	return l_Status;
+	return result;
 }
 
 HRESULT SVPPQObject::GetInputIOValues(std::vector<_variant_t>& rInputValues) const
@@ -1048,169 +1035,70 @@ HRESULT SVPPQObject::GetInputIOValues(std::vector<_variant_t>& rInputValues) con
 
 bool SVPPQObject::RebuildInputList()
 {
-	SVIOEntryHostStructPtr pOldInput;
-	SVIOEntryHostStructPtr pNewInput;
-
-	// Make sure all the defaults are here for old configurations
-	AddDefaultInputs();
-
 	if (nullptr != m_pInputList)
 	{
-		SVIOEntryHostStructPtrVector inputEntryVector = m_pInputList->getInputList();
-		size_t lNewSize = inputEntryVector.size();
-
-		for (size_t iOld = 0; iOld < m_AllInputs.size(); iOld++)
+		SVIOEntryHostStructPtrVector previousInputs;
+		previousInputs.swap(m_UsedInputs);
+		m_UsedInputs = m_pInputList->getInputList();
+		for (auto& pEntry : m_UsedInputs)
 		{
-			pOldInput = m_AllInputs[iOld];
-
-			for (size_t iNew = 0; iNew < lNewSize; iNew++)
+			uint32_t ioID {pEntry->m_IOId};
+			auto iter = std::find_if(previousInputs.begin(), previousInputs.end(), [&ioID](const auto& rpEntry) {return nullptr != rpEntry && ioID == rpEntry->m_IOId; });
+			if (previousInputs.end() != iter)
 			{
-				pNewInput = inputEntryVector[iNew];
-
-				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pNewInput->m_IOId);
-
-				if ((0 == strcmp(l_pObject->GetName(), pOldInput->getObject()->GetName())) &&
-					(pNewInput->m_ObjectType == pOldInput->m_ObjectType))
+				*pEntry = *(*iter);
+			}
+			else
+			{
+				SVObjectClass* pObject {nullptr};
+				std::shared_ptr<SvOi::IValueObject> pInputValueObject;
+				if (IO_REMOTE_INPUT == pEntry->m_ObjectType)
 				{
-					pNewInput->setLinkedObject(pOldInput->getObject());
-					pNewInput->m_PPQIndex = pOldInput->m_PPQIndex;
-					pNewInput->m_Enabled = pOldInput->m_Enabled;
-					pOldInput->m_ObjectType = pNewInput->m_ObjectType;
-					pOldInput->m_IOId = pNewInput->m_IOId;
-					pOldInput->getObject()->ResetObject();
-					break;
-				}// end if
-			}// end for
-		}// end for
+					// new variant value object for Remote Inputs.
+					pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
+					_variant_t defaultValue;
+					defaultValue.ChangeType(VT_R8);
+					if (nullptr != pInputValueObject)
+					{
+						pInputValueObject->setDefaultValue(defaultValue);
+						pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+					}
+				}
+				else
+				{
+					// new Bool Value Object for Digital Inputs.
+					pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
+					if (nullptr != pInputValueObject)
+					{
+						pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+					}
+				}
 
-		m_UsedInputs = inputEntryVector;
-
+				if (nullptr != pObject)
+				{
+					pObject->SetName(pEntry->m_name.c_str());
+					pObject->SetObjectOwner(this);
+					pObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
+					pObject->ResetObject();
+				}
+				pEntry->setValueObject(pInputValueObject);
+			}
+		}
 		std::sort(m_UsedInputs.begin(), m_UsedInputs.end(), &SVIOEntryHostStruct::PtrGreater);
-
 		return true;
 	}// end if
 
 	return false;
 }// end RebuildInputList
 
-
-// AddToAvailableInputs searches the m_AllInputs by name. If it does not exist,
-// then the new input is added. Two types are supported: 
-// IO_REMOTE_INPUT and IO_DIGITAL_INPUT.
-// A variant value object is created for the remote input.
-// A Boolean value object is created for the digital input.
-bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const std::string& rName)
-{
-	bool bFound = false;
-
-	// search for the input. 
-	for (size_t k = 0; k < m_AllInputs.size(); k++)
-	{
-		SVIOEntryHostStructPtr pOldInput = m_AllInputs[k];
-		if (rName == pOldInput->getObject()->GetName())
-		{
-			bFound = true;
-			break;
-		}// end if
-	}// end for
-
-	if (!bFound)
-	{
-		SVObjectClass* pObject {nullptr};
-		std::shared_ptr<SvOi::IValueObject> pInputValueObject;
-		if (eType == IO_REMOTE_INPUT)
-		{
-			// new variant value object for Remote Inputs.
-			pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
-			_variant_t defaultValue;
-			defaultValue.ChangeType(VT_R8);
-			if (nullptr != pInputValueObject)
-			{
-				pInputValueObject->setDefaultValue(defaultValue);
-				pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-			}
-		}
-		else
-		{
-			// new Bool Value Object for Digital Inputs.
-			pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-			if (nullptr != pInputValueObject)
-			{
-				pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-			}
-		}
-
-		if (nullptr != pObject)
-		{
-			pObject->SetName(rName.c_str());
-			pObject->SetObjectOwner(this);
-			pObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-			pObject->ResetObject();
-		}
-
-		if (nullptr != pInputValueObject)
-		{
-			SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-			pIOEntry->setValueObject(pInputValueObject);
-			pIOEntry->m_ObjectType = eType;
-			pIOEntry->m_PPQIndex = -1;
-			pIOEntry->m_Enabled = false;
-
-			// Add input to PPQ.
-			AddInput(pIOEntry);
-			return true;
-		}
-	}// end if
-	return false;
-}
-
-// Add Default Inputs adds inputs to the m_AllInputs 
-// m_AllInputs appears to be the available input list.
-void SVPPQObject::AddDefaultInputs()
-{
-	long inputCount {SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount()};
-
-	// Create all the default Digital Inputs
-	for (long l = 0; l < inputCount; l++)
-	{
-		std::string Name = SvUl::Format(_T("DIO.Input%ld"), l + 1);
-		AddToAvailableInputs(IO_DIGITAL_INPUT, Name);
-	}// end for
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	SVInputObjectList* pInputObjectList(nullptr);
-	if (nullptr != pConfig) { pInputObjectList = pConfig->GetInputObjectList(); }
-
-	inputCount = (nullptr != pInputObjectList) ? pInputObjectList->getRemoteInputCount() : 0;
-
-	// Create all the default Remote Inputs
-	for (long l = 0; l < inputCount; l++)
-	{
-		std::string Name = SvUl::Format(SvO::cRemoteInputNumberLabel, l + 1);
-		AddToAvailableInputs(IO_REMOTE_INPUT, Name);
-	}// end for
-}
-
 SVIOEntryHostStructPtr SVPPQObject::GetInput(const std::string& name) const
 {
-	for (SVIOEntryHostStructPtrVector::const_iterator it = m_AllInputs.begin(); it != m_AllInputs.end(); ++it)
+	auto iter = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), [&name](const auto& rpEntry) {return nullptr != rpEntry && name == rpEntry->m_name; });
+	if (m_UsedInputs.end() != iter)
 	{
-		SVIOEntryHostStructPtr pIoEntry = (*it);
-		if (nullptr != pIoEntry)
-		{
-			if (name == pIoEntry->getObject()->GetName())
-			{
-				return pIoEntry;
-			}
-		}
+		return *iter;
 	}
 	return SVIOEntryHostStructPtr();
-}
-
-void SVPPQObject::AddOutput(SVIOEntryHostStructPtr pOutput)
-{
-	m_AllOutputs.push_back(pOutput);
 }
 
 bool SVPPQObject::RemoveOutput(SVIOEntryHostStructPtr pOutput)
@@ -1230,9 +1118,9 @@ bool SVPPQObject::RemoveOutput(SVIOEntryHostStructPtr pOutput)
 		Name = l_pObject->GetCompleteName();
 	}
 
-	SVIOEntryHostStructPtrVector::iterator l_Iter = m_AllOutputs.begin();
+	SVIOEntryHostStructPtrVector::iterator l_Iter = m_UsedOutputs.begin();
 
-	while (l_Iter != m_AllOutputs.end())
+	while (l_Iter != m_UsedOutputs.end())
 	{
 		std::string PPQName;
 		PPQName = (*l_Iter)->getObject()->GetCompleteName();
@@ -1241,7 +1129,7 @@ bool SVPPQObject::RemoveOutput(SVIOEntryHostStructPtr pOutput)
 
 		if (l_Status)
 		{
-			m_AllOutputs.erase(l_Iter);
+			m_UsedOutputs.erase(l_Iter);
 
 			break;
 		}
@@ -1480,91 +1368,57 @@ bool SVPPQObject::ResetOutputs()
 
 bool SVPPQObject::RebuildOutputList()
 {
-	// Make sure all the defaults are here for old configurations
-	AddDefaultOutputs();
+	AddPpqResults();
 
 	if (nullptr != m_pOutputList)
 	{
-		SVIOEntryHostStructPtrVector newOutputs = m_pOutputList->getOutputList();
-		size_t lNewSize = newOutputs.size();
-
-		m_pTriggerToggle.reset();
-		m_pOutputToggle.reset();
-		m_pDataValid.reset();
-
-		for (size_t iOld = 0; iOld < m_AllOutputs.size(); iOld++)
+		m_UsedOutputs.clear();
+		SVIOEntryHostStructPtrVector allOutputs = m_pOutputList->getOutputList();
+		for (auto& pEntry : allOutputs)
 		{
-			SVIOEntryHostStructPtr pOldOutput = m_AllOutputs[iOld];
-			pOldOutput->m_IOId = SvDef::InvalidObjectId;
-
-			for (size_t iNew = 0; iNew < lNewSize; iNew++)
+			SVObjectClass* pObject {nullptr};
+			std::string fqName {SvDef::FqnConfiguration};
+			fqName += '.' + pEntry->m_name;
+			SVObjectManagerClass::Instance().GetObjectByDottedName(fqName, pObject);
+			if (nullptr != pObject)
 			{
-				SVIOEntryHostStructPtr pNewOutput = newOutputs[iNew];
-
-				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pNewOutput->m_IOId);
-
-				std::string NewName = pObject->GetCompleteName();
-				std::string OldName = pOldOutput->getObject()->GetCompleteName();
-
-				if (pNewOutput->m_ObjectType == pOldOutput->m_ObjectType && NewName == OldName)
+				pEntry->setLinkedObject(pObject);
+				uint32_t inspectionID {pEntry->m_inspectionId};
+				auto iterIpd = std::find_if(m_arInspections.begin(), m_arInspections.end(), [&inspectionID](const auto* pEntry) { return pEntry->getObjectId() == inspectionID; });
+				bool isPpqOutput {m_arInspections.end() != iterIpd};
+				SVObjectClass* pPpq = pObject->GetAncestor(SvPb::SVObjectTypeEnum::SVPPQObjectType);
+				isPpqOutput |= (this == pPpq);
+				if(isPpqOutput)
 				{
-					if (SvPb::SVIoObjectType == pObject->GetObjectType())
+					pEntry->m_Enabled = (nullptr != pObject);
+
+					m_UsedOutputs.push_back(pEntry);
+					//These outputs have special functionality and need to be disabled
+					if (pObject == &m_PpqOutputs[PpqOutputEnums::DataValid])
 					{
-						//IO object types require the complete name
-						pObject->SetName(pOldOutput->getObject()->GetCompleteName().c_str());
-						pNewOutput->setLinkedObject(pOldOutput->getObject());
+						m_pDataValid = pEntry;
+						pEntry->m_Enabled = false;
 					}
-					else
+					else if (pObject == &m_PpqOutputs[PpqOutputEnums::TriggerToggle])
 					{
-						//Normal object types require the name and set the owner
-						pObject->SetName(pOldOutput->getObject()->GetName());
-						pNewOutput->setLinkedObject(pOldOutput->getObject());
-						pNewOutput->getObject()->SetObjectOwner(pOldOutput->getObject()->GetParent());
+						m_pTriggerToggle = pEntry;
+						pEntry->m_Enabled = false;
 					}
-
-					pNewOutput->m_Enabled = pOldOutput->m_Enabled;
-					pOldOutput->m_ObjectType = pNewOutput->m_ObjectType;
-					pOldOutput->m_IOId = pNewOutput->m_IOId;
-					pOldOutput->getObject()->ResetObject();
-
-					// Check for prefix of PPQ for these special signals...
-					if (0 == NewName.compare(0, 4, _T("PPQ_")))
+					else if (pObject == &m_PpqOutputs[PpqOutputEnums::OutputToggle])
 					{
-						// Disable Trigger Toggle since it is not written with the outputs
-						if (std::string::npos != NewName.find(_T("Trigger Toggle")))
-						{
-							m_pTriggerToggle = pNewOutput;
-							pNewOutput->m_Enabled = false;
-						}// end if
-
-						// Find Output Toggle now to make it quicker later
-						if (std::string::npos != NewName.find(_T("Output Toggle")))
-						{
-							m_pOutputToggle = pNewOutput;
-							pNewOutput->m_Enabled = false;
-						}// end if
-
-						// Find Data Valid now to make it quicker later
-						if (std::string::npos != NewName.find(_T("Data Valid")))
-						{
-							m_pDataValid = pNewOutput;
-							pNewOutput->m_Enabled = false;
-						}// end if
+						m_pOutputToggle = pEntry;
+						pEntry->m_Enabled = false;
 					}
-					break;
-				}// end if
-			}// end for
-		}// end for
-
-		m_UsedOutputs = newOutputs;
-
+				}
+			}
+		}
+		std::sort(m_UsedOutputs.begin(), m_UsedOutputs.end(), &SVIOEntryHostStruct::PtrGreater);
 		return true;
-	}// end if
-
+	}
 	return false;
-}// end RebuildOutputList
+}
 
-void SVPPQObject::AddDefaultOutputs()
+void SVPPQObject::AddPpqResults()
 {
 	static_assert(PpqOutputEnums::OutputNr != 0, "PPQ output number enum should not be 0");
 	constexpr LPCTSTR cPpqOutputNames[PpqOutputEnums::OutputNr] =
@@ -1599,18 +1453,6 @@ void SVPPQObject::AddDefaultOutputs()
 		return;
 	}
 
-	//This checks if the default outputs are already in the list by checking if the first default output is found
-	bool	bFound {false};
-	std::string Name = cPpqOutputNames[PpqOutputEnums::TriggerToggle];
-	for (auto pOutput : m_AllOutputs)
-	{
-		if (Name == pOutput->getObject()->GetName())
-		{
-			bFound = true;
-			break;
-		}
-	}
-
 	for (int i = 0; i < PpqOutputEnums::OutputNr; ++i)
 	{
 		auto& rOutput = m_PpqOutputs[i];
@@ -1619,16 +1461,6 @@ void SVPPQObject::AddDefaultOutputs()
 		rOutput.SetDefaultValue(BOOL(cPpqOutputDefaults[i]), true);
 		rOutput.SetValue(BOOL(cPpqOutputDefaults[i]));
 		rOutput.ResetObject();
-
-		if (!bFound)
-		{
-			SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-			pIOEntry->setLinkedObject(dynamic_cast<SVObjectClass*> (&rOutput));
-			pIOEntry->m_ObjectType = SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
-			pIOEntry->m_Enabled = true;
-
-			AddOutput(pIOEntry);
-		}
 	}
 
 	std::string PpqName = GetName();
@@ -1649,7 +1481,7 @@ void SVPPQObject::AddDefaultOutputs()
 		m_spTiggercount->SetObjectOwner(this);
 		m_spPpqLength->SetObjectOwner(this);
 	}
-}// end AddDefaultOutputs
+}
 
 long SVPPQObject::getOutputCount()
 {
@@ -3041,7 +2873,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 	rWriter.StartElement(SvXml::CTAG_INPUT);
 
 	long lInputNr {0};
-	for (const auto& pEntry : GetAllInputs())
+	for (const auto& pEntry : GetUsedInputs())
 	{
 		if (nullptr != pEntry)
 		{
@@ -3080,18 +2912,11 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 					rWriter.WriteAttribute(SvXml::CTAG_ITEM_NAME, l_svValue);
 					l_svValue.Clear();
 
-					SVInputObjectPtr pInput = m_pInputList->GetInput(pEntry->m_IOId);
-					if (nullptr != pInput)
-					{
-						l_svValue = pInput->GetChannel();
-						rWriter.WriteAttribute(SvXml::CTAG_REMOTE_INDEX, l_svValue);
-						l_svValue.Clear();
-					}
-
 					l_svValue = pEntry->m_PPQIndex;
 					rWriter.WriteAttribute(SvXml::CTAG_PPQ_POSITION, l_svValue);
 					l_svValue.Clear();
 
+					SVInputObjectPtr pInput = m_pInputList->GetInput(pEntry->m_IOId);
 					if (nullptr != pInput)
 					{
 						pInput->Read(l_svValue);

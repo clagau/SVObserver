@@ -66,7 +66,7 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 
 	m_bUseOverlays = true;	// most objects use overlays; must change if needed in derived classes
 
-	SetObjectAttributesAllowed(SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
+	SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::AddAttribute);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_statusTag, SvPb::StatusEId, IDS_OBJECTNAME_STATUS, false, SvOi::SVResetItemNone, false);
@@ -160,54 +160,6 @@ void SVTaskObjectClass::fixInvalidInputs(std::back_insert_iterator<std::vector<S
 	}
 
 	__super::fixInvalidInputs(inserter);
-}
-
-std::vector<SvOi::IObjectClass*> SVTaskObjectClass::getOutputListFiltered(UINT uiAttributes, bool bAND) const
-{
-	std::vector<SvOi::IObjectClass*> outputList;
-	getOutputList(std::back_inserter(outputList));
-	outputList.erase(std::remove_if(outputList.begin(), outputList.end(), [bAND, uiAttributes](auto* pObject)
-	{return bAND ? (pObject->ObjectAttributesSet() & uiAttributes) != uiAttributes // AND
-		: 0 == (pObject->ObjectAttributesSet() & uiAttributes); }), outputList.end());
-
-	return outputList;
-}
-
-void SVTaskObjectClass::GetOutputListFiltered(SVObjectReferenceVector& rObjectList, UINT uiAttributes, bool bAND) const
-{
-	std::vector<SvOi::IObjectClass*> outputList;
-	getOutputList(std::back_inserter(outputList));
-	for (auto* pIObject : outputList)
-	{
-		SVObjectReference ObjectRef {dynamic_cast<SVObjectClass*>(pIObject)};
-		if (ObjectRef.getObject())
-		{
-			if (!ObjectRef.isArray())
-			{
-				bool bAttributesOK = bAND ? (ObjectRef.ObjectAttributesSet() & uiAttributes) == uiAttributes // AND
-					: (ObjectRef.ObjectAttributesSet() & uiAttributes) > 0;            // OR
-				if (bAttributesOK)
-				{
-					rObjectList.push_back(ObjectRef);
-				}
-			}
-			else
-			{
-				int iArraySize = ObjectRef.getValueObject()->getArraySize();
-				for (int j = 0; j < iArraySize; j++)
-				{
-					ObjectRef.SetArrayIndex(j);
-					bool bAttributesOK = bAND ? (ObjectRef.ObjectAttributesSet() & uiAttributes) == uiAttributes // AND
-						: (ObjectRef.ObjectAttributesSet() & uiAttributes) > 0;            // OR
-					if (bAttributesOK)
-					{
-						rObjectList.push_back(ObjectRef);
-					}
-				}
-
-			}
-		}
-	}
 }
 
 void SVTaskObjectClass::removeTaskMessage(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId)
@@ -1144,7 +1096,6 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		}
 	}
 
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_statusTag.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_statusColor.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
@@ -1462,7 +1413,7 @@ bool SVTaskObjectClass::CloseObject()
 	return Result;
 }
 
-HRESULT SVTaskObjectClass::GetImageList(SVImageClassPtrVector& p_rImageList, UINT uiAttributes, bool bAND)
+HRESULT SVTaskObjectClass::GetImageList(SVImageClassPtrVector& p_rImageList)
 {
 	HRESULT hr = S_OK;
 
@@ -1477,15 +1428,9 @@ HRESULT SVTaskObjectClass::GetImageList(SVImageClassPtrVector& p_rImageList, UIN
 	for (auto* pObject : list)
 	{
 		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
-
 		if (nullptr != pImage)
 		{
-			bool bAttributesOK = bAND ? (pImage->ObjectAttributesSet() & uiAttributes) == uiAttributes // AND
-				: (pImage->ObjectAttributesSet() & uiAttributes) > 0;            // OR
-			if (bAttributesOK)
-			{
-				p_rImageList.push_back(pImage);
-			}
+			p_rImageList.push_back(pImage);
 		}
 	}
 

@@ -206,10 +206,6 @@ namespace SvOsl
 	void ObjectTreeGenerator::insertTreeObject(const SvPb::TreeItem& rTreeItem)
 	{
 		SvCl::ObjectSelectorItem SelectorItem{rTreeItem};
-		if(TypeMultipleObject == m_SelectorType)
-		{
-			SelectorItem.m_CheckedState = rTreeItem.selected() ? SvCl::ObjectSelectorItem::CheckedEnabled : SvCl::ObjectSelectorItem::UncheckedEnabled;
-		}
 		if (0 == rTreeItem.children_size())
 		{
 			SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);

@@ -72,9 +72,6 @@
     <ClCompile Include="RootObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SelectedObjectsPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SoftwareTriggerDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -106,9 +103,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVConfigurationPrint.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDataDefinitionSheet.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVDataDefinitionStruct.cpp">
@@ -283,9 +277,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVProgressDialog.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPublishList.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRCCommand.cpp">
@@ -571,9 +562,6 @@
     <ClInclude Include="RootObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SelectedObjectsPage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SoftwareTriggerDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -611,9 +599,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVConfigXMLPrint.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDataDefinitionSheet.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVDataDefinitionStruct.h">
@@ -814,9 +799,6 @@
     <ClInclude Include="SVProgressDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVPublishList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVRCCommand.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1013,9 +995,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RegressionTestController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectAttribute.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SheetForExternalToolAdjustment.h">

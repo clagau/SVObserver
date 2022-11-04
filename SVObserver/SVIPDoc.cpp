@@ -18,7 +18,6 @@
 #include "ResultTabbedView.h"
 #include "SVCommandInspectionCollectImageData.h"
 #include "SVConfigurationObject.h"
-#include "SVDataDefinitionSheet.h"
 #include "SVDirectX.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVGlobal.h"
@@ -138,8 +137,6 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_RESULTS_TABLE_PICKER, OnResultsTablePicker)
 	ON_COMMAND(ID_SAVE_RESULTS_TO_FILE, OnSaveResultsToFile)
 	ON_COMMAND(ID_SAVE_RESULTSTABLE_TO_FILE, OnSaveTableResultsToFile)
-	ON_COMMAND(ID_PUBLISHED_RESULTS_PICKER, OnPublishedResultsPicker)
-	ON_COMMAND(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnPublishedResultImagesPicker)
 	ON_COMMAND(ID_ADD_LOADIMAGETOOL, OnAddLoadImageTool)
 	ON_COMMAND(ID_RUN_REGRESSIONTEST, RunRegressionTest)
 	ON_COMMAND(ID_ADD_ACQUISITIONTOOL, OnAddAcquisitionTool)
@@ -156,7 +153,6 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_VIEW_RESETCOUNTSALLIPS, OnViewResetAllCounts)
 	ON_COMMAND(ID_VIEW_RESETCOUNTSCURRENTIP, OnViewResetCountsCurrentIP)
 	ON_COMMAND(WM_REGRESSION_TEST_COMPLETE, RegressionTestComplete)
-	ON_COMMAND(ID_EDIT_DATA_DEFINITION_LISTS, OnEditDataDefinitionLists)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESETCOUNTSALLIPS, OnUpdateViewResetCountsAllIPs)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESETCOUNTSCURRENTIP, OnUpdateViewResetCountsCurrentIP)
 	ON_COMMAND(ID_SHOW_RELATIONS, OnShowToolRelations)
@@ -167,7 +163,6 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	// Dynamic Enumerated Tool Set Draw Flags
 	ON_COMMAND_RANGE(ID_VIEW_TOOLSETDRAW_POP_BASE, ID_VIEW_TOOLSETDRAW_POP_MAX, OnChangeToolSetDrawFlag)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_TOOLSETDRAW_POP_BASE + 1, ID_VIEW_TOOLSETDRAW_POP_MAX, OnUpdateViewToolSetDrawSubMenus)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_DATA_DEFINITION_LISTS, &SVIPDoc::OnUpdateEditDataDefinitionLists)
 	ON_COMMAND(ID_ADD_RESIZETOOL, &SVIPDoc::OnAddResizetool)
 	ON_COMMAND(ID_ADD_RINGBUFFERTOOL, OnAddRingBufferTool)
 	ON_COMMAND(ID_ADD_TABLETOOL, OnAddTableTool)
@@ -1984,126 +1979,6 @@ void SVIPDoc::OnSaveTableResultsToFile()
 	}
 }
 
-void SVIPDoc::OnPublishedResultsPicker()
-{
-	SVInspectionProcess* pInspection(GetInspectionProcess());
-	if (nullptr != pInspection)
-	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-		std::string InspectionName(pInspection->GetName());
-
-		SvPb::InspectionCmdRequest requestCmd;
-		SvPb::InspectionCmdResponse responseCmd;
-		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, GetInspectionID(), SvPb::publishable);
-		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
-		if (responseCmd.has_getobjectselectoritemsresponse())
-		{
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
-		}
-
-		std::string PublishableResults = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULTS);
-		std::string Title = SvUl::Format(_T("%s - %s"), PublishableResults.c_str(), InspectionName.c_str());
-		std::string Filter = SvUl::LoadStdString(IDS_FILTER);
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), PublishableResults.c_str(), Filter.c_str());
-
-		if (IDOK == Result)
-		{
-			for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
-			{
-				SVObjectReference ObjectRef {rEntry};
-				bool previousState = SvPb::publishable == (SvPb::publishable & ObjectRef.ObjectAttributesSet());
-				SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-				ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
-			}
-
-			pInspection->GetPublishList().Refresh(GetToolSet());
-
-			// Set the Document as modified
-			SetModifiedFlag();
-			SVConfigurationObject* pConfig = nullptr;
-			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-			if (nullptr != pConfig)
-			{
-				pConfig->ValidateRemoteMonitorList();
-
-				// Force the PPQs to rebuild
-				long lSize = pConfig->GetPPQCount();
-
-				for (long l = 0; l < lSize; l++)
-				{
-					SVPPQObject* pPPQ = pConfig->GetPPQ(l);
-					if (nullptr != pPPQ)
-					{
-						pPPQ->RebuildOutputList();
-					}// end if
-				}
-			}// end for
-			GetTheIODoc()->UpdateAllViews(nullptr);
-		}
-	}
-}
-
-void SVIPDoc::OnPublishedResultImagesPicker()
-{
-	SVInspectionProcess* pInspection(GetInspectionProcess());
-	if (nullptr != pInspection)
-	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-
-		std::string InspectionName(pInspection->GetName());
-
-		SvPb::InspectionCmdRequest requestCmd;
-		SvPb::InspectionCmdResponse responseCmd;
-		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, GetInspectionID(), SvPb::publishResultImage, SvDef::InvalidObjectId, false, SvPb::allImageObjects);
-		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, ID_PUBLISHED_RESULT_IMAGES_PICKER + SvOr::HELPFILE_ID_OFFSET);
-		if (responseCmd.has_getobjectselectoritemsresponse())
-		{
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
-		}
-
-		std::string PublishableImages = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULT_IMAGES);
-		std::string Title = SvUl::Format(_T("%s - %s"), PublishableImages.c_str(), InspectionName.c_str());
-		std::string Filter = SvUl::LoadStdString(IDS_FILTER);
-
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), PublishableImages.c_str(), Filter.c_str());
-
-		if (IDOK == Result)
-		{
-			for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
-			{
-				SVObjectReference ObjectRef {rEntry};
-				bool previousState = SvPb::publishResultImage == (SvPb::publishResultImage & ObjectRef.ObjectAttributesSet());
-				SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-				ObjectRef.SetObjectAttributesSet(SvPb::publishResultImage, attributeType);
-			}
-			SetModifiedFlag();
-
-			for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects())
-			{
-				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(calcObjectId(rEntry));
-				if (nullptr != pObject)
-				{
-					pObject->resetAllObjects();
-				}
-			}
-
-			SVConfigurationObject* pConfig(nullptr);
-			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-			if (nullptr != pConfig)
-			{
-				pConfig->ValidateRemoteMonitorList();
-				GetTheIODoc()->UpdateAllViews(nullptr);
-			}
-		}
-	}
-}
-
 void SVIPDoc::RebuildResultsList()
 {
 	SVResultList* pResultList = GetResultList();
@@ -2504,7 +2379,8 @@ bool SVIPDoc::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 	{
 		return false;
 	}
-	return  pResultList->LoadViewedVariables(rTree, htiParent);
+	pResultList->LoadViewedVariables(rTree, htiParent);
+	return true;
 
 }
 
@@ -3107,14 +2983,6 @@ HRESULT SVIPDoc::RemoveImage(uint32_t imageId)
 	return l_Status;
 }
 
-void SVIPDoc::RefreshPublishedList()
-{
-	SVPublishList& publishList = GetInspectionProcess()->GetPublishList();
-	publishList.Refresh(dynamic_cast<SvIe::SVTaskObjectClass*> (GetToolSet()));
-
-	SetModifiedFlag();
-}
-
 SvIe::SVVirtualCameraPtrVector SVIPDoc::GetCameras() const
 {
 	SvIe::SVVirtualCameraPtrVector cameraVector;
@@ -3563,31 +3431,6 @@ void SVIPDoc::OnUpdateViewResetCountsCurrentIP(CCmdUI* pCmdUI)
 {
 	// @WARNING:  Pointers should be checked before they are dereferenced.
 	pCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT));
-}
-
-void SVIPDoc::OnEditDataDefinitionLists()
-{
-	SVInspectionProcess* pInspection = GetInspectionProcess();
-
-	if (nullptr != pInspection)
-	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-		std::string inspectionName = pInspection->GetName();
-		std::string Title = _T("Data Definition Lists - ");
-		Title += inspectionName;
-		SVDataDefinitionSheet sheet(this, Title.c_str(), inspectionName, pInspection->getObjectId());
-
-		//remove apply button
-		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-
-		sheet.DoModal();
-	}
-}
-
-void SVIPDoc::OnUpdateEditDataDefinitionLists(CCmdUI* pCmdUI)
-{
-	// @WARNING:  Pointers should be checked before they are dereferenced.
-	pCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_READY) && SVSVIMStateClass::CheckState(SV_STATE_EDIT));
 }
 
 HRESULT SVIPDoc::RebuildImages()

@@ -124,7 +124,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_RC_CLOSE, OnRCClose)
 
 	ON_COMMAND(ID_EDIT_ADD_REMOTE_OUTPUTS, OnEditRemoteOutputs)
-	ON_COMMAND_RANGE(ID_EDIT_PUBLISHEDRESULTS_BASE, ID_EDIT_PUBLISHEDRESULTS_LIMIT, OnEditPublishedResults)
 
 	ON_UPDATE_COMMAND_UI(ID_TRIGGER_SETTINGS, OnUpdateTriggerSettings)
 	ON_UPDATE_COMMAND_UI(ID_MODE_RUN, OnUpdateModeRun)
@@ -156,8 +155,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_RESULTS_TABLE_PICKER, OnUpdateResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_SAVE_RESULTS_TO_FILE, OnUpdateResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_SAVE_RESULTSTABLE_TO_FILE, OnUpdateResultsPicker)
-	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULTS_PICKER, OnUpdatePublishedResultsPicker)
-	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnUpdatePublishedImagesPicker)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITREMOTEINPUTS, OnUpdateEditRemoteInputs)
 
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LIGHTREFERENCE, OnUpdateExtrasLightReference)
@@ -174,7 +171,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGOUT, OnUpdateExtrasLogout)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_UTILITIES_EDIT, OnUpdateExtrasUtilitiesEdit)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_EXTRAS_UTILITIES_BASE, ID_EXTRAS_UTILITIES_LIMIT, OnUpdateExtraUtilities)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_EDIT_PUBLISHEDRESULTS_BASE, ID_EDIT_PUBLISHEDRESULTS_LIMIT, OnUpdateEditPublishedResults)
 
 	ON_UPDATE_COMMAND_UI(ID_NEXT_PANE, OnUpdateNextPane)
 	ON_UPDATE_COMMAND_UI(ID_PREV_PANE, OnUpdatePrevPane)
@@ -1355,25 +1351,6 @@ void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 	// This code to add menu items for the Published Results does not belong here
 	// but we need a message when the edit menu is selected.  So this works until we can find a
 	// message for the Edit popup UpdateUI or similar.
-
-	// Get Menu handle
-	HMENU hmen = ::GetMenu(m_hWnd);
-	if (nullptr != pConfig)
-	{
-		// The IO menu is limited to 100 Published results menu items.
-		// There is no limit to the number of inspections that can be created 
-		// but we are only displaying up to 100 menu items for inspections on the IO page.
-		// If there are more than 100, then the user will have to go to the inspection to edit published results
-		// If more are to be supported, then these resources for the ID_EDIT_PUBLISHEDRESULTS_LIMIT will need changed. 
-		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
-		RemoveMenu(hmen, _T("&Edit\\Published Results")); // start empty.
-		for (UINT i = 0; i < static_cast<UINT>(rInspections.size()) && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++)
-		{
-			// Add a menu for each inspection.
-			std::string Name = SvUl::Format(_T("&Edit\\Published Results\\%s"), rInspections[i]->GetName());
-			AddMenuItem(hmen, Name, static_cast<UINT>(ID_EDIT_PUBLISHEDRESULTS_BASE + i));
-		}
-	}
 }
 
 void SVMainFrame::OnUpdateEditAddRemoteOutputs(CCmdUI* pCmdUI)
@@ -1551,24 +1528,6 @@ void SVMainFrame::OnUpdateExtraUtilities(CCmdUI* PCmdUI)
 	PCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN));
 }
 
-void SVMainFrame::OnUpdateEditPublishedResults(CCmdUI* PCmdUI)
-{
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_READY)
-		&& SVSVIMStateClass::CheckState(SV_STATE_EDIT));
-}
-
-void SVMainFrame::OnUpdatePublishedResultsPicker(CCmdUI* PCmdUI)
-{
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_READY)
-		&& SVSVIMStateClass::CheckState(SV_STATE_EDIT));
-}
-
-void SVMainFrame::OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI)
-{
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_READY)
-		&& SVSVIMStateClass::CheckState(SV_STATE_EDIT));
-}
-
 void SVMainFrame::OnUpdateResultsPicker(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(((SVSVIMStateClass::CheckState(SV_STATE_READY)
@@ -1632,31 +1591,6 @@ void SVMainFrame::OnEditRemoteOutputs()
 	if (nullptr != pConfig)
 	{
 		pConfig->SetupRemoteOutput();
-	}
-}
-
-// This handler handles a range of Ids based on inspection.
-// It is called from when the IO Page is displayed.
-// The IDR_SVOBSERVER_IODOCTYPE Menu Published Results.
-void SVMainFrame::OnEditPublishedResults(UINT nID)
-{
-	UINT uiInspection = nID - ID_EDIT_PUBLISHEDRESULTS_BASE;
-	// Get list of inspections
-	// edit published results
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	if (nullptr != pConfig)
-	{
-		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
-		if (uiInspection < rInspections.size())
-		{
-			SVIPDoc* pDoc = GetIPDocByInspectionID(rInspections[uiInspection]->getObjectId());
-			if (nullptr != pDoc)
-			{
-				pDoc->OnPublishedResultsPicker();
-			}
-
-		}
 	}
 }
 

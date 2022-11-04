@@ -21,7 +21,7 @@ message DataDefinition
 {
 	string name = 1;				//Name of value or image object
 	bool writable = 2;				//True if object is writable
-	bool published = 3;				//True if object has been published 
+	bool published = 3;				//Obsolete and will not be set anymore
 	string type = 4;				//The object type (int, double etc..)
 	repeated string additionalInfo = 5;	//List of additional information
 }

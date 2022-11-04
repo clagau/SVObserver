@@ -97,7 +97,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 			SVObjectClass* pCurrentObject = SVObjectManagerClass::Instance().GetObject(m_InputObjectID);
 			// Init IO combo from m_ppIOEntries;
-			for (const auto& pIOEntry : pPPQ->GetAllOutputs())
+			for (const auto& pIOEntry : pPPQ->getUsedOutputs())
 			{
 				SVIOEntryHostStruct EntryStruct;
 				

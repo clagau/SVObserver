@@ -138,7 +138,7 @@ public:
 	bool DetachInspection( SVInspectionProcess* pInspection );
 
 	bool AddSharedCamera(SvIe::SVVirtualCamera* pCamera);
-	void GetInspectionCount( long &lSize ) const;
+	long GetInspectionCount() const;
 
 	size_t GetCameraCount() const;
 	SvIe::SVVirtualCameraPtrVector GetVirtualCameras(bool sortAndMakeUnique = false) const;
@@ -179,18 +179,13 @@ public:
 	HRESULT GetInputIOValues(std::vector<_variant_t>& rInputValues) const;
 	bool RebuildInputList();
 	const SVIOEntryHostStructPtrVector& GetUsedInputs() const {return m_UsedInputs;}
-	const SVIOEntryHostStructPtrVector& GetAllInputs() const {return m_AllInputs;}
-	void AddDefaultInputs();
-	bool AddToAvailableInputs(SVIOObjectType eType, const std::string& rName );
 	SVIOEntryHostStructPtr GetInput( const std::string& rName ) const;
 
-	void AddOutput( SVIOEntryHostStructPtr pOutput );
 	bool RemoveOutput( SVIOEntryHostStructPtr pOutput );
 	bool WriteOutputs(SVProductInfoStruct* pProduct);
 	bool ResetOutputs();
 	bool RebuildOutputList();
-	const SVIOEntryHostStructPtrVector& GetAllOutputs() const { return m_AllOutputs; }
-	void AddDefaultOutputs();
+	void AddPpqResults();
 	long getOutputCount();
 
 	void __stdcall cameraCallback(ULONG_PTR pCaller, const CameraInfo& rCameraInfo);
@@ -333,8 +328,6 @@ protected:
 	std::vector<long> m_notifyInspectionList;
 
 	// Pointers to the PPQ's I/O Lists
-	SVIOEntryHostStructPtrVector m_AllInputs;
-	SVIOEntryHostStructPtrVector m_AllOutputs;
 	SVIOEntryHostStructPtrVector m_UsedInputs;
 	SVIOEntryHostStructPtrVector m_UsedOutputs;
 

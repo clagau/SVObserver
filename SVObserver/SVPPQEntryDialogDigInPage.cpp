@@ -60,7 +60,7 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	assert( m_pSheet );
 
-	for(const auto& pEntry : m_pSheet->m_pPPQ->GetAllInputs())
+	for(const auto& pEntry : m_pSheet->m_pPPQ->GetUsedInputs())
 	{
 		if( pEntry->m_ObjectType != IO_DIGITAL_INPUT )
 		{

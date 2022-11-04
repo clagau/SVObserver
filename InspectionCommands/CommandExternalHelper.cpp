@@ -270,9 +270,6 @@ SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vecto
 		case SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed:
 			result.set_attributesallowed(0);
 			break;
-		case SvPb::GetObjectSelectorItemsRequest::kAttributesSet:
-			result.set_attributesset(0);
-			break;
 		case SvPb::GetObjectSelectorItemsRequest::kExcludeSameLineage:
 			assert(false);
 			break;

@@ -23,7 +23,6 @@ struct SVDataDefinitionStruct
 {
 	std::string m_Name;
 	bool m_Writable;
-	bool m_Published;
 	std::string m_Type;
 	SvDef::StringVector m_AdditionalInfo;
 public:

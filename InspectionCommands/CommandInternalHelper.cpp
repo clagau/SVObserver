@@ -29,7 +29,7 @@ namespace AllowedFunctionHelper
 {
 bool hasAttributes(const SvOi::IObjectClass* pObject)
 {
-	return (0 != ((SvDef::selectableAttributes | SvPb::archivableImage | SvPb::taskObject) & pObject->ObjectAttributesAllowed())) ? true : false;
+	return (0 != (SvDef::viewableAndUseable & pObject->ObjectAttributesAllowed())) ? true : false;
 }
 
 bool hasExtension(const SvOi::IObjectClass* pObject, bool&)
@@ -149,9 +149,6 @@ IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorIte
 		case SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed:
 			return AttributesAllowedFilter();
 
-		case SvPb::GetObjectSelectorItemsRequest::kAttributesSet:
-			return AttributesSetFilter();
-
 		default:
 			return [](const SvOi::IObjectClass*, unsigned int, int) { return true; };
 	}	
@@ -255,7 +252,7 @@ void SvOi::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem
 		return;
 	}
 
-	SvPb::ObjectAttributes attribute {SvPb::ObjectAttributes::noAttributes};
+	SvPb::ObjectAttributes attribute {SvDef::viewableAndUseable};
 	SvPb::ObjectSelectorType type {SvPb::allValueObjects};
 	bool onlyToolset {true};
 	switch (valueType)
@@ -263,45 +260,38 @@ void SvOi::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem
 		case SvPb::LinkedValueTypeEnum::TypeDecimal:
 		{
 			type = SvPb::allNumberValueObjects;
-			attribute = SvPb::selectableForEquation;
 			onlyToolset = false;
 			break;
 		}
 		case SvPb::LinkedValueTypeEnum::TypeText:
 		{
 			type = SvPb::allValueObjects;
-			attribute = SvPb::ObjectAttributes::viewable;
 			onlyToolset = false;
 			break;
 		}
 		case SvPb::LinkedValueTypeEnum::TypeTable:
 		{
 			type = SvPb::tableObjects;
-			attribute = SvPb::ObjectAttributes::taskObject;
 			break;
 		}
 		case SvPb::LinkedValueTypeEnum::TypeGrayImage:
 		{
 			type = SvPb::grayImageObjects;
-			attribute = SvPb::ObjectAttributes::archivableImage;
 			break;
 		}
 		case SvPb::LinkedValueTypeEnum::TypeColorImage:
 		{
 			type = SvPb::colorImageObjects;
-			attribute = SvPb::ObjectAttributes::archivableImage;
 			break;
 		}
 		case SvPb::LinkedValueTypeEnum::TypeImage:
 		{
 			type = SvPb::allImageObjects;
-			attribute = SvPb::ObjectAttributes::archivableImage;
 			break;
 		}
 		case SvPb::LinkedValueTypeEnum::TypeStates:
 		{
 			type = SvPb::toolObjects;
-			attribute = SvPb::ObjectAttributes::taskObject;
 			break;
 		}
 		default:

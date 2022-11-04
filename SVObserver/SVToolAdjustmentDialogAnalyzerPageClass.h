@@ -45,7 +45,6 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeCurrentAnalyzer();
 	afx_msg void OnResultButton();
-	afx_msg void OnPublishButton();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

@@ -33,8 +33,8 @@ bool SVFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	//hide valid, status and color for the result picker.
-	m_statusTag.SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-	m_statusColor.SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	m_statusTag.SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
+	m_statusColor.SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
 
 	return bOk;
 }

@@ -108,8 +108,6 @@ void SVObjectClass::init()
 	SVObjectManagerClass::Instance().CreateObjectID(this);
 
 	m_ObjectAttributesAllowed = SvPb::noAttributes;
-	m_ObjectAttributesSet.resize(1);
-	m_ObjectAttributesSet[0] = SvPb::noAttributes;
 }
 
 /*
@@ -562,40 +560,26 @@ Must override this in the derived class if you wish to set any values upon resto
 */
 HRESULT SVObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
-	HRESULT hr = S_FALSE;
 	bool bOk = false;
 
 	if (nullptr != pDataObject)
 	{
-		SvCl::SVObjectDWordArrayClass svDWordArray;
-		SvCl::SVObjectStdStringArrayClass stringArray;
-
-		if (true == (bOk = pDataObject->GetAttributeData(scCommentTag, stringArray)))
+		if (SvCl::SVObjectStdStringArrayClass stringArray; true == (bOk = pDataObject->GetAttributeData(scCommentTag, stringArray)))
 		{
 			m_comment = (0 < stringArray.size() ? stringArray[0] : "");
 			SvUl::RemoveEscapedSpecialCharacters(m_comment, true);
 		}
-		else if( true == (bOk = pDataObject->GetAttributeData(scAttributesSetTag, svDWordArray)))
+		else if (SvCl::SVObjectDWordArrayClass svDWordArray; true == (bOk = pDataObject->GetAttributeData(scAttributesSetTag, svDWordArray)))
 		{
-			int iSize = static_cast<int> (svDWordArray.size());
-			{
-				m_ObjectAttributesSet.resize(iSize);
-				for (int i = 0; i < iSize; i++)
-				{
-					//attribute set infos are only in older configs
-					// correct infos about variables in result view are in a seperate list in the config
-					m_ObjectAttributesSet.at(i) = (svDWordArray[i] & ~SvPb::viewable);
-				}
-			}
+			; // Do nothing as it's obsolete
 		}
-		else if( true == (bOk = pDataObject->GetAttributeData(_T("AttributesAllowed"), svDWordArray)))
+		else if (SvCl::SVObjectStdStringArrayClass StringArray; true == (bOk = pDataObject->GetAttributeData(_T("AttributesAllowed"), svDWordArray)))
 		{
 			; // Do nothing as it's obsolete
 		}
 	}
 
-	hr = bOk ? S_OK : S_FALSE;
-	return hr;
+	return bOk ? S_OK : S_FALSE;
 }
 
 // Override this function to implement object behavior...
@@ -617,6 +601,15 @@ bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType) const
 				DWORD type = pValueObject->GetType();
 				constexpr std::array<DWORD, 11> filter {VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL};
 				return (filter.end() != std::find(filter.begin(), filter.end(), type));
+			}
+			return false;
+		}
+		case SvPb::boolValueObjects:
+		{
+			auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(this);
+			if (nullptr != pValueObject)
+			{
+				return (VT_BOOL == pValueObject->GetType());
 			}
 			return false;
 		}
@@ -928,8 +921,6 @@ void SVObjectClass::disableEmbeddedObject(SVObjectClass* pObjectToDisable)
 	if (nullptr != pObjectToDisable)
 	{
 		pObjectToDisable->SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
-		// Reset any selection
-		pObjectToDisable->SetObjectAttributesSet(0, SvOi::SetAttributeType::OverwriteAttribute);
 
 		// Get this object's outputInfo
 		pObjectToDisable->disconnectAllInputs();
@@ -1074,52 +1065,6 @@ UINT SVObjectClass::SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttribu
 			break;
 	}
 	return m_ObjectAttributesAllowed;
-}
-
-/*
-This method returns the set attributes of this object.
-*/
-UINT SVObjectClass::ObjectAttributesSet(int iIndex) const
-{
-	if (static_cast<int> (m_ObjectAttributesSet.size()) > iIndex)
-	{
-		return m_ObjectAttributesSet.at(iIndex);
-	}
-	else
-	{
-		assert(false);
-		return 0;
-	}
-}
-
-/*
-This method sets attributes of this object.
-*/
-UINT SVObjectClass::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeType Type, int Index)
-{
-	if (static_cast<int> (m_ObjectAttributesSet.size()) > Index)
-	{
-
-		UINT& rAttributesSet = m_ObjectAttributesSet.at(Index);
-		switch (Type)
-		{
-			case SvOi::SetAttributeType::AddAttribute:
-				rAttributesSet |= Attributes;
-				break;
-			case SvOi::SetAttributeType::RemoveAttribute:
-				rAttributesSet &= ~Attributes;
-				break;
-			case SvOi::SetAttributeType::OverwriteAttribute:
-				rAttributesSet = Attributes;
-				break;
-		}
-		return rAttributesSet;
-	}
-	else
-	{
-		assert(false);
-		return 0;
-	}
 }
 
 void SVObjectClass::setObjectId(uint32_t objectId) 

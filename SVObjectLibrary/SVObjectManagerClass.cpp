@@ -434,7 +434,7 @@ void SVObjectManagerClass::resetNextObjectId()
 
 bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 {
-	bool Result = (ReadWrite == m_State);
+	bool Result = (ReadWrite == m_State && nullptr != pObject);
 
 	if (Result)
 	{
@@ -443,34 +443,29 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 		{
 			Autolock.lock();
 		}
-		Result = Result && nullptr != pObject;
+
+		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(pObject->getObjectId());
+		assert(nullptr == pUniqueObject);
+		Result = (nullptr == pUniqueObject);
 
 		if (Result)
 		{
-			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(pObject->getObjectId());
-			assert(nullptr == pUniqueObject);
-			Result = (nullptr == pUniqueObject);
+			pUniqueObject = std::make_shared<SVUniqueObjectEntryStruct>();
+			pUniqueObject->m_pObject = pObject;
+			pUniqueObject->m_ObjectID = pObject->getObjectId();
+			m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
 
-			if (Result)
+			SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
+			uint32_t OwnerId = pObject->GetParentID();
+			if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
 			{
-				pUniqueObject = SVUniqueObjectEntryStructPtr {new SVUniqueObjectEntryStruct};
-
-				Result = (nullptr != pUniqueObject);
-
-				if (Result)
-				{
-					pUniqueObject->m_pObject = pObject;
-					pUniqueObject->m_ObjectID = pObject->getObjectId();
-					m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
-
-					SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
-					uint32_t OwnerId = pObject->GetParentID();
-					if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
-					{
-						SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType(SvOl::JoinType::Owner));
-					}
-				}
+				SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType(SvOl::JoinType::Owner));
 			}
+		}
+		else
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DuplicateObjectId, {std::to_string(pObject->getObjectId())}, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 

@@ -1285,44 +1285,23 @@ STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psa
 				SvIe::SVImageClass* pImage = nullptr;
 				if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(strName.c_str(), pImage))
 				{
-					bool bImageOK = false;
-					if (nullptr != dynamic_cast<SvIe::SVCameraImageTemplate*>(pImage)) // Source image
+					ImageObjects.push_back(pImage);	// add data object pointer to the list
+
+					if (SvDef::InvalidObjectId == l_PPQId) //set the first PPQ name as the comparison standard
 					{
-						ImageObjects.push_back(pImage);	// add data object pointer to the list
-						bImageOK = true;
-					}
-					else if (pImage->ObjectAttributesSet() & SvPb::publishResultImage)	// Published result image
-					{
-						ImageObjects.push_back(pImage);	// add data object pointer to the list
-						bImageOK = true;
+						l_PPQId = pInspection->GetPPQIdentifier();
 					}
 					else
 					{
-						hrOK = SVMSG_REQUEST_IMAGE_NOT_SOURCE_IMAGE;
-						l_bItemNotFound = true;
-						ImageObjects.push_back(nullptr);
-						/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
-					}
-
-					// if image is OK, check PPQ
-					if (bImageOK)
-					{
-						if (SvDef::InvalidObjectId == l_PPQId) //set the first PPQ name as the comparison standard
+						if (l_PPQId != pInspection->GetPPQIdentifier())	// not on same PPQ
 						{
-							l_PPQId = pInspection->GetPPQIdentifier();
-						}
-						else
-						{
-							if (l_PPQId != pInspection->GetPPQIdentifier())	// not on same PPQ
+							hrOK = SVMSG_REQUESTED_OBJECTS_ON_DIFFERENT_PPQS;
+							// set the status of all objects to this error
+							for (long i = 0; i < static_cast<long> (lNumberOfElements); i++)
 							{
-								hrOK = SVMSG_REQUESTED_OBJECTS_ON_DIFFERENT_PPQS;
-								// set the status of all objects to this error
-								for (long i = 0; i < static_cast<long> (lNumberOfElements); i++)
-								{
-									/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
-								}
-								break;
+								/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
 							}
+							break;
 						}
 					}
 				}
@@ -2362,7 +2341,7 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 		pTaskObjectList->getOutputList(std::back_inserter(selectedObjects));
 
 		selectedObjects.erase(std::remove_if(selectedObjects.begin(), selectedObjects.end(), [](auto* pObject) 
-			{return nullptr == dynamic_cast<SvOi::IValueObject*> (pObject) || 0 == (pObject->ObjectAttributesSet() & SvPb::dataDefinitionValue); }), selectedObjects.end());
+			{return nullptr == dynamic_cast<SvOi::IValueObject*> (pObject) || 0 == (pObject->ObjectAttributesAllowed() & SvPb::viewable); }), selectedObjects.end());
 
 		// Copy list to Safearray
 
@@ -2508,7 +2487,7 @@ STDMETHODIMP SVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName
 				//
 				// Check for the required Output object attributes.
 				//
-				if ((pImage->ObjectAttributesSet() & SvPb::dataDefinitionImage) != 0)
+				if ((pImage->ObjectAttributesAllowed() & SvPb::viewable) != 0)
 				{
 					objectList.push_back(pImage);
 				}
@@ -2552,7 +2531,7 @@ STDMETHODIMP SVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName
 			l_Index[1] = 2;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
-			Value = (objectList[i]->ObjectAttributesSet() & SvPb::publishResultImage) != 0;
+			Value = true;  //publish flag is removed, so it is always true
 			//l_saData.PutElement( l_Index, l_vTmp );
 			/*hr = */::SafeArrayPutElement(l_psaData, l_Index, &Value);
 

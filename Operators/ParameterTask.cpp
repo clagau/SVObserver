@@ -477,50 +477,42 @@ namespace SvOp
 			setObject(i);
 			m_TypeObjects[i]->GetValue(type);
 			m_objects[i]->UpdateContent();
-			UINT defaultStringValueAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::dataDefinitionValue;
-			UINT defaultValueValueAttributes = SvDef::defaultValueObjectAttributes & (~SvPb::audittrail);
+			UINT attributes = SvDef::viewableAndUseable;
 			if (SvPb::ParameterInputObjectType == GetObjectSubType())
 			{
-				defaultStringValueAttributes |= SvPb::remotelySetable;
-				defaultValueValueAttributes |= SvPb::remotelySetable;
+				attributes |= SvPb::remotelySetable;
 			}
+			m_objects[i]->SetObjectAttributesAllowed(attributes, SvOi::SetAttributeType::AddAttribute);
+			m_TypeObjects[i]->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::OverwriteAttribute);
+
 			SvPb::LinkedValueTypeEnum typeEnum{ type };
 			switch (typeEnum)
 			{
 			case SvPb::LinkedValueTypeEnum::TypeDecimal:
-				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes, SvOi::SetAttributeType::AddAttribute);
 				m_objects[i]->setValueType(SvPb::TypeDecimal);
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeText:
-				m_objects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
 				m_objects[i]->setValueType(SvPb::TypeText);
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeTable:
-				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes | SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
 				m_objects[i]->setValueType(SvPb::TypeTable);
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeStates:
-				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes | SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
 				m_objects[i]->setValueType(SvPb::TypeStates);
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeGrayImage:
-				m_objects[i]->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);
 				m_objects[i]->setValueType(SvPb::TypeGrayImage);
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeColorImage:
-				m_objects[i]->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);
 				m_objects[i]->setValueType(SvPb::TypeColorImage);
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeImage:
-				m_objects[i]->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);
 				m_objects[i]->setValueType(SvPb::TypeImage);
 				break;
 			default:
 				assert(false);
 				break;
 			}
-			
-			m_TypeObjects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes & (~SvPb::dataDefinitionValue), SvOi::SetAttributeType::OverwriteAttribute);
 		}
 		if (number < m_objects.size())
 		{

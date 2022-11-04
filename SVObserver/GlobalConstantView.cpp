@@ -306,11 +306,6 @@ void GlobalConstantView::insertGlobalConstant( const SvUl::GlobalConstantData& r
 		pGlobalObject->setDescription( rGlobalData.m_Description.c_str() );
 		//All Global constants can be remotely settable
 		pGlobalObject->SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-		//If the Global Constant is of type text then not selectable for equations so remove the attribute
-		if( VT_BSTR == rGlobalData.m_Value.vt )
-		{
-			pGlobalObject->SetObjectAttributesAllowed( SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute );
-		}
 	}
 }
 

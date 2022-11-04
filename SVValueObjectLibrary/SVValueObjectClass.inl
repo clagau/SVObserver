@@ -121,8 +121,6 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int32_t iSize)
 
 	m_ResultSize = iSize;
 
-	m_ObjectAttributesSet.resize(getArraySize(), SvPb::noAttributes);
-
 	return hr;
 }
 

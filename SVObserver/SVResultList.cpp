@@ -91,45 +91,23 @@ void SVResultList::Save(SvOi::IObjectWriter& rWriter)
 	m_ResultViewReferences.Save(rWriter);
 }
 
-bool SVResultList::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent)
+void SVResultList::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent)
 {
 	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	m_ResultViewReferences.Clear();
-	SVInspectionProcess* pInspec(nullptr);
-	if (m_pToolSet)
-	{
-		pInspec = dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection());
-	}
 	
-	bool SevenOneCfg(false);
-	bool SevenTwoCfg(false);
-
 	ResultViewReferences::SVTreeType::SVBranchHandle htiChild = nullptr;
-
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_VIEWEDVARIABLES, htiParent, htiChild))
 	{
-		SevenTwoCfg = m_ResultViewReferences.Load( rTree, htiChild );
-		if ( false == SevenTwoCfg )
+		bool isOk = m_ResultViewReferences.Load( rTree, htiChild );
+		if ( false == isOk)
 		{
 			///older configurations may have a ViewedEnvVariables entry! 
 			m_ResultViewReferences.Load( rTree, htiChild, SvXml::CTAG_VIEWEDENVARIABLES);
-			SevenOneCfg = m_ResultViewReferences.Load( rTree, htiChild, SvXml::CTAG_VIEWEDTOOLVARIABLES);
+			m_ResultViewReferences.Load( rTree, htiChild, SvXml::CTAG_VIEWEDTOOLVARIABLES);
 		}
 	}
-	
-	if ( !SevenTwoCfg )
-	{
-		m_ResultViewReferences.InsertFromPPQInputs(pInspec);
-	}
-
-	if ( !SevenTwoCfg && !SevenOneCfg )
-	{
-		///older configurations may have no ViewedToolVariables entry!
-		m_ResultViewReferences.InsertFromOutputList(pInspec);
-	}
-
-	return true;
 }
 
 void SVResultList::RebuildReferenceVector(SVInspectionProcess* pInspection )

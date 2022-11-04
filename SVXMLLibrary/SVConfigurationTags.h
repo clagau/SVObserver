@@ -36,7 +36,6 @@ namespace  SvXml
 	constexpr const char* CTAG_VALUE                          = (_T("Value"));
 	constexpr const char* CTAG_POSITION                       = (_T("Position"));
 	constexpr const char* CTAG_PPQ_POSITION                   = (_T("PPQPosition"));
-	constexpr const char* CTAG_REMOTE_INDEX                   = (_T("RemoteIndex"));
 	constexpr const char* CTAG_REMOTE_INITIAL_VALUE           = (_T("RemoteInitialValue"));
 	constexpr const char* CTAG_INPUT                          = (_T("Input"));
 	constexpr const char* CTAG_ATTRIBUTE                      = (_T("Attribute"));
@@ -187,8 +186,6 @@ namespace  SvXml
 	constexpr const char* CTAG_REGRESSIONTEST = _T("RegressionTest");
 	constexpr const char* CTAG_USE_PLAY_CONDITION = _T("UsePlayCondition");
 	constexpr const char* CTAG_PLAY_CONDITION_EQUATION = _T("PlayConditionEquation");
-
-	constexpr const char* CTAG_OBJECT_ATTRIBUTES_SET = _T("ObjectAttributesSet");
 
 	constexpr const char* CTAG_ADDITIONAL_CONFIG_FILES = _T("AdditionalConfigFiles");
 

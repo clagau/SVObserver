@@ -96,8 +96,6 @@ public:
 	/// Disconnected the input connection and set it to nullptr.
 	void DisconnectInput();
 
-	virtual UINT ObjectAttributesSet(int iIndex = 0) const override;
-
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const;
 
 	virtual bool isArray() const override;
