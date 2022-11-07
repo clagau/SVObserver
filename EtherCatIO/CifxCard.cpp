@@ -150,7 +150,7 @@ void CifXCard::setReady(bool ready)
 
 int32_t CifXCard::OpenCifX()
 {
-	int32_t result{ CIFX_DEV_NOT_READY };
+	int32_t result {CIFX_DEV_NOT_READY};
 
 	m_sourceFileParam.clear();
 	result = m_cifxLoadLib.Open();
@@ -171,8 +171,8 @@ int32_t CifXCard::OpenCifX()
 	DRIVER_INFORMATION driverInfo;
 	memset(&driverInfo, 0, sizeof(driverInfo));
 	m_cifxLoadLib.m_pDriverGetInformation(m_hDriver, sizeof(driverInfo), reinterpret_cast<void*> (&driverInfo));
-	std::string driverVersion{ driverInfo.abDriverVersion };
-	::OutputDebugString((_T("Driver version ") + driverVersion + '\n').c_str() );
+	std::string driverVersion {driverInfo.abDriverVersion};
+	::OutputDebugString((_T("Driver version ") + driverVersion + '\n').c_str());
 
 	::OutputDebugString("Opening channel ...\n");
 	result = m_cifxLoadLib.m_pChannelOpen(m_hDriver, const_cast<char*> (cBoardName), cCifxChannel, &m_hChannel);
@@ -183,14 +183,11 @@ int32_t CifXCard::OpenCifX()
 	}
 	CHANNEL_INFORMATION channelInfo;
 	m_cifxLoadLib.m_pChannelInfo(m_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
-	std::string firmware{ "EtherCat Master FW: " + std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision)};
-	::OutputDebugString(reinterpret_cast<char*> (channelInfo.abFWName));
-	::OutputDebugString((' ' + firmware + '\n').c_str());
+	std::string firmware {std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision)};
+	std::string protocolType {reinterpret_cast<char*> (channelInfo.abFWName)};
+	::OutputDebugString((protocolType + ' ' + firmware + '\n').c_str());
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
-	SvDef::StringVector msgList;
-	msgList.push_back(driverVersion);
-	msgList.push_back(firmware);
-	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxVersionInfo, msgList, SvStl::SourceFileParams(StdMessageParams));
+	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxVersionInfo,{driverVersion, protocolType, firmware}, SvStl::SourceFileParams(StdMessageParams));
 
 	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_CHANNELINIT, cResetTimeout);
 	if (CIFX_NO_ERROR != result)

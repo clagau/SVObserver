@@ -335,15 +335,12 @@ int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
 	}
 	CHANNEL_INFORMATION channelInfo;
 	m_cifxLoadLib.m_pChannelInfo(m_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
-	std::string firmware{"Power Link FW: " + std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision) };
+	std::string firmware{std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision) };
+	std::string protocolType {reinterpret_cast<char*> (channelInfo.abFWName)};
 	m_notifyType =  (rAdditionalData == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
-	::OutputDebugString(reinterpret_cast<char*> (channelInfo.abFWName));
-	::OutputDebugString((' ' + firmware + '\n').c_str());
+	::OutputDebugString((protocolType + ' ' + firmware + '\n').c_str());
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
-	SvDef::StringVector msgList;
-	msgList.push_back(driverVersion);
-	msgList.push_back(firmware);
-	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxVersionInfo, msgList, SvStl::SourceFileParams(StdMessageParams));
+	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxVersionInfo, {driverVersion, protocolType, firmware}, SvStl::SourceFileParams(StdMessageParams));
 
 	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_CHANNELINIT, cResetTimeout);
 	if (CIFX_NO_ERROR != result)
