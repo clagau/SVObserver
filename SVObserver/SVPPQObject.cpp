@@ -1748,23 +1748,14 @@ void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
 			case SvDef::SVPPQExtendedTimeDelayMode:
 			case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 			{
-				long triggerCount {-1L};
-				if (0 == m_outputDelay)
-				{
-					triggerCount = pProduct->triggerCount();
-				}
-				else if (0 < m_outputDelay)
+				if (0 < m_outputDelay)
 				{
 					pProduct->m_outputsInfo.m_EndOutputDelay = pProduct->m_triggerInfo.m_ToggleTimeStamp + m_outputDelay;
 					if (pProduct->m_outputsInfo.m_BeginProcess < pProduct->m_outputsInfo.m_EndOutputDelay)
 					{
-						triggerCount = pProduct->triggerCount();
+						m_oOutputsDelayQueue.AddTail(pProduct->triggerCount());
+						m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::DelayOutputs]));
 					}
-				}
-				if (triggerCount > 0L)
-				{
-					m_oOutputsDelayQueue.AddTail(triggerCount);
-					m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::DelayOutputs]));
 				}
 				break;
 			}
