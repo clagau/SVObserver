@@ -61,7 +61,7 @@ void LinearMaximumBackgroundObjectAnalyzer::init()
 	if( nullptr != pEdgeB )
 	{
 		AddFriend(pEdgeB);
-		pEdgeA->setDefaultValues(SvDef::SV_POSITIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
+		pEdgeB->setDefaultValues(SvDef::SV_POSITIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	RegisterEmbeddedObject( &m_svLinearDistanceA, SvPb::LinearDistanceEdgeAEId, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone, false );
