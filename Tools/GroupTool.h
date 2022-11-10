@@ -14,6 +14,7 @@
 namespace SvOp
 {
 	class ParameterTask;
+	class ResultParameterTask;
 }
 
 namespace SvTo
@@ -35,6 +36,7 @@ public:
 	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
 	virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 	virtual void resetCounters() override;
+	virtual bool Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 	virtual SvPb::InspectionCmdResponse getInvalidDependencies() const override;
@@ -59,7 +61,7 @@ private:
 private:
 	SvVol::SVBoolValueObjectClass m_isClosed;
 	SvOp::ParameterTask* m_pInputTask = nullptr;
-	SvOp::ParameterTask* m_pResultTask = nullptr;
+	SvOp::ResultParameterTask* m_pResultTask = nullptr;
 
 	std::string m_groupStr;
 	std::string m_inputStr;

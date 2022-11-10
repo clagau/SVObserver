@@ -981,4 +981,16 @@ namespace SvOp
 	{
 	}
 
+	bool ResultParameterTask::calcFormulaPost(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	{
+		bool bRetVal {true};
+		for (auto& pObject : m_objects)
+		{
+			if (nullptr != pObject && SvPb::LinkedSelectedOption::Formula == pObject->getSelectedOption())
+			{
+				bRetVal = pObject->runEmbedded(rRunStatus, pErrorMessages) && bRetVal;
+			}
+		}
+		return bRetVal;
+	}
 } //namespace SvOp

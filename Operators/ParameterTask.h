@@ -15,6 +15,11 @@
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+class RunStatus;
+}
+
 namespace SvVol
 {
 	class SVEnumerateValueObjectClass;
@@ -47,7 +52,6 @@ namespace SvOp
 #pragma endregion Public Methods
 
 	protected:
-		//virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 #pragma region Private Methods
 	private:
@@ -65,9 +69,11 @@ namespace SvOp
 #pragma endregion Private Methods
 
 #pragma region Member Variables
+	protected:
+		std::vector<std::unique_ptr<SvVol::LinkedValue>> m_objects;
+
 	private:
 		SvVol::SVLongValueObjectClass m_NumberOfObjects;
-		std::vector<std::unique_ptr<SvVol::LinkedValue>> m_objects;
 		std::vector< std::unique_ptr<SvVol::SVEnumerateValueObjectClass>>  m_TypeObjects;
 		SvPb::EmbeddedIdEnum m_startEmbeddedIdValue;
 		SvPb::EmbeddedIdEnum m_startEmbeddedIdType;
@@ -91,5 +97,7 @@ namespace SvOp
 
 		ResultParameterTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_PARAMETER_TASK);
 		virtual ~ResultParameterTask();
+
+		bool calcFormulaPost(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages);
 	};
 } //namespace SvOp

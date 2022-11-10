@@ -155,7 +155,7 @@ bool DrawTool::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* p
 {
 	bool bRetVal = __super::Run(rRunStatus, pErrorMessages);
 
-	if (bRetVal)
+	if (bRetVal && false == rRunStatus.IsDisabled() && false == rRunStatus.IsDisabledByCondition())
 	{
 		// Run yourself...
 		auto pOutputImage = onRunLocal(rRunStatus, pErrorMessages);
@@ -197,6 +197,8 @@ bool DrawTool::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* p
 	}
 
 	setStatus(rRunStatus);
+
+	m_ToolTime.Stop();
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{

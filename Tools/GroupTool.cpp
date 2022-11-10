@@ -14,6 +14,7 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #include "InspectionCommands/CommandExternalHelper.h"
+#include "InspectionEngine/RunStatus.h"
 #pragma endregion Includes
 
 //This comment is to avoid that the SVConditional include is marked as not required due to forward declaration from a base class
@@ -70,7 +71,7 @@ namespace SvTo
 		}
 
 		info.m_SubType = SvPb::ParameterResultObjectType;
-		m_pResultTask = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
+		m_pResultTask = dynamic_cast<SvOp::ResultParameterTask*>(getFirstObject(info));
 		if (nullptr == m_pResultTask)
 		{
 			m_pResultTask = new SvOp::ResultParameterTask;
@@ -172,6 +173,26 @@ namespace SvTo
 			}
 		}
 		
+	}
+
+	bool GroupTool::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	{
+		bool bRetVal = __super::Run(rRunStatus, pErrorMessages);
+
+		if (bRetVal && false == rRunStatus.IsDisabled() && false == rRunStatus.IsDisabledByCondition())
+		{
+			bRetVal = m_pResultTask->calcFormulaPost(rRunStatus, pErrorMessages);
+			if (!bRetVal)
+			{
+				// Something was wrong...
+				rRunStatus.SetInvalid();
+				setStatus(rRunStatus);
+			}
+		}
+
+		m_ToolTime.Stop();
+
+		return bRetVal;
 	}
 
 	SvPb::InspectionCmdResponse GroupTool::getInvalidDependencies() const

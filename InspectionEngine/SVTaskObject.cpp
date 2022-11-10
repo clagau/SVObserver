@@ -107,15 +107,18 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMes
 	Result &= __super::resetAllObjects(&m_ResetErrorMessages);
 
 	m_embeddedFormulaLinked.clear();
-	for (auto* pObject : m_embeddedList)
+	if (GetObjectSubType() != SvPb::ParameterResultObjectType) //for results in the GroupTool the formula must be calculated at the end (see ResultParameterTask::calcFormulaPost()).
 	{
-		if (nullptr != pObject && SvPb::LinkedValueClassId == pObject->GetClassID())
+		for (auto* pObject : m_embeddedList)
 		{
-			auto* pLinkedObject = dynamic_cast<SvVol::LinkedValue*>(pObject);
-			if (nullptr != pLinkedObject && SvPb::LinkedSelectedOption::Formula == pLinkedObject->getSelectedOption())
+			if (nullptr != pObject && SvPb::LinkedValueClassId == pObject->GetClassID())
 			{
-				m_embeddedFormulaLinked.push_back(pLinkedObject);
-				Result = pLinkedObject->resetAllObjects(pErrorMessages) && Result;
+				auto* pLinkedObject = dynamic_cast<SvVol::LinkedValue*>(pObject);
+				if (nullptr != pLinkedObject && SvPb::LinkedSelectedOption::Formula == pLinkedObject->getSelectedOption())
+				{
+					m_embeddedFormulaLinked.push_back(pLinkedObject);
+					Result = pLinkedObject->resetAllObjects(pErrorMessages) && Result;
+				}
 			}
 		}
 	}
