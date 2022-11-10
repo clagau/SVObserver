@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVRegressionTestStruct.h"
 #include "InspectionEngine/SVVirtualCamera.h"
+#include "SVFileSystemLibrary/ImageFileFormats.h"
 #pragma endregion Includes
 
 
@@ -64,15 +65,17 @@ private: //methods
 	int FillFileList(RegressionTestStruct& rStruct);
 
 	/// Fill the list of files with directory-modi (Main method)
-	/// \param rStruct [in,out] The struct which should to be filled
+	/// \param rStruct [in,out] The struct to be filled
 	/// \returns int Number of images
 	int FillFileListFromDirectory(RegressionTestStruct& rStruct);
 
 	/// Fill the list of files with directory-modi for recursive call of the subdirectories.
-	/// \param rStruct [in,out] The struct which should to be filled
-	/// \param rCurrentPath [in] The current path of this recursive call.
+	/// \param rStruct [in,out] The struct to be filled
+	/// \param rParentDirectory [in] The current directory path of this recursive call.
 	/// \returns int Number of images
-	int FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath, ImageFileFormat fileFormat);
+	int collectMatchingFilesInDirectories(RegressionTestStruct& rStruct, const std::string& rParentDirectory, ImageFileFormat fileFormat);
+
+	int collectMatchingFilesInDirectory(RegressionTestStruct& rStruct, const std::string& rParentDirectory, ImageFileFormat fileFormat);
 
 	SvPb::GetToolsWithReplaceableSourceImageResponse createToolNameList() const;
 

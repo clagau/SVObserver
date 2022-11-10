@@ -346,7 +346,7 @@ namespace SvStl
 		{Tid_RegressionTest_WrongFormat, _T("Selection Error in {0}: \"Use list of files\" selected, but the file name does not match\n the acceptable format (<file name>_<sequence number>.bmp). Select again?")},
 		{Tid_RegressionTest_NoFilesSelected, _T("Selection Error: \"No files\" selected.  Select again?")},
 		{Tid_RegressionTest_FileNotExist, _T("Selection Error in {0}: File does not exist.  Select again?")},
-		{Tid_RegressionTest_EmptyDirectory, _T("Selection Error in {0}: Directory has no .bmp files.  Select again?")},
+		{Tid_RegressionTest_EmptyDirectory, _T("Selection Error in {0}: Directory has no image files.  Select again?")},
 		{Tid_RemoteOutput_TriggerCountDeleteError, _T("Trigger Count Cannot Be deleted")},
 		{Tid_RemoteOutput_DeletingOutput, _T("Are you sure you want to delete this Output?")},
 		{Tid_RemoteOutput_DeletingAllOutput, _T("Are you sure you want to delete All Entries for {0}")},

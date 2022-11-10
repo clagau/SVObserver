@@ -15,7 +15,6 @@
 #include "SVRegressionFileSelectDlg.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -31,6 +30,33 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 constexpr size_t cReserveNumber = 1000;
+
+namespace 
+{
+SvDef::StringVector findSubdirectories(const std::string& rParentDirectory)
+{
+	std::string fileMask = rParentDirectory + _T("\\*");
+	CFileFind fileFinder;
+	bool bFound = fileFinder.FindFile(fileMask.c_str());
+	SvDef::StringVector folderList;
+	folderList.reserve(cReserveNumber);
+	while (bFound)
+	{
+		bFound = fileFinder.FindNextFile();
+		if (fileFinder.IsDirectory() && !fileFinder.IsDots())
+		{
+			//skip directory which start with underscore (e.g. C:/images/_Name)
+			std::string directoryName {fileFinder.GetFileName().GetString()};
+			if (directoryName.size() > 0 && '_' != directoryName[0])
+			{
+				folderList.emplace_back(fileFinder.GetFilePath().GetString());
+			}
+		}
+	}
+	return folderList;
+}
+}
+
 
 SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(UINT nIDCaption, uint32_t inspectionID, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
@@ -216,25 +242,22 @@ void SVRegressionFileSelectSheet::OnAddImage()
 	}
 }
 
-std::string SVRegressionFileSelectSheet::MakeFileNameMask( const std::string& rFileName )
+std::string SVRegressionFileSelectSheet::MakeFileNameMask(const std::string& rFileName )
 {
-	std::string Result;
-	size_t FileNameLength = rFileName.size();
-
-	//check to see if last 4 chars = .bmp 
-	if( 0 == SvUl::CompareNoCase( SvUl::Right(rFileName, 4), std::string( _T(".bmp") ) ) )
+	if (filenameMatchesImageFormat(rFileName, ImageFileFormat::any))
 	{
-		Result = SvUl::Left( rFileName, FileNameLength - 4 );
-	
-		size_t Pos = Result.rfind('_');
-		if ( std::string::npos != Pos )
+		size_t positionOfRightmostUnderscore = rFileName.rfind('_');
+		auto extension = SvUl::getExtension(rFileName);
+
+		if (std::string::npos != positionOfRightmostUnderscore && extension.length()>2) 
+			//we expect a filepath looking like "D:\\TEMP\\XYZ_000001.bmp" here...
 		{
-			Result = SvUl::Left( rFileName, Pos+1 );
-			Result = Result + _T("*.bmp");
+			return SvUl::Left(rFileName, positionOfRightmostUnderscore + 1) + _T("*") + extension;
+			//... and if our expectation was met, we'll return a pattern string looking like "D:\\TEMP\\XYZ_*.bmp"
 		}
 	}
 
-	return Result;
+	return _T("");
 }
 	
 void SVRegressionFileSelectSheet::ValidateAndFillFileList()
@@ -290,6 +313,7 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 				SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidImageFileType, SvStl::SourceFileParams(StdMessageParams));
 				throw Exception;
 			}
+
 			rStruct.stdVectorFile.push_back(rStruct.firstFilepath);
 			isFileSet = true;
 		}
@@ -387,7 +411,6 @@ int SVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 }
 
 
-
 int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct)
 {
 	std::string currentPath = rStruct.firstFilepath;
@@ -412,64 +435,62 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 	}
 	else
 	{
-		fileFormat = ImageFileFormat::bmp;
+		fileFormat = ImageFileFormat::any;
 		//in this case we assume a directory path is contained in rStruct.firstFilepath and that the appropriate file type is bitmap
 	}
-	int count = FillFileListFromDirectory(rStruct, currentPath, fileFormat);
+	int count = collectMatchingFilesInDirectories(rStruct, currentPath, fileFormat);
 	return count;
 }
 
-int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath, ImageFileFormat fileFormat)
+
+int SVRegressionFileSelectSheet::collectMatchingFilesInDirectories(RegressionTestStruct& rStruct, const std::string& rParentDirectory, ImageFileFormat fileFormat)
+{
+	int count = collectMatchingFilesInDirectory(rStruct, rParentDirectory, fileFormat);
+
+	if (RegressionFileEnum::RegSubDirectories == rStruct.iFileMethod)
+	{
+		SvDef::StringVector folderList = findSubdirectories(rParentDirectory);
+
+		//StrCmpLogicalW is the sorting function used by Windows Explorer
+		auto FolderCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t {rLhs.c_str()}, _bstr_t {rRhs.c_str()}) < 0; };
+		std::sort(folderList.begin(), folderList.end(), FolderCompare);
+		count = std::accumulate(folderList.begin(), folderList.end(), count, [this, &rStruct, fileFormat](int sum, const auto& rFolder) {return sum + collectMatchingFilesInDirectories(rStruct, rFolder, fileFormat); });
+	}
+	return count;
+}
+
+
+int SVRegressionFileSelectSheet::collectMatchingFilesInDirectory(RegressionTestStruct& rStruct, const std::string& rParentDirectory, ImageFileFormat fileFormat)
 {
 	int count = 0;
 
-	std::string fileMask = rCurrentPath + _T("\\*") + imageFileNameExtension(fileFormat);
-	CFileFind fileFinder;
-	BOOL bFound = fileFinder.FindFile(fileMask.c_str());
-	std::string firstFile;
-	while (bFound)
+	for (auto extension : allImageFileNameExtensions(fileFormat))
 	{
-		bFound = fileFinder.FindNextFile();
-		rStruct.stdVectorFile.push_back(std::string(fileFinder.GetFilePath()));
-		if (0 == count)
-		{
-			firstFile = fileFinder.GetFilePath();
-		}
-		count++;
-	}
-	if (false == firstFile.empty())
-	{
-		rStruct.fileSortRange.emplace_back(firstFile, fileFinder.GetFilePath());
-	}
-	if (RegressionFileEnum::RegSubDirectories == rStruct.iFileMethod)
-	{
-		fileMask = rCurrentPath + _T("\\*");
-		bFound = fileFinder.FindFile(fileMask.c_str());
-		SvDef::StringVector folderList;
-		folderList.reserve(cReserveNumber);
+		std::string fileMask = rParentDirectory + _T("\\*") + extension;
+		CFileFind fileFinder;
+		BOOL bFound = fileFinder.FindFile(fileMask.c_str());
+		std::string firstFile;
 		while (bFound)
 		{
 			bFound = fileFinder.FindNextFile();
-			if (fileFinder.IsDirectory() && !fileFinder.IsDots())
+			rStruct.stdVectorFile.push_back(std::string(fileFinder.GetFilePath()));
+			if (0 == count)
 			{
-				//skip directory which start with underscore (e.g. C:/images/_Name)
-				std::string directoryName{ fileFinder.GetFileName().GetString() };
-				if (directoryName.size() > 0 && '_' != directoryName[0])
-				{
-					folderList.emplace_back(fileFinder.GetFilePath().GetString());
-				}
+				firstFile = fileFinder.GetFilePath();
 			}
+			count++;
 		}
-		//StrCmpLogicalW is the sorting function used by Windows Explorer
-		auto FolderCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t{ rLhs.c_str() }, _bstr_t{ rRhs.c_str() }) < 0; };
-		std::sort(folderList.begin(), folderList.end(), FolderCompare);
-		count = std::accumulate(folderList.begin(), folderList.end(), count, [this, &rStruct, fileFormat](int sum, const auto& rFolder) {return sum + FillFileListFromDirectory(rStruct, rFolder, fileFormat);} );
+		if (false == firstFile.empty())
+		{
+			rStruct.fileSortRange.emplace_back(firstFile, fileFinder.GetFilePath());
+		}
 	}
 
 	return count;
 }
 
-BOOL SVRegressionFileSelectSheet::OnInitDialog() 
+
+BOOL SVRegressionFileSelectSheet::OnInitDialog()
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
 	int iPageCnt = GetPageCount();

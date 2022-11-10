@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FilepathUtilities.cpp" />
+    <ClCompile Include="ImageFileFormats.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -98,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FilepathUtilities.h" />
+    <ClInclude Include="ImageFileFormats.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVFileNameArrayClass.h" />
     <ClInclude Include="SVFileNameClass.h" />

@@ -16,7 +16,6 @@
 #include "SVMatroxBlobInterface.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxErrorEnum.h"
-#include "SVMatroxHelper.h"
 #include "SVMatroxImageInterface.h"
 #include "SVMatroxResourceMonitor.h"
 #include "SVMatroxOcrCalibrateStruct.h"

@@ -15,10 +15,10 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "ObjectInterfaces/ITRCImage.h"
+#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVUtilityLibrary/FileHelper.h"
 #pragma endregion Includes
 
 //#define TRACE_LOADTIME true
@@ -103,7 +103,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 
 	if (m_fileData.mode == ContinuousMode || m_fileData.mode == SingleIterationMode)
 	{
-		m_fileList = SvUl::getFileList(m_fileData.directory.c_str(), _T(".bmp"), false);
+		m_fileList = getFileList(m_fileData.directory.c_str(), ImageFileFormat::any, false);
 	}
 	else // Single File Mode
 	{

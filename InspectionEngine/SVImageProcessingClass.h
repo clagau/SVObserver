@@ -14,6 +14,8 @@
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "Definitions/SVMatroxSimpleEnums.h"
+#include "SVFileSystemLibrary/ImageFileFormats.h"
+
 #pragma endregion Includes
 
 class SVImageInfoClass;

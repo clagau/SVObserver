@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "SVFileSystemLibrary/ImageFileFormats.h"
+
 bool SVCheckPathDir(LPCTSTR PathName, bool CreateIfDoesNotExist );
 bool SVDeleteFiles(LPCTSTR PathName, bool IncludeSubDirectories );
 std::string readContentFromFileAndDelete(const std::string& rFileName);
@@ -19,4 +21,7 @@ void writeStringToFile(const std::string& rFileName, const std::string& rFileDat
 bool pathCanProbablyBeCreatedOrExistsAlready(const std::string& rFilePath);
 
 HRESULT CheckDrive(const std::string& p_strDrive);
+
+std::vector<std::string> getFileList(LPCTSTR pPath, ImageFileFormat fileFormat, bool recursive);
+
 

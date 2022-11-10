@@ -15,7 +15,6 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
@@ -93,7 +92,7 @@ void SVArchiveRecord::BuildDefaultImageFilePaths()
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	for (DWORD i = 0; i < dwMaxImages; i++)
 	{
-		std::string FileName = SvUl::Format(_T("%s__%06ld%s"), m_ImageFileName.c_str(), i + 1, imageFileNameExtension(imageFileFormat()).c_str());
+		std::string FileName = SvUl::Format(_T("%s__%06ld%s"), m_ImageFileName.c_str(), i + 1, firstImageFileNameExtension(imageFileFormat()).c_str());
 		svFileName.SetFileName(FileName.c_str());
 		m_FileNames.push_back(svFileName.GetFullFileName());
 	}

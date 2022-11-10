@@ -17,7 +17,6 @@
 #include "SVMatroxBuffer.h"
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxResourceMonitor.h"
-#include "SVMatroxHelper.h"
 #include "SVBufferResource.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary/MessageTextEnum.h"

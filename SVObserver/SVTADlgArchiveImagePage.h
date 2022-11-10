@@ -19,7 +19,7 @@
 #include "Tools/ArchiveMethodEnum.h"
 #include "SVOGuiUtility/DataController.h"
 #include "SVOGuiUtility/LinkedValueWidgetHelper.h"
-#include "Definitions/SVMatroxSimpleEnums.h"
+#include "SVFileSystemLibrary/ImageFileFormats.h"
 #pragma endregion Includes
 
 

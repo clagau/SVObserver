@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #pragma endregion Includes
+#include "SVFileSystemLibrary/ImageFileFormats.h"
 
 class SVImageFile;
 
@@ -19,20 +20,20 @@ class SVImageFileLoader
 {
 public:
 	//************************************
-	//! The method loads a bitmap file 
-	//! \param FileName <in> The name of the bitmap file
+	//! The method loads an image file 
+	//! \param FileName <in> The name of the image file
 	//! \param rImageFile <out> The image file information
 	//! \returns S_OK when successful
 	//************************************
-	static HRESULT Load( LPCTSTR FileName, SVImageFile& rImageFile );
+	static HRESULT LoadImageFile( LPCTSTR FileName, SVImageFile& rImageFile );
 
 	//************************************
-	//! The method loads the first bitmap file
-	//! \param Name <in> The name of the bitmap file or a directory containing the files
-	//! \param Ext <in> The file extension to search for the first file
+	//! The method loads the first image file
+	//! \param Name <in> The name of the image file or a directory containing the files
+	//! \param fileFormat <in> The file format to consider for the first file
 	//! \param rImageFile <out> The image file information
 	//! \returns S_OK when successful
 	//************************************
-	static HRESULT LoadFirstFile( LPCTSTR Name, LPCTSTR Ext, SVImageFile& rImageFile );
+	static HRESULT LoadFirstFile(LPCTSTR Name, ImageFileFormat fileFormat, SVImageFile& rImageFile);
 };
 

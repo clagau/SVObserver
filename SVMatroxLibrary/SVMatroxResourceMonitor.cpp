@@ -11,7 +11,10 @@
 
 #include "stdafx.h"
 #include "SVMatroxResourceMonitor.h"
+#include "SVMatroxApplicationInterface.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVUtilityLibrary/StringHelper.h"
+
 
 #ifdef _DEBUG
 #define MONITOR_MIL_RESOURCES
@@ -185,4 +188,44 @@ void SVMatroxResourceMonitor::OutputDebug()
 	}
 
 #endif
+}
+
+HRESULT DestroyMatroxId(__int64& rId, void(*pFreeFunc)(MIL_ID), SVMatroxIdentifierEnum identifierType)
+{
+	HRESULT Result(S_OK);
+#ifdef USE_TRY_BLOCKS
+	try
+#endif
+	{
+		if (nullptr != pFreeFunc)
+		{
+			if (M_NULL != rId)
+			{
+
+				pFreeFunc(rId);
+				Result = SVMatroxApplicationInterface::GetLastStatus();
+				if (S_OK == Result)
+				{
+					SVMatroxResourceMonitor::EraseIdentifier(identifierType, rId);
+
+					rId = M_NULL;
+				}
+
+			}
+		}
+		else
+		{
+			Result = SVMEE_BAD_POINTER;
+		}
+	}
+#ifdef USE_TRY_BLOCKS
+	catch (...)
+	{
+		Result = SVMEE_MATROX_THREW_EXCEPTION;
+		SVMatroxApplicationInterface::LogMatroxException();
+	}
+#endif
+
+	return Result;
+
 }

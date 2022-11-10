@@ -60,9 +60,6 @@
     <ClCompile Include="SVMatroxGraphicsInterface.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxImageBuffer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxGraphicsInterface.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxIdentifierEnum.h">

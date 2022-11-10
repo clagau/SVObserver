@@ -46,3 +46,9 @@ private:
 	const SVMatroxResourceMonitor& operator=( const SVMatroxResourceMonitor& p_rObject );
 };
 
+/// Destroys a matrox handle with a defined method.
+/// \param rId [in] ID of the handle.
+/// \param pFreeFunc [in] function pointer to the matrox free function (e.g. MblobFree).
+/// \param identifierType [in] Identifer to remove the entry from the debug class SVMatroxResourceMonitor.
+/// \returns HRESULT
+HRESULT DestroyMatroxId(__int64& rId, void(*pFreeFunc)(MIL_ID), SVMatroxIdentifierEnum identifierType);

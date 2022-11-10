@@ -16,6 +16,7 @@
 #include "SVMatroxBuffer.h"
 #include "SVMatroxErrorEnum.h"
 #include "Definitions/SVMatroxSimpleEnums.h"
+#include "SVFileSystemLibrary/ImageFileFormats.h"
 #include "SVMatroxBufferCreateExtStruct.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
@@ -61,39 +62,39 @@ class SVMatroxBufferInterface
 public:
 	friend class SVMatroxGige;
 
-	SVMatroxBufferInterface();
+	SVMatroxBufferInterface() = default;
 
-	virtual ~SVMatroxBufferInterface();
+	virtual ~SVMatroxBufferInterface() = default;
 
 	//******* Create Functions *********
 	// MbuffAlloc1d or Line
-	static HRESULT Create( SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateLineStruct& CreateLineStruct);
+	static HRESULT Create( SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateLineStruct& CreateLineStruct); //!< creates a Matrox buffer using a SVMatroxBufferCreateLineStruct.
 	// Mainly for Grab Buffers
-	static HRESULT Create( const SVMatroxSystem& rSystem, SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateStruct& CreateStruct);
+	static HRESULT Create( const SVMatroxSystem& rSystem, SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateStruct& CreateStruct); //!< creates a Matrox buffer using a SVMatroxSystem and a SVMatroxBufferCreateStruct
 	// MbufAllocColor - Standard buffer..
-	static HRESULT Create( SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateStruct& CreateStruct);
+	static HRESULT Create( SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateStruct& CreateStruct); //!< creates a Matrox buffer using a SVMatroxBufferCreateStruct.
 	// MbufChildColor2d - CreateChild buffer
-	static HRESULT Create( SVMatroxBuffer& rNewBuffer, const SVMatroxBufferCreateChildStruct& CreateChildStruct);
+	static HRESULT Create( SVMatroxBuffer& rNewBuffer, const SVMatroxBufferCreateChildStruct& CreateChildStruct);//!< creates a Matrox child buffer using a SVMatroxBufferCreateChildStruct.
 	// MbufCreateColor -  Caution	 : Uses external data buffer that you must manage.
-	static HRESULT Create( SVMatroxBuffer& rBuffer, SVMatroxBufferCreateExtStruct CreateColorStruct);
+	static HRESULT Create( SVMatroxBuffer& rBuffer, SVMatroxBufferCreateExtStruct CreateColorStruct); //!< creates a Matrox buffer using a SVMatroxBufferCreateExtStruct. This type is used for interfacing to other libraries such as Intek.
 
-	static HRESULT Create( SVMatroxBuffer& rNewBuffer, const SVMatroxBuffer& CreateFrom, bool addDibFlag = false );
+	static HRESULT Create( SVMatroxBuffer& rNewBuffer, const SVMatroxBuffer& CreateFrom, bool addDibFlag = false ); //!< creates a Matrox buffer using a SVMatroxBuffer.
 
 	// HBitmapToNewMilHandle
-	static HRESULT Create( SVMatroxBuffer& rNewMilId, HBITMAP& rHbm );
+	static HRESULT Create( SVMatroxBuffer& rNewMilId, HBITMAP& rHbm ); //!< creates a SVMatroxBuffer from a HBitmap.
 
 	static HRESULT createToHBitmap(SVMatroxBuffer& rNewMilId, const HBITMAP& rHbm);
 
 	// ****** Copy Buffer  **********
 	// MbufCopy
-	static HRESULT CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom );
+	static HRESULT CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom ); //!< copies the data from a SVMatroxBuffer to a SVMatroxBuffer.
 	// MbufCopyClip
-	static HRESULT CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom, long lXOffset, long lYOffset);
+	static HRESULT CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom, long lXOffset, long lYOffset); //!< copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
 	// MbufCopyColor
-	static HRESULT CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom, long lBand );
+	static HRESULT CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom, long lBand ); //!< copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
 
 	// HBitmapToMilHandle
-	static HRESULT CopyBuffer(const  SVMatroxBuffer& rMilId, HBITMAP& rHbm );
+	static HRESULT CopyBuffer(const  SVMatroxBuffer& rMilId, HBITMAP& rHbm ); //!< copies the data from a HBitmap to a SVMatroxBuffer.
 
 	///copies ImageBuffer to  string rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
 	static HRESULT CopyBufferToFileDIB(std::string& rToDib,  SVBitmapInfo& rBitMapInfo, const SVMatroxBuffer& rFromId, bool addFileHeader = true);
@@ -139,30 +140,30 @@ public:
 	}
 
 	// ****** Get and Set Functions **********
-	static HRESULT Get( const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, double& rResult );
+	static HRESULT Get( const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, double& rResult ); //!< uses MbufInquire to get information about a SVMatroxBuffer and stores it in a double.
 	static HRESULT Get( const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, long& rResult );
-	static HRESULT Get( const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, LONGLONG& rResult );
+	static HRESULT Get( const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, LONGLONG& rResult ); //!< uses MbufInquire to get information about a SVMatroxBuffer and stores it in a LONGLONG.
 
 	// ****** Put Functions **********
 	// MbufPut
-	static HRESULT PutBuffer(const SVMatroxBuffer& rTo, const unsigned char* pcArrayData );
-	static HRESULT PutBuffer(const SVMatroxBuffer& rTo, const long* plArrayData );
+	static HRESULT PutBuffer(const SVMatroxBuffer& rTo, const unsigned char* pcArrayData ); //!< copies the data from a user array to a MatroxBuffer.
+	static HRESULT PutBuffer(const SVMatroxBuffer& rTo, const long* plArrayData ); //!< copies the data from a user array to a MatroxBuffer.
 	
 	// MbufPut1d
-	static HRESULT PutLine(const SVMatroxBuffer& rTo, long lCount, const unsigned char* pArrayData);
+	static HRESULT PutLine(const SVMatroxBuffer& rTo, long lCount, const unsigned char* pArrayData); //<! copies the data from a user array to a MatroxBuffer.
 	// MbufGet1d
 
-	static HRESULT Set(const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, const double rdValue);
-	static HRESULT Set( const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, const long long rlValue );
+	static HRESULT Set(const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, const double rdValue); //<! allows you to control a specified data buffer settings with a supplied double.
+	static HRESULT Set( const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, const long long rlValue ); //1< allows you to control a specified data buffer settings with a supplied long.
 
 	// ****** Miscellaneous *********
-	static HRESULT ControlNeighborhood(const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, const long lValue);
+	static HRESULT ControlNeighborhood(const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, const long lValue); //!< changes the setting of an operation control type of the specified kernel buffer or structuring element buffer.
 
-	static HRESULT ClearBuffer(const SVMatroxBuffer& rBuffer, double dColor );
+	static HRESULT ClearBuffer(const SVMatroxBuffer& rBuffer, double dColor ); //!< clears the entire specified buffer to the specified color.
 
 	// ***** Inport / Export *********
-	static HRESULT Import(SVMatroxBuffer& rBuf, const std::string& rFileName, ImageFileFormat fileFormat, bool bRestore= false );
-	static HRESULT Export(const SVMatroxBuffer& rBuf, const std::string& rFileName, ImageFileFormat fileFormat );
+	static HRESULT Import(SVMatroxBuffer& rBuf, const std::string& rFileName, ImageFileFormat fileFormat, bool bRestore= false ); //!< imports data from a file into an existing or automatically allocated MIL data buffer.
+	static HRESULT Export(const SVMatroxBuffer& rBuf, const std::string& rFileName, ImageFileFormat fileFormat ); //!< exports a data buffer to a file, in the specified output file format.
 
 	//************************************
 	//! Get  the Dimension  from the Imagefile 
@@ -182,9 +183,9 @@ protected:
 	static void createImageBufferPtr(SVMatroxBuffer& rBuffer, __int64 MatroxID, const std::string& rCreatorName);
 
 private:
-	static HRESULT GetBitmapInfo( LPBITMAPINFO& rpBitmapInfo, const SVMatroxBuffer& rBuffer );
-	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum eType );
-	static long Convert2MatroxType   ( SVMatroxBufferTypeEnum eType );
-	static long Convert2MatroxType   ( SVMatroxBufferInfoEnum eType );
+	static HRESULT GetBitmapInfo( LPBITMAPINFO& rpBitmapInfo, const SVMatroxBuffer& rBuffer ); //!< returns a pointer (LPBITMAPINFO) to the header of the DIB associated with the MIL buffer (if any) or NULL.
+	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum eType ); //!< converts the SVMatroxBufferTypeEnum to a Matrox Type.
+	static long Convert2MatroxType   ( SVMatroxBufferTypeEnum eType ); //!< converts the SVMatroxBufferTypeEnum to a Matrox Type.
+	static long Convert2MatroxType   ( SVMatroxBufferInfoEnum eType ); //!< converts the SVMatroxBufferTypeEnum to a Matrox Type.
 };
 

@@ -18,7 +18,6 @@
 #include "Definitions/SVExtentEnums.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVUtilityLibrary/GeoHelper.h"
 #pragma endregion Includes
 

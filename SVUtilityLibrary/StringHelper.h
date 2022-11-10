@@ -184,6 +184,6 @@ namespace SvUl
 		static const std::string g_ToolSetName{ SvUl::LoadStdString(10151/*IDS_CLASSNAME_SVTOOLSET*/) };
 	}
 
-	std::string getLowerCaseExtension(const std::string& rFilepath);
+	std::string getExtension(const std::string& rFilepath);
 } // namespace SvUl
 

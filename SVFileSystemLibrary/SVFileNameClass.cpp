@@ -198,7 +198,7 @@ bool SVFileNameClass::SetFileType(DWORD dwFileType)
 		{
 			SetFileSelectDialogTitle( _T("Select Image File") );
 			SetFileSaveDialogTitle( _T("Save Image File") );
-			SetDefaultFileExtension( ".bmp" );
+			SetDefaultFileExtension(_T(".bmp") );
 			SetDefaultFileName( _T("") );
 			SetDefaultPathName( _T("C:\\IMAGES") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );

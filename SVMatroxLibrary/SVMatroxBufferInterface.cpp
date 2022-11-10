@@ -17,7 +17,6 @@
 #include "SVMatroxBufferCreateLineStruct.h"
 #include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxErrorEnum.h"
-#include "SVMatroxHelper.h"
 #include "SVMatroxImageBuffer.h"
 #include "SVMatroxImageChildBuffer.h"
 #include "SVMatroxSystem.h"
@@ -44,32 +43,29 @@ enum PIxelFormats
 	Pixel32 = 32
 };
 
-/**
-@SVOperationName Default Constructor
 
-@SVOperationDescription
-
-*/
-SVMatroxBufferInterface::~SVMatroxBufferInterface()
+namespace
 {
+MIL_INT64 getMilImageFormatCode(ImageFileFormat fileFormat)
+{
+	switch (fileFormat)
+	{
+		case ImageFileFormat::invalid:
+		case ImageFileFormat::any:
+		default:
+			return -1;
+		case ImageFileFormat::mim:
+			return M_MIL;
+		case ImageFileFormat::tiff:
+			return M_TIFF;
+		case ImageFileFormat::bmp:
+			return M_BMP;
+		case ImageFileFormat::png:
+			return M_PNG;
+	}
+}
 }
 
-/**
-@SVOperationName Destructor
-
-@SVOperationDescription
-
-*/
-SVMatroxBufferInterface::SVMatroxBufferInterface()
-{
-}
-
-/**
-@SVOperationName Convert2MatroxType - SVMatroxBufferTypeEnum
-
-@SVOperationDescription This function converts the SVMatroxBufferTypeEnum to a Matrox Type.
-
-*/
 long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferTypeEnum eType)
 {
 	long matroxType = 0;
@@ -108,12 +104,6 @@ long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferTypeEnum eType)
 	return matroxType;
 }
 
-/**
-@SVOperationName Convert2MatroxType - SVMatroxBufferAttributeEnum
-
-@SVOperationDescription This function converts the SVMatroxBufferTypeEnum to a Matrox Type.
-
-*/
 __int64 SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferAttributeEnum eType)
 {
 	__int64 matroxType = 0;
@@ -267,12 +257,7 @@ __int64 SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferAttributeEnum 
 	return matroxType;
 }
 
-/**
-@SVOperationName Convert2MatroxType - SVMatroxBufferInfoEnum
 
-@SVOperationDescription This function converts the SVMatroxBufferTypeEnum to a Matrox Type.
-
-*/
 long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferInfoEnum eType)
 {
 	long matroxType = 0;
@@ -397,12 +382,7 @@ long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferInfoEnum eType)
 	return matroxType;
 }
 
-/**
-@SVOperationName Create - SVMatroxBufferCreateLineStruct
 
-@SVOperationDescription This function creates a Matrox buffer using a SVMatroxBufferCreateLineStruct.
-
-*/
 HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateLineStruct& CreateLineStruct)
 {
 	HRESULT code(S_OK);
@@ -444,12 +424,6 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 	return code;
 }
 
-/**
-@SVOperationName Create - SVMatroxBufferCreateStruct
-
-@SVOperationDescription This function creates a Matrox buffer using a SVMatroxSystem and a SVMatroxBufferCreateStruct.
-
-*/
 HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& rSystem, SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateStruct& CreateStruct)
 {
 	HRESULT code(S_OK);
@@ -523,12 +497,6 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& rSystem, SVMatroxB
 	return code;
 }
 
-/**
-@SVOperationName Create - SVMatroxBufferCreateStruct
-
-@SVOperationDescription This function creates a Matrox buffer using a SVMatroxBufferCreateStruct.
-
-*/
 HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateStruct& CreateStruct)
 {
 	HRESULT code(S_OK);
@@ -592,12 +560,6 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 	return code;
 }
 
-/**
-@SVOperationName Create - SVMatroxBufferCreateChildStruct
-
-@SVOperationDescription This function creates a Matrox child buffer using a SVMatroxBufferCreateChildStruct.
-
-*/
 HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateChildStruct& CreateChildStruct)
 {
 	HRESULT code(S_OK);
@@ -664,12 +626,6 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 	return code;
 }
 
-/**
-@SVOperationName Create - SVMatroxBufferCreateExtStruct
-
-@SVOperationDescription This function creates a Matrox buffer using a SVMatroxBufferCreateExtStruct.  This type is used for interfacing to other libraries such as Intek.
-
-*/
 // MbufCreateColor -  Caution	 : Uses external data buffer that you must manage.
 HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferCreateExtStruct CreateColorStruct)
 {
@@ -741,12 +697,6 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferC
 	return code;
 }
 
-/**
-@SVOperationName Create - SVMatroxBuffer
-
-@SVOperationDescription This function creates a Matrox buffer using a SVMatroxBuffer.
-
-*/
 HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBuffer& CreateFrom, bool addDibFlag)
 {
 	HRESULT code(S_OK);
@@ -823,12 +773,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 	return code;
 }
 
-/**
-@SVOperationName Create
 
-@SVOperationDescription This function creates a SVMatroxBuffer from a HBitmap.
-
-*/
 HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& rHbm)
 {
 	HRESULT code(S_OK);
@@ -1060,12 +1005,6 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint<long>& rPoint, const S
 	return l_Status;
 }
 
-/**
-@SVOperationName GetBitmapInfo
-
-@SVOperationDescription This function returns a pointer (LPBITMAPINFO) to the header of the DIB associated with the MIL buffer (if any) or NULL.
-
-*/
 HRESULT SVMatroxBufferInterface::GetBitmapInfo(LPBITMAPINFO& rpBitmapInfo, const SVMatroxBuffer& rBuffer)
 {
 	HRESULT code(S_OK);
@@ -1184,12 +1123,6 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& rBitmapInfo, const 
 	return l_Status;
 }
 
-/**
-@SVOperationName CopyBuffer (SVMatroxBuffer to SVMatroxBuffer)
-
-@SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer.
-
-*/
 HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom)
 {
 	HRESULT code(S_OK);
@@ -1372,12 +1305,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(__int64 To, const SVMatroxBuffer& rF
 	return code;
 }
 
-/**
-@SVOperationName CopyBuffer (SVMatroxBuffer and offsets to SVMatroxBuffer)
 
-@SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
-
-*/
 HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom, long lXOffset, long lYOffset)
 {
 	HRESULT code(S_OK);
@@ -1410,12 +1338,6 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, const SVM
 	return code;
 }
 
-/**
-@SVOperationName CopyBuffer (SVMatroxBuffer band to SVMatroxBuffer)
-
-@SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
-
-*/
 HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, const SVMatroxBuffer& rFrom, long lBand)
 {
 	HRESULT code(S_OK);
@@ -1447,12 +1369,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, const SVM
 	return code;
 }
 
-/**
-@SVOperationName CopyBuffer (HBITMAP to SVMatroxBuffer)
 
-@SVOperationDescription This function copies the data from a HBitmap to a SVMatroxBuffer.
-
-*/
 HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rMilId, HBITMAP& rHbm)
 {	// HBitmapToMilHandle
 	HRESULT code(S_OK);
@@ -1648,12 +1565,6 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 }
 
 
-/**
-@SVOperationName PutBuffer - const unsigned char*
-
-@SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
-
-*/
 HRESULT SVMatroxBufferInterface::PutBuffer(const SVMatroxBuffer& rTo,
 	const unsigned char* pcArrayData)
 {
@@ -1685,12 +1596,6 @@ HRESULT SVMatroxBufferInterface::PutBuffer(const SVMatroxBuffer& rTo,
 	return code;
 }
 
-/**
-@SVOperationName PutBuffer - const long*
-
-@SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
-
-*/
 HRESULT SVMatroxBufferInterface::PutBuffer(const SVMatroxBuffer& rTo, const long* plArrayData)
 {
 	HRESULT code(S_OK);
@@ -1721,12 +1626,7 @@ HRESULT SVMatroxBufferInterface::PutBuffer(const SVMatroxBuffer& rTo, const long
 	return code;
 }
 
-/**
-@SVOperationName PutLine
 
-@SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
-
-*/
 HRESULT SVMatroxBufferInterface::PutLine(const SVMatroxBuffer& rTo,
 	long lCount,
 	const unsigned char* pArrayData)
@@ -1762,12 +1662,7 @@ HRESULT SVMatroxBufferInterface::PutLine(const SVMatroxBuffer& rTo,
 	return code;
 }
 
-/**
-@SVOperationName Get - double
 
-@SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a double.
-
-*/
 HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, double& rResult)
 {
 	HRESULT code(S_OK);
@@ -1818,12 +1713,7 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& rBuf, SVMatroxBufferI
 	return code;
 }
 
-/**
-@SVOperationName Get - LONGLONG
 
-@SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a LONGLONG.
-
-*/
 HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& rBuf, SVMatroxBufferInfoEnum eWhat, LONGLONG& rResult)
 {
 	HRESULT code(S_OK);
@@ -1876,12 +1766,6 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& rBuf, SVMatroxBufferI
 	return code;
 }
 
-/**
-@SVOperationName Set - double
-
-@SVOperationDescription This function allows you to control a specified data buffer settings with a supplied double.
-
-*/
 HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& rBuf,
 	SVMatroxBufferInfoEnum eWhat,
 	const double rdValue)
@@ -1923,25 +1807,12 @@ HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& rBuf,
 	return code;
 }
 
-/**
-@SVOperationName Set - long
-
-@SVOperationDescription This function allows you to control a specified data buffer settings with a supplied long.
-
-*/
 HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& rBuf,
 	SVMatroxBufferInfoEnum eWhat,
 	const long long rlValue)
 {
 	return Set(rBuf, eWhat, static_cast<const double>(rlValue));
 }
-
-/**
-@SVOperationName ControlNeighborhood
-
-@SVOperationDescription This function changes the setting of an operation control type of the specified kernel buffer or structuring element buffer.
-
-*/
 HRESULT SVMatroxBufferInterface::ControlNeighborhood(const SVMatroxBuffer& rBuf,
 	SVMatroxBufferInfoEnum eWhat,
 	long lValue)
@@ -1983,12 +1854,7 @@ HRESULT SVMatroxBufferInterface::ControlNeighborhood(const SVMatroxBuffer& rBuf,
 	return code;
 }
 
-/**
-@SVOperationName ClearBuffer - SVMatroxBuffer
 
-@SVOperationDescription This function clears the entire specified buffer to the specified color.
-
-*/
 HRESULT SVMatroxBufferInterface::ClearBuffer(const SVMatroxBuffer& rBuffer, double dColor)
 {
 	HRESULT code;
@@ -2039,12 +1905,6 @@ HRESULT SVMatroxBufferInterface::GetImageSize(const std::string& rFileName, long
 	return (Code);
 }
 
-/**
-@SVOperationName Import
-
-@SVOperationDescription This function imports data from a file into an existing or automatically allocated MIL data buffer.
-
-*/
 HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 	const std::string& rFileName,
 	ImageFileFormat fileFormat,
@@ -2104,12 +1964,6 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 	return code;
 }
 
-/**
-@SVOperationName Export
-
-@SVOperationDescription This function exports a data buffer to a file, in the specified output file format.
-
-*/
 HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer,
 	const std::string& rFileName,
 	ImageFileFormat fileFormat)

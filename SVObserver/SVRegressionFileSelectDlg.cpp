@@ -13,7 +13,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/SVFileDialog.h"
-#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -121,7 +120,8 @@ void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	if (iPos != -1) //only write out registry entry if the path is not empty.
 	{
 		CString sTmpDirName = m_RegTestFiles;
-		if (0 == m_RegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
+
+		if (filenameMatchesImageFormat(m_RegTestFiles.GetBuffer(), ImageFileFormat::any))
 		{	//cut file name to save only path
 			sTmpDirName = m_RegTestFiles.Left(iPos);
 		}

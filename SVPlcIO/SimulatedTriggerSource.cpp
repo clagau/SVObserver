@@ -10,7 +10,7 @@
 #include "InspectionState.h"
 #include "PowerLinkConnection.h"
 #include "SimulatedTriggerSource.h"
-#include "SVUtilityLibrary/FileHelper.h"
+#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -295,7 +295,7 @@ HRESULT SimulatedTriggerSource::initChannel(const std::vector<std::vector<std::s
 
 		if (false == validationFolder.empty())
 		{
-			triggerData.m_LoadImageList = SvUl::getFileList(validationFolder.c_str(), _T(".bmp"), false);
+			triggerData.m_LoadImageList = getFileList(validationFolder.c_str(), ImageFileFormat::bmp, false);
 		}
 
 		if (triggerData.m_channel < cNumberOfChannels)

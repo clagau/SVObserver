@@ -22,7 +22,6 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "InspectionEngine/RunStatus.h"
@@ -1071,7 +1070,7 @@ std::string SVArchiveTool::getNextImageFileName()
 	m_FilenameIndex2.getValue(index);
 	uint32_t Index2 = static_cast<uint32_t> (index);
 
-	return SvUl::Format(_T("%s%08ld%s%04ld%s"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2, imageFileNameExtension(m_imageFileFormat).c_str());
+	return SvUl::Format(_T("%s%08ld%s%04ld%s"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2, firstImageFileNameExtension(m_imageFileFormat).c_str());
 }
 
 

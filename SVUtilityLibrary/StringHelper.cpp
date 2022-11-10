@@ -567,7 +567,7 @@ namespace SvUl
 	}
 
 
-	std::string getLowerCaseExtension(const std::string& rFilepath)
+	std::string getExtension(const std::string& rFilepath)
 	{ 
 		size_t pos = rFilepath.rfind(_T("."));
 
@@ -576,15 +576,7 @@ namespace SvUl
 			return "";
 		}
 
-		auto extension = rFilepath.substr(pos); 
-
-		auto x = [](char c){ return static_cast<char>(std::tolower(static_cast<unsigned char>(c))); };
-
-		std::string lowercaseExtension;
-
-		std::transform(extension.begin(), extension.end(), std::back_inserter(lowercaseExtension), x);
-
-		return lowercaseExtension;
+		return rFilepath.substr(pos);
 	}
 
 

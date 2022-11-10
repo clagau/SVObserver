@@ -16,7 +16,6 @@
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBufferTemplate.h"
 #include "SVMatroxErrorEnum.h"
-#include "SVMatroxHelper.h"
 #include "SVMatroxImageBuffer.h"
 #include "SVMatroxResourceMonitor.h"
 #pragma endregion Includes

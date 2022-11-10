@@ -6,9 +6,6 @@
 //******************************************************************************
 #pragma once
 
-
-
-
 #include <mil.h>
 
 enum SVMatroxBufferTypeEnum ///< Used for creating a buffer
@@ -222,17 +219,6 @@ enum SVMatroxBufferInfoEnum ///< Used for Getting and Setting buffer settings.
 	// Combination Constants
 	SVHostAddressPitch = SVHostAddress | SVPitch,
 
-};
-
-
-// Mbuf Import / Export function
-enum class ImageFileFormat : long ///< Used to set the file type for importing and exporting image buffers
-{
-	invalid = 0,
-	bmp = 1,
-	png = 2,
-	tiff = 3,
-	mim = 4
 };
 
 

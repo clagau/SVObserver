@@ -18,7 +18,6 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVMatroxLibrary/SVMatroxHelper.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"

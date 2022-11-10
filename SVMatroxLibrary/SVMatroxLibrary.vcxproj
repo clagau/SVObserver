@@ -142,7 +142,6 @@
     <ClCompile Include="SVMatroxBufferTemplate.cpp" />
     <ClCompile Include="SVMatroxDisplayInterface.cpp" />
     <ClCompile Include="SVMatroxGraphicsInterface.cpp" />
-    <ClCompile Include="SVMatroxHelper.cpp" />
     <ClCompile Include="SVMatroxImageBuffer.cpp" />
     <ClCompile Include="SVMatroxImageChildBuffer.cpp" />
     <ClCompile Include="SVMatroxImageInterface.cpp" />
@@ -182,7 +181,6 @@
     <ClInclude Include="SVMatroxEnums.h" />
     <ClInclude Include="SVMatroxErrorEnum.h" />
     <ClInclude Include="SVMatroxGraphicsInterface.h" />
-    <ClInclude Include="SVMatroxHelper.h" />
     <ClInclude Include="SVMatroxIdentifierEnum.h" />
     <ClInclude Include="SVMatroxImageBuffer.h" />
     <ClInclude Include="SVMatroxImageChildBuffer.h" />
