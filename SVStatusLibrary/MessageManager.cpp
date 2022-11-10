@@ -59,8 +59,7 @@ namespace SvStl
 	}
 
 
-
-	void MessageManager::Throw()
+			void MessageManager::Throw()
 	{
 		throw m_MessageContainer;
 	}
