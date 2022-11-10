@@ -309,9 +309,13 @@ HRESULT SimulatedTriggerSource::initChannel(const std::vector<std::vector<std::s
 
 void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double timestamp)
 {
-	static uint32_t currentIndex {0UL};
-	static uint8_t currentTriggerIndex {1};
-	static uint32_t objectID {0};
+	struct CurrentTriggerData
+	{
+		uint32_t m_imageIndex {0UL};
+		uint8_t m_triggerIndex {1};
+		uint32_t m_objectID {0};
+	};
+	static std::array<CurrentTriggerData, cNumberOfChannels> currentTriggerData;
 	int triggerChannel {-1};
 
 	for (int i = 0; i < static_cast<int> (m_channel.size()); ++i)
@@ -330,16 +334,16 @@ void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double ti
 
 	if (m_channel[triggerChannel].m_intialize)
 	{
-		currentIndex = 0UL;
-		currentTriggerIndex = 1;
-		objectID = rSimTriggerData.m_objectID;
+		currentTriggerData[triggerChannel].m_imageIndex = 0UL;
+		currentTriggerData[triggerChannel].m_triggerIndex = 1;
+		currentTriggerData[triggerChannel].m_objectID = rSimTriggerData.m_objectID;
 		m_channel[triggerChannel].m_intialize = false;
 	}
 
 	std::string acquisitionFile;
-	if (currentIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
+	if (currentTriggerData[triggerChannel].m_imageIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
 	{
-		acquisitionFile = rSimTriggerData.m_LoadImageList[currentIndex];
+		acquisitionFile = rSimTriggerData.m_LoadImageList[currentTriggerData[triggerChannel].m_imageIndex];
 	}
 	if (false == acquisitionFile.empty())
 	{
@@ -354,8 +358,8 @@ void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double ti
 		pos1 = acquisitionFile.find_last_of('_', pos2);
 		if (std::string::npos != pos1 && std::string::npos != pos2 && 0 != triggerIndex)
 		{
-			objectID = std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1));
-			currentTriggerIndex = triggerIndex;
+			currentTriggerData[triggerChannel].m_objectID = std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1));
+			currentTriggerData[triggerChannel].m_triggerIndex = triggerIndex;
 		}
 	}
 
@@ -364,10 +368,10 @@ void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double ti
 		TriggerReport triggerReport;
 		triggerReport.m_triggerTimestamp = timestamp;
 		triggerReport.m_channel = rSimTriggerData.m_channel;
-		triggerReport.m_objectID = objectID;
+		triggerReport.m_objectID = currentTriggerData[triggerChannel].m_objectID;
 		triggerReport.m_objectType = cSingleObjectType;
 		triggerReport.m_triggerPerObjectID = rSimTriggerData.m_triggerPerObjectID;
-		triggerReport.m_triggerIndex = currentTriggerIndex;
+		triggerReport.m_triggerIndex = currentTriggerData[triggerChannel].m_triggerIndex;
 		triggerReport.m_isValid = true;
 		triggerReport.m_acquisitionFile = acquisitionFile;
 		{
@@ -375,24 +379,24 @@ void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double ti
 			gTriggerReport[triggerReport.m_channel] = std::move(triggerReport);
 		}
 		gNewTrigger[rSimTriggerData.m_channel] = true;
-		++currentTriggerIndex;
-		++currentIndex;
+		++currentTriggerData[triggerChannel].m_triggerIndex;
+		++currentTriggerData[triggerChannel].m_imageIndex;
 		::SetEvent(g_hSignalEvent);
 	}
 
-	if (currentTriggerIndex > rSimTriggerData.m_triggerPerObjectID)
+	if (currentTriggerData[triggerChannel].m_triggerIndex > rSimTriggerData.m_triggerPerObjectID)
 	{
 		if (0 != rSimTriggerData.m_objectDelay)
 		{
 			std::this_thread::sleep_for(std::chrono::microseconds(rSimTriggerData.m_objectDelay));
 		}
-		currentTriggerIndex = 1;
-		objectID++;
-		if (rSimTriggerData.m_objectNumber > 0 && objectID >= rSimTriggerData.m_objectID + rSimTriggerData.m_objectNumber)
+		currentTriggerData[triggerChannel].m_triggerIndex = 1;
+		currentTriggerData[triggerChannel].m_objectID++;
+		if (rSimTriggerData.m_objectNumber > 0 && currentTriggerData[triggerChannel].m_objectID >= rSimTriggerData.m_objectID + rSimTriggerData.m_objectNumber)
 		{
 			m_channel[triggerChannel].m_timerInfo.m_pause = true;
 		}
-		if (0 < rSimTriggerData.m_LoadImageList.size() && currentIndex >= rSimTriggerData.m_LoadImageList.size())
+		if (0 < rSimTriggerData.m_LoadImageList.size() && currentTriggerData[triggerChannel].m_imageIndex >= rSimTriggerData.m_LoadImageList.size())
 		{
 			m_channel[triggerChannel].m_timerInfo.m_pause = true;
 		}

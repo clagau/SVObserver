@@ -2749,6 +2749,22 @@ void SVPPQObject::ProcessCompleteInspections()
 				if (pProduct->m_dataComplete)
 				{
 					SetProductComplete(*pProduct);
+					switch (getPPQOutputMode())
+					{
+						case SvDef::SVPPQTimeDelayAndDataCompleteMode:
+						case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
+						{
+							long triggerCount {pProduct->triggerCount()};
+							m_oOutputsDelayQueue.RemoveHead(&triggerCount);
+							ProcessOutputs(*pProduct);
+							break;
+						}
+						default:
+						{
+							break;
+						}
+					}
+
 					size_t ppqIndex = m_PPQPositions.GetIndexByTriggerCount(inspectionInfoPair.first);
 					for (size_t i = ppqIndex + 1; i < m_PPQPositions.size(); ++i)
 					{
