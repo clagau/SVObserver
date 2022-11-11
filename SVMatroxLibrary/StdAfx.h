@@ -55,6 +55,7 @@
 #include <cmath>
 #include <comdef.h>
 #include <deque>
+#include <format>
 #include <iterator>			//Used by static library
 #include <memory>
 #include <map>				//Used by static library

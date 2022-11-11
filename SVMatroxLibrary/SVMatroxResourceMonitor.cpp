@@ -180,7 +180,7 @@ void SVMatroxResourceMonitor::OutputDebug()
 			std::string Text{MatroxIdentifierName[i]};
 			for(const auto& rID : rSet)
 			{
-				Text += SvUl::Format(" %d; ", rID);
+				Text += std::format("{}; ", rID);
 			}
 			Text += " Matrox IDs have not been freed\n";
 			::OutputDebugString(Text.c_str());

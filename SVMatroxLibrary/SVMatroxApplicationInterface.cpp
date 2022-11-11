@@ -18,7 +18,6 @@
 #include "SVMatroxImagingLibrary.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary\SVSVIMStateClass.h"
 #pragma endregion Includes
@@ -138,8 +137,8 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 			}
 		}
 		SvDef::StringVector msgList;
-		msgList.push_back( SvUl::Format( _T("%d"), OsError ));
-		msgList.push_back( SvUl::Format( _T("0X%08X"), OsError ));
+		msgList.push_back(std::format( _T("{}"), OsError ));
+		msgList.push_back(std::format( _T("{:#08x}"), OsError ));
 		msgList.push_back( p_rStatusInfo.GetCompleteString() );
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 		Exception.setMessage( MessageCode, SvStl::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -487,8 +486,8 @@ void SVMatroxApplicationInterface::LocalInitialize()
 			if ( SV_CURRENT_MIL_VERSION != l_MilVersion )
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%4.2f"), SV_CURRENT_MIL_VERSION));
-				msgList.push_back(SvUl::Format(_T("%4.2f"), l_MilVersion));
+				msgList.push_back(std::format(_T("{:4.2f}"), SV_CURRENT_MIL_VERSION));
+				msgList.push_back(std::format(_T("{:4.2f}"), l_MilVersion));
 				
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvStl::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams));

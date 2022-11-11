@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxErrorEnum.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 /**
@@ -124,11 +123,11 @@ std::string SVMatroxStatusInformation::GetCompleteString() const
 	std::string l_Code;
 
 	Result += _T( "Status Code=" );
-	l_Code = SvUl::Format( _T( "%ld" ), m_StatusCode & ~( SVMEE_MATROX_ERROR ) );
+	l_Code = std::format( _T( "{}" ), m_StatusCode & ~( SVMEE_MATROX_ERROR ) );
 	Result += l_Code.c_str();
 
 	Result += _T( "-Function Code=" );
-	l_Code = SvUl::Format( _T( "%ld" ), m_FunctionCode );
+	l_Code = std::format( _T( "{}" ), m_FunctionCode );
 	Result += l_Code.c_str();
 
 	Result += _T( "-Status String=" );

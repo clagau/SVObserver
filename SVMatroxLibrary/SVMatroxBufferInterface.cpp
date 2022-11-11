@@ -24,7 +24,6 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
@@ -1236,7 +1235,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 	else
 	{
 		SvDef::StringVector msg;
-		msg.push_back(SvUl::Format("Matrox Code: 0X%08X", Code));
+		msg.push_back(std::format("Matrox Code: {:#08x}", Code));
 		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Default, msg, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}

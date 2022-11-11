@@ -204,21 +204,21 @@ void SMViewDlg::UpdateControls(bool isready)
 			std::string text = it->second->GetIsActive() ? _T("true") : _T("false");
 			m_MonListsCtrl.SetItemText(item, eIsActive, text.c_str());
 
-			text = SvUl::Format(_T("%i"), it->second->m_rejectDepth);
+			text = std::format(_T("{}"), it->second->m_rejectDepth);
 			m_MonListsCtrl.SetItemText(item, eRejectDepth, text.c_str());
 
-			text = SvUl::Format(_T("%i"), it->second->m_ProductDepth);
+			text = std::format(_T("{}"), it->second->m_ProductDepth);
 			m_MonListsCtrl.SetItemText(item, eProductDepth, text.c_str());
 
-			text = SvUl::Format(_T("%i"), it->second->m_ProductFilter);
+			text = std::format(_T("{}"), static_cast<int>(it->second->m_ProductFilter));
 			m_MonListsCtrl.SetItemText(item, eProductFilter, text.c_str());
 
 
 			//monitorListCpy.m_MonitorEntries[list]
-			text = SvUl::Format(_T("%i"), it->second->m_MonitorEntries[SvSml::ListType::productItemsImage].size());
+			text = std::format(_T("{}"), it->second->m_MonitorEntries[SvSml::ListType::productItemsImage].size());
 			m_MonListsCtrl.SetItemText(item, eImageCount, text.c_str());
 
-			text = SvUl::Format(_T("%i"), it->second->m_MonitorEntries[SvSml::ListType::productItemsData].size());
+			text = std::format(_T("{}"), it->second->m_MonitorEntries[SvSml::ListType::productItemsData].size());
 			m_MonListsCtrl.SetItemText(item, ePcount, text.c_str());
 			item++;
 		}

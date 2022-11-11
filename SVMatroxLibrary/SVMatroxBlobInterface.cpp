@@ -572,7 +572,7 @@ HRESULT SVMatroxBlobInterface::FillResults(const SVBlobOffsetList& rBlobList, SV
 			{
 				std::string l_Name;
 
-				l_Name = SvUl::Format(_T("Blob Result %d"), i);
+				l_Name = std::format(_T("Blob Result {}"), i);
 
 				l_Status = rResults.SetContainer(_bstr_t(l_Name.c_str()), l_Blob, true);
 			}

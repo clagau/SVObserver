@@ -18,7 +18,6 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -382,8 +381,8 @@ bool CustomFilter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) 
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), lWidth));
-			msgList.push_back(SvUl::Format(_T("%d"), 7));
+			msgList.push_back(std::format(_T("{}"), lWidth));
+			msgList.push_back(std::format(_T("{}"), 7));
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
@@ -397,8 +396,8 @@ bool CustomFilter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) 
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), lHeight));
-			msgList.push_back(SvUl::Format(_T("%d"), 7));
+			msgList.push_back(std::format(_T("{}"), lHeight));
+			msgList.push_back(std::format(_T("{}"), 7));
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}

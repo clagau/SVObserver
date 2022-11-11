@@ -16,7 +16,6 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -203,8 +202,8 @@ bool Ranking2Filter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), Width));
-			msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
+			msgList.push_back(std::format(_T("{}"), Width));
+			msgList.push_back(std::format(_T("{}"), SvDef::cMaxKernelSize));
 			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
@@ -218,8 +217,8 @@ bool Ranking2Filter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), Height));
-			msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
+			msgList.push_back(std::format(_T("{}"), Height));
+			msgList.push_back(std::format(_T("{}"), SvDef::cMaxKernelSize));
 			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
