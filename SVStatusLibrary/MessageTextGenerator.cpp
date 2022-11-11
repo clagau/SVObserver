@@ -47,7 +47,8 @@ namespace SvStl
 
 				if (std::string::npos != pos)
 				{
-					retString.replace(pos, search.size(), additionalList[i]);
+					std::string addMessage = convertAddtionalListTextToString(additionalList[i]);
+					retString.replace(pos, search.size(), addMessage);
 				}
 			}
 		}

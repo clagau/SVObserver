@@ -118,7 +118,7 @@ namespace SvStl
 		{Tid_CreationOf2Failed, _T("Creation of {0} \"{1}\" failed.")},
 		{Tid_Command_StartSvimConfig, _T("Informational - Starting PutSVIMConfig")},
 		{Tid_Command_EndSvimConfig, _T("Informational - Ending PutSVIMConfig")},
-		{Tid_ErrorMIL, _T("{0} - An error has occurred, MIL error code = {2}, MIL error Text = {3}")},
+		{Tid_ErrorMIL, _T("{0} - An error has occurred, MIL error code = {1}, MIL error Text = {2}")},
 		{Tid_ErrorGettingPPQ, _T("Error getting PPQ.")},
 		{Tid_ErrorGettingInputObjectList, _T("Error getting input object list.")},
 		{Tid_ErrorGettingPPQCount, _T("Error getting PPQ count.")},
@@ -184,7 +184,7 @@ namespace SvStl
 
 		{Tid_True, _T("TRUE")},
 		{Tid_False, _T("FALSE")},
-		{Tid_ConditionalValidated, _T("Conditional Equation Validated Successfully\n Condition = {0}")},
+		{Tid_ConditionalValidated, _T("Conditional Equation Validated Successfully\nCondition = {0}")},
 		{Tid_FormulaValidated, _T("Formula Validated Successfully\n Value = {0}")},
 		{Tid_ConditionalSelectedValidated, _T("Selected Text validated successfully\n Condition = {0}") },
 		{Tid_FormulaSelectedValidated, _T("Selected Text validated successfully\n Value = {0}") },
@@ -293,7 +293,7 @@ namespace SvStl
 							"unknown error with Inspection {0} when the system was going online.")},
 		{Tid_GoOnlineFailure_Acquisition, _T("Configuration cannot enter Run.  Cannot reach camera {0} when the system was going online.")},
 		{Tid_GoOnlineFailure_Trigger, _T("Configuration cannot enter Run.  There is an "
-							"unknown error with Trigger {2} when the system was going online.")},
+							"unknown error with Trigger {1} when the system was going online.")},
 		{Tid_GoOnlineFailure_InternalTrigger, _T("Configuration cannot enter Run.  There is the "
 							"error {0} with enable internal Trigger when the system was going online.")},
 		{Tid_GoOnlineFailure_CreatePPQThread, _T("Configuration cannot enter Run.  There is the "
@@ -359,7 +359,7 @@ namespace SvStl
 		{Tid_InvalidKeywordsInPath, _T("Invalid keywords in path '{0}'!") },
 
 		{Tid_FileName_Exists, _T("{0} already exists.\nDo you want to replace it?")},
-		{Tid_Error_you_have_Selected_X_Must_less_then_Y, _T("Error: You have selected {0} for the Max Images count. The image count must be less then {2}")},
+		{Tid_Error_you_have_Selected_X_Must_less_then_Y, _T("Error: You have selected {0} for the Max Images count. The image count must be less then {1}")},
 		{Tid_ArchiveTool_WarningMaxImages, _T("WARNING: You have selected {0} for the Max Images count")},
 		{Tid_AP_NotEnoughImageMemoryWhenChangingMode, _T("There is not enough available memory for {0} images to be archived when changing mode.\n AvailableArchive Image Memory is the result of image size and the 'Max Images' number.")},
 		{Tid_AP_NotEnoughMemoryPleaseDeselect, _T("Not enough Available Archive Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.")},
