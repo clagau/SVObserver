@@ -2530,7 +2530,7 @@ void SVPPQObject::ProcessDelayOutputs()
 		SVProductInfoStruct* pProduct {nullptr};
 		long processCount = 0;
 
-		if (m_oOutputsDelayQueue.GetHead(&processCount))
+		if (m_oOutputsDelayQueue.RemoveHead(&processCount))
 		{
 			pProduct = GetProductInfoStruct(processCount);
 		}
@@ -2539,7 +2539,6 @@ void SVPPQObject::ProcessDelayOutputs()
 		{
 			if (currentTime >= pProduct->m_outputsInfo.m_EndOutputDelay)
 			{
-				m_oOutputsDelayQueue.RemoveHead(&processCount);
 				ProcessOutputs(*pProduct);
 			}
 			else
@@ -2591,7 +2590,7 @@ void SVPPQObject::ProcessResetOutputs()
 		SVProductInfoStruct* pProduct {nullptr};
 		long processCount {0L};
 
-		if (m_oOutputsResetQueue.GetHead(&processCount))
+		if (m_oOutputsResetQueue.RemoveHead(&processCount))
 		{
 			pProduct = GetProductInfoStruct(processCount);
 		}
@@ -2600,7 +2599,6 @@ void SVPPQObject::ProcessResetOutputs()
 		{
 			if (currentTime >= pProduct->m_outputsInfo.m_EndResetDelay)
 			{
-				m_oOutputsResetQueue.RemoveHead(&processCount);
 				ResetOutputs();
 			}
 			else
@@ -2624,7 +2622,7 @@ void SVPPQObject::ProcessDataValidDelay()
 		SVProductInfoStruct* pProduct {nullptr};
 		long processCount {0L};
 
-		if (m_DataValidDelayQueue.GetHead(&processCount))
+		if (m_DataValidDelayQueue.RemoveHead(&processCount))
 		{
 			pProduct = GetProductInfoStruct(processCount);
 		}
@@ -2633,7 +2631,6 @@ void SVPPQObject::ProcessDataValidDelay()
 		{
 			if (currentTime >= pProduct->m_outputsInfo.m_EndDataValidDelay)
 			{
-				m_DataValidDelayQueue.RemoveHead(&processCount);
 				if (nullptr != m_pDataValid)
 				{
 					m_pOutputList->WriteOutputValue(m_pDataValid, pProduct->m_outputsInfo.m_DataValidResult);
@@ -2687,7 +2684,7 @@ void SVPPQObject::ProcessCameraResponses()
 			}
 			++l_CameraIter;
 		}
-	} // if( 0 < m_PendingCameraResponses.size() )
+	}
 
 	while (0 < m_CameraResponseQueue.GetCount())
 	{
