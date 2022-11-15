@@ -30,7 +30,6 @@ HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerRep
 , m_additionalData {rAdditionalData}
 , m_cifXCard((0 != plcNodeID) ? plcNodeID : cCifXNodeId, cmaxPLC_DataSize)
 {
-	memset(&m_previousTriggerData[0], 0, m_previousTriggerData.size());
 	::OutputDebugString("Triggers are received from PLC via CifX card.\n");
 }
 
@@ -60,66 +59,25 @@ HRESULT HardwareTriggerSource::initialize()
 
 void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelOut)
 {
-	///Channel has already been checked
-	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-	if (true == m_inspectionStateQueue.empty() || 0 != m_inspectionStateQueue.front().m_channels[channel].m_objectID)
-	{
-		m_inspectionStateQueue.emplace(InspectionState1 {});
-	}
-	m_inspectionStateQueue.back().m_channels[channel] = std::move(channelOut);
+	m_cifXCard.queueResult(channel, std::move(channelOut));
 }
 
 void HardwareTriggerSource::analyzeTelegramData()
 {
-	while (m_cifXCard.popInputDataQueue())
+	InputData inputData = m_cifXCard.popInputDataQueue();
+	while (TelegramContent::NoneContent != inputData.m_telegram.m_content)
 	{
-		const InputData& rInputData = m_cifXCard.getCurrentInputData();
-		switch (rInputData.m_telegram.m_content)
+		if (TelegramContent::OperationData == inputData.m_telegram.m_content)
 		{
-			case TelegramContent::VersionData:
+			uint32_t triggerOffset = m_cifXCard.getTriggerDataOffset();
+			//If new trigger data check for new triggers
+			if (m_cifXCard.isProtocolInitialized() && 0 != memcmp(&m_inputData.m_dynamicData[0] + triggerOffset, &inputData.m_dynamicData[0] + triggerOffset, cCmdDataSize - triggerOffset))
 			{
-				m_cifXCard.sendVersion();
-				break;
-			}
-			case TelegramContent::TimeSyncData:
-			{
-				break;
-			}
-			case TelegramContent::ConfigurationData:
-			{
-				m_cifXCard.sendConfigList();
-				break;
-			}
-			case TelegramContent::OperationData:
-			{
-				InspectionState1 sendInpectionState;
-
-				{
-					std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-					if (false == m_inspectionStateQueue.empty())
-					{
-						sendInpectionState = std::move(m_inspectionStateQueue.front());
-						m_inspectionStateQueue.pop();
-					}
-				}
-
-				m_cifXCard.sendOperationData(sendInpectionState);
-
-				uint32_t triggerOffset = m_cifXCard.getTriggerDataOffset();
-				//If new trigger data check for new triggers
-				if (m_cifXCard.isProtocolInitialized() && 0 != memcmp(&m_previousTriggerData[0] + triggerOffset, &m_cifXCard.getCurrentInputData().m_dynamicData[0] + triggerOffset, cCmdDataSize - triggerOffset))
-				{
-					memcpy(&m_previousTriggerData[0], &m_cifXCard.getCurrentInputData().m_dynamicData[0], cCmdDataSize);
-					checkForNewTriggers();
-				}
-
-				break;
-			}
-			default:
-			{
-				break;
+				std::swap(m_inputData, inputData);
+				checkForNewTriggers();
 			}
 		}
+		inputData = m_cifXCard.popInputDataQueue();
 	}
 }
 
@@ -152,9 +110,9 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 	if (PlcVersion::PlcData1 == plcVersion)
 	{
 		InspectionCommand1 inspectionCmd;
-		memcpy(&inspectionCmd, &m_cifXCard.getCurrentInputData().m_dynamicData[0], sizeof(inspectionCmd));
+		memcpy(&inspectionCmd, &m_inputData.m_dynamicData[0], sizeof(inspectionCmd));
 		const ChannelIn1& rChannel = inspectionCmd.m_channels[channel];
-		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp, m_cifXCard.getCurrentInputData().m_notificationTime);
+		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp, m_inputData.m_notificationTime);
 
 		bool channelTriggerDataValid = (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
 		channelTriggerDataValid &= m_previousSequenceCode[channel] != rChannel.m_sequence && (0 != rChannel.m_sequence % 2);
@@ -176,9 +134,9 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 	else if (PlcVersion::PlcData2 == plcVersion)
 	{
 		InspectionCommand2 inspectionCmd;
-		memcpy(&inspectionCmd, &m_cifXCard.getCurrentInputData().m_dynamicData[0], sizeof(inspectionCmd));
+		memcpy(&inspectionCmd, &m_inputData.m_dynamicData[0], sizeof(inspectionCmd));
 		const ChannelIn2& rChannel = inspectionCmd.m_channels[channel];
-		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp1, m_cifXCard.getCurrentInputData().m_notificationTime);
+		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp1, m_inputData.m_notificationTime);
 
 		bool channelTriggerDataValid = (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
 		if (channelTriggerDataValid)

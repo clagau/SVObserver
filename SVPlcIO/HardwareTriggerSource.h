@@ -8,7 +8,6 @@
 
 #pragma region Includes
 #include "CifxCard.h"
-#include "InspectionState.h"
 #include "TriggerSource.h"
 #pragma endregion Includes
 
@@ -42,8 +41,7 @@ private:
 	uint32_t m_ProcessDataChanges {0UL};
 	int8_t m_previousSequenceCode[cNumberOfChannels] = { 0, 0, 0, 0 };
 
-	std::array<uint8_t, cCmdDataSize> m_previousTriggerData;
-	std::queue<InspectionState1> m_inspectionStateQueue;
+	InputData m_inputData {};
 
 	CifXCard m_cifXCard;
 	std::string m_additionalData;

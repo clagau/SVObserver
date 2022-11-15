@@ -82,6 +82,13 @@ void CifXCard::readProcessData(uint32_t notification)
 			::SetEvent(m_hTelegramReadEvent);
 		}
 	}
+
+	static bool threadSetPriority {false};
+	if (false == threadSetPriority)
+	{
+		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+		threadSetPriority = true;
+	}
 }
 
 bool CifXCard::popInputDataQueue()

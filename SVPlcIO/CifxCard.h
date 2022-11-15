@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "ConfigDataSet.h"
 #include "InspectionCommand.h"
+#include "InspectionState.h"
 #include "Telegram.h"
 #include "SVStatusLibrary/SourceFileParams.h"
 #include "Triggering/CifxLoadLibrary.h"
@@ -32,7 +33,6 @@ struct InputData
 {
 	InputData() { memset(&m_dynamicData[0], 0, m_dynamicData.size()); }
 	double m_notificationTime {0.0};
-	int32_t m_syncSocRelative {0L};
 	Telegram m_telegram;
 	std::array<uint8_t, cCmdDataSize> m_dynamicData;
 };
@@ -48,14 +48,11 @@ public:
 
 	void readProcessData(uint32_t notification);
 
-	const InputData& getCurrentInputData() { return m_currentInputData; }
-	bool popInputDataQueue();
+	InputData popInputDataQueue();
 
-	void setHandleForTelegramReceptionEvent(HANDLE h) { m_hTelegramReadEvent = h; }
+	void setHandleForTelegramReceptionEvent(HANDLE hEvent) { m_hTelegramReadEvent = hEvent; }
 
-	void sendVersion();
-	void sendConfigList();
-	void sendOperationData(const InspectionState1& rState);
+	void queueResult(uint8_t channel, ChannelOut1&& channelOut);
 
 	bool isProtocolInitialized() { return m_protocolInitialized; }
 	uint32_t getTriggerDataOffset() { return m_triggerDataOffset; }
@@ -67,6 +64,9 @@ private:
 	int32_t SendConfigurationToCifX();
 	int32_t WarmstartAndInitializeCifX();
 
+	void sendVersion(const Telegram& rTelegram, uint16_t plcVersion);
+	void sendConfigList(const Telegram& rTelegram, const ConfigDataSet* const pConfigDataSet);
+	void sendOperationData(const Telegram& rTelegram, const InspectionState1& rState);
 	int32_t SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt);
 	int32_t SendRecvCmdPkt(uint32_t ulCmd);
 	void BuildConfigurationReq(CIFX_PACKET* ptPacket, uint16_t NodeId, uint16_t DataLength);
@@ -92,8 +92,8 @@ private:
 	std::mutex m_cifxMutex;
 	SvTrig::CifxLoadLibrary m_cifxLoadLib;
 	std::queue<InputData> m_inputDataQueue;
-	InputData m_currentInputData;
 	PlcVersion m_plcVersion{ PlcVersion::PlcDataNone };
+	std::queue<InspectionState1> m_inspectionStateQueue;
 	uint32_t m_triggerDataOffset{ 0UL };	//The memory offset in bytes to the trigger data starting from the inspection command struct
 	SvStl::SourceFileParams m_sourceFileParam; //The last recorded source file parameter setting
 

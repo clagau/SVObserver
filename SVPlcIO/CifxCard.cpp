@@ -14,7 +14,6 @@
 #include <Hil_ApplicationCmd.h>
 
 #include "CifXCard.h"
-#include "InspectionState.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
@@ -39,11 +38,6 @@ constexpr uint32_t cVendorId = 0x00000044UL;	///Hilscher Vendor ID
 constexpr uint32_t cProductCode = 1UL;			///CIFX
 constexpr uint32_t cSerialNumber = 0UL;			///Use serial number from SecMem or FDL
 constexpr uint32_t cRevisionNumber = 0UL;
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
-//This is used to check which config set does not match
-ConfigDataSet gPlcConfig[cConfigListSize];
-#endif
 
 void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void* pvUser)
 {
@@ -72,53 +66,81 @@ void CifXCard::readProcessData(uint32_t notification)
 	{
 		return;
 	}
+	if (false == m_protocolInitialized)
+	{
+		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+	}
 
 	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, m_maxPlcDataSize, m_pReadBuffer.get(), cTimeout);
 	if (CIFX_NO_ERROR == result)
 	{
-		InputData inputData;
-		inputData.m_notificationTime = timeStamp;
+		Telegram telegram;
 		uint8_t* pData = m_pReadBuffer.get();
-		memcpy(&inputData.m_telegram, pData, sizeof(Telegram));
+		memcpy(&telegram, pData, sizeof(Telegram));
 		pData += sizeof(Telegram);
 		static uint16_t prevContentID {0U};
 
-		if (prevContentID != inputData.m_telegram.m_contentID)
+		if (prevContentID != telegram.m_contentID)
 		{
-			prevContentID = inputData.m_telegram.m_contentID;
-			switch (inputData.m_telegram.m_content)
+			prevContentID = telegram.m_contentID;
+			switch (telegram.m_content)
 			{
 				case TelegramContent::VersionData:
 				{
-					memcpy(&inputData.m_dynamicData[0], pData, sizeof(PlcVersion));
+					uint16_t plcVersion {0};
+					memcpy(&plcVersion, pData, sizeof(uint16_t));
+					sendVersion(telegram, plcVersion);
 					break;
 				}
 
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
 				case TelegramContent::ConfigurationData:
 				{
-					memcpy(&gPlcConfig, pData, cConfigListSize * sizeof(ConfigDataSet));
+					//This is used to check which config set does not match
+					ConfigDataSet plcConfig[cConfigListSize];
+					memcpy(plcConfig, pData, cConfigListSize * sizeof(ConfigDataSet));
+					sendConfigList(telegram, plcConfig);
+					break;
 				}
-#endif
+
 				case TelegramContent::OperationData:
 				{
+					InputData inputData;
+					inputData.m_notificationTime = timeStamp;
+					inputData.m_telegram = telegram;
 					memcpy(&inputData.m_dynamicData[0], pData, cCmdDataSize);
+					InspectionState1 sendInpectionState;
+
+					{
+						std::lock_guard<std::mutex> guard {m_cifxMutex};
+						if (false == m_inspectionStateQueue.empty())
+						{
+							sendInpectionState = std::move(m_inspectionStateQueue.front());
+							m_inspectionStateQueue.pop();
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
+							std::string text;
+							for (const auto& rChannel : sendInpectionState.m_channels)
+							{
+								text += std::to_string(rChannel.m_objectID);
+								text += ',';
+							}
+							text += '\n';
+							::OutputDebugString(text.c_str());
+#endif
+						}
+						if (m_hTelegramReadEvent != nullptr)
+						{
+							m_inputDataQueue.emplace(std::move(inputData));
+							::SetEvent(m_hTelegramReadEvent);
+						}
+					}
+					sendOperationData(telegram, sendInpectionState);
+
 					break;
 				}
 				default:
 				{
 					break;
 				}
-			}
-			if (m_hTelegramReadEvent != nullptr)
-			{
-				//Reduce lock guard scope
-				{
-					std::lock_guard<std::mutex> guard {m_cifxMutex};
-					m_inputDataQueue.emplace(std::move(inputData));
-				}
-
-				::SetEvent(m_hTelegramReadEvent);
 			}
 		}
 	}
@@ -129,16 +151,16 @@ void CifXCard::readProcessData(uint32_t notification)
 	}
 }
 
-bool CifXCard::popInputDataQueue()
+InputData CifXCard::popInputDataQueue()
 {
+	InputData result {};
 	std::lock_guard<std::mutex> guard {m_cifxMutex};
 	if (false == m_inputDataQueue.empty())
 	{
-		m_currentInputData = m_inputDataQueue.front();
+		result = m_inputDataQueue.front();
 		m_inputDataQueue.pop();
-		return true;
 	}
-	return false;
+	return result;
 }
 
 void CifXCard::closeCifX()
@@ -187,111 +209,15 @@ HRESULT CifXCard::OpenAndInitializeCifX(const std::string& rAdditionalData)
 	return result;
 }
 
-void CifXCard::sendVersion()
+void CifXCard::queueResult(uint8_t channel, ChannelOut1&& channelOut)
 {
-	m_protocolInitialized = false;
-	m_plcVersion = PlcVersion::PlcDataNone;
-	PlcVersion plcVersion{ PlcVersion::PlcData1 };
-	if (0 == memcmp(&plcVersion, &m_currentInputData.m_dynamicData[0], sizeof(PlcVersion)))
+	///Channel has already been checked
+	std::lock_guard<std::mutex> guard {m_cifxMutex};
+	if (true == m_inspectionStateQueue.empty() || 0 != m_inspectionStateQueue.back().m_channels[channel].m_objectID)
 	{
-		m_plcVersion = plcVersion;
+		m_inspectionStateQueue.emplace(InspectionState1 {});
 	}
-	else
-	{
-		plcVersion = PlcVersion::PlcData2;
-		if (0 == memcmp(&plcVersion, &m_currentInputData.m_dynamicData[0], sizeof(PlcVersion)))
-		{
-			m_plcVersion = plcVersion;
-		}
-	}
-
-	const uint8_t* pData = reinterpret_cast<const uint8_t*> (&m_plcVersion);
-	writeResponseData(m_currentInputData.m_telegram, pData, sizeof(PlcVersion));
-
-	SvStl::MessageManager Msg(SvStl::MsgType::Log);
-	SvDef::StringVector msgList;
-	msgList.push_back(std::to_string(LOBYTE(plcVersion)));
-	msgList.push_back(std::to_string(HIBYTE(plcVersion)));
-	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcVersion, msgList, SvStl::SourceFileParams(StdMessageParams));
-	::OutputDebugString("Send Version\n");
-	//Now that the version is known create the config list
-	::OutputDebugString("Create config lists\n");
-	m_configDataSetVector.reserve(2);
-	m_configDataSetVector.emplace_back(TelegramLayout::Layout1, createConfigList(TelegramLayout::Layout1));
-	m_configDataSetVector.emplace_back(TelegramLayout::Layout2, createConfigList(TelegramLayout::Layout2));
-}
-
-void CifXCard::sendConfigList()
-{
-	uint8_t layoutIndex = m_currentInputData.m_telegram.m_layout;
-	if(0 < layoutIndex )
-	{
-		///Layout index is always either 1 or 2
-		layoutIndex = (layoutIndex % 2) == 1 ? 1 : 2;
-		const auto iter = std::find_if(m_configDataSetVector.begin(), m_configDataSetVector.end(), [&layoutIndex](const auto& rEntry) { return rEntry.first == static_cast<TelegramLayout> (layoutIndex); });
-		if(iter != m_configDataSetVector.end() && 0 < iter->second.size())
-		{
-			const uint8_t* pData = reinterpret_cast<const uint8_t*> (&iter->second[0]);
-			writeResponseData(m_currentInputData.m_telegram, pData, sizeof(ConfigDataSet) * cConfigListSize);
-			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			SvDef::StringVector msgList{std::to_string(layoutIndex)};
-			Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcConfigData, msgList, SvStl::SourceFileParams(StdMessageParams));
-			::OutputDebugString("Send config data Layout\n");
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
-			if (cConfigListSize == iter->second.size())
-			{
-				const std::vector<ConfigDataSet>& rConfigList = iter->second;
-				for (int i = 0; i < cConfigListSize; ++i)
-				{
-					if (rConfigList[i].m_byteSize != gPlcConfig[i].m_byteSize ||
-						rConfigList[i].m_dataType != gPlcConfig[i].m_dataType ||
-						rConfigList[i].m_mode != gPlcConfig[i].m_mode ||
-						rConfigList[i].m_startByte != gPlcConfig[i].m_startByte)
-					{
-						std::string text{ _T("ConfigID ") };
-						text += std::to_string(i) + _T(" ==> SVObserver Data: ");
-						text += std::to_string(rConfigList[i].m_byteSize) + ',' + std::to_string(rConfigList[i].m_dataType) + ',' + std::to_string(rConfigList[i].m_mode) + ',' + std::to_string(rConfigList[i].m_startByte);
-						text += _T("<> PLC Data: ");
-						text += std::to_string(gPlcConfig[i].m_byteSize) + ',' + std::to_string(gPlcConfig[i].m_dataType) + ',' + std::to_string(gPlcConfig[i].m_mode) + ',' + std::to_string(gPlcConfig[i].m_startByte) + '\n';
-						::OutputDebugString(text.c_str());
-					}
-				}
-			}
-#endif
-		}
-	}
-}
-
-void CifXCard::sendOperationData(const InspectionState1& rState)
-{
-	if (false == m_protocolInitialized)
-	{
-		m_protocolInitialized = (m_plcVersion != PlcVersion::PlcDataNone);
-		SvStl::MessageManager Msg(SvStl::MsgType::Log);
-		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcOpertaion, SvStl::SourceFileParams(StdMessageParams));
-		::OutputDebugString("Operation mode\n");
-	}
-	//insState2 must declared be here due to pData pointing to it!
-	InspectionState2 insState2;
-	size_t dynamicDataSize {0ULL};
-	const uint8_t* pData {nullptr};
-	if (PlcVersion::PlcData1 == m_plcVersion)
-	{
-		pData = reinterpret_cast<const uint8_t*> (&rState);
-		dynamicDataSize = sizeof(InspectionState1);
-	}
-	else if (PlcVersion::PlcData2 == m_plcVersion)
-	{
-		for (unsigned int i = 0; i < cNumberOfChannels; ++i)
-		{
-			//ChannelOut2 does not have the measurement value array ChannelOut1 so do not copy it
-			memcpy(&insState2.m_channels[i], &rState.m_channels[i], sizeof(ChannelOut2));
-		}
-		pData = reinterpret_cast<const uint8_t*> (&insState2);
-		dynamicDataSize = sizeof(InspectionState2);
-	}
-
-	writeResponseData(m_currentInputData.m_telegram, pData, dynamicDataSize);
+	m_inspectionStateQueue.back().m_channels[channel] = std::move(channelOut);
 }
 
 void CifXCard::setReady(bool ready)
@@ -335,9 +261,9 @@ int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
 	}
 	CHANNEL_INFORMATION channelInfo;
 	m_cifxLoadLib.m_pChannelInfo(m_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
-	std::string firmware{std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision) };
+	std::string firmware {std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision)};
 	std::string protocolType {reinterpret_cast<char*> (channelInfo.abFWName)};
-	m_notifyType =  (rAdditionalData == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
+	m_notifyType = (rAdditionalData == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
 	::OutputDebugString((protocolType + ' ' + firmware + '\n').c_str());
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxVersionInfo, {driverVersion, protocolType, firmware}, SvStl::SourceFileParams(StdMessageParams));
@@ -438,7 +364,6 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 	} while (CIFX_DEV_NOT_RUNNING == result);
 	::OutputDebugString(" -> complete.\n");
 
-
 	/* check CifX state */
 	if ((CIFX_NO_ERROR == result) || (CIFX_DEV_NO_COM_FLAG == result))
 	{
@@ -493,6 +418,106 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 	}
 
 	return result;
+}
+
+void CifXCard::sendVersion(const Telegram& rTelegram, uint16_t plcVersion)
+{
+	m_protocolInitialized = false;
+	m_plcVersion = PlcVersion::PlcDataNone;
+	if (PlcVersion::PlcData1 == static_cast<PlcVersion> (plcVersion))
+	{
+		m_plcVersion = PlcVersion::PlcData1;
+	}
+	else if (PlcVersion::PlcData2 == static_cast<PlcVersion> (plcVersion))
+	{
+		m_plcVersion = PlcVersion::PlcData2;
+	}
+
+	const uint8_t* pData = reinterpret_cast<const uint8_t*> (&m_plcVersion);
+	writeResponseData(rTelegram, pData, sizeof(PlcVersion));
+
+	SvStl::MessageManager Msg(SvStl::MsgType::Log);
+	SvDef::StringVector msgList;
+	msgList.push_back(std::to_string(LOBYTE(plcVersion)));
+	msgList.push_back(std::to_string(HIBYTE(plcVersion)));
+	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcVersion, msgList, SvStl::SourceFileParams(StdMessageParams));
+	::OutputDebugString("Send Version\n");
+	//Now that the version is known create the config list
+	::OutputDebugString("Create config lists\n");
+	m_configDataSetVector.reserve(2);
+	m_configDataSetVector.emplace_back(TelegramLayout::Layout1, createConfigList(TelegramLayout::Layout1));
+	m_configDataSetVector.emplace_back(TelegramLayout::Layout2, createConfigList(TelegramLayout::Layout2));
+}
+
+void CifXCard::sendConfigList(const Telegram& rTelegram, const ConfigDataSet* const pConfigDataSet)
+{
+	uint8_t layoutIndex = rTelegram.m_layout;
+	if (0 < layoutIndex)
+	{
+		///Layout index is always either 1 or 2
+		layoutIndex = (layoutIndex % 2) == 1 ? 1 : 2;
+		const auto iter = std::find_if(m_configDataSetVector.begin(), m_configDataSetVector.end(), [&layoutIndex](const auto& rEntry) { return rEntry.first == static_cast<TelegramLayout> (layoutIndex); });
+		if (iter != m_configDataSetVector.end() && 0 < iter->second.size())
+		{
+			const uint8_t* pData = reinterpret_cast<const uint8_t*> (&iter->second[0]);
+			writeResponseData(rTelegram, pData, sizeof(ConfigDataSet) * cConfigListSize);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			SvDef::StringVector msgList {std::to_string(layoutIndex)};
+			Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcConfigData, msgList, SvStl::SourceFileParams(StdMessageParams));
+			::OutputDebugString("Send config data Layout\n");
+			if (cConfigListSize == iter->second.size())
+			{
+				const std::vector<ConfigDataSet>& rConfigList = iter->second;
+				for (int i = 0; i < cConfigListSize; ++i)
+				{
+					if (rConfigList[i].m_byteSize != pConfigDataSet[i].m_byteSize ||
+						rConfigList[i].m_dataType != pConfigDataSet[i].m_dataType ||
+						rConfigList[i].m_mode != pConfigDataSet[i].m_mode ||
+						rConfigList[i].m_startByte != pConfigDataSet[i].m_startByte)
+					{
+						std::string text {_T("ConfigID ")};
+						text += std::to_string(i) + _T(" ==> SVObserver Data: ");
+						text += std::to_string(rConfigList[i].m_byteSize) + ',' + std::to_string(rConfigList[i].m_dataType) + ',' + std::to_string(rConfigList[i].m_mode) + ',' + std::to_string(rConfigList[i].m_startByte);
+						text += _T("<> PLC Data: ");
+						text += std::to_string(pConfigDataSet[i].m_byteSize) + ',' + std::to_string(pConfigDataSet[i].m_dataType) + ',' + std::to_string(pConfigDataSet[i].m_mode) + ',' + std::to_string(pConfigDataSet[i].m_startByte) + '\n';
+						::OutputDebugString(text.c_str());
+					}
+				}
+			}
+		}
+	}
+}
+
+void CifXCard::sendOperationData(const Telegram& rTelegram, const InspectionState1& rState)
+{
+	if (false == m_protocolInitialized)
+	{
+		m_protocolInitialized = (m_plcVersion != PlcVersion::PlcDataNone);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcOpertaion, SvStl::SourceFileParams(StdMessageParams));
+		::OutputDebugString("Operation mode\n");
+	}
+	//insState2 must declared be here due to pData pointing to it!
+	InspectionState2 insState2;
+	size_t dynamicDataSize {0ULL};
+	const uint8_t* pData {nullptr};
+	if (PlcVersion::PlcData1 == m_plcVersion)
+	{
+		pData = reinterpret_cast<const uint8_t*> (&rState);
+		dynamicDataSize = sizeof(InspectionState1);
+	}
+	else if (PlcVersion::PlcData2 == m_plcVersion)
+	{
+		for (unsigned int i = 0; i < cNumberOfChannels; ++i)
+		{
+			//ChannelOut2 does not have the measurement value array ChannelOut1 so do not copy it
+			memcpy(&insState2.m_channels[i], &rState.m_channels[i], sizeof(ChannelOut2));
+		}
+		pData = reinterpret_cast<const uint8_t*> (&insState2);
+		dynamicDataSize = sizeof(InspectionState2);
+	}
+
+	writeResponseData(rTelegram, pData, dynamicDataSize);
 }
 
 int32_t CifXCard::SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)

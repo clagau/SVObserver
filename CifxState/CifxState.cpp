@@ -172,6 +172,7 @@ void printMessage(CifxMessage messageID, int32_t result = 0, LPCTSTR pText = nul
 
 void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void* )
 {
+	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 	if (g_notificationType == notification)
 	{
 		double timeStamp = GetTimeStamp();
