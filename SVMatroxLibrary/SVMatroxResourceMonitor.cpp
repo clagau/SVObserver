@@ -13,7 +13,6 @@
 #include "SVMatroxResourceMonitor.h"
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxErrorEnum.h"
-#include "SVUtilityLibrary/StringHelper.h"
 
 
 #ifdef _DEBUG
