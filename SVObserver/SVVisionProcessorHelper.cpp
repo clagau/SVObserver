@@ -1192,7 +1192,10 @@ void SVVisionProcessorHelper::ProcessNotification(SvPb::GetNotificationStreamRes
 		bool allNotifications = it->m_notifyList.empty();
 		if (allNotifications || isNotifyTypeInList)
 		{
-			it->m_observer.onNext(std::move(response));
+			//Always make a copy as we need it multiple times
+			SvPb::GetNotificationStreamResponse copyResponse;
+			copyResponse.CopyFrom(response);
+			it->m_observer.onNext(std::move(copyResponse));
 		}
 		++it;
 	}
