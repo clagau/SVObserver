@@ -18,7 +18,7 @@
 #include "SVObserver_i.h"
 #include "SVCommand.h"
 
-#include "SVUtilityLibrary/DirectoryUtilities.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
@@ -328,7 +328,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 
 	try
 	{
-		if (SvUl::CreateDirPath(SvStl::GlobalPath::Inst().GetTempPath().c_str()))
+		if (SvFs::CreateDirPath(SvStl::GlobalPath::Inst().GetTempPath().c_str()))
 		{
 			bool bRet = false;
 			CFileException* ex = new CFileException;
@@ -516,7 +516,7 @@ STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlo
 	Path = szDrive;
 	Path += szDir;
 
-	SvUl::CreateDirPath(Path.c_str());
+	SvFs::CreateDirPath(Path.c_str());
 
 	CFile binFile;
 	CFileException l_FileException;

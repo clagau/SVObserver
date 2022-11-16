@@ -19,7 +19,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVFileSystemLibrary/FilepathUtilities.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -114,7 +114,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		if (athArchivePathAndName.areTokensValid())
 		{
 			std::string TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFilepath );
-			if (false == pathCanProbablyBeCreatedOrExistsAlready(TmpArchiveFileName.c_str()))
+			if (false == SvFs::pathCanProbablyBeCreatedOrExistsAlready(TmpArchiveFileName.c_str()))
 			{
 				pathErrorDescriptionId = SvStl::Tid_InvalidKeywordsInPath;
 			}
@@ -126,7 +126,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	}
 	else
 	{	//not using Keywords 
-		if (false == pathCanProbablyBeCreatedOrExistsAlready(ArchiveFilepath))
+		if (false == SvFs::pathCanProbablyBeCreatedOrExistsAlready(ArchiveFilepath))
 		{
 			pathErrorDescriptionId = SvStl::Tid_InvalidPath;
 		}
@@ -343,16 +343,16 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 
 void SVTADlgArchiveResultsPage::OnBrowse() 
 {
-	SVFileNameClass	folderpathPart1;
+	SvFs::FileHelper	folderpathPart1;
 
 	//get current path
 	CString Text;
 	m_resultFolderpathPart1Edit.GetWindowText( Text );
 	std::string firstPart = Text.GetString();
 
-	SVCheckPathDir( firstPart.c_str(), TRUE );
+	SvFs::ensureDirectoryExists( firstPart.c_str(), TRUE );
 
-	folderpathPart1.SetFileType(SV_DEFAULT_FILE_TYPE);
+	folderpathPart1.SetFileType(SvFs::FileType::defaultType);
 	folderpathPart1.SetDefaultPathName(firstPart.c_str() );
 	if (folderpathPart1.SelectPath())
 	{

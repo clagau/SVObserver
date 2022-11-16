@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVSaveToolSetImageDialog.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
@@ -92,11 +92,11 @@ namespace SvOg
 			m_availableImagesComboCtrl.GetLBText(index, imageName);
 			if (!imageName.IsEmpty())
 			{
-				SVFileNameClass	svfncImageFile;
+				SvFs::FileHelper	svfncImageFile;
 			
 				std::string Path = AfxGetApp()->GetProfileString(	_T("Settings"), _T("ImagesFilePath"), _T("C:\\Images")).GetString();	// Default
 			
-				svfncImageFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
+				svfncImageFile.SetFileType(SvFs::FileType::SourceFile);
 				svfncImageFile.SetPathName( Path.c_str() );
 			
 				bool bResult = svfncImageFile.SaveFile(); // Show Save File Dialog

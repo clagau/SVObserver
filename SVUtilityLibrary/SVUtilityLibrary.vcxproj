@@ -158,7 +158,6 @@
     <ClCompile Include="ArchiveExtractCallback.cpp" />
     <ClCompile Include="ArchiveUpdateCallback.cpp" />
     <ClCompile Include="AuditFiles.cpp" />
-    <ClCompile Include="DirectoryUtilities.cpp" />
     <ClCompile Include="GlobalConstantData.cpp" />
     <ClCompile Include="Heapwalk.cpp" />
     <ClCompile Include="InStreamWrapper.cpp" />
@@ -189,7 +188,6 @@
     <ClInclude Include="ArchiveExtractCallback.h" />
     <ClInclude Include="ArchiveUpdateCallback.h" />
     <ClInclude Include="AuditFiles.h" />
-    <ClInclude Include="DirectoryUtilities.h" />
     <ClInclude Include="GeoHelper.h" />
     <ClInclude Include="GlobalConstantData.h" />
     <ClInclude Include="Heapwalk.h" />

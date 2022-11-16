@@ -125,7 +125,7 @@ namespace SvOg
 		std::string Path = AfxGetApp()->GetProfileString(	_T("Settings"),_T( "ImagesFilePath" ), _T("C:\\Images")).GetString();
 		
 		m_svfncImageSourceFile.SetPathName(Path.c_str());
-		m_svfncImageSourceFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
+		m_svfncImageSourceFile.SetFileType(SvFs::FileType::SourceFile);
 		if (m_svfncImageSourceFile.SelectFile())
 		{
 			// Save the directory selected from..

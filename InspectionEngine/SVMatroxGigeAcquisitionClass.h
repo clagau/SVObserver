@@ -35,7 +35,7 @@ public:
 	virtual HRESULT Destroy() override;
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const override;
-	virtual HRESULT LoadFiles(const SVFileNameArrayClass &rArray ) override;
+	virtual HRESULT LoadFiles(const SvFs::FileNameContainer &rArray ) override;
 	virtual HRESULT ReadCameraFile( const std::string& filename, SVDeviceParamCollection& rParams ) override;
 
 	virtual HRESULT CreateLightReference( int iBands ) override;

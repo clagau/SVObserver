@@ -50,7 +50,7 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "Operators/SVConditional.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
 #include "SVIOLibrary/SVOutputObject.h"
 #include "SVMessage/SVMessage.h"

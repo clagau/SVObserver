@@ -277,8 +277,8 @@ void SVOCameraDlg::OnBtnPropVc()
 						SvIe::SVAcquisitionClassPtr psvDevice(SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigName.c_str()));
 						if (nullptr != psvDevice)
 						{
-							SVFileNameArrayClass svFiles;
-							SVFileNameClass svFile;
+							SvFs::FileNameContainer svFiles;
+							SvFs::FileHelper svFile;
 							svFile.SetFullFileName(pCameraObj->GetCameraFile().c_str());
 							svFiles.push_back(svFile);
 							if (false == pCameraObj->GetSequenceCameraFile().empty())

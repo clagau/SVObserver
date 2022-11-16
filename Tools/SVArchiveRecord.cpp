@@ -13,7 +13,7 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
@@ -86,7 +86,7 @@ void SVArchiveRecord::BuildDefaultImageFilePaths()
 
 	m_ImagePathRoot = m_pArchiveTool->getCurrentImagePathRoot();
 
-	SVFileNameClass svFileName;
+	SvFs::FileHelper svFileName;
 	svFileName.SetPathName(m_ImagePathRoot.c_str());
 
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
@@ -138,7 +138,7 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile)
 		return E_FAIL;
 	}
 
-	SVFileNameClass svFileName;
+	SvFs::FileHelper svFileName;
 	rImageFile = m_FileNames[m_lLastIndex];
 
 	return S_OK;
@@ -152,7 +152,7 @@ HRESULT SVArchiveRecord::GetNextAlternativeImageFilePath(std::string& rImageFile
 	{
 		return  -1902;
 	}
-	SVFileNameClass svFileName;
+	SvFs::FileHelper svFileName;
 	
 	rImageDirectoryPath = m_pArchiveTool->alternativeImageDirectory(m_ImagePathRoot);
 	//std::filesystem::create_directories(imageDirectoryPath);

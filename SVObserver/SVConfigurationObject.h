@@ -60,7 +60,7 @@ namespace  SvXml
 
 class SVDeviceParamCollection;
 class SVDeviceParam;
-class SVFileNameArrayClass;
+class SvFs::FileNameContainer;
 class SVIOController;
 class SVNavigateTree;
 class SVRemoteOutputGroup;
@@ -191,11 +191,11 @@ public:
 	SVInputObjectList* GetInputObjectList() const { return (nullptr != m_pInputObjectList) ? m_pInputObjectList.get() : nullptr; }
 	SVOutputObjectList* GetOutputObjectList() const { return (nullptr != m_pOutputObjectList) ? m_pOutputObjectList.get() : nullptr; }
 
-	std::list<SVFileNameClass>& getAdditionalFiles() { return m_AdditionalFiles; }
+	std::list<SvFs::FileHelper>& getAdditionalFiles() { return m_AdditionalFiles; }
 
 	HRESULT RebuildOutputObjectList();
 
-	bool AddAcquisitionDevice(LPCTSTR szName, const SVFileNameArrayClass& rsvFiles,
+	bool AddAcquisitionDevice(LPCTSTR szName, const SvFs::FileNameContainer& rsvFiles,
 		const SVLightReference& rsvLight,
 		const SVLut& rLut,
 		const SVDeviceParamCollection* rpDeviceParams);
@@ -205,7 +205,7 @@ public:
 
 	bool RemoveAcquisitionDevice(LPCTSTR szName);
 	bool GetAcquisitionDevice(LPCTSTR szName,
-		SVFileNameArrayClass*& pFiles,
+		SvFs::FileNameContainer*& pFiles,
 		SVLightReference*& pLight,
 		SVLut*& rpLut,
 		SVDeviceParamCollection*& rpDeviceParams) const;
@@ -213,7 +213,7 @@ public:
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceEndPosition();
 	void GetAcquisitionDeviceNextAssoc(SVAcquisitionDeviceMap::const_iterator& rNextPosition, std::string& rKey) const;
 	void GetAcquisitionDeviceNextAssoc(SVAcquisitionDeviceMap::const_iterator& rNextPosition, std::string& rKey,
-		SVFileNameArrayClass*& pFiles,
+		SvFs::FileNameContainer*& pFiles,
 		SVLightReference*& pLight,
 		SVLut*& rpLut,
 		SVDeviceParamCollection*& rpDeviceParams) const;
@@ -433,7 +433,7 @@ private:
 	//************************************
 	void ConvertColorToStandardProductType(bool& rConfigType);
 
-	HRESULT LoadAcquisitionDeviceFilename(SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SVFileNameArrayClass& rFileArray);
+	HRESULT LoadAcquisitionDeviceFilename(SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SvFs::FileNameContainer& rFileArray);
 
 	void SaveFileAcquisitionConfiguration(SvOi::IObjectWriter& rWriter, const SVDeviceParamCollection& rDeviceParams) const;
 	HRESULT LoadFileAcquisitionConfiguration(SVTreeType& rTree, SVTreeType::SVBranchHandle htiBoardChild, long& lNumAcqDig);
@@ -475,7 +475,7 @@ private:
 	void PpqTimer(const std::string& rName, double timestamp) const;
 
 #pragma region Member Variables
-	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
+	std::list<SvFs::FileHelper>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	std::unique_ptr<SVIOController> m_pIOController;
 	std::unique_ptr<SVInputObjectList> m_pInputObjectList;
 	std::unique_ptr<SVOutputObjectList> m_pOutputObjectList;

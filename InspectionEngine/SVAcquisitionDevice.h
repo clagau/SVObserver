@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
+#include "FilesystemUtilities/FileHelperContainer.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVOLibrary/SVLut.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
@@ -27,7 +27,7 @@ public:
 	SVConfigurationAcquisitionDeviceInfoStruct();
 	~SVConfigurationAcquisitionDeviceInfoStruct();
 
-	SVFileNameArrayClass msvFiles;
+	SvFs::FileNameContainer msvFiles;
 	SVLightReference msvLightArray;
 	SVLut mLut;
 	SVDeviceParamCollection mDeviceParams;

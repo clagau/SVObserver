@@ -22,7 +22,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVOLibrary/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
@@ -99,7 +99,7 @@ void SVAcquisitionClass::ClearDevice()
 
 	for (long l = static_cast<long> (mFiles.size() - 1); -1 < l; l--)
 	{
-		SVFileNameManagerClass::Instance().RemoveItem(&(mFiles[l]));
+		SvFs::FileHelperManager::Instance().RemoveItem(&(mFiles[l]));
 	}
 
 	m_SingleGrabHandle.reset();
@@ -129,7 +129,7 @@ HRESULT SVAcquisitionClass::Destroy()
 
 	for (long l = static_cast<long> (mFiles.size() - 1); -1 < l; l--)
 	{
-		SVFileNameManagerClass::Instance().RemoveItem(&(mFiles[l]));
+		SvFs::FileHelperManager::Instance().RemoveItem(&(mFiles[l]));
 	}
 
 	return hrOk;
@@ -264,11 +264,11 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::LoadFiles(const SVFileNameArrayClass &rArray)
+HRESULT SVAcquisitionClass::LoadFiles(const SvFs::FileNameContainer &rArray)
 {
 	for (long l = static_cast<long> (mFiles.size() - 1); -1 < l; l--)
 	{
-		SVFileNameManagerClass::Instance().RemoveItem(&(mFiles[l]));
+		SvFs::FileHelperManager::Instance().RemoveItem(&(mFiles[l]));
 	}
 
 	mFiles = rArray;
@@ -276,7 +276,7 @@ HRESULT SVAcquisitionClass::LoadFiles(const SVFileNameArrayClass &rArray)
 	bool LogOnly(SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD));
 	for (long l = 0; l < static_cast<long> (mFiles.size()); ++l)
 	{
-		if (false == SVFileNameManagerClass::Instance().AddItem(&(mFiles[l])))
+		if (false == SvFs::FileHelperManager::Instance().AddItem(&(mFiles[l])))
 		{
 			if (LogOnly)
 			{
@@ -425,7 +425,7 @@ HRESULT SVAcquisitionClass::UnloadFiles()
 
 	for (long l = static_cast<long> (mFiles.size() - 1); -1 < l; l--)
 	{
-		SVFileNameManagerClass::Instance().RemoveItem(&(mFiles[l]));
+		SvFs::FileHelperManager::Instance().RemoveItem(&(mFiles[l]));
 	}
 
 	mFiles.clear();
@@ -449,7 +449,7 @@ HRESULT SVAcquisitionClass::GetFileNameArraySize(long &rlSize) const
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetFileName(long lIndex, SVFileNameClass &rFileName) const
+HRESULT SVAcquisitionClass::GetFileName(long lIndex, SvFs::FileHelper &rFileName) const
 {
 	HRESULT hrOk = S_FALSE;
 

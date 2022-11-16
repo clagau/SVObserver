@@ -23,7 +23,7 @@
 #include "SVUtilityLibrary/SVPoint.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "Definitions/GlobalConst.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/GeoHelper.h"
 #pragma endregion Includes
@@ -725,9 +725,9 @@ namespace SvOg
 	{
 		bool bOk = false;
 
-		SVFileNameClass svfncFileName;
+		SvFs::FileHelper svfncFileName;
 
-		svfncFileName.SetFileType( SV_PATTERN_MODEL_FILE_TYPE );
+		svfncFileName.SetFileType( SvFs::FileType::patternModel );
 
 		//
 		// Try to read the current image file path name from registry...

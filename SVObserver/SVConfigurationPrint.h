@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
@@ -133,7 +133,7 @@ protected:
 
 	BOOL m_isRealPrint;
 
-	SVFileNameClass m_svfnFileName;    // SES 11-Jan-2001
+	SvFs::FileHelper m_svfnFileName;    // SES 11-Jan-2001
 
 	bool m_isPrintToStringBuffer;
 	std::string* m_pBuffer;

@@ -42,7 +42,7 @@
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVFileSystemLibrary/ImageFileFormats.h"
+#include "FilesystemUtilities/ImageFileFormats.h"
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"

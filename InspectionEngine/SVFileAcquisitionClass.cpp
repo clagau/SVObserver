@@ -96,7 +96,7 @@ HRESULT SVFileAcquisitionClass::SetDeviceParameter(int parameter, const _variant
 
 
 
-HRESULT SVFileAcquisitionClass::LoadFiles(const SVFileNameArrayClass& )
+HRESULT SVFileAcquisitionClass::LoadFiles(const SvFs::FileNameContainer& )
 {
 	HRESULT hrOk = S_OK;
 	GetCameraImageInfo( &msvImageInfo );

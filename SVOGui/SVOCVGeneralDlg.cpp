@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVOCVGeneralDlg.h"
 #include "SVOCVSheet.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -94,9 +94,9 @@ namespace SvOg
 
 	void SVOCVGeneralDlg::OnFontBrowseCmd() 
 	{
-		SVFileNameClass svfncFileName;
+		SvFs::FileHelper svfncFileName;
 
-		svfncFileName.SetFileType( SV_OCV_FONT_FILE_TYPE );
+		svfncFileName.SetFileType( SvFs::FileType::ocvFont );
 
 		//
 		// Try to read the current image file path name from registry...
@@ -160,9 +160,9 @@ namespace SvOg
 
 	void SVOCVGeneralDlg::OnConstraintsBrowseCmd() 
 	{
-		SVFileNameClass svfncFileName;
+		SvFs::FileHelper svfncFileName;
 
-		svfncFileName.SetFileType( SV_OCV_CONSTRAINTS_FILE_TYPE );
+		svfncFileName.SetFileType( SvFs::FileType::ocvConstraints );
 
 		//
 		// Try to read the current image file path name from registry...
@@ -227,9 +227,9 @@ namespace SvOg
 
 	void SVOCVGeneralDlg::OnControlsBrowseCmd() 
 	{
-		SVFileNameClass svfncFileName;
+		SvFs::FileHelper svfncFileName;
 
-		svfncFileName.SetFileType( SV_OCV_CONTROLS_FILE_TYPE );
+		svfncFileName.SetFileType( SvFs::FileType::ocvControls );
 
 		//
 		// Try to read the current image file path name from registry...

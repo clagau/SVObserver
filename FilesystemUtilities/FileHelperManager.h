@@ -1,31 +1,25 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2003 by Körber Pharma Inspection GmbH. All Rights Reserved
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVFileNameManagerClass
-//* .File Name       : $Workfile:   SVFileNameManagerClass.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:38:16  $
-//******************************************************************************
+///\copyright 2003 by Körber Pharma Inspection GmbH. All Rights Reserved
+///\file FileHelperManager.h
 
 #pragma once
 
-class SVFileNameClass;
+#include "FileHelperPointerContainer.h"
 
-#include "SVFileNameLockablePointerArrayClass.h"
+namespace SvFs
+{
+class FileHelper;
 
 //This class maintains a list of object global to the 
 //application.  This class is responsible for copying the 
 //appropriate files to the configuration and run directories.
-class SVFileNameManagerClass 
+class FileHelperManager
 {
 private:
 	// This method assigns the default values to the class's attributes.
-	SVFileNameManagerClass();
+	FileHelperManager();
 
 public:
-	static SVFileNameManagerClass& Instance();
+	static FileHelperManager& Instance();
 
 	//list of file names contained within the vector.
 	SvDef::StringVector GetFileNameList();
@@ -33,7 +27,7 @@ public:
 	//This operator copies the file from the selected 
 	//location to the configuration and run directory as 
 	//necessary.
-	bool LoadItem(SVFileNameClass* pFileName);
+	bool LoadItem(FileHelper* pFileName);
 
 	//This operator exposes the string contained in the 
 	//gcsConfigurationPathName application attribute.
@@ -53,25 +47,25 @@ public:
 	//parameter to the method.
 	bool SetConfigurationPathName(LPCTSTR PathName);
 
-	//This operator will add a pointer to a SVFileNameClass 
+	//This operator will add a pointer to a FileHelper 
 	//object to the application file list.  The miCurrentItem 
 	//index will be set to this element.
-	bool AddItem(SVFileNameClass* pFileName);
+	bool AddItem(FileHelper* pFileName);
 
 	//This operator will remove a pointer to a 
-	//SVFileNameClass object from the application file list.  
+	//FileHelper object from the application file list.  
 	//The miCurrentItem index will be set to the proceeding 
 	//element.
-	bool RemoveItem(const SVFileNameClass* const pFileName);
+	bool RemoveItem(const FileHelper* const pFileName);
 
 	//This operator will search the global application list 
 	//for a match for the pointer address.  It will reset the 
 	//array index pointer to the appropriate array element.
-	static bool FindItem(const SVFileNameClass* const pFileName);
+	static bool FindItem(const FileHelper* const pFileName);
 
 	//This operator will return the pointer address to the 
 	//appropriate file object at the current array index.
-	static SVFileNameClass* GetItem();
+	static FileHelper* GetItem();
 
 	//This operator creates the full path tree if it does not 
 	//exist.
@@ -84,6 +78,7 @@ private:
 
 	std::string m_ConfigurationPathName; // Configuration Path Name variable
 	std::string m_RunPathName; // Run Path Name variable
-	SVFileNameLockablePointerArrayClass m_svFileNameList; // File Name List
+	FileHelperPointerContainer m_svFileNameList; // File Name List
 	int m_iCurrentItem; //This attribute contains the value of the current position in the file name list.
 };
+}

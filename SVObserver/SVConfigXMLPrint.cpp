@@ -268,7 +268,7 @@ void SVConfigXMLPrint::WriteCamera(Writer writer, SvIe::SVVirtualCamera* pCamera
 void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SvIe::SVVirtualCamera* pCamera) const
 {
 	writer->WriteStartElement(nullptr, L"HardwareAcquisition", nullptr);
-	SVFileNameArrayClass* pfnac = nullptr;
+	SvFs::FileNameContainer* pfnac = nullptr;
 	SVLightReference* plrcDummy = nullptr;
 	SVLut* plutDummy = nullptr;
 	SVDeviceParamCollection* pDeviceParams = nullptr;

@@ -14,7 +14,7 @@
 #include "SVUtilitiesCustomizeDialog.h"
 #include "SVObserver.h"
 #include "SVUtilities.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -353,9 +353,9 @@ void SVUtilitiesCustomizeDialog::OnCustomizeDelete()
 
 void SVUtilitiesCustomizeDialog::OnCustomizeCommandSelect() 
 {
-	SVFileNameClass	svfncCommand;
+	SvFs::FileHelper	svfncCommand;
 
-	svfncCommand.SetFileType(SV_DEFAULT_FILE_TYPE);
+	svfncCommand.SetFileType(SvFs::FileType::defaultType);
 	if (svfncCommand.SelectFile())
 	{
 		m_Command = svfncCommand.GetFullFileName().c_str();
@@ -366,9 +366,9 @@ void SVUtilitiesCustomizeDialog::OnCustomizeCommandSelect()
 
 void SVUtilitiesCustomizeDialog::OnCustomizeDirectorySelect() 
 {
-	SVFileNameClass	svfncWorkingDirectory;
+	SvFs::FileHelper	svfncWorkingDirectory;
 
-	svfncWorkingDirectory.SetFileType(SV_DEFAULT_FILE_TYPE);
+	svfncWorkingDirectory.SetFileType(SvFs::FileType::defaultType);
 
 	if (svfncWorkingDirectory.SelectPath())
 	{

@@ -69,9 +69,6 @@
     <ClCompile Include="AuditFiles.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="DirectoryUtilities.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleInfo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -189,9 +186,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="AuditFiles.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectoryUtilities.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ModuleInfo.h">

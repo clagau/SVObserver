@@ -16,7 +16,7 @@
 #include "SVMatroxBuffer.h"
 #include "SVMatroxErrorEnum.h"
 #include "Definitions/SVMatroxSimpleEnums.h"
-#include "SVFileSystemLibrary/ImageFileFormats.h"
+#include "FilesystemUtilities/ImageFileFormats.h"
 #include "SVMatroxBufferCreateExtStruct.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes

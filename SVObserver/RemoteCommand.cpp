@@ -14,7 +14,7 @@
 #include "ConfigurationOuttakes.h"
 #include "RemoteCommand.h"
 #include "SVVisionProcessorHelper.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "Definitions/SVIMCommand.h"
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/SVIMCommand.h"
@@ -121,7 +121,7 @@ std::string GlobalRCGetConfigurationName(bool runPath)
 
 	if(runPath)
 	{
-		SVFileNameClass svFileName;
+		SvFs::FileHelper svFileName;
 		svFileName.SetFullFileName(Result.c_str());
 
 		if(!svFileName.GetFileNameOnly().empty())

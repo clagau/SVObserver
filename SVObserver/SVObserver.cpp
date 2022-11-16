@@ -51,8 +51,8 @@
 #include "Definitions/TextDefinesSvDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
-#include "SVFileSystemLibrary/FilepathUtilities.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVMFCControls/DisplayMessageBox.h"
@@ -245,12 +245,12 @@ BOOL SVObserverApp::InitInstance()
 	}
 #endif //_DEBUG
 
-	//Initializing  must be before first use of  MessageNotification::FireNotify which is i.e called from CheckDrive 
+	//Initializing  must be before first use of  MessageNotification::FireNotify which is i.e called from checkDrive 
 	startInstances();
 	SVDirectX::Instance().Initialize();
 
 	// Check for proper setup of V: for SVRemoteControl
-	if (S_OK != CheckDrive(SvStl::GlobalPath::Inst().GetPathOnRamDrive().c_str()))
+	if (S_OK != SvFs::checkDrive(SvStl::GlobalPath::Inst().GetPathOnRamDrive().c_str()))
 	{
 		return false;
 	}
@@ -592,18 +592,18 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	}
 
 	// If not loading from the run path then delete all files in that path
-	if (0 != SvUl::CompareNoCase(loadPath, std::string(SVFileNameManagerClass::Instance().GetRunPathName() + "\\")))
+	if (0 != SvUl::CompareNoCase(loadPath, std::string(SvFs::FileHelperManager::Instance().GetRunPathName() + "\\")))
 	{
 		// Clean up Execution Directory...
 		// Check path, create if necessary and delete contents...
-		InitPath(std::string(SVFileNameManagerClass::Instance().GetRunPathName() + "\\").c_str(), true, true);
+		InitPath(std::string(SvFs::FileHelperManager::Instance().GetRunPathName() + "\\").c_str(), true, true);
 	}
 
 	//Is the file of type packed config then we need to first unzip the file into the run folder
 	if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cPackedConfigExtension)))
 	{
 		SvDef::StringVector RunFiles;
-		if (SvUl::unzipAll(FileName, SVFileNameManagerClass::Instance().GetRunPathName(), RunFiles))
+		if (SvUl::unzipAll(FileName, SvFs::FileHelperManager::Instance().GetRunPathName(), RunFiles))
 		{
 			//Find the svx file
 			for (const auto& rFile : RunFiles)
@@ -789,7 +789,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 void SVObserverApp::RemoveUnusedFiles()
 {
-	SVFileNameManagerClass::Instance().RemoveUnusedFiles();
+	SvFs::FileHelperManager::Instance().RemoveUnusedFiles();
 }
 
 bool SVObserverApp::Logout(bool)
@@ -806,11 +806,11 @@ bool SVObserverApp::Logout(bool)
 	return false;
 }
 
-bool SVObserverApp::InitPath(LPCTSTR PathName, bool CreateIfDoesNotExist /*= true*/, bool DeleteContents /*= true*/)
+bool SVObserverApp::InitPath(LPCTSTR PathName, bool createIfMissing /*= true*/, bool DeleteContents /*= true*/)
 {
 	if (nullptr != PathName)
 	{
-		if (SVCheckPathDir(PathName, CreateIfDoesNotExist))
+		if (SvFs::ensureDirectoryExists(PathName, createIfMissing))
 		{
 			if (DeleteContents)
 			{
@@ -834,7 +834,7 @@ bool SVObserverApp::InitPath(LPCTSTR PathName, bool CreateIfDoesNotExist /*= tru
 							// Not identical with boot directory...
 							// Delete contents of this directory...
 							DeleteName += _T("*.*");
-							return SVDeleteFiles(DeleteName.c_str(), true);
+							return SvFs::deleteFiles(DeleteName.c_str(), true);
 						}
 					}
 				}
@@ -1344,7 +1344,7 @@ HRESULT SVObserverApp::SendCameraParameters()
 	{
 		SVDeviceParamCollection* pDeviceParams = nullptr;
 
-		SVFileNameArrayClass* pDummyFiles = nullptr;
+		SvFs::FileNameContainer* pDummyFiles = nullptr;
 		SVLightReference* pDummyLight = nullptr;
 		SVLut* pDummyLut = nullptr;
 

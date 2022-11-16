@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVOGuiUtility\PictureDisplay.h"
 #include "SVOGuiUtility\ImageController.h"
 #include "SVOGuiUtility\DataController.h"
@@ -88,7 +88,7 @@ protected:
 	//}}AFX_DATA
 
 	SvMc::SVMaskEditor* m_pMaskEditorCtl;
-	SVFileNameClass	m_svfnFileName;    // SES 15-Jan-2001
+	SvFs::FileHelper	m_svfnFileName;    // SES 15-Jan-2001
 
 	static UINT_PTR CALLBACK ColorDlgHookFn(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 

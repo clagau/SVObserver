@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVOCVSheet.h"
 #include "SVOCVMatchDlg.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
 
 #pragma endregion Includes
@@ -128,9 +128,9 @@ namespace SvOg
 
 	void SVOCVMatchDlg::OnFontBrowseCmd() 
 	{
-		SVFileNameClass svfncFileName;
+		SvFs::FileHelper svfncFileName;
 
-		svfncFileName.SetFileType( SV_OCV_MATCH_STRING_FILE_TYPE );
+		svfncFileName.SetFileType( SvFs::FileType::ocvMatch );
 
 		//
 		// Try to read the current image file path name from registry...

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVStringValueObjectClass.h"
 #pragma endregion Includes
 
@@ -40,7 +40,7 @@ protected:
 private:
 	void LocalInitialize();
 
-	SVFileNameClass m_FileName;
+	SvFs::FileHelper m_FileName;
 };
 
 } //namespace SvVol

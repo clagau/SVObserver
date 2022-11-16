@@ -13,7 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVFileNameValueObjectClass.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #pragma endregion Includes
 
 namespace SvVol
@@ -56,7 +56,7 @@ SVFileNameValueObjectClass& SVFileNameValueObjectClass::operator = ( const SVFil
 
 SVFileNameValueObjectClass::~SVFileNameValueObjectClass()
 {
-	SVFileNameManagerClass::Instance().RemoveItem(&m_FileName);
+	SvFs::FileHelperManager::Instance().RemoveItem(&m_FileName);
 }
 
 HRESULT SVFileNameValueObjectClass::SetValue( const std::string& rValue, int Index /*= -1*/ )
@@ -67,7 +67,7 @@ HRESULT SVFileNameValueObjectClass::SetValue( const std::string& rValue, int Ind
 	if ( S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result )
 	{
 		m_FileName.SetFullFileName( rValue.c_str() );
-		SVFileNameManagerClass::Instance().LoadItem( &m_FileName );
+		SvFs::FileHelperManager::Instance().LoadItem( &m_FileName );
 		Result = __super::SetValue( m_FileName.GetFullFileName(), Index );
 	}
 	
@@ -93,7 +93,7 @@ void SVFileNameValueObjectClass::LocalInitialize()
 	
 	init();
 
-	SVFileNameManagerClass::Instance().AddItem(&m_FileName);
+	SvFs::FileHelperManager::Instance().AddItem(&m_FileName);
 }
 
 } //namespace SvVol

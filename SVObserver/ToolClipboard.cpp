@@ -27,7 +27,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "ObjectInterfaces/IObjectWriter.h"
-#include "SVFileSystemLibrary/FilepathUtilities.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -169,7 +169,7 @@ std::string ToolClipboard::readXmlToolData()
 	std::string ClipboardData = clipboardDataToString();
 	std::string baseFilePath(SvStl::GlobalPath::Inst().GetTempPath().c_str());
 
-	writeStringToFile(m_zipFilePath, ClipboardData, false);
+	SvFs::writeStringToFile(m_zipFilePath, ClipboardData, false);
 
 	SvDef::StringVector containedFilepaths;
 	if (!SvUl::unzipAll(m_zipFilePath, SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
@@ -181,7 +181,7 @@ std::string ToolClipboard::readXmlToolData()
 	::DeleteFile(m_zipFilePath.c_str());
 	moveDependencyFilesToRunPath(containedFilepaths);
 
-	return readContentFromFileAndDelete(xmlFilePath());
+	return SvFs::readContentFromFileAndDelete(xmlFilePath());
 }
 
 
@@ -261,7 +261,7 @@ std::string ToolClipboard::createToolDefinitionString(const std::vector<uint32_t
 	
 	::DeleteFile(xmlFilePath().c_str());
 
-	return readContentFromFileAndDelete(m_zipFilePath);
+	return SvFs::readContentFromFileAndDelete(m_zipFilePath);
 }
 
 SvDef::StringVector ToolClipboard::streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds) const
@@ -308,7 +308,7 @@ SvDef::StringVector ToolClipboard::streamToolsToXmlFile(const std::vector<uint32
 
 	filepaths.insert(filepaths.end(), DependencyFilepaths.begin(), DependencyFilepaths.end());
 
-	writeStringToFile(xmlFilePath(), MemoryStream.str(), true);
+	SvFs::writeStringToFile(xmlFilePath(), MemoryStream.str(), true);
 
 	filepaths.emplace_back(xmlFilePath());
 

@@ -662,9 +662,9 @@ void SVMainFrame::OnFileOpenSVC()
 	// Proof user rights...
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION))
 	{
-		SVFileNameClass svFileName;
+		SvFs::FileHelper svFileName;
 
-		svFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
+		svFileName.SetFileType(SvFs::FileType::svzConfig);
 		//
 		// Try to read the current image file path name from registry...
 		//

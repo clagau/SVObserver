@@ -448,13 +448,13 @@ HRESULT SVRemoteOutputDataController::ValidateInputs()
 					if( nullptr == l_pInputVO )
 					{
 						OutputDebugString(_T("Input Deleted \n"));
-						KeepPrevError( l_hr, l_pGroup->Delete( l_pOutput ));
+						SvUl::KeepPrevError( l_hr, l_pGroup->Delete( l_pOutput ));
 					}
 				}
 			}
 			else
 			{
-				KeepPrevError( l_hr, l_pGroup->Delete( l_pOutput ));
+				SvUl::KeepPrevError( l_hr, l_pGroup->Delete( l_pOutput ));
 			}
 		}
 	}

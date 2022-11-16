@@ -80,7 +80,7 @@ public:
 	void RemoveUnusedFiles();
 
 	bool Logout( bool BForceLogout = false );
-	bool InitPath( LPCTSTR PathName, bool CreateIfDoesNotExist = true, bool DeleteContents = true );
+	bool InitPath( LPCTSTR PathName, bool createIfMissing = true, bool DeleteContents = true );
 
 	bool IsMatroxGige() const;
 

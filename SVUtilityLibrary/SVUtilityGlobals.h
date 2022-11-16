@@ -14,5 +14,7 @@
 #define SV_SEVERITY( p_Status ) \
 	( ( ( ( unsigned long ) p_Status ) >> 30 ) & 0x00000003 )
 
-void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew );
-
+namespace SvUl
+{
+void KeepPrevError(HRESULT& p_rhrPrev, HRESULT p_hrNew);
+}

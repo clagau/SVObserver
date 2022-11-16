@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVOGuiUtility/PictureDisplay.h"
 #include "SVOGuiUtility/ImageController.h"
 #include "SVOGuiUtility/DataController.h"
@@ -54,7 +54,7 @@ namespace SvOg
 
 	#pragma region Member variables
 	private:
-		SVFileNameClass m_svfncImageSourceFile;
+		SvFs::FileHelper m_svfncImageSourceFile;
 		SvOgu::ImageController m_ImageController;
 		SvOgu::ValueController m_values;
 		//{{AFX_DATA(SVTADlgFileImageSourcePage)

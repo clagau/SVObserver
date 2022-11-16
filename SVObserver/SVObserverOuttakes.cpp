@@ -26,7 +26,7 @@
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVLibrary/SVWinUtility.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
@@ -353,7 +353,7 @@ HRESULT ConnectCameraBuffers()
 			{
 				// dummy vars
 				SVLightReference* pLR;
-				SVFileNameArrayClass* pFiles;
+				SvFs::FileNameContainer* pFiles;
 				SVLut* pLut;
 				SVDeviceParamCollection* pParams;
 
@@ -489,7 +489,7 @@ bool OpenConfigFileFromMostRecentList(CRecentFileList* pRecentFileList, int nID)
 	// Open and read the Configuration from the Most Recent Used
 	// List under the menu File.
 	//
-	SVFileNameClass svFileName;
+	SvFs::FileHelper svFileName;
 
 	svFileName.SetFullFileName((*pRecentFileList)[nIndex]);
 

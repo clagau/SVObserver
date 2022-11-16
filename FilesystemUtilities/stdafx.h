@@ -1,13 +1,5 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2008 by Körber Pharma Inspection GmbH. All Rights Reserved
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : stdafx
-//* .File Name       : $Workfile:   stdafx.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 09:37:40  $
-//******************************************************************************
+///\copyright 2008 by Körber Pharma Inspection GmbH. All Rights Reserved
+///\file stdafx.h
 
 #pragma once
 
@@ -42,10 +34,6 @@
 #define _SECURE_SCL 0
 #endif
 
-//************************************
-//! Precompiled headers section
-//************************************
-#pragma region Precompiled Headers
 #include <windows.h>
 
 #include <algorithm>
@@ -65,7 +53,5 @@
 #include <string>			//Used by static library
 #include <tchar.h>
 #include <vector>			//Used by static library
-
-#pragma endregion Precompiled Headers
 
 

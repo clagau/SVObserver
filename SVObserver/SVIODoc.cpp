@@ -24,7 +24,7 @@
 #include "SVConfigurationObject.h"
 #include "SVUtilities.h"
 #include "TextDefinesSvO.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVRemoteInputObject.h"

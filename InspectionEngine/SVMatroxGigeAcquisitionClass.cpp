@@ -119,7 +119,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetFileNameArraySize( long &rlSize ) const
 // Called from SVOCameraDlg::OnBtnPropVc
 // Called from SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration
 // Called from SVOPropertyPageDlg::AdjustCameraImageFormat
-HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(const SVFileNameArrayClass& rFiles)
+HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(const SvFs::FileNameContainer& rFiles)
 {
 	m_DeviceParams.Clear();
 	m_sequenceCameraFileIndex = -1;

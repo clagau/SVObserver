@@ -45,7 +45,7 @@
 #include "Tools/SVArchiveRecordsArray.h"
 #include "Tools/SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
+#include "FilesystemUtilities/FileHelperContainer.h"
 #include "SVImageLibrary\SVLightReference.h"
 #include "SVIPDoc.h"
 #include "Operators/SVShapeMaskHelperClass.h"
@@ -227,7 +227,7 @@ SVConfigurationPrint::SVConfigurationPrint()
 	m_isPrintToStringBuffer = false;
 	m_pBuffer = nullptr;
 	
-	// Set SVFileNameClass for Print to File
+	// Set SvFs::FileHelper for Print to File
 	
 	m_svfnFileName.SetDefaultFileExtension(std::string(CString(MAKEINTRESOURCE(AFX_IDS_PRINTDEFAULTEXT))));
 	
@@ -306,7 +306,7 @@ void SVConfigurationPrint::DoPrintConfig()
 		if (m_printInfo.m_pPD->m_pd.Flags & PD_PRINTTOFILE)
 		{
 			// begin SES 11-Jan-2001
-			// Use SVFileNameClass for browsing
+			// Use SvFs::FileHelper for browsing
 			if (!m_svfnFileName.SaveFile())
 			{
 				return;
@@ -1507,7 +1507,7 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 		SvIe::SVVirtualCamera* pCamera = pConfig->GetCamera(l);
 		if( nullptr != pCamera )
 		{
-			SVFileNameArrayClass* pfnac = nullptr;
+			SvFs::FileNameContainer* pfnac = nullptr;
 			SVLightReference* plrcDummy = nullptr;
 			SVLut* plutDummy = nullptr;
 			SVDeviceParamCollection* pDeviceParams = nullptr;

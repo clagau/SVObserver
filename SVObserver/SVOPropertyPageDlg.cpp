@@ -29,7 +29,7 @@
 #include "Definitions/TextDefinesSvDef.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVGigeCameraROIDlg.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
@@ -205,8 +205,8 @@ void SVOPropertyPageDlg::SetupCamera()
 	
 		SetupFileCamera(pRoot);
 
-		SVFileNameClass FileName;
-		FileName.SetFileType(SV_CAMERA_FILE_TYPE);
+		SvFs::FileHelper FileName;
+		FileName.SetFileType(SvFs::FileType::cameraFile);
 
 		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
@@ -291,8 +291,8 @@ void SVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 		pCombo->SetItemValue(m_CameraObj.GetFileLoadingMode());
 	}
 
-	SVFileNameClass FileName;
-	FileName.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
+	SvFs::FileHelper FileName;
+	FileName.SetFileType(SvFs::FileType::SourceFile);
 	
 	bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
@@ -1936,8 +1936,8 @@ HRESULT SVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, SV
 
 		if( S_OK == pDevice->GetFileNameArraySize( l_lSize ) && l_lSize < 1 )
 		{
-			SVFileNameArrayClass svFiles;
-			SVFileNameClass svFile;
+			SvFs::FileNameContainer svFiles;
+			SvFs::FileHelper svFile;
 
 			svFile.SetFullFileName( m_CameraObj.GetCameraFile().c_str() );
 

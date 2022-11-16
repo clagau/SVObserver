@@ -20,7 +20,7 @@
 #include "SVVisionProcessorHelper.h"
 
 #include "Definitions/SVUserMessage.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVLibrary/SVPackedFile.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVSecurity/SVSecurityManager.h"
@@ -33,8 +33,8 @@ struct ConfigFilenames
 	ConfigFilenames();
 	std::string prepareSvxFileSave();
 
-	SVFileNameClass m_ConfigFileName;
-	SVFileNameClass m_SvxFileName;
+	SvFs::FileHelper m_ConfigFileName;
+	SvFs::FileHelper m_SvxFileName;
 };
 
 class SVConfigurationObject* UseConfigAssistant(class SVOConfigAssistantDlg& rDlg, class SVConfigurationObject*, bool newConfiguration);
@@ -155,7 +155,7 @@ bool PrepareForNewConfiguration()
 
 	// Clean up Execution Directory...
 	// Check path, create if necessary and delete contents...
-	TheSVObserverApp().InitPath(std::string(SVFileNameManagerClass::Instance().GetRunPathName() + _T("\\")).c_str(), true, true);
+	TheSVObserverApp().InitPath(std::string(SvFs::FileHelperManager::Instance().GetRunPathName() + _T("\\")).c_str(), true, true);
 
 	// Ensure that DestroyConfig() can do his work...
 	SVSVIMStateClass::AddState(SV_STATE_READY);
@@ -324,17 +324,17 @@ bool setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile)
 
 	if (g_ConfigFilenames.m_ConfigFileName.GetPathName().empty())
 	{
-		SVFileNameManagerClass::Instance().SetConfigurationPathName(nullptr);
+		SvFs::FileHelperManager::Instance().SetConfigurationPathName(nullptr);
 	}
 	else
 	{
 		if (0 == SvUl::CompareNoCase(g_ConfigFilenames.m_ConfigFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath()))
 		{
-			SVFileNameManagerClass::Instance().SetConfigurationPathName(nullptr);
+			SvFs::FileHelperManager::Instance().SetConfigurationPathName(nullptr);
 		}
 		else
 		{
-			bOk = SVFileNameManagerClass::Instance().SetConfigurationPathName(g_ConfigFilenames.m_ConfigFileName.GetPathName().c_str());
+			bOk = SvFs::FileHelperManager::Instance().SetConfigurationPathName(g_ConfigFilenames.m_ConfigFileName.GetPathName().c_str());
 			// if this returns FALSE, unable to access specified path!
 			if (!bOk)
 			{
@@ -349,9 +349,9 @@ bool setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile)
 
 	if (bOk)
 	{
-		if (!SVFileNameManagerClass::Instance().GetConfigurationPathName().empty())
+		if (!SvFs::FileHelperManager::Instance().GetConfigurationPathName().empty())
 		{
-			AfxGetApp()->WriteProfileString(_T("Settings"), _T("ConfigurationFilePath"), SVFileNameManagerClass::Instance().GetConfigurationPathName().c_str());
+			AfxGetApp()->WriteProfileString(_T("Settings"), _T("ConfigurationFilePath"), SvFs::FileHelperManager::Instance().GetConfigurationPathName().c_str());
 		}
 	}
 
@@ -443,8 +443,8 @@ HRESULT SavePackedConfiguration(LPCTSTR pFileName)
 
 bool DetermineConfigurationSaveName()
 {
-	SVFileNameClass svFileName = g_ConfigFilenames.m_ConfigFileName;
-	svFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
+	SvFs::FileHelper svFileName = g_ConfigFilenames.m_ConfigFileName;
+	svFileName.SetFileType(SvFs::FileType::svzConfig);
 	//Need to remove the *.svx files being visible
 	svFileName.SetFileExtensionFilterList(_T("SVResearch Configuration Files (*.svz)|*.svz||"));
 
@@ -455,9 +455,9 @@ bool DetermineConfigurationSaveName()
 
 		if (0 == SvUl::CompareNoCase(svFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
 		{
-			if (!SVFileNameManagerClass::Instance().GetConfigurationPathName().empty())
+			if (!SvFs::FileHelperManager::Instance().GetConfigurationPathName().empty())
 			{
-				svFileName.SetPathName(SVFileNameManagerClass::Instance().GetConfigurationPathName().c_str());
+				svFileName.SetPathName(SvFs::FileHelperManager::Instance().GetConfigurationPathName().c_str());
 			}
 		}
 	}
@@ -769,7 +769,7 @@ void SetFullSvxFileName(const std::string& rFullFileName)
 
 void LoadSvxFilenameFromManager()
 {
-	SVFileNameManagerClass::Instance().LoadItem(&g_ConfigFilenames.m_SvxFileName);
+	SvFs::FileHelperManager::Instance().LoadItem(&g_ConfigFilenames.m_SvxFileName);
 }
 
 
@@ -786,13 +786,13 @@ void SetConfigFileNameOnly(const std::string& rOriginalFile)
 
 void RemoveSvxFilenameFromManager()
 {
-	SVFileNameManagerClass::Instance().RemoveItem(&g_ConfigFilenames.m_SvxFileName);
+	SvFs::FileHelperManager::Instance().RemoveItem(&g_ConfigFilenames.m_SvxFileName);
 }
 
 
 void AddSvxFilenameToManager()
 {
-	SVFileNameManagerClass::Instance().AddItem(&g_ConfigFilenames.m_SvxFileName);
+	SvFs::FileHelperManager::Instance().AddItem(&g_ConfigFilenames.m_SvxFileName);
 }
 
 std::string GetFullSvxFileName() 
@@ -802,14 +802,14 @@ std::string GetFullSvxFileName()
 
 ConfigFilenames::ConfigFilenames()
 {
-	m_ConfigFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
+	m_ConfigFileName.SetFileType(SvFs::FileType::svzConfig);
 	m_ConfigFileName.setExcludeCharacters(SvDef::cExcludeCharsConfigName);
 }
 
 std::string ConfigFilenames::prepareSvxFileSave()
 {
 	m_SvxFileName.SetFileName(m_ConfigFileName.GetFileName().c_str());
-	m_SvxFileName.SetPathName(SVFileNameManagerClass::Instance().GetRunPathName().c_str());
+	m_SvxFileName.SetPathName(SvFs::FileHelperManager::Instance().GetRunPathName().c_str());
 	m_SvxFileName.SetExtension(SvDef::cConfigExtension);
 	return GetFullSvxFileName();
 }

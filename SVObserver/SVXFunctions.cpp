@@ -18,7 +18,7 @@
 #include "SVParserProgressDialog.h"
 #include "SVXFunctions.h"
 
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVOLibrary/ObsoleteItemChecker.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

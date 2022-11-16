@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #pragma endregion Includes
-#include "SVFileSystemLibrary/ImageFileFormats.h"
+#include "FilesystemUtilities/ImageFileFormats.h"
 
 class SVImageFile;
 

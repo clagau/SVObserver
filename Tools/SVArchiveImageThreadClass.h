@@ -12,7 +12,7 @@
 #include "SVLibrary/SVTemplate.h"
 #include "ObjectInterfaces/ITRCImage.h"
 #include "Tools/ArchiveMethodEnum.h"
-#include "SVFileSystemLibrary/ImageFileFormats.h"
+#include "FilesystemUtilities/ImageFileFormats.h"
 
 #pragma endregion Includes
 

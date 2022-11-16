@@ -20,8 +20,8 @@
 #include "Definitions/SVResetStruct.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelper.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "InspectionEngine/RunStatus.h"
@@ -495,11 +495,11 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector* pErrorM
 
 	if (!FileArchivePath.empty())
 	{
-		SVFileNameClass svFileName(FileArchivePath.c_str());
+		SvFs::FileHelper svFileName(FileArchivePath.c_str());
 
 		if (_access(svFileName.GetPathName().c_str(), 0) != 0)
 		{
-			if (!SVFileNameManagerClass::Instance().CreatePath(svFileName.GetPathName().c_str()))
+			if (!SvFs::FileHelperManager::Instance().CreatePath(svFileName.GetPathName().c_str()))
 			{
 				if (nullptr != pErrorMessages)
 				{

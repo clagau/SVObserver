@@ -57,14 +57,14 @@ HRESULT SVToolExtentClass::Initialize()
 	m_eTranslation = SvPb::SVExtentTranslationUnknown;
 	m_eShape = SvDef::SVExtentShapeUnknown;
 
-	KeepPrevError(l_svOk, m_Properties.Initialize());
+	SvUl::KeepPrevError(l_svOk, m_Properties.Initialize());
 
 	m_bAlwaysUpdate = true;
 
 	m_pSelectedImage = nullptr;
 
-	KeepPrevError(l_svOk, m_svRootOffsetData.Initialize());
-	KeepPrevError(l_svOk, m_svSelectedOffsetData.Initialize());
+	SvUl::KeepPrevError(l_svOk, m_svRootOffsetData.Initialize());
+	SvUl::KeepPrevError(l_svOk, m_svSelectedOffsetData.Initialize());
 	m_ImageExtent.setIsUpdated(false);
 	
 	return l_svOk;
@@ -121,13 +121,13 @@ HRESULT SVToolExtentClass::UpdateExtentToParentExtents(SVImageExtentClass& rNewE
 			const SVImageExtentClass rimageExtent = pParent->GetImageExtents();
 			// Get the Width and Height form the parent extent. Set the Position point to zero, zero.
 			l_Status = rimageExtent.GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dHeight);
-			KeepPrevError(l_Status, rimageExtent.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dWidth));
-			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyPositionPointX, dPosX));
-			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, dPosY));
-			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight));
-			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth));
-			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dHeight));
-			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dWidth));
+			SvUl::KeepPrevError(l_Status, rimageExtent.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dWidth));
+			SvUl::KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyPositionPointX, dPosX));
+			SvUl::KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, dPosY));
+			SvUl::KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight));
+			SvUl::KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth));
+			SvUl::KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dHeight));
+			SvUl::KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dWidth));
 		}
 		else
 		{

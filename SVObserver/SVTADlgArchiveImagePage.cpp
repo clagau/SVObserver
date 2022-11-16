@@ -20,7 +20,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVFileSystemLibrary/FilepathUtilities.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -259,7 +259,7 @@ bool SVTADlgArchiveImagePage::validateArchiveImageFilepath()
 
 	try
 	{
-		if (pathCanProbablyBeCreatedOrExistsAlready(imageDirectoryPath))
+		if (SvFs::pathCanProbablyBeCreatedOrExistsAlready(imageDirectoryPath))
 		{
 			return true;
 		}
@@ -504,7 +504,7 @@ void SVTADlgArchiveImagePage::OnStopAtMaxClicked()
 
 void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 {
-	SVFileNameClass	svfncImageFolder;
+	SvFs::FileHelper	svfncImageFolder;
 
 	CString firstPartOfImageArchivePathRoot;
 	m_ImageFilepathroot1.GetWindowText(firstPartOfImageArchivePathRoot);
@@ -523,7 +523,7 @@ void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 	//
 	// Select the folder to copy to..
 	//
-	svfncImageFolder.SetFileType(SV_DEFAULT_FILE_TYPE);
+	svfncImageFolder.SetFileType(SvFs::FileType::defaultType);
 	if (svfncImageFolder.SelectPath())
 	{
 		firstPartOfImageArchivePathRoot = svfncImageFolder.GetPathName().c_str();

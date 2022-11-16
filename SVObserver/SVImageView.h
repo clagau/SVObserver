@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVOGuiUtility/ZoomHelper.h"
@@ -258,7 +258,7 @@ private:
 
 	CRect m_LastRect;
 
-	SVFileNameClass m_ViewOrImageFilename; /// filepath under which the last view or image was saved
+	SvFs::FileHelper m_ViewOrImageFilename; /// filepath under which the last view or image was saved
 
 #pragma endregion Member variables
 };

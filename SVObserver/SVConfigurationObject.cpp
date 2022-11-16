@@ -41,7 +41,7 @@
 #include "ObjectInterfaces/ICommand.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionDeviceParamEnum.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVIOLibrary/PlcOutputObject.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
@@ -239,7 +239,7 @@ SvTrig::SVTriggerObject* SVConfigurationObject::GetTrigger(long lIndex) const
 }// end GetTrigger
 
 bool SVConfigurationObject::AddAcquisitionDevice(LPCTSTR szName,
-	const SVFileNameArrayClass& rsvFiles,
+	const SvFs::FileNameContainer& rsvFiles,
 	const SVLightReference& rsvLight,
 	const SVLut& rLut,
 	const SVDeviceParamCollection* pDeviceParams)
@@ -359,7 +359,7 @@ bool SVConfigurationObject::RemoveAcquisitionDevice(LPCTSTR szName)
 }
 
 bool SVConfigurationObject::GetAcquisitionDevice(LPCTSTR szName,
-	SVFileNameArrayClass*& rpFiles,
+	SvFs::FileNameContainer*& rpFiles,
 	SVLightReference*& rpLight,
 	SVLut*& rpLut,
 	SVDeviceParamCollection*& rpDeviceParams) const
@@ -407,7 +407,7 @@ void SVConfigurationObject::GetAcquisitionDeviceNextAssoc(SVAcquisitionDeviceMap
 
 void SVConfigurationObject::GetAcquisitionDeviceNextAssoc(SVAcquisitionDeviceMap::const_iterator& rNextPosition,
 	std::string& rKey,
-	SVFileNameArrayClass*& rpFiles,
+	SvFs::FileNameContainer*& rpFiles,
 	SVLightReference*& rpLight,
 	SVLut*& rpLut,
 	SVDeviceParamCollection*& rpDeviceParams) const
@@ -1058,7 +1058,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 
 				_variant_t Name;
 				SVLightReference svLight;
-				SVFileNameArrayClass svFileArray;
+				SvFs::FileNameContainer svFileArray;
 				SVLut lut;
 				SVDeviceParamCollection svDeviceParams;
 
@@ -1757,7 +1757,7 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 
 		if (bOk)
 		{
-			SVFileNameClass svFileName;
+			SvFs::FileHelper svFileName;
 
 			svFileName.SetFullFileName(IPName.c_str());
 
@@ -2205,7 +2205,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 	}
 }
 
-HRESULT SVConfigurationObject::LoadAcquisitionDeviceFilename(SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SVFileNameArrayClass& rFileArray)
+HRESULT SVConfigurationObject::LoadAcquisitionDeviceFilename(SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SvFs::FileNameContainer& rFileArray)
 {
 	HRESULT hr = S_FALSE;
 
@@ -2237,7 +2237,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 	{
 		++lNumAcqDig;
 
-		SVFileNameArrayClass svFileArray;
+		SvFs::FileNameContainer svFileArray;
 		SVDeviceParamCollection svDeviceParams;
 
 		std::string DigName = rTree.getBranchName(hDigChild);
@@ -2469,7 +2469,7 @@ bool SVConfigurationObject::DestroyConfiguration()
 
 	for (const auto& rFile : m_AdditionalFiles)
 	{
-		SVFileNameManagerClass::Instance().RemoveItem(&rFile);
+		SvFs::FileHelperManager::Instance().RemoveItem(&rFile);
 	}
 
 	SVObjectManagerClass::Instance().resetNextObjectId();
@@ -2674,7 +2674,7 @@ void SVConfigurationObject::SaveAcquisitionDevice(SvOi::IObjectWriter& rWriter) 
 	rWriter.StartElement(SvXml::CTAG_ACQUISITION_DEVICE);
 
 	std::string Name;
-	SVFileNameArrayClass* pFiles = nullptr;
+	SvFs::FileNameContainer* pFiles = nullptr;
 	SVLightReference* pLight = nullptr;
 	SVLut* pLut = nullptr;
 	SVDeviceParamCollection* pDeviceParams = nullptr;
@@ -4999,8 +4999,8 @@ HRESULT SVConfigurationObject::LoadAdditionalFiles(SVTreeType& rTree)
 				if (S_OK == rTree.getLeafData(hLeaf, Value) && VT_BSTR == Value.vt)
 				{
 					std::string FilePath{ SvUl::createStdString(Value.bstrVal) };
-					m_AdditionalFiles.emplace_back(SVFileNameClass{ FilePath.c_str() });
-					SVFileNameManagerClass::Instance().AddItem(&m_AdditionalFiles.back());
+					m_AdditionalFiles.emplace_back(SvFs::FileHelper{ FilePath.c_str() });
+					SvFs::FileHelperManager::Instance().AddItem(&m_AdditionalFiles.back());
 				}
 			}
 			hLeaf = rTree.getNextLeaf(hBranch, hLeaf);
@@ -5182,7 +5182,7 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 
 void SVConfigurationObject::UpdateAuditFiles(bool calculateHash)
 {
-	std::vector<std::string> Filenames = SVFileNameManagerClass::Instance().GetFileNameList();
+	std::vector<std::string> Filenames = SvFs::FileHelperManager::Instance().GetFileNameList();
 	///remove current config file 
 	std::string ConfigFilename, webAppIdsFilename;
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
@@ -5366,12 +5366,12 @@ void RemoveFileFromConfig(LPCTSTR FilePath) //@TODO [Arvid][10.20][26.10.2021] t
 	if (nullptr != pConfig)
 	{
 		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
-		auto iter = std::find_if(rAdditionalFiles.begin(), rAdditionalFiles.end(), [&FilePath](const SVFileNameClass& rFile) {return FilePath == rFile.GetFullFileName(); });
+		auto iter = std::find_if(rAdditionalFiles.begin(), rAdditionalFiles.end(), [&FilePath](const SvFs::FileHelper& rFile) {return FilePath == rFile.GetFullFileName(); });
 		if (rAdditionalFiles.end() != iter)
 		{
-			const SVFileNameClass& rSVFileName = *iter;
+			const SvFs::FileHelper& rSVFileName = *iter;
 			pConfig->getAdditionalFiles().remove(rSVFileName);
-			SVFileNameManagerClass::Instance().RemoveItem(&rSVFileName);
+			SvFs::FileHelperManager::Instance().RemoveItem(&rSVFileName);
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 		}
 	}
@@ -5390,8 +5390,8 @@ void AddFileToConfig(LPCTSTR FilePath) //@TODO [Arvid][10.20][26.10.2021] this s
 			//File is already in additional file list
 			return;
 		}
-		pConfig->getAdditionalFiles().emplace_back(SVFileNameClass {FilePath});
-		SVFileNameManagerClass::Instance().AddItem(&pConfig->getAdditionalFiles().back());
+		pConfig->getAdditionalFiles().emplace_back(SvFs::FileHelper {FilePath});
+		SvFs::FileHelperManager::Instance().AddItem(&pConfig->getAdditionalFiles().back());
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 	}
 }
@@ -5412,7 +5412,7 @@ bool fileSaveAsSVX(SVConfigurationObject* pConfig, const std::string& rSvxFilepa
 	//If the file name is not empty we compress all files into a .svz file
 	if (!rFileName.empty())
 	{
-		SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
+		SvDef::StringVector FileNameList = SvFs::FileHelperManager::Instance().GetFileNameList();
 		bool shouldWebAppIdsDeleted = isSafeToDeleteWebAppIdsJson();
 		if (shouldWebAppIdsDeleted)
 		{

@@ -11,7 +11,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "ObjectInterfaces/ITRCImage.h"
-#include "SVFileSystemLibrary/ImageFileFormats.h"
+#include "FilesystemUtilities/ImageFileFormats.h"
 #pragma endregion Includes
 
 namespace SvIe

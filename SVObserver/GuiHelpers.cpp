@@ -8,7 +8,7 @@
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
 #include "SVIOTabbedView.h" 
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "FilesystemUtilities/FileHelperManager.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 

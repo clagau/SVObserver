@@ -13,7 +13,7 @@
 //Moved to precompiled header: #include <sstream>
 //Moved to precompiled header: #include <boost\algorithm\string\case_conv.hpp>
 #include "Heapwalk.h"
-#include "DirectoryUtilities.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 
@@ -278,11 +278,11 @@ void HeapFragmentationChecker::openFilestreams()
 	static time_t in_time_t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
 	std::pair<std::string, std::string> filenameAndDirectoryPaths = getFilename("Details.log", in_time_t);
-	ensureDirectoryExists(filenameAndDirectoryPaths.second);
+	SvFs::ensureDirectoryExistsVar(filenameAndDirectoryPaths.second);
 	m_DetailsFilestream.open(filenameAndDirectoryPaths.first, std::ios_base::app);
 
 	filenameAndDirectoryPaths = getFilename("Overview.log", in_time_t);
-	ensureDirectoryExists(filenameAndDirectoryPaths.second);
+	SvFs::ensureDirectoryExistsVar(filenameAndDirectoryPaths.second);
 	m_OverviewFilestream.open(filenameAndDirectoryPaths.first, std::ios_base::app);
 }
 

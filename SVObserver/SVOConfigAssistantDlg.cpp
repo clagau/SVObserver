@@ -1288,8 +1288,8 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 		const SVOCameraObjPtr pCameraObj( GetCameraObject( CameraIndex ) );
 		if( nullptr != pCameraObj )
 		{
-			SVFileNameArrayClass svFiles;
-			SVFileNameClass svFile;
+			SvFs::FileNameContainer svFiles;
+			SvFs::FileHelper svFile;
 			SVLut lut;
 			SVLightReference lightRef;
 			// For File Acquisition
@@ -1391,7 +1391,7 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				if ( nullptr != psvDevice )
 				{
 					bool bGetLightReference = false;
-					SVFileNameArrayClass* psvFiles {nullptr};
+					SvFs::FileNameContainer* psvFiles {nullptr};
 					SVImageInfoClass svImageInfo;
 
 					if ( pConfig->GetAcquisitionDevice( DigName.c_str(), psvFiles, psvLight, pLut, pDeviceParams ) )
@@ -2427,7 +2427,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 				long lSize {0L};
 				std::string CameraFileName;
 				std::string sequenceCameraFile;
-				SVFileNameClass oCamFile;
+				SvFs::FileHelper oCamFile;
 				pcfgCamera->GetAcquisitionDevice()->GetFileNameArraySize( lSize );
 				for ( long lFile = 0; lFile < lSize; lFile++)
 				{
@@ -3929,8 +3929,8 @@ void SVOConfigAssistantDlg::OnBnClickedCancel()
 		{
 			const SVOCameraObjPtr pCameraObj = m_TmpCameraList.GetCameraObjectByPosition(i);
 			SvIe::SVAcquisitionClassPtr psvDevice;
-			SVFileNameArrayClass svFiles;
-			SVFileNameClass svFile;
+			SvFs::FileNameContainer svFiles;
+			SvFs::FileHelper svFile;
 
 			if( nullptr != pCameraObj )
 			{

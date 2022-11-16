@@ -1,5 +1,4 @@
 ///\copyright 2022 by Körber Pharma Inspection GmbH. All Rights Reserved
-///\file ImageFileFormats.h 
 /// enum and functions for Image File Formats
 
 #include "stdafx.h"

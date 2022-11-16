@@ -19,7 +19,7 @@
 #include "Tools/ArchiveMethodEnum.h"
 #include "SVOGuiUtility/DataController.h"
 #include "SVOGuiUtility/LinkedValueWidgetHelper.h"
-#include "SVFileSystemLibrary/ImageFileFormats.h"
+#include "FilesystemUtilities/ImageFileFormats.h"
 #pragma endregion Includes
 
 

@@ -1,69 +1,64 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2003 by Körber Pharma Inspection GmbH. All Rights Reserved
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVFileNameClass
-//* .File Name       : $Workfile:   SVFileNameClass.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Sep 2014 13:37:06  $
-//******************************************************************************
+///\copyright 2003 by Körber Pharma Inspection GmbH. All Rights Reserved
+///\file FileHelper.h
 
 #pragma once
 
-enum SVFileTypesEnum
+namespace SvFs
 {
-	SV_DEFAULT_FILE_TYPE               = 0,
-	SV_CAMERA_FILE_TYPE                = 1,
-	SV_IMAGE_SOURCE_FILE_TYPE          = 2,
-	SV_PATTERN_MODEL_FILE_TYPE         = 3,
-	SV_MASK_FILE_TYPE                  = 4,
-	SV_BAR_CODE_MATCH_STRING_FILE_TYPE = 5,
-	SV_OCR_MATCH_STRING_FILE_TYPE      = 6,
-	SV_OCR_FONT_FILE_TYPE              = 7,
-	SV_BAR_CODE_STORE_VALUE_FILE_TYPE  = 8,
-	SV_SVZ_CONFIGURATION_FILE_TYPE     = 9,
-	SV_OCV_MATCH_STRING_FILE_TYPE      = 10,
-	SV_OCV_FONT_FILE_TYPE              = 11,
-	SV_OCV_CONSTRAINTS_FILE_TYPE       = 12,
-	SV_OCV_CONTROLS_FILE_TYPE          = 13,
+
+enum class FileType
+{
+	defaultType = 0,
+	cameraFile = 1,
+	SourceFile = 2,
+	patternModel = 3,
+	mask = 4,
+	barCodeMatch = 5,
+	ocrMatch = 6,
+	ocrFont = 7,
+	barCodeValue = 8,
+	svzConfig = 9,
+	ocvMatch = 10,
+	ocvFont = 11,
+	ocvConstraints = 12,
+	ocvControls = 13,
 };
 
 //This class maintain the type and information about a file.  
 //This class can be used as a storage or selection class.  
 //This class contains and manages information for only one 
 //file or path.
-class SVFileNameClass 
+class FileHelper
 {
 public:
 	//This operator is the default constructor for the 
-	//SVFileNameClass.  This method sets all object 
+	//FileHelper.  This method sets all object 
 	//attributes to their default values.
-	SVFileNameClass();
+	FileHelper();
 
 	//This operator constructs the object with all of the 
 	//default options except the path name, file name and 
 	//extension.  These three pieces of information are 
 	//collected from the full file name string pass as a 
 	//parameter.
-	explicit SVFileNameClass(LPCTSTR FullFileName);
+	explicit FileHelper(LPCTSTR FullFileName);
 
 	//This operator is the copy constructor.  This method 
 	//will create an exact copy of the object supplied as the 
 	//parameter to this constructor.
-	SVFileNameClass(const SVFileNameClass& orig);
+	FileHelper(const FileHelper& orig);
 
-	//This operator is a constructor similiar to the copy 
+	//This operator is a constructor similar to the copy 
 	//constructor.  This method takes a pointer to a 
-	//SVFileNameClass and copies the elements into the new 
+	//FileHelper and copies the elements into the new 
 	//object.
-	explicit SVFileNameClass(const SVFileNameClass* const svFileName);
+	explicit FileHelper(const FileHelper* const svFileName);
 
-	virtual ~SVFileNameClass();
+	virtual ~FileHelper();
 
-	//This operator allows a SVFileNameClass to assign its 
+	//This operator allows a FileHelper to assign its 
 	//values into this objects values.
-	const SVFileNameClass& operator=(const SVFileNameClass& rhs);
+	const FileHelper& operator=(const FileHelper& rhs);
 
 	//This operator exposes the string contained in the 
 	//mcsFileName attribute.
@@ -75,7 +70,7 @@ public:
 
 	//This operator exposes the values contained in the 
 	//mdwFileType attribute.
-	DWORD GetFileType() const;
+	FileType GetFileType() const;
 
 	//This operator exposes the string contained in the 
 	//mcsPathName attribute.
@@ -124,7 +119,7 @@ public:
 	//mcsFileSaveDialogTitle, mcsDefaultFileExtension, 
 	//mcsDefaultFileName, mdwFileSelectFlags, 
 	//mdwFileSaveFlags, mcsFileExtensionFilterList attributes.
-	bool SetFileType(DWORD dwFileType);
+	bool SetFileType(FileType fileType);
 
 	//This operator changes the string contained in the 
 	//mcsPathName, mcsFileName and mcsExtension attributes to 
@@ -209,28 +204,24 @@ public:
 	//within the object.
 	bool SaveFile();
 
-	//************************************
 	//! Method to set a list of characters to exclude for the file name
 	//! \param ExculdeChar [in] array of characters to exclude
-	//************************************
-	void setExcludeCharacters( LPCTSTR ExculdeChar ) { m_ExcludeChar = ExculdeChar; };
+	void setExcludeCharacters(LPCTSTR ExculdeChar) { m_ExcludeChar = ExculdeChar; };
 
-	bool operator == (const SVFileNameClass& rhs) const;
+	bool operator == (const FileHelper& rhs) const;
 
 private:
 	void Init();
 
-	//************************************
 	//! Method to check if the file name has any invalid characters
 	//! \param PathName [in] the selected path name
 	//! \param FileName [in] the selected file name
 	//! \returns the valid PathName
-//************************************
-	std::string checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const;
+	std::string checkFileName(LPCTSTR PathName, LPCTSTR FileName) const;
 
 	//This attribute defines which kind of file is desired to 
 	//be held within this object.
-	DWORD m_FileType;
+	FileType m_FileType;
 
 	//This attribute defines the path name attached to this 
 	//object.
@@ -283,4 +274,4 @@ private:
 
 	std::string m_ExcludeChar;			//The array of file name exclude characters
 };
-
+}

@@ -20,7 +20,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVOLibrary/AcquisitionDevice.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
-#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
+#include "FilesystemUtilities/FileHelperContainer.h"
 #pragma endregion Includes
 
 struct SVAcquisitionConstructParams;
@@ -68,8 +68,8 @@ public:
 	HRESULT DestroyBuffers();
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const;
-	virtual HRESULT GetFileName( long lIndex, SVFileNameClass &rFileName ) const;
-	virtual HRESULT LoadFiles(const SVFileNameArrayClass &rArray );
+	virtual HRESULT GetFileName( long lIndex, SvFs::FileHelper &rFileName ) const;
+	virtual HRESULT LoadFiles(const SvFs::FileNameContainer &rArray );
 	virtual HRESULT UnloadFiles();
 	virtual HRESULT ReadCameraFile( const std::string& filename,  SVDeviceParamCollection& rParams );
 
@@ -165,7 +165,7 @@ protected:
 	SVDeviceParamCollection m_CameraFileDeviceParams;
 	SVLut& Lut();
 	SVLightReference mLightReference;
-	SVFileNameArrayClass mFiles;
+	SvFs::FileNameContainer mFiles;
 
 	std::string m_DigName;
 	int miChannel {0};

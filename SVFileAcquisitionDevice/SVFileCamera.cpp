@@ -15,7 +15,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "ObjectInterfaces/ITRCImage.h"
-#include "SVFileSystemLibrary/FilepathUtilities.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -103,7 +103,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 
 	if (m_fileData.mode == ContinuousMode || m_fileData.mode == SingleIterationMode)
 	{
-		m_fileList = getFileList(m_fileData.directory.c_str(), ImageFileFormat::any, false);
+		m_fileList = SvFs::getFileList(m_fileData.directory.c_str(), ImageFileFormat::any, false);
 	}
 	else // Single File Mode
 	{

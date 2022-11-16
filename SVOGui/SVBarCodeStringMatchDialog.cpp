@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVOResource/Resource.h"
 #include "SVBarCodeStringMatchDialog.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "FilesystemUtilities/FileHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -158,9 +158,9 @@ void SVBarCodeStringMatchDialog::OnBarcodeSaveInFile()
 void SVBarCodeStringMatchDialog::OnBarCodeSelectFile() 
 {
 	// begin SES 18-Jan-2001
-	SVFileNameClass   svfnFileName;
+	SvFs::FileHelper   svfnFileName;
 
-	svfnFileName.SetFileType ( SV_BAR_CODE_STORE_VALUE_FILE_TYPE );
+	svfnFileName.SetFileType ( SvFs::FileType::barCodeValue );
 
 	if ( svfnFileName.SelectFile () )
 	{
@@ -195,9 +195,9 @@ void SVBarCodeStringMatchDialog::OnBcUseMultiple()
 
 void SVBarCodeStringMatchDialog::OnBcMultiSelectfile() 
 {
-	SVFileNameClass   svfnFileName;
+	SvFs::FileHelper   svfnFileName;
 
-	svfnFileName.SetFileType ( SV_BAR_CODE_MATCH_STRING_FILE_TYPE );
+	svfnFileName.SetFileType ( SvFs::FileType::barCodeMatch );
 
 	if ( svfnFileName.SelectFile () )
 	{

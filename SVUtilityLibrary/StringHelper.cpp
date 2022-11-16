@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "StringHelper.h"
+#include "SVUtilityGlobals.h"
 #include "LoadDll.h"
 #pragma endregion Includes
 
@@ -579,5 +580,11 @@ namespace SvUl
 		return rFilepath.substr(pos);
 	}
 
-
+	void SvUl::KeepPrevError(HRESULT& rPrevError, HRESULT newError)
+	{
+		if (S_OK == rPrevError)
+		{
+			rPrevError = newError;
+		}
+	}
 } // namespace SvUl

@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVImageFileLoader.h"
 #include "SVImageFile.h"
-#include "SVFileSystemLibrary/FilepathUtilities.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
 #pragma endregion Includes
 
 HRESULT SVImageFileLoader::LoadImageFile(LPCTSTR FileName, SVImageFile& rImageFile)
@@ -29,7 +29,7 @@ HRESULT SVImageFileLoader::LoadFirstFile(LPCTSTR Name, ImageFileFormat fileForma
 
 	if (FILE_ATTRIBUTE_DIRECTORY == (::GetFileAttributes(Name) & FILE_ATTRIBUTE_DIRECTORY))
 	{
-		std::vector<std::string> fileList {getFileList(Name, fileFormat, false)};
+		std::vector<std::string> fileList {SvFs::getFileList(Name, fileFormat, false)};
 		auto iter = fileList.begin();
 		if (fileList.end() != iter)
 		{

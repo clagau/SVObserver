@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVImageTool.h"
 #include "Definitions/ImageOperatorEnums.h"
-#include "SVFileSystemLibrary/ImageFileFormats.h"
+#include "FilesystemUtilities/ImageFileFormats.h"
 #include "Operators/SVImageArithmetic.h"
 #include "Operators/SVInplaceImageOperatorListClass.h"
 #include "Operators/SVLUTEquation.h"

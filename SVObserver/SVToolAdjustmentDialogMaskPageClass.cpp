@@ -27,6 +27,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
 static LPCTSTR NoImageTag = _T("(No Image)");
 
 const UINT UISetRGB = RegisterWindowMessage(SETRGBSTRING);
@@ -59,24 +60,24 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogMaskPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass(uint32_t inspectionId, uint32_t taskObjectId, uint32_t maskOperatorId)
-: CPropertyPage(SVToolAdjustmentDialogMaskPageClass::IDD)
-, m_InspectionID(inspectionId)
-, m_TaskObjectID(taskObjectId)
-, m_pMaskEditorCtl(nullptr)
-, m_ImageController(inspectionId, taskObjectId)
-, m_Values{ SvOgu::BoundValues{ inspectionId, maskOperatorId } }
-, m_maskController{ inspectionId, taskObjectId, maskOperatorId }
+	: CPropertyPage(SVToolAdjustmentDialogMaskPageClass::IDD)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
+	, m_pMaskEditorCtl(nullptr)
+	, m_ImageController(inspectionId, taskObjectId)
+	, m_Values{ SvOgu::BoundValues{ inspectionId, maskOperatorId } }
+	, m_maskController{ inspectionId, taskObjectId, maskOperatorId }
 {
 	m_pThis = this;
 
-   // Set SVFileNameClass for Import & Export functions.
-   std::string DefaultExtension(SvUl::LoadStdString(IDS_FULL_MASKFILE_EXTENSION));
-   std::string Filter(SvUl::LoadStdString(IDS_MASKFILE_DIALOG_FILTER));
+	// Set SvFs::FileHelper for Import & Export functions.
+	std::string DefaultExtension(SvUl::LoadStdString(IDS_FULL_MASKFILE_EXTENSION));
+	std::string Filter(SvUl::LoadStdString(IDS_MASKFILE_DIALOG_FILTER));
 
-   m_svfnFileName.SetDefaultFileExtension(DefaultExtension.c_str());
-   m_svfnFileName.SetFileSaveFlags(OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT);
-   m_svfnFileName.SetFileSelectFlags(OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT);
-   m_svfnFileName.SetFileExtensionFilterList(Filter.c_str());
+	m_svfnFileName.SetDefaultFileExtension(DefaultExtension.c_str());
+	m_svfnFileName.SetFileSaveFlags(OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT);
+	m_svfnFileName.SetFileSelectFlags(OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT);
+	m_svfnFileName.SetFileExtensionFilterList(Filter.c_str());
 
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogMaskPageClass)
 	m_bActivateMask = false;
@@ -187,21 +188,21 @@ void SVToolAdjustmentDialogMaskPageClass::initMask()
 	UpdateData(false); // set data to dialog
 }
 
-BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog() 
+BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	// See if we can 'connect' to the Mask Editor Active X control.
 	assert(nullptr == m_pMaskEditorCtl);
-	
+
 	m_ImageController.Init();
 	m_Values.Init();
 	m_maskController.Init();
 
 	RetreiveCurrentlySelectedImageNames();
 
-	m_dialogImage.AddTab(_T("Tool Input")); 
-	m_dialogImage.AddTab(_T("Mask")); 
-	m_dialogImage.AddTab(_T("Tool Result")); 
+	m_dialogImage.AddTab(_T("Tool Input"));
+	m_dialogImage.AddTab(_T("Mask"));
+	m_dialogImage.AddTab(_T("Tool Result"));
 
 	m_dialogImage.SelectTab(2);
 
@@ -229,31 +230,31 @@ BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog()
 	OnActivateMask();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
+					// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton() 
+void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 {
-	if( nullptr == m_pMaskEditorCtl )
+	if (nullptr == m_pMaskEditorCtl)
 	{
 		m_pMaskEditorCtl = new SvMc::SVMaskEditor;
 
-		CRect r(0,0,1,1);
+		CRect r(0, 0, 1, 1);
 		BOOL bResult = m_pMaskEditorCtl->Create(
 			"MaskEditorCtlWnd",  //LPCTSTR lpszWindowName, 
 			WS_POPUP,  // | WS_VISIBLE,  //DWORD dwStyle,
 			r,           //const RECT& rect, 
 			this,        //CWnd* pParentWnd, 
 			2           //UINT nID,
-			);
+		);
 
 		if (!bResult)
 		{
 			delete m_pMaskEditorCtl;
 			m_pMaskEditorCtl = nullptr;
-			
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_MaskPage_StartOCXFailed, SvStl::SourceFileParams(StdMessageParams));
+
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_MaskPage_StartOCXFailed, SvStl::SourceFileParams(StdMessageParams));
 			return;
 		}
 	}
@@ -295,7 +296,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			hr = pUnk->QueryInterface(IID_IStream, reinterpret_cast<void**>(&pStreamMaskController));
 			if (S_OK == hr)
 			{
-				if (nullptr != pStreamMaskController )
+				if (nullptr != pStreamMaskController)
 				{
 					/*hr = */GetHGlobalFromStream(pStreamMaskController, &hg);
 					m_maskController.SetMaskData(hg);
@@ -315,16 +316,16 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			}
 			UpdateData(false);
 		}
- 		// Refresh Dialog...
+		// Refresh Dialog...
 		initMask();
 	}
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton() 
+void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 {
 	UpdateData(true);
 
-	// Use SVFileNameClass for browsing
+	// Use SvFs::FileHelper for browsing
 	if (m_svfnFileName.SaveFile())
 	{
 		std::string Extension = SvUl::LoadStdString(IDS_FULL_MASKFILE_EXTENSION);
@@ -334,46 +335,46 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 			m_svfnFileName.SetExtension(Extension.c_str());
 		}
 
-		HRESULT hr = m_maskController.ExportMask( m_svfnFileName.GetFullFileName() );
+		HRESULT hr = m_maskController.ExportMask(m_svfnFileName.GetFullFileName());
 		if (!SUCCEEDED(hr))
 		{
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			SvDef::StringVector msgList;
-			msgList.push_back( m_svfnFileName.GetFullFileName() );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams));
+			msgList.push_back(m_svfnFileName.GetFullFileName());
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	// Refresh image view...
 	initMask();
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton() 
+void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 {
 	UpdateData(true);
-		
-	// Use SVFileNameClass for browsing.
+
+	// Use SvFs::FileHelper for browsing.
 	if (m_svfnFileName.SelectFile())
 	{
 		HRESULT hr = m_maskController.ImportMask(m_svfnFileName.GetFullFileName());
 		if (!SUCCEEDED(hr))
 		{
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			SvDef::StringVector msgList;
-			msgList.push_back( std::string(m_svfnFileName.GetFullFileName()) );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams));
+			msgList.push_back(std::string(m_svfnFileName.GetFullFileName()));
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	// Refresh image view...
 	initMask();
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnEditShapeMaskButton() 
+void SVToolAdjustmentDialogMaskPageClass::OnEditShapeMaskButton()
 {
 	m_Values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
 
 	SVMaskShapeEditorDlg dlg(m_InspectionID, m_TaskObjectID, m_maskController.GetInstanceID(), m_maskController.GetShapeMaskHelperID());
 
-	long selTab = 2; 
+	long selTab = 2;
 	m_dialogImage.GetSelectedTab(&selTab);
 	dlg.setSelectedTab(selTab);
 
@@ -401,7 +402,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditShapeMaskButton()
 	initMask();
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnActivateMask() 
+void SVToolAdjustmentDialogMaskPageClass::OnActivateMask()
 {
 	initMask();
 
@@ -420,12 +421,12 @@ void SVToolAdjustmentDialogMaskPageClass::OnActivateMask()
 	GetDlgItem(IDC_DRAW_MASK_CRITERIA)->EnableWindow(m_bActivateMask);
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnSelchangeMaskOperatorCombo() 
+void SVToolAdjustmentDialogMaskPageClass::OnSelchangeMaskOperatorCombo()
 {
 	initMask();
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnRadioImageMask() 
+void SVToolAdjustmentDialogMaskPageClass::OnRadioImageMask()
 {
 	UpdateData();
 	ShowControls(m_iMaskType);
@@ -433,15 +434,15 @@ void SVToolAdjustmentDialogMaskPageClass::OnRadioImageMask()
 
 	SetupImageMaskCombo();
 }
-	
-void SVToolAdjustmentDialogMaskPageClass::OnRadioStaticMask() 
+
+void SVToolAdjustmentDialogMaskPageClass::OnRadioStaticMask()
 {
 	UpdateData();
 	ShowControls(m_iMaskType);
 	initMask();
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnRadioShapeMask() 
+void SVToolAdjustmentDialogMaskPageClass::OnRadioShapeMask()
 {
 	UpdateData();
 	ShowControls(m_iMaskType);
@@ -456,7 +457,7 @@ void SVToolAdjustmentDialogMaskPageClass::ShowControls(int p_iMaskType)
 	GetDlgItem(IDC_COMBO_FILL_OPTIONS)->ShowWindow(MASK_TYPE_SHAPE == p_iMaskType);
 	GetDlgItem(IDC_STATIC_FILL_COLOR)->ShowWindow(MASK_TYPE_SHAPE == p_iMaskType);
 	GetDlgItem(IDC_STATIC_FILL_OPTIONS)->ShowWindow(MASK_TYPE_SHAPE == p_iMaskType);
-	
+
 	// Static
 	GetDlgItem(IDC_BTN_IMPORT_MASK)->ShowWindow(MASK_TYPE_STATIC == p_iMaskType);
 	GetDlgItem(IDC_BTN_EXPORT_MASK)->ShowWindow(MASK_TYPE_STATIC == p_iMaskType);
@@ -464,7 +465,7 @@ void SVToolAdjustmentDialogMaskPageClass::ShowControls(int p_iMaskType)
 
 	// Shape
 	GetDlgItem(IDC_BTN_EDIT_SHAPE_MASK)->ShowWindow(MASK_TYPE_SHAPE == p_iMaskType);
-	
+
 	// Image
 	GetDlgItem(IDC_COMBO_IMAGE_MASK)->ShowWindow(MASK_TYPE_IMAGE == p_iMaskType);
 	GetDlgItem(IDC_STATIC_MASK_IMAGE_SOURCE)->ShowWindow(MASK_TYPE_IMAGE == p_iMaskType);
@@ -476,7 +477,7 @@ void SVToolAdjustmentDialogMaskPageClass::SetupImageMaskCombo()
 	m_cbAvailableSourceImageList.Init(rAvailableImageList, m_imageName, NoImageTag);
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnSelchangeComboImageMask() 
+void SVToolAdjustmentDialogMaskPageClass::OnSelchangeComboImageMask()
 {
 	UpdateData(true); // get data from dialog
 
@@ -490,7 +491,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeComboImageMask()
 	initMask();
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnButtonFillColorMore() 
+void SVToolAdjustmentDialogMaskPageClass::OnButtonFillColorMore()
 {
 	UpdateData();
 	CColorDialog dlg;
@@ -502,7 +503,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnButtonFillColorMore()
 
 	dlg.m_cc.Flags |= CC_ENABLEHOOK;
 	dlg.m_cc.lpfnHook = ColorDlgHookFn;
-	
+
 	dlg.m_cc.lCustData = atoi(m_sFillColor);
 
 	long lOriginalVal = atol(m_sFillColor);
@@ -522,12 +523,12 @@ void SVToolAdjustmentDialogMaskPageClass::OnButtonFillColorMore()
 	initMask();
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnChangeEditFillColor() 
+void SVToolAdjustmentDialogMaskPageClass::OnChangeEditFillColor()
 {
 	initMask();
 }
 
-UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn( HWND hdlg, UINT uiMsg, WPARAM, LPARAM lParam )
+UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn(HWND hdlg, UINT uiMsg, WPARAM, LPARAM lParam)
 {
 	int iReturnCode = 0;	// by default allow color dlg to process message
 
@@ -539,50 +540,50 @@ UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn( HWND hdlg
 	assert(nullptr != pWnd);
 	switch (uiMsg)
 	{
-		case WM_INITDIALOG:
+	case WM_INITDIALOG:
+	{
+		if (pWnd)
 		{
-			if (pWnd)
-			{
-				pWnd->GetDlgItem(COLOR_RAINBOW)->ShowWindow(SW_HIDE);
-				pWnd->GetDlgItem(COLOR_BOX1)->ShowWindow(SW_HIDE);
-				pWnd->GetDlgItem(COLOR_CUSTOM1)->ShowWindow(SW_HIDE);
-				pWnd->GetDlgItem(COLOR_SOLID)->ShowWindow(SW_HIDE);
-				
-				CHOOSECOLOR* pColor = reinterpret_cast<CHOOSECOLOR*>(lParam);
-				if (pColor)
-				{
-					
-					::SendMessage(hdlg, UISetRGB, 0, (LPARAM)RGB(pColor->lCustData, pColor->lCustData, pColor->lCustData));
-				}
-			}
-			iReturnCode = 1;	// don't have color dlg handle this again (it has already handled it)
-			break;
-		}
+			pWnd->GetDlgItem(COLOR_RAINBOW)->ShowWindow(SW_HIDE);
+			pWnd->GetDlgItem(COLOR_BOX1)->ShowWindow(SW_HIDE);
+			pWnd->GetDlgItem(COLOR_CUSTOM1)->ShowWindow(SW_HIDE);
+			pWnd->GetDlgItem(COLOR_SOLID)->ShowWindow(SW_HIDE);
 
-		case WM_PAINT:
-		{
-			CWnd* pWndRed = pWnd->GetDlgItem(COLOR_RED);
-			assert(nullptr != pWndRed);
-			if (nullptr != pWndRed)
+			CHOOSECOLOR* pColor = reinterpret_cast<CHOOSECOLOR*>(lParam);
+			if (pColor)
 			{
-				CString sText;
-				pWndRed->GetWindowText(sText);
 
-				m_pThis->m_Values.Set<CString>(SvPb::MaskFillColorEId, sText);
-				m_pThis->m_Values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
-				m_pThis->setImages();
+				::SendMessage(hdlg, UISetRGB, 0, (LPARAM)RGB(pColor->lCustData, pColor->lCustData, pColor->lCustData));
 			}
 		}
+		iReturnCode = 1;	// don't have color dlg handle this again (it has already handled it)
+		break;
+	}
 
-		default:
+	case WM_PAINT:
+	{
+		CWnd* pWndRed = pWnd->GetDlgItem(COLOR_RED);
+		assert(nullptr != pWndRed);
+		if (nullptr != pWndRed)
 		{
-			break;
+			CString sText;
+			pWndRed->GetWindowText(sText);
+
+			m_pThis->m_Values.Set<CString>(SvPb::MaskFillColorEId, sText);
+			m_pThis->m_Values.Commit(SvOgu::PostAction::doReset | SvOgu::PostAction::doRunOnce);
+			m_pThis->setImages();
 		}
+	}
+
+	default:
+	{
+		break;
+	}
 	}
 	return iReturnCode;
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnSelchangeComboFillOptions() 
+void SVToolAdjustmentDialogMaskPageClass::OnSelchangeComboFillOptions()
 {
 	initMask();
 }
@@ -602,7 +603,7 @@ void SVToolAdjustmentDialogMaskPageClass::setImages()
 	m_dialogImage.Refresh();
 }
 
-void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria() 
+void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria()
 {
 	initMask();
 }

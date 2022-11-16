@@ -30,7 +30,7 @@ public:
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams ) override;
 	virtual HRESULT SetDeviceParameter(int parameter, const _variant_t& rValue) override;
 
-	virtual HRESULT LoadFiles(const SVFileNameArrayClass &rArray) override;
+	virtual HRESULT LoadFiles(const SvFs::FileNameContainer &rArray) override;
 	virtual HRESULT UnloadFiles() override;
 
 	virtual HRESULT CreateLightReference( int iBands ) override;
