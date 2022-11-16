@@ -1944,7 +1944,9 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask* pExternalToolT
 
 		if (bTypeIsArrayOrScalar)
 		{
-			rInputValue.setValueType((VT_BSTR == (VT_BSTR & rInputDef.getVt())) ? SvPb::TypeText : SvPb::TypeDecimal);
+			//pay attention VT_BSTR & VT_BOOL   == VT_BSTR; be carefull with  bool operation on  VARENUM 
+			auto type = ( VT_BSTR == rInputDef.getVt() || ( (VT_BSTR|VT_ARRAY) == rInputDef.getVt())) ? SvPb::TypeText : SvPb::TypeDecimal;
+			rInputValue.setValueType(type);
 			rInputValue.SetAllowVoidReference(false);
 			rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), initializeAll);
 			if (initializeAll)

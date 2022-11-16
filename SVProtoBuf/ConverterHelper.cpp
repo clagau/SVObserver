@@ -144,7 +144,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 	switch (rPbVariant.type())
 	{
 		case VT_BOOL:
-			rVariant.boolVal = rPbVariant.bval();
+			rVariant.boolVal = (rPbVariant.bval()== 0)? VARIANT_FALSE : VARIANT_TRUE   ;
 			break;
 
 		case VT_I1:
