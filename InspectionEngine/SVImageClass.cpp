@@ -353,12 +353,30 @@ const double& SVImageClass::GetLastResetTimeStamp() const
 
 bool SVImageClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
-#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-	OutputDebugString(SvUl::Format("SVImageClass::ResetObject %s\n", GetCompleteName().c_str()).c_str());
+	
+#ifdef  TRACE_RESETALL
+	ResetImageIds[getObjectId()]++;
+	IdsName[getObjectId()] = GetCompleteName().c_str();
+	std::string traceText = std::format("SVImageClass::ResetObject {}: {}; {}; {}; {}; {}\n", (int)ResetImageIds[getObjectId()],
+	 (unsigned int)getObjectId(), (int)m_ObjectTypeInfo.m_ObjectType, (unsigned int)m_ObjectTypeInfo.m_SubType, static_cast<unsigned int> (m_ObjectTypeInfo.m_EmbeddedID), GetCompleteName().c_str());
+	if (ResetImageIds[getObjectId()] > 1)
+	{
+
+		::OutputDebugString(traceText.c_str());
+	}
 #endif 
 	setInspectionPosForTrc();
+	bool Result = (S_OK == UpdateFromParentInformation(pErrorMessages)) && (S_OK == RebuildStorage(pErrorMessages)) ;
 
-	bool Result = (S_OK == UpdateFromParentInformation(pErrorMessages)) && (S_OK == RebuildStorage(pErrorMessages)) && __super::ResetObject(pErrorMessages);
+	if (!m_isCreated)
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotCreated, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
 
 	setImageSubType();
 
@@ -367,7 +385,6 @@ bool SVImageClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	m_width.setValue(value);
 	m_ImageInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputHeight, value);
 	m_height.setValue(value);
-
 	return Result;
 }
 
@@ -1131,6 +1148,11 @@ SvOi::ITRCImagePtr SVImageClass::getImageReadOnly(const SvOi::ITriggerRecordR* p
 	if (nullptr != pTriggerRecord)
 	{
 		assert(0 <= m_imagePosInTRC);
+		if ((0 > m_imagePosInTRC))
+		{
+			std::string text = std::format("Triggerposition issue for {}\n", GetCompleteName());
+			Log_Error(text.c_str());
+		}
 		if (!m_isChildImageInTRC)
 		{
 			pImage = pTriggerRecord->getImage(m_imagePosInTRC, lockImage);

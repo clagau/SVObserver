@@ -88,7 +88,7 @@ public:
 	//innitialize and recalculate the imageExtent if necessary 
 	HRESULT updateImageExtent(bool init);
 
-	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent);
+	HRESULT SetImageExtentAndProperty( const SVImageExtentClass& rImageExtent);
 
 	// ******* Begin Source Extent Data
 	// *
@@ -204,6 +204,7 @@ private:
 	SvPb::SVExtentTranslationEnum m_eTranslation {SvPb::SVExtentTranslationUnknown};
 	SvDef::SVExtentShapeEnum m_eShape {SvDef::SVExtentShapeUnknown};
 
+	//@TODO[MEC][10.30][17.11.2022]  CHECK if  m_Properties is necessary additional to m_Imageextent
 	SVToolExtentPropertiesClass m_Properties;
 
 	

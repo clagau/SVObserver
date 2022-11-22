@@ -55,6 +55,7 @@
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>
+#include <format>
 #include <guiddef.h>
 #include <map>
 #include <memory>

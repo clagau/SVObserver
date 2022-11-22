@@ -73,9 +73,8 @@ public:
 
 	virtual ~SVObjectClass();
 
-	/*
-	This method is a placeholder for the object reset functionality.  This method will be overridden by derived classes.
-	*/
+	
+	
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
@@ -159,7 +158,7 @@ public:
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual SvStl::MessageContainerVector verifyAndSetName(const std::string& newName) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
+	virtual bool resetAllObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 	virtual HRESULT getValue(double& , int = 0) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& ) const override { return E_NOTIMPL; };
 	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
@@ -221,7 +220,8 @@ public:
 	HRESULT setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString);
 
 	SvOi::ObjectNotificationRAIIPtr registerNotification(SvOi::ObjectNotificationFunctionPtr pFunc);
-
+	void SetLateReset() { m_LateReset = true; }
+	bool GetLateReset() const { return m_LateReset; } 
 protected:
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
@@ -260,11 +260,11 @@ protected:
 	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo{};
 
 	SVObjectPtrVector m_embeddedList;
+	
 
 	bool m_editModeFreezeFlag = false;
-
+	bool m_LateReset = false;
 private:
-	
 	//ATTENTION: order of the parameter (especially m_ObjectName before m_Name) is important, because it is needed for the constructors.
 	int m_resourceID;		//String resource ID, of NOT user changeable name.
 	uint32_t m_objectId = SvDef::InvalidObjectId;

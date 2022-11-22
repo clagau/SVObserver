@@ -390,8 +390,8 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 bool ResizeTool::ModifyImageExtentByScaleFactors()
 {
-#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
-	auto before = m_toolExtent.getImageExtent();
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE) 
+	SVImageExtentClass  before = m_toolExtent.getImageExtent();
 #endif
 	if (!m_pEmbeddedExtents.get())
 	{
@@ -433,7 +433,9 @@ bool ResizeTool::ModifyImageExtentByScaleFactors()
 	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, outputImageWidth));
 	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, outputImageHeight));
 
-#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE) 
 	m_toolExtent.getImageExtent().OutputDebugInformationOnExtent(" modify", &before);
 #endif
 

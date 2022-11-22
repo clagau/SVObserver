@@ -485,14 +485,20 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		bool ret = __super::CreateObject(rCreateStructure);
 
+		SVObjectLevelCreateStruct equationCreateStructure {*this};
+		equationCreateStructure.m_pInspection = rCreateStructure.m_pInspection;
+		equationCreateStructure.m_pTool = rCreateStructure.m_pTool;
+		equationCreateStructure.m_pAnalyzer = rCreateStructure.m_pAnalyzer;
+		
+		m_Content.CreateObject(equationCreateStructure);
+		m_refOptionObject.CreateObject(equationCreateStructure);
+
 		long lValue = 0;
 		m_refOptionObject.GetValue(lValue);
 		m_refOption = static_cast<SvPb::LinkedSelectedOption>(lValue);
 
 		m_equation.setUseOwnerIdForDep();
-		SVObjectLevelCreateStruct equationCreateStructure {*this};// = rCreateStructure;
-		equationCreateStructure.m_pInspection = rCreateStructure.m_pInspection;
-		equationCreateStructure.m_pTool = rCreateStructure.m_pTool;
+		
 		m_equation.CreateObject(equationCreateStructure);
 		if (nullptr == m_indirectValueRef.getObject() && SvDef::InvalidObjectId != m_indirectValueRef.getObjectId())
 		{

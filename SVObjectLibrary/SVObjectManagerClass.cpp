@@ -298,6 +298,12 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 
 HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName, SVObjectReference& rObjectRef) const
 {
+	if (rFullName.size() == 0)
+	{
+		//@TODO[MEC][10.30][17.11.2022] add an errormessage here after fix issue in LinkedValue::updateFromOldStruct
+		return E_FAIL;
+	}
+	
 	if (0 == rFullName.find(SvOl::ToolSetName))
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
@@ -306,6 +312,8 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 		rObjectRef = SVObjectReference();
 		return E_FAIL;
 	}
+
+
 
 	auto [Result, pObject, NameInfo] = getObjectByDottedName(rFullName);
 

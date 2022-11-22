@@ -45,6 +45,12 @@
 #pragma endregion Includes
 
 //#define TRACE_TRC
+#ifdef TRACE_RESETALL	
+
+std::unordered_map<int, int> ResetImageIds;
+std::unordered_map<int, int> ResetIds;
+std::unordered_map<int, std::string> IdsName;
+#endif 
 
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SvPb::InspectionProcessClassId);
 
@@ -1287,6 +1293,10 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 
 bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
 {
+#ifdef TRACE_RESETALL	
+	ResetImageIds.clear();
+	ResetIds.clear();
+#endif 
 	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
 	if (nullptr == pTrcRW)
 	{
@@ -1359,6 +1369,44 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorM
 	{
 		*pErrorMessages = ErrorMessages;
 	}
+#ifdef TRACE_RESETALL	
+	
+	std::string msg = std::format("Total ResetedImage Ids: {}\n", ResetImageIds.size());
+	OutputDebugString(msg.c_str());
+	bool first {true};
+	for (auto &it : ResetImageIds)
+	{
+		if (it.second > 1)
+		{
+			if (first)
+			{
+				OutputDebugString("RESET IMAGE IDS MORE THEN ONCE!!!!!!!!!!:\n");
+				first = false;
+			}
+			msg = std::format("{} : ({}): {} \n", IdsName[it.first], it.first, it.second);
+			OutputDebugString(msg.c_str());
+		}
+
+	}
+	first = true;
+	msg = std::format("Total ResetedIds: {}\n", ResetIds.size());
+	OutputDebugString(msg.c_str());
+	for (auto &it : ResetIds)
+	{
+		if (it.second > 1)
+		{
+			if (first)
+			{
+				OutputDebugString("RESET IDS MORE THEN ONCE!!!!!!!!!!:\n");
+				first = false;
+			}
+			
+			msg = std::format("{} : ({}): {} \n", IdsName[it.first], it.first, it.second);
+			OutputDebugString(msg.c_str());
+		}
+	}
+	
+#endif 
 	return Result;
 }
 

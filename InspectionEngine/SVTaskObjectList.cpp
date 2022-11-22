@@ -974,24 +974,6 @@ bool SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructVector* pList, 
 	return rc;
 }
 
-bool SVTaskObjectListClass::resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
-{
-	bool Result = SVTaskObjectClass::resetAllOutputListObjects( pErrorMessages );
-
-	// Try to send message to outputObjectList members
-	for( int i = 0; i < static_cast<int> (numberOfTaskObjects()); ++ i )
-	{
-		SVTaskObjectClass* l_pObject(getTaskObject( i ) );
-		if( nullptr != l_pObject )
-		{
-			//return-value and error-messages do not be saved here, because this object will call resetAllOutputListObjects by its own and return error-messages to the parents.
-			//this call here is important to reset (resize) the embedded images, so the parents can use it for its reset.
-			l_pObject->resetAllOutputListObjects();
-		}
-	}
-	return Result;
-}
-
 bool SVTaskObjectListClass::isInputImage(uint32_t imageId) const
 {
 	bool Result = SVTaskObjectClass::isInputImage(imageId);
@@ -1049,7 +1031,7 @@ bool SVTaskObjectListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVe
 	return bRetVal;
 }
 
-bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
+bool SVTaskObjectListClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
 {
 	bool Result = __super::resetAllObjects(pErrorMessages);
 

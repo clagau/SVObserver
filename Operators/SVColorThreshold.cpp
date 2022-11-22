@@ -269,6 +269,11 @@ void SVColorThreshold::LocalInitialize()
 	RegisterEmbeddedImage(&m_BandThreshold[SvDef::BandEnum::Band2].m_OutputImage, SvPb::Band2ImageEId, IDS_OBJECTNAME_BAND2_IMAGE);
 	RegisterEmbeddedImage(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
 
+	//these will be resetet in ResetObject in createBandChildLayer 
+	m_BandThreshold[SvDef::BandEnum::Band0].m_OutputImage.SetLateReset();
+	m_BandThreshold[SvDef::BandEnum::Band1].m_OutputImage.SetLateReset();
+	m_BandThreshold[SvDef::BandEnum::Band2].m_OutputImage.SetLateReset();
+
 	/////////////////////////////////////////////////////////////////////////
 	// Band 0 Threshold
 	/////////////////////////////////////////////////////////////////////////
@@ -327,6 +332,7 @@ void SVColorThreshold::LocalInitialize()
 	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band0ImageEId);
 	registerInputObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage, _T("ColorThresholdBand0Image"), SvPb::Band0ImageInputEId);
 	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetObjectAttributesAllowed(SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);;
+	
 
 	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band1ImageEId);
 	registerInputObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage, _T("ColorThresholdBand1Image"), SvPb::Band1ImageInputEId);

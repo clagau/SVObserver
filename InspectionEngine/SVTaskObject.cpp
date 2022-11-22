@@ -91,7 +91,6 @@ SVTaskObjectClass::~SVTaskObjectClass()
 bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
 {
 	clearTaskMessages();
-
 	bool Result = (S_OK == updateImageExtent(true));
 
 	// Notify friends...
@@ -103,9 +102,7 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMes
 		}
 	}
 
-	Result &= resetAllOutputListObjects(&m_ResetErrorMessages);
-	Result &= __super::resetAllObjects(&m_ResetErrorMessages);
-
+	Result = Result && __super::resetAllObjects(&m_ResetErrorMessages);
 	m_embeddedFormulaLinked.clear();
 	if (GetObjectSubType() != SvPb::ParameterResultObjectType) //for results in the GroupTool the formula must be calculated at the end (see ResultParameterTask::calcFormulaPost()).
 	{
@@ -113,11 +110,12 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMes
 		{
 			if (nullptr != pObject && SvPb::LinkedValueClassId == pObject->GetClassID())
 			{
-				auto* pLinkedObject = dynamic_cast<SvVol::LinkedValue*>(pObject);
+				SvVol::LinkedValue* pLinkedObject = static_cast<SvVol::LinkedValue*>(pObject);;
+				assert(dynamic_cast<SvVol::LinkedValue*>(pObject) == pLinkedObject);
 				if (nullptr != pLinkedObject && SvPb::LinkedSelectedOption::Formula == pLinkedObject->getSelectedOption())
 				{
 					m_embeddedFormulaLinked.push_back(pLinkedObject);
-					Result = pLinkedObject->resetAllObjects(pErrorMessages) && Result;
+					Result = pLinkedObject->resetAllObjects(pErrorMessages) && Result; //@TODO[MEC][10.30][17.11.2022] is this necessary?
 				}
 			}
 		}
@@ -127,7 +125,6 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMes
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_ResetErrorMessages.begin(), m_ResetErrorMessages.end());
 	}
-
 	return Result;
 }
 
@@ -380,7 +377,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 				break;
 		}
 	}
-	
+
 
 	for (auto const& rEntry : rValueVector)
 	{
@@ -400,7 +397,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						throw Msg;
 					}
-					
+
 					SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(rData.m_pValueObject);
 					if (pObj && pObj->GetParentID() != getObjectId())
 					{
@@ -424,11 +421,11 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 					SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(rData.m_pValueObject);
 					if (pObj && pObj->GetParentID() != getObjectId())
 					{
-							
+
 						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongParentForEmbeddedValue, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 						throw Msg;
 					}
-					
+
 					break;
 			}
 
@@ -1152,35 +1149,6 @@ void SVTaskObjectClass::MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObje
 			m_embeddedList.erase(currentIter);
 		}
 	}
-}
-
-bool SVTaskObjectClass::resetAllOutputListObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
-{
-	bool Result = true;
-
-	for (size_t j = 0; j < m_friendList.size(); ++j)
-	{
-		if (nullptr != m_friendList[j])
-		{
-			//return-value and error-messages do not be saved here, because this object will call resetAllOutputListObjects by its own and return error message to the parents.
-			//this call here is important to reset (resize) the embedded images, so the parents can use it for its reset.
-			m_friendList[j]->resetAllOutputListObjects();
-		}
-	}
-
-	// Try to send message to outputObjectList members
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-
-		if (nullptr != pObject && pObject->ObjectAttributesAllowed())
-		{
-			//the error of this embedded objects must be saved by this object.
-			Result = pObject->resetAllObjects(pErrorMessages) && Result;
-		}
-	}
-
-	return Result;
 }
 
 bool SVTaskObjectClass::registerInputObject(SvOl::InputObject* pInputObject, const std::string& rInputName, SvPb::EmbeddedIdEnum embeddedId)

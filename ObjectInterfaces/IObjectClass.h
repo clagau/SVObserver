@@ -15,6 +15,17 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+
+#ifdef TRACE_RESETALL
+
+extern std::unordered_map<int, int> ResetImageIds;
+extern std::unordered_map<int, int> ResetIds;
+extern std::unordered_map<int, std::string> IdsName;
+
+#endif 
+
+
+
 namespace SvDef
 {
 struct SVObjectTypeInfoStruct;

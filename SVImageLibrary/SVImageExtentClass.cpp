@@ -2906,7 +2906,7 @@ bool SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription
 		{
 			if (nullptr != pReference)
 			{
-				OutputDebugInformationOnExtent(pDescription); //If we want delta information we usually also need information on the reference
+				
 
 				auto referencePropertyAndValue = pReference->m_extentValues.find(propertyAndValue.first);
 				if (referencePropertyAndValue != pReference->m_extentValues.end())

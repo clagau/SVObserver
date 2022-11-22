@@ -208,7 +208,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum ToolExtent
 
 				imageExtents.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
 
-				l_Status = SetImageExtent(imageExtents);
+				l_Status = SetImageExtentAndProperty(imageExtents);
 			}
 			else
 			{
@@ -228,7 +228,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum ToolExtent
 							}
 							pParent->GetImageExtentsToFit(imageExtents, imageExtents);
 
-							SetImageExtent(imageExtents);
+							SetImageExtentAndProperty(imageExtents);
 						}
 					}
 				}
@@ -248,7 +248,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum ToolExtent
 						imageExtents.SetExtentProperty(SvPb::SVExtentPropertyHeight, l_Value);
 					}
 
-					l_Status = SetImageExtent(imageExtents);
+					l_Status = SetImageExtentAndProperty(imageExtents);
 				}
 			}
 		}
@@ -456,7 +456,7 @@ HRESULT SVToolExtentClass::ensureValidScaleFactorIfDirectValue(const SVImageExte
 	return hrOk;
 }
 
-HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent) 
+HRESULT SVToolExtentClass::SetImageExtentAndProperty(const SVImageExtentClass& rImageExtent) 
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -2471,7 +2471,7 @@ HRESULT SVToolExtentClass::UpdateFromOutputSpace(SvPb::SVExtentLocationPropertyE
 		}
 
 	}
-
+	SetImageExtentAndProperty(m_ImageExtent);
 	return l_hrOk;
 }
 

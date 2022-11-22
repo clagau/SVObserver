@@ -133,8 +133,6 @@ protected:
 	// NEVER call base class Run()! 
 	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	virtual bool resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-
 	/// Call method ConnectObject at the child object with a create struct defined in this method.
 	/// \param rChildObject [in] Child object
 	virtual void connectChildObject( SVTaskObjectClass& rChildObject );

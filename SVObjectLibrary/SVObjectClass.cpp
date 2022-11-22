@@ -134,6 +134,19 @@ bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		}
 		return false;
 	}
+#ifdef TRACE_RESETALL
+	ResetIds[getObjectId()]++;
+	IdsName[getObjectId()] = GetCompleteName().c_str();
+	std::string traceText = std::format(_T("SVObjectClass::ResetObject {}: {}; {}; {}; {}; {}\n"), (unsigned int)ResetIds[getObjectId()],
+	 (unsigned int) m_objectId, (unsigned int)m_ObjectTypeInfo.m_ObjectType, (unsigned int)m_ObjectTypeInfo.m_SubType, static_cast<unsigned int> (m_ObjectTypeInfo.m_EmbeddedID), GetCompleteName().c_str());
+	//::OutputDebugString(traceText.c_str());
+	if (ResetIds[getObjectId()] > 1)
+	{
+		::OutputDebugString(traceText.c_str());
+		
+	}
+#endif 
+
 	return true;
 }
 
@@ -399,6 +412,22 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 
 	return nullptr;
 }
+
+bool SVObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages)
+{
+	bool Result = true;
+	for (auto pObject : m_embeddedList)
+	{
+		if (nullptr != pObject  && pObject->m_LateReset == false &&   pObject->ObjectAttributesAllowed())
+		{
+			
+			// cppcheck-suppress useStlAlgorithm
+			Result = Result && pObject->resetAllObjects(pErrorMessages);
+		}	
+	}
+	Result =  Result  && ResetObject(pErrorMessages); 
+	return Result;
+};
 
 void SVObjectClass::getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const
 {

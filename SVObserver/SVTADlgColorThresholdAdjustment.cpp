@@ -16,7 +16,6 @@
 #include "SVTADlgColorThresholdSheet.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVColorThreshold.h"
-#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"

@@ -612,10 +612,8 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 
 bool SVToolSet::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
 {
-
 	bool result = __super::resetAllObjects(pErrorMessages);
 	m_isObjectValid.SetValue(BOOL(result));
-
 	return result;
 }
 

@@ -67,7 +67,6 @@ public:
 	void addOrRemoveResetErrorMessage(SvStl::MessageContainer& rErrorMessage, bool add);
 
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
-
 	virtual bool isInputImage(uint32_t imageId) const override;
 
 	virtual bool DoesObjectHaveExtents() const;
@@ -229,8 +228,6 @@ protected:
 	// Don't forget to call base class onRun() first.
 	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
 	bool runFriends(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
-
-	virtual bool resetAllOutputListObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
 	
 private:

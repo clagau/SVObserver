@@ -852,7 +852,7 @@ SvPb::EAutoSize SVToolClass::GetAutoSizeEnabled() const
 HRESULT SVToolClass::updateExtentFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eAction, long dx, long dy)
 {
 	
-	m_toolExtent.UpdateFromOutputSpace(eAction, dx, dy);
+ m_toolExtent.UpdateFromOutputSpace(eAction, dx, dy);
 
 	HRESULT retVal {S_OK};
 	auto* pInspection = GetInspectionInterface();
@@ -932,7 +932,7 @@ bool SVToolClass::SetDefaultFormulas(SvStl::MessageContainerVector*)
 
 HRESULT SVToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
-	return m_toolExtent.SetImageExtent(rImageExtent);
+	return m_toolExtent.SetImageExtentAndProperty(rImageExtent);
 }
 
 const SVImageExtentClass& SVToolClass::GetImageExtent() const

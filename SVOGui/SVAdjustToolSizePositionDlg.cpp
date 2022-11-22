@@ -453,10 +453,9 @@ bool  SVAdjustToolSizePositionDlg::IsReadonly(const ::SvPb::ExtentParameter& ite
 			bReadonly = true;
 		}
 	}
-	catch (...)
+	catch (std::out_of_range&  )
 	{
-		assert(false);
-		bReadonly = true;
+		bReadonly = false;
 	}
 
 	return bReadonly;
