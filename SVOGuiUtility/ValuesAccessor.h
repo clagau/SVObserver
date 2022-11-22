@@ -15,7 +15,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvOgu
@@ -170,7 +169,7 @@ public:
 		if (S_OK != hr && 0 == m_MessageFailList.size())
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"),hr));
+			msgList.push_back(std::format(_T("{}"), hr));
 			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams), taskID);
 			m_MessageFailList.push_back(message);
 		}

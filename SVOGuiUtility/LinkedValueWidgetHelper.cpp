@@ -10,6 +10,7 @@
 #include "LinkedValueWidgetHelper.h"
 #include "LinkedValueSelectorDialog.h"
 #include "Definitions/GlobalConst.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace
@@ -29,8 +30,8 @@ bool checkValue(int minValue, int maxValue, const variant_t& rValue, SvStl::Mess
 	if (false == isOk)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), minValue));
-		msgList.push_back(SvUl::Format(_T("%d"), maxValue));
+		msgList.push_back(std::format(_T("{}"), minValue));
+		msgList.push_back(std::format(_T("{}"), maxValue));
 		variant_t val;
 		HRESULT hr = ::VariantChangeTypeEx(&val, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
 		if (S_OK == hr)

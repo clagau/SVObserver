@@ -132,7 +132,7 @@ namespace SvOg
 		{
 		case VT_R8:
 			{
-				rText = SvUl::Format( _T("%.06f"), rValue.dblVal );
+				rText = std::format( _T("{:.06f}"), rValue.dblVal );
 				rType = GlobalConstantTypes[ SvUl::GlobalConstantData::DecimalType ];
 			}
 			break;

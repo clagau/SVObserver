@@ -38,7 +38,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 			switch (rData.m_type)
 			{
 				case DrawNodeType::BaseImage:
-					textStr = SvUl::Format("%s Image: ", m_isColor ? "Color" : "Gray");
+					textStr = std::format("{} Image: ", m_isColor ? "Color" : "Gray");
 					break;
 				case DrawNodeType::Text:
 					textStr = "General Data";
@@ -56,14 +56,14 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 
 						if (1. != scaleX || 1. != scaleY)
 						{
-							textStr += SvUl::Format("(%.2f/%.2f)", scaleX, scaleY);
+							textStr += std::format("({:.2f}/{:.2f})", scaleX, scaleY);
 						}
 
 						_variant_t textVar = rData.m_pValues->Get<LinkedValueData>(SvPb::TextEId).m_Value;
 						if (VT_BSTR == textVar.vt)
 						{
 							std::string text = SvUl::createStdString(textVar.bstrVal);
-							textStr += SvUl::Format(", \"%s\"", text.c_str());
+							textStr += std::format(", \"{}\"", text);
 						}
 					}
 					break;
@@ -92,7 +92,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 				{
 					long width = m_rValues.Get<long>(SvPb::ExtentWidthEId);
 					long height = m_rValues.Get<long>(SvPb::ExtentHeightEId);
-					textStr += SvUl::Format(": %d / %d", width, height);
+					textStr += std::format(": {} / {}", width, height);
 					if (isAutoFit() && useBackgroundImage())
 					{
 						textStr += "; Autofit";
@@ -107,7 +107,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					{
 						long width = rData.m_pValues->Get<LinkedValueData>(SvPb::WidthEId).m_Value;
 						long height = rData.m_pValues->Get<LinkedValueData>(SvPb::HeightEId).m_Value;
-						textStr += SvUl::Format(": %d / %d", width, height);
+						textStr += std::format(": {} / {}", width, height);
 					}
 					break;
 				}
@@ -126,7 +126,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					{
 						long x = rData.m_pValues->Get<LinkedValueData>(SvPb::LeftEId).m_Value;
 						long y = rData.m_pValues->Get<LinkedValueData>(SvPb::TopEId).m_Value;
-						textStr += SvUl::Format(": %d / %d", x, y);
+						textStr += std::format(": {} / {}", x, y);
 					}
 					break;
 				}
@@ -138,7 +138,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					{
 						long x = rData.m_pValues->Get<LinkedValueData>(SvPb::CenterXEId).m_Value;
 						long y = rData.m_pValues->Get<LinkedValueData>(SvPb::CenterYEId).m_Value;
-						textStr += SvUl::Format(": %d / %d", x, y);
+						textStr += std::format(": {} / {}", x, y);
 					}
 					break;
 				}
@@ -160,7 +160,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 						long y2 = rData.m_pValues->Get<LinkedValueData>(SvPb::Y2EId).m_Value;
 						long x3 = rData.m_pValues->Get<LinkedValueData>(SvPb::X3EId).m_Value;
 						long y3 = rData.m_pValues->Get<LinkedValueData>(SvPb::Y3EId).m_Value;
-						textStr += SvUl::Format(": %d / %d; %d / %d; %d / %d ", x1, y1, x2, y2, x3, y3);
+						textStr += std::format(": {} / {}; {} / {}; {} / {} ", x1, y1, x2, y2, x3, y3);
 					}
 					break;
 				}
@@ -177,7 +177,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 						auto x2Values = SvUl::SafeArrayToVector<double>(rX2ValueData.m_Value.parray);
 						auto y2Values = SvUl::SafeArrayToVector<double>(rY2ValueData.m_Value.parray);
 						auto numbers = std::min({xValues.size(), yValues.size(),x2Values.size(), y2Values.size()});
-						textStr += SvUl::Format(": %d Lines", numbers);
+						textStr += std::format(": {} Lines", numbers);
 					}
 					break;
 				}
@@ -192,7 +192,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 						auto xValues = SvUl::SafeArrayToVector<double>(rXValueData.m_Value.parray);
 						auto yValues = SvUl::SafeArrayToVector<double>(rYValueData.m_Value.parray);
 						auto numbers = std::min(xValues.size(), yValues.size());
-						textStr += SvUl::Format(": %d Points", numbers);
+						textStr += std::format(": {} Points", numbers);
 					}
 					break;
 				}
@@ -203,7 +203,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					{
 						long x = rData.m_pValues->Get<LinkedValueData>(SvPb::X1EId).m_Value;
 						long y = rData.m_pValues->Get<LinkedValueData>(SvPb::Y1EId).m_Value;
-						textStr = SvUl::Format("Position: %d / %d", x, y);
+						textStr = std::format("Position: {} / {}", x, y);
 					}
 					break;
 				}
@@ -213,7 +213,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					{
 						long x = rData.m_pValues->Get<LinkedValueData>(SvPb::X1EId).m_Value;
 						long y = rData.m_pValues->Get<LinkedValueData>(SvPb::Y1EId).m_Value;
-						textStr = SvUl::Format("Point: %d / %d", x, y);
+						textStr = std::format("Point: {} / {}", x, y);
 					}
 					break;
 				}
@@ -232,7 +232,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 						double start = rData.m_pValues->Get<LinkedValueData>(SvPb::StartAngleEId).m_Value;
 						double stop = rData.m_pValues->Get<LinkedValueData>(SvPb::EndAngleEId).m_Value;
 						double xAxis = rData.m_pValues->Get<LinkedValueData>(SvPb::XAxisAngleEId).m_Value;
-						textStr += SvUl::Format(": %.1f / %.1f / %.1f", start, stop, xAxis);
+						textStr += std::format(": {:.1f} / {:.1f} / {:.1f}", start, stop, xAxis);
 					}
 					break;
 				}
@@ -249,11 +249,11 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 				{
 					byte color2 = rData.m_pValues->Get<byte>(SvPb::Color2EId);
 					byte color3 = rData.m_pValues->Get<byte>(SvPb::Color3EId);
-					textStr += SvUl::Format(": %d / %d / %d", color1, color2, color3);
+					textStr += std::format(": {} / {} / {}", color1, color2, color3);
 				}
 				else
 				{
-					textStr += SvUl::Format(": %d", color1);
+					textStr += std::format(": {}", color1);
 				}
 			}
 			break;

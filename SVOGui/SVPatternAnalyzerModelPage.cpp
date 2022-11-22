@@ -798,7 +798,7 @@ namespace SvOg
 		pItem->SetCtrlID( ModelWidth_Property );
 		pItem->SetBold( false );
 		pItem->SetHeight(16);
-		Text= SvUl::Format(_T("Width (%d - %d)"), SvDef::cMinPatternModelNewSize, m_sourceImageWidth);
+		Text= std::format(_T("Width ({} - {})"), SvDef::cMinPatternModelNewSize, m_sourceImageWidth);
 		pItem->SetLabelText( Text.c_str() );
 		pItem->OnRefresh();
 
@@ -808,7 +808,7 @@ namespace SvOg
 		pItem->SetCtrlID( ModelHeight_Property );
 		pItem->SetBold( false );
 		pItem->SetHeight(16);
-		Text= SvUl::Format(_T("Height (%d - %d)"), SvDef::cMinPatternModelNewSize, m_sourceImageHeight);
+		Text= std::format(_T("Height ({} - {})"), SvDef::cMinPatternModelNewSize, m_sourceImageHeight);
 		pItem->SetLabelText( Text.c_str() );
 		pItem->OnRefresh();
 

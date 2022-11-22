@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "BlobReconstructFilterDlg.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

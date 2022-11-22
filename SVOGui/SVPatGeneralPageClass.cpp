@@ -149,35 +149,35 @@ void SVPatGeneralPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScro
 	case IDC_PAT_SEARCH_ANGLE_SLIDER :
 		{
 			m_dSearchAngle = ((double)iNewPos) / 10.0;
-			std::string Text = SvUl::Format("%.1f", m_dSearchAngle);
+			std::string Text = std::format("{:.1f}", m_dSearchAngle);
 			SetDlgItemText(IDC_PAT_SEARCH_ANGLE_VALUE, Text.c_str());
 		break;
 		}
 	case IDC_PAT_ANGLE_DELTA_NEGATIVE_SLIDER :
 		{
 			m_dAngleDeltaNegative = ((double)iNewPos) / 10.0;
-			std::string Text = SvUl::Format("%.1f", m_dAngleDeltaNegative);
+			std::string Text = std::format("{:.1f}", m_dAngleDeltaNegative);
 			SetDlgItemText(IDC_PAT_ANGLE_DELTA_NEGATIVE_VALUE, Text.c_str());
 		break;
 		}
 	case IDC_PAT_ANGLE_DELTA_POSITIVE_SLIDER :
 		{
 			m_dAngleDeltaPositive = ((double)iNewPos) / 10.0;
-			std::string Text = SvUl::Format("%.1f", m_dAngleDeltaPositive);
+			std::string Text = std::format("{:.1f}", m_dAngleDeltaPositive);
 			SetDlgItemText(IDC_PAT_ANGLE_DELTA_POSITIVE_VALUE, Text.c_str());
 		break;
 		}
 	case IDC_PAT_ANGLE_TOLERANCE_SLIDER :
 		{
 			m_dAngleTolerance = ((double)iNewPos) / 10.0;
-			std::string Text = SvUl::Format("%.1f", m_dAngleTolerance);
+			std::string Text = std::format("{:.1f}", m_dAngleTolerance);
 			SetDlgItemText(IDC_PAT_ANGLE_TOLERANCE_VALUE, Text.c_str());
 		break;
 		}
 	case IDC_PAT_ANGULAR_ACCURACY_SLIDER :
 		{
 			m_dAngularAccuracy = ((double)iNewPos) / 10.0;
-			std::string Text = SvUl::Format("%.1f", m_dAngularAccuracy);
+			std::string Text = std::format("{:.1f}", m_dAngularAccuracy);
 			SetDlgItemText(IDC_PAT_ANGULAR_ACCURACY_VALUE, Text.c_str());
 		break;
 		}

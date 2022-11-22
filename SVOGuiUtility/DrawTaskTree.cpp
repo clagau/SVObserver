@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include "DrawTaskTree.h"
 #include "Definitions/GlobalConst.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

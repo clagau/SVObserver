@@ -39,8 +39,8 @@ bool checkDepthValue(const variant_t& rValue, SvStl::MessageContainer& rMessageC
 	if (false == isOk)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMin));
-		msgList.push_back(SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMax));
+		msgList.push_back(std::format(_T("{}"), SvDef::cRingBufferDepthMin));
+		msgList.push_back(std::format(_T("{}"), SvDef::cRingBufferDepthMax));
 		variant_t val;
 		HRESULT hr = ::VariantChangeTypeEx(&val, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
 		if (S_OK == hr)

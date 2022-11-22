@@ -153,7 +153,7 @@ namespace SvStl
 		{Tid_Error_WrongCameraVendor, _T("Wrong camera vendor: Expected {0}, Current {1}")},
 		{Tid_CreateBufferFailed, _T("Failed to create an image buffer!")},
 		{Tid_CreateImageChildBuffer_parent, _T("\"{0}\" was located partially or completely outside of "
-			"the bounds of \"{0}\".\nIt has been moved and/or resized "
+			"the bounds of \"{1}\".\nIt has been moved and/or resized "
 			"to fit in the bounds.\nThis configuration should be "
 			"saved to prevent this message from appearing again.")},
 		{Tid_CreateImageChildBuffer_child, _T("\"{0}\" was located partially or completely outside of "
@@ -293,7 +293,7 @@ namespace SvStl
 							"unknown error with Inspection {0} when the system was going online.")},
 		{Tid_GoOnlineFailure_Acquisition, _T("Configuration cannot enter Run.  Cannot reach camera {0} when the system was going online.")},
 		{Tid_GoOnlineFailure_Trigger, _T("Configuration cannot enter Run.  There is an "
-							"unknown error with Trigger {1} when the system was going online.")},
+							"unknown error with Trigger {0} when the system was going online.")},
 		{Tid_GoOnlineFailure_InternalTrigger, _T("Configuration cannot enter Run.  There is the "
 							"error {0} with enable internal Trigger when the system was going online.")},
 		{Tid_GoOnlineFailure_CreatePPQThread, _T("Configuration cannot enter Run.  There is the "

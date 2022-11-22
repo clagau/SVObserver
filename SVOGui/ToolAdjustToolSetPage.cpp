@@ -12,6 +12,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "Definitions/ObjectNames.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -100,7 +101,7 @@ void ToolAdjustToolSetPage::OnBtnObjectPicker()
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(Items);
 
 	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
-	std::string Title = SvUl::Format( _T("%s - %s"), ToolsetOutput.c_str(), SvDef::c_InspectedObjectID);
+	std::string Title = std::format( _T("{} - {}"), ToolsetOutput, SvDef::c_InspectedObjectID);
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );

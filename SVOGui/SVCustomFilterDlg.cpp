@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCustomFilterDlg.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -122,11 +121,11 @@ namespace SvOg
 
 		m_values.Init();
 		m_lKernelWidth = m_values.Get<long>(SvPb::FilterKernelWidthEId);
-		Temp = SvUl::Format( "%d", m_lKernelWidth );
+		Temp = std::format( "{}", m_lKernelWidth );
 		m_ctlKernelWidth.SelectString( -1, Temp.c_str() );
 
 		m_lKernelHeight = m_values.Get<long>(SvPb::FilterKernelHeightEId);
-		Temp = SvUl::Format( "%d", m_lKernelHeight );
+		Temp = std::format( "{}", m_lKernelHeight );
 		m_ctlKernelHeight.SelectString( -1, Temp.c_str() );
 
 		EnableCells();
@@ -187,7 +186,7 @@ namespace SvOg
 
 				{
 					std::string Name;
-					Name = SvUl::Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lKernelHeight ) / 2 ) ) * m_lKernelWidth + ( j - ( ( 7 - m_lKernelWidth  ) / 2 ) ) + 1 );
+					Name = std::format( _T( "Cell {}" ), ( k - ( ( 7 - m_lKernelHeight ) / 2 ) ) * m_lKernelWidth + ( j - ( ( 7 - m_lKernelWidth  ) / 2 ) ) + 1 );
 					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( Name.c_str() );
 					GetDlgItem( IDC_CELL1 + k * 7 + j )->EnableWindow( TRUE );
 				}// end if

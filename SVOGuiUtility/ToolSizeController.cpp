@@ -10,6 +10,7 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "FormulaController.h"
 #include "InspectionCommands/CommandExternalHelper.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 

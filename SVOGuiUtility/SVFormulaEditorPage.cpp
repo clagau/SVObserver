@@ -402,7 +402,7 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
 	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
 	std::string InspectionName = m_FormulaController->GetInspectionName();
-	std::string Title = SvUl::Format(_T("%s - %s"), ToolsetOutput.c_str(), InspectionName.c_str());
+	std::string Title = std::format(_T("{} - {}"), ToolsetOutput, InspectionName);
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this);
 	if (IDOK == Result)
@@ -711,7 +711,7 @@ void SVFormulaEditorPageClass::onValidate()
 		}
 		else
 		{
-			msgList.push_back(SvUl::Format(_T("%lf"), value));
+			msgList.push_back(std::format(_T("{}"), value));
 			if (selectedEquationText.empty())
 			{
 				id = SvStl::Tid_FormulaValidated;

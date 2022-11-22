@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "Definitions/SVMatroxSimpleEnums.h"
 #include "SVRankingFilterDlg.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -107,11 +106,11 @@ namespace SvOg
 		m_values.Init();
 		
 		m_lRankingWidth = m_values.Get<long>(SvPb::FilterKernelWidthEId);
-		Temp = SvUl::Format( "%d", m_lRankingWidth );
+		Temp = std::format( "{}", m_lRankingWidth );
 		m_ctlRankingWidth.SelectString( -1, Temp.c_str() );
 
 		m_lRankingHeight = m_values.Get<long>(SvPb::FilterKernelHeightEId);
-		Temp = SvUl::Format( "%d", m_lRankingHeight );
+		Temp = std::format( "{}", m_lRankingHeight );
 		m_ctlRankingHeight.SelectString( -1, Temp.c_str() );
 
 		m_lRankingRank = m_values.Get<long>(SvPb::RankingFilterRankingRankEId);
@@ -182,7 +181,7 @@ namespace SvOg
 
 				{
 					std::string Name;
-					Name = SvUl::Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lRankingHeight ) / 2 ) ) * m_lRankingWidth + ( j - ( ( 7 - m_lRankingWidth  ) / 2 ) ) + 1 );
+					Name = std::format( _T( "Cell {}" ), ( k - ( ( 7 - m_lRankingHeight ) / 2 ) ) * m_lRankingWidth + ( j - ( ( 7 - m_lRankingWidth  ) / 2 ) ) + 1 );
 					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( Name.c_str() );
 					GetDlgItem( IDC_CELL1 + k * 7 + j )->EnableWindow( TRUE );
 				}// end if
@@ -201,7 +200,7 @@ namespace SvOg
 
 		for(long j = 0; j < m_lRankingWidth * m_lRankingHeight; j++ )
 		{
-			std::string Temp = SvUl::Format( _T("%02d"), j + 1 );
+			std::string Temp = std::format( _T("{:02d}"), j + 1 );
 			m_ctlRankingRank.SetItemData( m_ctlRankingRank.AddString( Temp.c_str() ), j + 1 );
 		}
 
@@ -211,7 +210,7 @@ namespace SvOg
 		}// end if
 		else
 		{
-			std::string Temp = SvUl::Format( "%02d", m_lRankingRank );
+			std::string Temp = std::format( "{:02d}", m_lRankingRank );
 			m_ctlRankingRank.SelectString( -1, Temp.c_str() );
 		}// end else
 

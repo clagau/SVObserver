@@ -17,6 +17,7 @@
 #include "SVOGuiUtility/BlobAnalyzer2Helper.h"
 #include "SVOGuiUtility/DisplayHelper.h"
 #include "SVFormulaEditorSheet.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
@@ -300,7 +301,7 @@ namespace SvOg
 		{
 			if (0 < pItem->iRow && m_featureData.size() >= pItem->iRow && m_featureData[pItem->iRow - 1].is_custom())
 			{
-				std::string strCaption = SvUl::Format(_T("%s %s"), m_featureData[pItem->iRow - 1].name().c_str(), _T("Formula"));
+				std::string strCaption = std::format(_T("{} {}"), m_featureData[pItem->iRow - 1].name(), _T("Formula"));
 
 				SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_featureData[pItem->iRow - 1].equationid(), strCaption.c_str());
 				dlg.DoModal();

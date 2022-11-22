@@ -103,7 +103,7 @@ BOOL Ranking2FilterDlg::OnInitDialog()
 		//Check that its an odd value
 		if (1 == (i % 2))
 		{
-			Entry = SvUl::Format(_T("%d"), i);
+			Entry = std::format(_T("{}"), i);
 			m_WidthCtrl.AddString(Entry.c_str());
 			m_HeightCtrl.AddString(Entry.c_str());
 		}
@@ -510,9 +510,9 @@ void Ranking2FilterDlg::isDataValid() const
 	if (m_KernelArray.size() != m_KernelWidth*m_KernelHeight)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), m_KernelArray.size()));
-		msgList.push_back(SvUl::Format(_T("%d"), m_KernelWidth));
-		msgList.push_back(SvUl::Format(_T("%d"), m_KernelHeight));
+		msgList.push_back(std::format(_T("{}"), m_KernelArray.size()));
+		msgList.push_back(std::format(_T("{}"), m_KernelWidth));
+		msgList.push_back(std::format(_T("{}"), m_KernelHeight));
 		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
@@ -521,16 +521,16 @@ void Ranking2FilterDlg::isDataValid() const
 	if (1 != m_KernelWidth % 2 || 1 > m_KernelWidth || SvDef::cMaxKernelSize < m_KernelWidth)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), m_KernelWidth));
-		msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
+		msgList.push_back(std::format(_T("{}"), m_KernelWidth));
+		msgList.push_back(std::format(_T("{}"), SvDef::cMaxKernelSize));
 		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
 	if (1 != m_KernelHeight % 2 || 1 > m_KernelHeight || SvDef::cMaxKernelSize < m_KernelHeight)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), m_KernelHeight));
-		msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
+		msgList.push_back(std::format(_T("{}"), m_KernelHeight));
+		msgList.push_back(std::format(_T("{}"), SvDef::cMaxKernelSize));
 		SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw message;
 	}
@@ -555,7 +555,7 @@ void Ranking2FilterDlg::enableCells()
 
 	for (long j = 0; j < m_KernelWidth * m_KernelHeight; j++)
 	{
-		std::string Temp = SvUl::Format(_T("%02d"), j + 1);
+		std::string Temp = std::format(_T("{:02d}"), j + 1);
 		m_ctlRankingRank.SetItemData(m_ctlRankingRank.AddString(Temp.c_str()), j + 1);
 	}
 
@@ -565,7 +565,7 @@ void Ranking2FilterDlg::enableCells()
 	}// end if
 	else
 	{
-		std::string Temp = SvUl::Format("%02d", m_RankingRank);
+		std::string Temp = std::format("{:02d}", m_RankingRank);
 		m_ctlRankingRank.SelectString(-1, Temp.c_str());
 	}// end else
 

@@ -49,8 +49,8 @@ bool isFieldValid(const std::string& fieldName, const variant_t& rValue, SvStl::
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(fieldName);
-			msgList.push_back(SvUl::Format(_T("%d"), static_cast<int>(s_RangeMin)));
-			msgList.push_back(SvUl::Format(_T("%d"), static_cast<int>(s_RangeMax)));
+			msgList.push_back(std::format(_T("{}"), static_cast<int>(s_RangeMin)));
+			msgList.push_back(std::format(_T("{}"), static_cast<int>(s_RangeMax)));
 			rMsgContainer.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RangeValue_WrongRange, msgList, SvStl::SourceFileParams(StdMessageParams));
 			return false;
 		}

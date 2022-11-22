@@ -12,6 +12,7 @@
 #include "SVFormulaEditorSheet.h"
 #include "SVOGuiUtility/DataController.h"
 #include "SVToolAdjustmentDialogSizePage.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

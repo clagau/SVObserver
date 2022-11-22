@@ -13,6 +13,7 @@
 #include "DisplayHelper.h"
 #include "CDSVPictureDisplay.h"
 #include "Definitions/Color.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

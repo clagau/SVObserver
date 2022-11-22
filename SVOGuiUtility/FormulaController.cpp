@@ -23,7 +23,6 @@
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -102,7 +101,7 @@ std::string FormulaController::GetEquationText() const
 	else
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), hr));
+		msgList.push_back(std::format(_T("{}"), hr));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
@@ -226,7 +225,7 @@ int FormulaController::ValidateEquation_NoReset(const std::string& equationStrin
 	else
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), hr));
+		msgList.push_back(std::format(_T("{}"), hr));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
@@ -283,7 +282,7 @@ void FormulaController::Init()
 			else
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), hr));
+				msgList.push_back(std::format(_T("{}"), hr));
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 				assert(false);
@@ -303,7 +302,7 @@ void FormulaController::Init()
 		else
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), hr));
+			msgList.push_back(std::format(_T("{}"), hr));
 			SvStl::MessageManager e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 			assert(false);

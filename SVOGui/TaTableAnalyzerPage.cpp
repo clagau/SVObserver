@@ -118,7 +118,7 @@ bool clarifyIfChangeWanted(uint32_t inspectionId, uint32_t taskObjectId, uint32_
 		if (false == dependencyList.empty())
 		{
 			std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
-			std::string DisplayText = SvUl::Format(FormatText.c_str(), name.c_str(), name.c_str(), name.c_str(), name.c_str());
+			std::string DisplayText = std::vformat(FormatText, std::make_format_args(name, name, name, name));
 			SVShowDependentsDialog Dlg(dependencyList, DisplayText.c_str(), SVShowDependentsDialog::DeleteConfirm);
 			return (IDOK == Dlg.DoModal());
 		}
@@ -486,7 +486,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 		{
 			//display an error if set failed.
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), hrOk));
+			msgList.push_back(std::format(_T("{}"), hrOk));
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
@@ -801,7 +801,7 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 				if (S_OK != hrOk)
 				{
 					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), hrOk));
+					msgList.push_back(std::format(_T("{}"), hrOk));
 					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams));
 					rErrorMessageList.push_back(Msg);
 					return E_FAIL;

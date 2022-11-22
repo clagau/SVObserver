@@ -121,7 +121,7 @@ void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 				if (S_OK != hr)
 				{
 					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), hr));
+					msgList.push_back(std::format(_T("{}"), hr));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RemovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
@@ -188,13 +188,13 @@ void TADialogTableDefinesPage::OnBnClickedButtonAdd()
 		addPreId = m_gridList[Selection.GetMinRow() - 1].second;
 	}
 	int number = static_cast<int>(m_gridList.size()) + 1;
-	std::string name = SvUl::Format(_T("%s %d"), cEquationName, number);
+	std::string name = std::format(_T("{} {}"), cEquationName, number);
 
 	//search for unique name until one is found
 	while (!isTableNameUnique(name))
 	{
 		number++;
-		name = SvUl::Format(_T("%s %d"), cEquationName, number);
+		name = std::format(_T("{} {}"), cEquationName, number);
 	}
 	AddColumn(name, addPreId);
 
@@ -209,7 +209,7 @@ void TADialogTableDefinesPage::OnGridDblClick(NMHDR *pNotifyStruct, LRESULT* /*p
 	if (cFormulaColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
 	{
 		ValidateData(); //validate the new line (this does a reset and add the column to the tableObject)
-		std::string strCaption = SvUl::Format(_T("%s %s"), m_gridList[pItem->iRow - 1].first.c_str(), _T("Formula"));
+		std::string strCaption = std::format(_T("{} {}"), m_gridList[pItem->iRow - 1].first, _T("Formula"));
 
 		SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_gridList[pItem->iRow - 1].second, strCaption.c_str());
 		dlg.DoModal();
@@ -276,7 +276,7 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 							else
 							{
 								SvDef::StringVector msgList;
-								msgList.push_back(SvUl::Format(_T("%d"), hr));
+								msgList.push_back(std::format(_T("{}"), hr));
 								Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 							}
 						}
@@ -475,7 +475,7 @@ void TADialogTableDefinesPage::MoveColumn(uint32_t moveId, uint32_t preId)
 	if (S_OK != hr)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), hr));
+		msgList.push_back(std::format(_T("{}"), hr));
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_MovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -533,7 +533,7 @@ HRESULT TADialogTableDefinesPage::AddColumn(const std::string& rName, uint32_t a
 	if (S_OK != hr)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), hr));
+		msgList.push_back(std::format(_T("{}"), hr));
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}

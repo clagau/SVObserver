@@ -538,12 +538,12 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 			{
 				if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyNoDecimalPlaces) != 0)
 				{
-					Value = SvUl::Format(_T("%d"), static_cast<int> (DisplayedValue));
+					Value = std::format(_T("{}"), static_cast<int> (DisplayedValue));
 
 				}
 				else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentProperty2DecimalPlaces) != 0)
 				{
-					Value = SvUl::Format(_T("%.2f"), DisplayedValue);
+					Value = std::format(_T("{:.2f}"), DisplayedValue);
 				}
 				else
 				{
