@@ -144,6 +144,10 @@ public:
 	static std::string GetHash();
 	static void ConfigWasLoaded(LPCSTR hash = nullptr);
 	static void ConfigWasUnloaded();
+
+	static bool IsReloadedAfterCopyToolsToClipboard() { return m_isReloadedAfterCopyToolsToClipboard; };
+	static void SetReloadAfterCopyToolsToClipboard(bool flag) { m_isReloadedAfterCopyToolsToClipboard = flag; };
+
 private:
 	//************************************
 	// Method: CheckModeNotify
@@ -178,6 +182,8 @@ private:
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
 	///Lockcount >  0 prevents some  SVRC command to avoid crashes because of mult threading issues 
 	static std::atomic<int>  m_LockCountSvrc; //<  
+
+	static std::atomic<bool> m_isReloadedAfterCopyToolsToClipboard;
 };
 
 

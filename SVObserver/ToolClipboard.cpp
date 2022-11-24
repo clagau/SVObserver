@@ -32,6 +32,7 @@
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
@@ -139,6 +140,7 @@ HRESULT ToolClipboard::writeXmlToolData(const std::vector<uint32_t>& rToolIds) c
 						e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_SetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams));
 						e.Throw();
 					}
+					SVSVIMStateClass::SetReloadAfterCopyToolsToClipboard(false);
 				}
 				else
 				{
@@ -595,11 +597,12 @@ HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMater
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
 	{
 		constexpr LPCTSTR cXmlSearch = _T("Type=\"VT_BSTR\">");
+		constexpr LPCTSTR cTmpStart = _T("($");
 		/// This replacement is required to ensure rXmlData does not have multiple unique ID values
 		std::string searchString {cXmlSearch};
 		searchString += _T("{#");
 		std::string replaceString {cXmlSearch};
-		replaceString += _T("($");
+		replaceString += cTmpStart;
 		SvUl::searchAndReplace(rXmlData, searchString.c_str(), replaceString.c_str());
 
 		//Replace each uniqueID with a new ID
@@ -608,10 +611,30 @@ HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMater
 		{
 			uint32_t newId = SVObjectManagerClass::Instance().getNextObjectId();
 			std::string newIdString = convertObjectIdToString(newId);
-			SvUl::searchAndReplace(rUniqueID, _T("{#"), _T("($"));
+			SvUl::searchAndReplace(rUniqueID, _T("{#"), cTmpStart);
 			SvUl::searchAndReplace(rXmlData, rUniqueID.c_str(), newIdString.c_str());
 		}
-		SvUl::searchAndReplace(rXmlData, replaceString.c_str(), searchString.c_str());
+		if (SVSVIMStateClass::IsReloadedAfterCopyToolsToClipboard())
+		{
+			size_t pos = rXmlData.find(cTmpStart, 0);
+
+			while (pos != std::string::npos)
+			{
+				size_t endPos = rXmlData.find("}", pos + 1);
+				if (endPos == std::string::npos)
+				{
+					assert(false);
+					break;
+				}
+				rXmlData.replace(pos, endPos - pos, "{#0}");
+
+				pos = rXmlData.find(cTmpStart, pos);
+			}
+		}
+		else
+		{
+			SvUl::searchAndReplace(rXmlData, replaceString.c_str(), searchString.c_str());
+		}
 		Result = S_OK;
 	}
 	else

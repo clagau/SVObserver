@@ -395,10 +395,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			{
 				m_Content.SetValue(m_LinkedObjectRef.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType, true));
 			}
-			else
-			{
-				m_Content.SetValue("");
-			}
 			break;
 		case SvPb::LinkedSelectedOption::Formula:
 			m_Content.SetValue(m_formulaString);

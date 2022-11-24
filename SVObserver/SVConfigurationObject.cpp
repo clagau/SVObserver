@@ -2134,6 +2134,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		throw;
 	}
 	m_bConfigurationValid = true;
+	SVSVIMStateClass::SetReloadAfterCopyToolsToClipboard(true);
 
 	return result;
 }
