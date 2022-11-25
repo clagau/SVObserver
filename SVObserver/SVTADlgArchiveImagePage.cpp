@@ -101,6 +101,7 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t
 , m_taskId(taskObjectId)
 , m_ValueController{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 , m_alternativeImagePaths(m_ValueController, inspectionId, taskObjectId)
+, m_FilepathRootSeparatorWidgetHelper(m_ImageFilepathrootSeparator, SvPb::ArchiveImageFilepathRootSeparatorEId, m_ValueController)
 {
 	m_strCaption = m_psp.pszTitle;
 	if( nullptr != m_pParent )
@@ -142,6 +143,8 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 			}
 		}
 	}
+
+	m_FilepathRootSeparatorWidgetHelper.EditboxToValue();
 
 	if (!validateArchiveImageFilepath())
 	{
@@ -214,6 +217,7 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT1, m_ImageFilepathroot1Button);
 	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT2, m_ImageFilepathroot2);
 	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT2, m_ImageFilepathroot2Button);
+	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT_SEPARATOR, m_ImageFilepathrootSeparator);
 	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT3, m_ImageFilepathroot3);
 	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT3, m_ImageFilepathroot3Button);
 	DDX_Control(pDX, IDC_USE_ALTERNATIVE_IMAGE_PATH, m_useAlternativeImagePathButton);
@@ -350,6 +354,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController);
 	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController);
 	m_ImageFilepathrootWidgetHelpers[2] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ImageFilepathroot3, m_ImageFilepathroot3Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart3EId, &m_ValueController);
+
 	m_alternativeImagePaths.init();
 
 	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
@@ -360,6 +365,8 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_Init = false;
 	UpdateData(FALSE);
+
+	m_FilepathRootSeparatorWidgetHelper.ValueToEditbox();
 
 	ReadSelectedObjects();
 

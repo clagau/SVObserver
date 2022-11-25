@@ -1244,6 +1244,7 @@ enum EmbeddedIdEnum
 	CurrentImageQueueLengthEId = 592;
   	ArchiveResultFolderpathPart1EId = 593;
 	ArchiveImageFileFormatEId = 594;
+	ArchiveImageFilepathRootSeparatorEId = 595;
 
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 

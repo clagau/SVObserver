@@ -44,8 +44,7 @@ public:
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 	std::string GetUntranslatedFullResultFilepath();
-
-	const std::string alternativeImageDirectory(const std::string& imagePathRoot);
+	std::string alternativeImageDirectory(const std::string& imagePathRoot);
 
 	static long CalculateImageMemory(SvIe::SVImageClass* pImage );
 	static long CalculateImageMemory( std::vector<SvIe::SVImageClass*> imagePtrVector );
@@ -122,6 +121,7 @@ private:
 
 	std::string GetImageDirectoryPathPart1() const;
 	std::string GetImageDirectoryPathPart2() const;
+	std::string GetImageDirectoryPathSeparator() const;
 	std::string GetImageDirectoryPathPart3() const;
 
 	//
@@ -145,6 +145,7 @@ private:
 	SvVol::LinkedValue m_resultFolderpathPart1;
 	SvVol::LinkedValue m_resultFolderpathPart2;
 	SvVol::LinkedValue m_ResultFilename; 
+	SvVol::LinkedValue m_resultFolderpathPart3;
 	SvVol::LinkedValue m_resultFilepath;
 
 	SvVol::LinkedValue m_imageFileRootPath1; 
@@ -170,6 +171,8 @@ private:
 	SvVol::LinkedValue m_baseDirectoryname;
 	SvVol::LinkedValue m_baseFilename;
 	SvVol::LinkedValue m_centerFilename;
+
+	SvVol::SVStringValueObjectClass	m_ImageFilepathrootSeparator;
 
 	bool m_removeEntriesIfDisconnected = true;
 };

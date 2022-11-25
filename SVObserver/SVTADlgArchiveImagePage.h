@@ -19,6 +19,7 @@
 #include "Tools/ArchiveMethodEnum.h"
 #include "SVOGuiUtility/DataController.h"
 #include "SVOGuiUtility/LinkedValueWidgetHelper.h"
+#include "SVOGui/ValueEditWidgetHelper.h"
 #include "FilesystemUtilities/ImageFileFormats.h"
 #pragma endregion Includes
 
@@ -77,7 +78,6 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 	private:
 
 		SvOgu::WidgetHelperSource m_source;
-
 
 		CEdit	m_EditBaseDirectoryname;
 		CButton m_ButtonBaseDirectoryname;
@@ -179,12 +179,12 @@ private:
 
 	CEdit	m_ImageFilepathroot1;
 	CEdit	m_ImageFilepathroot2;
+	CEdit	m_ImageFilepathrootSeparator;
 	CEdit	m_ImageFilepathroot3;
 
 	CButton m_ImageFilepathroot1Button;
 	CButton m_ImageFilepathroot2Button;
 	CButton m_ImageFilepathroot3Button;
-
 	CButton m_StopAtMaxImagesButton;
 	CButton m_useAlternativeImagePathButton;
 	uint32_t m_inspectionId;
@@ -199,6 +199,7 @@ private:
 	typedef std::map <SvIe::SVImageClass*, long> MapSelectedImageType;
 
 	SvOgu::ValueController m_ValueController;
+	SvOg::ValueEditWidgetHelper m_FilepathRootSeparatorWidgetHelper;
 	std::array < std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, 3> m_ImageFilepathrootWidgetHelpers;
 
 	bool m_Init = false;

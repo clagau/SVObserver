@@ -119,6 +119,9 @@ void SVArchiveTool::initializeArchiveTool()
 	m_imageFileRootPath2.SetDefaultValue(_variant_t(""), true);
 	m_imageFileRootPath2.setValueType(SvPb::TypeText);
 
+	RegisterEmbeddedObject(&m_ImageFilepathrootSeparator,SvPb::ArchiveImageFilepathRootSeparatorEId,IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_SEPARATOR, false, SvOi::SVResetItemTool, true);
+	m_ImageFilepathrootSeparator.SetDefaultValue(_T(""), true);
+
 	RegisterEmbeddedObject(&m_imageFileRootPath3, SvPb::ArchiveImageFileRootPart3EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3, true, SvOi::SVResetItemTool, true);
 	m_imageFileRootPath3.SetDefaultValue(_variant_t(""), true);
 	m_imageFileRootPath3.setValueType(SvPb::TypeText);
@@ -978,6 +981,13 @@ std::string SVArchiveTool::GetImageDirectoryPathPart2() const
 	return pathPart2;
 }
 
+std::string SVArchiveTool::GetImageDirectoryPathSeparator() const
+{
+	std::string result;
+	m_ImageFilepathrootSeparator.getValue(result);
+	return result;
+}
+
 std::string SVArchiveTool::GetImageDirectoryPathPart3() const
 {
 	std::string pathPart3;
@@ -998,7 +1008,7 @@ HRESULT SVArchiveTool::WriteBuffers()
 }
 
 
-const std::string SVArchiveTool::alternativeImageDirectory(const std::string& rImagePathRoot)
+std::string SVArchiveTool::alternativeImageDirectory(const std::string& rImagePathRoot)
 {
 	_variant_t temporaryVariant;
 
@@ -1100,7 +1110,7 @@ long SVArchiveTool::CalculateImageMemory(std::vector<SvIe::SVImageClass*> imageP
 
 std::string SVArchiveTool::getUntranslatedImagePathRoot() const
 {
-	return GetImageDirectoryPathPart1() + GetImageDirectoryPathPart2() + GetImageDirectoryPathPart3();
+	return GetImageDirectoryPathPart1() + GetImageDirectoryPathPart2() + GetImageDirectoryPathSeparator() + GetImageDirectoryPathPart3();
 }
 
 const std::string SVArchiveTool::getCurrentImagePathRoot() const
