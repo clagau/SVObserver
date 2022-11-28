@@ -19,7 +19,7 @@
 #include "Tools/ArchiveMethodEnum.h"
 #include "SVOGuiUtility/DataController.h"
 #include "SVOGuiUtility/LinkedValueWidgetHelper.h"
-#include "SVOGui/ValueEditWidgetHelper.h"
+#include "SVOGuiUtility/ValueEditWidgetHelper.h"
 #include "FilesystemUtilities/ImageFileFormats.h"
 #pragma endregion Includes
 
@@ -199,7 +199,7 @@ private:
 	typedef std::map <SvIe::SVImageClass*, long> MapSelectedImageType;
 
 	SvOgu::ValueController m_ValueController;
-	SvOg::ValueEditWidgetHelper m_FilepathRootSeparatorWidgetHelper;
+	SvOgu::ValueEditWidgetHelper m_FilepathRootSeparatorWidgetHelper;
 	std::array < std::unique_ptr<SvOgu::LinkedValueWidgetHelper>, 3> m_ImageFilepathrootWidgetHelpers;
 
 	bool m_Init = false;

@@ -197,7 +197,6 @@
     <ClCompile Include="TATableAnalyzerPage.cpp" />
     <ClCompile Include="TATableSourcePage.cpp" />
     <ClCompile Include="ToolAdjustToolSetPage.cpp" />
-    <ClCompile Include="ValueEditWidgetHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuditFilesDialog.h" />
@@ -278,7 +277,6 @@
     <ClInclude Include="TATableSourcePage.h" />
     <ClInclude Include="ToolAdjustToolSetPage.h" />
     <ClInclude Include="TextDefinesSvOg.h" />
-    <ClInclude Include="ValueEditWidgetHelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

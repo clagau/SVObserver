@@ -9,7 +9,7 @@
 #include "ValueEditWidgetHelper.h"
 #pragma endregion Includes
 
-namespace SvOg
+namespace SvOgu
 {
 	void ValueEditWidgetHelper::EditboxToValue()
 	{

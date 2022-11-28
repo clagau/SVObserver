@@ -7,15 +7,15 @@
 #pragma once
 
 #include "StdAfx.h"
-#include "SVOGuiUtility/DataController.h"
+#include "DataController.h"
 
-namespace SvOg
+namespace SvOgu
 {
 	// holds GUI elements and IDs required for (possibly linked) Values that are to be modified using an MFC dialog
 	class ValueEditWidgetHelper
 	{
 	public:
-		ValueEditWidgetHelper(CEdit& valueEdit, SvPb::EmbeddedIdEnum embeddedId, SvOgu::ValueController& rValueController) :
+		ValueEditWidgetHelper(CEdit& valueEdit, SvPb::EmbeddedIdEnum embeddedId, ValueController& rValueController) :
 			m_rValueEdit(valueEdit),
 			m_embeddedId(embeddedId),
 			m_rValueController(rValueController) {m_rValueController.Init();}
@@ -30,7 +30,7 @@ namespace SvOg
 			
 		CEdit& m_rValueEdit;
 		SvPb::EmbeddedIdEnum m_embeddedId;
-		SvOgu::ValueController& m_rValueController;
+		ValueController& m_rValueController;
 	};
 
 
