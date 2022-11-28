@@ -357,6 +357,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	if (folderpathPart1.SelectPath())
 	{
 		m_resultFolderpathPart1Edit.SetWindowText(folderpathPart1.GetPathName().c_str());
+		m_ResultFolderpathWidgetHelpers[0]->EditboxToValue();
 	}
 }
 
