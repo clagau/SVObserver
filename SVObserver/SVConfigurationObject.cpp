@@ -955,6 +955,10 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 				SVOutputObject* pOutput {nullptr};
 				if (SvPb::SVDigitalOutputObjectType == ioType)
 				{
+					if(SvDef::cModuleReady == IOName)
+					{
+						IOName = SvDef::FqnEnvironmentModuleReady;
+					}
 					pOutput = m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get();
 					SVDigitalOutputObject* pDigitalOutput = dynamic_cast<SVDigitalOutputObject*> (pOutput);
 					if (nullptr != pDigitalOutput)
@@ -964,7 +968,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 						pDigitalOutput->Invert(bInverted);
 						pDigitalOutput->Combine(bCombined, bCombinedACK);
 
-						if (SvDef::cModuleReady == IOName)
+						if (SvDef::FqnEnvironmentModuleReady == IOName)
 						{
 							l_ModuleReadyId = pOutput->getObjectId();
 						}
@@ -1008,7 +1012,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 
 	if (isDiscreteIO && SvDef::InvalidObjectId == l_ModuleReadyId)
 	{
-		SVOutputObjectPtr pOutput = m_pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType);
+		SVOutputObjectPtr pOutput = m_pOutputObjectList->GetOutputFlyweight(SvDef::FqnEnvironmentModuleReady, SvPb::SVDigitalOutputObjectType);
 
 		if (nullptr != pOutput && SvPb::SVDigitalOutputObjectType == pOutput->GetObjectSubType())
 		{
@@ -5085,7 +5089,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 			SVOutputObjectList* pOutputObjectList = pConfig->GetOutputObjectList();
 			if (nullptr != pOutputObjectList)
 			{
-				SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType, cModuleReadyChannel).get());
+				SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::FqnEnvironmentModuleReady, SvPb::SVDigitalOutputObjectType, cModuleReadyChannel).get());
 
 				if (nullptr != pOutput && nullptr != pConfig->GetModuleReady())
 				{

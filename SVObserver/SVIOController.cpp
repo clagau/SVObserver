@@ -68,18 +68,11 @@ void SVIOController::initializeOutputs()
 		{
 			m_pModuleReady = std::make_shared<SVIOEntryHostStruct>();
 			m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;
-			std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-			if (nullptr != pInputValueObject)
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(ObjectIdEnum::ModuleReadyId);
+			if (nullptr != pObject)
 			{
-				m_pModuleReady->setValueObject(pInputValueObject);
-				SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_pModuleReady->getObject(), ObjectIdEnum::ModuleReadyId);
-				SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-				//! For Module Ready do not set the parent owner
-				pObject->SetName(SvDef::cModuleReady);
-				pObject->ResetObject();
-				pInputValueObject->setValue(_variant_t(true));
+				m_pModuleReady->setLinkedObject(pObject);
 			}
-			pInputValueObject.reset();
 		}
 
 	}
@@ -192,14 +185,15 @@ HRESULT SVIOController::SetModuleReady( bool Value )
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if (nullptr != pConfig) { pOutputList = pConfig->GetOutputObjectList(); }
 
+	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (SVObjectManagerClass::Instance().GetObject(ObjectIdEnum::ModuleReadyId));
+	if (nullptr != pValueObject)
+	{
+		pValueObject->setValue(_variant_t(Value));
+	}
+
 	// Don't set Module Ready if it isn't in the output list
 	if (nullptr != m_pModuleReady && SvDef::InvalidObjectId != m_pModuleReady->m_IOId)
 	{
-		if(nullptr != m_pModuleReady->getValueObject())
-		{
-			m_pModuleReady->getValueObject()->setValue( _variant_t(Value) );
-		}
-
 		if(nullptr != pOutputList)
 		{
 			result = pOutputList->WriteOutput(m_pModuleReady, true, false) ? S_OK : E_FAIL;

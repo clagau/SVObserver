@@ -238,12 +238,17 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				if(IDOK == dlg.DoModal())
 				{
 					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-
+					if (nullptr != dlg.m_pLinkedObject && ObjectIdEnum::ModuleReadyId == dlg.m_pLinkedObject->getObjectId())
+					{
+						pIOEntry = pIOController->GetModuleReady();
+						pIOEntry->m_ObjectType = dlg.m_ioObjectType;
+					}
 					if(dlg.m_pLinkedObject != pLinkedObject)
 					{
 						if (nullptr == pIOEntry)
 						{
 							pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+							pIOEntry->m_ObjectType = dlg.m_ioObjectType;
 						}
 						else
 						{									
@@ -272,16 +277,10 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 							pIOEntry->setLinkedObject(dlg.m_pLinkedObject);
 							if(nullptr != pOutput && nullptr != pOutputList )
 							{
+								pIOEntry->m_IOId = pOutput->getObjectId();
 								pOutput->SetName(dlg.m_pLinkedObject->GetCompleteName().c_str());
 								pOutputList->AttachOutput( pOutput );
 							}
-
-							if( pIOEntry == pIOController->GetModuleReady() )
-							{
-								pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-								pIOEntry->m_IOId = dlg.m_pDigOutput->getObjectId();
-							}
-
 						}
 
 						long lPPQSize = 0;

@@ -87,6 +87,11 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 	{
 		for (long i = 0; i < pConfig->GetPPQCount(); ++i)
 		{
+			//For NEO display only the valid PPQ index
+			if (-1 != m_PpqIndex && i != m_PpqIndex)
+			{
+				continue;
+			}
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if (nullptr != pPPQ)
 			{
@@ -125,8 +130,17 @@ void SVIOAdjustDialog::OnObjectSelector()
 	uint32_t inspectionID {static_cast<uint32_t> (m_inspectionCtrl.GetItemData(inspectionIndex))};
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
+	std::vector<SvPb::SearchArea> searchArea;
+	searchArea.reserve(3);
+	if (IO_DIGITAL_OUTPUT == m_ioObjectType)
+	{
+		//This is required to be able to select Module Ready
+		searchArea.push_back(SvPb::SearchArea::globalConstantItems);
+	}
+	searchArea.push_back(SvPb::SearchArea::ppqItems);
+	searchArea.push_back(SvPb::SearchArea::toolsetItems);
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems}, inspectionID, SvPb::useable, SvDef::InvalidObjectId, false, SvPb::boolValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed);
+		searchArea, inspectionID, SvPb::useable, SvDef::InvalidObjectId, false, SvPb::boolValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed);
 
 	SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
@@ -182,7 +196,8 @@ void SVIOAdjustDialog::UpdateGroups()
 		m_isCombinedNAK = !m_isCombinedACK;
 	}
 
-	SvPb::SVObjectTypeEnum objectType = (nullptr != m_pLinkedObject) ? m_pLinkedObject->GetParent()->GetObjectType() : SvPb::SVObjectTypeEnum::SVNotSetObjectType;
+	auto* pParent = (nullptr != m_pLinkedObject && nullptr != m_pLinkedObject->GetParent()) ? m_pLinkedObject->GetParent() : nullptr;
+	SvPb::SVObjectTypeEnum objectType =  (nullptr != pParent) ? pParent->GetObjectType() : SvPb::SVObjectTypeEnum::SVNotSetObjectType;
 	switch (m_ioObjectType)
 	{
 		case SVIOObjectType::IO_DIGITAL_INPUT:

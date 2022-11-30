@@ -85,6 +85,7 @@ constexpr const char* FqnRemoteInputs = _T("RemoteInputs");
 //! Environment FQN names
 constexpr const char* FqnEnvironment = _T("Environment");
 constexpr const char* FqnEnvironmentView = _T("Environment.View");
+constexpr const char* FqnEnvironmentModuleReady = _T("Environment.Module Ready");
 constexpr const char* FqnEnvironmentModelNumber = _T("Environment.Model Number");
 constexpr const char* FqnEnvironmentSerialNumber = _T("Environment.Serial Number");
 constexpr const char* FqnEnvironmentWin = _T("Environment.Windows");

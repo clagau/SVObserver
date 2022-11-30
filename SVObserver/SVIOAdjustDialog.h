@@ -64,5 +64,7 @@ private:
 	void showForcedGroup(int showState);
 	void showInvertGroup(int showState);
 	void showCombinedGroup(int showState);
+
+	std::string m_moduleReadyName;
 };
 

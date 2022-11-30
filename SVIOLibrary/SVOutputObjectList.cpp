@@ -18,7 +18,6 @@
 #include "SVRemoteOutputObject.h"
 #include "SVOutputObjectList.h"
 #include "SVMessage/SVMessage.h"
-#include "Definitions/TextDefinesSvDef.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -332,7 +331,7 @@ bool SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 			if (!l_bEnable)	// Act as if enabled when Module Ready
 			{
 				std::string Name = pOutput->GetName();
-				if (SvDef::cModuleReady == Name)
+				if (SvDef::FqnEnvironmentModuleReady == Name)
 				{
 					l_bEnable = true;
 				}
@@ -487,7 +486,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 					}
 				}
 
-				l_Skip = l_Skip || (SvDef::cModuleReady == OutputName );
+				l_Skip = l_Skip || (SvDef::FqnEnvironmentModuleReady == OutputName );
 
 				if( ! l_Skip )
 				{
@@ -534,7 +533,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 			{
 				SVDigitalOutputObject* l_pOutput = *l_OutputIter;
 
-				if( nullptr != l_pOutput && std::string(SvDef::cModuleReady ) == l_pOutput->GetName() )
+				if( nullptr != l_pOutput && std::string(SvDef::FqnEnvironmentModuleReady) == l_pOutput->GetName() )
 				{
 					l_pOutput->SetChannel( -1 );
 
