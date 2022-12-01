@@ -3298,7 +3298,14 @@ void SVIPDoc::OnViewResetCountsCurrentIP()
 			pInspection->GetToolSet()->ResetCounts();
 		}
 
-		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION))
+		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		{
+			if (m_regTest.isDoRunOnce())
+			{
+				RunOnce();
+			}
+		}
+		else if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 		{
 			RunOnce();
 		}

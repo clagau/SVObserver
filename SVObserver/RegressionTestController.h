@@ -45,6 +45,8 @@ public:
 	void setLoadEquationText(const std::string& rText) { m_LoadEquationText = rText; };
 	void setValidationMode(bool validationMode) { m_isValidationMode = validationMode; }
 	void setValidationFile(LPCTSTR filePath) { m_resultFileName = filePath; }
+	void setDoRunOnce(bool doRunOnce) { m_doRunOnce = doRunOnce; };
+	bool isDoRunOnce() { return m_doRunOnce; };
 
 private:
 	SvIe::SVVirtualCameraPtrVector GetCameras(const SVInspectionProcess& rIP) const;
@@ -60,6 +62,7 @@ private:
 	RegressionRunModeEnum m_RunMode {RegressionRunModeEnum::RegModePause};
 	RegressionPlayModeEnum m_RunPlayMode {RegressionPlayModeEnum::RunToEnd};
 	int m_iTimeoutMS = 0;
+	std::atomic_bool m_doRunOnce {false};
 	bool m_isRunning {false};
 	bool m_isStopping {false};
 	bool m_UsePlayCondition {false};

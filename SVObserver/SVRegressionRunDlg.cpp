@@ -66,6 +66,7 @@ SVRegressionRunDlg::SVRegressionRunDlg(RegressionTestController& rRegessionContr
 SVRegressionRunDlg::~SVRegressionRunDlg()
 {
 	DestroyIcons();
+	m_rRegressionController.setDoRunOnce(false);
 }
 #pragma endregion Constructor
 
@@ -386,6 +387,7 @@ void SVRegressionRunDlg::OnBtnSettings()
 		{
 			m_bFirst = FALSE;
 		}
+		m_rRegressionController.setDoRunOnce(false);
 	}
 	else
 	{

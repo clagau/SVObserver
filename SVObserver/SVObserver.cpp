@@ -959,31 +959,23 @@ void SVObserverApp::ValidateMRUList()
 
 void SVObserverApp::ResetAllCounts()
 {
-	long l = 0;
-	long lSize = 0;
 	SVSVIMStateClass::SVRCBlocker block;
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	//If the pointer is a nullptr then lSize is 0
-	if (nullptr != pConfig) { lSize = pConfig->GetInspectionCount(); }
-	for (l = 0; l < lSize; l++)
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
+	while (nullptr != pos)
 	{
-		SVInspectionProcess* pInspection = pConfig->GetInspection(l);
-
-		if (nullptr != pInspection) { pInspection->GetToolSet()->ResetCounts(); }
-	}// end for
-
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING|SV_STATE_REGRESSION))
-	{
-		for (l = 0; l < lSize; l++)
+		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate*>(AfxGetApp()->GetNextDocTemplate(pos));
+		if (pDocTemplate)
 		{
-			SVInspectionProcess* pInspection = pConfig->GetInspection(l);
-			if (nullptr != pInspection)
+			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+			while (nullptr != posDoc)
 			{
-				SvCmd::RunOnceSynchronous(pInspection->getObjectId());
+				CDocument* pDoc = pDocTemplate->GetNextDoc(posDoc);
+				SVIPDoc* pIpDoc = dynamic_cast<SVIPDoc*> (pDoc);
+				if (nullptr != pIpDoc)
+				{
+					pIpDoc->OnViewResetCountsCurrentIP();
+				}
 			}
-
 		}
 	}
 }

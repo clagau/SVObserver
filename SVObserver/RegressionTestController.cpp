@@ -286,6 +286,7 @@ DWORD RegressionTestController::runThread()
 		{
 			setPlayPause(runState);
 		}
+		m_doRunOnce = true;
 	}//end of while loop
 
 	if (m_fileOutputResult.is_open())
