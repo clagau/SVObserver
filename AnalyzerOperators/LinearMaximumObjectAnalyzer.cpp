@@ -76,7 +76,7 @@ void LinearMaximumObjectAnalyzer::init()
 	if( nullptr != pEdgeB )
 	{
 		AddFriend(pEdgeB);
-		pEdgeA->setDefaultValues(SvDef::SV_NEGATIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
+		pEdgeB->setDefaultValues(SvDef::SV_NEGATIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	// Set Embedded defaults
