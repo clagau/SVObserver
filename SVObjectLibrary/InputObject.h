@@ -13,6 +13,7 @@
 #include "SVObjectAppClass.h"
 #include "SVOResource/resource.h"
 #include "ObjectInterfaces/IInputObject.h"
+#include "InspectionEngine/SVImageClass.h"
 #pragma endregion Includes
 
 
@@ -67,6 +68,27 @@ class InputObject : public SVObjectAppClass, public SvOi::IInputObject
 
 		return nullptr;
 	}
+
+	template <>
+	SvIe::SVImageClass* getInput<SvIe::SVImageClass>(bool /*bRunMode*/) const
+	{
+		if (IsConnected() && nullptr != GetInputObjectInfo().getFinalObject())
+		{
+			SVObjectClass* pObject = GetInputObjectInfo().getFinalObject();
+			if (pObject && pObject->GetObjectType() == SvPb::SVImageObjectType)
+			{
+				return static_cast<SvIe::SVImageClass*> (pObject);
+			}
+			else
+			{
+				return nullptr;
+			}
+		}
+		return nullptr;
+	}
+	
+	
+
 	template <typename T>
 	T* getInputObject(bool bRunMode = false) const
 	{

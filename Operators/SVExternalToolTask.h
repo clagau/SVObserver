@@ -156,6 +156,8 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	bool  CheckInputImages(SvStl::MessageContainerVector* pErrorMessages = nullptr);
+
 	enum FindEnum
 	{
 		FIND_VALUES = 1,

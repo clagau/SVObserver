@@ -556,6 +556,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			Exception.Throw();
 		}
 		const SvOi::IObjectClass* pObject = m_LinkedObjectRef.getObject();
+		//@TODO[MEC][10.30][02.12.2022] avoiding dynamic_cast in run mode i.e by use GetClassID()
 		const LinkedValue* pRefObject = dynamic_cast<const LinkedValue*>(pObject);
 		if (nullptr == pRefObject)
 		{

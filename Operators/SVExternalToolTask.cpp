@@ -1804,6 +1804,8 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector* pErrorMessag
 		m_Data.m_aInputImageInfo[i].validateInput();
 	}
 
+	Result = Result && CheckInputImages(pErrorMessages);
+
 	SetIndirectValueSaveFlag();
 	collectInputValues();
 
@@ -2097,6 +2099,27 @@ bool SVExternalToolTask::getResults(SvOi::ITRCImagePtr pResultImageBuffers[])
 	}
 	return true;
 }
+
+bool SVExternalToolTask::CheckInputImages(SvStl::MessageContainerVector* pErrorMessages )
+{
+
+	bool result {true};
+	for (int i = 0; i < m_Data.m_lNumInputImages; i++)
+	{
+		if (nullptr == GetInputImage(i, false))
+		{
+			result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+		}
+
+	}
+	return result;
+}
+
 
 
 bool SVExternalToolTask::anyImagesResized()
