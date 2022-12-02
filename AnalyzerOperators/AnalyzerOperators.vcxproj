@@ -14,7 +14,7 @@
     <ProjectGuid>{13ECC053-AF9B-4D6A-AFF2-40D87E7734CD}</ProjectGuid>
     <Keyword>Win64Proj</Keyword>
     <RootNamespace>AnalyzerOperators</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

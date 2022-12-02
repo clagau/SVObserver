@@ -22,7 +22,7 @@
     <ProjectGuid>{AA20BDB8-15C0-43EB-83B5-6FC716849F13}</ProjectGuid>
     <RootNamespace>SVStatusLibrary</RootNamespace>
     <Keyword>Win64Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

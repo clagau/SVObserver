@@ -14,7 +14,7 @@
     <ProjectGuid>{B1F5F607-2CC4-4F28-ABB7-AF223BA573C8}</ProjectGuid>
     <RootNamespace>SVXMLLibrary</RootNamespace>
     <Keyword>Win64Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

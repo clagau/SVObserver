@@ -14,7 +14,7 @@
     <ProjectGuid>{8B3B32DE-8EAF-4955-BE03-95F3EFDE7EA0}</ProjectGuid>
     <RootNamespace>SVSoftwareTriggerDevice</RootNamespace>
     <Keyword>Win64Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

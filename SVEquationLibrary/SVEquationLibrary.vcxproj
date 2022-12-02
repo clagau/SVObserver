@@ -14,7 +14,7 @@
     <ProjectGuid>{DC61928F-C2CF-4461-980B-918E20F491DF}</ProjectGuid>
     <RootNamespace>SVEquationLibrary</RootNamespace>
     <Keyword>Win64Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

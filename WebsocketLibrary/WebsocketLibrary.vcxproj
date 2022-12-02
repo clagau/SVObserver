@@ -22,7 +22,7 @@
     <ProjectGuid>{C3C84C20-1039-4D97-95E2-B26143D86241}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>RunReWebsocketLibrary</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

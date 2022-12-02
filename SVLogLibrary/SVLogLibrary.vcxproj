@@ -22,7 +22,7 @@
     <ProjectGuid>{A8F3AF59-2581-40F2-8378-05A090B90677}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SVLogLibrary</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

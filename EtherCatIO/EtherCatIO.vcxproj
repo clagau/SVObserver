@@ -14,7 +14,7 @@
     <ProjectGuid>{617C9D3E-D56B-4047-8FEC-5B34A3848EDC}</ProjectGuid>
     <RootNamespace>EtherCatIO</RootNamespace>
     <ProjectName>EtherCatIO</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

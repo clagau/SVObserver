@@ -14,7 +14,7 @@
     <ProjectGuid>{E0344B2A-C109-4008-ADBD-DDC03F806647}</ProjectGuid>
     <RootNamespace>ObjectSelectorLibrary</RootNamespace>
     <Keyword>Win64Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

@@ -14,7 +14,7 @@
     <ProjectGuid>{6BFC8DA7-21FB-447A-8CBF-BFB6CBC009BA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TriggerToStartFrame</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
