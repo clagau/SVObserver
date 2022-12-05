@@ -49,7 +49,6 @@
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefinesSvDef.h"
-#include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "FilesystemUtilities/FilepathUtilities.h"
 #include "FilesystemUtilities/FileHelperManager.h"
