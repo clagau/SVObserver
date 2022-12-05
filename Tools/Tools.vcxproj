@@ -123,7 +123,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArchiveDataAsynchron.h" />
-    <ClInclude Include="ArchiveMethodEnum.h" />
     <ClInclude Include="ArchiveToolHelper.h" />
     <ClInclude Include="DrawTool.h" />
     <ClInclude Include="GroupTool.h" />

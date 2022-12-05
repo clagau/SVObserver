@@ -81,5 +81,8 @@
     <ClInclude Include="TextDefinesSvDef.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ArchiveMethodEnum.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

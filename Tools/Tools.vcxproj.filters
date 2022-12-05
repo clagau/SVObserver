@@ -110,9 +110,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ArchiveMethodEnum.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="ArchiveToolHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

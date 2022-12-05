@@ -108,7 +108,7 @@ namespace SvStl
 		{Tid_ArchiveTool_CreatePathFailed, _T("Create Archive Path \"{0}\" Failed")},
 		{Tid_ArchiveTool_WriteToFileFailed, _T("Write to Archive File failed")},
 		{Tid_ArchiveTool_AllocImageFailed, _T("Allocate Image Buffer failed: {0}")},
-		{Tid_ArchiveTool_NotEnoughBuffer, _T("All ArchiveTool need more memory than available.")},
+		{Tid_ArchiveTool_NotEnoughImageBuffer, _T("All Archive Tools combined need more image memory than is available.")},
 		{Tid_OnlyOneArchiveImageWhenAlternativeImagePath, _T("Only one Archive Image allowed when Alternative Image Path is selected")},
 
 		{Tid_BarCode_UnableToRead, _T("Bar Code Analyzer was unable to read\nthe match string from file. Check the\nanalyzer settings for proper match string.")},
@@ -359,10 +359,9 @@ namespace SvStl
 		{Tid_InvalidKeywordsInPath, _T("Invalid keywords in path '{0}'!") },
 
 		{Tid_FileName_Exists, _T("{0} already exists.\nDo you want to replace it?")},
-		{Tid_Error_you_have_Selected_X_Must_less_then_Y, _T("Error: You have selected {0} for the Max Images count. The image count must be less then {1}")},
-		{Tid_ArchiveTool_WarningMaxImages, _T("WARNING: You have selected {0} for the Max Images count")},
-		{Tid_AP_NotEnoughImageMemoryWhenChangingMode, _T("There is not enough available memory for {0} images to be archived when changing mode.\n AvailableArchive Image Memory is the result of image size and the 'Max Images' number.")},
-		{Tid_AP_NotEnoughMemoryPleaseDeselect, _T("Not enough Available Archive Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.")},
+		{Tid_MaxImagesForArchiveToolTooHigh, _T("{0} max. images for Archive Tool selected: Must be less than {1} !")},
+		{Tid_NotEnoughArchiveImageMemory, _T("Not enough available Archive Image Memory.")},
+		{Tid_NotEnoughArchiveImageMemoryPleaseDeselect, _T("Not enough available Archive Image Memory.\nPlease deselect some images, decrease 'Max. Images' or 'Max. Queue' or change 'When to archive' mode.")},
 		{Tid_Threshold_OutOfRange, _T("Out of Range!\n(0 ... 255)")},
 		{Tid_CriticalUnableToConnectTo, _T("Unable to connect to {0}")},
 		{Tid_Error_DuplicateEmbeddedId, _T("Error - Duplicate Embedded ID found")},

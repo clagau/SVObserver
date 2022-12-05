@@ -6,7 +6,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ArchiveMethodEnum.h"
+#include "Definitions/ArchiveMethodEnum.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
@@ -86,7 +86,7 @@ private:
 	friend class SVArchiveRecordsArray;
 #pragma endregion Private Members
 
-	ArchiveMode archiveMode() const ;
+	SvDef::ArchiveMode archiveMode() const ;
 	ImageFileFormat  imageFileFormat() const ;
 };
 

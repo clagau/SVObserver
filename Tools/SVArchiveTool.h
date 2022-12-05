@@ -16,9 +16,9 @@
 //Moved to precompiled header: #include <vector>
 
 #include "SVTool.h"
-#include "ArchiveMethodEnum.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
+#include "Definitions/ArchiveMethodEnum.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
@@ -81,7 +81,7 @@ public:
 	SvVol::SVEnumerateValueObjectClass m_evoArchiveMode;
 	SvVol::SVEnumerateValueObjectClass m_evoImageFileFormat;
 
-	ArchiveMode m_archiveMode;
+	SvDef::ArchiveMode m_archiveMode;
 	ImageFileFormat m_imageFileFormat;
 
 	SvVol::SVBoolValueObjectClass m_bvoUseHeaders;

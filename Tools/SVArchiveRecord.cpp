@@ -168,7 +168,7 @@ long SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& 
 {
 	assert(nullptr != rImage && !rImage->isEmpty());
 
-	if (archiveMode() == ArchiveMode::asynchronous)
+	if (archiveMode() == SvDef::ArchiveMode::asynchronous)
 	{
 		// the QueueImage function will copy the buffer, so pass in the original here
 		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, imageFileFormat(), rImageDirectoryPath, m_ImageInfo, m_toolPos);
@@ -184,7 +184,7 @@ long SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& 
 	return -1;
 }
 
-// right now called if method == ArchiveMode::goOffline or ArchiveMode::asynchronous
+// right now called if method == SvDef::ArchiveMode::goOffline or SvDef::ArchiveMode::asynchronous
 HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap, int toolPos)
 {
 	m_toolPos = toolPos;
@@ -216,7 +216,7 @@ HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMa
 			}
 
 			// now create buffer if reserve OK
-			if (ArchiveMode::asynchronous != archiveMode())
+			if (SvDef::ArchiveMode::asynchronous != archiveMode())
 			{
 				m_ImageStoreVector.clear();
 				m_ImageStoreVector.resize(lBufferNumber);
@@ -295,7 +295,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 		return -1;
 	}
 
-	if (archiveMode() == ArchiveMode::synchronous)
+	if (archiveMode() == SvDef::ArchiveMode::synchronous)
 	{
 		try
 		{
@@ -311,7 +311,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 		}
 		return 0;
 	}
-	// ArchiveMode::goOffline or ArchiveMode::asynchronous
+	// SvDef::ArchiveMode::goOffline or SvDef::ArchiveMode::asynchronous
 	return QueueImage(pImageBuffer, ImageFilePath, imageDirectoryPath);
 }
 
@@ -341,9 +341,9 @@ void SVArchiveRecord::SetArchiveTool(SVArchiveTool* pTool)
 }
 
 
-ArchiveMode SVArchiveRecord::archiveMode() const
+SvDef::ArchiveMode SVArchiveRecord::archiveMode() const
 {
-	return (nullptr != m_pArchiveTool) ? m_pArchiveTool->m_archiveMode : ArchiveMode::invalid;
+	return (nullptr != m_pArchiveTool) ? m_pArchiveTool->m_archiveMode : SvDef::ArchiveMode::invalid;
 }
 
 

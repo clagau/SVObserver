@@ -43,7 +43,6 @@ static char THIS_FILE[] = __FILE__;
 constexpr long cAsyncDefaultMaximumImageQueueLength = 5;
 #pragma endregion Declarations
 
-
 SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
 
@@ -256,14 +255,14 @@ void SVArchiveTool::initializeArchiveTool()
 	m_dwArchiveStopAtMaxImages.SetDefaultValue(1, true);
 	m_dwArchiveMaxImagesCount.SetDefaultValue(10, true);
 
-	long async = static_cast<long>(ArchiveMode::asynchronous); //must cast to use class enum with SVEnumerateValueObjectClass...
+	long async = static_cast<long>(SvDef::ArchiveMode::asynchronous); //must cast to use class enum with SVEnumerateValueObjectClass...
 	m_evoArchiveMode.SetDefaultValue(async, true); 
 
 	SvDef::NameValueVector EnumVectorWhen
 	{
-		{ _T("Synchronous"), static_cast<long>(ArchiveMode::synchronous) }, //... or with NameValueVector
-		{ _T("Change Mode"), static_cast<long>(ArchiveMode::goOffline) },
-		{ _T("Asynchronous"), static_cast<long>(ArchiveMode::asynchronous) }
+		{ _T("Synchronous"), static_cast<long>(SvDef::ArchiveMode::synchronous) }, //... or with NameValueVector
+		{ _T("Change Mode"), static_cast<long>(SvDef::ArchiveMode::goOffline) },
+		{ _T("Asynchronous"), static_cast<long>(SvDef::ArchiveMode::asynchronous) }
 	};
 
 	m_evoArchiveMode.SetEnumTypes(EnumVectorWhen);
@@ -285,7 +284,7 @@ void SVArchiveTool::initializeArchiveTool()
 	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute);
 	m_HeaderObjectIDs.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	m_bInitializedForRun = false;
-	m_archiveMode = ArchiveMode::invalid;
+	m_archiveMode = SvDef::ArchiveMode::invalid;
 	m_uiValidateCount = 0;
 
 }
@@ -297,9 +296,9 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 
 	if (bOk)
 	{
-		long Method = static_cast<long>(ArchiveMode::invalid);
+		long Method = static_cast<long>(SvDef::ArchiveMode::invalid);
 		m_evoArchiveMode.GetValue(Method);
-		m_archiveMode = static_cast<ArchiveMode> (Method);
+		m_archiveMode = static_cast<SvDef::ArchiveMode> (Method);
 
 		long Format = static_cast<long>(ImageFileFormat::invalid);
 		m_evoImageFileFormat.GetValue(Format);
@@ -403,7 +402,7 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 
 	long archiveMode = 0;
 	m_evoArchiveMode.GetValue(archiveMode);
-	m_archiveMode = static_cast<ArchiveMode>(archiveMode);
+	m_archiveMode = static_cast<SvDef::ArchiveMode>(archiveMode);
 
 	long imageFileFormat = 0;
 	m_evoImageFileFormat.GetValue(imageFileFormat);
@@ -433,10 +432,10 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 
 	m_uiValidateCount = 0;
 
-	if (SVMemoryManager::Instance().remainingMemoryInBytes() < 0)
+	if (memoryNeedsToBeConsidered(m_archiveMode) && SVMemoryManager::Instance().remainingMemoryInBytes() < 0)
 	{
 		SvDef::StringVector msgList;
-		SvStl::MessageContainer Msg(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryPleaseDeselect, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+		SvStl::MessageContainer Msg(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_NotEnoughArchiveImageMemoryPleaseDeselect, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		pErrorMessages->push_back(Msg);
 		result = false;
 	}
@@ -634,9 +633,9 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 		}
 	}
 
-	long Method(static_cast<long>(ArchiveMode::invalid));
+	long Method(static_cast<long>(SvDef::ArchiveMode::invalid));
 	m_evoArchiveMode.GetValue(Method);
-	m_archiveMode = static_cast<ArchiveMode> (Method);
+	m_archiveMode = static_cast<SvDef::ArchiveMode> (Method);
 
 	m_ImageCollection.ResetImageCounts();
 
@@ -646,14 +645,14 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector* pErrorMessage
 	m_ImageCollection.ValidateImageObjects();
 
 	ArchiveDataAsynchron::Instance().GoOnline();
-	if (m_archiveMode == ArchiveMode::goOffline || m_archiveMode == ArchiveMode::asynchronous)
+	if (m_archiveMode == SvDef::ArchiveMode::goOffline || m_archiveMode == SvDef::ArchiveMode::asynchronous)
 	{
 		if (!AllocateImageBuffers(pErrorMessages))
 		{
 			return false;
 		}
 
-		if (m_archiveMode == ArchiveMode::asynchronous)
+		if (m_archiveMode == SvDef::ArchiveMode::asynchronous)
 		{
 			/*HRESULT hrThreadOnline =*/ SVArchiveImageThreadClass::Instance().GoOnline();
 			
@@ -690,11 +689,11 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 	{
 		SVMemoryManager::Instance().ReleaseMemory(getObjectId());
 	}
-	if (m_archiveMode == ArchiveMode::goOffline || m_archiveMode == ArchiveMode::asynchronous)
+	if (m_archiveMode == SvDef::ArchiveMode::goOffline || m_archiveMode == SvDef::ArchiveMode::asynchronous)
 	{
 		DWORD dwMaxImages;
 		m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
-		if (m_archiveMode == ArchiveMode::asynchronous)
+		if (m_archiveMode == SvDef::ArchiveMode::asynchronous)
 		{
 			_variant_t maxImageQueueLength;
 			m_maximumImageQueueLength.GetValue(maxImageQueueLength);
@@ -706,7 +705,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 		BufferStructCountMap bufferMap;
 		HRESULT hrAllocate = m_ImageCollection.AllocateBuffers(dwMaxImages, bufferMap, toolPos);
 
-		if (ArchiveMode::asynchronous == m_archiveMode)
+		if (SvDef::ArchiveMode::asynchronous == m_archiveMode)
 		{
 			long imageCount = std::accumulate(bufferMap.begin(), bufferMap.end(), 0, [](long sum, std::pair<SVMatroxBufferCreateStruct, long> val) { return sum + val.second; });
 			if (imageCount > 0)
@@ -739,7 +738,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 						{
 							if (nullptr != pErrorMessages)
 							{
-								SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+								SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughImageBuffer, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 								pErrorMessages->push_back(Msg);
 							}
 							if (nullptr != pResetRaii)
@@ -1133,12 +1132,12 @@ void SVArchiveTool::disconnectObjectInput(uint32_t objectId)
 void SVArchiveTool::goingOffline()
 {
 	ArchiveDataAsynchron::Instance().GoOffline();
-	if (m_archiveMode == ArchiveMode::asynchronous)
+	if (m_archiveMode == SvDef::ArchiveMode::asynchronous)
 	{
 		SVArchiveImageThreadClass::Instance().GoOffline();
 	}
 
-	if (m_archiveMode == ArchiveMode::goOffline)
+	if (m_archiveMode == SvDef::ArchiveMode::goOffline)
 	{
 		WriteBuffers();
 	}
@@ -1251,7 +1250,7 @@ bool SVArchiveTool::updateCurrentImagePathRoot(SvStl::MessageContainerVector* pE
 					type = type | SvStl::MsgType::Display;
 				}
 				SvStl::MessageManager msg(type);
-				msg.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidKeywordsInPath, SvStl::SourceFileParams(StdMessageParams));
+				msg.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidKeywordsInPath, {m_currentImagePathRoot}, SvStl::SourceFileParams(StdMessageParams));
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(msg.getMessageContainer());

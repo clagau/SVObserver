@@ -85,6 +85,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ArchiveMethodEnum.h" />
     <ClInclude Include="BandEnums.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="GlobalConst.h" />

@@ -12,11 +12,11 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/ArchiveMethodEnum.h"
 #include "SVOResource/resource.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
 #include "SVMFCControls/EditNumbers.h"
-#include "Tools/ArchiveMethodEnum.h"
 #include "SVOGuiUtility/DataController.h"
 #include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #include "SVOGuiUtility/ValueEditWidgetHelper.h"
@@ -140,15 +140,21 @@ protected:
 	afx_msg void OnKillFocusImageFilepathroot2();
 	afx_msg void OnKillFocusImageFilepathroot3();
 
+	virtual BOOL OnKillActive() override { return QueryAllowExit(); }
+
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
 	bool validateArchiveImageFilepath();  ///< makes sure that the directory as defined in the Archive Tool Adjustment Dialog is available
 	void updateAndCommitImageValues();
 
+	void updateMemoryAndQueueLengthVisibility();
+
+
 	template<AipCtr::Lve lve>
 	void OnButton() { m_alternativeImagePaths.OnButton(lve); }
 	template<AipCtr::Lve lve>
 	void OnKillFocus() { m_alternativeImagePaths.OnKillFocus(lve); }
+
 
 	__int64 recalculateRemainingImageMemory();
 
@@ -173,7 +179,7 @@ private:
 	CEdit	m_maximumImageQueueLengthEditBox;
 	CButton m_maximumImageQueueLengthButton;
 
-	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_maximumImageQueueLengthWidgetHelper;
+	std::unique_ptr<SvOgu::LinkedValueWidgetHelper> m_pMaximumImageQueueLengthWidgetHelper;
 
 	CStatic	m_maximumImageQueueLengthStaticText;
 
@@ -192,9 +198,9 @@ private:
 
 	int		m_WhenToArchiveIndex = -1;
 	int		m_FormatIndex = -1;
-	SvTo::ArchiveMode m_selectedMode = SvTo::ArchiveMode::invalid;
+	SvDef::ArchiveMode m_selectedMode = SvDef::ArchiveMode::invalid;
 	ImageFileFormat m_selectedFormat = ImageFileFormat::invalid;
-	long m_ImagesToArchive = 0;
+	long m_maximumNumberOfArchiveImages = 0;
 
 	typedef std::map <SvIe::SVImageClass*, long> MapSelectedImageType;
 

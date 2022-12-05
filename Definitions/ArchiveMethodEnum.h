@@ -4,7 +4,7 @@
 //*****************************************************************************
 
 #pragma once
-namespace SvTo
+namespace SvDef
 {
 
 enum class ArchiveMode
@@ -15,4 +15,9 @@ enum class ArchiveMode
 	goOffline		= 3,
 };
 
-} //namespace SvTo
+inline bool memoryNeedsToBeConsidered(ArchiveMode mode)
+{
+	return mode == ArchiveMode::goOffline || mode == ArchiveMode::asynchronous;
+}
+
+} //namespace SvDef

@@ -67,6 +67,8 @@ protected:
 	afx_msg void OnKillFocusResultFolderpathPart2();
 	afx_msg void OnKillFocusResultFilename();
 
+	virtual BOOL OnKillActive() override { return QueryAllowExit(); }
+
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
 	SvDef::StringPairVector GetSelectedHeaderNamePairs();

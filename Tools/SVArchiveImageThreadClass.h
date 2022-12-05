@@ -8,10 +8,10 @@
 #pragma region Inlcudes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <vector>
+#include "Definitions/ArchiveMethodEnum.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVLibrary/SVTemplate.h"
 #include "ObjectInterfaces/ITRCImage.h"
-#include "Tools/ArchiveMethodEnum.h"
 #include "FilesystemUtilities/ImageFileFormats.h"
 
 #pragma endregion Includes
