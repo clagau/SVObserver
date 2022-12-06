@@ -99,14 +99,17 @@ void SVTaskObjectListClass::fixInvalidInputs(std::back_insert_iterator<std::vect
 
 void SVTaskObjectListClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {
-	nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
-	__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
-	
-	for (const auto* pObject : m_TaskObjectVector)
+	if (0 != (ObjectAttributesAllowed() & SvPb::viewable))
 	{
-		if (nullptr != pObject)
+		nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
+		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+
+		for (const auto* pObject : m_TaskObjectVector)
 		{
-			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			if (nullptr != pObject)
+			{
+				pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			}
 		}
 	}
 }
@@ -493,7 +496,6 @@ bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, 
 				if (SvDef::SVMFResetInspection == (context & SvDef::SVMFResetInspection))
 				{
 					GetInspection()->resetAllObjects();
-					pInspection->BuildValueObjectMap();
 				}
 			}
 			return true;

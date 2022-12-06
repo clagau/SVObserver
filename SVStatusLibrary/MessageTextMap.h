@@ -723,5 +723,7 @@ namespace SvStl
 		{Tid_SetOfReadOnlyValueFailed, _T("Value is readOnly. Set is forbidden.")},
 		{Tid_SetOfValueFailed, _T("Set of embeddedValue with the ID {0} failed.")},
 		{Tid_DuplicateObjectId, _T("By creating an object, there is a duplicate of the objectId %s found.")},
+		{Tid_RejectClarifyFailedNoTR, _T("Reject clarification failed, no valid triggerRecord.")},
+		{Tid_RejectClarifyFailedUnknowData, _T("Reject clarification failed, unknown data: {}.")},
 };
 } //namespace SvStl

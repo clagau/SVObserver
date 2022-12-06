@@ -146,6 +146,27 @@ bool SVThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 
 	bOk = Rebuild() && bOk;
 
+	for (size_t j = 0; j < m_friendList.size(); j++)
+	{
+		if (nullptr != m_friendList[j])
+		{
+			switch (m_friendList[j]->GetObjectSubType())
+			{
+				case SvPb::SVUpperThresholdEquationObjectType:
+					m_pUTEquation = m_friendList[j];
+					break;
+				case SvPb::SVLowerThresholdEquationObjectType:
+					m_pLTEquation = m_friendList[j];
+					break;
+				case SvPb::SVAutoThresholdEquationObjectType:
+					m_pATEquation = m_friendList[j];
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
 	m_isCreated = bOk;
 
 	return bOk;
@@ -198,14 +219,43 @@ bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		}
 	}
 
-	BOOL bAutoThreshold, bUpperThreshActive, bUseExternalUT, bLowerThreshActive, bUseExternalLT;
+	BOOL bThreshActive = false;
+	m_threshActivate.GetValue(bThreshActive);
+	m_autoThreshold.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+
+	BOOL bAutoThreshold, bUseAutoExternal, bUpperThreshActive, bUseExternalUT, bLowerThreshActive, bUseExternalLT;
 	m_autoThreshold.GetValue(bAutoThreshold);
+	m_blackBackground.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && bAutoThreshold ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && bAutoThreshold ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	m_useExternalATM.GetValue(bUseAutoExternal);
+	m_useExternalATM.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && bAutoThreshold ? SvOi::AddAttribute : SvOi::RemoveAttribute);
 	m_upperThreshActivate.GetValue(bUpperThreshActive);
+	m_upperThreshActivate.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && false == bAutoThreshold ? SvOi::AddAttribute : SvOi::RemoveAttribute);
 	m_useExternalUT.GetValue(bUseExternalUT);
+	m_useExternalUT.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && false == bAutoThreshold && bUpperThreshActive ? SvOi::AddAttribute : SvOi::RemoveAttribute);
 	m_lowerThreshActivate.GetValue(bLowerThreshActive);
+	m_lowerThreshActivate.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && false == bAutoThreshold ? SvOi::AddAttribute : SvOi::RemoveAttribute);
 	m_useExternalLT.GetValue(bUseExternalLT);
+	m_useExternalLT.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && false == bAutoThreshold && bLowerThreshActive ? SvOi::AddAttribute : SvOi::RemoveAttribute);
 	m_upperThresh.setSaveValueFlag(!bAutoThreshold && bUpperThreshActive && !bUseExternalUT);
+	m_upperThresh.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && false == bAutoThreshold && false == bUseExternalUT && bUpperThreshActive ? SvOi::AddAttribute : SvOi::RemoveAttribute);
 	m_lowerThresh.setSaveValueFlag(!bAutoThreshold && bLowerThreshActive && !bUseExternalLT);
+	m_lowerThresh.SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && false == bAutoThreshold && false == bUseExternalLT && bLowerThreshActive ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+
+	if (nullptr != m_pATEquation)
+	{
+		m_pATEquation->SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && bAutoThreshold && bUseAutoExternal ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	}
+
+	if (nullptr != m_pUTEquation)
+	{
+		m_pUTEquation->SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && false == bAutoThreshold && bUpperThreshActive && bUseExternalUT ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	}
+
+	if (nullptr != m_pLTEquation)
+	{
+		m_pLTEquation->SetObjectAttributesAllowed(SvPb::viewable, bThreshActive && false == bAutoThreshold && bLowerThreshActive && bUseExternalLT ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	}
 
 	return Result;
 }

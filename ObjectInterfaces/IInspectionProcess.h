@@ -83,8 +83,6 @@ namespace SvOi
 		///Calls a command in the inspection thread
 		virtual HRESULT SubmitCommand(const ICommandPtr& rCommandPtr) = 0;
 
-		virtual void BuildValueObjectMap() = 0;
-
 		virtual uint32_t getFirstCamera() const = 0;
 
 		virtual HRESULT addSharedCamera(uint32_t cameraID) = 0;

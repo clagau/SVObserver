@@ -215,25 +215,28 @@ HRESULT LinearAnalyzer::updateImageExtent(bool init)
 
 void LinearAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
-	std::vector<std::string> nameList = getParameterNamesForML();
-
-	bool isNoError = true;
-	for (auto name : nameList)
+	if (isViewable())
 	{
-		std::string fullName = GetCompleteName() + "." + name;
-		isNoError &= setParameterToList(fullName, inserter);
-	}
+		std::vector<std::string> nameList = getParameterNamesForML();
 
-	if (!isNoError)
-	{
-		SvDef::StringVector msgData;
-		msgData.push_back("");
+		bool isNoError = true;
 		for (auto name : nameList)
 		{
-			msgData[0] += "\n" + name;
+			std::string fullName = GetCompleteName() + "." + name;
+			isNoError &= setParameterToList(fullName, inserter);
 		}
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetResultParameterToMonitorListFailed, msgData, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-		rMessages.push_back(Msg);
+
+		if (!isNoError)
+		{
+			SvDef::StringVector msgData;
+			msgData.push_back("");
+			for (auto name : nameList)
+			{
+				msgData[0] += "\n" + name;
+			}
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetResultParameterToMonitorListFailed, msgData, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+			rMessages.push_back(Msg);
+		}
 	}
 }
 

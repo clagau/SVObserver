@@ -54,13 +54,17 @@ class InputObject : public SVObjectAppClass, public SvOi::IInputObject
 	void setStartSearchId(uint32_t startSearchId) { m_startSearchId = startSearchId; };
 	void setAllowedMode(SvOi::InputAllowedMode mode) { m_allowedMode = mode; };
 	SvOi::InputAllowedMode getAllowedMode() const { return m_allowedMode; };
-	
+
 	template <typename T>
 	T* getInput(bool bRunMode = false) const
 	{
 		if (IsConnected() && nullptr != GetInputObjectInfo().getFinalObject())
 		{
 			SVObjectClass* pObject = GetInputObjectInfo().getFinalObject();
+			if (0 == (pObject->ObjectAttributesAllowed() & SvPb::useable))
+			{
+				return nullptr;
+			}
 			//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 			//! We are sure that when getObject() is not nullptr that it is the correct type
 			return bRunMode ? static_cast<T*> (pObject) : dynamic_cast<T*> (pObject);
@@ -75,7 +79,7 @@ class InputObject : public SVObjectAppClass, public SvOi::IInputObject
 		if (IsConnected() && nullptr != GetInputObjectInfo().getFinalObject())
 		{
 			SVObjectClass* pObject = GetInputObjectInfo().getFinalObject();
-			if (pObject && pObject->GetObjectType() == SvPb::SVImageObjectType)
+			if (pObject && pObject->GetObjectType() == SvPb::SVImageObjectType && 0 != (pObject->ObjectAttributesAllowed() & SvPb::useable))
 			{
 				return static_cast<SvIe::SVImageClass*> (pObject);
 			}

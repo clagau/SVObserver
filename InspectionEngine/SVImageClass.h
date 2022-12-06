@@ -14,12 +14,13 @@
 #pragma region Includes
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
-#include "ObjectInterfaces/ISVImage.h"
-#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVObjectLibrary/SVObjectAppClass.h"
+#include "ObjectInterfaces/ISVImage.h"
 #include "ObjectInterfaces/ITRCImage.h"
 #include "ObjectInterfaces/ITriggerRecordRW.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
+#include "SVObjectLibrary/SVObjectAppClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
@@ -38,6 +39,15 @@ class SVImageClass : public SvOl::SVObjectAppClass, public SvOi::ISVImage
 	SV_DECLARE_CLASS
 
 public:
+
+	enum class BufferType
+	{
+		Undefined,
+		TRCBuffer,
+		TRCChildImage,
+		LocalBuffer,
+		LocalChildBuffer,
+	};
 
 	explicit SVImageClass(LPCSTR ObjectName);
 	SVImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGE );
@@ -121,7 +131,7 @@ public:
 
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) override;
 
-	bool isChildImageInTRC() const { return m_isChildImageInTRC; };
+	BufferType getBufferType() const { return m_BufferType; };
 
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed = false, bool firstObject = false) const override;
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) override;
@@ -173,7 +183,9 @@ private:
 	void init();
 
 	void setInspectionPosForTrc();
+	bool UpdateBuffers(SvStl::MessageContainerVector* pErrorMessages);
 	bool UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessages);
+	bool UpdateLocalBuffer(SvStl::MessageContainerVector* pErrorMessages);
 	void copyCurrent2SaveImage();
 
 protected:
@@ -189,10 +201,13 @@ protected:
 private:
 	int m_inspectionPosInTRC = -1; //inspection position in TriggerRecordController
 	int m_imagePosInTRC = -1;
-	bool m_isChildImageInTRC = false;
+	BufferType m_BufferType {BufferType::Undefined};
+	MatroxBufferChildDataStruct m_BufferStructForLocalChild;
+
 	mutable SVParentObjectPair m_ParentImageInfo;
 	SvVol::SVDoubleValueObjectClass m_width;
 	SvVol::SVDoubleValueObjectClass m_height;
+	SvOi::SVImageBufferHandlePtr m_localBuffer; //only set and used if m_BufferType == LocalBuffer
 	SvOi::SVImageBufferHandlePtr m_savedBuffer;
 	SVImageInfoClass m_ImageInfoOfSavedBuffer;
 

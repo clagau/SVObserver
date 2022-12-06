@@ -99,20 +99,35 @@ bool SVColorThreshold::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 
 	createImages();
 
-	//If no enabled Threshold Bands then disable Output Threshold Image as well
-	int EnabledThresholdCount(0);
-	for (SvDef::BandEnum Band : SvDef::BandList)
+	BOOL OutputThresholdEnabled;
+	m_OutputThresholdEnabled.GetValue(OutputThresholdEnabled);
+	if (OutputThresholdEnabled)
 	{
-		BOOL Enabled(false);
-		m_BandThreshold[Band].m_ThresholdEnabled.GetValue(Enabled);
-		if (Enabled)
+		bool isThresholdEnabled {false};
+		for (SvDef::BandEnum Band : SvDef::BandList)
 		{
-			EnabledThresholdCount++;
+			BOOL Enabled(false);
+			m_BandThreshold[Band].m_ThresholdEnabled.GetValue(Enabled);
+			isThresholdEnabled |= (TRUE == Enabled);
+			m_BandThreshold[Band].m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
+		}
+		if (isThresholdEnabled)
+		{
+			m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, SvOi::SetAttributeType::AddAttribute);
+		}
+		else
+		{
+			m_OutputThresholdEnabled.SetValue(BOOL(false));
+			m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
 		}
 	}
-	if (0 == EnabledThresholdCount)
+	else
 	{
-		m_OutputThresholdEnabled.SetValue(BOOL(false));
+		m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
+		for (SvDef::BandEnum Band : SvDef::BandList)
+		{
+			m_BandThreshold[Band].m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
+		}
 	}
 
 	bool Result = ValidateLocal();
@@ -141,8 +156,6 @@ BandThreshold* SVColorThreshold::GetBandThreshold(SvDef::BandEnum Band)
 #pragma region Protected Methods
 bool SVColorThreshold::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = true;
-
 	// Binarizing: lowerThresh <= x <= upperTresh		--> 255 
 	//	 		   otherwise							--> 0
 
@@ -164,11 +177,18 @@ bool SVColorThreshold::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContaine
 			ThresholdEnabledVector.push_back(Band);
 		}
 	}
+
+	if (0 == ThresholdEnabledVector.size())
+	{
+		return true;
+	}
+
+	bool Result = true;
 	SvOi::ITRCImagePtr pBandImageArray[SvDef::BandEnum::BandNumber];
 	SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 	SvOi::ITRCImagePtr pInputImageBufferArray[SvDef::BandEnum::BandNumber];
 
-	for (SvDef::BandEnum Band : SvDef::BandList)
+	for (SvDef::BandEnum Band : ThresholdEnabledVector)
 	{
 		pBandImageArray[Band] = GetBandOutputImage(Band).getImageToWrite(rRunStatus.m_triggerRecord);
 		SvIe::SVImageClass* pInputImage = GetBandInputImage(Band, true);
@@ -192,14 +212,10 @@ bool SVColorThreshold::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContaine
 
 	if (Result)
 	{
-		bool isBinarize = std::ranges::all_of(SvDef::BandList,
+		bool isBinarize = std::ranges::all_of(ThresholdEnabledVector,
 			[&](SvDef::BandEnum Band) 
 			{ 
-				if (ThresholdEnabled[Band])
-				{
-					return Binarize(LowerThreshold[Band], UpperThreshold[Band], ThresholdExclude[Band], pInputImageBufferArray[Band], pBandImageArray[Band]);
-				}
-				return true;
+				return Binarize(LowerThreshold[Band], UpperThreshold[Band], ThresholdExclude[Band], pInputImageBufferArray[Band], pBandImageArray[Band]);
 			});
 
 		if (!isBinarize)
@@ -426,7 +442,6 @@ bool SVColorThreshold::ValidateLocal() const
 		Result &= nullptr != m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject();
 		Result &= Result ? m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject()->IsCreated() : false;
 		Result &= m_BandThreshold[Band].m_OutputImage.IsCreated();
-		//Result &= m_BandThreshold[Band].m_OutputImage.IsCreated();
 		if (!Result)
 		{
 			break;

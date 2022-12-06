@@ -86,6 +86,8 @@ protected:
 	SvOl::InputObject	 m_inputLUTVectorResult;
 
 	bool m_bForceLUTRecalc;
+
+	SVTaskObjectClass* m_pLUTEquation {nullptr};
 };
 
 } //namespace SvOp

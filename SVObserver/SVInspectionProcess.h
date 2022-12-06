@@ -98,7 +98,6 @@ public:
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce() override;
 	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;
-	virtual void BuildValueObjectMap() override;
 	uint32_t getFirstCamera() const override;
 	HRESULT addSharedCamera(uint32_t cameraID) override;
 	HRESULT resetTool(SvOi::IObjectClass& rTool) override;
@@ -275,10 +274,6 @@ protected:
 
 	HRESULT InitializeRunOnce();
 
-	HRESULT GetInspectionValueObject( LPCTSTR Name, SVObjectReference& rObjectRef );
-	HRESULT GetInspectionImage( LPCTSTR Name, SvIe::SVImageClass*& p_rRefObject );
-	HRESULT GetInspectionObject( LPCTSTR Name, SVObjectReference& rObjectRef );
-
 	bool ProcessInputRequests( bool &rForceOffsetUpdate );
 	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem );
 	bool ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, const SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos);
@@ -301,7 +296,7 @@ protected:
 	HRESULT ProcessCommandQueue();
 	
 	///True if product is a reject
-	bool isReject();
+	bool isReject(SvOi::ITriggerRecordRPtr pTriggerRecord);
 	
 	void BuildWatchlist();
 
@@ -334,9 +329,6 @@ private:
 	// Inspection pointers
 	SVToolSet* m_pCurrentToolset{nullptr};
 
-	// Map of All Value Objects
-	SVValueObjectMap m_mapValueObjects;
-
 	SvDef::SVResetStruct m_svReset;
 
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
@@ -360,7 +352,7 @@ private:
 	SvOp::SVConditional* m_pToolSetConditional{nullptr};
 	SVCommandQueue m_CommandQueue;
 	
-	std::vector<WatchlistelementPtr> m_WatchListDatas;
+	std::vector<SvSml::MonitorEntryPointer> m_WatchListDatas;
 	
 	int m_StoreIndex{-1}; 
 

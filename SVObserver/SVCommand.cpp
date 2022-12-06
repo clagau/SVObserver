@@ -1902,6 +1902,7 @@ STDMETHODIMP SVCommand::SVRunOnce(BSTR bstrName)
 		SVInspectionProcess* pInspection(nullptr);
 		if (SVConfigurationObject::GetInspection(SvUl::createStdString(bstrName).c_str(), pInspection))
 		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			hrResult = SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 		}
 	}// end if

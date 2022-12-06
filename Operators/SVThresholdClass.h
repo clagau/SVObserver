@@ -74,6 +74,10 @@ protected:
 	SvVol::SVBoolValueObjectClass	 m_autoThreshold;
 	SvVol::SVBoolValueObjectClass	 m_blackBackground;
 
+	SVTaskObjectClass* m_pUTEquation {nullptr};
+	SVTaskObjectClass* m_pLTEquation {nullptr};
+	SVTaskObjectClass* m_pATEquation {nullptr};
+
 private:
 	void init();
 public:

@@ -822,7 +822,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	void LinkedValue::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed, bool firstObject) const
 	{
-		if (SvPb::noAttributes == attribute || SvPb::noAttributes != ObjectAttributesAllowed())
+		if (SvPb::noAttributes == attribute || 0 != (ObjectAttributesAllowed() & SvPb::viewable))
 		{
 			__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed, firstObject);
 			for (auto& rChild : m_children)

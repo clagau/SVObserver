@@ -211,30 +211,33 @@ namespace SvTo
 
 	void GroupTool::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed/* = false*/, bool firstObject/* = false*/) const
 	{
-		BOOL isClosed = false;
-		m_isClosed.GetValue(isClosed);
-		if (isClosed && stopIfClosed && false == firstObject)
+		if (0 != (ObjectAttributesAllowed() & SvPb::viewable))
 		{
-			SVObjectClass::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
-			if (m_pInputTask)
+			BOOL isClosed = false;
+			m_isClosed.GetValue(isClosed);
+			if (isClosed && stopIfClosed && false == firstObject)
 			{
-				m_pInputTask->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
-			}
-			if (m_pResultTask)
-			{
-				m_pResultTask->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
-			}
-			for (auto* pObject : m_embeddedList)
-			{
-				if (nullptr != pObject)
+				SVObjectClass::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+				if (m_pInputTask)
 				{
-					pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+					m_pInputTask->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+				}
+				if (m_pResultTask)
+				{
+					m_pResultTask->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+				}
+				for (auto* pObject : m_embeddedList)
+				{
+					if (nullptr != pObject)
+					{
+						pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+					}
 				}
 			}
-		}
-		else
-		{
-			__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			else
+			{
+				__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			}
 		}
 	}
 

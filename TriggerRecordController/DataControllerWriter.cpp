@@ -360,6 +360,7 @@ void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, co
 		*m_pSmData = rSmData;
 		offset += sizeof(SMData);
 		m_pTRofInterestArray = reinterpret_cast<int*>(pTemp + offset);
+		std::fill(m_pTRofInterestArray, m_pTRofInterestArray + TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
 		offset += sizeof(int) *(TriggerRecordController::cMaxTriggerRecordsOfInterest + 1);
 		m_pImageListInSM = pTemp + offset;
 		offset += rSmData.m_maxImageListSize;

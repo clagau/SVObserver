@@ -334,7 +334,7 @@ UINT SVValueObjectClass<T>::SetObjectAttributesAllowed(UINT Attributes, SvOi::Se
 	UINT newAttribute = __super::SetObjectAttributesAllowed(Attributes, Type);
 
 	///When the attributes are set to no attributes and MemBlock is reserved we need to reserve local memory and copy the original values back
-	if(newAttribute == SvPb::noAttributes && nullptr != m_pValue && 0 != m_memSizeReserved)
+	if(isViewable() && nullptr != m_pValue && 0 != m_memSizeReserved)
 	{
 		m_pValue = reserveLocalMemory();
 		m_memOffset = -1;
@@ -650,7 +650,7 @@ int32_t SVValueObjectClass<T>::getByteSize(bool useResultSize, bool memBlockData
 	int32_t result(0L);
 
 	///When for memory block and has no attributes then no memory requirements and return 0
-	if (memBlockData && 0 == ObjectAttributesAllowed())
+	if (memBlockData && false == isViewable())
 	{
 		return result;
 	}

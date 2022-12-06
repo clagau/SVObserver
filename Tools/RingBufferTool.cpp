@@ -261,7 +261,7 @@ bool RingBufferTool::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainer
 		if (nullptr != pInputImage && static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos)
 		{
 			SvOi::ITRCImagePtr pImageBuffer = nullptr;
-			if (!pInputImage->isChildImageInTRC())
+			if (SvIe::SVImageClass::BufferType::TRCBuffer == pInputImage->getBufferType())
 			{
 				pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get(), true);
 			}

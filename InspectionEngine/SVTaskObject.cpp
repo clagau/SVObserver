@@ -269,14 +269,17 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 
 void SVTaskObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {
-	nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
-	__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
-
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	if (0 != (ObjectAttributesAllowed() & SvPb::viewable))
 	{
-		if (nullptr != m_friendList[i])
+		nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
+		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+
+		for (size_t i = 0; i < m_friendList.size(); ++i)
 		{
-			m_friendList[i]->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			if (nullptr != m_friendList[i])
+			{
+				m_friendList[i]->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			}
 		}
 	}
 }

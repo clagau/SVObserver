@@ -686,5 +686,7 @@ enum MessageTextEnum
 	Tid_SetOfReadOnlyValueFailed,
 	Tid_SetOfValueFailed,
 	Tid_DuplicateObjectId,
+	Tid_RejectClarifyFailedNoTR,
+	Tid_RejectClarifyFailedUnknowData,
 };
 } //namespace SvStl

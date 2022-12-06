@@ -286,7 +286,6 @@ HRESULT SVInspectionProcess::ProcessInspection()
 				LastProductUpdate(product);
 			}
 		}
-		m_processActive = false;
 		SVObjectManagerClass::Instance().DecrementInspectionIndicator();
 
 		if (processed)
@@ -294,6 +293,7 @@ HRESULT SVInspectionProcess::ProcessInspection()
 			rIPInfo.ClearIndexes();
 			LastProductNotify();
 		}
+		m_processActive = false;
 	}
 	return l_Status;
 }
@@ -319,14 +319,15 @@ void SVInspectionProcess::BuildWatchlist()
 	{
 		if (it.second->data.m_inspectionStoreId == m_StoreIndex)
 		{
-			SVObjectReference ObjectRef;
-			if (S_OK == GetInspectionObject(it.first.c_str(), ObjectRef))
+			if (it.second->data.ObjectType != SvPb::SVImageObjectType && (it.second->data.m_MonitorListFlag & RejectConditionFlag))
 			{
-				if (it.second->data.ObjectType != SvPb::SVImageObjectType && (it.second->data.m_MonitorListFlag & RejectConditionFlag))
+				SVObjectReference ObjectRef;
+				if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(it.first, ObjectRef))
 				{
+
 					if (false == it.second->data.wholeArray)
 					{
-						m_WatchListDatas.push_back(WatchlistelementPtr(new WatchListElement(ObjectRef, it.second)));
+						m_WatchListDatas.push_back(it.second);
 					}
 					else
 					{
@@ -338,28 +339,34 @@ void SVInspectionProcess::BuildWatchlist()
 	}
 }
 
-bool SVInspectionProcess::isReject()
+bool SVInspectionProcess::isReject(SvOi::ITriggerRecordRPtr pTriggerRecord)
 {
+	if (nullptr == pTriggerRecord)
+	{
+		assert(false);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RejectClarifyFailedNoTR, SvStl::SourceFileParams(StdMessageParams));
+		return false;
+	}
+
 	bool result(false);
 	for (auto& element : m_WatchListDatas)
 	{
-		if (element->MonEntryPtr.get())
+		if (nullptr != element)
 		{
-			int arrayindex(-1);
-			if (TRUE == element->MonEntryPtr->data.isArray)
+			if (0 <= element->data.m_triggerRecordPos)
 			{
-				arrayindex = element->MonEntryPtr->data.arrayIndex;
-			}
-
-			SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(element->ObjRef.getValueObject());
-			if (pObj)
-			{
-				double val(0);
-				pObj->getValue(val, arrayindex);
+				double val = pTriggerRecord->getDataValue(element->data.m_triggerRecordPos);
 				if (val != 0)
 				{
 					result = true;
 				}
+			}
+			else
+			{
+				assert(false);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RejectClarifyFailedUnknowData, {element->name}, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -375,7 +382,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected()
 		SVPPQObject* pPPQ{ GetPPQ() };
 		if (nullptr != pPPQ && pPPQ->HasActiveMonitorList() && m_lastRunProduct.m_triggered)
 		{
-			m_lastRunProduct.m_svInspectionInfos[getObjectId()].m_bReject = isReject();
+			m_lastRunProduct.m_svInspectionInfos[getObjectId()].m_bReject = isReject(m_lastRunProduct.m_svInspectionInfos[getObjectId()].m_triggerRecordComplete);
 		}
 		std::pair<long, SVInspectionInfoStruct> data{ m_lastRunProduct.triggerCount(), m_lastRunProduct.m_svInspectionInfos[getObjectId()] };
 		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
@@ -426,6 +433,7 @@ void SVInspectionProcess::Init()
 	// Set up your type...
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVInspectionObjectType;
 	m_svReset.RemoveState(SvDef::SVResetStateAll);
+	SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::AddAttribute);
 }
 
 SVInspectionProcess::~SVInspectionProcess()
@@ -521,62 +529,6 @@ void SVInspectionProcess::DestroyInspection()
 	}
 }// end Destroy
 
-HRESULT SVInspectionProcess::GetInspectionValueObject(LPCTSTR Name, SVObjectReference& rObjectRef)
-{
-	SVObjectNameInfo NameInfo;
-	SVObjectClass* pObject(nullptr);
-
-	HRESULT hr = NameInfo.ParseObjectName(Name);
-
-	if (S_OK == hr)
-	{
-		//If Inspections prefix is present remove it
-		if (std::string(SvDef::FqnInspections) == NameInfo.m_NameArray[0])
-		{
-			NameInfo.RemoveTopName();
-		}
-
-		SVValueObjectMap::const_iterator iter = m_mapValueObjects.find(NameInfo.GetObjectName());
-
-		if (m_mapValueObjects.end() != iter)
-		{
-			pObject = iter->second;
-		}
-	}
-
-	if (nullptr != pObject)
-	{
-		rObjectRef = SVObjectReference(pObject, NameInfo);
-		hr = S_OK;
-	}
-	else
-	{
-		hr = S_FALSE;
-	}
-
-
-	return hr;
-}
-
-HRESULT SVInspectionProcess::GetInspectionObject(LPCTSTR Name, SVObjectReference& rObjectRef)
-{
-	HRESULT hr = GetInspectionValueObject(Name, rObjectRef);	// try the most efficient one first
-	if (S_OK == hr)
-	{
-		return S_OK;
-	}
-	else	// if not a value object, try getting images
-	{
-		SvIe::SVImageClass* pImage = nullptr;
-		hr = GetInspectionImage(Name, pImage);
-		if (S_OK == hr)
-		{
-			rObjectRef = SVObjectReference(pImage);
-		}
-	}
-	return hr;
-}
-
 bool SVInspectionProcess::CanGoOnline()
 {
 	bool l_bOk(true);
@@ -636,8 +588,6 @@ bool SVInspectionProcess::GoOnline()
 	m_offlineRequest = false;
 
 	m_processThread.SetPriority(THREAD_PRIORITY_NORMAL);
-
-	BuildValueObjectMap();
 
 	try
 	{
@@ -956,7 +906,6 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 		pResultlist->RebuildReferenceVector(this);
 	}
 
-	BuildValueObjectMap();
 	return true;
 }
 
@@ -1225,12 +1174,6 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 	}
 
 	SetDefaultInputs();
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
-	int iCount = static_cast<int>(m_mapValueObjects.size());
-	std::string Text = SvUl::Format(_T("%s value object count=%d\n"), GetName(), iCount);
-	::OutputDebugString(Text.c_str());
-#endif
 
 	return l_Status;
 }
@@ -2429,8 +2372,6 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector* pErrorMessa
 
 	m_pToolSetCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(getFirstCamera()));
 
-	BuildValueObjectMap();
-
 	m_bForceOffsetUpdate = true;
 
 	m_resetting = false;
@@ -2750,8 +2691,6 @@ void SVInspectionProcess::SetDefaultInputs()
 	{
 		m_pCurrentToolset->SetDefaultInputs();
 	}// end if
-
-	BuildValueObjectMap();
 }
 
 LPCTSTR SVInspectionProcess::GetDeviceName() const
@@ -2808,7 +2747,6 @@ HRESULT SVInspectionProcess::RegisterSubObject(SVObjectClass* pObject)
 	else if (nullptr != (pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject)))
 	{
 		m_ValueObjectSet.insert(pValueObject);
-		m_mapValueObjects.insert({ pObject->GetCompleteName(), pObject });
 		Result = S_OK;
 	}
 
@@ -2845,12 +2783,6 @@ HRESULT SVInspectionProcess::UnregisterSubObject(SVObjectClass* pObject)
 		{
 			m_updateValueObjectSet.erase(pValueObject);
 		}
-		SVValueObjectMap::iterator iter = m_mapValueObjects.find(pObject->GetCompleteName());
-		if (m_mapValueObjects.end() != iter)
-		{
-			m_mapValueObjects.erase(iter);
-		}
-
 		Result = S_OK;
 	}
 
@@ -2879,38 +2811,6 @@ SvIe::SVCameraImageTemplate* SVInspectionProcess::GetToolSetMainImage()
 	}
 
 	return pImage;
-}
-
-HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SvIe::SVImageClass*& p_rRefObject)
-{
-	// Set to Defaults in case of failure
-	p_rRefObject = nullptr;
-
-	std::string ImageName{ Name };
-	std::string Inspections{ SvDef::FqnInspections };
-	Inspections += '.';
-	//If Inspections prefix is present remove it
-	if (0 == ImageName.find(Inspections))
-	{
-		ImageName = ImageName.substr(Inspections.size(), ImageName.size() - Inspections.size());
-	}
-
-	std::vector<SvOi::IObjectClass*> list;
-	fillObjectList(std::back_inserter(list), { SvPb::SVImageObjectType });
-
-	for (const auto pObject : list)
-	{
-		SvIe::SVImageClass* pImage = SvIe::castObjectToImage(pObject);
-
-		if (nullptr != pImage && pImage->GetCompleteName() == ImageName)
-		{
-			// We found the image by name
-			p_rRefObject = pImage;
-
-			return S_OK;
-		}
-	}
-	return E_FAIL;
 }
 
 void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter) const
@@ -3050,20 +2950,6 @@ HRESULT SVInspectionProcess::SubmitCommand(const SvOi::ICommandPtr& rCommandPtr)
 
 	return Result;
 }
-
-void SVInspectionProcess::BuildValueObjectMap()
-{
-	m_mapValueObjects.clear();
-
-	for (const auto& rpValueObj : m_ValueObjectSet)
-	{
-		SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (rpValueObj);
-		if (nullptr != pObject)
-		{
-			m_mapValueObjects.insert({ pObject->GetCompleteName(), pObject });
-		}
-	}
-}// end BuildValueObjectMap
 
 uint32_t SVInspectionProcess::getFirstCamera() const
 {

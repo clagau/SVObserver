@@ -99,9 +99,10 @@ void SVLUTOperator::init()
 
 	// Add equation friends...
 	SVLUTEquation* pLUTEquationFriend = new SVLUTEquation( this );
-	if( pLUTEquationFriend )
-		AddFriend( pLUTEquationFriend );
-
+	if (pLUTEquationFriend)
+	{
+		AddFriend(pLUTEquationFriend);
+	}
 
 	// Identify our input type needs...
 
@@ -141,6 +142,15 @@ bool SVLUTOperator::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_minOutput.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_maxOutput.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
+	for (size_t j = 0; j < m_friendList.size(); j++)
+	{
+		if (nullptr != m_friendList[j] && SvPb::SVEquationObjectType == m_friendList[j]->GetObjectType() && SvPb::SVLUTEquationObjectType == m_friendList[j]->GetObjectSubType())
+		{
+			m_pLUTEquation = m_friendList[j];
+			break;
+		}
+	}
+
 	m_isCreated = bOk;
 
 	return bOk;
@@ -157,8 +167,29 @@ bool SVLUTOperator::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	long lLutMode = 0;
 	if (S_OK == m_lutMode.GetValue(lLutMode))
 	{
-		bool isVectorPrint = (4 /*Formula*/ != lLutMode);
+		bool isVectorPrint = (SvPb::LUTFormula != lLutMode);
 		m_lutVector.SetObjectAttributesAllowed(SvPb::audittrail, isVectorPrint ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
+	}
+
+
+	//Hide unused object
+	BOOL isUsed {false};
+	m_useLUT.GetValue(isUsed);
+	m_lutVector.SetObjectAttributesAllowed(SvPb::viewable, isUsed ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	m_continuousRecalcLUT.SetObjectAttributesAllowed(SvPb::viewable, isUsed ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	m_lutMode.SetObjectAttributesAllowed(SvPb::viewable, isUsed ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+
+	m_upperClip.SetObjectAttributesAllowed(SvPb::viewable, isUsed && SvPb::LUTClip == lLutMode ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	m_lowerClip.SetObjectAttributesAllowed(SvPb::viewable, isUsed && SvPb::LUTClip == lLutMode ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+
+	m_minInput.SetObjectAttributesAllowed(SvPb::viewable, isUsed && SvPb::LUTStretch == lLutMode ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	m_maxInput.SetObjectAttributesAllowed(SvPb::viewable, isUsed && SvPb::LUTStretch == lLutMode ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	m_minOutput.SetObjectAttributesAllowed(SvPb::viewable, isUsed && SvPb::LUTStretch == lLutMode ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+	m_maxOutput.SetObjectAttributesAllowed(SvPb::viewable, isUsed && SvPb::LUTStretch == lLutMode ? SvOi::AddAttribute : SvOi::RemoveAttribute);
+
+	if (nullptr != m_pLUTEquation)
+	{
+		m_pLUTEquation->SetObjectAttributesAllowed(SvPb::viewable, isUsed && SvPb::LUTFormula == lLutMode ? SvOi::AddAttribute : SvOi::RemoveAttribute);
 	}
 
 	return Result;

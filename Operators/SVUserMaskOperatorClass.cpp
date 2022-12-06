@@ -170,12 +170,17 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 	{
 		Result = pShapeHelper->ResetObject(pErrorMessages) && Result;
 
-		SvOi::SetAttributeType AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		pShapeHelper->SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType );
+		SvOi::SetAttributeType AddRemoveAnyType = bActive ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+		m_evoCurrentMaskOperator.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::viewable, AddRemoveAnyType);
+		m_dwvoMaskType.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::viewable, AddRemoveAnyType);
+		m_evoDrawCriteria.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::viewable, AddRemoveAnyType);
+
+		SvOi::SetAttributeType AddRemoveShapeTypes = (bActive && dwMaskType == MASK_TYPE_SHAPE) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+		pShapeHelper->SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveShapeTypes);
 		pShapeHelper->SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-		AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) && bActive ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_evoFillArea.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType  );
-		m_lvoFillColor.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType  );
+		m_evoFillArea.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveShapeTypes);
+		m_lvoFillColor.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveShapeTypes);
+		m_bvoContRecalc.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::viewable, AddRemoveShapeTypes);
 	}
 	else
 	{

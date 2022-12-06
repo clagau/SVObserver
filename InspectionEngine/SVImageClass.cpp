@@ -19,6 +19,7 @@
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVTaskObject.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -54,6 +55,33 @@ static char THIS_FILE[] = __FILE__;
 constexpr long cColorBandNumber = 3L;
 constexpr long cMonoBandNumber = 1L;
 #pragma endregion Declarations
+
+namespace
+{
+class LocalImage : public SvOi::ITRCImage
+{
+#pragma region Constructor
+public:
+	explicit LocalImage(const SvOi::SVImageBufferHandlePtr& pBuffer, bool isReadOnly = true)
+		: m_pBuffer {pBuffer}, m_isReadOnly {isReadOnly} {};
+
+	virtual ~LocalImage() {};
+#pragma endregion Constructor
+
+public:
+	virtual bool isReadOnly() const override { return m_isReadOnly; };
+	virtual SvOi::SVImageBufferHandlePtr getHandle() const override { return m_pBuffer; };
+	virtual int getBufferPos() const override { return -1; };
+	virtual bool isEmpty() const override { return !isValid() || (nullptr == m_pBuffer || m_pBuffer->empty()); };
+	virtual bool isValid() const override { return true; };
+
+
+private:
+	const bool m_isReadOnly = true;
+	SvOi::SVImageBufferHandlePtr m_pBuffer;
+};
+}
+
 
 SV_IMPLEMENT_CLASS(SVImageClass, SvPb::ImageClassId);
 
@@ -414,10 +442,14 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector* pErrorMessag
 
 	if (S_OK == hr)
 	{
-		if (!UpdateTRCBuffers(pErrorMessages))
+		if (!UpdateBuffers(pErrorMessages))
 		{
 			hr = E_FAIL;
 		}
+	}
+	else
+	{
+		m_BufferType = BufferType::Undefined;
 	}
 
 	if (S_OK == hr)
@@ -1091,7 +1123,7 @@ void SVImageClass::setImage(SvOi::ITRCImagePtr pImage, const SvOi::ITriggerRecor
 	assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
-		assert(0 <= m_imagePosInTRC && !m_isChildImageInTRC);
+		assert(0 <= m_imagePosInTRC && BufferType::TRCBuffer == m_BufferType);
 		pTriggerRecord->setImage(m_imagePosInTRC, pImage);
 	}
 }
@@ -1101,7 +1133,7 @@ void SVImageClass::resetImage(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 	assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
-		assert(0 <= m_imagePosInTRC && !m_isChildImageInTRC);
+		assert(0 <= m_imagePosInTRC && BufferType::TRCBuffer == m_BufferType);
 		pTriggerRecord->setImage(m_imagePosInTRC, -1);
 	}
 }
@@ -1147,19 +1179,45 @@ SvOi::ITRCImagePtr SVImageClass::getImageReadOnly(const SvOi::ITriggerRecordR* p
 	assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
-		assert(0 <= m_imagePosInTRC);
-		if ((0 > m_imagePosInTRC))
+		switch (m_BufferType)
 		{
-			std::string text = std::format("Triggerposition issue for {}\n", GetCompleteName());
-			Log_Error(text.c_str());
-		}
-		if (!m_isChildImageInTRC)
-		{
-			pImage = pTriggerRecord->getImage(m_imagePosInTRC, lockImage);
-		}
-		else
-		{
-			pImage = pTriggerRecord->getChildImage(m_imagePosInTRC, lockImage);
+			case BufferType::TRCBuffer:
+				assert(0 <= m_imagePosInTRC);
+				pImage = pTriggerRecord->getImage(m_imagePosInTRC, lockImage);
+				break;
+			case BufferType::TRCChildImage:
+				assert(0 <= m_imagePosInTRC);
+				pImage = pTriggerRecord->getChildImage(m_imagePosInTRC, lockImage);
+				break;
+			case BufferType::LocalBuffer:
+				pImage = std::make_shared<LocalImage>(m_localBuffer, true);
+				break;
+			case BufferType::LocalChildBuffer:
+			{
+				SVImageClass* pParent = GetParentImage();
+				if (nullptr != pParent)
+				{
+					auto pParentImage = pParent->getImageReadOnly(pTriggerRecord);
+					if (nullptr != pParentImage && false == pParentImage->isEmpty())
+					{
+						SVMatroxBufferCreateChildStruct bufferStruct(pParentImage->getHandle()->GetBuffer());
+						bufferStruct.m_data = m_BufferStructForLocalChild;
+						SVMatroxBuffer buffer;
+						SVMatroxBufferInterface::Create(buffer, bufferStruct);
+						if (!buffer.empty())
+						{
+							SvOi::SVImageBufferHandlePtr pImagePtr = std::make_shared<SVImageBufferHandleImage>(buffer);
+							pImage = std::make_shared<LocalImage>(pImagePtr, true);
+						}
+					}
+				}
+				break;
+			}
+			default:
+				SvStl::MessageManager e(SvStl::MsgType::Log);
+				e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
+				assert(false);
+				break;
 		}
 	}
 	else
@@ -1176,8 +1234,22 @@ SvOi::ITRCImagePtr SVImageClass::getImageToWrite(const SvOi::ITriggerRecordRWPtr
 	assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
-		assert(0 <= m_imagePosInTRC && !m_isChildImageInTRC);
-		pImage = pTriggerRecord->createNewImageHandle(m_imagePosInTRC);
+		switch (m_BufferType)
+		{
+			case BufferType::TRCBuffer:
+				pImage = pTriggerRecord->createNewImageHandle(m_imagePosInTRC);
+				break;
+			case BufferType::LocalBuffer:
+				pImage = std::make_shared<LocalImage>(m_localBuffer, false);
+				break;
+			case BufferType::TRCChildImage:
+			case BufferType::LocalChildBuffer:
+			default:
+				SvStl::MessageManager e(SvStl::MsgType::Log);
+				e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
+				assert(false);
+				break;
+		}
 	}
 	else
 	{
@@ -1198,7 +1270,7 @@ void SVImageClass::getOutputList(std::back_insert_iterator<std::vector<SvOi::IOb
 void SVImageClass::setEditModeFreezeFlag(bool flag)
 {
 	__super::setEditModeFreezeFlag(flag);
-	if (m_editModeFreezeFlag && !m_isChildImageInTRC)
+	if (m_editModeFreezeFlag && BufferType::TRCBuffer == m_BufferType)
 	{
 		if (nullptr == m_savedBuffer)
 		{
@@ -1214,7 +1286,7 @@ void SVImageClass::setEditModeFreezeFlag(bool flag)
 
 void SVImageClass::goingOffline()
 {
-	if (m_editModeFreezeFlag && !m_isChildImageInTRC)
+	if (m_editModeFreezeFlag && BufferType::TRCBuffer == m_BufferType)
 	{
 		copyCurrent2SaveImage();
 	}
@@ -1222,7 +1294,7 @@ void SVImageClass::goingOffline()
 
 void SVImageClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 {
-	if (m_editModeFreezeFlag && !m_isChildImageInTRC && hasStorage())
+	if (m_editModeFreezeFlag && BufferType::TRCBuffer == m_BufferType && hasStorage())
 	{
 		auto image = getImageToWrite(pTr);
 		assert(nullptr != m_savedBuffer && nullptr != image && !image->isEmpty());
@@ -1488,17 +1560,34 @@ void SVImageClass::setInspectionPosForTrc()
 	}
 }
 
-bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessages)
+bool SVImageClass::UpdateBuffers(SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		//[MZA][8.10][26.06.2018] In Run-mode it is not valid to updated TRC-Buffer. Return true to avoid abort of the run.
 		return true;
 	}
+	if (isViewable())
+	{
+		return UpdateTRCBuffers(pErrorMessages);
+	}
+	else
+	{
+		return UpdateLocalBuffer(pErrorMessages);
+	}
+}
 
+bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessages)
+{
 	bool retValue = true;
 	if (0 <= m_inspectionPosInTRC)
 	{
+		if (BufferType::LocalBuffer == m_BufferType)
+		{
+			m_BufferType = BufferType::Undefined;
+			m_localBuffer = nullptr;
+		}
+
 		if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
 			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 		{
@@ -1511,7 +1600,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 				{
 					try
 					{
-						m_isChildImageInTRC = true;
+						m_BufferType = BufferType::TRCChildImage;
 						auto& rTRC = SvOi::getTriggerRecordControllerRWInstanceThrow();
 						m_imagePosInTRC = rTRC.addOrChangeChildImage(getObjectId(), m_ParentImageInfo.first, bufferStruct, m_inspectionPosInTRC);
 					}
@@ -1560,7 +1649,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 			{
 				try
 				{
-					m_isChildImageInTRC = false;
+					m_BufferType = BufferType::TRCBuffer;
 					auto& rTRC = SvOi::getTriggerRecordControllerRWInstanceThrow();
 					m_imagePosInTRC = rTRC.addOrChangeImage(getObjectId(), bufferStruct, m_inspectionPosInTRC);
 				}
@@ -1593,6 +1682,50 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 			}
 		}
 	}
+	return retValue;
+}
+
+bool SVImageClass::UpdateLocalBuffer(SvStl::MessageContainerVector* pErrorMessages)
+{
+	bool retValue = true;
+	if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
+			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
+	{
+		SVImageClass* pParent = GetParentImage();
+		if (nullptr != pParent)
+		{
+			HRESULT Result = SVImageProcessingClass::FillChildBufferStructFromInfo(pParent->GetImageInfo(), m_ImageInfo, m_BufferStructForLocalChild);
+			if (S_OK == Result)
+			{
+				m_BufferType = BufferType::LocalChildBuffer;
+			}
+			else
+			{
+				m_BufferType = BufferType::Undefined;
+				m_BufferStructForLocalChild = {};
+			}
+		}
+		else
+		{
+			retValue = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+		}
+	}
+	else
+	{
+		retValue = (S_OK == SVImageProcessingClass::CreateImageBuffer(m_ImageInfo, m_localBuffer, pErrorMessages));
+		m_BufferType = BufferType::LocalBuffer;
+	}
+	if (false == retValue)
+	{
+		m_BufferType = BufferType::Undefined;
+		assert(false);
+	}
+
 	return retValue;
 }
 

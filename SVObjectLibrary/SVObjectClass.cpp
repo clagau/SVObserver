@@ -443,19 +443,22 @@ void SVObjectClass::getOutputList(std::back_insert_iterator<std::vector<SvOi::IO
 
 void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {
-	if (isCorrectType(requiredType))
+	if (0 != (ObjectAttributesAllowed() & SvPb::viewable))
 	{
-		SVObjectReference ObjectRef{ getObjectId() };
-		ObjectRef.fillSelectorList(treeInserter, wholeArray, pFunctor, attribute, nameToType);
-	}
-
-	if (SvPb::noAttributes == attribute || SvPb::noAttributes != ObjectAttributesAllowed())
-	{
-		for (auto* pObject : m_embeddedList)
+		if (isCorrectType(requiredType))
 		{
-			if (nullptr != pObject)
+			SVObjectReference ObjectRef {getObjectId()};
+			ObjectRef.fillSelectorList(treeInserter, wholeArray, pFunctor, attribute, nameToType);
+		}
+
+		if (SvPb::noAttributes == attribute || SvPb::noAttributes != ObjectAttributesAllowed())
+		{
+			for (auto* pObject : m_embeddedList)
 			{
-				pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+				if (nullptr != pObject)
+				{
+					pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+				}
 			}
 		}
 	}
@@ -1138,6 +1141,16 @@ void SVObjectClass::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb:
 			pObject->fixInvalidInputs(inserter);
 		}
 	}
+}
+
+bool SVObjectClass::isViewable() const
+{
+	bool isViewableFlag {SvPb::viewable == (ObjectAttributesAllowed() & SvPb::viewable)};
+	if (isViewableFlag && GetParent())
+	{
+		isViewableFlag = GetParent()->isViewable();
+	}
+	return  isViewableFlag;
 }
 
 void SVObjectClass::sendChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId)

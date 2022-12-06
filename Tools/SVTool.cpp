@@ -1210,12 +1210,6 @@ SvOi::ParametersForML SVToolClass::getParameterForMonitorList(SvStl::MessageCont
 
 void SVToolClass::finishAddTool()
 {
-	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-	if (nullptr != pInspection)
-	{
-		pInspection->BuildValueObjectMap();
-	}
-
 	// Set default formulas in newly instantiated tool...
 	SvStl::MessageContainerVector ErrorMessages;
 	SetDefaultFormulas(&ErrorMessages);
