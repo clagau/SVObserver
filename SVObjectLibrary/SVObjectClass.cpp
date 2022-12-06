@@ -425,7 +425,8 @@ bool SVObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessage
 			Result = Result && pObject->resetAllObjects(pErrorMessages);
 		}	
 	}
-	Result =  Result  && ResetObject(pErrorMessages); 
+	//Result on second position to force Execution of ResetObject
+	Result =  ResetObject(pErrorMessages) && Result; 
 	return Result;
 };
 
