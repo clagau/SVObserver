@@ -13,7 +13,6 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ITool.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -262,12 +261,10 @@ namespace SvOl
 				std::string SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				std::string ClientName = pClient->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 
-				
-				//Inserter = SvDef::StringPair(SupplierName, ClientName);
 				bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
 				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
 				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
-				bool isClientInSourceSet = rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId());
+				bool isClientInSourceSet = (pToolClient != nullptr) ? rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId()) : false;
 				isClientInSourceSet |= (pTopToolClient != nullptr) ? rSourceSet.end() != rSourceSet.find(pTopToolClient->getObjectId()) : false;
 
 				SvOi::IObjectClass* pTopToolSupplier = pSupplier->GetAncestorInterface(SvPb::SVToolObjectType, true);

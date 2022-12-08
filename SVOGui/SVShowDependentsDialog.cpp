@@ -71,15 +71,18 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 	CWnd* pControl(nullptr);
 	if (DeleteConfirm == m_DialogType)
 	{
-		if (0 == m_dependencyList.size())
+		if (m_dependencyList.size() > 0 || m_dependencyResponse.dependencypair_size() > 0)
+		{
+			pControl = GetDlgItem(IDC_WARNING_TEXT);
+			if (nullptr != pControl)
+			{
+				pControl->SetWindowText(m_DisplayText.c_str());
+			}
+		}
+		else
 		{
 			EndDialog(IDOK);
 			return false;
-		}
-		pControl = GetDlgItem(IDC_WARNING_TEXT);
-		if (nullptr != pControl)
-		{
-			pControl->SetWindowText(m_DisplayText.c_str());
 		}
 	}
 	else
