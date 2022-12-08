@@ -300,6 +300,7 @@ void TableCopyObject::RemoveUnusedColumn()
 				if (nullptr != pValueObject.get())
 				{
 					RemoveEmbeddedObject(pValueObject.get());
+					pValueObject->CloseObject();
 				}
 			}
 		}
