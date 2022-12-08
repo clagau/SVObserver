@@ -29,7 +29,7 @@ using EntryInfo = std::tuple<size_t, EntryType, BYTE>;
 
 void logHeap(const std::string& rTitle);
 
-std::string getInfoString(const std::string rTypename, size_t memSize, BYTE regionIndex)
+std::string getInfoString(const std::string& rTypename, size_t memSize, BYTE regionIndex)
 {
 	static std::string oldTypename = "";
 	BYTE oldRegionIndex = 0;
@@ -37,7 +37,6 @@ std::string getInfoString(const std::string rTypename, size_t memSize, BYTE regi
 	if (rTypename != oldTypename || oldRegionIndex != regionIndex)
 	{
 		oldTypename = rTypename;
-		oldRegionIndex = regionIndex;
 
 		if ("" != rTypename)
 		{
@@ -263,7 +262,7 @@ public:
 	static void closeFilestreams();
 	static std::pair<std::string, std::string> getFilename(const std::string& rType, time_t in_time_t);
 
-	HeapFragmentationChecker(const std::string& rTitle) : m_title(rTitle) {}
+	explicit HeapFragmentationChecker(const std::string& rTitle) : m_title(rTitle) {}
 	void logAllHeaps();
 };
 
