@@ -1,7 +1,7 @@
 //*****************************************************************************
 /// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
 /// \file GetObjectSelector.proto
-/// All Rights Reserved 
+/// All Rights Reserved
 //*****************************************************************************
 /// Protobuf file GetObjectSelector which is used by both InspectionCommands
 /// and SVRC-SVObserver and that is the reason it is in a separate file
@@ -19,7 +19,7 @@ message TreeItem
 {
 	string name = 1;				//The name of the leaf or branch
 	string location = 2;			//The location which is the dotted name of leaf or branch
-	bool selected = 3;				//The flag which defines if the object is selected
+	//bool selected = 3;				//obsolete (The flag which defines if the object is selected)
 	string type = 4;				//The object type
 	string objectIDIndex = 5;		//The object ID including index for array values
 	repeated TreeItem children = 6;	//The children of this node
@@ -44,7 +44,7 @@ message GetObjectSelectorItemsRequest
 	oneof filter
 	{
 		uint32 attributesAllowed = 7;		//Object selector filter for attributes allowed (value not used)
-		uint32 attributesSet = 8;			//Object selector filter for attributes set (value not used)
+		//uint32 attributesSet = 8;			//obsolete (Object selector filter for attributes set (value not used))
 		ExludeSameLineageData excludeSameLineage = 9;			//Object selector filter exclude all object from the same lineage (list of object which exclude)
 	}
 }

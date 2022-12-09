@@ -1,7 +1,7 @@
 //*****************************************************************************
 /// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
 /// \file SVO-Enum.proto
-/// All Rights Reserved 
+/// All Rights Reserved
 //*****************************************************************************
 /// Protobuf file for the Enums used by SVObserver
 //******************************************************************************
@@ -137,13 +137,13 @@ enum SVObjectSubTypeEnum
 	PixelAnalyzerResultObjectType		        = 0x00000200;
 	SVPixelCountObjectType						= 0x00000201;
 
-	SVLinePixelCountingAnalyzerObjectType		= 0x00000300;
-	SVLineEdgeCountingAnalyzerObjectType		= 0x00000301;
-	SVLineEdgePositionAnalyzerObjectType		= 0x00000302;
-	SVLineLinearMeasurementAnalyzerObjectType	= 0x00000303;
-	SVLineMaximumForegroundObjectAnalyzerObjectType = 0x00000304;
+	SVLinePixelCountingAnalyzerObjectType		= 0x00000300;  //obsolete
+	SVLineEdgeCountingAnalyzerObjectType		= 0x00000301;  //obsolete
+	SVLineEdgePositionAnalyzerObjectType		= 0x00000302;  //obsolete
+	SVLineLinearMeasurementAnalyzerObjectType	= 0x00000303;  //obsolete
+	SVLineMaximumForegroundObjectAnalyzerObjectType = 0x00000304; //obsolete
 	SVLineMaximumBackgroundObjectAnalyzerObjectType = 0x00000305;
-	SVLineMaximumObjectAnalyzerObjectType		= 0x00000306;
+	SVLineMaximumObjectAnalyzerObjectType		= 0x00000306; //obsolete
 
 	SVLinearEdgeAProcessingObjectType			= 0x00000380;
 	SVLinearEdgeBProcessingObjectType			= 0x00000381;
@@ -318,20 +318,20 @@ enum ObjectAttributes
 {
 	noAttributes				= 0x00000000;	//None
 	viewable					= 0x00000001;	//Object is viewable in object selector
-	publishable					= 0x00000002;	//Object value can be published
-	archivable					= 0x00000004;	//Object value is displayed in the object selector when used for archiving
-	selectableForEquation		= 0x00000008;	//Object is displayed in the object selector when used for equations
-	embedable					= 0x00000010;	//Object is an embedded value
-	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
-	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
+	//publishable					= 0x00000002;	//obsolete (Object value can be published)
+	//archivable					= 0x00000004;	//obsolete (Object value is displayed in the object selector when used for archiving)
+	useable						= 0x00000008;	//Object can be used (displayed in the object selector when e.g. used for equations)
+	//embedable					= 0x00000010;	//obsolete (Object is an embedded value)
+	//selectableForStatistics		= 0x00000020;	//obselete (Object is displayed in the object selector when used for statistics tool)
+	//archivableImage				= 0x00000040;	//obsolete (Object image is displayed in the object selector when used for archiving)
 	audittrail					= 0x00000080;	//Object is printed in the configuration report
 	remotelySetable				= 0x00000100;	//Object can be set remotely  //@TODO[Arvid]: this is a typo. 'remotelySettable' would be correct
 	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online //@TODO[Arvid]: this is a typo. 'settableOnline' would be correct
-	extentObject				= 0x00000400;	//Object is an extent value object
-	taskObject					= 0x00000800;	//Object is a task object
-	publishResultImage			= 0x00001000;	//Object result image can be published
-	dataDefinitionValue			= 0x00010000;	//Object is selected for the data definition list
-	dataDefinitionImage			= 0x00020000;	//Object is selected for the data definition list
+	//extentObject				= 0x00000400;	//obsolete (Object is an extent value object)
+	//taskObject					= 0x00000800;	//obsolete (Object is a task object)
+	//publishResultImage			= 0x00001000;	//obsolete (Object result image can be published)
+	//dataDefinitionValue			= 0x00010000;	//obsolete (Object is selected for the data definition list)
+	//dataDefinitionImage			= 0x00020000;	//obselete (Object is selected for the data definition list)
 }
 
 ///Object selector types
@@ -353,6 +353,7 @@ enum ObjectSelectorType
 	grayImageObjects = 6;
 	colorImageObjects = 7;
 	toolObjects = 8;
+	boolValueObjects = 9;		//All ValueObjects which are of type bool
 }
 
 enum SVExtentPropertyEnum
@@ -686,7 +687,7 @@ enum EmbeddedIdEnum
 	RootEId = 3;
 	ToolSetEnabledEId = 4;
 	ToolEnabledEId = 5;
-	ToolSelectedForOperatorMoveEId = 6;
+	ToolSelectedForOperatorMoveEId = 6; //obsolete, but needed for loading configs older than 10.20
 	ToolPositionEId = 7;
 	ToolTimeEId = 8;
 	MinToolSetTimeEId = 9;
@@ -796,7 +797,7 @@ enum EmbeddedIdEnum
 	OCVExtentWidthEId = 119;
 	OCVExtentHeightEId = 120;
 	OCVMatchScoreEId = 121;
-	ArchiveFilePathEId = 122;
+	ArchiveResultFilepathEId = 122;
 	ArchiveImageGuids_OBSOLETE_EId = 123;
 	ArchiveImageFileRootPart1EId = 124;
 	ArchiveResultGuids_OBSOLETE_EId = 125;
@@ -1110,7 +1111,7 @@ enum EmbeddedIdEnum
 	BCRawDataEId = 438;
 	BCStringFormatEId = 439;
 	BCThresholdTypeEId = 440;
-	ToolCommentTypeEId = 441;
+	ToolCommentTypeEId = 441; //obsolete since 10.30
 	NotUsed1 = 442;
 	NotUsed2 = 443;
 	ToolSizeAdjustSizeWidthModeEId = 445;
@@ -1237,6 +1238,13 @@ enum EmbeddedIdEnum
 	FontScaleYEId = 586;
 	XAxisAngleEId = 587;
 	IsColorImageCheckEId = 588;
+	ArchiveResultFolderpathPart2EId = 589;
+	ArchiveResultFilenameEId = 590;
+	MaximumImageQueueLengthEId = 591;
+	CurrentImageQueueLengthEId = 592;
+	ArchiveResultFolderpathPart1EId = 593;
+	ArchiveImageFileFormatEId = 594;
+
 
 	//The following Ids are the first of an array and must have 100 reserved Ids
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
@@ -1253,8 +1261,6 @@ enum EmbeddedIdEnum
 	ResultObjectValueEId = 2000; //Result value object (for e.g. Result in Group Tool)
 	ResultObjectLinkedEId = 2100; //obsolete, but needed for loading configs older than 10.20
 	ResultObjectTypeEId = 2200; //Type for Result Object (for e.g. Result in Group Tool)
-
-
 
 	//IDs for Inputs
 	LUTOperatorInputEId = 100000;
@@ -1478,3 +1484,17 @@ enum ResetType
 	RT_IP  = 4;
 };
 
+enum ToolDependencyEnum
+{
+	NoDependency = 0;
+	Client = 1;
+	Supplier = 2;
+	ClientAndSupplier = 3;
+};
+
+enum DependecyTypeEnum
+{
+	NoDependencyType = 0;
+	Tool = 1;
+	Object = 2;
+}
