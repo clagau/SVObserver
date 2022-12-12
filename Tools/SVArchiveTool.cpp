@@ -241,7 +241,7 @@ void SVArchiveTool::initializeArchiveTool()
 	// Set Embedded defaults
 	m_svoArchiveImageNames.SetDefaultValue(_T(""), true);
 	m_svoArchiveResultNames.SetDefaultValue(_T(""), true);
-	m_resultFilepath.SetDefaultValue(_bstr_t(SvUl::Format("D:\\TEMP\\%s__0.txt", GetName()).c_str()), true);
+	m_resultFilepath.SetDefaultValue(_bstr_t(std::format("D:\\TEMP\\{}__0.txt", GetName()).c_str()), true);
 	m_resultFolderpathPart1.SetDefaultValue(_bstr_t(""), true);
 	m_resultFolderpathPart2.SetDefaultValue(_bstr_t(""), true);
 	m_ResultFilename.SetDefaultValue(_bstr_t(""), true);
@@ -773,7 +773,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 			if (nullptr != pErrorMessages)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%x"), hrAllocate));
+				msgList.push_back(std::format(_T("{:x}"), hrAllocate));
 				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_AllocImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
@@ -1026,7 +1026,7 @@ std::string SVArchiveTool::alternativeImageDirectory(const std::string& rImagePa
 
 	std::string imageDirectoryPath = rImagePathRoot;
 
-	std::string namedDirectoryname = SvUl::Format("%s%06ld", baseDirectoryname.c_str(), DirectorynameIndex);
+	std::string namedDirectoryname = std::format("{}{:06d}", baseDirectoryname.c_str(), DirectorynameIndex);
 
 	auto concatDir = [](const std::string& rA, const std::string& rB) {return rA + "\\" + rB; };
 
@@ -1079,7 +1079,7 @@ std::string SVArchiveTool::getNextImageFileName()
 	m_FilenameIndex2.getValue(index);
 	uint32_t Index2 = static_cast<uint32_t> (index);
 
-	return SvUl::Format(_T("%s%08ld%s%04ld%s"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2, firstImageFileNameExtension(m_imageFileFormat).c_str());
+	return std::format(_T("{}{:08d}{}{:04d}{}"), baseFilename, Index1, centerFilename, Index2, firstImageFileNameExtension(m_imageFileFormat));
 }
 
 

@@ -59,12 +59,12 @@ std::string ArchiveToolHelper::TranslatePath(const std::string& sPath)
 	SYSTEMTIME stime;
 	memset( &stime, 0, sizeof( SYSTEMTIME));
 	::GetLocalTime( &stime );
-	std::string sDay = SvUl::Format("%02d", stime.wDay);
-	std::string sMonth = SvUl::Format("%02d", stime.wMonth);
-	std::string sYear = SvUl::Format("%04d", stime.wYear);
-	std::string sHour = SvUl::Format("%02d", stime.wHour);
-	std::string sMin = SvUl::Format("%02d", stime.wMinute);
-	std::string sSec = SvUl::Format("%02d", stime.wSecond);
+	std::string sDay = std::format("{:02d}", stime.wDay);
+	std::string sMonth = std::format("{:02d}", stime.wMonth);
+	std::string sYear = std::format("{:04d}", stime.wYear);
+	std::string sHour = std::format("{:02d}", stime.wHour);
+	std::string sMin = std::format("{:02d}", stime.wMinute);
+	std::string sSec = std::format("{:02d}", stime.wSecond);
 	
 	//replace all Keywords
 	sReturnPath = SvUl::searchAndReplace(sReturnPath, KW_DAY.c_str(),sDay.c_str());

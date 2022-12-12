@@ -15,7 +15,6 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefinesSvDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -133,7 +132,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 					if (nullptr != pErrorMessages)
 					{
 						SvDef::StringVector msgList;
-						msgList.push_back(SvUl::Format(_T("%d"), SvDef::c_maxTableColumn));
+						msgList.push_back(std::format(_T("{}"), SvDef::c_maxTableColumn));
 						SvStl::MessageContainer message;
 						message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 						pErrorMessages->push_back( message );
@@ -216,9 +215,9 @@ bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) 
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector messageList;
-			messageList.push_back(SvUl::Format(_T("%d"), SvDef::cTableMaxRowMin));
-			messageList.push_back(SvUl::Format(_T("%d"), SvDef::cTableMaxRowMax));
-			messageList.push_back(SvUl::Format(_T("%d"), maxRow));
+			messageList.push_back(std::format(_T("{}"), SvDef::cTableMaxRowMin));
+			messageList.push_back(std::format(_T("{}"), SvDef::cTableMaxRowMax));
+			messageList.push_back(std::format(_T("{}"), maxRow));
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_MaxRowWrongValue, messageList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back( message );

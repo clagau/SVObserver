@@ -92,7 +92,7 @@ void SVArchiveRecord::BuildDefaultImageFilePaths()
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	for (DWORD i = 0; i < dwMaxImages; i++)
 	{
-		std::string FileName = SvUl::Format(_T("%s__%06ld%s"), m_ImageFileName.c_str(), i + 1, firstImageFileNameExtension(imageFileFormat()).c_str());
+		std::string FileName = std::format(_T("{}__{:06d}{}"), m_ImageFileName, i + 1, firstImageFileNameExtension(imageFileFormat()));
 		svFileName.SetFileName(FileName.c_str());
 		m_FileNames.push_back(svFileName.GetFullFileName());
 	}

@@ -15,7 +15,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #pragma endregion Includes
@@ -109,9 +108,9 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMin));
-			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMax));
-			msgList.push_back(SvUl::Format("%d", depthVariant.lVal));
+			msgList.push_back(std::format("{}", SvDef::cRingBufferDepthMin));
+			msgList.push_back(std::format("{}", SvDef::cRingBufferDepthMax));
+			msgList.push_back(std::format("{}", depthVariant.lVal));
 			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvStl::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 			pErrorMessages->push_back(message);
 		}

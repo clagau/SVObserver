@@ -93,8 +93,8 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 
 	// Set Default Warp Method to Use Horizontal
 	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool, true);
-	std::string EnumTypes = SvUl::Format( _T("%s=%d,%s=%d"), CYLINDRICAL_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
-	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, WarpTypeVertical);
+	std::string EnumTypes = std::format( _T("{}={},{}={}"), CYLINDRICAL_WARP_TYPE_HORIZONTAL, static_cast<int>(WarpTypeHorizontal),
+	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, static_cast<int>(WarpTypeVertical));
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
 	m_svWarpType.SetDefaultValue( CYLINDRICAL_WARP_TYPE_HORIZONTAL, true);
 	m_svWarpType.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
@@ -106,15 +106,15 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 
 	// M_NEAREST_NEIGHBOR 
 	Mode = SvUl::LoadStdString( IDS_NEAREST_NEIGHBOR_STRING );
-	Text = SvUl::Format( _T( "%s=%d," ), Mode.c_str(), SVNearestNeighbor); // M_NEAREST_NEIGHBOR);
+	Text = std::format( _T( "{}={}," ), Mode, static_cast<int>(SVNearestNeighbor)); // M_NEAREST_NEIGHBOR);
 	EnumTypes += Text;
 	// M_BILINEAR
 	Mode = SvUl::LoadStdString( IDS_BILINEAR_STRING );
-	Text = SvUl::Format( _T( "%s=%d," ), Mode.c_str(), SVBilinear);		// M_BILINEAR );
+	Text = std::format( _T( "{}={}," ), Mode, static_cast<int>(SVBilinear));		// M_BILINEAR );
 	EnumTypes += Text;
 	// M_BICUBIC
 	Mode = SvUl::LoadStdString( IDS_BICUBIC_STRING );
-	Text = SvUl::Format( _T( "%s=%d," ), Mode.c_str(), SVBiCubic);			// M_BICUBIC );
+	Text = std::format( _T( "{}={}," ), Mode, static_cast<int>(SVBiCubic));			// M_BICUBIC );
 	EnumTypes += Text;
 
 	// And now set enum types...
