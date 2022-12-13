@@ -94,13 +94,13 @@ SVLinearEdgeBProcessingClass::~SVLinearEdgeBProcessingClass()
 
 bool SVLinearEdgeBProcessingClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	if (m_svLowerThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_VALUE))
+	if (m_svLowerThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_B_LOWER_THRESHOLD_VALUE))
 	{
-		m_svLowerThresholdSelected.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_SELECTED).c_str());
+		m_svLowerThresholdSelected.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_B_LOWER_THRESHOLD_SELECTED).c_str());
 	}
-	if (m_svUpperThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_VALUE))
+	if (m_svUpperThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_B_UPPER_THRESHOLD_VALUE))
 	{
-		m_svUpperThresholdSelected.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_SELECTED).c_str());
+		m_svUpperThresholdSelected.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_B_UPPER_THRESHOLD_SELECTED).c_str());
 	}
 
 	return __super::CreateObject(rCreateStructure);

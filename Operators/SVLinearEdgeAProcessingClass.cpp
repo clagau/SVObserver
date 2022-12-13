@@ -53,7 +53,7 @@ SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass(SVObjectClass* POwner
 	m_svLowerThresholdValueObject.SetOutputFormat(SvVol::OutputFormat_int);
 	m_svLowerThresholdValueObject.setSaveValueFlag(false);
 	m_svLowerThresholdValueObject.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-	RegisterEmbeddedObject( &m_svLowerThresholdSelected, SvPb::EdgeALowerThresholdSelectedValueEId, IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_SELECTED, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject( &m_svLowerThresholdSelected, SvPb::EdgeALowerThresholdSelectedValueEId, IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_SELECTED, false, SvOi::SVResetItemNone, true);
 	m_svLowerThresholdSelected.SetOutputFormat(SvVol::OutputFormat_int);
 	RegisterEmbeddedObject( &m_svLowerMaxMinusPercentDiffValue, SvPb::LowerThresholdMaxMinusPercentDiffEId, IDS_OBJECTNAME_LOWERTHRESHOLD_PERCENTDIFF_A, false, SvOi::SVResetItemNone, true);
 	m_svLowerMaxMinusPercentDiffValue.SetOutputFormat(SvVol::OutputFormat_int);
@@ -89,7 +89,7 @@ SVLinearEdgeAProcessingClass::~SVLinearEdgeAProcessingClass()
 
 bool SVLinearEdgeAProcessingClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	if (m_svLowerThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_VALUE))
+	if (m_svLowerThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_VALUE) || m_svLowerThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_SELECTED))
 	{
 		m_svLowerThresholdSelected.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_SELECTED).c_str());
 	}
