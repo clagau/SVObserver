@@ -60,4 +60,30 @@ enum PlcDataType : uint16_t
 	DoubleIndex = 14,
 };
 
+enum class TriggerType
+{
+	None,
+	HardwareTrigger,
+	SimulatedTrigger
+};
+
+enum class LogType
+{
+	NoLogging,
+	PlcInOut,
+	PlcData,
+};
+
+struct PlcInputParam
+{
+	std::function<void(const TriggerReport&)> m_reportTriggerCallBack {};
+	TriggerType m_triggerType {TriggerType::None};
+	uint16_t m_plcNodeID {0};
+	uint16_t m_plcTransferTime {0};
+	std::string m_PD0Version {};
+	std::string m_simulationFile {};
+	std::string m_logFileName {};
+	LogType m_logType {LogType::NoLogging};
+};
+
 } //namespace SvPlc

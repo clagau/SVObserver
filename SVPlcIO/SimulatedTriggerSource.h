@@ -13,6 +13,8 @@
 
 namespace SvPlc
 {
+struct PlcInputParam;
+
 struct SimulatedTriggerData
 {
 	std::string m_name {};
@@ -51,7 +53,7 @@ class SimulatedTriggerSource : public TriggerSource
 		validationFolder,
 	};
 public:
-	explicit SimulatedTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rSimulateFile);
+	explicit SimulatedTriggerSource(const PlcInputParam& rPlcInput);
 	virtual ~SimulatedTriggerSource() = default;
 
 	virtual HRESULT initialize() override;
@@ -66,7 +68,7 @@ private:
 	void dispatchTrigger(const std::string& rName, double timestamp);
 
 	std::array<ChannelData, cNumberOfChannels> m_channel;
-	std::string m_plcSimulateFile;
+	std::string m_simulatationFile;
 
 	std::array<std::atomic_ulong, cNumberOfChannels> m_ObjectsGood{ 0UL, 0UL, 0UL, 0UL };
 	std::array<std::atomic_ulong, cNumberOfChannels> m_ObjectsBad {0UL, 0UL, 0UL, 0UL};

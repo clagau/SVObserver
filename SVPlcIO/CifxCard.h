@@ -18,6 +18,7 @@
 
 namespace SvPlc
 {
+struct PlcInputParam;
 struct InspectionState1;
 
 constexpr size_t cCmdDataSize = std::max(sizeof(InspectionCommand1), sizeof(InspectionCommand2));
@@ -40,10 +41,10 @@ struct InputData
 class CifXCard
 {
 public:
-	CifXCard(uint16_t CifXNodeId, uint16_t MaxRtdSize);
+	CifXCard(const PlcInputParam& rPlcInput);
 	~CifXCard() = default;
 
-	HRESULT OpenAndInitializeCifX(const std::string& rAdditionalData);
+	HRESULT OpenAndInitializeCifX();
 	void closeCifX();
 
 	void readProcessData(uint32_t notification);
@@ -60,7 +61,7 @@ public:
 	PlcVersion getPlcVersion() const { return m_plcVersion; }
 
 private:
-	int32_t OpenCifX(const std::string& rAdditionalData);
+	int32_t OpenCifX();
 	int32_t SendConfigurationToCifX();
 	int32_t WarmstartAndInitializeCifX();
 
@@ -74,8 +75,7 @@ private:
 	std::vector<ConfigDataSet> createConfigList(TelegramLayout layout);
 	void writeResponseData(const Telegram& rInputTelegram,  const uint8_t* pSdoDynamic, size_t sdoDynamicSize);
 
-	const uint16_t m_CifXNodeId {0};
-	const uint16_t m_maxPlcDataSize {0UL};
+	const PlcInputParam& m_rPlcInput;
 
 	CIFXHANDLE m_hDriver {nullptr};
 	CIFXHANDLE m_hChannel {nullptr};
@@ -98,6 +98,7 @@ private:
 	SvStl::SourceFileParams m_sourceFileParam; //The last recorded source file parameter setting
 
 	std::vector<std::pair<TelegramLayout, std::vector<ConfigDataSet>>> m_configDataSetVector;
+	std::ofstream m_logContentFile;
 };
 
 } //namespace SvPlc

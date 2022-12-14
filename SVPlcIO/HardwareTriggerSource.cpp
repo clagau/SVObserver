@@ -11,6 +11,7 @@
 #include "HardwareTriggerSource.h"
 #include "PowerLinkConnection.h"
 #include "Telegram.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvPlc
@@ -18,17 +19,14 @@ namespace SvPlc
 constexpr uint8_t cUnitControlActive = 1;
 constexpr int32_t cMicrosecondsPerMillisecond = 1000;
 constexpr uint32_t cTimeWrap = 65536;		//Constant when time offset negative need to wrap it by 16 bits
-constexpr uint16_t cCifXNodeId = 11; //< The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
-constexpr uint16_t cmaxPLC_DataSize = 456; //< the maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
-//Make sure that the telegram in structure is smaller than the Hilscher card incoming buffer size
-static_assert(sizeof(Telegram) + cCmdDataSize <= cmaxPLC_DataSize, "Read buffer size is to small");
-static_assert(sizeof(Telegram) + std::max(sizeof(InspectionState1), sizeof(InspectionState2)) <= cmaxPLC_DataSize, "Write buffer size is to small");
-static_assert(sizeof(Telegram) + cConfigListSize * sizeof(ConfigDataSet) <= cmaxPLC_DataSize, "Write buffer size is to small");
 
-HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData) : TriggerSource(pReportTrigger)
-, m_plcTransferTime {plcTransferTime}
-, m_additionalData {rAdditionalData}
-, m_cifXCard((0 != plcNodeID) ? plcNodeID : cCifXNodeId, cmaxPLC_DataSize)
+constexpr LPCTSTR cOperationDataName = _T("_OperationData.log");
+constexpr LPCTSTR cPlcOperationDataHeading = _T("ContentID;Channel;Timestamp;TriggerTimeStamp;TriggerDataValid;UnitControl;Sequence;TriggerIndex;ObjectType;ObjectID\r\n");
+constexpr LPCTSTR cOperationDataFormat = _T("%u; %hhu; %f; %f; %d; %hhu; %hhd; %hhu; %hhu; %lu\r\n");
+
+HardwareTriggerSource::HardwareTriggerSource(const PlcInputParam& rPlcInput) : TriggerSource(rPlcInput.m_reportTriggerCallBack)
+, m_plcInput {rPlcInput}
+, m_cifXCard(m_plcInput)
 {
 	::OutputDebugString("Triggers are received from PLC via CifX card.\n");
 }
@@ -36,6 +34,11 @@ HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerRep
 
 HardwareTriggerSource::~HardwareTriggerSource()
 {
+	if (m_logOperationDataFile.is_open())
+	{
+		m_logOperationDataFile.close();
+	}
+
 	m_cifXCard.closeCifX();
 }
 
@@ -46,7 +49,7 @@ HRESULT HardwareTriggerSource::initialize()
 	if(m_initialized == false)
 	{
 		m_cifXCard.setHandleForTelegramReceptionEvent(g_hSignalEvent);
-		result = m_cifXCard.OpenAndInitializeCifX(m_additionalData);
+		result = m_cifXCard.OpenAndInitializeCifX();
 		if (S_OK != result)
 		{
 			::OutputDebugString("Could not open and initialize PLC connection!\n");
@@ -54,6 +57,16 @@ HRESULT HardwareTriggerSource::initialize()
 		}
 	}
 
+	if (LogType::PlcData == m_plcInput.m_logType)
+	{
+		std::string fileName {m_plcInput.m_logFileName + cOperationDataName};
+		m_logOperationDataFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+		if (m_logOperationDataFile.is_open())
+		{
+			std::string fileData(cPlcOperationDataHeading);
+			m_logOperationDataFile.write(fileData.c_str(), fileData.size());
+		}
+	}
 	return result;
 }
 
@@ -69,13 +82,20 @@ void HardwareTriggerSource::analyzeTelegramData()
 	{
 		if (TelegramContent::OperationData == inputData.m_telegram.m_content)
 		{
+			m_changedData = false;
 			uint32_t triggerOffset = m_cifXCard.getTriggerDataOffset();
 			//If new trigger data check for new triggers
 			if (m_cifXCard.isProtocolInitialized() && 0 != memcmp(&m_inputData.m_dynamicData[0] + triggerOffset, &inputData.m_dynamicData[0] + triggerOffset, cCmdDataSize - triggerOffset))
 			{
+				m_changedData = true;
 				std::swap(m_inputData, inputData);
-				checkForNewTriggers();
 			}
+			else
+			{
+				m_inputData.m_telegram = inputData.m_telegram;
+				m_inputData.m_notificationTime = inputData.m_notificationTime;
+			}
+			checkForNewTriggers();
 		}
 		inputData = m_cifXCard.popInputDataQueue();
 	}
@@ -84,7 +104,7 @@ void HardwareTriggerSource::analyzeTelegramData()
 double HardwareTriggerSource::getExecutionTime(int32_t socRelative, int16_t timeStamp, double notificationTime)
 {
 	int32_t triggerTimeOffset = getPlcTriggerTime(socRelative, timeStamp) - socRelative;
-	return notificationTime + static_cast<double> ((triggerTimeOffset - static_cast<int32_t> (m_plcTransferTime)) / cMicrosecondsPerMillisecond);
+	return notificationTime + static_cast<double> ((triggerTimeOffset - static_cast<int32_t> (m_plcInput.m_plcTransferTime)) / cMicrosecondsPerMillisecond);
 }
 
 int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t timeStamp)
@@ -114,8 +134,15 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		const ChannelIn1& rChannel = inspectionCmd.m_channels[channel];
 		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp, m_inputData.m_notificationTime);
 
-		bool channelTriggerDataValid = (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+		bool channelTriggerDataValid = m_changedData && (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
 		channelTriggerDataValid &= m_previousSequenceCode[channel] != rChannel.m_sequence && (0 != rChannel.m_sequence % 2);
+
+		if (m_logOperationDataFile.is_open())
+		{
+			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel, m_inputData.m_notificationTime,
+				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_objectType, rChannel.m_objectID);
+			m_logOperationDataFile.write(fileData.c_str(), fileData.size());
+		}
 		if (channelTriggerDataValid)
 		{
 			TriggerReport report;
@@ -138,7 +165,14 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		const ChannelIn2& rChannel = inspectionCmd.m_channels[channel];
 		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp1, m_inputData.m_notificationTime);
 
-		bool channelTriggerDataValid = (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+		bool channelTriggerDataValid = m_changedData && (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+
+		if (m_logOperationDataFile.is_open())
+		{
+			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel, m_inputData.m_notificationTime,
+				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_currentObjectType, rChannel.m_currentObjectID);
+			m_logOperationDataFile.write(fileData.c_str(), fileData.size());
+		}
 		if (channelTriggerDataValid)
 		{
 			TriggerReport report;

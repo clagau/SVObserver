@@ -5,22 +5,16 @@
 
 #pragma once
 
+#pragma region Includes
+#include "PlcDataTypes.h"
+#pragma endregion Includes
+
 namespace SvPlc
 {
 
-struct ResultReport;
-struct TriggerReport;
-
-enum class TriggerType
-{
-	None,
-	HardwareTrigger,
-	SimulatedTrigger
-};
-
 namespace Tec
 {
-void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, TriggerType triggerType, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData);
+void startTriggerEngine(const PlcInputParam& rPlcInput);
 void stopTriggerEngine();
 
 HRESULT initTriggerEngine();

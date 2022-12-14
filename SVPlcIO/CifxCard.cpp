@@ -18,6 +18,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/SVClock.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 //#define TRACE_PLC
@@ -39,6 +40,16 @@ constexpr uint32_t cProductCode = 1UL;			///CIFX
 constexpr uint32_t cSerialNumber = 0UL;			///Use serial number from SecMem or FDL
 constexpr uint32_t cRevisionNumber = 0UL;
 
+constexpr uint16_t cCifXNodeId = 11; //< The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
+constexpr uint16_t cmaxPLC_DataSize = 456; //< the maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
+//Make sure that the telegram in structure is smaller than the Hilscher card incoming buffer size
+static_assert(sizeof(Telegram) + cCmdDataSize <= cmaxPLC_DataSize, "Read buffer size is to small");
+static_assert(sizeof(Telegram) + std::max(sizeof(InspectionState1), sizeof(InspectionState2)) <= cmaxPLC_DataSize, "Write buffer size is to small");
+static_assert(sizeof(Telegram) + cConfigListSize * sizeof(ConfigDataSet) <= cmaxPLC_DataSize, "Write buffer size is to small");
+
+constexpr LPCTSTR cContentDataName = _T("_ContentData.log");
+constexpr LPCTSTR cPlcContentHeading = _T("Timestamp;ContentID;RefID;Content;Layout;Version\r\n");
+
 void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void* pvUser)
 {
 	if (pvUser == nullptr)
@@ -53,9 +64,8 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void*
 	pCifX->readProcessData(notification);
 }
 
-CifXCard::CifXCard(uint16_t CifXNodeId, uint16_t MaxPlcDataSize):
- m_CifXNodeId(CifXNodeId)
-,m_maxPlcDataSize(MaxPlcDataSize)
+CifXCard::CifXCard(const PlcInputParam& rPlcInput):
+ m_rPlcInput(rPlcInput)
 {
 }
 
@@ -71,7 +81,7 @@ void CifXCard::readProcessData(uint32_t notification)
 		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 	}
 
-	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, m_maxPlcDataSize, m_pReadBuffer.get(), cTimeout);
+	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, cmaxPLC_DataSize, m_pReadBuffer.get(), cTimeout);
 	if (CIFX_NO_ERROR == result)
 	{
 		Telegram telegram;
@@ -79,6 +89,12 @@ void CifXCard::readProcessData(uint32_t notification)
 		memcpy(&telegram, pData, sizeof(Telegram));
 		pData += sizeof(Telegram);
 		static uint16_t prevContentID {0U};
+
+		std::string fileData;
+		if (m_logContentFile.is_open())
+		{
+			fileData = SvUl::Format(_T("%f; %u; %u; %u; %u;"), timeStamp, telegram.m_contentID, telegram.m_referenceID, telegram.m_content, telegram.m_layout);
+		}
 
 		if (prevContentID != telegram.m_contentID)
 		{
@@ -90,6 +106,11 @@ void CifXCard::readProcessData(uint32_t notification)
 					uint16_t plcVersion {0};
 					memcpy(&plcVersion, pData, sizeof(uint16_t));
 					sendVersion(telegram, plcVersion);
+
+					if (m_logContentFile.is_open())
+					{
+						fileData += SvUl::Format(_T("0x%X"), plcVersion);
+					}
 					break;
 				}
 
@@ -116,17 +137,7 @@ void CifXCard::readProcessData(uint32_t notification)
 						{
 							sendInpectionState = std::move(m_inspectionStateQueue.front());
 							m_inspectionStateQueue.pop();
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
-							std::string text;
-							for (const auto& rChannel : sendInpectionState.m_channels)
-							{
-								text += std::to_string(rChannel.m_objectID);
-								text += ',';
 							}
-							text += '\n';
-							::OutputDebugString(text.c_str());
-#endif
-						}
 						if (m_hTelegramReadEvent != nullptr)
 						{
 							m_inputDataQueue.emplace(std::move(inputData));
@@ -142,7 +153,12 @@ void CifXCard::readProcessData(uint32_t notification)
 					break;
 				}
 			}
+			if (m_logContentFile.is_open())
+			{
+				fileData += _T("\r\n");
+				m_logContentFile.write(fileData.c_str(), fileData.size());
 		}
+	}
 	}
 	if (CIFX_NOTIFY_SYNC == m_notifyType)
 	{
@@ -165,6 +181,10 @@ InputData CifXCard::popInputDataQueue()
 
 void CifXCard::closeCifX()
 {
+	if (m_logContentFile.is_open())
+	{
+		m_logContentFile.close();
+	}
 	if(m_cifxLoadLib.isInitilized())
 	{
 		::OutputDebugString("Closing application and freeing buffers...\n");
@@ -182,9 +202,9 @@ void CifXCard::closeCifX()
 }
 
 
-HRESULT CifXCard::OpenAndInitializeCifX(const std::string& rAdditionalData)
+HRESULT CifXCard::OpenAndInitializeCifX()
 {
-	HRESULT result = OpenCifX(rAdditionalData);
+	HRESULT result = OpenCifX();
 
 	if (CIFX_NO_ERROR == result)
 	{
@@ -200,6 +220,17 @@ HRESULT CifXCard::OpenAndInitializeCifX(const std::string& rAdditionalData)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxInitializationSuccess, m_sourceFileParam);
+
+		if (LogType::PlcData == m_rPlcInput.m_logType)
+		{
+			std::string fileName {m_rPlcInput.m_logFileName + cContentDataName};
+			m_logContentFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+			if (m_logContentFile.is_open())
+			{
+				std::string fileData(cPlcContentHeading);
+				m_logContentFile.write(fileData.c_str(), fileData.size());
+	}
+		}
 	}
 	else
 	{
@@ -226,7 +257,7 @@ void CifXCard::setReady(bool ready)
 	m_ready = ready;
 }
 
-int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
+int32_t CifXCard::OpenCifX()
 {
 	int32_t result{ CIFX_DEV_NOT_READY };
 
@@ -263,7 +294,7 @@ int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
 	m_cifxLoadLib.m_pChannelInfo(m_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
 	std::string firmware {std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision)};
 	std::string protocolType {reinterpret_cast<char*> (channelInfo.abFWName)};
-	m_notifyType = (rAdditionalData == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
+	m_notifyType =  (m_rPlcInput.m_PD0Version == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
 	::OutputDebugString((protocolType + ' ' + firmware + '\n').c_str());
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxVersionInfo, {driverVersion, protocolType, firmware}, SvStl::SourceFileParams(StdMessageParams));
@@ -311,7 +342,8 @@ int32_t CifXCard::SendConfigurationToCifX()
 	memset(&recvPkt, 0, sizeof(recvPkt));
 
 	/* build configuration packet */
-	BuildConfigurationReq(&sendPkt, m_CifXNodeId, m_maxPlcDataSize);
+	uint16_t cifxNodeID = (0 != m_rPlcInput.m_plcNodeID) ? m_rPlcInput.m_plcNodeID : cCifXNodeId;
+	BuildConfigurationReq(&sendPkt, cifxNodeID, cmaxPLC_DataSize);
 
 	/* send configuration Req packet */
 	int32_t result = SendRecvPkt(&sendPkt, &recvPkt);
@@ -372,12 +404,12 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 			::OutputDebugString("No communication!\n");
 		}
 
-		m_pReadBuffer = std::make_unique<uint8_t[]>(m_maxPlcDataSize);
-		m_pWriteBuffer = std::make_unique<uint8_t[]>(m_maxPlcDataSize);
+		m_pReadBuffer = std::make_unique<uint8_t[]>(cmaxPLC_DataSize);
+		m_pWriteBuffer = std::make_unique<uint8_t[]>(cmaxPLC_DataSize);
 
 		/* initialize the read and write buffer with zero */
-		memset(m_pReadBuffer.get(), 0, m_maxPlcDataSize);
-		memset(m_pWriteBuffer.get(), 0, m_maxPlcDataSize);
+		memset(m_pReadBuffer.get(), 0, cmaxPLC_DataSize);
+		memset(m_pWriteBuffer.get(), 0, cmaxPLC_DataSize);
 
 		///Only call this when using sync notification
 		if (CIFX_NOTIFY_SYNC == m_notifyType)
@@ -850,7 +882,7 @@ void CifXCard::writeResponseData(const Telegram& rInputTelegram, const uint8_t* 
 	{
 		std::lock_guard<std::mutex> guard {m_cifxMutex};
 		//Clear the write buffer
-		memset(m_pWriteBuffer.get(), 0, m_maxPlcDataSize);
+		memset(m_pWriteBuffer.get(), 0, cmaxPLC_DataSize);
 		//Copy the SDO Static data
 		uint8_t* pData = m_pWriteBuffer.get();
 		memcpy(pData, &outputTelegram, sizeof(Telegram));
@@ -864,7 +896,7 @@ void CifXCard::writeResponseData(const Telegram& rInputTelegram, const uint8_t* 
 		}
 	}
 
-	if (CIFX_NO_ERROR != m_cifxLoadLib.m_pChannelIOWrite(m_hChannel, 0, 0, m_maxPlcDataSize, m_pWriteBuffer.get(), cTimeout))
+	if (CIFX_NO_ERROR != m_cifxLoadLib.m_pChannelIOWrite(m_hChannel, 0, 0, cmaxPLC_DataSize, m_pWriteBuffer.get(), cTimeout))
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CifxInitializationError, SvStl::SourceFileParams(StdMessageParams));

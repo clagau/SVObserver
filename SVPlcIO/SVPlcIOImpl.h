@@ -67,9 +67,7 @@ private:
 
 #pragma region Member Variables
 private:
-	uint16_t m_plcTransferTime {0};
-	uint16_t m_plcNodeID {0};
-	long m_PlcVersion {0L};
+	PlcInputParam m_plcInputParam;
 	std::atomic_bool m_engineStarted {false};
 	std::atomic_bool m_engineInitialized {false};
 	std::array<std::atomic_bool, cMaxPlcTriggers> m_triggerStarted{false, false, false, false};
@@ -77,11 +75,8 @@ private:
 	std::array<std::atomic_uint32_t, cMaxPlcTriggers> m_outputCount {0UL, 0UL, 0UL, 0UL};
 	std::atomic_int8_t m_currentTriggerChannel{-1};
 
-	std::string m_AdditionalData;
-	std::string m_logFileName;
 	std::ofstream m_logInFile;
 	std::ofstream m_logOutFile;
-	TriggerType m_triggerType{TriggerType::None};
 #pragma endregion Member Variables
 };
 

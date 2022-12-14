@@ -26,9 +26,10 @@ constexpr LPCTSTR cPLCSimulation = _T("PLCSimulation");
 constexpr LPCTSTR cPLCTransferTime = _T("PLC-TransferTime");
 constexpr LPCTSTR cPD0Version = _T("PD0Version");
 constexpr LPCTSTR cPLCNodeID = _T("PLC-NodeID");
-constexpr LPCTSTR cOutputFileName = _T("OutputFileName");
-constexpr LPCTSTR cPlcInputName = _T("_PlcInput.txt");
-constexpr LPCTSTR cPlcOutputName = _T("_PlcOutput.txt");
+constexpr LPCTSTR cLogBaseFileName = _T("LogBaseFileName");
+constexpr LPCTSTR cLogType = _T("LogType");
+constexpr LPCTSTR cPlcInputName = _T("_PlcInput.log");
+constexpr LPCTSTR cPlcOutputName = _T("_PlcOutput.log");
 constexpr LPCTSTR cPlcInputHeading = _T("Channel; Count; Trigger Timestamp; ObjectID; Trigger Index; Trigger per ObjectID; TimeStamp\r\n");
 constexpr LPCTSTR cPlcOutputHeading = _T("Channel; Count; Timestamp; ObjectID; Results\r\n");
 constexpr LPCTSTR cTriggerName = _T("HardwareTrigger.Dig_");			///This name must match the name in the SVHardwareManifest
@@ -61,22 +62,41 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 		TCHAR buffer[cBuffSize];
 		memset(buffer, 0, cBuffSize);
 		std::string iniFile = SvStl::GlobalPath::Inst().GetBinPath(cIniFile);
-		::GetPrivateProfileString(cSettingsGroup, cOutputFileName, "", buffer, cBuffSize, iniFile.c_str());
-		m_logFileName = buffer;
+		::GetPrivateProfileString(cSettingsGroup, cLogBaseFileName, "", buffer, cBuffSize, iniFile.c_str());
+		m_plcInputParam.m_logFileName = buffer;
 		memset(buffer, 0, cBuffSize);
 		::GetPrivateProfileString(cSettingsGroup, cPLCSimulation, "", buffer, cBuffSize, iniFile.c_str());
-		m_AdditionalData = buffer;
-		m_triggerType = m_AdditionalData.empty() ? TriggerType::HardwareTrigger : TriggerType::SimulatedTrigger;
-		if (TriggerType::HardwareTrigger == m_triggerType)
+		m_plcInputParam.m_simulationFile = buffer;
+		m_plcInputParam.m_triggerType = m_plcInputParam.m_simulationFile.empty() ? TriggerType::HardwareTrigger : TriggerType::SimulatedTrigger;
+		memset(buffer, 0, cBuffSize);
+		::GetPrivateProfileString(cSettingsGroup, cPD0Version, "", buffer, cBuffSize, iniFile.c_str());
+		m_plcInputParam.m_PD0Version = buffer;
+		m_plcInputParam.m_plcTransferTime = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str()));
+		m_plcInputParam.m_plcNodeID = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str()));
+		m_plcInputParam.m_logType = static_cast<LogType> (::GetPrivateProfileInt(cSettingsGroup, cLogType, 0, iniFile.c_str()));
+		//Check if logging should stay active!
+		if (LogType::NoLogging != m_plcInputParam.m_logType)
 		{
-			memset(buffer, 0, cBuffSize);
-			::GetPrivateProfileString(cSettingsGroup, cPD0Version, "", buffer, cBuffSize, iniFile.c_str());
-			m_AdditionalData = buffer;
+			//@TODO[gra][10.21][02.12.2022]: This should be replaced by std::filesystem::last_write_time when file_time_type can be used
+			HANDLE hFileIni = ::CreateFile(iniFile.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+			if(nullptr != hFileIni)
+			{
+				FILETIME fTime;
+				::GetFileTime(hFileIni, nullptr, nullptr, &fTime);
+				::CloseHandle(hFileIni);
+				SYSTEMTIME sysTime;
+				::FileTimeToSystemTime(&fTime, &sysTime);
+				SYSTEMTIME nowTime;
+				::GetSystemTime(&nowTime);
+				if (sysTime.wDay != nowTime.wDay || sysTime.wMonth != nowTime.wMonth || sysTime.wYear != nowTime.wYear)
+				{
+					m_plcInputParam.m_logType = LogType::NoLogging;
+					::WritePrivateProfileString(cSettingsGroup, cLogType, _T("0"), iniFile.c_str());
+				}
+			}
 		}
-		m_plcTransferTime = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str()));
-		m_plcNodeID = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str()));
 		///If no setting then try to derive the PLC node ID from the SVIM computer name
-		if(0 == m_plcNodeID)
+		if(0 == m_plcInputParam.m_plcNodeID)
 		{
 			DWORD size{cBuffSize};
 			memset(buffer, 0, cBuffSize);
@@ -86,7 +106,7 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 				auto iter = cComputerNameNodeID.find(computerName);
 				if(cComputerNameNodeID.end() != iter)
 				{
-					m_plcNodeID = static_cast<uint16_t> (iter->second);
+					m_plcInputParam.m_plcNodeID = static_cast<uint16_t> (iter->second);
 				}
 			}
 		}
@@ -168,9 +188,9 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 
 	if (false == m_engineStarted)
 	{
-		if(false == m_logFileName.empty())
+		if(LogType::PlcInOut == m_plcInputParam.m_logType)
 		{
-			std::string fileName = m_logFileName;
+			std::string fileName = m_plcInputParam.m_logFileName;
 			fileName += cPlcInputName;
 			m_logInFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
 			if(m_logInFile.is_open())
@@ -178,7 +198,7 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 				std::string fileData(cPlcInputHeading);
 				m_logInFile.write(fileData.c_str(), fileData.size());
 			}
-			fileName = m_logFileName;
+			fileName = m_plcInputParam.m_logFileName;
 			fileName += cPlcOutputName;
 			m_logOutFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
 			if (m_logOutFile.is_open())
@@ -187,8 +207,8 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 				m_logOutFile.write(fileData.c_str(), fileData.size());
 			}
 		}
-		auto reportTriggerCallback = [this](const TriggerReport& rTriggerReport) { return reportTrigger(rTriggerReport); };
-		Tec::startTriggerEngine(reportTriggerCallback, m_triggerType, m_plcNodeID, m_plcTransferTime, m_AdditionalData);
+		m_plcInputParam.m_reportTriggerCallBack = [this](const TriggerReport& rTriggerReport) { return reportTrigger(rTriggerReport); };
+		Tec::startTriggerEngine(m_plcInputParam);
 		Tec::setReady(m_moduleReady);
 		m_engineStarted = true;
 		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
@@ -310,8 +330,8 @@ HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long, unsigned long index
 
 	if (SVIOParameterEnum::PlcSimulatedTrigger == index && VT_BSTR == rValue.vt)
 	{
-		m_AdditionalData = _bstr_t(rValue.bstrVal);
-		m_triggerType = m_AdditionalData.empty() ? TriggerType::HardwareTrigger : TriggerType::SimulatedTrigger;
+		m_plcInputParam.m_simulationFile = _bstr_t(rValue.bstrVal);
+		m_plcInputParam.m_triggerType = m_plcInputParam.m_simulationFile.empty() ? TriggerType::HardwareTrigger : TriggerType::SimulatedTrigger;
 		result = S_OK;
 	}
 
@@ -370,7 +390,6 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		}
 		++m_inputCount[rTriggerReport.m_channel];
 	}
-	
 
 	/// Only call trigger callbacks if the module ready is set this avoids problems with the PPQ Object not being ready
 	if(m_moduleReady)

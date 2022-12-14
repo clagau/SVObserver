@@ -37,18 +37,18 @@ std::mutex gTriggerDataMutex;
 std::array<TriggerReport, cNumberOfChannels> gTriggerReport;
 std::array<std::atomic_bool, cNumberOfChannels> gNewTrigger {false, false, false, false};
 
-SimulatedTriggerSource::SimulatedTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rSimulateFile) : TriggerSource(pReportTrigger)
-	,m_plcSimulateFile{rSimulateFile}
+SimulatedTriggerSource::SimulatedTriggerSource(const PlcInputParam& rPlcInput) : TriggerSource(rPlcInput.m_reportTriggerCallBack)
+	,m_simulatationFile{rPlcInput.m_simulationFile}
 {
 }
 
 HRESULT SimulatedTriggerSource::initialize()
 {
 	HRESULT result{ S_OK };
-	if(false == m_plcSimulateFile.empty())
+	if(false == m_simulatationFile.empty())
 	{
 		std::ifstream cycleFile;
-		cycleFile.open(m_plcSimulateFile.c_str(), std::ifstream::in | std::ifstream::binary);
+		cycleFile.open(m_simulatationFile.c_str(), std::ifstream::in | std::ifstream::binary);
 		if(false== cycleFile.is_open())
 		{
 			result = ERROR_FILE_NOT_FOUND;
@@ -108,10 +108,10 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 			{
 				///Write result file in same directory as cycles file
 				std::string resultFilename;
-				size_t pos = m_plcSimulateFile.rfind('\\');
+				size_t pos = m_simulatationFile.rfind('\\');
 				if(std::string::npos != pos)
 				{
-					resultFilename = m_plcSimulateFile.substr(0ULL, pos + 1);
+					resultFilename = m_simulatationFile.substr(0ULL, pos + 1);
 					resultFilename += cResultFilename;
 					resultFilename += m_channel[channel].m_simulatedTriggerData.m_name;
 					resultFilename += cResultExtension;
@@ -152,10 +152,10 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 	if(false == result)
 	{
 		std::string resultFilename;
-		size_t pos = m_plcSimulateFile.rfind('\\');
+		size_t pos = m_simulatationFile.rfind('\\');
 		if (std::string::npos != pos)
 		{
-			resultFilename = m_plcSimulateFile.substr(0ULL, pos + 1);
+			resultFilename = m_simulatationFile.substr(0ULL, pos + 1);
 			resultFilename += cResultFilename;
 			resultFilename += cResultExtension;
 		}

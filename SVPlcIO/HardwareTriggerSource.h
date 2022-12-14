@@ -8,16 +8,16 @@
 
 #pragma region Includes
 #include "CifxCard.h"
+#include "PlcDataTypes.h"
 #include "TriggerSource.h"
 #pragma endregion Includes
 
 namespace SvPlc
 {
-/// processes all information that is either gained from the incoming process data or put into outgoing process data 
 class HardwareTriggerSource : public TriggerSource
 {
 public:
-	explicit HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData);
+	explicit HardwareTriggerSource(const PlcInputParam& rPlcInput);
 	virtual ~HardwareTriggerSource();
 
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
@@ -33,8 +33,7 @@ private:
 	int32_t getPlcTriggerTime(int32_t socRelative, int16_t timeStamp);
 	double getExecutionTime(int32_t socRelative, int16_t timeStamp, double notificationTime);
 
-	uint16_t m_plcTransferTime {0};
-
+	PlcInputParam m_plcInput;		//This value must be above m_cifxCard as it is passed by reference
 	uint16_t m_svimContentID {0};
 	uint32_t m_numberOfFailures {0UL};
 
@@ -44,8 +43,10 @@ private:
 	InputData m_inputData {};
 
 	CifXCard m_cifXCard;
-	std::string m_additionalData;
 	bool m_initialized {false};
+	bool m_changedData {false};
+
+	std::ofstream m_logOperationDataFile;
 };
 
 } //namespace SvPlc
