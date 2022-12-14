@@ -470,7 +470,7 @@ void SVShiftTool::LocalInitialize()
 	m_LeftResult.SetTypeName( _T("Extent X") );
 	m_TopResult.SetTypeName( _T("Extent Y") );
 	//Register Embedded Objects
-	RegisterEmbeddedObject( &m_evoShiftMode, SvPb::ShiftToolModeEId, IDS_OBJECTNAME_SHIFT_TOOL_MODE, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_evoShiftMode, SvPb::ShiftToolModeEId, IDS_OBJECTNAME_SHIFT_TOOL_MODE, false, SvOi::SVResetItemToolAndDependent, true);
 	RegisterEmbeddedObject( &m_SourceImageName, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject( &m_TranslationX, SvPb::TranslationXEId, IDS_OBJECTNAME_TRANSLATION_X_RESULT, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedObject( &m_TranslationY, SvPb::TranslationYEId, IDS_OBJECTNAME_TRANSLATION_Y_RESULT, false, SvOi::SVResetItemNone, true);

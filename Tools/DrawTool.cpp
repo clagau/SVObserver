@@ -283,10 +283,10 @@ void DrawTool::BuildEmbeddedObjectList ()
 	RegisterEmbeddedObject(&m_autoFitSizeObject, SvPb::AutoFitSizeEId, IDS_USE_AUTOFIT, false, SvOi::SVResetItemOwner, true);
 	m_autoFitSizeObject.SetDefaultValue(BOOL(false), true);
 
-	RegisterEmbeddedObject(&m_BackgroundImageX, SvPb::PositionXEId, IDS_POSITION_X, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_BackgroundImageX, SvPb::PositionXEId, IDS_POSITION_X, false, SvOi::SVResetItemToolAndDependent, true);
 	variant_t vtTemp {0l};
 	m_BackgroundImageX.SetDefaultValue(vtTemp);
-	RegisterEmbeddedObject(&m_BackgroundImageY, SvPb::PositionYEId, IDS_POSITION_Y, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_BackgroundImageY, SvPb::PositionYEId, IDS_POSITION_Y, false, SvOi::SVResetItemToolAndDependent, true);
 	m_BackgroundImageY.SetDefaultValue(vtTemp);
 
 	RegisterEmbeddedObject(&m_backgroundColor1Object, SvPb::Color1EId, IDS_BACKGROUND_COLOR1, false, SvOi::SVResetItemOwner, true);

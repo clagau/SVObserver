@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVInspectionProcess.h"
-#include "SVInspectionProcessResetStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVIOLibrary/SVInputObject.h"
@@ -42,6 +41,7 @@
 #include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "SVUtilityLibrary/VectorHelper.h"
 #pragma endregion Includes
 
 //#define TRACE_TRC
@@ -951,7 +951,8 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 
 	if (l_StringValue == SvO::SVTOOLPARAMETERLIST_MARKER)
 	{
-		::InterlockedIncrement(const_cast<long*>(&m_lInputRequestMarkerCount));
+		m_lInputRequestMarkerCount++;
+		
 	}// end if
 
 	return true;
@@ -1488,7 +1489,9 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 	}
 
 	SVInputRequestInfoStructPtr pInputRequest;
-	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct toolMap;
+	std::vector<uint32_t> IdsToReset;
+	
+
 	while (m_lInputRequestMarkerCount > 0L)
 	{
 		long l_lSize = 0;
@@ -1549,7 +1552,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 			// 1 piece of the list per inspection iteration
 			if (Value == SvO::SVTOOLPARAMETERLIST_MARKER)
 			{
-				::InterlockedDecrement(const_cast<long*>(&m_lInputRequestMarkerCount));
+				m_lInputRequestMarkerCount--;
 				break;
 			}// end if
 
@@ -1741,7 +1744,8 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 
 					if (nullptr != pTool)
 					{
-						SvOi::SVResetItemEnum eToolResetItem = toolMap[pTool].SetResetData(ObjectRef.getValueObject()->getResetItem(), ObjectRef.getObject());
+						std::back_insert_iterator<std::vector<uint32_t>> Inserter(IdsToReset);
+						SvOi::SVResetItemEnum eToolResetItem =  AddToResetIds(ObjectRef.getValueObject()->getResetItem(), ObjectRef.getObject(), Inserter);
 
 						if (eToolResetItem < rResetItem)
 						{
@@ -1755,7 +1759,9 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 
 					if (SvOi::SVResetItemIP == rResetItem)
 					{
-						toolMap.clear();
+
+						IdsToReset.clear();
+					
 					}
 				}
 			}// end if object exists
@@ -1771,48 +1777,23 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 			}
 			else
 			{
-				int l_iSize = m_pCurrentToolset->GetSize();
-
-				for (long l = 0; l < l_iSize; l++)
+				SvUl::RemoveDuplicates(IdsToReset);
+				for (const auto id : IdsToReset)
 				{
-					SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (m_pCurrentToolset->getTaskObject(l));
-
-					if (nullptr != pTool)
-					{
-						if (toolMap.find(pTool) != toolMap.end())
-						{
-							if (toolMap[pTool].m_ObjectSet.empty())
-							{
-								bRet &= pTool->resetAllObjects();
-							}
-							else
-							{
-								SVObjectPtrSet::iterator l_oIter;
-
-								l_oIter = toolMap[pTool].m_ObjectSet.begin();
-
-								while (l_oIter != toolMap[pTool].m_ObjectSet.end())
-								{
-									SVObjectClass* l_psvObject = *l_oIter;
-
-									if (nullptr != l_psvObject)
-									{
-										bRet &= l_psvObject->resetAllObjects();
-									}
-									else
-									{
-										bRet = false;
-									}
-
-									++l_oIter;
-								}
-							}
-						}
+					SVObjectClass* pObject = nullptr;
+					SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObject);
+					if (pObject)
+					{	
+						bRet = pObject->resetAllObjects() && bRet;
 					}
+
 				}
+				IdsToReset.clear();
+				
+			
 			}// end if( l_bResetIPDoc ) else
 
-			if (rResetItem < SvOi::SVResetItemNone)
+			if (rResetItem != SvOi::SVResetItemNone)
 			{
 				SVRemoveValues l_Data;
 
@@ -2996,15 +2977,51 @@ HRESULT SVInspectionProcess::resetTool(SvOi::IObjectClass& rTool)
 	m_bForceOffsetUpdate = true;
 	/// correct tool size when it does not fit to the parent image 
 	AddResetState(SvDef::SVResetAutoMoveAndResize);
-	bool resetAllObjects = rTool.resetAllObjects();
+	bool doRunOnce = rTool.resetAllObjects();
 	m_resetting = false;
-	if (resetAllObjects)
+	if (doRunOnce)
 	{
 		result = RunOnce();
 	}
 	RemoveResetState(SvDef::SVResetAutoMoveAndResize);
 	return result;
 }
+
+HRESULT SVInspectionProcess::resetToolAndDependends(SvOi::IObjectClass*  pTool)
+{
+	HRESULT result {E_FAIL};
+	m_resetting = true;
+	m_bForceOffsetUpdate = true;
+	/// correct tool size when it does not fit to the parent image 
+	AddResetState(SvDef::SVResetAutoMoveAndResize);
+	bool doRunOnce = pTool->resetAllObjects();
+	
+	bool resetDependentsOK {true};
+
+	std::vector<uint32_t> vec;
+	std::back_insert_iterator<std::vector<uint32_t>> backiter(vec);
+	SvTo::InsertDependentTools(backiter, pTool->getObjectId());
+	
+	for (const auto  id : vec)
+	{
+		SVObjectClass* pObject = nullptr;
+		SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObject);
+		if (pObject)
+		{
+			resetDependentsOK = pObject->resetAllObjects() && resetDependentsOK;
+		}
+
+	}
+	
+	m_resetting = false;
+	if (doRunOnce)
+	{
+		result = RunOnce();
+	}
+	RemoveResetState(SvDef::SVResetAutoMoveAndResize);
+	return result;
+}
+
 
 HRESULT SVInspectionProcess::propagateSizeAndPosition()
 {
@@ -3500,4 +3517,70 @@ SVProductInfoStruct SVInspectionProcess::LastProductGet() const
 	}
 
 	return result;
+}
+
+
+
+SvOi::SVResetItemEnum  SVInspectionProcess::AddToResetIds(SvOi::SVResetItemEnum eResetItem, SVObjectClass* pObject, std::back_insert_iterator<std::vector<uint32_t>>  ResetIdIt)
+{
+	if (eResetItem == SvOi::SVResetItemIP || pObject == nullptr)
+	{
+		return SvOi::SVResetItemIP;
+	}
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject->GetAncestor(SvPb::SVToolObjectType));
+	if(pTool == nullptr)
+	{
+		return SvOi::SVResetItemIP;
+	}
+	SvOi::SVResetItemEnum ret {eResetItem};
+	switch (eResetItem)
+	{
+		case SvOi::SVResetItemIP:
+		{
+			break;
+		}
+		case SvOi::SVResetItemToolAndDependent:
+		{
+
+			SVObjectClass* pParent = pTool->GetParent();
+
+			//@TODO[MEC][10.30][13.12.2022] find the supertool ????
+			if (nullptr != pParent && SvPb::SVToolObjectType == pParent->GetObjectType())
+			{
+				ResetIdIt = pParent->getObjectId();
+				SvTo::InsertDependentTools(ResetIdIt, pParent->getObjectId());
+				
+			}
+			else
+			{
+				ResetIdIt = pTool->getObjectId();
+				SvTo::InsertDependentTools(ResetIdIt, pTool->getObjectId());
+			}
+			break;
+		}
+
+		case SvOi::SVResetItemTool:
+		{
+			ResetIdIt = pTool->getObjectId();
+
+			break;
+		}
+		case SvOi::SVResetItemOwner:
+		{
+			if (pObject->GetParent())
+			{
+				ResetIdIt = pObject->GetParent()->getObjectId();
+			}
+			break;
+		}
+		case SvOi::SVResetItemNone:
+		{
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+	return ret;
 }

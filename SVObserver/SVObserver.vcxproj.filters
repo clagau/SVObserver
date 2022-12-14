@@ -486,9 +486,6 @@
     <ClCompile Include="SVImportProgress.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVInspectionProcessResetStruct.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVInspectionTreeParser.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -665,9 +662,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVInspectionProcess.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInspectionProcessResetStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVInspectionTreeParser.h">

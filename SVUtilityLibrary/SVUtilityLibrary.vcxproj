@@ -225,6 +225,7 @@
     <ClInclude Include="SVPoint.h" />
     <ClInclude Include="SVSafeArray.h" />
     <ClInclude Include="SVUtilityGlobals.h" />
+    <ClInclude Include="VectorHelper.h" />
     <ClInclude Include="ZipHelper.h" />
   </ItemGroup>
   <ItemGroup>

@@ -321,7 +321,7 @@ namespace SvTo
 
 	void GroupTool::Initialize()
 	{
-		RegisterEmbeddedObject(&m_isClosed, SvPb::IsClosedEId, IDS_OBJECTNAME_ISCLOSED, false, SvOi::SVResetItemTool, true);
+		RegisterEmbeddedObject(&m_isClosed, SvPb::IsClosedEId, IDS_OBJECTNAME_ISCLOSED, false, SvOi::SVResetItemToolAndDependent, true);
 		m_isClosed.SetDefaultValue(BOOL(true), true);			// Default for Failed is TRUE !!!
 
 		m_canResizeToParent = false;

@@ -77,51 +77,51 @@ void SVArchiveTool::initializeArchiveTool()
 		&m_svoArchiveImageNames,
 		SvPb::ArchiveImageNamesEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_NAMES,
-		false, SvOi::SVResetItemTool, true);
+		false, SvOi::SVResetItemToolAndDependent, true);
 
 	RegisterEmbeddedObject(
 		&m_svoArchiveResultNames,
 		SvPb::ArchiveResultNamesEId,
 		IDS_OBJECTNAME_ARCHIVE_RESULT_NAMES,
-		false, SvOi::SVResetItemTool, false);
+		false, SvOi::SVResetItemToolAndDependent, false);
 
-	RegisterEmbeddedObject(&m_maximumImageQueueLength, SvPb::MaximumImageQueueLengthEId, IDS_OBJECTNAME_MAX_IMAGE_QUEUE_LENGTH, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_maximumImageQueueLength, SvPb::MaximumImageQueueLengthEId, IDS_OBJECTNAME_MAX_IMAGE_QUEUE_LENGTH, false, SvOi::SVResetItemToolAndDependent, true);
 	m_maximumImageQueueLength.SetDefaultValue(_variant_t(cAsyncDefaultMaximumImageQueueLength), true);
 
-	RegisterEmbeddedObject(&m_currentImageQueueLength, SvPb::CurrentImageQueueLengthEId, IDS_OBJECTNAME_CURRENT_IMAGE_QUEUE_LENGTH, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject(&m_currentImageQueueLength, SvPb::CurrentImageQueueLengthEId, IDS_OBJECTNAME_CURRENT_IMAGE_QUEUE_LENGTH, false, SvOi::SVResetItemToolAndDependent, false);
 	m_currentImageQueueLength.SetDefaultValue(_variant_t(0l), true);
 	
 	UINT cAttribute { SvPb::audittrail};
 	m_currentImageQueueLength.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
-	RegisterEmbeddedObject(&m_resultFilepath, SvPb::ArchiveResultFilepathEId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH, true, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject(&m_resultFilepath, SvPb::ArchiveResultFilepathEId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH, true, SvOi::SVResetItemToolAndDependent, false);
 	m_resultFilepath.SetDefaultValue(_variant_t(""), true);
 	m_resultFilepath.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_resultFolderpathPart1, SvPb::ArchiveResultFolderpathPart1EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FOLDERPATH1, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_resultFolderpathPart1, SvPb::ArchiveResultFolderpathPart1EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FOLDERPATH1, true, SvOi::SVResetItemToolAndDependent, true);
 	m_resultFolderpathPart1.SetDefaultValue(_variant_t(""), true);
 	m_resultFolderpathPart1.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_resultFolderpathPart2, SvPb::ArchiveResultFolderpathPart2EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FOLDERPATH2, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_resultFolderpathPart2, SvPb::ArchiveResultFolderpathPart2EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FOLDERPATH2, true, SvOi::SVResetItemToolAndDependent, true);
 	m_resultFolderpathPart2.SetDefaultValue(_variant_t(""), true);
 	m_resultFolderpathPart2.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_ResultFilename, SvPb::ArchiveResultFilenameEId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILENAME, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_ResultFilename, SvPb::ArchiveResultFilenameEId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILENAME, true, SvOi::SVResetItemToolAndDependent, true);
 	m_ResultFilename.SetDefaultValue(_variant_t(""), true);
 	m_ResultFilename.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_imageFileRootPath1, SvPb::ArchiveImageFileRootPart1EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART1, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_imageFileRootPath1, SvPb::ArchiveImageFileRootPart1EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART1, true, SvOi::SVResetItemToolAndDependent, true);
 	m_imageFileRootPath1.SetDefaultValue(_variant_t(""), true);
 	m_imageFileRootPath1.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_imageFileRootPath2, SvPb::ArchiveImageFileRootPart2EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART2, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_imageFileRootPath2, SvPb::ArchiveImageFileRootPart2EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART2, true, SvOi::SVResetItemToolAndDependent, true);
 	m_imageFileRootPath2.SetDefaultValue(_variant_t(""), true);
 	m_imageFileRootPath2.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_ImageFilepathrootSeparator,SvPb::ArchiveImageFilepathRootSeparatorEId,IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_SEPARATOR, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_ImageFilepathrootSeparator,SvPb::ArchiveImageFilepathRootSeparatorEId,IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_SEPARATOR, false, SvOi::SVResetItemToolAndDependent, true);
 	m_ImageFilepathrootSeparator.SetDefaultValue(_T(""), true);
 
-	RegisterEmbeddedObject(&m_imageFileRootPath3, SvPb::ArchiveImageFileRootPart3EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_imageFileRootPath3, SvPb::ArchiveImageFileRootPart3EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3, true, SvOi::SVResetItemToolAndDependent, true);
 	m_imageFileRootPath3.SetDefaultValue(_variant_t(""), true);
 	m_imageFileRootPath3.setValueType(SvPb::TypeText);
 
@@ -129,28 +129,28 @@ void SVArchiveTool::initializeArchiveTool()
 		&m_dwAppendArchiveFile,
 		SvPb::ArchiveAppendArchiveFileEId,
 		IDS_OBJECTNAME_ARCHIVE_APPEND_ARCHIVE_FILE,
-		false, SvOi::SVResetItemTool, true);
+		false, SvOi::SVResetItemToolAndDependent, true);
 	m_dwAppendArchiveFile.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(
 		&m_bvoFormatResults,
 		SvPb::FormatArchiveToolResultsEId,
 		IDS_OBJECTNAME_FORMAT_ARCHIVE_TOOLS_RESULTS,
-		false, SvOi::SVResetItemTool, true);
+		false, SvOi::SVResetItemToolAndDependent, true);
 	m_bvoFormatResults.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(
 		&m_dwArchiveResultsMinimumNumberOfCharacters,
 		SvPb::ArchiveResultsMinimumNumberOfCharactersEId,
 		IDS_OBJECTNAME_ARCHIVE_RESULTS_MIN_CHARACTERS,
-		false, SvOi::SVResetItemTool, true);
+		false, SvOi::SVResetItemToolAndDependent, true);
 	m_dwArchiveResultsMinimumNumberOfCharacters.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(
 		&m_dwArchiveResultsNumberOfDecimals,
 		SvPb::ArchiveResultsNumberOfDecimalsEId,
 		IDS_OBJECTNAME_ARCHIVE_RESULTS_NUMBER_OF_DECIMALS,
-		false, SvOi::SVResetItemTool, true);
+		false, SvOi::SVResetItemToolAndDependent, true);
 	m_dwArchiveResultsNumberOfDecimals.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(
@@ -205,31 +205,31 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ENABLE_HEADERS,
 		false, SvOi::SVResetItemNone, true);
 
-	RegisterEmbeddedObject(&m_baseDirectoryname, SvPb::BaseDirectorynameEId, IDS_BASE_DIRECTORYNAME, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_baseDirectoryname, SvPb::BaseDirectorynameEId, IDS_BASE_DIRECTORYNAME, true, SvOi::SVResetItemToolAndDependent, true);
 	m_baseDirectoryname.SetDefaultValue(_bstr_t(""), true);
 	m_baseDirectoryname.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_DirectorynameIndex, SvPb::DirectorynameIndexEId, IDS_OBJECTNAME_DIRECTORYNAME_INDEX, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_DirectorynameIndex, SvPb::DirectorynameIndexEId, IDS_OBJECTNAME_DIRECTORYNAME_INDEX, true, SvOi::SVResetItemToolAndDependent, true);
 	m_DirectorynameIndex.SetDefaultValue(_variant_t(0UL), true);
 
-	RegisterEmbeddedObject(&m_SubfolderSelection, SvPb::SubfolderSelectionEId, IDS_OBJECTNAME_SUBFOLDER_SELECTION, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_SubfolderSelection, SvPb::SubfolderSelectionEId, IDS_OBJECTNAME_SUBFOLDER_SELECTION, true, SvOi::SVResetItemToolAndDependent, true);
 	m_SubfolderSelection.SetDefaultValue(_variant_t(0UL), true);
 
-	RegisterEmbeddedObject(&m_SubfolderLocation, SvPb::SubfolderLocationEId, IDS_OBJECTNAME_SUBFOLDER_LOCATION, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_SubfolderLocation, SvPb::SubfolderLocationEId, IDS_OBJECTNAME_SUBFOLDER_LOCATION, true, SvOi::SVResetItemToolAndDependent, true);
 	m_SubfolderLocation.SetDefaultValue(_variant_t(0UL), true);
 
-	RegisterEmbeddedObject(&m_baseFilename, SvPb::BaseFilenameEId, IDS_BASE_FILENAME, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_baseFilename, SvPb::BaseFilenameEId, IDS_BASE_FILENAME, true, SvOi::SVResetItemToolAndDependent, true);
 	m_baseFilename.SetDefaultValue(_bstr_t(""), true);
 	m_baseFilename.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_FilenameIndex1, SvPb::FilenameIndex1EId, IDS_OBJECTNAME_FILENAME_INDEX1, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_FilenameIndex1, SvPb::FilenameIndex1EId, IDS_OBJECTNAME_FILENAME_INDEX1, true, SvOi::SVResetItemToolAndDependent, true);
 	m_FilenameIndex1.SetDefaultValue(_variant_t(0UL), true);
 
-	RegisterEmbeddedObject(&m_centerFilename, SvPb::CenterFilenameEId, IDS_CENTER_FILENAME, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_centerFilename, SvPb::CenterFilenameEId, IDS_CENTER_FILENAME, true, SvOi::SVResetItemToolAndDependent, true);
 	m_centerFilename.SetDefaultValue(_bstr_t(""), true);
 	m_centerFilename.setValueType(SvPb::TypeText);
 
-	RegisterEmbeddedObject(&m_FilenameIndex2, SvPb::FilenameIndex2EId, IDS_OBJECTNAME_FILENAME_INDEX2, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_FilenameIndex2, SvPb::FilenameIndex2EId, IDS_OBJECTNAME_FILENAME_INDEX2, true, SvOi::SVResetItemToolAndDependent, true);
 	m_FilenameIndex2.SetDefaultValue(_variant_t(0UL), true);
 
 	// no need to register image buffer

@@ -167,7 +167,7 @@ void TableExcludeAnalyzer::Initialize()
 void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 {
 	//set excludeHigh-Value
-	RegisterEmbeddedObject( &m_excludeHigh, SvPb::TableAnaylzerExcludeHighEId, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_excludeHigh, SvPb::TableAnaylzerExcludeHighEId, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE, true, SvOi::SVResetItemToolAndDependent, true);
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = cVarType_Value;
@@ -175,7 +175,7 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 	m_excludeHigh.SetDefaultValue( vtTemp, true );
 
 	//set excludeLow-Value
-	RegisterEmbeddedObject( &m_excludeLow, SvPb::TableAnaylzerExcludeLowEId, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_excludeLow, SvPb::TableAnaylzerExcludeLowEId, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE, true, SvOi::SVResetItemToolAndDependent, true);
 	//vtTemp.vt = cVarType_Value;
 	vtTemp.dblVal = cDefaultLowValue;
 	m_excludeLow.SetDefaultValue( vtTemp, true );

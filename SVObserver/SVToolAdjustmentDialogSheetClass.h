@@ -56,6 +56,7 @@ public:
 	void markDocumentAsDirty(bool runOnce = false); // Marks the document as 'dirty' so user will be prompted to save this configuration on program exit.
 
 	SvOi::IObjectClass* GetTaskObject() const;
+	SvOi::IObjectClass* GetSuperTool() const;
 	uint32_t GetInspectionID() const { return m_InspectionID; }
 	uint32_t GetTaskObjectID() const { return m_TaskObjectID; }
 
@@ -65,7 +66,7 @@ public:
 protected:
 	virtual void addPages();
 	bool ValidateAllSheets();
-	bool ResetTools(SvOi::IObjectClass* pObject);
+	bool ResetTools();
 
 	CPropertyPage* createToolAdjustmentDialogCommentPage();
 
@@ -76,6 +77,8 @@ private:
 
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;
+
+	std::vector<uint32_t> m_dependentTools;
 
 	typedef std::shared_ptr<SvOgu::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;

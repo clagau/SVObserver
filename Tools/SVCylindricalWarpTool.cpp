@@ -87,12 +87,12 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	RegisterEmbeddedImage( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemToolAndDependent, false );
 
 	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set Default Warp Method to Use Horizontal
-	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemToolAndDependent, true);
 	std::string EnumTypes = std::format( _T("{}={},{}={}"), CYLINDRICAL_WARP_TYPE_HORIZONTAL, static_cast<int>(WarpTypeHorizontal),
 	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, static_cast<int>(WarpTypeVertical));
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
@@ -129,7 +129,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	// allow an unequal warp tool.
 	// Currently we double the start angle and make it symetrical
 	// the work is done in SVImageExtentClass.
-	RegisterEmbeddedObject( &m_svWarpAngle, SvPb::WarpAngleEId, IDS_OBJECTNAME_WARPANGLE, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_svWarpAngle, SvPb::WarpAngleEId, IDS_OBJECTNAME_WARPANGLE, false, SvOi::SVResetItemToolAndDependent, true);
 	m_svWarpAngle.SetDefaultValue( 180.0, true);
 	m_svWarpAngle.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyStartAngle, &m_svWarpAngle );

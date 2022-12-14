@@ -24,17 +24,23 @@ namespace SvOi
 		//! 	dependent Tools. In most cases this would be overkill.	
 		SVResetItemIP = 0,
 
+		
+		//Reset the tool or if parent is a tool the parent tool and dependent.
+		SVResetItemToolAndDependent = 1,
+		
 		//!  Generally the default.  
-		SVResetItemTool = 1,
+		SVResetItemTool = 2,
 
 		//!  An optimization IF you are editing a sub-task object (friend or child)
 		//!  and you can get away with only parent task for some duration.  Usually  
 		//!  requires "manual" Tool level reset when accepting sub-task values. 
-		SVResetItemOwner = 2,
+		SVResetItemOwner = 3,
 
 		//	An SVResetItemNone example are Tool Results, which do not require reseting the 
 		//!  Tool, Owner, or IP when their values change.
-		SVResetItemNone = 3,
+		SVResetItemNone = 4,
+
+		
 		SVResetItemSize,
 	};
 

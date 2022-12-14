@@ -61,15 +61,15 @@ SVImagePolarTransform::SVImagePolarTransform( SVObjectClass* POwner, int StringR
 	m_inputImage.setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_centerX, SvPb::OutputCenterXEId, IDS_OBJECTNAME_CENTER_X, false, SvOi::SVResetItemTool, false);
-	RegisterEmbeddedObject( &m_centerY, SvPb::OutputCenterYEId, IDS_OBJECTNAME_CENTER_Y, false, SvOi::SVResetItemTool, false);
-	RegisterEmbeddedObject( &m_startRadius, SvPb::OutputStartRadiusEId, IDS_OBJECTNAME_START_RADIUS, false, SvOi::SVResetItemTool, false);
-	RegisterEmbeddedObject( &m_endRadius, SvPb::OutputEndRadiusEId, IDS_OBJECTNAME_END_RADIUS, false, SvOi::SVResetItemTool, false);
-	RegisterEmbeddedObject( &m_startAngle, SvPb::StartAngleEId, IDS_OBJECTNAME_START_ANGLE, false, SvOi::SVResetItemTool, false);
-	RegisterEmbeddedObject( &m_endAngle, SvPb::EndAngleEId, IDS_OBJECTNAME_END_ANGLE, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject( &m_centerX, SvPb::OutputCenterXEId, IDS_OBJECTNAME_CENTER_X, false, SvOi::SVResetItemToolAndDependent, false);
+	RegisterEmbeddedObject( &m_centerY, SvPb::OutputCenterYEId, IDS_OBJECTNAME_CENTER_Y, false, SvOi::SVResetItemToolAndDependent, false);
+	RegisterEmbeddedObject( &m_startRadius, SvPb::OutputStartRadiusEId, IDS_OBJECTNAME_START_RADIUS, false, SvOi::SVResetItemToolAndDependent, false);
+	RegisterEmbeddedObject( &m_endRadius, SvPb::OutputEndRadiusEId, IDS_OBJECTNAME_END_RADIUS, false, SvOi::SVResetItemToolAndDependent, false);
+	RegisterEmbeddedObject( &m_startAngle, SvPb::StartAngleEId, IDS_OBJECTNAME_START_ANGLE, false, SvOi::SVResetItemToolAndDependent, false);
+	RegisterEmbeddedObject( &m_endAngle, SvPb::EndAngleEId, IDS_OBJECTNAME_END_ANGLE, false, SvOi::SVResetItemToolAndDependent, false);
 	RegisterEmbeddedObject( &m_interpolationMode, SvPb::OutputInterpolationModeEId, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone, true);
 
-	RegisterEmbeddedObject( &m_useFormulaInput, SvPb::OutputUseFormulaEId, IDS_OBJECTNAME_USE_FORMULA, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_useFormulaInput, SvPb::OutputUseFormulaEId, IDS_OBJECTNAME_USE_FORMULA, false, SvOi::SVResetItemToolAndDependent, true);
 
 	RegisterEmbeddedImage( &m_outputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 	

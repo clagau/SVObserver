@@ -140,7 +140,7 @@ bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	std::string traceText = std::format(_T("SVObjectClass::ResetObject {}: {}; {}; {}; {}; {}\n"), (unsigned int)ResetIds[getObjectId()],
 	 (unsigned int) m_objectId, (unsigned int)m_ObjectTypeInfo.m_ObjectType, (unsigned int)m_ObjectTypeInfo.m_SubType, static_cast<unsigned int> (m_ObjectTypeInfo.m_EmbeddedID), GetCompleteName().c_str());
 	//::OutputDebugString(traceText.c_str());
-	if (ResetIds[getObjectId()] > 1)
+	if (ResetIds[getObjectId()] > 1 || true)
 	{
 		::OutputDebugString(traceText.c_str());
 		

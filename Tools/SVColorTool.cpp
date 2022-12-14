@@ -334,7 +334,7 @@ void SVColorToolClass::LocalInitialize()
 	m_hasROI.SetDefaultValue(BOOL(false), true);
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemToolAndDependent, false);
 
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();
 	//! Set Output image to color

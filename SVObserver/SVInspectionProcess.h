@@ -101,6 +101,7 @@ public:
 	uint32_t getFirstCamera() const override;
 	HRESULT addSharedCamera(uint32_t cameraID) override;
 	HRESULT resetTool(SvOi::IObjectClass& rTool) override;
+	HRESULT resetToolAndDependends(SvOi::IObjectClass* pTool) ;
 	virtual HRESULT propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
 	virtual SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const override;
@@ -308,6 +309,8 @@ private:
 	void LastProductUpdate(const SVProductInfoStruct& rProduct);
 	SVProductInfoStruct LastProductGet() const;
 
+	SvOi::SVResetItemEnum  AddToResetIds(SvOi::SVResetItemEnum eResetItem, SVObjectClass* pObject, std::back_insert_iterator<std::vector<uint32_t>>  ResetIdIt);
+	
 	SVIOEntryHostStructPtrVector m_PPQInputs;
 
 	bool m_bForceOffsetUpdate{true}; // Force Global Extent data to update
@@ -317,7 +320,7 @@ private:
 	mutable SvSyl::SVThread m_processThread;
 	std::atomic_bool m_NotifyWithLastInspected;
 
-	volatile long m_lInputRequestMarkerCount{0L};
+	std::atomic<long>  m_lInputRequestMarkerCount{0L};
 	SVInputRequestQueue m_InputRequests;
 	SVInputImageRequestQueue m_InputImageRequests;
 

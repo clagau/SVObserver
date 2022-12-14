@@ -252,7 +252,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::Emb
 	{
 		// Construct new object...
 		SvVol::DoubleSortValueObject* pObject = dynamic_cast<SvVol::DoubleSortValueObject*>(SvOi::ConstructObject(SvPb::DoubleSortValueClassId));
-		RegisterEmbeddedObject(pObject, embeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool, false);
+		RegisterEmbeddedObject(pObject, embeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemToolAndDependent, false);
 		m_ValueList.push_back(SvVol::DoubleSortValuePtr {pObject});
 	}
 
@@ -270,7 +270,7 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SvPb::EmbeddedIdEnum e
 
 	if (CreateChildObject(pObject))
 	{
-		RegisterEmbeddedObject(pObject, embeddedId, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool, false);
+		RegisterEmbeddedObject(pObject, embeddedId, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemToolAndDependent, false);
 		pObject->SetName(name);
 		pObject->SetArraySize(arraySize);
 		pRetObject = SvVol::DoubleSortValuePtr {pObject};
@@ -358,7 +358,7 @@ void TableObject::Initialize()
 
 void TableObject::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_NumberOfRows, SvPb::TableObject_NumberOfRowsEId, IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS, true, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject(&m_NumberOfRows, SvPb::TableObject_NumberOfRowsEId, IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS, true, SvOi::SVResetItemToolAndDependent, false);
 	m_NumberOfRows.SetDefaultValue(0L, true);
 }
 #pragma endregion Private Methods

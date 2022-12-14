@@ -253,7 +253,6 @@ echo %time%
     <ClCompile Include="SVInspectionExporter.cpp" />
     <ClCompile Include="SVInspectionImporter.cpp" />
     <ClCompile Include="SVInspectionProcess.cpp" />
-    <ClCompile Include="SVInspectionProcessResetStruct.cpp" />
     <ClCompile Include="SVInspectionTreeParser.cpp" />
     <ClCompile Include="SVIOAdjustDialog.cpp" />
     <ClCompile Include="SVIOBoardCapabilities.cpp" />
@@ -436,7 +435,6 @@ echo %time%
     <ClInclude Include="SVInspectionExporter.h" />
     <ClInclude Include="SVInspectionImporter.h" />
     <ClInclude Include="SVInspectionProcess.h" />
-    <ClInclude Include="SVInspectionProcessResetStruct.h" />
     <ClInclude Include="SVInspectionTreeParser.h" />
     <ClInclude Include="SVIOAdjustDialog.h" />
     <ClInclude Include="SVIOBoardCapabilities.h" />

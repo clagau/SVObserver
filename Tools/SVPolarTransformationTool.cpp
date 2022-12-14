@@ -58,7 +58,7 @@ void SVPolarTransformationToolClass::init()
 	
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemToolAndDependent, false);
 		
 
 	// Default taskObjectList items:

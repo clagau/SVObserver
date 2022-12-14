@@ -25,6 +25,8 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/Overlay.h"
+#include "InspectionCommands/CommandExternalHelper.h"
+
 #pragma endregion Includes
 
 namespace SvTo
@@ -42,6 +44,36 @@ constexpr long MaxScaleFactor = 1000;		// Maximum allowed Scale Factor.
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
+
+
+uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  InIt, uint32_t toolobjectId)
+{
+	
+	uint32_t res {0};
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getdependencyrequest();
+	auto* idSet = pRequest->mutable_idsofobjectsdependedon();
+	idSet->Add(toolobjectId);
+	pRequest->set_objecttype(SvPb::SVToolObjectType);
+	pRequest->set_tooldependecytype(SvPb::ToolDependencyEnum::Client);
+	pRequest->set_dependecytype(SvPb::DependecyTypeEnum::Tool);
+	pRequest->set_alldependecies(true);
+
+	HRESULT hr = SvCmd::InspectionCommands(0, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getdependencyresponse())
+	{
+		SvPb::GetDependencyResponse dependencyResponse = responseCmd.getdependencyresponse();
+		for (const auto& pair : dependencyResponse.dependencypair())
+		{
+			res++;
+			InIt = pair.client().toolobjectid();
+			//OutputDebugString(pair.client().DebugString().c_str());
+		}
+	}
+	return res;
+}
+
 
 EmbeddedExtents::EmbeddedExtents(SVToolClass* pOwner, ToolExtType tetype)
 :m_pOwner(pOwner), m_ToolExtType(tetype)
@@ -75,28 +107,28 @@ void EmbeddedExtents::RegisterEmbeddedExtents()
 	{
 		if (m_ToolExtType == ToolExtType::All)
 		{
-			m_pOwner->RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemTool, true);
-			m_pOwner->RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemTool, true);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemToolAndDependent, true);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemToolAndDependent, true);
 			m_pOwner->RegisterEmbeddedObject(&m_ExtentRight, SvPb::ExtentRelativeRightPositionEId, IDS_OBJECTNAME_EXTENT_RIGHT, false, SvOi::SVResetItemNone, false);
 			m_pOwner->RegisterEmbeddedObject(&m_ExtentBottom, SvPb::ExtentRelativeBottomPositionEId, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SvOi::SVResetItemNone, false);
-			m_pOwner->RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool, true);
-			m_pOwner->RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool, true);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemToolAndDependent, true);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemToolAndDependent, true);
 		}
 		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceX, SvPb::AuxiliarySourceXEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SvOi::SVResetItemNone, false);
 		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceY, SvPb::AuxiliarySourceYEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SvOi::SVResetItemNone, false);
 		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceAngle, SvPb::AuxiliarySourceAngleEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_ANGLE, false, SvOi::SVResetItemNone, false);
 		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceImageName, SvPb::AuxiliarySourceImageNameEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_IMAGE_NAME, false, SvOi::SVResetItemNone, false);
 		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliaryDrawType, SvPb::AuxiliaryDrawTypeEId, IDS_OBJECTNAME_AUXILIARY_DRAW_TYPE_NAME, false, SvOi::SVResetItemNone, false);
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentWidthFactorContent, SvPb::ExtentWidthFactorContentEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_CONTENT, true, SvOi::SVResetItemTool, true);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentWidthFactorContent, SvPb::ExtentWidthFactorContentEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_CONTENT, true, SvOi::SVResetItemToolAndDependent, true);
 		m_ExtentWidthFactorContent.SetDefaultValue(_variant_t(0.0), true);
 
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeightFactorContent, SvPb::ExtentHeightFactorContentEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_CONTENT, true, SvOi::SVResetItemTool, true);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeightFactorContent, SvPb::ExtentHeightFactorContentEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_CONTENT, true, SvOi::SVResetItemToolAndDependent, true);
 		m_ExtentHeightFactorContent.SetDefaultValue(_variant_t(0.0), true);
 
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentWidthFactorFormat, SvPb::ExtentWidthFactorFormatEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_FORMAT, true, SvOi::SVResetItemTool, true);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentWidthFactorFormat, SvPb::ExtentWidthFactorFormatEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_FORMAT, true, SvOi::SVResetItemToolAndDependent, true);
 		m_ExtentWidthFactorFormat.SetDefaultValue(_variant_t(0.0), true);
 
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeightFactorFormat, SvPb::ExtentHeightFactorFormatEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_FORMAT, true, SvOi::SVResetItemTool, true);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeightFactorFormat, SvPb::ExtentHeightFactorFormatEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_FORMAT, true, SvOi::SVResetItemToolAndDependent, true);
 		m_ExtentHeightFactorFormat.SetDefaultValue(_variant_t(0.0), true);
 	}
 }
@@ -199,7 +231,7 @@ void SVToolClass::init()
 	}
 
 	RegisterEmbeddedObject(&m_drawToolFlag, SvPb::ConditionalToolDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone, true);
-	RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SvPb::UpdateAuxiliaryExtentsEId, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SvPb::UpdateAuxiliaryExtentsEId, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemToolAndDependent, true);
 
 	m_toolExtent.SetTool(this);
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationShift);
@@ -899,7 +931,8 @@ HRESULT SVToolClass::setExtentList(const ::google::protobuf::RepeatedPtrField<::
 	auto* pInspection = GetInspectionInterface();
 	if (S_OK == retVal && nullptr != pInspection)
 	{
-		retVal = pInspection->resetTool(*this);
+	
+		retVal = pInspection->resetToolAndDependends(static_cast<SvOi::IObjectClass *>(this));
 	}
 	else
 	{

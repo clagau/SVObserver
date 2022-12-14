@@ -89,6 +89,8 @@ namespace SvOi
 
 		virtual HRESULT resetTool(IObjectClass& rTool) = 0;
 
+		virtual HRESULT resetToolAndDependends(SvOi::IObjectClass* pTool) = 0;
+
 		virtual HRESULT propagateSizeAndPosition() = 0;
 
 		virtual bool usePropagateSizeAndPosition() const = 0;

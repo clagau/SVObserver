@@ -74,14 +74,14 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		registerInputObject(&m_Data.m_aInputImageInfo[i], l_Name, SvPb::ImageInputEId + i);
 		m_Data.m_aInputImageInfo[i].setAllowedMode(SvOi::InputAllowedMode::IsBeforeTool);
 	}
-	RegisterEmbeddedObject(&m_Data.m_voDllPath, SvPb::DllFileNameEId, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemTool, true);
-	RegisterEmbeddedObject(&m_Data.m_UseUnitMapping, SvPb::UseUnitMappingEId, "Use Unit Mapping", false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_Data.m_voDllPath, SvPb::DllFileNameEId, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemToolAndDependent, true);
+	RegisterEmbeddedObject(&m_Data.m_UseUnitMapping, SvPb::UseUnitMappingEId, "Use Unit Mapping", false, SvOi::SVResetItemToolAndDependent, true);
 	m_Data.m_UseUnitMapping.setDefaultValue(FALSE);
 	// Initialize Dll Dependencies 
 	m_Data.m_aDllDependencies.resize(SVExternalToolTaskData::NUM_TOOL_DEPENDENCIES);
 	for (i = 0; i < m_Data.m_aDllDependencies.size(); i++)
 	{
-		RegisterEmbeddedObject(&m_Data.m_aDllDependencies[i], SvPb::DllDependencyFileNameEId + i, IDS_OBJECTNAME_DLL_DEP_FILE_01 + static_cast<int>(i), false, SvOi::SVResetItemTool, true);
+		RegisterEmbeddedObject(&m_Data.m_aDllDependencies[i], SvPb::DllDependencyFileNameEId + i, IDS_OBJECTNAME_DLL_DEP_FILE_01 + static_cast<int>(i), false, SvOi::SVResetItemToolAndDependent, true);
 	}
 	// init Tool Name
 	RegisterEmbeddedObject(&m_Data.m_voToolName, SvPb::DllToolNameEId, IDS_OBJECTNAME_DLL_TOOL_NAME, false, SvOi::SVResetItemNone, false);
@@ -94,7 +94,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	// Init Input Object Info array
 	for (i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
-		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i], SvPb::ExternalInputEId + i, IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemTool, true);
+		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i], SvPb::ExternalInputEId + i, IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemToolAndDependent, true);
 
 		// set default values
 		VARIANT vtTemp;

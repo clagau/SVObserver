@@ -52,7 +52,7 @@ void SVLUTEquation::init()
 	// Register Embedded Objects
 	m_byteVectorResult.SetLegacyVectorObjectCompatibility();
 	RegisterEmbeddedObject( &m_byteVectorResult, SvPb::LUTEquationResultEId, IDS_OBJECTNAME_LUTRESULT, false, SvOi::SVResetItemNone, false);
-	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SvPb::LUTEquationClipFlagEId, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SvPb::LUTEquationClipFlagEId, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SvOi::SVResetItemToolAndDependent, true);
 
 	// Set Embedded defaults
 	m_byteVectorResult.SetDefaultValue( 0 );

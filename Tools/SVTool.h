@@ -84,6 +84,9 @@ public:
 };
 
 
+
+uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  InIt, uint32_t toolobjectId);
+
 class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
@@ -93,6 +96,8 @@ public:
 	SVToolClass() = delete;
 	explicit SVToolClass(ToolExtType toolExtType , SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL);
 	virtual ~SVToolClass();
+
+	
 
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 

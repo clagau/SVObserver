@@ -215,6 +215,9 @@
     <ClInclude Include="Heapwalk.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="VectorHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVHandleManager.inl">

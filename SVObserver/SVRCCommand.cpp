@@ -202,7 +202,7 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 {
 	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
-	Log_Info("SVRCCommand::PutConfig");
+
 	// Check if we are in an allowed state first
 	// Not allowed to perform if in Regression or Test
 	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))

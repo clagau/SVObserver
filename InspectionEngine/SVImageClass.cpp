@@ -204,8 +204,8 @@ void SVImageClass::init()
 	m_width.SetTypeName(_T("Image Width"));
 	m_height.SetTypeName(_T("Image Height"));
 
-	RegisterEmbeddedObject(&m_width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool, false);
-	RegisterEmbeddedObject(&m_height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject(&m_width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemToolAndDependent, false);
+	RegisterEmbeddedObject(&m_height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemToolAndDependent, false);
 
 	m_width.SetDefaultValue(100, true);
 	m_height.SetDefaultValue(100, true);
@@ -387,7 +387,7 @@ bool SVImageClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	IdsName[getObjectId()] = GetCompleteName().c_str();
 	std::string traceText = std::format("SVImageClass::ResetObject {}: {}; {}; {}; {}; {}\n", (int)ResetImageIds[getObjectId()],
 	 (unsigned int)getObjectId(), (int)m_ObjectTypeInfo.m_ObjectType, (unsigned int)m_ObjectTypeInfo.m_SubType, static_cast<unsigned int> (m_ObjectTypeInfo.m_EmbeddedID), GetCompleteName().c_str());
-	if (ResetImageIds[getObjectId()] > 1)
+	if (ResetImageIds[getObjectId()] > 1 || true)
 	{
 
 		::OutputDebugString(traceText.c_str());

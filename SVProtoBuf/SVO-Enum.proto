@@ -1482,7 +1482,8 @@ enum ResetType
 	RT_FromObject =1;  //use resettype from embeddet variable only used in Request not in Response
 	RT_OWNER = 2;
 	RT_Tool = 3;
-	RT_IP  = 4;
+	RT_ToolAndDependent = 4;
+	RT_IP  = 5;
 };
 
 enum ToolDependencyEnum

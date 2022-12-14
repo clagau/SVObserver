@@ -66,25 +66,8 @@ HRESULT CommandInspectionExtentUpdater::operator()()
 		{
 			pInspection->ForceOffsetUpdate();
 			/// correct tool size when it does not fit to the parent image 
-			pInspection->AddResetState(SvDef::SVResetAutoMoveAndResize);
-
-			bool result(false);
-			SVObjectClass* pResetObject = dynamic_cast<SVObjectClass*>  (pTool);
-			if (nullptr != pResetObject)
-			{
-				result = pResetObject->resetAllObjects();
-			}
-
-			if (result)
-			{
-				retVal = pInspection->RunOnce();
-
-			}
-			else
-			{
-				retVal = E_FAIL;
-			}
-			pInspection->RemoveResetState(SvDef::SVResetAutoMoveAndResize);
+			retVal = pInspection->resetToolAndDependends(static_cast<SvOi::IObjectClass*>(pTool));
+			
 		}
 	}
 	else

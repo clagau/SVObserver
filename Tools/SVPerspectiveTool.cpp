@@ -356,11 +356,11 @@ void SVPerspectiveToolClass::LocalInitialize()
 	// Register Embedded Objects
 	RegisterEmbeddedImage( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 
-	RegisterEmbeddedObject( &m_svXOffset, SvPb::TranslationXOffsetEId, IDS_X_OFFSET, false, SvOi::SVResetItemTool, false);
-	RegisterEmbeddedObject( &m_svYOffset, SvPb::TranslationYOffsetEId, IDS_Y_OFFSET, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject( &m_svXOffset, SvPb::TranslationXOffsetEId, IDS_X_OFFSET, false, SvOi::SVResetItemToolAndDependent, false);
+	RegisterEmbeddedObject( &m_svYOffset, SvPb::TranslationYOffsetEId, IDS_Y_OFFSET, false, SvOi::SVResetItemToolAndDependent, false);
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemToolAndDependent, false);
 
 	SetImageExtentProperty( SvPb::SVExtentPropertyTranslationOffsetX, &m_svXOffset );
 	SetImageExtentProperty( SvPb::SVExtentPropertyTranslationOffsetY, &m_svYOffset );
@@ -368,7 +368,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set Default Warp Method to Use Horizontal
-	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemToolAndDependent, true);
 	std::string EnumTypes = std::format("{}={},{}={}", PERSPECTIVE_WARP_TYPE_HORIZONTAL, static_cast<int>(WarpTypeHorizontal),
 	                                   PERSPECTIVE_WARP_TYPE_VERTICAL, static_cast<int>(WarpTypeVertical));
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );

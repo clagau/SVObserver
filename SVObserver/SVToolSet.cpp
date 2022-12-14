@@ -74,8 +74,8 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToAcquisitionStart], SvPb::TriggerToAcquisitionStartEId, IDS_TRIGGER_TO_ACQUISITION_START_TIME, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::AcquisitionTime], SvPb::AcquisitionTimeEId, IDS_ACQUISITION_TIME, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerTimeStamp], SvPb::TriggerTimeEId, IDS_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone, false);
-	RegisterEmbeddedObject(&m_Width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool, false);
-	RegisterEmbeddedObject(&m_Height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool, false);
+	RegisterEmbeddedObject(&m_Width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemToolAndDependent, false);
+	RegisterEmbeddedObject(&m_Height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemToolAndDependent, false);
 	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, SvPb::EnableAuxiliaryExtentsEId, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone, true);
 	///m_ObjectID is of type double as math tool results are also double which would cause problems with m_InspectedObectID which should only be of one type
 	RegisterEmbeddedObject(&m_ObjectID, SvPb::ObjectIDEId, SvDef::c_ObjectID, false, SvOi::SVResetItemNone, false);

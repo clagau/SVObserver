@@ -103,19 +103,19 @@ void SVStatTool::init(void)
 			&m_OccurenceValue, 
 			SvPb::StatTestValueEId,
 			IDS_OBJECTNAME_STATTESTVALUE,
-			false, SvOi::SVResetItemTool, true);
+			false, SvOi::SVResetItemToolAndDependent, true);
 		
 		RegisterEmbeddedObject(
 			&m_VariableName, 
 			SvPb::StatVariableNameToMonitorEId,
 			IDS_OBJECTNAME_STAT_VARIABLE_NAME,
-			false, SvOi::SVResetItemTool, true);
+			false, SvOi::SVResetItemToolAndDependent, true);
 		
 		RegisterEmbeddedObject(
 			&m_PersistantFeaturesEnabled, 
 			SvPb::StatEnabledFeaturesEId,
 			IDS_OBJECTNAME_ENABLEDFEATURES,
-			false, SvOi::SVResetItemTool, true);
+			false, SvOi::SVResetItemToolAndDependent, true);
 
 	// Save default attributes
 	m_Value[SV_STATS_MIN_VALUE].SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);

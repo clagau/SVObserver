@@ -46,24 +46,24 @@ void SVShapeMaskHelperClass::init()
 	m_ObjectTypeInfo.m_SubType    = SvPb::SVShapeMaskHelperObjectType;
 
 	// do these eventually be changed to ResetItemOwner?
-	RegisterEmbeddedObject( &m_bvoAutoResize, SvPb::ShapeMaskAutoResizeEId, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SvOi::SVResetItemTool, true);
-	RegisterEmbeddedObject( &m_evoShapeType, SvPb::ShapeMaskTypeEId, IDS_OBJECTNAME_SHAPE_MASK_TYPE, false, SvOi::SVResetItemTool, true);
-	RegisterEmbeddedObject( &m_evoMaskArea, SvPb::ShapeMaskMaskAreaEId, IDS_OBJECTNAME_SHAPE_MASK_MASK_AREA, false, SvOi::SVResetItemTool, true);
-	RegisterEmbeddedObject(&m_voCenterX, SvPb::CenterXEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_bvoAutoResize, SvPb::ShapeMaskAutoResizeEId, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SvOi::SVResetItemToolAndDependent, true);
+	RegisterEmbeddedObject( &m_evoShapeType, SvPb::ShapeMaskTypeEId, IDS_OBJECTNAME_SHAPE_MASK_TYPE, false, SvOi::SVResetItemToolAndDependent, true);
+	RegisterEmbeddedObject( &m_evoMaskArea, SvPb::ShapeMaskMaskAreaEId, IDS_OBJECTNAME_SHAPE_MASK_MASK_AREA, false, SvOi::SVResetItemToolAndDependent, true);
+	RegisterEmbeddedObject(&m_voCenterX, SvPb::CenterXEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, true, SvOi::SVResetItemToolAndDependent, true);
 	m_voCenterX.SetDefaultValue(_variant_t(50L), true);
-	RegisterEmbeddedObject(&m_voCenterY, SvPb::CenterYEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_voCenterY, SvPb::CenterYEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, true, SvOi::SVResetItemToolAndDependent, true);
 	m_voCenterY.SetDefaultValue(_variant_t(50L), true);
-	RegisterEmbeddedObject(&m_voWidth, SvPb::WidthEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_voWidth, SvPb::WidthEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, true, SvOi::SVResetItemToolAndDependent, true);
 	m_voWidth.SetDefaultValue(_variant_t(80L), true);
-	RegisterEmbeddedObject(&m_voHeight, SvPb::HeightEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_voHeight, SvPb::HeightEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, true, SvOi::SVResetItemToolAndDependent, true);
 	m_voHeight.SetDefaultValue(_variant_t(80L), true);
-	RegisterEmbeddedObject(&m_voSideThickness, SvPb::ShapeMaskPropertySideThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_voSideThickness, SvPb::ShapeMaskPropertySideThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, true, SvOi::SVResetItemToolAndDependent, true);
 	m_voSideThickness.SetDefaultValue(_variant_t(20L), true);
-	RegisterEmbeddedObject(&m_voTopBottomThickness, SvPb::ShapeMaskPropertyTopBottomThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_TOP_BOTTOM_THICKNESS, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_voTopBottomThickness, SvPb::ShapeMaskPropertyTopBottomThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_TOP_BOTTOM_THICKNESS, true, SvOi::SVResetItemToolAndDependent, true);
 	m_voTopBottomThickness.SetDefaultValue(_variant_t(20L), true);
-	RegisterEmbeddedObject(&m_voOffset, SvPb::ShapeMaskPropertyOffsetEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_OFFSET, true, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject(&m_voOffset, SvPb::ShapeMaskPropertyOffsetEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_OFFSET, true, SvOi::SVResetItemToolAndDependent, true);
 	m_voOffset.SetDefaultValue(_variant_t(20L), true);
-	RegisterEmbeddedObject( &m_evoXYSymmetry, SvPb::ShapeMaskPropertySymmetryOrientationEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_XY_SYMMETRY, false, SvOi::SVResetItemTool, true);
+	RegisterEmbeddedObject( &m_evoXYSymmetry, SvPb::ShapeMaskPropertySymmetryOrientationEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_XY_SYMMETRY, false, SvOi::SVResetItemToolAndDependent, true);
 
 	m_bvoAutoResize.SetDefaultValue( false, false );
 

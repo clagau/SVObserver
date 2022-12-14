@@ -369,11 +369,14 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 			case SvPb::RT_IP:
 				ToReset = SvOi::SVResetItemIP; //0
 				break;
+			case SvPb::RT_ToolAndDependent:
+				ToReset = SvOi::SVResetItemToolAndDependent;
+				break;
 			case SvPb::RT_Tool:
-				ToReset = SvOi::SVResetItemTool; //1 
+				ToReset = SvOi::SVResetItemTool;  
 				break;
 			case SvPb::RT_OWNER:
-				ToReset = SvOi::SVResetItemOwner; //2 
+				ToReset = SvOi::SVResetItemOwner;  
 				break;
 			case SvPb::RT_FromObject:
 				checkReset = true;
@@ -487,6 +490,13 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 				GetInspection()->resetAllObjects();
 				pPar->result = SvPb::RT_IP;
 				break;
+			
+			case SvOi::SVResetItemToolAndDependent:
+				GetInspectionInterface()->resetToolAndDependends(static_cast<IObjectClass*>( GetTool()));
+				pPar->result = SvPb::RT_ToolAndDependent;
+				break;
+
+
 			case SvOi::SVResetItemTool:
 				GetTool()->resetAllObjects();
 				pPar->result = SvPb::RT_Tool;
