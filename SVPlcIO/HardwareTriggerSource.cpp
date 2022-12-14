@@ -22,21 +22,23 @@ constexpr uint32_t cTimeWrap = 65536;		//Constant when time offset negative need
 
 constexpr LPCTSTR cOperationDataName = _T("_OperationData.log");
 constexpr LPCTSTR cPlcOperationDataHeading = _T("ContentID;Channel;Timestamp;TriggerTimeStamp;TriggerDataValid;UnitControl;Sequence;TriggerIndex;ObjectType;ObjectID\r\n");
-constexpr LPCTSTR cOperationDataFormat = _T("%u; %hhu; %f; %f; %d; %hhu; %hhd; %hhu; %hhu; %lu\r\n");
+constexpr LPCTSTR cOperationDataFormat = _T("%u; %hhu; %f; %f; %d; %hhu; %hhd; %hhu; %hhu; %lu\n");
 
 HardwareTriggerSource::HardwareTriggerSource(const PlcInputParam& rPlcInput) : TriggerSource(rPlcInput.m_reportTriggerCallBack)
 , m_plcInput {rPlcInput}
 , m_cifXCard(m_plcInput)
+, m_logger {boost::log::keywords::channel = cOperationDataName}
 {
 	::OutputDebugString("Triggers are received from PLC via CifX card.\n");
 }
 
-
 HardwareTriggerSource::~HardwareTriggerSource()
 {
-	if (m_logOperationDataFile.is_open())
+	if (nullptr != m_pSink)
 	{
-		m_logOperationDataFile.close();
+		m_pSink->flush();
+		m_pSink->stop();
+		boost::log::core::get()->remove_sink(m_pSink);
 	}
 
 	m_cifXCard.closeCifX();
@@ -60,11 +62,17 @@ HRESULT HardwareTriggerSource::initialize()
 	if (LogType::PlcData == m_plcInput.m_logType)
 	{
 		std::string fileName {m_plcInput.m_logFileName + cOperationDataName};
-		m_logOperationDataFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+		m_logOperationDataFile.open(fileName.c_str(), std::ios::out | std::ios::trunc);
 		if (m_logOperationDataFile.is_open())
 		{
+			boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logOperationDataFile);
+			m_pSink = boost::make_shared<text_sink>();
+			m_pSink->locked_backend()->add_stream(stream);
+			auto filterOperationData = [](const boost::log::attribute_value_set& rAttribSet) -> bool {return rAttribSet["Channel"].extract<std::string>() == cOperationDataName; };
+			m_pSink->set_filter(filterOperationData);
+			boost::log::core::get()->add_sink(m_pSink);
 			std::string fileData(cPlcOperationDataHeading);
-			m_logOperationDataFile.write(fileData.c_str(), fileData.size());
+			BOOST_LOG(m_logger) << fileData.c_str();
 		}
 	}
 	return result;
@@ -141,7 +149,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		{
 			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel, m_inputData.m_notificationTime,
 				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_objectType, rChannel.m_objectID);
-			m_logOperationDataFile.write(fileData.c_str(), fileData.size());
+			BOOST_LOG(m_logger) << fileData.c_str();
 		}
 		if (channelTriggerDataValid)
 		{
@@ -171,7 +179,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		{
 			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel, m_inputData.m_notificationTime,
 				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_currentObjectType, rChannel.m_currentObjectID);
-			m_logOperationDataFile.write(fileData.c_str(), fileData.size());
+			BOOST_LOG(m_logger) << fileData.c_str();
 		}
 		if (channelTriggerDataValid)
 		{

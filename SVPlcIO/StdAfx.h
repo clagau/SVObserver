@@ -56,6 +56,7 @@
 #include <format>
 #include <fstream>
 #include <functional>
+#include <iostream>
 #include <iterator>			//Used by static library
 #include <map>
 #include <memory>
@@ -70,4 +71,12 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+
+#include <boost/log/attributes/attribute_set.hpp>
+#include <boost/log/common.hpp>
+#include <boost/log/expressions/attr.hpp>
+#include <boost/log/sinks.hpp>
+#include <boost/log/sources/channel_feature.hpp>
+#include <boost/log/sources/channel_logger.hpp>
+#include <boost/shared_ptr.hpp>
 #pragma endregion Precompiled Headers

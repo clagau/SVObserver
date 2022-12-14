@@ -46,7 +46,10 @@ private:
 	bool m_initialized {false};
 	bool m_changedData {false};
 
-	std::ofstream m_logOperationDataFile;
+	std::filebuf m_logOperationDataFile;
+	typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_ostream_backend> text_sink;
+	boost::shared_ptr<text_sink> m_pSink {nullptr};
+	boost::log::sources::channel_logger_mt<std::string> m_logger;
 };
 
 } //namespace SvPlc

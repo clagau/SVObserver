@@ -175,11 +175,14 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 	if (g_notificationType == notification)
 	{
+		static double timeStampPrev {0.0};
 		double timeStamp = GetTimeStamp();
 		int32_t result = g_cifxLoadLib.m_pChannelIORead(g_hChannel, 0, 0, cMaxPLC_DataSize, g_ReadBuffer, cTimeout);
 
 		if (CIFX_NO_ERROR == result)
 		{
+			std::string outputText {std::to_string(timeStamp) + ';' + std::to_string(timeStampPrev) + '\n'};
+			::OutputDebugString(outputText.c_str());
 			//Message type is Request and content is version
 			if (2 == g_ReadBuffer[4] && 1 == g_ReadBuffer[5])
 			{
@@ -207,6 +210,7 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 			}
 			g_cifxLoadLib.m_pChannelIOWrite(g_hChannel, 0, 0, cMaxPLC_DataSize, g_ReadBuffer, cTimeout);
 		}
+		timeStampPrev = timeStamp;
 
 		g_notificationSync++;
 		if (CIFX_NOTIFY_SYNC == g_notificationType)

@@ -48,7 +48,7 @@ static_assert(sizeof(Telegram) + std::max(sizeof(InspectionState1), sizeof(Inspe
 static_assert(sizeof(Telegram) + cConfigListSize * sizeof(ConfigDataSet) <= cmaxPLC_DataSize, "Write buffer size is to small");
 
 constexpr LPCTSTR cContentDataName = _T("_ContentData.log");
-constexpr LPCTSTR cPlcContentHeading = _T("Timestamp;ContentID;RefID;Content;Layout;Version\r\n");
+constexpr LPCTSTR cPlcContentHeading = _T("Timestamp;ContentID;RefID;Content;Layout;Version\n");
 
 void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void* pvUser)
 {
@@ -65,13 +65,22 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void*
 }
 
 CifXCard::CifXCard(const PlcInputParam& rPlcInput):
- m_rPlcInput(rPlcInput)
+	m_rPlcInput(rPlcInput)
+	, m_logger {boost::log::keywords::channel = cContentDataName}
 {
 }
 
 void CifXCard::readProcessData(uint32_t notification)
 {
-	double timeStamp = SvUl::GetTimeStamp();
+	double timeStamp {SvUl::GetTimeStamp()};
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
+	static double timeStampPrev {0.0};
+	if ((timeStamp - timeStampPrev) > 2.0)
+	{
+		::OutputDebugString(SvUl::Format(_T("%f; %f\n"), timeStamp, timeStampPrev).c_str());
+	}
+	timeStampPrev = timeStamp;
+#endif
 	if (notification != m_notifyType || false == m_cifxLoadLib.isInitilized())
 	{
 		return;
@@ -155,8 +164,8 @@ void CifXCard::readProcessData(uint32_t notification)
 			}
 			if (m_logContentFile.is_open())
 			{
-				fileData += _T("\r\n");
-				m_logContentFile.write(fileData.c_str(), fileData.size());
+				fileData += _T("\n");
+				BOOST_LOG(m_logger) << fileData.c_str();
 		}
 	}
 	}
@@ -181,9 +190,11 @@ InputData CifXCard::popInputDataQueue()
 
 void CifXCard::closeCifX()
 {
-	if (m_logContentFile.is_open())
+	if (nullptr != m_pSink)
 	{
-		m_logContentFile.close();
+		m_pSink->flush();
+		m_pSink->stop();
+		boost::log::core::get()->remove_sink(m_pSink);
 	}
 	if(m_cifxLoadLib.isInitilized())
 	{
@@ -200,7 +211,6 @@ void CifXCard::closeCifX()
 		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxClosed, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
-
 
 HRESULT CifXCard::OpenAndInitializeCifX()
 {
@@ -224,11 +234,17 @@ HRESULT CifXCard::OpenAndInitializeCifX()
 		if (LogType::PlcData == m_rPlcInput.m_logType)
 		{
 			std::string fileName {m_rPlcInput.m_logFileName + cContentDataName};
-			m_logContentFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+			m_logContentFile.open(fileName.c_str(), std::ios::out | std::ios::trunc);
 			if (m_logContentFile.is_open())
 			{
+				boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logContentFile);
+				m_pSink = boost::make_shared<text_sink>();
+				m_pSink->locked_backend()->add_stream(stream);
+				auto filterContent = [](const boost::log::attribute_value_set& rAttribSet) -> bool {return rAttribSet["Channel"].extract<std::string>() == cContentDataName; };
+				m_pSink->set_filter(filterContent);
+				boost::log::core::get()->add_sink(m_pSink);
 				std::string fileData(cPlcContentHeading);
-				m_logContentFile.write(fileData.c_str(), fileData.size());
+				BOOST_LOG(m_logger) << fileData.c_str();
 	}
 		}
 	}
@@ -879,21 +895,18 @@ void CifXCard::writeResponseData(const Telegram& rInputTelegram, const uint8_t* 
 	outputTelegram.m_layout = rInputTelegram.m_layout;
 	outputTelegram.m_systemStatus = m_ready ? SystemStatus::AppReady : SystemStatus::ComReady;
 
-	{
-		std::lock_guard<std::mutex> guard {m_cifxMutex};
-		//Clear the write buffer
-		memset(m_pWriteBuffer.get(), 0, cmaxPLC_DataSize);
-		//Copy the SDO Static data
-		uint8_t* pData = m_pWriteBuffer.get();
-		memcpy(pData, &outputTelegram, sizeof(Telegram));
-		pData += sizeof(Telegram);
+	//Clear the write buffer
+	memset(m_pWriteBuffer.get(), 0, cmaxPLC_DataSize);
+	//Copy the SDO Static data
+	uint8_t* pData = m_pWriteBuffer.get();
+	memcpy(pData, &outputTelegram, sizeof(Telegram));
+	pData += sizeof(Telegram);
 
-		//If nullptr or size 0 then no dynamic data
-		if (nullptr != pSdoDynamic && 0 != sdoDynamicSize)
-		{
-			//Copy the SDO Dynamic data
-			memcpy(pData, pSdoDynamic, sdoDynamicSize);
-		}
+	//If nullptr or size 0 then no dynamic data
+	if (nullptr != pSdoDynamic && 0 != sdoDynamicSize)
+	{
+		//Copy the SDO Dynamic data
+		memcpy(pData, pSdoDynamic, sdoDynamicSize);
 	}
 
 	if (CIFX_NO_ERROR != m_cifxLoadLib.m_pChannelIOWrite(m_hChannel, 0, 0, cmaxPLC_DataSize, m_pWriteBuffer.get(), cTimeout))
