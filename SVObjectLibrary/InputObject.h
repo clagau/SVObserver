@@ -58,10 +58,10 @@ class InputObject : public SVObjectAppClass, public SvOi::IInputObject
 	template <typename T>
 	T* getInput(bool bRunMode = false) const
 	{
-		if (IsConnected() && nullptr != GetInputObjectInfo().getFinalObject())
+		if (IsConnected())
 		{
 			SVObjectClass* pObject = GetInputObjectInfo().getFinalObject();
-			if (0 == (pObject->ObjectAttributesAllowed() & SvPb::useable))
+			if (nullptr == pObject || 0 == (pObject->ObjectAttributesAllowed() & SvPb::useable))
 			{
 				return nullptr;
 			}
@@ -76,7 +76,7 @@ class InputObject : public SVObjectAppClass, public SvOi::IInputObject
 	template <>
 	SvIe::SVImageClass* getInput<SvIe::SVImageClass>(bool /*bRunMode*/) const
 	{
-		if (IsConnected() && nullptr != GetInputObjectInfo().getFinalObject())
+		if (IsConnected())
 		{
 			SVObjectClass* pObject = GetInputObjectInfo().getFinalObject();
 			if (pObject && pObject->GetObjectType() == SvPb::SVImageObjectType && 0 != (pObject->ObjectAttributesAllowed() & SvPb::useable))

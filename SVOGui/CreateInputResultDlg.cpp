@@ -132,11 +132,14 @@ void addParameterEntry(uint32_t inspectionId, uint32_t taskId, const SvOg::Creat
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_addparameteranduseitrequest();
 	pRequest->set_parametertaskid(taskId);
+
+	// cppcheck-suppress syntaxError
 	for (auto j = nameOffset; const auto& rEntry : rDataMap)
 	{
 		pRequest->set_parametername(rParaNames[j++]);
 		pRequest->set_linkedname(rEntry.first);
 		pRequest->clear_usenamelist();
+
 		for (const auto& rName : rEntry.second)
 		{
 			pRequest->add_usenamelist(rName);
