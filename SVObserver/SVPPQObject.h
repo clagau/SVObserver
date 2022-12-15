@@ -377,6 +377,7 @@ private:
 	void checkNakReason(CantProcessEnum cantProcessReason);
 
 	void setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const;
+	void checkTriggerIndex(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const;
 	void setOutputResults(uint32_t inspectedID, std::vector<bool>& rOutputResult) const;
 
 	void AttachAcqToTriggers(bool setSoftwareTrigger);

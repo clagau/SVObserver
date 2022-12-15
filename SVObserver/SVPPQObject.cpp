@@ -1507,6 +1507,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTrigge
 			{
 				setPreviousNAK(*pPrevProduct, pNewProduct);
 			}
+			checkTriggerIndex(*pPrevProduct, pNewProduct);
 		}
 
 		pNewProduct->m_triggered = true;
@@ -3304,6 +3305,45 @@ void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVP
 		}
 	}
 }
+
+void SVPPQObject::checkTriggerIndex(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const
+{
+	uint32_t currentObjectID {0UL};
+	uint32_t nextObjectID {0UL};
+
+	const _variant_t& rCurrentObjectID = rCurrentProduct.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
+	if (VT_UINT == rCurrentObjectID.vt)
+	{
+		currentObjectID = static_cast<uint32_t> (rCurrentObjectID);
+	}
+	const _variant_t& rNextObjectID = pNextProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
+	if (VT_UINT == rNextObjectID.vt)
+	{
+		nextObjectID = static_cast<uint32_t> (rNextObjectID);
+	}
+	const _variant_t& rCurrentTriggerIndex = rCurrentProduct.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
+	const _variant_t& rNextTriggerIndex = pNextProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
+	if (VT_UI1 == rCurrentTriggerIndex.vt && VT_UI1 == rNextTriggerIndex.vt)
+	{
+		if (nextObjectID != 0 && nextObjectID == currentObjectID)
+		{
+			//Check that trigger index has been incremented
+			if (static_cast<DWORD> (rCurrentTriggerIndex) + 1 != static_cast<DWORD> (rNextTriggerIndex))
+			{
+				pNextProduct->m_prevTriggerNAK = true;
+			}
+		}
+		else
+		{
+			//Check when next objectID that trigger index is 1
+			if (1 != static_cast<DWORD> (rNextTriggerIndex))
+			{
+				pNextProduct->m_prevTriggerNAK = true;
+			}
+		}
+	}
+}
+
 
 void SVPPQObject::setOutputResults(uint32_t inspectedID, std::vector<bool>& rOutputResult) const
 {
