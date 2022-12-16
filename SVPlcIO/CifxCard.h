@@ -41,7 +41,7 @@ struct InputData
 class CifXCard
 {
 public:
-	CifXCard(const PlcInputParam& rPlcInput);
+	explicit CifXCard(const PlcInputParam& rPlcInput);
 	~CifXCard() = default;
 
 	HRESULT OpenAndInitializeCifX();

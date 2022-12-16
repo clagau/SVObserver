@@ -62,8 +62,7 @@ HRESULT HardwareTriggerSource::initialize()
 	if (LogType::PlcData == m_plcInput.m_logType)
 	{
 		std::string fileName {m_plcInput.m_logFileName + cOperationDataName};
-		m_logOperationDataFile.open(fileName.c_str(), std::ios::out | std::ios::trunc);
-		if (m_logOperationDataFile.is_open())
+		if (nullptr != m_logOperationDataFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
 		{
 			boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logOperationDataFile);
 			m_pSink = boost::make_shared<text_sink>();

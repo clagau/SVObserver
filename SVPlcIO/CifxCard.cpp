@@ -234,8 +234,7 @@ HRESULT CifXCard::OpenAndInitializeCifX()
 		if (LogType::PlcData == m_rPlcInput.m_logType)
 		{
 			std::string fileName {m_rPlcInput.m_logFileName + cContentDataName};
-			m_logContentFile.open(fileName.c_str(), std::ios::out | std::ios::trunc);
-			if (m_logContentFile.is_open())
+			if (nullptr != m_logContentFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
 			{
 				boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logContentFile);
 				m_pSink = boost::make_shared<text_sink>();

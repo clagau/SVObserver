@@ -6,11 +6,12 @@
 #pragma once
 
 #pragma region Includes
-#include "PlcDataTypes.h"
 #pragma endregion Includes
 
 namespace SvPlc
 {
+struct PlcInputParam;
+struct ResultReport;
 
 namespace Tec
 {

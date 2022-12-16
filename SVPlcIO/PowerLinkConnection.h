@@ -21,7 +21,7 @@ extern HANDLE g_hSignalEvent;
 class PowerlinkConnection
 {
 public:
-	PowerlinkConnection(const PlcInputParam& rPlcInput);
+	explicit PowerlinkConnection(const PlcInputParam& rPlcInput);
 	~PowerlinkConnection();
 
 	void setReady(bool ready);

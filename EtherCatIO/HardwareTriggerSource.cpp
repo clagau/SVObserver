@@ -13,7 +13,6 @@
 #pragma endregion Includes
 
 constexpr int cTimerConversion = 10000;
-//#define ETHERCAT_TIMER
 
 namespace SvEcat
 {
@@ -122,10 +121,12 @@ void HardwareTriggerSource::setOutput(uint8_t outputNr, bool state)
 	}
 }
 
+#if defined (ETHERCAT_TIMER)
 void HardwareTriggerSource::writeOutputs(double)
 {
 	m_outputData[0] = (0 == m_outputData[0]) ? 2 : 0;
 }
+#endif
 
 
 void HardwareTriggerSource::analyzeTelegramData()

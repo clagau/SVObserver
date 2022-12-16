@@ -397,7 +397,7 @@ HRESULT Trigger1DllToTrigger2Dll(LPCSTR DllName1, LPCSTR DllName2)
 	return result;
 }
 
-int main(int argc, char* args[])
+int main(int argc, const char* args[])
 {
 	std::vector<std::string> cmdOptions;
 	cmdOptions.resize(argc - 1);

@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerEngineConnection.h"
+#include "PlcDataTypes.h"
 #include "Triggering/IODeviceBase.h"
 #pragma endregion Includes
 

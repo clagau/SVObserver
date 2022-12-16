@@ -11,6 +11,8 @@
 #include "TriggerSource.h"
 #pragma endregion Includes
 
+//#define ETHERCAT_TIMER
+
 namespace SvEcat
 {
 /// processes all information that is either gained from the incoming process data or put into outgoing process data 
@@ -30,7 +32,9 @@ public:
 private:
 	virtual  void createTriggerReport(uint8_t channel) override;
 
+#if defined (ETHERCAT_TIMER)
 	void writeOutputs(double timestamp);
+#endif
 
 	std::array<uint8_t, cEtherCatDataSize> m_previousInputData {0,0,0,0,0,0,0,0};
 	std::array<uint8_t, cEtherCatDataSize> m_outputData {0,0,0,0,0,0,0,0};

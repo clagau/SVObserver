@@ -8,7 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPlcIOImpl.h"
-#include "PlcDataTypes.h"
+#include "TriggerEngineConnection.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"

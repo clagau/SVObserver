@@ -114,6 +114,7 @@ void PowerlinkConnection::EventSignalThread(std::function<void()> pCallback)
 		// wait for Client to signal
 		if(WAIT_OBJECT_0 == WaitForSingleObject(g_hSignalEvent, INFINITE))
 		{
+			// cppcheck-suppress knownConditionTrueFalse ;g_runThread is atomic
 			if(g_runThread)
 			{
 				pCallback();

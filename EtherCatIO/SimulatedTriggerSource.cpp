@@ -176,6 +176,7 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 					fileData += cObjectInvalid;
 					fileData += std::to_string(m_ObjectsInvalid[i]) + _T("\r\n");
 				}
+				// cppcheck-suppress invalidFunctionArg
 				resultFile.write(fileData.c_str(), static_cast<int64_t> (fileData.size()));
 				resultFile.close();
 			}
