@@ -37,7 +37,6 @@
 #define _AFX_SECURE_NO_DEPRECATE
 #define _ATL_SECURE_NO_DEPRECATE
 #define _CRT_NON_CONFORMING_SWPRINTFS
-#define _SCL_SECURE_NO_WARNINGS
 
 #ifndef _DEBUG
 #define _SECURE_SCL 0
@@ -62,6 +61,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <format>
 #include <functional>
 #include <guiddef.h>
 #include <io.h>

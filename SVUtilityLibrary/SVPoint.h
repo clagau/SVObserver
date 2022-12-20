@@ -9,6 +9,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <type_traits>
+#include "stdafx.h"
 #include "StringHelper.h"
 #pragma endregion Includes
 
@@ -19,7 +20,7 @@ class SVPoint
 public:
 	//@TODO[gra][8.10][19.11.2018]: The format for integral types should be "( %d, %d )" (one extra space)
 	//however the script tests need to be adapted otherwise errors will occur
-	static constexpr auto cFormat = std::is_integral<T>::value ? "( %d, %d)" : "( %lf, %lf )";
+	static constexpr auto cFormat = std::is_integral<T>::value ? "( {:d}, {:d} )" : "( {:f}, {:f} )";
 	static_assert(std::is_arithmetic<T>::value, "Must be a number!");
 
 	SVPoint()
@@ -36,7 +37,7 @@ public:
 
 	std::string toString() const
 	{
-		return SvUl::Format(cFormat, m_x, m_y);
+		return std::format(cFormat, m_x, m_y);
 	}
 
 	SVPoint& operator=(const POINT &rRhs)

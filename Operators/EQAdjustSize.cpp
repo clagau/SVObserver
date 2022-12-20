@@ -10,9 +10,6 @@
 #include "EQAdjustSize.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "Definitions/Color.h"
-#ifdef TRACE_EQADJUSTSIZE 
-#include "SVUtilityLibrary/StringHelper.h"
-#endif
 #pragma endregion Includes
 
 namespace SvOp
@@ -96,7 +93,7 @@ bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 #ifdef TRACE_EQADJUSTSIZE 
 	double val;
 	m_result.GetValue(val);
-	auto text = SvUl::Format("ResetObject  Result( %d )ret %f  Hascondition:%d; IsEnabled:%d   \n", Result, val, HasCondition() , IsEnabled());
+	auto text = std::format("ResetObject  Result( {:d} )ret {:f}  Hascondition:{:d}; IsEnabled:{:d}   \n", Result, val, HasCondition() , IsEnabled());
 	OutputDebugString(text.c_str());
 #endif 
 	return Result;

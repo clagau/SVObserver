@@ -15,7 +15,6 @@
 #include "Definitions\StringTypeDef.h"
 #include "SVProtoBuf/Envelope.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVLogLibrary\Logging.h"

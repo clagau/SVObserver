@@ -447,7 +447,7 @@ SvOi::EquationTestResult SVEquation::Test(SvStl::MessageContainerVector *pErrorM
 				else
 				{
 					ret.iPositionFailed = m_Yacc.lex_stack[m_Yacc.sIndex - 1].position + 1;
-					msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
+					msgList.push_back(std::format(_T("{:d}"), ret.iPositionFailed));
 					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				}
 				m_isDataValid = false;
@@ -533,7 +533,7 @@ SvOi::EquationTestResult SVEquation::lexicalScan(LPCTSTR inBuffer)
 		ret.iPositionFailed = static_cast<int>(m_Lex.position + 1);
 		SvDef::StringVector msgList;
 		msgList.push_back(fullObjectName);
-		msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
+		msgList.push_back(std::format(_T("{:d}"), ret.iPositionFailed));
 		m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 
 		m_isDataValid = false;

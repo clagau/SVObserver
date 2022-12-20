@@ -23,7 +23,6 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -155,7 +154,7 @@ void SVOCVAnalyzerResult::clearAll()
 		// Add it to our task object list
 		Add( pResult );
 
-		std::string Name = SvUl::Format( "Character %d Result", l + 1 );
+		std::string Name = std::format( "Character {:d} Result", l + 1 );
 		pResult->SetName( Name.c_str() );
 	}// end for
 
@@ -689,7 +688,7 @@ bool SVOCVAnalyzerResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 						if (nullptr != pErrorMessages)
 						{
 							SvDef::StringVector msgList;
-							msgList.push_back(SvUl::Format(_T("%x"), imageTypeMil));
+							msgList.push_back(std::format(_T("{:x}"), imageTypeMil));
 							SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_MilImageTypeInvalid, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 							pErrorMessages->push_back(Msg);
 						}

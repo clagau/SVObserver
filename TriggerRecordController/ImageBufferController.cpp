@@ -17,7 +17,6 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVUtilityLibrary\StringHelper.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #pragma endregion Includes
 //#define TRACE_TRC
@@ -73,12 +72,12 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructL
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
 	for (const auto& rImageStruct : rImageList)
 	{
-		std::string DebugString = SvUl::Format(_T("Required image %d for ImageType %d"), rImageStruct.numberofbuffersrequired(), rImageStruct.structid());
+		std::string DebugString = std::format(_T("Required image {:d} for ImageType {:d}"), rImageStruct.numberofbuffersrequired(), rImageStruct.structid());
 		if (0 < rImageStruct.imageprops().size())
 		{
 			MatroxImageProps debugBufferProps;
 			memcpy(&debugBufferProps, rImageStruct.imageprops().c_str(), sizeof(MatroxImageProps));
-			DebugString += SvUl::Format(_T(" (%d/%d = %lld)"), debugBufferProps.sizeX, debugBufferProps.sizeY, debugBufferProps.Bytesize);
+			DebugString += std::format(_T(" ({:d}/{:d} = {:d})"), debugBufferProps.sizeX, debugBufferProps.sizeY, debugBufferProps.Bytesize);
 		}
 		else
 		{
@@ -86,19 +85,19 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructL
 			SVMatroxBufferCreateStruct bufferStruct;
 			MatroxImageProps bufferProps;
 			fillBufferData(imageStructTmp, bufferStruct, bufferProps);
-			DebugString += SvUl::Format(_T(" (%d/%d = %lld)"), bufferProps.sizeX, bufferProps.sizeY, bufferProps.Bytesize);
+			DebugString += std::format(_T(" ({:d}/{:d} = {:d})"), bufferProps.sizeX, bufferProps.sizeY, bufferProps.Bytesize);
 		}
 		
 		::OutputDebugString((DebugString+_T("\n")).c_str());
 	}
-	std::string DebugString = SvUl::Format(_T("Complete required image %d\n\n"), completeNumberOfRequiredBuffer);
+	std::string DebugString = std::format(_T("Complete required image {}\n\n"), completeNumberOfRequiredBuffer);
 	::OutputDebugString(DebugString.c_str());
 #endif
 	if (m_rDataController.getMaxNumberOfRequiredBuffer() < completeNumberOfRequiredBuffer)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), completeNumberOfRequiredBuffer));
-		msgList.push_back(SvUl::Format(_T("%d"), m_rDataController.getMaxNumberOfRequiredBuffer()));
+		msgList.push_back(std::format(_T("{:d}"), completeNumberOfRequiredBuffer));
+		msgList.push_back(std::format(_T("{:d}"), m_rDataController.getMaxNumberOfRequiredBuffer()));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetBuffer_TooMany, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -258,14 +257,14 @@ SvOi::ITRCImagePtr ImageBufferController::createNewImageHandle(int structId, int
 		}
 
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format("%d, (%d) ", structId, Buffernumber));
+		msgList.push_back(std::format("{:d}, ({:d}) ", structId, Buffernumber));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NoBufferFree, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	else
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), structId));
+		msgList.push_back(std::format(_T("{:d}"), structId));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_UnknownStructID, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -316,13 +315,13 @@ void ImageBufferController::addRequiredMemory(SvPb::ImageStructData& rStructData
 	if (rNeededBufferSpace > m_rDataController.getMaxBufferSizeInBytes())
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		std::string DebugString = SvUl::Format(_T("Failed because required memory size %lld\n"), rNeededBufferSpace / 1024 / 1024);
+		std::string DebugString = std::format(_T("Failed because required memory size {:d}\n"), rNeededBufferSpace / 1024 / 1024);
 		::OutputDebugString(DebugString.c_str());
 #endif
 		m_rDataController.clearImageBuffer(true);
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), static_cast<long>(rNeededBufferSpace / 1024 / 1024)));
-		msgList.push_back(SvUl::Format(_T("%d"), static_cast<long>(m_rDataController.getMaxBufferSizeInBytes() / 1024 / 1024)));
+		msgList.push_back(std::format(_T("{:d}"), static_cast<long>(rNeededBufferSpace / 1024 / 1024)));
+		msgList.push_back(std::format(_T("{:d}"), static_cast<long>(m_rDataController.getMaxBufferSizeInBytes() / 1024 / 1024)));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetBuffer_TooMuch, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();

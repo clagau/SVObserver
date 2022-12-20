@@ -14,7 +14,6 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/RegistryAccess.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #include "TriggerRecordData.h"
 #pragma endregion Includes
@@ -69,7 +68,7 @@ DataControllerBase::DataControllerBase()
 	{
 		DWORD errorCode = GetLastError();
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%x"), errorCode));
+		msgList.push_back(std::format(_T("{:x}"), errorCode));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
@@ -80,7 +79,7 @@ DataControllerBase::DataControllerBase()
 	{
 		DWORD errorCode = GetLastError();
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%x"), errorCode));
+		msgList.push_back(std::format(_T("{:x}"), errorCode));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);

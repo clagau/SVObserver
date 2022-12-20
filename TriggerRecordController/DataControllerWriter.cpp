@@ -24,7 +24,7 @@ namespace SvTrc
 std::string getNewSMIPName()
 {
 	static int smNumber = 0;
-	return SvUl::Format(_T("SVOIP%3d"), smNumber++);
+	return std::format(_T("SVOIP{:3d}"), smNumber++);
 }
 
 int getNeedSMSize(SMData smData)
@@ -608,7 +608,7 @@ void DataControllerWriter::resetImageRefCounter()
 	else
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
+		msgList.push_back(std::format(_T("{:d}"), m_maxNumberOfRequiredBuffer));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TooManyImageBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -870,8 +870,8 @@ void DataControllerWriter::prepareReset()
 		if (timeInS.count() > maxWaitTime)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), maxWaitTime));
-			msgList.push_back(SvUl::Format(_T("%d"), m_pCommonData->m_resetLockCounter));
+			msgList.push_back(std::format(_T("{:d}"), maxWaitTime));
+			msgList.push_back(std::format(_T("{:d}"), static_cast<long>(m_pCommonData->m_resetLockCounter)));
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CounterTimeOut, SvStl::SourceFileParams(StdMessageParams));
 

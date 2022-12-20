@@ -43,6 +43,7 @@
 #include <algorithm>
 #include <atomic>
 #include <comdef.h>
+#include <format>
 #include <future>
 #include <memory>
 #include <map>

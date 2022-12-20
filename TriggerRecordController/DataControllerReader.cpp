@@ -57,10 +57,8 @@ void TRControllerReaderDataPerIP::init(const std::string& smName)
 	}
 	
 	m_SMHandle = nullptr;
-	SvDef::StringVector msgList;
-	msgList.push_back(SvUl::Format(_T("%s"), smName.c_str()));
 	SvStl::MessageManager Exception(SvStl::MsgType::Data);
-	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, msgList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, {smName}, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }
 
@@ -586,10 +584,8 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 		if (!isOk)
 		{
 			assert(false);
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%s"), name.c_str()));
 			SvStl::MessageManager Exception(SvStl::MsgType::Data);
-			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, {name}, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
 	}
@@ -621,7 +617,7 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 		if (S_OK != errCode || buffer.empty())
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%X"), errCode));
+			msgList.push_back(std::format(_T("{:X}"), errCode));
 			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
@@ -633,7 +629,7 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 		else
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
+			msgList.push_back(std::format(_T("{:d}"), m_maxNumberOfRequiredBuffer));
 			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TooManyImageBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();

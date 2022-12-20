@@ -85,35 +85,35 @@ SVImagePolarTransform::SVImagePolarTransform( SVObjectClass* POwner, int StringR
 
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE
 	Mode = SvUl::LoadStdString( IDS_NEAREST_NEIGHBOR_STRING );
-	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVNearestNeighOverScanEnable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE );
+	Text = std::format( _T("{}+{} {}={:d},"), Mode, Overscan, Enable, static_cast<int>(SVNearestNeighOverScanEnable) ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE );
 	EnumTypes += Text;
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE
-	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVNearestNeighOverScanDisable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE );
+	Text = std::format( _T("{}+{} {}={:d},"), Mode, Overscan, Disable, static_cast<int>(SVNearestNeighOverScanDisable) ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE );
 	EnumTypes += Text;
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR
-	Text = SvUl::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVNearestNeighOverScanClear ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR );
+	Text = std::format( _T("{}+{}={:d},"), Mode, OverscanClear, static_cast<int>(SVNearestNeighOverScanClear) ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR );
 	EnumTypes += Text;
 
 	// M_BILINEAR + M_OVERSCAN_ENABLE
 	Mode = SvUl::LoadStdString( IDS_BILINEAR_STRING );
-	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVBilinearOverScanEnable ); // M_BILINEAR + M_OVERSCAN_ENABLE );
+	Text = std::format( _T("{}+{} {}={:d},"), Mode, Overscan, Enable, static_cast<int>(SVBilinearOverScanEnable) ); // M_BILINEAR + M_OVERSCAN_ENABLE );
 	EnumTypes += Text;
 	// M_BILINEAR + M_OVERSCAN_DISABLE
-	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_DISABLE );
+	Text = std::format( _T("{}+{} {}={:d},"), Mode, Overscan, Disable, static_cast<int>(SVBilinearOverScanClear) ); // M_BILINEAR + M_OVERSCAN_DISABLE );
 	EnumTypes += Text;
 	// M_BILINEAR + M_OVERSCAN_CLEAR
-	Text = SvUl::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_CLEAR );
+	Text = std::format( _T("{}+{}={:d},"), Mode, OverscanClear, static_cast<int>(SVBilinearOverScanClear) ); // M_BILINEAR + M_OVERSCAN_CLEAR );
 	EnumTypes += Text;
 
 	// M_BICUBIC + M_OVERSCAN_ENABLE
 	Mode = SvUl::LoadStdString( IDS_BICUBIC_STRING );
-	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVBiCubicOverScanEnable ); // M_BICUBIC + M_OVERSCAN_ENABLE );
+	Text = std::format( _T("{}+{} {}={:d},"), Mode, Overscan, Enable, static_cast<int>(SVBiCubicOverScanEnable) ); // M_BICUBIC + M_OVERSCAN_ENABLE );
 	EnumTypes += Text;
 	// M_BICUBIC + M_OVERSCAN_DISABLE
-	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVBiCubicOverScanDisable ); // M_BICUBIC + M_OVERSCAN_DISABLE );
+	Text = std::format( _T("{}+{} {}={:d},"), Mode, Overscan, Disable, static_cast<int>(SVBiCubicOverScanDisable) ); // M_BICUBIC + M_OVERSCAN_DISABLE );
 	EnumTypes += Text;
 	// M_BICUBIC + M_OVERSCAN_CLEAR
-	Text = SvUl::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVBiCubicOverScanClear ); // M_BICUBIC + M_OVERSCAN_CLEAR );
+	Text = std::format( _T("{}+{}={:d},"), Mode, OverscanClear, static_cast<int>(SVBiCubicOverScanClear) ); // M_BICUBIC + M_OVERSCAN_CLEAR );
 	EnumTypes += Text;
 
 	// And now set enum types...
@@ -333,7 +333,7 @@ bool SVImagePolarTransform::SetDefaultEquation( SVEquation* pEquation, const std
 		if( ! rName.empty() )
 		{
 			// Set equation...
-			pEquation->SetEquationText( SvUl::Format( _T( "\"%s\"" ), rName.c_str() ) );
+			pEquation->SetEquationText( std::format( _T( "\"{}\"" ), rName ) );
 			// Update symbol table and test...
 			if(false == (Result = pEquation->Test(pErrorMessages).bPassed))
 			{

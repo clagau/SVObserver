@@ -77,15 +77,15 @@ SVImageTransform::SVImageTransform( SVObjectClass* POwner, int StringResourceID 
 	std::string EnumTypes;
 	// M_NEAREST_NEIGHBOR 
 	Mode = SvUl::LoadStdString( IDS_NEAREST_NEIGHBOR_STRING );
-	Text = SvUl::Format( _T("%s=%d,"), Mode.c_str(), SVNearestNeighOverScanClear); // M_NEAREST_NEIGHBOR);
+	Text = std::format( _T("{}={:d},"), Mode, static_cast<int>(SVNearestNeighOverScanClear)); // M_NEAREST_NEIGHBOR);
 	EnumTypes += Text;
 	// M_BILINEAR
 	Mode = SvUl::LoadStdString( IDS_BILINEAR_STRING );
-	Text = SvUl::Format( _T("%s=%d,"), Mode.c_str(), SVBilinear);		// M_BILINEAR );
+	Text = std::format( _T("{}={:d},"), Mode, static_cast<int>(SVBilinear));		// M_BILINEAR );
 	EnumTypes += Text;
 	// M_BICUBIC
 	Mode = SvUl::LoadStdString( IDS_BICUBIC_STRING );
-	Text = SvUl::Format( _T("%s=%d,"), Mode.c_str(), SVBiCubic);			// M_BICUBIC );
+	Text = std::format( _T("{}={:d},"), Mode, static_cast<int>(SVBiCubic));			// M_BICUBIC );
 	EnumTypes += Text;
 	// And now set enum types...
 	m_interpolationMode.SetEnumTypes( EnumTypes.c_str() );

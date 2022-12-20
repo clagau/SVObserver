@@ -19,7 +19,6 @@
 #include "SVSharedMemoryLibrary/SMParameterStruct.h"
 #include "SVSharedMemoryLibrary/SVSharedMemorySettings.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -77,7 +76,7 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 	fillBufferData(rImageStruct, bufferStruct, bufferProps);
 
 	std::vector<std::string> newMemoryNames;
-	newMemoryNames.emplace_back(SvUl::Format("TRC.Images%d", memoryCounter++));
+	newMemoryNames.emplace_back(std::format("TRC.Images{:d}", memoryCounter++));
 	SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
 	m_sharedMemoryMap[newMemoryNames[0]] = std::make_unique<SvSml::SharedDataStore>();
 	
@@ -93,7 +92,7 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 			{
 				m_sharedMemoryMap[memoryName]->CreateDataStore(memoryName.c_str(), static_cast<DWORD> (bufferProps.Bytesize), requiredPerStore, smParam);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-				std::string DebugString = SvUl::Format(_T("ImageBufferSMHelper SM: %d - %s\n"), rImageStruct.structid(), memoryName.c_str());
+				std::string DebugString = std::format(_T("ImageBufferSMHelper SM: {:d} - {:d}\n"), rImageStruct.structid(), memoryName.c_str());
 				::OutputDebugString(DebugString.c_str());
 #endif
 			}
@@ -103,7 +102,7 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 		{ //if exception thrown because size bigger than DWORD, split it in more stores
 			if (SvStl::Tid_SharedMemorySizeTooBig == rExp.getMessage().m_AdditionalTextId)
 			{
-				auto newName = SvUl::Format("TRC.Images%d", memoryCounter++);
+				auto newName = std::format("TRC.Images{:d}", memoryCounter++);
 				m_sharedMemoryMap[newName] = std::make_unique<SvSml::SharedDataStore>();
 				newMemoryNames.emplace_back(newName);
 			}
@@ -125,7 +124,7 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 		if (S_OK != errCode || buffer.empty())
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%X"), errCode));
+			msgList.push_back(std::format(_T("{:X}"), errCode));
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
@@ -149,7 +148,7 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 		else
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
+			msgList.push_back(std::format(_T("{:d}"), m_maxNumberOfRequiredBuffer));
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TooManyImageBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();

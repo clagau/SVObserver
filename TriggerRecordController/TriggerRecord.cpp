@@ -18,7 +18,6 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 //#define TRACE_TRC
@@ -102,7 +101,7 @@ SvOi::ITRCImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 				{
 					pImagePos[pos] = -1;
 					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), pos));
+					msgList.push_back(std::format(_T("{:d}"), pos));
 					SvStl::MessageManager e(SvStl::MsgType::Log);
 					e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
@@ -191,7 +190,7 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 				else
 				{
 					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), pos));
+					msgList.push_back(std::format(_T("{:d}"), pos));
 					SvStl::MessageManager e(SvStl::MsgType::Log);
 					e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetValueWrongPos, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
@@ -201,7 +200,7 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ValueNotReady, SvStl::SourceFileParams(StdMessageParams));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-				std::string DebugString = SvUl::Format(_T("value not ready; %d\n"), m_rData.m_trId);
+				std::string DebugString = std::format(_T("value not ready; {}\n"), m_rData.m_trId);
 				::OutputDebugString(DebugString.c_str());
 #endif
 			}	
@@ -215,7 +214,7 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 	else
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), pos));
+		msgList.push_back(std::format(_T("{:d}"), pos));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetValueWrongPos, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -267,7 +266,7 @@ void TriggerRecord::initImages()
 				if (nullptr == pImage)
 				{
 					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
+					msgList.push_back(std::format(_T("{:d}"), pImagePos[i]));
 					SvStl::MessageManager e(SvStl::MsgType::Log);
 					e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
@@ -311,7 +310,7 @@ void TriggerRecord::setImages(const ITriggerRecordR& rDestTr)
 					if (nullptr == pImage)
 					{
 						SvDef::StringVector msgList;
-						msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
+						msgList.push_back(std::format(_T("{:d}"), pImagePos[i]));
 						SvStl::MessageManager e(SvStl::MsgType::Log);
 						e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 					}
@@ -409,7 +408,7 @@ SvOi::ITRCImagePtr TriggerRecord::createNewImageHandle(int pos)
 			{
 				pImagePos[pos] = -1;
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), pos));
+				msgList.push_back(std::format(_T("{:d}"), pos));
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
@@ -436,7 +435,7 @@ void TriggerRecord::writeValueData(const uint8_t* pMemSource, int32_t memBytes)
 	{
 		uint8_t* pData = m_rData.getValueData();
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		std::string DebugString = SvUl::Format(_T("writeValueData; %d\n"), getId());
+		std::string DebugString = std::format(_T("writeValueData; {:d}\n"), getId());
 		::OutputDebugString(DebugString.c_str());
 #endif
 		if (nullptr != pData && memBytes < m_dataListSize)
@@ -458,7 +457,7 @@ void TriggerRecord::writeValueData(const uint8_t* pMemSource, int32_t memBytes)
 	else
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		std::string DebugString = SvUl::Format(_T("writeValueData: tr not lockable\n"));
+		std::string DebugString = (_T("writeValueData: tr not lockable\n"));
 		::OutputDebugString(DebugString.c_str());
 #endif
 		SvStl::MessageManager e(SvStl::MsgType::Log);

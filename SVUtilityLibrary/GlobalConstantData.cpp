@@ -22,7 +22,7 @@ bool GlobalConstantData::operator<( const GlobalConstantData& Rhs ) const
 	switch( m_Value.vt )
 	{
 	case VT_R8:
-		LhsValue = SvUl::Format(_T("%.06f"), m_Value.dblVal );
+		LhsValue = std::format(_T("{:.6f}"), m_Value.dblVal );
 		break;
 	case VT_BSTR:
 		LhsValue = SvUl::createStdString(m_Value);
@@ -33,7 +33,7 @@ bool GlobalConstantData::operator<( const GlobalConstantData& Rhs ) const
 	switch( Rhs.m_Value.vt )
 	{
 	case VT_R8:
-		RhsValue = SvUl::Format(_T("%.06f"), Rhs.m_Value.dblVal );
+		RhsValue = std::format(_T("{:.6f}"), Rhs.m_Value.dblVal );
 		break;
 	case VT_BSTR:
 		RhsValue = SvUl::createStdString(Rhs.m_Value);

@@ -80,7 +80,7 @@ SharedMemReader::retvalues SharedMemReader::fillProductWithTR(int trigger, SvOi:
 
 		if (nullptr == rProduct.m_triggerRecordMap[ipPair.first])
 		{
-			SV_LOG_GLOBAL(trace) << SvUl::Format(_T("fillProductWithTR: TRC is null; %d\n"), ipPair.first);
+			SV_LOG_GLOBAL(trace) << std::format(_T("fillProductWithTR: TRC is null; {}\n"), ipPair.first);
 			return fail;
 		}
 	}
@@ -97,7 +97,7 @@ SharedMemReader::retvalues SharedMemReader::fillProductWithLastTR(SvOi::ITrigger
 			rProduct.m_triggerRecordMap[ipPair.first] = rTRC.createTriggerRecordObject(ipPair.second, rTRC.getLastTrId(ipPair.second));
 			if (nullptr == rProduct.m_triggerRecordMap[ipPair.first])
 			{
-				SV_LOG_GLOBAL(trace) << SvUl::Format(_T("fillProductWithLastTR: TRC is null; %d\n"), ipPair.first);
+				SV_LOG_GLOBAL(trace) << std::format(_T("fillProductWithLastTR: TRC is null; {}\n"), ipPair.first);
 				return fail;
 			}
 		}
@@ -124,7 +124,7 @@ SharedMemReader::retvalues SharedMemReader::fillProductWithLastTR(SvOi::ITrigger
 						trPair.second = rTRC.createTriggerRecordObjectPerTriggerCount(iter->second, lowestTriggerCount);
 						if (nullptr == trPair.second)
 						{
-							SV_LOG_GLOBAL(trace) << SvUl::Format(_T("fillProductWithLastTR: TRC is null; %d\n"), trPair.first);
+							SV_LOG_GLOBAL(trace) << std::format(_T("fillProductWithLastTR: TRC is null; {}\n"), trPair.first);
 							return fail;
 						}
 					}
@@ -187,7 +187,7 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 				}
 				else
 				{
-					SV_LOG_GLOBAL(trace) << SvUl::Format(_T("_GetProduct: TRC is null; Reject\n"));
+					SV_LOG_GLOBAL(trace) << _T("_GetProduct: TRC is null; Reject\n");
 					return fail;
 				}				
 			}
@@ -253,7 +253,7 @@ SharedMemReader::retvalues SharedMemReader::fillTrcInFailstatusList(LPCTSTR Moni
 					}
 					else
 					{
-						SV_LOG_GLOBAL(trace) << SvUl::Format(_T("fillTrcInFailstatusList: TRC is null; %d\n"), ipPair.first);
+						SV_LOG_GLOBAL(trace) << std::format(_T("fillTrcInFailstatusList: TRC is null; {}\n"), ipPair.first);
 						return fail;
 					}
 				}

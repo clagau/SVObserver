@@ -2,7 +2,6 @@
 #include "MonitorEntry.h"
 #include "MonitorListCpy.h"
 #include "Definitions/GlobalConst.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVPRotobuf\MonitorListStore.h"
 namespace SvSml
 {

@@ -13,12 +13,11 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SourceFileParams.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 void MesManHelper::ThrowCreateFileMappingFailed(LPCSTR MapFileName, const SvStl::SourceFileParams& rFileParams)
 {
-	std::string LastError = SvUl::Format(_T("%s LastError:  %i"), MapFileName, GetLastError());
+	std::string LastError = std::format(_T("{} LastError:  {}"), MapFileName, GetLastError());
 	SvDef::StringVector msgList;
 	msgList.push_back(LastError);
 	SvStl::MessageManager MesMan(SvStl::MsgType::Log);
@@ -27,7 +26,7 @@ void MesManHelper::ThrowCreateFileMappingFailed(LPCSTR MapFileName, const SvStl:
 }
 void MesManHelper::ThrowMapViewOfFileFailed(LPCSTR MapFileName, const SvStl::SourceFileParams& rFileParams)
 {
-	std::string LastError = SvUl::Format(_T("%s LastError:  %i"), MapFileName, GetLastError());
+	std::string LastError = std::format(_T("{} LastError:  {}"), MapFileName, GetLastError());
 	SvDef::StringVector msgList;
 	msgList.push_back(LastError);
 
@@ -38,7 +37,7 @@ void MesManHelper::ThrowMapViewOfFileFailed(LPCSTR MapFileName, const SvStl::Sou
 
 void MesManHelper::LogUnMapViewOfFileFailed(LPCSTR MapFileName, const SvStl::SourceFileParams& rFileParams)
 {
-	std::string LastError = SvUl::Format(_T("%s LastError:  %i"), MapFileName, GetLastError());
+	std::string LastError = std::format(_T("{} LastError:  {}"), MapFileName, GetLastError());
 	SvDef::StringVector msgList;
 	msgList.push_back(LastError);
 	SvStl::MessageManager MesMan(SvStl::MsgType::Log);

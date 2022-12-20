@@ -67,7 +67,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	// Initialize input images array.
 	for (i = 0; i < m_Data.m_aInputImageInfo.size(); i++)
 	{
-		std::string l_Name = SvUl::Format(_T("ExternalToolTaskImage%d"), i);
+		std::string l_Name = std::format(_T("ExternalToolTaskImage{:d}"), i);
 		// this object will be filled in SVTaskObject::ConnectAllInputs
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
 		m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
@@ -823,7 +823,7 @@ std::vector<SVImageDefinitionStruct> SVExternalToolTask::initializeInputImages(s
 		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getFinalObject());
 		if (pImage)
 		{
-			auto imageNumber = SvUl::Format(_T("Input image #%d: "), i);
+			auto imageNumber = std::format(_T("Input image #{:d}: "), i);
 
 			switch (pImage->GetObjectSubType())
 			{
@@ -1459,7 +1459,7 @@ bool SVExternalToolTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 				_bstr_t bMessage;
 				HRESULT hrError = GetDLLMessageString(hr, bMessage.GetAddress());
 				std::string dllMessageString = (hrError == E_NOTIMPL) ? std::string("<not implemented>") : SvUl::createStdString(bMessage);
-				msgList.push_back(SvUl::Format(_T("%ld: %s"), hr, dllMessageString.c_str()));
+				msgList.push_back(std::format(_T("{:d}: {}"), hr, dllMessageString));
 				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				pErrorMessages->push_back(Msg);
 			}

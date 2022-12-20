@@ -154,7 +154,7 @@ namespace SvOp
 			// Check bitness
 			if (CheckBitness(rDllPath.c_str()) != ImageFileMachineAMD64)
 			{
-				std::string Message = SvUl::Format(_T("%s is not 64 Bit!"), rDllPath.c_str());
+				std::string Message = std::format(_T("{} is not 64 Bit!"), rDllPath.c_str());
 				rStatusMsgs.emplace_back(Message);
 			}
 		}
@@ -368,7 +368,7 @@ namespace SvOp
 						}
 						else
 						{
-							std::string Version = SvUl::Format(_T("Version %d"), lTmp);
+							std::string Version = std::format(_T("Version {:d}"), lTmp);
 							rStatusMsgs.emplace_back(Version);
 						}
 					}
@@ -620,7 +620,7 @@ namespace SvOp
 			if (S_OK != result)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("0x%xld"), result));
+				msgList.push_back(std::format(_T("{:#x}ld"), result));
 				msgList.push_back(m_dllName);
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(static_cast<DWORD> (result), SvStl::Tid_RunTool_Exception, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -693,7 +693,7 @@ namespace SvOp
 			{
 
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("0x%xld"), result));
+				msgList.push_back(std::format(_T("{:#x}ld"), result));
 				msgList.push_back(m_dllName);
 				
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
@@ -907,7 +907,7 @@ namespace SvOp
 			for (auto& rIiis : *pVector)
 			{
 				rIiis = InputImageInformationStruct();
-				rIiis.DisplayName = SvUl::Format(_T("Image %02d"), ++i).c_str();
+				rIiis.DisplayName = std::format(_T("Image {:2d}"), ++i).c_str();
 				rIiis.HelpText = "No HelpText available!";
 				rIiis.allowBlackAndWhite();
 			}

@@ -2,7 +2,6 @@
 #include "StdAfx.h"
 #include "MonitorEntry.h"
 #include "SVMatroxLibrary/MatroxImageProps.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvSml

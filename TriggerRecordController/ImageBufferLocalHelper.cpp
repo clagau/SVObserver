@@ -13,7 +13,6 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary\StringHelper.h"
 #pragma warning( disable: 4244 )	//Disable warning for conversion
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
@@ -55,7 +54,7 @@ int ImageBufferLocalHelper::createMilBufferinMemory(int requiredNumbers, SvPb::I
 		if (S_OK != errCode || buffer.empty())
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%X"), errCode));
+			msgList.push_back(std::format(_T("{:X}"), errCode));
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
