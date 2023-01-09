@@ -21,7 +21,7 @@ constexpr int32_t cMicrosecondsPerMillisecond = 1000;
 constexpr uint32_t cTimeWrap = 65536;		//Constant when time offset negative need to wrap it by 16 bits
 
 constexpr LPCTSTR cOperationDataName = _T("_OperationData.log");
-constexpr LPCTSTR cPlcOperationDataHeading = _T("ContentID;Channel;Timestamp;TriggerTimeStamp;TriggerDataValid;UnitControl;Sequence;TriggerIndex;ObjectType;ObjectID\r\n");
+constexpr LPCTSTR cPlcOperationDataHeading = _T("ContentID;Channel;Timestamp;TriggerTimeStamp;TriggerDataValid;UnitControl;Sequence;TriggerIndex;ObjectType;ObjectID\n");
 constexpr LPCTSTR cOperationDataFormat = _T("%u; %hhu; %f; %f; %d; %hhu; %hhd; %hhu; %hhu; %lu\n");
 
 HardwareTriggerSource::HardwareTriggerSource(const PlcInputParam& rPlcInput) : TriggerSource(rPlcInput.m_reportTriggerCallBack)
@@ -59,7 +59,7 @@ HRESULT HardwareTriggerSource::initialize()
 		}
 	}
 
-	if (LogType::PlcData == m_plcInput.m_logType)
+	if (LogType::PlcOperationData == (m_plcInput.m_logType & LogType::PlcOperationData))
 	{
 		std::string fileName {m_plcInput.m_logFileName + cOperationDataName};
 		if (nullptr != m_logOperationDataFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
@@ -136,7 +136,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 
 		if (m_logOperationDataFile.is_open())
 		{
-			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel, m_inputData.m_notificationTime,
+			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel + 1, m_inputData.m_notificationTime,
 				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_objectType, rChannel.m_objectID);
 			BOOST_LOG(m_logger) << fileData.c_str();
 		}
@@ -168,7 +168,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 
 		if (m_logOperationDataFile.is_open())
 		{
-			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel, m_inputData.m_notificationTime,
+			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel + 1, m_inputData.m_notificationTime,
 				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_currentObjectType, rChannel.m_currentObjectID);
 			BOOST_LOG(m_logger) << fileData.c_str();
 		}

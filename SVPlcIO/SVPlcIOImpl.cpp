@@ -73,7 +73,7 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 		m_plcInputParam.m_PD0Version = buffer;
 		m_plcInputParam.m_plcTransferTime = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str()));
 		m_plcInputParam.m_plcNodeID = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str()));
-		m_plcInputParam.m_logType = static_cast<LogType> (::GetPrivateProfileInt(cSettingsGroup, cLogType, 0, iniFile.c_str()));
+		m_plcInputParam.m_logType = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cLogType, 0, iniFile.c_str()));
 		//Check if logging should stay active!
 		if (LogType::NoLogging != m_plcInputParam.m_logType)
 		{
@@ -188,17 +188,20 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 
 	if (false == m_engineStarted)
 	{
-		if(LogType::PlcInOut == m_plcInputParam.m_logType)
+		if (LogType::PlcIn == (m_plcInputParam.m_logType & LogType::PlcIn))
 		{
-			std::string fileName = m_plcInputParam.m_logFileName;
+			std::string fileName {m_plcInputParam.m_logFileName};
 			fileName += cPlcInputName;
 			m_logInFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
-			if(m_logInFile.is_open())
+			if (m_logInFile.is_open())
 			{
 				std::string fileData(cPlcInputHeading);
 				m_logInFile.write(fileData.c_str(), fileData.size());
 			}
-			fileName = m_plcInputParam.m_logFileName;
+		}
+		if (LogType::PlcOut == (m_plcInputParam.m_logType & LogType::PlcOut))
+		{
+			std::string fileName {m_plcInputParam.m_logFileName};
 			fileName += cPlcOutputName;
 			m_logOutFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
 			if (m_logOutFile.is_open())

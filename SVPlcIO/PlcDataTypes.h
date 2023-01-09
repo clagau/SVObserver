@@ -67,11 +67,13 @@ enum class TriggerType
 	SimulatedTrigger
 };
 
-enum class LogType
+enum LogType : uint16_t
 {
-	NoLogging,
-	PlcInOut,
-	PlcData,
+	NoLogging = 0x0000,
+	PlcIn = 0x0001,
+	PlcOut = 0x0002,
+	PlcContentData = 0x0004,
+	PlcOperationData = 0x0008,
 };
 
 struct PlcInputParam
@@ -83,7 +85,7 @@ struct PlcInputParam
 	std::string m_PD0Version {};
 	std::string m_simulationFile {};
 	std::string m_logFileName {};
-	LogType m_logType {LogType::NoLogging};
+	uint16_t m_logType {LogType::NoLogging};
 };
 
 } //namespace SvPlc

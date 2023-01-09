@@ -228,7 +228,7 @@ HRESULT CifXCard::OpenAndInitializeCifX()
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxInitializationSuccess, m_sourceFileParam);
 
-		if (LogType::PlcData == m_rPlcInput.m_logType)
+		if (LogType::PlcContentData == (m_rPlcInput.m_logType & LogType::PlcContentData))
 		{
 			std::string fileName {m_rPlcInput.m_logFileName + cContentDataName};
 			if (nullptr != m_logContentFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
