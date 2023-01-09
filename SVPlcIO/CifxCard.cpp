@@ -75,10 +75,7 @@ void CifXCard::readProcessData(uint32_t notification)
 	double timeStamp {SvUl::GetTimeStamp()};
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
 	static double timeStampPrev {0.0};
-	if ((timeStamp - timeStampPrev) > 2.0)
-	{
-		::OutputDebugString(SvUl::Format(_T("%f; %f\n"), timeStamp, timeStampPrev).c_str());
-	}
+	::OutputDebugString(SvUl::Format(_T("%f; %f\n"), timeStamp, timeStampPrev).c_str());
 	timeStampPrev = timeStamp;
 #endif
 	if (notification != m_notifyType || false == m_cifxLoadLib.isInitilized())

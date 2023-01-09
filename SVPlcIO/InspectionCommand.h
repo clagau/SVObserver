@@ -24,6 +24,7 @@ struct ChannelIn1
 public:
 	ChannelIn1() = default;
 	~ChannelIn1() = default;
+	auto operator<=>(const ChannelIn1&) const = default;
 #pragma region Member Variables
 public:
 	uint8_t m_unitControl{ 0 };				//When true then do inspection
@@ -53,7 +54,7 @@ struct ChannelIn2
 public:
 	ChannelIn2() = default;
 	~ChannelIn2() = default;
-
+	auto operator<=>(const ChannelIn2&) const = default;
 #pragma region Member Variables
 public:
 	uint8_t m_unitControl {0};				//When true then do inspection

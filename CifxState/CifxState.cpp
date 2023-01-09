@@ -7,12 +7,14 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include <array>
 #include <cifXErrors.h>
 #include <cifXUser.h>
 #include <Epl_Common_Defines.h>
 #include <EplCn_If_Public.h>
 #include <Hil_ApplicationCmd.h>
 #include "Triggering/CifxLoadLibrary.h"
+#include "SVPlcIO/Telegram.h"
 #pragma endregion Includes
 
 //This is to avoid CheckInclude false positives EPLCN_IF_QUEUE_NAME
@@ -67,8 +69,7 @@ CIFXHANDLE g_hChannel {nullptr};
 uint32_t g_plcNodeID {cCifXNodeId};
 uint32_t g_notificationType { 0UL };
 std::atomic<int> g_notificationSync{ 0 };
-uint8_t g_ReadBuffer[cMaxPLC_DataSize];
-std::string g_version;
+uint8_t g_PlcBuffer[cMaxPLC_DataSize];
 double g_lastTimestamp {0.0};
 double g_intDeltaMin {0.0};
 double g_intDeltaMax {0.0};
@@ -88,6 +89,9 @@ enum CifxMessage : int
 	CifxDMASuccess,
 	CifxRegisterNotifySyncSuccess,
 	CifxBusStateOnSuccess,
+	CifxPlcDataVersion,
+	CifxConfigData,
+	CifxOperationData,
 	CifxNotificationsReceived,
 	CifxTestSuccess,
 	LoadLibraryError = 1000,
@@ -120,8 +124,11 @@ static const std::map<CifxMessage, LPCTSTR> cErrorMessages
 	{CifxMessage::CifxDMASuccess, "DMA successfully set\n"},
 	{CifxMessage::CifxRegisterNotifySyncSuccess, "Sync notify successfully registered\n"},
 	{CifxMessage::CifxBusStateOnSuccess, "Bus state on successfully set\n"},
+	{CifxMessage::CifxPlcDataVersion, "PLC Data Version {}\n"},
+	{CifxMessage::CifxConfigData, "PLC Config Layout {}\n"},
+	{CifxMessage::CifxOperationData, "PLC Operation Data\n"},
 	{CifxMessage::CifxNotificationsReceived, "Notifications received {}\n"},
-	{CifxMessage::CifxTestSuccess, "Cfix test successful {}\n"},
+	{CifxMessage::CifxTestSuccess, "Cfix test successful\n"},
 	{CifxMessage::LoadLibraryError, "Could not load cifX32DLL.dll [{:#x}]\n"},
 	{CifxMessage::OpenDriverError, "Driver could not be opened [{:#x}]\n"},
 	{CifxMessage::OpenChannelError, "Channel could not be opened [{:#x}]\n"},
@@ -176,26 +183,56 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 	if (g_notificationType == notification)
 	{
 		static double timeStampPrev {0.0};
+		static uint16_t contentID {0};
+		static std::string version {};
+		static SvPlc::TelegramLayout layout {SvPlc::TelegramLayout::NoneLayout};
+		static bool operationData {false};
 		double timeStamp = GetTimeStamp();
-		int32_t result = g_cifxLoadLib.m_pChannelIORead(g_hChannel, 0, 0, cMaxPLC_DataSize, g_ReadBuffer, cTimeout);
+		int32_t result = g_cifxLoadLib.m_pChannelIORead(g_hChannel, 0, 0, cMaxPLC_DataSize, g_PlcBuffer, cTimeout);
 
 		if (CIFX_NO_ERROR == result)
 		{
 			std::string outputText {std::to_string(timeStamp) + ';' + std::to_string(timeStampPrev) + '\n'};
 			::OutputDebugString(outputText.c_str());
-			//Message type is Request and content is version
-			if (2 == g_ReadBuffer[4] && 1 == g_ReadBuffer[5])
-			{
-				g_version = "with PLC Data Version=" + std::to_string(g_ReadBuffer[20]);
-				g_version += '.';
-				g_version += std::to_string(g_ReadBuffer[21]);
+			SvPlc::Telegram& rTelegram = reinterpret_cast<SvPlc::Telegram&> (g_PlcBuffer);
 
-				if (g_lastTimestamp == 0.0)
+			switch (rTelegram.m_content)
 				{
-					g_lastTimestamp = timeStamp;
+				case SvPlc::TelegramContent::VersionData:
+				{
+					std::string reqVersion{std::to_string(g_PlcBuffer[20]) + '.' + std::to_string(g_PlcBuffer[21])};
+					if (version != reqVersion)
+					{
+						version = reqVersion;
+						printMessage(CifxMessage::CifxPlcDataVersion, 0, version.c_str());
 				}
-				else
+					layout = SvPlc::TelegramLayout::NoneLayout;
+					operationData = false;
+					break;
+				}
+				case SvPlc::TelegramContent::ConfigurationData:
 				{
+					if (layout != rTelegram.m_layout)
+					{
+						layout = rTelegram.m_layout;
+						printMessage(CifxMessage::CifxConfigData, 0, std::to_string(layout).c_str());
+					}
+					break;
+				}
+				case SvPlc::TelegramContent::OperationData:
+				{
+					if (false == operationData)
+					{
+						operationData = true;
+						printMessage(CifxMessage::CifxOperationData);
+					}
+					memset(g_PlcBuffer + sizeof(SvPlc::Telegram), 0, cMaxPLC_DataSize - sizeof(SvPlc::Telegram));
+					break;
+				}
+			}
+
+			if (g_lastTimestamp > 0.0)
+			{
 					double diff = timeStamp - g_lastTimestamp;
 					if (g_intDeltaMax < diff && diff < 10.0)
 					{
@@ -207,8 +244,19 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 					}
 					g_lastTimestamp = timeStamp;
 				}
+			g_lastTimestamp = timeStamp;
+
+			++contentID;
+			if (0 == contentID)
+			{
+				++contentID;
 			}
-			g_cifxLoadLib.m_pChannelIOWrite(g_hChannel, 0, 0, cMaxPLC_DataSize, g_ReadBuffer, cTimeout);
+			rTelegram.m_referenceID = rTelegram.m_contentID;
+			rTelegram.m_contentID = contentID;
+			rTelegram.m_type = SvPlc::TelegramType::Response;
+			rTelegram.m_systemStatus = SvPlc::SystemStatus::AppReady;
+
+			g_cifxLoadLib.m_pChannelIOWrite(g_hChannel, 0, 0, cMaxPLC_DataSize, g_PlcBuffer, cTimeout);
 		}
 		timeStampPrev = timeStamp;
 
@@ -423,7 +471,7 @@ int main(int argc, char* args[])
 		}
 	}
 
-	memset(g_ReadBuffer, 0, cMaxPLC_DataSize);
+	memset(g_PlcBuffer, 0, cMaxPLC_DataSize);
 
 	DWORD size {cBuffSize};
 	TCHAR buffer[cBuffSize];
@@ -615,15 +663,14 @@ int main(int argc, char* args[])
 		}
 
 		///Sleep for 10 seconds to check if interrupts are received
-		Sleep(cResetTimeout*2);
-
+		Sleep(cResetTimeout * 2);
 		std::string notifications;
 		notifications = "Notifications=" + std::to_string(g_notificationSync) + "\nInterrupt Delta Min = " + std::to_string(g_intDeltaMin) + " Interrupt Delta Max = " + std::to_string(g_intDeltaMax);
 		printMessage(CifxMessage::CifxNotificationsReceived, 0, notifications.c_str());
 	}
 
 	closeCifX();
-	printMessage(CifxMessage::CifxTestSuccess, 0, g_version.c_str());
+	printMessage(CifxMessage::CifxTestSuccess);
 	std::cout << std::format(cResult, 0);
 	return 0;
 }

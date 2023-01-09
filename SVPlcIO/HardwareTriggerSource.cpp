@@ -84,27 +84,15 @@ void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelOu
 
 void HardwareTriggerSource::analyzeTelegramData()
 {
-	InputData inputData = m_cifXCard.popInputDataQueue();
-	while (TelegramContent::NoneContent != inputData.m_telegram.m_content)
+	m_inputData = m_cifXCard.popInputDataQueue();
+	while (TelegramContent::NoneContent != m_inputData.m_telegram.m_content)
 	{
-		if (TelegramContent::OperationData == inputData.m_telegram.m_content)
+		if (TelegramContent::OperationData == m_inputData.m_telegram.m_content)
 		{
-			m_changedData = false;
-			uint32_t triggerOffset = m_cifXCard.getTriggerDataOffset();
-			//If new trigger data check for new triggers
-			if (m_cifXCard.isProtocolInitialized() && 0 != memcmp(&m_inputData.m_dynamicData[0] + triggerOffset, &inputData.m_dynamicData[0] + triggerOffset, cCmdDataSize - triggerOffset))
-			{
-				m_changedData = true;
-				std::swap(m_inputData, inputData);
-			}
-			else
-			{
-				m_inputData.m_telegram = inputData.m_telegram;
-				m_inputData.m_notificationTime = inputData.m_notificationTime;
-			}
 			checkForNewTriggers();
+			m_prevInputData = m_inputData;
 		}
-		inputData = m_cifXCard.popInputDataQueue();
+		m_inputData = m_cifXCard.popInputDataQueue();
 	}
 }
 
@@ -136,12 +124,14 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 	PlcVersion plcVersion = m_cifXCard.getPlcVersion();
 	if (PlcVersion::PlcData1 == plcVersion)
 	{
-		InspectionCommand1 inspectionCmd;
-		memcpy(&inspectionCmd, &m_inputData.m_dynamicData[0], sizeof(inspectionCmd));
-		const ChannelIn1& rChannel = inspectionCmd.m_channels[channel];
-		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp, m_inputData.m_notificationTime);
-
-		bool channelTriggerDataValid = m_changedData && (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+		InspectionCommand1& rInspectionCmd = reinterpret_cast<InspectionCommand1&> (m_inputData.m_dynamicData[0]);
+		const ChannelIn1& rChannel = rInspectionCmd.m_channels[channel];
+		const InspectionCommand1& rPrevInspectionCmd = reinterpret_cast<InspectionCommand1&> (m_prevInputData.m_dynamicData[0]);
+		const ChannelIn1& rPrevChannel = rPrevInspectionCmd.m_channels[channel];
+		double triggerTimeStamp = getExecutionTime(rInspectionCmd.m_socRelative, rChannel.m_timeStamp, m_inputData.m_notificationTime);
+	
+		bool channelTriggerDataValid {rChannel != rPrevChannel};
+		channelTriggerDataValid &= (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
 		channelTriggerDataValid &= m_previousSequenceCode[channel] != rChannel.m_sequence && (0 != rChannel.m_sequence % 2);
 
 		if (m_logOperationDataFile.is_open())
@@ -159,7 +149,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 			report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
 			report.m_triggerPerObjectID = rChannel.m_triggerCount;
 			report.m_triggerTimestamp = triggerTimeStamp;
-			report.m_isValid = (0 != inspectionCmd.m_socRelative);
+			report.m_isValid = (0 != rInspectionCmd.m_socRelative);
 
 			sendTriggerReport(report);
 			m_previousSequenceCode[channel] = rChannel.m_sequence;
@@ -167,12 +157,14 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 	}
 	else if (PlcVersion::PlcData2 == plcVersion)
 	{
-		InspectionCommand2 inspectionCmd;
-		memcpy(&inspectionCmd, &m_inputData.m_dynamicData[0], sizeof(inspectionCmd));
-		const ChannelIn2& rChannel = inspectionCmd.m_channels[channel];
-		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp1, m_inputData.m_notificationTime);
+		InspectionCommand2& rInspectionCmd = reinterpret_cast<InspectionCommand2&> (m_inputData.m_dynamicData[0]);
+		const ChannelIn2& rChannel = rInspectionCmd.m_channels[channel];
+		const InspectionCommand2& rPrevInspectionCmd = reinterpret_cast<InspectionCommand2&> (m_prevInputData.m_dynamicData[0]);
+		const ChannelIn2& rPrevChannel = rPrevInspectionCmd.m_channels[channel];
+		double triggerTimeStamp = getExecutionTime(rInspectionCmd.m_socRelative, rChannel.m_timeStamp1, m_inputData.m_notificationTime);
 
-		bool channelTriggerDataValid = m_changedData && (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+		bool channelTriggerDataValid {rChannel != rPrevChannel};
+		channelTriggerDataValid &= (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
 
 		if (m_logOperationDataFile.is_open())
 		{
@@ -189,7 +181,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 			report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
 			report.m_triggerPerObjectID = rChannel.m_triggerCount;
 			report.m_triggerTimestamp = triggerTimeStamp;
-			report.m_isValid = (0 != inspectionCmd.m_socRelative);
+			report.m_isValid = (0 != rInspectionCmd.m_socRelative);
 
 			sendTriggerReport(report);
 		}

@@ -41,10 +41,10 @@ private:
 	int8_t m_previousSequenceCode[cNumberOfChannels] = { 0, 0, 0, 0 };
 
 	InputData m_inputData {};
+	InputData m_prevInputData {};
 
 	CifXCard m_cifXCard;
 	bool m_initialized {false};
-	bool m_changedData {false};
 
 	std::filebuf m_logOperationDataFile;
 	typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_ostream_backend> text_sink;
