@@ -11,7 +11,6 @@
 #include "HardwareTriggerSource.h"
 #include "PowerLinkConnection.h"
 #include "Telegram.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvPlc
@@ -22,7 +21,7 @@ constexpr uint32_t cTimeWrap = 65536;		//Constant when time offset negative need
 
 constexpr LPCTSTR cOperationDataName = _T("_OperationData.log");
 constexpr LPCTSTR cPlcOperationDataHeading = _T("ContentID;Channel;Timestamp;TriggerTimeStamp;TriggerDataValid;UnitControl;Sequence;TriggerIndex;ObjectType;ObjectID\n");
-constexpr LPCTSTR cOperationDataFormat = _T("%u; %hhu; %f; %f; %d; %hhu; %hhd; %hhu; %hhu; %lu\n");
+constexpr LPCTSTR cOperationDataFormat = _T("{:d}; {:d}; {:f}; {:f}; {:b}; {:d}; {:d}; {:d}; {:d}; {:d}\n");
 
 HardwareTriggerSource::HardwareTriggerSource(const PlcInputParam& rPlcInput) : TriggerSource(rPlcInput.m_reportTriggerCallBack)
 , m_plcInput {rPlcInput}
@@ -136,7 +135,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 
 		if (m_logOperationDataFile.is_open())
 		{
-			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel + 1, m_inputData.m_notificationTime,
+			std::string fileData = std::format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel + 1, m_inputData.m_notificationTime,
 				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_objectType, rChannel.m_objectID);
 			BOOST_LOG(m_logger) << fileData.c_str();
 		}
@@ -168,7 +167,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 
 		if (m_logOperationDataFile.is_open())
 		{
-			std::string fileData = SvUl::Format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel + 1, m_inputData.m_notificationTime,
+			std::string fileData = std::format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel + 1, m_inputData.m_notificationTime,
 				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_currentObjectType, rChannel.m_currentObjectID);
 			BOOST_LOG(m_logger) << fileData.c_str();
 		}

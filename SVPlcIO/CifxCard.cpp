@@ -18,7 +18,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/SVClock.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 //#define TRACE_PLC
@@ -75,7 +74,7 @@ void CifXCard::readProcessData(uint32_t notification)
 	double timeStamp {SvUl::GetTimeStamp()};
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
 	static double timeStampPrev {0.0};
-	::OutputDebugString(SvUl::Format(_T("%f; %f\n"), timeStamp, timeStampPrev).c_str());
+	::OutputDebugString(std::format(_T("{}; {}\n"), timeStamp, timeStampPrev).c_str());
 	timeStampPrev = timeStamp;
 #endif
 	if (notification != m_notifyType || false == m_cifxLoadLib.isInitilized())
@@ -99,7 +98,7 @@ void CifXCard::readProcessData(uint32_t notification)
 		std::string fileData;
 		if (m_logContentFile.is_open())
 		{
-			fileData = SvUl::Format(_T("%f; %u; %u; %u; %u;"), timeStamp, telegram.m_contentID, telegram.m_referenceID, telegram.m_content, telegram.m_layout);
+			fileData = std::format(_T("{:f}; {:d}; {:d}; {:d}; {:d};"), timeStamp, telegram.m_contentID, telegram.m_referenceID, static_cast<uint8_t> (telegram.m_content), static_cast<uint8_t> (telegram.m_layout));
 		}
 
 		if (prevContentID != telegram.m_contentID)
@@ -115,7 +114,7 @@ void CifXCard::readProcessData(uint32_t notification)
 
 					if (m_logContentFile.is_open())
 					{
-						fileData += SvUl::Format(_T("0x%X"), plcVersion);
+						fileData += std::format(_T("{:X}"), plcVersion);
 					}
 					break;
 				}
