@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <direct.h>
 #include "SVGlobal.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 TCHAR SVRCCurrentSVCPathName[ _MAX_PATH ];

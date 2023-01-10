@@ -93,7 +93,7 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 			aIndex[0] = x;
 			aIndex[1] = y;
 			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, 1);
-			Log_Assert(hr == S_OK);
+			assert(hr == S_OK);
 			if (S_OK != hr)
 			{
 				::OutputDebugString("Error in function MultiDimSetAt");
@@ -449,7 +449,7 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 			aIndex[1] = y;
 			double value = (x + 1) * (y + 1);
 			hr = tdimsa.MultiDimSetAt(aIndex, value);
-			Log_Assert(S_OK == hr);
+			assert(S_OK == hr);
 		}
 	}
 	CComSafeArray<double> tdimsb(tdimsa);
@@ -492,12 +492,12 @@ HRESULT CDllTool::run_copyTableInput2Output()
 		m_ResultTables[FirstResultTable].vt = VT_EMPTY;
 	}
 
-	Log_Assert(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
+	assert(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
 		int dim = saInput.GetDimensions();
-		Log_Assert(dim == 2);
+		assert(dim == 2);
 		if (dim != 2)
 		{
 			::OutputDebugString("Input array not dimension size 2!");
@@ -523,7 +523,7 @@ HRESULT CDllTool::run_copyTableInput2Output()
 					}
 
 					HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
-					Log_Assert(S_OK == hr);
+					assert(S_OK == hr);
 					if (S_OK != hr)
 					{
 						::OutputDebugString("Error in function MultiDimSetAt");
@@ -545,12 +545,12 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 
 
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].Clear();
-	Log_Assert(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
+	assert(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
 		int dim = saInput.GetDimensions();
-		Log_Assert(dim == 2);
+		assert(dim == 2);
 		if (dim != 2)
 		{
 			::OutputDebugString("Input array not dimension size 2!");
@@ -601,7 +601,7 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 	{
 		CComSafeArray<BSTR> saInput((m_aInputValues[InputValue_TABLE_NAMES].parray));
 		int dim = saInput.GetDimensions();
-		Log_Assert(dim == 1);
+		assert(dim == 1);
 		if (dim != 1)
 		{
 			::OutputDebugString("Input array not dimension size 1!");
@@ -652,7 +652,7 @@ HRESULT CDllTool::run()
 
 	m_aResultValues[ResultValue_DOUBLE_ARRAY].Clear();
 
-	Log_Assert(m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8));
+	assert(m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		int inputarrayLen = 0;
@@ -677,7 +677,7 @@ HRESULT CDllTool::run()
 
 	m_aResultValues[ResultValue_INT_ARRAY].Clear();
 
-	Log_Assert(m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4));
+	assert(m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4));
 	if (m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))
 	{
 		CComSafeArray<int> saInput((m_aInputValues[InputValue_INT_ARRAY].parray));
@@ -699,7 +699,7 @@ HRESULT CDllTool::run()
 		}
 	}
 
-	Log_Assert(m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8));
+	assert(m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8))
 	{
 		double out {0};
