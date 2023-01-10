@@ -183,21 +183,22 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 	if (g_notificationType == notification)
 	{
 		static double timeStampPrev {0.0};
-		static uint16_t contentID {0};
-		static std::string version {};
 		static SvPlc::TelegramLayout layout {SvPlc::TelegramLayout::NoneLayout};
-		static bool operationData {false};
 		double timeStamp = GetTimeStamp();
 		int32_t result = g_cifxLoadLib.m_pChannelIORead(g_hChannel, 0, 0, cMaxPLC_DataSize, g_PlcBuffer, cTimeout);
 
 		if (CIFX_NO_ERROR == result)
 		{
+			static uint16_t contentID {0};
+			static std::string version {};
+			static bool operationData {false};
+
 			std::string outputText {std::to_string(timeStamp) + ';' + std::to_string(timeStampPrev) + '\n'};
 			::OutputDebugString(outputText.c_str());
 			SvPlc::Telegram& rTelegram = reinterpret_cast<SvPlc::Telegram&> (g_PlcBuffer);
 
 			switch (rTelegram.m_content)
-				{
+			{
 				case SvPlc::TelegramContent::VersionData:
 				{
 					std::string reqVersion{std::to_string(g_PlcBuffer[20]) + '.' + std::to_string(g_PlcBuffer[21])};
@@ -233,17 +234,16 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 
 			if (g_lastTimestamp > 0.0)
 			{
-					double diff = timeStamp - g_lastTimestamp;
-					if (g_intDeltaMax < diff && diff < 10.0)
-					{
-						g_intDeltaMax = diff;
-					}
-					if (g_intDeltaMin == 0.0 || g_intDeltaMin > diff)
-					{
-						g_intDeltaMin = diff;
-					}
-					g_lastTimestamp = timeStamp;
+				double diff = timeStamp - g_lastTimestamp;
+				if (g_intDeltaMax < diff && diff < 10.0)
+				{
+					g_intDeltaMax = diff;
 				}
+				if (g_intDeltaMin == 0.0 || g_intDeltaMin > diff)
+				{
+					g_intDeltaMin = diff;
+				}
+			}
 			g_lastTimestamp = timeStamp;
 
 			++contentID;
