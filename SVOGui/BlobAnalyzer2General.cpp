@@ -219,7 +219,7 @@ namespace SvOg
 						*pRequestSet->mutable_list() = featureData;
 
 						hResult = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-						assert(hResult == S_OK && responseCmd.has_setfeaturesresponse());
+						Log_Assert(hResult == S_OK && responseCmd.has_setfeaturesresponse());
 						return false;
 					}
 					else
@@ -233,7 +233,7 @@ namespace SvOg
 				hResult = E_FAIL;
 			}
 		}
-		assert(S_OK == hResult);
+		Log_Assert(S_OK == hResult);
 		return false;
 	}
 }  //namespace SvOg

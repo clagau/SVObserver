@@ -156,7 +156,7 @@ void TextObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 		{
 		case P_Type:
-			assert( TextROI == parameterValue.lVal );
+			Log_Assert( TextROI == parameterValue.lVal );
 			break;
 		case P_X1:
 			m_pos.x = parameterValue.lVal;

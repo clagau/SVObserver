@@ -237,7 +237,7 @@ SvDef::NameValueVector BlobAnalyzer::getFeatureList(bool isSelected) const
 {
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+	Log_Assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
 	SvDef::NameValueVector list;
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
@@ -778,7 +778,7 @@ void BlobAnalyzer::UpdateBlobFeatures()
 	//! Only update the features if they have changed
 	if (m_PreviousFeaturesEnabled != FeaturesEnabled)
 	{
-		assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+		Log_Assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
 		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
@@ -810,7 +810,7 @@ void BlobAnalyzer::UpdateBlobFeatures()
 
 void BlobAnalyzer::EnableFeature(int Feature)
 {
-	assert(0 <= Feature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > Feature);
+	Log_Assert(0 <= Feature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > Feature);
 	auto iter = std::ranges::find(m_embeddedList, &m_Value[Feature]);
 	if (iter == m_embeddedList.end())
 	{
@@ -855,7 +855,7 @@ bool BlobAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 			SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 			if (nullptr == pImageBuffer)
 			{
-				assert(false);
+				Log_Assert(false);
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
@@ -867,7 +867,7 @@ bool BlobAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 
 			if (pImageBuffer->isEmpty())
 			{
-				assert(false);
+				Log_Assert(false);
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
@@ -884,7 +884,7 @@ bool BlobAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 
 		if( S_OK != MatroxCode )
 		{
-			assert( false );
+			Log_Assert( false );
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
@@ -896,7 +896,7 @@ bool BlobAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 
 		std::string FeaturesEnabled;
 		m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-		assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+		Log_Assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
 		// Sri 04-12-00
 		// Check whether we want to exclude the blobs, which has at least one of its features 
@@ -1396,7 +1396,7 @@ DWORD BlobAnalyzer::BuildFeatureListID ()
 
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+	Log_Assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
@@ -1483,7 +1483,7 @@ void BlobAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector&, st
 {
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+	Log_Assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
@@ -1523,12 +1523,12 @@ void BlobAnalyzer::CreateArray()
 
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+	Log_Assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
 	// add array capability to blob results
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++ )
 	{
-		assert(i < SvDef::c_maxTableColumn);
+		Log_Assert(i < SvDef::c_maxTableColumn);
 		if (_T('1') == FeaturesEnabled[i])
 		{
 			m_Value[i].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)
@@ -1681,7 +1681,7 @@ SvDef::StringVector BlobAnalyzer::getAnalyzerResult()
 	{
 		std::string FeaturesEnabled;
 		m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-		assert(FeaturesEnabled.size() == SvOi::SV_NUMBER_OF_BLOB_FEATURES);
+		Log_Assert(FeaturesEnabled.size() == SvOi::SV_NUMBER_OF_BLOB_FEATURES);
 
 		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{

@@ -403,7 +403,7 @@ HRESULT SVMatroxApplicationInterface::GetSystemCount( long& p_lCount )
 		}
 		#endif
 
-		assert(S_OK == Result);
+		Log_Assert(S_OK == Result);
 	}
 	else
 	{
@@ -440,7 +440,7 @@ HRESULT SVMatroxApplicationInterface::GetSystemName( long long p_lSystemNumber, 
 		}
 		#endif
 
-		assert( Result == S_OK );
+		Log_Assert( Result == S_OK );
 	}
 	else
 	{

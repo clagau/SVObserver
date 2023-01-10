@@ -95,7 +95,7 @@ bool SVDoubleResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainer
 	if( __super::onRun(rRunStatus, pErrorMessages) )
 	{
 		const SVObjectClass* pObject = getInput();
-		assert(pObject);
+		Log_Assert(pObject);
 
 		if( nullptr != pObject )
 		{

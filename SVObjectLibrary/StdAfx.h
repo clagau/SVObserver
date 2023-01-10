@@ -89,4 +89,5 @@
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
 #pragma warning (pop)
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

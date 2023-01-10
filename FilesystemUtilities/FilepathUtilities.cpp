@@ -9,6 +9,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 namespace
 {
@@ -101,7 +102,7 @@ HRESULT checkDrive(const std::string& rDrive)
 			Exception.setMessage(SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, Drive.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
 #ifndef _DEBUG
-			assert(false);
+			Log_Assert(false);
 #else
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
 			::OutputDebugString(Drive.c_str());
@@ -396,7 +397,7 @@ std::vector<std::string> getFileList(LPCTSTR pPath, ImageFileFormat fileFormat, 
 		SvDef::StringVector msgList;
 		msgList.push_back(e.what());
 		Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
+		Log_Assert(false);
 	}
 
 	return result;

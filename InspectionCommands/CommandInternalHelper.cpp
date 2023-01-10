@@ -248,7 +248,7 @@ void SvOi::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem
 {
 	if (nullptr == pInspection)
 	{
-		assert(false);
+		Log_Assert(false);
 		return;
 	}
 

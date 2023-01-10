@@ -38,7 +38,7 @@ std::vector<double> createPointPairVec(SvPb::EmbeddedIdEnum xEid, SvPb::Embedded
 	std::vector<double> retVal;
 	auto xVar = rControl.Get<LinkedValueData>(xEid).m_Value;
 	auto yVar = rControl.Get<LinkedValueData>(yEid).m_Value;
-	assert(VT_ARRAY == (VT_ARRAY & xVar.vt) && nullptr != xVar.parray && VT_ARRAY == (VT_ARRAY & yVar.vt) && nullptr != yVar.parray);
+	Log_Assert(VT_ARRAY == (VT_ARRAY & xVar.vt) && nullptr != xVar.parray && VT_ARRAY == (VT_ARRAY & yVar.vt) && nullptr != yVar.parray);
 	if (VT_ARRAY == (VT_ARRAY & xVar.vt) && nullptr != xVar.parray && VT_ARRAY == (VT_ARRAY & yVar.vt) && nullptr != yVar.parray)
 	{
 		long sizeX = xVar.parray->rgsabound[0].cElements;
@@ -54,7 +54,7 @@ std::vector<double> createPointPairVec(SvPb::EmbeddedIdEnum xEid, SvPb::Embedded
 			else
 			{
 				retVal.push_back(0);
-				assert(false);
+				Log_Assert(false);
 			}
 			if (S_OK == ::SafeArrayGetElement(yVar.parray, &i, &value))
 			{
@@ -63,7 +63,7 @@ std::vector<double> createPointPairVec(SvPb::EmbeddedIdEnum xEid, SvPb::Embedded
 			else
 			{
 				retVal.push_back(0);
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 	}
@@ -73,7 +73,7 @@ std::vector<double> createPointPairVec(SvPb::EmbeddedIdEnum xEid, SvPb::Embedded
 double safeArrayGetValue(const variant_t& rValue, long pos)
 {
 	double value = .0;
-	assert(VT_ARRAY == (VT_ARRAY & rValue.vt) && nullptr != rValue.parray);
+	Log_Assert(VT_ARRAY == (VT_ARRAY & rValue.vt) && nullptr != rValue.parray);
 	switch (rValue.vt)
 	{
 		case VT_ARRAY | VT_R8:
@@ -87,7 +87,7 @@ double safeArrayGetValue(const variant_t& rValue, long pos)
 			break;
 		}
 		default:
-			assert(false);
+			Log_Assert(false);
 			break;
 	}
 

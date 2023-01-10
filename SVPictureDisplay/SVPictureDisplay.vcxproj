@@ -82,7 +82,7 @@
       <ModuleDefinitionFile>.\SVPictureDisplay.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SVLibrary.lib;SVOGuiUtility.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVLibrary.lib;SVOGuiUtility.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -119,7 +119,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVLibrary.lib;SVOGuiUtility.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVLibrary.lib;SVOGuiUtility.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Message>Performing Custom Build Step</Message>

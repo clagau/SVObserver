@@ -352,7 +352,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(const TCHAR* pImageFilepath, SVI
 
 			newBuffer.clear();
 
-			assert(S_OK == l_Code);
+			Log_Assert(S_OK == l_Code);
 			if (S_OK == CreateImageBuffer(rInfo, rHandle) &&
 				S_OK == LoadImageBuffer(pImageFilepath, rInfo, rHandle))
 			{
@@ -730,7 +730,7 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 		{
 			if (ChildRect.top < ParentRect.top) // should never be true? child is relative to parent
 			{
-				assert(false);
+				Log_Assert(false);
 				ChildRect.top = 0;
 			}
 			else if (ChildRect.bottom > ParentRect.bottom) // may happen if the main image shrinks (camera files change)
@@ -740,7 +740,7 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 
 			if (ChildRect.left < ParentRect.left)   // should never be true? child is relative to parent
 			{
-				assert(false);
+				Log_Assert(false);
 				ChildRect.left = 0;
 			}
 			else if (ChildRect.right > ParentRect.right) // may happen if the main image shrinks (camera files change)

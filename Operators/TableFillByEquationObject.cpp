@@ -57,7 +57,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 	{
 		m_equationList.insert(m_equationList.begin(), columnList.begin(), columnList.begin()+m_ValueList.size());
 	}
-	assert(m_equationList.size() == m_ValueList.size());
+	Log_Assert(m_equationList.size() == m_ValueList.size());
 
 	int i = 0;
 	for (std::vector<TableColumnEquation*>::iterator forIter = columnList.begin(); columnList.end() != forIter; ++forIter, i++)

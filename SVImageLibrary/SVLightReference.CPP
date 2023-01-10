@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "SVLightReference.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 void SVLightReferenceBand::Create(int iSize)
 {
@@ -168,7 +169,7 @@ bool SVLightReference::SetBandData(const SVLightReference& rhs, unsigned int uiB
     }
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 	}
 
     return bResult;

@@ -140,7 +140,7 @@ public:
 	variant_t GetDefaultValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
 		Container::const_iterator it = m_values.find(embeddedID);
-		assert(m_values.end() != it && 0 == it->second.index());
+		Log_Assert(m_values.end() != it && 0 == it->second.index());
 		if (m_values.end() != it && 0 == it->second.index())
 		{
 			return std::get<0>(it->second).GetDefaultValue();
@@ -157,7 +157,7 @@ public:
 	variant_t GetValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
 		Container::const_iterator it = m_values.find(embeddedID);
-		assert(m_values.end() != it);
+		Log_Assert(m_values.end() != it);
 		if (m_values.end() != it)
 		{
 			return std::visit([](const auto& val) -> variant_t { return val.GetValue(); }, it->second);
@@ -168,7 +168,7 @@ public:
 	variant_t GetMinValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
 		Container::const_iterator it = m_values.find(embeddedID);
-		assert(m_values.end() != it);
+		Log_Assert(m_values.end() != it);
 		if (m_values.end() != it)
 		{
 			return std::visit([](const auto& val) -> variant_t { return val.GetMinValue(); }, it->second);
@@ -179,7 +179,7 @@ public:
 	variant_t GetMaxValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
 		Container::const_iterator it = m_values.find(embeddedID);
-		assert(m_values.end() != it);
+		Log_Assert(m_values.end() != it);
 		if (m_values.end() != it)
 		{
 			return std::visit([](const auto& val) -> variant_t { return val.GetMaxValue(); }, it->second);
@@ -190,7 +190,7 @@ public:
 	LinkedValueData getLinkedData(SvPb::EmbeddedIdEnum embeddedID) const
 	{
 		Container::const_iterator it = m_values.find(embeddedID);
-		assert(m_values.end() != it && 1 == it->second.index());
+		Log_Assert(m_values.end() != it && 1 == it->second.index());
 		if (m_values.end() != it && 1 == it->second.index())
 		{
 			return std::get<1>(it->second).getLinkedData();
@@ -221,7 +221,7 @@ public:
 		if (!m_ReadOnly)
 		{
 			Container::iterator it = m_values.find(embeddedID);
-			assert(m_values.end() != it && 0 == it->second.index());
+			Log_Assert(m_values.end() != it && 0 == it->second.index());
 			if (m_values.end() != it && 0 == it->second.index())
 			{
 				if (auto& rValue = std::get<0>(it->second); false == rValue.isReadOnly())
@@ -231,7 +231,7 @@ public:
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 					return false;
 				}
 			}
@@ -244,11 +244,11 @@ public:
 		if (!m_ReadOnly)
 		{
 			Container::iterator it = m_values.find(embeddedID);
-			assert(m_values.end() != it);
+			Log_Assert(m_values.end() != it);
 			if (m_values.end() != it)
 			{
 				bool isReadonly = std::visit([](const auto& val) -> uint32_t { return val.isReadOnly(); }, it->second);
-				assert(false == isReadonly);
+				Log_Assert(false == isReadonly);
 				if (false == isReadonly)
 				{
 					if (0 == it->second.index())
@@ -272,7 +272,7 @@ public:
 		if (!m_ReadOnly)
 		{
 			Container::iterator it = m_values.find(embeddedID);
-			assert(m_values.end() != it && 1 == it->second.index() && false == std::get<1>(it->second).isReadOnly());
+			Log_Assert(m_values.end() != it && 1 == it->second.index() && false == std::get<1>(it->second).isReadOnly());
 			if (m_values.end() != it && 1 == it->second.index() && false == std::get<1>(it->second).isReadOnly())
 			{
 				std::get<1>(it->second).setLinkedData(data);

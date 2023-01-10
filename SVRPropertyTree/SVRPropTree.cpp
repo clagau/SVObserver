@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVRPropTree.h"
 #include "SVRPropTreeState.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -34,7 +35,7 @@ constexpr const char* cDefaultFontName = _T("MS Sans Serif");
 
 static int CALLBACK FontFamilyProcFonts(const LOGFONT FAR* lplf, const TEXTMETRIC FAR*, ULONG, LPARAM)
 {
-	assert(nullptr != lplf);
+	Log_Assert(nullptr != lplf);
 	CString strFont = lplf->lfFaceName;
 	return strFont.CollateNoCase (cOfficeFontName) == 0 ? 0 : 1;
 }
@@ -576,7 +577,7 @@ void SVRPropTree::EnsureVisible(SVRPropertyItem* pItem)
 	}
 
 	bool itemVisible = IsItemVisible(pItem);
-	assert(itemVisible); UNREFERENCED_PARAMETER(itemVisible);
+	Log_Assert(itemVisible); UNREFERENCED_PARAMETER(itemVisible);
 
 	CRect rc;
 
@@ -718,7 +719,7 @@ SVRPropertyItem* SVRPropTree::FindItem(UINT nCtrlID)
 
 bool CALLBACK SVRPropTree::EnumFindItem(SVRPropTree*, SVRPropertyItem* pItem, LPARAM lParam)
 {
-	assert(nullptr != pItem);
+	Log_Assert(nullptr != pItem);
 
 	if (pItem->GetCtrlID()==(UINT)lParam)
 	{

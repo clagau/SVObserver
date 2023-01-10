@@ -571,7 +571,7 @@ void ToolSetView::ValidateLabelText(std::string& rNewText)
 
 	if (rNewText.empty())
 	{
-		assert(m_LabelSaved.size() > 0);
+		Log_Assert(m_LabelSaved.size() > 0);
 		rNewText = m_LabelSaved;
 	}
 }
@@ -632,7 +632,7 @@ void ToolSetView::OnEditLabelEnds()
 	if (m_labelingIndex >= 0 && m_labelingIndex < m_toolSetListCtrl.GetItemCount())
 	{
 		BOOL bResult = m_toolSetListCtrl.SetItemText(m_labelingIndex, 0, m_LabelEdited.c_str());
-		assert(bResult); UNREFERENCED_PARAMETER(bResult);
+		Log_Assert(bResult); UNREFERENCED_PARAMETER(bResult);
 
 		// Cause a redraw.
 		m_toolSetListCtrl.Update(m_labelingIndex);

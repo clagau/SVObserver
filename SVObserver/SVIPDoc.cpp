@@ -568,7 +568,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 		{
 			SvStl::MessageContainerVector errorMsgContainer;
 			errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
-			assert(errorMsgContainer.size() > 0);
+			Log_Assert(errorMsgContainer.size() > 0);
 			if (errorMsgContainer.size() > 0)
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -856,8 +856,8 @@ void SVIPDoc::OnAdjustLightReference()
 {
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
-	assert(GetToolSet());
-	assert(GetToolSet()->IsCreated());
+	Log_Assert(GetToolSet());
+	Log_Assert(GetToolSet()->IsCreated());
 
 	if (nullptr == pInspection || !GetToolSet()->IsCreated()) { return; }
 
@@ -896,7 +896,7 @@ void SVIPDoc::OnAdjustLightReference()
 
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		assert(nullptr != pConfig);
+		Log_Assert(nullptr != pConfig);
 
 		SVLightReferenceVector* pResultLightRefVector {nullptr};
 		if (nullptr != pConfig && dlg.DoModal() == IDOK)
@@ -928,8 +928,8 @@ void SVIPDoc::OnAdjustLut()
 {
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
-	assert(GetToolSet());
-	assert(GetToolSet()->IsCreated());
+	Log_Assert(GetToolSet());
+	Log_Assert(GetToolSet()->IsCreated());
 
 	if (nullptr == pInspection || !GetToolSet()->IsCreated()) // is tool set created
 	{
@@ -983,7 +983,7 @@ void SVIPDoc::OnAdjustLut()
 		}
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		assert(nullptr != pConfig);
+		Log_Assert(nullptr != pConfig);
 
 		if (nullptr != pConfig)
 		{
@@ -1432,7 +1432,7 @@ void SVIPDoc::updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uin
 			pRequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_TaskObjectList);
 
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
-			assert(S_OK == hr); UNREFERENCED_PARAMETER(hr);
+			Log_Assert(S_OK == hr); UNREFERENCED_PARAMETER(hr);
 
 			SVObjectClass* pOwnerObject(SVObjectManagerClass::Instance().GetObject(ownerID));
 			if (pOwnerObject && false == pOwnerObject->isLoopOrGroupTool())
@@ -1765,7 +1765,7 @@ void SVIPDoc::OnResultsTablePicker()
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
 	{
 		SVResultList* pResultList(GetResultList());
-		assert(nullptr != pResultList);
+		Log_Assert(nullptr != pResultList);
 		if (nullptr != pResultList)
 		{
 			SvUl::NameObjectIdList availableList;
@@ -2206,7 +2206,7 @@ void SVIPDoc::OnUpdateViewToolSetDrawSubMenus(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnChangeToolSetDrawFlag(UINT nId)
 {
-	assert(nId >= ID_VIEW_TOOLSETDRAW_POP_BASE && nId <= ID_VIEW_TOOLSETDRAW_POP_MAX);
+	Log_Assert(nId >= ID_VIEW_TOOLSETDRAW_POP_BASE && nId <= ID_VIEW_TOOLSETDRAW_POP_MAX);
 
 	// Access denied...
 	if (!TheSVObserverApp().OkToEdit()) { return; }
@@ -2278,7 +2278,7 @@ void SVIPDoc::RefreshDocument()
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 
 		}
 
@@ -2467,7 +2467,7 @@ void SVIPDoc::SaveViews(SvOi::IObjectWriter& rWriter)
 		while (nullptr != (View.pView = GetNextView(vPos)))
 		{
 			std::string viewClassName = getViewClassName(View.pView);
-			assert(false == viewClassName.empty());
+			Log_Assert(false == viewClassName.empty());
 			svVariant = ++ViewNumber;
 			if (false == viewClassName.empty() && cSVImageViewName != viewClassName)
 			{
@@ -2522,7 +2522,7 @@ void SVIPDoc::SaveViewPlacements(SvOi::IObjectWriter& rWriter)
 		if (pWndSplitter && pWndSplitter->GetSafeHwnd())
 		{
 			CSplitterWnd* pWndSplitter2 = dynamic_cast<CSplitterWnd*>(pWndSplitter->GetParent());
-			assert(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
+			Log_Assert(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
 
 			SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
 			if (nullptr != pFrame && nullptr != pFrame->GetSafeHwnd())
@@ -2722,7 +2722,7 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 					// This the one we want to retrieve the size and position.
 					//
 					CSplitterWnd* pWndSplitter2 = dynamic_cast<CSplitterWnd*>(pWndSplitter->GetParent());
-					assert(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
+					Log_Assert(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
 
 					SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
 

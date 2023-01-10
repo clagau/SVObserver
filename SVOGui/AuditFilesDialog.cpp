@@ -196,7 +196,7 @@ namespace SvOg
 
 		if (m_FileGrid.GetRowCount() != ItemCount + 1)
 		{
-			assert(false);
+			Log_Assert(false);
 			return;
 		}
 		for (int item = 0; item < ItemCount; item++)

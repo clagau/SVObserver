@@ -71,7 +71,7 @@ bool SVStringResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainer
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
 		SvVol::SVStringValueObjectClass* pValueObject = m_inputObject.getInput<SvVol::SVStringValueObjectClass>(true);
-		assert( pValueObject );
+		Log_Assert( pValueObject );
 
 		if( nullptr != pValueObject )
 		{

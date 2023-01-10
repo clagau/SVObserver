@@ -195,7 +195,7 @@ void SegmentObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 		case P_Type:
-			assert(SegmentROI == parameterValue.lVal);
+			Log_Assert(SegmentROI == parameterValue.lVal);
 			break;
 		case P_StartAngle:
 			m_startAngle = parameterValue;

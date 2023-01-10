@@ -270,7 +270,7 @@ template <typename T>
 HRESULT SVValueObjectClass<T>::SetArrayValues(const ValueVector& rValues)
 {
 	int32_t Size = static_cast<int32_t> (rValues.size());
-	assert(Size <= getArraySize());
+	Log_Assert(Size <= getArraySize());
 	if (Size <= getArraySize() && nullptr != m_pValue)
 	{
 		SetResultSize(Size);
@@ -294,7 +294,7 @@ HRESULT SVValueObjectClass<T>::GetArrayValues(ValueVector& rValues) const
 	{
 		return Result;
 	}
-	assert(getResultSize() <= getArraySize());
+	Log_Assert(getResultSize() <= getArraySize());
 	rValues.resize(getResultSize());
 	if (nullptr != m_pValue)
 	{
@@ -359,7 +359,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues) const
 	HRESULT Result(S_OK);
 
 	int ResultSize = getResultSize();
-	assert(ResultSize <= getArraySize());
+	Log_Assert(ResultSize <= getArraySize());
 	rValues.resize(ResultSize);
 	for (int i = 0; i < ResultSize && S_OK == Result; i++)
 	{
@@ -521,7 +521,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues) cons
 		return S_OK;
 	}
 
-	assert(getResultSize() <= getArraySize());
+	Log_Assert(getResultSize() <= getArraySize());
 	rValues.resize(getResultSize());
 	if (1 == getArraySize())
 	{

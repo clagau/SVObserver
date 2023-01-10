@@ -135,6 +135,8 @@
 #include "stdafx.h"
 #include "GridMemDC.h"
 #include "GridCtrl.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <afxadv.h>            // For CSharedFile
@@ -391,7 +393,7 @@ namespace SvGcl
 	// creates the control - use like any other window create control
 	BOOL GridCtrl::Create(const RECT& rect, CWnd* pParentWnd, UINT nID, DWORD dwStyle)
 	{
-		assert(pParentWnd->GetSafeHwnd());
+		Log_Assert(pParentWnd->GetSafeHwnd());
 
 		if (!CWnd::Create(GRIDCTRL_CLASSNAME, nullptr, dwStyle, rect, pParentWnd, nID))
 			return FALSE;
@@ -808,7 +810,7 @@ namespace SvGcl
 	// TODO: decrease timer interval over time to speed up selection over time
 	void GridCtrl::OnTimer(UINT_PTR nIDEvent)
 	{
-		assert(nIDEvent == WM_LBUTTONDOWN);
+		Log_Assert(nIDEvent == WM_LBUTTONDOWN);
 		if (nIDEvent != WM_LBUTTONDOWN)
 			return;
 
@@ -2783,7 +2785,7 @@ namespace SvGcl
 		if ( IsItemEditing(cell.row, cell.col) )
 		{
 			GridCellBase* pCell = GetCell(cell.row, cell.col);
-			assert(pCell);
+			Log_Assert(pCell);
 			if (!pCell) return;
 
 			CWnd* pEditWnd = pCell->GetEditWnd();
@@ -3307,7 +3309,7 @@ namespace SvGcl
 			m_nHScrollMax = 0;
 		}
 
-		assert(m_nVScrollMax < INT_MAX && m_nHScrollMax < INT_MAX); // This should be fine
+		Log_Assert(m_nVScrollMax < INT_MAX && m_nHScrollMax < INT_MAX); // This should be fine
 
 		/* Old code - CJM
 		SCROLLINFO si;
@@ -3522,7 +3524,7 @@ namespace SvGcl
 		if (m_nFixedRows == nFixedRows)
 			return TRUE;
 
-		assert(nFixedRows >= 0);
+		Log_Assert(nFixedRows >= 0);
 
 		ResetSelectedRange();
 
@@ -3578,7 +3580,7 @@ namespace SvGcl
 		if (m_nFixedCols == nFixedCols)
 			return TRUE;
 
-		assert(nFixedCols >= 0);
+		Log_Assert(nFixedCols >= 0);
 
 		if (nFixedCols > GetColumnCount())
 			if (!SetColumnCount(nFixedCols))
@@ -3634,7 +3636,7 @@ namespace SvGcl
 	{
 		BOOL bResult = TRUE;
 
-		assert(nRows >= 0);
+		Log_Assert(nRows >= 0);
 		if (nRows == GetRowCount())
 			return bResult;
 
@@ -3731,7 +3733,7 @@ namespace SvGcl
 	{
 		BOOL bResult = TRUE;
 
-		assert(nCols >= 0);
+		Log_Assert(nCols >= 0);
 
 		if (nCols == GetColumnCount())
 			return bResult;
@@ -3820,12 +3822,12 @@ namespace SvGcl
 								UINT nFormat /* = DT_CENTER|DT_VCENTER|DT_SINGLELINE */,
 								int nColumn  /* = -1 */)
 	{
-		assert(!m_AllowReorderColumn); // function not implemented in case of m_AllowReorderColumn option
+		Log_Assert(!m_AllowReorderColumn); // function not implemented in case of m_AllowReorderColumn option
 		if (nColumn >= 0 && nColumn < m_nFixedCols)
 		{
 
 			// TODO: Fix it so column insertion works for in the fixed column area
-			assert(FALSE);
+			Log_Assert(FALSE);
 			return -1;
 		}
 
@@ -3913,7 +3915,7 @@ namespace SvGcl
 		if (nRow >= 0 && nRow < m_nFixedRows)
 		{
 			// TODO: Fix it so column insertion works for in the fixed row area
-			assert(FALSE);
+			Log_Assert(FALSE);
 			return -1;
 		}
 
@@ -4005,13 +4007,13 @@ namespace SvGcl
 		if (GetVirtualMode())
 			return FALSE;
 
-		assert(IsValid(nRow, nCol));
+		Log_Assert(IsValid(nRow, nCol));
 		if (!IsValid(nRow, nCol))
 			return FALSE;
 
 		if (!pRuntimeClass->IsDerivedFrom(RUNTIME_CLASS(GridCellBase)))
 		{
-			assert( FALSE);
+			Log_Assert( FALSE);
 			return FALSE;
 		}
 
@@ -4029,10 +4031,10 @@ namespace SvGcl
 
 	BOOL GridCtrl::SetDefaultCellType( CRuntimeClass* pRuntimeClass)
 	{
-		assert( nullptr != pRuntimeClass );
+		Log_Assert( nullptr != pRuntimeClass );
 		if (!pRuntimeClass->IsDerivedFrom(RUNTIME_CLASS(GridCellBase)))
 		{
-			assert( FALSE);
+			Log_Assert( FALSE);
 			return FALSE;
 		}
 		m_pRtcDefault = pRuntimeClass;
@@ -4042,11 +4044,11 @@ namespace SvGcl
 	// Creates a new grid cell and performs any necessary initialisation
 	/*virtual*/ GridCellBase* GridCtrl::CreateCell(int nRow, int nCol)
 	{
-		assert(!GetVirtualMode());
+		Log_Assert(!GetVirtualMode());
 
 		if (!m_pRtcDefault || !m_pRtcDefault->IsDerivedFrom(RUNTIME_CLASS(GridCellBase)))
 		{
-			assert( FALSE);
+			Log_Assert( FALSE);
 			return nullptr;
 		}
 		GridCellBase* pCell = (GridCellBase*) m_pRtcDefault->CreateObject();
@@ -4070,7 +4072,7 @@ namespace SvGcl
 	/*virtual*/ void GridCtrl::DestroyCell(int nRow, int nCol)
 	{
 		// Should NEVER get here in virtual mode.
-		assert(!GetVirtualMode());
+		Log_Assert(!GetVirtualMode());
 
 		// Set the cells state to 0. If the cell is selected, this
 		// will remove the cell from the selected list.
@@ -4119,7 +4121,7 @@ namespace SvGcl
 
 	void GridCtrl::AddSubVirtualRow(int Num, int Nb)
 	{
-		assert(Nb == -1 || Nb ==1); // only these vlaues are implemented now
+		Log_Assert(Nb == -1 || Nb ==1); // only these vlaues are implemented now
 		if(!GetVirtualMode()) return;
 		for(int ind = 0; ind<m_nRows ; ind++)
 			if(m_arRowOrder[ind]>Num) m_arRowOrder[ind]+=Nb;
@@ -4458,7 +4460,7 @@ namespace SvGcl
 
 		if (GetVirtualMode())
 		{
-			assert(m_pfnVirtualCompare);
+			Log_Assert(m_pfnVirtualCompare);
 			m_CurCol = m_arColOrder[nCol];
 			m_This = this;
 			std::stable_sort(m_arRowOrder.begin() + m_nFixedRows, m_arRowOrder.end(), 
@@ -4700,7 +4702,7 @@ namespace SvGcl
 	int GridCtrl::GetItemImage(int nRow, int nCol) const
 	{
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return -1;
 
@@ -4732,7 +4734,7 @@ namespace SvGcl
 			return FALSE;
 
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return FALSE;
 
@@ -4745,7 +4747,7 @@ namespace SvGcl
 	UINT GridCtrl::GetItemState(int nRow, int nCol) const
 	{
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return 0;
 
@@ -4758,7 +4760,7 @@ namespace SvGcl
 			return FALSE;
 
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return FALSE;
 
@@ -4769,7 +4771,7 @@ namespace SvGcl
 	UINT GridCtrl::GetItemFormat(int nRow, int nCol) const
 	{
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return 0;
 
@@ -4782,7 +4784,7 @@ namespace SvGcl
 			return FALSE;
 
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return FALSE;
 
@@ -4793,7 +4795,7 @@ namespace SvGcl
 	COLORREF GridCtrl::GetItemBkColour(int nRow, int nCol) const
 	{
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return 0;
 
@@ -4806,7 +4808,7 @@ namespace SvGcl
 			return FALSE;
 
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return FALSE;
     
@@ -4817,7 +4819,7 @@ namespace SvGcl
 	COLORREF GridCtrl::GetItemFgColour(int nRow, int nCol) const
 	{
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return 0;
     
@@ -4830,7 +4832,7 @@ namespace SvGcl
 			return FALSE;
 
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return FALSE;
     
@@ -4842,7 +4844,7 @@ namespace SvGcl
 	const LOGFONT* GridCtrl::GetItemFont(int nRow, int nCol)
 	{
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell) 
 			return GetDefaultCell(nRow < GetFixedRowCount(), nCol < GetFixedColumnCount())->GetFont();
     
@@ -4852,7 +4854,7 @@ namespace SvGcl
 	BOOL GridCtrl::IsItemEditing(int nRow, int nCol)
 	{
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return FALSE;
 
@@ -4884,7 +4886,7 @@ namespace SvGcl
 
 	int GridCtrl::GetRowHeight(int nRow) const
 	{
-		assert(nRow >= 0 && nRow < m_nRows);
+		Log_Assert(nRow >= 0 && nRow < m_nRows);
 		if (nRow < 0 || nRow >= m_nRows)
 			return -1;
 
@@ -4893,7 +4895,7 @@ namespace SvGcl
 
 	int GridCtrl::GetColumnWidth(int nCol) const
 	{
-		assert(nCol >= 0 && nCol < m_nCols);
+		Log_Assert(nCol >= 0 && nCol < m_nCols);
 		if (nCol < 0 || nCol >= m_nCols)
 			return -1;
 
@@ -4902,7 +4904,7 @@ namespace SvGcl
 
 	BOOL GridCtrl::SetRowHeight(int nRow, int height)
 	{
-		assert(nRow >= 0 && nRow < m_nRows && height >= 0);
+		Log_Assert(nRow >= 0 && nRow < m_nRows && height >= 0);
 		if (nRow < 0 || nRow >= m_nRows || height < 0)
 			return FALSE;
 
@@ -4914,7 +4916,7 @@ namespace SvGcl
 
 	BOOL GridCtrl::SetColumnWidth(int nCol, int width)
 	{
-		assert(nCol >= 0 && nCol < m_nCols && width >= 0);
+		Log_Assert(nCol >= 0 && nCol < m_nCols && width >= 0);
 		if (nCol < 0 || nCol >= m_nCols || width < 0)
 			return FALSE;
 
@@ -4945,7 +4947,7 @@ namespace SvGcl
 	BOOL GridCtrl::AutoSizeColumn(int nCol, UINT nAutoSizeStyle /*=GVS_DEFAULT*/, 
 								   BOOL bResetScroll /*=TRUE*/)
 	{
-		assert(nCol >= 0 && nCol < m_nCols);
+		Log_Assert(nCol >= 0 && nCol < m_nCols);
 		if (nCol < 0 || nCol >= m_nCols)
 			return FALSE;
 
@@ -4960,7 +4962,7 @@ namespace SvGcl
 
 		int nWidth = 0;
 
-		assert(GVS_DEFAULT <= nAutoSizeStyle && nAutoSizeStyle <= GVS_BOTH);
+		Log_Assert(GVS_DEFAULT <= nAutoSizeStyle && nAutoSizeStyle <= GVS_BOTH);
 		if (nAutoSizeStyle == GVS_DEFAULT)
 			nAutoSizeStyle = GetAutoSizeStyle();
 
@@ -4993,7 +4995,7 @@ namespace SvGcl
 
 	BOOL GridCtrl::AutoSizeRow(int nRow, BOOL bResetScroll /*=TRUE*/)
 	{
-		assert(nRow >= 0 && nRow < m_nRows);
+		Log_Assert(nRow >= 0 && nRow < m_nRows);
 		if (nRow < 0 || nRow >= m_nRows)
 			return FALSE;
 
@@ -5068,7 +5070,7 @@ namespace SvGcl
 
 		int nCol, nRow;
 
-		assert(GVS_DEFAULT <= nAutoSizeStyle && nAutoSizeStyle <= GVS_BOTH);
+		Log_Assert(GVS_DEFAULT <= nAutoSizeStyle && nAutoSizeStyle <= GVS_BOTH);
 		if (nAutoSizeStyle == GVS_DEFAULT)
 			nAutoSizeStyle = GetAutoSizeStyle();
 
@@ -5638,7 +5640,7 @@ namespace SvGcl
 
 	BOOL GridCtrl::InvalidateCellRect(const CellRange& cellRange)
 	{
-		assert(IsValid(cellRange));
+		Log_Assert(IsValid(cellRange));
 		if (!::IsWindow(GetSafeHwnd()) || !m_bAllowDraw)
 			return FALSE;
 
@@ -5903,7 +5905,7 @@ namespace SvGcl
 		CCellID cell = GetCellFromPt(point);
 		if( !IsValid( cell) )
 		{
-			//assert(FALSE);
+			//Log_Assert(FALSE);
 			return;
 		}
 
@@ -6646,7 +6648,7 @@ namespace SvGcl
 		// fit on a page, so we can in turn determine how many printed
 		// pages represent the entire document.
 
-		assert(pDC && pInfo);
+		Log_Assert(pDC && pInfo);
 		if (!pDC || !pInfo) return;
 
 		// Get a DC for the current window (will be a screen DC for print previewing)
@@ -7525,7 +7527,7 @@ namespace SvGcl
 	BOOL GridCtrl::ValidateEdit(int nRow, int nCol, LPCTSTR str)
 	{
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return TRUE;
 
@@ -7539,7 +7541,7 @@ namespace SvGcl
 			return _T("");
 
 		GridCellBase* pCell = GetCell(nRow, nCol);
-		assert(pCell);
+		Log_Assert(pCell);
 		if (!pCell)
 			return _T("");
 
@@ -7559,7 +7561,7 @@ namespace SvGcl
 	void GridCtrl::Reorder(int From, int To)
 	{
 			// Set line From just after Line To
-		assert(From>= GetFixedRowCount() && To>=GetFixedRowCount()-1 && From<m_nRows && To<m_nRows);
+		Log_Assert(From>= GetFixedRowCount() && To>=GetFixedRowCount()-1 && From<m_nRows && To<m_nRows);
 		int Value = m_arRowOrder[From];
 		m_arRowOrder.erase(m_arRowOrder.begin()+From);
 		int Offset = (From>=To ? 1:0);

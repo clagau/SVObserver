@@ -615,7 +615,7 @@ namespace SvOp
 			}
 			result = (result == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : result;
 
-			assert(S_OK == result);
+			Log_Assert(S_OK == result);
 
 			if (S_OK != result)
 			{
@@ -687,7 +687,7 @@ namespace SvOp
 			}
 			result = (result == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : result;
 
-			assert(S_OK == result);
+			Log_Assert(S_OK == result);
 
 			if (S_OK != result)
 			{

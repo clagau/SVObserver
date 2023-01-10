@@ -193,7 +193,7 @@ namespace SvXml
 			}
 			else // insert first Element 
 			{
-				assert(m_RevisionTree.is_root()); 
+				Log_Assert(m_RevisionTree.is_root()); 
 				*(m_RevisionTree.get()) = spNewElement;
 				m_pCurrentNodeInRevisionTree = &m_RevisionTree;
 			}
@@ -206,7 +206,7 @@ namespace SvXml
 			}
 			else // insert first Element 
 			{
-				assert(m_EncryptionTree.is_root()); 
+				Log_Assert(m_EncryptionTree.is_root()); 
 				*(m_EncryptionTree.get()) = spNewElement;
 				m_pCurrentNodeInEncryptionTree = &m_EncryptionTree;
 			}
@@ -219,7 +219,7 @@ namespace SvXml
 			}
 			else // insert first Element 
 			{
-				assert(m_DataTree.is_root()); 
+				Log_Assert(m_DataTree.is_root()); 
 				*(m_DataTree.get()) = spNewElement;
 				m_pCurrentNodeInDataTree = &m_DataTree;
 			}
@@ -294,7 +294,7 @@ namespace SvXml
 			}
 			else
 			{
-				assert(m_pCurrentNodeInRevisionTree);
+				Log_Assert(m_pCurrentNodeInRevisionTree);
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams));
 
@@ -302,7 +302,7 @@ namespace SvXml
 			if(nullptr == m_pCurrentNodeInRevisionTree)
 			{
 				m_status = PARSING_NONE;
-				assert(m_depth == 0 );
+				Log_Assert(m_depth == 0 );
 			}
 		}
 		else if (m_status == PARSING_ENCRYPTION)
@@ -316,14 +316,14 @@ namespace SvXml
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams));
-				assert(m_pCurrentNodeInEncryptionTree);
+				Log_Assert(m_pCurrentNodeInEncryptionTree);
 			}
 
 			if(nullptr == m_pCurrentNodeInEncryptionTree)
 			{
 				//SetDecryption();
 				m_status = PARSING_NONE;
-				assert(m_depth == 0 );
+				Log_Assert(m_depth == 0 );
 			}
 		}
 
@@ -338,14 +338,14 @@ namespace SvXml
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams));
-				assert(m_pCurrentNodeInDataTree);
+				Log_Assert(m_pCurrentNodeInDataTree);
 			}
 
 			if(nullptr == m_pCurrentNodeInDataTree)
 			{
 			
 				m_status = PARSING_NONE;
-				assert(m_depth == 0 );
+				Log_Assert(m_depth == 0 );
 			}
 		
 		}
@@ -398,7 +398,7 @@ namespace SvXml
 		messageList.push_back(SvUl::createStdString(pwchErrorText));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvStl::Tid_XML_Error, messageList, SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
+		Log_Assert(false);
 		return S_OK;
 	}
 } //namespace SvXml

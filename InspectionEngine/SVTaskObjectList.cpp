@@ -275,7 +275,7 @@ int  SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, SVTaskObjectCl
 	int Result(-1);
 	if (nullptr == pTaskObject)
 	{
-		assert(false);
+		Log_Assert(false);
 		return -1;
 	}
 
@@ -578,7 +578,7 @@ void SVTaskObjectListClass::Delete(uint32_t objectID)
 		}
 	}
 	// unknown owner!!
-	assert( false );
+	Log_Assert( false );
 }
 
 void SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject)
@@ -892,19 +892,19 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 	
 	if (Index < 0)
 	{
-		assert( false );
+		Log_Assert( false );
 		Index = 0;
 	}
 	
 	if (Index >= static_cast<int> (numberOfTaskObjects()))
 	{
-		assert( false );
+		Log_Assert( false );
 		return;
 	}
 	
 	if (Index + Count > static_cast<int> (numberOfTaskObjects()))
 	{
-		assert( false );
+		Log_Assert( false );
 		Count = static_cast<int> (numberOfTaskObjects()) - Index; 
 	}
 	

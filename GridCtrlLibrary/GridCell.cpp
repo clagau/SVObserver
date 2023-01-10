@@ -49,6 +49,7 @@
 #include "GridCell.h"
 #include "InPlaceEdit.h"
 #include "GridCtrl.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -272,7 +273,7 @@ namespace SvGcl
 
 	void CGridDefaultCell::SetFont(const LOGFONT* plf)
 	{
-		assert(plf);
+		Log_Assert(plf);
 
 		if (!plf) return;
 
@@ -303,13 +304,13 @@ namespace SvGcl
 
 	LOGFONT* CGridDefaultCell::GetFont() const
 	{
-		assert(m_plfFont);  // This is the default - it CAN'T be NULL!
+		Log_Assert(m_plfFont);  // This is the default - it CAN'T be NULL!
 		return m_plfFont;
 	}
 
 	CFont* CGridDefaultCell::GetFontObject() const
 	{
-		assert(m_Font.GetSafeHandle());
+		Log_Assert(m_Font.GetSafeHandle());
 		return (CFont*) &m_Font; 
 	}
 

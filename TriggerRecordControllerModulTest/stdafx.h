@@ -40,3 +40,4 @@
 #include <vector>
 
 #include <mil.h>
+#include "SVStatusLibrary/MessageManager.h"

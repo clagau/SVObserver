@@ -92,7 +92,7 @@ namespace SvOgu
 		}
 		long min;
 		saParameterList.GetLBound(1, &min);
-		assert( min == 0 );
+		Log_Assert( min == 0 );
 
 		LONG *pParameterList( nullptr );
 		VARIANT *pParameterValue( nullptr );

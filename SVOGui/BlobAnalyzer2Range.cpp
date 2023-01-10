@@ -273,7 +273,7 @@ namespace SvOg
 					break;
 			}
 
-			assert(nullptr != pLinkedValue);
+			Log_Assert(nullptr != pLinkedValue);
 			if (nullptr != pLinkedValue && SvPb::LinkedSelectedOption::DirectValue == pLinkedValue->option())
 			{
 				variant_t tmp {cellText.c_str()};
@@ -305,7 +305,7 @@ namespace SvOg
 	{
 		int index(nID - IDC_BUTTON_FAILHIGH);
 
-		assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+		Log_Assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
 		if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 		{
 			m_RangeWidgets[index]->OnButton();
@@ -316,7 +316,7 @@ namespace SvOg
 	{
 		int index(nID - IDC_EDIT_FAILHIGH);
 
-		assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+		Log_Assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
 		if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 		{
 			m_RangeWidgets[index]->EditboxToValue();

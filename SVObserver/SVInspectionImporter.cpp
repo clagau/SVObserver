@@ -351,7 +351,7 @@ static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& 
 				if (nullptr != hBranch)
 				{
 					auto leafItem = rTree.findLeaf(hBranch, scElementTag);
-					assert(rTree.getTree().end() != leafItem);
+					Log_Assert(rTree.getTree().end() != leafItem);
 					if (rTree.getTree().end() != leafItem)
 					{
 						rTree.setLeafData(leafItem, convertObjectIdToVariant(rGlobalImport.m_objectId));

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVHBitmapUtilities.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <math.h>
 #pragma endregion Includes
@@ -97,7 +98,7 @@ BITMAPINFO* SVIHBitmapUtilities::CreateBitmapInfoStruct( SVImageDefinitionStruct
 	// device colors are important. 
 	pbmi->bmiHeader.biClrImportant = 0; 
 
-	assert( pbmi );
+	Log_Assert(pbmi );
 	return pbmi; 
 }// end CreateBitmapInfoStruct
 
@@ -139,7 +140,7 @@ HRESULT SVIHBitmapUtilities::SVImageInfoToImageDefinitionStruct( const BITMAPINF
 SVDIBITMAPINFO SVIHBitmapUtilities::SVCreateHBitmap( SVImageDefinitionStruct& rImageDef, RGBQUAD* pColorTable )
 {
 	BITMAPINFO* pbmInfo=CreateBitmapInfoStruct(rImageDef);
-	assert( pbmInfo );
+	Log_Assert( pbmInfo );
 
 	switch( rImageDef.eImageFormat )
 	{
@@ -164,7 +165,7 @@ SVDIBITMAPINFO SVIHBitmapUtilities::SVCreateHBitmap( SVImageDefinitionStruct& rI
 	{
 		delete [] pbmInfo;
 		pbmInfo = nullptr;
-		assert(0);
+		Log_Assert(0);
 	}
 	return SVDIBITMAPINFO( hbmResult, pBits, pbmInfo );
 
@@ -183,7 +184,7 @@ HRESULT SVIHBitmapUtilities::SVImageInfoToNewDIB( const BITMAPINFOHEADER& info, 
 
 	HRESULT hr = S_OK;
 
-	assert( nullptr == rsvDIB.hbm );
+	Log_Assert( nullptr == rsvDIB.hbm );
 
 	SVImageDefinitionStruct l_ImageDef;
 	SVImageInfoToImageDefinitionStruct( info, l_ImageDef );

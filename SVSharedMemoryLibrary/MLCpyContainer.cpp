@@ -144,7 +144,7 @@ namespace SvSml
 			MonitorEntriesMap::iterator MEMIt = MLCPyIt->second->m_EntriesMap.begin();
 			for (; MEMIt != MLCPyIt->second->m_EntriesMap.end(); ++MEMIt)
 			{
-				assert(MEMIt->second.get());
+				Log_Assert(MEMIt->second.get());
 				std::string inspectionName {MEMIt->first};
 				std::string Inspections {SvDef::FqnInspections};
 				Inspections += _T('.');
@@ -160,7 +160,7 @@ namespace SvSml
 				}
 
 				assert(m_InspectionInfoMap.find(inspectionName) != m_InspectionInfoMap.end());
-				assert(MEMIt->second->name == MEMIt->first);
+				Log_Assert(MEMIt->second->name == MEMIt->first);
 
 				MEMIt->second->data.m_inspectionStoreId = m_InspectionInfoMap[inspectionName]->StoreIndex;
 			}

@@ -135,7 +135,7 @@ HRESULT DoubleSortValueObject::SetArrayValues(const ValueVector& rValues)
 	HRESULT Result(E_FAIL);
 
 	int32_t Size = static_cast<int32_t> (rValues.size());
-	assert(Size <= getArraySize());
+	Log_Assert(Size <= getArraySize());
  	if (Size <= m_doubleData.size())
 	{
 		SetResultSize(Size);
@@ -166,7 +166,7 @@ HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues) con
 	HRESULT Result( S_OK );
 
 	int ResultSize = getResultSize();
-	assert( ResultSize <= getArraySize() );
+	Log_Assert( ResultSize <= getArraySize() );
 	rValues.resize( ResultSize );
 	_variant_t Value;
 	for( int i=0; i < ResultSize && S_OK == Result; i++ )
@@ -221,7 +221,7 @@ void DoubleSortValueObject::updateMemBlockData()
 			if(0 < dataByteSize)
 			{
 				///Memory block reserved for value object is to small. This should not happen!
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			}
@@ -234,7 +234,7 @@ HRESULT DoubleSortValueObject::GetArrayValues(std::vector<double>& rValues) cons
 	HRESULT Result(S_OK);
 
 	int resultSize = getResultSize();
-	assert( resultSize <= getArraySize() );
+	Log_Assert( resultSize <= getArraySize() );
 	rValues.resize( resultSize );
 	if (m_DummySortContainer.bIsActive && m_doubleData.size())
 	{

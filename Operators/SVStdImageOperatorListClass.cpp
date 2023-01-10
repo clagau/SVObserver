@@ -267,7 +267,7 @@ SvOi::SVImageBufferHandlePtr SVStdImageOperatorListClass::createTmpSourceImage()
 {
 	SvOi::SVImageBufferHandlePtr input;
 	auto* pParentImage = m_LogicalROIImage.GetParentImage();
-	assert(nullptr != pParentImage);
+	Log_Assert(nullptr != pParentImage);
 	if (nullptr != pParentImage)
 	{
 		SVImageInfoClass tmpInfo = m_LogicalROIImage.GetImageInfo();
@@ -278,7 +278,7 @@ SvOi::SVImageBufferHandlePtr SVStdImageOperatorListClass::createTmpSourceImage()
 		if (abs(bitmapInfo.GetWidth()) < ChildRect.right || abs(bitmapInfo.GetHeight()) < ChildRect.top)
 		{
 			SvIe::SVImageProcessingClass::CreateImageBuffer(pParentImage->GetImageInfo(), inputParent);
-			assert(inputParent);
+			Log_Assert(inputParent);
 			if (inputParent)
 			{
 				SVMatroxBufferInterface::ClearBuffer(inputParent->GetBuffer(), 0.0);

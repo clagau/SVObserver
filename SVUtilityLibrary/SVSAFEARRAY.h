@@ -175,7 +175,7 @@ template<>
 inline std::vector<SVPoint<double>> getVectorFromOneDim<SVPoint<double>>(const _variant_t& )
 {
 	std::vector<SVPoint<double>> result;
-	assert(false);
+	Log_Assert(false);
 	return result;
 }
 
@@ -183,7 +183,7 @@ template<>
 inline std::vector<SVPoint<long>> getVectorFromOneDim<SVPoint<long>>(const _variant_t& )
 {
 	std::vector<SVPoint<long>> result;
-	assert(false);
+	Log_Assert(false);
 	return result;
 }
 
@@ -191,7 +191,7 @@ template<>
 inline std::vector<std::string> getVectorFromOneDim<std::string>(const _variant_t& )
 {
 	std::vector<std::string> result;
-	assert(false);
+	Log_Assert(false);
 	return result;
 }
 

@@ -76,7 +76,7 @@ bool DrawPolygonTask::drawImage(SvOi::SVImageBufferHandlePtr pImageHandle, DrawA
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 }

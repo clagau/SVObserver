@@ -561,7 +561,7 @@ namespace SvOg
 		SVBarCodeProperties* pPropPage = static_cast<SVBarCodeProperties*>(GetParent());
 
 		const auto* pInfo = GetInfoByMilID(GetBarCodeType());
-		assert(pInfo);
+		Log_Assert(pInfo);
 		if (pInfo)
 		{
 			dwEncoding = pInfo->defaultenctype();
@@ -722,7 +722,7 @@ void SVBarCodeGeneralDialog::OnBnClickedThresholdNormalRadio(UINT)
 			return &*iter;
 		}
 
-		assert(false);
+		Log_Assert(false);
 		return nullptr;
 	}
 

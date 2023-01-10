@@ -346,7 +346,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	for (size_t j = 0; nullptr == m_pToolConditional && j < m_friendList.size(); j++)
 	{
 		//conditional must be the first friend because it will be blocked in runFriends if tool
-		assert(0 == j);
+		Log_Assert(0 == j);
 		m_pToolConditional = dynamic_cast<SvOp::SVConditional*> (m_friendList[j]);
 		setSkipFirstFriendFromRun();
 	}
@@ -603,7 +603,7 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_EDIT) && (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST)))
 		{
-			assert(rRunStatus.m_triggerRecord);
+			Log_Assert(rRunStatus.m_triggerRecord);
 			if (nullptr != rRunStatus.m_triggerRecord)
 			{
 				copiedSavedImage(rRunStatus.m_triggerRecord);

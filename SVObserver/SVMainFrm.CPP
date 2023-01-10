@@ -492,7 +492,7 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	catch (CException* e)
 	{
 		e->Delete();
-		assert(FALSE);
+		Log_Assert(FALSE);
 	}
 
 	InitToolBars();
@@ -571,7 +571,7 @@ void SVMainFrame::OnClose()
 		catch (CException* e)
 		{
 			e->Delete();
-			assert(FALSE);
+			Log_Assert(FALSE);
 		}
 
 		// Log out...
@@ -2245,7 +2245,7 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 	{
 		CControlBarInfo* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
 
-		assert(nullptr != pInfo);
+		Log_Assert(nullptr != pInfo);
 
 		int nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
 		if (nDockedCount > 0)

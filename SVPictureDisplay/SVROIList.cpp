@@ -106,7 +106,7 @@ HRESULT SVROIList::Remove(long lIndex)
 
 	if( lIndex < 0 || lIndex >= m_arROIObjects.GetSize() )
 	{
-        assert(FALSE);
+        Log_Assert(FALSE);
 		// Throw some exception here
 		return S_FALSE;
 	}// end if
@@ -144,7 +144,7 @@ LPDISPATCH SVROIList::GetItem(long lIndex)
 
 	if( lIndex < 0 || lIndex >= m_arROIObjects.GetSize() )
 	{
-        assert(FALSE);
+        Log_Assert(FALSE);
         // Throw some exception here
 		return (LPDISPATCH) VT_EMPTY;
 	}

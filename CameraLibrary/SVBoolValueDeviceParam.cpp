@@ -91,7 +91,7 @@ bool& BoolValue(SVDeviceParamWrapper& w)
 		w = SVBoolValueDeviceParam();
 		p = w.DerivedValue(p);
 	} 
-	assert(p); 
+	Log_Assert(p); 
 	return const_cast<SVBoolValueDeviceParam*>(p)->bValue;
 }
 
@@ -101,7 +101,7 @@ bool BoolValue(const SVDeviceParamWrapper& w)
 	if (p) 
 		return p->bValue; 
 
-	assert(FALSE);
+	Log_Assert(FALSE);
 	return 0;
 }
 

@@ -421,7 +421,7 @@ bool SVLUTOperator::RecalcLUT( SvIe::RunStatus& rRunStatus )
 				std::vector<BYTE> byteVec;
 				if( S_OK == m_lutVector.GetArrayValues( byteVec )  )
 				{
-					assert( byteVec.size() == m_lutElementNumber );
+					Log_Assert( byteVec.size() == m_lutElementNumber );
 					if ( byteVec.size() == m_lutElementNumber )
 					{
 						/*l_Code = */SVMatroxBufferInterface::PutLine( m_lutBufID, m_lutElementNumber, reinterpret_cast<unsigned char*>(&(byteVec[0])));

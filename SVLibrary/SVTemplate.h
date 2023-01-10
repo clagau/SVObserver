@@ -15,6 +15,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #pragma once
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
@@ -168,19 +169,19 @@ public:
 		DERIVED* DerivedValue(DERIVED*& )
 	                            { DERIVED* p = nullptr;
 	                              if (m_pImpl) {p = dynamic_cast< DERIVED* > ((BASETYPE*) *this);
-								              assert(p); }	// if the assert hits, the type is incorrect
+								              Log_Assert(p); }	// if the assert hits, the type is incorrect
 	                              return p;}
 	template<typename DERIVED>
 	    const DERIVED* DerivedValue(const DERIVED*& ) const
 	                            { const DERIVED* p = nullptr;
 	                              if (m_pImpl) { p = dynamic_cast< const DERIVED* > ((const BASETYPE*) *this);
-								               assert(p); }  // if the assert hits, the type is incorrect
+								               Log_Assert(p); }  // if the assert hits, the type is incorrect
 	                              return p; }
 	template<typename DERIVED>
 	    HRESULT GetDerivedValue(DERIVED*& rpd)
 	                            { if (nullptr == m_pImpl) return ERROR_NOT_FOUND; 
 	                              else if (nullptr != (rpd = dynamic_cast< DERIVED* > ((BASETYPE*) *this))) return S_OK;
-								  else { assert(rpd); return TYPE_E_TYPEMISMATCH;} }  // if the assert hits, the type is incorrect
+								  else { Log_Assert(rpd); return TYPE_E_TYPEMISMATCH;} }  // if the assert hits, the type is incorrect
 private:
 	BASETYPE* m_pImpl;
 };
@@ -209,7 +210,7 @@ template < typename DERIVED, typename DUMMYARG > DERIVED* DerivedValue ( TValueS
 	if ( nullptr != ((DUMMYARG*) base) )
 	{
 		pd = dynamic_cast < DERIVED* > ((DUMMYARG*) base);
-		assert( pd );	// if the assert hits, you are telling it the wrong type
+		Log_Assert( pd );	// if the assert hits, you are telling it the wrong type
 	}
 	return pd;
 }
@@ -224,7 +225,7 @@ TValueSemantics<BASETYPE>::TValueSemantics()
 template <typename BASETYPE>
 TValueSemantics<BASETYPE>::TValueSemantics(const BASETYPE* pType)
 {
-	assert( pType );
+	Log_Assert( pType );
 	if ( pType )
 	{
 		// needs an explicit cast because MSVC 6.0 doesn't support covariant return types (Q240862)

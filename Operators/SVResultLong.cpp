@@ -109,7 +109,7 @@ bool SVLongResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
 		const SVObjectClass* pObject = getInput();
-		assert( pObject );
+		Log_Assert( pObject );
 
 		if( nullptr != pObject )
 		{

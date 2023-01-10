@@ -224,7 +224,7 @@ void SVOCameraDlg::OnBtnPropVc()
         SVOCameraObjPtr pCameraObj = m_pParent->GetCameraObjectByName( CameraName );
 		if( nullptr == pCameraObj )
 		{
-			assert(FALSE);
+			Log_Assert(FALSE);
 			return;
 		}
         SVOPropertyPageDlg oDlg;

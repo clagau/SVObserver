@@ -89,4 +89,5 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/static_assert.hpp>
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

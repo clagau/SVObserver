@@ -623,7 +623,7 @@ HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMater
 				size_t endPos = rXmlData.find("}", pos + 1);
 				if (endPos == std::string::npos)
 				{
-					assert(false);
+					Log_Assert(false);
 					break;
 				}
 				rXmlData.replace(pos, endPos - pos, "{#0}");
@@ -690,7 +690,7 @@ uint32_t ToolClipboard::parseOneToolFromTree(SvXml::SVXMLMaterialsTree& rTree, S
 	SVObjectClass* pOwnerTmp = pOwner;
 	if (nullptr == pOwnerTmp)
 	{
-		assert(false);
+		Log_Assert(false);
 		pOwnerTmp = (nullptr != m_pInspection) ? (static_cast<SVInspectionProcess*> (m_pInspection))->GetToolSet() : nullptr;
 	}
 

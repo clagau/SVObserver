@@ -112,7 +112,7 @@ SvVol::DoubleSortValuePtr TableCopyObject::addNewColumn(LPCTSTR, int pos)
 	else
 	{
 		pSharedObject.reset();
-		assert(false);
+		Log_Assert(false);
 	}
 	return pSharedObject;
 }
@@ -356,7 +356,7 @@ int TableCopyObject::ResetCopyColumn()
 				}
 				else
 				{
-					assert(false); //the number of column should be checked already in ResetObject, so this part should be never reached. 
+					Log_Assert(false); //the number of column should be checked already in ResetObject, so this part should be never reached. 
 				}
 			}
 		}

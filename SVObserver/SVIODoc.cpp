@@ -175,7 +175,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr != pConfig )
 	{
 		pInputList = pConfig->GetInputObjectList( );

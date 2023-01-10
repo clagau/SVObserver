@@ -574,7 +574,7 @@ bool SVPPQObject::SetCameraPPQPosition(long lPosition, SvIe::SVVirtualCamera* pC
 	bool l_Status = true;
 
 	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != pCamera);
+	Log_Assert(nullptr != pCamera);
 
 	if (m_isCreated && -1 <= lPosition && lPosition < static_cast<long>(m_PPQPositions.size()) - 1)
 	{
@@ -593,7 +593,7 @@ bool SVPPQObject::GetCameraPPQPosition(long& lPosition, const SvIe::SVVirtualCam
 	bool bFound;
 
 	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != pCamera);
+	Log_Assert(nullptr != pCamera);
 
 	lPosition = -1;
 
@@ -1447,7 +1447,7 @@ void SVPPQObject::AddPpqResults()
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	assert(nullptr != pConfig);
+	Log_Assert(nullptr != pConfig);
 	if (nullptr == pConfig)
 	{
 		return;
@@ -2997,7 +2997,7 @@ DWORD SVPPQObject::GetObjectColor() const
 
 bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
 {
-	assert(depth >= 0);
+	Log_Assert(depth >= 0);
 	if (m_rejectCount != depth)
 	{
 		m_rejectCount = depth;
@@ -3097,7 +3097,7 @@ bool SVPPQObject::setInspections2TRC()
 			return rData.id() == tmpId;
 		});
 
-		assert(pInspList->end() != pInspPB);
+		Log_Assert(pInspList->end() != pInspPB);
 		if (pInspList->end() != pInspPB)
 		{
 			pInspPB->set_numberofrecords(getNeededRecords());

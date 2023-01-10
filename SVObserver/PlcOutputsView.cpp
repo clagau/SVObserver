@@ -99,7 +99,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams));
-			assert(false);
+			Log_Assert(false);
 		}
 
 		// Check if any PPQs are here yet
@@ -113,7 +113,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 			{
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams));
-				assert(false);
+				Log_Assert(false);
 			}
 			else
 			{

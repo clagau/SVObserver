@@ -58,5 +58,5 @@
 #include <memory>
 #include <string>
 #include <vector>
-
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

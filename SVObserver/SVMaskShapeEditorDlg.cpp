@@ -195,7 +195,7 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 	m_dialogImage.SelectTab(m_currentTabNumber);
 
 	SvOp::SVShapeMaskHelperClass::ShapeTypeEnum shapeType = static_cast <SvOp::SVShapeMaskHelperClass::ShapeTypeEnum> (m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskTypeEId));
-	assert( shapeType != SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeInvalid );
+	Log_Assert( shapeType != SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeInvalid );
 	setShapeType( shapeType );
 
 	setImages();
@@ -540,7 +540,7 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 #endif
 
 	CWnd* pwndTmp = CWnd::FromHandle(hdlg);
-	assert(pwndTmp);
+	Log_Assert(pwndTmp);
 	CColorDialog* pDlg = dynamic_cast< CColorDialog* >( pwndTmp );
 	switch (uiMsg)
 	{
@@ -566,7 +566,7 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 	case WM_PAINT:
 		{
 			CWnd* pWndRed = pDlg->GetDlgItem(COLOR_RED);
-			assert( pWndRed );
+			Log_Assert( pWndRed );
 			if ( pWndRed )
 			{
 				CString sText;
@@ -616,7 +616,7 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 	m_Tree.DeleteAllItems();
 
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-	assert( pRoot );
+	Log_Assert( pRoot );
 	pRoot->SetCanShrink(false);
 	pRoot->SetInfoText(_T(""));
 	pRoot->HideItem();
@@ -665,7 +665,7 @@ void SVMaskShapeEditorDlg::setPropertyToList(SvPb::EmbeddedIdEnum embeddedId, SV
 		{
 			SVRPropertyItemEdit* pEdit = dynamic_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
 			pItem = pEdit;
-			assert(pEdit);
+			Log_Assert(pEdit);
 			setValueColumn(embeddedId, *pEdit);
 		}
 		else
@@ -689,11 +689,11 @@ void SVMaskShapeEditorDlg::setPropertyToList(SvPb::EmbeddedIdEnum embeddedId, SV
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 
-		assert(pItem);
+		Log_Assert(pItem);
 
 		pItem->SetCtrlID(GetPropertyID(embeddedId));
 		pItem->SetBold(false);
@@ -707,7 +707,7 @@ void SVMaskShapeEditorDlg::setPropertyToList(SvPb::EmbeddedIdEnum embeddedId, SV
 HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 {
 	SVRPropertyItem* pRoot = m_Tree.GetRootItem()->GetChild();
-	assert( pRoot );
+	Log_Assert( pRoot );
 	SVRPropertyItem* pChild = pRoot->GetChild();
 
 	while ( pChild )
@@ -739,7 +739,7 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 

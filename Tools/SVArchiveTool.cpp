@@ -553,7 +553,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector* pErrorM
 	//
 	// Write the result to the archive file.
 	//
-	assert(m_fileArchive.is_open());
+	Log_Assert(m_fileArchive.is_open());
 	try
 	{
 		m_fileArchive.write(TimeStamp.c_str(), TimeStamp.size());
@@ -714,7 +714,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 			}
 		}
 
-		assert(S_OK == hrAllocate);
+		Log_Assert(S_OK == hrAllocate);
 		if (S_OK == hrAllocate)
 		{
 			if (m_lastBufferMap != bufferMap || m_lastMaxImages != dwMaxImages)
@@ -1085,7 +1085,7 @@ std::string SVArchiveTool::getNextImageFileName()
 
 long SVArchiveTool::CalculateImageMemory(SvIe::SVImageClass* pImage)
 {
-	assert(nullptr != pImage);
+	Log_Assert(nullptr != pImage);
 	long lImageSize = 0;
 	if (nullptr != pImage)
 	{

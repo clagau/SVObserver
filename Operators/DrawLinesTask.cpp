@@ -76,7 +76,7 @@ bool DrawLinesTask::drawImage(SvOi::SVImageBufferHandlePtr pImageHandle, DrawAre
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 }

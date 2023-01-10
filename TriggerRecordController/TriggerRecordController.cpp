@@ -106,7 +106,7 @@ const SvPb::ImageList& TriggerRecordController::getImageDefList(int inspectionPo
 		return m_pDataController->getImageDefList(inspectionPos);
 	}
 
-	assert(false);
+	Log_Assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
@@ -119,7 +119,7 @@ const std::unordered_map<uint32_t, int>& TriggerRecordController::getImageDefMap
 		return m_pDataController->getImageMap(inspectionPos);
 	}
 
-	assert(false);
+	Log_Assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
@@ -132,7 +132,7 @@ const std::unordered_map<uint32_t, int>& TriggerRecordController::getChildImageD
 		return m_pDataController->getChildImageMap(inspectionPos);
 	}
 
-	assert(false);
+	Log_Assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
@@ -145,7 +145,7 @@ const std::unordered_map<uint32_t, std::pair<bool, int>>& TriggerRecordControlle
 		return m_pDataController->getLinkedImageMap(inspectionPos);
 	}
 
-	assert(false);
+	Log_Assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
@@ -158,7 +158,7 @@ const SvPb::DataDefinitionList& TriggerRecordController::getDataDefList(int insp
 		return m_pDataController->getDataDefList(inspectionPos);
 	}
 
-	assert(false);
+	Log_Assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetDataDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
@@ -171,7 +171,7 @@ const std::unordered_map<uint32_t, int>& TriggerRecordController::getDataDefMap(
 		return m_pDataController->getDataDefMap(inspectionPos);
 	}
 
-	assert(false);
+	Log_Assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetDataDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
@@ -179,7 +179,7 @@ const std::unordered_map<uint32_t, int>& TriggerRecordController::getDataDefMap(
 
 SvOi::ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObject(int inspectionPos, int trId)
 {
-	assert(-1 == m_resetStarted4IP);
+	Log_Assert(-1 == m_resetStarted4IP);
 	if (-1 == m_resetStarted4IP && 0 <= trId)
 	{
 		return m_pDataController->createTriggerRecordObject(inspectionPos, [trId](TriggerRecordData& rData) -> bool { return rData.m_trId == trId; });
@@ -189,7 +189,7 @@ SvOi::ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObject(int 
 
 SvOi::ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount)
 {
-	assert(-1 == m_resetStarted4IP);
+	Log_Assert(-1 == m_resetStarted4IP);
 	if (-1 == m_resetStarted4IP && 0 <= triggerCount)
 	{
 		return m_pDataController->createTriggerRecordObject(inspectionPos, [triggerCount](TriggerRecordData& rData) -> bool { return rData.m_triggerData.m_TriggerCount == triggerCount; });
@@ -199,7 +199,7 @@ SvOi::ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObjectPerTr
 
 SvOi::RAIIPtr TriggerRecordController::registerResetCallback(std::function<void()> pCallback)
 {
-	assert(pCallback);
+	Log_Assert(pCallback);
 	if (nullptr != pCallback)
 	{
 		static int handleCounter = 0;
@@ -217,7 +217,7 @@ SvOi::RAIIPtr TriggerRecordController::registerResetCallback(std::function<void(
 
 SvOi::RAIIPtr TriggerRecordController::registerReadyCallback(std::function<void()> pCallback)
 {
-	assert(pCallback);
+	Log_Assert(pCallback);
 	if (nullptr != pCallback)
 	{
 		static int handleCounter = 0;
@@ -239,7 +239,7 @@ SvOi::RAIIPtr TriggerRecordController::registerReadyCallback(std::function<void(
 
 SvOi::RAIIPtr TriggerRecordController::registerNewTrCallback(std::function<void(SvOi::TrEventData)> pCallback)
 {
-	assert(pCallback);
+	Log_Assert(pCallback);
 	if (nullptr != pCallback)
 	{
 		static int handleCounter = 0;
@@ -257,7 +257,7 @@ SvOi::RAIIPtr TriggerRecordController::registerNewTrCallback(std::function<void(
 
 SvOi::RAIIPtr TriggerRecordController::registerNewInterestTrCallback(std::function<void(const std::vector<SvOi::TrInterestEventData>&)> pCallback)
 {
-	assert(pCallback);
+	Log_Assert(pCallback);
 	if (nullptr != pCallback)
 	{
 		static int handleCounter = 0;
@@ -360,7 +360,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 {
 	if (m_isResetLocked)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocked, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -368,7 +368,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 
 	if (0 >= newSizeTr || cMaxTriggerRecords < newSizeTr)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvDef::StringVector msgList;
 		msgList.push_back(std::format(_T("{:d}"), newSizeTr));
 		msgList.push_back(std::format(_T("{:d}"), cMaxTriggerRecords));
@@ -379,7 +379,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 
 	if (0 > newSizeTrOfIntereset || cMaxTriggerRecordsOfInterest < newSizeTrOfIntereset)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvDef::StringVector msgList;
 		msgList.push_back(std::format(_T("{:d}"), newSizeTrOfIntereset));
 		msgList.push_back(std::format(_T("{:d}"), cMaxTriggerRecordsOfInterest));
@@ -395,7 +395,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 	{
 		if (0 > inspectionPos || inspectionList.list_size() <= inspectionPos)
 		{   //new start of reset is not allowed if reset is in progress.
-			assert(false);
+			Log_Assert(false);
 			SvDef::StringVector msgList;
 			msgList.push_back(std::format(_T("{:d}"), inspectionPos));
 			msgList.push_back(std::format(_T("{:d}"), inspectionList.list_size()));
@@ -407,7 +407,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 		auto* pIpData = inspectionList.mutable_list(inspectionPos);
 		if (nullptr == pIpData)
 		{
-			assert(false);
+			Log_Assert(false);
 			SvDef::StringVector msgList;
 			msgList.push_back(std::format(_T("{:d}"), inspectionPos));
 			msgList.push_back(std::format(_T("{:d}"), inspectionList.list_size()));
@@ -459,7 +459,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 
 SvOi::ITriggerRecordRWPtr TriggerRecordController::createTriggerRecordObjectToWrite(int inspectionPos)
 {
-	assert(-1 == m_resetStarted4IP);
+	Log_Assert(-1 == m_resetStarted4IP);
 
 	if (-1 == m_resetStarted4IP)
 	{
@@ -539,7 +539,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::startResetTriggerRecordStructure(int 
 {
 	if (m_isResetLocked)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocked, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -547,7 +547,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::startResetTriggerRecordStructure(int 
 
 	if (-1 != m_resetStarted4IP)
 	{   //new start of reset is not allowed if reset is in progress.
-		assert(false);
+		Log_Assert(false);
 		SvDef::StringVector msgList;
 		msgList.push_back(std::format(_T("{:d}"), m_resetStarted4IP));
 		msgList.push_back(std::format(_T("{:d}"), inspectionPos));
@@ -560,7 +560,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::startResetTriggerRecordStructure(int 
 	const auto& rInspectionList = m_pDataController->getInspections();
 	if ((0 > inspectionPos && m_cResetStartedAddBuffer != inspectionPos) || rInspectionList.list_size() <= inspectionPos)
 	{   //new start of reset is not allowed if reset is in progress.
-		assert(false);
+		Log_Assert(false);
 		SvDef::StringVector msgList;
 		msgList.push_back(std::format(_T("{:d}"), inspectionPos));
 		msgList.push_back(std::format(_T("{:d}"), rInspectionList.list_size()));
@@ -575,7 +575,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::startResetTriggerRecordStructure(int 
 		int TriggerRecordSize = ipData.numberofrecords();
 		if (0 >= TriggerRecordSize || cMaxTriggerRecords < TriggerRecordSize)
 		{
-			assert(false);
+			Log_Assert(false);
 			SvDef::StringVector msgList;
 			msgList.push_back(std::format(_T("{:d}"), TriggerRecordSize));
 			msgList.push_back(std::format(_T("{:d}"), cMaxTriggerRecords));
@@ -587,7 +587,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::startResetTriggerRecordStructure(int 
 		int TriggerRecordOfInterestSize = ipData.numberrecordsofinterest();
 		if (0 > TriggerRecordOfInterestSize || cMaxTriggerRecordsOfInterest < TriggerRecordOfInterestSize)
 		{
-			assert(false);
+			Log_Assert(false);
 			SvDef::StringVector msgList;
 			msgList.push_back(std::format(_T("{:d}"), TriggerRecordOfInterestSize));
 			msgList.push_back(std::format(_T("{:d}"), cMaxTriggerRecordsOfInterest));
@@ -644,7 +644,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::setGlobalInit()
 {
 	if (m_isResetLocked)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocked, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -652,7 +652,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::setGlobalInit()
 
 	if (-1 != m_resetStarted4IP)
 	{   //new start of reset is not allowed if reset is in progress.
-		assert(false);
+		Log_Assert(false);
 		SvDef::StringVector msgList;
 		msgList.push_back(std::format(_T("{:d}"), m_resetStarted4IP));
 		msgList.push_back(std::format(_T("{:d}"), -1));
@@ -672,7 +672,7 @@ int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBu
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
 	if (ResetEnum::Invalid == resetEnum)
 	{   //Not possible to add and change image.
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -684,7 +684,7 @@ int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBu
 		int TriggerRecordSize = ipData.numberofrecords();
 		if (0 >= TriggerRecordSize || cMaxTriggerRecords < TriggerRecordSize)
 		{
-			assert(false);
+			Log_Assert(false);
 			SvDef::StringVector msgList;
 			msgList.push_back(std::format(_T("{:d}"), TriggerRecordSize));
 			msgList.push_back(std::format(_T("{:d}"), cMaxTriggerRecords));
@@ -956,7 +956,7 @@ bool TriggerRecordController::removeImageBuffer(uint32_t ownerID, const SVMatrox
 {
 	if (-1 == m_resetStarted4IP || m_isResetLocked)
 	{   //removeImageBuffer is not allowed if reset is not started.
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 	auto bufferMapIter = m_additionalBufferMap.find(ownerID);
@@ -996,7 +996,7 @@ bool TriggerRecordController::removeAllImageBuffer(uint32_t ownerID)
 {
 	if (-1 == m_resetStarted4IP || m_isResetLocked)
 	{   //removeAllImageBuffer is not allowed if reset is not started.
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 
@@ -1019,7 +1019,7 @@ bool TriggerRecordController::removeAllImageBuffer()
 {
 	if (-1 == m_resetStarted4IP || m_isResetLocked)
 	{   //removeAllImageBuffer is not allowed if reset is not started.
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 
@@ -1036,7 +1036,7 @@ void TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefL
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
 	if (ResetEnum::Invalid == resetEnum)
 	{   //Not possible to add and change image.
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -1123,7 +1123,7 @@ void TriggerRecordController::finishGlobalInit()
 {
 	if (m_isResetLocked)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocked, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -1131,7 +1131,7 @@ void TriggerRecordController::finishGlobalInit()
 
 	if (-1 != m_resetStarted4IP)
 	{   //new start of reset is not allowed if reset is in progress.
-		assert(false);
+		Log_Assert(false);
 		SvDef::StringVector msgList;
 		msgList.push_back(std::format(_T("{:d}"), m_resetStarted4IP));
 		msgList.push_back(std::format(_T("{:d}"), -1));
@@ -1142,7 +1142,7 @@ void TriggerRecordController::finishGlobalInit()
 
 	if (!m_isGlobalInit)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GlobalInitNotStarted, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -1160,7 +1160,7 @@ void TriggerRecordController::finishResetTriggerRecordStructure()
 {
 	if (-1 == m_resetStarted4IP)
 	{   //stop of reset is not allowed if reset is not started.
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetNotStart, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -1212,7 +1212,7 @@ void TriggerRecordController::recalcRequiredBuffer()
 		catch (...)
 		{
 			//nothing to do
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 }
@@ -1411,7 +1411,7 @@ TriggerRecordController::ResetEnum TriggerRecordController::prepareChangingSubIm
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
 	if (ResetEnum::Invalid == resetEnum)
 	{   //Not possible to add and change image.
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -1443,7 +1443,7 @@ TriggerRecordController* getTriggerRecordControllerInstance(bool throwException 
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(throwException ? SvStl::MsgType::Data : SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetTRCFailed, SvStl::SourceFileParams(StdMessageParams));
 		if (throwException)
@@ -1491,7 +1491,7 @@ ITriggerRecordControllerRW* getTriggerRecordControllerRWInstance() noexcept
 		//Use reinterpret cast for speed as we know it fits!
 		return reinterpret_cast<ITriggerRecordControllerRW*> (pTRC);
 	}
-	assert(false);
+	Log_Assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
 	return nullptr;
@@ -1505,7 +1505,7 @@ ITriggerRecordControllerRW& getTriggerRecordControllerRWInstanceThrow() noexcept
 		//Use reinterpret cast for speed as we know it fits!
 		return reinterpret_cast<ITriggerRecordControllerRW&> (*pTRC);
 	}
-	assert(false);
+	Log_Assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
@@ -1533,13 +1533,13 @@ void createTriggerRecordControllerInstance(TRC_DataType dataType)
 			SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerReader>());
 			break;
 		default:
-			assert(false);
+			Log_Assert(false);
 			break;
 		}
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 	}
 }
 

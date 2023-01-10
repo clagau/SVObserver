@@ -32,6 +32,7 @@
 
 #include "SVRPropTreeItem.h"
 #include "Definitions/Color.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // drawing helper functions
@@ -271,7 +272,7 @@ bool SVRPropertyItem::HitCheckBox(const POINT& pt)
 
 bool SVRPropertyItem::IsRootLevel()
 {
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 	return GetParent() == m_pProp->GetRootItem();
 }
 
@@ -415,7 +416,7 @@ void SVRPropertyItem::CommitChanges()
 
 	m_bCommitOnce = true;
 
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 	OnCommit();
 
@@ -504,7 +505,7 @@ LONG SVRPropertyItem::UpdatePosition( const RECT& rc, LONG x, LONG y )
 	LONG nTotal, nCol, ey;
 	CRect drc, ir;
 
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 
 	if(!IsRootLevel() && IsHidden())
@@ -633,7 +634,7 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 	LONG nTotal, nCol, ey;
 	CRect drc, ir;
 
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 	if(!IsRootLevel() && IsHidden())
 	{
@@ -893,7 +894,7 @@ void SVRPropertyItem::DrawAttribute(CDC*, const RECT&)
 
 int SVRPropertyItem::GetItemType(void)
 {
-	assert(0);
+	Log_Assert(0);
 	return 0;
 }
 
@@ -907,224 +908,224 @@ bool SVRPropertyItem::GetItemValue(bool&)
 
 bool SVRPropertyItem::GetItemValue(BYTE& /*bVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(short& /*iVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(USHORT& /*uiVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(long& /*lVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(ULONG& /*ulVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(int& /*intVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(UINT& /*uintVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(float& /*fltVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(double& /*dblVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(std::string& /*strVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::GetItemValue(_variant_t& /*vtVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const bool /*boolVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const BYTE /*bVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const short /*iVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const USHORT /*uiVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const long /*lVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const ULONG /*ulVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const int /*intVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const UINT /*uintVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const float /*fltVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(const double /*dblVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValue(LPCTSTR /*lpszVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(BYTE& /*bVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(short& /*iVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(USHORT& /*uiVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(long& /*lVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(ULONG& /*ulVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(int& /*intVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(UINT& /*uintVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(float& /*fltVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(double& /*dblVal*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 
 
 bool SVRPropertyItem::SetItemValuePtr(std::string& /*strSrc*/)
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 

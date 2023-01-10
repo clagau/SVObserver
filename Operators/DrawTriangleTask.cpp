@@ -74,7 +74,7 @@ bool DrawTriangleTask::drawImage(SvOi::SVImageBufferHandlePtr pImageHandle, Draw
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 }

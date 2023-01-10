@@ -179,7 +179,7 @@ bool DrawTaskTree::OnLButtonUp()
 				pRequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_TaskObjectList);
 
 				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
-				assert(S_OK == hr);
+				Log_Assert(S_OK == hr);
 				if (S_OK == hr)
 				{
 					auto hPos = GetNextItem(m_hDragTarget, TVGN_PREVIOUS);
@@ -301,7 +301,7 @@ std::pair<HTREEITEM, HTREEITEM> DrawTaskTree::prepareAddInto(HTREEITEM item, SvP
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 					return {nullptr, nullptr};
 				}
 				break;
@@ -318,7 +318,7 @@ std::pair<HTREEITEM, HTREEITEM> DrawTaskTree::prepareAddInto(HTREEITEM item, SvP
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 					return {nullptr, nullptr};
 				}
 				break;

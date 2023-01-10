@@ -26,7 +26,7 @@ namespace SvTrc
 			long value = InterlockedDecrement(&m_rRefCount);
 			if (0 > value)
 			{
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocker, SvStl::SourceFileParams(StdMessageParams));
 				InterlockedExchange(&m_rRefCount, 0);

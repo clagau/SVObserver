@@ -11,7 +11,7 @@
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
-
+#include <tchar.h>
 #include <functional>
 //#include <future>
 #include <memory>
@@ -20,3 +20,4 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread/future.hpp>
+

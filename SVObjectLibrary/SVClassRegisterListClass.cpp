@@ -1837,14 +1837,14 @@ void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )
 			{
 				std::string Temp = SvUl::Format( _T("Duplicate Class encountered\n ClassName: %s\n ClassID: %d"), pClass->GetClassName(), pClass->GetClassID());
 				::OutputDebugString( Temp.c_str() );
-				assert(false);
+				Log_Assert(false);
 			}
 		#endif
 	}
 	#ifdef _DEBUG
 	else
 	{
-		assert(false);//("Invalid Class encountered\n");
+		Log_Assert(false);//("Invalid Class encountered\n");
 	}
 	#endif
 }

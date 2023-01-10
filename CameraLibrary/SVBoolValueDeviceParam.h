@@ -15,6 +15,7 @@
 #include "SVDeviceParam.h"
 #include "SVDeviceParams.h"
 #pragma endregion Includes
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 class SVBoolValueDeviceParam : public SVDeviceParam
 {
@@ -52,8 +53,8 @@ public:
 	bool BoolValue(const SVDeviceParamWrapper& w);
 	SVDeviceParamWrapper DeviceParam(bool b);
 #else
-	inline bool& BoolValue(SVDeviceParamWrapper& w) {SVBoolValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVBoolValueDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->bValue;}
-	inline bool BoolValue(const SVDeviceParamWrapper& w) {const SVBoolValueDeviceParam* p = w.DerivedValue(p); if (p) return p->bValue; else {assert(false); return 0;} }
+	inline bool& BoolValue(SVDeviceParamWrapper& w) {SVBoolValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVBoolValueDeviceParam(); p = w.DerivedValue(p);} Log_Assert(p); return p->bValue;}
+	inline bool BoolValue(const SVDeviceParamWrapper& w) {const SVBoolValueDeviceParam* p = w.DerivedValue(p); if (p) return p->bValue; else {Log_Assert(false); return 0;} }
 	inline SVDeviceParamWrapper DeviceParam(bool b) {return SVBoolValueDeviceParam(b);}
 #endif
 

@@ -248,7 +248,7 @@ bool SVLinearImageOperatorList::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageC
 			
 			result = (S_OK == m_svLinearData.SetArrayValues(m_svArray)) && result;
 
-			assert(result);
+			Log_Assert(result);
 
 			if (!result)
 			{

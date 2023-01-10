@@ -201,7 +201,7 @@ void SVOPropertyPageDlg::SetupCamera()
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T("Camera"));
 		pRoot->SetInfoText(_T("Define a Camera"));
-		assert( m_eProduct != SVIM_PRODUCT_TYPE_UNKNOWN );
+		Log_Assert( m_eProduct != SVIM_PRODUCT_TYPE_UNKNOWN );
 	
 		SetupFileCamera(pRoot);
 
@@ -363,7 +363,7 @@ void SVOPropertyPageDlg::SetupAdvancedFileCamera(SVRPropertyItem* pRoot)
 
 void SVOPropertyPageDlg::SetupAdvancedCamera()
 {
-	assert( nullptr != m_pAssistant );
+	Log_Assert( nullptr != m_pAssistant );
 	SetTitle( m_CameraObj.GetCameraDisplayName().c_str() );
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
@@ -380,7 +380,7 @@ void SVOPropertyPageDlg::SetupAdvancedCamera()
 			pRoot->SetLabelText(_T("Camera Advanced"));
 			pRoot->SetInfoText(_T("Advanced camera properties"));
 			
-			assert( m_eProduct != SVIM_PRODUCT_TYPE_UNKNOWN );
+			Log_Assert( m_eProduct != SVIM_PRODUCT_TYPE_UNKNOWN );
 			if ( SVHardwareManifest::IsDigitalSVIM( m_eProduct ) )
 			{
 				// load options based on camera file
@@ -1193,8 +1193,8 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			SVDeviceParam* pDeviceParam = w;
 			const SVDeviceParam* pFileDeviceParam = wCF;
 
-			assert( pDeviceParam );
-			assert( pFileDeviceParam );
+			Log_Assert( pDeviceParam );
+			Log_Assert( pFileDeviceParam );
 
 			// If Custom get real DeviceParam
 			if (pDeviceParam && pDeviceParam->DataType() == DeviceDataTypeCustom)
@@ -1810,7 +1810,7 @@ void SVOPropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResu
 		{
 			SVDeviceParamEnum e = (SVDeviceParamEnum) (pItem->GetCtrlID() - PROP_CAMERA_FILE_BASE);
 			SVDeviceParamCollection& rCamDeviceParams = m_CameraObj.GetCameraDeviceParamsNonConst();
-			assert( rCamDeviceParams.ParameterExists(e) );
+			Log_Assert( rCamDeviceParams.ParameterExists(e) );
 			SVDeviceParamWrapper& rw = rCamDeviceParams.GetParameter(e);
 			SVDeviceParam* pDeviceParam = rw;
 			switch ( pDeviceParam->Type() )
@@ -1908,10 +1908,10 @@ HRESULT SVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, SV
 	const SVDeviceParamWrapper& rwCameraFileFormats = rCameraFileParams.Parameter( e );
 	const SVCameraFormatsDeviceParam* pCameraFileFormats = rwCameraFileFormats.DerivedValue( pCameraFileFormats );
 
-	assert( pCameraDeviceParam->options.find( sSelectedFormat ) != pCameraDeviceParam->options.end() );
+	Log_Assert( pCameraDeviceParam->options.find( sSelectedFormat ) != pCameraDeviceParam->options.end() );
 	SVCameraFormat& rCameraDeviceFormat = pCameraDeviceParam->options[sSelectedFormat];
 	
-	assert( pCameraFileFormats->options.find( sSelectedFormat ) != pCameraFileFormats->options.end() );
+	Log_Assert( pCameraFileFormats->options.find( sSelectedFormat ) != pCameraFileFormats->options.end() );
 	SVCameraFormat format( pCameraFileFormats->options.find( sSelectedFormat )->second );
 	format.AssignUserChangableValues( rCameraDeviceFormat );
 

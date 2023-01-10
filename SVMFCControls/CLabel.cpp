@@ -193,7 +193,7 @@ void CLabel::ReconstructFont()
 	m_font.DeleteObject();
 	BOOL bCreated = m_font.CreateFontIndirect(&m_lf);
 
-	assert(bCreated);
+	Log_Assert(bCreated);
 }
 
 //////////////////////////////////////////////////////////////////////////

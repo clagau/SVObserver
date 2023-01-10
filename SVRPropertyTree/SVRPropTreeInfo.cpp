@@ -30,6 +30,7 @@
 #include "stdafx.h"
 #include "SVRPropTree.h"
 #include "SVRPropTreeInfo.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -77,7 +78,7 @@ void SVRPropertyInfo::OnPaint()
 	dc.DrawEdge(&ClientRect, BDR_SUNKENOUTER, BF_RECT);
 	ClientRect.DeflateRect(4, 4);
 
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 	SVRPropertyItem* pItem = m_pProp->GetFocusedItem();
 

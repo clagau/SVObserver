@@ -121,7 +121,7 @@ namespace SvOgu
 			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
 			break;
 		default:
-			assert(false);
+			Log_Assert(false);
 			return false;
 		}
 		
@@ -134,7 +134,7 @@ namespace SvOgu
 		SetWindowText(textStr);
 
 		createObjectPage();
-		assert(m_pDlgLinkedPage);
+		Log_Assert(m_pDlgLinkedPage);
 		if (nullptr == m_pDlgLinkedPage)
 		{
 			return false;
@@ -144,7 +144,7 @@ namespace SvOgu
 		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes)
 		{
 			createFormulaPage();
-			assert(m_pDlgFormulaPage);
+			Log_Assert(m_pDlgFormulaPage);
 			if (nullptr == m_pDlgFormulaPage)
 			{
 				return false;
@@ -252,7 +252,7 @@ namespace SvOgu
 				msgList.push_back(m_ObjectName);
 				SvStl::MessageManager Msg(SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 	}

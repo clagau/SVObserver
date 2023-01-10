@@ -119,7 +119,7 @@ long SVMatroxPatternInterface::Convert2MatroxType(SVPatternTypeEnum eType)
 
 		default:
 		{
-			assert(0);
+			Log_Assert(0);
 			break;
 		}
 
@@ -180,7 +180,7 @@ long SVMatroxPatternInterface::Convert2MatroxType(SVPatternSearchParameterTypeEn
 		}
 		default:
 		{
-			assert(0);
+			Log_Assert(0);
 			break;
 		}
 	}
@@ -242,7 +242,7 @@ long SVMatroxPatternInterface::Convert2MatroxType(SVPatternResultEnum eType)
 		}
 		default:
 		{
-			assert(0);
+			Log_Assert(0);
 			break;
 		}
 	}

@@ -187,18 +187,6 @@ private:
 #pragma endregion Member variables
 };
 
-class  MessageManagerHelper
-{
-
-public:
-	static void LogError(LPCSTR errortext, const SvStl::SourceFileParams& rFileParams, int level = 0);
-};
 
 
 } //namespace SvStl
-#define Log_Error(text) SvStl::MessageManagerHelper::LogError(text, SvStl::SourceFileParams(StdMessageParams),0);
-#define Log_Info(text) SvStl::MessageManagerHelper::LogError(text, SvStl::SourceFileParams(StdMessageParams),2);
-#define Log_Assert(a) {  if (false ==  (a))\
-					{ SvStl::MessageManagerHelper::LogError(#a, SvStl::SourceFileParams(StdMessageParams), 0); assert(a);}}
-
-

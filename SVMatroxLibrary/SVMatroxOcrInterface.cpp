@@ -238,7 +238,7 @@ __int64 SVMatroxOcrInterface::Convert2MatroxControlType(SVOcrControlEnum p_eType
 		}
 		default:
 		{
-			assert(0);
+			Log_Assert(0);
 		}
 
 	}
@@ -340,7 +340,7 @@ __int64 SVMatroxOcrInterface::Convert2MatroxResultType(SVOcrResultEnum p_eType)
 		}
 		default:
 		{
-			assert(0);
+			Log_Assert(0);
 		}
 
 	}

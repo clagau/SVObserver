@@ -299,7 +299,7 @@ void DrawObject::SetParameter(long parameterId, _variant_t parameterValue)
 		m_SelectedColor = parameterValue.lVal;
 		break;
 	default:
-		assert(FALSE);
+		Log_Assert(FALSE);
 		break;
 	}
 }

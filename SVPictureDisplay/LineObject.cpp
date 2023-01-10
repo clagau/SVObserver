@@ -13,6 +13,7 @@
 #include "StdAfx.h"
 #include "LineObject.h"
 #include "SVPictureDisplayIdl.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -172,12 +173,12 @@ std::vector<long> setPoints(const _variant_t& variantPoints)
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 	}
 	return retVec;
 }
@@ -187,7 +188,7 @@ void LineObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 	case P_Type:
-		assert( LineROI == parameterValue.lVal );
+		Log_Assert( LineROI == parameterValue.lVal );
 		break;
 	case P_X1:
 		if (VT_I4 == parameterValue.vt || VT_R8 == parameterValue.vt)

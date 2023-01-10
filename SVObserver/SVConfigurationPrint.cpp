@@ -264,7 +264,7 @@ void SVConfigurationPrint::DoPrintConfig()
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	
-	assert(nullptr != m_printInfo.m_pPD);    // must be set
+	Log_Assert(nullptr != m_printInfo.m_pPD);    // must be set
 	
 	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
 	
@@ -298,7 +298,7 @@ void SVConfigurationPrint::DoPrintConfig()
 	if (DoPreparePrinting(&m_printInfo))
 	{
 		// hDC must be set (did you remember to call DoPreparePrinting?)
-		assert(nullptr != m_printInfo.m_pPD->m_pd.hDC);
+		Log_Assert(nullptr != m_printInfo.m_pPD->m_pd.hDC);
 		
 		// gather file to print to if print-to-file selected
 		std::string strOutput;
@@ -457,7 +457,7 @@ void SVConfigurationPrint::DoPrintConfig()
 			
 			OnPrepareDC();
 			
-			assert(m_printInfo.m_bContinuePrinting);
+			Log_Assert(m_printInfo.m_bContinuePrinting);
 			
 			// page successfully started, so now render the page
 			PrintPage();
@@ -494,7 +494,7 @@ void SVConfigurationPrint::printConfigToStringBuffer(std::string& rBuffer)
 	CWnd wnd;
 	CRect rect(0, 0, 10, 10);
 	BOOL bResult = wnd.CreateEx(0, _T("Button"), _T(""), 0, rect, nullptr, 0);
-	assert(bResult); UNREFERENCED_PARAMETER(bResult);
+	Log_Assert(bResult); UNREFERENCED_PARAMETER(bResult);
 	HDC hDC = wnd.GetDC()->GetSafeHdc();
 	m_printDC.Attach(hDC);
 	
@@ -507,8 +507,8 @@ void SVConfigurationPrint::printConfigToStringBuffer(std::string& rBuffer)
 BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	assert(nullptr != pPrintInfo);
-	assert(nullptr != pPrintInfo->m_pPD);
+	Log_Assert(nullptr != pPrintInfo);
+	Log_Assert(nullptr != pPrintInfo->m_pPD);
 	
 	if (pPrintInfo->m_pPD->m_pd.nMinPage > pPrintInfo->m_pPD->m_pd.nMaxPage)
 		pPrintInfo->m_pPD->m_pd.nMaxPage = pPrintInfo->m_pPD->m_pd.nMinPage;
@@ -555,9 +555,9 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 			return FALSE;       // do not print
 	}
 	
-	assert(nullptr != pPrintInfo->m_pPD);
+	Log_Assert(nullptr != pPrintInfo->m_pPD);
 	
-	assert(nullptr != pPrintInfo->m_pPD->m_pd.hDC);
+	Log_Assert(nullptr != pPrintInfo->m_pPD->m_pd.hDC);
 	
 	if (nullptr == pPrintInfo->m_pPD->m_pd.hDC)
 		return FALSE;
@@ -1371,7 +1371,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr									    // pointer to typeface name string 
 			);
-		assert(bResult);
+		Log_Assert(bResult);
 		
 		// Create sub title font
 		bResult = m_fontSection.CreateFont(
@@ -1390,7 +1390,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr										// pointer to typeface name string 
 			);
-		assert(bResult);
+		Log_Assert(bResult);
 		
 		// Create sub title font
 		bResult = m_fontSubSection.CreateFont(
@@ -1409,7 +1409,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr										// pointer to typeface name string 
 			);
-		assert(bResult);
+		Log_Assert(bResult);
 		
 		// Create text font
 		bResult = m_fontText.CreateFont(
@@ -1428,7 +1428,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr									    // pointer to typeface name string 
 			);
-		assert(bResult);
+		Log_Assert(bResult);
 		
 		// Create sub title font
 		bResult = m_fontPageNbr.CreateFont(
@@ -1447,7 +1447,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr										// pointer to typeface name string 
 			);
-		assert(bResult);
+		Log_Assert(bResult);
 		
 		// Save space for page number
 		m_printInfo.m_rectDraw.bottom -=(m_heightPageNumberPixels*2);
@@ -1512,10 +1512,10 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 			SVLut* plutDummy = nullptr;
 			SVDeviceParamCollection* pDeviceParams = nullptr;
 			SvIe::SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
-			assert( nullptr != pAcqDevice);
+			Log_Assert( nullptr != pAcqDevice);
 			bool bOk = pConfig->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams );
-			assert( bOk );
-			assert( pfnac );
+			Log_Assert( bOk );
+			Log_Assert( pfnac );
 			if ( bOk )
 			{
 				// print camera name

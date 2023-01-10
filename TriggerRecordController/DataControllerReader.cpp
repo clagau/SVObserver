@@ -103,7 +103,7 @@ void TRControllerReaderDataPerIP::reloadData()
 
 TriggerRecordData& TRControllerReaderDataPerIP::getTRData(int pos) const
 {
-	assert(0 <= pos && getBasicData().m_TriggerRecordNumber > pos && nullptr != m_pTriggerRecords);
+	Log_Assert(0 <= pos && getBasicData().m_TriggerRecordNumber > pos && nullptr != m_pTriggerRecords);
 	if (0 > pos || getBasicData().m_TriggerRecordNumber <= pos || nullptr == m_pTriggerRecords)
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
@@ -468,7 +468,7 @@ void DataControllerReader::initAndreloadData()
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateSMCommonData, SvStl::SourceFileParams(StdMessageParams));
 			}
@@ -583,7 +583,7 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 		bool isOk = rSMPointer->OpenDataStore(name.c_str());
 		if (!isOk)
 		{
-			assert(false);
+			Log_Assert(false);
 			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, {name}, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
@@ -599,7 +599,7 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ImageProps, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();

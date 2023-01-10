@@ -31,10 +31,11 @@
 #include "SVRPropTree.h"
 
 #include "SVRPropTreeItemStatic.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 void SVRPropertyItemStatic::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 	CFont*  pOldFont = pDC->SelectObject(m_pProp->GetNormalFont());
 	pDC->SetTextColor(RGB(0,0,0));

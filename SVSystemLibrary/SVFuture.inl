@@ -10,6 +10,8 @@
 
 #include <mutex>
 #include <atomic>
+#include "SVStatusLibrary/MessageManagerHelper.h"
+
 
 namespace SvSyl
 {
@@ -95,7 +97,7 @@ inline void SVFuture<void>::get()
 		m_state->cv.wait(lk);
 	}
 
-	assert(m_state->is_done);
+	Log_Assert(m_state->is_done);
 
 	if (!m_state->is_success)
 	{
@@ -224,7 +226,7 @@ inline T SVFuture<T>::get()
 		});
 	}
 
-	assert(m_state->is_done);
+	Log_Assert(m_state->is_done);
 
 	if (!m_state->is_success)
 	{

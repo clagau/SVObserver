@@ -481,7 +481,7 @@ namespace SvOg
 		CPropertyPage::OnInitDialog();
 
 		//Enum and m_rEdgeEmbeddedIds size must be the same
-		assert(EdgeEmbeddedEnum::EdgeIdCount == m_rEdgeEmbeddedIds.size());
+		Log_Assert(EdgeEmbeddedEnum::EdgeIdCount == m_rEdgeEmbeddedIds.size());
 
 		m_values.Init();
 

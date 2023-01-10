@@ -58,7 +58,7 @@ END_MESSAGE_MAP()
 BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 
 	for(const auto& pEntry : m_pSheet->m_pPPQ->GetUsedInputs())
 	{
@@ -100,7 +100,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 
 void SVPPQEntryDialogRemotePageClass::OnAddButton()
 {
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 	UpdateData( TRUE );
 
 	int index = m_availableInputCtrl.GetCurSel();
@@ -134,7 +134,7 @@ void SVPPQEntryDialogRemotePageClass::OnAddButton()
 
 void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 {
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 	UpdateData( TRUE );
 
 	int index = m_selectedInputCtrl.GetCurSel();
@@ -169,7 +169,7 @@ void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 void SVPPQEntryDialogRemotePageClass::OnOK()
 {
 	UpdateData( TRUE );
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 
 	m_bIsTaken = ( m_selectedInputCtrl.GetCount() > 0 );
 

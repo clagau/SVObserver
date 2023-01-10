@@ -19,6 +19,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVUtilityLibrary/GeoHelper.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 
@@ -2869,7 +2870,7 @@ HRESULT SVImageExtentClass::setProperty(SvPb::SVExtentPropertyEnum eProperty, do
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 	}
 	return result;
 }

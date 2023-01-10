@@ -69,4 +69,5 @@
 #include <boost/graph/graphviz.hpp>						//Used by static library
 #include <boost/scoped_array.hpp>						//Used by static library
 #pragma warning(pop)
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

@@ -344,7 +344,7 @@ bool DrawToolController::setCommonData(TreeNodeData& rData)
 	{
 		return S_OK == rData.m_pValues->Commit(PostAction::doReset | PostAction::doRunOnce, true);
 	}
-	assert(false);
+	Log_Assert(false);
 	return true;
 }
 
@@ -420,7 +420,7 @@ bool DrawToolController::setColorData(TreeNodeData& rData)
 
 		return S_OK == rData.m_pValues->Commit(PostAction::doReset | PostAction::doRunOnce, true);
 	}
-	assert(false);
+	Log_Assert(false);
 	return true;
 }
 }

@@ -10,6 +10,7 @@
 #include "StdAfx.h"
 #include "PolyPointsObject.h"
 #include "SVPictureDisplayIdl.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -58,7 +59,7 @@ void PolyPointsObject::Draw(POINT p_Offset, double p_fZoomWidth, double p_fZoomH
 	}
 	POINT* points = pointVec.data();
 	size_t numPoints = pointVec.size();
-	assert(INT_MAX > numPoints);
+	Log_Assert(INT_MAX > numPoints);
 	switch (m_subType)
 	{
 		case SubType_Points:
@@ -169,7 +170,7 @@ void PolyPointsObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 		case P_Type:
-			assert(PolyPointsROI == parameterValue.lVal);
+			Log_Assert(PolyPointsROI == parameterValue.lVal);
 			break;
 			//this parameter set scale option to both direction. 
 			// ATTENTIONS: Should only be used if both should be the same, else it should used P_SubType_X and P_SubType_Y.
@@ -222,7 +223,7 @@ void PolyPointsObject::setPoints(const _variant_t& variantPoints)
 	{
 		long length = variantPoints.parray->rgsabound[0].cElements;
 		//length must be modulo 2, because it is the xy pair
-		assert(0 == length % 2);
+		Log_Assert(0 == length % 2);
 		if (1 < length)
 		{
 			void* data = nullptr;
@@ -247,12 +248,12 @@ void PolyPointsObject::setPoints(const _variant_t& variantPoints)
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 	}
 }
 
@@ -268,7 +269,7 @@ _variant_t PolyPointsObject::getPointsAsVariant() const
 		}
 		COleSafeArray arraySafe;
 		size_t doubleNumPoints = m_points.size() * 2;
-		assert(ULONG_MAX > doubleNumPoints);
+		Log_Assert(ULONG_MAX > doubleNumPoints);
 		arraySafe.CreateOneDim(VT_I4, static_cast<DWORD>(doubleNumPoints), pointList);
 		delete[] pointList;
 		return arraySafe;

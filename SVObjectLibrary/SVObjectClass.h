@@ -25,6 +25,7 @@
 #pragma endregion Includes
 
 
+
 #pragma region Declarations
 struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;
@@ -174,7 +175,7 @@ public:
 
 	virtual void SetName(LPCTSTR Name);
 	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter);
-	virtual void changeSource(const SVObjectReference& /*rOldObject*/, SVObjectClass& /*rNewObject*/) { assert(false); };
+	virtual void changeSource(const SVObjectReference& /*rOldObject*/, SVObjectClass& /*rNewObject*/) { Log_Assert(false); };
 	const SvDef::SVObjectTypeInfoStruct& getObjectTypeInfo() const { return m_ObjectTypeInfo; };
 	bool isViewable() const; ///< Check if Viewable-attribute is set by this object and also by its owner.
 

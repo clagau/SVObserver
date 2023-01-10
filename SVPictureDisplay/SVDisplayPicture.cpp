@@ -1369,7 +1369,7 @@ long SVDisplayPicture::CalculateNextHandle()
 	}
 	else
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 		return 0;
 	}
 }
@@ -1422,7 +1422,7 @@ std::shared_ptr<DrawObject> SVDisplayPicture::createOverlay( const VariantParamM
 		pOverlay = std::shared_ptr<DrawObject>(new SegmentObject());
 		break;
 	default:
-		assert(FALSE);
+		Log_Assert(FALSE);
 		break;
 	}
 	pOverlay->SetParameter(ParameterMap);

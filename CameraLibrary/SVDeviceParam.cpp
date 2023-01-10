@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVDeviceParam.h"
 #include "SVDeviceParamCollection.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 SVDeviceParam::SVDeviceParam()
 	: m_eParam(DeviceParamInvalid)
@@ -69,7 +70,7 @@ SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
 	}
 	catch (std::runtime_error&)
 	{
-		assert(false);
+		Log_Assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		std::string outputText{_T("SVDeviceParam::Create unable to create type")};
 		outputText += std::to_string(static_cast<long> (eType)) + '\n';
@@ -78,7 +79,7 @@ SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
 		throw;
 	}
 
-	assert(pParam);
+	Log_Assert(pParam);
 	return pParam;
 }
 

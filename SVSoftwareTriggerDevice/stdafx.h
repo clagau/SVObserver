@@ -66,4 +66,5 @@
 #include <tchar.h>			//Used by static library
 #include <unordered_map>
 #include <vector>
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

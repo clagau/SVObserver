@@ -107,8 +107,8 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructL
 	if (!isGlobalInit)
 	{
 		SvPb::ImageStructList newImageStructList = m_rDataController.getImageStructList();
-		assert(rImageStructList.list_size() >= newImageStructList.list_size());
-		assert(0 == newImageStructList.list_size() || rImageStructList.list(newImageStructList.list_size() - 1).structid() == newImageStructList.list(newImageStructList.list_size() - 1).structid());
+		Log_Assert(rImageStructList.list_size() >= newImageStructList.list_size());
+		Log_Assert(0 == newImageStructList.list_size() || rImageStructList.list(newImageStructList.list_size() - 1).structid() == newImageStructList.list(newImageStructList.list_size() - 1).structid());
 
 		fitBufferToNewStruct(rImageStructList, newImageStructList, m_rDataController.getBufferVectorRef());
 
@@ -168,7 +168,7 @@ bool ImageBufferController::decreaseImageRefCounter(int pos)
 		long value = InterlockedDecrement(pImageCount);
 		if (0 > value)
 		{
-			assert(false);
+			Log_Assert(false);
 			SvStl::MessageManager e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_TRC_GENERAL_WARNING, SvStl::Tid_TRC_Error_ImageRefCount, SvStl::SourceFileParams(StdMessageParams));
 			InterlockedExchange(pImageCount, 0);
@@ -282,7 +282,7 @@ void ImageBufferController::reduceRequiredBuffers(const SvPb::ImageList& imageLi
 			auto* pImageStruct = newImageStructList.mutable_list(id);
 			if (nullptr != pImageStruct)
 			{
-				assert(0 <= pImageStruct->numberofbuffersrequired() - numbers);
+				Log_Assert(0 <= pImageStruct->numberofbuffersrequired() - numbers);
 				pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - numbers);
 			}
 		}
@@ -336,7 +336,7 @@ std::vector<std::pair<int, int>> ImageBufferController::updateImageStructListAnd
 	{
 		//old structId must be equal or higher (it is higher if an size-entry was deleted.)
 		int oldId = rImageStructData.structid();
-		assert(oldId >= i);
+		Log_Assert(oldId >= i);
 		if (oldId > i)
 		{
 			//Because oldID is 
@@ -396,7 +396,7 @@ void ImageBufferController::fitBufferToNewStruct(const SvPb::ImageStructList& rI
 		//add required memory (throw exception if not enough space left).
 		addRequiredMemory(*pStructData, requiredNumbers, neededBufferSpace);
 
-		assert(requiredNumbers > 0);
+		Log_Assert(requiredNumbers > 0);
 		if (pStructData->numberofbuffers() < requiredNumbers)
 		{ //add more buffer of this size if necessary
 			try

@@ -13,6 +13,7 @@
 #include "StdAfx.h"
 #include "ArrowObject.h"
 #include "SVPictureDisplayIdl.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -137,7 +138,7 @@ void ArrowObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 	case P_Type:
-		assert( ArrowROI == parameterValue.lVal );
+		Log_Assert( ArrowROI == parameterValue.lVal );
 		break;
 	case P_Orientation:
 		m_eOrient = static_cast<SVOrientation>( parameterValue.lVal );

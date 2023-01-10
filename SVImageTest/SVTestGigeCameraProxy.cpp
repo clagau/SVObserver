@@ -493,7 +493,7 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 			case DeviceParamLut:
 			{
 				const SVLutDeviceParam* pLutParam = rw.DerivedValue( pLutParam );
-				assert( pLutParam );
+				Log_Assert( pLutParam );
 
 				// convert to safearray
 				hr = SVLUTToSafeArray(pLutParam->lut, value);
@@ -957,7 +957,7 @@ HRESULT SVTestGigeCameraProxy::SetDigitizerParameters( const SVDeviceParamCollec
 	{
 		const SVDeviceParamWrapper& w = rDeviceParams.Parameter( DeviceParamFirmware );
 		const SVStringValueDeviceParam* psv = w.DerivedValue(psv);
-		assert( psv );
+		Log_Assert( psv );
 		m_strCameraFileFirmware = *psv;
 	}
 */

@@ -177,6 +177,7 @@
     <ClInclude Include="MessageContainer.h" />
     <ClInclude Include="MessageData.h" />
     <ClInclude Include="MessageManager.h" />
+    <ClInclude Include="MessageManagerHelper.h" />
     <ClInclude Include="MessageTextEnum.h" />
     <ClInclude Include="MessageTextGenerator.h" />
     <ClInclude Include="MessageTextMap.h" />

@@ -323,7 +323,7 @@ HRESULT SVTADlgResizePage::SetupResizeImageControl()
 	}
 
 	m_ROIImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_ROIIMAGE));
-	assert(SvDef::InvalidObjectId != m_ROIImageID);
+	Log_Assert(SvDef::InvalidObjectId != m_ROIImageID);
 	if (SvDef::InvalidObjectId == m_ROIImageID)
 	{//if the imagename we want still cannot be found we use the position in the list
 		if (1 < namesAndIds.size())
@@ -332,7 +332,7 @@ HRESULT SVTADlgResizePage::SetupResizeImageControl()
 		}
 	}
 	m_OutputImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_IMAGE1));
-	assert(SvDef::InvalidObjectId != m_OutputImageID);
+	Log_Assert(SvDef::InvalidObjectId != m_OutputImageID);
 	if (SvDef::InvalidObjectId == m_OutputImageID)
 	{//if the imagename we want still cannot be found we use the position in the list
 		if (0 < namesAndIds.size())
@@ -361,7 +361,7 @@ HRESULT SVTADlgResizePage::SetupResizeImageControl()
 
 void SVTADlgResizePage::UpdateImages()
 {
-	assert(SvDef::InvalidObjectId != m_ROIImageID && SvDef::InvalidObjectId != m_OutputImageID);
+	Log_Assert(SvDef::InvalidObjectId != m_ROIImageID && SvDef::InvalidObjectId != m_OutputImageID);
 
 	if (SvDef::InvalidObjectId != m_ROIImageID && SvDef::InvalidObjectId != m_OutputImageID)
 	{

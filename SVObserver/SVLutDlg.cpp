@@ -439,7 +439,7 @@ void SVLutDlgPage::Refresh()
 			{
 				pOperation = m_Lut(m_iCurrentBand).GetTransformOperation();
 			}
-			assert( nullptr != pOperation );
+			Log_Assert( nullptr != pOperation );
 			if (nullptr != pOperation)
 			{
 				const SVLutTransformOperationMap::SVLutTransformTypeInfo* pInfo = m_mapOperations.GetInfo(pOperation);

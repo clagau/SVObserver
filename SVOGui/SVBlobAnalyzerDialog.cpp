@@ -107,7 +107,7 @@ namespace SvOg
 		m_cbBlobColor.SetCurSelItemData(CurrentSelection);
 
 		m_FeaturesEnabled = std::string(m_values.Get<CString>(SvPb::BlobEnabledFeaturesEId));
-		assert(SvPb::SVBlobFeatureEnum::SV_NUMBER_OF_BLOB_FEATURES == m_FeaturesEnabled.size());
+		Log_Assert(SvPb::SVBlobFeatureEnum::SV_NUMBER_OF_BLOB_FEATURES == m_FeaturesEnabled.size());
 
 		m_Ascending = m_values.Get<bool>(SvPb::SortAscendingEId);
 		m_bExclude = m_values.Get<bool>(SvPb::ExcludeFailedEId);
@@ -141,7 +141,7 @@ namespace SvOg
 									 0,0,           // Width and Height Not Used
 									 SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW 
 									);
-		assert(bResult2);
+		Log_Assert(bResult2);
 
 		return TRUE;  // return TRUE unless you set the focus to a control
 					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben

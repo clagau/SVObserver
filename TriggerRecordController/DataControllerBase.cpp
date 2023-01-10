@@ -71,7 +71,7 @@ DataControllerBase::DataControllerBase()
 		msgList.push_back(std::format(_T("{:x}"), errorCode));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
+		Log_Assert(false);
 	}
 
 	m_hReadyEvent = ::CreateEvent(&sa, true, false, GNameReadyEvent);
@@ -82,7 +82,7 @@ DataControllerBase::DataControllerBase()
 		msgList.push_back(std::format(_T("{:x}"), errorCode));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
+		Log_Assert(false);
 	}
 }
 
@@ -106,7 +106,7 @@ TriggerRecordData& DataControllerBase::getTRData(int inspectionPos, int pos) con
 {
 	auto* pData = getTRControllerData(inspectionPos);
 	//do not check of the input parameter, because this is are private method and the parameter will be checked before in the calling method.
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 
 	return pData->getTRData(pos);
 }
@@ -134,7 +134,7 @@ int DataControllerBase::getLastTrId(int inspectionPos) const
 const SvPb::ImageList& DataControllerBase::getImageDefList(int inspectionPos, bool onlyIfInit) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr != pData && (!onlyIfInit || pData->getBasicData().m_bInit))
 	{
 		return pData->getImageList();
@@ -148,7 +148,7 @@ const SvPb::ImageList& DataControllerBase::getImageDefList(int inspectionPos, bo
 const std::unordered_map<uint32_t, int>& DataControllerBase::getImageMap(int inspectionPos) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr != pData && pData->getBasicData().m_bInit)
 	{
 		return pData->getImageMap();
@@ -162,7 +162,7 @@ const std::unordered_map<uint32_t, int>& DataControllerBase::getImageMap(int ins
 const std::unordered_map<uint32_t, int>& DataControllerBase::getChildImageMap(int inspectionPos) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr != pData && pData->getBasicData().m_bInit)
 	{
 		return pData->getChildImageMap();
@@ -176,7 +176,7 @@ const std::unordered_map<uint32_t, int>& DataControllerBase::getChildImageMap(in
 const std::unordered_map<uint32_t, std::pair<bool, int>>& DataControllerBase::getLinkedImageMap(int inspectionPos) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr != pData && pData->getBasicData().m_bInit)
 	{
 		return pData->getLinkedImageMap();
@@ -200,7 +200,7 @@ int DataControllerBase::getTriggerRecordNumber(int inspectionPos) const
 const SvPb::DataDefinitionList& DataControllerBase::getDataDefList(int inspectionPos) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr != pData && pData->getBasicData().m_bInit)
 	{
 		return pData->getDataList();
@@ -214,7 +214,7 @@ const SvPb::DataDefinitionList& DataControllerBase::getDataDefList(int inspectio
 const std::unordered_map<uint32_t, int>& DataControllerBase::getDataDefMap(int inspectionPos) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr != pData && pData->getBasicData().m_bInit)
 	{
 		return pData->getDataMap();
@@ -236,7 +236,7 @@ void DataControllerBase::sendReadyCallbackIfReady(const std::function<void()>& r
 bool DataControllerBase::isIPInit(int inspectionPos)
 {
 	auto* pData = getTRControllerData(inspectionPos);
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr != pData)
 	{
 		return pData->getBasicData().m_bInit;
@@ -247,7 +247,7 @@ bool DataControllerBase::isIPInit(int inspectionPos)
 void DataControllerBase::createTriggerRecordsBuffer(int inspectionPos, int trNumbers)
 {
 	auto* pData = getTRControllerData(inspectionPos);
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr != pData)
 	{
 		pData->createTriggerRecordsBuffer(trNumbers);

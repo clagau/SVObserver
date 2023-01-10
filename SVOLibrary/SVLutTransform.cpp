@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <typeinfo.h>
 #include "SVLutTransform.h"
 #include "SVLut.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 
@@ -44,7 +45,7 @@ SVLutTransformOperation* SVLutTransformOperationMap::GetType(SVLutTransformOpera
 
 SVLutTransformOperationEnum SVLutTransformOperationMap::GetType(const SVLutTransformOperation* pType)
 {
-	assert( pType );
+	Log_Assert( pType );
 	auto iter = std::find_if(m_TypeInfoMap.begin(), m_TypeInfoMap.end(), [&pType](const auto rEntry)
 	{
 		return nullptr != pType && nullptr != rEntry.second.m_pType && typeid(*rEntry.second.m_pType) == typeid(*pType);
@@ -60,7 +61,7 @@ const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperatio
 
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const SVLutTransformOperation* pType)
 {
-	assert( pType );
+	Log_Assert( pType );
 	auto iter = std::find_if(m_TypeInfoMap.begin(), m_TypeInfoMap.end(), [&pType](const auto rEntry)
 	{
 		return nullptr != pType && nullptr != rEntry.second.m_pType && typeid(*rEntry.second.m_pType) == typeid(*pType);
@@ -282,7 +283,7 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationFreeform&, SVLut
 HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationTwoKnee&, SVLutBand& data, const SVLutTransformParameters& param)
 {
 	HRESULT hr = S_OK;
-	assert( param.size() == 5 );
+	Log_Assert( param.size() == 5 );
 	if ( param.size() == 5 )
 	{
 		unsigned long x1 = param[0];

@@ -35,7 +35,7 @@ SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 		//This needs to be freed so that the parent can also be freed properly
 		freeBuffer();

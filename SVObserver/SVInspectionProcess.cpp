@@ -213,7 +213,7 @@ HRESULT SVInspectionProcess::ProcessInspection()
 		}
 
 
-		assert(m_PPQInputs.size() == product.m_triggerInfo.m_Inputs.size());
+		Log_Assert(m_PPQInputs.size() == product.m_triggerInfo.m_Inputs.size());
 		// Copy inputs to Inspection Process's Value objects
 		for (size_t i = 0; i < m_PPQInputs.size(); i++)
 		{
@@ -343,7 +343,7 @@ bool SVInspectionProcess::isReject(SvOi::ITriggerRecordRPtr pTriggerRecord)
 {
 	if (nullptr == pTriggerRecord)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RejectClarifyFailedNoTR, SvStl::SourceFileParams(StdMessageParams));
 		return false;
@@ -364,7 +364,7 @@ bool SVInspectionProcess::isReject(SvOi::ITriggerRecordRPtr pTriggerRecord)
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RejectClarifyFailedUnknowData, {element->name}, SvStl::SourceFileParams(StdMessageParams));
 			}
@@ -679,7 +679,7 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct* pProduct, CantProcessE
 	}
 
 	// See if we have discrete inputs.
-	assert(m_PPQInputs.size() == pProduct->m_triggerInfo.m_Inputs.size());
+	Log_Assert(m_PPQInputs.size() == pProduct->m_triggerInfo.m_Inputs.size());
 	for (size_t i = 0; bReady && i < m_PPQInputs.size(); i++)
 	{
 		if (nullptr != m_PPQInputs[i] && m_PPQInputs[i]->m_Enabled)

@@ -77,7 +77,7 @@ bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	Attributes = SvPb::remotelySetable | SvPb::setableOnline;
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
-	assert(m_pEmbeddedExtents);
+	Log_Assert(m_pEmbeddedExtents);
 	if (m_pEmbeddedExtents)
 	{
 		m_pEmbeddedExtents->m_ExtentLeft.SetObjectAttributesAllowed(Attributes, SvOi::SetAttributeType::RemoveAttribute);

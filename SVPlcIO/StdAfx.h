@@ -79,4 +79,5 @@
 #include <boost/log/sources/channel_feature.hpp>
 #include <boost/log/sources/channel_logger.hpp>
 #include <boost/shared_ptr.hpp>
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

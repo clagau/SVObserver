@@ -75,7 +75,7 @@ HRESULT SVMatroxDisplayInterface::CreateDisplay(__int64& p_rDispId)
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -139,7 +139,7 @@ HRESULT SVMatroxDisplayInterface::Create(SVMatroxBuffer& p_rDispBufId, SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -206,7 +206,7 @@ HRESULT SVMatroxDisplayInterface::Destroy(SVMatroxBuffer& p_rDispBufId)
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -332,7 +332,7 @@ HRESULT SVMatroxDisplayInterface::Get(const __int64& p_rDispId, SVDisplayCntrlEn
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -389,7 +389,7 @@ HRESULT SVMatroxDisplayInterface::Get(const __int64& p_rDispId, SVDisplayCntrlEn
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -444,7 +444,7 @@ HRESULT SVMatroxDisplayInterface::Set(const __int64& p_rDispId, SVDisplayCntrlEn
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -484,7 +484,7 @@ HRESULT SVMatroxDisplayInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -521,7 +521,7 @@ HRESULT SVMatroxDisplayInterface::Lut(const __int64& p_rDispId, const SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -556,7 +556,7 @@ HRESULT SVMatroxDisplayInterface::Pan(const __int64& p_rDispId, const double& p_
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -591,7 +591,7 @@ HRESULT SVMatroxDisplayInterface::Select(const __int64& p_rDispId, const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -626,7 +626,7 @@ HRESULT SVMatroxDisplayInterface::SelectWindow(const __int64& p_rDispId, const S
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -661,7 +661,7 @@ HRESULT SVMatroxDisplayInterface::Deselect(const __int64& p_rDispId)
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -697,7 +697,7 @@ HRESULT SVMatroxDisplayInterface::Zoom(const __int64& p_rDispId, const double& p
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 

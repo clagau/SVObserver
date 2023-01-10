@@ -8,6 +8,7 @@
 #include "Definitions/ObjectDefines.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 namespace SvOgu
 {
@@ -58,19 +59,19 @@ namespace SvOgu
 	public:
 		variant_t GetValue() const
 		{
-			assert(false);
+			Log_Assert(false);
 			return {};
 		}
 
 		variant_t GetMinValue() const
 		{
-			assert(false);
+			Log_Assert(false);
 			return {};
 		}
 
 		variant_t GetMaxValue() const
 		{
-			assert(false);
+			Log_Assert(false);
 			return {};
 		}
 

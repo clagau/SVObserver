@@ -65,7 +65,7 @@ void SVUserMaskOperatorClass::init()
 	SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
 
 	bool bAddFriend = AddFriend( pShapeHelper );
-	assert( bAddFriend );	UNREFERENCED_PARAMETER(bAddFriend);
+	Log_Assert( bAddFriend );	UNREFERENCED_PARAMETER(bAddFriend);
 
 
 	RegisterEmbeddedObject( &m_bvoActivated, SvPb::MaskEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemIP, true);
@@ -165,7 +165,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 	m_bvoActivated.GetValue(bActive);
 
 	SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-	assert( pShapeHelper );
+	Log_Assert( pShapeHelper );
 	if ( pShapeHelper )
 	{
 		Result = pShapeHelper->ResetObject(pErrorMessages) && Result;
@@ -784,7 +784,7 @@ void SVUserMaskOperatorClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::
 			if (isContRecalc)
 			{
 				const SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-				assert(pShapeHelper);
+				Log_Assert(pShapeHelper);
 				if (pShapeHelper)
 				{
 					pMaskImage = pShapeHelper->getImage();

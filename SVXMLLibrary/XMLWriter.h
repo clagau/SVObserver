@@ -38,6 +38,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 */ 
 
 #pragma once
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <iostream>
@@ -56,7 +57,7 @@ namespace xml
 	public:
 		// writer must be bound to an ostream
 		writer(std::ostream& os) : os(os), need_header(true), m_NewLine(true) {}
-		~writer(void) { assert(elements.empty()); }
+		~writer(void) { Log_Assert(elements.empty()); }
 		void setHeader(LPCSTR header) { headestring = header;} ;
 		void setNewLine(bool NewLine){ m_NewLine = NewLine; };
 
@@ -108,7 +109,7 @@ namespace xml
 		// create a new element tag, bound to an xml::writer
 		element(const char* name, writer& wr) : m_name(name), m_writer(wr)
 		{
-			assert(m_name != nullptr);
+			Log_Assert(m_name != nullptr);
 			check_parent( true );
 			wr.header().putc('<').puts(name);
 			tagopen = true;
@@ -139,9 +140,9 @@ namespace xml
 		// write an attribute for the current element
 		element& attr(const char* name, const char* value)
 		{
-			assert(name != 0);
-			assert(value != 0);
-			assert(tagopen);
+			Log_Assert(name != 0);
+			Log_Assert(value != 0);
+			Log_Assert(tagopen);
 			m_writer.putc(' ').puts(name).puts("=\"");
 			qputs(value);
 			m_writer.putc('"');
@@ -164,7 +165,7 @@ namespace xml
 		// write text content for the current element
 		element& contents(const char* str)
 		{
-			assert(str != 0);
+			Log_Assert(str != 0);
 			check_parent( false );
 			qputs(str);
 			return *this;
@@ -185,7 +186,7 @@ namespace xml
 
 		// write CDATA section
 		element& cdata(const char* str) {
-			assert(str != 0);
+			Log_Assert(str != 0);
 			check_parent( false );
 			m_writer.puts("<![CDATA[");
 			m_writer.puts(str);

@@ -521,7 +521,7 @@ void GlobalConstantView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	if (TheSVObserverApp().OkToEdit())
 	{
 		CMenu* PupupMenu = m_ContextMenuItem.GetSubMenu( 0 );
-		assert( nullptr != PupupMenu );
+		Log_Assert( nullptr != PupupMenu );
 		CWnd* PopupOwner = this;
 		while ( PopupOwner->GetStyle() & WS_CHILD )
 		{

@@ -412,7 +412,7 @@ BOOL SVObserverApp::InitInstance()
 
 	if (!IsWindow(SVVisionProcessorHelper::Instance().getMainhWnd()))
 	{
-		Log_Error("Invalid Mainwindow!");
+		Log_Error(SvDef::InvalidMainwindow);
 	}
 	//
 	// Init user list...
@@ -586,7 +586,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	HRESULT result = DestroyConfig();
 	if (S_OK != result)
 	{
-		Log_Error("DestroyConfig Issue");
+		Log_Error(SvDef::DestroyConfigFailed);
 		return result;	//keep the cancel state so it does not remove from MRU
 	}
 
@@ -665,7 +665,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	}
 	else
 	{
-		Log_Error("Wrong Extension in OpenFile");
+		Log_Error(SvDef::WrongExtensionInOpenFile);
 		result = E_INVALIDARG;
 	}
 
@@ -711,7 +711,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(rExp.getMessage());
-				Log_Error("OpenSVXFile Exception");
+				Log_Error(SvDef::OpenSvxFileError);
 			}
 
 			hr = LoadSvxFile(m_CurrentVersion, GetFullSvxFileName(), getConfigFullFileName(), GetSVIMType(), dynamic_cast<SVMainFrame*>(m_pMainWnd), std::move(globalInitPtr));
@@ -719,7 +719,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 			if (hr & SvDef::svErrorCondition)
 
 			{
-				Log_Error("LoadSvxFile error");
+				Log_Error(SvDef::OpenSvxFileError);
 				
 				// If there was an error during configuration loading...
 				SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
@@ -749,7 +749,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 		catch (CUserException* pUE)
 		{
 			
-			Log_Error("CUserException");
+			Log_Error(SvDef::OpenSvxFileError);
 			delete pUE;
 
 			bOk = false;
@@ -770,7 +770,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 	{
 		setConfigFullFileName(nullptr, true);
 		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
-		Log_Error("!OK");
+		Log_Error(SvDef::OpenSvxFileError);
 	}
 
 	if (S_OK == hr)
@@ -1290,7 +1290,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 	}
 	catch (...)
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 	}
 
 	try
@@ -1308,7 +1308,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 	}
 	catch (...)
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 	}
 
 	hCursor = ::LoadCursor(nullptr, IDC_WAIT);
@@ -1429,7 +1429,7 @@ void SVObserverApp::Start(DWORD desiredState)
 
 	SVObjectManagerClass::Instance().ClearAllIndicator();
 
-	assert(nullptr != pConfig);
+	Log_Assert(nullptr != pConfig);
 
 	if (nullptr == m_pMainWnd || nullptr == pConfig)
 	{

@@ -96,7 +96,7 @@ void SVTADlgExternalResultPage::rebuildPropertyTree()
 	m_Tree.DeleteAllItems();
 
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-	assert(pRoot);
+	Log_Assert(pRoot);
 	pRoot->SetCanShrink(false);
 	pRoot->SetLabelText(_T("External Tool Results"));
 	pRoot->SetInfoText(_T(""));
@@ -353,7 +353,7 @@ void SVTADlgExternalResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plR
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
-		assert(iIndex >= 0);	UNREFERENCED_PARAMETER(iIndex);
+		Log_Assert(iIndex >= 0);	UNREFERENCED_PARAMETER(iIndex);
 		// @TODO - add validation logic, e.g.: if (!bValidated) {*plResult = S_FALSE;}
 	}
 
@@ -377,7 +377,7 @@ BOOL SVTADlgExternalResultPage::OnSetActive()
 
 int SVTADlgExternalResultPage::GetItemIndex(SVRPropertyItem* pItem)
 {
-	assert(pItem);
+	Log_Assert(pItem);
 	return pItem->GetCtrlID() - ID_BASE;
 }
 

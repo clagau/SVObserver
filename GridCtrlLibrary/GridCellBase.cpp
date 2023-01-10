@@ -60,6 +60,7 @@
 #include "stdafx.h"
 #include "GridCtrl.h"
 #include "GridCellBase.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -129,7 +130,7 @@ namespace SvGcl
 		// depend on it's value being that which was passed in.
 
 		GridCtrl* pGrid = GetGrid();
-		assert(pGrid);
+		Log_Assert(pGrid);
 
 		if (!pGrid || !pDC)
 			return FALSE;
@@ -285,7 +286,7 @@ namespace SvGcl
 	#endif
 		{
 			CFont *pFont = GetFontObject();
-			assert(pFont);
+			Log_Assert(pFont);
 			if (pFont)
 				pDC->SelectObject(pFont);
 		}
@@ -488,7 +489,7 @@ namespace SvGcl
 
 	void GridCellBase::OnEndEdit() 
 	{
-		assert( FALSE); 
+		Log_Assert( FALSE); 
 	}
 
 	BOOL GridCellBase::ValidateEdit(LPCTSTR str)
@@ -523,7 +524,7 @@ namespace SvGcl
 	CSize GridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= nullptr*/)
 	{
 		GridCtrl* pGrid = GetGrid();
-		assert(pGrid);
+		Log_Assert(pGrid);
 
 		BOOL bReleaseDC = FALSE;
 		if (nullptr == pDC || nullptr == szText)
@@ -533,7 +534,7 @@ namespace SvGcl
 			if (nullptr == pDC || nullptr == szText) 
 			{
 				CGridDefaultCell* pDefCell = dynamic_cast<CGridDefaultCell*> (GetDefaultCell());
-				assert(pDefCell);
+				Log_Assert(pDefCell);
 				return CSize(pDefCell->GetWidth(), pDefCell->GetHeight());
 			}
 			bReleaseDC = TRUE;
@@ -610,7 +611,7 @@ namespace SvGcl
 		if (nImage >= 0)    
 		{        
 			GridCtrl* pGrid = GetGrid();        
-			assert(pGrid);        
+			Log_Assert(pGrid);        
 			IMAGEINFO Info;        
 			if (pGrid->GetImageList() && pGrid->GetImageList()->GetImageInfo(nImage, &Info))         
 			{            

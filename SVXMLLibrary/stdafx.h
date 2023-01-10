@@ -72,6 +72,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <boost/scoped_array.hpp>
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 
 #pragma endregion Precompiled Headers

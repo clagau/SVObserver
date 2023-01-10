@@ -249,7 +249,7 @@ void SymmetricTrapezoid::SetParameter(long parameterId, _variant_t parameterValu
 	switch (parameterId)
 	{
 		case P_Type:
-			assert( TrapezoidROI == parameterValue.lVal );
+			Log_Assert( TrapezoidROI == parameterValue.lVal );
 			break;
 		case P_Offset:
 			m_TrapOffset= parameterValue.lVal;

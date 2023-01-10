@@ -36,7 +36,7 @@ public:
 	const SvPb::ImageList& getImageList() const override { return m_ImageList; };
 	const SvPb::DataDefinitionList& getDataList() const override { return m_DataDefList; };
 	void* getTriggerRecords() { return m_pTriggerRecords; };
-	virtual void setLastFinishedTRID(int) override { assert(false); throw E_NOTIMPL; };
+	virtual void setLastFinishedTRID(int) override { Log_Assert(false); throw E_NOTIMPL; };
 	void setLastSetOfInterestFlagPos(int pos) override;
 	int getTrId2Send();
 	SvOi::TrInterestEventData getInterestTrId2Send();

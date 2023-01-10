@@ -76,7 +76,7 @@ bool DrawRectangleTask::drawImage(SvOi::SVImageBufferHandlePtr pImageHandle, Dra
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 }

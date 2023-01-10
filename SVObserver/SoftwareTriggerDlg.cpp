@@ -217,7 +217,7 @@ void SoftwareTriggerDlg::ClearTriggers()
 
 bool SoftwareTriggerDlg::AddTrigger(SvTrig::SVTriggerObject* pTrigger, bool paused)
 {
-	assert( nullptr != pTrigger );
+	Log_Assert( nullptr != pTrigger );
 	if( nullptr == pTrigger ){ return false; }
 
 	if (paused && nullptr != pTrigger->getDevice())

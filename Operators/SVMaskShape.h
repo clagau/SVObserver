@@ -51,7 +51,7 @@ struct SVMaskShapeProperty
 		if ( this != &rhs )
 		{
 			value = rhs.value;
-			assert( rhs.order != 0 );
+			Log_Assert( rhs.order != 0 );
 			if ( order == 0 || rhs.order != 0 )
 				order = rhs.order;
 			bAvailableWithAutoResize = rhs.bAvailableWithAutoResize;

@@ -50,9 +50,9 @@ HRESULT SVArchiveImageThreadClass::GoOnline()
 		m_bRunThread = true;
 		HANDLE hProcess = ::GetCurrentProcess();
 		DuplicateHandle( hProcess, ::GetCurrentThread(), hProcess, &m_hAppThread, 0, FALSE, DUPLICATE_SAME_ACCESS );
-		assert( nullptr == m_hExitEvent );
+		Log_Assert( nullptr == m_hExitEvent );
 		m_hExitEvent = ::CreateEvent( nullptr, true, false, nullptr );
-		assert( nullptr == m_hThread );
+		Log_Assert( nullptr == m_hThread );
 
 		m_hThread = ::CreateThread( nullptr, 0, SVArchiveImageThreadClass::ThreadEntry, this, 0, &m_dwThreadId );
 
@@ -66,7 +66,7 @@ HRESULT SVArchiveImageThreadClass::GoOffline()
 	if ( m_bRunThread )
 	{
 		m_bRunThread = false;
-		assert( nullptr != m_hExitEvent );
+		Log_Assert( nullptr != m_hExitEvent );
 		::SetEvent( m_hExitEvent );
 		::CloseHandle( m_hAppThread );
 		::CloseHandle( m_hThread );	// can be done on a live thread
@@ -127,7 +127,7 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 	// handle to app thread, handle to exit event
 	// timeout 1 ms
 	HANDLE ahObjects[2];
-	assert( nullptr != m_hExitEvent );
+	Log_Assert( nullptr != m_hExitEvent );
 	ahObjects[0] = m_hAppThread;
 	ahObjects[1] = m_hExitEvent;
 

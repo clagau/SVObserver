@@ -150,7 +150,7 @@ long LongValue(const SVDeviceParamWrapper& w)
 	if (p) 
 		return p->lValue; 
 	
-	assert(false);
+	Log_Assert(false);
 	return 0; 
 }
 

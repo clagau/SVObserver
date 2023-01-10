@@ -54,7 +54,7 @@ END_MESSAGE_MAP()
 
 BOOL SVPPQBar::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID ) 
 {
-	assert(nullptr != pParentWnd);
+	Log_Assert(nullptr != pParentWnd);
 	ASSERT_KINDOF(CFrameWnd, pParentWnd);
 
 	windowTitle = _T( "PPQ Bar" );
@@ -282,7 +282,7 @@ LRESULT SVPPQBar::OnSizeParent( WPARAM, LPARAM lParam )
 			}
 			else
 			{
-				assert( FALSE );      // can never happen
+				Log_Assert( FALSE );      // can never happen
 			}
 
 		rect.right = rect.left + size.cx;

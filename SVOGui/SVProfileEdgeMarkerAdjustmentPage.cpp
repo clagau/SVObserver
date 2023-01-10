@@ -47,7 +47,7 @@ bool isVertical(uint32_t inspectionId, uint32_t analyzerId)
 			return (90 == valuePair->value());
 		}
 	}
-	assert(false);
+	Log_Assert(false);
 	return false;
 }
 }

@@ -280,7 +280,7 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SvPb::EmbeddedIdEnum e
 	{
 		delete pObject;
 		pObject = nullptr;
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager e(SvStl::MsgType::Data);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		e.Throw();
@@ -290,7 +290,7 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SvPb::EmbeddedIdEnum e
 
 void TableObject::UpdateColumnValueObject(int pos, std::string objectName, int maxArray)
 {
-	assert(0 <= pos && m_ValueList.size() > pos);
+	Log_Assert(0 <= pos && m_ValueList.size() > pos);
 	//value already exist, update the name and size if needed.
 	SvVol::DoubleSortValueObject* pValueObject = m_ValueList[pos].get();
 	if (nullptr != pValueObject)
@@ -383,7 +383,7 @@ void  TableObject::getTableValues(_variant_t& rValue, long* pRowCount, long* pCo
 			double val {0.0};
 			valueList[c]->GetValue(val, r);
 			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
-			assert(hr == S_OK);
+			Log_Assert(hr == S_OK);
 			UNREFERENCED_PARAMETER(hr);
 		}
 	}
@@ -430,7 +430,7 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 	
 	setSortContainerDummy(SvVol::DummySortContainer(nRows));
 
-	assert(colNumber == sa.GetCount(0));
+	Log_Assert(colNumber == sa.GetCount(0));
 	for (unsigned long col = 0; col < colNumber; col++)
 	{
 		for (long row = 0; row < nRows; row++)

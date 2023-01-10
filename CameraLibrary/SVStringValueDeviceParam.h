@@ -15,6 +15,7 @@
 #include "SVDeviceParam.h"
 #include "SVDeviceParams.h"
 #pragma endregion Includes
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 class SVStringValueDeviceParam : public SVDeviceParam
 {
@@ -50,8 +51,8 @@ public:
 	const std::string& StringValue(const SVDeviceParamWrapper& w);
 	SVDeviceParamWrapper DeviceParam(const std::string& s);
 #else
-	inline std::string& StringValue(SVDeviceParamWrapper& w) {SVStringValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVStringValueDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->strValue;}
-	inline const std::string& StringValue(const SVDeviceParamWrapper& w) {const SVStringValueDeviceParam* p = w.DerivedValue(p); if (p) return p->strValue; else {assert(false); static std::string s(""); return s;} }
+	inline std::string& StringValue(SVDeviceParamWrapper& w) {SVStringValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVStringValueDeviceParam(); p = w.DerivedValue(p);} Log_Assert(p); return p->strValue;}
+	inline const std::string& StringValue(const SVDeviceParamWrapper& w) {const SVStringValueDeviceParam* p = w.DerivedValue(p); if (p) return p->strValue; else {Log_Assert(false); static std::string s(""); return s;} }
 	inline SVDeviceParamWrapper DeviceParam(const std::string& s) {return SVStringValueDeviceParam(s);}
 #endif
 

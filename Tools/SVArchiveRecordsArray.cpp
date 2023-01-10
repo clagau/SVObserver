@@ -57,10 +57,10 @@ void SVArchiveRecordsArray::ClearArray()
 HRESULT SVArchiveRecordsArray::InitializeObjects(SvVol::SVStringValueObjectClass& rObject )	// use array capability of string vo
 {
 	HRESULT hr = S_OK;
-	assert( nullptr != m_pArchiveTool );
+	Log_Assert( nullptr != m_pArchiveTool );
 	ClearArray();
 
-	assert(m_pArchiveTool->GetInspectionInterface());
+	Log_Assert(m_pArchiveTool->GetInspectionInterface());
 
 	int iSize = rObject.getResultSize();
 	for (int i = 0; i < iSize; i++)
@@ -171,7 +171,7 @@ void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pArchiveTool)
 
 long SVArchiveRecordsArray::WriteAllArchiveImages(const SvOi::ITriggerRecordRPtr& pTriggerRecord )
 {
-	assert( nullptr != m_pArchiveTool );
+	Log_Assert( nullptr != m_pArchiveTool );
 
 	long queueLength = 0;
 
@@ -266,7 +266,7 @@ std::string SVArchiveRecordsArray::BuildResultsArchiveString()
 		// We assume all archivable objects are Value Objects.
 		//
 		SvOi::IValueObject* pValueObject = rRecord.m_svObjectReference.getValueObject();
-		assert( nullptr != pValueObject );
+		Log_Assert( nullptr != pValueObject );
 
 		if ( nullptr != pValueObject )
 		{
@@ -382,7 +382,7 @@ std::string SVArchiveRecordsArray::AdaptDottedNameToInspectionName(std::string D
 			}
 			else
 			{	// We should always find a dotted name here.
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 	}

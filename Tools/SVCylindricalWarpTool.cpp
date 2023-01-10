@@ -407,8 +407,8 @@ bool SVCylindricalWarpToolClass::CreateLUT()
 	l_Create.m_lSizeY = lOutputHeight;
 	SVMatroxBufferInterface::Create( m_LutX, l_Create );
 	SVMatroxBufferInterface::Create( m_LutY, l_Create );
-	assert( !m_LutX.empty() );
-	assert( !m_LutY.empty() );
+	Log_Assert( !m_LutX.empty() );
+	Log_Assert( !m_LutY.empty() );
 
 	if ( !m_LutX.empty() && !m_LutY.empty() )
 	{

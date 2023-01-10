@@ -147,7 +147,7 @@ void TriangleObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 		case P_Type:
-			assert(TriangleROI == parameterValue.lVal);
+			Log_Assert(TriangleROI == parameterValue.lVal);
 			break;
 		case P_X1:
 			m_points[0].x = parameterValue.lVal;

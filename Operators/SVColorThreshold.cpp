@@ -251,7 +251,7 @@ bool SVColorThreshold::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContaine
 					SVMatroxImageInterface::Arithmetic(pOutputImageBuffer->getHandle()->GetBuffer(), pBandImageArray[SvDef::BandEnum::Band2]->getHandle()->GetBuffer(), pOutputImageBuffer->getHandle()->GetBuffer(), SVImageAnd);
 					break;
 				default:
-					assert(false);
+					Log_Assert(false);
 					break;
 			}
 		}

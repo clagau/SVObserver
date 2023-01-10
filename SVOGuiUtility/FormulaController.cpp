@@ -104,7 +104,7 @@ std::string FormulaController::GetEquationText() const
 		msgList.push_back(std::format(_T("{}"), hr));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
+		Log_Assert(false);
 	}
 	return equationText;
 }
@@ -228,7 +228,7 @@ int FormulaController::ValidateEquation_NoReset(const std::string& equationStrin
 		msgList.push_back(std::format(_T("{}"), hr));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
+		Log_Assert(false);
 	}
 	return retValue;
 }
@@ -285,7 +285,7 @@ void FormulaController::Init()
 				msgList.push_back(std::format(_T("{}"), hr));
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 	}
@@ -305,7 +305,7 @@ void FormulaController::Init()
 			msgList.push_back(std::format(_T("{}"), hr));
 			SvStl::MessageManager e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 	if (m_isConditional)

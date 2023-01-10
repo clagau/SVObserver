@@ -141,7 +141,7 @@ HRESULT SVVariantValueObjectClass::SetArrayValues(const ValueVector& rValues)
 	HRESULT Result(E_FAIL);
 
 	int32_t Size = static_cast<int32_t> (rValues.size());
-	assert(Size <= getArraySize());
+	Log_Assert(Size <= getArraySize());
 	if (Size <= m_variantData.size())
 	{
 		SetResultSize(Size);
@@ -266,7 +266,7 @@ void SVVariantValueObjectClass::updateMemBlockData()
 			if (0 < dataByteSize)
 			{
 				///Memory block reserved for value object is to small. This should not happen!
-				//assert(false);
+				//Log_Assert(false);
 				#ifdef _DEBUG
 				OutputDebugString("Memory block reserved for value object is to small. This should not happen!");
 				#endif 

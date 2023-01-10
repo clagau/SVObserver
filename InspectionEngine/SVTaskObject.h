@@ -158,7 +158,7 @@ public:
 	bool AddFriend(SVTaskObjectClass* pFriend, uint32_t addPreId = SvDef::InvalidObjectId);
 	virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override {};
-	virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) override { assert(false); return {}; };
+	virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) override { Log_Assert(false); return {}; };
 	virtual void getInputData(const SvPb::GetInputDataRequest& request, SvPb::InspectionCmdResponse& rCmdResponse) const override;
 #pragma endregion virtual method (ITaskObject)
 

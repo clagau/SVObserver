@@ -70,7 +70,7 @@ namespace SvMc
 		{
 			CWaitCursor waitCursor;
 			CDC *pDC = GetDC();
-			assert(pDC);
+			Log_Assert(pDC);
 
 			CFont* pOldFont = pDC->SelectObject(GetFont());
 

@@ -138,7 +138,7 @@ namespace SvOg
 	{
 		int index(nID - IDC_BUTTON_FAILHIGH);
 
-		assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+		Log_Assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
 		if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 		{
 			m_RangeWidgets[index]->OnButton();
@@ -149,7 +149,7 @@ namespace SvOg
 	{
 		int index(nID - IDC_EDIT_FAILHIGH);
 
-		assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+		Log_Assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
 		if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 		{
 			m_RangeWidgets[index]->EditboxToValue();

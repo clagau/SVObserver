@@ -109,7 +109,7 @@ bool SVVariantResultClass::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCon
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
 		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (GetInputValue());
-		assert( pValueObject );
+		Log_Assert( pValueObject );
 		
 		if( nullptr != pValueObject )
 		{

@@ -9,6 +9,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 namespace SvFs
 {
@@ -222,7 +223,7 @@ bool FileHelperManager::CreatePath(LPCTSTR PathName)
 			Start = Path.find(':');
 		}
 
-		assert(Start > 0);
+		Log_Assert(Start > 0);
 
 		do
 		{

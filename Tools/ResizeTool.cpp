@@ -395,7 +395,7 @@ bool ResizeTool::ModifyImageExtentByScaleFactors()
 #endif
 	if (!m_pEmbeddedExtents.get())
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 
@@ -446,7 +446,7 @@ bool ResizeTool::areAllAllScaleFactorValuesValid()
 {
 	if (!m_pEmbeddedExtents)
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 	
@@ -500,7 +500,7 @@ bool ResizeTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVecto
 #endif
 	if (nullptr == m_pEmbeddedExtents.get())
 	{
-		assert(false);
+		Log_Assert(false);
 		rRunStatus.SetInvalid();
 		return false;
 	}

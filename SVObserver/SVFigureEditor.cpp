@@ -140,7 +140,7 @@ CRect SVFigureEditor::GetHotSpot( CPoint pt )
 std::shared_ptr<CRgn> SVFigureEditor::GetHotSpot( CPoint pt1, CPoint pt2 )
 {
 	// this assumes right angles for hot spot
-	//assert( pt1.x == pt2.x || pt1.y == pt2.y );
+	//Log_Assert( pt1.x == pt2.x || pt1.y == pt2.y );
 
 	std::shared_ptr<CRgn> pRegion = std::make_shared<CRgn>();
 	CSize sizeHotSpot = GetHotSpotSize();

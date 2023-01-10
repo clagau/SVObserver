@@ -121,7 +121,7 @@ public:
 			{
 				MbufInquire(rBuffer.GetIdentifier(), M_HOST_ADDRESS, rpHostAddress);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				assert(rpHostAddress);
+				Log_Assert(rpHostAddress);
 			}
 			else
 			{
@@ -135,7 +135,7 @@ public:
 			SVMatroxApplicationInterface::LogMatroxException();
 		}
 #endif
-		assert(S_OK == l_Code);
+		Log_Assert(S_OK == l_Code);
 		return l_Code;
 	}
 

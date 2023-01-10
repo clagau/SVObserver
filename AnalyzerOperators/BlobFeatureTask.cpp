@@ -172,7 +172,7 @@ namespace SvAo
 
 	void BlobFeatureTask::addExcludeBlobs(std::set<int>& rExcludeSet)
 	{
-		assert(isCustomFeature());
+		Log_Assert(isCustomFeature());
 
 		BOOL isExclude = false;
 		m_isExcludeValue.GetValue(isExclude);

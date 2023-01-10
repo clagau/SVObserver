@@ -11,6 +11,7 @@
 #include "MessageManager.h"
 #include "SVSVIMStateClass.h"
 #include "SVMessage/SVMessage.h"
+#include "MessageManagerHelper.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -236,14 +237,19 @@ namespace SvStl
 		switch (level)
 		{
 			case 0:
-				MesMan.setMessage(SVMSG_SVO_111_GENERAL_ERROR, SvStl::Tid_Default, msgList, rFileParams);
+				MesMan.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Default, msgList, rFileParams);
 				break;
 			case 1:
-				MesMan.setMessage(SVMSG_SVO_112_GENERAL_WARNING, SvStl::Tid_Default, msgList, rFileParams);
+				MesMan.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Default, msgList, rFileParams);
 				break;
+			case 2:
 			default:
-				MesMan.setMessage(SVMSG_SVO_113_GENERAL_INFORMATIONAL, SvStl::Tid_Default, msgList, rFileParams);
+				MesMan.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Default, msgList, rFileParams);
 				break;
+			case 3:
+				MesMan.setMessage(SVMSG_SVO_114_ASSERRT_CONDITION_FAILED, SvStl::Tid_Default, msgList, rFileParams);
+				break;
+
 		}
 	}
 

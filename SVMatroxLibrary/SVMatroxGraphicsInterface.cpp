@@ -56,7 +56,7 @@ HRESULT SVMatroxGraphicsInterface::Clear(__int64& p_rGraphicsID, SVMatroxBuffer&
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -87,7 +87,7 @@ HRESULT SVMatroxGraphicsInterface::RectangleFill(__int64& p_rGraphicsID, SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -116,7 +116,7 @@ HRESULT SVMatroxGraphicsInterface::Color(__int64& p_rGraphicsID, double p_Color)
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -145,7 +145,7 @@ HRESULT SVMatroxGraphicsInterface::BackColor(__int64& p_rGraphicsID, double p_Co
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -180,7 +180,7 @@ HRESULT SVMatroxGraphicsInterface::Create(__int64& p_rGraphicsID)
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 

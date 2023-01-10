@@ -994,7 +994,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 	SvPb::InspectionCmdResponse cmdResponse;
 
 	SvOi::ITaskObject* pTaskObj = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
-	assert(nullptr != pTaskObj);
+	Log_Assert(nullptr != pTaskObj);
 	if (nullptr != pTaskObj)
 	{
 		auto EmbeddedVector = pTaskObj->getEmbeddedList();
@@ -1094,7 +1094,7 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 							}
 							else
 							{
-								assert(false);
+								Log_Assert(false);
 								cmdResponse.set_hresult(E_FAIL);
 							}
 							break;
@@ -1105,19 +1105,19 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 							}
 							else
 							{
-								assert(false);
+								Log_Assert(false);
 								cmdResponse.set_hresult(E_FAIL);
 							}
 							break;
 						default:
-							assert(false);
+							Log_Assert(false);
 							cmdResponse.set_hresult(E_FAIL);
 							break;
 					}
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 					cmdResponse.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(pObject->getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_SetOfReadOnlyValueFailed));
 					cmdResponse.set_hresult(E_FAIL);
 				}
@@ -1183,7 +1183,7 @@ SvPb::InspectionCmdResponse validateLinkedValue(SvPb::ValidateLinkedValueRequest
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		cmdResponse.set_hresult(E_POINTER);
 	}
 	return cmdResponse;
@@ -1287,7 +1287,7 @@ SvPb::InspectionCmdResponse getExtentParameter(SvPb::GetExtentParameterRequest r
 		else
 		{
 			cmdResponse.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(pObject->getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_NoParentExtentForAnalyzer));
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 	else
@@ -1806,7 +1806,7 @@ SvPb::InspectionCmdResponse initializeExternalToolTask(SvPb::InitializeExternalT
 	{
 		auto* pResponse = cmdResponse.mutable_initializeexternaltooltaskresponse();
 
-		assert(pResponse != nullptr);
+		Log_Assert(pResponse != nullptr);
 		std::vector<std::string> statusMessages;
 	cmdResponse.set_hresult(pExternalToolTask->Initialize(statusMessages, request.increationprocess(), request.initializeall()));
 
@@ -1896,7 +1896,7 @@ SvPb::InspectionCmdResponse getInputValuesDefinitionExternalTool(SvPb::GetInputV
 	if (nullptr != pExternalToolTask)
 	{
 		SvPb::GetInputValuesDefinitionExternalToolResponse* pResponse = cmdResponse.mutable_getinputvaluesdefinitionexternaltoolresponse();
-		assert(pResponse != nullptr);
+		Log_Assert(pResponse != nullptr);
 
 		pResponse->set_numinputvalues(pExternalToolTask->getExternalToolDataAdmin().getNumInputValues());
 
@@ -1930,7 +1930,7 @@ SvPb::InspectionCmdResponse getPropTreeStateExternalTool(SvPb::GetPropTreeStateE
 	if (nullptr != pExternalToolTask)
 	{
 		auto* pResponse = cmdResponse.mutable_getproptreestateexternaltoolresponse();
-		assert(pResponse != nullptr);
+		Log_Assert(pResponse != nullptr);
 
 		auto propTreeState = pExternalToolTask->getExternalToolDataAdmin().getPropTreeState();
 
@@ -2024,7 +2024,7 @@ SvPb::InspectionCmdResponse getDllMessageString(SvPb::GetDllMessageStringRequest
 	if (nullptr != pExternalToolTask)
 	{
 		auto* pResponse = cmdResponse.mutable_getdllmessagestringresponse();
-		assert(pResponse != nullptr);
+		Log_Assert(pResponse != nullptr);
 		pResponse->set_errormessage(pExternalToolTask->getDllMessageString(request.hresulterror()));
 	}
 	else
@@ -2044,7 +2044,7 @@ SvPb::InspectionCmdResponse getResultValuesDefinitionExternalTool(SvPb::GetResul
 	if (nullptr != pExternalToolTask)
 	{
 		auto* pResponse = cmdResponse.mutable_getresultvaluesdefinitionexternaltoolresponse();
-		assert(pResponse != nullptr);
+		Log_Assert(pResponse != nullptr);
 
 		pResponse->set_numresultvalues(pExternalToolTask->getExternalToolDataAdmin().getNumResultValues());
 
@@ -2077,7 +2077,7 @@ SvPb::InspectionCmdResponse getTableResultsExternalTool(SvPb::GetTableResultsExt
 	if (nullptr != pExternalToolTask)
 	{
 		auto* pResponse = cmdResponse.mutable_gettableresultsexternaltoolresponse();
-		assert(pResponse != nullptr);
+		Log_Assert(pResponse != nullptr);
 
 		*pResponse = pExternalToolTask->getExternalToolDataAdmin().getTableResults();
 	}
@@ -2098,7 +2098,7 @@ SvPb::InspectionCmdResponse getResultRangeObject(SvPb::GetResultRangeObjectReque
 	if (nullptr != pExternalToolTask)
 	{
 		auto* pResponse = cmdResponse.mutable_getresultrangeobjectresponse();
-		assert(pResponse != nullptr);
+		Log_Assert(pResponse != nullptr);
 
 		auto* iObjectClass = pExternalToolTask->getResultRangeObjectAtIndex(request.index());
 		if (nullptr != iObjectClass)
@@ -2129,7 +2129,7 @@ SvPb::InspectionCmdResponse getImageInfoExternalTool(SvPb::GetImageInfoExternalT
 	if (nullptr != pExternalToolTask)
 	{
 		auto* pResponse = cmdResponse.mutable_getimageinfoexternaltoolresponse();
-		assert(pResponse != nullptr);
+		Log_Assert(pResponse != nullptr);
 
 		*pResponse = pExternalToolTask->getImageInfoList();
 	}

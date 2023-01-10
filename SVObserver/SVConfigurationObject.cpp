@@ -204,7 +204,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvTrig::SVTrig
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != ppTrigger);
+	Log_Assert(nullptr != ppTrigger);
 
 	long lCount = GetTriggerCount();
 
@@ -228,7 +228,7 @@ SvTrig::SVTriggerObject* SVConfigurationObject::GetTrigger(long lIndex) const
 {
 	SvTrig::SVTriggerObject* retValue = nullptr;
 
-	assert(0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex);
+	Log_Assert(0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex)
 	{
@@ -475,7 +475,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVPPQObject** 
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != ppPPQ);
+	Log_Assert(nullptr != ppPPQ);
 
 	long lCount = GetPPQCount();
 
@@ -498,7 +498,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVPPQObject** 
 SVPPQObject* SVConfigurationObject::GetPPQ(long lIndex) const
 {
 	SVPPQObject* retValue = nullptr;
-	assert(0 <= lIndex && static_cast<long> (m_arPPQArray.size()) > lIndex);
+	Log_Assert(0 <= lIndex && static_cast<long> (m_arPPQArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long>(m_arPPQArray.size()) > lIndex)
 	{
@@ -513,7 +513,7 @@ bool SVConfigurationObject::GetPPQByName(LPCTSTR name, SVPPQObject** ppPPQ) cons
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != ppPPQ);
+	Log_Assert(nullptr != ppPPQ);
 
 	int Size = static_cast<int> (m_arPPQArray.size());
 	for (int i = 0; i < Size && !bReturn; i++)
@@ -571,7 +571,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvIe::SVVirtua
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != ppCamera);
+	Log_Assert(nullptr != ppCamera);
 
 	long lCount = GetCameraCount();
 	std::string Name = tszName;
@@ -594,7 +594,7 @@ SvIe::SVVirtualCamera* SVConfigurationObject::GetCamera(long lIndex) const
 {
 	SvIe::SVVirtualCamera* pCamera = nullptr;
 
-	assert(0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex);
+	Log_Assert(0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex)
 	{
@@ -611,7 +611,7 @@ bool SVConfigurationObject::AddInspection(SVInspectionProcess* pInspection)
 	if (nullptr != pInspection)
 	{
 		m_arInspectionArray.push_back(pInspection);
-		assert(m_arInspectionArray.end() != std::find_if(m_arInspectionArray.begin(), m_arInspectionArray.end(), [pInspection](auto data)->bool
+		Log_Assert(m_arInspectionArray.end() != std::find_if(m_arInspectionArray.begin(), m_arInspectionArray.end(), [pInspection](auto data)->bool
 			{
 				return (data == pInspection);
 			}));
@@ -674,7 +674,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVInspectionPr
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	assert(nullptr != ppInspection);
+	Log_Assert(nullptr != ppInspection);
 
 	long lCount = GetInspectionCount();
 	std::string Name = tszName;
@@ -700,7 +700,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVInspectionPr
 SVInspectionProcess* SVConfigurationObject::GetInspection(long lIndex) const
 {
 	SVInspectionProcess* pResult = nullptr;
-	assert(0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex);
+	Log_Assert(0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex)
 	{
@@ -1090,7 +1090,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 					{
 						int iBands = Value;
 
-						assert(iBands > 0);
+						Log_Assert(iBands > 0);
 
 						if (svLight.Create(iBands))
 						{
@@ -1235,7 +1235,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 										long lTransformOperation = Value;
 
 										const SVLutTransformOperation* pOperation = SVLutTransform::GetEquivalentType((SVLutTransformOperationEnum)lTransformOperation);
-										assert(pOperation);
+										Log_Assert(pOperation);
 										if (pOperation)
 										{
 											lut(iBand).SetTransformOperation(*pOperation);
@@ -1329,7 +1329,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 						{
 							psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigitizerName.c_str());
 							bOk = nullptr != psvDevice;
-							assert(bOk);
+							Log_Assert(bOk);
 							if (bOk)
 							{
 								psvDevice->GetLut(lut);
@@ -2802,7 +2802,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 
 		const SVLutTransformOperation* pOperation = rLut(iBand).GetTransformOperation();
 		SVLutTransformOperationEnum e = SVLutTransform::GetEquivalentType(pOperation);
-		assert(e != LutTransformTypeUnknown);
+		Log_Assert(e != LutTransformTypeUnknown);
 		svVariant = (long)e;
 		rWriter.WriteAttribute(SvXml::CTAG_LUT_TRANSFORM_OPERATION, svVariant);
 		svVariant.Clear();
@@ -3842,7 +3842,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 
 				}
 
@@ -5316,7 +5316,7 @@ HRESULT  SVConfigurationObject::LoadAuditList(SVTreeType& rTree)
 
 void SVConfigurationObject::setIOIds(SVTreeType& rTree, SVTreeType::SVBranchHandle hInspectionProcess, SVInspectionProcess* pInspection) const
 {
-	assert(pInspection && hInspectionProcess);
+	Log_Assert(pInspection && hInspectionProcess);
 	if (nullptr == pInspection || nullptr == hInspectionProcess)
 	{
 		return;

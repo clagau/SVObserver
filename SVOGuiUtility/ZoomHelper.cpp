@@ -213,7 +213,7 @@ bool ZoomHelper::CalculateZoomFit(ZoomEnum ZoomType, CSize ImageSize, CSize View
 {
 	if (ImageSize.cx < 1 || ImageSize.cy < 1 || ViewSize.cx < 1 || ViewSize.cy < 1)
 	{
-		assert(false);
+		Log_Assert(false);
 		m_ZoomFit = 1.0;
 		return false;
 	}

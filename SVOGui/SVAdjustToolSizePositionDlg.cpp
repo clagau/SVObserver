@@ -401,7 +401,7 @@ void SVAdjustToolSizePositionDlg::BuildTreeFromExtents()
 	m_pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	//pRoot = m_Tree.GetRootItem(); This is a differnt Item!
 	
-	assert(m_pRoot);
+	Log_Assert(m_pRoot);
 	m_pRoot->SetCanShrink(false);
 	m_pRoot->SetInfoText(_T(""));
 	m_pRoot->HideItem();
@@ -463,7 +463,7 @@ bool  SVAdjustToolSizePositionDlg::IsReadonly(const ::SvPb::ExtentParameter& ite
 
 void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bool shouldCreate, bool overwrite)
 {
-	assert(pRoot);
+	Log_Assert(pRoot);
 	m_ToolSizeHelper.InitValues();
 	if (overwrite)
 	{
@@ -488,7 +488,7 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 		{
 			pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.FindItem(ID_BASE + (int)item.type()));
 		}
-		assert(pEdit);
+		Log_Assert(pEdit);
 
 		if (nullptr != pEdit)
 		{

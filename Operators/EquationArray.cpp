@@ -130,7 +130,7 @@ namespace SvOp
 
 	bool EquationArray::setRunValues(int startValue, int stopValue)
 	{
-		assert(startValue <= stopValue);
+		Log_Assert(startValue <= stopValue);
 		if (startValue <= stopValue)
 		{
 			m_startValue = startValue;

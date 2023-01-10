@@ -70,4 +70,5 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

@@ -83,7 +83,7 @@ std::pair <uint32_t,std::string> getValueObjectIdNamePairFromColumn(uint32_t ins
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 	}
 	return {valueObjectId, name};
 }

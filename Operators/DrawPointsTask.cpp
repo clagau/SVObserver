@@ -64,7 +64,7 @@ bool DrawPointsTask::drawImage(SvOi::SVImageBufferHandlePtr pImageHandle, DrawAr
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 }

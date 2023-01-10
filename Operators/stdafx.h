@@ -65,4 +65,5 @@
 
 #include <boost/circular_buffer.hpp>				//Used by static library
 #include <boost/lexical_cast.hpp>					//Used by static library
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

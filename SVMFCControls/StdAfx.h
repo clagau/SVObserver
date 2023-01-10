@@ -75,4 +75,5 @@
 #include <string>
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

@@ -53,4 +53,8 @@
 #include <algorithm>
 #include <assert.h>
 #include <vector>
+#include <string>
+#include <set>
+#include <map>
+#include <ctime>
 #pragma endregion Precompiled Headers

@@ -79,7 +79,7 @@ public:
 
 	HRESULT OnEndElement(const wchar_t*, int, const wchar_t*, int, int) override
 	{
-		assert(m_curr);
+		Log_Assert(m_curr);
 		m_curr = m_curr->parent;
 		return S_OK;
 	}

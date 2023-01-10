@@ -308,7 +308,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
+		Log_Assert(false);
 		rObjectRef = SVObjectReference();
 		return E_FAIL;
 	}
@@ -453,7 +453,7 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 		}
 
 		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(pObject->getObjectId());
-		assert(nullptr == pUniqueObject);
+		Log_Assert(nullptr == pUniqueObject);
 		Result = (nullptr == pUniqueObject);
 
 		if (Result)

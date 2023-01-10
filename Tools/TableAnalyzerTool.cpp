@@ -141,7 +141,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 		m_pResultTable->setSourecTable(nullptr);
 	}
 
-	assert(m_pResult);
+	Log_Assert(m_pResult);
 	//The "number of Rows"-Result must be the last task, because the other tasks can change the value.
 	if (m_pResult && getTaskObject(numberOfTaskObjects() - 1) != m_pResult)
 	{

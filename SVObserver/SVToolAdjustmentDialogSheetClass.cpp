@@ -96,7 +96,7 @@ void SVToolAdjustmentDialogSheetClass::init()
 	addPages();
 
 	SvOi::IObjectClass* pObject = GetSuperTool();
-	assert(pObject && pObject->GetObjectType() == SvPb::SVToolObjectType);
+	Log_Assert(pObject && pObject->GetObjectType() == SvPb::SVToolObjectType);
 	
 	m_dependentTools.clear();
 	
@@ -156,7 +156,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	ObjectInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
 	ObjectInfo.m_SubType = SvPb::SVLUTOperatorObjectType;
 	SvOi::IObjectClass* pTaskObject = GetTaskObject();
-	assert(pTaskObject);
+	Log_Assert(pTaskObject);
 	if (nullptr == pTaskObject)
 	{
 		return;

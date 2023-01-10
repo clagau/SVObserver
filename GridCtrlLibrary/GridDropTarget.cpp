@@ -86,8 +86,8 @@ namespace SvGcl
 			return FALSE;
 		bInProcedure = TRUE;
 
-		assert(pGridCtrl->IsKindOf(RUNTIME_CLASS(GridCtrl)));
-		assert(pGridCtrl);
+		Log_Assert(pGridCtrl->IsKindOf(RUNTIME_CLASS(GridCtrl)));
+		Log_Assert(pGridCtrl);
 
 		if (!pGridCtrl || !pGridCtrl->IsKindOf(RUNTIME_CLASS(GridCtrl)))
 		{
@@ -135,7 +135,7 @@ namespace SvGcl
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE(_T("In GridDropTarget::OnDragEnter\n"));
 #endif
-		assert(m_pGridCtrl);
+		Log_Assert(m_pGridCtrl);
 
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
 			return m_pGridCtrl->OnDragEnter(pDataObject, dwKeyState, point);
@@ -148,7 +148,7 @@ namespace SvGcl
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE(_T("In GridDropTarget::OnDragLeave\n"));
 #endif
-		assert(m_pGridCtrl);
+		Log_Assert(m_pGridCtrl);
 
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
 			m_pGridCtrl->OnDragLeave();
@@ -157,7 +157,7 @@ namespace SvGcl
 	DROPEFFECT GridDropTarget::OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, 
 										   DWORD dwKeyState, CPoint point)
 	{
-		assert(m_pGridCtrl);
+		Log_Assert(m_pGridCtrl);
 
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
 			return m_pGridCtrl->OnDragOver(pDataObject, dwKeyState, point);
@@ -171,7 +171,7 @@ namespace SvGcl
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE(_T("In GridDropTarget::OnDrop\n"));
 #endif
-		assert(m_pGridCtrl);
+		Log_Assert(m_pGridCtrl);
 
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
 			return m_pGridCtrl->OnDrop(pDataObject, dropEffect, point);

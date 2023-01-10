@@ -83,7 +83,7 @@ namespace SvOgu
 
 	void LinkedValueWidgetHelper::OnButton()
 	{
-		assert(m_pValueController);
+		Log_Assert(m_pValueController);
 		if (m_pValueController)
 		{
 			auto data = m_pValueController->Get<LinkedValueData>(m_embeddedId);
@@ -115,7 +115,7 @@ namespace SvOgu
 
 	void LinkedValueWidgetHelper::EditboxToValue(bool ignoreEmptyString)
 	{
-		assert(m_pValueController);
+		Log_Assert(m_pValueController);
 		if (m_pValueController)
 		{
 			auto data = m_pValueController->Get<LinkedValueData>(m_embeddedId);
@@ -184,7 +184,7 @@ namespace SvOgu
 
 	void LinkedValueWidgetHelper::ValueToEditbox()
 	{
-		assert(m_pValueController);
+		Log_Assert(m_pValueController);
 		if (m_pValueController)
 		{
 			auto data = m_pValueController->Get<LinkedValueData>(m_embeddedId);
@@ -199,7 +199,7 @@ namespace SvOgu
 					break;
 				default:
 					m_rValueEdit.EnableWindow(false);
-					assert(false);
+					Log_Assert(false);
 					return;
 			}
 			m_rValueEdit.EnableWindow(enableFlag);

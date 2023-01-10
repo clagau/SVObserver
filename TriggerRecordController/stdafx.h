@@ -58,4 +58,7 @@
 
 #include <boost/algorithm/string/split.hpp>
 #include <mil.h>
+#include "SVOResource\resource.h"
+#include "SVStatusLibrary/MessageManager.h"
+
 #pragma endregion Precompiled Headers

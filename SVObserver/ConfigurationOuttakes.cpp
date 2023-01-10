@@ -233,7 +233,7 @@ SVConfigurationObject* UseConfigAssistant(SVOConfigAssistantDlg& rAssistantDlg, 
 			for (long lPPQ = 0; lPPQ < lPPQCount; lPPQ++)
 			{
 				SVPPQObject* pPPQ = pConfig->GetPPQ(lPPQ);
-				assert(nullptr != pPPQ);
+				Log_Assert(nullptr != pPPQ);
 				pPPQ->RebuildInputList();
 				pPPQ->RebuildOutputList();
 			}

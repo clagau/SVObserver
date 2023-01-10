@@ -106,7 +106,7 @@ void SVHistogramBase::CalcStats()
 
 void SVHistogramBase::SetPixelCounts(std::vector<long>::const_iterator first, std::vector<long>::const_iterator last)
 {
-	assert(last - first == VectorCount);
+	Log_Assert(last - first == VectorCount);
 	std::vector<int>::iterator dest = m_values.begin(), dest2 = m_accumulated.begin();
 	m_max = m_total = 0;
 	for (std::vector<long>::const_iterator it = first; it != last; ++it, ++dest, ++dest2)

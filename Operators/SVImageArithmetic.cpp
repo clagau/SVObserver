@@ -164,7 +164,7 @@ bool SVImageArithmetic::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 	if (enableGain && useLut && Result)
 	{
 		auto info = m_OutputImage.GetImageInfo();
-		assert(info.getPixelDepth() == SV8BitUnsigned);
+		Log_Assert(info.getPixelDepth() == SV8BitUnsigned);
 		if (!m_pLookUp)
 		{
 			m_pLookUp = std::make_unique<LookUp>(256);

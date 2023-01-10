@@ -305,7 +305,7 @@ HRESULT SVAcquisitionClass::LoadFiles(const SvFs::FileNameContainer &rArray)
 
 HRESULT SVAcquisitionClass::CreateLightReference(int iBands)
 {
-	assert(iBands > 0);
+	Log_Assert(iBands > 0);
 
 	HRESULT hrOk = S_FALSE;
 
@@ -579,7 +579,7 @@ SVLut& SVAcquisitionClass::Lut()
 	SVLutDeviceParam lutparam;
 	m_DeviceParams.SetParameter(DeviceParamLut, lutparam);
 	hr = m_DeviceParams.GetParameter(DeviceParamLut, pParam);
-	assert(S_OK == hr && nullptr != pParam);
+	Log_Assert(S_OK == hr && nullptr != pParam);
 	return pParam->lut;
 }
 

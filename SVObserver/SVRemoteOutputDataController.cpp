@@ -269,7 +269,7 @@ HRESULT SVRemoteOutputDataController::GetPPQs( SvDef::StringVector& rPPQs, SVCon
 	HRESULT l_hr = S_OK;
 
 	//Only ASSERT not to change runtime
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 
 	rPPQs.clear();
 
@@ -404,7 +404,7 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 HRESULT SVRemoteOutputDataController::AddDefaultOutputs( const std::string& rRemoteGroupID, SVPPQObject* pPPQ )
 {
 	HRESULT l_hr = S_FALSE;
-	assert( nullptr != pPPQ );
+	Log_Assert( nullptr != pPPQ );
 	if( nullptr == pPPQ)
 	{
 		return l_hr;
@@ -464,7 +464,7 @@ HRESULT SVRemoteOutputDataController::ValidateInputs()
 void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pConfig)
 {
 	//Only ASSERT not to change runtime
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 
 	SVGroupDefVect l_OriginalList;
 	SvDef::StringVector GroupOutputNames;
@@ -506,7 +506,7 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject* pConfig, SVGroupDefVect& p_rOriginalList )
 {
 	//If pConfig is nullptr then no need to go further
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return;

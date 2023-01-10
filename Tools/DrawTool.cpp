@@ -177,7 +177,7 @@ bool DrawTool::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* p
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 				}				
 			}
 			rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);

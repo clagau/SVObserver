@@ -489,7 +489,7 @@ HRESULT SVMatroxImageInterface::Create(__int64& rResultId, const long p_lNbEntri
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -528,7 +528,7 @@ HRESULT SVMatroxImageInterface::Destroy(__int64& rResultId)
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -557,7 +557,7 @@ HRESULT SVMatroxImageInterface::ArithmeticGainOffset(const SVMatroxBuffer& p_rDe
 	}
 
 	HRESULT l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -656,7 +656,7 @@ HRESULT SVMatroxImageInterface::Arithmetic(const SVMatroxBuffer& p_rDestId,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -767,7 +767,7 @@ HRESULT SVMatroxImageInterface::Binarize(const SVMatroxBuffer& p_rDest,
 		l_StatusInfo.m_StatusCode = l_Code;
 		l_StatusInfo.m_StatusString = "SVMatroxImageInterface::Binarize error";
 		SVMatroxApplicationInterface::Log(l_StatusInfo);
-		assert(0);
+		Log_Assert(0);
 	}
 
 	return l_Code;
@@ -818,7 +818,7 @@ HRESULT SVMatroxImageInterface::Close(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -872,7 +872,7 @@ HRESULT SVMatroxImageInterface::Convert(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -914,7 +914,7 @@ HRESULT SVMatroxImageInterface::Convolve(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -954,7 +954,7 @@ HRESULT SVMatroxImageInterface::Convolve(const SVMatroxBuffer& p_rDest, const SV
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1003,7 +1003,7 @@ HRESULT SVMatroxImageInterface::Dilate(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1052,7 +1052,7 @@ HRESULT SVMatroxImageInterface::Erode(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1105,7 +1105,7 @@ HRESULT SVMatroxImageInterface::Flip(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1144,7 +1144,7 @@ HRESULT SVMatroxImageInterface::GetResult(const __int64& rResultID, std::vector<
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1182,7 +1182,7 @@ HRESULT SVMatroxImageInterface::GetResult(const __int64& rResultID, std::vector<
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1218,7 +1218,7 @@ HRESULT SVMatroxImageInterface::Histogram(const __int64& rHistResult, const SVMa
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1258,7 +1258,7 @@ HRESULT SVMatroxImageInterface::LutMap(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1304,7 +1304,7 @@ HRESULT SVMatroxImageInterface::Open(const SVMatroxBuffer& p_rDest, const SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1371,7 +1371,7 @@ HRESULT SVMatroxImageInterface::PolarTransform(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1408,7 +1408,7 @@ HRESULT SVMatroxImageInterface::Project(const __int64& rResultId,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1450,7 +1450,7 @@ HRESULT SVMatroxImageInterface::Rank(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1501,7 +1501,7 @@ HRESULT SVMatroxImageInterface::Rotate(const SVMatroxBuffer& p_rProjDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1551,7 +1551,7 @@ HRESULT SVMatroxImageInterface::Thick(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1600,7 +1600,7 @@ HRESULT SVMatroxImageInterface::Thin(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1652,7 +1652,7 @@ HRESULT SVMatroxImageInterface::Warp(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1703,7 +1703,7 @@ HRESULT SVMatroxImageInterface::Watershed(const SVMatroxBuffer& p_rDest,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -1761,7 +1761,7 @@ HRESULT SVMatroxImageInterface::Resize(
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == S_OK);
+	Log_Assert(l_Code == S_OK);
 	return l_Code;
 }
 

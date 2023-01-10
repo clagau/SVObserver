@@ -344,7 +344,7 @@ namespace SvOg
 				pRequest->set_objecttype(SvPb::SVToolObjectType);
 
 				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
-				assert(S_OK == hr);
+				Log_Assert(S_OK == hr);
 			}
 		}
 		refresh();
@@ -385,7 +385,7 @@ namespace SvOg
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 
 		auto* pAvailableRequest = requestCmd.mutable_getavailableobjectsrequest();
@@ -412,7 +412,7 @@ namespace SvOg
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 } //namespace SvOg

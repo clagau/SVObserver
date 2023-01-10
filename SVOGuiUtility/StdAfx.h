@@ -98,5 +98,6 @@ using std::max;
 #include <boost/lexical_cast.hpp>
 
 #include "SVOResource\resource.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 #pragma endregion Precompiled Headers

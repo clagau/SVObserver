@@ -864,6 +864,7 @@ void SVImageView::OnRButtonDblClk(UINT nFlags, CPoint point)
 
 void SVImageView::OnLButtonDown(UINT nFlags, CPoint point)
 {
+	
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
 		TheSVObserverApp().OkToEdit())
 	{
@@ -913,6 +914,7 @@ void SVImageView::OnLButtonDown(UINT nFlags, CPoint point)
 
 		CWnd::OnLButtonDown(nFlags, point);
 	}
+	
 }
 
 void SVImageView::OnMouseMove(UINT nFlags, CPoint point)

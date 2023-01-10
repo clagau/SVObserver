@@ -30,6 +30,7 @@
 #include "stdafx.h"
 #include "SVRPropTree.h"
 #include "SVRPropTreeItemCombo.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -57,7 +58,7 @@ END_MESSAGE_MAP()
 
 void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 	CFont*	l_pOldFont;
 
@@ -164,7 +165,7 @@ void SVRPropertyItemCombo::OnLossFocus()
 
 BOOL SVRPropertyItemCombo::CreateComboBox(DWORD dwStyle)
 {
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 	if (IsWindow(m_hWnd))
 	{
@@ -212,7 +213,7 @@ void SVRPropertyItemCombo::DisplayButton()
 
 BOOL SVRPropertyItemCombo::CreateComboBoxBool()
 {
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 	if (IsWindow(m_hWnd))
 	{

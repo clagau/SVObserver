@@ -34,6 +34,7 @@
 #include "stdafx.h"
 #include "VisualFx.h"
 
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -55,7 +56,7 @@ TTabItem::TTabItem(CWnd *pParent, LPCTSTR szLabel, HICON hIcon)
 	RECT rect;
 	::ZeroMemory(&rect, sizeof(RECT));
 	m_pCaption = new CStatic;
-	assert(m_pCaption);
+	Log_Assert(m_pCaption);
 	m_pCaption->Create(szLabel, WS_CHILD | SS_CENTER | WS_VISIBLE, rect, pParent);
 }
 
@@ -78,7 +79,7 @@ TTabItem& TTabItem::operator=(const TTabItem& rRhs)
 
 TTabItem::~TTabItem()
 {
-	assert(m_pCaption);
+	Log_Assert(m_pCaption);
 	if (nullptr != m_pCaption)
 	{
 		delete m_pCaption;
@@ -88,15 +89,15 @@ TTabItem::~TTabItem()
 // Set rectangle for tab caption
 void TTabItem::SetRect(CRect& rect)
 {
-	assert(m_pCaption);
+	Log_Assert(m_pCaption);
 	m_pCaption->MoveWindow(&rect);
 }
 
 // Set font for tab caption
 void TTabItem::SetFont(CFont *pFont)
 {
-	assert(m_pCaption);
-	assert(pFont);
+	Log_Assert(m_pCaption);
+	Log_Assert(pFont);
 	m_pCaption->SetFont(pFont, FALSE);
 }
 
@@ -109,7 +110,7 @@ void TTabItem::SetIcon(HICON hIcon)
 // Get tab caption text
 CString TTabItem::GetText(void)
 {
-	assert(m_pCaption);
+	Log_Assert(m_pCaption);
 	CString str;
 	m_pCaption->GetWindowText(str);
 	return str;
@@ -123,8 +124,8 @@ int TTabItem::GetLength(void)
 // Set tab caption text
 void TTabItem::SetText(LPCTSTR szLabel)
 {
-	assert(m_pCaption);
-	assert(szLabel);
+	Log_Assert(m_pCaption);
+	Log_Assert(szLabel);
 	m_pCaption->SetWindowText(szLabel);
 }
 
@@ -137,7 +138,7 @@ void TTabItem::Enable(BOOL bEnable)
 // Enable/disable tab caption
 void TTabItem::EnableTab(BOOL bEnable)
 {
-	assert(m_pCaption);
+	Log_Assert(m_pCaption);
 	m_bEnabled = bEnable;
 	m_pCaption->EnableWindow(m_bEnabled);
 }
@@ -145,7 +146,7 @@ void TTabItem::EnableTab(BOOL bEnable)
 // Show/hide tab caption
 void TTabItem::ShowTab(BOOL bShow)
 {
-	assert(m_pCaption);
+	Log_Assert(m_pCaption);
 	m_bVisible = bShow;
 	m_pCaption->ShowWindow(bShow ? SW_SHOW : SW_HIDE);
 }
@@ -224,7 +225,7 @@ BOOL TTabWnd::Create(LPCTSTR, LPCTSTR lpszWindowName,
 					 DWORD dwStyle, const RECT& prect, CWnd* pParentWnd,
 					 UINT nID, CCreateContext *pContext)
 {
-	assert(pParentWnd);
+	Log_Assert(pParentWnd);
 
 	dwStyle &= ~WS_BORDER;
 	CRect rect(prect);
@@ -285,8 +286,8 @@ void TTabWnd::createFont()
 // Add a tab to this window
 TTabItem *TTabWnd::addTab(CWnd *pWnd, LPCTSTR szLabel)
 {
-	assert(pWnd);
-	assert(szLabel);
+	Log_Assert(pWnd);
+	Log_Assert(szLabel);
 
 	TTabItem *pItem = new TTabItem(this, szLabel);
 	pItem->m_pWnd = pWnd;
@@ -319,7 +320,7 @@ int TTabWnd::GetTabCount(void)
 // Get index of the tab associated with specified window
 int TTabWnd::GetTabIndex(CWnd *pWnd)
 {
-	assert(pWnd);
+	Log_Assert(pWnd);
 
 	int nIndex = 0;
 	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
@@ -336,7 +337,7 @@ int TTabWnd::GetTabIndex(CWnd *pWnd)
 CWnd *TTabWnd::GetTabWnd(int index)
 {
 	TTabItem *pItem = findTabItem(index);
-	assert(pItem);
+	Log_Assert(pItem);
 	return ::IsWindow(pItem->m_pWnd->m_hWnd) ? pItem->m_pWnd : nullptr;
 }
 
@@ -344,16 +345,16 @@ CWnd *TTabWnd::GetTabWnd(int index)
 CString TTabWnd::GetTabLabel(int nIndex)
 {
 	TTabItem *pItem = findTabItem(nIndex);
-	assert(pItem);
+	Log_Assert(pItem);
 	return pItem->GetText();
 }
 
 // Set text of tab caption
 void TTabWnd::SetTabLabel(int nIndex, LPCTSTR szLabel)
 {
-	assert(szLabel);
+	Log_Assert(szLabel);
 	TTabItem *pItem = findTabItem(nIndex);
-	assert(pItem);
+	Log_Assert(pItem);
 	pItem->SetText(szLabel);
 	invalidateTabArea();
 }
@@ -362,7 +363,7 @@ void TTabWnd::SetTabLabel(int nIndex, LPCTSTR szLabel)
 void TTabWnd::Enable(int nIndex, BOOL bEnable)
 {
 	TTabItem *pItem = findTabItem(nIndex);
-	assert(pItem);
+	Log_Assert(pItem);
 	pItem->Enable(bEnable);
 	//pItem->m_pWnd->EnableWindow(bEnable);
 }
@@ -370,9 +371,9 @@ void TTabWnd::Enable(int nIndex, BOOL bEnable)
 // Cannot disable currently selected tab
 void TTabWnd::EnableTab(int nIndex, BOOL bEnable)
 {
-	assert(nIndex != m_nSelectedTab);
+	Log_Assert(nIndex != m_nSelectedTab);
 	TTabItem *pItem = findTabItem(nIndex);
-	assert(pItem);
+	Log_Assert(pItem);
 	pItem->EnableTab(bEnable);
 	invalidateTabArea();
 }
@@ -380,9 +381,9 @@ void TTabWnd::EnableTab(int nIndex, BOOL bEnable)
 // Cannot make invisible currently selected tab
 void TTabWnd::ShowTab(int nIndex, BOOL bShow)
 {
-	assert(nIndex != m_nSelectedTab);
+	Log_Assert(nIndex != m_nSelectedTab);
 	TTabItem *pItem = findTabItem(nIndex);
-	assert(pItem);
+	Log_Assert(pItem);
 	pItem->ShowTab(bShow);
 	invalidateTabArea();
 }
@@ -391,7 +392,7 @@ void TTabWnd::ShowTab(int nIndex, BOOL bShow)
 BOOL TTabWnd::IsTabEnabled(int nIndex)
 {
 	TTabItem *pItem = findTabItem(nIndex);
-	assert(pItem);
+	Log_Assert(pItem);
 	return pItem->m_bEnabled;
 }
 
@@ -399,14 +400,14 @@ BOOL TTabWnd::IsTabEnabled(int nIndex)
 BOOL TTabWnd::IsTabVisible(int nIndex)
 {
 	TTabItem *pItem = findTabItem(nIndex);
-	assert(pItem);
+	Log_Assert(pItem);
 	return pItem->m_bVisible;
 }
 
 // Set font
 void TTabWnd::SetFont(CFont *pFont)
 {
-	assert(pFont);
+	Log_Assert(pFont);
 	CWnd::SetFont(pFont);
 	m_Font.DeleteObject();
 	LOGFONT lf;
@@ -446,8 +447,8 @@ void TTabWnd::invalidateTabArea(void)
 // Draws a selected tab and returns its height
 int TTabWnd::drawSelTabTop(CDC *pDC, int x, CRect& client, TTabItem *pItem)
 {
-	assert(pItem);
-	assert(pDC);
+	Log_Assert(pItem);
+	Log_Assert(pDC);
 
 	CString str = pItem->GetText();
 	CSize textSize = pDC->GetTextExtent(str);
@@ -526,8 +527,8 @@ int TTabWnd::drawSelTabTop(CDC *pDC, int x, CRect& client, TTabItem *pItem)
 // Draw a selected tab at the bottom
 int TTabWnd::drawSelTabBottom(CDC *pDC, int x, CRect& client, TTabItem *pItem)
 {
-	assert(pItem);
-	assert(pDC);
+	Log_Assert(pItem);
+	Log_Assert(pDC);
 
 	CString str = pItem->GetText();
 	CSize textSize = pDC->GetTextExtent(str);
@@ -599,8 +600,8 @@ int TTabWnd::drawSelTabBottom(CDC *pDC, int x, CRect& client, TTabItem *pItem)
 // Draws an deselected tab and returns its height
 int TTabWnd::drawTabTop(CDC *pDC, int x, CRect&, TTabItem *pItem)
 {
-	assert(pItem);
-	assert(pDC);
+	Log_Assert(pItem);
+	Log_Assert(pDC);
 
 	CString str = pItem->GetText();
 	CSize textSize = pDC->GetTextExtent(str);
@@ -654,8 +655,8 @@ int TTabWnd::drawTabTop(CDC *pDC, int x, CRect&, TTabItem *pItem)
 // Draw an deselected tab at the bottom
 int TTabWnd::drawTabBottom(CDC *pDC, int x, CRect& client, TTabItem *pItem)
 {
-	assert(pItem);
-	assert(pDC);
+	Log_Assert(pItem);
+	Log_Assert(pDC);
 
 	CString str = pItem->GetText();
 	CSize textSize = pDC->GetTextExtent(str);
@@ -701,10 +702,10 @@ int TTabWnd::drawTabBottom(CDC *pDC, int x, CRect& client, TTabItem *pItem)
 // Draw edge arround client area
 void TTabWnd::drawClient(CDC *pDc, CRect& rect)
 {
-	assert(pDc);
+	Log_Assert(pDc);
 
 	CWnd *pParent = GetParent();
-	assert(pParent);
+	Log_Assert(pParent);
 	switch (m_nTabPos)
 	{
 		case TP_TOP:
@@ -742,7 +743,7 @@ void TTabWnd::OnPaint()
 	for (auto iterator = m_TabList.begin(); iterator != m_TabList.end(); ++iterator)
 	{
 		TTabItem *pItem = *iterator;
-		assert(nullptr != pItem);
+		Log_Assert(nullptr != pItem);
 		if (pItem->m_bVisible)
 		{
 			pItem->m_nMinX = x;
@@ -851,7 +852,7 @@ BOOL TTabWnd::SetActivePane(int nIndex, BOOL bActivate)
 			CWnd *pParent = GetParent();
 			while (pParent && !pParent->IsKindOf(RUNTIME_CLASS(CFrameWnd)))
 				pParent = pParent->GetParent();
-			assert(nullptr != pParent);
+			Log_Assert(nullptr != pParent);
 			updateFrame(static_cast<CFrameWnd*> (pParent), pNewPane->m_pWnd);
 		}
 		return TRUE;
@@ -862,8 +863,8 @@ BOOL TTabWnd::SetActivePane(int nIndex, BOOL bActivate)
 // Update frame window active view based on newly selected tab item
 BOOL TTabWnd::updateFrame(CFrameWnd *pFrame, CWnd *pWnd)
 {
-	assert(pFrame);
-	assert(pWnd);
+	Log_Assert(pFrame);
+	Log_Assert(pWnd);
 
 	if (pWnd->IsKindOf(RUNTIME_CLASS(CView)))
 	{
@@ -909,7 +910,7 @@ void TTabWnd::ResizeTab(int cx, int cy)
 {
 	CRect rect;
 	CWnd *pParent = GetParent();
-	assert(pParent);
+	Log_Assert(pParent);
 	pParent->GetClientRect(&rect);
 
 	if (pParent->IsKindOf(RUNTIME_CLASS(CSplitterWnd)))
@@ -981,7 +982,7 @@ void TTabWnd::ResizeTab(int cx, int cy)
 // Erase area where the tabs are displayed
 BOOL TTabWnd::OnEraseBkgnd(CDC* pDC)
 {
-	assert(pDC);
+	Log_Assert(pDC);
 
 	CRect rect;
 	GetClientRect(&rect);
@@ -1032,7 +1033,7 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, CRuntimeClass *pViewClass,
 							  CCreateContext *pContext)
 {
 	CRect rect, client;
-	assert(pViewClass && pContext);
+	Log_Assert(pViewClass && pContext);
 
 	CWnd *pWnd = static_cast<CWnd*> (pViewClass->CreateObject());
 	if (!pWnd)
@@ -1061,7 +1062,7 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, CRuntimeClass *pViewClass,
 
 	// Insert new tab object into the list
 	TTabItem *pTab = addTab(pWnd, lpszLabel);
-	assert(pTab);
+	Log_Assert(pTab);
 	if (m_TabList.size() != 1)
 	{
 		pWnd->EnableWindow(FALSE);
@@ -1074,8 +1075,8 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, CRuntimeClass *pViewClass,
 TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, int nRows, int nCols,
 							  CWnd *pWnd, UINT nID)
 {
-	assert(pWnd);
-	assert(pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
+	Log_Assert(pWnd);
+	Log_Assert(pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
 
 	int dwStyle = AFX_WS_DEFAULT_VIEW;
 	dwStyle &= ~WS_BORDER;
@@ -1091,7 +1092,7 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, int nRows, int nCols,
 	}
 
 	TTabItem *pTab = addTab(pWnd, lpszLabel);
-	assert(pTab);
+	Log_Assert(pTab);
 	if (m_TabList.size() != 1)
 	{
 		pWnd->EnableWindow(FALSE);
@@ -1115,9 +1116,9 @@ TVisualObject::TVisualObject()
 TVisualObject::TVisualObject(DWORD dwId, CCreateContext *pContext,
 							 CRuntimeClass *pClass)
 {
-	assert(pContext);
-	assert(pClass);
-	assert(pClass->IsDerivedFrom(RUNTIME_CLASS(CView)));
+	Log_Assert(pContext);
+	Log_Assert(pClass);
+	Log_Assert(pClass->IsDerivedFrom(RUNTIME_CLASS(CView)));
 
 	zeroAll();
 	m_dwId = dwId;
@@ -1131,9 +1132,9 @@ TVisualObject::TVisualObject(DWORD dwId, CCreateContext *pContext,
 TVisualObject::TVisualObject(DWORD dwId, LPCTSTR szTitle, CCreateContext *pContext,
 							 CRuntimeClass *pClass, DWORD dwStyle)
 {
-	assert(szTitle);
-	assert(pContext);
-	assert(pClass);
+	Log_Assert(szTitle);
+	Log_Assert(pContext);
+	Log_Assert(pClass);
 
 	zeroAll();
 	m_dwId = dwId;
@@ -1147,7 +1148,7 @@ TVisualObject::TVisualObject(DWORD dwId, LPCTSTR szTitle, CCreateContext *pConte
 	}
 	else
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 	}
 	m_strTitle = szTitle;
 	m_pContext = pContext;
@@ -1160,10 +1161,10 @@ TVisualObject::TVisualObject(DWORD dwId, LPCTSTR szTitle, CCreateContext *pConte
 TVisualObject::TVisualObject(DWORD dwId, LPCTSTR szTitle, int nRows, int nCols,
 							 CCreateContext *pContext, DWORD dwStyle)
 {
-	assert(szTitle);
-	assert(pContext);
-	assert(nRows);
-	assert(nCols);
+	Log_Assert(szTitle);
+	Log_Assert(pContext);
+	Log_Assert(nRows);
+	Log_Assert(nCols);
 
 	zeroAll();
 	m_dwId = dwId;
@@ -1180,9 +1181,9 @@ TVisualObject::TVisualObject(DWORD dwId, LPCTSTR szTitle, int nRows, int nCols,
 TVisualObject::TVisualObject(DWORD dwId, int nRow, int nCol, CCreateContext *pContext,
 							 CRuntimeClass *pClass, CSize size, DWORD dwStyle)
 {
-	assert(pContext);
-	assert(pClass);
-	assert(pClass->IsDerivedFrom(RUNTIME_CLASS(CView)) ||
+	Log_Assert(pContext);
+	Log_Assert(pClass);
+	Log_Assert(pClass->IsDerivedFrom(RUNTIME_CLASS(CView)) ||
 		   pClass->IsDerivedFrom(RUNTIME_CLASS(TTabWnd)));
 
 	zeroAll();
@@ -1201,9 +1202,9 @@ TVisualObject::TVisualObject(DWORD dwId, int nRow, int nCol, CCreateContext *pCo
 TVisualObject::TVisualObject(DWORD dwId, int nRow, int nCol, int nRows, int nCols,
 							 CCreateContext *pContext, DWORD dwStyle)
 {
-	assert(pContext);
-	assert(nRows);
-	assert(nCols);
+	Log_Assert(pContext);
+	Log_Assert(nRows);
+	Log_Assert(nCols);
 
 	zeroAll();
 	m_dwId = dwId;
@@ -1285,9 +1286,9 @@ void TVisualObject::checkStyle(void)
 {
 	if ((m_dwStyle & TOS_TABTOP) || (m_dwStyle & TOS_TABBOTTOM))
 	{
-		assert(m_pRuntimeClass);
+		Log_Assert(m_pRuntimeClass);
 		// Tab position valid only for tab window derived classes
-		assert(m_pRuntimeClass->IsDerivedFrom(RUNTIME_CLASS(TTabWnd)));
+		Log_Assert(m_pRuntimeClass->IsDerivedFrom(RUNTIME_CLASS(TTabWnd)));
 	}
 	if (m_dwStyle & TOS_SELECTED)
 	{
@@ -1297,11 +1298,11 @@ void TVisualObject::checkStyle(void)
 		if (nullptr == m_pRuntimeClass)
 		{
 			// Splitters canot be dynamically create (m_pRuntimeClass is nullptr)
-			assert((m_nObjectType != OT_SPLITTER) && (m_nObjectType != OT_SPLITTERVIEW));
+			Log_Assert((m_nObjectType != OT_SPLITTER) && (m_nObjectType != OT_SPLITTERVIEW));
 		}
 		else
 		{
-			assert(!m_pRuntimeClass->IsDerivedFrom(RUNTIME_CLASS(TTabWnd)));
+			Log_Assert(!m_pRuntimeClass->IsDerivedFrom(RUNTIME_CLASS(TTabWnd)));
 		}
 	}
 }
@@ -1322,7 +1323,7 @@ void TVisualObject::Destroy(BOOL bDestroyWindow)
 // cannot be focused
 BOOL TVisualObject::CanFocus(void)
 {
-	assert(m_pWnd);
+	Log_Assert(m_pWnd);
 
 	if (m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)) ||
 		m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
@@ -1376,91 +1377,91 @@ HICON TVisualObject::GetIcon(void)
 // Set this object as active pane
 BOOL TVisualObject::SetActivePane(void)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->SetActivePane(this);
 }
 
 // Set this tab to be active tab (not the active pane)
 BOOL TVisualObject::SetActiveTab(void)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->SetActiveTab(this);
 }
 
 // Enable/disable this object
 BOOL TVisualObject::Enable(BOOL bEnable)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->Enable(this, bEnable);
 }
 
 // Enable/disable tab
 BOOL TVisualObject::EnableTab(BOOL bEnable)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->EnableTab(this, bEnable);
 }
 
 // SHow/hide this object
 BOOL TVisualObject::ShowTab(BOOL bShow)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->ShowTab(this, bShow);
 }
 
 // Is this object enabled
 BOOL TVisualObject::IsEnabled(BOOL& bEnabled)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->IsEnabled(this, bEnabled);
 }
 
 // Is this object enabled
 BOOL TVisualObject::IsTabEnabled(BOOL& bEnabled)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->IsTabEnabled(this, bEnabled);
 }
 
 // Is this object visible
 BOOL TVisualObject::IsTabVisible(BOOL& bVisible)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->IsTabVisible(this, bVisible);
 }
 
 // Returns TRUE if this object is a tab within a tab window
 BOOL TVisualObject::IsTabPane(void)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->IsTabPane(this);
 }
 
 // Returns TRUE if this object is a tab window
 BOOL TVisualObject::IsTabWindow(void)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->IsTabWindow(this);
 }
 
 // Returns TRUE if this object is a pane within a splitter window
 BOOL TVisualObject::IsSplitterPane(void)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->IsSplitterPane(this);
 }
 
 // Returns TRUE if this object is a splitter window
 BOOL TVisualObject::IsSplitterWindow(void)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->IsSplitterWindow(this);
 }
 
 // Returns TRUE if this object is derived from CView 
 BOOL TVisualObject::IsView(void)
 {
-	assert(m_pFramework);
+	Log_Assert(m_pFramework);
 	return m_pFramework->IsView(this);
 }
 
@@ -1579,11 +1580,11 @@ TVisualObject *TVisualFramework::findObject(CWnd *pWnd)
 // There is only one root level object (either splitter or tab)
 BOOL TVisualFramework::Add(TVisualObject *pObject)
 {
-	assert(pObject);
-	assert(m_ObjectList.size() == 0);   // Only one root level object allowed
+	Log_Assert(pObject);
+	Log_Assert(m_ObjectList.size() == 0);   // Only one root level object allowed
 
 	// Root level object is either a view, splitter or a tab
-	assert((pObject->m_nObjectType == TVisualObject::OT_TAB) ||
+	Log_Assert((pObject->m_nObjectType == TVisualObject::OT_TAB) ||
 		(pObject->m_nObjectType == TVisualObject::OT_VIEW) ||
 		   (pObject->m_nObjectType == TVisualObject::OT_SPLITTER));
 
@@ -1594,14 +1595,14 @@ BOOL TVisualFramework::Add(TVisualObject *pObject)
 		m_ObjectMap[pObject->m_dwId] = pObject;
 		return TRUE;
 	}
-	assert(FALSE);    // Duplicate object Id
+	Log_Assert(FALSE);    // Duplicate object Id
 	return FALSE;
 }
 
 // Add child object to the specified object
 BOOL TVisualFramework::Add(TVisualObject *pOwner, TVisualObject *pObject)
 {
-	assert(pObject);
+	Log_Assert(pObject);
 
 #ifdef _DEBUG
 	// Validate definition
@@ -1611,7 +1612,7 @@ BOOL TVisualFramework::Add(TVisualObject *pOwner, TVisualObject *pObject)
 			(pObject->m_nObjectType != TVisualObject::OT_SPLITTER) &&
 			(pObject->m_nObjectType != TVisualObject::OT_TAB))
 		{
-			assert(FALSE);
+			Log_Assert(FALSE);
 		}
 	}
 	else if (pOwner->m_nObjectType == TVisualObject::OT_SPLITTER)
@@ -1620,7 +1621,7 @@ BOOL TVisualFramework::Add(TVisualObject *pOwner, TVisualObject *pObject)
 			(pObject->m_nObjectType != TVisualObject::OT_SPLITTERSPLITTER) &&
 			pObject->m_nObjectType != TVisualObject::OT_TAB)
 		{
-			assert(FALSE);
+			Log_Assert(FALSE);
 		}
 	}
 	else if (pOwner->m_nObjectType == TVisualObject::OT_SPLITTERSPLITTER)
@@ -1628,14 +1629,14 @@ BOOL TVisualFramework::Add(TVisualObject *pOwner, TVisualObject *pObject)
 		if ((pObject->m_nObjectType != TVisualObject::OT_SPLITTERVIEW) &&
 			(pObject->m_nObjectType != TVisualObject::OT_SPLITTERSPLITTER))
 		{
-			assert(FALSE);
+			Log_Assert(FALSE);
 		}
 	}
 	else if (pOwner->m_nObjectType == TVisualObject::OT_TABVIEW)
 	{
 		if ((pObject->m_nObjectType != TVisualObject::OT_SPLITTER))
 		{
-			assert(FALSE);
+			Log_Assert(FALSE);
 		}
 	}
 
@@ -1649,15 +1650,15 @@ BOOL TVisualFramework::Add(TVisualObject *pOwner, TVisualObject *pObject)
 		m_ObjectMap[pObject->m_dwId] = pObject;
 		return TRUE;
 	}
-	assert(FALSE);    // Duplicate object Id
+	Log_Assert(FALSE);    // Duplicate object Id
 	return FALSE;
 }
 
 // Create all objects within the framework
 BOOL TVisualFramework::Create(CWnd *pWnd)
 {
-	assert(pWnd);
-	assert(pWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)));
+	Log_Assert(pWnd);
+	Log_Assert(pWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)));
 
 	// Save owner for later
 	m_pOwner = pWnd;
@@ -1776,8 +1777,8 @@ void TVisualFramework::Remove(TVisualObject *pObject)
 // Create specified object and all its childs
 BOOL TVisualFramework::execCreate(CWnd *pWnd, TVisualObject *pObject)
 {
-	assert(pWnd);
-	assert(pObject);
+	Log_Assert(pWnd);
+	Log_Assert(pObject);
 
 	BOOL rc = FALSE;
 	switch (pObject->m_nObjectType)
@@ -1807,17 +1808,17 @@ BOOL TVisualFramework::execCreate(CWnd *pWnd, TVisualObject *pObject)
 // Create a simple view 
 BOOL TVisualFramework::execCreateView(CWnd *pWnd, TVisualObject *pObject)
 {
-	assert(pWnd);
-	assert(pWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)));
-	assert(pObject);
-	assert(pObject->m_pContext);
-	assert(pObject->m_pRuntimeClass);
+	Log_Assert(pWnd);
+	Log_Assert(pWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)));
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pContext);
+	Log_Assert(pObject->m_pRuntimeClass);
 
 	CFrameWnd *pFrame = static_cast<CFrameWnd*> (pWnd);
 	pObject->m_pContext->m_pNewViewClass = pObject->m_pRuntimeClass;
 	pObject->m_pWnd = pFrame->CreateView(pObject->m_pContext);
-	assert(pObject->m_pWnd);
-	assert(::IsWindow(pObject->m_pWnd->m_hWnd));
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 
 	pObject->m_pParent = pFrame;
 	setTabWndProperties(pObject);
@@ -1828,21 +1829,21 @@ BOOL TVisualFramework::execCreateView(CWnd *pWnd, TVisualObject *pObject)
 // Create a view within a tab window
 BOOL TVisualFramework::execCreateTabView(CWnd *pWnd, TVisualObject *pObject)
 {
-	assert(pWnd);
-	assert(pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)));
-	assert(pObject);
-	assert(pObject->m_pContext);
-	assert(pObject->m_pRuntimeClass);
-	assert(!pObject->m_strTitle.IsEmpty());
+	Log_Assert(pWnd);
+	Log_Assert(pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)));
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pContext);
+	Log_Assert(pObject->m_pRuntimeClass);
+	Log_Assert(!pObject->m_strTitle.IsEmpty());
 
 	TTabWnd *pTab = static_cast<TTabWnd*> (pWnd);
 	TTabItem* pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_pRuntimeClass,
 							 pObject->m_pContext);
-	assert(pItem);
+	Log_Assert(pItem);
 	pItem->SetIcon(pObject->GetIcon());
 	pObject->m_pWnd = pItem->GetSafeWnd();
-	assert(pObject->m_pWnd);
-	assert(::IsWindow(pObject->m_pWnd->m_hWnd));
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 	pObject->m_pParent = pTab;
 	setTabWndProperties(pObject);
 	return TRUE;
@@ -1851,14 +1852,14 @@ BOOL TVisualFramework::execCreateTabView(CWnd *pWnd, TVisualObject *pObject)
 // Create a splitter window
 BOOL TVisualFramework::execCreateSplitter(CWnd *pWnd, TVisualObject *pObject)
 {
-	assert(pWnd);
-	assert(pObject);
+	Log_Assert(pWnd);
+	Log_Assert(pObject);
 
 	// Cannot use pObject->m_pRuntimeClass->CreateObject() since splitters 
 	// do not support dynamic creation
 	pObject->m_pWnd = CreateSplitter(pObject->m_dwId);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
 
 	if (pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
@@ -1866,14 +1867,14 @@ BOOL TVisualFramework::execCreateSplitter(CWnd *pWnd, TVisualObject *pObject)
 		TTabItem* pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_nRows,
 										   pObject->m_nCols, pObject->m_pWnd);
 		pItem->SetIcon(pObject->GetIcon());
-		assert(::IsWindow(pObject->m_pWnd->m_hWnd));
+		Log_Assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 		pObject->m_pParent = pWnd;
 	}
 	else if (pWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)))
 	{
 		CSplitterWnd* pSplitter = static_cast<CSplitterWnd*> (pObject->m_pWnd);
 		pSplitter->CreateStatic(pWnd, pObject->m_nRows, pObject->m_nCols);
-		assert(::IsWindow(pObject->m_pWnd->m_hWnd));
+		Log_Assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 		pObject->m_pParent = pWnd;
 	}
 	setTabWndProperties(pObject);
@@ -1887,17 +1888,17 @@ BOOL TVisualFramework::execCreateSplitter(CWnd *pWnd, TVisualObject *pObject)
 // Create a view within a splitter. Then create all childs of this view.
 BOOL TVisualFramework::execCreateSplitterView(CWnd *pWnd, TVisualObject *pObject)
 {
-	assert(pWnd);
-	assert(pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
-	assert(pObject);
+	Log_Assert(pWnd);
+	Log_Assert(pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
+	Log_Assert(pObject);
 
 	CSplitterWnd* pSplitter = static_cast<CSplitterWnd*> (pWnd);
 	pSplitter->CreateView(pObject->m_nRowIndex, pObject->m_nColIndex,
 						  pObject->m_pRuntimeClass, pObject->m_Size,
 						  pObject->m_pContext);
 	pObject->m_pWnd = pSplitter->GetPane(pObject->m_nRowIndex, pObject->m_nColIndex);
-	assert(pObject->m_pWnd);
-	assert(::IsWindow(pObject->m_pWnd->m_hWnd));
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 	pObject->m_pParent = pSplitter;
 	setTabWndProperties(pObject);
 	for (auto it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); ++it)
@@ -1910,20 +1911,20 @@ BOOL TVisualFramework::execCreateSplitterView(CWnd *pWnd, TVisualObject *pObject
 // Create a nested splitter window
 BOOL TVisualFramework::execCreateSplitterSplitter(CWnd *pWnd, TVisualObject *pObject)
 {
-	assert(pWnd);
-	assert(pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
+	Log_Assert(pWnd);
+	Log_Assert(pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
 
 	CSplitterWnd* pParent = static_cast<CSplitterWnd*> (pWnd);
 	// Cannot use pObject->m_pRuntimeClass->CreateObject() since splitters 
 	// do not support dynamic creation
 	pObject->m_pWnd = CreateSplitter(pObject->m_dwId);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)));
 	CSplitterWnd *pSplitter = static_cast<CSplitterWnd*> (pObject->m_pWnd);
 	pSplitter->CreateStatic(pParent, pObject->m_nRows, pObject->m_nCols,
 							WS_CHILD | WS_VISIBLE | WS_BORDER,
 							pParent->IdFromRowCol(pObject->m_nRowIndex, pObject->m_nColIndex));
-	assert(::IsWindow(pSplitter->m_hWnd));
+	Log_Assert(::IsWindow(pSplitter->m_hWnd));
 	pObject->m_pParent = pParent;
 	for (auto it = pObject->m_ObjectList.begin(); it != pObject->m_ObjectList.end(); ++it)
 	{
@@ -1935,18 +1936,18 @@ BOOL TVisualFramework::execCreateSplitterSplitter(CWnd *pWnd, TVisualObject *pOb
 // Create a tab window and all its childs (tabs)
 BOOL TVisualFramework::execCreateTabWnd(CWnd *pWnd, TVisualObject *pObject)
 {
-	assert(pWnd);
-	assert(pObject);
+	Log_Assert(pWnd);
+	Log_Assert(pObject);
 
 	if (pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
 		TTabWnd* pTab = static_cast<TTabWnd*> (pWnd);
 		TTabItem* pItem = pTab->CreatePane(pObject->m_strTitle, pObject->m_pRuntimeClass, pObject->m_pContext);
 		pItem->SetIcon(pObject->GetIcon());
-		assert(pItem);
+		Log_Assert(pItem);
 		pObject->m_pWnd = pItem->GetSafeWnd();
-		assert(pObject->m_pWnd);
-		assert(::IsWindow(pObject->m_pWnd->m_hWnd));
+		Log_Assert(pObject->m_pWnd);
+		Log_Assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 		pObject->m_pParent = pWnd;
 		setTabWndProperties(pObject);
 	}
@@ -1954,11 +1955,11 @@ BOOL TVisualFramework::execCreateTabWnd(CWnd *pWnd, TVisualObject *pObject)
 	{
 		CRect rect;
 		pObject->m_pWnd = static_cast<CWnd*> (pObject->m_pRuntimeClass->CreateObject());
-		assert(pObject->m_pWnd);
+		Log_Assert(pObject->m_pWnd);
 		pObject->m_pParent = pWnd;
 		pObject->m_pWnd->Create(nullptr, _T(""), WS_VISIBLE | WS_CHILD,
 								rect, pWnd, TABWND_DEFAULT_ID);
-		assert(::IsWindow(pObject->m_pWnd->m_hWnd));
+		Log_Assert(::IsWindow(pObject->m_pWnd->m_hWnd));
 		setTabWndProperties(pObject);
 	}
 	
@@ -1973,8 +1974,8 @@ BOOL TVisualFramework::execCreateTabWnd(CWnd *pWnd, TVisualObject *pObject)
 // Set properties of tab window
 void TVisualFramework::setTabWndProperties(TVisualObject *pObject)
 {
-	assert(pObject);
-	assert(nullptr != pObject->m_pWnd);
+	Log_Assert(pObject);
+	Log_Assert(nullptr != pObject->m_pWnd);
 
 	// If this is a tab window then set the position of tabs
 	if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
@@ -1988,7 +1989,7 @@ void TVisualFramework::setTabWndProperties(TVisualObject *pObject)
 
 	// If this is a pane within a tab then check if this pane
 	// should be a selected pane
-	assert(pObject->m_pParent);
+	Log_Assert(pObject->m_pParent);
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
 		TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pParent);
@@ -2028,7 +2029,7 @@ CWnd *TVisualFramework::GetObject(DWORD dwId)
 // Can be any object (view, splitter or tab window)
 DWORD TVisualFramework::GetObject(CWnd *pWnd)
 {
-	assert(pWnd);
+	Log_Assert(pWnd);
 	TVisualObject* pObject = findObject(pWnd);
 	if (nullptr == pObject)
 		return 0;
@@ -2051,8 +2052,8 @@ TVisualObject *TVisualFramework::Get(CWnd *pWnd)
 // supplied tab window object. This may not be the active pane
 TVisualObject *TVisualFramework::GetActiveTab(TVisualObject *pObject)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
 
 	if (!pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		return nullptr;
@@ -2060,7 +2061,7 @@ TVisualObject *TVisualFramework::GetActiveTab(TVisualObject *pObject)
 	TTabWnd* pTab = static_cast<TTabWnd*> (pObject->m_pWnd);
 	int nIndex = pTab->GetTabIndex();
 	CWnd *pWnd = pTab->GetTabWnd(nIndex);
-	assert(pWnd);
+	Log_Assert(pWnd);
 
 	return Get(pWnd);
 }
@@ -2069,9 +2070,9 @@ TVisualObject *TVisualFramework::GetActiveTab(TVisualObject *pObject)
 // pane associated with the active tab.
 BOOL TVisualFramework::SetActiveTab(TVisualObject *pObject)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pParent);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pParent);
 
 	if (!pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		return FALSE;
@@ -2084,9 +2085,9 @@ BOOL TVisualFramework::SetActiveTab(TVisualObject *pObject)
 // Returns TRUE if object is a tab within a tab window
 BOOL TVisualFramework::IsTabPane(TVisualObject* pObject)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pParent);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pParent);
 
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		return TRUE;
@@ -2096,8 +2097,8 @@ BOOL TVisualFramework::IsTabPane(TVisualObject* pObject)
 // Returns TRUE if object is a tab window
 BOOL TVisualFramework::IsTabWindow(TVisualObject* pObject)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
 
 	if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		return TRUE;
@@ -2107,9 +2108,9 @@ BOOL TVisualFramework::IsTabWindow(TVisualObject* pObject)
 // Returns TRUE if object is a pane within a splitter window
 BOOL TVisualFramework::IsSplitterPane(TVisualObject* pObject)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pParent);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pParent);
 
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(CSplitterWnd)))
 		return TRUE;
@@ -2119,8 +2120,8 @@ BOOL TVisualFramework::IsSplitterPane(TVisualObject* pObject)
 // Returns TRUE if object is a pane within a splitter window
 BOOL TVisualFramework::IsSplitterWindow(TVisualObject* pObject)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
 
 	if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CSplitterWnd)))
 		return TRUE;
@@ -2130,8 +2131,8 @@ BOOL TVisualFramework::IsSplitterWindow(TVisualObject* pObject)
 // Returns TRUE if object is derived from CView
 BOOL TVisualFramework::IsView(TVisualObject *pObject)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
 
 	if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CView)))
 		return TRUE;
@@ -2147,7 +2148,7 @@ int TVisualFramework::GetCount(void)
 // Set font for complete framework
 void TVisualFramework::SetFont(CFont *pFont)
 {
-	assert(pFont);
+	Log_Assert(pFont);
 
 	for (auto mapit = m_ObjectMap.begin(); mapit != m_ObjectMap.end(); ++mapit)
 	{
@@ -2189,7 +2190,7 @@ CSplitterWnd *TVisualFramework::CreateSplitter(DWORD)
 // Set focus to visual object 
 BOOL TVisualFramework::SetActivePane(TVisualObject *pObject)
 {
-	assert(pObject);
+	Log_Assert(pObject);
 
 	// Cannot set focus to splitter or tab window
 	if (!pObject->CanFocus())
@@ -2237,17 +2238,17 @@ BOOL TVisualFramework::SetActivePane(TVisualObject *pObject)
 TVisualObject *TVisualFramework::GetActivePane(void)
 {
 	CFrameWnd *pFrame = static_cast<CFrameWnd*> (m_pOwner);
-	assert(pFrame);
+	Log_Assert(pFrame);
 	CView *pView = pFrame->GetActiveView();
-	assert(pView);
+	Log_Assert(pView);
 	return findObject(pView);
 }
 
 // Enable/disable a view. Returns TRUE if sucessful
 BOOL TVisualFramework::Enable(TVisualObject *pObject, BOOL bEnable)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
 
 	if (pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(CView)))
 	{
@@ -2267,9 +2268,9 @@ BOOL TVisualFramework::Enable(TVisualObject *pObject, BOOL bEnable)
 // Enable/disable a tab
 BOOL TVisualFramework::EnableTab(TVisualObject *pObject, BOOL bEnable)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pParent);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pParent);
 
 	// Check if parent is a tab window
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
@@ -2288,9 +2289,9 @@ BOOL TVisualFramework::EnableTab(TVisualObject *pObject, BOOL bEnable)
 // Show/hide a tab
 BOOL TVisualFramework::ShowTab(TVisualObject *pObject, BOOL bShow)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pParent);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pParent);
 
 	if (!pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 		return FALSE;
@@ -2308,8 +2309,8 @@ BOOL TVisualFramework::ShowTab(TVisualObject *pObject, BOOL bShow)
 // object. If return code is TRUE, check bEnabled
 BOOL TVisualFramework::IsEnabled(TVisualObject *pObject, BOOL& bEnabled)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
 
 	bEnabled = pObject->m_bEnabled;
 	return TRUE;
@@ -2319,9 +2320,9 @@ BOOL TVisualFramework::IsEnabled(TVisualObject *pObject, BOOL& bEnabled)
 // object. If return code is TRUE, check bEnabled
 BOOL TVisualFramework::IsTabEnabled(TVisualObject *pObject, BOOL& bEnabled)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pParent);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pParent);
 
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
@@ -2337,9 +2338,9 @@ BOOL TVisualFramework::IsTabEnabled(TVisualObject *pObject, BOOL& bEnabled)
 // object. If return code is TRUE then check bVisible.
 BOOL TVisualFramework::IsTabVisible(TVisualObject *pObject, BOOL& bVisible)
 {
-	assert(pObject);
-	assert(pObject->m_pWnd);
-	assert(pObject->m_pParent);
+	Log_Assert(pObject);
+	Log_Assert(pObject->m_pWnd);
+	Log_Assert(pObject->m_pParent);
 
 	if (pObject->m_pParent->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 	{
@@ -2355,7 +2356,7 @@ BOOL TVisualFramework::IsTabVisible(TVisualObject *pObject, BOOL& bVisible)
 // any framework related messages
 BOOL TVisualFramework::ProcessMessage(MSG *pMsg)
 {
-	assert(pMsg);
+	Log_Assert(pMsg);
 	if (pMsg->message == WM_KEYDOWN)
 	{
 		// Handle Ctrl+Tab for tab windows
@@ -2364,16 +2365,16 @@ BOOL TVisualFramework::ProcessMessage(MSG *pMsg)
 			if ((pMsg->wParam == VK_TAB) && (::GetAsyncKeyState(VK_CONTROL) != 0))
 			{
 				CWnd *pWnd = CWnd::FromHandle(pMsg->hwnd);
-				assert(pWnd);
+				Log_Assert(pWnd);
 				if (pWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)))
 					return FALSE;
 				// If we are in form view then pWnd is a control
 				while (pWnd && !pWnd->IsKindOf(RUNTIME_CLASS(CView)))
 					pWnd = pWnd->GetParent();
 				// Find object for this window
-				assert(pWnd);
+				Log_Assert(pWnd);
 				TVisualObject *pObject = findObject(pWnd);
-				assert(nullptr != pObject);
+				Log_Assert(nullptr != pObject);
 				while (pObject && !pObject->m_pWnd->IsKindOf(RUNTIME_CLASS(TTabWnd)))
 					pObject = pObject->m_pOwner;
 				if (pObject)
@@ -2459,7 +2460,7 @@ TVisualFormView::TVisualFormView(UINT nIDTemplate)
 
 void TVisualFormView::SetFont(CFont *pFont)
 {
-	assert(pFont);
+	Log_Assert(pFont);
 	::EnumChildWindows(m_hWnd, ::setChildFont, (LPARAM)pFont);
 }
 
@@ -2473,9 +2474,9 @@ void TVisualFormView::OnEnable(BOOL bEnable)
 BOOL __stdcall setChildFont(HWND hwnd, LPARAM lparam)
 {
 	CFont* pFont = reinterpret_cast<CFont*> (lparam);
-	assert(pFont);
+	Log_Assert(pFont);
 	CWnd* pWnd = CWnd::FromHandle(hwnd);
-	assert(pWnd);
+	Log_Assert(pWnd);
 	pWnd->SetFont(pFont);
 	return TRUE;
 }
@@ -2485,7 +2486,7 @@ BOOL __stdcall setChildEnabled(HWND hwnd, LPARAM lparam)
 {
 	BOOL bEnabled = static_cast<BOOL> (lparam);
 	CWnd *pWnd = CWnd::FromHandle(hwnd);
-	assert(pWnd);
+	Log_Assert(pWnd);
 	pWnd->EnableWindow(bEnabled);
 	return TRUE;
 }

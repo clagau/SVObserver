@@ -33,7 +33,7 @@ namespace SvSml
 		}
 		else
 		{
-			assert(MeMIt->second->name == name);
+			Log_Assert(MeMIt->second->name == name);
 			return MeMIt->second;
 		}
 	}
@@ -54,7 +54,7 @@ namespace SvSml
 		}
 		else
 		{
-			assert(MeMIt->second->name == name);
+			Log_Assert(MeMIt->second->name == name);
 			if (ltype < ListType::Count)
 			{
 				MeMIt->second->data.m_MonitorListFlag |= ListFlags[ltype];
@@ -179,8 +179,8 @@ namespace SvSml
 		MonitorEntriesMap::const_iterator it;
 		for (it = m_EntriesMap.begin(); it != m_EntriesMap.end(); ++it)
 		{
-			assert(it->second.get());
-			assert(it->first == it->second->name);
+			Log_Assert(it->second.get());
+			Log_Assert(it->first == it->second->name);
 
 			std::string inspectionName{it->first};
 			std::string Inspections{SvDef::FqnInspections};

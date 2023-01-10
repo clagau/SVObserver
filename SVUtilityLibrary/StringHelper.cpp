@@ -203,7 +203,7 @@ namespace SvUl
 	std::string Format( LPCSTR pFormat, ...)
 	{
 		std::string result;
-		assert(pFormat);
+		Log_Assert(pFormat);
 
 		if (nullptr != pFormat)
 		{
@@ -222,7 +222,7 @@ namespace SvUl
 	std::string Format(LPCWSTR pFormat, ...)
 	{
 		std::string result;
-		assert(pFormat);
+		Log_Assert(pFormat);
 
 		if (nullptr != pFormat)
 		{

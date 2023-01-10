@@ -40,7 +40,7 @@ CString convertInString(const variant_t& rValue)
 
 bool isFieldValid(const std::string& fieldName, const variant_t& rValue, SvStl::MessageContainer& rMsgContainer)
 {
-	assert(VT_R8 == rValue.vt);
+	Log_Assert(VT_R8 == rValue.vt);
 	if (VT_R8 == rValue.vt)
 	{
 		const double s_RangeMax = 17000000;

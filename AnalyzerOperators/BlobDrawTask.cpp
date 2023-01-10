@@ -102,14 +102,14 @@ namespace SvAo
 				SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 				if (nullptr == pImageBuffer)
 				{
-					assert(false);
+					Log_Assert(false);
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
 					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					msg.Throw();
 				}
 				if (pImageBuffer->isEmpty())
 				{
-					assert(false);
+					Log_Assert(false);
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
 					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					msg.Throw();
@@ -129,7 +129,7 @@ namespace SvAo
 				SvOi::ITRCImagePtr pImageBuffer = m_AdditionalImages.getImageToWrite(rRunStatus.m_triggerRecord);
 				if (nullptr == pImageBuffer || pImageBuffer->isEmpty())
 				{
-					assert(false);
+					Log_Assert(false);
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
 					msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 					msg.Throw();

@@ -109,7 +109,7 @@ bool SVDPointXResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContaine
 	if( SVResult::onRun( rRunStatus, pErrorMessages ) )
 	{
 		SvVol::SVDPointValueObjectClass* pPoint = getInputPoint();
-		assert( pPoint );
+		Log_Assert( pPoint );
 
 		SVPoint<double> dPoint;
 		if(nullptr != pPoint)

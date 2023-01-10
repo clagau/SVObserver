@@ -109,7 +109,7 @@ void TRControllerWriterDataPerIP::setDataDefList(SvPb::DataDefinitionList&& data
 
 TriggerRecordData& TRControllerWriterDataPerIP::getTRData(int pos) const
 {
-	assert(0 <= pos && getBasicData().m_TriggerRecordNumber > pos && nullptr != m_pTriggerRecords);
+	Log_Assert(0 <= pos && getBasicData().m_TriggerRecordNumber > pos && nullptr != m_pTriggerRecords);
 	if (0 > pos || getBasicData().m_TriggerRecordNumber <= pos || nullptr == m_pTriggerRecords)
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
@@ -179,7 +179,7 @@ void TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trNumbers)
 
 void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(long trBufferSize, int trNumbers)
 {
-	assert(m_pBasicData && m_pSmData);
+	Log_Assert(m_pBasicData && m_pSmData);
 	if (nullptr == m_pBasicData || nullptr == m_pSmData)
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
@@ -247,7 +247,7 @@ bool TRControllerWriterDataPerIP::isEnoughFreeForLock() const
 
 void TRControllerWriterDataPerIP::setTrOfInterestNumber(int number)
 {
-	assert(nullptr != m_pBasicData && nullptr != m_pTRofInterestArray);
+	Log_Assert(nullptr != m_pBasicData && nullptr != m_pTRofInterestArray);
 	if (nullptr != m_pBasicData && nullptr != m_pTRofInterestArray)
 	{
 		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
@@ -270,7 +270,7 @@ void TRControllerWriterDataPerIP::setTrOfInterestNumber(int number)
 
 void TRControllerWriterDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 {
-	assert(nullptr != m_pBasicData);
+	Log_Assert(nullptr != m_pBasicData);
 	if (nullptr != m_pBasicData)
 	{
 		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
@@ -314,7 +314,7 @@ void TRControllerWriterDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 std::vector<int> TRControllerWriterDataPerIP::getTRofInterestPos(int n)
 {
 	std::vector<int> retVec;
-	assert(m_pBasicData);
+	Log_Assert(m_pBasicData);
 	if (nullptr != m_pBasicData)
 	{
 		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest, false);
@@ -375,7 +375,7 @@ void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, co
 		smHandleOld.reset();
 
 		m_smDataCBFunc(newSMName, m_SMHandle->GetSlotSize());
-		assert(nullptr != m_pSmData && nullptr != m_pBasicData);
+		Log_Assert(nullptr != m_pSmData && nullptr != m_pBasicData);
 	}
 	catch (...)
 	{
@@ -385,7 +385,7 @@ void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, co
 		m_pImageListInSM = nullptr;
 		m_pDataDefListInSM = nullptr;
 		m_pTriggerRecords = nullptr;
-		assert(false);
+		Log_Assert(false);
 		throw;
 	}
 	
@@ -431,7 +431,7 @@ DataControllerWriter::DataControllerWriter()
 
 	if (!isInit || nullptr == pTemp)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateSMCommonData, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -501,7 +501,7 @@ bool DataControllerWriter::setInspections(SvPb::InspectionList&& rInspectionList
 	};
 	if (std::any_of(rInspectionList.list().begin(), rInspectionList.list().end(), isRecordNumberInvalid))
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 
@@ -584,7 +584,7 @@ void DataControllerWriter::setImageStructList(SvPb::ImageStructList&& list)
 	{
 		if (list.ByteSizeLong() > cMaxImageStructPbSize)
 		{
-			assert(false);
+			Log_Assert(false);
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
@@ -619,7 +619,7 @@ void DataControllerWriter::changeDataDef(SvPb::DataDefinitionList&& dataDefList,
 {
 	if (0 > inspectionPos || m_dataVector.size() < inspectionPos || nullptr == m_dataVector[inspectionPos])
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -698,7 +698,7 @@ SvOi::ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite
 				currentPos = currentPos % m_dataVector[inspectionPos]->getBasicData().m_TriggerRecordNumber;
 			} while (currentPos != m_dataVector[inspectionPos]->getNextPosForFreeCheck());
 		}
-		assert(false);
+		Log_Assert(false);
 	}
 
 	return nullptr;
@@ -802,7 +802,7 @@ void DataControllerWriter::setInspectionList(SvPb::InspectionList&& rInspectionL
 {
 	if (rInspectionList.ByteSizeLong() > cMaxInspectionPbSize)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
 		throw Exception;
@@ -827,7 +827,7 @@ void DataControllerWriter::setInspectionList(SvPb::InspectionList&& rInspectionL
 		{
 			size_t pos = m_dataVector.size();
 			m_dataVector.emplace_back(std::make_shared<TRControllerWriterDataPerIP>());
-			assert(nullptr != m_dataVector[pos]);
+			Log_Assert(nullptr != m_dataVector[pos]);
 			auto setInspectionSMDataFunctor = [this, pos](const std::string& rSmName, int smSize) {return setInspectionSMData(static_cast<int>(pos), rSmName, smSize); };
 			m_dataVector[pos]->init(setInspectionSMDataFunctor);
 		}
@@ -1025,14 +1025,14 @@ void DataControllerWriter::ResetInspectionData(TRControllerWriterDataPerIP& rDat
 
 void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSmName, int smSize)
 {
-	assert(0 <= ipPos && m_inspectionList.list_size() > ipPos);
+	Log_Assert(0 <= ipPos && m_inspectionList.list_size() > ipPos);
 	if (0 <= ipPos && m_inspectionList.list_size() > ipPos)
 	{
 		m_inspectionList.mutable_list(ipPos)->set_nameofsm(rSmName);
 		m_inspectionList.mutable_list(ipPos)->set_sizeofsm(smSize);
 		if (m_inspectionList.ByteSizeLong() > cMaxInspectionPbSize)
 		{
-			assert(false);
+			Log_Assert(false);
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
 		}

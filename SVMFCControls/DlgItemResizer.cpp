@@ -57,8 +57,8 @@ namespace SvMc
 	void DlgItemResizer::Add(CWnd *pCtrl, UINT uFlags)
 	{
 		// Make sure params are valid
-		assert(pCtrl != 0);
-		assert(pCtrl->GetParent() != 0);
+		Log_Assert(pCtrl != 0);
+		Log_Assert(pCtrl->GetParent() != 0);
 
 		CWnd *pParent = pCtrl->GetParent();
 

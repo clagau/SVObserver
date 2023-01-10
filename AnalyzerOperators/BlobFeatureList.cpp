@@ -365,7 +365,7 @@ namespace SvAo
 
 			for (auto* pFeature : m_featureTaskVec)
 			{
-				assert(nullptr != pFeature);
+				Log_Assert(nullptr != pFeature);
 				pFeature->fillValues(m_ResultBufferID);
 			}
 		}
@@ -424,7 +424,7 @@ namespace SvAo
 		}
 		for (MIL_ID id : neededFeatures)
 		{
-			assert(g_featureDataMap.end() != g_featureDataMap.find(id));
+			Log_Assert(g_featureDataMap.end() != g_featureDataMap.find(id));
 			auto* pNewTask = new BlobFeatureTask(this, g_featureDataMap[id].m_stringResourceID);
 			pNewTask->setFeatureType(static_cast<long>(id), false);
 			Add(pNewTask);
@@ -455,7 +455,7 @@ namespace SvAo
 			}
 			else
 			{
-				assert(g_featureDataMap.end() != g_featureDataMap.find(type));
+				Log_Assert(g_featureDataMap.end() != g_featureDataMap.find(type));
 				m_featureTaskVec[i]->setValueObject(m_pResultTable->updateOrCreateColumn(SvPb::TableColumnValueEId + i, g_featureDataMap[type].m_stringResourceID, maxArraySize));
 				auto iter = g_ResultColumPosMap.find(type);
 				if (g_ResultColumPosMap.end() != iter)
@@ -602,7 +602,7 @@ namespace SvAo
 
 	void BlobFeatureList::moveFeatureTasks(size_t posFrom, size_t posTo)
 	{
-		assert(posFrom > posTo);
+		Log_Assert(posFrom > posTo);
 
 		auto iterFromR = std::find(m_TaskObjectVector.rbegin(), m_TaskObjectVector.rend(), m_featureTaskVec[posFrom]);
 		auto iterToR = std::find(m_TaskObjectVector.rbegin(), m_TaskObjectVector.rend(), m_featureTaskVec[posTo]);

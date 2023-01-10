@@ -90,7 +90,7 @@ namespace SvOg
 		HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
 		if (S_OK != hr || false == responseCmd.has_gettoolswithreplaceablesourceimageresponse())
 		{
-			assert(false);
+			Log_Assert(false);
 			return {};
 		}
 

@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVGraphix.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -527,7 +528,7 @@ SVGraphixDrawObjectClass* SVGraphixClass::GetNewDrawObject( SVGraphixDrawObjectE
 
 	}
 
-	assert(pDrawObject);
+	Log_Assert(pDrawObject);
 
 	if( bInsert ) 
 	{

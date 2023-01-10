@@ -124,7 +124,7 @@ HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, uint32_t unique
 				// Try to replace or add object...
 				if( !pOwnerObject->replaceObject(pObject, uniqueID) )
 				{
-					assert(false);
+					Log_Assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 					std::string Temp = SvUl::Format(_T("SVObjectBuilder::CreateObject - ReplaceObject %.80s\n"), name.c_str() );
 					::OutputDebugString( Temp.c_str() );
@@ -144,7 +144,7 @@ HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, uint32_t unique
 			else
 			{
 				hr = S_FALSE;
-				assert(false);
+				Log_Assert(false);
 				delete pObject;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				::OutputDebugString( _T("SVObjectBuilder::CreateObject - Owner Object not Found") );
@@ -167,7 +167,7 @@ HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, uint32_t unique
 	else
 	{
 		hr = S_FALSE;
-		assert(false);
+		Log_Assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		::OutputDebugString( _T("SVObjectBuilder::CreateObject - Creation Failed") );
 #endif
@@ -192,7 +192,7 @@ SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classI
 {
 	if (SvDef::InvalidObjectId == ownerUniqueID)
 	{
-		assert(false);
+		Log_Assert(false);
 		return nullptr;
 	}
 
@@ -235,7 +235,7 @@ SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classI
 			{
 				delete pObject;
 				pObject = nullptr;
-				assert(false);
+				Log_Assert(false);
 			}
 			
 		}
@@ -267,7 +267,7 @@ HRESULT SVObjectBuilder::OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID
 		else
 		{
 			hr = S_FALSE;
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 	return hr;
@@ -287,7 +287,7 @@ HRESULT SVObjectBuilder::SetEmbeddedLinkedChildIds(uint32_t uniqueID, const std:
 	else
 	{
 		hr = S_FALSE;
-		assert(false);
+		Log_Assert(false);
 	}
 
 	return hr;
@@ -325,7 +325,7 @@ HRESULT SVObjectBuilder::OverwriteInputObject(SvPb::EmbeddedIdEnum embeddedID, u
 		else
 		{
 			hr = S_FALSE;
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 	return hr;

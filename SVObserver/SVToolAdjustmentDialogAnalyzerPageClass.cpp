@@ -87,7 +87,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	assert(m_pTool);
+	Log_Assert(m_pTool);
 	if (m_pTool)
 	{
 		m_ImageController.Init();
@@ -190,7 +190,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 		if (nullptr != m_pTool)
 		{
 			SVObjectClass* pInspection(m_pTool->GetInspection());
-			assert(nullptr != pInspection);
+			Log_Assert(nullptr != pInspection);
 
 			if (nullptr != pInspection)
 			{
@@ -282,7 +282,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 	if (nullptr != m_pTool)
 	{
 		SVObjectClass* pInspection(m_pTool->GetInspection());
-		assert(nullptr != pInspection);
+		Log_Assert(nullptr != pInspection);
 
 		if (nullptr != pInspection)
 		{

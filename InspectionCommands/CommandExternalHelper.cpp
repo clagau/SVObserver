@@ -20,6 +20,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -88,7 +89,7 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 				return E_FAIL;
 			}
 		}
@@ -192,7 +193,7 @@ std::string getDottedName(uint32_t inspectionId, uint32_t objectId, bool include
 	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
 	if (S_OK != hr || false == responseCmd.has_getobjectnameresponse())
 	{
-		assert(false);
+		Log_Assert(false);
 		return {};
 	}
 	return responseCmd.getobjectnameresponse().name();
@@ -271,7 +272,7 @@ SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vecto
 			result.set_attributesallowed(0);
 			break;
 		case SvPb::GetObjectSelectorItemsRequest::kExcludeSameLineage:
-			assert(false);
+			Log_Assert(false);
 			break;
 		default: //nothing to do, empty oneof
 			break;
@@ -316,7 +317,7 @@ HRESULT setComment(uint32_t inspectionId, uint32_t objectId, std::string comment
 	pRequest->set_comment(commentStr);
 
 	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
-	assert(S_OK == hr);
+	Log_Assert(S_OK == hr);
 	return hr;
 }
 } //namespace SvCmd

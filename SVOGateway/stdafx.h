@@ -74,5 +74,6 @@
 #include <boost/scoped_array.hpp>
 #include <boost/shared_array.hpp> //Used by static library
 #include <boost/utility.hpp>      //Used by static library
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers
 //#define TRACE_SHARED_MEMORY_ACCESS

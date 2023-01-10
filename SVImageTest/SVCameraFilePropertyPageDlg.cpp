@@ -254,7 +254,7 @@ void SVCameraFilePropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 			SVDeviceParamWrapper& w = params.GetParameter(e);
 			const SVDeviceParamWrapper& wCF = l_CamFileParams.Parameter( e );
 			SVDeviceParam* pDeviceParam = w;
-			assert( pDeviceParam );
+			Log_Assert( pDeviceParam );
 			long lValue;
 
 			// If Custom get real DeviceParam
@@ -433,7 +433,7 @@ void SVCameraFilePropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESUL
 		{
 			SVDeviceParamEnum e = (SVDeviceParamEnum) (pItem->GetCtrlID() - PROP_CAMERA_FILE_BASE);
 			SVDeviceParamCollection& rCamDeviceParams = GetCameraDeviceParamsNonConst();
-			assert( rCamDeviceParams.ParameterExists(e) );
+			Log_Assert( rCamDeviceParams.ParameterExists(e) );
 			SVDeviceParamWrapper& rw = rCamDeviceParams.GetParameter(e);
 			SVDeviceParam* pDeviceParam = rw;
 			switch ( pDeviceParam->Type() )

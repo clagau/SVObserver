@@ -17,6 +17,7 @@
 #include "RemoteMonitorListController.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 enum {IDC_MONITOR_PROPERTY_TREE = 100};
@@ -82,7 +83,7 @@ std::string MonitorListPropertyDlg::ValidateLabelText(const std::string& rNewTex
 
 	if( Result.empty() )
 	{
-		assert(m_DisplayName.size() > 0);
+		Log_Assert(m_DisplayName.size() > 0);
 		Result = m_DisplayName;
 	}
 	return Result;

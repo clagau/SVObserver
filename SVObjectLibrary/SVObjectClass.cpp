@@ -115,8 +115,8 @@ This destructor unregisters itself from the object manager and frees all of the 
 */
 SVObjectClass::~SVObjectClass()
 {
-	assert(0 == m_embeddedList.size());
-	assert(0 == m_notificationList.size());
+	Log_Assert(0 == m_embeddedList.size());
+	Log_Assert(0 == m_notificationList.size());
 	sendChangeNotification(SvOi::ObjectNotificationType::Deleting, m_objectId);
 	disconnectAllInputs();
 
@@ -227,7 +227,7 @@ bool SVObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 	}
 
 	m_isCreated = Result;
@@ -518,7 +518,7 @@ Set new object owner using owner pointer.
 */
 bool SVObjectClass::SetObjectOwner(SVObjectClass* pNewOwner)
 {
-	assert(pNewOwner != this); // can't own yourself...
+	Log_Assert(pNewOwner != this); // can't own yourself...
 
 	//First disconnect the previous owner
 	if (nullptr != m_pOwner)
@@ -583,7 +583,7 @@ HRESULT SVObjectClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttrib
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		return E_FAIL;
 	}
 }
@@ -838,7 +838,7 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 {
 	if (!IsCreated() && !CreateObject(rCreateStructure))
 	{
-		assert(false);
+		Log_Assert(false);
 
 		SvDef::StringVector msgList;
 		msgList.push_back(GetName());
@@ -909,7 +909,7 @@ HRESULT SVObjectClass::RemoveObjectConnection(uint32_t )
 
 bool SVObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR ObjectName)
 {
-	assert(nullptr != pEmbeddedObject);
+	Log_Assert(nullptr != pEmbeddedObject);
 	if (nullptr != pEmbeddedObject)
 	{
 		for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
@@ -921,7 +921,7 @@ bool SVObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams));
-					assert(false);
+					Log_Assert(false);
 					return false;
 				}
 			}
@@ -939,7 +939,7 @@ bool SVObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject
 
 void SVObjectClass::AddEmbeddedObject(SVObjectClass* pObject)
 {
-	assert(nullptr != pObject);
+	Log_Assert(nullptr != pObject);
 
 	// Add to Owner's List of Embedded Objects
 	m_embeddedList.push_back(pObject);
@@ -977,11 +977,11 @@ bool SVObjectClass::createEmbeddedChildren()
 		if (nullptr != pObject)
 		{
 			result = createAllObjectsFromChild(*pObject) && result;
-			assert(result);
+			Log_Assert(result);
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 			result = false;
 		}
 	}

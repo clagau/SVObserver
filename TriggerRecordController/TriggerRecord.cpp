@@ -367,7 +367,7 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 				{
 					rImageController.decreaseImageRefCounter(pImagePos[pos]);
 					pImagePos[pos] = -1;
-					assert(false);
+					Log_Assert(false);
 					SvStl::MessageManager Exception(SvStl::MsgType::Data);
 					Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_TypeNotFit, SvStl::SourceFileParams(StdMessageParams));
 					Exception.Throw();
@@ -375,7 +375,7 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager Exception(SvStl::MsgType::Data);
 				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_InvalidType, SvStl::SourceFileParams(StdMessageParams));
 				Exception.Throw();
@@ -383,7 +383,7 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_InvalidPos, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();

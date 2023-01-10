@@ -184,7 +184,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t inspectionId,
 		Title = pTool->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType) + _T(" ") + Title;
 
 		SVIPDoc* pIPDoc = GetIPDocByInspectionID(inspectionId);
-		assert(nullptr != pIPDoc);
+		Log_Assert(nullptr != pIPDoc);
 
 		if (nullptr != pIPDoc)
 		{

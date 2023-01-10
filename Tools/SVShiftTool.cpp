@@ -67,7 +67,7 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 	m_LeftResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_TopResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
-	assert(m_pEmbeddedExtents);
+	Log_Assert(m_pEmbeddedExtents);
 	if (m_pEmbeddedExtents)
 	{
 		m_pEmbeddedExtents->m_ExtentRight.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -169,7 +169,7 @@ void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 	SvPb::setValueObject(m_LeftResult, *pRect->mutable_x(), true);
 	SvPb::setValueObject(m_TopResult, *pRect->mutable_y(), true);
 	
-	assert(m_pEmbeddedExtents);
+	Log_Assert(m_pEmbeddedExtents);
 	if (m_pEmbeddedExtents)
 	{
 		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentWidth, *pRect->mutable_w());

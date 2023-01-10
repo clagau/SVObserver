@@ -68,7 +68,7 @@ namespace SvOg
 
 	void SVDlgImageClass::UpdateImageInfo(uint32_t inspectionId, uint32_t imageId)
 	{
-		assert(SvDef::InvalidObjectId != inspectionId || SvDef::InvalidObjectId != imageId);	// if no source image, must supply info & handle
+		Log_Assert(SvDef::InvalidObjectId != inspectionId || SvDef::InvalidObjectId != imageId);	// if no source image, must supply info & handle
 
 		m_inspectionId = inspectionId;
 		m_imageId = imageId;

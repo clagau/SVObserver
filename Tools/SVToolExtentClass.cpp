@@ -291,7 +291,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum ToolExtent
 
 SvPb::SVExtentTranslationEnum SVToolExtentClass::GetTranslation() const
 {
-	assert(m_ImageExtent.GetTranslation() == m_eTranslation);
+	Log_Assert(m_ImageExtent.GetTranslation() == m_eTranslation);
 	return m_eTranslation;
 }
 
@@ -953,7 +953,7 @@ SvPb::SVExtentLocationPropertyEnum SVToolExtentClass::GetLocationPropertyAt(cons
 {
 	const SVImageExtentClass* pEx = &(m_ImageExtent);
 
-	assert(pEx->GetTranslation() == m_eTranslation);
+	Log_Assert(pEx->GetTranslation() == m_eTranslation);
 
 	SvPb::SVExtentLocationPropertyEnum l_eLocation = SvPb::SVExtentLocationPropertyUnknown;
 
@@ -1378,7 +1378,7 @@ HRESULT SVToolExtentClass::UpdateDraggingROI(SvPb::SVExtentLocationPropertyEnum 
 {
 	 SVImageExtentClass* pEx = &(m_ImageExtent);
 
-	assert(pEx->GetTranslation() == m_eTranslation);
+	Log_Assert(pEx->GetTranslation() == m_eTranslation);
 
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1560,7 +1560,7 @@ HRESULT  SVToolExtentClass::UpdateVerticalPerspective(SvPb::SVExtentLocationProp
 	
 	SVImageExtentClass* pEx = &(m_ImageExtent);
 
-	assert(pEx->GetTranslation() == m_eTranslation);
+	Log_Assert(pEx->GetTranslation() == m_eTranslation);
 
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1610,7 +1610,7 @@ HRESULT  SVToolExtentClass::UpdateHorizontalPerspective(SvPb::SVExtentLocationPr
 {
 	SVImageExtentClass* pEx = &(m_ImageExtent);
 
-	assert(pEx->GetTranslation() == m_eTranslation);
+	Log_Assert(pEx->GetTranslation() == m_eTranslation);
 	HRESULT l_hrOk = S_FALSE;
 
 	SVPoint<double> position;
@@ -1659,7 +1659,7 @@ HRESULT SVToolExtentClass::UpdateLine(SvPb::SVExtentLocationPropertyEnum eLocati
 {
 	SVImageExtentClass* pEx = &(m_ImageExtent);
 
-	assert(pEx->GetTranslation() == m_eTranslation);
+	Log_Assert(pEx->GetTranslation() == m_eTranslation);
 
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1724,7 +1724,7 @@ HRESULT SVToolExtentClass::UpdatePolar(SvPb::SVExtentLocationPropertyEnum p_eLoc
 	
 	 SVImageExtentClass* pEx = &(m_ImageExtent);
 
-	assert(pEx->GetTranslation() == m_eTranslation);
+	Log_Assert(pEx->GetTranslation() == m_eTranslation);
 	HRESULT l_hrOk = S_FALSE;
 
 	SVPoint<double> position;
@@ -2009,7 +2009,7 @@ HRESULT SVToolExtentClass::UpdatePolarFromOutputSpace(SvPb::SVExtentLocationProp
 	
 	 SVImageExtentClass* pEx = &(m_ImageExtent);
 
-	assert(pEx->GetTranslation() == m_eTranslation);
+	Log_Assert(pEx->GetTranslation() == m_eTranslation);
 	
 	HRESULT l_hrOk = S_FALSE;
 	SVPoint<double> position;
@@ -2102,7 +2102,7 @@ HRESULT SVToolExtentClass::UpdateFromOutputSpace(SvPb::SVExtentLocationPropertyE
 	
 	SVImageExtentClass* pEx = &(m_ImageExtent);
 
-	assert(pEx->GetTranslation() == m_eTranslation);
+	Log_Assert(pEx->GetTranslation() == m_eTranslation);
 
 	HRESULT l_hrOk = S_FALSE;
 
@@ -2498,7 +2498,7 @@ HRESULT SVToolExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoint
 {
 	HRESULT l_hrOk {S_OK};
 	
-	assert(m_ImageExtent.GetTranslation() == m_eTranslation);
+	Log_Assert(m_ImageExtent.GetTranslation() == m_eTranslation);
 	
 	rResult.clear();
 

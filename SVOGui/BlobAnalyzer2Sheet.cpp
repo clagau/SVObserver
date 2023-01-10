@@ -93,12 +93,12 @@ namespace SvOg
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 

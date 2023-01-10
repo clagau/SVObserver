@@ -304,7 +304,7 @@ HRESULT SVMatroxBarCodeInterface::Get(const __int64& p_rCodeID, SVBarCodeControl
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == Result);
+	Log_Assert(S_OK == Result);
 	return Result;
 }
 
@@ -405,7 +405,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 		}
 	}
 #endif
-	assert(RetValue);
+	Log_Assert(RetValue);
 	return RetValue;
 }
 
@@ -523,7 +523,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 		}
 	}
 #endif
-	assert(retValue);
+	Log_Assert(retValue);
 	return retValue;
 }
 
@@ -580,7 +580,7 @@ bool SVMatroxBarCodeInterface::Execute(const __int64& p_rCodeID, const SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(retValue);
+	Log_Assert(retValue);
 	return retValue;
 }
 
@@ -621,7 +621,7 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, SVBarCodeTypesEnum 
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == Result);
+	Log_Assert(S_OK == Result);
 	return Result;
 }
 
@@ -695,7 +695,7 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_Fr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == Result);
+	Log_Assert(S_OK == Result);
 	return Result;
 
 }

@@ -133,7 +133,7 @@ bool DrawTextTask::drawImage(SvOi::SVImageBufferHandlePtr pImageHandle, DrawArea
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 }

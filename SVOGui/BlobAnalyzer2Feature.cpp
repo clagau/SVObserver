@@ -409,7 +409,7 @@ namespace SvOg
 					pLinkedValue = m_featureData[pItem->iRow - 1].mutable_upper_bound();
 				}
 				
-				assert(nullptr != pLinkedValue);
+				Log_Assert(nullptr != pLinkedValue);
 				if (nullptr != pLinkedValue && SvPb::LinkedSelectedOption::DirectValue == pLinkedValue->option())
 				{
 					variant_t tmp {cellText.c_str()};
@@ -788,7 +788,7 @@ namespace SvOg
 		{
 			return responseCmd.getavailablefeaturesresponse();
 		}
-		assert(false);
+		Log_Assert(false);
 		return {};
 	}
 

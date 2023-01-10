@@ -511,7 +511,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 			case DeviceParamLut:
 			{
 				const SVLutDeviceParam* pLutParam = rw.DerivedValue( pLutParam );
-				assert( pLutParam );
+				Log_Assert( pLutParam );
 
 				_variant_t varValue;
 				// convert to safearray

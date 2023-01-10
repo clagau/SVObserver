@@ -277,7 +277,7 @@ STDMETHODIMP SVCommand::SVGetSVIMConfig(long lOffset, long* lBlockSize, BSTR* bs
 	{
 		TCHAR szCause[255];
 		memEx->GetErrorMessage(szCause, 255);
-		assert(false);
+		Log_Assert(false);
 		hrResult = SVMSG_CMDCOMSRV_MEMORY_ERROR;
 		bHrSet = true;
 		memEx->Delete();
@@ -286,7 +286,7 @@ STDMETHODIMP SVCommand::SVGetSVIMConfig(long lOffset, long* lBlockSize, BSTR* bs
 	{
 		TCHAR szCause[255];
 		ex->GetErrorMessage(szCause, 255);
-		assert(false);
+		Log_Assert(false);
 		hrResult = SVMSG_CMDCOMSRV_FILE_ERROR;
 		bHrSet = true;
 		ex->Delete();
@@ -383,7 +383,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 	{
 		TCHAR szCause[255];
 		theEx->GetErrorMessage(szCause, 255);
-		assert(false);
+		Log_Assert(false);
 		hrResult = theEx->m_lOsError;
 		theEx->Delete();
 	}
@@ -717,27 +717,27 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long, SAFEARRAY** pp
 
 		if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
 		{
-			Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
+			Log_Error(SvDef::ConfigurationNotLoaded);
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
 		unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
-		assert(nullptr != ppsaStatus);
-		assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
-		assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
+		Log_Assert(nullptr != ppsaStatus);
+		Log_Assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
+		Log_Assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
 
-		assert(nullptr != ppsaImages);
-		assert(nullptr != *ppsaImages);	// must provide allocated SafeArray(LONG)
-		assert((*ppsaImages)->rgsabound[0].cElements == lNumberOfElements);
+		Log_Assert(nullptr != ppsaImages);
+		Log_Assert(nullptr != *ppsaImages);	// must provide allocated SafeArray(LONG)
+		Log_Assert((*ppsaImages)->rgsabound[0].cElements == lNumberOfElements);
 
-		assert(nullptr != ppsaOverlays);
-		assert(nullptr != *ppsaOverlays);// must provide allocated SafeArray(LONG)
-		assert((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
+		Log_Assert(nullptr != ppsaOverlays);
+		Log_Assert(nullptr != *ppsaOverlays);// must provide allocated SafeArray(LONG)
+		Log_Assert((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
 
-		assert(nullptr != ppsaProcCounts);
-		assert(nullptr != *ppsaProcCounts);// must provide allocated SafeArray(LONG)
-		assert((*ppsaProcCounts)->rgsabound[0].cElements == lNumberOfElements);
+		Log_Assert(nullptr != ppsaProcCounts);
+		Log_Assert(nullptr != *ppsaProcCounts);// must provide allocated SafeArray(LONG)
+		Log_Assert((*ppsaProcCounts)->rgsabound[0].cElements == lNumberOfElements);
 
 		long lDefaultStatus = S_FALSE;
 
@@ -831,7 +831,7 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long, SAFEARRAY** pp
 					}
 					else
 					{
-						assert(false);
+						Log_Assert(false);
 
 					}
 
@@ -1007,13 +1007,13 @@ STDMETHODIMP SVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaN
 
 	unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
-	assert(nullptr != ppsaStatus);
-	assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
-	assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
+	Log_Assert(nullptr != ppsaStatus);
+	Log_Assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
+	Log_Assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
 
-	assert(nullptr != ppsaData);
-	assert(nullptr != *ppsaData);	// must provide allocated SafeArray(LONG)
-	assert((*ppsaData)->rgsabound[0].cElements == lNumberOfElements);
+	Log_Assert(nullptr != ppsaData);
+	Log_Assert(nullptr != *ppsaData);	// must provide allocated SafeArray(LONG)
+	Log_Assert((*ppsaData)->rgsabound[0].cElements == lNumberOfElements);
 
 	long lDefaultStatus = S_FALSE;
 
@@ -1029,7 +1029,7 @@ STDMETHODIMP SVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaN
 
 	if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
 	{
-		Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
+		Log_Error(SvDef::ConfigurationNotLoaded);
 		hr = SVMSG_CONFIGURATION_NOT_LOADED;
 		return hr;
 	}
@@ -1144,7 +1144,7 @@ STDMETHODIMP SVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaN
 					}// else invalid or out of range index
 					else	// some generic error; currently should not get here
 					{
-						assert(false);
+						Log_Assert(false);
 						hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 						// did not get value.  set value to -1
 						Value = _T("-1");
@@ -1226,17 +1226,17 @@ STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psa
 
 		unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
-		assert(nullptr != ppsaStatus);
-		assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
-		assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
+		Log_Assert(nullptr != ppsaStatus);
+		Log_Assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
+		Log_Assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
 
-		assert(nullptr != ppsaImages);
-		assert(nullptr != *ppsaImages);	// must provide allocated SafeArray(LONG)
-		assert((*ppsaImages)->rgsabound[0].cElements == lNumberOfElements);
+		Log_Assert(nullptr != ppsaImages);
+		Log_Assert(nullptr != *ppsaImages);	// must provide allocated SafeArray(LONG)
+		Log_Assert((*ppsaImages)->rgsabound[0].cElements == lNumberOfElements);
 
-		assert(nullptr != ppsaOverlays);
-		assert(nullptr != *ppsaOverlays);// must provide allocated SafeArray(LONG)
-		assert((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
+		Log_Assert(nullptr != ppsaOverlays);
+		Log_Assert(nullptr != *ppsaOverlays);// must provide allocated SafeArray(LONG)
+		Log_Assert((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
 
 		BSTR bstr = nullptr;
 		SvIe::SVImageClassPtrVector ImageObjects;
@@ -1261,7 +1261,7 @@ STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psa
 
 		if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
 		{
-			Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
+			Log_Error(SvDef::ConfigurationNotLoaded);
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
@@ -1743,17 +1743,17 @@ HRESULT SVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, SA
 	//get number of elements out of the incoming safearray
 	unsigned long Size = psaNames->rgsabound[0].cElements;
 
-	assert(nullptr != ppsaStatus);
-	assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
-	assert((*ppsaStatus)->rgsabound[0].cElements == Size);
+	Log_Assert(nullptr != ppsaStatus);
+	Log_Assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
+	Log_Assert((*ppsaStatus)->rgsabound[0].cElements == Size);
 
-	assert(nullptr != ppsaValues);
-	assert(nullptr != *ppsaValues);	// must provide allocated SafeArray(LONG)
-	assert((*ppsaValues)->rgsabound[0].cElements == Size);
+	Log_Assert(nullptr != ppsaValues);
+	Log_Assert(nullptr != *ppsaValues);	// must provide allocated SafeArray(LONG)
+	Log_Assert((*ppsaValues)->rgsabound[0].cElements == Size);
 
-	assert(nullptr != ppsaProcCounts);
-	assert(nullptr != *ppsaProcCounts);// must provide allocated SafeArray(LONG)
-	assert((*ppsaProcCounts)->rgsabound[0].cElements == Size);
+	Log_Assert(nullptr != ppsaProcCounts);
+	Log_Assert(nullptr != *ppsaProcCounts);// must provide allocated SafeArray(LONG)
+	Log_Assert((*ppsaProcCounts)->rgsabound[0].cElements == Size);
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);

@@ -144,7 +144,7 @@ namespace SvOgu
 		{
 			return responseCmd.getinputdataresponse().data();
 		}
-		assert(false);
+		Log_Assert(false);
 		return {};
 	}
 
@@ -189,7 +189,7 @@ namespace SvOgu
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 					SvStl::MessageContainerVector messageList;
 					if (responseCmd.has_getimageresponse())
 					{
@@ -228,7 +228,7 @@ namespace SvOgu
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 			SvStl::MessageContainerVector messageList;
 			if (responseCmd.has_getimageresponse())
 			{

@@ -18,4 +18,5 @@
 #include <map>
 #include <mil.h>
 #include <mutex>
+#include "SVStatusLibrary/MessageManager.h"
 

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLut.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 
@@ -66,7 +67,7 @@ SVLutInfo& SVLutInfo::operator = (const SVLutInfo& rhs)
 
 void SVLutInfo::CopyNoTransform(const SVLutInfo& rhs)
 {
-	assert( this != &rhs );
+	Log_Assert( this != &rhs );
 	if (this != &rhs)
 	{
 		muiFormat = rhs.muiFormat;
@@ -166,7 +167,7 @@ bool SVLutInfo::GetTransformParameters(SVLutTransformParameters& rParam) const
 bool SVLutInfo::GetTransformParameters(SAFEARRAY*& rpsaParam) const
 {
 	bool bRet = false;
-	assert( nullptr == rpsaParam );	// must clean up and set to nullptr before calling
+	Log_Assert( nullptr == rpsaParam );	// must clean up and set to nullptr before calling
 	if ( mpTransform && nullptr == rpsaParam )
 	{
 		SVLutTransformParameters param;
@@ -204,7 +205,7 @@ SVLutBand::~SVLutBand()
 
 SVLutBand& SVLutBand::operator = ( const SVLutBand& rhs )
 {
-	assert( this != &rhs );
+	Log_Assert( this != &rhs );
 	if ( this != &rhs )
 	{
 		mulBand = rhs.mulBand;
@@ -217,7 +218,7 @@ SVLutBand& SVLutBand::operator = ( const SVLutBand& rhs )
 
 void SVLutBand::CopyNoTransform( const SVLutBand& rhs )
 {
-	assert( this != &rhs );
+	Log_Assert( this != &rhs );
 	if ( this != &rhs )
 	{
 		mulBand = rhs.mulBand;
@@ -229,8 +230,8 @@ void SVLutBand::CopyNoTransform( const SVLutBand& rhs )
 bool SVLutBand::CopyBandData(const SVLutBand& lutband)
 {
 	bool bRet = false;
-	assert( mulBand == lutband.Band() );
-	assert( mInfo.BandSize() == lutband.Info().BandSize() );
+	Log_Assert( mulBand == lutband.Band() );
+	Log_Assert( mInfo.BandSize() == lutband.Info().BandSize() );
 	if ( mulBand == lutband.Band() && mInfo.BandSize() == lutband.Info().BandSize() )
 	{
 		maTable = lutband.maTable;
@@ -318,18 +319,18 @@ bool SVLutBand::SetTransformOperation(const SVLutTransformOperation& pType)
 bool SVLutBand::SetBandData(SAFEARRAY* psaBandData)
 {
 	bool bRet=false;
-	assert( nullptr != psaBandData );	// must be valid SAFEARRAY
+	Log_Assert( nullptr != psaBandData );	// must be valid SAFEARRAY
 	if (nullptr != psaBandData)
 	{
 		VARTYPE vt;
 		::SafeArrayGetVartype(psaBandData, &vt);
-		assert( VT_I4 == vt || VT_UI4 == vt );
+		Log_Assert( VT_I4 == vt || VT_UI4 == vt );
 		if ( VT_I4 == vt || VT_UI4 == vt )
 		{
 			long lSize;
 			::SafeArrayGetUBound(psaBandData, 1, &lSize);
 			lSize++;
-			assert( lSize == maTable.size() );	// size must match!
+			Log_Assert( lSize == maTable.size() );	// size must match!
 			if ( lSize == maTable.size() )
 			{
 				long lBegin;
@@ -354,7 +355,7 @@ bool SVLutBand::SetBandData(SAFEARRAY* psaBandData)
 bool SVLutBand::GetBandData(SAFEARRAY*& rpsaBandData) const
 {
 	bool bRet = false;
-	assert( nullptr == rpsaBandData );	// must clean up and set to nullptr before calling
+	Log_Assert( nullptr == rpsaBandData );	// must clean up and set to nullptr before calling
 	if (nullptr == rpsaBandData)
 	{
 		SAFEARRAYBOUND saBounds[1];
@@ -436,7 +437,7 @@ void SVLut::CopyNoTransform( const SVLut& rhs )
 {
 	if ( this != &rhs )
 	{
-		assert( rhs.mInfo.Bands() == rhs.m_Bands.size() );
+		Log_Assert( rhs.mInfo.Bands() == rhs.m_Bands.size() );
 		mInfo.CopyNoTransform( rhs.mInfo );
 		if ( m_Bands.size() != rhs.m_Bands.size() )
 		{
@@ -453,7 +454,7 @@ void SVLut::CopyNoTransform( const SVLut& rhs )
 
 bool SVLut::CopyBandData(const SVLutBand& lutband)
 {
-	assert( lutband.Band() < mInfo.Bands() );
+	Log_Assert( lutband.Band() < mInfo.Bands() );
 	if ( lutband.Band() < mInfo.Bands() )
 	{
 		m_Bands[ lutband.Band() ].CopyBandData(lutband);
@@ -480,7 +481,7 @@ bool SVLut::CopyBandData(const SVLut& lut, int iBand)
 		}
 		else
 		{
-			assert( static_cast< unsigned long >( iBand ) < m_Bands.size() && iBand >= 0);
+			Log_Assert( static_cast< unsigned long >( iBand ) < m_Bands.size() && iBand >= 0);
 			if ( static_cast< unsigned long >( iBand ) < m_Bands.size() && iBand >= 0)
 			{
 				m_Bands[iBand].CopyBandData(lut(iBand));
@@ -577,7 +578,7 @@ bool SVLut::SetTransform(const SVLutTransform& rTransform)
 	bool bRet = nullptr == mInfo.GetTransform();
 	if ( bRet )
 	{
-		assert( mInfo.Bands() == m_Bands.size() );
+		Log_Assert( mInfo.Bands() == m_Bands.size() );
 		for (UINT i=0; i<mInfo.Bands(); i++)
 		{
 			bRet = bRet && m_Bands[i].mInfo.SetTransform(rTransform);
@@ -600,11 +601,11 @@ bool SVLut::SetTransformOperation(const SVLutTransformOperation& pType)
 bool SVLut::SetBandData(SAFEARRAY* psaBands)
 {
 	bool bRet=false;
-	assert( nullptr != psaBands );	// must be valid SAFEARRAY
+	Log_Assert( nullptr != psaBands );	// must be valid SAFEARRAY
 	if (nullptr != psaBands)
 	{
 		UINT uiDims = ::SafeArrayGetDim(psaBands);
-		assert( uiDims <= 2 );
+		Log_Assert( uiDims <= 2 );
 		if ( uiDims <= 2 )
 		{
 			ULONG lNumBands;
@@ -613,12 +614,12 @@ bool SVLut::SetBandData(SAFEARRAY* psaBands)
 			::SafeArrayGetUBound(psaBands, 2, &lBandUBound);
 			lNumBands = lBandUBound - lBandLBound + 1;
 
-			assert( lNumBands == mInfo.Bands() );
+			Log_Assert( lNumBands == mInfo.Bands() );
 			if ( lNumBands == mInfo.Bands() )
 			{
 				VARTYPE vt;
 				::SafeArrayGetVartype(psaBands, &vt);
-				assert( VT_I4 == vt || VT_UI4 == vt );
+				Log_Assert( VT_I4 == vt || VT_UI4 == vt );
 				if ( VT_I4 == vt || VT_UI4 == vt )
 				{
 					ULONG lBandSize;
@@ -627,7 +628,7 @@ bool SVLut::SetBandData(SAFEARRAY* psaBands)
 					::SafeArrayGetUBound(psaBands, 1, &lBandSizeUBound);
 					lBandSize = lBandSizeUBound - lBandSizeLBound + 1;
 
-					assert( lBandSize == mInfo.BandSize() );	// size must match!
+					Log_Assert( lBandSize == mInfo.BandSize() );	// size must match!
 					if ( lBandSize == mInfo.BandSize() )
 					{
 						long alDimIndex[2];
@@ -659,7 +660,7 @@ bool SVLut::SetBandData(SAFEARRAY* psaBands)
 bool SVLut::GetBandData(SAFEARRAY*& rpsaBands) const
 {
 	bool bRet = false;
-	assert( nullptr == rpsaBands);	// must clean up and set to nullptr before calling
+	Log_Assert( nullptr == rpsaBands);	// must clean up and set to nullptr before calling
 	if( nullptr == rpsaBands && 0 < mInfo.BandSize() && 0 < mInfo.Bands() )
 	{
 		SAFEARRAYBOUND saBounds[2];

@@ -59,7 +59,7 @@ namespace SvMc
 	{
 		CPropertySheet::OnInitDialog();
 
-		assert(GetActivePage() != 0);
+		Log_Assert(GetActivePage() != 0);
 
 		// Get the original client rect
 		GetClientRect(m_rcClient);

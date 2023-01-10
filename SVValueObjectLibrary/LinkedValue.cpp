@@ -336,7 +336,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 			return E_FAIL;
 		}
 	}
@@ -348,12 +348,12 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			setSelectedOption(SvPb::LinkedSelectedOption::DirectValue);
 			m_directValue = rValue;
 			bool isOk = UpdateConnection();
-			assert(isOk);
+			Log_Assert(isOk);
 			return isOk;
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 			return false;
 		}
 	}
@@ -369,7 +369,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		m_indirectValueRef = rReference;
 		setSelectedOption(SvPb::LinkedSelectedOption::IndirectValue);
 		bool isOk = UpdateConnection();
-		assert(isOk);
+		Log_Assert(isOk);
 		return isOk;
 	}
 
@@ -1221,7 +1221,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		default:
 			m_children.clear();
 			m_childrenIds.clear();
-			assert(false);
+			Log_Assert(false);
 			break;
 		}
 
@@ -1239,7 +1239,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 		std::string objectIdAndIndexString;
 		auto* pValueArray = valuePtr();
-		assert(nullptr != pValueArray);
+		Log_Assert(nullptr != pValueArray);
 		if (nullptr != pValueArray)
 		{	//Here we look if the direct value is a valid objectId to find out if this object is linked to another value.
 			objectIdAndIndexString = SvUl::createStdString(pValueArray[0]);
@@ -1316,7 +1316,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		else	// plain data
 		{
 			setSelectedOption(SvPb::LinkedSelectedOption::DirectValue);
-			assert(Result);
+			Log_Assert(Result);
 			if (Result)
 			{
 				DisconnectInput();
@@ -1764,7 +1764,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		variant_t valueVar = value;
 		if (S_OK != ::VariantChangeTypeEx(&valueVar, &valueVar, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
 		{
-			assert(false);
+			Log_Assert(false);
 			return false;
 		}
 		return (S_OK == __super::setValue(valueVar));
@@ -1921,7 +1921,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		auto* pTRC = SvOi::getTriggerRecordControllerRWInstance();
 		auto* pInsp = GetAncestorInterface(SvPb::SVInspectionObjectType);
-		assert(nullptr != pTRC && nullptr != pInsp);
+		Log_Assert(nullptr != pTRC && nullptr != pInsp);
 		//if not created, do not set anything to TRC
 		if (m_isCreated && nullptr != pTRC && nullptr != pInsp)
 		{

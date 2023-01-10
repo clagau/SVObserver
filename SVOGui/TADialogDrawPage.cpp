@@ -413,7 +413,7 @@ void TADialogDrawPage::OnColorButton(UINT nID)
 void TADialogDrawPage::OnButtonLinkedValue(UINT nID)
 {
 	int index(nID - IDC_LINKED_VALUE_BUTTON1);
-	assert(0 <= index && m_editCtrlDataList.size() > index && m_editCtrlDataList[index].m_Widget);
+	Log_Assert(0 <= index && m_editCtrlDataList.size() > index && m_editCtrlDataList[index].m_Widget);
 	if (0 <= index && m_editCtrlDataList.size() > index && m_editCtrlDataList[index].m_Widget)
 	{
 		m_editCtrlDataList[index].m_Widget->OnButton();
@@ -428,7 +428,7 @@ void TADialogDrawPage::OnKillFocusEdit(UINT nID)
 	UpdateData();
 
 	auto ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nID](const auto& rEntry){ return rEntry.m_nIDC == nID; });
-	assert(m_editCtrlDataList.end() != ctrlDataIter);
+	Log_Assert(m_editCtrlDataList.end() != ctrlDataIter);
 	if (m_editCtrlDataList.end() != ctrlDataIter)
 	{
 		if (ctrlDataIter->m_Widget)
@@ -573,7 +573,7 @@ void TADialogDrawPage::setAddTaskCtrl(const SvOgu::TreeNodeData& rData)
 			break;
 	}
 
-	assert(m_availableList.size());
+	Log_Assert(m_availableList.size());
 	if (0 < m_availableList.size())
 	{
 		m_comboBox2.Init(m_availableList, m_availableList[0].first, _T(""));
@@ -618,23 +618,23 @@ void TADialogDrawPage::setBaseImageGeneralCtrl()
 		{
 			auto nId = static_cast<UINT>(m_BSOAControls[BOSAEnum::Edit3].GetDlgCtrlID());
 			auto ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nId](const auto& rEntry){ return rEntry.m_nIDC == nId; });
-			assert(m_editCtrlDataList.end() != ctrlDataIter);
+			Log_Assert(m_editCtrlDataList.end() != ctrlDataIter);
 			if (m_editCtrlDataList.end() != ctrlDataIter)
 			{
 				auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[BOSAEnum::Edit3]);
 				auto* pButton = static_cast<CButton*>(&m_BSOAControls[BOSAEnum::LinkedValueButton3]);
-				assert(pEdit && pButton);
+				Log_Assert(pEdit && pButton);
 				ctrlDataIter->m_Widget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionXEId, m_pValues.get());
 			}
 
 			nId = static_cast<UINT>(m_BSOAControls[BOSAEnum::Edit4].GetDlgCtrlID());
 			ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nId](const auto& rEntry){ return rEntry.m_nIDC == nId; });
-			assert(m_editCtrlDataList.end() != ctrlDataIter);
+			Log_Assert(m_editCtrlDataList.end() != ctrlDataIter);
 			if (m_editCtrlDataList.end() != ctrlDataIter)
 			{
 				auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[BOSAEnum::Edit4]);
 				auto* pButton = static_cast<CButton*>(&m_BSOAControls[BOSAEnum::LinkedValueButton4]);
-				assert(pEdit && pButton);
+				Log_Assert(pEdit && pButton);
 				ctrlDataIter->m_Widget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, m_TaskObjectID, SvPb::PositionYEId, m_pValues.get());
 			}
 		}
@@ -683,7 +683,7 @@ void TADialogDrawPage::setBaseImageSizeCtrl()
 
 void TADialogDrawPage::setSizeCtrl(SvOgu::TreeNodeData& rData)
 {
-	assert(rData.m_pValues);
+	Log_Assert(rData.m_pValues);
 	setControl(BOSAEnum::Static2, "Width:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::WidthEId, rData);
 	setControl(BOSAEnum::Static3, "Height:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::HeightEId, rData);
 	UpdateData(false);
@@ -691,7 +691,7 @@ void TADialogDrawPage::setSizeCtrl(SvOgu::TreeNodeData& rData)
 
 void TADialogDrawPage::setGeneralCtrl(SvOgu::TreeNodeData& rData)
 {
-	assert(rData.m_pValues);
+	Log_Assert(rData.m_pValues);
 	if (nullptr != rData.m_pValues)
 	{
 		switch (rData.m_type)
@@ -766,7 +766,7 @@ void TADialogDrawPage::setPositionCtrl(SvOgu::TreeNodeData& rData)
 
 void TADialogDrawPage::setPointsCtrl(SvOgu::TreeNodeData& rData)
 {
-	assert(rData.m_pValues);
+	Log_Assert(rData.m_pValues);
 	switch (rData.m_type)
 	{
 		case SvOgu::DrawNodeType::Triangle:
@@ -802,7 +802,7 @@ void TADialogDrawPage::setPointsCtrl(SvOgu::TreeNodeData& rData)
 		}
 		break;
 		default:
-			assert(false);
+			Log_Assert(false);
 			break;
 	}
 	UpdateData(false);
@@ -810,7 +810,7 @@ void TADialogDrawPage::setPointsCtrl(SvOgu::TreeNodeData& rData)
 
 void TADialogDrawPage::setColorCtrl(SvOgu::TreeNodeData& rData)
 {
-	assert(rData.m_pValues);
+	Log_Assert(rData.m_pValues);
 	if (m_drawToolController.isColor())
 	{
 		byte redValue = rData.m_pValues->Get<byte>(SvPb::Color1EId);
@@ -864,8 +864,8 @@ void TADialogDrawPage::setColorCtrl(SvOgu::TreeNodeData& rData)
 
 void TADialogDrawPage::setAngleCtrl(SvOgu::TreeNodeData& rData)
 {
-	assert(rData.m_pValues);
-	assert(SvOgu::DrawNodeType::Segment == rData.m_type);
+	Log_Assert(rData.m_pValues);
+	Log_Assert(SvOgu::DrawNodeType::Segment == rData.m_type);
 
 	setControl(BOSAEnum::Static2, "Start Angle:", BOSAEnum::Edit2, BOSAEnum::LinkedValueButton2, SvPb::StartAngleEId, rData);
 	setControl(BOSAEnum::Static3, "Stop Angle:", BOSAEnum::Edit3, BOSAEnum::LinkedValueButton3, SvPb::EndAngleEId, rData);
@@ -1063,7 +1063,7 @@ void TADialogDrawPage::refreshTree()
 void TADialogDrawPage::updateImages()
 {
 	IPictureDisp* pOutputImage = m_ImageController.GetImage(SvPb::OutputImageEId);
-	assert(pOutputImage);
+	Log_Assert(pOutputImage);
 	m_dialogImage.setImage(pOutputImage, m_OutputTabHandle);
 	m_dialogImage.Refresh();
 	resetOverlay();
@@ -1096,7 +1096,7 @@ void TADialogDrawPage::resetOverlay()
 void TADialogDrawPage::addNodeInto(HTREEITEM item, SvPb::ClassIdEnum classId, SvOgu::DrawTaskTree::addPosEnum posEnum)
 {
 	auto iter = std::ranges::find_if(c_typeConvVec, [classId](const auto& rEntry) { return rEntry.first == classId; });
-	assert(c_typeConvVec.end() != iter);
+	Log_Assert(c_typeConvVec.end() != iter);
 	if(c_typeConvVec.end() != iter)
 	{
 		SvPb::InspectionCmdRequest requestCmd;
@@ -1171,7 +1171,7 @@ void TADialogDrawPage::setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, SvOgu::
 {
 	auto nId = static_cast<UINT>(m_BSOAControls[ctrlEnum].GetDlgCtrlID());
 	auto ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nId](const auto& rEntry){ return rEntry.m_nIDC == nId; });
-	assert(m_editCtrlDataList.end() != ctrlDataIter);
+	Log_Assert(m_editCtrlDataList.end() != ctrlDataIter);
 	if (m_editCtrlDataList.end() != ctrlDataIter)
 	{
 		m_BSOAControls[ctrlEnum].ShowWindow(SW_SHOW);
@@ -1206,12 +1206,12 @@ void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogD
 {
 	auto nId = static_cast<UINT>(m_BSOAControls[editEnum].GetDlgCtrlID());
 	auto ctrlDataIter = std::ranges::find_if(m_editCtrlDataList, [nId](const auto& rEntry){ return rEntry.m_nIDC == nId; });
-	assert(m_editCtrlDataList.end() != ctrlDataIter);
+	Log_Assert(m_editCtrlDataList.end() != ctrlDataIter);
 	if (m_editCtrlDataList.end() != ctrlDataIter)
 	{
 		auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[editEnum]);
 		auto* pButton = static_cast<CButton*>(&m_BSOAControls[buttonEnum]);
-		assert(pEdit && pButton);
+		Log_Assert(pEdit && pButton);
 		ctrlDataIter->m_Widget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, rData.m_objectId, embeddedId, rData.m_pValues.get(), validCallback);
 	}
 }
@@ -1227,7 +1227,7 @@ void TADialogDrawPage::setOrRemoveColorItemForBase()
 {
 	HTREEITEM hBaseItem = m_treeCtrl.GetNextItem(nullptr, TVGN_ROOT);
 	auto* pBaseData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(hBaseItem));
-	assert(nullptr != hBaseItem && nullptr != pBaseData && SvOgu::DrawNodeType::BaseImage == pBaseData->m_type);
+	Log_Assert(nullptr != hBaseItem && nullptr != pBaseData && SvOgu::DrawNodeType::BaseImage == pBaseData->m_type);
 	if (nullptr == pBaseData || SvOgu::DrawNodeType::BaseImage != pBaseData->m_type)
 	{
 		return;
@@ -1235,7 +1235,7 @@ void TADialogDrawPage::setOrRemoveColorItemForBase()
 
 	auto currentItem = pBaseData->m_lastInternItem;
 	auto* pData = reinterpret_cast<SvOgu::TreeNodeData*>(m_treeCtrl.GetItemData(currentItem));
-	assert(nullptr != pData);
+	Log_Assert(nullptr != pData);
 	if (nullptr == pData)
 	{
 		return;

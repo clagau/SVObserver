@@ -177,7 +177,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 		m_Tree.ShowInfoText(false);
 
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-		assert(pRoot);
+		Log_Assert(pRoot);
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T("Input Source Images"));
 		pRoot->SetInfoText(_T(""));

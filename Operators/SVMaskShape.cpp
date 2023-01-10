@@ -135,7 +135,7 @@ HRESULT SVMaskShape::SetProperties(const MapType& p_mapProperties)
 {
 	HRESULT hr = S_FALSE;
 	
-	assert( m_bImageInfoSet );
+	Log_Assert( m_bImageInfoSet );
 	
 	if ( m_bImageInfoSet )
 	{

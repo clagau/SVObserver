@@ -484,7 +484,7 @@ HRESULT SVPictureTabs::CloneScrollPosition(int Orientation, long TabHandle)
 	HRESULT hr = S_OK;
 	int pos = 0;
 
-	assert(Orientation == SB_VERT || Orientation == SB_HORZ);
+	Log_Assert(Orientation == SB_VERT || Orientation == SB_HORZ);
 	
 	if( IsValidTabHandle( TabHandle ) )
 	{
@@ -492,7 +492,7 @@ HRESULT SVPictureTabs::CloneScrollPosition(int Orientation, long TabHandle)
 	}
 	else
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 		return E_InvalidTab;
 	}
 

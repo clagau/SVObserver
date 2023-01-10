@@ -355,7 +355,7 @@ namespace SvTrcT
 			}
 			catch (...)
 			{	
-				assert(false);
+				Log_Assert(false);
 			}
 
 			pMainImage.reset();

@@ -85,7 +85,7 @@ SVTaskObjectClass::~SVTaskObjectClass()
 {
 	SVTaskObjectClass::DestroyFriends();
 
-	assert(0 == m_inputs.size());
+	Log_Assert(0 == m_inputs.size());
 }
 
 bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
@@ -531,7 +531,7 @@ void SVTaskObjectClass::ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector
 
 		const SvDef::SVObjectTypeInfoStruct& rInfo = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
-		assert(SvDef::InvalidObjectId != pInInfo->GetInputObjectInfo().getObjectId() ||
+		Log_Assert(SvDef::InvalidObjectId != pInInfo->GetInputObjectInfo().getObjectId() ||
 			SvPb::NoEmbeddedId != rInfo.m_EmbeddedID ||
 			SvPb::SVNotSetObjectType != rInfo.m_ObjectType ||
 			SvPb::SVNotSetSubObjectType != rInfo.m_SubType);
@@ -1088,12 +1088,12 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		{
 			Result = CreateChildObject(m_friendList[j]) && Result;
 
-			assert(Result);
+			Log_Assert(Result);
 		}
 		else
 		{
 			Result = false;
-			assert(Result);
+			Log_Assert(Result);
 		}
 	}
 
@@ -1105,7 +1105,7 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		{
 			pInput->SetInputObject(pInput->GetInputObjectInfo().getObjectId());
 			Result = CreateChildObject(pInput) && Result;
-			assert(Result);
+			Log_Assert(Result);
 		}
 	}
 
@@ -1669,7 +1669,7 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetValueStruct& rEntry, 
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 		catch (...)

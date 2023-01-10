@@ -146,7 +146,7 @@ HRESULT SVStringValueObjectClass::SetArrayValues(const ValueVector& rValues)
 	HRESULT Result(E_FAIL);
 
 	int32_t Size = static_cast<int32_t> (rValues.size());
-	assert(Size <= getArraySize());
+	Log_Assert(Size <= getArraySize());
 	if (Size <= m_stringData.size())
 	{
 		SetResultSize(Size);
@@ -221,7 +221,7 @@ void SVStringValueObjectClass::updateMemBlockData()
 			if (0 < dataByteSize)
 			{
 				///Memory block reserved for value object is to small. This should not happen!
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			}

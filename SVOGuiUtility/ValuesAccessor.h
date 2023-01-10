@@ -71,7 +71,7 @@ public:
 					break;
 				}
 				default:
-					assert(false);
+					Log_Assert(false);
 					break;
 				}
 				
@@ -123,7 +123,7 @@ public:
 				break;
 			}
 			default:
-				assert(false);
+				Log_Assert(false);
 				break;
 			}
 			

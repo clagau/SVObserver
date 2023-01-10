@@ -85,3 +85,4 @@
 #pragma warning( disable : 4471 )
 #import <msxml3.dll> raw_interfaces_only 
 #pragma warning( pop )
+#include "SVStatusLibrary/MessageManagerHelper.h"

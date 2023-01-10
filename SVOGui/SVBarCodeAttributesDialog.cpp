@@ -173,7 +173,7 @@ namespace SvOg
 			return *iter;
 		}
 
-		assert(false);
+		Log_Assert(false);
 		return *m_barCodeTypeInfos.typeparameters().cbegin();
 	}
 }

@@ -132,7 +132,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 	void TADialogRingBufferParameterPage::OnButtonDepth()
 	{
-		assert(m_DepthWidget);
+		Log_Assert(m_DepthWidget);
 		if (m_DepthWidget)
 		{
 			m_DepthWidget->OnButton();
@@ -148,7 +148,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	{
 		int ButtonIndex( nID-IDC_BUTTON_IMAGE_INDEX1 );
 
-		assert(m_ImageIndexWidget[ButtonIndex]);
+		Log_Assert(m_ImageIndexWidget[ButtonIndex]);
 		if (m_ImageIndexWidget[ButtonIndex])
 		{
 			m_ImageIndexWidget[ButtonIndex]->OnButton();
@@ -159,7 +159,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	{
 		int ButtonIndex(nID - IDC_EDIT_IMAGE_INDEX1);
 
-		assert(m_ImageIndexWidget[ButtonIndex]);
+		Log_Assert(m_ImageIndexWidget[ButtonIndex]);
 		if (m_ImageIndexWidget[ButtonIndex])
 		{
 			m_ImageIndexWidget[ButtonIndex]->EditboxToValue();

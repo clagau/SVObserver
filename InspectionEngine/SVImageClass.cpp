@@ -228,11 +228,11 @@ bool SVImageClass::DestroyImage()
 	{
 		bOk = (S_OK == ClearParentConnection());
 
-		assert(bOk);
+		Log_Assert(bOk);
 
 		bOk = S_OK == RemoveChildren() && bOk;
 
-		assert(bOk);
+		Log_Assert(bOk);
 
 		m_ImageType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
 
@@ -694,7 +694,7 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 		{
 			SVImageClass* l_pParentImage = GetParentImage();
 
-			assert(nullptr != l_pParentImage);
+			Log_Assert(nullptr != l_pParentImage);
 
 			if (nullptr != l_pParentImage && l_pParentImage != this)
 			{
@@ -1120,20 +1120,20 @@ const std::vector<double> SVImageClass::UnitMatrix = {1.0,0.0,0.0,0.0,1.0,0.0,0.
 
 void SVImageClass::setImage(SvOi::ITRCImagePtr pImage, const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
-	assert(nullptr != pTriggerRecord);
+	Log_Assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
-		assert(0 <= m_imagePosInTRC && BufferType::TRCBuffer == m_BufferType);
+		Log_Assert(0 <= m_imagePosInTRC && BufferType::TRCBuffer == m_BufferType);
 		pTriggerRecord->setImage(m_imagePosInTRC, pImage);
 	}
 }
 
 void SVImageClass::resetImage(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
-	assert(nullptr != pTriggerRecord);
+	Log_Assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
-		assert(0 <= m_imagePosInTRC && BufferType::TRCBuffer == m_BufferType);
+		Log_Assert(0 <= m_imagePosInTRC && BufferType::TRCBuffer == m_BufferType);
 		pTriggerRecord->setImage(m_imagePosInTRC, -1);
 	}
 }
@@ -1176,17 +1176,17 @@ SvOi::ITRCImagePtr SVImageClass::getTempImageBuffer(bool createBufferExternIfNec
 SvOi::ITRCImagePtr SVImageClass::getImageReadOnly(const SvOi::ITriggerRecordR* pTriggerRecord, bool lockImage) const
 {
 	SvOi::ITRCImagePtr pImage = nullptr;
-	assert(nullptr != pTriggerRecord);
+	Log_Assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
 		switch (m_BufferType)
 		{
 			case BufferType::TRCBuffer:
-				assert(0 <= m_imagePosInTRC);
+				Log_Assert(0 <= m_imagePosInTRC);
 				pImage = pTriggerRecord->getImage(m_imagePosInTRC, lockImage);
 				break;
 			case BufferType::TRCChildImage:
-				assert(0 <= m_imagePosInTRC);
+				Log_Assert(0 <= m_imagePosInTRC);
 				pImage = pTriggerRecord->getChildImage(m_imagePosInTRC, lockImage);
 				break;
 			case BufferType::LocalBuffer:
@@ -1216,7 +1216,7 @@ SvOi::ITRCImagePtr SVImageClass::getImageReadOnly(const SvOi::ITriggerRecordR* p
 			default:
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
-				assert(false);
+				Log_Assert(false);
 				break;
 		}
 	}
@@ -1231,7 +1231,7 @@ SvOi::ITRCImagePtr SVImageClass::getImageReadOnly(const SvOi::ITriggerRecordR* p
 SvOi::ITRCImagePtr SVImageClass::getImageToWrite(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	SvOi::ITRCImagePtr pImage = nullptr;
-	assert(nullptr != pTriggerRecord);
+	Log_Assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
 		switch (m_BufferType)
@@ -1247,7 +1247,7 @@ SvOi::ITRCImagePtr SVImageClass::getImageToWrite(const SvOi::ITriggerRecordRWPtr
 			default:
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
-				assert(false);
+				Log_Assert(false);
 				break;
 		}
 	}
@@ -1297,11 +1297,11 @@ void SVImageClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 	if (m_editModeFreezeFlag && BufferType::TRCBuffer == m_BufferType && hasStorage())
 	{
 		auto image = getImageToWrite(pTr);
-		assert(nullptr != m_savedBuffer && nullptr != image && !image->isEmpty());
+		Log_Assert(nullptr != m_savedBuffer && nullptr != image && !image->isEmpty());
 		if (nullptr != m_savedBuffer && nullptr != image && !image->isEmpty())
 		{
 			HRESULT result = SVMatroxBufferInterface::CopyBuffer(image->getHandle()->GetBuffer(), m_savedBuffer->GetBuffer());
-			assert(S_OK == result); UNREFERENCED_PARAMETER(result);
+			Log_Assert(S_OK == result); UNREFERENCED_PARAMETER(result);
 		}
 	}
 }
@@ -1518,7 +1518,7 @@ void SVImageClass::getExtentProperties(::google::protobuf::RepeatedPtrField< ::S
 SvPb::OverlayDesc SVImageClass::getOverlayStruct() const
 {
 	auto* pInsp = dynamic_cast<SvOi::IInspectionProcess*>(GetInspection());
-	assert(nullptr != pInsp);
+	Log_Assert(nullptr != pInsp);
 	if (nullptr != pInsp)
 	{
 		return pInsp->getOverlayStruct(*this);
@@ -1622,7 +1622,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-					assert(false);
+					Log_Assert(false);
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -1672,7 +1672,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				//@todo[mec] Sometimes the error case is used to check for valid user input 
-				//assert(false);
+				//Log_Assert(false);
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -1723,7 +1723,7 @@ bool SVImageClass::UpdateLocalBuffer(SvStl::MessageContainerVector* pErrorMessag
 	if (false == retValue)
 	{
 		m_BufferType = BufferType::Undefined;
-		assert(false);
+		Log_Assert(false);
 	}
 
 	return retValue;
@@ -1743,11 +1743,11 @@ void SVImageClass::copyCurrent2SaveImage()
 	}
 
 	auto image = getLastImage();
-	assert(nullptr != m_savedBuffer);
+	Log_Assert(nullptr != m_savedBuffer);
 	if (nullptr != m_savedBuffer && nullptr != image)
 	{
 		HRESULT result = SVMatroxBufferInterface::CopyBuffer(m_savedBuffer->GetBuffer(), image->GetBuffer());
-		assert(S_OK == result);		UNREFERENCED_PARAMETER(result);
+		Log_Assert(S_OK == result);		UNREFERENCED_PARAMETER(result);
 	}
 }
 

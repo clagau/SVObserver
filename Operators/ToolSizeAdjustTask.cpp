@@ -70,14 +70,14 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	//Add Evaluation Objects 
 	bool ok(false);
 	ok = AddEvaluationObject(&m_resultInput[SvDef::ToolSizeAdjustEnum::TSWidth], SvPb::EQAdjustSizeWidthClassId, _T("ToolSizeAdjustWidth"), SvPb::WidthInputEId);
-	assert(ok);
+	Log_Assert(ok);
 	ok = AddEvaluationObject(&m_resultInput[SvDef::ToolSizeAdjustEnum::TSHeight], SvPb::EQAdjustSizeHeightClassId, _T("ToolSizeAdjustHeight"), SvPb::HeightInputEId);
-	assert(ok);
+	Log_Assert(ok);
 
 	ok = AddEvaluationObject(&m_resultInput[SvDef::ToolSizeAdjustEnum::TSPositionX], SvPb::EQAdjustSizePositionXClassId, _T("ToolSizeAdjustPositionX"), SvPb::PositionXInputEId);
-	assert(ok);
+	Log_Assert(ok);
 	ok = AddEvaluationObject(&m_resultInput[SvDef::ToolSizeAdjustEnum::TSPositionY], SvPb::EQAdjustSizePositionYClassId,  _T("ToolSizeAdjustPositionY"), SvPb::PositionYInputEId);
-	assert(ok);
+	Log_Assert(ok);
 }
 
 ToolSizeAdjustTask::~ToolSizeAdjustTask()
@@ -436,7 +436,7 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 	SvTo::SVToolClass* pTool = GetTool();
 	if (nullptr == pTool)
 	{
-		assert(false);
+		Log_Assert(false);
 		hresult = E_FAIL;
 	}
 
@@ -512,7 +512,7 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::AddToFriendlist(SvTo::SVToolClass* pTool
 {
 	if (nullptr == pTool)
 	{
-		assert(false);
+		Log_Assert(false);
 		return nullptr;
 	}
 
@@ -531,7 +531,7 @@ HRESULT ToolSizeAdjustTask::EnsureInFriendList(SvTo::SVToolClass* pTool, bool Al
 	HRESULT hres(E_FAIL);
 	if (nullptr == pTool)
 	{
-		assert(false);
+		Log_Assert(false);
 		return hres;
 	}
 	ToolSizeAdjustTask* pToolSizeAdjustTask = GetToolSizeAdjustTask(pTool);

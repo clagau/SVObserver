@@ -77,7 +77,7 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum identi
 		l_Status = E_FAIL;
 	}
 
-	assert(S_OK == l_Status);
+	Log_Assert(S_OK == l_Status);
 #endif
 	return l_Status;
 }
@@ -138,11 +138,11 @@ HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum identifi
 			l_Status = E_FAIL;
 		}
 
-		assert(S_OK == l_Status);
+		Log_Assert(S_OK == l_Status);
 	}
 
 
-	assert(S_OK == l_Status);
+	Log_Assert(S_OK == l_Status);
 #endif
 	return l_Status;
 }

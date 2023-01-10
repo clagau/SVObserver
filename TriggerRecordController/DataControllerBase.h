@@ -11,6 +11,7 @@
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #pragma endregion Includes
+#include "SVStatusLibrary/MessageManagerHelper.h"
 
 
 #pragma region Declarations
@@ -128,12 +129,12 @@ public:
 	const std::unordered_map<uint32_t, std::pair<bool, int>>& getLinkedImageMap() const { return m_LinkedImageDefMap; };
 	virtual const SvPb::DataDefinitionList& getDataList() const = 0;
 	const std::unordered_map<uint32_t, int>& getDataMap() const { return m_DataDefMap; };
-	virtual void createTriggerRecordsBuffer(int ) { assert(false); throw E_NOTIMPL; };
+	virtual void createTriggerRecordsBuffer(int ) { Log_Assert(false); throw E_NOTIMPL; };
 	virtual void resetFreeTrNumber() {};
 	virtual void increaseFreeTrNumber() {};
 	virtual void decreaseFreeTrNumber() {};
 	virtual bool isEnoughFreeForLock() const { return true; };
-	virtual void setTrOfInterestNumber(int ) { assert(false); throw E_NOTIMPL; };
+	virtual void setTrOfInterestNumber(int ) { Log_Assert(false); throw E_NOTIMPL; };
 	virtual void setTrOfInterest(int inspectionPos, int pos) = 0;
 
 protected:
@@ -167,7 +168,7 @@ public:
 
 	TriggerRecordData& getTRData(int inspectionPos, int pos) const;
 
-	virtual bool setInspections(SvPb::InspectionList&& ) { assert(false); throw E_NOTIMPL; };
+	virtual bool setInspections(SvPb::InspectionList&& ) { Log_Assert(false); throw E_NOTIMPL; };
 	virtual long getResetId() const = 0;
 	virtual volatile long* getResetLockCounterRef() = 0;
 	virtual const SvPb::InspectionList& getInspections() const = 0;
@@ -183,32 +184,32 @@ public:
 	const std::unordered_map<uint32_t, int>& getImageMap(int inspectionPos) const;
 	const std::unordered_map<uint32_t, int>& getChildImageMap(int inspectionPos) const;
 	const std::unordered_map<uint32_t, std::pair<bool, int>>& getLinkedImageMap(int inspectionPos) const;
-	virtual void setImageDefList(int , SvPb::ImageList&& ) { assert(false); throw E_NOTIMPL; };
+	virtual void setImageDefList(int , SvPb::ImageList&& ) { Log_Assert(false); throw E_NOTIMPL; };
 
 	virtual const SvPb::ImageStructList& getImageStructList() const = 0;
 	/// Set the ImageStructList
 	/// ATTENTION: Throw exception if ImageStructList cannot set (e.g. in writer object to large for the space in sharedMemory).
 	/// \param list [in]
-	virtual void setImageStructList(SvPb::ImageStructList&& ) { assert(false); throw E_NOTIMPL; };
+	virtual void setImageStructList(SvPb::ImageStructList&& ) { Log_Assert(false); throw E_NOTIMPL; };
 
-	virtual void resetImageRefCounter() { assert(false); throw E_NOTIMPL; };
+	virtual void resetImageRefCounter() { Log_Assert(false); throw E_NOTIMPL; };
 
 	int getTriggerRecordNumber(int inspectionPos) const;
 
 	const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) const;
 	const std::unordered_map<uint32_t, int>& getDataDefMap(int inspectionPos) const;
-	virtual void changeDataDef(SvPb::DataDefinitionList&& , long , int ) { assert(false); throw E_NOTIMPL; };
+	virtual void changeDataDef(SvPb::DataDefinitionList&& , long , int ) { Log_Assert(false); throw E_NOTIMPL; };
 
 	virtual SvOi::ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) = 0;
-	virtual SvOi::ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int ) { assert(false); throw E_NOTIMPL; };
+	virtual SvOi::ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int ) { Log_Assert(false); throw E_NOTIMPL; };
 
-	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int , int , SvPb::ImageList&& , SvPb::ImageStructList&& ) { assert(false); throw E_NOTIMPL; };
+	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int , int , SvPb::ImageList&& , SvPb::ImageStructList&& ) { Log_Assert(false); throw E_NOTIMPL; };
 
 	virtual long* getImageRefCountPtr(int pos) = 0;
 
-	virtual void removeImageMemory(std::string memoryName) { assert(false); throw E_NOTIMPL; };
-	virtual int createMilBufferinMemory(int , SvPb::ImageStructData& , int ) { assert(false); throw E_NOTIMPL; };
-	virtual int contractMilBufferinMemory(int , SvPb::ImageStructData& , int ) { assert(false); throw E_NOTIMPL; };
+	virtual void removeImageMemory(std::string memoryName) { Log_Assert(false); throw E_NOTIMPL; };
+	virtual int createMilBufferinMemory(int , SvPb::ImageStructData& , int ) { Log_Assert(false); throw E_NOTIMPL; };
+	virtual int contractMilBufferinMemory(int , SvPb::ImageStructData& , int ) { Log_Assert(false); throw E_NOTIMPL; };
 	virtual bool isReady() const = 0;
 
 	std::vector<SVMatroxBuffer>& getBufferVectorRef() { return m_bufferVector; }
@@ -226,7 +227,7 @@ public:
 
 	/// Set the InspectionList
 	/// \param rInspectionList [in]
-	virtual void setInspectionList(SvPb::InspectionList&& ) { assert(false); throw E_NOTIMPL; };
+	virtual void setInspectionList(SvPb::InspectionList&& ) { Log_Assert(false); throw E_NOTIMPL; };
 
 	bool isIPInit(int inspectionPos);
 	void createTriggerRecordsBuffer(int inspectionPos, int trNumbers);
@@ -238,7 +239,7 @@ public:
 	/// Reset resetId to 0 and wait until all reader finished his function.
 	virtual void prepareReset();
 	/// Set resetId to a new number and send reset event.
-	virtual void finishedReset() { assert(false); throw E_NOTIMPL; };
+	virtual void finishedReset() { Log_Assert(false); throw E_NOTIMPL; };
 
 	virtual void setPauseTrsOfInterest(bool flag, int inspectionPos) = 0;
 	virtual bool getPauseTrsOfInterest(int inspectionPos) const = 0;

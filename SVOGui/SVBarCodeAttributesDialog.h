@@ -74,7 +74,7 @@ namespace SvOg
 				return iter->name();
 			}
 
-			assert(false);
+			Log_Assert(false);
 			return {};
 		};
 

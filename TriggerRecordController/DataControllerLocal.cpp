@@ -88,7 +88,7 @@ void TRControllerLocalDataPerIP::setTriggerRecords(void* pTR)
 
 TriggerRecordData& TRControllerLocalDataPerIP::getTRData(int pos) const
 {
-	assert(0 <= pos && getBasicData().m_TriggerRecordNumber > pos && nullptr != m_pTriggerRecords);
+	Log_Assert(0 <= pos && getBasicData().m_TriggerRecordNumber > pos && nullptr != m_pTriggerRecords);
 
 	void* tmp = static_cast<char*>(m_pTriggerRecords) + (pos*getBasicData().m_triggerRecordBufferSize);
 	TriggerRecordData* tr = reinterpret_cast<TriggerRecordData*>(tmp);
@@ -199,7 +199,7 @@ bool DataControllerLocal::setInspections(SvPb::InspectionList&& rInspectionList)
 	{
 		if (SvOi::ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords() || SvOi::ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rInspection.numberrecordsofinterest())
 		{
-			assert(false);
+			Log_Assert(false);
 			return false;
 		}
 	}
@@ -271,7 +271,7 @@ void DataControllerLocal::changeDataDef(SvPb::DataDefinitionList&& dataDefList, 
 {
 	if (0 > inspectionPos || m_dataVector.size() < inspectionPos)
 	{
-		assert(false);
+		Log_Assert(false);
 		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
@@ -312,7 +312,7 @@ SvOi::ITriggerRecordRPtr DataControllerLocal::createTriggerRecordObject(int insp
 
 SvOi::ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(int inspectionPos)
 {
-	assert(0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos].getBasicData().m_bInit);
+	Log_Assert(0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos].getBasicData().m_bInit);
 
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos].getBasicData().m_bInit)
 	{
@@ -336,7 +336,7 @@ SvOi::ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(
 			currentPos++;
 			currentPos = currentPos % m_dataVector[inspectionPos].getBasicData().m_TriggerRecordNumber;
 		} while (currentPos != m_dataVector[inspectionPos].getNextPosForFreeCheck());
-		assert(false);
+		Log_Assert(false);
 	}
 
 	return nullptr;
@@ -345,7 +345,7 @@ SvOi::ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(
 std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList&& rImageList, SvPb::ImageStructList&& rImageStructList)
 {
 	prepareReset();
-	assert(m_dataVector.size() == m_inspectionList.list_size());
+	Log_Assert(m_dataVector.size() == m_inspectionList.list_size());
 	for (int i = 0; i < m_dataVector.size(); i++)
 	{
 		TRControllerBaseDataPerIP::BasicData& rBaseData = m_dataVector[i].getMutableBasicData();

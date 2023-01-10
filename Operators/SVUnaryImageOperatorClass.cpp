@@ -94,7 +94,7 @@ bool SVUnaryImageOperatorClass::Run( bool First, SvOi::SVImageBufferHandlePtr RI
 ////////////////////////////////////////////////////////////////////////////////
 bool SVUnaryImageOperatorClass::onRun( bool, SvOi::SVImageBufferHandlePtr, SvOi::SVImageBufferHandlePtr, SvIe::RunStatus& , SvStl::MessageContainerVector* )
 {
-	assert(0);
+	Log_Assert(0);
 	return false;
 }
 

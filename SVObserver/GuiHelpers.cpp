@@ -128,8 +128,8 @@ bool AddMenuItem(
 {
 	bool bSuccess = false;
 
-	assert(rItemText.size() > 0);
-	assert(nullptr != hTargetMenu);
+	Log_Assert(rItemText.size() > 0);
+	Log_Assert(nullptr != hTargetMenu);
 
 	// first, does the menu item have
 	// any required submenus to be found/created?
@@ -320,8 +320,8 @@ bool RemoveMenu(
 {
 	bool bSuccess = false;
 
-	assert(rItemText.size() > 0);
-	assert(nullptr != hTargetMenu);
+	Log_Assert(rItemText.size() > 0);
+	Log_Assert(nullptr != hTargetMenu);
 
 	// first, does the menu item have
 	// any required submenus to be found/created?
@@ -429,8 +429,8 @@ bool DoesPoupupMenuExist(HMENU hTargetMenu, const std::string& rItemText)
 
 int FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 {
-	assert(Menu);
-	assert(::IsMenu(Menu->GetSafeHmenu()));
+	Log_Assert(Menu);
+	Log_Assert(::IsMenu(Menu->GetSafeHmenu()));
 
 	int count = Menu->GetMenuItemCount();
 	for (int i = 0; i < count; i++)

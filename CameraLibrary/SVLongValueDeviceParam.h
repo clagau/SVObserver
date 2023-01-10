@@ -15,6 +15,8 @@
 #include "SVDeviceParam.h"
 #include "SVDeviceParams.h"
 #pragma endregion Includes
+#include "SVStatusLibrary/MessageManagerHelper.h"
+
 
 class SVLongValueDeviceParam : public SVDeviceParam
 {
@@ -59,8 +61,8 @@ private:
 	SVDeviceParamWrapper DeviceParam(int i);
 	SVDeviceParamWrapper DeviceParam(short i);
 #else
-	inline long& LongValue(SVDeviceParamWrapper& w) {SVLongValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLongValueDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->lValue;}
-	inline long LongValue(const SVDeviceParamWrapper& w) {const SVLongValueDeviceParam* p = w.DerivedValue(p); if (p) return p->lValue; else {assert(false); return 0;} }
+	inline long& LongValue(SVDeviceParamWrapper& w) {SVLongValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLongValueDeviceParam(); p = w.DerivedValue(p);} Log_Assert(p); return p->lValue;}
+	inline long LongValue(const SVDeviceParamWrapper& w) {const SVLongValueDeviceParam* p = w.DerivedValue(p); if (p) return p->lValue; else {Log_Assert(false); return 0;} }
 	inline SVDeviceParamWrapper DeviceParam(long l) {return SVLongValueDeviceParam(l);}	// get conversions for free
 	inline SVDeviceParamWrapper DeviceParam(int i) {return SVLongValueDeviceParam(i);}
 	inline SVDeviceParamWrapper DeviceParam(short i) {return SVLongValueDeviceParam(i);}

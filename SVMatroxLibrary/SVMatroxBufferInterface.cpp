@@ -419,7 +419,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -492,7 +492,7 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& rSystem, SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -555,7 +555,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -621,7 +621,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-//	assert(S_OK == code);
+//	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -692,7 +692,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferC
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -768,7 +768,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -880,7 +880,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& rHbm)
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1153,7 +1153,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, const SVM
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1241,7 +1241,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 	}
 
 
-	assert(S_OK == Code);
+	Log_Assert(S_OK == Code);
 	return Code;
 }
 
@@ -1271,7 +1271,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, __int64 F
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1300,7 +1300,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(__int64 To, const SVMatroxBuffer& rF
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1333,7 +1333,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, const SVM
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1364,7 +1364,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rTo, const SVM
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1429,7 +1429,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& rMilId, HBITMA
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1463,7 +1463,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 					break;
 			}
 						
-			assert(bufferVector.size() == fabs(rBitMapInfo.GetHeight()*rBitMapInfo.GetWidth()*(rBitMapInfo.GetBitCount() / 8)));
+			Log_Assert(bufferVector.size() == fabs(rBitMapInfo.GetHeight()*rBitMapInfo.GetWidth()*(rBitMapInfo.GetBitCount() / 8)));
 			if (0 < bufferVector.size())
 			{
 				pHostBuffer = bufferVector.data();
@@ -1591,7 +1591,7 @@ HRESULT SVMatroxBufferInterface::PutBuffer(const SVMatroxBuffer& rTo,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1621,7 +1621,7 @@ HRESULT SVMatroxBufferInterface::PutBuffer(const SVMatroxBuffer& rTo, const long
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1657,7 +1657,7 @@ HRESULT SVMatroxBufferInterface::PutLine(const SVMatroxBuffer& rTo,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1708,7 +1708,7 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& rBuf, SVMatroxBufferI
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1748,7 +1748,7 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& rBuf, SVMatroxBufferI
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1802,7 +1802,7 @@ HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& rBuf,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1849,7 +1849,7 @@ HRESULT SVMatroxBufferInterface::ControlNeighborhood(const SVMatroxBuffer& rBuf,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1879,7 +1879,7 @@ HRESULT SVMatroxBufferInterface::ClearBuffer(const SVMatroxBuffer& rBuffer, doub
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 
 }
@@ -1959,7 +1959,7 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 
@@ -1991,7 +1991,7 @@ HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer,
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == code);
+	Log_Assert(S_OK == code);
 	return code;
 }
 

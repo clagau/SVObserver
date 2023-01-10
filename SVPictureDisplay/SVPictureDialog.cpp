@@ -711,7 +711,7 @@ int SVPictureDialog::GetScrollPosition(int orientation) const
 		break;
 
 	default:
-		assert(FALSE);
+		Log_Assert(FALSE);
 		break;
 	}
 	return res;

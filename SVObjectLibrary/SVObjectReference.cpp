@@ -110,7 +110,7 @@ SVObjectReference::SVObjectReference(const std::string& objectIdAndIndexString)
 			}
 			else
 			{
-				assert(false);
+				Log_Assert(false);
 				m_ArrayIndex = -1l;
 			}
 		}
@@ -342,7 +342,7 @@ const SVObjectNameInfo& SVObjectReference::GetObjectNameInfo() const
 
 UINT SVObjectReference::ObjectAttributesAllowed() const
 {
-	assert(nullptr != m_pObject);
+	Log_Assert(nullptr != m_pObject);
 	if (nullptr != m_pObject)
 	{
 		return m_pObject->ObjectAttributesAllowed();
@@ -355,7 +355,7 @@ UINT SVObjectReference::ObjectAttributesAllowed() const
 
 UINT SVObjectReference::SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type)
 {
-	assert(nullptr != m_pObject);
+	Log_Assert(nullptr != m_pObject);
 	if (nullptr != m_pObject)
 	{
 		return m_pObject->SetObjectAttributesAllowed(Attributes, Type);

@@ -18,6 +18,7 @@
 #include "SVMaskEditor.h"
 #include "SVSystemLibrary\SVImageConvertorGDI.h"
 #include "SVMaskEditorPropPage.h"
+#include "SVStatusLibrary\MessageManagerHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -341,7 +342,7 @@ IStream* SVMaskEditorCtrl::GetMaskData()
 {
 	CComPtr<IStream> stream;
 	HRESULT hr = CreateStreamOnHGlobal(maskEditorDlg.GraphixObject.GetGraphixData(), true, &stream );
-	assert( S_OK == hr );
+	Log_Assert( S_OK == hr );
 	return stream.Detach();
 }
 
@@ -358,7 +359,7 @@ void SVMaskEditorCtrl::SetMaskData(IStream* nNewValue)
 	}
 	else
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 	}
 }
 

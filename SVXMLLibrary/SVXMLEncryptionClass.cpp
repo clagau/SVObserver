@@ -578,13 +578,13 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 				encryptedVector[vectorIndex] =  c_CharTable[index];
 				if (encryptedVector[vectorIndex] == 0)
 				{
-					assert(false);
+					Log_Assert(false);
 				}
 			}
 			else
 			{
 				///Encrypt vector is to small!
-				assert(false);
+				Log_Assert(false);
 			}
 		}
 	}
@@ -618,7 +618,7 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 
 	if (checksumTest != checksumSeed)
 	{
-		assert(false);
+		Log_Assert(false);
 		result = -1908;
 	}
 

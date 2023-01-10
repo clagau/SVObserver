@@ -58,7 +58,7 @@ END_MESSAGE_MAP()
 BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 
 	for(const auto& pEntry : m_pSheet->m_pPPQ->GetUsedInputs())
 	{
@@ -105,7 +105,7 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 
 void SVPPQEntryDialogDigInPageClass::OnAddButton() 
 {
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 	UpdateData( TRUE );
 
 	int index = m_availableInputCtrl.GetCurSel();
@@ -139,7 +139,7 @@ void SVPPQEntryDialogDigInPageClass::OnAddButton()
 
 void SVPPQEntryDialogDigInPageClass::OnRemoveButton() 
 {
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 	UpdateData( TRUE );
 
 	int index = m_selectedInputCtrl.GetCurSel();
@@ -174,7 +174,7 @@ void SVPPQEntryDialogDigInPageClass::OnRemoveButton()
 void SVPPQEntryDialogDigInPageClass::OnOK() 
 {
 	UpdateData( TRUE );
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 
 	m_bIsTaken = ( m_selectedInputCtrl.GetCount() > 0 );
 

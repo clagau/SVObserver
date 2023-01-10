@@ -134,7 +134,7 @@ namespace SvOg
 		{
 			return SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 		}
-		assert(false);
+		Log_Assert(false);
 		return {};
 	}
 
@@ -550,7 +550,7 @@ namespace SvOg
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 			return {};
 		}
 	}

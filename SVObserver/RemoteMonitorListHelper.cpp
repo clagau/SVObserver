@@ -125,7 +125,7 @@ void RemoteMonitorListHelper::AddMonitorObject2MonitorListcpy(const MonitoredObj
 		MeP->m_objectId = it->m_objectId;
 		if(listtype == SvSml::ListType::productItemsImage)
 		{
-			assert(MeP->data.ObjectType== SvPb::SVObjectTypeEnum::SVImageObjectType );
+			Log_Assert(MeP->data.ObjectType== SvPb::SVObjectTypeEnum::SVImageObjectType );
 		}
 	}
 }

@@ -490,7 +490,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 	}
 	else
 	{
-		assert( false );
+		Log_Assert( false );
 		result = false;
 	}
 

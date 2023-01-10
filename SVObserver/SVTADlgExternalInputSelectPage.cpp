@@ -152,7 +152,7 @@ BOOL SVTADlgExternalInputSelectPage::OnInitDialog()
 		m_Tree.SetColumn(m_Tree.GetColumn() * 2);
 
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-		assert(pRoot);
+		Log_Assert(pRoot);
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T("External Tool Input"));
 		pRoot->SetInfoText(_T(""));
@@ -175,7 +175,7 @@ BOOL SVTADlgExternalInputSelectPage::OnInitDialog()
 			}
 
 			pGroupItem = AddGroupToTree(inputDefinitions[i].groupname(), mapGroupItems, pRoot);
-			assert(pGroupItem);
+			Log_Assert(pGroupItem);
 
 			AddItemToTree(inputDefinitions[i], pGroupItem, ID_BASE + i);
 			++iItemCount;
@@ -303,7 +303,7 @@ void SVTADlgExternalInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRE
 		auto* pEditItem = dynamic_cast<SVRPropertyItemEdit*>(pItem);
 
 		// display value object picker
-		assert(pEditItem);
+		Log_Assert(pEditItem);
 		if (nullptr != pEditItem)
 		{
 			//set focus away from this control, so that changed values will be set, before SelectObject is called.
@@ -386,7 +386,7 @@ const std::unique_ptr<SvPb::InputValueDefinition> SVTADlgExternalInputSelectPage
 
 int SVTADlgExternalInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 {
-	assert(pItem);
+	Log_Assert(pItem);
 	return pItem->GetCtrlID() - ID_BASE;
 }
 
@@ -445,7 +445,7 @@ bool SVTADlgExternalInputSelectPage::setStringToData(SVRPropertyItem& rItem)
 	auto pDef = GetInputDefinitionPtr(&rItem);
 
 	int index = GetItemIndex(&rItem);
-	assert(index >= 0 && index < m_inputValueCount);
+	Log_Assert(index >= 0 && index < m_inputValueCount);
 	if (!pDef || index < 0 || index >= m_inputValueCount)
 	{
 		return false;

@@ -26,7 +26,7 @@ namespace SvTo
 #pragma region Public Methods
 void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectReference rObject)
 {
-	assert(pArchiveTool);
+	Log_Assert(pArchiveTool);
 
 	SetArchiveTool(pArchiveTool);
 
@@ -72,15 +72,15 @@ void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectRef
 
 void SVArchiveRecord::BuildImageFileName()
 {
-	assert(m_svObjectReference.getObject());
+	Log_Assert(m_svObjectReference.getObject());
 	m_ImageFileName = m_ImageObjectName = m_svObjectReference.getObject()->GetCompleteName();
 	SvUl::searchAndReplace(m_ImageFileName, _T("."), _T("_"));
 }
 
 void SVArchiveRecord::BuildDefaultImageFilePaths()
 {
-	assert(0 < m_ImageFileName.size());
-	assert(m_pArchiveTool);
+	Log_Assert(0 < m_ImageFileName.size());
+	Log_Assert(m_pArchiveTool);
 	DWORD		dwMaxImages;
 	m_FileNames.clear();
 
@@ -166,7 +166,7 @@ HRESULT SVArchiveRecord::GetNextAlternativeImageFilePath(std::string& rImageFile
 
 long SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName, const std::string& rImageDirectoryPath)
 {
-	assert(nullptr != rImage && !rImage->isEmpty());
+	Log_Assert(nullptr != rImage && !rImage->isEmpty());
 
 	if (archiveMode() == SvDef::ArchiveMode::asynchronous)
 	{
@@ -197,7 +197,7 @@ HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMa
 	{
 		pImage = pImage->GetParentImage();
 	}
-	assert(pImage);
+	Log_Assert(pImage);
 	if (pImage)
 	{
 		m_ImageInfo = pImage->GetImageInfo();

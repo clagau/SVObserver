@@ -263,7 +263,7 @@ namespace SvOp
 		m_NumberOfObjects.GetValue(newFreePos);
 
 		auto* pEmbeddedList = request.mutable_embeddedlist();
-		assert(pEmbeddedList);
+		Log_Assert(pEmbeddedList);
 
 		//Set empty-"oldembeddedid" to the free position
 		setEmptyOldEmbeddedIdToFreeId(*pEmbeddedList, newFreePos);
@@ -306,7 +306,7 @@ namespace SvOp
 	{
 		if (nullptr == rObjectRef.getFinalObject())
 		{
-			assert(false);
+			Log_Assert(false);
 			return SvPb::LinkedValueTypeEnum::TypeDecimal;
 		}
 		const auto& typeInfo = rObjectRef.getFinalObject()->getObjectTypeInfo();
@@ -345,7 +345,7 @@ namespace SvOp
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 					return SvPb::LinkedValueTypeEnum::TypeText;
 				}
 			}
@@ -369,7 +369,7 @@ namespace SvOp
 		{
 			resp.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_InvalidData));
 			resp.set_hresult(E_FAIL);
-			assert(false);
+			Log_Assert(false);
 			return resp;
 		}
 
@@ -381,7 +381,7 @@ namespace SvOp
 			nameVec.push_back(newName);
 			if (-1 < checkNameForUnique<std::string>(getObjectId(), nameVec, resp, [](const auto& rRequest) { return rRequest; }))
 			{
-				assert(false);
+				Log_Assert(false);
 				return resp;
 			}
 			setObject(static_cast<int>(pos));
@@ -389,7 +389,7 @@ namespace SvOp
 			{
 				resp.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_InvalidData));
 				resp.set_hresult(E_FAIL);
-				assert(false);
+				Log_Assert(false);
 				return resp;
 			}
 			m_TypeObjects[pos]->SetObjectEmbedded(m_startEmbeddedIdType + pos, this, (newName + cTypeNamePostfix).c_str());
@@ -413,7 +413,7 @@ namespace SvOp
 				}
 				else
 				{
-					assert(false);
+					Log_Assert(false);
 				}
 			}
 		}
@@ -421,7 +421,7 @@ namespace SvOp
 		{
 			SvPb::convertMessageToProtobuf(e, resp.mutable_errormessage()->add_messages());
 			resp.set_hresult(E_FAIL);
-			assert(false);
+			Log_Assert(false);
 			return resp;
 		}
 		
@@ -510,7 +510,7 @@ namespace SvOp
 				m_objects[i]->setValueType(SvPb::TypeImage);
 				break;
 			default:
-				assert(false);
+				Log_Assert(false);
 				break;
 			}
 		}
@@ -791,7 +791,7 @@ namespace SvOp
 					}
 					else
 					{
-						//assert(false);
+						//Log_Assert(false);
 						fillMessageToProtobuf(pErrorMessage, rValueObject.getObjectId(), SvStl::Tid_ValidateValue_LinkedObjectInvalid, SvStl::SourceFileParams(StdMessageParams));
 						return false;
 					}
@@ -856,7 +856,7 @@ namespace SvOp
 		if (SvPb::NoEmbeddedId != rValue.oldembeddedid())
 		{
 			int oldPos = rValue.oldembeddedid() - m_startEmbeddedIdValue;
-			assert(pos <= oldPos && cMaxNumberOfObjects > oldPos);
+			Log_Assert(pos <= oldPos && cMaxNumberOfObjects > oldPos);
 			if (pos < oldPos && cMaxNumberOfObjects > oldPos)
 			{
 				//swap objectIds in errormessages

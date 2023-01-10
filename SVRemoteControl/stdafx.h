@@ -94,6 +94,7 @@ class SVControlCommands;
 typedef std::shared_ptr<SVControlCommands> CommandDispatcher;
 using namespace ATL;
 
+
 //#ifdef _DEBUG
 //#define TRACE_SOCKET TRUE 
 //#endif 

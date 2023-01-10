@@ -415,7 +415,7 @@ void ResultListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 	{
 		CMenu* pPopupMenu = m_ContextMenuItem.GetSubMenu(0);
-		assert(nullptr != pPopupMenu);
+		Log_Assert(nullptr != pPopupMenu);
 		CWnd* pOwner = this;
 		while (pOwner->GetStyle() & WS_CHILD)
 		{

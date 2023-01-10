@@ -237,7 +237,7 @@ SVExternalToolTask::~SVExternalToolTask()
 void SVExternalToolTask::SetResultArraySize()
 {
 	int ResultNum = __min(m_Data.getNumResults(), static_cast<int>(m_Data.m_aResultObjects.size()));
-	assert(m_Data.getNumResults() <= m_Data.m_aResultObjects.size());
+	Log_Assert(m_Data.getNumResults() <= m_Data.m_aResultObjects.size());
 	for (int rn = 0; rn < ResultNum; rn++)
 	{
 
@@ -270,7 +270,7 @@ void SVExternalToolTask::CreateArrayInTable()
 	{
 		if (t >= m_Data.m_ResultTableObjects.size() || m_Data.m_ResultTableObjects[t] == nullptr)
 		{
-			assert(false);
+			Log_Assert(false);
 			break;
 		}
 		TableObject* pTab = m_Data.m_ResultTableObjects[t];
@@ -282,7 +282,7 @@ void SVExternalToolTask::CreateArrayInTable()
 		{
 			if (i >= SvDef::c_maxTableColumn)
 			{
-				assert(false);
+				Log_Assert(false);
 				break;
 			}
 
@@ -305,7 +305,7 @@ bool SVExternalToolTask::CreateTableObjects()
 	{
 		if (pOb && pOb->GetObjectType() == SvPb::TableObjectType && pOb->GetObjectSubType() == SvPb::SVNotSetSubObjectType)
 		{
-			assert(Index < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS);
+			Log_Assert(Index < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS);
 			if (Index < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS)
 			{
 				m_Data.m_ResultTableObjects[Index++] = dynamic_cast<SvOp::TableObject*>(pOb);
@@ -2341,7 +2341,7 @@ bool SVExternalToolTask::collectResultValues()
 
 	HRESULT hr = m_dll.GetResultValues(getObjectId(), Resultsize, Resultsize ? &(m_InspectionResultValues[0]) : nullptr);
 
-	assert(S_OK == hr);
+	Log_Assert(S_OK == hr);
 
 	if (S_OK != hr)
 	{
@@ -2352,7 +2352,7 @@ bool SVExternalToolTask::collectResultValues()
 	{
 		SvVol::SVVariantValueObjectClass* pResultValue = GetResultValueObject(i);
 
-		assert(nullptr != pResultValue);
+		Log_Assert(nullptr != pResultValue);
 
 		if (nullptr == pResultValue)
 		{
@@ -2368,7 +2368,7 @@ bool SVExternalToolTask::collectResultValues()
 				{
 					//if the value object is an array the correct size will be set in setValue
 					pResultValue->SetArraySize(2);
-					assert(false);
+					Log_Assert(false);
 				}
 
 				if (pResultValue->GetDefaultType() != type)

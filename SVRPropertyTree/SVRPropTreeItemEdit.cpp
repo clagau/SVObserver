@@ -32,6 +32,7 @@
 #include "SVRPropTree.h"
 #include "SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -59,7 +60,7 @@ END_MESSAGE_MAP()
 
 void SVRPropertyItemEdit::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 
 	pDC->SelectObject(IsReadOnly() ? m_pProp->GetNormalFont() : m_pProp->GetBoldFont());
 	pDC->SetTextColor( m_rgbForeColor );

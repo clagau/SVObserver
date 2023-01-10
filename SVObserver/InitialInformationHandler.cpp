@@ -100,7 +100,7 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 	}
 	else
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 
 		m_InitializationStatusFlags = S_FALSE;
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

@@ -161,7 +161,7 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	}
 
 	SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetParent() );
-	assert( pMaskOperator );
+	Log_Assert( pMaskOperator );
 	if (nullptr != pMaskOperator )
 	{
 		m_pShape->SetImageInfo( pMaskOperator->m_MaskBufferInfo );
@@ -222,7 +222,7 @@ void SVShapeMaskHelperClass::createImageObject(bool useImageObject)
 	if (useImageObject)
 	{
 		SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> (GetParent());
-		assert(pMaskOperator);
+		Log_Assert(pMaskOperator);
 		if (pMaskOperator)
 		{
 			if (nullptr == m_pImage)
@@ -296,7 +296,7 @@ HRESULT SVShapeMaskHelperClass::Refresh(SvIe::RunStatus* pRunStatus)
 		}
 		
 		SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetParent() );
-		assert( pMaskOperator );
+		Log_Assert( pMaskOperator );
 		if (pMaskOperator && nullptr != pMaskOperator->m_MaskBufferHandlePtr)
 		{
 				////////////////////

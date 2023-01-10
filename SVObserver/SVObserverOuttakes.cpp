@@ -399,7 +399,7 @@ HRESULT ConnectCameras()
 	}
 	catch (...)
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 		hr = E_FAIL;
 	}
 
@@ -416,7 +416,7 @@ HRESULT DisconnectCameras()
 	}
 	catch (...)
 	{
-		assert(FALSE);
+		Log_Assert(FALSE);
 		hr = E_FAIL;
 	}
 
@@ -471,12 +471,12 @@ void StartTrigger(SVConfigurationObject* pConfig)
 
 bool OpenConfigFileFromMostRecentList(CRecentFileList* pRecentFileList, int nID)
 {
-	assert(nullptr != pRecentFileList);
+	Log_Assert(nullptr != pRecentFileList);
 
-	assert(nID >= ID_FILE_MRU_FILE1);
-	assert(nID < ID_FILE_MRU_FILE1 + (int)pRecentFileList->GetSize());
+	Log_Assert(nID >= ID_FILE_MRU_FILE1);
+	Log_Assert(nID < ID_FILE_MRU_FILE1 + (int)pRecentFileList->GetSize());
 	int nIndex = nID - ID_FILE_MRU_FILE1;
-	assert((*pRecentFileList)[nIndex].GetLength() != 0);
+	Log_Assert((*pRecentFileList)[nIndex].GetLength() != 0);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
 	TRACE2("MRU: open file (%d) '%s'.\n", (nIndex)+1,

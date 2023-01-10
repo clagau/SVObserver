@@ -508,7 +508,7 @@ namespace SvOg
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 			return {};
 		}
 	}

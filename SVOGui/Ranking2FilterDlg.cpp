@@ -573,13 +573,13 @@ void Ranking2FilterDlg::enableCells()
 
 void Ranking2FilterDlg::setKernelFromControl()
 {
-	assert(m_KernelHeight*m_KernelWidth == m_KernelArray.size());
+	Log_Assert(m_KernelHeight*m_KernelWidth == m_KernelArray.size());
 	for (int col = 1; col <= m_KernelWidth; col++)
 	{
 		for (int row = 1; row <= m_KernelHeight; row++)
 		{
 			SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, col));
-			assert(nullptr != cell);
+			Log_Assert(nullptr != cell);
 			if (nullptr != cell)
 			{
 				bool value = (TRUE == cell->GetCheck());

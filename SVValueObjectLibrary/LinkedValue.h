@@ -56,7 +56,7 @@ public:
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false) override;
 	virtual HRESULT setValue(const SvPb::LinkedValue& rData) override;
 	//This version of the method should not used for LinkedValue, but the other methods setDirectValue or setIndirectValue
-	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override { assert(false); return __super::setValue(rValueString, Index); };
+	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override { Log_Assert(false); return __super::setValue(rValueString, Index); };
 	bool setDirectValue(const _variant_t& rValue);
 	bool setIndirectValue(const std::string& rValueString);
 	bool setIndirectValue(const SVObjectReference& rReference);

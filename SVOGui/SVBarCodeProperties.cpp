@@ -48,7 +48,7 @@ namespace SvOg
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 		
 		m_analyzerValues.Init();

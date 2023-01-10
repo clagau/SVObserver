@@ -59,7 +59,7 @@ bool DrawBucketFillTask::drawImage(SvOi::SVImageBufferHandlePtr pImageHandle, Dr
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 		return false;
 	}
 }

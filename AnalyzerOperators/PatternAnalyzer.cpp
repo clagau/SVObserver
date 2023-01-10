@@ -1379,7 +1379,7 @@ bool PatternAnalyzer::getNewUseDontCareValue(const SvOi::SetValueStructVector &r
 	if (rValueVector.end() != iter)
 	{
 		const auto& rValueStruct = std::get<SvOi::SetValueStruct>(*iter);
-		assert(VT_BOOL == rValueStruct.m_Value.vt);
+		Log_Assert(VT_BOOL == rValueStruct.m_Value.vt);
 		useDontCare = rValueStruct.m_Value.boolVal;
 	}
 	else
@@ -1400,7 +1400,7 @@ bool PatternAnalyzer::validateNewDontCareFileName(const SvOi::SetValueStructVect
 	if (rValueVector.end() != iter)
 	{
 		const auto& rValueStruct = std::get<SvOi::SetValueStruct>(*iter);
-		assert(VT_BSTR == rValueStruct.m_Value.vt);
+		Log_Assert(VT_BSTR == rValueStruct.m_Value.vt);
 		std::string newFileName = SvUl::createStdString(rValueStruct.m_Value.bstrVal);
 
 		SVMatroxBuffer importHandle;
@@ -1443,7 +1443,7 @@ bool PatternAnalyzer::validateNewModelFileName(const SvOi::SetValueStructVector 
 	if (rValueVector.end() != iter)
 	{
 		const auto& rValueStruct = std::get<SvOi::SetValueStruct>(*iter);
-		assert(VT_BSTR == rValueStruct.m_Value.vt);
+		Log_Assert(VT_BSTR == rValueStruct.m_Value.vt);
 		std::string fileName;
 		msv_szModelImageFile.GetValue(fileName);
 		std::string newFileName = SvUl::createStdString(rValueStruct.m_Value.bstrVal);

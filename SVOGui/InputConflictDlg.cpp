@@ -378,16 +378,16 @@ void InputConflictDlg::commitInputObject(int pos, const std::string& rText)
 			pRequest->set_objectid(m_rInputDataVector[pos].objectid());
 			pRequest->set_newconnectedid(valueIter->objectid());
 			HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
-			assert(S_OK == hr);
+			Log_Assert(S_OK == hr);
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 	else
 	{
-		assert(false);
+		Log_Assert(false);
 	}
 }
 

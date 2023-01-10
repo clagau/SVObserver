@@ -225,7 +225,7 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 	if( nullptr == m_pDevice || nullptr == m_pLR || -1 == m_AttributeType || nullptr == m_pCamera )
 	{
 		// Not supported use!!! Caller forgot to set parameters
-		assert( FALSE );
+		Log_Assert( FALSE );
 		if( GetParent() )
 			GetParent()->SendMessage( WM_CLOSE );
 		else
@@ -402,7 +402,7 @@ DWORD SVLightReferenceDialogPropertyPageClass::CurrentValue()
 			return pAttribute->lValue;
 		else
 		{
-			assert( FALSE );
+			Log_Assert( FALSE );
 			return 0;
 		}
 	}
@@ -420,7 +420,7 @@ void SVLightReferenceDialogPropertyPageClass::SetCurrentValue(DWORD dw)
 			pAttribute->lValue = (long) dw;
 		else
 		{
-			assert( FALSE );
+			Log_Assert( FALSE );
 		}
 	}
 }

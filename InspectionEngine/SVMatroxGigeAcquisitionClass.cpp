@@ -188,7 +188,7 @@ HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const std::string& rFilena
 
 HRESULT SVMatroxGigeAcquisitionClass::CreateLightReference( int iBands )
 {
-	assert(iBands > 0);
+	Log_Assert(iBands > 0);
 
 	HRESULT hr = SVAcquisitionClass::CreateLightReference( iBands );
 	

@@ -313,14 +313,14 @@ namespace SvAo
 			SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 			if (nullptr == pImageBuffer)
 			{
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				msg.Throw();
 			}
 			if (pImageBuffer->isEmpty())
 			{
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				msg.Throw();
@@ -342,7 +342,7 @@ namespace SvAo
 					}
 					else
 					{
-						assert(false);
+						Log_Assert(false);
 					}
 				}
 			}
@@ -350,7 +350,7 @@ namespace SvAo
 			HRESULT MatroxCode = SVMatroxBlobInterface::Execute(m_ResultBufferID, pImageBuffer->getHandle()->GetBuffer(), m_BlobContextID, grayImageId);
 			if (S_OK != MatroxCode)
 			{
-				assert(false);
+				Log_Assert(false);
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				msg.Throw();
@@ -525,7 +525,7 @@ namespace SvAo
 			}
 			if (nullptr == m_ResultColumnForOverlayArray[0] || nullptr == m_ResultColumnForOverlayArray[1] || nullptr == m_ResultColumnForOverlayArray[2] || nullptr == m_ResultColumnForOverlayArray[3])
 			{
-				assert(false);
+				Log_Assert(false);
 				return E_FAIL;
 			}
 			std::vector<double> minXArray;

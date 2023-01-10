@@ -408,7 +408,7 @@ bool isSameVar(const _variant_t& rValue1, const _variant_t& rValue2)
 			return false;
 		}
 
-		assert(1 == rValue1.parray->cDims); //for other dims, it is not implemented.
+		Log_Assert(1 == rValue1.parray->cDims); //for other dims, it is not implemented.
 		if (1 == rValue1.parray->cDims)
 		{
 			size_t size1 = rValue1.parray->cbElements * rValue1.parray->rgsabound[0].cElements;
@@ -426,7 +426,7 @@ bool isSameVar(const _variant_t& rValue1, const _variant_t& rValue2)
 			else
 			{
 				//not implemented for VT_BSTR
-				assert(false);
+				Log_Assert(false);
 				return false;
 			}
 		}

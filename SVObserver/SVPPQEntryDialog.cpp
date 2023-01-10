@@ -59,7 +59,7 @@ END_MESSAGE_MAP()
 BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 
 	long lPosition;
 	int index;
@@ -100,7 +100,7 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 
 void SVPPQEntryDialogCameraPageClass::OnAddButton() 
 {
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 	UpdateData( TRUE );
 
 	int index = m_AvailableList.GetCurSel();
@@ -122,7 +122,7 @@ void SVPPQEntryDialogCameraPageClass::OnAddButton()
 
 void SVPPQEntryDialogCameraPageClass::OnRemoveButton() 
 {
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 	UpdateData( TRUE );
 
 	int index = m_SelectedList.GetCurSel();
@@ -145,7 +145,7 @@ void SVPPQEntryDialogCameraPageClass::OnRemoveButton()
 void SVPPQEntryDialogCameraPageClass::OnOK() 
 {
 	UpdateData( TRUE );
-	assert( m_pSheet );
+	Log_Assert( m_pSheet );
 
 	SvIe::SVVirtualCamera* pCamera( nullptr );
 	

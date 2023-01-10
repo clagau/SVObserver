@@ -99,7 +99,7 @@ bool SVPointYResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainer
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
 		const SvVol::SVPointValueObjectClass* pValueObject = m_inputObject.getInput<SvVol::SVPointValueObjectClass>(true);
-		assert( pValueObject );
+		Log_Assert( pValueObject );
 
 		if( nullptr != pValueObject )
 		{

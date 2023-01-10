@@ -453,7 +453,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 		{
 			// Context Menu...Add and Properties
 			CMenu* pPopup = m_ContextMenuProp.GetSubMenu(0);
-			assert(nullptr != pPopup);
+			Log_Assert(nullptr != pPopup);
 			CWnd* pWndPopupOwner = this;
 
 			while(pWndPopupOwner->GetStyle() & WS_CHILD)
@@ -489,7 +489,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 					pPopup = m_ContextMenuItem.GetSubMenu(0);
 				}
 
-				assert(nullptr != pPopup);
+				Log_Assert(nullptr != pPopup);
 				while(pWndPopupOwner->GetStyle() & WS_CHILD)
 				{
 					pWndPopupOwner = pWndPopupOwner->GetParent();
@@ -605,7 +605,7 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 		if( !PPQName.empty() )
 		{
 			pConfig->GetChildObjectByName( PPQName.c_str(), &pPPQ );
-			assert( nullptr != pPPQ );
+			Log_Assert( nullptr != pPPQ );
 			if( nullptr != pPPQ )
 			{ 
 				SvVol::BasicValueObjectPtr pPpqTriggerCount = pPPQ->getPpqVaraible(SvDef::FqnPpqTriggerCount);

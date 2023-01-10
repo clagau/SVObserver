@@ -26,19 +26,19 @@ SVClassRegisterClass::~SVClassRegisterClass()
 
 SvPb::ClassIdEnum SVClassRegisterClass::GetClassID() const
 { 
-	assert( 0 );
+	Log_Assert( 0 );
 	return SvPb::NoObjectClassId;
 }
 
 SVObjectClass* SVClassRegisterClass::Construct() 
 { 
-	assert( 0 );
+	Log_Assert( 0 );
 	return nullptr; 
 }
 
 LPCTSTR SVClassRegisterClass::GetClassName() const
 { 
-	assert( 0 );
+	Log_Assert( 0 );
 	return _T( "" ); 
 }
 

@@ -101,7 +101,7 @@ bool TableSortAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 		{
 			SvVol::ValueObjectSortContainer& rSortContainer = pTool->getSortContainer();
 			size_t sizeValues = pColumnValues->getSortContainerSize();
-			assert(sizeValues == rSortContainer.size());
+			Log_Assert(sizeValues == rSortContainer.size());
 			if (0 < sizeValues)
 			{
 				CheckAndResizeTmpArray(sizeValues);

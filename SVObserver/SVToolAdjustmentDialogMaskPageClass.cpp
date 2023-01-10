@@ -192,7 +192,7 @@ BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	// See if we can 'connect' to the Mask Editor Active X control.
-	assert(nullptr == m_pMaskEditorCtl);
+	Log_Assert(nullptr == m_pMaskEditorCtl);
 
 	m_ImageController.Init();
 	m_Values.Init();
@@ -275,7 +275,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 		// Set current mask operator...
 		int item = m_cbMaskOperator.GetCurSel();
@@ -537,7 +537,7 @@ UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn(HWND hdlg,
 #endif
 
 	CWnd* pWnd = CWnd::FromHandle(hdlg);
-	assert(nullptr != pWnd);
+	Log_Assert(nullptr != pWnd);
 	switch (uiMsg)
 	{
 	case WM_INITDIALOG:
@@ -563,7 +563,7 @@ UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn(HWND hdlg,
 	case WM_PAINT:
 	{
 		CWnd* pWndRed = pWnd->GetDlgItem(COLOR_RED);
-		assert(nullptr != pWndRed);
+		Log_Assert(nullptr != pWndRed);
 		if (nullptr != pWndRed)
 		{
 			CString sText;

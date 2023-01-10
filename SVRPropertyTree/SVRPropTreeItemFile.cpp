@@ -34,6 +34,7 @@
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -86,7 +87,7 @@ END_MESSAGE_MAP()
 
 void SVRPropertyItemFile::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
-	assert(nullptr != m_pProp);
+	Log_Assert(nullptr != m_pProp);
 	CFont*	l_pOldFont;
 
 	l_pOldFont = pDC->SelectObject(IsReadOnly() ? m_pProp->GetNormalFont() : m_pProp->GetBoldFont());
@@ -230,7 +231,7 @@ void SVRPropertyItemFile::DrawButton(int nButtonState)
 		}
 		else
 		{
-			assert( false );	// Invalid nButtonState
+			Log_Assert( false );	// Invalid nButtonState
 		}
 	}
 	DC.SelectObject(pOldBrush);
@@ -545,11 +546,11 @@ bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=nullptr*
 
 	if (m_bFindFolder)
 	{
-		assert(!(dwFlags & SVR_FILE));			// can not specify SVR_FILE with SVR_FOLDER
+		Log_Assert(!(dwFlags & SVR_FILE));			// can not specify SVR_FILE with SVR_FOLDER
 	}
 	else
 	{
-		assert(dwFlags & SVR_FILE);			// must specify either SVR_FILE or SVR_FOLDER
+		Log_Assert(dwFlags & SVR_FILE);			// must specify either SVR_FILE or SVR_FOLDER
 	}
 	return true;
 }

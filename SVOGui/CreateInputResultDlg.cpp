@@ -70,7 +70,7 @@ void initGrid(SvGcl::GridCtrl& rGrid)
 
 void setGrid(SvGcl::GridCtrl& rGrid, const SvOg::CreateInputResultDlg::DataMapType& map, std::vector<std::string>& nameVec)
 {
-	assert(map.size() <= nameVec.size());
+	Log_Assert(map.size() <= nameVec.size());
 	size_t nameOffset = nameVec.size() - map.size();
 	int number = static_cast<int>(map.size());
 	rGrid.SetRowCount(number + 1);
@@ -126,7 +126,7 @@ uint32_t getObjectId(uint32_t inspectionId, const std::string& objectName)
 
 void addParameterEntry(uint32_t inspectionId, uint32_t taskId, const SvOg::CreateInputResultDlg::DataMapType& rDataMap, const std::vector<std::string>& rParaNames)
 {
-	assert(rDataMap.size() <= rParaNames.size());
+	Log_Assert(rDataMap.size() <= rParaNames.size());
 	size_t nameOffset = rParaNames.size() - rDataMap.size();
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
@@ -145,7 +145,7 @@ void addParameterEntry(uint32_t inspectionId, uint32_t taskId, const SvOg::Creat
 			pRequest->add_usenamelist(rName);
 		}
 		HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
-		assert(S_OK == hr);
+		Log_Assert(S_OK == hr);
 	}
 }
 }
@@ -181,7 +181,7 @@ CreateInputResultDlg::CreateInputResultDlg(uint32_t inspectionId, uint32_t toolI
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 	

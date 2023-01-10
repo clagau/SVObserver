@@ -41,7 +41,7 @@ SVMatroxImageBuffer::~SVMatroxImageBuffer()
 		}
 		else
 		{
-			assert(false);
+			Log_Assert(false);
 		}
 	}
 }

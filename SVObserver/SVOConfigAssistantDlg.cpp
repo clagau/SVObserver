@@ -1271,7 +1271,7 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return false;
@@ -1529,7 +1529,7 @@ bool SVOConfigAssistantDlg::SendCameraDataToConfiguration()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return false;
@@ -1642,7 +1642,7 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return false;
@@ -1799,7 +1799,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return false;
@@ -1987,7 +1987,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return false;
@@ -2270,7 +2270,7 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return false;
@@ -2396,7 +2396,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	assert( nullptr != pConfig );
+	Log_Assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return false;
