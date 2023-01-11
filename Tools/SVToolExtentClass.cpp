@@ -1041,7 +1041,7 @@ SvPb::SVExtentLocationPropertyEnum SVToolExtentClass::GetLocationPropertyAt(cons
 			{
 				l_lInflateY = 1;
 			}
-
+			// cppcheck-suppress knownConditionTrueFalse 
 			if (l_oRect.right - 4 < 9)
 			{
 				l_lInflateX = 1;

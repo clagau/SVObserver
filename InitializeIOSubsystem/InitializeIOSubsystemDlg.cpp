@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "InitializeIOSubsystemDlg.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
-#include "SVStatusLibrary\MessageManagerHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
