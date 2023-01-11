@@ -190,7 +190,6 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 		if (CIFX_NO_ERROR == result)
 		{
 			static uint16_t contentID {0};
-			static std::string version {};
 			static bool operationData {false};
 
 			std::string outputText {std::to_string(timeStamp) + ';' + std::to_string(timeStampPrev) + '\n'};
@@ -201,6 +200,7 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 			{
 				case SvPlc::TelegramContent::VersionData:
 				{
+					static std::string version {};
 					std::string reqVersion{std::to_string(g_PlcBuffer[20]) + '.' + std::to_string(g_PlcBuffer[21])};
 					if (version != reqVersion)
 					{
