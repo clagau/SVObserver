@@ -632,7 +632,7 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 			}
 			std::string runPath = SvUl::MakeLower(SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			std::string comparePath = SvUl::MakeLower(destinationPath.c_str());
-			if (rRequest.saveinconfig() && 0 != comparePath.find(runPath))
+			if (rRequest.saveinconfig() && false == comparePath.starts_with(runPath))
 			{
 				result = E_INVALIDARG;
 			}

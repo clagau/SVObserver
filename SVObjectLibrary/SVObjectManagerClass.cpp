@@ -304,7 +304,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 		return E_FAIL;
 	}
 	
-	if (0 == rFullName.find(SvOl::ToolSetName))
+	if (rFullName.starts_with(SvOl::ToolSetName))
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), SvStl::SourceFileParams(StdMessageParams));
@@ -1322,7 +1322,7 @@ std::tuple<HRESULT, SVObjectClass*, SVObjectNameInfo> SVObjectManagerClass::getO
 			//Check if it is configuration object as it needs to be stripped of the FqnConfiguration name
 			if (ChildRootID == ConfigID)
 			{
-				if (0 == Name.find(pChildRootObject->GetName()))
+				if (Name.starts_with(pChildRootObject->GetName()))
 				{
 					NameInfo.RemoveTopName();
 				}

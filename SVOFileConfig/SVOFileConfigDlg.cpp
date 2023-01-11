@@ -468,7 +468,7 @@ bool SVOFileConfigDlg::ParseInspection( const std::string& rName, std::string& r
 		std::string Temp;
 		Result = true;
 		Temp = SvUl::Left( rName, Pos );
-		if( Temp == _T("DIO") || (Temp.find( _T("PPQ")) == 0))
+		if( Temp == _T("DIO") || Temp.starts_with(_T("PPQ")))
 		{
 			Result = false;
 		}
@@ -489,7 +489,7 @@ bool SVOFileConfigDlg::ParsePPQ( const std::string& rName, std::string& rOut)
 		std::string Temp;
 
 		Temp = SvUl::Left( rName,  Pos );
-		if( Temp.find( _T("PPQ") ) == 0)
+		if( Temp.starts_with(_T("PPQ") ))
 		{
 			Result = true;
 			rOut = Temp;

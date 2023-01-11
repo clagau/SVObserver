@@ -47,7 +47,7 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 		Result = completeName ? ObjectRef.GetCompleteName(true) : ObjectRef.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, true);
 	}
 
-	if(!Result.empty() && 0 != Result.find(SvDef::FqnInspections) && completeName)
+	if(!Result.empty() && false == Result.starts_with(SvDef::FqnInspections) && completeName)
 	{
 		std::string InspectionsPrefix(SvDef::FqnInspections);
 		InspectionsPrefix += _T(".");

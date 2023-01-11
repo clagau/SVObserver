@@ -148,7 +148,7 @@ namespace SvSml
 				std::string inspectionName {MEMIt->first};
 				std::string Inspections {SvDef::FqnInspections};
 				Inspections += _T('.');
-				if (0 == inspectionName.find(Inspections))
+				if (inspectionName.starts_with(Inspections))
 				{
 					inspectionName = inspectionName.substr(Inspections.size(), inspectionName.size() - Inspections.size());
 				}

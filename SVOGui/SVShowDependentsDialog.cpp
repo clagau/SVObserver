@@ -181,7 +181,7 @@ void SVShowDependentsDialog::OnCustomdrawDependencyList(NMHDR* pNMHDR, LRESULT* 
 		for (SvPb::DependencyPair dependencyPair : m_dependencyResponse.dependencypair())
 		{
 			std::string clientName = dependencyPair.client().name();
-			if ((ItemText == clientName || 0 == ItemText.find(clientName + ".")) && dependencyPair.sourceisclient())
+			if ((ItemText == clientName || ItemText.starts_with(clientName + ".")) && dependencyPair.sourceisclient())
 			{
 				TextColor = SvDef::Blue;
 			}

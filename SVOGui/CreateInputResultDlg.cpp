@@ -133,7 +133,6 @@ void addParameterEntry(uint32_t inspectionId, uint32_t taskId, const SvOg::Creat
 	auto* pRequest = requestCmd.mutable_addparameteranduseitrequest();
 	pRequest->set_parametertaskid(taskId);
 
-	// cppcheck-suppress syntaxError
 	for (auto j = nameOffset; const auto& rEntry : rDataMap)
 	{
 		pRequest->set_parametername(rParaNames[j++]);

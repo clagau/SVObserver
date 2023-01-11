@@ -4885,7 +4885,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 		while (S_OK == retValue && rTree.isValidLeaf(hChild, hLeaf))
 		{
 			std::string Name(rTree.getLeafName(hLeaf));
-			if (0 != Name.find(SvDef::FqnInspections))
+			if (false == Name.starts_with(SvDef::FqnInspections))
 			{
 				std::string InspectionsPrefix(SvDef::FqnInspections);
 				InspectionsPrefix += _T(".");
