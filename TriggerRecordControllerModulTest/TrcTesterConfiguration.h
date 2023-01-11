@@ -77,6 +77,7 @@ public:
 	double getMaxTimeSetBuffer() const { return m_NoOfRepetitionsPerStep * m_maxTimeSetBufferPerIter; };
 	double getMaxTimeCheckBufferPerBuffer() const { return m_maxTimeCheckBufferPerBuffer; };
 	double getMaxTimesetAndReadImage() const { return m_maxTimesetAndReadImage; };
+	double getMaxTimesetAndReadImageTRC() const { return m_maxTimesetAndReadImageTRC; };
 	double getMaxTimesetAndReadValue() const { return m_maxTimesetAndReadValue; };
 	const std::vector<ImageList>& getImageLists() const { return m_imageLists; };
 	const ParamDefList& getValueObjectSet() const { return m_valueObjectSet; };
@@ -106,6 +107,7 @@ private:
 	double m_maxTimeSetBufferPerIter = 1.8;
 	double m_maxTimeCheckBufferPerBuffer = 3.1;
 	double m_maxTimesetAndReadImage = 0.65;
+	double m_maxTimesetAndReadImageTRC = 0.0065;
 	double m_maxTimesetAndReadValue = 0.01;
 
 	int m_numberOfRecordsAddOne = 5;

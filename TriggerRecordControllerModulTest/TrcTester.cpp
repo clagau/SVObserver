@@ -422,10 +422,19 @@ bool TrcTester::setAndReadImage()
 	//constexpr int numberOfRuns = 100;
 	const int numberOfRuns = m_config.getNoOfRepetitionsPerStep();
 	double start = SvUl::GetTimeStamp();
+	double elapsedGetImageBuffer_ms = 0;
+	double elapsedEqualCheck_ms = 0;
+	double elapsedGetImage_ms = 0;
+	double elapsedGetTR_ms = 0;
+	double elapsedSetImage_ms = 0;
+	double elapsedCreateTRRW_ms = 0;
+	double elapsedCopy_ms = 0;
 	for (int i = 0; i < numberOfRuns; i++)
 	{
 		//write image to buffer
+		double start_part = SvUl::GetTimeStamp();
 		auto imageHandle = m_pTrcRW->getImageBuffer(bufferStruct);
+		elapsedGetImageBuffer_ms += SvUl::GetTimeStamp() - start_part;
 		if (nullptr == imageHandle || imageHandle->isEmpty())
 		{
 			m_rLogClass.Log(_T("getImageBuffer return nullptr!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
@@ -433,21 +442,28 @@ bool TrcTester::setAndReadImage()
 		}
 		else
 		{
+			start_part = SvUl::GetTimeStamp();
 			MbufCopy(imageIds[i%imageIds.size()], imageHandle->getHandle()->GetBuffer().GetIdentifier());
+			elapsedCopy_ms += SvUl::GetTimeStamp() - start_part;
+			start_part = SvUl::GetTimeStamp();
 			if (!areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageIds[i%imageIds.size()]))
 			{
 				m_rLogClass.Log(_T("ImageCopy failed. Images are not equal!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
 			}
+			elapsedEqualCheck_ms += SvUl::GetTimeStamp() - start_part;
 		}
 
 		{//scope for tr2W
 			//get TR and set new image
+			start_part = SvUl::GetTimeStamp();
 			auto tr2W = m_pTrcRW->createTriggerRecordObjectToWrite(0);
 			if (nullptr == tr2W)
 			{
 				m_rLogClass.Log(_T("createTriggerRecordObjectToWrite return nullptr!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
 				return false;
 			}
+			elapsedCreateTRRW_ms += SvUl::GetTimeStamp() - start_part;
+			start_part = SvUl::GetTimeStamp();
 			try
 			{
 				tr2W->setImage(0, imageHandle->getBufferPos());
@@ -457,16 +473,21 @@ bool TrcTester::setAndReadImage()
 				m_rLogClass.logException("", rExp, __LINE__, strTestSetAndReadImage);
 				return false;
 			}
+			elapsedSetImage_ms += SvUl::GetTimeStamp() - start_part;
 		}
+		start_part = SvUl::GetTimeStamp();
 		int id = m_pTrcRW->getLastTrId(0);
 		auto tr2R = m_pTrcRW->createTriggerRecordObject(0, id);
+		elapsedGetTR_ms += SvUl::GetTimeStamp() - start_part;
 		if (nullptr == tr2R)
 		{
 			std::string errorStr = std::format(_T("could not create read version of TR (id{}) in run {}"), id, i);
 			m_rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
 			continue;
 		}
+		start_part = SvUl::GetTimeStamp();
 		imageHandle = tr2R->getImage(0);
+		elapsedGetImage_ms += SvUl::GetTimeStamp() - start_part;
 		if (nullptr == imageHandle || imageHandle->isEmpty())
 		{
 			m_rLogClass.Log(_T("getImageBuffer return nullptr!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
@@ -474,6 +495,7 @@ bool TrcTester::setAndReadImage()
 		}
 		else
 		{
+			start_part = SvUl::GetTimeStamp();
 			if (!areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageIds[i%imageIds.size()]))
 			{
 				m_rLogClass.Log(_T("ImageCopy failed. Images are not equal!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
@@ -484,14 +506,24 @@ bool TrcTester::setAndReadImage()
 			//	logStr.Format(_T("Read image is equal to set image in run %d"), i);
 			//	m_rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestSetAndReadImage);
 			//}
+			elapsedEqualCheck_ms += SvUl::GetTimeStamp() - start_part;
 		}
 	}
 	double end = SvUl::GetTimeStamp();
 	double elapsed_ms = end - start;
-
+	double elapsedTRC_ms = elapsedGetImageBuffer_ms + elapsedGetImage_ms + elapsedGetTR_ms + elapsedSetImage_ms + elapsedCreateTRRW_ms;
 	std::string logStr = std::format(_T("({} ms/ {} ms)"), elapsed_ms, numberOfRuns*m_config.getMaxTimesetAndReadImage());
 	bool isTimeOk = elapsed_ms < numberOfRuns*m_config.getMaxTimesetAndReadImage();
 	m_rLogClass.Log(logStr.c_str(), isTimeOk ? LogLevel::Information_Level1 : LogLevel::Error, isTimeOk ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetAndReadImage);
+	logStr = std::format(_T("TRC-time: {} ms/ {} ms"), elapsedTRC_ms, numberOfRuns * m_config.getMaxTimesetAndReadImageTRC());
+	isTimeOk = elapsedTRC_ms < numberOfRuns* m_config.getMaxTimesetAndReadImageTRC();
+	m_rLogClass.Log(logStr.c_str(), isTimeOk ? LogLevel::Information_Level1 : LogLevel::Error, isTimeOk ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetAndReadImage);
+	logStr = std::format(_T("GetBuffer {} ms / GetImage {} ms / GetTR {} ms"), elapsedGetImageBuffer_ms, elapsedGetImage_ms, elapsedGetTR_ms);
+	m_rLogClass.Log(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestSetAndReadImage);
+	logStr = std::format(_T("SetImage {} ms / CreateTRRW {} ms"), elapsedSetImage_ms, elapsedCreateTRRW_ms);
+	m_rLogClass.Log(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestSetAndReadImage);
+	logStr = std::format(_T("Copy {} ms / EqualCheck {} ms"), elapsedCopy_ms, elapsedEqualCheck_ms);
+	m_rLogClass.Log(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestSetAndReadImage);
 	return true;
 }
 
