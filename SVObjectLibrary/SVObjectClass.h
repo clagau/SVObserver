@@ -154,6 +154,9 @@ public:
 	virtual UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual uint32_t getObjectId() const override {	return m_objectId; };
 	void setObjectId(uint32_t objectId);
+	/// Move this object data to the other object: switch objectId, copy value and move connection.
+	/// \param rObject [inout] source object
+	virtual void moveObject(SVObjectClass& rObject);
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;

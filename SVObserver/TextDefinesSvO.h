@@ -14,9 +14,7 @@ namespace SvO
 	const TCHAR* const ClipboardFileName = _T( "ClipboardFile" );
 	const TCHAR* const ZipExtension = _T( ".7z" );
 	const TCHAR* const XmlExtension = _T( ".xml" );
-	const TCHAR* const XmlNameSpace = _T( "xmlns" );
-	const TCHAR* const SvrNameSpace = _T( "x-schema:#SVR00001" );
-	const TCHAR* const SV_BaseNode = _T( "SV_BASENODE" );
+	const TCHAR* const ModuleExtension = _T(".svm");
 	const TCHAR* const InsertingTool = _T( "Inserting Tool ..." );
 	const TCHAR* const LoadingResourceDllFailed = _T( "Could not load resource dll.\nThe program will terminated." );
 

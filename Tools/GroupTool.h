@@ -48,6 +48,15 @@ public:
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 	virtual int getToolDepth(bool goUpwards = true) const override;
+	bool isClosed() const;
+
+	/// Moved FriendList from this tool to the parameter and clear it in this tool.
+	/// \param friendList [out]
+	void movedAndDeleteFriends(SVThreadSafeList<SVTaskObjectClass*>& rFriendList);
+	void movedAndDeleteTaskObjects(SvIe::SVTaskObjectPtrVector& taskList);
+	///  Move the embeddedObjects to the attached list: switch objectId, copy value and move connection.
+	/// \param rEmbeddedObject [inout] List of embeddedObjects to move to.
+	void moveEmbeddedObjects(SVObjectPtrVector& rEmbeddedObjects);
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };

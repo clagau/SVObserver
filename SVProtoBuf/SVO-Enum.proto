@@ -122,6 +122,7 @@ enum SVObjectSubTypeEnum
 	LoopToolObjectType							= 0x0000002d;
 	GroupToolObjectType							= 0x0000002e;
 	DrawToolObjectType							= 0x0000002f;
+	ModuleToolObjectType							= 0x00000030;
 
 	SVEnvironmentObjectType						= 0x00000062;
 	SVCameraObjectType							= 0x00000063;
@@ -548,7 +549,8 @@ enum ClassIdEnum
 	ExternalToolClassId = 42;
 	GroupToolClassId = 43;
 	DrawToolClassId = 44;
-
+	ModuleToolClassId = 45;
+	
 
 	//Analyzer Class Ids
 	BlobAnalyzerClassId = 100;
@@ -1245,6 +1247,7 @@ enum EmbeddedIdEnum
   	ArchiveResultFolderpathPart1EId = 593;
 	ArchiveImageFileFormatEId = 594;
 	ArchiveImageFilepathRootSeparatorEId = 595;
+	ModuleCommentEId = 596;
 
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 

@@ -296,7 +296,7 @@ bool deleteFiles(LPCTSTR PathName, bool IncludeSubDirectories)
 }
 
 
-std::string readContentFromFileAndDelete(const std::string& rFileName)
+std::string readContentFromFile(const std::string& rFileName, bool deleteFileAfterUse)
 {
 	std::string content;
 	std::ifstream FileStream;
@@ -311,8 +311,12 @@ std::string readContentFromFileAndDelete(const std::string& rFileName)
 		FileStream.read(&content.at(0), FileSize);
 		FileStream.close();
 	}
-	::DeleteFile(rFileName.c_str());
 	content.append(_T("\0"));
+
+	if (deleteFileAfterUse)
+	{
+		::DeleteFile(rFileName.c_str());
+	}
 
 	return content;
 }

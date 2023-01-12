@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -20,7 +21,7 @@ namespace SvOg
 	class SVToolAdjustmentDialogCommentPage : public CPropertyPage
 	{
 	public:
-		SVToolAdjustmentDialogCommentPage(uint32_t inspectionId, uint32_t taskObjectId);   // standard constructor
+		SVToolAdjustmentDialogCommentPage(uint32_t inspectionId, uint32_t taskObjectId, bool isModuleComment = false);   // standard constructor
 
 	public:
 		virtual ~SVToolAdjustmentDialogCommentPage();
@@ -44,6 +45,8 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
+		bool m_isModuleComment;
+		SvOgu::ValueController m_values;
 	};
 } //namespace SvOg
 

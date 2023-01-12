@@ -81,11 +81,12 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	TADialogGroupToolResultPage::TADialogGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId)
+	TADialogGroupToolResultPage::TADialogGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isInputsChangeAble)
 		: CPropertyPage(TADialogGroupToolResultPage::IDD, IDS_CLASSNAME_RESULT_PARAMETER_TASK)
 		, m_InspectionID(inspectionId)
 		, m_toolId(toolId)
 		, m_TaskObjectID(taskId)
+		, m_isChangeAble(isInputsChangeAble)
 		, m_Values{ SvOgu::BoundValues{ inspectionId, taskId } }
 	{
 	}
@@ -120,6 +121,14 @@ namespace SvOg
 		SvOgu::DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 		m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
+
+		if (false == m_isChangeAble)
+		{
+			GetDlgItem(IDC_BUTTON_REMOVE)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_ADD)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_MOVEUP)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_MOVEDOWN)->ShowWindow(SW_HIDE);
+		}
 
 		loadDataList();
 		initGridControl();
@@ -188,13 +197,16 @@ namespace SvOg
 		}
 		case ValueButtonColumn:
 		{
-			SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1].m_name, m_resultData[pItem->iRow - 1].m_data, m_resultData[pItem->iRow - 1].m_data.m_defaultValue.vt);
-			if (IDOK == dlg.DoModal())
+			if (m_isChangeAble)
 			{
-				m_resultData[pItem->iRow - 1].m_data = dlg.getData();
-				setValueColumn(pItem->iRow - 1);
-				setInspectionData(false);
-				m_Grid.Refresh();
+				SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1].m_name, m_resultData[pItem->iRow - 1].m_data, m_resultData[pItem->iRow - 1].m_data.m_defaultValue.vt);
+				if (IDOK == dlg.DoModal())
+				{
+					m_resultData[pItem->iRow - 1].m_data = dlg.getData();
+					setValueColumn(pItem->iRow - 1);
+					setInspectionData(false);
+					m_Grid.Refresh();
+				}
 			}
 		}
 		break;
@@ -384,6 +396,18 @@ namespace SvOg
 		}
 	}
 
+	void TADialogGroupToolResultPage::setGridControlReadOnlyFlag(int row, int column, bool isChangeable)
+	{
+		if (isChangeable)
+		{
+			m_Grid.SetItemState(row, column, m_Grid.GetItemState(row, column) & (~GVIS_READONLY));
+		}
+		else
+		{
+			m_Grid.SetItemState(row, column, m_Grid.GetItemState(row, column) | GVIS_READONLY);
+		}
+	}
+
 	void TADialogGroupToolResultPage::FillGridControl()
 	{
 		CStringArray typeOptions;
@@ -406,12 +430,13 @@ namespace SvOg
 			m_Grid.SetItemBkColour(row, DependencyColumn, isOk(m_resultData[i]) ? SvDef::White : SvDef::Black);
 			m_Grid.SetItemFgColour(row, DependencyColumn, isOk(m_resultData[i]) ? SvDef::Black : SvDef::White);
 			m_Grid.SetItemText(row, DependencyColumn, hasDependencies ? "D" : "");
-			m_Grid.SetItemState(row, DependencyColumn, m_Grid.GetItemState(row, DependencyColumn) | GVIS_READONLY);
+			setGridControlReadOnlyFlag(row, DependencyColumn, false);
 
 			m_Grid.SetItemText(row, NameColumn, m_resultData[i].m_name.c_str());
-			m_Grid.SetItemState(row, NameColumn, m_Grid.GetItemState(row, NameColumn) & (~GVIS_READONLY));
+			setGridControlReadOnlyFlag(row, NameColumn, false);
 			using namespace SvGcl;
 			m_Grid.SetCellType(row, TypeColumn, RUNTIME_CLASS(GridCellCombo));
+			setGridControlReadOnlyFlag(row, TypeColumn, m_isChangeAble);
 			auto* pCell = dynamic_cast<SvGcl::GridCellCombo*>(m_Grid.GetCell(row, TypeColumn));
 
 			pCell->SetOptions(typeOptions);
@@ -435,16 +460,19 @@ namespace SvOg
 			{
 				m_Grid.SetItemText(row, ResultColumn, "");
 			}
-			m_Grid.SetItemState(row, ResultColumn, m_Grid.GetItemState(row, ResultColumn) | GVIS_READONLY);
+			setGridControlReadOnlyFlag(row, ResultColumn, false);
 
 			setValueColumn(i);
 
-			SvGcl::GV_ITEM buttonItem;
-			buttonItem.mask = GVIF_IMAGE;
-			buttonItem.iImage = 0;
-			buttonItem.row = row;
-			buttonItem.col = ValueButtonColumn;
-			m_Grid.SetItem(&buttonItem);
+			if (m_isChangeAble)
+			{
+				SvGcl::GV_ITEM buttonItem;
+				buttonItem.mask = GVIF_IMAGE;
+				buttonItem.iImage = 0;
+				buttonItem.row = row;
+				buttonItem.col = ValueButtonColumn;
+				m_Grid.SetItem(&buttonItem);
+			}
 		}
 
 		m_Grid.Refresh();
@@ -476,13 +504,14 @@ namespace SvOg
 		if (isChangeable)
 		{
 			m_Grid.SetItemBkColour(pos + 1, ValueColumn, SvDef::White);
-			m_Grid.SetItemState(pos + 1, ValueColumn, m_Grid.GetItemState(pos + 1, ValueColumn) & (~GVIS_READONLY));
+			setGridControlReadOnlyFlag(pos + 1, ValueColumn, m_isChangeAble);
 		}
 		else
 		{
 			m_Grid.SetItemBkColour(pos + 1, ValueColumn, SvDef::WhiteSmoke);
-			m_Grid.SetItemState(pos + 1, ValueColumn, m_Grid.GetItemState(pos + 1, ValueColumn) | GVIS_READONLY);
+			setGridControlReadOnlyFlag(pos + 1, ValueColumn, false);
 		}
+		setGridControlReadOnlyFlag(pos + 1, ValueButtonColumn, m_isChangeAble);
 	}
 
 	void TADialogGroupToolResultPage::showContextMenu(CPoint point)
@@ -532,6 +561,7 @@ namespace SvOg
 			if (0 < Selection.GetMinRow() && Selection.GetMinRow() <= m_resultData.size())
 			{
 				GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_SHOW);
+				GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(m_isChangeAble);
 				m_strComment = m_resultData[Selection.GetMinRow() - 1].m_data.m_comment.c_str();
 				UpdateData(false);
 			}

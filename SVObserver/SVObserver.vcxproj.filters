@@ -489,6 +489,9 @@
     <ClCompile Include="SVInspectionTreeParser.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1013,6 +1016,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObserverOuttakes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

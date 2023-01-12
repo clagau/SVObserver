@@ -108,6 +108,9 @@
     <ClCompile Include="ArchiveDataAsynchron.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleTool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArchiveToolHelper.h">
@@ -201,6 +204,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ArchiveDataAsynchron.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

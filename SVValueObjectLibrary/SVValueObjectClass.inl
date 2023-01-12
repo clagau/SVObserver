@@ -670,16 +670,19 @@ int32_t SVValueObjectClass<T>::getByteSize(bool useResultSize, bool memBlockData
 template <typename T>
 void SVValueObjectClass<T>::setTrData(int32_t memOffset, int32_t memSize, int32_t pos)
 {
-	///This is required to make sure that if memory data block needs to be reallocated the pointer is not invalid
-	clearMemoryBlockPointer();
 	///Reset all parameters when pos is -1
 	if (-1 == pos)
 	{
+		m_pValue = reserveLocalMemory();
 		m_trPos = -1L;
 		m_memOffset = -1L;
 		m_memSizeReserved = 0L;
 		return;
 	}
+
+	///This is required to make sure that if memory data block needs to be reallocated the pointer is not invalid
+	clearMemoryBlockPointer();
+
 	m_trPos = pos;
 	///When memOffset and memSize are -1 then only the trigger record position is changed
 	if (-1 == memOffset && -1 == memSize)
@@ -971,6 +974,23 @@ std::string SVValueObjectClass<T>::getFixedWidthFormatString(uint32_t , uint32_t
 {
 	return getOutputFormat(); //this ensures that for all objects derived from SVValueObjectClass the normal (non-fixed-width) format string is 
 	//used if that class does not overload getFixedWidthFormatString()
+}
+
+template <typename T>
+void SVValueObjectClass<T>::moveObject(SVObjectClass& rObject)
+{
+	__super::moveObject(rObject);
+	auto* pSourceObject = dynamic_cast<SVValueObjectClass<T>*>(&rObject);
+	if (nullptr != pSourceObject)
+	{
+		_variant_t value;
+		getValue(value);
+		pSourceObject->setValue(value);
+	}
+	else
+	{
+		assert(false);
+	}
 }
 
 template <typename T> bool SVValueObjectClass<T>::CheckMaxMin( T val ) const

@@ -28,6 +28,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOGui/SVTextEditDialog.h"
+#include "Tools/GroupTool.h"
 #include "Tools/SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "Definitions/GlobalConst.h"
@@ -53,34 +54,57 @@ enum ToolsetViewUpdateHints
 
 namespace
 {
-std::pair<bool, bool> determineRequiredMenuModifications(uint32_t navigatorObjectID)
+struct RequiredMenuModifcation
 {
-	bool isShiftToolWithReference = false;
-	bool hasRoi = true;
+	bool m_isShiftToolWithReference = false;
+	bool m_hasRoi = true;
+	bool m_isClosedGroupTool = false;
+};
+
+RequiredMenuModifcation determineRequiredMenuModifications(uint32_t navigatorObjectID)
+{
+	RequiredMenuModifcation retVal;
 
 	if (navigatorObjectID > SvDef::InvalidObjectId)
 	{
 		SvTo::SVToolClass* pSelectedTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(navigatorObjectID));
 		if (nullptr != pSelectedTool)
 		{
-			SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool*> (pSelectedTool);
-			if (nullptr != pShiftTool)
+			switch (pSelectedTool->GetClassID())
 			{
-				long shiftMode;
-				pShiftTool->m_evoShiftMode.GetValue(shiftMode);
-				if (shiftMode == SvTo::SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
+			case SvPb::ShiftToolClassId:
+			{
+				SvTo::SVShiftTool* pShiftTool = static_cast<SvTo::SVShiftTool*> (pSelectedTool);
+				if (nullptr != pShiftTool)
 				{
-					isShiftToolWithReference = true;
+					long shiftMode;
+					pShiftTool->m_evoShiftMode.GetValue(shiftMode);
+					if (shiftMode == SvTo::SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
+					{
+						retVal.m_isShiftToolWithReference = true;
+					}
 				}
+				break;
 			}
+			case SvPb::GroupToolClassId:
+			{
+				auto* pGroupTool = static_cast<SvTo::GroupTool*>(pSelectedTool);
+				retVal.m_isClosedGroupTool = (nullptr != pGroupTool && pGroupTool->isClosed());
+				break;
+			}
+			default:
+				//nothing to do
+				break;
+			}
+			
 			if (!pSelectedTool->DoesObjectHaveExtents() || SvPb::TransformationToolClassId == pSelectedTool->GetClassID())
 			{
-				hasRoi = false;
+				retVal.m_hasRoi = false;
 			}
 		}
 	}
 
-	return {isShiftToolWithReference, hasRoi};
+	return retVal;
 }
 }
 
@@ -455,12 +479,16 @@ void ToolSetView::loadAndAdaptMenu(const std::vector<PtrNavigatorElement>& rSele
 				bMenuLoaded = menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_EMPTY);
 			case 1:
 			{
-				auto [isShiftToolWithReference, hasRoi] = determineRequiredMenuModifications(rSelectedElements[0]->m_navigatorObjectId);
+				auto reqModification = determineRequiredMenuModifications(rSelectedElements[0]->m_navigatorObjectId);
 
-				bMenuLoaded = menu.LoadMenu(isShiftToolWithReference ? IDR_TOOL_LIST_CONTEXT_MENU_SHIFT : IDR_TOOL_LIST_CONTEXT_MENU);
-				if (false == hasRoi)
+				bMenuLoaded = menu.LoadMenu(reqModification.m_isShiftToolWithReference ? IDR_TOOL_LIST_CONTEXT_MENU_SHIFT : IDR_TOOL_LIST_CONTEXT_MENU);
+				if (false == reqModification.m_hasRoi)
 				{
 					menu.RemoveMenu(ID_EDIT_ADJUSTTOOLPOSITION, MF_BYCOMMAND); ///< if the selected tool does not have an ROI: remove the Adjust Tool Position menu item
+				}
+				if (false == reqModification.m_isClosedGroupTool)
+				{
+					menu.RemoveMenu(ID_CONVERT_TO_MODULE, MF_BYCOMMAND);
 				}
 				break;
 			}

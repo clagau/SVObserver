@@ -688,5 +688,7 @@ enum MessageTextEnum
 	Tid_DuplicateObjectId,
 	Tid_RejectClarifyFailedNoTR,
 	Tid_RejectClarifyFailedUnknowData,
+
+	Tid_ModuleNameAlreadyUsed,
 };
 } //namespace SvStl

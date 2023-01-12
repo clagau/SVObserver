@@ -59,7 +59,8 @@ namespace SvOi
 	enum class ObjectNotificationType
 	{
 		Deleting,
-		ObjectIdChange
+		ObjectIdChange,
+		SwitchObject,
 	};
 
 	using ObjectNotificationFunction = std::function<void(SvOi::ObjectNotificationType, uint32_t)>;

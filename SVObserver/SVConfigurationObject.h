@@ -13,6 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+#include "ModuleController.h"
 #include "MonitorListAttributeStruct.h"
 #include "RemoteMonitorList.h"
 #include "SVInspectionProcess.h"
@@ -382,6 +383,7 @@ public:
 	void setPostRunExecutionFilePath(LPCTSTR filepath) {m_postRunExecutionFile = filepath;}
 	const std::string& getPreRunExecutionFilePath() const {return m_preRunExecutionFile;}
 	const std::string& getPostRunExecutionFilePath() const {return m_postRunExecutionFile;}
+	ModuleController& getModuleController() { return m_moduleController; }
 
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
@@ -492,6 +494,8 @@ private:
 
 	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;
 	SvPb::InspectionList m_inspList4TRC;
+
+	ModuleController m_moduleController;
 
 	///list with additional files for audit trail
 	mutable SvUl::AuditFiles m_AuditWhiteList;

@@ -16,6 +16,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLEncryptionClass.h"
+#include "SVConfigurationTags.h"
 
 
 #define Stringtize(s) (#s)
@@ -572,25 +573,32 @@ namespace  SvXml
 		//<NODE xmlns="x-schema:#SVR00001" Name="Base" Type="SV_BASENODE">
 		_variant_t xmlnsValue;
 		_variant_t value;
-		xmlnsValue.SetString("x-schema:#SVR00001");
+		xmlnsValue.SetString(SvXml::SvrNameSpace);
 	
 	
 		if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE) 
 		{
-			_bstr_t basenode("SV_BASENODE");
+			_bstr_t basenode(SvXml::SV_BaseNode);
 			_bstr_t Enbasenode;
 			m_pEncryption->EncryptString (2, basenode, Enbasenode);
 			value.SetString( (LPCTSTR) Enbasenode);
 		}
 		else
 		{
-			value.SetString("SV_BASENODE");
+			value.SetString(SvXml::SV_BaseNode);
 		}
 	
 	
-		StartElement("Base");
-		ElementAttribute("xmlns", xmlnsValue);
-		ElementAttribute("Type", value);
+		StartElement(SvXml::BaseTag);
+		ElementAttribute(SvXml::XmlNameSpace, xmlnsValue);
+		ElementAttribute(SvXml::TypeTag, value);
+	}
+
+	void SVObjectXMLWriter::WriteShortEvirmonment(DWORD version)
+	{
+		StartElement(SvXml::CTAG_ENVIRONMENT);
+		WriteAttribute(SvXml::CTAG_VERSION_NUMBER, version);
+		EndElement();
 	}
 
 	void SVObjectXMLWriter::WriteRevisionHistory(const _variant_t formatVersionValue, const _variant_t revisionValue)

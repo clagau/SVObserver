@@ -68,6 +68,10 @@ namespace  SvXml
 		//************************************
 		void WriteStartOfBase();
 
+		///  Write the Environment-Element only with the version 
+		/// \param version [in] SVO version number
+		void WriteShortEvirmonment(DWORD version);
+
 		//************************************
 		/// Write the revision history node.
 		/// \param formatVersionValue [in] The version number.

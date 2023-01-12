@@ -39,7 +39,7 @@ class SVToolClass;
 }
 
 class SVObjectClass;
-class SVInspectionProcess;
+class SVIPDoc;
 
 class ToolClipboard
 {
@@ -76,26 +76,6 @@ protected:
 	std::string createToolDefinitionString(const std::vector<uint32_t>& rToolIds) const;
 
 	//************************************
-	// Description: This method writes the Base and Environment nodes
-	// Parameter: rXmlWriter <in> Reference to the XML writer
-	//************************************
-	void writeBaseAndEnvironmentNodes(SvOi::IObjectWriter& rWriter) const;
-
-	//************************************
-	// Description: This method writes the ids of sources like Inspection and Image
-	// Parameter: rXmlWriter <in> Reference to the XML writer
-	// Parameter: rTool <in> Reference to the tool to save
-	//************************************
-	void writeToolParameter(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool, int pos) const;
-
-	//************************************
-	// Description: This method finds the dependency files in the tool Xml string
-	// Parameter: rToolXmlString <in> Reference to the tool XML string to search
-	// Return: vector of dependency filepaths
-	//************************************
-	SvDef::StringVector findDependencyFiles(const std::string& rToolXmlString) const;
-
-	//************************************
 	// Description: This method updates dependency files if required
 	// Parameter: rDependencyFilepaths <in> Reference to a list of files
 	//************************************
@@ -121,10 +101,10 @@ protected:
 	/// \param rTree [in] Reference to the tree generated from the clipboard
 	/// \param pOwner [in] The owner of the new object.
 	/// \returns HRESULT S_OK on success
-	HRESULT updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner) const;
+	HRESULT updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc) const;
 
-	void updateToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const;
-	std::string getUniqueToolName(std::string& rToolName, const SVObjectClass* pOwner) const;
+	void updateToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const;
+	std::string getUniqueToolName(std::string& rToolName, const SVObjectClass& rOwner, const SVIPDoc& rDoc) const;
 
 	//************************************
 	// Description: This method replaces all the unique ids
@@ -134,17 +114,6 @@ protected:
 	//************************************
 	HRESULT replaceUniqueIds( std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree ) const;
 
-	//************************************
-	// Description: This method parses the tree and generates the tool
-	// Parameter : rTree <in> Reference to the tree to parse
-	// Return: rToolId: Reference to the tool ID generated
-	//************************************
-	std::vector<uint32_t> parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass* pOwner);
-
-	uint32_t parseOneToolFromTree(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass* pOwner, SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem);
-
-	SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds) const;
-
 	std::string xmlFilePath() const;
 
 
@@ -152,7 +121,6 @@ protected:
 
 private:
 #pragma region Member Variables
-	mutable SVInspectionProcess* m_pInspection{nullptr};
 	mutable SvStl::MessageManager m_errorMessage{SvStl::MsgType::Log | SvStl::MsgType::Display};
 	mutable std::vector<std::string> m_additionalNames;
 
@@ -164,3 +132,10 @@ private:
 std::string clipboardDataToString(); ///< gets the clipboard data and converts it into a string
 bool toolClipboardDataPresent(); ///<Checks to see if the clipboard data is valid
 
+/// Stream tools and additional information to a XML-File and return all dependency files in a vector
+/// \param rToolIds [in] List of toolIds which have to stream to the XML-File
+/// \param rXmlFilePath [in] Path and name of the new XML-File.
+/// \returns SvDef::StringVector List of all dependency files are needed by the tools.
+SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds, const std::string& rXmlFilePath);
+
+std::vector<uint32_t> parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass& rOwner);

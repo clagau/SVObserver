@@ -412,6 +412,26 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 		}
 
+		case SvPb::SVObjectSubTypeEnum::ModuleToolObjectType:
+		{
+			ObjectInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
+			ObjectInfo.m_SubType = SvPb::ParameterInputObjectType;
+			SvOi::IObjectClass* pObject = pTaskObject->getFirstObject(ObjectInfo);
+			if (nullptr != pObject)
+			{
+				AddPage(new SvOg::TADialogGroupToolInputPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId(), false));
+			}
+			ObjectInfo.m_SubType = SvPb::ParameterResultObjectType;
+			pObject = pTaskObject->getFirstObject(ObjectInfo);
+			if (nullptr != pObject)
+			{
+				AddPage(new SvOg::TADialogGroupToolResultPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId(), false));
+			}
+			addConditionalDialog();
+			AddPage(new SvOg::SVToolAdjustmentDialogCommentPage(m_InspectionID, m_TaskObjectID, true));
+			break;
+		}
+
 		case SvPb::SVObjectSubTypeEnum::DrawToolObjectType:
 			AddPage(new SvOg::TADialogDrawPage(m_InspectionID, m_TaskObjectID));
 			addConditionalDialog();

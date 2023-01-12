@@ -155,11 +155,12 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	TADialogGroupToolInputPage::TADialogGroupToolInputPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId)
+	TADialogGroupToolInputPage::TADialogGroupToolInputPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isInputsChangeAble)
 		: CPropertyPage(TADialogGroupToolInputPage::IDD)
 		, m_InspectionID(inspectionId)
 		, m_toolId(toolId)
 		, m_TaskObjectID(taskId)
+		, m_isInputsChangeAble(isInputsChangeAble)
 		, m_Values{ SvOgu::BoundValues{ inspectionId, taskId }}
 	{
 	}
@@ -194,6 +195,14 @@ namespace SvOg
 		SvOgu::DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 		m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
+
+		if (false == m_isInputsChangeAble)
+		{
+			GetDlgItem(IDC_BUTTON_REMOVE)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_ADD)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_MOVEUP)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_MOVEDOWN)->ShowWindow(SW_HIDE);
+		}
 
 		loadDataList();
 		initGridControl();
@@ -407,6 +416,18 @@ namespace SvOg
 		}
 	}
 
+	void TADialogGroupToolInputPage::setGridControlReadOnlyFlag(int row, int column, bool isChangeable)
+	{
+		if (isChangeable)
+		{
+			m_Grid.SetItemState(row, column, m_Grid.GetItemState(row, column) & (~GVIS_READONLY));
+		}
+		else
+		{
+			m_Grid.SetItemState(row, column, m_Grid.GetItemState(row, column) | GVIS_READONLY);
+		}
+	}
+
 	void TADialogGroupToolInputPage::FillGridControl()
 	{
 		CStringArray typeOptions;
@@ -429,12 +450,14 @@ namespace SvOg
 			m_Grid.SetItemBkColour(row, DependencyColumn, isOk(m_inputData[i]) ? SvDef::White : SvDef::Black);
 			m_Grid.SetItemFgColour(row, DependencyColumn, isOk(m_inputData[i]) ? SvDef::Black : SvDef::White);
 			m_Grid.SetItemText(row, DependencyColumn, hasDependencies ? "D" : "");
-			m_Grid.SetItemState(row, DependencyColumn, m_Grid.GetItemState(row, DependencyColumn) | GVIS_READONLY);
+			setGridControlReadOnlyFlag(row, DependencyColumn, false);
 
 			m_Grid.SetItemText(row, NameColumn, m_inputData[i].m_name.c_str());
-			m_Grid.SetItemState(row, NameColumn, m_Grid.GetItemState(row, NameColumn) & (~GVIS_READONLY));
+			setGridControlReadOnlyFlag(row, NameColumn, m_isInputsChangeAble);
+			
 			using namespace SvGcl;
 			m_Grid.SetCellType(row, TypeColumn, RUNTIME_CLASS(GridCellCombo));
+			setGridControlReadOnlyFlag(row, TypeColumn, m_isInputsChangeAble);
 			auto* pCell = dynamic_cast<SvGcl::GridCellCombo*>(m_Grid.GetCell(row, TypeColumn));
 
 			pCell->SetOptions(typeOptions);
@@ -468,7 +491,7 @@ namespace SvOg
 			{
 				m_Grid.SetItemText(row, ResultColumn, "");
 			}
-			m_Grid.SetItemState(row, ResultColumn, m_Grid.GetItemState(row, ResultColumn) | GVIS_READONLY);
+			setGridControlReadOnlyFlag(row, ResultColumn, false);
 
 			setValueColumn(i);
 
@@ -482,12 +505,12 @@ namespace SvOg
 			if (SvPb::isValueType(type)) 
 			{
 				m_Grid.SetItemText(row, DefaultColumn, static_cast<CString>(m_inputData[i].m_data.m_defaultValue));
-				m_Grid.SetItemState(row, DefaultColumn, m_Grid.GetItemState(row, DefaultColumn) & (~GVIS_READONLY));
+				setGridControlReadOnlyFlag(row, DefaultColumn, m_isInputsChangeAble);
 			}
 			else
 			{
 				m_Grid.SetItemText(row, DefaultColumn, "");
-				m_Grid.SetItemState(row, DefaultColumn, m_Grid.GetItemState(row, DefaultColumn) | GVIS_READONLY);
+				setGridControlReadOnlyFlag(row, DefaultColumn, false);
 			}
 		}
 
@@ -502,8 +525,11 @@ namespace SvOg
 		switch (m_inputData[pos].m_data.m_selectedOption)
 		{
 			case SvPb::DirectValue:
-				isChangeable = true;
-				valueString = static_cast<CString>(m_inputData[pos].m_data.m_directValue);
+				if (SvPb::isValueType(m_inputData[pos].m_type))
+				{
+					isChangeable = true;
+					valueString = static_cast<CString>(m_inputData[pos].m_data.m_directValue);
+				}
 				break;
 			case SvPb::IndirectValue:
 				valueString = SvCmd::getDottedName(m_InspectionID, m_inputData[pos].m_data.m_indirectIdName).c_str();
@@ -573,6 +599,7 @@ namespace SvOg
 			if (0 < Selection.GetMinRow() && Selection.GetMinRow() <= m_inputData.size())
 			{
 				GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_SHOW);
+				GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(m_isInputsChangeAble);
 				m_strComment = m_inputData[Selection.GetMinRow() - 1].m_data.m_comment.c_str();
 				UpdateData(false);
 			}

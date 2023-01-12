@@ -440,9 +440,9 @@ void SVObjectManagerClass::resetNextObjectId()
 	resetExchangeObjectIdMap();
 }
 
-bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
+bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass& rObject)
 {
-	bool Result = (ReadWrite == m_State && nullptr != pObject);
+	bool Result = (ReadWrite == m_State);
 
 	if (Result)
 	{
@@ -452,19 +452,19 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 			Autolock.lock();
 		}
 
-		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(pObject->getObjectId());
+		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(rObject.getObjectId());
 		Log_Assert(nullptr == pUniqueObject);
 		Result = (nullptr == pUniqueObject);
 
 		if (Result)
 		{
 			pUniqueObject = std::make_shared<SVUniqueObjectEntryStruct>();
-			pUniqueObject->m_pObject = pObject;
-			pUniqueObject->m_ObjectID = pObject->getObjectId();
+			pUniqueObject->m_pObject = &rObject;
+			pUniqueObject->m_ObjectID = rObject.getObjectId();
 			m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
 
 			SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
-			uint32_t OwnerId = pObject->GetParentID();
+			uint32_t OwnerId = rObject.GetParentID();
 			if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
 			{
 				SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType(SvOl::JoinType::Owner));
@@ -473,35 +473,31 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 		else
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DuplicateObjectId, {std::to_string(pObject->getObjectId())}, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DuplicateObjectId, {std::to_string(rObject.getObjectId())}, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 
 	return Result;
 }
 
-bool SVObjectManagerClass::CloseUniqueObjectID(SVObjectClass* pObject)
+bool SVObjectManagerClass::CloseUniqueObjectID(const SVObjectClass& rObject)
 {
 	bool Result = (ReadWrite == m_State);
 
 	if (Result)
 	{
 		std::lock_guard<std::recursive_mutex>  AutoLock(m_Mutex);
-		Result = Result && nullptr != pObject;
 
-		if (Result)
+		uint32_t ObjectID(rObject.getObjectId());
+		DetachSubjectsAndObservers(ObjectID);
+
+		SvOl::DependencyManager::Instance().Remove(ObjectID);
+
+		SVUniqueObjectEntryMap::iterator l_Iter(m_UniqueObjectEntries.find(ObjectID));
+
+		if (l_Iter != m_UniqueObjectEntries.end())
 		{
-			uint32_t ObjectID(pObject->getObjectId());
-			DetachSubjectsAndObservers(ObjectID);
-
-			SvOl::DependencyManager::Instance().Remove(ObjectID);
-
-			SVUniqueObjectEntryMap::iterator l_Iter(m_UniqueObjectEntries.find(ObjectID));
-
-			if (l_Iter != m_UniqueObjectEntries.end())
-			{
-				m_UniqueObjectEntries.erase(l_Iter);
-			}
+			m_UniqueObjectEntries.erase(l_Iter);
 		}
 	}
 
@@ -512,12 +508,31 @@ bool SVObjectManagerClass::ChangeUniqueObjectID(SVObjectClass* pObject, uint32_t
 {
 	if (SvDef::InvalidObjectId != newId && nullptr != pObject)
 	{
-		if (pObject->getObjectId() != newId && CloseUniqueObjectID(pObject))
+		if (pObject->getObjectId() != newId && CloseUniqueObjectID(*pObject))
 		{
 			pObject->setObjectId(newId);
-			return OpenUniqueObjectID(pObject);
+			return OpenUniqueObjectID(*pObject);
 		}
 		return (pObject->getObjectId() == newId);
+	}
+	return false;
+}
+
+bool SVObjectManagerClass::SwapUniqueObjectID(SVObjectClass& rFirstObject, SVObjectClass& rSecondObject)
+{
+	uint32_t firstId {rFirstObject.getObjectId()};
+	uint32_t secondId {rSecondObject.getObjectId()};
+	if (firstId != secondId)
+	{
+		//add not the objectId to deletedIds because it is used in the other objects again.
+		setDeletedFlag(false);
+		CloseUniqueObjectID(rFirstObject);
+		CloseUniqueObjectID(rSecondObject);
+		setDeletedFlag(true);
+		rFirstObject.setObjectId(secondId);
+		rSecondObject.setObjectId(firstId);
+		OpenUniqueObjectID(rFirstObject);
+		return OpenUniqueObjectID(rSecondObject);
 	}
 	return false;
 }

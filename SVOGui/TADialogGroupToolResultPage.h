@@ -30,7 +30,11 @@ namespace SvOg
 #pragma region Constructor
 	public:
 		// Standard constructor
-		TADialogGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId);
+		/// \param inspectionId [int]
+		/// \param toolId [in]
+		/// \param taskId [in]
+		/// \param isInputsChangeAble [in] If false, for the inputs only the values is changeable.
+		TADialogGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isInputsChangeAble = true);
 
 		// Standard destructor
 		virtual ~TADialogGroupToolResultPage() = default;
@@ -93,6 +97,8 @@ namespace SvOg
 		void UpdateEnableButtons();
 
 		bool OnValueChanged(int row, int column);
+
+		void setGridControlReadOnlyFlag(int row, int column, bool isChangeable);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -100,6 +106,8 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_toolId;
 		const uint32_t m_TaskObjectID;
+
+		const bool m_isChangeAble;
 
 		CBitmap m_downArrowBitmap;
 		CImageList m_ImageList;

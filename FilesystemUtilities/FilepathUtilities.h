@@ -9,7 +9,7 @@ namespace SvFs
 {
 bool ensureDirectoryExists(LPCTSTR PathName, bool createIfMissing);
 bool deleteFiles(LPCTSTR PathName, bool IncludeSubDirectories);
-std::string readContentFromFileAndDelete(const std::string& rFileName);
+std::string readContentFromFile(const std::string& rFileName, bool deleteFileAfterUse = true);
 void writeStringToFile(const std::string& rFileName, const std::string& rFileData, bool Text);
 
 bool pathCanProbablyBeCreatedOrExistsAlready(const std::string& rFilePath);

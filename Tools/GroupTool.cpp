@@ -213,9 +213,7 @@ namespace SvTo
 	{
 		if (0 != (ObjectAttributesAllowed() & SvPb::viewable))
 		{
-			BOOL isClosed = false;
-			m_isClosed.GetValue(isClosed);
-			if (isClosed && stopIfClosed && false == firstObject)
+			if (isClosed() && stopIfClosed && false == firstObject)
 			{
 				SVObjectClass::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
 				if (m_pInputTask)
@@ -243,9 +241,7 @@ namespace SvTo
 
 	void GroupTool::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool firstObject /*= false*/)
 	{
-		BOOL isClosed = false;
-		m_isClosed.GetValue(isClosed);
-		if (isClosed && stopIfClosed && false == firstObject)
+		if (isClosed() && stopIfClosed && false == firstObject)
 		{
 			SVObjectClass::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 			if (m_pInputTask)
@@ -272,9 +268,7 @@ namespace SvTo
 
 	uint32_t GroupTool::getFirstClosedParent(uint32_t stopSearchAtObjectId) const
 	{
-		BOOL isClosed = false;
-		m_isClosed.GetValue(isClosed);
-		if (isClosed)
+		if (isClosed())
 		{
 			return getObjectId();
 		}
@@ -286,9 +280,7 @@ namespace SvTo
 
 	bool GroupTool::isValidDependency(const std::pair<std::string, std::string>& rEntry) const
 	{
-		BOOL isClosed = false;
-		m_isClosed.GetValue(isClosed);
-		return FALSE == isClosed || isValid(rEntry);
+		return false == isClosed() || isValid(rEntry);
 	}
 	
 	std::vector<std::string> GroupTool::getToolAdjustNameList() const
@@ -317,6 +309,48 @@ namespace SvTo
 	{
 		int depth = (false == goUpwards) ? 1 : 0;
 		return __super::getToolDepth(goUpwards) + depth;
+	}
+
+	bool GroupTool::isClosed() const
+	{
+		BOOL isClosed = false;
+		m_isClosed.GetValue(isClosed);
+		return isClosed;
+	}
+
+	void GroupTool::movedAndDeleteFriends(SVThreadSafeList<SVTaskObjectClass*>& friendList)
+	{
+		friendList.RemoveAll();
+		for (int i = 0; m_friendList.size() > i; ++i)
+		{
+			friendList.Add(m_friendList[i]);
+		}
+		m_friendList.RemoveAll();
+	}
+
+	void GroupTool::movedAndDeleteTaskObjects(SvIe::SVTaskObjectPtrVector& taskList)
+	{
+		taskList = std::move(m_TaskObjectVector);
+		m_TaskObjectVector.clear();
+	}
+
+	void GroupTool::moveEmbeddedObjects(SVObjectPtrVector& rEmbeddedObjects)
+	{
+		for (auto* pEmbeddedObject : m_embeddedList)
+		{
+			if (nullptr != pEmbeddedObject)
+			{
+				auto iter = std::ranges::find_if(rEmbeddedObjects, [pEmbeddedObject](const auto* pEntry) {return nullptr != pEntry && pEntry->GetEmbeddedID() == pEmbeddedObject->GetEmbeddedID(); });
+				if (rEmbeddedObjects.end() != iter)
+				{
+					pEmbeddedObject->moveObject(**iter);
+				}
+				else
+				{
+					assert(false);
+				}
+			}
+		}
 	}
 
 	void GroupTool::Initialize()

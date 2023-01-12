@@ -189,6 +189,7 @@ echo %time%
     <ClCompile Include="GuiHelpers.cpp" />
     <ClCompile Include="InitialInformationHandler.cpp" />
     <ClCompile Include="LoadConfigWarning.cpp" />
+    <ClCompile Include="ModuleController.cpp" />
     <ClCompile Include="MonitorListAddRemoveDlg.cpp" />
     <ClCompile Include="MonitorListPropertyDlg.cpp" />
     <ClCompile Include="MonitorListSelector.cpp" />
@@ -380,6 +381,7 @@ echo %time%
     <ClInclude Include="GuiHelpers.h" />
     <ClInclude Include="InitialInformationHandler.h" />
     <ClInclude Include="LoadConfigWarning.h" />
+    <ClInclude Include="ModuleController.h" />
     <ClInclude Include="MonitorListAddRemoveDlg.h" />
     <ClInclude Include="MonitorListPropertyDlg.h" />
     <ClInclude Include="MonitorListSelector.h" />

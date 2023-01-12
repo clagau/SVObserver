@@ -126,23 +126,9 @@ void SvOi::exportCustom2Filter(const std::string &filePath,
 		XmlWriter.WriteRootElement( _T( "Custom2_Filter_Export") );
 		XmlWriter.WriteSchema();
 
-		_variant_t xmlnsValue;
-		_variant_t Value;
-
-		xmlnsValue.SetString( "x-schema:#SVR00001" );
-
-		Value.SetString( "SV_BASENODE" );
-
-		XmlWriter.StartElement( _T("Base") );
-		XmlWriter.ElementAttribute( _T("xmlns"), xmlnsValue );
-		XmlWriter.ElementAttribute( _T("Type"), Value );
-
-		Value.Clear();
-		Value = TheSVObserverApp().getCurrentVersion();
-
-		XmlWriter.StartElement( SvXml::CTAG_ENVIRONMENT  );
-		XmlWriter.WriteAttribute( SvXml::CTAG_VERSION_NUMBER, Value );
-		XmlWriter.EndElement();
+		XmlWriter.WriteStartOfBase();
+		XmlWriter.WriteShortEvirmonment(TheSVObserverApp().getCurrentVersion());
+		
 		std::string Label = SvUl::LoadStdString( IDS_CLASSNAME_CUSTOM2FILTER );
 		XmlWriter.StartElement( Label.c_str() );
 

@@ -99,9 +99,10 @@ public:
 	void reduceNextObjectId(uint32_t removedObjectId);
 	void setDeletedFlag(bool flag) { m_addToDeletedList = flag; };
 	void resetNextObjectId();
-	bool OpenUniqueObjectID( SVObjectClass* pObject );
-	bool CloseUniqueObjectID( SVObjectClass* pObject );
+	bool OpenUniqueObjectID( SVObjectClass& rObject );
+	bool CloseUniqueObjectID(const SVObjectClass& rObject );
 	bool ChangeUniqueObjectID( SVObjectClass* pObject, uint32_t newObjectId );
+	bool SwapUniqueObjectID(SVObjectClass& rFirstObject, SVObjectClass& rSecondObject);
 
 	SVObjectClass* GetObject(uint32_t objectId) const;
 	SVObjectClass* GetObjectCompleteName( LPCTSTR Name );

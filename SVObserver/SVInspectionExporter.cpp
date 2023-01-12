@@ -37,15 +37,6 @@ static LPCTSTR scExportExt = _T(".bxp");
 static LPCTSTR scColorExportExt = _T(".cxp");
 #pragma endregion Declarations
 
-static void WriteVersion(SvOi::IObjectWriter& rWriter, unsigned long p_version)
-{
-	_variant_t version(p_version);
-
-	rWriter.StartElement(SvXml::CTAG_ENVIRONMENT);
-	rWriter.WriteAttribute(SvXml::CTAG_VERSION_NUMBER, version);
-	rWriter.EndElement();
-}
-
 static void WritePPQInputOutputs(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
 {
 	rWriter.StartElement(SvXml::CTAG_PPQ);
@@ -277,7 +268,7 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 					writer.WriteSchema();
 					writer.WriteStartOfBase();
 					{
-						WriteVersion(writer, p_version);
+						writer.WriteShortEvirmonment(p_version);
 
 						WritePPQInputOutputs(writer, *pInspection);
 

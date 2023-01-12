@@ -204,6 +204,9 @@ namespace  SvXml
 	constexpr const char* BaseTag = _T( "Base" );
 	constexpr const char* TypeTag = _T( "Type" );
 	constexpr const char* DataTag = _T( "</DATA>" );
+	constexpr const char* XmlNameSpace = _T( "xmlns" );
+	constexpr const char* SvrNameSpace = _T( "x-schema:#SVR00001" );
+	constexpr const char* SV_BaseNode = _T( "SV_BASENODE" );
 
 	constexpr const char* CTAG_CALCULATE_HASH = _T("CalculateHash");
 	constexpr const char* CTAG_IGNORE_FILE = _T("IgnoreFile");

@@ -124,6 +124,8 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TOOL_PARA_TO_MONITORLIST, OnUpdateAddParameterToMonitorList)
 	ON_COMMAND(ID_REMOVE_TOOL_PARA_TO_MONITORLIST, OnRemoveParameterToMonitorList)
 	ON_UPDATE_COMMAND_UI(ID_REMOVE_TOOL_PARA_TO_MONITORLIST, OnUpdateRemoveParameterToMonitorList)
+	ON_UPDATE_COMMAND_UI(ID_CONVERT_TO_MODULE, OnUpdateConvertToModul)
+	ON_COMMAND(ID_CONVERT_TO_MODULE, OnConvertToModul)
 	ON_COMMAND(ID_EDIT_DELETE, OnEditDelete)
 	ON_COMMAND(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAdjustLightReference)
 	ON_COMMAND(ID_EDIT_ADJUSTLUT, OnAdjustLut)
@@ -1565,6 +1567,48 @@ void SVIPDoc::OnUpdateRemoveParameterToMonitorList(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(Enabled);
+}
+
+void SVIPDoc::OnUpdateConvertToModul(CCmdUI* pCmdUI)
+{
+	BOOL Enabled = true;
+	pCmdUI->Enable(Enabled);
+}
+
+void SVIPDoc::OnConvertToModul()
+{
+	if (!SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	{
+		return;
+	}
+
+	SVConfigurationObject* pConfig = nullptr;
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	assert(nullptr != pConfig);
+
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr != pConfig && nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
+	{
+		auto toolIDs = pToolsetView->GetAllSelectedToolIds();
+		if (1 == toolIDs.size() && SvDef::InvalidObjectId != toolIDs[0])
+		{
+			//@TODO[MZA][10.30][09.12.2022] show dialog to ask for the module name
+			std::string name = "Module" + std::to_string(toolIDs[0]);
+
+			SvUl::RemoveCharacters(name, SvDef::cExcludeCharsToolIpName);
+
+			try
+			{
+				pConfig->getModuleController().checkIfNameValid(name);
+				pConfig->getModuleController().convertGroupTool(toolIDs[0], name);
+			}
+			catch (const SvStl::MessageContainer& rExp)
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Exception.setMessage(rExp.getMessage());
+			}
+		}
+	}
 }
 
 void SVIPDoc::OnEditTool()

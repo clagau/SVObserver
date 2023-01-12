@@ -464,6 +464,10 @@ void SVObjectReference::onChangeNotification(SvOi::ObjectNotificationType type, 
 				m_objectId = m_pObject->getObjectId();
 			}
 			break;
+		case SvOi::ObjectNotificationType::SwitchObject:
+			setObjectId(objectId);
+			update();
+			break;
 		default:
 			break;
 	}

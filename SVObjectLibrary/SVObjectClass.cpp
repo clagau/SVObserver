@@ -120,7 +120,7 @@ SVObjectClass::~SVObjectClass()
 	sendChangeNotification(SvOi::ObjectNotificationType::Deleting, m_objectId);
 	disconnectAllInputs();
 
-	SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
+	SVObjectManagerClass::Instance().CloseUniqueObjectID(*this);
 }
 
 bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -1105,6 +1105,12 @@ void SVObjectClass::setObjectId(uint32_t objectId)
 	uint32_t oldId = m_objectId;
 	m_objectId = objectId; 
 	sendChangeNotification(SvOi::ObjectNotificationType::ObjectIdChange, oldId);
+}
+
+void SVObjectClass::moveObject(SVObjectClass& rObject)
+{
+	SVObjectManagerClass::Instance().SwapUniqueObjectID(*this, rObject);
+	sendChangeNotification(SvOi::ObjectNotificationType::SwitchObject, rObject.getObjectId());
 }
 
 /*

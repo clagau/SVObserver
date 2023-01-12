@@ -122,6 +122,7 @@ public:
 
 #pragma endregion virtual method (IObjectClass/IValueObject)
 
+	virtual void moveObject(SVObjectClass& rObject) override;
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
 
 	/// getter and setter for ShouldSaveValue-Flag

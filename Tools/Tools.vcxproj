@@ -91,6 +91,7 @@
     <ClCompile Include="DrawTool.cpp" />
     <ClCompile Include="GroupTool.cpp" />
     <ClCompile Include="LoopTool.cpp" />
+    <ClCompile Include="ModuleTool.cpp" />
     <ClCompile Include="ResizeTool.cpp" />
     <ClCompile Include="RingBufferTool.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -127,6 +128,7 @@
     <ClInclude Include="DrawTool.h" />
     <ClInclude Include="GroupTool.h" />
     <ClInclude Include="LoopTool.h" />
+    <ClInclude Include="ModuleTool.h" />
     <ClInclude Include="ResizeTool.h" />
     <ClInclude Include="RingBufferTool.h" />
     <ClInclude Include="stdafx.h" />
