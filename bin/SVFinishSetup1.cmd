@@ -1,1 +1,0 @@
-copy c:\SVObserver\bin\svrunonce.cmd "C:\Documents and Settings\Administrator\Start Menu\Programs\Startup\"
