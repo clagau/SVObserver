@@ -95,7 +95,8 @@ void SVToolAdjustmentDialogSheetClass::init()
 	
 	addPages();
 
-	SvOi::IObjectClass* pObject = GetSuperTool();
+
+	SvOi::IObjectClass* pObject = GetTaskObject();
 	Log_Assert(pObject && pObject->GetObjectType() == SvPb::SVToolObjectType);
 	
 	m_dependentTools.clear();
@@ -586,7 +587,7 @@ bool SVToolAdjustmentDialogSheetClass::ResetTools()
 	
 	bool resetResult = false;
 	//If parent is a tool then it must be reset
-	SvOi::IObjectClass* pTool = GetSuperTool();
+	SvOi::IObjectClass* pTool = GetTopTool();
 	if (nullptr == pTool)
 	{
 		return resetResult;
@@ -603,7 +604,7 @@ bool SVToolAdjustmentDialogSheetClass::ResetTools()
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObj);
 		if (pObj)
 		{
-			isOK = pObj->resetAllObjects() && isOK;
+			isOK = pObj->resetAllObjects(nullptr,true) && isOK;
 		}
 
 	}
@@ -658,7 +659,7 @@ SvOi::IObjectClass* SVToolAdjustmentDialogSheetClass::GetTaskObject() const
 	return (SvOi::getObject(m_TaskObjectID));
 }
 
-SvOi::IObjectClass* SVToolAdjustmentDialogSheetClass::GetSuperTool() const
+SvOi::IObjectClass* SVToolAdjustmentDialogSheetClass::GetTopTool() const
 {
 	SVObjectClass* pTool  = static_cast<SVObjectClass *>( GetTaskObject());
 	if (pTool)

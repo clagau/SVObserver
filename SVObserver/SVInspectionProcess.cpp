@@ -1235,7 +1235,7 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 	}
 }
 
-bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
+bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool /*depended = false*/)
 {
 #ifdef TRACE_RESETALL	
 	ResetImageIds.clear();
@@ -1784,7 +1784,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 					SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObject);
 					if (pObject)
 					{	
-						bRet = pObject->resetAllObjects() && bRet;
+						bRet = pObject->resetAllObjects(nullptr,true) && bRet;
 					}
 
 				}
@@ -3008,7 +3008,7 @@ HRESULT SVInspectionProcess::resetToolAndDependends(SvOi::IObjectClass*  pTool)
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObject);
 		if (pObject)
 		{
-			resetDependentsOK = pObject->resetAllObjects() && resetDependentsOK;
+			resetDependentsOK = pObject->resetAllObjects(nullptr,true) && resetDependentsOK;
 		}
 
 	}

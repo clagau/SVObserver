@@ -66,7 +66,7 @@ public:
 	//remove last errormessage if add is false and errormessagetext is last errormessagetext 
 	void addOrRemoveResetErrorMessage(SvStl::MessageContainer& rErrorMessage, bool add);
 
-	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) override;
 	virtual bool isInputImage(uint32_t imageId) const override;
 
 	virtual bool DoesObjectHaveExtents() const;

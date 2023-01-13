@@ -41,7 +41,7 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	virtual bool resetAllObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) override;
 
 	SvVol::ValueObjectSortContainer&  getSortContainer() { return m_pResultTable->getSortContainer();};
 	void UpdateNumberOfRows() { return m_pResultTable->UpdateNumberOfRows(); };

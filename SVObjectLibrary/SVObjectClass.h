@@ -162,7 +162,7 @@ public:
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual SvStl::MessageContainerVector verifyAndSetName(const std::string& newName) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual bool resetAllObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) override;
 	virtual HRESULT getValue(double& , int = 0) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& ) const override { return E_NOTIMPL; };
 	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;

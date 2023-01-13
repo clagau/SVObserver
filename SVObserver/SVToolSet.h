@@ -48,7 +48,7 @@ public:
 	virtual ~SVToolSet();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	void Destroy();

@@ -1873,7 +1873,7 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector* pErrorMessag
 	return Result;
 }
 
-bool SVExternalToolTask::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
+bool SVExternalToolTask::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool /*depended = false*/)
 {
 	bool Result = __super::resetAllObjects(pErrorMessages);
 	CreateArrayInTable();

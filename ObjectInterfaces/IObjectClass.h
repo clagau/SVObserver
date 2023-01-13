@@ -161,7 +161,7 @@ namespace SvOi
 		/// Reset this object and all children and required all friends.
 		/// \param pErrorMessages [in,out] Pointer to an Error Message Container. If the pointer unequal nullptr, an error message will be added if it happens during reset.
 		/// \returns bool
-		virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages=nullptr) = 0;
+		virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) = 0;
 
 		/// Get the object class ID
 		virtual SvPb::ClassIdEnum GetClassID() const = 0;

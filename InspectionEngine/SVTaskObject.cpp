@@ -88,7 +88,7 @@ SVTaskObjectClass::~SVTaskObjectClass()
 	Log_Assert(0 == m_inputs.size());
 }
 
-bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
+bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool /*dependand = false*/)
 {
 	clearTaskMessages();
 	bool Result = (S_OK == updateImageExtent(true));

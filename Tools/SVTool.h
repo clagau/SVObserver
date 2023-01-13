@@ -99,7 +99,8 @@ public:
 
 	
 
-	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) override;
+	bool resetAllDepedentObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr);
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
@@ -304,6 +305,7 @@ protected:
 	SVToolExtentClass m_toolExtent;
 
 	bool m_canResizeToParent {false};
+	bool m_ressetAll_Active {false};
 	
 	
 };

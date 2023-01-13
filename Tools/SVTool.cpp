@@ -26,6 +26,8 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/Overlay.h"
 #include "InspectionCommands/CommandExternalHelper.h"
+#include "SVUtilityLibrary/RaiiLifeFlag.h"
+#include "SVUtilityLibrary/VectorHelper.h"
 
 #pragma endregion Includes
 
@@ -68,7 +70,7 @@ uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  
 		{
 			res++;
 			InIt = pair.client().toolobjectid();
-			//OutputDebugString(pair.client().DebugString().c_str());
+			OutputDebugString(pair.client().DebugString().c_str());
 		}
 	}
 	return res;
@@ -411,16 +413,50 @@ bool SVToolClass::CloseObject()
 	return SVTaskObjectListClass::CloseObject();
 }
 
-bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages)
+bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool Resetdepended  )
 {
+	
 	BOOL freezeFlag(false);
 	m_editFreezeFlag.GetValue(freezeFlag);
 	setEditModeFreezeFlag(TRUE == freezeFlag);
 
 	bool result = __super::resetAllObjects(pErrorMessages);
 	m_isObjectValid.SetValue(BOOL(result));
+	if (Resetdepended)
+	{
+		resetAllDepedentObjects(nullptr);
+	}
+
 	return result;
 }
+
+bool SVToolClass::resetAllDepedentObjects(SvStl::MessageContainerVector*  )
+{
+	bool ret {true};
+	if (m_ressetAll_Active)
+	{
+		Log_Assert(false);
+		return ret;
+	}
+	SvDef::RaiiLifeFlag resetCheck(m_ressetAll_Active);
+	
+	std::vector<uint32_t> dependentTools;
+	std::back_insert_iterator<std::vector<uint32_t>>  InsertIt(dependentTools);
+	SvTo::InsertDependentTools(InsertIt, getObjectId());
+	SvUl::RemoveDuplicates(dependentTools);
+	for (const auto id : dependentTools)
+	{
+		SVObjectClass* pObj = nullptr;
+		SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObj);
+		if (pObj && pObj != this)
+		{
+			ret = pObj->resetAllObjects(nullptr, true) && ret;
+		}
+
+	}
+	return ret;
+}
+
 
 bool SVToolClass::IsEnabled() const
 {
