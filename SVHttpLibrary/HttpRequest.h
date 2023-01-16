@@ -23,7 +23,7 @@ public:
 	boost::beast::http::verb Method;
 	Url Url;
 	std::map<boost::beast::http::field, std::string> Headers = {};
-	boost::beast::string_view Body;
+	std::string Body;
 };
 
 } // namespace SvHttp

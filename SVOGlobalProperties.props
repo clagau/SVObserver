@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <MIL_VER>MIL10SP2102_64bit</MIL_VER>
-    <BOOST_VER>boost_1_76_0</BOOST_VER>
+    <BOOST_VER>boost_1_81_0</BOOST_VER>
     <PROTOBUF_VER>protobuf-3.17.0</PROTOBUF_VER>
   </PropertyGroup>
   <PropertyGroup>

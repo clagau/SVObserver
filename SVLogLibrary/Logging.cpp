@@ -11,6 +11,7 @@
 #include "Logging.h"
 
 #include <iostream>
+#include <fstream>
 #include <set>
 #include <string>
 #include <vector>

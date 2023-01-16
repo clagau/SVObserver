@@ -402,7 +402,7 @@ void HttpServerConnection::http_access_log(const boost::beast::http::response<Bo
 
 	const auto get_request_header = [this](const boost::beast::http::field& field)
 	{
-		const auto str = m_Request[field].to_string();
+		std::string str = m_Request[field];
 		if (str.empty())
 		{
 			return std::string("-");
@@ -480,7 +480,7 @@ HttpServerConnection::http_build_not_found(boost::beast::string_view target)
 	res.set(boost::beast::http::field::server, m_rSettings.ServerVersionString);
 	res.set(boost::beast::http::field::content_type, "text/html");
 	res.keep_alive(m_Request.keep_alive());
-	res.body() = "The resource '" + target.to_string() + "' was not found.";
+	res.body() = "The resource '" + std::string {target} + "' was not found.";
 	res.prepare_payload();
 	return res;
 }
@@ -495,7 +495,7 @@ HttpServerConnection::http_build_not_authorized(boost::beast::string_view reason
 	res.set(boost::beast::http::field::server, m_rSettings.ServerVersionString);
 	res.set(boost::beast::http::field::content_type, "text/html");
 	res.keep_alive(m_Request.keep_alive());
-	res.body() = "Not authorized: " + reason.to_string();
+	res.body() = "Not authorized: " + std::string {reason};
 	res.prepare_payload();
 	return res;
 }
@@ -510,7 +510,7 @@ HttpServerConnection::http_build_bad_request(boost::beast::string_view why)
 	res.set(boost::beast::http::field::server, m_rSettings.ServerVersionString);
 	res.set(boost::beast::http::field::content_type, "text/html");
 	res.keep_alive(m_Request.keep_alive());
-	res.body() = why.to_string();
+	res.body() = std::string {why};
 	res.prepare_payload();
 	return res;
 }
@@ -525,7 +525,7 @@ HttpServerConnection::http_build_server_error(boost::beast::string_view what)
 	res.set(boost::beast::http::field::server, m_rSettings.ServerVersionString);
 	res.set(boost::beast::http::field::content_type, "text/html");
 	res.keep_alive(m_Request.keep_alive());
-	res.body() = "An error occurred: '" + what.to_string() + "'";
+	res.body() = "An error occurred: '" + std::string {what} + "'";
 	res.prepare_payload();
 	return res;
 }
@@ -578,7 +578,7 @@ std::string HttpServerConnection::ws_get_access_token(std::string& rProtocol)
 		const auto bearer_prefix = std::string {"Bearer "};
 		if (auth_header.starts_with(bearer_prefix))
 		{
-			return auth_header.substr(bearer_prefix.size()).to_string();
+			return std::string {auth_header.substr(bearer_prefix.size())};
 		}
 		
 		const auto basic_prefix = std::string {"Basic "};
@@ -611,7 +611,7 @@ std::string HttpServerConnection::ws_get_access_token(std::string& rProtocol)
 		if (ws_protocol.starts_with(access_token_prefix))
 		{
 			rProtocol = "access_token";
-			return ws_protocol.substr(access_token_prefix.size()).to_string();
+			return std::string {ws_protocol.substr(access_token_prefix.size())};
 		}
 	}
 
@@ -838,7 +838,7 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error, c
 
 bool HttpServerConnection::base64decode(std::string& out, const boost::beast::string_view& in)
 {
-	return SVEncodeDecodeUtilities::Base64EncodeToStringFromString(out, in.to_string()) == 0;
+	return SVEncodeDecodeUtilities::Base64EncodeToStringFromString(out, std::string {in}) == 0;
 }
 
 } // namespace SvHttp

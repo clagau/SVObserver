@@ -58,7 +58,7 @@ public:
 		}
 		if (!req.Body.empty())
 		{
-			req_.body() = req.Body.to_string();
+			req_.body() = req.Body;
 			req_.prepare_payload();
 		}
 		
