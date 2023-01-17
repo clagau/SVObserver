@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros">
     <MIL_VER>MIL10SP2102_64bit</MIL_VER>
     <BOOST_VER>boost_1_81_0</BOOST_VER>
-    <PROTOBUF_VER>protobuf-3.17.0</PROTOBUF_VER>
+    <PROTOBUF_VER>protobuf-3.21.12</PROTOBUF_VER>
   </PropertyGroup>
   <PropertyGroup>
     <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;$(PATH_3RDPARTY)\Matrox\$(MIL_VER)\Include;$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\include;$(PATH_3RDPARTY)\$(BOOST_VER);$(PATH_3RDPARTY)\HilscherCifx\include;$(PATH_3RDPARTY)\tcl_5.3.2;$(PATH_3RDPARTY)\rapidjson-1.1.0\include;$(PATH_3RDPARTY)\openssl-1.1.0i\include;$(IncludePath)</IncludePath>

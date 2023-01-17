@@ -273,6 +273,8 @@ bool TrcTester::createTR2WriteAndRead()
 		return false;
 	}
 
+#undef max //undefine max to be able to use std::max instead of a macro. This is necessary because somewhere between protobuf-3.17.0 and protobuf-3.21.12 a max() macro started polluting the global namespace, leading to all sorts of compile errors
+
 	int maxRecords = 0;
 	for (auto valuePair : numbersOfRecords)
 	{
