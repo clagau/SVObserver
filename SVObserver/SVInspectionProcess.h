@@ -25,7 +25,6 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
 #pragma endregion Includes
 
@@ -410,7 +409,7 @@ namespace SVDetail
 	inline std::string str2int(const std::string& rString)
 	{
 		int base = (rString[0] == '0' && toupper(rString[1]) == 'X')?16:10;
-		std::string Result = SvUl::Format( _T("%d"), _tcstol(rString.c_str(), nullptr, base) );
+		std::string Result = std::format( _T("{}"), _tcstol(rString.c_str(), nullptr, base) );
 		return Result;
 	}
 

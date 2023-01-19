@@ -428,9 +428,9 @@ HRESULT  SaxXMLHandler::OnEndElement(const wchar_t  *, int ,const wchar_t *pwchN
 HRESULT  SaxXMLHandler::OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool )
 {
 	SvDef::StringVector messageList;
-	messageList.push_back(SvUl::Format(_T("%i"), line));
-	messageList.push_back(SvUl::Format(_T("%i"), column));
-	messageList.push_back(SvUl::Format(_T("%i"), errorCode));
+	messageList.push_back(std::format(_T("{}"), line));
+	messageList.push_back(std::format(_T("{}"), column));
+	messageList.push_back(std::format(_T("{}"), errorCode));
 	messageList.push_back(SvUl::createStdString(pwchErrorText));
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvStl::Tid_XML_Error, messageList, SvStl::SourceFileParams(StdMessageParams));

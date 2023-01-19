@@ -16,7 +16,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVClock.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -125,7 +124,7 @@ void ResultListCtrl::updateList()
 	}
 	else
 	{
-		Temp = SvUl::Format( _T( "%.3f ms ( %.3f ms )" ), m_ResultData.m_ToolSetEndTime * 1000, m_ResultData.m_ToolSetAvgTime * 1000 );
+		Temp = std::format( _T( "{:.3f} ms ( {:.3f} ms )" ), m_ResultData.m_ToolSetEndTime * 1000, m_ResultData.m_ToolSetAvgTime * 1000 );
 	}
 
 	std::string Prev = GetItemText(i, 1).GetString();
@@ -191,11 +190,11 @@ int ResultListCtrl::updateResults(bool bRedrawDefinitions)
 			{
 				if (0 <= l_rDef.GetIndex())
 				{
-					Name = SvUl::Format(_T("%s[%d]"), l_pObject->GetName(), l_rDef.GetIndex() + 1);
+					Name = std::format(_T("{}[{:d}]"), l_pObject->GetName(), l_rDef.GetIndex() + 1);
 				}
 				else
 				{
-					Name = SvUl::Format(_T("%s[]"), l_pObject->GetName());
+					Name = std::format(_T("{}[]"), l_pObject->GetName());
 				}
 			}
 			else
@@ -205,7 +204,7 @@ int ResultListCtrl::updateResults(bool bRedrawDefinitions)
 			NameToType = l_pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 		}
 
-		ItemIndex = SvUl::Format(_T("%d"), i);
+		ItemIndex = std::format(_T("{:d}"), i);
 
 		SvIe::SVIPResultData::SVResultDataMap::const_iterator l_Iter = m_ResultData.m_ResultData.find(l_rDef);
 
@@ -435,7 +434,7 @@ std::string ResultListCtrl::CalcProcessesPerSecond(double p_LastTriggerDistance)
 
 	if (dTime != 0.0)
 	{
-		Result = SvUl::Format(_T("%.3f / sec (%.3f / min)"), 1.0 / dTime, 1.0 / dTime * 60.0);
+		Result = std::format(_T("{:.3f} / sec ({:.3f} / min)"), 1.0 / dTime, 1.0 / dTime * 60.0);
 	}
 
 	return Result;

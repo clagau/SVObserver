@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ZoomToolBar.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -61,7 +60,7 @@ void ZoomToolBar::SetRange(double dmin, double dmax , double dpage)
 
 void ZoomToolBar::DisplayNumber(int fig)
 {
-	std::string Text = SvUl::Format("%i%%",fig);
+	std::string Text = std::format("{}%%",fig);
 	m_wndZoomStatic.SetWindowText(Text.c_str());
 }
 

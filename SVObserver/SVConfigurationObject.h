@@ -27,7 +27,6 @@
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #include "SVOLibrary/SVObserverEnums.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/AuditFiles.h"
 #pragma endregion Includes
 

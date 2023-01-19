@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <direct.h>
 #include "SVGlobal.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
@@ -88,13 +87,10 @@ BOOL SVGetVersionString( std::string& rCurrentVersion, DWORD dwVersion )
 	//
 	if( subVersion != 0  && subVersion != 0xff )
 	{
-		Beta = SvUl::Format( _T( " Beta %d" ), subVersion );
+		Beta = std::format( _T( " Beta {:d}" ), subVersion );
 	}
 
-	rCurrentVersion = SvUl::Format( _T( "Version %u.%2.2u%s" ), 
-	                            LOBYTE( HIWORD( dwVersion ) ), 
-	                            HIBYTE( LOWORD( dwVersion ) ), 
-	                            Beta.c_str() );
+	rCurrentVersion = std::vformat(_T("Version {}.{:2.2d}{}"), std::make_format_args((int)LOBYTE(HIWORD(dwVersion)), (int)HIBYTE(LOWORD(dwVersion)), Beta.c_str()));
 
 #ifdef _DEBUG
 	rCurrentVersion += _T("d");        // For debug builds.

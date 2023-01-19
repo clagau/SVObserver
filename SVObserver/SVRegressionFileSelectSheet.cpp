@@ -18,7 +18,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVOResource/resource.h"
 #include "SVOGui/SelectToolForNewSourceImageDialog.h"
 #pragma endregion Includes

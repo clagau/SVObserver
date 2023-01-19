@@ -22,7 +22,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
@@ -142,7 +141,7 @@ static bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListIn
 				for (int i = 0; i < ioSize; ++i)
 				{
 					SVTreeType::SVBranchHandle hSubChild;
-					std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, i);
+					std::string IOEntry = std::format(SvXml::CTAGF_IO_ENTRY_X, i);
 					if (SvXml::SVNavigateTree::GetItemBranch(rTree, IOEntry.c_str(), hItemIO, hSubChild))
 					{
 						ImportedOutput importedOutput;
@@ -619,17 +618,17 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		std::string oldInspectionName = SvUl::createStdString(oldInspectionNameVariant);
 		std::string replaceStrings[] = 
 		{ 
-			"<DATA Name=\"ObjectName\" Type=\"VT_BSTR\">%s</DATA>", 
-			"<DATA Name=\"Element\" Type=\"VT_BSTR\">%s</DATA>", 
-			"Type=\"VT_BSTR\">%s.Tool Set.",
-			"Type=\"VT_BSTR\">%s.DIO.",
-			"Type=\"VT_BSTR\">%s.Remote Input"
+			"<DATA Name=\"ObjectName\" Type=\"VT_BSTR\">{}</DATA>", 
+			"<DATA Name=\"Element\" Type=\"VT_BSTR\">{}</DATA>", 
+			"Type=\"VT_BSTR\">{}.Tool Set.",
+			"Type=\"VT_BSTR\">{}.DIO.",
+			"Type=\"VT_BSTR\">{}.Remote Input"
 		};
 
 		for (const auto& rString : replaceStrings)
 		{
-			std::string oldString = SvUl::Format(rString.c_str(), oldInspectionName.c_str());
-			std::string newString = SvUl::Format(rString.c_str(), rNewInspectionName.c_str());
+			std::string oldString = std::vformat(rString, std::make_format_args(oldInspectionName));
+			std::string newString = std::vformat(rString, std::make_format_args(rNewInspectionName));
 			SvUl::searchAndReplace(xmlString, oldString.c_str(), newString.c_str());
 		}
 	}

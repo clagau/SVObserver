@@ -24,7 +24,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -120,7 +119,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 				for (long j = 0; j < m_maxOutputNumber; ++j)
 				{
 					int indexRow = j + m_maxOutputNumber * i;
-					std::string Item = SvUl::Format(_T("PLC Output %d"), j + 1);
+					std::string Item = std::format(_T("PLC Output {:d}"), j + 1);
 					m_rCtrl.InsertItem(LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
 									   indexRow, Item.c_str(),
 									   INDEXTOSTATEIMAGEMASK(1),

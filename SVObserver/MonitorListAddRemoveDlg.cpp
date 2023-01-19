@@ -65,7 +65,7 @@ void MonitorListAddRemoveDlg::ReplaceList( const std::string& rOldName, const st
 
 std::string MonitorListAddRemoveDlg::BuildListDisplayName(LPCTSTR PPQName, LPCTSTR Name) const
 {
-	return SvUl::Format(_T("%s(%s)"), Name, PPQName); // Append PPQ name
+	return std::format(_T("{}({})"), Name, PPQName); // Append PPQ name
 }
 
 std::string MonitorListAddRemoveDlg::GetListNameFromDisplayName(LPCTSTR Name) const
@@ -158,7 +158,7 @@ std::string MonitorListAddRemoveDlg::NextAvailableListName() const
         num = (*it) + 1;
     }
 	    
-    return SvUl::Format( _T("MonitorList%d"), num );
+    return std::format( _T("MonitorList{:d}"), num );
 }
 
 void MonitorListAddRemoveDlg::OnBnClickedRemoveBtn()

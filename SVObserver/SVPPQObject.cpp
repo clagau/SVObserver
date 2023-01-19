@@ -41,7 +41,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "Triggering/SVTriggerClass.h"
@@ -172,7 +171,7 @@ HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectName
 HRESULT SVPPQObject::ObserverUpdate(const SVInspectionInfoPair& rData)
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-	::OutputDebugString(SvUl::Format(_T("%s Inspection %s completed TRI=%d State=%x\n"), GetName(), rData.second.m_pInspection->GetName(), rData.first, rData.second.m_InspectedState).c_str());
+	::OutputDebugString(std::format(_T("{} Inspection {} completed TRI={:d} State={:x}\n"), GetName(), rData.second.m_pInspection->GetName(), rData.first, rData.second.m_InspectedState).c_str());
 #endif
 	m_lastPPQPosition = m_PPQPositions.GetIndexByTriggerCount(rData.first);
 
@@ -687,7 +686,7 @@ void SVPPQObject::PrepareGoOnline(bool setSoftwareTrigger)
 			if (S_OK != hRTemp)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%X"), hRTemp));
+				msgList.push_back(std::format(_T("{:X}"), hRTemp));
 				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, msgList, SvStl::SourceFileParams(StdMessageParams));
 				throw Msg;
 			}
@@ -1328,7 +1327,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 	if (bNak)
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		::OutputDebugString(SvUl::Format(_T("%s NAK TRI=%d\n"), GetName(), pProduct->triggerCount()).c_str());
+		::OutputDebugString(std::format(_T("{} NAK TRI={:d}\n"), GetName(), pProduct->triggerCount()).c_str());
 #endif
 		::InterlockedIncrement(&m_NAKCount);
 		if (pProduct->m_triggered)
@@ -1710,7 +1709,7 @@ bool SVPPQObject::StartInspection(uint32_t inspectionID)
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->triggerCount());
 		std::string inspectionName = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->GetName();
-		::OutputDebugString(SvUl::Format(_T("%s Start Inspection %s TRI=%d, PPQPos=%d\n"), GetName(), inspectionName.c_str(), pProduct->triggerCount(), ppqPos).c_str());
+		::OutputDebugString(std::format(_T("{} Start Inspection {} TRI={:d}, PPQPos={:d}\n"), GetName(), inspectionName, pProduct->triggerCount(), ppqPos).c_str());
 #endif
 
 		if (pProduct->m_triggered == 0)
@@ -1953,12 +1952,12 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		}
 
 #if defined(TRACE_PPQ2)
-		::OutputDebugString(SvUl::Format("%d: isNak: %d,  Set Product Complete \n", rProduct.m_triggerInfo.lTriggerCount, isNAK).c_str());
+		::OutputDebugString(std::format("{:d}: isNak: {:d},  Set Product Complete \n", rProduct.m_triggerInfo.lTriggerCount, isNAK).c_str());
 #endif
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
-		::OutputDebugString(SvUl::Format(_T("%s Product complete TRI=%d, PPQPos=%d\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
+		::OutputDebugString(std::format(_T("{} Product complete TRI={:d}, PPQPos={:d}\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
 #endif
 	}
 
@@ -2008,14 +2007,14 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 		SV_LOG_GLOBAL(trace) << "Product Incomplete: " << GetName() << " : " << rProduct.triggerCount() << " : " << m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
-		::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d, PPQPos=%d\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
+		::OutputDebugString(std::format(_T("{} Product incomplete TRI={:d}, PPQPos={:D}\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
 #endif
 		if (isNak)
 		{
 			checkNakReason(rProduct.m_CantProcessReason);
 		}
 #if defined (TRACE_PPQ2)
-		::OutputDebugString(SvUl::Format("%d: isNak: %d,  Set Product Incomplete \n", rProduct.m_triggerInfo.lTriggerCount,isNak).c_str());
+		::OutputDebugString(std::format("{:d}: isNak: {:d},  Set Product Incomplete \n", rProduct.m_triggerInfo.lTriggerCount,isNak).c_str());
 #endif
 	}
 	rProduct.m_dataComplete = true;
@@ -2101,7 +2100,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 						}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Camera %s | TRI=%d, PPQPos=%d\n"), GetName(), rElement.m_pCamera->GetName(), pProduct->triggerCount(), productIndex).c_str());
+						::OutputDebugString(std::format(_T("{} Camera {} | TRI={:d}, PPQPos={:d}\n"), GetName(), rElement.m_pCamera->GetName(), pProduct->triggerCount(), productIndex).c_str());
 #endif
 						for (size_t i = (productIndex + 1); i < m_PPQPositions.size(); ++i)
 						{
@@ -2241,7 +2240,7 @@ void SVPPQObject::cameraCallback(ULONG_PTR pCaller, const CameraInfo& rCameraInf
 
 		m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, rCameraInfo));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		::OutputDebugString(SvUl::Format(_T("%s Finished Camera Acquisition %s\n"), GetName(), pCamera->GetName()).c_str());
+		::OutputDebugString(std::format(_T("{} Finished Camera Acquisition {}\n"), GetName(), pCamera->GetName()).c_str());
 #endif
 		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::CameraResponses]));
 	}
@@ -2276,7 +2275,7 @@ void __stdcall SVPPQObject::triggerCallback(SvTrig::SVTriggerInfoStruct&& trigge
 		m_oTriggerQueue.PushTail(triggerInfo);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		::OutputDebugString(SvUl::Format(_T("%s Finished Trigger TRI=%d\n"), GetName(), triggerInfo.lTriggerCount).c_str());
+		::OutputDebugString(std::format(_T("{} Finished Trigger TRI={:d}\n"), GetName(), triggerInfo.lTriggerCount).c_str());
 #endif
 
 		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::Trigger]));
@@ -2448,7 +2447,7 @@ void SVPPQObject::ProcessTrigger()
 			{
 				InitializeProduct(pProduct);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-				::OutputDebugString(SvUl::Format(_T("%s Process Trigger TRI=%d, ProdActive=%d\n"), GetName(), pProduct->triggerCount(), pProduct->IsProductActive()).c_str());
+				::OutputDebugString(std::format(_T("{} Process Trigger TRI={:d}, ProdActive={:d}\n"), GetName(), pProduct->triggerCount(), pProduct->IsProductActive()).c_str());
 #endif
 
 				if (nullptr != m_spTiggercount)
@@ -2479,7 +2478,7 @@ void SVPPQObject::ProcessNotifyInspections()
 				SVInspectionInfoStruct& rInfo = pProduct->m_svInspectionInfos[m_arInspections[i]->getObjectId()];
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-				::OutputDebugString(SvUl::Format(_T("%s Notify Inspection TRI=%d CanProcess=%d, InProcess=%d, ProdActive=%d\n"), GetName(), triggerCount, rInfo.m_CanProcess, rInfo.m_InProcess, pProduct->IsProductActive()).c_str());
+				::OutputDebugString(std::format(_T("{} Notify Inspection TRI={:d} CanProcess={:d}, InProcess={:d}, ProdActive={:d}\n"), GetName(), triggerCount, rInfo.m_CanProcess, rInfo.m_InProcess, pProduct->IsProductActive()).c_str());
 #endif
 				if (false == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued && pProduct->IsProductActive())
 				{
@@ -2491,7 +2490,7 @@ void SVPPQObject::ProcessNotifyInspections()
 						{
 							notifyRestInspectionList.push_back(triggerCount);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-							::OutputDebugString(SvUl::Format(_T("%s Start Inspection %s failed TRI=%d\n"), GetName(), m_arInspections[i]->GetName(), triggerCount).c_str());
+							::OutputDebugString(std::format(_T("{} Start Inspection {} failed TRI={:d}\n"), GetName(), m_arInspections[i]->GetName(), triggerCount).c_str());
 #endif
 					}
 					}
@@ -2499,7 +2498,7 @@ void SVPPQObject::ProcessNotifyInspections()
 					{
 						notifyRestInspectionList.push_back(triggerCount);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Cannot Process Inspection TRI=%d\n"), GetName(), triggerCount).c_str());
+						::OutputDebugString(std::format(_T("{} Cannot Process Inspection TRI={:d}\n"), GetName(), triggerCount).c_str());
 #endif
 					}
 				}
@@ -2508,7 +2507,7 @@ void SVPPQObject::ProcessNotifyInspections()
 		else
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		::OutputDebugString(SvUl::Format(_T("%s Removed Notify Inspection TRI=%d\n"), GetName(), triggerCount).c_str());
+			::OutputDebugString(std::format(_T("{} Removed Notify Inspection TRI={:d}\n"), GetName(), triggerCount).c_str());
 #endif
 		}
 	}
@@ -2680,7 +2679,7 @@ void SVPPQObject::ProcessCameraResponses()
 				processed = (S_OK == ProcessCameraResponse(l_Data));
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-				::OutputDebugString(SvUl::Format(_T("%s Processed Pending Camera Response %s\n"), GetName(), l_Data.m_pCamera->GetName()).c_str());
+				::OutputDebugString(std::format(_T("{} Processed Pending Camera Response {}\n"), GetName(), l_Data.m_pCamera->GetName()).c_str());
 #endif
 			}
 			++l_CameraIter;
@@ -2694,7 +2693,7 @@ void SVPPQObject::ProcessCameraResponses()
 		{
 			ProcessCameraResponse(cameraData);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-			::OutputDebugString(SvUl::Format(_T("%s Processed Camera Response %s\n"), GetName(), cameraData.m_pCamera->GetName()).c_str());
+			::OutputDebugString(std::format(_T("{} Processed Camera Response {}\n"), GetName(), cameraData.m_pCamera->GetName()).c_str());
 #endif
 		}
 		else
@@ -2772,7 +2771,7 @@ void SVPPQObject::ProcessCompleteInspections()
 						{
 							SetProductIncomplete(static_cast<long>(i));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-							::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d\n"), GetName(), pProduct->triggerCount()).c_str());
+							::OutputDebugString(std::format(_T("{} Product incomplete TRI={:d}\n"), GetName(), pProduct->triggerCount()).c_str());
 #endif
 						}
 						else
@@ -2882,7 +2881,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 	{
 		if (nullptr != pEntry)
 		{
-			l_svName = SvUl::Format(SvXml::CTAGF_INPUT_X, lInputNr);
+			l_svName = std::format(SvXml::CTAGF_INPUT_X, lInputNr);
 			rWriter.StartElement(l_svName.c_str());
 
 			switch (pEntry->m_ObjectType)

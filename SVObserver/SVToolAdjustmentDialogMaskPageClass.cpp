@@ -18,7 +18,6 @@
 #include "Definitions/NameValueVector.h"
 #include "SVMFCControls/SVMaskEditor.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -23,7 +23,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/ArchiveToolHelper.h"
 #pragma endregion Includes
@@ -325,7 +324,7 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption.GetString(), m_pTool->GetInspection()->GetName() );
+	std::string Title = std::format( _T("{} - {}"), m_strCaption.GetString(), m_pTool->GetInspection()->GetName() );
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption.GetString(), Filter.c_str(), this );
 

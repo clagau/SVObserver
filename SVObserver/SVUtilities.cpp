@@ -32,7 +32,7 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-const TCHAR* const cUtilityNr				= _T("Utility%d");
+const TCHAR* const cUtilityNr				= _T("Utility{:d}");
 const TCHAR* const cDisplayName				= _T("DisplayName");
 const TCHAR* const cCommandName				= _T("Command");
 const TCHAR* const cArgumentsName			= _T("Arguments");
@@ -202,7 +202,7 @@ bool SVUtilities::LoadMenuFromINI(CMenu *pMenu)
 	for ( int i = 0; (i < l_iHighestIndex) && bRet; i++ )
 	{
 		SvLib::SVUtilityIniClass l_Struct;
-		std::string Text = SvUl::Format( cUtilityNr, i+1 );
+		std::string Text = std::format( cUtilityNr, i+1 );
 		UtilName = UtilityIni.GetValueString( Text.c_str(), cDisplayName, _T("") );
 		if ( UtilName.empty() )
 		{
@@ -327,7 +327,7 @@ void SVUtilities::CleanupIni()
 
 	for( int i = 1; i <= l_iHighestIndex; i++ )
 	{
-		std::string Text = SvUl::Format( cUtilityNr, i );
+		std::string Text = std::format( cUtilityNr, i );
 
 		Iter = pApp->m_UtilityMenu.find((UINT) (iId + i-1));
 		if( pApp->m_UtilityMenu.end() != Iter )
@@ -354,7 +354,7 @@ void SVUtilities::UpdateIni()
 	while ( pApp->m_UtilityMenu.end() != Iter  )
 	{
 		iCnt++;
-		std::string Text = SvUl::Format( cUtilityNr, iCnt);
+		std::string Text = std::format( cUtilityNr, iCnt);
 		const SvLib::SVUtilityIniClass& rUtilityStruct( Iter->second );
 
 		//update ini entries for each utility

@@ -276,7 +276,7 @@ HRESULT SVInspectionProcess::ProcessInspection()
 
 				rIPInfo.m_ObjectID = m_pCurrentToolset->getInspectedObjectID();
 #ifdef _DEBUG
-				//					std::string l_TempStateString = SvUl::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
+				//					std::string l_TempStateString = std::format( _T( "SVInspectionProcess::ProcessInspection|{}|TRI={:d}\n" ),
 				//						GetName(), p_rProduct.ProcessCount() );
 				//					::OutputDebugString( l_TempStateString.c_str() );
 #endif
@@ -1538,7 +1538,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 						{
 							Value += _T(",");
 						}
-						Value += SvUl::Format(_T("`%s`"), SvUl::createStdString(l_Variant).c_str());
+						Value += std::format(_T("`{}`"), SvUl::createStdString(l_Variant).c_str());
 					}
 				}
 			}
@@ -2445,7 +2445,7 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(SvIe::RunStatus& rRunStatu
 	if (nullptr != rRunStatus.m_triggerRecord)
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		std::string DebugString = SvUl::Format(_T("copyValues2TriggerRecord; %d\n"), rRunStatus.m_triggerRecord->getId());
+		std::string DebugString = std::format(_T("copyValues2TriggerRecord; {:d}\n"), rRunStatus.m_triggerRecord->getId());
 		::OutputDebugString(DebugString.c_str());
 #endif
 		for (const auto& pValue : m_updateValueObjectSet)
@@ -2465,7 +2465,7 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(SvIe::RunStatus& rRunStatu
 	else
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		std::string DebugString = SvUl::Format(_T("copyValues2TriggerRecord failed, no TR\n"), rRunStatus.m_triggerRecord->getId());
+		std::string DebugString = std::format(_T("copyValues2TriggerRecord failed, no TR\n"), rRunStatus.m_triggerRecord->getId());
 		::OutputDebugString(DebugString.c_str());
 #endif
 		SvStl::MessageManager e(SvStl::MsgType::Log);

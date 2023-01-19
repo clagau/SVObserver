@@ -23,7 +23,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -32,7 +31,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr const char* cDigitalInputName = ("Digital Input %ld");
+constexpr const char* cDigitalInputName = ("Digital Input {:d}");
 
 IMPLEMENT_DYNCREATE(SVDiscreteInputsView, CListView)
 
@@ -109,7 +108,7 @@ void SVDiscreteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 		for(long  i = 0; i < maxInput; ++i )
 		{
 			// First column: Module I/O
-			std::string Item = SvUl::Format(cDigitalInputName, i + 1 );
+			std::string Item = std::format(cDigitalInputName, i + 1 );
 			m_rCtrl.InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
 									  i, Item.c_str(),
 									  INDEXTOSTATEIMAGEMASK(1),
@@ -142,7 +141,7 @@ void SVDiscreteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 					// Column: Force
 					if( pDigInput->IsForced() )
 					{
-						Item = SvUl::Format( _T( "%d" ), pDigInput->GetForcedValue() ? 1 : 0 );
+						Item = std::format( _T( "{:d}" ), pDigInput->GetForcedValue() ? 1 : 0 );
 						m_rCtrl.SetItemText( i, 2, Item.c_str() );
 					}// end if
 

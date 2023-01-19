@@ -77,7 +77,7 @@ int SoftwareTriggerDlg::SelectTrigger()
 		{
 			int Value = pTrigger->GetSoftwareTriggerPeriod();
 
-			std::string Text = SvUl::Format( _T("%d"), Value );
+			std::string Text = std::format( _T("{:d}"), Value );
 			m_intervalEdit.SetWindowText( Text.c_str() );
 			m_pSpins->SetValue( Value );
 			m_knobCtrl.SetValue( Value );
@@ -156,7 +156,7 @@ LRESULT SoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM lParam)
 	if (EditOK(value))
 	{
 		EditFlag lockEdit {m_editFlag};
-		std::string Text = SvUl::Format(_T("%d"), value);
+		std::string Text = std::format(_T("{:d}"), value);
 		m_intervalEdit.SetWindowText(Text.c_str());
 		m_pSpins->SetValue(value);
 		SetFrequency(value);
@@ -188,7 +188,7 @@ void SoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 			{
 				EditFlag lockEdit {m_editFlag};
 				m_knobCtrl.SetValue(value);
-				std::string Text = SvUl::Format(_T("%d"), value);
+				std::string Text = std::format(_T("{:d}"), value);
 				m_intervalEdit.SetWindowText(Text.c_str());
 				SetFrequency(value);
 				SetTriggerPeriod(value);
@@ -282,10 +282,10 @@ void SoftwareTriggerDlg::SetTriggerPeriod(int val)
 void SoftwareTriggerDlg::SetFrequency( int Value )
 {
 	double Frequency = 1000.0 / Value;
-	std::string Text = SvUl::Format( _T("%.4fHz"), Frequency);
+	std::string Text = std::format( _T("{:.4f}Hz"), Frequency);
 	m_frequency.SetWindowText( Text.c_str() );
 	Frequency *= 60;
-	Text = SvUl::Format( _T("%.2f/min"), Frequency);
+	Text = std::format( _T("{:.2f}/min"), Frequency);
 	m_ppmLabel.SetWindowText( Text.c_str() );
 }
 

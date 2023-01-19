@@ -34,7 +34,6 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/SVAdjustToolSizePositionDlg.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -425,7 +424,7 @@ BOOL SVImageView::OnCommand(WPARAM wParam, LPARAM lParam)
 
 			if (nullptr != m_pTool)
 			{
-				std::string DlgName = SvUl::Format(_T("Adjust Tool Size and Position - %s"), m_pTool->GetName());
+				std::string DlgName = std::format(_T("Adjust Tool Size and Position - {}"), m_pTool->GetName());
 				SvOg::SVAdjustToolSizePositionDlg dlg(m_pTool->GetInspection()->getObjectId(), m_pTool->getObjectId(), DlgName.c_str(), this);
 				dlg.DoModal();
 			}
@@ -806,8 +805,8 @@ void SVImageView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		// Compensate for Scaling of Displayed Image
 		TransformFromViewSpace(l_point);
 
-		std::string Text = SvUl::Format(_T(" X: %d, Y: %d "), l_point.x, l_point.y);
-		SetStatusText(Text.c_str());
+		std::string Text = std::format( _T(" X: {:d}, Y: {:d} "), l_point.x, l_point.y );
+		SetStatusText( Text.c_str() );
 
 		if (false == ImageIsEmpty() && nullptr != l_psvIPDoc)
 		{
@@ -834,12 +833,12 @@ void SVImageView::OnRButtonDblClk(UINT nFlags, CPoint point)
 		SVIPDoc* l_psvIPDoc = GetIPDoc();
 
 		// Compensate for Scaling of Displayed Image
-		TransformFromViewSpace(l_point);
-
-		std::string Text = SvUl::Format(_T(" X: %d, Y: %d "), l_point.x, l_point.y);
-		SetStatusText(Text.c_str());
-
-		if (nullptr != l_psvIPDoc && false == ImageIsEmpty())
+		TransformFromViewSpace( l_point );
+		
+		std::string Text = std::format( _T(" X: {:d}, Y: {:d} "), l_point.x, l_point.y );
+		SetStatusText( Text.c_str() );
+		
+		if( nullptr != l_psvIPDoc && false == ImageIsEmpty())
 		{
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->Get1stSelectedToolID()));
 			if (nullptr != pTool)
@@ -893,11 +892,11 @@ void SVImageView::OnLButtonDown(UINT nFlags, CPoint point)
 					S_OK == pToolExtenclass->GetExtentProperty(SvPb::SVExtentPropertyWidth, l_width) &&
 					S_OK == pToolExtenclass->GetExtentProperty(SvPb::SVExtentPropertyHeight, l_height))
 				{
-					Text = SvUl::Format(_T(" X: %d, Y: %d    cX: %d, cY: %d "), l_tempPoint.x, l_tempPoint.y, l_width, l_height);
+					Text = std::format( _T(" X: {:d}, Y: {:d}    cX: {:d}, cY: {:d} "), l_tempPoint.x, l_tempPoint.y, l_width, l_height );
 				}
 				else
 				{
-					Text = SvUl::Format(_T(" Col: %d, Row: %d "), point.x, point.y);
+					Text = std::format( _T(" Col: {:d}, Row: {:d} "), point.x, point.y );
 				}
 
 				m_lastMouseMovePoint = point;
@@ -906,7 +905,7 @@ void SVImageView::OnLButtonDown(UINT nFlags, CPoint point)
 			}
 			else
 			{
-				Text = SvUl::Format(_T(" Col: %d, Row: %d "), point.x, point.y);
+				Text = std::format( _T(" Col: {:d}, Row: {:d} "), point.x, point.y );
 			}
 
 			SetStatusText(Text.c_str());
@@ -954,7 +953,7 @@ void SVImageView::OnMouseMove(UINT nFlags, CPoint point)
 		TransformFromViewSpace(point1);
 
 		// Status Text: Mouse Pos and Color
-		std::string Text = SvUl::Format(_T(" Col: %d, Row: %d    RGB: %u/%u/%u "), point1.x, point1.y, redValue, greenValue, blueValue);
+		std::string Text = std::format(_T(" Col: {:d}, Row: {:d}    RGB: {}/{}/{} "), point1.x, point1.y, redValue, greenValue, blueValue);
 
 		HICON hCursor = nullptr;
 
@@ -996,9 +995,9 @@ void SVImageView::OnMouseMove(UINT nFlags, CPoint point)
 					extent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointY, top);
 					extent.GetExtentProperty(SvPb::SVExtentPropertyWidth, width);
 					extent.GetExtentProperty(SvPb::SVExtentPropertyHeight, height);
-
+						
 					// Status Text: Mouse Pos and Tool Extent
-					Text = SvUl::Format(_T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), point1.x, point1.y, left, top, width, height);
+					Text = std::format(_T(" Col: {:d}, Row: {:d}    X: {:d}, Y: {:d}    cX: {:d}, cY: {:d} "), point1.x, point1.y, left, top, width, height);
 				}
 			}
 		}
@@ -1037,8 +1036,8 @@ void SVImageView::OnLButtonUp(UINT nFlags, CPoint point)
 
 	ReleaseCapture();
 
-	std::string Text = SvUl::Format(_T(" Col: %d, Row: %d "), point.x, point.y);
-	SetStatusText(Text.c_str());
+	std::string Text = std::format( _T(" Col: {:d}, Row: {:d} "), point.x, point.y );
+	SetStatusText( Text.c_str() );
 
 	CWnd::OnLButtonUp(nFlags, point);
 

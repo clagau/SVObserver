@@ -52,7 +52,6 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/AcquisitionName.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -486,7 +485,7 @@ std::string SVOConfigAssistantDlg::GetNextCameraName()
 	while ( bFound )
 	{
 		iRet++;
-		Result = SvUl::Format( _T("%s%d"), SvDef::cCameraFixedName, iRet );
+		Result = std::format( _T("{}{:d}"), SvDef::cCameraFixedName, iRet );
 		bFound = m_CameraList.IsCameraInList( Result.c_str() );
 	}
 	m_iNextCameraNumber = iRet;
@@ -512,7 +511,7 @@ std::string SVOConfigAssistantDlg::GetNextInspectionName() const
 	while ( bFound )
 	{
 		iRet++;
-		Result = SvUl::Format( _T("%s%d"), SvDef::cInspectionFixedName, iRet );
+		Result = std::format( _T("{}{:d}"), SvDef::cInspectionFixedName, iRet );
 		bFound = m_InspectList.IsInspectionInList(Result.c_str());
 		bFound |= m_InspectList.IsOriginalInspectionInList(Result.c_str());
 	}
@@ -523,7 +522,7 @@ std::string SVOConfigAssistantDlg::GetNextTriggerName(LPCTSTR BaseName) const
 {
 	int iRet = m_TriggerList.GetNextTriggerID();
 	
-	std::string Result = SvUl::Format(_T("%s%d"), BaseName, iRet + 1 );
+	std::string Result = std::format(_T("{}{:d}"), BaseName, iRet + 1 );
 
 	return Result;
 }
@@ -542,7 +541,7 @@ std::string SVOConfigAssistantDlg::GetNextPPQName() const
 	while( bFound )
 	{
 		iRet++;
-		Result = SvUl::Format( _T("%s%d"), SvDef::cPpqFixedName, iRet );
+		Result = std::format( _T("{}{:d}"), SvDef::cPpqFixedName, iRet );
 		bFound = m_PPQList.IsPPQInList( Result.c_str() );
 	}
 	return Result;
@@ -1931,7 +1930,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						else
 						{
 							SvDef::StringVector msgList;
-							msgList.push_back(SvUl::Format(_T("%d"), hr));
+							msgList.push_back(std::format(_T("{:d}"), hr));
 							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 						}
@@ -3032,14 +3031,14 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 							if ( l_lPpqLength <= l_lImageDepth )
 							{
 								// remove error message if exist
-								std::string Msg = SvUl::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
+								std::string Msg = std::format( _T("{}{:d}"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
 								RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
 							else
 							{
 								// add error message if it does not exist
-								std::string Msg = SvUl::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
+								std::string Msg = std::format( _T("{}{:d}"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
 								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
@@ -3059,7 +3058,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 							long l_lImageDepth = TheSVObserverApp().GetMaxPPQLength();
 							if ( l_lPpqLength > l_lImageDepth )
 							{
-								std::string Msg = SvUl::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
+								std::string Msg = std::format( _T("{}{:d}"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
 								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
@@ -3069,7 +3068,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 							// see if error conditions exist, if so remove it
 							// maintain source image = false
 							long l_lImageDepth = TheSVObserverApp().GetMaxPPQLength();
-							std::string Msg = SvUl::Format( _T("%s%d"),PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
+							std::string Msg = std::format( _T("{}{:d}"),PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
 							//create error display message
 							RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 						}

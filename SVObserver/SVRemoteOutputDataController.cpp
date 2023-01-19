@@ -25,7 +25,6 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -161,7 +160,7 @@ bool SVRemoteOutputDataController::GetParameters(SvOi::IObjectWriter& rWriter)
 		for( l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end() ; ++l_it )
 		{
 			lIndex++;
-			std::string Branch = SvUl::Format( "%s_%d", SvXml::CTAG_REMOTE_GROUP_ID, lIndex );
+			std::string Branch = std::format( "{}_{:d}", SvXml::CTAG_REMOTE_GROUP_ID, lIndex );
 			rWriter.StartElement( Branch.c_str() );
 			l_it->second->GetParameters( rWriter );
 			rWriter.EndElement();
@@ -201,7 +200,7 @@ bool SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 				SVTreeType::SVBranchHandle htiBranch = nullptr;
 				std::string GroupID;
 
-				std::string Entry = SvUl::Format( _T("%s_%d"), SvXml::CTAG_REMOTE_GROUP_ID, ++l_lEntryNum );
+				std::string Entry = std::format( _T("{}_{:d}"), SvXml::CTAG_REMOTE_GROUP_ID, ++l_lEntryNum );
 				tmpResult = SvXml::SVNavigateTree::GetItemBranch( p_rTree, Entry.c_str(), htiIORemoteOutput, htiBranch );
 
 				if (tmpResult)
@@ -381,7 +380,7 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 			} );
 			if (l_ppqIt == l_PPQInfos.end())
 			{
-				std::string Text = SvUl::Format(_T("Deleting Remote Output Group associated with PPQ %s\n"), ppqInfo.first.c_str() );
+				std::string Text = std::format(_T("Deleting Remote Output Group associated with PPQ {}\n"), ppqInfo.first.c_str() );
 				OutputDebugString( Text.c_str() );
 				l_it = m_RemoteGroupParameters.erase(l_it);
 			}

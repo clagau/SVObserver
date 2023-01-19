@@ -40,7 +40,6 @@
 #include "Triggering/SVTriggerConstants.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/AcquisitionName.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVRPropertyTree/SVRPropTreeItemFile.h"
@@ -453,7 +452,7 @@ void SVOPropertyPageDlg::SetupAdvancedCamera()
 					pCombo->CreateComboBox();
 
 					int num = m_CameraObj.GetDigNumber();
-					std::string Text = SvUl::Format( _T("%d"), num );
+					std::string Text = std::format( _T("{:d}"), num );
 					int iPos = pCombo->AddString( Text.c_str() );
 					pCombo->SetItemData(iPos, num);
 					pCombo->SetItemValue(num);
@@ -516,9 +515,9 @@ void SVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SV
 						{
 							Label = pCamFileParam->Name();
 						}
-						Label = SvUl::Format( _T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
+						Label = std::format( _T("{} ({})"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
 						pEdit->SetLabelText( Label.c_str() );
-						std::string Description = SvUl::Format( _T("%s   Min = %d, Max = %d; default = %d"), pCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
+						std::string Description = std::format( _T("{}   Min = {:d}, Max = {:d}; default = {:d}"), pCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
 						pEdit->SetInfoText( Description.c_str() );
 
 						pEdit->SetItemValue( pCamDeviceParam->GetScaledValue() );
@@ -878,7 +877,7 @@ void SVOPropertyPageDlg::SetupAdvancedTrigger()
 		{
 			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
 			pEdit->SetLabelText(_T("Timer Period"));
-			std::string Text = SvUl::Format(_T("Enter the period for the Software Trigger (also used for Test Mode), in milliseconds (minimum %d milliseconds)."), SvTrig::MinTimerPeriod_ms);
+			std::string Text = std::format(_T("Enter the period for the Software Trigger (also used for Test Mode), in milliseconds (minimum {:d} milliseconds)."), SvTrig::MinTimerPeriod_ms);
 			pEdit->SetInfoText(Text.c_str());
 
 			pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
@@ -992,9 +991,9 @@ void SVOPropertyPageDlg::SetupPPQ()
 		pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 		if ( pCombo )
 		{
-			std::string InfoString = SvUl::Format( _T("Enabling this option will maintain source images and published result images "
+			std::string InfoString = std::format( _T("Enabling this option will maintain source images and published result images "
 				"throughout the length of the PPQ. Because of this, "
-				"the PPQ Length can not be > %d"),TheSVObserverApp().GetMaxPPQLength());
+				"the PPQ Length can not be > {:d}"),TheSVObserverApp().GetMaxPPQLength());
 			pCombo->SetCtrlID(PROP_PPQ_MAINTAIN_SRC_IMG);
 			pCombo->SetLabelText(_T("Maintain Published Images"));
 			pCombo->SetInfoText( InfoString.c_str() );

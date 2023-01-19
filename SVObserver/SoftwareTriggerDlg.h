@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVMFCControls/SVKnobControl.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 constexpr int cMaxTriggerCount = 4;
@@ -177,7 +176,7 @@ inline bool SVSpinGroup::SetValue(int val)
 	int carry = val / m_limit;
 	m_value = val % m_limit;
 
-	std::string Text = SvUl::Format(_T("%d"), m_value);
+	std::string Text = std::format(_T("{:d}"), m_value);
 	m_spin.SetPos(m_value);
 	m_edit.SetWindowText(Text.c_str());
 	if (m_value || carry)
@@ -237,7 +236,7 @@ inline bool SVSpinGroup::Increment(int val)
 		m_next->Increment(1);
 	}
 
-	std::string Text = SvUl::Format(_T("%d"), m_value);
+	std::string Text = std::format(_T("{:d}"), m_value);
 	m_edit.SetWindowText(Text.c_str());
 	return true;
 }

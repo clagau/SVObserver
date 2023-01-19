@@ -25,7 +25,6 @@
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/ArchiveToolHelper.h"
 #include "SVOLibrary/SVMemoryManager.h"
@@ -318,7 +317,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 
 	m_maximumNumberOfArchiveImages = m_ValueController.Get<DWORD>(SvPb::ArchiveMaxImagesCountEId);
-	std::string Temp = SvUl::Format(_T("%ld"), m_maximumNumberOfArchiveImages);
+	std::string Temp = std::format(_T("{:d}"), m_maximumNumberOfArchiveImages);
 	m_EditMaxImages.SetWindowText( Temp.c_str() );
 
 	// store the MaxImageNumber
@@ -396,7 +395,7 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
 
-	std::string Prefix = SvUl::Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), SvUl::LoadedStrings::g_ToolSetName.c_str() );
+	std::string Prefix = std::format( _T("{}.{}."), m_pTool->GetInspection()->GetName(), SvUl::LoadedStrings::g_ToolSetName );
 
 	int Index = 0;
 
@@ -449,7 +448,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption.GetString(), m_pTool->GetInspection()->GetName());
+	std::string Title = std::format( _T("{} - {}"), m_strCaption.GetString(), m_pTool->GetInspection()->GetName());
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption.GetString(), Filter.c_str(), this );
 
@@ -645,7 +644,7 @@ __int64 SVTADlgArchiveImagePage::recalculateRemainingImageMemory()
 
 	double megabytes = (double)FreeMem / (double)(SvDef::cBytesPerMegabyte);
 
-	std::string availableMemory = SvUl::Format(formatText, fabs(megabytes));
+	std::string availableMemory = std::vformat(formatText, std::make_format_args(fabs(megabytes)));
 	m_wndAvailableArchiveImageMemory.SetWindowText(availableMemory.c_str());
 
 	return FreeMem;

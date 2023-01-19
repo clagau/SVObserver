@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVPPQBar.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVConfigurationObject.h"
 #include "SVObserverOuttakes.h"
 #include "SVIPDoc.h"
@@ -359,7 +358,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 		for( int i = 0; i < lPPQLength + 1; ++ i )
 		{
 			CButton* pButton = new CButton();
-			std::string Caption = SvUl::Format( _T("%d"), i + 1 );
+			std::string Caption = std::format( _T("{:d}"), i + 1 );
 			DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP;
 			buttonList.Add( pButton );
 			if( i != lPPQLength )
@@ -389,7 +388,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 
 				if( lPosition >= 0 && lPosition < buttonList.GetSize() && buttonList.GetAt( lPosition ) )
 				{
-					std::string Caption = SvUl::Format( _T("*%d*"),lPosition + 1 );
+					std::string Caption = std::format( _T("*{:d}*"),lPosition + 1 );
 					buttonList.GetAt( lPosition )->SetWindowText( Caption.c_str() );
 				}// end if
 			}
@@ -401,7 +400,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 			int pos = lPosition;
 			if( pos >= 0 && pos < buttonList.GetSize() && buttonList.GetAt( pos ) )
 			{
-				std::string Caption = SvUl::Format( _T("*%d*"), pos + 1 );
+				std::string Caption = std::format( _T("*{:d}*"), pos + 1 );
 				buttonList.GetAt( pos )->SetWindowText( Caption.c_str() );
 			}// end if
 
@@ -479,7 +478,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 			    {
 				    if( dlg.m_bIsTaken )
 				    {
-						std::string Caption = SvUl::Format( _T("*%d*"), pos + 1 );
+						std::string Caption = std::format( _T("*{:d}*"), pos + 1 );
 					    buttonList.GetAt( pos )->SetWindowText( Caption.c_str() );
 
 					    HICON hIc = AfxGetApp()->LoadIcon( IDI_ICON_CAMERA );

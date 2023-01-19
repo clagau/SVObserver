@@ -18,7 +18,6 @@
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -55,7 +54,7 @@ bool SVLutDlg::Create(SvIe::SVVirtualCameraPtrVector& rCameraVector, SVLutMap& r
 
 			if(nullptr != pAcqDevice && raLut.find( pCamera->getObjectId() ) != raLut.end() && 0 < raLut[pCamera->getObjectId()].NumBands() )
 			{
-				std::string Caption = SvUl::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pAcqDevice->DigNumber(), pAcqDevice->Channel());
+				std::string Caption = std::format("{} (Dig_{:d}.Ch_{:d})", pCamera->GetName(), pAcqDevice->DigNumber(), pAcqDevice->Channel());
 
 				SVLutDlgPage* pPage;
 				pPage = new SVLutDlgPage( this, Caption.c_str() );

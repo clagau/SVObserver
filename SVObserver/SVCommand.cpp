@@ -44,7 +44,6 @@
 #include "RemoteCommand.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVVisionProcessorHelper.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -1170,7 +1169,7 @@ STDMETHODIMP SVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaN
 								ArrayValues += _T(",");
 							}
 
-							ArrayValues += SvUl::Format(_T("`%s`"), Value.c_str());
+							ArrayValues += std::format(_T("`{}`"), Value);
 						}
 						else
 						{
@@ -1844,7 +1843,7 @@ HRESULT SVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, SA
 								{
 									ArrayValues += _T(",");
 								}
-								ArrayValues += SvUl::Format(_T("`%s`"), Value.c_str());
+								ArrayValues += std::format(_T("`{}`"), Value);
 							}
 							else
 							{

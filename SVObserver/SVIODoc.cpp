@@ -34,7 +34,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

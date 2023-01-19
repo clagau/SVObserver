@@ -180,7 +180,7 @@ std::pair<std::map<std::string, SVRPropertyItem*>, int> SVTADlgExternalResultPag
 			default:      Type = _T("???");    break;
 		}
 
-		std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.helptext().c_str());
+		std::string sDescription = std::format(_T(" (Type : {})  {}"), Type, rDefinition.helptext());
 		pEdit->SetInfoText(sDescription.c_str());
 		pEdit->SetButtonText(_T("Range"));
 		pEdit->ReadOnly();
@@ -246,7 +246,7 @@ void SVTADlgExternalResultPage::HandleTables(std::map<std::string, SVRPropertyIt
 		std::string  sLabel = "Table Object";
 		if (i > 0)
 		{
-			sLabel = SvUl::Format(_T("%s%i"), "Table Object", i);
+			sLabel = std::format(_T("{}{}"), "Table Object", i);
 		}
 
 		{
@@ -257,7 +257,7 @@ void SVTADlgExternalResultPage::HandleTables(std::map<std::string, SVRPropertyIt
 		pEdit->SetLabelText(sLabel.c_str());
 		pEdit->ReadOnly();
 
-		std::string sDescription = SvUl::Format(_T(" (Type: Tableobject)  %s"), rDefinition.helptext().c_str());
+		std::string sDescription = std::format(_T(" (Type: Tableobject)  {}"), rDefinition.helptext());
 		pEdit->SetInfoText(sDescription.c_str());
 
 		pEdit->OnRefresh();

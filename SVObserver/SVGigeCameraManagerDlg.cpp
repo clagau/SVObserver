@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeCameraManagerDlg.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -93,7 +92,7 @@ HRESULT SVGigeCameraManagerDlg::Refresh()
 	{
 		if( x < static_cast<int> (m_CamList.size()))
 		{
-			std::string CameraNumber = SvUl::Format("%d",x+1);
+			std::string CameraNumber = std::format("{:d}",x+1);
 			m_ctlCameraList.InsertItem( x, CameraNumber.c_str() );
 
 			if( !m_CamList[x].m_IPAddress.empty() )

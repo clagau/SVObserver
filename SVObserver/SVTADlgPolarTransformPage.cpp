@@ -17,7 +17,6 @@
 #include "Operators/SVImagePolarTransform.h"
 #include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGuiUtility/DataController.h"
 #pragma endregion Includes
 

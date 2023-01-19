@@ -50,7 +50,6 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 
@@ -2093,8 +2092,8 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 		{
 			if( WAIT_TIMEOUT == WaitForSingleObject( m_hDisplayChangedEvent, 0 ) )
 			{
-				std::string Message = SvUl::Format( _T("\n\n\nThe display color settings on the system have changed.\n"
-					"Images may not display correctly until this configuration is reopened.") );
+				std::string Message = _T("\n\n\nThe display color settings on the system have changed.\n"
+					"Images may not display correctly until this configuration is reopened.");
 				HANDLE hMessage = ::CreateEvent( nullptr, true, false, nullptr );
 				::SetEvent( hMessage );
 				SvOi::CallModelessMessageBox( Message, hMessage );

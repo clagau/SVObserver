@@ -20,7 +20,6 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -392,7 +391,7 @@ BOOL SVChildrenSetupDialog::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject
 		std::set<uint32_t> rIdsOfObjectsDependedOn({pTaskObject->getObjectId()});
 
 		std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
-		std::string DisplayText = SvUl::Format(FormatText.c_str(), pTaskObject->GetName(), pTaskObject->GetName(), pTaskObject->GetName(), pTaskObject->GetName());
+		std::string DisplayText = std::vformat(FormatText, std::make_format_args(pTaskObject->GetName(), pTaskObject->GetName(), pTaskObject->GetName(), pTaskObject->GetName()));
 
 		INT_PTR rc = SvOg::showDependentsDialogIfNecessary(rIdsOfObjectsDependedOn, DisplayText);
 

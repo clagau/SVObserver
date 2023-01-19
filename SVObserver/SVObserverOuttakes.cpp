@@ -41,7 +41,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/Heapwalk.h"
 #include "SVUtilityLibrary/LoadDll.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Triggering/SVTriggerObject.h"
 #include "Triggering/SVTriggerProcessingClass.h"
 #pragma endregion Includes
@@ -264,7 +263,7 @@ HRESULT GetTriggersAndCounts(std::string& rTriggerCounts)
 				if (nullptr != pTrigger)
 				{
 					hr = S_OK;
-					std::string Temp = SvUl::Format(_T("\n%s count-%d"), pTrigger->GetName(), pTrigger->getTriggerCount());
+					std::string Temp = std::format(_T("\n{} count-{:d}"), pTrigger->GetName(), pTrigger->getTriggerCount());
 					rTriggerCounts += Temp;
 				}
 			}

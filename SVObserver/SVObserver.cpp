@@ -74,7 +74,6 @@
 #include "SVUtilityLibrary/Heapwalk.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVUtilityLibrary/SVClock.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "Triggering/SVTriggerObject.h"
 #include "Triggering/SVTriggerProcessingClass.h"
@@ -551,7 +550,7 @@ int SVObserverApp::Run()
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		//Set the error code to unhandled exception but use the rest of the data from the original exception
 		SvStl::MessageData Msg(rExp.getMessage());
-		std::string OrgMessageCode = SvUl::Format(_T("0x%08X"), Msg.m_MessageCode);
+		std::string OrgMessageCode = std::format(_T("{:#08x}"), Msg.m_MessageCode);
 		Msg.m_AdditionalTextId = SvStl::Tid_Default;
 		SvDef::StringVector msgList;
 		msgList.push_back(OrgMessageCode);
@@ -728,7 +727,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				if (E_FAIL != hr)
 				{
 					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), hr));
+					msgList.push_back(std::format(_T("{:d}"), hr));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_ConfigurationLoadFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
@@ -1453,7 +1452,7 @@ void SVObserverApp::Start(DWORD desiredState)
 		long loadTime = static_cast<long> (SvUl::GetTimeStamp() - startLoading);
 		SvDef::StringVector msgList;
 		msgList.push_back(TriggerCounts);
-		msgList.push_back(SvUl::Format(_T("%d"), loadTime));
+		msgList.push_back(std::format(_T("{:d}"), loadTime));
 		//add go-online message to the event viewer.
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, SvStl::Tid_GoOnlineTime, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -1574,8 +1573,8 @@ HRESULT SVObserverApp::PrepareCamerasAndMemory()
 			if (cNormalNonPageMemoryUsage < NonPagedMemUsage)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%.0f"), cNormalNonPageMemoryUsage));
-				msgList.push_back(SvUl::Format(_T("%.0f"), NonPagedMemUsage));
+				msgList.push_back(std::format(_T("{:f}"), cNormalNonPageMemoryUsage));
+				msgList.push_back(std::format(_T("{:f}"), NonPagedMemUsage));
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_NON_PAGED_MEMORY_LOW, SvStl::Tid_MoreThanPercentUsed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
@@ -1887,7 +1886,7 @@ bool SVObserverApp::InitATL(){
 	if (FAILED(l_Status))
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%08X"), l_Status));
+		msgList.push_back(std::format(_T("{:08x}"), l_Status));
 #ifdef _DEBUG
 		if (!l_AppRegister && !l_AppUnregister)
 		{

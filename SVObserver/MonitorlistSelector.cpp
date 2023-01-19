@@ -14,7 +14,6 @@
 #include "MonitorListSelector.h"
 #include "SVConfigurationObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "RemoteMonitorListHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"

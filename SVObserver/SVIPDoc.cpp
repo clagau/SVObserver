@@ -67,7 +67,6 @@
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
@@ -1669,7 +1668,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				//Set the error code to unhandled exception but use the rest of the data from the original exception
 				SvStl::MessageData Msg(rExp.getMessage());
-				std::string OrgMessageCode = SvUl::Format(_T("0x%08X"), Msg.m_MessageCode);
+				std::string OrgMessageCode = std::format(_T("{:#08X}"), Msg.m_MessageCode);
 				Msg.m_AdditionalTextId = SvStl::Tid_Default;
 				SvDef::StringVector msgList;
 				msgList.push_back(OrgMessageCode);
@@ -1772,7 +1771,7 @@ void SVIPDoc::OnResultsPicker()
 			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(TranslateSelectedObjects(rSelectedObjects, InspectionName));
 
 			std::string ResultPicker = SvUl::LoadStdString(IDS_RESULT_PICKER);
-			std::string Title = SvUl::Format(_T("%s - %s"), ResultPicker.c_str(), InspectionName.c_str());
+			std::string Title = std::format(_T("{} - {}"), ResultPicker.c_str(), InspectionName.c_str());
 			std::string Filter = SvUl::LoadStdString(IDS_FILTER);
 			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ResultPicker.c_str(), Filter.c_str());
 
@@ -1899,11 +1898,11 @@ void SVIPDoc::OnSaveResultsToFile()
 					{
 						if (0 <= l_rDef.GetIndex())
 						{
-							Name = SvUl::Format(_T("%s[%d]"), l_pObject->GetName(), l_rDef.GetIndex() + 1);
+							Name = std::format(_T("{}[{:d}]"), l_pObject->GetName(), l_rDef.GetIndex() + 1);
 						}
 						else
 						{
-							Name = SvUl::Format(_T("%s[]"), l_pObject->GetName());
+							Name = std::format(_T("{}[]"), l_pObject->GetName());
 						}
 					}
 					else
@@ -1913,14 +1912,14 @@ void SVIPDoc::OnSaveResultsToFile()
 					NameToType = l_pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				}
 
-				ItemIndex = SvUl::Format(_T("%d"), i);
+				ItemIndex = std::format(_T("{:d}"), i);
 
 				SvIe::SVIPResultData::SVResultDataMap::const_iterator l_Iter = ResultData.m_ResultData.find(l_rDef);
 
 				if (l_Iter != ResultData.m_ResultData.end())
 				{
 					Value = l_Iter->second.GetValue().c_str();
-					//Color = SvUl::Format(_T("0X%X6"), l_Iter->second.GetColor());
+					//Color = std::format(_T("{:#06X}"), l_Iter->second.GetColor());
 
 					if (l_Iter->second.IsIOTypePresent())
 					{
@@ -1941,13 +1940,13 @@ void SVIPDoc::OnSaveResultsToFile()
 				file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
 			}
 
-			std::string TimeText = SvUl::Format(_T("%.3f ms ( %.3f ms )"), ResultData.m_ToolSetEndTime * 1000, ResultData.m_ToolSetAvgTime * 1000);
+			std::string TimeText = std::format(_T("{:.3f} ms ( {:.3f} ms )"), ResultData.m_ToolSetEndTime * 1000, ResultData.m_ToolSetAvgTime * 1000);
 			tmpText = _T("Toolset Time;") + TimeText + ";" + GetCompleteToolSetName() + "\n";
 			file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
 			double dTime = ResultData.m_TriggerDistance / 1000.0;
 			if (dTime != 0.0)
 			{
-				TimeText = SvUl::Format(_T("%.3f / sec (%.3f / min)"), 1.0 / dTime, 1.0 / dTime * 60.0);
+				TimeText = std::format(_T("{:.3f} / sec ({:.3f} / min)"), 1.0 / dTime, 1.0 / dTime * 60.0);
 			}
 			else
 			{
@@ -1997,13 +1996,13 @@ void SVIPDoc::OnSaveTableResultsToFile()
 				int rowCountNew = SvUl::getArraySizeFromOneDim(resultTableData[0].m_rowData);
 				for (int i = 0; i < rowCountNew; i++)
 				{
-					tmpText = SvUl::Format(_T("%d;"), i + 1);
+					tmpText = std::format(_T("{:d};"), i + 1);
 					for (int j = 0; j < resultTableData.size(); j++)
 					{
 						std::vector<double> values = SvUl::getVectorFromOneDim<double>(resultTableData[j].m_rowData);
 						if (values.size() > i)
 						{
-							tmpText += SvUl::Format("%f", values[i]);
+							tmpText += std::format("{}", values[i]);
 						}
 						tmpText += ";";
 					}
@@ -3101,7 +3100,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		if (GetImageView())
 		{
 			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-			std::string DlgName = SvUl::Format(_T("Adjust Tool Size and Position - %s"), pTool->GetName());
+			std::string DlgName = std::format(_T("Adjust Tool Size and Position - {}"), pTool->GetName());
 			SvOg::SVAdjustToolSizePositionDlg dlg(m_InspectionID, pTool->getObjectId(), DlgName.c_str(), dynamic_cast<CWnd*>(this->GetMDIChild()));
 			dlg.DoModal();
 		}
@@ -4206,7 +4205,7 @@ bool mayDeleteCurrentlySelectedTools(const std::set<uint32_t>& rIdsOfObjectsDepe
 	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 	std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
-	std::string DisplayText = SvUl::Format(FormatText.c_str(), "the selected tools'", "the selected tools", "the selected tools", "the selected tools");
+	std::string DisplayText = std::vformat(FormatText, std::make_format_args("the selected tools'", "the selected tools", "the selected tools", "the selected tools"));
 
 	return IDOK == SvOg::showDependentsDialogIfNecessary(rIdsOfObjectsDependedOn, DisplayText);
 }

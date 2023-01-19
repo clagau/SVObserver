@@ -32,7 +32,6 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -430,7 +429,7 @@ HRESULT ToolClipboard::updateAllToolNames(std::string& rXmlData, SVTreeType& rTr
 		int toolIndex = 0;
 		while (rTree.isValidBranch(ToolItem))
 		{
-			std::string fullToolNameTag {SvUl::Format(SvXml::FullToolNameTag, toolIndex++)};
+			std::string fullToolNameTag {std::format(SvXml::FullToolNameTag, toolIndex++)};
 			SvXml::SVXMLMaterialsTree::SVLeafHandle fullToolNameHandle;
 			SvXml::SVNavigateTree::GetItemLeaf(rTree, fullToolNameTag.c_str(), ToolsItem, fullToolNameHandle);
 			variant_t value;
@@ -514,7 +513,7 @@ std::string ToolClipboard::getUniqueToolName(std::string& rToolName, const SVObj
 			OutputDebugString("(additional):\n");
 			for (const auto& rName : m_additionalNames)
 			{
-				OutputDebugString(SvUl::Format("\t%s\n", rName.c_str()).c_str());
+				OutputDebugString(std::format("\t{}\n", rName.c_str()).c_str());
 			}
 		}
 #endif
@@ -522,7 +521,7 @@ std::string ToolClipboard::getUniqueToolName(std::string& rToolName, const SVObj
 		uniqueName = rDoc.makeNameUnique(rToolName, m_additionalNames);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLNAMES)
-		OutputDebugString(SvUl::Format("new Unique: %s -> %s\n", rToolName.c_str(), uniqueName.c_str()).c_str());
+		OutputDebugString(std::format("new Unique: {} -> {}\n", rToolName.c_str(), uniqueName.c_str()).c_str());
 #endif
 	}
 

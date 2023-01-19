@@ -54,6 +54,7 @@
 #include <ctime>			//Used by static library
 #include <comdef.h>
 #include <comutil.h>
+#include <format>
 #include <fstream>
 #include <iosfwd>
 #include <iostream>

@@ -102,7 +102,7 @@ std::string SVRemoteOutputGroupAddRemoveDlg::NextAvailableGroupName()
 			}
 		}
 	}
-	Result = SvUl::Format( _T("Output Group %d"), num );
+	Result = std::format( _T("Output Group {:d}"), num );
 	return Result;
 }
 

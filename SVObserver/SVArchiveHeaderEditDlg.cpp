@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVArchiveHeaderEditDlg.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 // SVArchiveHeaderEditDlg dialog
@@ -238,7 +237,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 		else
 		{	// The string does not fit so we display a part of it.
 			int newLength = static_cast<int>( DisplayText.size() * (double)newWidth /textSize.cx);
-			std::string NewString = SvUl::Format( _T("%s..."), SvUl::Left( DisplayText, newLength-3).c_str() );
+			std::string NewString = std::format( _T("{}..."), SvUl::Left( DisplayText, newLength-3).c_str() );
 			pText->SetWindowText( NewString.c_str() );
 		}
 	}

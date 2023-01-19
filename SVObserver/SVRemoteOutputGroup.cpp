@@ -17,7 +17,6 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
@@ -93,7 +92,7 @@ bool SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
 	// Remote Outputs 
 	for (size_t i = 0; i < m_RemoteOutputs.size(); i++)
 	{
-		std::string Branch = SvUl::Format(_T("%s_%d"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, i + 1);
+		std::string Branch = std::format(_T("{}_{:d}"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, i + 1);
 		rWriter.StartElement(Branch.c_str());
 		m_RemoteOutputs[i]->GetParameters(rWriter);
 		rWriter.EndElement();
@@ -137,7 +136,7 @@ bool SVRemoteOutputGroup::SetParameters(SVTreeType& p_rTree, SVTreeType::SVBranc
 		while (tmp)
 		{
 			SVTreeType::SVBranchHandle htiBranch = nullptr;
-			std::string Entry = SvUl::Format(_T("%s_%d"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum);
+			std::string Entry = std::format(_T("{}_{:d}"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum);
 			tmp = SvXml::SVNavigateTree::GetItemBranch(p_rTree, Entry.c_str(), htiParent, htiBranch);
 			if (tmp)
 			{

@@ -21,7 +21,6 @@
 #include "Operators/SVResult.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVStatTool.h"
 #pragma endregion Includes
 
@@ -277,7 +276,7 @@ void SVTADlgStatisticsPage::OnBtnObjectPicker()
 	}
 
 	std::string ToolsetOutput = SvUl::LoadStdString( IDS_SELECT_TOOLSET_OUTPUT );
-	std::string Title = SvUl::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
+	std::string Title = std::format( _T("{} - {}"), ToolsetOutput, m_pTool->GetName() );
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );

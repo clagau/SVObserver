@@ -17,7 +17,6 @@
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 BEGIN_MESSAGE_MAP(SVLightReferenceDialogPropertySheetClass, CPropertySheet)
@@ -88,7 +87,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages(SvIe::SVVirtualCamera
 				SvDef::StringVector msgList;
 				if(nullptr != pDevice)
 				{
-					msgList.push_back(SvUl::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pDevice->DigNumber(), pDevice->Channel()));
+					msgList.push_back(std::format("{} (Dig_{:d}.Ch_{:d})", pCamera->GetName(), pDevice->DigNumber(), pDevice->Channel()));
 				}
 				else
 				{
@@ -108,7 +107,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages(SvIe::SVVirtualCamera
 				for (int iAttribute=0; iAttribute < rLRBand.NumAttributes(); iAttribute++)
 				{
 					// the IDs are no longer valid... use the text instead
-					std::string DigitizerName = SvUl::Format( _T("Dig.%d"), pDevice->DigNumber() );
+					std::string DigitizerName = std::format( _T("Dig.{:d}"), pDevice->DigNumber() );
 					std::string TabText = pCamera->GetName() + std::string(_T(" ")) + DigitizerName + std::string(_T(" ")) + rLRBand.Attribute( iAttribute ).strName;
 					SVLightReferenceDialogPropertyPageClass* pPage = new SVLightReferenceDialogPropertyPageClass( TabText.c_str() );
 					pPage->m_pCamera = pCamera;
@@ -198,9 +197,9 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnSetActive()
 	m_ValueSlider.SetPageSize( (max-min)/10 );
 
 	// Set Min and Max Text 
-	std::string Text = SvUl::Format( _T("%ld"), min );
+	std::string Text = std::format( _T("{:d}"), min );
 	GetDlgItem(IDC_MIN)->SetWindowText( Text.c_str() );
-	Text = SvUl::Format( _T("%ld"), max );
+	Text = std::format( _T("{:d}"), max );
 	GetDlgItem(IDC_MAX)->SetWindowText( Text.c_str() );
 
 	// Update step width...

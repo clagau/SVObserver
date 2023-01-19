@@ -16,7 +16,6 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -112,7 +111,7 @@ HRESULT CommandInspectionGetItems::UpdateResultsWithImageData(const std::string&
 
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
-			std::string Temp = SvUl::Format(_T("%ld-%u.bmp"), TriggerCount, pImage->getObjectId());
+			std::string Temp = std::format(_T("{:d}-{}.bmp"), TriggerCount, pImage->getObjectId());
 			std::string FileName = SvStl::GlobalPath::Inst().GetPathOnRamDrive(Temp.c_str());
 
 			GetStatus = SvIe::SVImageProcessingClass::SaveImageBuffer(FileName.c_str(), ImageFileFormat::bmp, pImageBuffer->getHandle());

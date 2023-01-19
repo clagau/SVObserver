@@ -26,7 +26,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -35,7 +34,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr const char* cDigitalOutputName = ("Digital Output %ld");
+constexpr const char* cDigitalOutputName = ("Digital Output {:d}");
 
 IMPLEMENT_DYNCREATE(SVDiscreteOutputsView, CListView)
 
@@ -126,7 +125,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* , LPARAM , CObject*  )
 		for(long i = 0; i < maxOutput; ++i)
 		{
 			// First column: Result I/O
-			std::string Item = SvUl::Format(cDigitalOutputName, i + 1);
+			std::string Item = std::format(cDigitalOutputName, i + 1);
 			m_rCtrl.InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
 				i, Item.c_str(), 
 				INDEXTOSTATEIMAGEMASK(1),

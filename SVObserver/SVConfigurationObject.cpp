@@ -59,7 +59,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
@@ -856,7 +855,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 	// Loop through all the "IO EntryXXX"
 	for (i = 0; i < lIOSize; i++)
 	{
-		std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, i);
+		std::string IOEntry = std::format(SvXml::CTAGF_IO_ENTRY_X, i);
 		if (!SvXml::SVNavigateTree::GetItemBranch(rTree, IOEntry.c_str(), hChild, hSubChild))
 		{
 			SvStl::MessageContainer MsgCont;
@@ -1098,7 +1097,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 							{
 								SVTreeType::SVBranchHandle hBand = nullptr;
 
-								std::string Band = SvUl::Format(SvXml::CTAGF_BAND_X, i);
+								std::string Band = std::format(SvXml::CTAGF_BAND_X, i);
 
 								if (SvXml::SVNavigateTree::GetItemBranch(rTree, Band.c_str(), hDataChild, hBand))
 								{
@@ -1112,7 +1111,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 										{
 											SVTreeType::SVBranchHandle hLight = nullptr;
 
-											std::string LightRef = SvUl::Format(SvXml::CTAGF_LIGHTREFERENCE_X, j);
+											std::string LightRef = std::format(SvXml::CTAGF_LIGHTREFERENCE_X, j);
 
 											if (SvXml::SVNavigateTree::GetItemBranch(rTree, LightRef.c_str(), hBand, hLight))
 											{
@@ -1192,7 +1191,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 							{
 								SVTreeType::SVBranchHandle hBand = nullptr;
 
-								std::string Band = SvUl::Format(SvXml::CTAGF_BAND_X, iBand);
+								std::string Band = std::format(SvXml::CTAGF_BAND_X, iBand);
 
 								SVLutTransformParameters param;
 
@@ -2264,7 +2263,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 			// need to determine Digitizer Number and Channel
 			std::string DeviceName;
 
-			DeviceName = SvUl::Format(_T("%s.%s"), BoardName.c_str(), DigName.c_str());
+			DeviceName = std::format(_T("{}.{}"), BoardName, DigName);
 
 			SvIe::SVAcquisitionClassPtr psvDevice(SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DeviceName.c_str()));
 			if (nullptr != psvDevice)
@@ -2313,7 +2312,7 @@ HRESULT SVConfigurationObject::LoadDeviceParameters(SVTreeType& rTree, SVTreeTyp
 	int iParam = 0;
 	SVTreeType::SVBranchHandle hParam(nullptr);
 
-	std::string Parameter = SvUl::Format(SvXml::CTAGF_DEVICE_PARAM_X, ++iParam);
+	std::string Parameter = std::format(SvXml::CTAGF_DEVICE_PARAM_X, ++iParam);
 
 	while (SvXml::SVNavigateTree::GetItemBranch(rTree, Parameter.c_str(), hDataChild, hParam))
 	{
@@ -2330,7 +2329,7 @@ HRESULT SVConfigurationObject::LoadDeviceParameters(SVTreeType& rTree, SVTreeTyp
 		}
 
 		hParam = nullptr;
-		Parameter = SvUl::Format(SvXml::CTAGF_DEVICE_PARAM_X, ++iParam);
+		Parameter = std::format(SvXml::CTAGF_DEVICE_PARAM_X, ++iParam);
 	}
 
 	return S_OK;
@@ -2353,7 +2352,7 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial(SVTreeType& rTree, SVTreeT
 		if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_OPTIONS, hParent, hChild))
 		{
 			int iOption = 0;
-			std::string OptionTag = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
+			std::string OptionTag = std::format(SvXml::CTAGF_OPTION_X, ++iOption);
 			while (SvXml::SVNavigateTree::GetItemBranch(rTree, OptionTag.c_str(), hChild, hParam))
 			{
 				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NAME, hParam, svVariant))
@@ -2383,7 +2382,7 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial(SVTreeType& rTree, SVTreeT
 						rcf.m_lHeight = svVariant;
 					}
 				}
-				OptionTag = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
+				OptionTag = std::format(SvXml::CTAGF_OPTION_X, ++iOption);
 			}
 		}
 	}
@@ -2621,7 +2620,7 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 
 	for (long lIn = 0; lIn < lInSize; lIn++)
 	{
-		std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, lCount);
+		std::string IOEntry = std::format(SvXml::CTAGF_IO_ENTRY_X, lCount);
 
 		if (inputEntryVector[lIn]->m_ObjectType == IO_DIGITAL_INPUT)
 		{
@@ -2647,7 +2646,7 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 
 	for (long lOut = 0; lOut < lOutSize; lOut++)
 	{
-		std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, lCount);
+		std::string IOEntry = std::format(SvXml::CTAGF_IO_ENTRY_X, lCount);
 
 		rWriter.StartElement(IOEntry.c_str());
 		if (nullptr != m_pOutputObjectList->GetOutput(outputEntryVector[lOut]->m_IOId))
@@ -2744,7 +2743,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 
 	for (int i = 0; i < rLight.NumBands(); i++)
 	{
-		std::string Band = SvUl::Format(SvXml::CTAGF_BAND_X, i);
+		std::string Band = std::format(SvXml::CTAGF_BAND_X, i);
 		rWriter.StartElement(Band.c_str());
 
 		svVariant = rLight.Band(i).NumAttributes();
@@ -2753,7 +2752,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 
 		for (int j = 0; j < rLight.Band(i).NumAttributes(); j++)
 		{
-			std::string LightRef = SvUl::Format(SvXml::CTAGF_LIGHTREFERENCE_X, j);
+			std::string LightRef = std::format(SvXml::CTAGF_LIGHTREFERENCE_X, j);
 
 			rWriter.StartElement(LightRef.c_str());
 
@@ -2791,7 +2790,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 
 	for (int iBand = 0; iBand < static_cast<int>(rLut.Info().Bands()); iBand++)
 	{
-		std::string Band = SvUl::Format(SvXml::CTAGF_BAND_X, iBand);
+		std::string Band = std::format(SvXml::CTAGF_BAND_X, iBand);
 		rWriter.StartElement(Band.c_str());
 
 		SAFEARRAY* psaParam = nullptr;
@@ -3253,7 +3252,7 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	rWriter.WriteSchema();
 
 	DWORD versionNumber = TheSVObserverApp().getCurrentVersion();
-	std::string versionString = SvUl::Format("%d.%d", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
+	std::string versionString = std::format("{:d}.{:d}", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
 	rWriter.WriteRevisionHistory(versionString.c_str(), 1);
 	rWriter.WriteStartOfBase();
 
@@ -3296,7 +3295,7 @@ void SVConfigurationObject::SaveDeviceParameters(SvOi::IObjectWriter& rWriter, c
 				HRESULT hrValue = pParam->GetValue(vValue);
 				if (S_OK == hrValue)
 				{
-					std::string Parameter = SvUl::Format(SvXml::CTAGF_DEVICE_PARAM_X, ++i);
+					std::string Parameter = std::format(SvXml::CTAGF_DEVICE_PARAM_X, ++i);
 					rWriter.StartElement(Parameter.c_str());
 
 					_variant_t svVariant;
@@ -3348,7 +3347,7 @@ void SVConfigurationObject::SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter,
 		for (iter = pcf->options.begin(); iter != pcf->options.end(); ++iter)
 		{
 			const SVCameraFormat& rcf = iter->second;
-			Parameter = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
+			Parameter = std::format(SvXml::CTAGF_OPTION_X, ++iOption);
 			rWriter.StartElement(Parameter.c_str());
 
 			svVariant.SetString(rcf.m_strName.c_str());
@@ -5075,7 +5074,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 			{
 				for (unsigned long l = 0; l < cDiscreteInputCount; l++)
 				{
-					std::string Name = SvUl::Format(_T("DIO.Input%d"), l + 1);
+					std::string Name = std::format(_T("DIO.Input{:d}"), l + 1);
 
 					SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l).get());
 
@@ -5240,7 +5239,7 @@ void SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter, SvUl::Au
 		int FileNr{ 0 };
 		for (const auto& AuditFile : AuditFileVec)
 		{
-			std::string FileTagX = SvUl::Format(SvXml::CTAGF_FILE_X, ++FileNr);
+			std::string FileTagX = std::format(SvXml::CTAGF_FILE_X, ++FileNr);
 			rWriter.StartElement(FileTagX.c_str());
 			_variant_t Value{ AuditFile.Fullname.c_str() };
 			rWriter.WriteAttribute(SvXml::CTAG_FILENAME, Value);

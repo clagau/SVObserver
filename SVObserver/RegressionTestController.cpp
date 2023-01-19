@@ -256,7 +256,7 @@ DWORD RegressionTestController::runThread()
 					}
 					outputData += ' ';
 				}
-				outputData =  SvUl::Format(_T("%lu;%s;%s\r\n"), m_objectIDParams.m_currentObjectID, outputData.c_str(), firstFileName.c_str());
+				outputData = std::format(_T("{};{};{}\r\n"), m_objectIDParams.m_currentObjectID, outputData, firstFileName);
 				m_fileOutputResult.write(outputData.c_str(), outputData.size());
 			}
 			fileNameVec.clear();

@@ -252,7 +252,7 @@ void SVUtilitiesCustomizeDialog::OnApply()
 			int iCnt = UtilityIni.GetValueInt(_T("General"), _T("HighestUtilityIndex"), 0);
 			iCnt++;
 			UtilityIni.SetValueInt( _T("General"), _T("HighestUtilityIndex"),iCnt);
-			std::string Text = SvUl::Format(_T("Utility%d"),iCnt);
+			std::string Text = std::format(_T("Utility{:d}"),iCnt);
 			UtilityIni.SetValueString( Text.c_str(), _T("DisplayName"), UtilityStruct.m_DisplayName.c_str() );
 			UtilityIni.SetValueString( Text.c_str(), _T("Command"), UtilityStruct.m_Command.c_str() );
 			UtilityIni.SetValueString( Text.c_str(), _T("Arguments"), UtilityStruct.m_Arguments.c_str() );
@@ -301,7 +301,7 @@ void SVUtilitiesCustomizeDialog::OnCustomizeDelete()
 	{
 		std::string Value;
 		iUtlCnt++;
-		std::string Text = SvUl::Format(_T("Utility%d"), iUtlCnt);
+		std::string Text = std::format(_T("Utility{}"), iUtlCnt);
 		Value = UtilityIni.GetValueString( Text.c_str(), _T("DisplayName"), _T("") );
 
 		if ( Value == m_MenuText.GetString() )

@@ -15,7 +15,6 @@
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/TextDefinesSvDef.h"
 #pragma endregion Includes
 
@@ -97,7 +96,7 @@ void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 		CameraNumber = CameraNumber %  MaxNumberCameraEntries; 
 	}
 	//get last regression path for this camera from registry...
-	std::string KeyName = SvUl::Format( _T("LastPath_%i"), CameraNumber);
+	std::string KeyName = std::format( _T("LastPath_{}"), CameraNumber);
 	m_RegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), KeyName.c_str(), SvStl::GlobalPath::Inst().GetTempPath().c_str());
 	bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 

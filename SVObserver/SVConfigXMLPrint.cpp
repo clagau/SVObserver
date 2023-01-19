@@ -33,7 +33,6 @@
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/SVTool.h"
 #include "Triggering/SVTriggerClass.h"
@@ -1053,7 +1052,7 @@ void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject) const
 					if (pDoubleValueObj)
 					{
 						double dVal = pDoubleValueObj->GetDefaultValue();
-						sValue = SvUl::Format(_T("%lf"), dVal);
+						sValue = std::format(_T("{}"), dVal);
 						//ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 						//PrintValueObject(pDC, ptCurPos, utf16(sLabel), utf16(sValue));
 
@@ -1302,7 +1301,7 @@ void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
 
 		if (nullptr != pGlobalConstant)
 		{
-			Value = SvUl::Format(L"GlobalConstant%d", ++Index);
+			Value = std::format("GlobalConstant{}", ++Index);
 			writer->WriteStartElement(nullptr, SvUl::to_utf16(Value.c_str(), cp_dflt).c_str(), nullptr);
 			//write Global Constant Name
 			Value = pGlobalConstant->GetCompleteName();
@@ -1354,7 +1353,7 @@ HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLongValueDeviceParam& param)
 		}
 		if (Value.empty())
 		{
-			Value = SvUl::Format(_T("%lu%s"), static_cast<unsigned long> (param.GetScaledValue()), param.info.sUnits.empty() ? _T("") : std::string(_T(" ") + param.info.sUnits).c_str());
+			Value = std::format(_T("{}{}"), static_cast<unsigned long> (param.GetScaledValue()), param.info.sUnits.empty() ? _T("") : std::string(_T(" ") + param.info.sUnits).c_str());
 		}
 		m_writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
 		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(Value, cp_dflt).c_str());
@@ -1369,7 +1368,7 @@ HRESULT SVDeviceParamConfigXMLHelper::Visit(SVi64ValueDeviceParam& param)
 	if (pCamFileParam)
 	{
 		m_writer->WriteStartElement(nullptr, L"Param", nullptr);
-		std::string Text = SvUl::Format("%I64d", param.iValue);
+		std::string Text = std::format("{}", param.iValue);
 		m_writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
 		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(Text, cp_dflt).c_str());
 		m_writer->WriteEndElement();

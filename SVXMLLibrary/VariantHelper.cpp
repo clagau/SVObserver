@@ -72,7 +72,7 @@ namespace SvXml
 		if (S_OK != hres)
 		{
 			SvDef::StringVector messageList;
-			messageList.push_back(SvUl::Format(_T("%d"), hres));
+			messageList.push_back(std::format(_T("{:d}"), hres));
 			SvStl::MessageContainer Exception;
 			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_RestoreVariantError, messageList, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;

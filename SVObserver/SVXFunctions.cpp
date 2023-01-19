@@ -24,7 +24,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SHA256.h"
 #include "SVUtilityLibrary/Heapwalk.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/LoadConfiguration.h"
@@ -496,7 +495,7 @@ HRESULT LoadSvxFile(unsigned long svoVersion, const std::string& rSvxFilePath, c
 
 	SvDef::StringVector msgList;
 	msgList.push_back(rSvzFilePath);
-	msgList.push_back(SvUl::Format(_T("%d"), timeUsed));
+	msgList.push_back(std::format(_T("{:d}"), timeUsed));
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED, SvStl::Tid_ConfigLoadTime, msgList, SvStl::SourceFileParams(StdMessageParams));
 

@@ -17,7 +17,6 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVOGui/SVTADlgExternalToolImageSelectPage.h"
 #include "SVTADlgExternalResultPage.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"

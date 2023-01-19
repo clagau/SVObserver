@@ -17,7 +17,6 @@
 #include "SVOGuiUtility/DisplayHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 

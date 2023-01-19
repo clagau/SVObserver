@@ -20,7 +20,6 @@
 #include "Operators/TableObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVClock.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -252,7 +251,7 @@ void  ResultViewReferences::GetResultData(SvIe::SVIPResultData& rResultData) con
 			std::string ValueString;
 			it->getValueObject()->getValue( ValueString, it->getValidArrayIndex() );
 			// Wrap string in Quotes...
-			Value = SvUl::Format(_T("\042%s\042"), ValueString.c_str());
+			Value = std::format(_T("\042{}\042"), ValueString);
 		}
 		else
 		{

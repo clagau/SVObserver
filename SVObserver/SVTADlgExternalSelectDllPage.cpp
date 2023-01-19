@@ -22,7 +22,6 @@
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #include "SVSystemLibrary/FileVersion.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
-#include "SVUtilityLibrary/StringHelper.h"
 
 //#include <Psapi.h>
 #pragma endregion Includes

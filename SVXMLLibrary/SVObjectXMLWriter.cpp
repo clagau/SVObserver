@@ -13,7 +13,6 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/foreach.hpp>
 #include "SVObjectXMLWriter.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLEncryptionClass.h"
 #include "SVConfigurationTags.h"
@@ -125,20 +124,20 @@ namespace  SvXml
 			break;
 
 		case VT_I2:
-			strValue = SvUl::Format("%d", value.iVal);
+			strValue = std::format("{:d}", value.iVal);
 			break;
 
 		case VT_INT:
 		case VT_I4:
-			strValue = SvUl::Format("%ld", value.lVal);
+			strValue = std::format("{:d}", value.lVal);
 			break;
 
 		case VT_R4:
-			strValue = SvUl::Format("%f", value.fltVal);
+			strValue = std::format("{:f}", value.fltVal);
 			break;
 
 		case VT_R8:
-			strValue = SvUl::Format("%lf", value.dblVal);
+			strValue = std::format("{:f}", value.dblVal);
 			break;
 
 		case VT_BSTR:
@@ -146,32 +145,32 @@ namespace  SvXml
 			break;
 
 		case VT_BOOL:
-			strValue = SvUl::Format("%s", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
+			strValue = std::format("{}", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
 			break;
 
 		case VT_I1:
-			strValue = SvUl::Format("%02X", value.cVal);
+			strValue = std::format("{:02x}", value.cVal);
 			break;
 
 		case VT_UI1:
-			strValue = SvUl::Format("%02X", value.bVal);
+			strValue = std::format("{:02x}", value.bVal);
 			break;
 
 		case VT_UI2:
-			strValue = SvUl::Format("%u", value.uiVal);
+			strValue = std::format("{:d}", value.uiVal);
 			break;
 
 		case VT_UINT:
 		case VT_UI4:
-			strValue = SvUl::Format("%lu", value.ulVal);
+			strValue = std::format("{:d}", value.ulVal);
 			break;
 
 		case VT_I8:
-			strValue = SvUl::Format("%I64d", value.llVal);
+			strValue = std::format("{:d}", value.llVal);
 			break;
 
 		case VT_UI8:
-			strValue = SvUl::Format("%I64u", value.ullVal);
+			strValue = std::format("{:d}", value.ullVal);
 			break;
 
 		default:
@@ -277,7 +276,7 @@ namespace  SvXml
 			SvUl::SVSAFEARRAY arrayValue{ value };
 			for (int i=0; i < arrayValue.size(); ++i)
 			{
-				std::string attName = SvUl::Format("DataIndex_%d", i+1);
+				std::string attName = std::format("DataIndex_{:d}", i+1);
 				_variant_t lVal;
 				arrayValue.GetElement( i, lVal );
 				WriteAttribute(attName.c_str(), lVal);

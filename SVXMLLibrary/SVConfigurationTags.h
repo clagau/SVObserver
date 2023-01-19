@@ -29,8 +29,8 @@ namespace  SvXml
 	constexpr const char* CTAG_COLOR	                      = (_T("Color"));
 	constexpr const char* CTAG_ACQUISITION_DEVICE             = (_T("AcquisitionDevice"));
 	constexpr const char* CTAG_SIZE                           = (_T("Size"));
-	constexpr const char* CTAGF_BAND_X                        = (_T("Band_%d")); // CTAGF indicates formatting is required.
-	constexpr const char* CTAGF_LIGHTREFERENCE_X              = (_T("LightReference_%d")); // CTAGF indicates formatting is required.
+	constexpr const char* CTAGF_BAND_X                        = (_T("Band_{:d}")); // CTAGF indicates formatting is required.
+	constexpr const char* CTAGF_LIGHTREFERENCE_X              = (_T("LightReference_{:d}")); // CTAGF indicates formatting is required.
 	constexpr const char* CTAG_NAME                           = (_T("Name"));
 	constexpr const char* CTAG_RESOURCE_ID                    = (_T("ResourceID"));
 	constexpr const char* CTAG_VALUE                          = (_T("Value"));
@@ -52,7 +52,7 @@ namespace  SvXml
 	constexpr const char* CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT  = (_T("EnableAuxiliaryExtent"));
 	constexpr const char* CTAG_INSPECTION                     = (_T("Inspection"));
 	constexpr const char* CTAG_NUMBER_OF_IO_ENTRIES           = (_T("NumberOfIOEntries"));
-	constexpr const char* CTAGF_IO_ENTRY_X                    = (_T("IOEntry%d")); // CTAGF indicates formatting is required.
+	constexpr const char* CTAGF_IO_ENTRY_X                    = (_T("IOEntry{:d}")); // CTAGF indicates formatting is required.
 	constexpr const char* CTAG_IO_ENTRY_NAME                  = (_T("IOEntryName"));
 	constexpr const char* CTAG_IS_OUTPUT                      = (_T("IsOutput"));
 	constexpr const char* CTAG_CHANNEL                        = (_T("Channel"));
@@ -108,7 +108,7 @@ namespace  SvXml
 	constexpr const char* CTAG_REJECT_QUEUE_DEPTH             = (_T("RejectQueueDepth"));
 	constexpr const char* CTAG_IS_ACTIVATED					  = (_T("IsActivated"));
 	constexpr const char* CTAG_VERSION_NUMBER                 = (_T("VersionNumber"));
-	constexpr const char* CTAGF_INPUT_X                       = (_T("Input_%d")); // CTAGF indicates formatting is required.
+	constexpr const char* CTAGF_INPUT_X                       = (_T("Input_{:d}")); // CTAGF indicates formatting is required.
 	constexpr const char* CTAG_ITEM_NAME                      = (_T("ItemName"));
 	constexpr const char* CTAG_IO_TYPE                        = (_T("IO_Type"));
 	constexpr const char* CTAG_DESCRIPTION		              = _T("Description");
@@ -125,12 +125,12 @@ namespace  SvXml
 	constexpr const char* CTAG_CONFIGURATION_TYPE             = _T("ConfigurationType");
 
 	constexpr const char* CTAG_DEVICE_PARAM_LIST              = _T("DeviceParamList");
-	constexpr const char* CTAGF_DEVICE_PARAM_X                = _T("DeviceParam_%d"); // CTAGF indicates formatting is required.
+	constexpr const char* CTAGF_DEVICE_PARAM_X                = _T("DeviceParam_{:d}"); // CTAGF indicates formatting is required.
 	constexpr const char* CTAG_DEVICE_PARAM_TYPE              = _T("DeviceParamType");
 	constexpr const char* CTAG_DEVICE_PARAM_VALUE             = _T("DeviceParamValue");
 	constexpr const char* CTAG_DEVICE_PARAM_UNITS             = _T("DeviceParamUnits");
 	constexpr const char* CTAG_OPTIONS                        = _T("Options");
-	constexpr const char* CTAGF_OPTION_X                      = _T("Option_%d"); // CTAGF indicates formatting is required.
+	constexpr const char* CTAGF_OPTION_X                      = _T("Option_{:d}"); // CTAGF indicates formatting is required.
 
 	constexpr const char* CTAG_VARIABLE_CAMERA_FORMAT         = _T("VariableCameraFormat");
 	constexpr const char* CTAG_CAMERA_ID				      = _T("CameraID");
@@ -200,7 +200,7 @@ namespace  SvXml
 	constexpr const char* ToolsTag = _T( "Tools" );
 	constexpr const char* ToolDepthTag = _T("ToolDepth");
 	constexpr const char* ClassIdTag = _T("ClassID");
-	constexpr const char* FullToolNameTag = _T("FullToolName%d");
+	constexpr const char* FullToolNameTag = _T("FullToolName{:d}");
 	constexpr const char* BaseTag = _T( "Base" );
 	constexpr const char* TypeTag = _T( "Type" );
 	constexpr const char* DataTag = _T( "</DATA>" );
@@ -210,7 +210,7 @@ namespace  SvXml
 
 	constexpr const char* CTAG_CALCULATE_HASH = _T("CalculateHash");
 	constexpr const char* CTAG_IGNORE_FILE = _T("IgnoreFile");
-	constexpr const char* CTAGF_FILE_X = _T("File_%d");
+	constexpr const char* CTAGF_FILE_X = _T("File_{:d}");
 
 	constexpr const char* cDigitalType = _T("Digital");
 	constexpr const char* cRemoteType = _T("Remote");

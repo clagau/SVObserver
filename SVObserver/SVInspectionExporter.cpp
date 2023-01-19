@@ -21,7 +21,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/DependencyManager.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
@@ -57,7 +56,7 @@ static void WritePPQInputOutputs(SvOi::IObjectWriter& rWriter, const SVInspectio
 				bool isOutputEnabledAndPlcType = rOutputEntry->m_Enabled && nullptr != pOutput && SvPb::SVObjectSubTypeEnum::PlcOutputObjectType == pOutput->GetObjectSubType();
 				if (isOutputEnabledAndPlcType)
 				{
-					std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, count);
+					std::string IOEntry = std::format(SvXml::CTAGF_IO_ENTRY_X, count);
 
 					rWriter.StartElement(IOEntry.c_str());
 					pOutput->Persist(rWriter);

@@ -25,7 +25,6 @@
 #include "SVOGui/SVShowDependentsDialog.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 
@@ -269,7 +268,7 @@ int GlobalConstantView::insertItem(const SvVol::BasicValueObjectPtr& rpObject, i
 	case VT_R8:
 		{
 			Type = SvOg::GlobalConstantTypes[SvUl::GlobalConstantData::DecimalType];
-			ValueText = SvUl::Format( _T("%.06f"), Value.dblVal );
+			ValueText = std::format( _T("{:.6f}"), Value.dblVal );
 		}
 		break;
 	case VT_BSTR:
@@ -394,7 +393,7 @@ bool GlobalConstantView::checkAllDependencies(SvVol::BasicValueObject* pObject, 
 		std::string Name( pObject->GetName() );
 		std::set<uint32_t> ObjectCheckList;
 
-		DisplayText = SvUl::Format( DisplayText.c_str(), Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
+		DisplayText = std::vformat(DisplayText, std::make_format_args(Name, Name, Name, Name));
 
 		ObjectCheckList.insert( pObject->getObjectId() );
 		
