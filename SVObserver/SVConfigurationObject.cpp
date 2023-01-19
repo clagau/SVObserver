@@ -2591,7 +2591,7 @@ void SVConfigurationObject::SaveEnvironment(SvOi::IObjectWriter& rWriter) const
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentResultUpdate, svValue);
 	rWriter.WriteAttribute(SvXml::CTAG_RESULT_DISPLAY_UPDATE, svValue);
 
-	rWriter.WriteAttribute(SvXml::CTAG_NEXT_OBJECT_ID, SVObjectManagerClass::Instance().getCurrentNextObjectId());
+	rWriter.WriteAttribute(SvXml::CTAG_NEXT_OBJECT_ID, SVObjectManagerClass::Instance().getGreatestUsedObjectId() +1);
 	
 	svValue.Clear();
 	svValue.SetString(m_preRunExecutionFile.c_str());
@@ -4469,7 +4469,7 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType& rTree, SVT
 					//check if clip for LUT equation is existing.
 					if (!SvXml::SVNavigateTree::FindBranch(rTree, lutEquationEmbeddedsBranch, SVFindPredicate(rTree, IDS_OBJECTNAME_LUT_EQUATION_CLIP), lutEquationClipBranch))
 					{
-						SVObjectManagerClass::Instance().setDeletedFlag(false);
+						
 						//add clip value to tree, with value FALSE
 						SVConfigurationTreeWriter< SVTreeType > writer(rTree, lutEquationEmbeddedsBranch);
 						SvVol::SVBoolValueObjectClass isLUTFormulaClipped;
@@ -4480,7 +4480,7 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType& rTree, SVT
 						isLUTFormulaClipped.SetValue(BOOL(false));
 						isLUTFormulaClipped.Persist(writer);
 					}
-					SVObjectManagerClass::Instance().setDeletedFlag(true);
+					
 				}
 			}
 

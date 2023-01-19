@@ -29,6 +29,11 @@ class SVObjectClass;
 
 #pragma endregion Declarations
 
+namespace ObIds
+{
+ constexpr uint32_t   WarningRegion   =  static_cast<uint32_t>( 0.9 * UINT_MAX);
+ }
+
 class SVObjectManagerClass
 {
 public:
@@ -89,15 +94,16 @@ public:
 	bool CreateObjectID( SVObjectClass* pObject );
 	uint32_t getNextObjectId();
 
+	
+	void CheckObjectId(uint32_t objectId);
+	
 	/// Return the current next objectId without increase the number.
 	/// \returns uint32_t
 	uint32_t getCurrentNextObjectId() { return m_nextObjectId; };
-	void fitFirstObjectId() { m_firstObjectId = m_nextObjectId + 1; }
+	
 	void fitNextObjectId(uint32_t usedObjectId);
-	/// If the removedObjectId the highest used objectId, reduce NextObjectId.
-	/// \param removedObjectId [in]
-	void reduceNextObjectId(uint32_t removedObjectId);
-	void setDeletedFlag(bool flag) { m_addToDeletedList = flag; };
+	uint32_t   getGreatestUsedObjectId();
+	
 	void resetNextObjectId();
 	bool OpenUniqueObjectID( SVObjectClass& rObject );
 	bool CloseUniqueObjectID(const SVObjectClass& rObject );
@@ -239,8 +245,7 @@ protected:
 	//@Todo[MEC][8.20] [15.05.2019] probaly after some code cleanup std::mutex would be enough  
 	mutable std::recursive_mutex m_Mutex;
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
-	std::set<uint32_t>		m_deletedObjectIdSet;
-	bool					m_addToDeletedList = true;
+	
 	RootNameChildMap		m_RootNameChildren;
 	SvDef::TranslateMap		m_TranslationMap;
 
@@ -251,8 +256,10 @@ protected:
 
 	long m_LastFrameRate;
 
-	uint32_t m_nextObjectId = ObjectIdEnum::FirstPossibleObjectId;	
-	uint32_t m_firstObjectId = ObjectIdEnum::FirstPossibleObjectId;
+	std::atomic<uint32_t> m_nextObjectId = ObjectIdEnum::FirstPossibleObjectId;	
+	bool m_AlreadyWarnedObjectIds {false};
+
+	
 };
 
 #include "SVObjectManagerClass.inl"

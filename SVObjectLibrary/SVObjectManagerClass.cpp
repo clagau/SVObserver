@@ -375,15 +375,20 @@ bool SVObjectManagerClass::CreateObjectID(SVObjectClass* pObject)
 	return Result;
 }
 
+void SVObjectManagerClass::CheckObjectId(uint32_t objectId)
+{
+	
+	if (objectId >= ObIds::WarningRegion && m_AlreadyWarnedObjectIds ==false)
+	{
+		m_AlreadyWarnedObjectIds = true;
+		SvStl::MessageManager e(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ObjectIdToLarge, {std::to_string(objectId)}, SvStl::SourceFileParams(StdMessageParams));
+	}
+}
+
 uint32_t SVObjectManagerClass::getNextObjectId() 
 {
-	auto iter = m_deletedObjectIdSet.begin();
-	if (m_deletedObjectIdSet.end() != iter)
-	{
-		auto retValue = *iter;
-		m_deletedObjectIdSet.erase(iter);
-		return retValue;
-	}
+	CheckObjectId(m_nextObjectId);
 	return m_nextObjectId++; 
 }
 
@@ -393,50 +398,31 @@ void SVObjectManagerClass::fitNextObjectId(uint32_t usedObjectId)
 	{
 		m_nextObjectId = usedObjectId;
 	}
+	CheckObjectId(m_nextObjectId);
 }
 
-void SVObjectManagerClass::reduceNextObjectId(uint32_t removedObjectId)
-{
-	if (removedObjectId > m_firstObjectId)
-	{
-		if (m_nextObjectId - 1 == removedObjectId)
-		{
-			m_nextObjectId--;
-			auto iter = m_deletedObjectIdSet.find(m_nextObjectId - 1);
-			while (m_deletedObjectIdSet.end() != iter)
-			{
-				m_deletedObjectIdSet.erase(iter);
-				m_nextObjectId--;
-				iter = m_deletedObjectIdSet.find(m_nextObjectId - 1);
-			}
-		}
-		else
-		{
-			m_deletedObjectIdSet.emplace(removedObjectId);
-		}
-	}
-}
 
-void SVObjectManagerClass::resetNextObjectId()
+uint32_t  SVObjectManagerClass::getGreatestUsedObjectId()
 {
-	m_deletedObjectIdSet.clear();
 	auto maxIter = std::max_element(m_UniqueObjectEntries.begin(), m_UniqueObjectEntries.end());
-	if (m_UniqueObjectEntries.end() != maxIter && m_firstObjectId < maxIter->first - 1)
+	if (m_UniqueObjectEntries.end() != maxIter && ObjectIdEnum::FirstPossibleObjectId < maxIter->first - 1)
 	{
-		m_nextObjectId = maxIter->first + 1;
-		for (uint32_t i = maxIter->first - 1; i >= m_firstObjectId; --i)
-		{
-			auto findIter = m_UniqueObjectEntries.find(i);
-			if (m_UniqueObjectEntries.end() == findIter)
-			{
-				m_deletedObjectIdSet.emplace(i);
-			}
-		}
+		CheckObjectId(maxIter->first);
+		return maxIter->first;
 	}
 	else
 	{
-		m_nextObjectId = m_firstObjectId;
+		return  ObjectIdEnum::FirstPossibleObjectId -1 ;
+	
 	}
+}
+
+
+void SVObjectManagerClass::resetNextObjectId()
+{
+	m_AlreadyWarnedObjectIds = false;
+	m_nextObjectId = getGreatestUsedObjectId() +1;
+	CheckObjectId(m_nextObjectId);
 	resetExchangeObjectIdMap();
 }
 
@@ -525,10 +511,10 @@ bool SVObjectManagerClass::SwapUniqueObjectID(SVObjectClass& rFirstObject, SVObj
 	if (firstId != secondId)
 	{
 		//add not the objectId to deletedIds because it is used in the other objects again.
-		setDeletedFlag(false);
+		
 		CloseUniqueObjectID(rFirstObject);
 		CloseUniqueObjectID(rSecondObject);
-		setDeletedFlag(true);
+		
 		rFirstObject.setObjectId(secondId);
 		rSecondObject.setObjectId(firstId);
 		OpenUniqueObjectID(rFirstObject);
@@ -823,10 +809,7 @@ HRESULT SVObjectManagerClass::DetachObservers(uint32_t subjectID)
 
 	if (S_OK == Result)
 	{
-		if (m_addToDeletedList)
-		{
-			reduceNextObjectId(subjectID);
-		}
+		
 		SVSubjectDataNameDeque::iterator Iter;
 
 		for (Iter = SubjectDataNames.begin(); SubjectDataNames.end() != Iter; ++Iter)

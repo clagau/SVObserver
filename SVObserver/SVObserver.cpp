@@ -1770,7 +1770,7 @@ void SVObserverApp::startInstances()
 	fillExchangeEmbedded();
 	fillEmbeddedIdFromIndirectLinked();
 
-	SVObjectManagerClass::Instance().fitFirstObjectId();
+
 }
 
 bool SVObserverApp::DestroyMessageWindow()

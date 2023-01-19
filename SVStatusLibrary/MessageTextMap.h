@@ -726,5 +726,6 @@ namespace SvStl
 		{Tid_RejectClarifyFailedNoTR, _T("Reject clarification failed, no valid triggerRecord.")},
 		{Tid_RejectClarifyFailedUnknowData, _T("Reject clarification failed, unknown data: {}.")},
 		{Tid_ModuleNameAlreadyUsed, _T("The Modulename \"{0}\" already used.")},
+		{Tid_ObjectIdToLarge, _T("The objectid  \"{0}\" is too large. You must Clean up ObjectIds for current the config.")},
 };
 } //namespace SvStl

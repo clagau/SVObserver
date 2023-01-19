@@ -184,7 +184,7 @@ namespace SvXml
 				if (nullptr != pNumericVal &&  iswdigit (*pNumericVal))
 				{
 					//-			Convert strings to longs (including hex representations)
-					pVar->uintVal = wcstol (pNumericVal,  &pNumericValEnd, 0);
+					pVar->uintVal = wcstoul (pNumericVal,  &pNumericValEnd, 0);
 				}
 				else
 				{
@@ -200,7 +200,7 @@ namespace SvXml
 				if (nullptr != pNumericVal &&  iswdigit (*pNumericVal))
 				{
 					//-			Convert strings to longs (including hex representations)
-					pVar->ulVal = wcstol (pNumericVal,  &pNumericValEnd, 0);
+					pVar->ulVal = wcstoul (pNumericVal,  &pNumericValEnd, 0);
 				}
 				else
 				{
