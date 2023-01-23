@@ -124,8 +124,8 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	}
 
 	//set attributes for Upper and Lower Threshold values.
-	m_svUpperThresholdSelected.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
-	m_svLowerThresholdSelected.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+	m_svUpperThresholdSelected.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_svLowerThresholdSelected.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 
 	m_svLinearEdges.SetObjectAttributesAllowed( SvPb::viewable | SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 

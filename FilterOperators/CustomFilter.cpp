@@ -174,7 +174,7 @@ void CustomFilter::init()
 	m_bvoAbsoluteValue.SetDefaultValue(BOOL(true));
 	m_lvoTransformationFactor.SetDefaultValue( 1 );
 
-	const UINT cAttributes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	for( l = 0; l < 49; l++ )
 	{
 		m_plvoKernelCells[l]->SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -318,7 +318,7 @@ void CustomFilter::RebuildKernel()
 	delete [] pKernelData;	
 	for( l = 0; l < lWidth * lHeight; l++ )
 	{
-		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes | SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes | SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 
 	for( l = lWidth * lHeight; l < 49; l++ )

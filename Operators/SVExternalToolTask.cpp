@@ -166,7 +166,7 @@ void SVExternalToolTask::SetAllAttributes()
 	for (int i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
 		//Use add attributes because linked value objects can change the attributes if linked type 
-		UINT attribute = (i < m_Data.m_NumLinkedValue) ? SvPb::remotelySetable | SvPb::setableOnline | SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
+		UINT attribute = (i < m_Data.m_NumLinkedValue) ? SvPb::remotelySetable | SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
 		SvOi::SetAttributeType addOverwriteType = (i < m_Data.m_NumLinkedValue) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::OverwriteAttribute;
 		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed(attribute, addOverwriteType);
 	}

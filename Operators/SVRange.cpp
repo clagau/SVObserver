@@ -78,7 +78,7 @@ bool SVRange::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	const UINT cAttributes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	for (int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		m_LinkedValues[i].SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);

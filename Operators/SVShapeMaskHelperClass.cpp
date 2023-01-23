@@ -112,7 +112,7 @@ bool SVShapeMaskHelperClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	const UINT cAttributes = SvPb::viewable  | SvPb::remotelySetable | SvPb::setableOnline | SvPb::audittrail;
+	const UINT cAttributes = SvPb::viewable  | SvPb::remotelySetable | SvPb::audittrail;
 	m_bvoAutoResize.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_evoShapeType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_evoMaskArea.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );

@@ -272,7 +272,7 @@ SVEquation::SVEquation(SVObjectClass* POwner, int StringResourceID, bool enableF
 	m_Yacc.setEquation(this);
 	if (enableFlagRemoteSettable)
 	{
-		m_enabled.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+		m_enabled.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	}
 
 	init();

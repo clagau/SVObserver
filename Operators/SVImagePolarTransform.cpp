@@ -161,7 +161,7 @@ bool SVImagePolarTransform::CreateObject( const SVObjectLevelCreateStruct& rCrea
 	result &= S_OK == ( m_outputImage.InitializeImage(m_inputImage.getInput<SvIe::SVImageClass>()));
 
 	// Set / Reset Printable Flag
-	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	m_centerX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_centerY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_startRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -731,7 +731,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 
 void SVImagePolarTransform::SetCalculatedPrintableFlags()
 {
-	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	BOOL bSetValue( false );
 	m_useFormulaInput.GetValue(bSetValue);
 

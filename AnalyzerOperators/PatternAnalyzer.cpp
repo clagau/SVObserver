@@ -681,9 +681,7 @@ bool PatternAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 	msv_szModelImageFile.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 	m_bpatDontCare.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_bpatDontCare.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 	m_DontCareImageFile.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	
 	msv_dpatPreliminaryAcceptanceThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );

@@ -70,7 +70,7 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	bOk &= (nullptr != GetInspection());
 
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::RemoveAttribute );
 
 	// These values will not be exposed for the this Tool.
 	m_drawToolFlag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);

@@ -304,6 +304,7 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 		m_evoImageFileFormat.GetValue(Format);
 		m_imageFileFormat = static_cast<ImageFileFormat> (Format);
 	}
+	enabled.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 
 	m_FilenameIndex1.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_FilenameIndex2.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
@@ -312,14 +313,12 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 	m_SubfolderLocation.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
 	m_svoArchiveImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_svoArchiveImageNames.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_resultFilepath.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
-	m_resultFolderpathPart1.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
-	m_resultFolderpathPart2.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
-	m_ResultFilename.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
+	m_resultFilepath.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::RemoveAttribute);
+	m_resultFolderpathPart1.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_resultFolderpathPart2.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_ResultFilename.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_imageFileRootPath1.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_imageFileRootPath2.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);

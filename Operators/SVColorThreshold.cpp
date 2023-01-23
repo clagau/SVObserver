@@ -61,7 +61,7 @@ bool SVColorThreshold::CreateObject(const SVObjectLevelCreateStruct& rCreateStru
 		{
 		}
 	}
-	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	// Set / Reset Printable Flags 
 	for (SvDef::BandEnum Band : SvDef::BandList)
 	{

@@ -99,7 +99,7 @@ bool SVTransformationToolClass::CreateObject( const SVObjectLevelCreateStruct& r
 	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

@@ -137,12 +137,12 @@ bool SVThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	m_useExternalLT.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_useExternalUT.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	
-	m_autoThreshold.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_autoThreshold.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_useExternalATM.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 
-	m_upperThresh.SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_lowerThresh.SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_upperThresh.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_lowerThresh.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 
 	bOk = Rebuild() && bOk;
 

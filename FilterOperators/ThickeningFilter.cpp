@@ -46,7 +46,7 @@ void ThickeningFilter::init()
 	m_bvoGrayOn.SetDefaultValue(BOOL(false));
 
 
-	const UINT cAttributes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	m_lvoItterations.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_bvoGrayOn.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 }

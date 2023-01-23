@@ -194,7 +194,7 @@ void Custom2Filter::init()
 	m_AbsoluteValue.SetDefaultValue(BOOL(true));
 	m_NormalizationFactor.SetDefaultValue(SvDef::cStandardKernelSize*SvDef::cStandardKernelSize );
 
-	const UINT cAttributes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	m_KernelArray.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	m_KernelWidth.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );

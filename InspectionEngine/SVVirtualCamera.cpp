@@ -521,7 +521,7 @@ HRESULT SVVirtualCamera::updateCameraLongParameter( LPCTSTR Name, const SVLongVa
 		SvVol::BasicValueObjectPtr pValueObject = m_CameraValues.setValueObject( Name, Value, this, SvPb::SVCameraObjectType );
 		if(nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+			pValueObject->SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 			Result = S_OK;
 		}
 	}

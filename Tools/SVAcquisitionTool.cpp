@@ -63,7 +63,7 @@ bool SVAcquisitionToolClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 	}
 
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::RemoveAttribute );
 	m_SourceImageNames.SetValue( mainImageObject.GetCompleteName());
 
 	m_isCreated = bOk;

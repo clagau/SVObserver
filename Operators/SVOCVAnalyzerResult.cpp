@@ -240,8 +240,8 @@ bool SVOCVAnalyzerResult::CreateObject(	const SVObjectLevelCreateStruct& rCreate
 	}
 
 	// Set / Reset Printable Flag
-	UINT cAttibutes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
-	m_svoMatchString.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
+	UINT cAttibutes = SvPb::audittrail | SvPb::remotelySetable;
+	m_svoMatchString.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_svoFoundString.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	m_lvoMatchLineNumber.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	m_bvoPerformOCR.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::OverwriteAttribute );

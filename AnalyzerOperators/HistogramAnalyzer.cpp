@@ -552,7 +552,7 @@ bool HistogramAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
         m_isCreated = true;
 	}
 
-	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	msvHistogramValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	msvStdDevValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	msvMeanValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );

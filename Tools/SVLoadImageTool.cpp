@@ -94,7 +94,7 @@ bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 	}
 
 	// Set / Reset Printable Flags
-	m_fileImage.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+	m_fileImage.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_currentPathName.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_continuousReload.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 

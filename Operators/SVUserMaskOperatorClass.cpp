@@ -128,7 +128,7 @@ bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCr
 {
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
-	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
 	// Set / Reset Printable Flag
 	m_bvoActivated.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_evoDrawCriteria.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -177,7 +177,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 
 		SvOi::SetAttributeType AddRemoveShapeTypes = (bActive && dwMaskType == MASK_TYPE_SHAPE) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		pShapeHelper->SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveShapeTypes);
-		pShapeHelper->SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+		pShapeHelper->SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 		m_evoFillArea.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveShapeTypes);
 		m_lvoFillColor.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveShapeTypes);
 		m_bvoContRecalc.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::viewable, AddRemoveShapeTypes);

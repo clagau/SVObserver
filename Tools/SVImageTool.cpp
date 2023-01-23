@@ -141,7 +141,7 @@ bool SVImageToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStru
 	m_outputOperator.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
+	m_SourceImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::RemoveAttribute);
 
 	bOk &= S_OK == UpdateTranslation();
 

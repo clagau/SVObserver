@@ -56,8 +56,8 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 
 	l_Status &= (S_OK == m_OutputImage.InitializeImage(m_ImageInput.getInput<SvIe::SVImageClass>()) );
 
-	constexpr UINT cAttributes = SvPb::remotelySetable | SvPb::setableOnline | SvPb::audittrail;
-	m_SourceImageName.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	constexpr UINT cAttributes = SvPb::remotelySetable | SvPb::audittrail;
+	m_SourceImageName.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::RemoveAttribute );
 	m_TranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_TranslationY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_LearnedTranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
