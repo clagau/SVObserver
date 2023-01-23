@@ -16,6 +16,7 @@
 
 namespace SvOp
 {
+class SVDoubleResult;
 class SVMathEquation;
 }
 
@@ -36,6 +37,7 @@ public:
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
+	virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };
@@ -44,6 +46,7 @@ private:
 	void init(void);
 
 	SvOp::SVMathEquation* m_pMathEquation;
+	SvOp::SVDoubleResult* m_pResult {nullptr};
 };
 
 } //namespace SvTo

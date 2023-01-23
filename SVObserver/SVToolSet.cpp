@@ -472,12 +472,7 @@ bool SVToolSet::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 //				: Otherwise it returns FALSE, that means: if the Tool Set should
 //				: not run, because the Tool Set Condition failed!
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
-{
-	bool bRetVal = true;
-	clearRunErrorMessages();
-
-	if (m_ResetCounts)
+void SVToolSet::ResetCounterDirectly()
 	{
 		// Reset Counters...
 		m_PassedCount.SetValue(0);
@@ -500,6 +495,16 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 				}
 			}
 		}
+	}
+
+bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+{
+	bool bRetVal = true;
+	clearRunErrorMessages();
+
+	if (m_ResetCounts)
+	{
+		ResetCounterDirectly();
 	}
 
 	double l_Timer = SvUl::GetTimeStamp();

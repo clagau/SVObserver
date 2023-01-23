@@ -51,6 +51,8 @@ public:
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
+	void ResetCounterDirectly();
+
 	void Destroy();
 
 	bool IsEnabled() const;

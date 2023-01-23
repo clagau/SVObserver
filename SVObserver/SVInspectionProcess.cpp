@@ -1184,6 +1184,7 @@ void SVInspectionProcess::SetResetCounts()
 	if (nullptr != m_pCurrentToolset)
 	{
 		m_pCurrentToolset->ResetCounts();
+		m_pCurrentToolset->ResetCounterDirectly();
 	}
 }
 

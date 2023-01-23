@@ -17,6 +17,7 @@
 #include "Operators/SVMathEquation.h"
 #include "Operators/SVResultDouble.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "InspectionEngine/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -65,8 +66,8 @@ void SVMathToolClass::init(void)
 	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 
 	// Construct the result
-	SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (resultClassInfo.Construct());
-	Add( pResult );
+	auto* pResult = dynamic_cast<SvOp::SVDoubleResult*> (resultClassInfo.Construct());
+	Add(pResult);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,6 +85,14 @@ SVMathToolClass::~SVMathToolClass()
 bool SVMathToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
+
+	auto iter = std::ranges::find_if(m_TaskObjectVector, [](const auto& rEntry)
+	{return nullptr != rEntry && SvPb::SVResultObjectType == rEntry->GetObjectType() && SvPb::SVResultDoubleObjectType == rEntry->GetObjectSubType(); });
+	if (iter != m_TaskObjectVector.end())
+	{
+		m_pResult = dynamic_cast<SvOp::SVDoubleResult*>(*iter);
+	}
+	assert(m_pResult);
 
 	// These values will not be exposed for this Tool.
 	m_drawToolFlag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
@@ -135,4 +144,14 @@ std::vector<std::string> SVMathToolClass::getToolAdjustNameList() const
 	};
 	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
 }
+
+bool SVMathToolClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
+{
+	bool isOk = __super::ResetObject(pErrorMessages);
+
+	SvIe::RunStatus state;
+	isOk = isOk && nullptr != m_pResult && m_pResult->Run(state, pErrorMessages);
+	return isOk;
+}
+
 } //namespace SvTo
