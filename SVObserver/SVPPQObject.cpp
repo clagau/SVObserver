@@ -2530,7 +2530,7 @@ void SVPPQObject::ProcessDelayOutputs()
 		SVProductInfoStruct* pProduct {nullptr};
 		long processCount = 0;
 
-		if (m_oOutputsDelayQueue.RemoveHead(&processCount))
+		if (m_oOutputsDelayQueue.GetHead(&processCount))
 		{
 			pProduct = GetProductInfoStruct(processCount);
 		}
@@ -2540,6 +2540,7 @@ void SVPPQObject::ProcessDelayOutputs()
 			if (currentTime >= pProduct->m_outputsInfo.m_EndOutputDelay)
 			{
 				ProcessOutputs(*pProduct);
+				m_oOutputsDelayQueue.RemoveHead(&processCount);
 			}
 			else
 			{
@@ -2572,6 +2573,10 @@ void SVPPQObject::ProcessDelayOutputs()
 				}
 			}
 		}
+		else
+		{
+			m_oOutputsDelayQueue.RemoveHead(&processCount);
+		}
 	}
 }
 
@@ -2590,7 +2595,7 @@ void SVPPQObject::ProcessResetOutputs()
 		SVProductInfoStruct* pProduct {nullptr};
 		long processCount {0L};
 
-		if (m_oOutputsResetQueue.RemoveHead(&processCount))
+		if (m_oOutputsResetQueue.GetHead(&processCount))
 		{
 			pProduct = GetProductInfoStruct(processCount);
 		}
@@ -2600,6 +2605,7 @@ void SVPPQObject::ProcessResetOutputs()
 			if (currentTime >= pProduct->m_outputsInfo.m_EndResetDelay)
 			{
 				ResetOutputs();
+				m_oOutputsResetQueue.RemoveHead(&processCount);
 			}
 			else
 			{
@@ -2622,7 +2628,7 @@ void SVPPQObject::ProcessDataValidDelay()
 		SVProductInfoStruct* pProduct {nullptr};
 		long processCount {0L};
 
-		if (m_DataValidDelayQueue.RemoveHead(&processCount))
+		if (m_DataValidDelayQueue.GetHead(&processCount))
 		{
 			pProduct = GetProductInfoStruct(processCount);
 		}
@@ -2639,6 +2645,7 @@ void SVPPQObject::ProcessDataValidDelay()
 				{
 					m_pOutputList->WriteOutputValue(m_pOutputToggle, pProduct->m_outputsInfo.m_OutputToggleResult);
 				}
+				m_DataValidDelayQueue.RemoveHead(&processCount);
 			}
 			else
 			{
