@@ -633,6 +633,7 @@ enum MessageTextEnum
 	Tid_ModuleReady,
 	Tid_ModelTypeMismatch,
 	Tid_PlcOutputAlreadyUsed,
+	Tid_OutputAlreadyUsed,
 
 	Tid_Http_ConnectionError,
 	Tid_Http_ConnectionCloseError,

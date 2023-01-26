@@ -167,11 +167,6 @@ void SVDiscreteOutputsView::OnUpdate( CView* , LPARAM , CObject*  )
 
 void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point) 
 {
-	SVIOEntryHostStructPtr pIOEntry;
-	SVOutputObjectPtr pOutput;
-	UINT flags;
-
-	int item = m_rCtrl.HitTest( point, &flags );
 	SVIOController* pIOController{nullptr};
 
 	if( nullptr != m_pDocument)
@@ -180,10 +175,29 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 	}
 	if (false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit() && nullptr != pIOController )
 	{
-		if( item >= 0 && item < m_rCtrl.GetItemCount() && 
+		UINT flags {0};
+
+		int item = m_rCtrl.HitTest(point, &flags);
+
+		std::vector<std::string> usedOutputList;
+		for (const auto& rEntry : m_Items)
+		{
+			if (rEntry.second->m_ObjectType != SVIOObjectType::IO_DIGITAL_OUTPUT)
+			{
+				continue;
+			}
+
+			SVObjectClass* pOutput = SVObjectManagerClass::Instance().GetObject(rEntry.second->m_IOId);
+			if (nullptr != pOutput)
+			{
+				usedOutputList.emplace_back(std::string(pOutput->GetName()));
+			}
+		}
+
+		if( item >= 0 && item < m_rCtrl.GetItemCount() &&
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
 		{
-			SVIOAdjustDialog dlg;
+			SVIOAdjustDialog dlg {usedOutputList};
 			SVConfigurationObject* pConfig(nullptr);
 			SVOutputObjectList* pOutputList(nullptr);
 
@@ -195,6 +209,8 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 
 			// Search for In or Out
 			const auto iter = m_Items.find(item);
+			SVIOEntryHostStructPtr pIOEntry;
+			SVOutputObjectPtr pOutput;
 			if(m_Items.end() !=  iter)
 			{
 				pIOEntry = iter->second;

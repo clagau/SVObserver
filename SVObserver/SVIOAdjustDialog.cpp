@@ -21,6 +21,7 @@
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVHardwareManifest.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -35,7 +36,8 @@ BEGIN_MESSAGE_MAP(SVIOAdjustDialog, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_SELECTOR, OnObjectSelector)
 END_MESSAGE_MAP()
 
-SVIOAdjustDialog::SVIOAdjustDialog(CWnd* pParent /*=nullptr*/) : CDialog(SVIOAdjustDialog::IDD, pParent)
+SVIOAdjustDialog::SVIOAdjustDialog(const std::vector<std::string>& rUsedOutputList, CWnd* pParent /*=nullptr*/) : CDialog(SVIOAdjustDialog::IDD, pParent)
+, m_rUsedOuputList{rUsedOutputList}
 {
 }
 
@@ -162,9 +164,19 @@ void SVIOAdjustDialog::OnObjectSelector()
 
 	if (IDOK == Result)
 	{
+		SVObjectClass* pPrevLinkedObject {m_pLinkedObject};
+		std::string prevName{m_IOName.GetString()};
 		SVObjectReference ObjectRef {SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
 		m_pLinkedObject = ObjectRef.getObject();
 		m_IOName = ObjectRef.GetCompleteName(true).c_str();
+
+		if (m_rUsedOuputList.end() != std::find(m_rUsedOuputList.begin(), m_rUsedOuputList.end(), std::string(m_IOName.GetString())))
+		{
+			SvStl::MessageManager e(SvStl::MsgType::Display);
+			e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_OutputAlreadyUsed, {m_IOName.GetString()}, SvStl::SourceFileParams(StdMessageParams));
+			m_pLinkedObject = pPrevLinkedObject;
+			m_IOName = prevName.c_str();
+		}
 	}
 	UpdateGroups();
 }

@@ -180,7 +180,7 @@ void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 			pDigInput = dynamic_cast< SVDigitalInputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
 			if( pDigInput )
 			{
-				SVIOAdjustDialog dlg;
+				SVIOAdjustDialog dlg {std::vector<std::string>{}};
 				dlg.m_IOName = m_rCtrl.GetItemText( item, 1 );
 				dlg.m_IOValue.Format( "%d", pDigInput->GetValue() ? 1 : 0 );
 				dlg.m_pDigInput = pDigInput;

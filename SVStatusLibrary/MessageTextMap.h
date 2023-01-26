@@ -669,6 +669,7 @@ namespace SvStl
 		{Tid_ModuleReady , _T("Module ready set to {0}")},
 		{Tid_ModelTypeMismatch , _T("Model mismatch SVIM type is {0}, the loaded configuration is type {1}\nConfiguration shall not be able to go into Run mode")},
 		{Tid_PlcOutputAlreadyUsed , _T("PLC Output {0} for {1} is already being used and cannot be imported with the value:\n{2}")},
+		{Tid_OutputAlreadyUsed , _T("Output linked value {0} is already being used and cannot be used for another output")},
 
 		{Tid_Http_ConnectionError, _T("Client connection error: {0}")},
 		{Tid_Http_ConnectionCloseError, _T("Error while closing http connection: {0}")},

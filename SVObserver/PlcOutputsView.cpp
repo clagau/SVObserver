@@ -154,11 +154,25 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 
 void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 {
-	UINT flags;
 
-	int item = m_rCtrl.HitTest(point, &flags);
 	if (false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit())
 	{
+		std::vector<std::string> usedOutputList;
+		for (const auto& rEntry : m_Items)
+		{
+			if (rEntry.second->m_ObjectType != SVIOObjectType::IO_PLC_OUTPUT)
+			{ 
+				continue;
+			}
+
+			SVObjectClass* pOutput = SVObjectManagerClass::Instance().GetObject(rEntry.second->m_IOId);
+			if (nullptr !=pOutput)
+			{ 
+				usedOutputList.emplace_back(std::string(pOutput->GetName()));
+			}
+		}
+		UINT flags {0};
+		int item = m_rCtrl.HitTest(point, &flags);
 		if (item >= 0 && item < m_rCtrl.GetItemCount() && (flags & LVHT_ONITEM))
 		{
 			SVConfigurationObject* pConfig(nullptr);
@@ -202,7 +216,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 
 			if (nullptr != pPlcOutput)
 			{
-				SVIOAdjustDialog dlg;
+				SVIOAdjustDialog dlg {usedOutputList};
 				dlg.m_IOName = m_rCtrl.GetItemText(item, 2);
 				SVObjectClass* pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;
 				dlg.m_pLinkedObject = pLinkedObject;
@@ -268,7 +282,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 			}
 			else
 			{
-				SVIOAdjustDialog dlg;
+				SVIOAdjustDialog dlg {usedOutputList};
 				dlg.m_IOName = _T("");
 
 				if (IDOK == dlg.DoModal())

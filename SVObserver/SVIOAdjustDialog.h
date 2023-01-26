@@ -29,7 +29,7 @@ protected:
 	afx_msg void OnObjectSelector();
 	
 public:
-	SVIOAdjustDialog( CWnd* pParent = nullptr );
+	explicit SVIOAdjustDialog(const std::vector<std::string>& rUsedOutputList, CWnd* pParent = nullptr );
 	virtual ~SVIOAdjustDialog() = default;
 
 	//{{AFX_VIRTUAL(SVIOAdjustDialog)
@@ -66,5 +66,6 @@ private:
 	void showCombinedGroup(int showState);
 
 	std::string m_moduleReadyName;
+	const std::vector<std::string>& m_rUsedOuputList;
 };
 
