@@ -19,17 +19,17 @@ namespace SvEcat
 HANDLE g_hSignalEvent {nullptr};
 std::atomic_bool g_runThread{false};
 
-PowerlinkConnection::PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, TriggerType triggerType, const std::string& rAdditionalData)
+PowerlinkConnection::PowerlinkConnection(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, TriggerType triggerType, const std::string& rAdditionalData)
 {
 	g_hSignalEvent = ::CreateEvent(nullptr, false, false, nullptr);
 
 	switch (triggerType)
 	{
 	case TriggerType::HardwareTrigger:
-		m_pTriggersource = std::make_unique<HardwareTriggerSource>(pReportTrigger, rAdditionalData);
+		m_pTriggersource = std::make_unique<HardwareTriggerSource>(pTriggerDataCallback, rAdditionalData);
 		break;
 	case TriggerType::SimulatedTrigger:
-		m_pTriggersource = std::make_unique<SimulatedTriggerSource>(pReportTrigger, rAdditionalData);
+		m_pTriggersource = std::make_unique<SimulatedTriggerSource>(pTriggerDataCallback, rAdditionalData);
 		break;
 	default:
 		break;

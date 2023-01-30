@@ -5,11 +5,13 @@
 
 #pragma once
 
+namespace SvTrig
+{
+struct TriggerData;
+}
+
 namespace SvEcat
 {
-
-struct ResultReport;
-struct TriggerReport;
 
 enum class TriggerType
 {
@@ -20,7 +22,7 @@ enum class TriggerType
 
 namespace Tec
 {
-void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, TriggerType triggerType, const std::string& rAdditionalData);
+void startTriggerEngine(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, TriggerType triggerType, const std::string& rAdditionalData);
 void stopTriggerEngine();
 
 HRESULT initTriggerEngine();

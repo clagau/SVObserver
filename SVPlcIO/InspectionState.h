@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include <stdint.h>
 #include "PlcDataTypes.h"
 #pragma endregion Includes
 
@@ -24,12 +23,13 @@ public:
 
 #pragma region Member Variables
 public:
-	uint8_t m_objectType{ 0 };				//Object type
-	uint32_t m_objectID{ 0 };				//Object ID
-	std::array<uint8_t, cResultSize> m_results	//Results array
+	bool m_isEnabled {false};
+	uint8_t m_objectType{ 0 };
+	uint32_t m_objectID{ 0 };
+	std::array<uint8_t, cResultSize> m_results
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	std::array<float, cResultSize> m_measurementValues //Measurement value array
-	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+	float m_measurementValue { 0.0 };
+	std::array<uint32_t, cSerialCodeSize> m_serializationCode {0UL, 0UL, 0UL, 0UL, 0UL};
 #pragma endregion Member Variables
 };
 	
@@ -41,7 +41,7 @@ public:
 
 #pragma region Member Variables
 public:
-	std::array<ChannelOut1, cNumberOfChannels> m_channels;	//Out data for each of the 4 separate channels
+	std::array<ChannelOut1, cNumberOfChannels> m_channels;
 #pragma endregion Member Variables
 };
 
@@ -53,10 +53,10 @@ public:
 
 #pragma region Member Variables
 public:
-	uint8_t m_objectType{ 0 };				//Object type
-	uint32_t m_objectID{ 0 };				//Object ID
+	uint8_t m_objectType{ 0 };
+	uint32_t m_objectID{ 0 };
 	std::array<uint8_t, cResultSize> m_results
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };	//Results array
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 #pragma endregion Member Variables
 };
 
@@ -69,7 +69,7 @@ public:
 #pragma region Member Variables
 public:
 	std::array<uint8_t, cHeaderSize> m_header {0, 0, 0, 0, 0, 0, 0, 0};
-	std::array<ChannelOut2, cNumberOfChannels> m_channels;	//Out data for each of the 4 separate channels
+	std::array<ChannelOut2, cNumberOfChannels> m_channels;
 #pragma endregion Member Variables
 };
 

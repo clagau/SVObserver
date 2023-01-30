@@ -12,13 +12,13 @@
 
 #pragma region Includes
 #include "resource.h"
-#include "Triggering/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 class SVIOConfigurationInterfaceClass;
 namespace SvTrig
 {
 	class SVIOTriggerLoadLibraryClass;
+	struct TriggerData;
 }
 
 enum IOBoardType

@@ -9,6 +9,7 @@
 #include "StdAfx.h"
 #include "SVPlcIOExports.h"
 #include "SVPlcIOImpl.h"
+#include "Triggering/ResultData.h"
 #pragma endregion Includes
 
 std::atomic_ulong gRefCount{0UL};
@@ -73,13 +74,13 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long , unsigned long )
 	return S_OK;
 }
 
-HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTrig::TriggerData& rData)
+HRESULT WINAPI SVOutputSetData(const SvTrig::ResultData& rResultData)
 {
 	HRESULT result {E_FAIL};
 
-	if (SvPlc::cMaxPlcTriggers >= triggerIndex)
+	if (SvPlc::cMaxPlcTriggers > rResultData.m_channel)
 	{
-		result = gPlc.SetOutputData(triggerIndex, rData);
+		result = gPlc.SetOutputData(rResultData);
 	}
 	return result;
 }

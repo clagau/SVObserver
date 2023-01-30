@@ -8,38 +8,22 @@
 #pragma once
 
 #pragma region Includes
-#include <stdint.h>
 #pragma endregion Includes
+
+namespace SvTrig
+{
+struct TriggerData;
+}
 
 namespace SvPlc
 {
 
-constexpr unsigned int cNumberOfChannels = 4; /// the number of trigger channels
-constexpr unsigned int cConfigListSize = 62; /// The config list size
+constexpr unsigned int cNumberOfChannels = 4;
+constexpr unsigned int cConfigListSize = 62;
 constexpr uint8_t cResultSize = 14;
+constexpr uint8_t cSerialCodeSize = 5;
 constexpr uint8_t cHeaderSize = 8;
 constexpr uint8_t cModeSingleDirect = 1;
-
-struct TriggerReport
-{
-	uint8_t m_channel {0};
-	uint32_t m_objectID{ 0UL };
-	uint8_t m_objectType{ 0 };
-	uint8_t m_triggerIndex{0};
-	uint8_t m_triggerPerObjectID{ 0 };
-	double m_triggerTimestamp{ 0.0 };
-	bool m_isValid{false};
-	std::string m_acquisitionFile;
-};
-
-struct ResultReport
-{
-	uint8_t m_channel{ 0 };
-	uint32_t m_objectID{ 0UL };
-	uint8_t m_objectType{ 0 };
-	double m_timestamp{ 0.0 };
-	std::array<uint8_t, cResultSize> m_results {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0};
-};
 
 enum PlcDataType : uint16_t
 {
@@ -78,7 +62,7 @@ enum LogType : uint16_t
 
 struct PlcInputParam
 {
-	std::function<void(const TriggerReport&)> m_reportTriggerCallBack {};
+	std::function<void(const SvTrig::TriggerData&)> m_pTriggerDataCallBack {};
 	TriggerType m_triggerType {TriggerType::None};
 	uint16_t m_plcNodeID {0};
 	uint16_t m_plcTransferTime {0};

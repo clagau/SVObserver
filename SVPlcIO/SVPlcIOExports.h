@@ -11,6 +11,11 @@
 #include "Triggering/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
+namespace SvTrig
+{
+struct ResultData;
+}
+
 #pragma region exports
 
 HRESULT WINAPI SVCreate();
@@ -24,7 +29,7 @@ unsigned long WINAPI SVOutputGetCount();
 HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool value);
 unsigned long WINAPI SVOutputGetPortCount();
 HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value);
-HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTrig::TriggerData& rData);
+HRESULT WINAPI SVOutputSetData(const SvTrig::ResultData& rResultData);
 
 unsigned long WINAPI SVTriggerGetCount();
 unsigned long WINAPI SVTriggerGetHandle(unsigned long index);

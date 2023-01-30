@@ -26,7 +26,7 @@ constexpr size_t cCmdDataSize = std::max(sizeof(InspectionCommand1), sizeof(Insp
 enum class PlcVersion : uint16_t
 {
 	PlcDataNone = 0,
-	PlcData1 = 0x0401,		//1.4 order is reversed to send correctly to the PLC (Note Version 1.3 has been marked obsolete)
+	PlcData1 = 0x0501,		//1.5 order is reversed to send correctly to the PLC (Note Version 1.3 and 1.4 have been marked obsolete)
 	PlcData2 = 0x0201		//1.2 order is reversed to send correctly to the PLC
 };
 

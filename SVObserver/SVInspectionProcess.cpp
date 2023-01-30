@@ -190,28 +190,7 @@ HRESULT SVInspectionProcess::ProcessInspection()
 		//If no tool set camera was found TriggerToAcquisitionStart and AcquisitionTime will be set to 0
 		m_pCurrentToolset->setTime(triggerToAcqTime, ToolSetTimes::TriggerToAcquisitionStart);
 		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
-
-		const _variant_t& rObjectID = product.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
-		if (VT_EMPTY != rObjectID.vt)
-		{
-			m_pCurrentToolset->setObjectID(static_cast<double> (rObjectID));
-		}
-		const _variant_t& rObjectType = product.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectType];
-		if (VT_EMPTY != rObjectType.vt)
-		{
-			m_pCurrentToolset->setObjectType(static_cast<DWORD> (rObjectType));
-		}
-		const _variant_t& rTriggerIndex = product.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
-		if (VT_EMPTY != rTriggerIndex.vt)
-		{
-			m_pCurrentToolset->setTriggerIndex(static_cast<DWORD> (rTriggerIndex));
-		}
-		const _variant_t& rTriggerPerObjectID = product.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID];
-		if (VT_EMPTY != rTriggerPerObjectID.vt)
-		{
-			m_pCurrentToolset->setTriggerPerObjectID(static_cast<DWORD> (rTriggerPerObjectID));
-		}
-
+		m_pCurrentToolset->setTriggerData(product.m_triggerInfo.m_Data);
 
 		Log_Assert(m_PPQInputs.size() == product.m_triggerInfo.m_Inputs.size());
 		// Copy inputs to Inspection Process's Value objects

@@ -383,6 +383,14 @@ SvVol::SVEnumerateValueObjectClass* SVToolSet::GetDrawFlagObject()
 	return &m_DrawFlag;
 }
 
+void SVToolSet::setTriggerData(const SvTrig::TriggerData& rTriggerData)
+{
+	////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
+	m_ObjectID.SetValue(static_cast<double> (rTriggerData.m_objectData[0].m_objectID));
+	m_ObjectType.SetValue(static_cast<DWORD> (rTriggerData.m_objectType));
+	m_TriggerIndex.SetValue(static_cast<DWORD> (rTriggerData.m_triggerIndex));
+	m_TriggerPerObjectID.SetValue(static_cast<DWORD> (rTriggerData.m_triggerPerObjectID));
+}
 
 long SVToolSet::getTriggerCount() const
 {

@@ -65,6 +65,7 @@
 #include <set>				//Used by static library
 #include <sstream>
 #include <string>
+#include <stdint.h>
 #include <tchar.h>			//Used by static library
 #include <time.h>
 #include <typeindex>

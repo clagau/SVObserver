@@ -12,6 +12,8 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "Triggering/ResultData.h"
+#include "Triggering/TriggerData.h"
 #pragma endregion Includes
 
 namespace SvPlc
@@ -130,33 +132,19 @@ unsigned long SVPlcIOImpl::GetOutputCount()
 	return cOutputCount;
 }
 
-HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTrig::TriggerData& rData)
+HRESULT SVPlcIOImpl::SetOutputData(const SvTrig::ResultData& rResultData)
 {
-	ResultReport reportResult;
+	Tec::writeResult(rResultData);
 
-	//PLC channel is zero based while SVObserver trigger index is one based!
-	reportResult.m_channel = static_cast<uint8_t> (triggerIndex - 1);
-	reportResult.m_timestamp = SvUl::GetTimeStamp();
-
-	reportResult.m_objectID = (VT_EMPTY != rData[SvTrig::TriggerDataEnum::ObjectID].vt) ? static_cast<uint32_t> (rData[SvTrig::TriggerDataEnum::ObjectID]) : 0UL;
-	reportResult.m_objectType = (VT_EMPTY != rData[SvTrig::TriggerDataEnum::ObjectType].vt) ? static_cast<uint8_t> (rData[SvTrig::TriggerDataEnum::ObjectType]) : 0;
-	const _variant_t& rOutputData = rData[SvTrig::TriggerDataEnum::OutputData];
-	if((VT_UI1 | VT_ARRAY) == rOutputData.vt && rOutputData.parray->rgsabound[0].cElements == cResultSize)
+	if (m_logOutFile.is_open() && cMaxPlcTriggers > rResultData.m_channel)
 	{
-		memcpy(&reportResult.m_results[0], rOutputData.parray->pvData, cResultSize * sizeof(uint8_t));
-	}
-
-	Tec::writeResult(reportResult);
-
-	if (m_logOutFile.is_open() && cMaxPlcTriggers > reportResult.m_channel)
-	{
-		uint32_t outputCount = ++m_outputCount[reportResult.m_channel];
+		uint32_t outputCount = ++m_outputCount[rResultData.m_channel];
 		std::string resultString;
-		for (auto& rResult : reportResult.m_results)
+		for (auto& rResult : rResultData.m_results)
 		{
 			resultString += std::to_string(rResult) + ' ';
 		}
-		std::string fileData = std::format(_T("{}; {}; {}; {}; {}\r\n"), triggerIndex, outputCount, reportResult.m_timestamp, reportResult.m_objectID, resultString.c_str());
+		std::string fileData = std::format(_T("{}; {}; {}; {}; {}\r\n"), rResultData.m_channel+1, outputCount, SvUl::GetTimeStamp(), rResultData.m_objectID, resultString.c_str());
 		m_logOutFile.write(fileData.c_str(), fileData.size());
 	}
 	return S_OK;
@@ -210,7 +198,7 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 				m_logOutFile.write(fileData.c_str(), fileData.size());
 			}
 		}
-		m_plcInputParam.m_reportTriggerCallBack = [this](const TriggerReport& rTriggerReport) { return reportTrigger(rTriggerReport); };
+		m_plcInputParam.m_pTriggerDataCallBack = [this](const SvTrig::TriggerData& rTriggerData) { return NotifyTriggerData(rTriggerData); };
 		Tec::startTriggerEngine(m_plcInputParam);
 		Tec::setReady(m_moduleReady);
 		m_engineStarted = true;
@@ -382,45 +370,42 @@ HRESULT SVPlcIOImpl::SetParameterValue(unsigned long index, const _variant_t& rV
 	return result;
 }
 
-void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
+void SVPlcIOImpl::NotifyTriggerData(const SvTrig::TriggerData& rTriggerData)
 {
 
-	if(cMaxPlcTriggers > rTriggerReport.m_channel)
+	if(cMaxPlcTriggers > rTriggerData.m_channel)
 	{
-		if(false == m_triggerStarted[rTriggerReport.m_channel] || false == rTriggerReport.m_isValid)
+		if(false == m_triggerStarted[rTriggerData.m_channel])
 		{
 			return;
 		}
-		++m_inputCount[rTriggerReport.m_channel];
+		++m_inputCount[rTriggerData.m_channel];
 	}
 
 	/// Only call trigger callbacks if the module ready is set this avoids problems with the PPQ Object not being ready
 	if(m_moduleReady)
 	{
 		//PLC channel is zero based while SVObserver trigger index is one based!
-		unsigned long triggerIndex = rTriggerReport.m_channel + 1;
-
-		SvTrig::TriggerData triggerData;
-		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
-		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
-		triggerData[SvTrig::TriggerDataEnum::ObjectType] = _variant_t(rTriggerReport.m_objectType);
-		triggerData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_objectID);
-		triggerData[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
-		triggerData[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
-		triggerData[SvTrig::TriggerDataEnum::AcquisitionFile].SetString(rTriggerReport.m_acquisitionFile.c_str());
+		unsigned long triggerIndex = rTriggerData.m_channel + 1;
 
 		auto iter = m_triggerCallbackMap.find(triggerIndex);
 		if (m_triggerCallbackMap.end() != iter)
 		{
+			SvTrig::TriggerData triggerData = rTriggerData;
 			iter->second(std::move(triggerData));
 		}
 
-		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerReport.m_channel)
+		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerData.m_channel)
 		{
-			const TriggerReport& rData = rTriggerReport;
+			const SvTrig::TriggerData& rData = rTriggerData;
+			std::string objectIDList;
+			for (int i = 0; i < cObjectMaxNr; ++i)
+			{
+				objectIDList += (0 == i) ? "" : "," + std::to_string(rData.m_objectData[i].m_objectID);
+			}
 			///This is required as m_inputCount[rData.m_channel] is atomic
 			uint32_t inputCount = m_inputCount[rData.m_channel];
-			std::string fileData = std::format(_T("{}; {}; {}; {}; {:d}; {:d}; {}\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_objectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
+			std::string fileData = std::format(_T("{}; {}; {}; {}; {:d}; {:d}; {}\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, objectIDList.c_str(), rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
 			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}

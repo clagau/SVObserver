@@ -89,5 +89,11 @@
     <ClInclude Include="CifxLoadLibrary.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="TriggerData.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultData.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

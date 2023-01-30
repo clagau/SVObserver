@@ -180,13 +180,13 @@ HRESULT SVIODigitalLoadLibraryClass::SetOutputPortValue(unsigned long port, unsi
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::SetOutputData(unsigned long channel, const TriggerData& rData)
+HRESULT SVIODigitalLoadLibraryClass::SetOutputData(const SvTrig::ResultData& rResultData)
 {
 	HRESULT result {E_FAIL};
 
 	if (nullptr != m_pSetOutputData)
 	{
-		result = m_pSetOutputData(channel, rData);
+		result = m_pSetOutputData(rResultData);
 	}
 	return result;
 }

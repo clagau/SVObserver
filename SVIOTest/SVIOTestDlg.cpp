@@ -556,56 +556,44 @@ void SVIOTestDlg::StartTrigger(int triggerchannel)
 
 void __stdcall SVIOTestDlg::triggerCallback(SvTrig::TriggerData&& triggerData)
 {
-	double timestamp{ 0.0 };
-	const _variant_t& rTimestamp = triggerData[SvTrig::TriggerDataEnum::TimeStamp];
-	if (VT_R8 == rTimestamp.vt)
-	{
-		timestamp = rTimestamp.dblVal;
-	}
+	SVIOTriggerDataStruct* pData = getTriggerData(triggerData.m_channel);
 
-	const _variant_t& rTriggerChannel = triggerData[SvTrig::TriggerDataEnum::TriggerChannel];
-	if (VT_UI1 == rTriggerChannel.vt)
+	if (nullptr != pData)
 	{
-		unsigned long triggerChannel = rTriggerChannel;
-		SVIOTriggerDataStruct* pData = getTriggerData(triggerChannel);
+		(pData->lTriggerCount)++;
 
-		if (nullptr != pData)
+		if (101 < pData->lTriggerCount)
 		{
-			(pData->lTriggerCount)++;
+			pData->m_TotalTime -= (pData->m_TimeStamp[pData->ulNextIndex] -
+				pData->m_TimeStamp[pData->ulIndex]);
+		}
 
-			if (101 < pData->lTriggerCount)
+		pData->m_TimeStamp[pData->ulIndex] = triggerData.m_triggerTimestamp;
+
+		if (1 < pData->lTriggerCount)
+		{
+			pData->m_LastTime = (pData->m_TimeStamp[pData->ulIndex] -
+				pData->m_TimeStamp[pData->ulLastIndex]);
+
+			pData->m_TotalTime += pData->m_LastTime;
+
+			if (2 < pData->lTriggerCount)
 			{
-				pData->m_TotalTime -= (pData->m_TimeStamp[pData->ulNextIndex] -
-					pData->m_TimeStamp[pData->ulIndex]);
-			}
-
-			pData->m_TimeStamp[pData->ulIndex] = timestamp;
-
-			if (1 < pData->lTriggerCount)
-			{
-				pData->m_LastTime = (pData->m_TimeStamp[pData->ulIndex] -
-					pData->m_TimeStamp[pData->ulLastIndex]);
-
-				pData->m_TotalTime += pData->m_LastTime;
-
-				if (2 < pData->lTriggerCount)
+				if (pData->m_MaxTime < pData->m_LastTime)
 				{
-					if (pData->m_MaxTime < pData->m_LastTime)
-					{
-						pData->m_MaxTime = pData->m_LastTime;
-					}
+					pData->m_MaxTime = pData->m_LastTime;
+				}
 
-					if (pData->m_LastTime < pData->m_MinTime)
-					{
-						pData->m_MinTime = pData->m_LastTime;
-					}
+				if (pData->m_LastTime < pData->m_MinTime)
+				{
+					pData->m_MinTime = pData->m_LastTime;
 				}
 			}
-
-			pData->ulLastIndex = pData->ulIndex;
-			pData->ulIndex = pData->ulNextIndex;
-			pData->ulNextIndex = (pData->ulNextIndex + 1) % 100;
 		}
+
+		pData->ulLastIndex = pData->ulIndex;
+		pData->ulIndex = pData->ulNextIndex;
+		pData->ulNextIndex = (pData->ulNextIndex + 1) % 100;
 	}
 }
 

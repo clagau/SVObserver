@@ -4,12 +4,16 @@
 /// \file SVPlcIOExports.h
 /// \brief Exported functions of the DLL
 //******************************************************************************
-
 #pragma once
 
 #pragma region Includes
 #include "Triggering/SVTriggerInfoStruct.h"
 #pragma endregion Includes
+
+namespace SvTrig
+{
+struct ResultData;
+}
 
 #pragma region exports
 
@@ -24,7 +28,7 @@ unsigned long WINAPI SVOutputGetCount();
 HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool value);
 unsigned long WINAPI SVOutputGetPortCount();
 HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value);
-HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTrig::TriggerData& rData);
+HRESULT WINAPI SVOutputSetData(const SvTrig::ResultData&);
 
 unsigned long WINAPI SVTriggerGetCount();
 unsigned long WINAPI SVTriggerGetHandle(unsigned long index);

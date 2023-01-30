@@ -19,7 +19,7 @@ namespace SvEcat
 class HardwareTriggerSource : public TriggerSource
 {
 public:
-	explicit HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rAdditionalData);
+	explicit HardwareTriggerSource(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, const std::string& rAdditionalData);
 	virtual ~HardwareTriggerSource();
 
 	virtual bool isReady() const override	{ return m_cifXCard.isReady(); }
@@ -30,7 +30,7 @@ public:
 	virtual void setReady(bool ready) override { m_cifXCard.setReady(ready); }
 
 private:
-	virtual  void createTriggerReport(uint8_t channel) override;
+	virtual  void createTriggerData(uint8_t channel) override;
 
 #if defined (ETHERCAT_TIMER)
 	void writeOutputs(double timestamp);

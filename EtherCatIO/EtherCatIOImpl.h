@@ -64,7 +64,7 @@ private:
 	HRESULT afterStartTrigger() override;
 	void beforeStopTrigger(unsigned long triggerIndex) override;
 
-	void reportTrigger(const TriggerReport&);
+	void NotifyTriggerData(const SvTrig::TriggerData& rTriggerData);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

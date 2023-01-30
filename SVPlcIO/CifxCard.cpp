@@ -825,7 +825,7 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_results[0])], startByte, sizeof(ChannelOut1::m_results) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_measurementValues[0])], startByte, sizeof(ChannelOut1::m_measurementValues) };
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_measurementValue)], startByte, sizeof(ChannelOut1::m_measurementValue) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 				}

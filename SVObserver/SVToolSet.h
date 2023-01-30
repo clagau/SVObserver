@@ -94,11 +94,8 @@ public:
 
 	void setTime(double time, ToolSetTimes timeType) { m_Times[timeType].SetValue(static_cast<__int64> (time)); }
 	void setPpqPosition(long ppqPosition) { m_PPQIndexAtCompletion.SetValue(ppqPosition); }
-	void setObjectID(double objectID) { m_ObjectID.SetValue(objectID); }
+	void setTriggerData(const SvTrig::TriggerData& rTriggerData);
 	DWORD getInspectedObjectID() { double value; m_InspectedObjectID.getValue(value); return static_cast<DWORD> (value); }
-	void setObjectType(DWORD objectType) { m_ObjectType.SetValue(objectType); }
-	void setTriggerIndex(DWORD triggerIndex) { m_TriggerIndex.SetValue(triggerIndex); }
-	void setTriggerPerObjectID(DWORD triggerPerObjectID) { m_TriggerPerObjectID.SetValue(triggerPerObjectID); }
 	void setInspectionname(std::string Inspectionname) { m_InspectionName.SetValue(Inspectionname);};
 	void setMissingImageCount(int missingeImageCount) { m_MissingImageCountTS.SetValue(missingeImageCount); }
 	void setNotCompleteCount(int notCompleteCount) { m_NotCompleteCountTS.SetValue(notCompleteCount); }

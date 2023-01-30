@@ -11,6 +11,7 @@
 #include "SimulatedTriggerSource.h"
 #include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "Triggering/TriggerData.h"
 #pragma endregion Includes
 
 namespace SvEcat
@@ -33,10 +34,10 @@ constexpr LPCTSTR cObjectInvalid = _T("ObjectInvalid=");
 
 
 std::mutex gTriggerDataMutex;
-std::array<TriggerReport, cNumberOfChannels> gTriggerReport;
+std::array<SvTrig::TriggerData, cNumberOfChannels> gTriggerDataList;
 std::array<std::atomic_bool, cNumberOfChannels> gNewTrigger {false, false, false, false};
 
-SimulatedTriggerSource::SimulatedTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rSimulateFile) : TriggerSource(pReportTrigger)
+SimulatedTriggerSource::SimulatedTriggerSource(std::function<void(const SvTrig::TriggerData&)> pSendTriggerData, const std::string& rSimulateFile) : TriggerSource(pSendTriggerData)
 	,m_plcSimulateFile{rSimulateFile}
 {
 }
@@ -236,22 +237,23 @@ void SimulatedTriggerSource::setOutput(uint8_t , bool )
 	//}
 }
 
-void SimulatedTriggerSource::createTriggerReport(uint8_t channel)
+void SimulatedTriggerSource::createTriggerData(uint8_t channel)
 {
 	if(gNewTrigger[channel])
 	{
-		TriggerReport triggerReport;
+		SvTrig::TriggerData triggerData;
 		{
 			std::lock_guard<std::mutex> guard {gTriggerDataMutex};
-			triggerReport = std::move(gTriggerReport[channel]);
-			gTriggerReport[channel] = {};
+			triggerData = std::move(gTriggerDataList[channel]);
+			gTriggerDataList[channel] = {};
 		}
 		gNewTrigger[channel] = false;
-		sendTriggerReport(triggerReport);
-		if(triggerReport.m_triggerIndex == triggerReport.m_triggerPerObjectID)
+		sendTriggerData(triggerData);
+		if(triggerData.m_triggerIndex == triggerData.m_triggerPerObjectID)
 		{
+			//Use default objectID at the moment
 			std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
-			m_channel[channel].m_objectIDFileMap[triggerReport.m_objectID] = triggerReport.m_acquisitionFile;
+			m_channel[channel].m_objectIDFileMap[triggerData.m_objectData[0].m_objectID] = triggerData.m_pAcquisitionFile;
 		}
 	}
 }
@@ -361,18 +363,17 @@ void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double ti
 
 	if (false == m_channel[triggerChannel].m_timerInfo.m_pause)
 	{
-		TriggerReport triggerReport;
-		triggerReport.m_triggerTimestamp = timestamp;
-		triggerReport.m_channel = rSimTriggerData.m_channel;
-		triggerReport.m_objectID = objectID;
-		triggerReport.m_objectType = cSingleObjectType;
-		triggerReport.m_triggerPerObjectID = rSimTriggerData.m_triggerPerObjectID;
-		triggerReport.m_triggerIndex = currentTriggerIndex;
-		triggerReport.m_isValid = true;
-		triggerReport.m_acquisitionFile = acquisitionFile;
+		SvTrig::TriggerData triggerData;
+		triggerData.m_triggerTimestamp = timestamp;
+		triggerData.m_channel = rSimTriggerData.m_channel;
+		triggerData.m_objectData[0].m_objectID = objectID;
+		triggerData.m_objectType = cSingleObjectType;
+		triggerData.m_triggerPerObjectID = rSimTriggerData.m_triggerPerObjectID;
+		triggerData.m_triggerIndex = currentTriggerIndex;
+		triggerData.m_pAcquisitionFile = acquisitionFile.c_str();
 		{
 			std::lock_guard<std::mutex> guard {gTriggerDataMutex};
-			gTriggerReport[triggerReport.m_channel] = std::move(triggerReport);
+			gTriggerDataList[triggerData.m_channel] = std::move(triggerData);
 		}
 		gNewTrigger[rSimTriggerData.m_channel] = true;
 		++currentTriggerIndex;

@@ -13,10 +13,11 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 #include "SVDigitizerLoadLibraryClass.h"
-#include "SVTriggerClass.h"
 #include "SVIOTriggerLoadLibraryClass.h"
-#include "SVIOLibrary/SVIOParameterEnum.h"
+#include "SVTriggerClass.h"
 #include "SVTriggerConstants.h"
+#include "SVTriggerInfoStruct.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
 #pragma endregion Includes
 
 namespace SvTrig
@@ -174,13 +175,14 @@ void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInf
 			++rObjIDParam.m_currentObjectID;
 			m_triggerIndex = 1L;
 		}
-		else if(0 == rObjIDParam.m_startObjectID && 0 == rObjIDParam.m_currentObjectID)
+		else if (0 == rObjIDParam.m_startObjectID && 0 == rObjIDParam.m_currentObjectID)
 		{
 			rObjIDParam.m_currentObjectID = 1L;
 		}
-		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(static_cast<uint32_t> (rObjIDParam.m_currentObjectID));
-		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(static_cast<uint8_t> (m_triggerIndex));
-		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(static_cast<uint8_t> (rObjIDParam.m_triggerPerObjectID));
+		//Always use the default object index which is 0
+		rTriggerInfo.m_Data.m_objectData[0].m_objectID = static_cast<uint32_t> (rObjIDParam.m_currentObjectID);
+		rTriggerInfo.m_Data.m_triggerIndex = static_cast<uint8_t> (m_triggerIndex);
+		rTriggerInfo.m_Data.m_triggerPerObjectID = static_cast<uint8_t> (rObjIDParam.m_triggerPerObjectID);
 		long objectIDOffset = (0 == rObjIDParam.m_startObjectID) ? 0L : rObjIDParam.m_startObjectID - 1;
 		bool objectIDCountReached {rObjIDParam.m_triggerPerObjectID == m_triggerIndex && rObjIDParam.m_objectIDCount > 0 && (rObjIDParam.m_currentObjectID >= objectIDOffset + rObjIDParam.m_objectIDCount)};
 		if (objectIDCountReached)
@@ -191,7 +193,7 @@ void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInf
 	else if(SvDef::TriggerType::HardwareTrigger == m_type)
 	{
 		SvTrig::ObjectIDParameters objectIDParam = getObjectIDParameters();
-		long triggerPerObjectID = static_cast<long> (rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID]);
+		long triggerPerObjectID = static_cast<long> (rTriggerInfo.m_Data.m_triggerPerObjectID);
 		if (0 != triggerPerObjectID && objectIDParam.m_triggerPerObjectID != triggerPerObjectID)
 		{
 			objectIDParam.m_triggerPerObjectID = triggerPerObjectID;

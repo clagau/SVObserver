@@ -12,6 +12,12 @@
 #include "Triggering/IODeviceBase.h"
 #pragma endregion Includes
 
+namespace SvTrig
+{
+struct ResultData;
+struct TriggerData;
+}
+
 namespace SvPlc
 {
 
@@ -37,7 +43,7 @@ public:
 	unsigned long GetInputCount();
 	unsigned long GetOutputCount();
 
-	HRESULT SetOutputData(unsigned long triggerIndex, const SvTrig::TriggerData& rData);
+	HRESULT SetOutputData(const SvTrig::ResultData& rResultData);
 
 	// Triggers
 	unsigned long GetTriggerCount() const;
@@ -62,7 +68,7 @@ private:
 	HRESULT afterStartTrigger() override;
 	void beforeStopTrigger(unsigned long triggerIndex) override;
 
-	void reportTrigger(const TriggerReport&);
+	void NotifyTriggerData(const SvTrig::TriggerData&);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "Definitions/TriggerType.h"
 #include "TriggerDevice.h"
-#include "SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 
@@ -21,6 +20,8 @@ namespace SvTrig
 {
 class SVIOTriggerLoadLibraryClass;
 class SVDigitizerLoadLibraryClass;
+struct SVTriggerInfoStruct;
+struct TriggerData;
 
 struct AcquisitionParameter
 {
@@ -43,7 +44,7 @@ public:
 	explicit SVTriggerClass(LPCTSTR deviceName);
 	virtual ~SVTriggerClass() = default;
 
-	void __stdcall triggerCallback(SvTrig::TriggerData&& triggerData);
+	void __stdcall triggerCallback(TriggerData&& triggerData);
 
 	void addAcquisitionTrigger(AcquisitionParameter&& acqParameter);
 	void clearAcquisitionTriggers();
@@ -67,7 +68,7 @@ public:
 	void setPause(bool pauseState);
 	bool getPause() const { return m_pause; }
 protected:
-	virtual void preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo) override;
+	virtual void preProcessTriggers(SVTriggerInfoStruct& rTriggerInfo) override;
 	virtual void postProcessTriggers(DWORD sleepDuration, bool softwareTrigger, LPCTSTR pAcquisitionFile) override;
 
 private:

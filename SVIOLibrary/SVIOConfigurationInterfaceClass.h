@@ -14,6 +14,11 @@
 #include "SVIODigitalStruct.h"
 #include "SVIODigitalLoadLibraryClass.h"
 
+namespace SvTrig
+{
+struct ResultData;
+}
+
 class SVIOConfigurationInterfaceClass  
 {
 public:
@@ -56,7 +61,7 @@ public:
 
 	HRESULT SetDigitalOutputPortValue( unsigned long port, unsigned long value );
 
-	HRESULT SetDigitalOutputData(unsigned long channel, const TriggerData& rData);
+	HRESULT SetDigitalOutputData(const SvTrig::ResultData& rResultData);
 
 	HRESULT ClearDigitalOutputs();
 	HRESULT TestDigitalOutputs();

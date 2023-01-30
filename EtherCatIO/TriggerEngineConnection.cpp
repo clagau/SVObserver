@@ -6,7 +6,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TriggerEngineConnection.h"
-#include "PlcDataTypes.h"
 #include "PowerLinkConnection.h" 
 #pragma endregion Includes
 
@@ -16,9 +15,9 @@ std::unique_ptr<PowerlinkConnection> g_pPowerLink;
 
 namespace Tec
 {
-void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, TriggerType triggerType, const std::string& rAdditionalData)
+void startTriggerEngine(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, TriggerType triggerType, const std::string& rAdditionalData)
 {
-	g_pPowerLink = std::make_unique<PowerlinkConnection>(reportTrigger, triggerType, rAdditionalData);
+	g_pPowerLink = std::make_unique<PowerlinkConnection>(pTriggerDataCallback, triggerType, rAdditionalData);
 	::OutputDebugString("Start Trigger Engine!\n");
 }
 

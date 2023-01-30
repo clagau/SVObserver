@@ -8,10 +8,14 @@
 #pragma region Includes
 #pragma endregion Includes
 
+namespace SvTrig
+{
+struct ResultData;
+}
+
 namespace SvPlc
 {
 struct PlcInputParam;
-struct ResultReport;
 
 namespace Tec
 {
@@ -23,7 +27,7 @@ HRESULT initTriggerEngine();
 void setReady(bool ready);
 void setTriggerChannel(uint8_t channel, bool active);
 
-void writeResult(const ResultReport& rReportResult);
+void writeResult(const SvTrig::ResultData& rResultData);
 } //namespace Tec
 
 } //namespace SvPlc

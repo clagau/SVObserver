@@ -61,11 +61,11 @@ void setTriggerChannel(uint8_t channel, bool active)
 	}
 }
 
-void writeResult(const ResultReport& rResultReport)
+void writeResult(const SvTrig::ResultData& rResultData)
 {
 	if(nullptr != g_pPowerLink)
 	{
-		g_pPowerLink->writeResult(rResultReport);
+		g_pPowerLink->writeResult(rResultData);
 	}
 }
 } //namespace Tec

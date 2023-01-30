@@ -104,6 +104,7 @@
     <ClInclude Include="CifxLoadLibrary.h" />
     <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="ObjectIDParameters.h" />
+    <ClInclude Include="ResultData.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
     <ClInclude Include="SVIOTriggerLoadLibraryClass.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="SVTriggerInfoStruct.h" />
     <ClInclude Include="SVTriggerObject.h" />
     <ClInclude Include="SVTriggerProcessingClass.h" />
+    <ClInclude Include="TriggerData.h" />
     <ClInclude Include="TriggerDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

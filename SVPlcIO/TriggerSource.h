@@ -10,14 +10,18 @@
 #include "PlcDataTypes.h"
 #pragma endregion Includes
 
+namespace SvTrig
+{
+struct ResultData;
+struct TriggerData;
+}
+
 namespace SvPlc
 {
-struct ChannelOut1;
-
 class TriggerSource
 {
 public:
-	explicit TriggerSource(std::function<void(const TriggerReport&)> pReportTrigger);
+	explicit TriggerSource(std::function<void(const SvTrig::TriggerData&)> pReportTrigger);
 	virtual ~TriggerSource() = default;
 
 	void checkForNewTriggers();
@@ -26,17 +30,17 @@ public:
 	virtual bool setTriggerChannel(uint8_t channel, bool active);
 	virtual bool isReady() { return true; }
 	virtual void analyzeTelegramData() = 0;
-	virtual void queueResult(uint8_t , ChannelOut1&& ) {}
+	virtual void queueResult(const SvTrig::ResultData& rResultData) = 0;
 	virtual void setReady(bool ) {}
 
 protected:
-	virtual void createTriggerReport(uint8_t channel) = 0;
-	void sendTriggerReport(const TriggerReport& rTriggerReport);
+	virtual void createTriggerData(uint8_t channel) = 0;
+	void sendTriggerData(const SvTrig::TriggerData& rTriggerData);
 
 	std::mutex m_triggerSourceMutex;
 
 private:
-	std::function<void(const TriggerReport&)> m_pReportTrigger;
+	std::function<void(const SvTrig::TriggerData&)> m_pTriggerDataCallback;
 	std::array<std::atomic_bool, cNumberOfChannels> m_activeChannel {false, false, false, false};
 };
 

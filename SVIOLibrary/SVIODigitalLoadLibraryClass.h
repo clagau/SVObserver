@@ -12,10 +12,12 @@
 #pragma once
 
 #pragma region Includes
-#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
-using TriggerData = std::array<_variant_t, SvDef::cTriggerDataNumber>;
+namespace SvTrig
+{
+struct ResultData;
+}
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
@@ -26,7 +28,7 @@ typedef unsigned long (WINAPI *SVOutputGetCountPtr)();
 typedef HRESULT (WINAPI *SVOutputSetValuePtr)(unsigned long, bool);
 typedef unsigned long (WINAPI *SVOutputGetPortCountPtr)();
 typedef HRESULT (WINAPI *SVOutputSetPortValuePtr)(unsigned long, unsigned long);
-typedef HRESULT (WINAPI *SVOutputSetDataPtr)(unsigned long, const TriggerData&);
+typedef HRESULT (WINAPI *SVOutputSetDataPtr)(const SvTrig::ResultData&);
 
 typedef unsigned long (WINAPI *SVGetParameterCountPtr)();
 typedef _variant_t (WINAPI *SVGetParameterNamePtr)( unsigned long);
@@ -52,7 +54,7 @@ public:
 	unsigned long GetOutputPortCount() const;
 	HRESULT SetOutputPortValue(unsigned long port, unsigned long value);
 
-	HRESULT SetOutputData(unsigned long channel, const TriggerData& rData);
+	HRESULT SetOutputData(const SvTrig::ResultData& rResultData);
 
 	// Parameter related functions. Not implemented in all dlls.
 	unsigned long GetParameterCount() const;

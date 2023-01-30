@@ -167,18 +167,11 @@ namespace SvTrig
 		if (nullptr != m_pCurrentTrigger)
 		{
 			SvTrig::SVTriggerInfoStruct triggerInfo;
-			if (0.0 == triggerTime)
-			{
-				triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(SvUl::GetTimeStamp());
-				triggerInfo.m_Data[SvTrig::TriggerDataEnum::SoftwareTrigger] = true;
-			}
-			else
-			{
-				triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(triggerTime);
-			}
+			triggerInfo.m_Data.m_triggerTimestamp = SvUl::GetTimeStamp();
+			triggerInfo.m_softwareTrigger = (0.0 == triggerTime);
 			triggerInfo.bValid = true;
 			///Trigger channel 0 based
-			triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(static_cast<uint8_t> (m_pCurrentTrigger->getTriggerChannel()));
+			triggerInfo.m_Data.m_channel = static_cast<uint8_t> (m_pCurrentTrigger->getTriggerChannel());
 			m_pCurrentTrigger->Notify(triggerInfo);
 		}
 	}

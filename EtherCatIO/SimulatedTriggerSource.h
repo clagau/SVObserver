@@ -51,7 +51,7 @@ class SimulatedTriggerSource : public TriggerSource
 		validationFolder,
 	};
 public:
-	explicit SimulatedTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rSimulateFile);
+	explicit SimulatedTriggerSource(std::function<void(const SvTrig::TriggerData&)> pReportTrigger, const std::string& rSimulateFile);
 	virtual ~SimulatedTriggerSource() = default;
 
 	virtual HRESULT initialize() override;
@@ -59,7 +59,7 @@ public:
 	virtual void analyzeTelegramData() override;
 	virtual uint32_t getInputs() const override { return 0UL; }
 	virtual void setOutput(uint8_t outputNr, bool state) override;
-	virtual void createTriggerReport(uint8_t channel) override;
+	virtual void createTriggerData(uint8_t channel) override;
 
 private:
 	HRESULT initChannel(const std::vector<std::vector<std::string>>& rCycleParamList);

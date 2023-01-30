@@ -12,6 +12,7 @@
 #include "PowerLinkConnection.h"
 #include "SimulatedTriggerSource.h"
 #include "TriggerEngineConnection.h"
+#include "Triggering/ResultData.h"
 #pragma endregion Includes
 
 namespace SvPlc
@@ -66,15 +67,11 @@ void PowerlinkConnection::setTriggerChannel(uint8_t channel, bool active)
 	}
 }
 
-void PowerlinkConnection::writeResult(const ResultReport& rResultReport)
+void PowerlinkConnection::writeResult(const SvTrig::ResultData& rResultData)
 {
-	if (rResultReport.m_channel < cNumberOfChannels)
+	if (rResultData.m_channel < cNumberOfChannels)
 	{
-		ChannelOut1 channelOut;
-		channelOut.m_objectType = rResultReport.m_objectType;
-		channelOut.m_objectID = rResultReport.m_objectID;
-		channelOut.m_results = rResultReport.m_results;
-		m_pTriggersource->queueResult(rResultReport.m_channel, std::move(channelOut));
+		m_pTriggersource->queueResult(rResultData);
 	}
 }
 
@@ -85,7 +82,7 @@ HRESULT PowerlinkConnection::initialize()
 
 void PowerlinkConnection::StartEventSignalThread()
 {
-	if (!m_eventSignalThread.joinable())
+	if (false == m_eventSignalThread.joinable())
 	{
 		g_runThread = true;
 		auto eventHandler = [this]() { return EventHandler(); };

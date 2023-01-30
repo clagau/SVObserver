@@ -12,8 +12,8 @@
 
 namespace SvPlc
 {
-TriggerSource::TriggerSource(std::function<void(const TriggerReport&)> pReportTrigger) :
-	m_pReportTrigger(pReportTrigger)
+TriggerSource::TriggerSource(std::function<void(const SvTrig::TriggerData&)> pSendTriggerData) :
+	m_pTriggerDataCallback(pSendTriggerData)
 {
 }
 
@@ -33,11 +33,11 @@ bool TriggerSource::setTriggerChannel(uint8_t channel, bool active)
 	return result;
 }
 
-void TriggerSource::sendTriggerReport(const TriggerReport& rTriggerReport)
+void TriggerSource::sendTriggerData(const SvTrig::TriggerData& rTriggerData)
 {
-	if(nullptr != m_pReportTrigger)
+	if(nullptr != m_pTriggerDataCallback)
 	{
-		m_pReportTrigger(rTriggerReport);
+		m_pTriggerDataCallback(rTriggerData);
 	}
 }
 
@@ -47,7 +47,7 @@ void TriggerSource::checkForNewTriggers()
 	{
 		if (m_activeChannel[channel])
 		{
-			createTriggerReport(channel);
+			createTriggerData(channel);
 		}	
 	}
 }

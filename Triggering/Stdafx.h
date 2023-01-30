@@ -68,6 +68,7 @@
 #include <queue>				//Used by static library
 #include <set>					//Used by static library
 #include <stdexcept>			//Used by static library
+#include <stdint.h>
 #include <tchar.h>				//Used by static library
 #include <unordered_map>
 

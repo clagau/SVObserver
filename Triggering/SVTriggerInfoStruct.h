@@ -8,40 +8,16 @@
 
 #pragma once
 #pragma region Includes
-#include "Definitions/GlobalConst.h"
+#include "TriggerData.h"
 #pragma endregion Includes
 
 namespace SvTrig
 {
-enum TriggerDataEnum : int
-{
-	TimeStamp = 0,
-	ObjectID,
-	TriggerIndex,
-	TriggerPerObjectID,
-	OutputData,
-	TriggerChannel,
-	ObjectType,
-	SoftwareTrigger,
-	AcquisitionFile,
-	TriggerDataNumber
-};
-
-static_assert(TriggerDataEnum::TriggerDataNumber == SvDef::cTriggerDataNumber, "The trigger data enum number must be the same size as the variable SvDef::cTriggerDataNumber");
-
-using TriggerData = std::array<_variant_t, TriggerDataEnum::TriggerDataNumber>;
 using TriggerCallBack = std::function<void(TriggerData&&)>;
 
 struct SVTriggerInfoStruct
 {
-
 	SVTriggerInfoStruct() = default;
-	SVTriggerInfoStruct(const SVTriggerInfoStruct& rRhs) = default;
-	SVTriggerInfoStruct(SVTriggerInfoStruct&& rRhs) = default;
-	virtual ~SVTriggerInfoStruct() = default;
-
-	SVTriggerInfoStruct& operator=(const SVTriggerInfoStruct& rRhs) = default;
-	SVTriggerInfoStruct& operator=(SVTriggerInfoStruct&& rRhs) = default;
 
 	void clear() { *this = {}; }
 
@@ -51,6 +27,7 @@ struct SVTriggerInfoStruct
 	double m_triggerTimeStamp{0.0};
 	double m_ToggleTimeStamp{0.0};
 	double m_PreviousTrigger{0.0};
+	bool m_softwareTrigger {false};
 	TriggerData m_Data;
 	std::vector<_variant_t> m_Inputs;
 };

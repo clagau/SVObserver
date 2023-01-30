@@ -36,13 +36,12 @@ void __stdcall TriggerDevice::ProcessCallback(ULONG_PTR pCaller)
 				DWORD sleepDuration {0};
 				std::string acquisitionFile;
 				//If in the input data it has a valid time stamp value then it is more accurate then use it
-				const _variant_t& rTimeStamp = triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp];
-				if (VT_R8 == rTimeStamp.vt && 0.0 < rTimeStamp.dblVal)
+				if (0.0 < triggerInfo.m_Data.m_triggerTimestamp)
 				{
-					triggerInfo.m_triggerTimeStamp = rTimeStamp.dblVal;
+					triggerInfo.m_triggerTimeStamp = triggerInfo.m_Data.m_triggerTimestamp;
+					////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
 					//When ObjectID is present then PLC connected so make sure the acquisition is done after the trigger timestamp
-					const _variant_t& rObjectID = triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
-					if (VT_UI4 == rObjectID.vt && rObjectID.ulVal > 0)
+					if (triggerInfo.m_Data.m_objectData[0].m_objectID > 0)
 					{
 						double timeDifference = triggerInfo.m_triggerTimeStamp - SvUl::GetTimeStamp();
 						bool isTimeInTheFuture = timeDifference > 0.0;
@@ -53,10 +52,9 @@ void __stdcall TriggerDevice::ProcessCallback(ULONG_PTR pCaller)
 							++sleepDuration;
 						}
 					}
-					const _variant_t& rAcquisitionFile = triggerInfo.m_Data[SvTrig::TriggerDataEnum::AcquisitionFile];
-					if (VT_BSTR == rAcquisitionFile.vt)
+					if (nullptr != triggerInfo.m_Data.m_pAcquisitionFile)
 					{
-						acquisitionFile = _bstr_t(rAcquisitionFile.bstrVal);
+						acquisitionFile = triggerInfo.m_Data.m_pAcquisitionFile;
 					}
 				}
 				else
@@ -65,12 +63,9 @@ void __stdcall TriggerDevice::ProcessCallback(ULONG_PTR pCaller)
 					triggerInfo.m_triggerTimeStamp = SvUl::GetTimeStamp();
 				}
 
-				const _variant_t& rSoftwareTrigger = triggerInfo.m_Data[SvTrig::TriggerDataEnum::SoftwareTrigger];
-				bool softwareTrigger = (VT_BOOL == rSoftwareTrigger.vt) ? (rSoftwareTrigger ? true : false) : false;
-
 				pTriggerDevice->preProcessTriggers(triggerInfo);
 				pTriggerDevice->m_pPpqTriggerCallback(std::move(triggerInfo));
-				pTriggerDevice->postProcessTriggers(sleepDuration, softwareTrigger, acquisitionFile.c_str());
+				pTriggerDevice->postProcessTriggers(sleepDuration, triggerInfo.m_softwareTrigger, acquisitionFile.c_str());
 			}
 			done = (0 == pTriggerDevice->m_triggerQueue.size());
 		}

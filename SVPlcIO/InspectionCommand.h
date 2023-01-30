@@ -8,12 +8,12 @@
 #pragma once
 
 #pragma region Includes
-#include <stdint.h>
 #include "PlcDataTypes.h"
+#include "Triggering/TriggerData.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-constexpr uint8_t c_ReservedInsCmd = 7;
+constexpr uint8_t cReservedInsCmd = 7;
 #pragma endregion Declarations
 
 namespace SvPlc
@@ -27,13 +27,18 @@ public:
 	auto operator<=>(const ChannelIn1&) const = default;
 #pragma region Member Variables
 public:
+	bool m_activation {false};				//Only for HV
+	bool m_enable {false};					//Only for HV
+	bool m_loopMode {false};				//True when loop mode is activated
 	uint8_t m_unitControl{ 0 };				//When true then do inspection
-	int8_t m_sequence{ 0 };					//Sequence number
-	int16_t m_timeStamp{ 0 };				//Time stamp
-	uint8_t m_objectType{ 0 };				//Object type
-	uint32_t m_objectID{ 0 };				//Object ID
-	uint8_t m_triggerIndex{ 0 };			//Trigger index
-	uint8_t m_triggerCount{ 0 };			//Trigger count per object
+	int8_t m_sequence{ 0 };
+	int16_t m_timeStamp{ 0 };
+	uint8_t m_triggerIndex {0};
+	uint8_t m_triggerCount {0};
+	uint8_t m_objectType{ 0 };
+	std::array <uint32_t, cObjectMaxNr> m_objectID {0UL, 0UL, 0UL, 0UL};
+	std::array <uint8_t, cObjectMaxNr> m_rotationNr {0, 0, 0, 0};
+	std::array <float, cObjectMaxNr> m_measurementValue {0.0, 0.0, 0.0, 0.0};
 #pragma endregion Member Variables
 };
 
@@ -83,7 +88,7 @@ public:
 	uint32_t m_socAbsSeconds {0UL};			//SOC time seconds
 	uint32_t m_socAbsNanoseconds {0UL};		//SOC time nano seconds
 	int32_t m_socRelative {0L};				//Relative SOC time
-	std::array<uint8_t, c_ReservedInsCmd>  m_reserved {0, 0, 0, 0, 0, 0, 0};	//Reserved data
+	std::array<uint8_t, cReservedInsCmd>  m_reserved {0, 0, 0, 0, 0, 0, 0};	//Reserved data
 	std::array<ChannelIn2, cNumberOfChannels> m_channels;	//In data for each of the 4 separate channels
 #pragma endregion Member Variables
 };

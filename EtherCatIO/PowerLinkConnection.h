@@ -22,7 +22,7 @@ extern HANDLE g_hSignalEvent;
 class PowerlinkConnection
 {
 public:
-	PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, TriggerType triggerType, const std::string& rAdditionalData);
+	PowerlinkConnection(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, TriggerType triggerType, const std::string& rAdditionalData);
 	~PowerlinkConnection();
 
 	void setReady(bool ready);

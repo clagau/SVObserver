@@ -135,8 +135,8 @@ void EthercatIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 				m_logOutFile.write(fileData.c_str(), fileData.size());
 			}
 		}
-		auto reportTriggerCallback = [this](const TriggerReport& rTriggerReport) { return reportTrigger(rTriggerReport); };
-		Tec::startTriggerEngine(reportTriggerCallback, m_triggerType, m_AdditionalData);
+		auto pTriggerDataCallBack = [this](const SvTrig::TriggerData& rTriggerData) { return NotifyTriggerData(rTriggerData); };
+		Tec::startTriggerEngine(pTriggerDataCallBack, m_triggerType, m_AdditionalData);
 		m_engineStarted = true;
 		Tec::setReady(m_moduleReady);
 		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
@@ -305,33 +305,25 @@ HRESULT EthercatIOImpl::SetParameterValue(unsigned long index, const _variant_t&
 	return result;
 }
 
-void EthercatIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
+void EthercatIOImpl::NotifyTriggerData(const SvTrig::TriggerData& rTriggerData)
 {
 
-	if(cMaxPlcTriggers > rTriggerReport.m_channel)
+	if(cMaxPlcTriggers > rTriggerData.m_channel)
 	{
-		if(false == m_triggerStarted[rTriggerReport.m_channel] || false == rTriggerReport.m_isValid)
+		if(false == m_triggerStarted[rTriggerData.m_channel])
 		{
 			return;
 		}
-		++m_inputCount[rTriggerReport.m_channel];
+		++m_inputCount[rTriggerData.m_channel];
 	}
 	
-
 	/// Only call trigger callbacks if the module ready is set this avoids problems with the PPQ Object not being ready
 	if(m_moduleReady)
 	{
 		//PLC channel is zero based while SVObserver trigger index is one based!
-		unsigned long triggerIndex = rTriggerReport.m_channel + 1;
+		unsigned long triggerIndex = rTriggerData.m_channel + 1;
 
-		SvTrig::TriggerData triggerData;
-		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
-		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
-		triggerData[SvTrig::TriggerDataEnum::ObjectType] = _variant_t(rTriggerReport.m_objectType);
-		triggerData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_objectID);
-		triggerData[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
-		triggerData[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
-		triggerData[SvTrig::TriggerDataEnum::AcquisitionFile].SetString(rTriggerReport.m_acquisitionFile.c_str());
+		SvTrig::TriggerData triggerData {rTriggerData};
 
 		auto iter = m_triggerCallbackMap.find(triggerIndex);
 		if (m_triggerCallbackMap.end() != iter)
@@ -339,12 +331,17 @@ void EthercatIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 			iter->second(std::move(triggerData));
 		}
 
-		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerReport.m_channel)
+		if(m_logInFile.is_open())
 		{
-			const TriggerReport& rData = rTriggerReport;
+			const SvTrig::TriggerData& rData = rTriggerData;
+			std::string objectIDList;
+			for (int i = 0; i < cObjectMaxNr; ++i)
+			{
+				objectIDList += (0 == i) ? "" : "," + std::to_string(rData.m_objectData[i].m_objectID);
+			}
 			///This is required as m_inputCount[rData.m_channel] is atomic
 			uint32_t inputCount = m_inputCount[rData.m_channel];
-			std::string fileData = std::format(_T("{}; {}; {}; {}; {}; {}; {}\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_objectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
+			std::string fileData = std::format(_T("{}; {}; {}; {}; {}; {}; {}\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, objectIDList.c_str(), rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
 			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}

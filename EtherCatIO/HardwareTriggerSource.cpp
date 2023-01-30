@@ -7,9 +7,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-
 #include "HardwareTriggerSource.h"
 #include "PowerLinkConnection.h"
+#include "Triggering/TriggerData.h"
 #pragma endregion Includes
 
 constexpr int cTimerConversion = 10000;
@@ -53,7 +53,7 @@ void CycleTimer(std::atomic_bool& rTimerOn, std::function<void(double)> dispatch
 }
 #endif
 
-HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rAdditionalData) : TriggerSource(pReportTrigger)
+HardwareTriggerSource::HardwareTriggerSource(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, const std::string& rAdditionalData) : TriggerSource(pTriggerDataCallback)
 , m_additionalData {rAdditionalData}
 {
 	::OutputDebugString("Triggers are received from PLC via CifX card.\n");
@@ -152,18 +152,17 @@ void HardwareTriggerSource::analyzeTelegramData()
 	}
 }
 
-void HardwareTriggerSource::createTriggerReport(uint8_t channel)
+void HardwareTriggerSource::createTriggerData(uint8_t channel)
 {
 	uint8_t inputMask = (1U << channel);
 	const InputData& rInputData = m_cifXCard.getCurrentInputData();
 	bool newTrigger = (rInputData.m_dynamicData[0] & inputMask) != 0 && (m_previousInputData[0] & inputMask) == 0;
 	if (newTrigger)
 	{
-		TriggerReport report;
-		report.m_channel = channel;
-		report.m_triggerTimestamp = rInputData.m_notificationTime;
-		report.m_isValid = true;
-		sendTriggerReport(report);
+		SvTrig::TriggerData triggerData;
+		triggerData.m_channel = channel;
+		triggerData.m_triggerTimestamp = rInputData.m_notificationTime;
+		sendTriggerData(triggerData);
 	}
 }
 } //namespace SvEcat

@@ -43,6 +43,7 @@
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVOLibrary/SVHardwareManifest.h"
+#include "Triggering/ResultData.h"
 #include "Triggering/SVTriggerClass.h"
 #include "Triggering/SVTriggerInfoStruct.h"
 #include "Triggering/SVTriggerObject.h"
@@ -1205,14 +1206,8 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 	bool bNak {true};
 	bool dataValidResult {false};
 	bool writeOutputData {false};
-	DWORD inspectedObjectID {0};
-	_variant_t objectType;
-
-#ifdef _DEBUG
-#ifdef SHOW_PPQ_STATE
-	std::string l_ProductState;
-#endif
-#endif
+	uint32_t inspectedObjectID {0UL};
+	uint8_t objectType {0U};
 
 	m_OutputToggle = !m_OutputToggle;
 
@@ -1227,41 +1222,19 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 		if (0 == inspectedObjectID)
 		{
 			//Set the default inspected object ID which would be the input object ID
-			const _variant_t& rObjectID = pProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
-			if (VT_UINT == rObjectID.vt)
-			{
-				inspectedObjectID = static_cast<DWORD> (rObjectID);
-			}
+			////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
+			inspectedObjectID = static_cast<DWORD> (pProduct->m_triggerInfo.m_Data.m_objectData[0].m_objectID);
 		}
 
-		DWORD triggerIndex {0};
-		DWORD triggerPerObjectID {0};
-		const _variant_t& rObjectType = pProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectType];
-		if (VT_UI1 == rObjectType.vt)
-		{
-			objectType = rObjectType;
-		}
-		const _variant_t& rTriggerIndex = pProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
-		if (VT_UI1 == rTriggerIndex.vt)
-		{
-			triggerIndex = static_cast<DWORD> (rTriggerIndex);
-		}
-		const _variant_t& rTriggerPerObjectID = pProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID];
-		if (VT_UI1 == rTriggerPerObjectID.vt)
-		{
-			triggerPerObjectID = static_cast<DWORD> (rTriggerPerObjectID);
-		}
+		objectType = pProduct->m_triggerInfo.m_Data.m_objectType;
+		uint8_t triggerIndex {pProduct->m_triggerInfo.m_Data.m_triggerIndex};
+		uint8_t triggerPerObjectID {pProduct->m_triggerInfo.m_Data.m_triggerPerObjectID};
 		//Only when both triggerIndex and triggerPerObjectID are valid and the same write data
 		writeOutputData = (0 != triggerIndex && 0 != triggerPerObjectID) ? (triggerIndex == triggerPerObjectID) : false;
 
 		pProduct->m_outputsInfo.m_OutputToggleResult = m_OutputToggle;
 		bNak = pProduct->m_outputsInfo.m_NakResult;
 		dataValidResult = pProduct->m_outputsInfo.m_DataValidResult;
-#ifdef _DEBUG
-#ifdef SHOW_PPQ_STATE
-		l_ProductState = pProduct->m_ProductState;
-#endif
-#endif
 	}
 
 	bool bWriteOutputs = true;
@@ -1277,19 +1250,19 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 	{
 		if (nullptr != m_pTrigger && writeOutputData)
 		{
-			//Trigger channel needs to  be one based
-			long triggerChannel = (nullptr != m_pTrigger->getDevice()) ? m_pTrigger->getDevice()->getDigitizerNumber() + 1 : -1;
+			int triggerChannel = (nullptr != m_pTrigger->getDevice()) ? m_pTrigger->getDevice()->getDigitizerNumber() : -1;
 
 			if (triggerChannel >= 0 && rOutputValues.size() > 0)
 			{
-				SvTrig::TriggerData outputData;
-				outputData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
-				if (VT_EMPTY != objectType.vt)
+				SvTrig::ResultData resultData;
+				resultData.m_channel = static_cast<uint8_t> (triggerChannel);
+				resultData.m_objectID = inspectedObjectID;
+				resultData.m_objectType = objectType;
+				if ((VT_UI1 | VT_ARRAY) == rOutputValues[0].second.vt && rOutputValues[0].second.parray->rgsabound[0].cElements == sizeof(resultData.m_results))
 				{
-					outputData[SvTrig::TriggerDataEnum::ObjectType] = objectType;
+					memcpy(&resultData.m_results[0], rOutputValues[0].second.parray->pvData, sizeof(resultData.m_results));
 				}
-				outputData[SvTrig::TriggerDataEnum::OutputData] = rOutputValues[0].second;
-				m_pOutputList->WriteOutputData(triggerChannel, outputData);
+				m_pOutputList->WriteOutputData(resultData);
 			}
 		}
 		result = m_pOutputList->WriteOutputs(rOutputValues);
@@ -1312,17 +1285,6 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 			m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::DataValidDelay]));
 		}
 	}
-
-
-#ifdef _DEBUG
-#ifdef SHOW_PPQ_STATE
-	if (!(l_ProductState.empty()))
-	{
-		l_ProductState += _T("\n");
-		OutputDebugString(l_ProductState.c_str());
-	}
-#endif
-#endif
 
 	if (bNak)
 	{
@@ -3288,24 +3250,14 @@ void SVPPQObject::checkNakReason(CantProcessEnum cantProcessReason)
 }
 void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const
 {
-	uint32_t newObjectID {0UL};
-	uint32_t prevObjectID {0UL};
+	////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
+	uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[0].m_objectID};
+	uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[0].m_objectID};
 
-	const _variant_t& rPrevObjectID = rCurrentProduct.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
-	if (VT_UINT == rPrevObjectID.vt)
-	{
-		prevObjectID = static_cast<uint32_t> (rPrevObjectID);
-	}
-	const _variant_t& rNewObjectID = pNextProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
-	if (VT_UINT == rNewObjectID.vt)
-	{
-		newObjectID = static_cast<uint32_t> (rNewObjectID);
-	}
-	if (newObjectID != 0 && newObjectID == prevObjectID)
+	if (nextObjectID != 0 && nextObjectID == currentObjectID)
 	{
 		//Object has more than 1 trigger per Object then relay NAK result to new product
-		const _variant_t& rTriggerIndex = pNextProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
-		if (VT_UI1 == rTriggerIndex.vt && 1u < static_cast<DWORD> (rTriggerIndex))
+		if (1u < pNextProduct->m_triggerInfo.m_Data.m_triggerIndex)
 		{
 			pNextProduct->m_prevTriggerNAK = true;
 		}
@@ -3314,38 +3266,26 @@ void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVP
 
 void SVPPQObject::checkTriggerIndex(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const
 {
-	uint32_t currentObjectID {0UL};
-	uint32_t nextObjectID {0UL};
+	////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
+	uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[0].m_objectID};
+	uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[0].m_objectID};
+	uint8_t nextTriggerIndex {pNextProduct->m_triggerInfo.m_Data.m_triggerIndex};
 
-	const _variant_t& rCurrentObjectID = rCurrentProduct.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
-	if (VT_UINT == rCurrentObjectID.vt)
+	if (nextObjectID != 0 && nextObjectID == currentObjectID)
 	{
-		currentObjectID = static_cast<uint32_t> (rCurrentObjectID);
-	}
-	const _variant_t& rNextObjectID = pNextProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID];
-	if (VT_UINT == rNextObjectID.vt)
-	{
-		nextObjectID = static_cast<uint32_t> (rNextObjectID);
-	}
-	const _variant_t& rCurrentTriggerIndex = rCurrentProduct.m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
-	const _variant_t& rNextTriggerIndex = pNextProduct->m_triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex];
-	if (VT_UI1 == rCurrentTriggerIndex.vt && VT_UI1 == rNextTriggerIndex.vt)
-	{
-		if (nextObjectID != 0 && nextObjectID == currentObjectID)
+		uint8_t currentTriggerIndex {rCurrentProduct.m_triggerInfo.m_Data.m_triggerIndex};
+		//Check that trigger index has been incremented
+		if (currentTriggerIndex + 1 != nextTriggerIndex)
 		{
-			//Check that trigger index has been incremented
-			if (static_cast<DWORD> (rCurrentTriggerIndex) + 1 != static_cast<DWORD> (rNextTriggerIndex))
-			{
-				pNextProduct->m_prevTriggerNAK = true;
-			}
+			pNextProduct->m_prevTriggerNAK = true;
 		}
-		else
+	}
+	else
+	{
+		//Check when next objectID that trigger index is 1
+		if (1 != nextTriggerIndex)
 		{
-			//Check when next objectID that trigger index is 1
-			if (1 != static_cast<DWORD> (rNextTriggerIndex))
-			{
-				pNextProduct->m_prevTriggerNAK = true;
-			}
+			pNextProduct->m_prevTriggerNAK = true;
 		}
 	}
 }

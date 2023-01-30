@@ -572,10 +572,10 @@ bool SVOutputObjectList::OutputIsNotValid(const std::string& rName )
 }
 
 
-void SVOutputObjectList::WriteOutputData(unsigned long triggerChannel, const TriggerData& rData)
+void SVOutputObjectList::WriteOutputData(const SvTrig::ResultData& rResultData)
 {
 	std::lock_guard<std::mutex> guard(m_protectOutputList);
-	SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputData(triggerChannel, rData);
+	SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputData(rResultData);
 }
 
 void SVOutputObjectList::setModuleReady(bool value)

@@ -225,9 +225,12 @@ DWORD RegressionTestController::runThread()
 		//send image info to the dialog...
 		if (runState.bRunFlag)
 		{
-			pToolset->setObjectID(m_objectIDParams.m_currentObjectID);
-			pToolset->setTriggerIndex(m_triggerIndex);
-			pToolset->setTriggerPerObjectID(m_objectIDParams.m_triggerPerObjectID);
+			SvTrig::TriggerData triggerData;
+			//Use default objectID at the moment
+			triggerData.m_objectData[0].m_objectID = static_cast<uint32_t> (m_objectIDParams.m_currentObjectID);
+			triggerData.m_triggerIndex = static_cast<uint8_t> (m_triggerIndex);
+			triggerData.m_triggerPerObjectID = static_cast<uint8_t> (m_objectIDParams.m_triggerPerObjectID);
+			pToolset->setTriggerData(triggerData);
 			runState.bRunFlag = false;
 			SendMessage(m_hRegressionWnd, WM_REGRESSION_TEST_SET_FILENAMES, reinterpret_cast<LPARAM> (&fileNameVec), 0);
 			runOnce(*m_pInspection);

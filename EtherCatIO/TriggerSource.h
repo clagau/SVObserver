@@ -10,6 +10,12 @@
 #include "PlcDataTypes.h"
 #pragma endregion Includes
 
+namespace SvTrig
+{
+struct ResultData;
+struct TriggerData;
+}
+
 namespace SvEcat
 {
 struct ChannelOut1;
@@ -17,7 +23,7 @@ struct ChannelOut1;
 class TriggerSource
 {
 public:
-	explicit TriggerSource(std::function<void(const TriggerReport&)> pReportTrigger);
+	explicit TriggerSource(std::function<void(const SvTrig::TriggerData&)> pSendTriggerData);
 	virtual ~TriggerSource() = default;
 
 	void checkForNewTriggers();
@@ -31,14 +37,14 @@ public:
 	virtual void setReady(bool ready) { m_ready = ready; }
 
 protected:
-	virtual void createTriggerReport(uint8_t channel) = 0;
-	void sendTriggerReport(const TriggerReport& rTriggerReport);
+	virtual void createTriggerData(uint8_t channel) = 0;
+	void sendTriggerData(const SvTrig::TriggerData& rTriggerData);
 
 	std::mutex m_triggerSourceMutex;
 
 private:
 	bool m_ready {false};
-	std::function<void(const TriggerReport&)> m_pReportTrigger;
+	std::function<void(const SvTrig::TriggerData&)> m_pTriggerDataCallback;
 	std::array<std::atomic_bool, cNumberOfChannels> m_activeChannel {false, false, false, false};
 };
 

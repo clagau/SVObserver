@@ -23,11 +23,11 @@ public:
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
 	virtual HRESULT initialize() override;
 	virtual void analyzeTelegramData() override;
-	virtual void queueResult(uint8_t channel, ChannelOut1&& channelOut) override;
+	virtual void queueResult(const SvTrig::ResultData& rResultData) override;
 	virtual void setReady(bool ready) override { m_cifXCard.setReady(ready); }
 
 private:
-	virtual  void createTriggerReport(uint8_t channel) override;
+	virtual  void createTriggerData(uint8_t channel) override;
 
 	/// Calculates the trigger offset time from the relative SOC and time stamp
 	int32_t getPlcTriggerTime(int32_t socRelative, int16_t timeStamp);

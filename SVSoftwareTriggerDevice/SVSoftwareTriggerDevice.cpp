@@ -218,8 +218,8 @@ void SVSoftwareTriggerDevice::dispatchTrigger(const std::string& rName, double t
 		bool validChannel = triggerChannel >= 0 && triggerChannel < m_timerList.size();
 
 		SvTrig::TriggerData triggerData;
-		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(timestamp);
-		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(static_cast<uint8_t> (triggerChannel));
+		triggerData.m_triggerTimestamp = timestamp;
+		triggerData.m_channel = static_cast<uint8_t> (triggerChannel);
 
 		auto iter = m_triggerCallbackMap.find(triggerChannel + 1);
 		if (m_triggerCallbackMap.end() != iter && validChannel && false == m_timerList[triggerChannel].m_pause)

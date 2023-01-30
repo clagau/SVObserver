@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTestIODlg.h"
-#include "Triggering/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 #define WM_SETOUTPUT (WM_USER + 101)

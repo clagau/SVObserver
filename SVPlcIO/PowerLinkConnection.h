@@ -7,12 +7,17 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerSource.h"
+#include "PlcDataTypes.h"
 #pragma endregion Includes
 
+namespace SvTrig
+{
+struct ResultData;
+}
 
 namespace SvPlc
 {
+class TriggerSource;
 struct PlcInputParam;
 struct ResultReport;
 
@@ -26,7 +31,7 @@ public:
 
 	void setReady(bool ready);
 	void setTriggerChannel(uint8_t channel, bool active);
-	void writeResult(const ResultReport& rResultReport);
+	void writeResult(const SvTrig::ResultData& rResultData);
 	HRESULT initialize();
 
 private:
@@ -45,7 +50,6 @@ private:
 	std::unique_ptr<TriggerSource> m_pTriggersource = nullptr;
 
 	uint32_t m_mostRecentlyReceivedOid[cNumberOfChannels] = {0,0,0,0};
-
 };
 
 } //namespace SvPlc
