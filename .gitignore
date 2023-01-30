@@ -6,6 +6,7 @@
 *.user
 .git/
 .vs/
+.svn/
 Debug/
 Release/
 #ignore specific files
