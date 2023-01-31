@@ -18,12 +18,14 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
+#include "Definitions\TextDefinesSvDef.h"
+#include "SVStatusLibrary\MessageManagerHelper.h"
 #pragma endregion Includes
 
 constexpr int cPortNumber = 2;
 constexpr int cInputCount = 8;
 constexpr int cOutputCount = 16;
-constexpr int RETRY = 2;
+constexpr int RETRY = 5;
 constexpr int cOneSecond = 1000;
 constexpr LPCTSTR cTriggerName = "IO_Board_1.Dig_";			///This name must match the name in the SVHardwareManifest
 
@@ -203,7 +205,8 @@ HRESULT SVLptIOImpl::SetOutputValue(unsigned long val)
 	// This function will only write the SVIMs 16 outputs
 	HRESULT hr = S_OK;
 
-	for (int i = 0; i < RETRY; i++)
+	int i = 0;
+	for (i = 0; i < RETRY; i++)
 	{
 		unsigned long data = val & 0xff;
 		if (S_OK != SVReadWriteLpt(data, SVControlWriteDigital0))
@@ -223,6 +226,11 @@ HRESULT SVLptIOImpl::SetOutputValue(unsigned long val)
 		{
 			WriteUnlockString();
 		}
+	
+	}
+	if (i >= 2)
+	{
+		Log_Info(SvStl::Tid_RetryValueLarge);
 	}
 	// The camera control bits could be written along with the outputs since
 	// there are only 16 output bits. Here is an Example:
@@ -285,8 +293,8 @@ HRESULT SVLptIOImpl::SetOutputBit(unsigned long bitNum, bool bitVal)
 	HRESULT hr = S_FALSE;
 
 	unsigned long lData = bitVal ? 1 : 0;
-
-	for (int i = 0; i < RETRY; i++)
+	int i = 0;
+	for (i = 0; i < RETRY; i++)
 	{
 		if (bitNum < 8)
 		{
@@ -314,6 +322,10 @@ HRESULT SVLptIOImpl::SetOutputBit(unsigned long bitNum, bool bitVal)
 		{
 			WriteUnlockString();
 		}
+	}
+	if (i >= 2)
+	{
+		Log_Info(SvStl::Tid_RetryValueLarge);
 	}
 	return hr;
 }
@@ -1094,7 +1106,10 @@ HRESULT SVLptIOImpl::WriteUnlockString()
 		}
 		Retry--;
 	}
-
+	if (Retry  < RETRY -2)
+	{
+		Log_Info(SvStl::Tid_RetryValueLarge);
+	}
 	return hr;
 }
 
@@ -1136,6 +1151,10 @@ HRESULT SVLptIOImpl::WriteLockString()
 			}
 		}
 		Retry--;
+	}
+	if (Retry < RETRY - 2)
+	{
+		Log_Info(SvStl::Tid_RetryValueLarge);
 	}
 	return hr;
 }

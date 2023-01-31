@@ -727,6 +727,13 @@ namespace SvStl
 		{Tid_RejectClarifyFailedNoTR, _T("Reject clarification failed, no valid triggerRecord.")},
 		{Tid_RejectClarifyFailedUnknowData, _T("Reject clarification failed, unknown data: {}.")},
 		{Tid_ModuleNameAlreadyUsed, _T("The Modulename \"{0}\" already used.")},
-		{Tid_ObjectIdToLarge, _T("The objectid  \"{0}\" is too large. You must Clean up ObjectIds for current the config.")},
+		{Tid_ObjectIdToLarge_OID, _T("The objectid  \"{0}\" is too large. You must Clean up ObjectIds for current the config.")},
+		{Tid_ConfigurationNotLoaded , _T("Configuration is not loaded")},
+		{Tid_InvalidMainwindow , _T("Invalid main window")},
+		{Tid_DestroyConfigFailed , _T("Destroy config failed")},
+		{Tid_WrongExtensionInOpenFile , _T("Wrong extension in open file")},
+		{Tid_OpenSvxFileError , _T("Open SVX file error")},
+		{Tid_CouldNotWrite_File ,  _T("PutConfig: Could not write {0}")},
+		{Tid_RetryValueLarge ,_T("Large Retry Value, when loading LPTIO.dll")}
 };
 } //namespace SvStl

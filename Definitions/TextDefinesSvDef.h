@@ -63,12 +63,6 @@ constexpr const char* SizeAdjustTextFormula = _T("Formula");
 constexpr const char* SizeAdjustTextAutoFitSize = _T("Auto Fit");
 constexpr const char* fileDlgFilterMilSupportedImageFilesTypes = _T("All Suitable Image Files (BMP, PNG, TIFF, MIM)|*.bmp; *.png; *.tif; *.mim|Bitmap Files(*.bmp)|*.bmp|PNG Files (*.png)|*.png|TIFF Files (*.tif)|*.tif|MIL Image Files (*.mim)|*.mim||");
 
-constexpr const char* ConfigurationNotLoaded = _T("Configuration is not loaded");
-constexpr const char* InvalidMainwindow = _T("Invalid main window");
-constexpr const char* DestroyConfigFailed = _T("Destroy config failed");
-constexpr const char* WrongExtensionInOpenFile = _T("Wrong extension in open file");
-constexpr const char* OpenSvxFileError = _T("Open SVX file error");
-constexpr const char* CouldNotWrite = _T("PutConfig: Could not write {}");
 
 
 

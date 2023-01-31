@@ -382,7 +382,7 @@ void SVObjectManagerClass::CheckObjectId(uint32_t objectId)
 	{
 		m_AlreadyWarnedObjectIds = true;
 		SvStl::MessageManager e(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ObjectIdToLarge, {std::to_string(objectId)}, SvStl::SourceFileParams(StdMessageParams));
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ObjectIdToLarge_OID, {std::to_string(objectId)}, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 

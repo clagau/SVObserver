@@ -6,6 +6,8 @@
 
 #pragma once
 #include "SVStatusLibrary/SourceFileParams.h"
+#include "MessageTextEnum.h"
+#include "MessageTextGenerator.h"
 
 namespace SvStl
 {
@@ -24,7 +26,21 @@ public:
 
 
 } //namespace SvStl
-#define Log_Error(text) SvStl::MessageManagerHelper::LogError(text, SvStl::SourceFileParams(StdMessageParams),SvStl::Severity::Error);
-#define Log_Info(text) SvStl::MessageManagerHelper::LogError(text, SvStl::SourceFileParams(StdMessageParams),SvStl::Severity::Informational);
+
+
+
 #define Log_Assert(a) {  if (!(a))\
 					{ SvStl::MessageManagerHelper::LogError(#a, SvStl::SourceFileParams(StdMessageParams), SvStl::Severity::Assert); assert(a);}}
+
+inline void Log_Error(SvStl::MessageTextEnum messageId, const SvDef::StringVector& additionalList = SvDef::StringVector())
+{
+	std::string text = SvStl::MessageTextGenerator::Instance().getText(messageId, additionalList);
+	SvStl::MessageManagerHelper::LogError(text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Severity::Error);
+	return;
+}
+inline void Log_Info(SvStl::MessageTextEnum messageId, const SvDef::StringVector& additionalList = SvDef::StringVector())
+{
+	std::string text = SvStl::MessageTextGenerator::Instance().getText(messageId, additionalList);
+	SvStl::MessageManagerHelper::LogError(text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Severity::Informational);
+	return;
+}

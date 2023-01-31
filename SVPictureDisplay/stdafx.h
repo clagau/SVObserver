@@ -56,6 +56,7 @@
 #include <comutil.h>
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 #include "SVStatusLibrary/MessageManagerHelper.h"

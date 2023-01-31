@@ -603,13 +603,13 @@ enum MessageTextEnum
 	Tid_aColorImage,
 	Tid_aDecimalValue,
 	Tid_aTextValue,
-	
+
 	Tid_ForbiddenNameForParameterName,
 	Tid_DuplicateParameterName,
 	Tid_DuplicateParameterNameWithLinked,
 	Tid_DuplicateParameterNameWithType,
 	Tid_SetParameterValuesFailed,
-	
+
 	Tid_Correct_Grouping_Add_S_Items,
 	Tid_GroupDependencies_Wrong,
 	Tid_InvalidScaleFactor,
@@ -662,12 +662,12 @@ enum MessageTextEnum
 	Tid_SVRC_AccessDenied,
 	Tid_InvalidValues,
 	Tid_InvalidParameterValue,
-	
+
 	Tid_ProductMissingNak,
 	Tid_ImageMissingNak,
 	Tid_InputMissingNak,
 	Tid_ProductIncompleteNak,
-	
+
 	Tid_IsColorCheckForGrayscaleImage,
 	Tid_WrongParentForEmbeddedValue,
 	Tid_FileNameInvalid,
@@ -690,6 +690,13 @@ enum MessageTextEnum
 	Tid_RejectClarifyFailedNoTR,
 	Tid_RejectClarifyFailedUnknowData,
 	Tid_ModuleNameAlreadyUsed,
-	Tid_ObjectIdToLarge,
+	Tid_ObjectIdToLarge_OID,
+	Tid_ConfigurationNotLoaded,
+	Tid_InvalidMainwindow,
+	Tid_DestroyConfigFailed,
+	Tid_WrongExtensionInOpenFile,
+	Tid_OpenSvxFileError,
+	Tid_CouldNotWrite_File,
+	Tid_RetryValueLarge
 };
 } //namespace SvStl

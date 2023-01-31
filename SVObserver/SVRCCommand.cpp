@@ -140,7 +140,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 		if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
 		{
-			Log_Error(SvDef::ConfigurationNotLoaded);
+			Log_Error(SvStl::Tid_ConfigurationNotLoaded);
 			result = SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
@@ -250,8 +250,10 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 			else
 			{
 				::remove(TempFileName.c_str());
-				std::string msg = std::format(SvDef::CouldNotWrite, TempFileName);
-				Log_Error(msg.c_str());
+				
+				SvDef::StringVector stv;
+				stv.push_back(TempFileName);
+				Log_Error(SvStl::Tid_CouldNotWrite_File, stv);
 				result = E_FAIL;
 			}
 		}
@@ -970,7 +972,7 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 		}
 		else
 		{
-			Log_Error("SVMSG_CONFIGURATION_NOT_LOADED");
+			Log_Error(SvStl::Tid_ConfigurationNotLoaded);
 			result = SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 	}
