@@ -88,12 +88,13 @@ namespace SvUl
 	//************************************
 	void RemoveCharacters(std::string& rStringValue, LPCTSTR ExcludeCharacters);
 
-	std::string RemoveCharactersByRegexAndTrim(const std::string& rName, //the string to (possibly) be adapted 
-		LPCTSTR excludePattern // the regexPattern specifying the characters to be removed
-		);
+	//! \param rName[in] the string to (possibly) be adapted 
+	//! \param excludePattern[in] the regexPattern specifying the characters to be removed
+	std::string RemoveCharactersByRegexAndTrim(const std::string& rName, LPCTSTR excludePattern);
 
-	std::string getValidLabel(const std::string& rCandidate,  //the string to (possible) be adapted 
-		const std::string& rFallback); //the return value if rCandidate cannot be modified into a valid Label (not necessarily valid itself)
+	//! \param rCandidate[in] the string to (possibly) be adapted 
+	//! \param rFallback[in] the return value if rCandidate cannot be modified into a valid Label (not necessarily 'valid 'itself)
+	std::string getValidLabel(const std::string& rCandidate, const std::string& rFallback);
 
 	bool isValidObjectName(const std::string& rCandidate);
 
