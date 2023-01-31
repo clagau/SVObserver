@@ -26,7 +26,6 @@
 #include "SVGigeCameraManager.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefinesSvDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -38,7 +37,7 @@ namespace SvIe
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr const char* cMatroxGigeDigitizer = _T("Matrox_GIGE.Dig_%d");
+constexpr const char* cMatroxGigeDigitizer = _T("Matrox_GIGE.Dig_{:d}");
 #pragma endregion Declarations
 
 SVDigitizerProcessingClass& SVDigitizerProcessingClass::Instance()
@@ -473,7 +472,7 @@ std::string SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID )
 			{
 				DigitizerID = Iter->m_CameraID + SvDef::cMaximumCameras;
 			}
-			Result = SvUl::Format( cMatroxGigeDigitizer, DigitizerID );
+			Result = std::format( cMatroxGigeDigitizer, DigitizerID );
 		}
 	}
 	return Result;
@@ -590,7 +589,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 		if( 0 != rCamera.m_AcquisitionHandle )
 		{
-			std::string AcquisitionName = SvUl::Format( cMatroxGigeDigitizer, rCamera.m_DigitizerID );
+			std::string AcquisitionName = std::format( cMatroxGigeDigitizer, rCamera.m_DigitizerID );
 
 			SVAcquisitionClassPtr pAcquisitionDevice = GetAcquisitionDevice( AcquisitionName.c_str() );
 

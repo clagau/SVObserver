@@ -22,7 +22,6 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvAo

@@ -16,7 +16,6 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #include "BlobAnalyzer2.h"
 #include "BlobFeatureList.h"

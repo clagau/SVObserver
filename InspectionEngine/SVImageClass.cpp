@@ -34,9 +34,6 @@
 #include "ObjectInterfaces/ILinkedObject.h"
 
 
-#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-#include "SVUtilityLibrary/StringHelper.h"
-#endif
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -268,7 +265,7 @@ HRESULT SVImageClass::InitializeImage(SVImageClass* pParentImage)
 	{
 
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-		OutputDebugString(SvUl::Format("Initialize Image  %s Parent %s\n", GetCompleteName().c_str(), pParentImage->GetCompleteName().c_str()).c_str());
+		OutputDebugString(std::format("Initialize Image  {} Parent {}\n", GetCompleteName(), pParentImage->GetCompleteName()).c_str());
 #endif 
 		uint32_t ImageID = pParentImage->getObjectId();
 		if (m_ParentImageInfo.first != ImageID)
@@ -291,7 +288,7 @@ HRESULT SVImageClass::UpdateImage(const SVImageExtentClass& rExtent, bool doNotR
 {
 
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-	OutputDebugString(SvUl::Format("Set new Extent for Image %s\n", GetCompleteName().c_str()).c_str());
+	OutputDebugString(std::format("Set new Extent for Image {}\n", GetCompleteName()).c_str());
 #endif 
 
 	HRESULT Result {S_OK};
@@ -330,7 +327,7 @@ HRESULT SVImageClass::UpdateImageSetParentAndImageInfo(uint32_t parentID, const 
 	{
 
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-		OutputDebugString(SvUl::Format("Set new parent for Image %s\n", GetCompleteName().c_str()).c_str());
+		OutputDebugString(std::format("Set new parent for Image {}\n", GetCompleteName()).c_str());
 #endif 
 		if (m_ParentImageInfo.first != parentID)
 		{
@@ -358,7 +355,7 @@ HRESULT SVImageClass::UpdateImageSetParentAndImageInfo(uint32_t parentID, const 
 HRESULT SVImageClass::UpdateImageType(SvPb::SVImageTypeEnum ImageType)
 {
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-	OutputDebugString(SvUl::Format("Set new Type for Image %s\n", GetCompleteName().c_str()).c_str());
+	OutputDebugString(std::format("Set new Type for Image {}\n", GetCompleteName()).c_str());
 #endif 
 	HRESULT l_Status = S_OK;
 
@@ -386,7 +383,7 @@ bool SVImageClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	ResetImageIds[getObjectId()]++;
 	IdsName[getObjectId()] = GetCompleteName().c_str();
 	std::string traceText = std::format("SVImageClass::ResetObject {}: {}; {}; {}; {}; {}\n", (int)ResetImageIds[getObjectId()],
-	 (unsigned int)getObjectId(), (int)m_ObjectTypeInfo.m_ObjectType, (unsigned int)m_ObjectTypeInfo.m_SubType, static_cast<unsigned int> (m_ObjectTypeInfo.m_EmbeddedID), GetCompleteName().c_str());
+	 (unsigned int)getObjectId(), (int)m_ObjectTypeInfo.m_ObjectType, (unsigned int)m_ObjectTypeInfo.m_SubType, static_cast<unsigned int> (m_ObjectTypeInfo.m_EmbeddedID), GetCompleteName());
 	if (ResetImageIds[getObjectId()] > 1 || true)
 	{
 
@@ -494,9 +491,9 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector*
 		{
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
 			OutputDebugString(
-				SvUl::Format("UpdateFromParentInformation: %s \n PARENTIMAGE: %s\n",
-				GetCompleteName().c_str(),
-				l_pParentImage->GetCompleteName().c_str()).c_str()
+				std::format("UpdateFromParentInformation: {} \n PARENTIMAGE: {}\n",
+				GetCompleteName(),
+				l_pParentImage->GetCompleteName()).c_str()
 			);
 #endif 
 
@@ -614,8 +611,8 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 				{
 					toolname = GetTool()->GetCompleteName();
 				}
-				auto msg = SvUl::Format("UpdateFromToolInformation: SetToolImage (tool : image)  (%s : %s)\n ",
-					toolname.c_str(), GetCompleteName().c_str());
+				auto msg = std::format("UpdateFromToolInformation: SetToolImage (tool : image)  ({} : {})\n ",
+					toolname, GetCompleteName());
 				OutputDebugString(msg.c_str());
 #endif 
 			}
@@ -632,8 +629,8 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 				{
 					toolname = GetTool()->GetCompleteName();
 				}
-				auto msg = SvUl::Format("UpdateFromToolInformation: WRONG TYPE in SetToolImage (tool : image)  (%s:%s)\n ",
-					toolname.c_str(), GetCompleteName().c_str());
+				auto msg = std::format("UpdateFromToolInformation: WRONG TYPE in SetToolImage (tool : image)  ({}:{})\n ",
+					toolname, GetCompleteName());
 				OutputDebugString(msg.c_str());
 			}
 
@@ -752,8 +749,8 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 					msg += pTool->GetCompleteName();
 
 
-					msg += SvUl::Format("\n( ROImage---Image:\n %s\n %s\n",
-						pChildObjectImage->GetCompleteName().c_str(), GetCompleteName().c_str());
+					msg += std::format("\n( ROImage---Image:\n {}\n {}\n",
+						pChildObjectImage->GetCompleteName(), GetCompleteName());
 
 					::OutputDebugString(msg.c_str());
 #endif
@@ -1335,6 +1332,9 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPo
 	
 	HRESULT l_hr = E_FAIL;
 	rOutPoint.clear();
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+	OutputDebugString(std::format("Translate from outputspace  begin for {} \n", GetCompleteName()).c_str());
+#endif 
 
 	if (nullptr != pImage)
 	{
@@ -1416,6 +1416,9 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImageFromTool(SVImageClass* pIma
 
 		} while (pImage != pCurrentImage && nullptr != pCurrentImage);
 
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+		OutputDebugString(std::format("Translate from outputspace  end for {} \n", GetCompleteName()).c_str());
+#endif 
 
 		if (pImage == pCurrentImage)
 		{

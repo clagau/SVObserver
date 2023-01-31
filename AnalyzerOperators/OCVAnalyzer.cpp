@@ -154,7 +154,7 @@ SvDef::StringVector OCVAnalyzer::getAnalyzerResult()
 
 				if (dValue > -1.0f)
 				{
-					std::string item = SvUl::Format(_T("%c\t%f"), cValue, dValue);
+					std::string item = std::format(_T("{:c}\t{:f}"), cValue, dValue);
 					result.emplace_back(item);
 				}
 			}

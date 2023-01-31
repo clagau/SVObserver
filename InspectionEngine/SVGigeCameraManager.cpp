@@ -15,7 +15,6 @@
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "Definitions/TextDefinesSvDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -94,7 +93,7 @@ void SVGigeCameraManager::ReadCameraMapping()
 		TCHAR pBuffer[128];
 		memset(pBuffer, 0, 128 );
 
-		CameraName =  SvUl::Format( _T("%s%d"), SvDef::cCameraFixedName, i + 1 );
+		CameraName = std::format( _T("{}{:d}"), SvDef::cCameraFixedName, i + 1 );
 		GetPrivateProfileString( cCameraMapping, CameraName.c_str(), "", pBuffer, 128, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 		
 		std::string IPAddress( pBuffer );

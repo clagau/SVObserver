@@ -19,7 +19,6 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVProtoBuf/ConverterHelper.h"

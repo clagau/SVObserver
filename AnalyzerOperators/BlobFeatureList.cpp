@@ -10,7 +10,6 @@
 #include "BlobFeatureTask.h"
 #include "Operators/TableObject.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Operators/SVResultLong.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include <iterator>
@@ -392,7 +391,7 @@ namespace SvAo
 			{
 				double value = 0;
 				pValue->getValue(value, blobIndex);
-				result.emplace_back(SvUl::Format(_T("%s\t%5.1f"), pValue->GetName(), value));
+				result.emplace_back(std::format(_T("{}\t{:5.1f}"), pValue->GetName(), value));
 			}
 		}
 		return result;

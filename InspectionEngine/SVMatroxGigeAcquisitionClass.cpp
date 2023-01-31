@@ -23,7 +23,6 @@
 #include "SVDigitizerProcessingClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Triggering/SVDigitizerLoadLibraryClass.h"
 #pragma endregion Includes
 

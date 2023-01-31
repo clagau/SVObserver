@@ -27,7 +27,6 @@
 #include "ObjectInterfaces/ITool.h"
 #include "ObjectInterfaces/IToolSet.h"
 #include "SVObjectLibrary/DependencyManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVObjectLibrary/InputObject.h"
 #include "SVProtoBuf/ConverterHelper.h"

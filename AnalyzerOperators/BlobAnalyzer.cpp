@@ -25,7 +25,6 @@
 #include "Tools/SVTool.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -1689,7 +1688,7 @@ SvDef::StringVector BlobAnalyzer::getAnalyzerResult()
 			{
 				const double* pData = &(m_vec2dBlobResults[i][0]);
 
-				std::string item = SvUl::Format(_T("%s\t%5.1f"), m_Value[i].GetName(), pData[m_nBlobIndex]);
+				std::string item = std::format(_T("{}\t{:5.1f}"), m_Value[i].GetName(), pData[m_nBlobIndex]);
 				result.emplace_back(item);
 			}
 		}

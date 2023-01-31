@@ -25,7 +25,6 @@
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Triggering/SVDigitizerLoadLibraryClass.h"
 #pragma warning (pop)
 #pragma region Includes

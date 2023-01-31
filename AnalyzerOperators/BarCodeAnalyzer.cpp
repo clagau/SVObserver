@@ -27,7 +27,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -122,8 +121,9 @@ void BarCodeAnalyzer::init()
 
 	// To support special DMCs May 2008.
 	// Use ~ to simulate non printable characters...
-	std::string FormatEnum = SvUl::Format(_T("Remove GS1 Control Characters=%d,Translate GS1 Control Characters=%d,Replace GS1 Control Characters=%d"), 
-											SVBCStringFormatRemoveCharacters, SVBCStringFormatTranslateCharacters, SVBCStringFormatReplaceCharacters );
+	std::string FormatEnum = std::format(_T("Remove GS1 Control Characters={:d},Translate GS1 Control Characters={:d},Replace GS1 Control Characters={:d}"), 
+											static_cast<int>(SVBCStringFormatRemoveCharacters), static_cast<int>(SVBCStringFormatTranslateCharacters), static_cast<int>(SVBCStringFormatReplaceCharacters) );
+
 	msv_eStringFormat.SetEnumTypes( FormatEnum.c_str() );
 	msv_eStringFormat.SetDefaultValue( SVBCStringFormatRemoveCharacters, true );
 	msv_lThresholdType.SetDefaultValue( 0, true ); // Default Normal thresholding
@@ -484,7 +484,7 @@ bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContaine
 								{
 									if( CharIsControl(BarCodeString[i]) )
 									{
-										std::string Temp = SvUl::Format(_T("%03d"),BarCodeString[i]);
+										std::string Temp = std::format(_T("{:3d}"), BarCodeString[i]);
 										l_strTranslated[j++] = '\\';
 										l_strTranslated[j++] = Temp[0];
 										l_strTranslated[j++] = Temp[1];

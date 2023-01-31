@@ -28,7 +28,6 @@
 #include "Operators/SVResultLong.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #include "SVUtilityLibrary/GeoHelper.h"
 #pragma endregion Includes
@@ -1067,23 +1066,23 @@ SvDef::StringVector PatternAnalyzer::getAnalyzerResult()
 	msv_dpatResultAngle.GetValue( dResultAngle, m_nPatternIndex );
 	if(bValue && dResultAngle > 0.0)
 	{
-		Value= SvUl::Format(_T("%3.1lf"), dResultAngle);
+		Value= std::format(_T("{:3.1f}"), dResultAngle);
 	}
 	result.emplace_back(Value);
 
 	double dMatchScore( 0.0 );
 	msv_dpatResultMatchScore.GetValue( dMatchScore, m_nPatternIndex );
-	Value = SvUl::Format(_T("%3.1lf"), dMatchScore);
+	Value = std::format(_T("{:3.1f}"), dMatchScore);
 	result.emplace_back(Value);
 
 	double dResultXPos( 0.0 );
 	msv_dpatResultX.GetValue( dResultXPos, m_nPatternIndex );
-	Value = SvUl::Format(_T("%4.1lf"), dResultXPos);
+	Value = std::format(_T("{:4.1f}"), dResultXPos);
 	result.emplace_back(Value);
 
 	double dResultYPos( 0.0 );
 	msv_dpatResultY.GetValue( dResultYPos, m_nPatternIndex );
-	Value = SvUl::Format(_T("%4.1lf"), dResultYPos);
+	Value = std::format(_T("{:4.1f}"), dResultYPos);
 	result.emplace_back(Value);
 
 	return result;
