@@ -69,9 +69,9 @@ constexpr int			cMaximumCameras = 4;
 constexpr int			cMinPatternModelNewSize = 8;
 constexpr int			cMinPatternModelLoadSize = 4;
 
-constexpr const char* cGeneralExcludeChars = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
-constexpr const char* cExcludeCharsToolIpName = cGeneralExcludeChars;
+constexpr const char* cExcludeCharsToolIpName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
 constexpr const char* cExcludeCharsConfigName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#");
+constexpr const char* cPatternAllExceptAlnumUnderscoreAndBlank = _T("[^a-zA-Z0-9_ ]");
 
 
 //! Fully qualified names

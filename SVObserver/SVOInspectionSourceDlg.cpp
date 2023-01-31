@@ -367,7 +367,7 @@ void SVOInspectionSourceDlg::OnSelchangeLstIpdList()
 	{
 		CString sCurrentTxt;
 		m_ctlIPDlist.GetText(iCurSel, sCurrentTxt);
-		SvMc::SVOEditorWnd *pEditor = new SvMc::SVOEditorWnd( m_ctlIPDlist, SvDef::cExcludeCharsToolIpName );
+		SvMc::SVOEditorWnd* pEditor = new SvMc::SVOEditorWnd(m_ctlIPDlist, SvDef::cExcludeCharsToolIpName);
 		pEditor->Edit(iCurSel);
 		pEditor->WaitForDoneEditing();
 
@@ -375,6 +375,7 @@ void SVOInspectionSourceDlg::OnSelchangeLstIpdList()
 		m_ctlIPDlist.GetText(iCurSel, sNewTxt);
 
 		bool invalidName = m_pParent->IsOriginalInspectionInList(sNewTxt);
+
 		if (invalidName)
 		{
 			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByName(sCurrentTxt.GetString());
@@ -387,18 +388,23 @@ void SVOInspectionSourceDlg::OnSelchangeLstIpdList()
 				}
 			}
 		}
-		CString spacesRemoved = sNewTxt;
-		spacesRemoved.Remove(' ');
-		invalidName |= m_pParent->IsInspectionInList(sNewTxt) || sNewTxt.IsEmpty() || spacesRemoved.IsEmpty();
+
+		std::string candidateName = SvUl::getValidLabel(sNewTxt.GetBuffer(), sCurrentTxt.GetBuffer());
+
+		invalidName |= m_pParent->IsInspectionInList(candidateName.c_str()) || candidateName.empty();
+
 		if (invalidName)
 		{
-			//Place MessageBox with error...
-			m_ctlIPDlist.InsertString(m_iCursel, sCurrentTxt);
-			m_ctlIPDlist.DeleteString(m_iCursel+1);
+			if (sCurrentTxt != sNewTxt) //invalidName will be true if the new name is the original name. In this case nothing needs to by done - but we don't want an error message!
+			{
+				//Place MessageBox with error...
+				m_ctlIPDlist.InsertString(m_iCursel, sCurrentTxt);
+				m_ctlIPDlist.DeleteString(m_iCursel + 1);
+			}
 		}
 		else
 		{
-			m_pParent->RenameInspection(sCurrentTxt.GetString(), sNewTxt);
+			m_pParent->RenameInspection(sCurrentTxt.GetString(), candidateName.c_str());
 			m_pParent->SetModified(TRUE);
 		}
 	}
@@ -407,7 +413,7 @@ void SVOInspectionSourceDlg::OnSelchangeLstIpdList()
 		m_iCursel = iCurSel;
 	}
 
-	if ( m_iCursel != LB_ERR )
+	if (m_iCursel != LB_ERR)
 	{
 		m_ctlIPDlist.SetCurSel(m_iCursel);
 	}

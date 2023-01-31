@@ -604,7 +604,8 @@ enum MessageTextEnum
 	Tid_aDecimalValue,
 	Tid_aTextValue,
 
-	Tid_ForbiddenNameForParameterName,
+	Tid_InvalidParameterName,
+	Tid_ForbiddenParameterName,
 	Tid_DuplicateParameterName,
 	Tid_DuplicateParameterNameWithLinked,
 	Tid_DuplicateParameterNameWithType,

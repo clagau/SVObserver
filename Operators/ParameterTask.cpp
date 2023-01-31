@@ -58,16 +58,23 @@ namespace SvOp
 	/// \param nameFunc [in] Function to get the name-string from the rName container.
 	/// \returns int return the error row (-1 = no error)
 	template<typename T>
-	int checkNameForUnique(uint32_t objectId, const std::ranges::input_range auto& rNames, SvPb::InspectionCmdResponse& rCmd, std::function<std::string(const T&)> nameFunc)
+	int checkNamesForUniquenessAndValidity(uint32_t objectId, const std::ranges::input_range auto& rNames, SvPb::InspectionCmdResponse& rCmd, std::function<std::string(const T&)> nameFunc)
 	{
 		for (auto iter = rNames.begin(); rNames.end() != iter; ++iter)
 		{
 			std::string name = nameFunc(*iter);
 
-			//check if forbitten name (already used by common objects)
+			if (!SvUl::isValidObjectName(name))
+			{ //invalid
+				rCmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(objectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_InvalidParameterName, {name}));
+				rCmd.set_hresult(E_FAIL);
+				return static_cast<int>(std::distance(rNames.begin(), iter));
+			}
+
+			//check if forbidden name (already used by common objects)
 			if (std::ranges::any_of(g_forbiddenNames, [name](const auto& rEntry) { return rEntry == name; }))
 			{ //duplicate
-				rCmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(objectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_ForbiddenNameForParameterName, {name}));
+				rCmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(objectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_ForbiddenParameterName, {name}));
 				rCmd.set_hresult(E_FAIL);
 				return static_cast<int>(std::distance(rNames.begin(), iter));
 			}
@@ -234,10 +241,8 @@ namespace SvOp
 			cmd.set_hresult(E_FAIL);
 			return cmd;
 		}
-
 		
-		//First check for unique names.
-		checkNameForUnique<SvPb::EmbeddedValueStruct>(getObjectId(), request.embeddedlist(), cmd, [](const auto& rRequest) { return rRequest.name(); });
+		checkNamesForUniquenessAndValidity<SvPb::EmbeddedValueStruct>(getObjectId(), request.embeddedlist(), cmd, [](const auto& rRequest) { return rRequest.name(); });
 		if (S_OK != cmd.hresult())
 		{
 			return cmd;
@@ -379,7 +384,7 @@ namespace SvOp
 			std::vector<std::string> nameVec;
 			std::ranges::transform(m_objects, back_inserter(nameVec), [](const auto& pObj) { return nullptr != pObj ? pObj->GetName() : ""; });
 			nameVec.push_back(newName);
-			if (-1 < checkNameForUnique<std::string>(getObjectId(), nameVec, resp, [](const auto& rRequest) { return rRequest; }))
+			if (-1 < checkNamesForUniquenessAndValidity<std::string>(getObjectId(), nameVec, resp, [](const auto& rRequest) { return rRequest; }))
 			{
 				Log_Assert(false);
 				return resp;
@@ -431,7 +436,7 @@ namespace SvOp
 	SvPb::InspectionCmdResponse ParameterTask::checkParameterNames(const SvPb::CheckParameterNamesRequest& rRequest)
 	{
 		SvPb::InspectionCmdResponse resp;
-		resp.mutable_checkparameternamesresponse()->set_errorrow(checkNameForUnique<std::string>(getObjectId(), rRequest.parameter_names(), resp, [](const auto& rRequest) { return rRequest; }));
+		resp.mutable_checkparameternamesresponse()->set_errorrow(checkNamesForUniquenessAndValidity<std::string>(getObjectId(), rRequest.parameter_names(), resp, [](const auto& rRequest) { return rRequest; }));
 		return resp;
 	}
 
@@ -965,7 +970,7 @@ namespace SvOp
 		{
 			return SvDef::InvalidObjectId;
 		}
-		//for Input-Values of GroupTool, should not stop at GroupTool-broder.
+		//for Input-Values of GroupTool, should not stop at GroupTool-border.
 		return m_pOwner->GetParent()->getFirstClosedParent(stopSearchAtObjectId);
 	}
 

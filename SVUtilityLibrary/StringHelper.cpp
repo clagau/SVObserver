@@ -11,6 +11,7 @@
 #include "StringHelper.h"
 #include "SVUtilityGlobals.h"
 #include "LoadDll.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -137,7 +138,30 @@ namespace SvUl
 
 	void Remove(std::string& rStringValue, std::string::traits_type::char_type ch)
 	{
-		rStringValue.erase(std::remove ( rStringValue.begin(), rStringValue.end(), ch ), rStringValue.end());
+		rStringValue.erase(std::remove(rStringValue.begin(), rStringValue.end(), ch), rStringValue.end());
+	}
+
+	std::string getValidLabel(const std::string& rCandidate, const std::string& rFallback)
+	{
+		auto corrected = Trim(RemoveCharactersByRegexAndTrim(rCandidate, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank).c_str());
+
+		if (corrected.empty())
+		{
+			Log_Assert(rFallback.size() > 0);
+			return rFallback;
+		}
+
+		return corrected;
+	}
+
+	bool isValidObjectName(const std::string& rCandidate)
+	{
+		return rCandidate == RemoveCharactersByRegexAndTrim(rCandidate, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank) && !rCandidate.empty();
+	}
+
+	std::string RemoveCharactersByRegexAndTrim(const std::string& rName, LPCTSTR excludePattern)
+	{
+		return Trim(std::regex_replace(rName, std::regex {excludePattern}, "").c_str());
 	}
 
 	void RemoveCharacters(std::string& rStringValue, LPCTSTR ExcludeCharacters)

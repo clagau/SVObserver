@@ -45,7 +45,6 @@
 #include "FilesystemUtilities/ImageFileFormats.h"
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary\StringHelper.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -625,8 +624,8 @@ SvPb::InspectionCmdResponse saveImage(SvPb::SaveImageRequest request)
 SvPb::InspectionCmdResponse setObjectName(SvPb::SetObjectNameRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
-	std::string newName = request.objectname();
-	SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+
+	std::string newName = SvUl::RemoveCharactersByRegexAndTrim(request.objectname(), SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
 	if (newName != request.objectname())
 	{
 		SvStl::MessageContainer message;

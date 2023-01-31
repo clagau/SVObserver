@@ -77,9 +77,7 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 // Validate label text and remove unwanted characters.
 std::string MonitorListPropertyDlg::ValidateLabelText(const std::string& rNewText) const
 {
-	std::string Result( rNewText );
-
-	SvUl::RemoveCharacters( Result, SvDef::cGeneralExcludeChars );
+	std::string Result = SvUl::RemoveCharactersByRegexAndTrim(rNewText, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
 
 	if( Result.empty() )
 	{

@@ -11,7 +11,6 @@
 #include "ModuleController.h"
 #include "TextDefinesSvO.h"
 #include "ToolClipboard.h"
-#include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
@@ -38,7 +37,7 @@ void ModuleController::saveModules()
 void ModuleController::checkIfNameValid(const std::string& rName) const
 {
 	//check if only valid characters are used.
-	if (std::string::npos != rName.find_first_of(SvDef::cExcludeCharsToolIpName))
+	if (!SvUl::isValidObjectName(rName))
 	{
 		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NameContainsInvalidChars, SvStl::SourceFileParams(StdMessageParams));
 		throw msg;

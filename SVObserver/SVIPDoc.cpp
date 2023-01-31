@@ -1594,8 +1594,7 @@ void SVIPDoc::OnConvertToModul()
 			//@TODO[MZA][10.30][09.12.2022] show dialog to ask for the module name
 			std::string name = "Module" + std::to_string(toolIDs[0]);
 
-			SvUl::RemoveCharacters(name, SvDef::cExcludeCharsToolIpName);
-
+			name = SvUl::RemoveCharactersByRegexAndTrim(name, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
 			try
 			{
 				pConfig->getModuleController().checkIfNameValid(name);

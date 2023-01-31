@@ -235,8 +235,8 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 	if (cNameColumn == pItem->iColumn && 0 < pItem->iRow)
 	{
 		std::string CellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
-		std::string newName = CellText;
-		SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+		std::string newName = SvUl::RemoveCharactersByRegexAndTrim(CellText, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
+
 		if (newName != CellText)
 		{
 			m_Grid.SetItemText(pItem->iRow, pItem->iColumn, newName.c_str());
@@ -248,10 +248,7 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 		}
 		else
 		{
-			std::string CheckOnlySpaces {newName};
-			SvUl::RemoveCharacters(CheckOnlySpaces, _T(" "));
-
-			if (!newName.empty() && !CheckOnlySpaces.empty())
+			if (!newName.empty())
 			{
 				if (isTableNameUnique(newName))
 				{

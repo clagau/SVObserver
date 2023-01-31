@@ -79,8 +79,7 @@ void DrawTaskTree::OnEndLabelEdit(NMHDR*, LRESULT* pResult)
 
 	CString text;
 	pEdit->GetWindowText(text);
-	std::string newName = SvUl::Trim(text);
-	SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+	std::string newName = SvUl::RemoveCharactersByRegexAndTrim(std::string(text.GetBuffer()), SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
 
 	if (newName.empty())
 	{

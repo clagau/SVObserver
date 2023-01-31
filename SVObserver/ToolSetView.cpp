@@ -31,7 +31,6 @@
 #include "Tools/GroupTool.h"
 #include "Tools/SVShiftTool.h"
 #include "SVShiftToolUtility.h"
-#include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVOGuiUtility/DataController.h"
@@ -588,20 +587,6 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 	*pResult = 0;
 }
 
-// Validate label text and remove unwanted characters.
-void ToolSetView::ValidateLabelText(std::string& rNewText)
-{
-	// strip leading and trailing spaces
-	rNewText = SvUl::Trim(rNewText.c_str());
-
-	SvUl::RemoveCharacters(rNewText, SvDef::cExcludeCharsToolIpName);
-
-	if (rNewText.empty())
-	{
-		Log_Assert(m_LabelSaved.size() > 0);
-		rNewText = m_LabelSaved;
-	}
-}
 void ToolSetView::RenameItem()
 {
 	if (m_LabelEdited == m_LabelSaved)
@@ -851,11 +836,9 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 
 	CString Text;
 	pEdit->GetWindowText(Text);
-	std::string NewText(Text);
-
-
+	
 	// Validate the text and remove unwanted characters.
-	ValidateLabelText(NewText);
+	auto NewText = SvUl::getValidLabel(Text.GetBuffer(), m_LabelSaved);
 	if (m_LabelSaved != NewText) // In case it was renamed to the same name as before renaming
 	{
 		SvTo::SVToolClass* pLoopGroupTool(nullptr);

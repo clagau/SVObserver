@@ -781,9 +781,9 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 		CString columnName;
 		m_EditAddColumnName.GetWindowText(columnName);
 
-		std::string newName = columnName.GetString();
-		std::string oldName = newName;
-		SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+		std::string oldName = columnName.GetString();
+		std::string newName = SvUl::RemoveCharactersByRegexAndTrim(oldName, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
+
 		if (newName != oldName)
 		{
 			m_EditAddColumnName.SetWindowText(newName.c_str());
@@ -792,10 +792,7 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 		//Has the name changed
 		if (newName != m_pSelectedAddEquationFormula->GetEquationName())
 		{
-			std::string CheckOnlySpaces {newName};
-			SvUl::RemoveCharacters(CheckOnlySpaces, _T(" "));
-
-			if (!newName.empty() && !CheckOnlySpaces.empty())
+			if (!newName.empty())
 			{
 				hrOk = m_pSelectedAddEquationFormula->SetEquationName(newName);
 				if (S_OK != hrOk)

@@ -103,7 +103,7 @@ public:
 	bool IsOriginalInspectionInList(LPCTSTR InspectionName) const;
 	bool IsPPQInList(LPCTSTR PPQName) const;
 
-	bool RenameInspection(LPCTSTR InspectionName, LPCTSTR NewName);
+	bool RenameInspection(LPCTSTR currentName, LPCTSTR candidateName);
 
 	int GetCameraListCount() const;
 	int GetInspectionListCount() const;

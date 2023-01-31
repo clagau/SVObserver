@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <set>
 #include "MonitorListAddRemoveDlg.h"
 #include "MonitorListPropertyDlg.h"
+#include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -244,12 +245,12 @@ void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 		MonitorListPropertyDlg propDlg(m_MonitorList, DisplayName.c_str());
 		if (IDOK == propDlg.DoModal() )
 		{
-			std::string sNewName = propDlg.GetMonitorListName();
+			std::string newName = SvUl::RemoveCharactersByRegexAndTrim(propDlg.GetMonitorListName(), SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
 			int depth = propDlg.GetMonitorListRejectQueueDepth();
-			if (sNewName != DisplayName)
+			if (newName != DisplayName && !newName.empty())
 			{
 				m_UsedList.DeleteString(iPos);
-				m_UsedList.InsertString(iPos, BuildListDisplayName(PPQName.c_str(), sNewName.c_str()).c_str() );
+				m_UsedList.InsertString(iPos, BuildListDisplayName(PPQName.c_str(), newName.c_str()).c_str() );
 			}
 			m_UsedList.SetItemData(iPos, depth);
 		}

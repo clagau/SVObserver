@@ -132,7 +132,6 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 
-	void ValidateLabelText( std::string& rNewText );
 	void RenameItem();
 
 	void ToggleExpandCollapse(int item);

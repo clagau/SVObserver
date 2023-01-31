@@ -328,9 +328,8 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM, LPARAM 
 		CString Text;
 		m_UsedList.GetText(sel, Text);
 		//trim white space from left and right of the new name
-		std::string newName = SvUl::Trim(Text);
 
-		SvUl::RemoveCharacters( newName, SvDef::cGeneralExcludeChars );
+		std::string newName = SvUl::RemoveCharactersByRegexAndTrim(Text.GetString(), SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
 
 		//don't all blank strings
 		if ( !newName.empty() )

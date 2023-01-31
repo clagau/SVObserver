@@ -439,16 +439,13 @@ namespace SvOg
 			case NameColumn:
 			{
 				std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
-				std::string newName = cellText;
-				SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+				std::string newName = SvUl::RemoveCharactersByRegexAndTrim(cellText, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
 				if (newName != cellText)
 				{
 					m_Grid.SetItemText(pItem->iRow, pItem->iColumn, newName.c_str());
 				}
 
-				std::string CheckOnlySpaces{ newName };
-				SvUl::RemoveCharacters(CheckOnlySpaces, _T(" "));
-				if (!newName.empty() && !CheckOnlySpaces.empty() && isNameNotUsed(newName))
+				if (!newName.empty() && isNameNotUsed(newName))
 				{
 					m_featureData[pItem->iRow - 1].set_name(newName);
 				}
