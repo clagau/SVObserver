@@ -18,7 +18,6 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "Definitions\TextDefinesSvDef.h"
 #include "SVStatusLibrary\MessageManagerHelper.h"
 #pragma endregion Includes
 
