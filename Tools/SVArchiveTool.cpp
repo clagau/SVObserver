@@ -304,7 +304,7 @@ bool SVArchiveTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 		m_evoImageFileFormat.GetValue(Format);
 		m_imageFileFormat = static_cast<ImageFileFormat> (Format);
 	}
-	enabled.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	m_EnableTool.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 
 	m_FilenameIndex1.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_FilenameIndex2.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);

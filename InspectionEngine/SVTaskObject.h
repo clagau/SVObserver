@@ -204,6 +204,7 @@ public:
 	void setStatus(const RunStatus& state);
 	void setStatus(DWORD color, DWORD state);
 	virtual const SVImageExtentClass* GetImageExtentPtr() const { return nullptr; };
+	virtual void  SetToolActiveFlag(bool ) { return; }
 protected:
 	// Direct Method Call
 	// NOTE:

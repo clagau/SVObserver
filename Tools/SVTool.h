@@ -115,6 +115,7 @@ public:
 	{
 		return (nullptr != m_pEmbeddedExtents.get());
 	}
+	virtual void  SetToolActiveFlag(bool isToolActiveFlag) override;
 
 	//************************************
 	//! return Flag with enabled Autosize
@@ -237,6 +238,7 @@ public:
 	
 
 protected:
+	
 	void UpdateAuxiliaryExtents();
 	virtual bool Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
@@ -264,7 +266,8 @@ protected:
 	std::unique_ptr<EmbeddedExtents> m_pEmbeddedExtents = nullptr;
 	
 	SvOp::SVConditional* m_pToolConditional;
-	SvVol::SVBoolValueObjectClass enabled;
+	SvVol::SVBoolValueObjectClass m_EnableTool; //renamed from enabled!
+	SvVol::SVBoolValueObjectClass m_IsToolActive; 
 
 	SvOi::IToolSet* m_pCurrentToolSet;
 

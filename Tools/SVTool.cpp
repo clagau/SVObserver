@@ -50,7 +50,7 @@ static char THIS_FILE[] = __FILE__;
 
 uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  InIt, uint32_t toolobjectId)
 {
-	
+
 	uint32_t res {0};
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
@@ -78,7 +78,7 @@ uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  
 
 
 EmbeddedExtents::EmbeddedExtents(SVToolClass* pOwner, ToolExtType tetype)
-:m_pOwner(pOwner), m_ToolExtType(tetype)
+	:m_pOwner(pOwner), m_ToolExtType(tetype)
 {
 
 }
@@ -190,7 +190,7 @@ void EmbeddedExtents::SetAttributes()
 
 }
 
-SVToolClass::SVToolClass(ToolExtType toolExtType , SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/)
+SVToolClass::SVToolClass(ToolExtType toolExtType, SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/)
 	: SVTaskObjectListClass(POwner, StringResourceID)
 	, m_pToolConditional(nullptr)
 {
@@ -208,7 +208,8 @@ void SVToolClass::init()
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_isObjectValid, SvPb::TaskObjectClassIsObjectValidEId, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone, false);
-	RegisterEmbeddedObject(&enabled, SvPb::ToolEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_EnableTool, SvPb::ToolEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_IsToolActive, SvPb::ToolActiveEId, IDS_OBJECTNAME_ACTIVE, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedObject(&m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_Warned, SvPb::WarnedEId, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone, false);
@@ -242,19 +243,19 @@ void SVToolClass::init()
 
 	if (bEx && m_pEmbeddedExtents->m_ToolExtType == ToolExtType::All)
 	{
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, &(m_pEmbeddedExtents->m_ExtentLeft) );
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, &(m_pEmbeddedExtents->m_ExtentTop) );
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth,  &(m_pEmbeddedExtents->m_ExtentWidth) );
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, &(m_pEmbeddedExtents->m_ExtentLeft));
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, &(m_pEmbeddedExtents->m_ExtentTop));
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, &(m_pEmbeddedExtents->m_ExtentWidth));
 		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, &(m_pEmbeddedExtents->m_ExtentHeight));
 	}
 	else
 	{
 		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, nullptr);
 		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, nullptr);
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth,nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, nullptr);
 		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, nullptr);
 	}
-	
+
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorContent, bEx ? &(m_pEmbeddedExtents->m_ExtentWidthFactorContent) : nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorContent, bEx ? &(m_pEmbeddedExtents->m_ExtentHeightFactorContent) : nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorFormat, bEx ? &(m_pEmbeddedExtents->m_ExtentWidthFactorFormat) : nullptr);
@@ -264,7 +265,8 @@ void SVToolClass::init()
 	// Set Embedded defaults
 	m_isObjectValid.SetDefaultValue(BOOL(false), true);
 	m_isObjectValid.setSaveValueFlag(false);
-	enabled.SetDefaultValue(BOOL(true), true);
+	m_EnableTool.SetDefaultValue(BOOL(true), true);
+	m_IsToolActive.SetDefaultValue(BOOL(true), true);
 	m_Passed.SetDefaultValue(BOOL(false), true);			// Default for Passed is FALSE !!!
 	m_Passed.setSaveValueFlag(false);
 	m_Failed.SetDefaultValue(BOOL(true), true);			// Default for Failed is TRUE !!!
@@ -355,7 +357,8 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 
 	// Set / Reset Printable Flags
 	m_isObjectValid.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
-	enabled.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_EnableTool.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_IsToolActive.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable , SvOi::SetAttributeType::RemoveAttribute);
 	m_Passed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_Failed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_Warned.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -413,9 +416,9 @@ bool SVToolClass::CloseObject()
 	return SVTaskObjectListClass::CloseObject();
 }
 
-bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool Resetdepended  )
+bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool Resetdepended)
 {
-	
+
 	BOOL freezeFlag(false);
 	m_editFreezeFlag.GetValue(freezeFlag);
 	setEditModeFreezeFlag(TRUE == freezeFlag);
@@ -430,7 +433,7 @@ bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/
 	return result;
 }
 
-bool SVToolClass::resetAllDepedentObjects(SvStl::MessageContainerVector*  )
+bool SVToolClass::resetAllDepedentObjects(SvStl::MessageContainerVector*)
 {
 	bool ret {true};
 	if (m_ressetAll_Active)
@@ -439,7 +442,7 @@ bool SVToolClass::resetAllDepedentObjects(SvStl::MessageContainerVector*  )
 		return ret;
 	}
 	SvDef::RaiiLifeFlag resetCheck(m_ressetAll_Active);
-	
+
 	std::vector<uint32_t> dependentTools;
 	std::back_insert_iterator<std::vector<uint32_t>>  InsertIt(dependentTools);
 	SvTo::InsertDependentTools(InsertIt, getObjectId());
@@ -461,7 +464,7 @@ bool SVToolClass::resetAllDepedentObjects(SvStl::MessageContainerVector*  )
 bool SVToolClass::IsEnabled() const
 {
 	BOOL bEnabled(true);
-	enabled.GetValue(bEnabled);
+	m_EnableTool.GetValue(bEnabled);
 
 	return bEnabled ? true : false;
 }
@@ -604,8 +607,12 @@ inline  void SVToolClass::UpdateStateAndCounter(SvIe::RunStatus& rRunStatus)
 				m_WarnedCount.SetValue(++lCount);
 			}
 		}
+		SetToolActiveFlag(true);
 	}
-
+	else
+	{
+		SetToolActiveFlag(false);
+	}
 	setStatus(rRunStatus);
 }
 
@@ -633,6 +640,7 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 	clearRunErrorMessages();
 	m_ToolTime.Start();
 	bool isToolActive = IsEnabled();
+	
 	BOOL freezeFlag(false);
 	m_editFreezeFlag.GetValue(freezeFlag);
 	if (TRUE == freezeFlag && isToolActive)
@@ -721,10 +729,26 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 		rRunStatus.SetInvalid();
 		retVal = false;
 	}
+	
 
 	return retVal;
 }// end Run
 
+void  SVToolClass::SetToolActiveFlag(bool isToolActiveFlag)
+{
+	m_IsToolActive.SetValue(isToolActiveFlag);
+	if (isToolActiveFlag == false)
+	{
+		for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
+		{
+			SVTaskObjectClass* pTaskObject = getTaskObject(i);
+			if (nullptr != pTaskObject)
+			{
+				pTaskObject->SetToolActiveFlag(FALSE);
+			}
+		}
+	}
+}
 bool SVToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
@@ -831,7 +855,7 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 		{
 			m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		}
-		
+
 	}
 	else
 	{
@@ -928,12 +952,12 @@ SvPb::EAutoSize SVToolClass::GetAutoSizeEnabled() const
 
 HRESULT SVToolClass::updateExtentFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eAction, long dx, long dy)
 {
-	
- m_toolExtent.UpdateFromOutputSpace(eAction, dx, dy);
+
+	m_toolExtent.UpdateFromOutputSpace(eAction, dx, dy);
 
 	HRESULT retVal {S_OK};
 	auto* pInspection = GetInspectionInterface();
-	if ( nullptr != pInspection)
+	if (nullptr != pInspection)
 	{
 		retVal = pInspection->resetTool(*this);
 	}
@@ -976,8 +1000,8 @@ HRESULT SVToolClass::setExtentList(const ::google::protobuf::RepeatedPtrField<::
 	auto* pInspection = GetInspectionInterface();
 	if (S_OK == retVal && nullptr != pInspection)
 	{
-	
-		retVal = pInspection->resetToolAndDependends(static_cast<SvOi::IObjectClass *>(this));
+
+		retVal = pInspection->resetToolAndDependends(static_cast<SvOi::IObjectClass*>(this));
 	}
 	else
 	{
@@ -1018,7 +1042,7 @@ const SVImageExtentClass& SVToolClass::GetImageExtent() const
 	return m_toolExtent.getImageExtent();
 }
 
-SVImageExtentClass& SVToolClass::GetImageExtentRef() 
+SVImageExtentClass& SVToolClass::GetImageExtentRef()
 {
 	return m_toolExtent.getImageExtent();
 }

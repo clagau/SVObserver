@@ -1248,6 +1248,7 @@ enum EmbeddedIdEnum
 	ArchiveImageFileFormatEId = 594;
 	ArchiveImageFilepathRootSeparatorEId = 595;
 	ModuleCommentEId = 596;
+	ToolActiveEId = 597;
 
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
