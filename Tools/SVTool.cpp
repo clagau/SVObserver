@@ -665,6 +665,9 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 
 		if (!m_pToolConditional || getConditionalResult())
 		{
+			bool isDisabled =  rRunStatus.IsDisabled();
+			bool isDisabledByCondition  = rRunStatus.IsDisabledByCondition();
+			
 			retVal = __super::Run(rRunStatus, &m_RunErrorMessages);
 
 			if (retVal)
@@ -675,10 +678,16 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 			{
 				rRunStatus.SetInvalid();
 			}
+			rRunStatus.SetDisabled(isDisabled);
+			rRunStatus.SetDisabledByCondition(isDisabledByCondition);
+
 		}
 		else
 		{
 			rRunStatus.SetDisabledByCondition();
+			//@TODO[MEC][10.30][31.01.2023] The next line would make sense, but is commented out for performance reasons 
+			//check if performance could be improved
+			//SetDisabled();
 		}// end else
 	}
 	else

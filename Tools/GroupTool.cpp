@@ -178,7 +178,8 @@ namespace SvTo
 	{
 		bool bRetVal = __super::Run(rRunStatus, pErrorMessages);
 
-		if (bRetVal && false == rRunStatus.IsDisabled() && false == rRunStatus.IsDisabledByCondition())
+		//bretVal is false if one tool is disabled
+		if (/*bRetVal && */ false == rRunStatus.IsDisabled() && false == rRunStatus.IsDisabledByCondition())
 		{
 			bRetVal = m_pResultTask->calcFormulaPost(rRunStatus, pErrorMessages);
 			if (!bRetVal)

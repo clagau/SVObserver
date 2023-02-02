@@ -52,8 +52,8 @@ public:
 	void SetInvalid();
 	void SetValid();
 	void SetInspectionStarted(bool state);
-	void SetDisabled();
-	void SetDisabledByCondition();
+	void SetDisabled(bool disable = true);
+	void SetDisabledByCondition(bool disable = true);
 	void SetCriticalFailure();
 
 	bool IsPassed() const;
@@ -70,6 +70,7 @@ public:
 	DWORD GetState() const;
 	DWORD GetStatusColor() const;
 
+	//@TODO[MEC][10.30][26.01.2023] members should be  privat
 	long m_lTriggerCount {-1};	// TB
 	bool m_UpdateCounters {true};
 
@@ -106,14 +107,14 @@ inline void RunStatus::SetValid()
 	run.status.valid = true;
 }
 
-inline void RunStatus::SetDisabled()
+inline void RunStatus::SetDisabled(bool val)
 {
-	run.status.disabled = true;
+	run.status.disabled = val;
 }
 
-inline void RunStatus::SetDisabledByCondition()
+inline void RunStatus::SetDisabledByCondition(bool val)
 {
-	run.status.disabledByCondition = true;
+	run.status.disabledByCondition = val;
 }
 
 inline void RunStatus::SetCriticalFailure()
