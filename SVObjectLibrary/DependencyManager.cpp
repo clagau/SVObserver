@@ -92,49 +92,64 @@ namespace SvOl
 			if (nullptr != pSupplier && nullptr != pClient)
 			{
 				//Basic value objects don't have tools check if main object is of type ToolObjectType
-				bool isSupplier = pSupplier->GetObjectType() == SvPb::SVBasicValueObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
-				bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
+				bool isMainSupplier = pSupplier->GetObjectType() == SvPb::SVBasicValueObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
 				auto* pToolParent = pSupplier->GetAncestorInterface(SvPb::SVToolObjectType);
 				bool isParentTool = (nullptr != pToolParent);
-				SvPb::SVObjectTypeEnum supplierAncestorType = isParentTool ? SvPb::SVToolObjectType : SvPb::SVToolSetObjectType;
-				SvOi::IObjectClass* pToolSupplier = pSupplier;
-				if (false == isSupplier)
+				SvPb::SVObjectTypeEnum supplierAncestorType = isParentTool ? SvPb::SVToolObjectType : SvPb::SVInspectionObjectType;
+				SvOi::IObjectClass* pMainSupplier = pSupplier;
+				if (false == isMainSupplier)
 				{
-					pToolSupplier = (isParentTool ? pToolParent : pSupplier->GetAncestorInterface(supplierAncestorType));
+					pMainSupplier = (isParentTool ? pToolParent : pSupplier->GetAncestorInterface(supplierAncestorType));
 				}
-				SvOi::IObjectClass* pTopToolSupplier = isParentTool ? pSupplier->GetAncestorInterface(SvPb::SVToolObjectType, true) : nullptr;
-				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
-				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
-				if (nullptr != pToolSupplier && nullptr != pToolClient)
+				bool isToolClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
+				SvOi::IObjectClass* pToolClient = isToolClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
+				if (nullptr != pMainSupplier && nullptr != pToolClient)
 				{
-					bool isClientInToolIdSet = toolIdSet.end() != toolIdSet.find(pToolClient->getObjectId());
-					isClientInToolIdSet |= (pTopToolClient != nullptr) ? toolIdSet.end() != toolIdSet.find(pTopToolClient->getObjectId()) : false;
-					bool isSupplierInToolIdSet = toolIdSet.end() != toolIdSet.find(pToolSupplier->getObjectId());
-					isSupplierInToolIdSet |= (pTopToolSupplier != nullptr) ? toolIdSet.end() != toolIdSet.find(pTopToolSupplier->getObjectId()) : false;
+					std::set<uint32_t> supplierList;
+					SvOi::IObjectClass* pParent {pMainSupplier};
+					while (nullptr != pParent)
+					{
+						uint32_t objectID {pParent->getObjectId()};
+						supplierList.insert(objectID);
+						if (toolIdSet.end() != toolIdSet.find(objectID))
+						{
+							break;
+						}
+						pParent = pParent->GetAncestorInterface(SvPb::SVToolObjectType);
+					}
+
+					std::set<uint32_t> clientList;
+					pParent = pToolClient;
+					while (nullptr != pParent)
+					{
+						uint32_t objectID {pParent->getObjectId()};
+						clientList.insert(objectID);
+						if(toolIdSet.end() != toolIdSet.find(objectID))
+						{
+							break;
+						}
+						pParent = pParent->GetAncestorInterface(SvPb::SVToolObjectType);
+					}
+					std::vector<uint32_t> supplierInToolIdSet;
+					std::set_intersection(supplierList.begin(), supplierList.end(), toolIdSet.begin(), toolIdSet.end(), std::back_inserter(supplierInToolIdSet));
+					std::vector<uint32_t> clientInToolIdSet;
+					std::set_intersection(clientList.begin(), clientList.end(), toolIdSet.begin(), toolIdSet.end(), std::back_inserter(clientInToolIdSet));
+
+					bool isSupplierInToolIdSet = 0 < supplierInToolIdSet.size();
+					bool isClientInToolIdSet = 0 < clientInToolIdSet.size();
 					//If same Tool filter out directly
 					if (allDependecies == false && isClientInToolIdSet && isSupplierInToolIdSet)
 					{
 						return false;
 					}
-					else
+					else if(isClientInToolIdSet || isSupplierInToolIdSet)
 					{
-						//One of the dependency tools must be in the source set
-						bool isNotParentSupplier = (toolIdSet.end() != toolIdSet.find(pToolSupplier->getObjectId()) && pToolSupplier != pTopToolClient);
-						if (isNotParentSupplier || toolIdSet.end() != toolIdSet.find(pToolClient->getObjectId()))
+						//Make sure client and supplier are not the same tool
+						bool isNotSameTool = clientList.end() == clientList.find(pMainSupplier->getObjectId());
+						if (isNotSameTool)
 						{
 							return true;
 						}
-					}
-				}
-				//This adds the dependency when a loop or group tool is the parent
-				pToolSupplier = pSupplier->GetAncestorInterface(supplierAncestorType, true);
-				pToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
-				if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
-				{
-					//One of the dependency tools must be in the source set
-					if (toolIdSet.end() != toolIdSet.find(pToolSupplier->getObjectId()) || toolIdSet.end() != toolIdSet.find(pToolClient->getObjectId()))
-					{
-						return true;
 					}
 				}
 			}
@@ -157,6 +172,7 @@ namespace SvOl
 			{
 				SvOi::IObjectClass* pParent = SvOi::getObject(pSupplier->GetParentID());
 				bool isParentToolset = (nullptr != pParent) && (SvPb::SVToolSetObjectType == pParent->GetObjectType());
+				bool isParentInspection = (nullptr != pParent) && (SvPb::SVInspectionObjectType == pParent->GetObjectType());
 				//To add also add the parent tool e.g. LoopTool if available
 				std::string SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				std::string ClientName = pClient->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
@@ -165,14 +181,28 @@ namespace SvOl
 					SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameToObjectType(nameToObjectType);
 					ClientName = pClient->GetObjectNameToObjectType(nameToObjectType);
 				}
-
+				if (isParentInspection)
+				{
+					std::string inspectionName {pParent->GetName()};
+					SvUl::searchAndReplace(SupplierName, inspectionName.c_str(), SvDef::FqnPPQVariables);
+				}
 				bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
 				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
-				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
-				bool isClientInSourceSet = rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId());
-				isClientInSourceSet |= (pTopToolClient != nullptr) ? rSourceSet.end() != rSourceSet.find(pTopToolClient->getObjectId()) : false;
+				bool isClientInSourceSet {false};
+				pParent = pToolClient;
+				while (nullptr != pParent)
+				{
+					uint32_t objectID {pParent->getObjectId()};
+					isClientInSourceSet = rSourceSet.end() != rSourceSet.find(objectID);
+					if (isClientInSourceSet)
+					{
+						break;
+					}
+					pParent = pParent->GetAncestorInterface(SvPb::SVToolObjectType);
+				}
 				
 				SvOi::IObjectClass* pTopToolSupplier = pSupplier->GetAncestorInterface(SvPb::SVToolObjectType, true);
+				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
 
 				auto* pDependencyPair = dependecyList.add_dependencypair();
 				pDependencyPair->mutable_supplier()->set_name(SupplierName);
