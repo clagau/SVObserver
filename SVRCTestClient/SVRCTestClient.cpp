@@ -187,7 +187,8 @@ int main(int argc, char* argv[])
 					<< " s  software trigger" << std::endl
 					<< " set_v  {value} {n, o, i, t }  inspection command set embedded value" << std::endl
 					<< " set_l  {value} {n, o, i, t }  inspection command set embedded linked value" << std::endl
-					<< " get   {BAR ,BA, AR }  inspection command get embedded value" << std::endl;
+					<< " get   {BAR ,BA, AR }  inspection command get embedded value" << std::endl
+					<< " p {x, y, w, h} {value} Adjust Tool Position and Size" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -637,6 +638,111 @@ int main(int argc, char* argv[])
 				}
 
 				SV_LOG_GLOBAL(info) << "hres  : " << hres << std::endl;
+			}
+			else if (words[0] == "p")
+			{
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1");
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
+				SvPb::InspectionCmdResponse responseCmd = client.request(std::move(requestCmd), Timeout).get();
+				uint32_t inspectionID = responseCmd.getobjectidresponse().objectid();
+
+				requestCmd = SvPb::InspectionCmdRequest {};
+				pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set.Window Tool");
+				responseCmd.Clear();
+				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+				uint32_t windowToolID = responseCmd.getobjectidresponse().objectid();
+
+				requestCmd = SvPb::InspectionCmdRequest {};
+				pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				auto* pInfo = pGetObjectID->mutable_info();
+				pInfo->set_ownerid(windowToolID);
+				auto* pInfoStruct = pInfo->mutable_infostruct();
+				pInfoStruct->set_objecttype(SvPb::SVToolSizeAdjustTaskType);
+				responseCmd.Clear();
+				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+				uint32_t adjustTaskID = responseCmd.getobjectidresponse().objectid();
+
+				
+				SvPb::SVExtentPropertyEnum extentProperty {SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointX};
+				SvPb::EmbeddedIdEnum embeddedID {SvPb::EmbeddedIdEnum::NoEmbeddedId};
+				if (words.size() > 1)
+				{
+					if (words[1] == "x")
+					{
+						extentProperty = SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointX;
+						embeddedID = SvPb::EmbeddedIdEnum::ToolSizeAdjustSizePositionXModeEId;
+					}
+					else if (words[1] == "y")
+					{
+						extentProperty = SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointY;
+						embeddedID = SvPb::EmbeddedIdEnum::ToolSizeAdjustSizePositionYModeEId;
+					}
+					else if (words[1] == "w")
+					{
+						extentProperty = SvPb::SVExtentPropertyEnum::SVExtentPropertyWidth;
+						embeddedID = SvPb::EmbeddedIdEnum::ToolSizeAdjustSizeWidthModeEId;
+					}
+					else if (words[1] == "h")
+					{
+						extentProperty = SvPb::SVExtentPropertyEnum::SVExtentPropertyHeight;
+						embeddedID = SvPb::EmbeddedIdEnum::ToolSizeAdjustSizeHeightModeEId;
+					}
+				}
+
+				int value {10};
+				if (words.size() > 2)
+				{
+					value = std::stoi(words[2]);
+				}
+
+				requestCmd = SvPb::InspectionCmdRequest {};
+				requestCmd.set_inspectionid(inspectionID);
+				SvPb::GetEmbeddedValuesRequest* pEmbeddevalueRequest = requestCmd.mutable_getembeddedvaluesrequest();
+				pEmbeddevalueRequest->set_objectid(adjustTaskID);
+				responseCmd.Clear();
+				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+				long mode {-1};
+				if (responseCmd.has_getembeddedvaluesresponse())
+				{
+					for (int i = 0; i < responseCmd.getembeddedvaluesresponse().list_size(); ++i)
+					{
+						if (embeddedID == responseCmd.getembeddedvaluesresponse().list(i).embeddedid())
+						{
+							mode = responseCmd.getembeddedvaluesresponse().list(i).value().value().lval();
+							break;
+						}
+					}
+				}
+				//Mode 0 is fixed value every other mode value is not editable!
+				if (0 == mode)
+				{
+					requestCmd = SvPb::InspectionCmdRequest {};
+					requestCmd.set_inspectionid(inspectionID);
+					SvPb::SetExtentParameterRequest* pRequest = requestCmd.mutable_setextentparameterrequest();
+					pRequest->set_objectid(windowToolID);
+					auto* pParameter = pRequest->mutable_extentlist()->mutable_extentlist()->Add();
+					pParameter->set_type(extentProperty);
+					pParameter->set_value(value);
+					pParameter->set_filteredoutflag(false);
+					pParameter->set_issetbyreset(false);
+
+					responseCmd = client.request(std::move(requestCmd), Timeout).get();
+					if (S_OK == responseCmd.hresult())
+					{
+						printf("successful\r\n");
+					}
+					else
+					{
+						printf("failed setting value\r\n");
+					}
+				}
+				else
+				{
+					printf("failed not editable\r\n");
+				}
 			}
 			else
 			{
