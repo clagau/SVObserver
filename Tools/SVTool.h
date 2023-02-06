@@ -234,6 +234,8 @@ public:
 	virtual SvPb::InspectionCmdResponse getInvalidDependencies() const override { return {}; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override { return {}; }
 	virtual bool isToolActive() const;
+	virtual SvOi::ITool* getToolPtr() override { return this; };
+
 #pragma endregion ITool methods
 	
 

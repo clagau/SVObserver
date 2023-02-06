@@ -185,6 +185,9 @@ public:
 	const SvDef::SVObjectTypeInfoStruct& getObjectTypeInfo() const { return m_ObjectTypeInfo; };
 	bool isViewable() const; ///< Check if Viewable-attribute is set by this object and also by its owner.
 
+	virtual SvOi::IValueObject* getValueObjectPtr()  override { return nullptr; };
+	virtual SvOi::ITool* getToolPtr() override { return nullptr; } ;
+
 #pragma region Methods to replace processMessage
 	/// Call the method createObject for all children and itself.
 	/// \param rCreateStructure [in]

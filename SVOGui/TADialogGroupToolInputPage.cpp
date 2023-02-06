@@ -77,6 +77,11 @@ namespace SvOg
 				case SvPb::LinkedValueTypeEnum::TypeText:
 					result = text.c_str();
 					break;
+				case SvPb::LinkedValueTypeEnum::TypeStates:
+					result = std::stoi(text);
+					break;
+
+					
 				default: //do nothing, empty variant
 					break;
 				}
@@ -105,6 +110,10 @@ namespace SvOg
 			case SvPb::LinkedValueTypeEnum::TypeText:
 				isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR));
 				break;
+			case SvPb::LinkedValueTypeEnum::TypeStates:
+				isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_INT));
+				break;
+
 			default: //do nothing, empty variant
 				break;
 			}
@@ -271,7 +280,7 @@ namespace SvOg
 		}
 		case ValueButtonColumn:
 		{
-			SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ExternalInputEId+(pItem->iRow - 1)), m_inputData[pItem->iRow - 1].m_name, m_inputData[pItem->iRow - 1].m_data, m_inputData[pItem->iRow - 1].m_data.m_defaultValue.vt);
+			SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ExternalInputEId+(pItem->iRow - 1)), m_inputData[pItem->iRow - 1]);
 			if (IDOK == dlg.DoModal())
 			{
 				m_inputData[pItem->iRow - 1].m_data = dlg.getData();

@@ -21,6 +21,8 @@
 #include "SVOResource/resource.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+
+
 #pragma endregion Includes
 
 namespace SvOi
@@ -119,7 +121,7 @@ public:
 
 	virtual bool isExternallySettable() const override { return m_externallySettableFlag; };
 	virtual void setExternallySettable(bool flag) override { m_externallySettableFlag = flag; };
-
+	virtual IValueObject* getValueObjectPtr()  override { return this; };
 #pragma endregion virtual method (IObjectClass/IValueObject)
 
 	virtual void moveObject(SVObjectClass& rObject) override;

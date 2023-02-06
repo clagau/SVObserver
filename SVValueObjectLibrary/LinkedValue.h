@@ -20,6 +20,8 @@
 namespace SvVol
 {
 
+
+
 class LinkedValue : public SVVariantValueObjectClass, public SvOi::ILinkedObject
 {
 	SV_DECLARE_CLASS
@@ -148,7 +150,8 @@ private:
 
 	bool checkLinkedObjectRef(SvStl::MessageContainerVector* pErrorMessages = nullptr) const;
 	bool updateLinkedValue(SVObjectReference& LinkedObjectRef, SvStl::MessageContainerVector* pErrorMessages);
-
+	bool UpdateChildrenForDefaultState(SvStl::MessageContainerVector* pErrorMessages);
+	
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	/// Checks if the linked object is valid.

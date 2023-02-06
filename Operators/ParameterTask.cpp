@@ -709,11 +709,37 @@ namespace SvOp
 				}
 				break;
 			}
+			case SvPb::LinkedValueTypeEnum::TypeStates:
+			{
+				_variant_t value;
+				HRESULT hr = pObject->GetValue(value);
+				if ((S_OK != hr && SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE != hr && E_BOUNDS != hr) )
+				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Log);
+					SvDef::StringVector msgList;
+					msgList.emplace_back(GetName());
+					msgList.emplace_back(pObject->GetName());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputValue, msgList, SvStl::SourceFileParams(StdMessageParams), pObject->getObjectId());
+					if (nullptr != pErrorMessages)
+					{
+						pErrorMessages->push_back(Msg.getMessageContainer());
+					}
+					bRet = false;
+			
+				}
+				else  if (VT_EMPTY == value.vt)
+				{
+					bRet &= checkObject(pObject->GetName(), pObject, typeEnum, pErrorMessages, pObject->getObjectId());
+				}
+				
+				break;
+			}
+			
+			
 			case SvPb::LinkedValueTypeEnum::TypeTable:
 			case SvPb::LinkedValueTypeEnum::TypeGrayImage:
 			case SvPb::LinkedValueTypeEnum::TypeColorImage:
 			case SvPb::LinkedValueTypeEnum::TypeImage:
-			case SvPb::LinkedValueTypeEnum::TypeStates:
 			{
 				bRet &= checkObject(pObject->GetName(), pObject, typeEnum, pErrorMessages, pObject->getObjectId());
 				break;
@@ -768,6 +794,7 @@ namespace SvOp
 	{
 		try
 		{
+
 			auto type = rRequestValue.type();
 			rValueObject.setValueType(type);
 			switch (type)
@@ -784,6 +811,17 @@ namespace SvOp
 				case SvPb::LinkedValueTypeEnum::TypeText:
 					SvPb::ConvertProtobufToVariant(rRequestValue.value().defaultvalue(), rDefaultValue);
 					if (VT_BSTR != rDefaultValue.vt)
+					{
+						fillMessageToProtobuf(pErrorMessage, rValueObject.getObjectId(), SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams));
+						return false;
+					}
+					rValueObject.validateValue(rRequestValue.value());
+					break;
+				
+				case SvPb::LinkedValueTypeEnum::TypeStates:
+					
+					SvPb::ConvertProtobufToVariant(rRequestValue.value().defaultvalue(), rDefaultValue);
+					if (VT_INT != rDefaultValue.vt)
 					{
 						fillMessageToProtobuf(pErrorMessage, rValueObject.getObjectId(), SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams));
 						return false;

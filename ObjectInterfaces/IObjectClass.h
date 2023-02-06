@@ -66,6 +66,8 @@ namespace SvOi
 	using ObjectNotificationFunction = std::function<void(SvOi::ObjectNotificationType, uint32_t)>;
 	using ObjectNotificationFunctionPtr = std::shared_ptr<ObjectNotificationFunction>;
 	using ObjectNotificationRAIIPtr = std::unique_ptr<void, std::function<void(void*)>>;
+	class IValueObject;
+	class ITool;
 
 	//this class is a interface. It should only have pure virtual public method and no member variables
 	class IObjectClass
@@ -208,5 +210,7 @@ namespace SvOi
 
 		virtual std::string getComment() const = 0;
 		virtual void setComment(const std::string& rComment) = 0;
+		virtual IValueObject* getValueObjectPtr() = 0;
+		virtual ITool* getToolPtr() = 0;
 	};
 } //namespace SvOi

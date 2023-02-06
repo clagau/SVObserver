@@ -251,5 +251,16 @@ void MessageManagerHelper::LogError(LPCSTR errortext, const SvStl::SourceFilePar
 
 	}
 }
+void MessageManagerHelper::LogError(SvStl::MessageTextEnum messageId, const SvDef::StringVector& additionalList, Severity sev, 
+	const std::source_location location)
+{
+	SvStl::SourceFileParams Param = SvStl::SourceFileParams(StdMessageParams);
+	Param.m_FileName = location.file_name(); 
+	Param.m_Line  = location.line();
+	std::string text = SvStl::MessageTextGenerator::Instance().getText(messageId, additionalList);
+	LogError(text.c_str(), Param, sev);
+	return;
+
+}
 
 }

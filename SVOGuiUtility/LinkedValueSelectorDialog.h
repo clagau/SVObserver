@@ -12,6 +12,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "DataController.h"
 #pragma endregion Includes
+#include "GroupToolHelper.h"
 
 namespace SvOgu
 {
@@ -35,6 +36,7 @@ namespace SvOgu
 		//}}AFX_DATA
 	public:
 		LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ValidCheckCallback validCallback = nullptr);
+		LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const SvOgu::GroupInputResultData& resultdata);
 		
 		virtual ~LinkedValueSelectorDialog();
 
@@ -74,6 +76,7 @@ namespace SvOgu
 		CString m_directValue;
 
 	private:
+		SvPb::LinkedValueTypeEnum m_LinkedValueType = SvPb::LinkedValueTypeEnum::TypeDecimal;
 		uint32_t m_inspectionId;
 		uint32_t m_objectId;
 		const std::string m_ObjectName;

@@ -162,6 +162,8 @@ public:
 
 	void setStandardFormatString() override {} //not currently used in this class
 
+	virtual IValueObject* getValueObjectPtr()  override { return this; };
+	
 #pragma endregion Public Methods
 
 private:

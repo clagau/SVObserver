@@ -1480,6 +1480,12 @@ enum LinkedValueTypeEnum
 	TypeImage = 5;
 	TypeStates = 6;
 };
+enum StateDefaultType
+{
+	TypePassed =0;
+	TypeFailed =1;
+	TypeWarned =2;
+}
 enum ResetType
 {
 	RT_None =0 ;

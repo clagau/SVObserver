@@ -48,6 +48,33 @@ namespace SvOgu
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
+
+	LinkedValueSelectorDialog::LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const SvOgu::GroupInputResultData& resultdata)
+		: CDialog(LinkedValueSelectorDialog::IDD)
+		, m_inspectionId(inspectionId)
+		, m_objectId(objectId)
+		, m_data(resultdata.m_data )
+		, m_vtType(resultdata.m_data.m_Value.vt)
+		, m_ObjectName(resultdata.m_name)
+		, m_validCheckCallback(nullptr)
+		, m_LinkedValueType(resultdata.m_type)
+	{
+		m_type = m_data.m_selectedOption;
+		if (VT_EMPTY == m_vtType)
+		{
+			m_possibleTypes = LinkedValueSelectorTypesEnum::Indirect;
+		}
+		else if (VT_ARRAY == (m_vtType & VT_ARRAY) || VT_BSTR == m_vtType || SvDef::InvalidObjectId == m_data.m_equationId)
+		{
+			m_possibleTypes = LinkedValueSelectorTypesEnum::DirectIndirect;
+		}
+		else
+		{
+			m_possibleTypes = LinkedValueSelectorTypesEnum::All;
+			m_FormulaController = std::make_shared<FormulaController>(m_inspectionId, m_objectId, m_data.m_equationId);
+		}
+	}
+
 	LinkedValueSelectorDialog::LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ValidCheckCallback validCallback /*= nullptr*/)
 		: CDialog(LinkedValueSelectorDialog::IDD)
 		, m_inspectionId(inspectionId)
@@ -125,6 +152,8 @@ namespace SvOgu
 			return false;
 		}
 		
+		if(m_LinkedValueType == SvPb::LinkedValueTypeEnum::TypeStates)
+			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
 
 		//Value
 		m_directValue = SvUl::VariantToString(m_data.m_directValue).c_str();

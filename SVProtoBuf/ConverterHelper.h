@@ -58,6 +58,6 @@ variant_t getDefaultString(SvPb::LinkedValueTypeEnum type);
 /// \returns bool
 constexpr bool isValueType(SvPb::LinkedValueTypeEnum type)
 {
-	return (SvPb::LinkedValueTypeEnum::TypeDecimal == type || SvPb::LinkedValueTypeEnum::TypeText == type);
+	return (SvPb::LinkedValueTypeEnum::TypeDecimal == type || SvPb::LinkedValueTypeEnum::TypeText == type || SvPb::LinkedValueTypeEnum::TypeStates == type);
 }
 } //namespace SvPb
