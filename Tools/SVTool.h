@@ -26,7 +26,6 @@
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVValueObjectLibrary/SVTimerValueObjectClass.h"
-#include "SVValueObjectLibrary/PassedWarnedFailedHelper.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -88,7 +87,7 @@ public:
 
 uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  InIt, uint32_t toolobjectId);
 
-class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool, public SvVol::PassedWarnedFailedHelper
+class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS
@@ -283,6 +282,12 @@ protected:
 	SvVol::SVEnumerateValueObjectClass	m_drawToolFlag;
 	SvVol::SVTimerValueObjectClass m_ToolTime;
 
+	// Passed, if TRUE ( Reset Value: FALSE )
+	SvVol::SVBoolValueObjectClass m_Passed;
+	// Warned, if TRUE ( Reset Value: TRUE )
+	SvVol::SVBoolValueObjectClass m_Warned;
+	// Failed, if TRUE ( Reset Value: TRUE )
+	SvVol::SVBoolValueObjectClass m_Failed;
 	// Failed, if TRUE ( Reset Value: FALSE )
 	SvVol::SVBoolValueObjectClass m_ExplicitFailed;
 

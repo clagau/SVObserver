@@ -203,15 +203,16 @@ SVToolClass::SVToolClass(ToolExtType toolExtType, SVObjectClass* POwner, int Str
 
 void SVToolClass::init()
 {
-	// Identify our type in the Output List
+	// Indentify our type in the Output List
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_isObjectValid, SvPb::TaskObjectClassIsObjectValidEId, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_EnableTool, SvPb::ToolEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedObject(&m_IsToolActive, SvPb::ToolActiveEId, IDS_OBJECTNAME_ACTIVE, false, SvOi::SVResetItemNone, true);
-
-	registerPwfAndSetDefaults(*this);
+	RegisterEmbeddedObject(&m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_Warned, SvPb::WarnedEId, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_ExplicitFailed, SvPb::ExplicitFailedEId, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SvOi::SVResetItemNone, false);
 
 	RegisterEmbeddedObject(&m_PassedCount, SvPb::PassedCountEId, IDS_OBJECTNAME_PASSED_COUNT, false, SvOi::SVResetItemNone, false);
@@ -266,6 +267,12 @@ void SVToolClass::init()
 	m_isObjectValid.setSaveValueFlag(false);
 	m_EnableTool.SetDefaultValue(BOOL(true), true);
 	m_IsToolActive.SetDefaultValue(BOOL(true), true);
+	m_Passed.SetDefaultValue(BOOL(false), true);			// Default for Passed is FALSE !!!
+	m_Passed.setSaveValueFlag(false);
+	m_Failed.SetDefaultValue(BOOL(true), true);			// Default for Failed is TRUE !!!
+	m_Failed.setSaveValueFlag(false);
+	m_Warned.SetDefaultValue(BOOL(true), true);			// Default for Warned is TRUE !!!
+	m_Warned.setSaveValueFlag(false);
 	m_ExplicitFailed.SetDefaultValue(BOOL(false), true);	// Default for Explicit Failed is FALSE !!!
 	m_ExplicitFailed.setSaveValueFlag(false);
 
@@ -352,7 +359,9 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	m_isObjectValid.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	m_EnableTool.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_IsToolActive.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable , SvOi::SetAttributeType::RemoveAttribute);
-	setPwfObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_Passed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_Failed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_Warned.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_ExplicitFailed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_PassedCount.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -498,7 +507,17 @@ void SVToolClass::GetDrawInfo(SVExtentMultiLineStruct& rMultiLine)
 
 	m_drawToolFlag.GetValue(rMultiLine.m_ToolDrawFlag);
 
-	std::tie(rMultiLine.m_Passed, rMultiLine.m_Warned, rMultiLine.m_Failed) = GetPassedWarnedFailedStatus();
+	BOOL bPassed = true;
+	BOOL bFailed = true;
+	BOOL bWarned = true;
+
+	m_Passed.GetValue(bPassed);
+	m_Failed.GetValue(bFailed);
+	m_Warned.GetValue(bWarned);
+
+	rMultiLine.m_Passed = (FALSE != bPassed);
+	rMultiLine.m_Failed = (FALSE != bFailed);
+	rMultiLine.m_Warned = (FALSE != bWarned);
 }
 
 void SVToolClass::UpdateAuxiliaryExtents()
@@ -562,9 +581,9 @@ inline  void SVToolClass::UpdateStateAndCounter(SvIe::RunStatus& rRunStatus)
 
 		// set our state according to the runStatus
 		m_Passed.SetValue(BOOL(rRunStatus.IsPassed()));
-		m_Failed.SetValue(BOOL(rRunStatus.isFailed()));
-		m_ExplicitFailed.SetValue(BOOL(rRunStatus.isFailed()));
-		m_Warned.SetValue(BOOL(rRunStatus.isWarned()));
+		m_Failed.SetValue(BOOL(rRunStatus.IsFailed()));
+		m_ExplicitFailed.SetValue(BOOL(rRunStatus.IsFailed()));
+		m_Warned.SetValue(BOOL(rRunStatus.IsWarned()));
 
 		if (rRunStatus.m_UpdateCounters)
 		{
@@ -576,13 +595,13 @@ inline  void SVToolClass::UpdateStateAndCounter(SvIe::RunStatus& rRunStatus)
 				m_PassedCount.SetValue(++lCount);
 			}
 			lCount = 0;
-			if (rRunStatus.isFailed())
+			if (rRunStatus.IsFailed())
 			{
 				m_FailedCount.GetValue(lCount);
 				m_FailedCount.SetValue(++lCount);
 			}
 			lCount = 0;
-			if (rRunStatus.isWarned())
+			if (rRunStatus.IsWarned())
 			{
 				m_WarnedCount.GetValue(lCount);
 				m_WarnedCount.SetValue(++lCount);
@@ -1372,7 +1391,6 @@ void SVToolClass::setStateValueToOverlay(SvPb::Overlay& rOverlay) const
 	SvPb::setValueObject(m_Passed, *rOverlay.mutable_passed(), true);
 	SvPb::setValueObject(m_Failed, *rOverlay.mutable_failed(), true);
 	SvPb::setValueObject(m_Warned, *rOverlay.mutable_warned(), true);
-
 }
 
 bool SVToolClass::isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction) const

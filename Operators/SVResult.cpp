@@ -49,7 +49,18 @@ void SVResult::init()
 	// Identify our type in the Output List
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
 
-	registerPwfAndSetDefaults(*this);
+	// Register Embedded Objects
+	RegisterEmbeddedObject( &m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_Warned, SvPb::WarnedEId, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject( &m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone, false);
+
+	// Set Embedded defaults
+	m_Passed.SetDefaultValue(BOOL(false), true);		// Default for Passed is FALSE !!!
+	m_Passed.setSaveValueFlag(false);
+	m_Failed.SetDefaultValue(BOOL(true), true);			// Default for Failed is TRUE !!!
+	m_Failed.setSaveValueFlag(false);
+	m_Warned.SetDefaultValue(BOOL(true), true);			// Default for Warned is TRUE !!!
+	m_Warned.setSaveValueFlag(false);
 }
 
 SVResult::~SVResult()
@@ -61,7 +72,9 @@ bool SVResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	setPwfObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_Failed.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_Warned.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_Passed.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -75,6 +88,27 @@ bool SVResult::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	m_inputObject.validateInput();
 
 	return Result && ValidateLocal(pErrorMessages);
+}
+
+bool SVResult::IsFailed()
+{
+	BOOL RVal = true;
+	m_Failed.GetValue( RVal );
+	return( TRUE == RVal );
+}
+
+bool SVResult::IsWarned()
+{
+	BOOL RVal = true;
+	m_Warned.GetValue( RVal );
+	return( TRUE == RVal );
+}
+
+bool SVResult::IsGood()
+{
+	BOOL RVal = true;
+	m_Passed.GetValue( RVal );
+	return( TRUE == RVal );
 }
 
 SVRange* SVResult::GetResultRange()
@@ -110,7 +144,9 @@ bool SVResult::Run( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 		DWORD dwColor = rRunStatus.GetStatusColor();
 		m_statusColor.SetValue(dwColor);
 
-		setWarnedFailedStatus(false, false);
+		m_Passed.SetValue(BOOL(true));
+		m_Failed.SetValue(BOOL(false));
+		m_Warned.SetValue(BOOL(false));
 		return true;
 	}
 	else
@@ -124,8 +160,8 @@ bool SVResult::Run( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 
 			// set our state according to the runStatus
 			m_Passed.SetValue(BOOL(rRunStatus.IsPassed()));
-			m_Failed.SetValue(BOOL(rRunStatus.isFailed()));
-			m_Warned.SetValue(BOOL(rRunStatus.isWarned()));
+			m_Failed.SetValue(BOOL(rRunStatus.IsFailed()));
+			m_Warned.SetValue(BOOL(rRunStatus.IsWarned()));
 
 			return true;
 		}

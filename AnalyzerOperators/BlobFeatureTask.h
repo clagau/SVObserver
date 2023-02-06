@@ -5,6 +5,7 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "Definitions/RangeEnum.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
@@ -12,14 +13,14 @@
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
-#include "SVValueObjectLibrary/PassedWarnedFailedHelper.h"
+#pragma endregion Includes
 
-
+#pragma region Declarations
 namespace SvOp
 {
 	class IndexEquation;
 }
-
+#pragma endregion Declarations
 
 namespace SvAo
 {
@@ -55,17 +56,19 @@ namespace SvAo
 		Descent = 2,
 	};
 
-
-	class BlobFeatureTask : public SvIe::SVTaskObjectListClass, public SvVol::PassedWarnedFailedHelper
+	class BlobFeatureTask : public SvIe::SVTaskObjectListClass
 		/// \brief Class for the parameter a feature of the blob analyzer.
 	{
 		SV_DECLARE_CLASS
 
+#pragma region Constructor
 	public:
 		BlobFeatureTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_BLOB_FEATURE_TASK);
 		virtual ~BlobFeatureTask() = default;
 		 
+#pragma endregion Constructor
 
+#pragma region Public Methods
 	public:
 		virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 
@@ -95,12 +98,18 @@ namespace SvAo
 
 		void setValueObject(SvVol::DoubleSortValuePtr pValue);
 		SvVol::DoubleSortValuePtr getValueObject() const { return m_pValue; };
+#pragma endregion Public Methods
 
+#pragma region Protected Methods
 	protected:
+#pragma endregion Protected Methods
 
+#pragma region Private Methods
 	private:
 		void updateEquation();
+#pragma endregion Private Methods
 
+#pragma region Member Variables
 	private:
 		SvVol::SVLongValueObjectClass  m_featureTypeValue;
 		SvVol::SVBoolValueObjectClass m_isCustomFeature;
@@ -113,9 +122,6 @@ namespace SvAo
 		std::array<SvVol::LinkedValue, RangeEnum::ER_COUNT> m_RangeValues;
 		SvVol::DoubleSortValuePtr m_pValue;
 		SvOp::IndexEquation* m_pEquation = nullptr;
-
-
-};
-
+#pragma endregion Member Variables
+	};
 }
-

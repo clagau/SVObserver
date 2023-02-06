@@ -4,6 +4,7 @@
 /// Class for the parameter a feature of the blob analyzer.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "BlobFeatureTask.h"
 #include "Operators/IndexEquation.h"
@@ -12,11 +13,14 @@
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 namespace SvAo
 {
@@ -63,12 +67,11 @@ namespace SvAo
 		return result;
 	}
 
+#pragma region Constructor
 	BlobFeatureTask::BlobFeatureTask(SVObjectClass* POwner, int StringResourceID)
 		:SVTaskObjectListClass(POwner, StringResourceID)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::BlobFeatureObjectType;
-
-		registerPwfAndSetDefaults(*this);
 
 		RegisterEmbeddedObject(&m_featureTypeValue, SvPb::FeatureTypeEId, IDS_BLOBFEATURE_TYPE, false, SvOi::SVResetItemOwner, false);
 		RegisterEmbeddedObject(&m_isCustomFeature, SvPb::IsCustomFeatureEId, IDS_BLOBFEATURE_ISCUSTOMFEATURE, false, SvOi::SVResetItemOwner, false);
@@ -105,7 +108,9 @@ namespace SvAo
 		m_RangeValues[RangeEnum::ER_FailHigh].SetDefaultValue(vtTemp, true);
 		m_RangeValues[RangeEnum::ER_WarnHigh].SetDefaultValue(vtTemp, true);
 	}
+#pragma endregion Constructor
 
+#pragma region Public Methods
 	bool BlobFeatureTask::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	{
 		bool l_bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
@@ -161,8 +166,6 @@ namespace SvAo
 			{
 				rRunStatus.SetPassed();
 			}
-
-			setWarnedFailedStatus(isWarn, isFail);
 		}
 		setStatus(rRunStatus);
 	}
@@ -339,7 +342,12 @@ namespace SvAo
 			m_pEquation->setResultColumn(m_pValue);
 		}
 	}
+#pragma endregion Public Methods
 
+#pragma region Protected Methods
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
 	void BlobFeatureTask::updateEquation()
 	{
 		for (size_t j = 0; j < m_friendList.size(); j++)
@@ -394,4 +402,5 @@ namespace SvAo
 			}
 		}
 	}
+#pragma endregion Private Methods
 }

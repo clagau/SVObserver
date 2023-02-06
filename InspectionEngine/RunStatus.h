@@ -57,8 +57,8 @@ public:
 	void SetCriticalFailure();
 
 	bool IsPassed() const;
-	bool isFailed() const;
-	bool isWarned() const;
+	bool IsFailed() const;
+	bool IsWarned() const;
 	bool IsValid() const;
 
 	bool IsDisabled() const;
@@ -132,12 +132,12 @@ inline bool RunStatus::IsPassed() const
 	return (run.status.passed && !run.status.failed && !run.status.warned && run.status.valid);
 }
 
-inline bool RunStatus::isFailed() const
+inline bool RunStatus::IsFailed() const
 {
 	return (run.status.failed && !run.status.warned && run.status.valid);
 }
 
-inline bool RunStatus::isWarned() const
+inline bool RunStatus::IsWarned() const
 {
 	return (run.status.warned && run.status.valid);
 }

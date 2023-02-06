@@ -45,7 +45,9 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_Enabled, SvPb::ToolSetEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedImage(&m_MainImageObject, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
 
-	registerPwfAndSetDefaults(*this);
+	RegisterEmbeddedObject(&m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_Warned, SvPb::WarnedEId, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_ExplicitFailed, SvPb::ExplicitFailedEId, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SvOi::SVResetItemNone, false);
 
 
@@ -105,6 +107,12 @@ void SVToolSet::init()
 	m_isObjectValid.SetDefaultValue(BOOL(false), true);
 	m_isObjectValid.setSaveValueFlag(false);
 	m_Enabled.SetDefaultValue(BOOL(true));
+	m_Passed.SetDefaultValue(BOOL(false));			// Default for Passed is FALSE !!!
+	m_Passed.setSaveValueFlag(false);
+	m_Failed.SetDefaultValue(BOOL(true));			// Default for Failed is TRUE !!!
+	m_Failed.setSaveValueFlag(false);
+	m_Warned.SetDefaultValue(BOOL(true));			// Default for Warned is TRUE !!!
+	m_Warned.setSaveValueFlag(false);
 	m_ExplicitFailed.SetDefaultValue(BOOL(false));	// Default for Explicit Failed is FALSE !!!
 	m_ExplicitFailed.setSaveValueFlag(false);
 
@@ -201,7 +209,9 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	// Set / Reset Printable Flags
 	m_isObjectValid.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	m_Enabled.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
-	setPwfObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_Passed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_Failed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_Warned.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_ExplicitFailed.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_PassedCount.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_FailedCount.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -568,9 +578,9 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 	{
 		// set our state according to the runStatus
 		m_Passed.SetValue(BOOL(rRunStatus.IsPassed()));
-		m_Failed.SetValue(BOOL(rRunStatus.isFailed()));
-		m_ExplicitFailed.SetValue(BOOL(rRunStatus.isFailed()));
-		m_Warned.SetValue(BOOL(rRunStatus.isWarned()));
+		m_Failed.SetValue(BOOL(rRunStatus.IsFailed()));
+		m_ExplicitFailed.SetValue(BOOL(rRunStatus.IsFailed()));
+		m_Warned.SetValue(BOOL(rRunStatus.IsWarned()));
 
 		if (rRunStatus.m_UpdateCounters)
 		{
@@ -582,13 +592,13 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 				m_PassedCount.SetValue(++lCount);
 			}
 			lCount = 0;
-			if (rRunStatus.isFailed())
+			if (rRunStatus.IsFailed())
 			{
 				m_FailedCount.GetValue(lCount);
 				m_FailedCount.SetValue(++lCount);
 			}
 			lCount = 0;
-			if (rRunStatus.isWarned())
+			if (rRunStatus.IsWarned())
 			{
 				m_WarnedCount.GetValue(lCount);
 				m_WarnedCount.SetValue(++lCount);
