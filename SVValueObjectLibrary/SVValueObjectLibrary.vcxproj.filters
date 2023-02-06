@@ -75,6 +75,9 @@
     <ClInclude Include="SVVariantValueObjectClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="PassedWarnedFailedHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicValueObject.cpp">
@@ -135,6 +138,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVValueObjectclass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="PassedWarnedFailedHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

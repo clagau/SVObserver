@@ -15,6 +15,7 @@
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/PassedWarnedFailedHelper.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -33,7 +34,7 @@ enum
 // .Title       : Base Class of module SVResult 
 ////////////////////////////////////////////////////////////////////////////////
 
-class SVResult : public SvIe::SVTaskObjectListClass
+class SVResult : public SvIe::SVTaskObjectListClass, public SvVol::PassedWarnedFailedHelper
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS
@@ -45,10 +46,6 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-
-	bool IsFailed();
-	bool IsWarned();
-	bool IsGood();
 
 	// derived class overrides...
 
@@ -76,12 +73,6 @@ protected:
 	// the input object list).  Objects that can use this are Double and Long.
 	SvOl::InputObject m_inputObject;
 
-	// Passed, if TRUE ( Reset Value: FALSE )
-	SvVol::SVBoolValueObjectClass	m_Passed;
-	// Warned, if TRUE ( Reset Value: TRUE )
-	SvVol::SVBoolValueObjectClass	m_Warned;
-	// Failed, if TRUE ( Reset Value: TRUE )
-	SvVol::SVBoolValueObjectClass	m_Failed;
 };
 
 } //namespace SvOp

@@ -155,8 +155,8 @@ SVProductInspectedState SVResultList::GetInspectionState()
 
 	for( auto pResult : m_results)
 	{
-		masterFailed |= pResult->IsFailed();
-		masterWarned |= pResult->IsWarned();
+		masterFailed |= pResult->isFailed();
+		masterWarned |= pResult->isWarned();
 	}
 
 	if (masterFailed)

@@ -92,6 +92,7 @@
     <ClInclude Include="BasicValueObjects.h" />
     <ClInclude Include="DoubleSortValueObject.h" />
     <ClInclude Include="LinkedValue.h" />
+    <ClInclude Include="PassedWarnedFailedHelper.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVBoolValueObjectClass.h" />
     <ClInclude Include="SVByteValueObjectClass.h" />
@@ -114,6 +115,7 @@
     <ClCompile Include="BasicValueObjects.cpp" />
     <ClCompile Include="DoubleSortValueObject.cpp" />
     <ClCompile Include="LinkedValue.cpp" />
+    <ClCompile Include="PassedWarnedFailedHelper.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

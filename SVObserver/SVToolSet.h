@@ -33,9 +33,9 @@ enum ToolSetTimes
 	MaxCount
 };
 
-// This class encapsules basic properties to handle and execute an Image Processing Tool Set
+// This class encapsulates basic properties to handle and execute an Image Processing Tool Set
 
-class SVToolSet : public SvIe::SVTaskObjectListClass, public SvOi::IToolSet
+class SVToolSet : public SvIe::SVTaskObjectListClass, public SvOi::IToolSet, public SvVol::PassedWarnedFailedHelper
 {
 	SV_DECLARE_CLASS
 
@@ -157,12 +157,6 @@ protected:
 
 	SVResultList m_ResultList;
 
-	// Passed, if TRUE ( Reset Value: FALSE )
-	SvVol::SVBoolValueObjectClass m_Passed;
-	// Warned, if TRUE ( Reset Value: TRUE )
-	SvVol::SVBoolValueObjectClass m_Warned;
-	// Failed, if TRUE ( Reset Value: TRUE )
-	SvVol::SVBoolValueObjectClass m_Failed;
 	// Failed, if TRUE ( Reset Value: FALSE )
 	SvVol::SVBoolValueObjectClass m_ExplicitFailed;
 
