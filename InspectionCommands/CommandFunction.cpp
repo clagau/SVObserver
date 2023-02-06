@@ -12,6 +12,7 @@
 #include "ObjectInterfaces\IAnalyzer.h"
 #include "ObjectInterfaces\IBarCode.h"
 #include "ObjectInterfaces\IBlobAnalyzer2.h"
+#include "ObjectInterfaces\IConfigurationObject.h"
 #include "ObjectInterfaces\IEnumerateValueObject.h"
 #include "ObjectInterfaces\IEquation.h"
 #include "ObjectInterfaces\IFormulaController.h"
@@ -45,6 +46,7 @@
 #include "FilesystemUtilities/ImageFileFormats.h"
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVMessage/SVMessage.h"
+#include "SVUtilityLibrary\SVGUID.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -824,7 +826,24 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 			SvOi::ITaskObjectListClass* pParentTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(pParent);
 			SvOi::IObjectAppClass* pObjectApp = dynamic_cast<SvOi::IObjectAppClass*>(pParentTaskObjectList);
 
-			pObject = SvOi::ConstructObject(request.classid());
+			bool notAddedYet = true;
+			if (SvPb::ModuleToolClassId != request.classid())
+			{
+				pObject = SvOi::ConstructObject(request.classid());
+			}
+			else
+			{
+				try
+				{
+					pObject = SvOi::ConstructAndAddModuleInstance(request.index(), request.ownerid());
+					notAddedYet = false;
+				}
+				catch (const SvStl::MessageContainer& rMsg)
+				{
+					cmdResponse.set_hresult(E_FAIL);
+					SvPb::convertMessageToProtobuf(rMsg, cmdResponse.mutable_errormessage()->add_messages());
+				}
+			}
 			SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
 
 			if (nullptr != pParentTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
@@ -843,13 +862,17 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 						break;
 					}
 				}
-				if (SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId == request.message_case())
+
+				if (notAddedYet)
 				{
-					pParentTaskObjectList->InsertBefore(request.taskobjectinsertbeforeid(), *pTaskObject);
-				}
-				else
-				{
-					pParentTaskObjectList->InsertAt(request.taskobjectpos(), *pTaskObject);
+					if (SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId == request.message_case())
+					{
+						pParentTaskObjectList->InsertBefore(request.taskobjectinsertbeforeid(), *pTaskObject);
+					}
+					else
+					{
+						pParentTaskObjectList->InsertAt(request.taskobjectpos(), *pTaskObject);
+					}
 				}
 
 				// And last - Create (initialize) it
@@ -1303,7 +1326,6 @@ SvPb::InspectionCmdResponse setExtentParameter(SvPb::SetExtentParameterRequest r
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
 	SvPb::SetExtentParameterResponse* pResponse = cmdResponse.mutable_setextentparameterresponse();
 	auto* pParameter = pResponse->mutable_parameters();
-	std::string debug = request.DebugString();
 
 	if (nullptr != pTool && nullptr != pParameter)
 	{
@@ -2282,5 +2304,15 @@ SvPb::InspectionCmdResponse getToolDepth(SvPb::GetToolDepthRequest request)
 		cmdResponse.set_hresult(E_POINTER);
 	}
 	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getModuleList()
+{
+	return SvOi::getModuleList();
+}
+
+SvPb::InspectionCmdResponse deleteModule(SvPb::DeleteModuleRequest request)
+{
+	return SvOi::deleteModule(SVGUID {request.guid()});
 }
 } //namespace SvCmd

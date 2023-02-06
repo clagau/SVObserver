@@ -24,7 +24,7 @@ PlcOutputObject::PlcOutputObject( SVObjectClass *pOwner, int StringResourceID )
 	LocalInitialize();
 }
 
-void PlcOutputObject::Persist(SvOi::IObjectWriter& rWriter) const
+void PlcOutputObject::Persist(SvOi::IObjectWriter& rWriter, bool /*closeObject = true*/) const
 {
 	_variant_t svVariant;
 	svVariant.SetString(GetName());

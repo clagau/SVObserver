@@ -39,6 +39,7 @@
 #include "InspectionEngine/SVFileAcquisitionClass.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "ObjectInterfaces/ICommand.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionDeviceParamEnum.h"
 #include "FilesystemUtilities/FileHelperManager.h"
@@ -2126,6 +2127,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		LoadAcquisitionDevice(rTree, BoardName, lNumBoardDig);
 		LoadCameras(rTree, lNumCameras, ConfigurationColor);
 		LoadTrigger(rTree);
+		m_moduleController.loadModules(rTree);
 		LoadInspection(rTree);
 		LoadPPQ(rTree);
 		LoadAdditionalFiles(rTree);
@@ -3267,6 +3269,7 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	SaveGlobalConstants(rWriter);
 	SaveAdditionalFiles(rWriter);
 	SaveAuditList(rWriter);
+	m_moduleController.saveModules(rWriter);
 	rWriter.EndElement(); // end of BaseNode
 	rWriter.EndElement(); // end of Root Element
 }
@@ -5229,6 +5232,23 @@ const std::vector< SvUl::AuditFile>& SVConfigurationObject::GetAuditWhiteList() 
 	return m_AuditWhiteList.GetFiles();
 };
 
+SvPb::InspectionCmdResponse SVConfigurationObject::deleteModule(SVGUID guid)
+{
+	auto cmdResponse = m_moduleController.deleteModule(guid);
+	for (const auto* pInsp : m_arInspectionArray)
+	{
+		if (pInsp)
+		{
+			SVIPDoc* pDoc = GetIPDocByInspectionID(pInsp->getObjectId());
+			if (pDoc)
+			{
+				pDoc->fixModuleMenuItems();
+			}
+		}
+	}
+	return cmdResponse;
+}
+
 void SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter, SvUl::AuditListType type) const
 {
 	auto& AuditFileVec = (type == SvUl::AuditListType::auditDefault) ? GetAuditDefaultList() : GetAuditWhiteList();
@@ -5446,4 +5466,96 @@ bool fileSaveAsSVX(SVConfigurationObject* pConfig, const std::string& rSvxFilepa
 	return true;
 }
 
+SvOi::IObjectClass* SvOi::ConstructAndAddModuleInstance(int index, uint32_t parentId)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
+	if (nullptr != pConfig)
+	{
+		return pConfig->getModuleController().constructAndAddModuleInstance(index, parentId);
+	}
+	SvStl::MessageManager e(SvStl::MsgType::Data);
+	e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
+	e.Throw();
+}
+
+SvPb::InspectionCmdResponse SvOi::getModuleList()
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		return pConfig->getModuleController().getModuleListResp();
+	}
+
+	SvPb::InspectionCmdResponse cmdResponse;
+	SvStl::MessageContainer message;
+	cmdResponse.set_hresult(E_FAIL);
+	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
+	SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse SvOi::deleteModule(SVGUID moduleGuid)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		return pConfig->deleteModule(moduleGuid);
+	}
+
+	SvPb::InspectionCmdResponse cmdResponse;
+	SvStl::MessageContainer message;
+	cmdResponse.set_hresult(E_FAIL);
+	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
+	SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
+	return cmdResponse;
+}
+
+void SvOi::registerModuleInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const HistoryList& rHistoryList)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		pConfig->getModuleController().registerInstance(guid, instanceId, rComment, rHistoryList);
+		return;
+	}
+
+	SvStl::MessageContainer message;
+	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
+	throw message;
+}
+
+void SvOi::unregisterModuleInstance(SVGUID guid, uint32_t instanceId)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		pConfig->getModuleController().unregisterInstance(guid, instanceId);
+		return;
+	}
+
+	SvStl::MessageContainer message;
+	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
+	throw message;
+}
+
+std::string SvOi::getModuleName(SVGUID guid)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		return pConfig->getModuleController().getModuleName(guid);
+	}
+	return {};
+}

@@ -42,5 +42,7 @@ namespace
 	extern const TCHAR scLinkedIndirectValueTag[] = (_T("IndirectID"));
 	extern const TCHAR scLinkedFormulaTag[] = (_T("Formula"));
 	extern const TCHAR scCommentTag[] = (_T("Comment"));
+	extern const TCHAR scModuleGuidTag[] = (_T("Module GUID"));
+	extern const TCHAR scHistoryTag[] = (_T("History"));
 }
 

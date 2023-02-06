@@ -22,7 +22,7 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter, bool closeObject = true) const override;
 
 	virtual HRESULT Write( const _variant_t& rValue ) override;
 	virtual HRESULT Reset() override;

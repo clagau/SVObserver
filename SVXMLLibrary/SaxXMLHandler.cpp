@@ -607,4 +607,16 @@ void SaxXMLHandler::SetDecryption()
 
 	return;
 }
+
+void convertXmlToTree(const std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree)
+{
+	SvXml::SaxXMLHandler  SaxHandler;
+	HRESULT	Result = SaxHandler.BuildFromXMLString(&rTree, _variant_t(rXmlData.c_str()));
+	if (false == SUCCEEDED(Result))
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_XML_To_Tree_Failed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+}
 } //namespace SvXml

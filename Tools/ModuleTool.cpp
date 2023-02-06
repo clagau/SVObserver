@@ -8,6 +8,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ModuleTool.h"
+#include "ObjectInterfaces/IConfigurationObject.h"
+#include "ObjectInterfaces/IModuleTool.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -30,36 +32,7 @@ namespace SvTo
 
 	ModuleTool::~ModuleTool()
 	{
-	}
-
-	void ModuleTool::MoveObjectToThis(GroupTool& rGroupTool)
-	{
-		DestroyFriends();
-		rGroupTool.movedAndDeleteFriends(m_friendList);
-		for (int i = 0; m_friendList.size() > i; ++i)
-		{
-			if (m_friendList[i])
-			{
-				m_friendList[i]->SetObjectOwner(this);
-			}
-		}
-	
-		DeleteAll();
-		rGroupTool.movedAndDeleteTaskObjects(m_TaskObjectVector);
-		for (auto* pObject : m_TaskObjectVector)
-		{
-			if (pObject)
-			{
-				pObject->SetObjectOwner(this);
-			}
-		}
-
-		rGroupTool.moveEmbeddedObjects(m_embeddedList);
-		//The inputs are not moved, because the GroupTool don't use the inputs.
-		
-		SetName(rGroupTool.GetName());
-		m_moduleComment.setValue(rGroupTool.getComment());
-		rGroupTool.moveObject(*this);
+		SvOi::unregisterModuleInstance(m_moduleGuid, getObjectId());
 	}
 
 	bool ModuleTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
@@ -79,6 +52,26 @@ namespace SvTo
 		return m_isCreated;
 	}
 
+	bool ModuleTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
+	{
+		bool result = __super::ResetObject(pErrorMessages);
+
+		try
+		{
+			SvOi::registerModuleInstance(m_moduleGuid, getObjectId(), getModuleComment(), m_historyList);
+		}
+		catch (SvStl::MessageContainer& rErr)
+		{
+			result = false;
+			if (pErrorMessages)
+			{
+				pErrorMessages->push_back(rErr);
+			}
+		}
+
+		return result;
+	}
+
 	std::vector<std::string> ModuleTool::getToolAdjustNameList() const
 	{
 		constexpr std::array<LPCTSTR, 4> cToolAdjustNameList
@@ -91,13 +84,104 @@ namespace SvTo
 		return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
 	}
 
+	void ModuleTool::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
+	{
+		__super::Persist(rWriter, false);
+
+		rWriter.WriteAttribute(scModuleGuidTag, m_moduleGuid.ToString().c_str());
+		rWriter.StartElement(scHistoryTag);
+		for (const auto& rValue : m_historyList)
+		{
+			rWriter.StartElement(std::to_string(rValue.first).c_str());
+			rWriter.WriteAttribute(scCommentTag, rValue.second.c_str());
+			rWriter.EndElement();
+		}
+		rWriter.EndElement();
+
+		if (closeObject)
+		{
+			rWriter.EndElement();
+		}
+	}
+
+	HRESULT ModuleTool::SetObjectValue(SVObjectAttributeClass* pDataObject)
+	{
+		SvCl::SVObjectStdStringArrayClass stringList;
+		if (std::string(pDataObject->GetName()) == scModuleGuidTag)
+		{
+			auto data = pDataObject->getData();
+			if (VT_BSTR == data.vt)
+			{
+				m_moduleGuid = SVGUID{pDataObject->getData()};
+				return S_OK;
+			}
+			else
+			{
+				Log_Assert(false);
+				return E_FAIL;
+			}
+		}
+		//else if (pDataObject->GetAttributeData(scLinkedIndirectValueTag, stringList))
+		//{
+		//	m_indirectValueRef = SVObjectReference(0 < stringList.size() ? stringList[0] : "");
+		//	return S_OK;
+		//}
+		//else if (pDataObject->GetAttributeData(scLinkedFormulaTag, stringList))
+		//{
+		//	m_formulaString = (0 < stringList.size() ? stringList[0] : "");
+		//	SvUl::RemoveEscapedSpecialCharacters(m_formulaString, true);
+		//	return S_OK;
+		//}
+		else
+		{
+			return __super::SetObjectValue(pDataObject);
+		}
+	}
+
+	SVGUID ModuleTool::renewModuleGuid()
+	{
+		auto status = (CoCreateGuid(&m_moduleGuid) == S_OK);
+		Log_Assert(status);
+		return m_moduleGuid;
+	}
+
+	std::string ModuleTool::getModuleComment() const
+	{
+		std::string text;
+		m_moduleComment.GetValue(text);
+		return text;
+	}
+
+	void ModuleTool::setModuleComment(const std::string& rText)
+	{
+		m_moduleComment.setValue(rText);
+	}
+
 	void ModuleTool::Initialize()
 	{
 		m_canResizeToParent = false;
 		m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 		m_ObjectTypeInfo.m_SubType = SvPb::ModuleToolObjectType;
 
+		renewModuleGuid();
+		m_historyList.emplace_back(std::time(nullptr), "Init");
+
 		RegisterEmbeddedObject(&m_moduleComment, SvPb::ModuleCommentEId, IDS_OBJECTNAME_MODULE_COMMENT, false, SvOi::SVResetItemNone, false);
 		m_moduleComment.SetDefaultValue(_T(""));
 	}
 } //namespace SvTo
+
+bool SvOi::setHistory(uint32_t objectID, const std::vector<std::pair<time_t, std::string>>& rHistoryVector)
+{
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(objectID);
+	auto* pModule = dynamic_cast<SvTo::ModuleTool*>(pObject);
+	if (pModule)
+	{
+		pModule->setHistory(rHistoryVector);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

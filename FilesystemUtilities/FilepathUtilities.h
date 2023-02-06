@@ -18,6 +18,12 @@ HRESULT checkDrive(const std::string& p_strDrive);
 
 std::vector<std::string> getFileList(LPCTSTR pPath, ImageFileFormat fileFormat, bool recursive);
 
+///  Moved files to a destination path and if access for move denied it delete it. 
+/// \param rFileList [in] List of files to move.
+/// \param rDestinationPath [in] Destination path.
+/// \param rIgnoreFilePart [in] Files which starts with this string will be ignored by moving/deleting.
+void moveFilesToFolder(const std::vector<std::string>& rFileList, const std::string& rDestinationPath, const std::string& rIgnoreFilePart);
+
 bool CreateDirPath(LPCTSTR Path);
 bool ensureDirectoryExistsVar(std::string& rDirectoryPath);
 }

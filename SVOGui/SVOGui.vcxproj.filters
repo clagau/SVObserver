@@ -243,6 +243,9 @@
     <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="EditModulesDialog.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlobReconstructFilterDlg.h">
@@ -477,6 +480,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="EditModulesDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

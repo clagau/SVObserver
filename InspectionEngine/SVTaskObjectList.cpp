@@ -193,7 +193,7 @@ void SVTaskObjectListClass::getInputData(const SvPb::GetInputDataRequest& reques
 	}
 }
 
-void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter) const
+void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 	SVTaskObjectClass::Persist(rWriter);
@@ -216,7 +216,10 @@ void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter) const
 			}
 		}
 	}
-	rWriter.EndElement();
+	if (closeObject)
+	{
+		rWriter.EndElement();
+	}
 }
 
 bool SVTaskObjectListClass::CloseObject()

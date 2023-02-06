@@ -144,5 +144,11 @@
     <ClInclude Include="IAnalyzer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="IConfigurationObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IModuleTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

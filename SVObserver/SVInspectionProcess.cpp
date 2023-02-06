@@ -2774,7 +2774,7 @@ SvIe::SVCameraImageTemplate* SVInspectionProcess::GetToolSetMainImage()
 	return pImage;
 }
 
-void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter) const
+void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
 {
 	// until it becomes a task object list...
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
@@ -2805,7 +2805,10 @@ void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter) const
 	SVToolSet* pToolSet = GetToolSet();
 	pToolSet->Persist(rWriter);
 
-	rWriter.EndElement();
+	if (closeObject)
+	{
+		rWriter.EndElement();
+	}
 }
 
 SVResultList* SVInspectionProcess::GetResultList() const

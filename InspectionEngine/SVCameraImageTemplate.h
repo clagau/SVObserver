@@ -44,7 +44,7 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	virtual void Persist(SvOi::IObjectWriter& rWritercloseObject, bool closeObject = true) const override;
 
 protected:
 	virtual bool CreateBuffers(const SVImageInfoClass& p_rImageInfo) = 0;

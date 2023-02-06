@@ -91,6 +91,7 @@
     <ClInclude Include="IBlobAnalyzer.h" />
     <ClInclude Include="IBlobAnalyzer2.h" />
     <ClInclude Include="ICommand.h" />
+    <ClInclude Include="IConfigurationObject.h" />
     <ClInclude Include="ICustom2Filter.h" />
     <ClInclude Include="IEnumerateValueObject.h" />
     <ClInclude Include="IEquation.h" />
@@ -102,6 +103,7 @@
     <ClInclude Include="IInspectionProcess.h" />
     <ClInclude Include="ILinkedObject.h" />
     <ClInclude Include="IMask.h" />
+    <ClInclude Include="IModuleTool.h" />
     <ClInclude Include="IObjectAppClass.h" />
     <ClInclude Include="IObjectClass.h" />
     <ClInclude Include="IObjectManager.h" />

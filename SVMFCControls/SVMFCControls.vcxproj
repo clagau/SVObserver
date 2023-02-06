@@ -127,6 +127,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EnterStringDlg.cpp" />
     <ClCompile Include="SVAnalyzerResultDlg.cpp" />
     <ClCompile Include="SVDlgBitmap.cpp" />
     <ClCompile Include="SVDlgFolder.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="ResizablePropertySheet.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="EnterStringDlg.h" />
     <ClInclude Include="SVAnalyzerResultDlg.h" />
     <ClInclude Include="SVDlgBitmap.H" />
     <ClInclude Include="SVDlgFolder.h" />

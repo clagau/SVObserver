@@ -349,7 +349,7 @@ enum MessageTextEnum
 	Tid_ClipboardInvalid,
 	Tid_ToolInvalid,
 	Tid_Clipboard_VersionMismatch,
-	Tid_ColorToolInsertFailed,
+	Tid_XML_To_Tree_Failed,
 	Tid_MonoToolInsertFailed,
 	Tid_LoopToolInsertLoopToolFailed,
 	Tid_LoopTool,
@@ -603,14 +603,14 @@ enum MessageTextEnum
 	Tid_aColorImage,
 	Tid_aDecimalValue,
 	Tid_aTextValue,
-
+	
 	Tid_InvalidParameterName,
 	Tid_ForbiddenParameterName,
 	Tid_DuplicateParameterName,
 	Tid_DuplicateParameterNameWithLinked,
 	Tid_DuplicateParameterNameWithType,
 	Tid_SetParameterValuesFailed,
-
+	
 	Tid_Correct_Grouping_Add_S_Items,
 	Tid_GroupDependencies_Wrong,
 	Tid_InvalidScaleFactor,
@@ -663,12 +663,12 @@ enum MessageTextEnum
 	Tid_SVRC_AccessDenied,
 	Tid_InvalidValues,
 	Tid_InvalidParameterValue,
-
+	
 	Tid_ProductMissingNak,
 	Tid_ImageMissingNak,
 	Tid_InputMissingNak,
 	Tid_ProductIncompleteNak,
-
+	
 	Tid_IsColorCheckForGrayscaleImage,
 	Tid_WrongParentForEmbeddedValue,
 	Tid_FileNameInvalid,
@@ -691,6 +691,14 @@ enum MessageTextEnum
 	Tid_RejectClarifyFailedNoTR,
 	Tid_RejectClarifyFailedUnknowData,
 	Tid_ModuleNameAlreadyUsed,
+	Tid_ModuleParameterLoadFailed,
+	Tid_ModuleFileLoadFailed,
+	Tid_ModuleInstanceConstructFailed,
+	Tid_ModuleNotFound,
+	Tid_ModuleCommentDifferent,
+	Tid_ModuleHistoryDifferent,
+	Tid_DeleteFailedModulesHasInstance,
+	Tid_ConfigurationObjectNotFound,
 	Tid_ObjectIdToLarge_OID,
 	Tid_ConfigurationNotLoaded,
 	Tid_InvalidMainwindow,

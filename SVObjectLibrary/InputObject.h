@@ -46,7 +46,7 @@ class InputObject : public SVObjectAppClass, public SvOi::IInputObject
 	virtual std::tuple<SvDef::SVObjectTypeInfoStruct, uint32_t, SvOi::InputAllowedMode, uint32_t> getAvailableObjectParameter() const override;
 	virtual SvPb::GetInputDataResponse getInputData(SvPb::SVObjectTypeEnum desiredFirstObjectTypeForConnectedName, bool excludeFirstObjectNameInConntectedName) const override;
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter, bool closeObject = true) const override;
 	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter) override;
 	virtual void changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject) override;
 	void setDottedNameOfLoadedInput(const std::string& rName) { m_DottedNameOfFailedLoadInput = rName; };

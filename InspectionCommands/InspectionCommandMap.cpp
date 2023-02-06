@@ -792,6 +792,24 @@ std::make_tuple(
 )
 },
 
+{SvPb::InspectionCmdRequest::kGetModuleListRequest,
+std::make_tuple(
+[] {return ThreadPref::cur; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest&) {return  getModuleList(); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kDeleteModuleRequest,
+std::make_tuple(
+[] {return ThreadPref::cur; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  deleteModule(rRequest.deletemodulerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
 };
 
 }

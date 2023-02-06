@@ -91,7 +91,7 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	virtual void Persist( SvOi::IObjectWriter& rWriter ) const override;
+	virtual void Persist( SvOi::IObjectWriter& rWriter, bool closeObject = true) const override;
 	void PersistImageAttributes( SvOi::IObjectWriter& rWriter ) const;
 
 	const SVImageClass* const GetRootImage() const;

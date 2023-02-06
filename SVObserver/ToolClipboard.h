@@ -65,7 +65,7 @@ public:
 	//************************************
 	std::string readXmlToolData();
 
-	std::vector<uint32_t> createToolsFromXmlData(const std::string& XmlData, uint32_t ownerId);
+	std::vector<uint32_t> createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId, bool onlySameVersionValid = true, bool useExplorerStyle = true);
 
 	const SvStl::MessageManager& getLastErrorMessage() const { return m_errorMessage; }
 #pragma endregion Public Methods
@@ -76,35 +76,21 @@ protected:
 	std::string createToolDefinitionString(const std::vector<uint32_t>& rToolIds) const;
 
 	//************************************
-	// Description: This method updates dependency files if required
-	// Parameter: rDependencyFilepaths <in> Reference to a list of files
-	//************************************
-	void moveDependencyFilesToRunPath( const SvDef::StringVector& rDependencyFilepaths ) const;
-
-	//************************************
-	// Description: This method converts the XML to tree
-	// Parameter: rXmlData <in> Reference to the XML data to convert
-	// Parameter: rTree <out> Reference to the tree to store the XML conversion
-	// Return: S_OK on success
-	//************************************
-	HRESULT convertXmlToTree( const std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree ) const;
-
-	//************************************
 	// Description: This method checks the clipboard SVObserver version to the current SVObserver version
 	// Parameter: rTree <in> Reference to the tree
 	// Return: S_OK on success
 	//************************************
-	HRESULT checkVersion(SvXml::SVXMLMaterialsTree& rTree ) const;
+	void checkVersion(SvXml::SVXMLMaterialsTree& rTree, bool onlySameVersionValid) const;
 
 	/// This method replaces the tool name and the dotted name (e.g. in equations)
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
 	/// \param rTree [in] Reference to the tree generated from the clipboard
 	/// \param pOwner [in] The owner of the new object.
 	/// \returns HRESULT S_OK on success
-	HRESULT updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc) const;
+	HRESULT updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const;
 
-	void updateToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const;
-	std::string getUniqueToolName(std::string& rToolName, const SVObjectClass& rOwner, const SVIPDoc& rDoc) const;
+	void updateToolName(std::string& rXmlData, const SVObjectClass& rOwner, const SVIPDoc& rDoc, const std::string& toolName, const std::string& rOldFullToolName, bool useExplorerStyle) const;
+	std::string getUniqueToolName(const std::string& rToolName, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const;
 
 	//************************************
 	// Description: This method replaces all the unique ids

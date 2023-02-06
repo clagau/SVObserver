@@ -24,6 +24,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/ILinkedObject.h"
+#include "ObjectInterfaces/IModuleTool.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "InputObject.h"
 #pragma warning (pop)
@@ -508,6 +509,21 @@ HRESULT SVObjectBuilder::SetInputs(uint32_t objectID, const SvDef::StringPairVec
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		::OutputDebugString( _T("SVObjectBuilder::SetInputs - Not a Valid Object\n") );
+#endif
+		hr = S_FALSE;
+	}
+	return hr;
+}
+
+HRESULT SVObjectBuilder::SetHistory(uint32_t objectID, const std::vector<std::pair<time_t, std::string>>& rHistoryVector)
+{
+	HRESULT hr = S_OK;
+
+	bool isOk = SvOi::setHistory(objectID, rHistoryVector);
+	if (false == isOk)
+	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
+		::OutputDebugString(_T("SVObjectBuilder::SetHistory - Not a Valid Object\n"));
 #endif
 		hr = S_FALSE;
 	}

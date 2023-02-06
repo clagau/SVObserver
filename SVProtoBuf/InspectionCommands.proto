@@ -208,6 +208,21 @@ message InputSearchParameters
 	uint32 input_connected_objectId = 1; // this is the ID of the object receiving input. Object must be of type InputConnectedType.
 }
 
+message History
+{
+	uint64 time = 1;
+	string comment = 2;
+}
+
+message ModuleData
+{
+	string name = 1;
+	string comment = 2;
+	string guid = 3;
+	repeated History historyList = 4;
+	int32 number_of_instances = 5;
+}
+
 //***************************************************************************
 // InspectionCommands - can be send with method InspectionCommands
 //***************************************************************************
@@ -531,6 +546,7 @@ message CreateObjectRequest
 
 	uint32 ownerId = 1;
 	ClassIdEnum classId = 2;
+	int32 index = 6; //By now this parameter is only used if classId == ModuleToolClassId. Then it is the index in the module list.
 
 	oneof message
 	{
@@ -1159,6 +1175,20 @@ message GetToolDepthResponse
 	int32 depthDownward = 2; //only set if goUpward is false
 }
 
+message GetModuleListRequest
+{
+}
+
+message GetModuleListResponse
+{
+	repeated ModuleData list = 1;
+}
+
+message DeleteModuleRequest
+{
+	string guid = 1;
+}
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -1241,6 +1271,8 @@ message InspectionCmdRequest
 		CheckParameterNamesRequest checkParameterNamesRequest = 76;
 		GetDependencyRequest getDependencyRequest = 77;
 		GetToolDepthRequest getToolDepthRequest = 78;
+		GetModuleListRequest getModuleListRequest = 79;
+		DeleteModuleRequest DeleteModuleRequest = 80;
 		}
 }
 
@@ -1306,5 +1338,6 @@ message InspectionCmdResponse
 		CheckParameterNamesResponse checkParameterNamesResponse = 56;
 		GetDependencyResponse getDependencyResponse = 57;
 		GetToolDepthResponse getToolDepthResponse = 58;
+		GetModuleListResponse getModuleListResponse = 59;
 		}
 }

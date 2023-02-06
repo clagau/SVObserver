@@ -76,22 +76,6 @@ void checkToolDepth(SvXml::SVXMLMaterialsTree& rTree, uint32_t ownerId)
 	}
 }
 
-void checkColorImage(const std::string& rXmlData, const SVIPDoc& rDoc)
-{
-	if (!rDoc.isImageAvailable(SvPb::SVImageColorType))
-	{
-		const std::string colorToolTypeString = "<DATA Name=\"ClassID\" Type=\"VT_INT\">35</DATA>";
-		bool isColorToolInto = (std::string::npos != rXmlData.find(colorToolTypeString));
-		//Color tool can not be inserted into a IPD without color images
-		if (isColorToolInto)
-		{
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams));
-			e.Throw();
-		}
-	}
-}
-
 void writeToolParameter(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool, int pos)
 {
 	std::string toolTag {SvUl::Format(SvXml::FullToolNameTag, pos)};
@@ -249,13 +233,13 @@ std::string ToolClipboard::readXmlToolData()
 		e.Throw();
 	}
 	::DeleteFile(m_zipFilePath.c_str());
-	moveDependencyFilesToRunPath(containedFilepaths);
+	SvFs::moveFilesToFolder(containedFilepaths, SvStl::GlobalPath::Inst().GetRunPath(), m_baseFilePath);
 
 	return SvFs::readContentFromFile(xmlFilePath());
 }
 
 
-std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId)
+std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId, bool onlySameVersionValid /*= true*/, bool useExplorerStyle /*= true*/)
 {
 	std::string XmlData(rXmlData);
 
@@ -286,26 +270,19 @@ std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& r
 	}
 
 	SvXml::SVXMLMaterialsTree Tree;
+	SvXml::convertXmlToTree(XmlData, Tree);
+	checkVersion(Tree, onlySameVersionValid);
 
-	HRESULT Result = convertXmlToTree(XmlData, Tree);
-	if (S_OK == Result)
+	checkToolDepth(Tree, ownerId);
+	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem = nullptr;
+	if (false == SvXml::SVNavigateTree::GetItemBranch(Tree, SvXml::ToolsTag, nullptr, ToolsItem))
 	{
-		Result = checkVersion(Tree);
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConversionFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
 	}
 
-	if (S_OK == Result)
-	{
-		checkToolDepth(Tree, ownerId);
-		SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem = nullptr;
-		if (false == SvXml::SVNavigateTree::GetItemBranch(Tree, SvXml::ToolsTag, nullptr, ToolsItem))
-		{
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConversionFailed, SvStl::SourceFileParams(StdMessageParams));
-			e.Throw();
-		}
-		checkColorImage(XmlData, *pDoc);
-		Result = updateAllToolNames(XmlData, Tree, *pOwner, *pDoc);
-	}
+	auto Result = updateAllToolNames(XmlData, Tree, *pOwner, *pDoc, useExplorerStyle);
 	if (S_OK == Result)
 	{
 		Result = replaceUniqueIds(XmlData, Tree);
@@ -313,10 +290,7 @@ std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& r
 	if (S_OK == Result)
 	{
 		Tree.Clear();
-		Result = convertXmlToTree(XmlData, Tree);
-	}
-	if (S_OK == Result)
-	{
+		SvXml::convertXmlToTree(XmlData, Tree);
 		auto toolIds = parseTreeToTool(Tree, *pOwner);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLSET)
 		std::stringstream str;
@@ -347,48 +321,7 @@ std::string ToolClipboard::createToolDefinitionString(const std::vector<uint32_t
 	return SvFs::readContentFromFile(m_zipFilePath);
 }
 
-void ToolClipboard::moveDependencyFilesToRunPath(const SvDef::StringVector& rDependencyFilepaths) const
-{
-	for (const auto& rEntry : rDependencyFilepaths)
-	{
-		//ignore the tool XML files themself: they are not dependency files
-		if (std::string::npos == rEntry.find(m_baseFilePath))
-		{
-			_TCHAR Name[_MAX_FNAME];
-			_TCHAR Extension[_MAX_EXT];
-			_splitpath(rEntry.c_str(), nullptr, nullptr, Name, Extension);
-
-			std::string DestinationFile(SvStl::GlobalPath::Inst().GetRunPath().c_str());
-			DestinationFile += _T("\\");
-			DestinationFile += Name;
-			DestinationFile += Extension;
-
-			if (0 == ::_access_s(DestinationFile.c_str(), 0))
-			{
-				::DeleteFile(rEntry.c_str());
-			}
-			else
-			{
-				::MoveFile(rEntry.c_str(), DestinationFile.c_str());
-			}
-		}
-	}
-}
-
-HRESULT ToolClipboard::convertXmlToTree(const std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree) const
-{
-	SvXml::SaxXMLHandler  SaxHandler;
-	HRESULT	Result = SaxHandler.BuildFromXMLString(&rTree, _variant_t(rXmlData.c_str()));
-	if (false == SUCCEEDED(Result))
-	{
-		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConversionFailed, SvStl::SourceFileParams(StdMessageParams));
-		e.Throw();
-	}
-	return Result;
-}
-
-HRESULT ToolClipboard::checkVersion(SvXml::SVXMLMaterialsTree& rTree) const
+void ToolClipboard::checkVersion(SvXml::SVXMLMaterialsTree& rTree, bool onlySameVersionValid) const
 {
 	HRESULT Result(E_FAIL);
 
@@ -401,9 +334,13 @@ HRESULT ToolClipboard::checkVersion(SvXml::SVXMLMaterialsTree& rTree) const
 		SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VERSION_NUMBER, EnvironmentItem, ClipboardVersion);
 
 		//Clipboard SVObserver version and current version must be the same
-		if (VT_UI4 == ClipboardVersion.vt && TheSVObserverApp().getCurrentVersion() == ClipboardVersion.ulVal)
+		if (VT_UI4 == ClipboardVersion.vt)
 		{
-			Result = S_OK;
+			if (TheSVObserverApp().getCurrentVersion() == ClipboardVersion.ulVal || 
+				(false == onlySameVersionValid && TheSVObserverApp().getCurrentVersion() > ClipboardVersion.ulVal))
+			{
+				Result = S_OK;
+			}
 		}
 	}
 
@@ -413,10 +350,9 @@ HRESULT ToolClipboard::checkVersion(SvXml::SVXMLMaterialsTree& rTree) const
 		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_Clipboard_VersionMismatch, SvStl::SourceFileParams(StdMessageParams));
 		e.Throw();
 	}
-	return Result;
 }
 
-HRESULT ToolClipboard::updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc) const
+HRESULT ToolClipboard::updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const
 {
 	HRESULT Result(E_FAIL);
 
@@ -435,7 +371,10 @@ HRESULT ToolClipboard::updateAllToolNames(std::string& rXmlData, SVTreeType& rTr
 			variant_t value;
 			rTree.getLeafData(fullToolNameHandle, value);
 
-			updateToolName(rXmlData, rTree, rOwner, rDoc, ToolItem, SvUl::createStdString(value));
+			_variant_t ObjectName;
+			SvXml::SVNavigateTree::GetItem(rTree, scObjectNameTag, ToolItem, ObjectName);
+
+			updateToolName(rXmlData, rOwner, rDoc, SvUl::createStdString(ObjectName.bstrVal), SvUl::createStdString(value), useExplorerStyle);
 			Result = S_OK;
 			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
 		}
@@ -451,13 +390,9 @@ HRESULT ToolClipboard::updateAllToolNames(std::string& rXmlData, SVTreeType& rTr
 	return Result;
 }
 
-void ToolClipboard::updateToolName(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc, SVTreeType::SVBranchHandle ToolItem, const std::string& rOldFullToolName) const
+void ToolClipboard::updateToolName(std::string& rXmlData, const SVObjectClass& rOwner, const SVIPDoc& rDoc, const std::string& toolName, const std::string& rOldFullToolName, bool useExplorerStyle) const
 {
-	_variant_t ObjectName;
-	SvXml::SVNavigateTree::GetItem(rTree, scObjectNameTag, ToolItem, ObjectName);
-	std::string ToolName = SvUl::createStdString(ObjectName.bstrVal);
-
-	std::string NewToolName = getUniqueToolName(ToolName, rOwner, rDoc);
+	std::string NewToolName = getUniqueToolName(toolName, rOwner, rDoc, useExplorerStyle);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLCLIPBOARD)
 	std::stringstream ss;
@@ -465,7 +400,7 @@ void ToolClipboard::updateToolName(std::string& rXmlData, SVTreeType& rTree, con
 	::OutputDebugString(ss.str().c_str());
 #endif
 
-	if (NewToolName != ToolName)
+	if (NewToolName != toolName)
 	{
 		size_t pos = rXmlData.find(scObjectNameTag);
 
@@ -473,7 +408,7 @@ void ToolClipboard::updateToolName(std::string& rXmlData, SVTreeType& rTree, con
 		{
 			// adding ">" and "<" ensures that only the correct occurrences of the name in the XML string will be replaced
 			auto searchString = ">" + NewToolName + "<";
-			auto replacementString = ">" + ToolName + "<";
+			auto replacementString = ">" + toolName + "<";
 
 			pos += sizeof(scObjectNameTag);
 			pos = rXmlData.find(replacementString.c_str(), pos);
@@ -496,14 +431,14 @@ void ToolClipboard::updateToolName(std::string& rXmlData, SVTreeType& rTree, con
 	}
 }
 
-std::string ToolClipboard::getUniqueToolName(std::string& rToolName, const SVObjectClass& rOwner, const SVIPDoc& rDoc) const
+std::string ToolClipboard::getUniqueToolName(const std::string& rToolName, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const
 {
 	std::string uniqueName;
 
 	if (rOwner.isLoopOrGroupTool())
 	{
 		auto pTaskObjectList = static_cast<const SvIe::SVTaskObjectListClass*>(&rOwner);
-		uniqueName = pTaskObjectList->makeNameUnique(rToolName, m_additionalNames);
+		uniqueName = pTaskObjectList->makeNameUnique(rToolName, m_additionalNames, useExplorerStyle);
 	}
 	else
 	{
@@ -518,7 +453,7 @@ std::string ToolClipboard::getUniqueToolName(std::string& rToolName, const SVObj
 		}
 #endif
 
-		uniqueName = rDoc.makeNameUnique(rToolName, m_additionalNames);
+		uniqueName = rDoc.makeNameUnique(rToolName, m_additionalNames, useExplorerStyle);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLNAMES)
 		OutputDebugString(std::format("new Unique: {} -> {}\n", rToolName.c_str(), uniqueName.c_str()).c_str());

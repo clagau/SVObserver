@@ -1221,7 +1221,7 @@ DWORD SVTaskObjectClass::GetStatusTag() const
 	return dwState;
 }
 
-void SVTaskObjectClass::Persist(SvOi::IObjectWriter& rWriter) const
+void SVTaskObjectClass::Persist(SvOi::IObjectWriter& rWriter, bool /*closeObject = true*/) const
 {
 	__super::Persist(rWriter);
 

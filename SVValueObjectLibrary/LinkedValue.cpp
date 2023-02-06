@@ -982,15 +982,14 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		return value;
 	}
 
-	void LinkedValue::Persist(SvOi::IObjectWriter& rWriter) const
+	void LinkedValue::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
 	{
 		if (SvPb::noAttributes == ObjectAttributesAllowed() && false == isUsed())
 		{
 			return;
 		}
 
-		setSaveFutherDataFlag();
-		__super::Persist(rWriter);
+		__super::Persist(rWriter, false);
 		if (m_children.size())
 		{
 			rWriter.StartElement(scLinkedChildsTag);
@@ -1016,7 +1015,10 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		Value = Temp.c_str();
 		rWriter.WriteAttribute(scLinkedFormulaTag, Value);
 
-		rWriter.EndElement();
+		if (closeObject)
+		{
+			rWriter.EndElement();
+		}
 	}
 
 	HRESULT LinkedValue::SetObjectValue(SVObjectAttributeClass* pDataObject)
@@ -1062,6 +1064,14 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	SvPb::LinkedSelectedOption LinkedValue::getSelectedOption() const
 	{
 		return m_refOption;
+	}
+
+	void LinkedValue::resetToDefault()
+	{
+		m_formulaString = "";
+		m_equation.SetEquationText(m_formulaString);
+		m_indirectValueRef = {};
+		setDirectValue(GetDefaultValue());
 	}
 
 	HRESULT LinkedValue::setIndirectStringForOldStruct(const std::vector<_variant_t>& rValueString)

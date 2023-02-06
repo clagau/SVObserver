@@ -24,7 +24,7 @@ SVDigitalInputObject::SVDigitalInputObject( SVObjectClass *pOwner, int StringRes
 	LocalInitialize();
 }
 
-void SVDigitalInputObject::Persist(SvOi::IObjectWriter& rWriter) const
+void SVDigitalInputObject::Persist(SvOi::IObjectWriter& rWriter, bool /*closeObject = true*/) const
 {
 	_variant_t svVariant;
 

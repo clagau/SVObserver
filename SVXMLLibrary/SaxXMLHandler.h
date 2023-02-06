@@ -205,4 +205,10 @@ private:
 	SaxEncryptionHandler *m_pSaxEncryptionHandler;
 #pragma endregion Member variables
 };
+
+/// This function converts the XML to tree
+/// \param rXmlData [in] Reference to the XML data to convert
+/// \param rTree [out] Reference to the tree to store the XML conversion
+/// Exception in error case.
+void convertXmlToTree(const std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree);
 } //namespace SvXml

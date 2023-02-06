@@ -916,7 +916,7 @@ HRESULT SVImageClass::RemoveObjectConnection(uint32_t objectID)
 	return l_Status;
 }
 
-void SVImageClass::Persist(SvOi::IObjectWriter& rWriter) const
+void SVImageClass::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 
@@ -924,7 +924,10 @@ void SVImageClass::Persist(SvOi::IObjectWriter& rWriter) const
 
 	PersistImageAttributes(rWriter);
 
-	rWriter.EndElement();
+	if (closeObject)
+	{
+		rWriter.EndElement();
+	}
 }
 
 void SVImageClass::PersistImageAttributes(SvOi::IObjectWriter& rWriter) const

@@ -172,7 +172,7 @@ namespace SvOg
 		auto* pSheet = dynamic_cast<CPropertySheet*>(GetParent());
 		if (nullptr != pSheet && pSheet->GetActivePage() == this)
 		{
-			return setInspectionData();
+			setInspectionData();
 		}
 		return true;
 	}

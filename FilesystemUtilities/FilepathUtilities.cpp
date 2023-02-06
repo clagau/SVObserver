@@ -407,6 +407,29 @@ std::vector<std::string> getFileList(LPCTSTR pPath, ImageFileFormat fileFormat, 
 	return result;
 }
 
+void moveFilesToFolder(const std::vector<std::string>& rFileList, const std::string& rDestinationPath, const std::string& rIgnoreFilePart)
+{
+	for (const auto& rEntry : rFileList)
+	{
+		if (false == rEntry.starts_with(rIgnoreFilePart))
+		{
+			_TCHAR Name[_MAX_FNAME];
+			_TCHAR Extension[_MAX_EXT];
+			_splitpath(rEntry.c_str(), nullptr, nullptr, Name, Extension);
+
+			std::string DestinationFile {rDestinationPath + _T("\\") + Name += Extension};
+			if (0 == ::_access_s(DestinationFile.c_str(), 0))
+			{
+				::DeleteFile(rEntry.c_str());
+			}
+			else
+			{
+				::MoveFile(rEntry.c_str(), DestinationFile.c_str());
+			}
+		}
+	}
+}
+
 
 bool CreateDirPath(LPCTSTR Path)
 {

@@ -58,9 +58,10 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/InputConflictDlg.h"
+#include "SVOGui/EditModulesDialog.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
 #include "SVOGui/SVAdjustToolSizePositionDlg.h"
-#include "SvOGui/SVFormulaEditorSheet.h"
+#include "SVOGui/SVFormulaEditorSheet.h"
 #include "SVOGui/SVSaveToolSetImageDialog.h"
 #include "SVOGui/SVShowDependentsDialog.h"
 #include "SVOGui/TextDefinesSvOg.h"
@@ -75,6 +76,8 @@
 #include "ObjectInterfaces/ObjectInfo.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVVisionProcessorHelper.h"
+#include "SVMFCControls/EnterStringDlg.h"
+#include "GuiHelpers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -175,6 +178,8 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_TOOL_DEPENDENCIES, OnUpdateToolDependencies)
 	ON_COMMAND(ID_ADD_LOOPTOOL, OnAddLoopTool)
 	ON_COMMAND(ID_ADD_GROUPTOOL, OnAddGroupTool)
+	ON_COMMAND(ID_EDIT_MODULES, OnEditModules)
+	ON_COMMAND_RANGE(ID_ADD_MODULE_FIRST, ID_ADD_MODULE_LAST, OnAddModuleTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_MATHTOOL, OnUpdateAddGeneralTool)
@@ -291,6 +296,8 @@ void SVIPDoc::UpdateAllData()
 {
 	if (!m_isDestroying)
 	{
+		fixModuleMenuItems();
+
 		SVIPProductStruct l_ProductData;
 		if (S_OK == m_NewProductData.PopHead(l_ProductData))
 		{
@@ -482,16 +489,16 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 	return l_bOk;
 }
 
-std::string SVIPDoc::makeNameUnique(const std::string& rToolName, const std::vector<std::string>& rAdditionalNames) const
+std::string SVIPDoc::makeNameUnique(const std::string& rToolName, const std::vector<std::string>& rAdditionalNames, bool useExplorerStyle) const
 {
-	return m_toolGroupings.makeNameUnique(rToolName, rAdditionalNames);
+	return m_toolGroupings.makeNameUnique(rToolName, rAdditionalNames, useExplorerStyle);
 }
 
 //******************************************************************************
 // Operation(s) Of Writing Access:
 //******************************************************************************
 
-bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
+bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId, int index)
 {
 	ToolSetView* pToolsetView = GetToolSetView();
 	if (nullptr == pToolsetView)
@@ -551,6 +558,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 	auto* pRequest = requestCmd.mutable_createobjectrequest();
 	pRequest->set_ownerid(OwnerID);
 	pRequest->set_classid(classId);
+	pRequest->set_index(index);
 	pRequest->set_taskobjectinsertbeforeid(TaskObjectInsertBeforeID);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
@@ -1110,6 +1118,17 @@ void SVIPDoc::OnAddGroupTool()
 	AddTool(SvPb::GroupToolClassId);
 }
 
+void SVIPDoc::OnEditModules()
+{
+	SvOg::EditModulesDialog dialog;
+	dialog.DoModal();
+}
+
+void SVIPDoc::OnAddModuleTool(UINT nId)
+{
+	AddTool(SvPb::ModuleToolClassId, nId - ID_ADD_MODULE_FIRST );
+}
+
 void SVIPDoc::OnEditDelete()
 {
 	SVInspectionProcess* pInspection(GetInspectionProcess());
@@ -1591,19 +1610,32 @@ void SVIPDoc::OnConvertToModul()
 		auto toolIDs = pToolsetView->GetAllSelectedToolIds();
 		if (1 == toolIDs.size() && SvDef::InvalidObjectId != toolIDs[0])
 		{
-			//@TODO[MZA][10.30][09.12.2022] show dialog to ask for the module name
-			std::string name = "Module" + std::to_string(toolIDs[0]);
+			auto* pObject = SVObjectManagerClass::Instance().GetObject(toolIDs[0]);
+			if (pObject)
+			{
+				switch (pObject->GetClassID())
+				{
+					case SvPb::GroupToolClassId:
+						convertGroupToolToModule(*pConfig, *pToolsetView, toolIDs[0]);
+						break;
+					case SvPb::ModuleToolClassId:
+						try
+						{
+							pConfig->getModuleController().convertModuleInstance(toolIDs[0]);
+						}
+						catch (const SvStl::MessageContainer& rExp)
+						{
+							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							Exception.setMessage(rExp.getMessage());
+						}
+						break;
+					default:
+						Log_Assert(false);
+						return;
+				}
+				
 
-			name = SvUl::RemoveCharactersByRegexAndTrim(name, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
-			try
-			{
-				pConfig->getModuleController().checkIfNameValid(name);
-				pConfig->getModuleController().convertGroupTool(toolIDs[0], name);
-			}
-			catch (const SvStl::MessageContainer& rExp)
-			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Exception.setMessage(rExp.getMessage());
+				UpdateAllViews(nullptr);
 			}
 		}
 	}
@@ -2994,7 +3026,44 @@ std::vector <SvIe::IPResultTableData> SVIPDoc::getResultTableData() const
 	return {};
 }
 
+void SVIPDoc::fixModuleMenuItems()
+{
+	CMenu* pMenu;
+	CWnd* pWindow = AfxGetMainWnd();
+	pMenu = pWindow->GetMenu();
 
+	SVConfigurationObject* pConfig = nullptr;
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	assert(nullptr != pConfig);
+
+	int pos = FindMenuItem(pMenu, "&Add");
+	if (pos == -1 && nullptr == pConfig)
+	{
+		return;
+	}
+
+	CMenu* submenu = pMenu->GetSubMenu(pos);
+	pos = FindMenuItem(submenu, "Modules");
+	if (pos > -1)
+	{
+		submenu = submenu->GetSubMenu(pos);
+		int count = submenu->GetMenuItemCount();
+		if (count > 2)
+		{
+			for (int i = count - 1; i > 1; --i)
+			{
+				submenu->RemoveMenu(i, MF_BYPOSITION);
+			}
+		}
+
+		pos = 2;
+		for (const auto& rModule : pConfig->getModuleController().getModuleList())
+		{
+			submenu->InsertMenu(pos, MF_BYPOSITION, ID_ADD_MODULE_FIRST + pos - 2, rModule.m_name.c_str());
+			++pos;
+		}
+	}
+}
 
 void SVIPDoc::OnAddExternalTool()
 {
@@ -3275,7 +3344,7 @@ void SVIPDoc::OnUpdateAddColorTool(CCmdUI* PCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageColorType);
+	Enabled = Enabled && TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageColorType, Get1stSelectedToolID());
 
 	PCmdUI->Enable(Enabled);
 }
@@ -3909,7 +3978,7 @@ uint32_t SVIPDoc::GetObjectIdFromToolToInsertBefore(const std::string& rName) co
 }
 
 
-bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
+bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType, uint32_t isBeforeToolId) const
 {
 	bool Result {false};
 
@@ -3920,7 +3989,7 @@ bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
 	pTreeSearchParameter->set_search_start_id(m_InspectionID);
 	pTreeSearchParameter->mutable_type_info()->set_objecttype(SvPb::SVImageObjectType);
 	pTreeSearchParameter->mutable_type_info()->set_subtype(ImageSubType);
-	pTreeSearchParameter->mutable_isbeforetoolmethod()->set_toolid(Get1stSelectedToolID());
+	pTreeSearchParameter->mutable_isbeforetoolmethod()->set_toolid(isBeforeToolId);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	SvUl::NameObjectIdList availableList;
@@ -3930,6 +3999,44 @@ bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
 	}
 
 	return Result;
+}
+
+void SVIPDoc::convertGroupToolToModule(SVConfigurationObject& rConfig, ToolSetView& rToolsetView, uint32_t toolID)
+{
+	int preCount = 1;
+	std::string name;
+	while (name.empty())
+	{
+		name = "Module" + std::to_string(preCount++);
+		try
+		{
+			rConfig.getModuleController().checkIfNameValid(name);
+		}
+		catch (const SvStl::MessageContainer&)
+		{
+			name.clear();
+		}
+	}
+
+	EnterStringDlg nameDlg {name,  std::bind(&ModuleController::checkIfNameValid, rConfig.getModuleController(), std::placeholders::_1), "Enter Module Name", &rToolsetView};
+	if (IDOK != nameDlg.DoModal())
+	{
+		return;
+	}
+	name = nameDlg.getString();
+
+	try
+	{
+		rConfig.getModuleController().checkIfNameValid(name);
+		rConfig.getModuleController().convertGroupTool(toolID, name);
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Exception.setMessage(rExp.getMessage());
+	}
+
+	fixModuleMenuItems();
 }
 
 

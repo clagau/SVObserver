@@ -47,6 +47,8 @@ namespace SvOp
 
 		SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID);
 
+		void setToDefault();
+
 		virtual SvPb::InspectionCmdResponse addParameterAndUseIt(const SvPb::AddParameterAndUseItRequest& rRequest) override;
 		virtual SvPb::InspectionCmdResponse checkParameterNames(const SvPb::CheckParameterNamesRequest& rRequest) override;
 #pragma endregion Public Methods

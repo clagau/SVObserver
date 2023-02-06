@@ -227,6 +227,10 @@ HRESULT SVInspectionTreeParser::ProcessChildren(SvXml::SVXMLMaterialsTree::SVBra
 			{
 				hr = ProcessInputs(hItem, ownerID);
 			}
+			else if (Name == scHistoryTag)
+			{
+				hr = ProcessHistory(hItem, ownerID);
+			}
 			else 
 			{
 				// process this node
@@ -559,10 +563,15 @@ HRESULT SVInspectionTreeParser::ProcessAttributes(uint32_t ownerID, uint32_t obj
 {
 	HRESULT hr = S_OK;
 
-	_variant_t comment;
-	if (GetItemValue(scCommentTag, hItem, comment))
+	_variant_t value;
+	if (GetItemValue(scCommentTag, hItem, value))
 	{
-		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scCommentTag, comment, SV_STRING_Type);
+		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scCommentTag, value, SV_STRING_Type);
+	}
+
+	if (GetItemValue(scModuleGuidTag, hItem, value))
+	{
+		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scModuleGuidTag, value, SV_STRING_Type);
 	}
 
 	std::vector<_variant_t> attributes;
@@ -646,6 +655,47 @@ HRESULT SVInspectionTreeParser::ProcessInputs(SvXml::SVXMLMaterialsTree::SVBranc
 	if (InputPairVector.size())
 	{
 		hr = SVObjectBuilder::SetInputs(ownerID, InputPairVector);
+	}
+	return hr;
+}
+
+
+HRESULT SVInspectionTreeParser::ProcessHistory(SvXml::SVXMLMaterialsTree::SVBranchHandle hHistory, uint32_t ownerID)
+{
+	HRESULT hr = S_OK;
+	std::vector<std::pair<time_t, std::string>>  historyVector;
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hInput {m_rTree.getFirstBranch(hHistory)};
+	do
+	{
+		if (hHistory)
+		{
+			UpdateProgress(++m_count, m_totalSize);
+
+			std::string branchName = m_rTree.getBranchName(hInput);
+			try
+			{
+
+				time_t date = std::stoll(branchName);
+				_variant_t comment;
+				GetItemValue(scCommentTag, hInput, comment);
+
+				if (comment.vt == VT_BSTR)
+				{
+					historyVector.emplace_back(date, SvUl::createStdString(comment));
+				}
+			}
+			catch (...)
+			{
+				Log_Assert(false);
+			}
+
+			hHistory = m_rTree.getNextBranch(hHistory, hInput);
+		}
+	} while (hHistory);
+
+	if (historyVector.size())
+	{
+		hr = SVObjectBuilder::SetHistory(ownerID, historyVector);
 	}
 	return hr;
 }

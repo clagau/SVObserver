@@ -90,7 +90,10 @@ public:
 	virtual void SetDisabled();
 	virtual DWORD GetObjectColor() const;
 
-	virtual void Persist( SvOi::IObjectWriter& rWriter ) const;
+	/// Write object to XML-file
+	/// \param rWriter [in]
+	/// \param closeObject [in] normally the object will be closed (true), but if the caller have to add parameter to this object it can force that the object stay open. The caller have to close the object than.
+	virtual void Persist( SvOi::IObjectWriter& rWriter, bool closeObject = true ) const;
 
 	void PersistBaseData(SvOi::IObjectWriter& rWriter) const;
 

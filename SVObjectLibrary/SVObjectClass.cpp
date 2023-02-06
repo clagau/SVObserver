@@ -988,7 +988,7 @@ bool SVObjectClass::createEmbeddedChildren()
 	return result;
 }
 
-void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter) const
+void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter, bool /*keepObjectOpen = false*/) const
 {
 	PersistBaseData(rWriter);
 	PersistEmbeddeds(rWriter);

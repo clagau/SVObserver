@@ -374,7 +374,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues) const
 }
 
 template <typename T>
-void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter) const
+void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
 {
 	if (SvPb::noAttributes == ObjectAttributesAllowed() && false == isUsed())
 	{
@@ -409,7 +409,7 @@ void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter) const
 		}
 	}
 
-	if (false == m_saveFurtherData)
+	if (closeObject)
 	{
 		rWriter.EndElement();
 	}

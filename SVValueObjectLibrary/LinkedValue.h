@@ -109,12 +109,14 @@ public:
 
 	std::string getContentStr() const;
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter, bool closeObject = true) const override;
 	virtual HRESULT SetObjectValue(SVObjectAttributeClass* PDataObject) override;
 
 	bool runEmbedded(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages);
 
 	virtual SvPb::LinkedSelectedOption getSelectedOption() const override;
+
+	void resetToDefault();
 
 	virtual HRESULT setIndirectStringForOldStruct(const std::vector<_variant_t>& rValueString) override;
 	virtual void setChildIds(const std::vector<uint32_t>& rObjectIds) override;

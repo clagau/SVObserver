@@ -193,4 +193,6 @@ SvPb::InspectionCmdResponse addParameterAndUseIt(SvPb::AddParameterAndUseItReque
 SvPb::InspectionCmdResponse checkParameterNames(SvPb::CheckParameterNamesRequest request);
 SvPb::InspectionCmdResponse getDependencyRequest(SvPb::GetDependencyRequest request);
 SvPb::InspectionCmdResponse getToolDepth(SvPb::GetToolDepthRequest request);
+SvPb::InspectionCmdResponse getModuleList();
+SvPb::InspectionCmdResponse deleteModule(SvPb::DeleteModuleRequest request);
 } //namespace SvCmd

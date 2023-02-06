@@ -62,6 +62,7 @@ private:
 	HRESULT ProcessMaskData(uint32_t ownerID, const _variant_t& maskData);
 
 	HRESULT ProcessInputs(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID);
+	HRESULT ProcessHistory(SvXml::SVXMLMaterialsTree::SVBranchHandle hItem, uint32_t ownerID);
 	
 	HRESULT ProcessAttributes(uint32_t ownerID, uint32_t objectID, SvXml::SVXMLMaterialsTree::SVBranchHandle hItem);
 

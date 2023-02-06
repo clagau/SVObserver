@@ -189,7 +189,7 @@ public:
 
 	HRESULT RemoveImage(SvIe::SVImageClass* pImage);
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter, bool closeObject = true) const override;
 
 	//************************************
 	//! Get all active ppqVariables for the used inspection.

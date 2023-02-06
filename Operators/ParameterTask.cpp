@@ -307,6 +307,17 @@ namespace SvOp
 		return __super::OverwriteEmbeddedObject(uniqueID, embeddedID);
 	}
 
+	void ParameterTask::setToDefault()
+	{
+		for (auto& rLinkedValue : m_objects)
+		{
+			if (rLinkedValue)
+			{
+				rLinkedValue->resetToDefault();
+			}
+		}
+	}
+
 	SvPb::LinkedValueTypeEnum getTypeFromIndirectValue(const SVObjectReference& rObjectRef)
 	{
 		if (nullptr == rObjectRef.getFinalObject())

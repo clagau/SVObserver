@@ -245,7 +245,7 @@ SvPb::GetInputDataResponse InputObject::getInputData(SvPb::SVObjectTypeEnum desi
 	return retValue;
 }
 
-void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
+void InputObject::Persist(SvOi::IObjectWriter& rWriter, bool closeObject /*= false*/) const
 {
 	//@TODO[MZA][10.10][10.12.2020] wie kann man das wieder reinnehmen?
 	//if (SvPb::noAttributes == ObjectAttributesAllowed())
@@ -271,7 +271,10 @@ void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
 		rWriter.WriteAttribute(scConntectedDotnameTag, value);
 	}
 
-	rWriter.EndElement();
+	if (closeObject)
+	{
+		rWriter.EndElement();
+	}
 }
 
 void InputObject::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)

@@ -173,7 +173,7 @@ public:
 	// Get the local object color...
 	virtual DWORD GetObjectColor() const override;
 	DWORD GetStatusTag() const;
-	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter, bool closeObject = true) const override;
 	void PersistFriends(SvOi::IObjectWriter& rWriter) const;
 	void PersistInputs(SvOi::IObjectWriter& rWriter) const;
 

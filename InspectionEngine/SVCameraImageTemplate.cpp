@@ -145,7 +145,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue(SVObjectAttributeClass* pDataObjec
 	return hr;
 }
 
-void SVCameraImageTemplate::Persist(SvOi::IObjectWriter& rWriter) const
+void SVCameraImageTemplate::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 
@@ -156,7 +156,10 @@ void SVCameraImageTemplate::Persist(SvOi::IObjectWriter& rWriter) const
 	rWriter.WriteAttribute(scDigitizerIDTag, value);
 	value.Clear();
 
-	rWriter.EndElement();
+	if (closeObject)
+	{
+		rWriter.EndElement();
+	}
 }
 
 HRESULT SVCameraImageTemplate::DisconnectBuffers()

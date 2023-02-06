@@ -57,6 +57,7 @@ struct RequiredMenuModifcation
 	bool m_isShiftToolWithReference = false;
 	bool m_hasRoi = true;
 	bool m_isClosedGroupTool = false;
+	bool m_isModulTool = false;
 };
 
 RequiredMenuModifcation determineRequiredMenuModifications(uint32_t navigatorObjectID)
@@ -89,6 +90,10 @@ RequiredMenuModifcation determineRequiredMenuModifications(uint32_t navigatorObj
 				auto* pGroupTool = static_cast<SvTo::GroupTool*>(pSelectedTool);
 				retVal.m_isClosedGroupTool = (nullptr != pGroupTool && pGroupTool->isClosed());
 				break;
+			}
+			case SvPb::ModuleToolClassId:
+			{
+				retVal.m_isModulTool = true;
 			}
 			default:
 				//nothing to do
@@ -484,7 +489,11 @@ void ToolSetView::loadAndAdaptMenu(const std::vector<PtrNavigatorElement>& rSele
 				{
 					menu.RemoveMenu(ID_EDIT_ADJUSTTOOLPOSITION, MF_BYCOMMAND); ///< if the selected tool does not have an ROI: remove the Adjust Tool Position menu item
 				}
-				if (false == reqModification.m_isClosedGroupTool)
+				if (reqModification.m_isModulTool)
+				{
+					menu.ModifyMenuA(ID_CONVERT_TO_MODULE, MF_BYCOMMAND | MF_STRING, ID_CONVERT_TO_MODULE, "Convert back to GroupTool");
+				}
+				else if (false == reqModification.m_isClosedGroupTool)
 				{
 					menu.RemoveMenu(ID_CONVERT_TO_MODULE, MF_BYCOMMAND);
 				}

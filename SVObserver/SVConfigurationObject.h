@@ -383,6 +383,7 @@ public:
 	const std::string& getPreRunExecutionFilePath() const {return m_preRunExecutionFile;}
 	const std::string& getPostRunExecutionFilePath() const {return m_postRunExecutionFile;}
 	ModuleController& getModuleController() { return m_moduleController; }
+	SvPb::InspectionCmdResponse deleteModule(SVGUID guid);
 
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;

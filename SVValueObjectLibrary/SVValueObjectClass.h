@@ -84,7 +84,7 @@ public:
 	virtual UINT SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type) override;
 	virtual HRESULT getValue(double& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<double>& rValues) const override;
-	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter, bool closeObject = true) const override;
 	//! For these methods see IValueObject documentation
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return SetDefaultValue(Variant2ValueType(rValue), false); }
 	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(&m_DefaultValue); };
@@ -198,7 +198,6 @@ protected:
 	int32_t getMemSizeReserved() const { return m_memSizeReserved; }
 	void setHasChanged(bool hasChanged) const { m_hasChanged = hasChanged; }
 	bool hasChanged() const { return m_hasChanged; }
-	void setSaveFutherDataFlag() const { m_saveFurtherData = true; };
 
 	virtual bool CheckMaxMin(T Value) const;// { return true; };
 #pragma endregion Protected Methods
@@ -211,7 +210,6 @@ protected:
 
 #pragma region Member Variables
 private:
-	mutable bool m_saveFurtherData = false;
 	std::string m_TypeName;					//The data type name
 	bool m_shouldSaveValue {true};			//If true, the value will be saved in configuration file, else it will not be saved and after loading the configuration it is default value.
 	bool m_shouldSaveDefaultValue {false};	//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.

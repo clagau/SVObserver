@@ -14,16 +14,18 @@
 #pragma region Includes
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#include "NavigatorElement.h"
+#include "RegressionTestController.h"
+#include "SVConfigurationObject.h"
 #include "SVDisplayObject.h"
-#include "SVRegressionTestStruct.h"
 #include "SVIPProductStruct.h"
+#include "SVRegressionTestStruct.h"
+#include "SVToolGrouping.h"
 #include "InspectionEngine/SVIPResultData.h"
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "SVToolGrouping.h"
 #include "ObjectInterfaces/IFormulaController.h"
-#include "NavigatorElement.h"
 #pragma endregion Includes
-#include "RegressionTestController.h"
+
 
 
 #pragma region Declarations
@@ -117,7 +119,7 @@ public:
 	bool IsToolPreviousToSelected(uint32_t toolID ) const;
 
 	std::string GetCompleteToolSetName() const;
-	std::string makeNameUnique(const std::string& rToolName, const std::vector<std::string>& rAdditionalNames) const;
+	std::string makeNameUnique(const std::string& rToolName, const std::vector<std::string>& rAdditionalNames, bool useExplorerStyle = true) const;
 
 	//getToolsSetinfo using current thread
 	SvOi::ObjectInfoVector GetToolSetInfo() const;
@@ -190,6 +192,8 @@ public:
 	afx_msg void OnAddPerspectiveTool();
 	afx_msg void OnAddLoopTool();
 	afx_msg void OnAddGroupTool();
+	afx_msg void OnEditModules();
+	afx_msg void OnAddModuleTool(UINT nId);
 	afx_msg void OnViewResetAllCounts();
 	afx_msg void OnViewResetCountsCurrentIP();
 	afx_msg void OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI);
@@ -240,12 +244,17 @@ public:
 	void GetResultData(SvIe::SVIPResultData& p_rResultData) const;
 	std::vector <SvIe::IPResultTableData> getResultTableData() const;
 
+	void fixModuleMenuItems();
 	
 	ToolSetView* GetToolSetView() const;
 	SVToolSet* GetToolSet() const;
 	void SetRegressionTestPlayEquationController(SvOi::IFormulaControllerPtr pRegressionTestPlayEquationController) { m_regTest.setPlayEquationController(pRegressionTestPlayEquationController); }
 
-	bool isImageAvailable(SvPb::SVObjectSubTypeEnum ImageType) const;
+	///  Check if an image with ImageType available.
+	/// \param ImageType [in]
+	/// \param isBeforeToolId [in] Only image before this tool in the toolset-tree valid. If SvDef::InvalidObjectId == isBeforeToolId, all image from this toolset valid.
+	/// \returns bool
+	bool isImageAvailable(SvPb::SVObjectSubTypeEnum ImageType, uint32_t isBeforeToolId) const;
 	SvOi::ITriggerRecordRPtr getLastTriggerRecord() const { return m_triggerRecord; };
 
 protected:
@@ -283,7 +292,11 @@ protected:
 	CMDIChildWnd* GetMDIChild();
 	void SetMDIChild( CMDIChildWnd* p_pMDIChildWnd );
 
-	bool AddTool(SvPb::ClassIdEnum classId);
+	/// Add a tool to inspection at the current position.
+	/// \param classId [in] ClassId for the new tool.
+	/// \param index [in] This parameter will only used it classId == ModuleToolClassId. Then it is the index in the module list.
+	/// \returns bool
+	bool AddTool(SvPb::ClassIdEnum classId, int index = 0);
 	bool deleteTool(SvTo::SVToolClass* pTool);
 
 	CView* getView() const;
@@ -347,6 +360,7 @@ private:
 	//! \returns the selected string set of object names
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
 
+	void convertGroupToolToModule(SVConfigurationObject& rConfig, ToolSetView& rToolsetView, uint32_t toolID);
 #pragma endregion Private Methods
 
 	RegressionTestController m_regTest;

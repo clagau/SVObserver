@@ -53,6 +53,7 @@ public:
 	static HRESULT SetObjectValue(uint32_t ownerID, uint32_t objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetObjectValue(uint32_t ownerID, uint32_t objectID, const std::string& itemName, const std::vector<_variant_t>& values, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetInputs(uint32_t objectID, const SvDef::StringPairVector& rInputPairVector);
+	static HRESULT SetHistory(uint32_t objectID, const std::vector<std::pair<time_t, std::string>>& rHistoryVector);
 
 	static HRESULT GetObjectDataType(uint32_t ownerID, uint32_t objectID, SVObjectScriptDataObjectTypeEnum& dataType);
 

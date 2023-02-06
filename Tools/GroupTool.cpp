@@ -318,6 +318,17 @@ namespace SvTo
 		return isClosed;
 	}
 
+	void GroupTool::setInputsToDefault()
+	{
+		SvDef::SVObjectTypeInfoStruct info(SvPb::ParameterTaskObjectType, SvPb::ParameterInputObjectType);
+		m_pInputTask = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
+		Log_Assert(m_pInputTask);
+		if (m_pInputTask)
+		{
+			m_pInputTask->setToDefault();
+		}
+	}
+
 	void GroupTool::movedAndDeleteFriends(SVThreadSafeList<SVTaskObjectClass*>& friendList)
 	{
 		friendList.RemoveAll();
@@ -345,12 +356,36 @@ namespace SvTo
 				{
 					pEmbeddedObject->moveObject(**iter);
 				}
-				else
-				{
-					assert(false);
-				}
 			}
 		}
+	}
+
+	void GroupTool::moveObjectToThis(GroupTool& rGroupTool)
+	{
+		DestroyFriends();
+		rGroupTool.movedAndDeleteFriends(m_friendList);
+		for (int i = 0; m_friendList.size() > i; ++i)
+		{
+			if (m_friendList[i])
+			{
+				m_friendList[i]->SetObjectOwner(this);
+			}
+		}
+
+		DeleteAll();
+		rGroupTool.movedAndDeleteTaskObjects(m_TaskObjectVector);
+		for (auto* pObject : m_TaskObjectVector)
+		{
+			if (pObject)
+			{
+				pObject->SetObjectOwner(this);
+			}
+		}
+
+		rGroupTool.moveEmbeddedObjects(m_embeddedList);
+
+		SetName(rGroupTool.GetName());
+		rGroupTool.moveObject(*this);
 	}
 
 	void GroupTool::Initialize()
@@ -361,7 +396,6 @@ namespace SvTo
 		m_canResizeToParent = false;
 		m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 		m_ObjectTypeInfo.m_SubType = SvPb::GroupToolObjectType;
-		
 	}
 
 	SvDef::StringPairVector GroupTool::getInvalidDependenciesList() const

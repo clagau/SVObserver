@@ -23,7 +23,7 @@ SVDigitalOutputObject::SVDigitalOutputObject( SVObjectClass *pOwner, int StringR
 	LocalInitialize();
 }
 
-void SVDigitalOutputObject::Persist(SvOi::IObjectWriter& rWriter) const
+void SVDigitalOutputObject::Persist(SvOi::IObjectWriter& rWriter, bool /*closeObject = true*/) const
 {
 	_variant_t svVariant;
 	svVariant.SetString(GetName());

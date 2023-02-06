@@ -58,6 +58,8 @@
 #include "SVOGui/TADialogGroupToolResultPage.h"
 #include "TADialogLinearResultRangesPage.h"
 #include "SVUtilityLibrary/VectorHelper.h"
+#include "Tools/ModuleTool.h"
+#include "ObjectInterfaces/IConfigurationObject.h"
 
 #pragma endregion Includes
 
@@ -482,6 +484,12 @@ BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()
 	{
 		CString Temp = _T("Tool Adjustment: ");
 		Temp += pTaskObject->GetObjectName();
+		if (auto* pModule = dynamic_cast<SvTo::ModuleTool*>(pTaskObject); nullptr != pModule)
+		{
+			Temp += " (";
+			Temp += SvOi::getModuleName(pModule->getModuleGuid()).c_str();
+			Temp += ") ";
+		}
 		Temp += _T(" - ");
 		Temp += pTaskObject->GetName();
 		SetWindowText(Temp);

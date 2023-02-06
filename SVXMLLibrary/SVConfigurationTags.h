@@ -195,6 +195,9 @@ namespace  SvXml
 	constexpr const char* CTAG_PRE_RUN_EXECUTION = _T("PreRunExecution");
 	constexpr const char* CTAG_POST_RUN_EXECUTION = _T("PostRunExecution");
 
+	constexpr const char* CTAG_MODULE_LIST = _T("ModuleList");
+	constexpr const char* CTAG_LAST_Modify = _T("LastModify");
+
 	/// These are tool copy / paste tags
 	constexpr const char* ToolCopyTag = _T( "Tool-Copy" );
 	constexpr const char* ToolsTag = _T( "Tools" );
