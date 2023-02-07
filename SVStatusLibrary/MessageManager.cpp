@@ -12,6 +12,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVMessage/SVMessage.h"
 #include "MessageManagerHelper.h"
+#include "MessageTextGenerator.h"
 #pragma endregion Includes
 
 #pragma region Constructor

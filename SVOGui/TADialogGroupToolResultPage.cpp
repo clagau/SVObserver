@@ -183,7 +183,7 @@ namespace SvOg
 		{
 		case DependencyColumn:
 		{
-			if (false == SvOgu::isOk(m_resultData[pItem->iRow - 1]))
+			if (false == (m_resultData[pItem->iRow - 1]).isOk())
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Display);
 				Msg.setMessage(m_resultData[pItem->iRow - 1].m_errorData);
@@ -199,7 +199,7 @@ namespace SvOg
 		{
 			if (m_isChangeAble)
 			{
-				SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1].m_name, m_resultData[pItem->iRow - 1].m_data, m_resultData[pItem->iRow - 1].m_data.m_defaultValue.vt);
+				SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1]);
 				if (IDOK == dlg.DoModal())
 				{
 					m_resultData[pItem->iRow - 1].m_data = dlg.getData();
@@ -260,7 +260,7 @@ namespace SvOg
 				}
 				case ValueColumn:
 				{
-					bAcceptChange = setValue(m_resultData[row - 1], cellText);
+					bAcceptChange = m_resultData[row - 1].setValue(cellText);
 				}
 			}
 		}
@@ -427,8 +427,8 @@ namespace SvOg
 			auto row = i + 1;
 
 			bool hasDependencies = (0 < m_resultData[i].m_dependencies.size());
-			m_Grid.SetItemBkColour(row, DependencyColumn, isOk(m_resultData[i]) ? SvDef::White : SvDef::Black);
-			m_Grid.SetItemFgColour(row, DependencyColumn, isOk(m_resultData[i]) ? SvDef::Black : SvDef::White);
+			m_Grid.SetItemBkColour(row, DependencyColumn, m_resultData[i].isOk() ? SvDef::White : SvDef::Black);
+			m_Grid.SetItemFgColour(row, DependencyColumn, m_resultData[i].isOk() ? SvDef::Black : SvDef::White);
 			m_Grid.SetItemText(row, DependencyColumn, hasDependencies ? "D" : "");
 			setGridControlReadOnlyFlag(row, DependencyColumn, false);
 

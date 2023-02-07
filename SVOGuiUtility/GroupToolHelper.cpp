@@ -53,29 +53,29 @@ SvStl::MessageData getMessage(const SvStl::MessageContainerVector& rErrorMessage
 
 namespace SvOgu
 {
-bool isOk(const GroupInputResultData& rData)
+bool GroupInputResultData::isOk() const
 {
-	return (SvDef::InvalidObjectId == rData.m_errorData.m_ObjectId);
+	return (SvDef::InvalidObjectId == m_errorData.m_ObjectId);
 }
 
-bool setValue(GroupInputResultData& data, const std::string& newStr)
+bool GroupInputResultData::setValue( const std::string& newStr)
 {
-	if (SvPb::LinkedSelectedOption::DirectValue == data.m_data.m_selectedOption && SvPb::isValueType(data.m_type))
+	if (SvPb::LinkedSelectedOption::DirectValue == m_data.m_selectedOption && SvPb::isValueType(m_type))
 	{
 		variant_t tmp {newStr.c_str()};
 		SvStl::MessageContainer msgContainer;
-		bool isValid = (S_OK == ::VariantChangeTypeEx(&data.m_data.m_directValue, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, data.m_data.m_defaultValue.vt));
+		bool isValid = (S_OK == ::VariantChangeTypeEx(&m_data.m_directValue, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, m_data.m_defaultValue.vt));
 		if (false == isValid)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(data.m_name);
+			msgList.push_back(m_name);
 			msgContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			SvStl::MessageManager Msg(SvStl::MsgType::Display);
 			Msg.setMessage(msgContainer.getMessage());
 		}
 		else
 		{
-			data.m_data.m_Value = data.m_data.m_directValue;
+			m_data.m_Value = m_data.m_directValue;
 		}
 		return isValid;
 	}

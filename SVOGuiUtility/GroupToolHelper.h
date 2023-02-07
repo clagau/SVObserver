@@ -26,14 +26,16 @@ struct GroupInputResultData
 	LinkedValueData m_data {SvPb::LinkedSelectedOption::DirectValue, {0.}, {0.}, {}, {0.}};
 	SvDef::StringPairVector m_dependencies;
 	SvStl::MessageData m_errorData;
+	
+	bool isOk() const;
+	bool setValue(const std::string& newStr);
+
 };
 
 const std::string c_inputName {"Input"};
 const std::string c_resultName {"Result"};
 
-bool isOk(const GroupInputResultData& rData);
 
-bool setValue(GroupInputResultData& data, const std::string& newStr);
 
 ///  Send the value to the business logic. It can throw an exception.
 /// \param ipId [int]

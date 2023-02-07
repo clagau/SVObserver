@@ -15,6 +15,7 @@
 #include "FormulaController.h"
 #include "SVFormulaEditorPage.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
+#include "GroupToolHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

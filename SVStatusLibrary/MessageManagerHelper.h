@@ -7,8 +7,8 @@
 #pragma once
 #include "SVStatusLibrary/SourceFileParams.h"
 #include "MessageTextEnum.h"
-#include "MessageTextGenerator.h"
 #include <source_location>
+#include "Definitions/StringTypeDef.h"
 
 namespace SvStl
 {

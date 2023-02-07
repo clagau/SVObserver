@@ -266,7 +266,7 @@ namespace SvOg
 		{
 		case DependencyColumn:
 		{
-			if (false == isOk(m_inputData[pItem->iRow - 1]))
+			if (false == m_inputData[pItem->iRow - 1].isOk())
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Display);
 				Msg.setMessage(m_inputData[pItem->iRow - 1].m_errorData);
@@ -456,8 +456,8 @@ namespace SvOg
 			auto row = i + 1;
 
 			bool hasDependencies = (0 < m_inputData[i].m_dependencies.size());
-			m_Grid.SetItemBkColour(row, DependencyColumn, isOk(m_inputData[i]) ? SvDef::White : SvDef::Black);
-			m_Grid.SetItemFgColour(row, DependencyColumn, isOk(m_inputData[i]) ? SvDef::Black : SvDef::White);
+			m_Grid.SetItemBkColour(row, DependencyColumn, m_inputData[i].isOk() ? SvDef::White : SvDef::Black);
+			m_Grid.SetItemFgColour(row, DependencyColumn, m_inputData[i].isOk() ? SvDef::Black : SvDef::White);
 			m_Grid.SetItemText(row, DependencyColumn, hasDependencies ? "D" : "");
 			setGridControlReadOnlyFlag(row, DependencyColumn, false);
 
@@ -719,7 +719,7 @@ namespace SvOg
 				}
 				case ValueColumn:
 				{
-					bAcceptChange = setValue(m_inputData[row - 1], cellText);
+					bAcceptChange = m_inputData[row - 1].setValue(cellText);
 					break;
 				}
 			}
