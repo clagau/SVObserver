@@ -40,11 +40,11 @@ void RunStatus::updateState(const RunStatus& childStatus, bool updateConditionSt
 		if (childStatus.IsDisabledByCondition()) { SetDisabledByCondition(); }
 	}
 
-	if (childStatus.IsWarned()) { SetWarned(); }
+	if (childStatus.isWarned()) { SetWarned(); }
 
-	if (childStatus.IsFailed()) { SetFailed(); }
+	if (childStatus.isFailed()) { SetFailed(); }
 
-	if (childStatus.IsPassed()) { SetPassed(); }
+	if (childStatus.isPassed()) { SetPassed(); }
 
 	if (childStatus.IsCriticalFailure()) { SetCriticalFailure(); }
 }
@@ -56,7 +56,7 @@ DWORD RunStatus::GetStatusColor() const
 		return SvDef::DefaultDisabledColor;
 	}
 
-	return (IsFailed() ? SvDef::DefaultFailedColor : (IsWarned() ? SvDef::DefaultWarnedColor : SvDef::DefaultGoodColor));
+	return (isFailed() ? SvDef::DefaultFailedColor : (isWarned() ? SvDef::DefaultWarnedColor : SvDef::DefaultGoodColor));
 }
 
 } //namespace SvIe

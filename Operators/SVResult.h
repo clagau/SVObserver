@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "SVObjectLibrary/InputObject.h"
-#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/PassedWarnedFailedHelper.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -46,17 +46,12 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	bool IsFailed();
-	bool IsWarned();
-	bool IsGood();
-
 	// derived class overrides...
 
 	SVRange* GetResultRange();
 
 	virtual bool Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	
-	
+
 	// Only valid for single input Results that can use the m_inputObjectInfo 
 	// shortcut.
 	const SVObjectClass* getInput() const;
@@ -69,19 +64,15 @@ protected:
 private:
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
+public:
+	SvVol::PassedWarnedFailedHelper m_pwf;
+
 protected:
 	// Input: Pointer to the Input Object
 	// This gives an easy shortcut to the input object.  Really only useful 
 	// with objects that KNOW they only have a single input object (otherwise walk 
 	// the input object list).  Objects that can use this are Double and Long.
 	SvOl::InputObject m_inputObject;
-
-	// Passed, if TRUE ( Reset Value: FALSE )
-	SvVol::SVBoolValueObjectClass	m_Passed;
-	// Warned, if TRUE ( Reset Value: TRUE )
-	SvVol::SVBoolValueObjectClass	m_Warned;
-	// Failed, if TRUE ( Reset Value: TRUE )
-	SvVol::SVBoolValueObjectClass	m_Failed;
 };
 
 } //namespace SvOp

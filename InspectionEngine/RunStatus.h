@@ -56,9 +56,9 @@ public:
 	void SetDisabledByCondition(bool disable = true);
 	void SetCriticalFailure();
 
-	bool IsPassed() const;
-	bool IsFailed() const;
-	bool IsWarned() const;
+	bool isPassed() const;
+	bool isFailed() const;
+	bool isWarned() const;
 	bool IsValid() const;
 
 	bool IsDisabled() const;
@@ -127,17 +127,17 @@ inline void RunStatus::SetInspectionStarted(bool state)
 	run.status.run = state;
 }
 
-inline bool RunStatus::IsPassed() const
+inline bool RunStatus::isPassed() const
 {
 	return (run.status.passed && !run.status.failed && !run.status.warned && run.status.valid);
 }
 
-inline bool RunStatus::IsFailed() const
+inline bool RunStatus::isFailed() const
 {
 	return (run.status.failed && !run.status.warned && run.status.valid);
 }
 
-inline bool RunStatus::IsWarned() const
+inline bool RunStatus::isWarned() const
 {
 	return (run.status.warned && run.status.valid);
 }

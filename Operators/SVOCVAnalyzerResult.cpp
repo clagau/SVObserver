@@ -722,9 +722,7 @@ bool SVOCVAnalyzerResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 				//
 				// Preset for failure
 				//
-				m_Failed.SetValue(BOOL(true));
-				m_Warned.SetValue(BOOL(true));
-				m_Passed.SetValue(BOOL(false));
+				m_pwf.setWarnedFailedStatus(true, true);
 
 				m_dvoHighestMatchScore.SetValue(0.0);
 				m_dvoLowestMatchScore.SetValue(0.0);
@@ -1161,18 +1159,15 @@ bool SVOCVAnalyzerResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 				{
 					case 1: // Passed
 					{
-						m_Failed.SetValue(BOOL(false));
-						m_Warned.SetValue(BOOL(false));
-						m_Passed.SetValue(BOOL(true));
-
+						m_pwf.setWarnedFailedStatus(false, false);
 						rRunStatus.SetPassed();
 
 						break;
 					}
 					case 2: // Warned
 					{
-						m_Failed.SetValue(BOOL(false));
-						m_Warned.SetValue(BOOL(true));
+						m_pwf.m_Failed.SetValue(BOOL(false));
+						m_pwf.m_Warned.SetValue(BOOL(true));
 
 						rRunStatus.SetWarned();
 
