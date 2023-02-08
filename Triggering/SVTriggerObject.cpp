@@ -167,7 +167,7 @@ namespace SvTrig
 		if (nullptr != m_pCurrentTrigger)
 		{
 			SvTrig::SVTriggerInfoStruct triggerInfo;
-			triggerInfo.m_Data.m_triggerTimestamp = SvUl::GetTimeStamp();
+			triggerInfo.m_Data.m_triggerTimestamp = (0.0 == triggerTime) ? SvUl::GetTimeStamp() : triggerTime;
 			triggerInfo.m_softwareTrigger = (0.0 == triggerTime);
 			triggerInfo.bValid = true;
 			///Trigger channel 0 based
