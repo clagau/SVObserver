@@ -207,7 +207,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 
 
 			// Load Button Icons...
-			///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 			CButton* pRadio = static_cast<CButton*> (GetDlgItem(IDC_PEN_RADIO));
 			HICON hIcon;
 			int iconSize = 16;
@@ -224,6 +224,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetCheck(1);
 			}
 
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 			pRadio = static_cast<CButton*> (GetDlgItem(IDC_POLYGON_RADIO));
 			if (nullptr != pRadio)
 			{
@@ -236,6 +237,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 			pRadio = static_cast<CButton*> (GetDlgItem(IDC_RECT_RADIO));
 			if (nullptr != pRadio)
 			{
@@ -248,6 +250,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 			pRadio = static_cast<CButton*> (GetDlgItem(IDC_ELLIPSE_RADIO));
 			if (nullptr != pRadio)
 			{
@@ -260,6 +263,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 			pRadio = static_cast<CButton*> (GetDlgItem(IDC_POLYLINE_RADIO));
 			if (nullptr != pRadio)
 			{
@@ -272,6 +276,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 			pRadio = static_cast<CButton*> (GetDlgItem(IDC_FILLED_RECT_RADIO));
 			if (nullptr != pRadio)
 			{
@@ -284,6 +289,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 			pRadio = static_cast<CButton*> (GetDlgItem(IDC_FILLED_ELLIPSE_RADIO));
 			if (nullptr != pRadio)
 			{
@@ -296,6 +302,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 			pRadio = static_cast<CButton*> (GetDlgItem(IDC_FILL_RADIO));
 			if (nullptr != pRadio)
 			{

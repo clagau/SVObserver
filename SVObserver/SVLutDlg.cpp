@@ -232,7 +232,7 @@ BOOL SVLutDlgPage::OnInitDialog()
 			pWnd = GetDlgItem(IDC_COLOR_BAND_SYNC);
 			if (nullptr != pWnd)
 			{
-				((CButton*)pWnd)->SetCheck(TRUE);
+				(static_cast<CButton*> (pWnd))->SetCheck(TRUE);
 			}
 
 			bool bSame = true;

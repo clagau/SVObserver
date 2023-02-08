@@ -60,10 +60,10 @@
 #define IDC_TRIGGER_PARAM               1045
 #define IDC_START_OUTPUTS2              1046
 #define IDC_ACCEPT_TRIGGERS             1046
-#define IDC_TRIG1_RISING_CHECK          1053
-#define IDC_TRIG2_RISING_CHECK          1054
-#define IDC_TRIG3_RISING_CHECK          1055
-#define IDC_TRIG4_RISING_CHECK          1058
+#define IDC_TRIG1_RISING_CHECK          1050
+#define IDC_TRIG2_RISING_CHECK          1051
+#define IDC_TRIG3_RISING_CHECK          1052
+#define IDC_TRIG4_RISING_CHECK          1053
 #define IDC_TRIG1_INV_BTN               1060
 #define IDC_TRIG2_INV_BTN               1061
 #define IDC_TRIG3_INV_BTN               1062

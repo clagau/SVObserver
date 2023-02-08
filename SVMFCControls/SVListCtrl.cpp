@@ -109,7 +109,8 @@ namespace SvMc
 							m_CurSubItem = 1;
 						else
 						{
-							CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+							//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+							CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 							// Make the column visible.
 							// We have to take into account that the header may be reordered.
 							MakeColumnVisible(Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem));
@@ -129,7 +130,8 @@ namespace SvMc
 					{
 						// Increment the order number.
 						m_CurSubItem++;
-						CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+						//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+						CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 						int nColumnCount = pHeader->GetItemCount();
 						// Don't go beyond the last column.
 						if (m_CurSubItem > nColumnCount -1) 
@@ -154,7 +156,8 @@ namespace SvMc
 						m_CurItem = GetNextItem(-1, LVNI_ALL | LVNI_SELECTED);
 						if (m_CurSubItem != -1 && m_CurItem != -1)
 						{
-							CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+							//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+							CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 							int iSubItem = Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem);
 							OnEditItem(m_CurItem, iSubItem, CPoint(-1, -1), VK_RETURN);
 							return TRUE;
@@ -169,7 +172,8 @@ namespace SvMc
 
 						if (m_CurSubItem != -1 && m_CurItem != -1)
 						{
-							CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+							//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+							CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 							int iSubItem = Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem);
 							OnEditItem(m_CurItem, iSubItem, CPoint(-1, -1), VK_SPACE);
 							return TRUE;
@@ -183,7 +187,8 @@ namespace SvMc
 
 						if (m_CurSubItem != -1 && m_CurItem != -1)
 						{
-							CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+							//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+							CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 							int iSubItem = Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem);
 							OnEditItem(m_CurItem, iSubItem, CPoint(-1, -1), VK_SPACE);
 							return TRUE;
@@ -208,7 +213,8 @@ namespace SvMc
 #if defined(SVListCtrlEx)	
 		if (m_CurSubItem != -1 && m_CurItem != -1)
 		{
-			CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+			//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+			CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*>(GetDlgItem(0));
 			int iSubItem = Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem);
 			OnEditItem(m_CurItem, iSubItem, CPoint(-1, -1), nChar);
 			return;
@@ -390,7 +396,8 @@ namespace SvMc
 			if (ht.iItem!=-1 && ht.iSubItem > 0)
 			{
 				m_CurSubItem = IndexToOrder(ht.iSubItem);
-				CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+				//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+				CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 				// Make the column fully visible.
 				MakeColumnVisible(Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem));
 				CListCtrl::OnLButtonDown(nFlags, point);
@@ -534,7 +541,8 @@ namespace SvMc
 		if (nCol < 0)
 			return;
 		// Get the order array to total the column offset.
-		CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 		int nColCount = pHeader->GetItemCount();
 		Log_Assert(nCol < nColCount);
 		int *pOrderarray = new int[nColCount];
@@ -565,7 +573,8 @@ namespace SvMc
 	int SVListCtrl::IndexToOrder(int iIndex)
 	{
 		// This translates a column index value to a column order value.
-		CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 		int nColCount = pHeader->GetItemCount();
 		int *pOrderarray = new int[nColCount];
 		Header_GetOrderArray(pHeader->m_hWnd, nColCount, pOrderarray);
@@ -723,7 +732,8 @@ namespace SvMc
 					m_CurSubItem = 1;
 				else
 				{
-					CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+					//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+					CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 					// Make the column visible.
 					// We have to take into account that the header may be reordered.
 					MakeColumnVisible(Header_OrderToIndex(pHeader->m_hWnd, m_CurSubItem));
@@ -744,7 +754,8 @@ namespace SvMc
 			{
 				// Increment the order number.
 				m_CurSubItem++;
-				CHeaderCtrl* pHeader = dynamic_cast<CHeaderCtrl*> (GetDlgItem(0));
+				//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+				CHeaderCtrl* pHeader = static_cast<CHeaderCtrl*> (GetDlgItem(0));
 				int nColumnCount = pHeader->GetItemCount();
 				// Don't go beyond the last column.
 				if (m_CurSubItem > nColumnCount -1) 

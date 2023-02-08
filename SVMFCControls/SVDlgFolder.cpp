@@ -60,7 +60,7 @@ namespace SvMc
 						// This will eliminate any files that might have been selected.
 						TCHAR path[MAX_PATH];
 						GetCurrentDirectory(MAX_PATH, path);
-						///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
+						//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 						(static_cast<SVDlgFolder*>(pDlg->GetDlgItem(0)))->SetSelectedPath(path);
 						pDlg->EndDialog(IDOK);
 						return false;

@@ -43,7 +43,8 @@ END_MESSAGE_MAP()
 
 void SVTriggerSetupDlgClass::OnStrobeInvBtn(UINT nID)
 {
-	CButton* pButton = dynamic_cast<CButton*> (GetDlgItem(nID));
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	CButton* pButton = static_cast<CButton*> (GetDlgItem(nID));
 	UINT index {nID - IDC_STROBE1_INV_BTN};
 	long mask {1 << index};
 	if(nullptr != pButton && pButton->GetCheck())
@@ -60,7 +61,8 @@ void SVTriggerSetupDlgClass::OnStrobeInvBtn(UINT nID)
 
 void SVTriggerSetupDlgClass::OnTrigInvBtn(UINT nID)
 {
-	CButton* pButton = dynamic_cast<CButton*> (GetDlgItem(nID));
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	CButton* pButton = static_cast<CButton*> (GetDlgItem(nID));
 	UINT index {nID - IDC_TRIG1_INV_BTN};
 	long mask {1 << index};
 	if (nullptr != pButton && pButton->GetCheck())
@@ -104,7 +106,8 @@ BOOL SVTriggerSetupDlgClass::OnInitDialog()
 
 	for (int i = 0; i < cTriggerChannelNr; ++i)
 	{
-		CButton* pButton = dynamic_cast<CButton*> (GetDlgItem(IDC_STROBE1_INV_BTN + i));
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		CButton* pButton = static_cast<CButton*> (GetDlgItem(IDC_STROBE1_INV_BTN + i));
 		long mask {1 << i};
 		pButton->SetCheck((m_lStrobeInverts & mask) ? TRUE : FALSE);
 		if (i > 1)
@@ -113,7 +116,8 @@ BOOL SVTriggerSetupDlgClass::OnInitDialog()
 			GetDlgItem(IDC_TRIG1_RISING_CHECK + i)->EnableWindow(enableControl);
 		}
 
-		pButton = dynamic_cast<CButton*> (GetDlgItem(IDC_TRIG1_INV_BTN + i));
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		pButton = static_cast<CButton*> (GetDlgItem(IDC_TRIG1_INV_BTN + i));
 		pButton->SetCheck((m_lTrigInverts & mask) ? TRUE : FALSE);
 		if (i > 1)
 		{

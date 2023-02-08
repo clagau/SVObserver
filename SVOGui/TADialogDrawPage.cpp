@@ -1209,8 +1209,8 @@ void TADialogDrawPage::setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogD
 	Log_Assert(m_editCtrlDataList.end() != ctrlDataIter);
 	if (m_editCtrlDataList.end() != ctrlDataIter)
 	{
-		auto* pEdit = static_cast<CEdit*>(&m_BSOAControls[editEnum]);
-		auto* pButton = static_cast<CButton*>(&m_BSOAControls[buttonEnum]);
+		auto* pEdit = static_cast<CEdit*> (&m_BSOAControls[editEnum]);
+		auto* pButton = static_cast<CButton*> (&m_BSOAControls[buttonEnum]);
 		Log_Assert(pEdit && pButton);
 		ctrlDataIter->m_Widget = std::make_unique<SvOgu::LinkedValueWidgetHelper>(*pEdit, *pButton, m_InspectionID, rData.m_objectId, embeddedId, rData.m_pValues.get(), validCallback);
 	}

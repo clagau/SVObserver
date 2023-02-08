@@ -44,7 +44,6 @@ END_MESSAGE_MAP()
 
 SVIOTestApp::SVIOTestApp()
 {
-	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 }
 
 SVIOTestApp::~SVIOTestApp()
@@ -98,7 +97,9 @@ BOOL SVIOTestApp::InitInstance()
 
 		dlg.DoModal();
 	}
+	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 
+	m_svTriggers.Close();
 	::FreeLibrary(dllHandle);
 
 	// Since the dialog has been closed, return FALSE so that we exit the

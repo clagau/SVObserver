@@ -2788,10 +2788,10 @@ namespace SvGcl
 			Log_Assert(pCell);
 			if (!pCell) return;
 
-			CWnd* pEditWnd = pCell->GetEditWnd();
-			if ( pEditWnd && pEditWnd->IsKindOf(RUNTIME_CLASS(CEdit)) )
+			CEdit* pEditWnd = dynamic_cast<CEdit*> (pCell->GetEditWnd());
+			if (nullptr != pEditWnd)
 			{
-				((CEdit*)pEditWnd)->Paste();
+				pEditWnd->Paste();
 				return;
 			}
 		}

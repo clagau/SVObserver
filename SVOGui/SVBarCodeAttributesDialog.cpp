@@ -90,11 +90,9 @@ namespace SvOg
 
 	void SVBarCodeAttributesDialog::InitSelections(long lBarCodeType)
 	{
-		CComboBox* pErrCorrectionBox;
-		CComboBox* pEncodingBox;
-
-		pErrCorrectionBox = (CComboBox*)GetDlgItem(IDC_BARCODE_ERROR_CORRECTION);
-		pEncodingBox = (CComboBox*)GetDlgItem(IDC_BARCODE_ENCODING);
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		CComboBox* pErrCorrectionBox = static_cast<CComboBox*> (GetDlgItem(IDC_BARCODE_ERROR_CORRECTION));
+		CComboBox* pEncodingBox = static_cast<CComboBox*> (GetDlgItem(IDC_BARCODE_ENCODING));
 
 		pErrCorrectionBox->Clear();
 		pEncodingBox->Clear();
@@ -143,13 +141,15 @@ namespace SvOg
 
 	void SVBarCodeAttributesDialog::OnSelchangeBarcodeErrorCorrection()
 	{
-		CComboBox* pErrCorrectionBox = (CComboBox*)GetDlgItem(IDC_BARCODE_ERROR_CORRECTION);
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		CComboBox* pErrCorrectionBox = static_cast<CComboBox*> (GetDlgItem(IDC_BARCODE_ERROR_CORRECTION));
 		m_dErrorCorrection = (double)pErrCorrectionBox->GetItemData(pErrCorrectionBox->GetCurSel());
 	}
 
 	void SVBarCodeAttributesDialog::OnSelchangeBarcodeEncoding()
 	{
-		CComboBox* pEncodingBox = (CComboBox*)GetDlgItem(IDC_BARCODE_ENCODING);
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		CComboBox* pEncodingBox = static_cast<CComboBox*> (GetDlgItem(IDC_BARCODE_ENCODING));
 		m_dEncoding = (double)pEncodingBox->GetItemData(pEncodingBox->GetCurSel());
 	}
 

@@ -75,21 +75,25 @@ BOOL SVBarCodeDataMatrixDialog::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	CSliderCtrl* pControl;
+	CSliderCtrl* pControl {nullptr};
 
-	pControl = (CSliderCtrl*)GetDlgItem(IDC_BARCODE_MINCELLSIZE);
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	pControl = static_cast<CSliderCtrl*> (GetDlgItem(IDC_BARCODE_MINCELLSIZE));
 	pControl->SetRangeMin(1, FALSE);
 	pControl->SetRangeMax(255, TRUE);
 
-	pControl = (CSliderCtrl*)GetDlgItem(IDC_BARCODE_MAXCELLSIZE);
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	pControl = static_cast<CSliderCtrl*> (GetDlgItem(IDC_BARCODE_MAXCELLSIZE));
 	pControl->SetRangeMin(1, FALSE);
 	pControl->SetRangeMax(255, TRUE);
 
-	pControl = (CSliderCtrl*)GetDlgItem(IDC_BARCODE_CELLX);
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	pControl = static_cast<CSliderCtrl*> (GetDlgItem(IDC_BARCODE_CELLX));
 	pControl->SetRangeMin(1, FALSE);
 	pControl->SetRangeMax(255, TRUE);
 
-	pControl = (CSliderCtrl*)GetDlgItem(IDC_BARCODE_CELLY);
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	pControl = static_cast<CSliderCtrl*> (GetDlgItem(IDC_BARCODE_CELLY));
 	pControl->SetRangeMin(1, FALSE);
 	pControl->SetRangeMax(255, TRUE);
 
@@ -251,11 +255,9 @@ void SVBarCodeDataMatrixDialog::OnChangeBarCodeCellYEdit()
 
 void SVBarCodeDataMatrixDialog::EnableControls(int iIdSlider, int iIdEdit, BOOL bEnable)
 {
-	CSliderCtrl* pSlider;
-	CEdit* pEdit;
-
-	pSlider = (CSliderCtrl*)GetDlgItem(iIdSlider);
-	pEdit = (CEdit*)GetDlgItem(iIdEdit);
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	CSliderCtrl* pSlider = static_cast<CSliderCtrl*> (GetDlgItem(iIdSlider));
+	CEdit* pEdit = static_cast<CEdit*> (GetDlgItem(iIdEdit));
 	pSlider->EnableWindow(bEnable);
 	pEdit->EnableWindow(bEnable);
 }

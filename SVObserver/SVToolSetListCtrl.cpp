@@ -75,7 +75,8 @@ void SVToolSetListCtrl::setObjectIds(uint32_t toolsetId, uint32_t inspectionId, 
 	int cnt = 0;
 
 	// Get the Header Control
-	CHeaderCtrl* pHeaderCtrl = reinterpret_cast<CHeaderCtrl*>(GetDlgItem(0));
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	CHeaderCtrl* pHeaderCtrl = static_cast<CHeaderCtrl*>(GetDlgItem(0));
 	if (pHeaderCtrl)
 	{
 		// turn off button style

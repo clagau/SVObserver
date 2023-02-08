@@ -346,22 +346,26 @@ namespace SvOg
 		}
 		m_iBarCodeType = GetIndexByMilID(m_lInitialBarCodeType);
 
-		CSliderCtrl *pControl;
+		CSliderCtrl* pControl {nullptr};
 
-		pControl = (CSliderCtrl *)GetDlgItem(IDC_BARCODE_ORIENTATION);
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		pControl = static_cast<CSliderCtrl*> (GetDlgItem(IDC_BARCODE_ORIENTATION));
 		pControl->SetRangeMin(0, FALSE);
 		pControl->SetRangeMax(360, TRUE);
 
-		pControl = (CSliderCtrl *)GetDlgItem(IDC_BARCODE_SKEWNEGATIVE);
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		pControl = static_cast<CSliderCtrl*> (GetDlgItem(IDC_BARCODE_SKEWNEGATIVE));
 		pControl->SetRangeMin(0, FALSE);
 		pControl->SetRangeMax(180, TRUE);
 
-		pControl = (CSliderCtrl *)GetDlgItem(IDC_BARCODE_SKEWPOSITIVE);
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		pControl = static_cast<CSliderCtrl*> (GetDlgItem(IDC_BARCODE_SKEWPOSITIVE));
 		pControl->SetRangeMin(0, FALSE);
 		pControl->SetRangeMax(180, TRUE);
 
 		// Threshold...
-		pControl = (CSliderCtrl *)GetDlgItem(IDC_BARCODE_THRESHOLD);
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		pControl = static_cast<CSliderCtrl*> (GetDlgItem(IDC_BARCODE_THRESHOLD));
 		pControl->SetRangeMin(0, FALSE);
 		pControl->SetRangeMax(255, TRUE);
 

@@ -106,7 +106,8 @@ void SVAboutDialogClass::LoadOEMInfo()
 	if( logoBmp && oemFile )
 	{
 		// Set The bitmap
-		CStatic* pStaticWnd = (CStatic *)GetDlgItem( IDC_LOGO );
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+		CStatic* pStaticWnd = static_cast<CStatic*> (GetDlgItem( IDC_LOGO ));
 		if( pStaticWnd )
 			pStaticWnd->SetBitmap( logoBmp );
 

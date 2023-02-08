@@ -152,9 +152,10 @@ void SVArchiveHeaderEditDlg::HeaderListChangeSize(int cx, int cy)
 	CRect OkBtnRec;
 	CRect CanBtnRec;
 	CRect StaticTextRec;
-	CButton* pOkBtn = (CButton*)GetDlgItem(IDOK);
-	CButton* pCancelBtn = (CButton*)GetDlgItem(IDCANCEL);
-	CStatic* pStatic = (CStatic*)GetDlgItem( IDC_SELECTED_TEXT);
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	CButton* pOkBtn = static_cast<CButton*>(GetDlgItem(IDOK));
+	CButton* pCancelBtn = static_cast<CButton*>(GetDlgItem(IDCANCEL));
+	CStatic* pStatic = static_cast<CStatic*>(GetDlgItem( IDC_SELECTED_TEXT));
 
 	pOkBtn->GetWindowRect( OkBtnRec );
 	ScreenToClient( OkBtnRec );
@@ -220,6 +221,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 		int newWidth = OkRec.left - ListRec.left;
 
 		// Get Text size in pixels ...
+		//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
 		CStatic* pText = static_cast<CStatic*>(GetDlgItem( IDC_SELECTED_TEXT ));
 		CDC* dc = GetDC();
 		CFont* pFont = pText->GetFont();

@@ -503,7 +503,8 @@ bool SVPictureDialog::PutIconOnButton( unsigned int p_iIconResource, unsigned in
 {
 	bool l_bOk = false;
 
-	CButton* pBtn = (CButton*)GetDlgItem( p_iButton );
+	//Note GetDlgItem uses a temporary CWnd* and dynamic_cast cannot be used
+	CButton* pBtn = static_cast<CButton*> (GetDlgItem(p_iButton));
 	if( nullptr != pBtn )
 	{
 		IconMap::iterator it = m_Icons.find(p_iIconResource);
