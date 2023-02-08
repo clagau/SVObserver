@@ -12,87 +12,88 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "DataController.h"
 #pragma endregion Includes
-#include "GroupToolHelper.h"
+
 
 namespace SvOgu
 {
-	class SVFormulaEditorPageClass;
-	using ValidCheckCallback = std::function<bool(const variant_t&, SvStl::MessageContainer&)>;
-	using ConvertValueCallback = std::function<CString(const variant_t&)>;
+struct GroupInputResultData;
+class SVFormulaEditorPageClass;
+using ValidCheckCallback = std::function<bool(const variant_t&, SvStl::MessageContainer&)>;
+using ConvertValueCallback = std::function<CString(const variant_t&)>;
 
-	enum class LinkedValueSelectorTypesEnum
-	{
-		None,
-		Indirect,
-		DirectIndirect,
-		All
-	};
+enum class LinkedValueSelectorTypesEnum
+{
+	None,
+	Indirect,
+	DirectIndirect,
+	All
+};
 
-	class LinkedValueSelectorDialog : public CDialog
-	{
-	protected:
-		//{{AFX_DATA(LinkedValueSelectorDialog)
-		enum {	IDD = IDD_LINKEDVALUE_SELECTOR_DIALOG	};
-		//}}AFX_DATA
-	public:
-		LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ValidCheckCallback validCallback = nullptr);
-		LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const SvOgu::GroupInputResultData& resultdata);
-		
-		virtual ~LinkedValueSelectorDialog();
+class LinkedValueSelectorDialog : public CDialog
+{
+protected:
+	//{{AFX_DATA(LinkedValueSelectorDialog)
+	enum { IDD = IDD_LINKEDVALUE_SELECTOR_DIALOG };
+	//}}AFX_DATA
+public:
+	LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ValidCheckCallback validCallback = nullptr);
+	LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const SvOgu::GroupInputResultData& resultdata);
 
-		LinkedValueData getData() { return m_data; };
-		static bool createVariantFromString(VARTYPE vtType, const std::string& rStrValue, variant_t& rVariantValue);
+	virtual ~LinkedValueSelectorDialog();
 
-	protected:
+	LinkedValueData getData() { return m_data; };
+	static bool createVariantFromString(VARTYPE vtType, const std::string& rStrValue, variant_t& rVariantValue);
 
-		// Overrides
-		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(LinkedValueSelectorDialog)
-	protected:
-		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-		//}}AFX_VIRTUAL
+protected:
 
-		// Generated message map functions
-		//{{AFX_MSG(LinkedValueSelectorDialog)
-		virtual BOOL OnInitDialog() override;
-		virtual void OnOK() override;
-		void OnValue();
-		void OnLinked();
-		void OnFormula();
-		//}}AFX_MSG
-		DECLARE_MESSAGE_MAP()
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(LinkedValueSelectorDialog)
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	//}}AFX_VIRTUAL
 
-	private:
-		void changeType(SvPb::LinkedSelectedOption newType);
-		void createObjectPage();
-		void createFormulaPage();
-		void updateShownControls();
-		bool checkAndSetDirectValue();
+	// Generated message map functions
+	//{{AFX_MSG(LinkedValueSelectorDialog)
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	void OnValue();
+	void OnLinked();
+	void OnFormula();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 
-	protected:
-		SvPb::LinkedSelectedOption m_type;
+private:
+	void changeType(SvPb::LinkedSelectedOption newType);
+	void createObjectPage();
+	void createFormulaPage();
+	void updateShownControls();
+	bool checkAndSetDirectValue();
 
-		//Value
-		CString m_directValue;
+protected:
+	SvPb::LinkedSelectedOption m_type;
 
-	private:
-		SvPb::LinkedValueTypeEnum m_LinkedValueType = SvPb::LinkedValueTypeEnum::TypeDecimal;
-		uint32_t m_inspectionId;
-		uint32_t m_objectId;
-		const std::string m_ObjectName;
-		LinkedValueData m_data;
-		VARTYPE m_vtType;
-		LinkedValueSelectorTypesEnum m_possibleTypes = LinkedValueSelectorTypesEnum::All;
+	//Value
+	CString m_directValue;
 
-		ValidCheckCallback m_validCheckCallback = nullptr;
+private:
+	SvPb::LinkedValueTypeEnum m_LinkedValueType = SvPb::LinkedValueTypeEnum::TypeDecimal;
+	uint32_t m_inspectionId;
+	uint32_t m_objectId;
+	const std::string m_ObjectName;
+	LinkedValueData m_data;
+	VARTYPE m_vtType;
+	LinkedValueSelectorTypesEnum m_possibleTypes = LinkedValueSelectorTypesEnum::All;
 
-		//linked 
-		CPropertySheet m_dlgLinkedSheet;
-		SvOsl::ObjectTreeGenerator m_linkedTreeGenerator;
-		std::unique_ptr<SvOsl::ObjectSelectorPpg> m_pDlgLinkedPage;
+	ValidCheckCallback m_validCheckCallback = nullptr;
 
-		//For Formula
-		std::unique_ptr<SVFormulaEditorPageClass> m_pDlgFormulaPage;
-		SvOi::IFormulaControllerPtr m_FormulaController;
-	};
+	//linked 
+	CPropertySheet m_dlgLinkedSheet;
+	SvOsl::ObjectTreeGenerator m_linkedTreeGenerator;
+	std::unique_ptr<SvOsl::ObjectSelectorPpg> m_pDlgLinkedPage;
+
+	//For Formula
+	std::unique_ptr<SVFormulaEditorPageClass> m_pDlgFormulaPage;
+	SvOi::IFormulaControllerPtr m_FormulaController;
+};
 } //namespace SvOgu
