@@ -257,9 +257,8 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 
 std::string SVArchiveRecordsArray::BuildResultsArchiveString()
 {
-	std::string Result;
+	std::string result;
 	
-	bool bFirst = true;	
 	for (const auto& rRecord: m_vecRecords)
 	{
 		//
@@ -270,29 +269,25 @@ std::string SVArchiveRecordsArray::BuildResultsArchiveString()
 
 		if ( nullptr != pValueObject )
 		{
-			std::string Temp;
-			HRESULT hr = pValueObject->getValue( Temp, rRecord.m_svObjectReference.ArrayIndex(), rRecord.m_formatString);
+			std::string value;
+			HRESULT hr = pValueObject->getValue( value, rRecord.m_svObjectReference.ArrayIndex(), rRecord.m_formatString);
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
-				if ( bFirst )
+				if(false == result.empty())
 				{
-					bFirst = false;
-				}
-				else
-				{
-					Result += _T(", ");
+					result += _T("; ");
 				}
 
-				Result += Temp;
+				result += value;
 			}
 			else
 			{
-				Result += _T(", ");
+				result += _T("; ");
 			}
 		}
 	}
 
-	return Result;
+	return result;
 }
 
 HRESULT SVArchiveRecordsArray::AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap, int toolPos)

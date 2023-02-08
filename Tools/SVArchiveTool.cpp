@@ -570,7 +570,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector* pErrorM
 				strHeader += *it;
 				if (it + 1 != HeaderVector.end())
 				{
-					strHeader += _T(",");
+					strHeader += ';';
 				}
 			}
 			if (!strHeader.empty())
