@@ -93,6 +93,7 @@ void SVArchiveTool::initializeArchiveTool()
 	
 	UINT cAttribute { SvPb::audittrail};
 	m_currentImageQueueLength.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_currentImageQueueLength.setSaveValueFlag(false);
 
 	RegisterEmbeddedObject(&m_resultFilepath, SvPb::ArchiveResultFilepathEId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH, true, SvOi::SVResetItemToolAndDependent, false);
 	m_resultFilepath.SetDefaultValue(_variant_t(""), true);
@@ -398,6 +399,8 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 		m_lastBufferMap.clear();
 		updateResultFilepathInformation(false);
 	}
+
+	m_currentImageQueueLength.SetValue(0);
 
 	long archiveMode = 0;
 	m_evoArchiveMode.GetValue(archiveMode);
@@ -706,10 +709,10 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 
 		if (SvDef::ArchiveMode::asynchronous == m_archiveMode)
 		{
-			long imageCount = std::accumulate(bufferMap.begin(), bufferMap.end(), 0, [](long sum, std::pair<SVMatroxBufferCreateStruct, long> val) { return sum + val.second; });
-			if (imageCount > 0)
+			m_imageCount = std::accumulate(bufferMap.begin(), bufferMap.end(), 0, [](long sum, std::pair<SVMatroxBufferCreateStruct, long> val) { return sum + val.second; });
+			if (m_imageCount > 0)
 			{
-				SVArchiveImageThreadClass::Instance().setMaxNumberOfBuffer(toolPos, dwMaxImages * imageCount);
+				SVArchiveImageThreadClass::Instance().setMaxImageBufferCount(toolPos, dwMaxImages * m_imageCount);
 			}
 		}
 
@@ -832,7 +835,15 @@ bool SVArchiveTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 		TRACE(_T("SVArchiveTool::onRun-WriteArchiveImageFiles-Name=%s\n"), GetCompleteName());
 #endif
 
-		m_currentImageQueueLength.SetValue(m_ImageCollection.WriteAllArchiveImages(rRunStatus.m_triggerRecord));
+		auto one_basedImageVectorIndex = m_ImageCollection.WriteAllArchiveImages(rRunStatus.m_triggerRecord);
+		auto usedQueueLength = one_basedImageVectorIndex;
+
+		if (m_imageCount > 1 && usedQueueLength > -1)
+		{
+			usedQueueLength = 1 + ((one_basedImageVectorIndex - 1)/ m_imageCount); // "1" if index in 1 ... m_imageCount, 2 if index in m_imageCount + 1 ... 2*m_imageCount,  etc.
+		}
+
+		m_currentImageQueueLength.SetValue(usedQueueLength);
 
 		rRunStatus.SetPassed();
 

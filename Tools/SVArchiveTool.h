@@ -175,6 +175,7 @@ private:
 	SvVol::SVStringValueObjectClass	m_ImageFilepathrootSeparator;
 
 	bool m_removeEntriesIfDisconnected = true;
+	long m_imageCount = 0;
 };
 
 } //namespace SvTo

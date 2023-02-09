@@ -49,10 +49,10 @@ public:
 	void BuildImageFileName();            // For images only
 
 	HRESULT AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
-	long QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName, const std::string& rImageDirectoryPath); // returns current queue length (-1 on error)
+	long QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName, const std::string& rImageDirectoryPath); // returns highest used position in ImageStoreVector (-1 on error)
 	
 	HRESULT WriteImageQueue();
-	long WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRecord); // returns current queue length (-1 on error)
+	long WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRecord); // Returns highest used position in ImageStoreVector (-1 on error)
 	static HRESULT WriteImageToFile( const SVMatroxBuffer& buf, const std::string& rFileName, ImageFileFormat fileFormat);
 
 	void SetArchiveTool( SVArchiveTool* pArchiveTool );

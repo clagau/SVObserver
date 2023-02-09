@@ -41,7 +41,7 @@ public:
 
 	HRESULT AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
 
-	long WriteAllArchiveImages(const SvOi::ITriggerRecordRPtr& pTriggerRecord); //Iterates the list of images to archive. Returns current queue length (-1 on error).
+	long WriteAllArchiveImages(const SvOi::ITriggerRecordRPtr& pTriggerRecord); //Iterates through the list of images to be archived. Returns highest used position in ImageStoreVector (-1 on error)
 
 	HRESULT WriteImageQueue();
 

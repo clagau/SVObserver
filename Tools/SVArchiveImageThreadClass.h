@@ -59,7 +59,7 @@ public:
 	HRESULT GoOnline();
 	HRESULT GoOffline();
 	long QueueImage( BufferInfo info ); // returns current queue length (-1 on error)
-	void setMaxNumberOfBuffer(int toolPos, long maxNumber) { m_maxBufferNumber[toolPos] = maxNumber; };
+	void setMaxImageBufferCount(int toolPos, long maxNumber) { m_maxImageBufferCount[toolPos] = maxNumber; };
 #pragma endregion Public Methods
 
 private:
@@ -78,7 +78,7 @@ private:
 
 	std::deque<BufferInfo> m_Queue;
 	volatile HANDLE    m_hExitEvent;
-	std::unordered_map<int, int> m_maxBufferNumber; //@TODO[MEC][10.20][14.03.2022] max buffer number per tool psition differnt inspections?
+	std::unordered_map<int, int> m_maxImageBufferCount; //@TODO[MEC/Arvid][10.20/10.30][14.03.2022/09.02.2023] The keys for this map are tool positions - which cannot work properly since the same map is used for different inspections/toolsets
 	std::unordered_map<int, int> m_currentBufferNumber;
 	long m_MaxNumberOfBuffer = 1;
 #pragma endregion Private Members
