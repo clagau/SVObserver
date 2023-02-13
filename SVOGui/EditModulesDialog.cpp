@@ -96,11 +96,14 @@ void EditModulesDialog::OnSelchangeList()
 	{
 		m_strComment = m_moduleList[index].m_comment.c_str();
 		m_strHistory = "";
+		std::string guidForFirstLine {m_moduleList[index].m_guid.ToString()};
 		for (const auto& rPair : m_moduleList[index].m_historyList)
 		{
 			char mbstr[100];
 			std::strftime(mbstr, sizeof(mbstr), "%c", std::localtime(&rPair.first));
-			m_strHistory += (std::string {mbstr} + ": " + rPair.second + "\n").c_str();
+			
+			m_strHistory = (std::string {mbstr} + ": " + rPair.second + guidForFirstLine + "\n").c_str() + m_strHistory;
+			guidForFirstLine = "";
 		}
 		GetDlgItem(IDC_DELETE)->EnableWindow(0 == m_moduleList[index].m_numberOfUse);
 	}

@@ -195,4 +195,5 @@ SvPb::InspectionCmdResponse getDependencyRequest(SvPb::GetDependencyRequest requ
 SvPb::InspectionCmdResponse getToolDepth(SvPb::GetToolDepthRequest request);
 SvPb::InspectionCmdResponse getModuleList();
 SvPb::InspectionCmdResponse deleteModule(SvPb::DeleteModuleRequest request);
+SvPb::InspectionCmdResponse fixInputsAndGetList(SvPb::FixInputsAndGetInputListRequest request);
 } //namespace SvCmd

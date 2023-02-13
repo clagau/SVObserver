@@ -316,17 +316,6 @@ namespace SvTo
 		return isClosed;
 	}
 
-	void GroupTool::setInputsToDefault()
-	{
-		SvDef::SVObjectTypeInfoStruct info(SvPb::ParameterTaskObjectType, SvPb::ParameterInputObjectType);
-		m_pInputTask = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
-		Log_Assert(m_pInputTask);
-		if (m_pInputTask)
-		{
-			m_pInputTask->setToDefault();
-		}
-	}
-
 	void GroupTool::movedAndDeleteFriends(SVThreadSafeList<SVTaskObjectClass*>& friendList)
 	{
 		friendList.RemoveAll();
@@ -384,6 +373,18 @@ namespace SvTo
 
 		SetName(rGroupTool.GetName());
 		rGroupTool.moveObject(*this);
+	}
+
+	void GroupTool::fixAndReturnAllGroupInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+	{
+		if (m_pInputTask)
+		{
+			m_pInputTask->fixAndAddAllObjects(inserter);
+		}
+		else
+		{
+			Log_Assert(false);
+		}
 	}
 
 	void GroupTool::Initialize()

@@ -78,7 +78,7 @@ void checkToolDepth(SvXml::SVXMLMaterialsTree& rTree, uint32_t ownerId)
 
 void writeToolParameter(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool, int pos)
 {
-	std::string toolTag {SvUl::Format(SvXml::FullToolNameTag, pos)};
+	std::string toolTag {std::format(SvXml::FullToolNameTag, pos)};
 	std::string tmpString = rTool.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
 	_variant_t Value = tmpString.c_str();
 	rWriter.WriteAttribute(toolTag.c_str(), Value);

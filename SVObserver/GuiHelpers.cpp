@@ -430,16 +430,19 @@ bool DoesPoupupMenuExist(HMENU hTargetMenu, const std::string& rItemText)
 int FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 {
 	Log_Assert(Menu);
-	Log_Assert(::IsMenu(Menu->GetSafeHmenu()));
-
-	int count = Menu->GetMenuItemCount();
-	for (int i = 0; i < count; i++)
+	if (Menu)
 	{
-		CString str;
-		if (Menu->GetMenuString(i, str, MF_BYPOSITION) &&
-			(strcmp(str, MenuString) == 0))
+		Log_Assert(::IsMenu(Menu->GetSafeHmenu()));
+
+		int count = Menu->GetMenuItemCount();
+		for (int i = 0; i < count; i++)
 		{
-			return i;
+			CString str;
+			if (Menu->GetMenuString(i, str, MF_BYPOSITION) &&
+				(strcmp(str, MenuString) == 0))
+			{
+				return i;
+			}
 		}
 	}
 

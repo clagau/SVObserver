@@ -810,6 +810,14 @@ std::make_tuple(
 )
 },
 
+{SvPb::InspectionCmdRequest::kFixInputsAndGetInputListRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  fixInputsAndGetList(rRequest.fixinputsandgetinputlistrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 };
 
 }

@@ -65,11 +65,12 @@ END_MESSAGE_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
-InputConflictDlg::InputConflictDlg(uint32_t inspectionId, std::vector<SvPb::FixedInputData>& rInputData, const std::vector<uint32_t>& rToolIds, CWnd* pParent /*nullptr*/)
+InputConflictDlg::InputConflictDlg(uint32_t inspectionId, const ::google::protobuf::RepeatedPtrField<SvPb::FixedInputData>& rInputData, const std::vector<uint32_t>& rToolIds, LPCTSTR title /*= "Input Conflict"*/, CWnd* pParent /*nullptr*/)
 	: CDialog(InputConflictDlg::IDD, pParent)
 	, m_inspectionId {inspectionId}
 	, m_rInputDataVector {rInputData}
 	, m_rToolIds {rToolIds}
+	,m_title {title}
 {
 
 }
@@ -88,6 +89,8 @@ void InputConflictDlg::DoDataExchange(CDataExchange* pDX)
 BOOL InputConflictDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+
+	SetWindowText(m_title);
 
 	SvOgu::DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
@@ -115,7 +118,7 @@ BOOL InputConflictDlg::OnInitDialog()
 	LoadGlobalData();
 	UpdateData(FALSE);
 
-	m_Grid.SetRedraw(true);
+	m_Grid.SetRedraw(true, true);
 	return TRUE;
 }
 

@@ -50,9 +50,6 @@ public:
 	virtual int getToolDepth(bool goUpwards = true) const override;
 	bool isClosed() const;
 
-	///  Set all Inputs to the Default Value. For some Type (e.g. Image) Inputs become invalid because the default Value is empty.
-	void setInputsToDefault();
-
 	/// Moved FriendList from this tool to the parameter and clear it in this tool.
 	/// \param friendList [out]
 	void movedAndDeleteFriends(SVThreadSafeList<SVTaskObjectClass*>& rFriendList);
@@ -61,6 +58,7 @@ public:
 	/// \param rEmbeddedObject [inout] List of embeddedObjects to move to.
 	void moveEmbeddedObjects(SVObjectPtrVector& rEmbeddedObjects);
 	void moveObjectToThis(GroupTool& rGroupTool);
+	void fixAndReturnAllGroupInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter);
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };

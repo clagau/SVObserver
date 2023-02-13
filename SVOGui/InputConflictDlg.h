@@ -24,7 +24,7 @@ private:
 
 #pragma region Constructor
 public:
-	explicit InputConflictDlg(uint32_t inspectionId, std::vector<SvPb::FixedInputData>& rInputDataVector, const std::vector<uint32_t>& rToolIds, CWnd* pParent = nullptr);
+	explicit InputConflictDlg(uint32_t inspectionId, const ::google::protobuf::RepeatedPtrField<SvPb::FixedInputData>& rInputDataVector, const std::vector<uint32_t>& rToolIds, LPCTSTR title = "Input Conflict", CWnd* pParent = nullptr);
 	virtual ~InputConflictDlg();
 #pragma endregion Constructor
 
@@ -51,10 +51,11 @@ protected:
 private:
 	uint32_t m_inspectionId {SvDef::InvalidObjectId};
 	SvGcl::GridCtrl m_Grid;						//The grid displaying the conflicting values
-	std::vector<SvPb::FixedInputData>& m_rInputDataVector;  //This is the conflict Global Data as data pair
+	const ::google::protobuf::RepeatedPtrField<SvPb::FixedInputData>& m_rInputDataVector;  //This is the conflict Global Data as data pair
 	const std::vector<uint32_t>& m_rToolIds;
 	CBitmap m_downArrowBitmap;
 	CImageList m_ImageList;
+	LPCTSTR m_title;
 
 	std::map<uint32_t, std::unique_ptr<SvOgu::ValueController>> m_valuesControllerMap;
 	std::map<uint32_t, std::vector<SvPb::ObjectNameIdPair>> m_inputObjectValueMap;

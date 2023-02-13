@@ -51,6 +51,8 @@ namespace SvOp
 
 		virtual SvPb::InspectionCmdResponse addParameterAndUseIt(const SvPb::AddParameterAndUseItRequest& rRequest) override;
 		virtual SvPb::InspectionCmdResponse checkParameterNames(const SvPb::CheckParameterNamesRequest& rRequest) override;
+
+		void fixAndAddAllObjects(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter);
 #pragma endregion Public Methods
 
 	protected:

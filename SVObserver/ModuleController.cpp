@@ -339,12 +339,7 @@ SvOi::IObjectClass* ModuleController::constructAndAddModuleInstance(int index, u
 			e.Throw();
 		}
 
-		auto* pGroupTool = dynamic_cast<SvTo::GroupTool*>(SvOi::getObject(pastedToolIDs[0]));
-		if (pGroupTool)
-		{
-			pGroupTool->setInputsToDefault();
-		}
-		return pGroupTool;
+		return SvOi::getObject(pastedToolIDs[0]);
 	}
 	SvStl::MessageManager e(SvStl::MsgType::Data);
 	e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));

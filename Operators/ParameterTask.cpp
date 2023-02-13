@@ -451,6 +451,17 @@ namespace SvOp
 		return resp;
 	}
 
+	void ParameterTask::fixAndAddAllObjects(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+	{
+		for (auto& rObject : m_objects)
+		{
+			if (nullptr != rObject.get())
+			{
+				rObject->fixAndAddInputs(inserter, false);
+			}
+		}
+	}
+
 	void ParameterTask::init()
 	{
 		// Identify our output type

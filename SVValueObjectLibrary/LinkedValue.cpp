@@ -299,7 +299,6 @@ HRESULT LinkedValue::SetValueKeepType(LPCTSTR Value, int Index)
 
 HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 {
-
 	setSelectedOption(rData.option());
 	SvPb::ConvertProtobufToVariant(rData.directvalue(), m_directValue);
 	m_indirectValueRef = SVObjectReference {rData.indirectidstring()};
@@ -371,9 +370,7 @@ bool LinkedValue::setIndirectValue(const SVObjectReference& rReference)
 {
 	m_indirectValueRef = rReference;
 	setSelectedOption(SvPb::LinkedSelectedOption::IndirectValue);
-	bool isOk = UpdateConnection();
-	Log_Assert(isOk);
-	return isOk;
+	return UpdateConnection();
 }
 
 void LinkedValue::updateMemBlockData()
@@ -726,30 +723,38 @@ void LinkedValue::getOutputList(std::back_insert_iterator<std::vector<SvOi::IObj
 	}
 }
 
-void LinkedValue::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+void LinkedValue::fixAndAddInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter, bool addOnlyInvalidInputs)
 {
-	__super::fixInvalidInputs(inserter);
-
 	switch (getSelectedOption())
 	{
 		case SvPb::LinkedSelectedOption::DirectValue:
 		{
+			if (false == addOnlyInvalidInputs)
+			{
+				std::string value;
+				getValue(value);
+				addFixedData(inserter, value);
+			}
 			break;
 		}
 		case SvPb::LinkedSelectedOption::IndirectValue:
 		{
 			SvStl::MessageContainerVector errorMessages;
 			bool isOk = checkLinkedObjectRef(&errorMessages);
+			std::string oldValueString;
+			m_Content.getValue(oldValueString);
 			if (false == isOk)
 			{
-				std::string oldValueString;
-				m_Content.getValue(oldValueString);
 				addFixedData(inserter, oldValueString);
 				SVObjectReference objectRef {GetObjectReferenceForDottedName(oldValueString)};
 				if (nullptr == objectRef.getObject() || false == setIndirectValue(objectRef))
 				{
 					tryToFixInput();
 				}
+			}
+			else if (false == addOnlyInvalidInputs)
+			{
+				addFixedData(inserter, oldValueString);
 			}
 			break;
 		}
@@ -761,12 +766,23 @@ void LinkedValue::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::F
 				addFixedData(inserter, m_equation.GetEquationText());
 				tryToFixInput();
 			}
+			else if (false == addOnlyInvalidInputs)
+			{
+				addFixedData(inserter, m_equation.GetEquationText());
+			}
 			break;
 		}
 		case SvPb::LinkedSelectedOption::None:
 		default:
 			break;
 	}
+}
+
+void LinkedValue::fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
+{
+	__super::fixInvalidInputs(inserter);
+
+	fixAndAddInputs(inserter, true);
 }
 
 void LinkedValue::changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject)
@@ -1125,7 +1141,6 @@ void LinkedValue::setValueType(SvPb::LinkedValueTypeEnum type)
 		case SvPb::TypeGrayImage:
 		case SvPb::TypeColorImage:
 		case SvPb::TypeImage:
-
 		default:
 			SetDefaultValue({}, false);
 			break;

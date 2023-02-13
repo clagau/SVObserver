@@ -57,6 +57,7 @@
 #include "ObjectInterfaces\ILinkedObject.h"
 #include "ObjectInterfaces\ISVLinearAnalyzer.h"
 #include <atltypes.h>
+#include "Tools\GroupTool.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -873,6 +874,11 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 					{
 						pParentTaskObjectList->InsertAt(request.taskobjectpos(), *pTaskObject);
 					}
+				}
+				else
+				{
+					Log_Assert(SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId == request.message_case());
+					pParentTaskObjectList->moveTaskObject(pObject->getObjectId(), request.taskobjectinsertbeforeid());
 				}
 
 				// And last - Create (initialize) it
@@ -2314,5 +2320,48 @@ SvPb::InspectionCmdResponse getModuleList()
 SvPb::InspectionCmdResponse deleteModule(SvPb::DeleteModuleRequest request)
 {
 	return SvOi::deleteModule(SVGUID {request.guid()});
+}
+
+SvPb::InspectionCmdResponse fixInputsAndGetList(SvPb::FixInputsAndGetInputListRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+	auto* pFixedListResponse = cmdResponse.mutable_fixinputsandgetinputlistresponse();
+	std::vector<SvPb::FixedInputData> fixedDataVector;
+	for (auto toolId : request.taskids())
+	{
+		SVObjectClass* pToolObject(SVObjectManagerClass::Instance().GetObject(toolId));
+		if (nullptr != pToolObject)
+		{
+			if (request.complete_grouptool_inputs_only())
+			{
+				if (auto* pGroupTool = dynamic_cast<SvTo::GroupTool*>(pToolObject); nullptr != pGroupTool)
+				{
+					pGroupTool->fixAndReturnAllGroupInputs(std::back_inserter(fixedDataVector));
+				}
+				else
+				{
+					Log_Assert(false);
+				}
+			}
+			else
+			{
+				pToolObject->fixInvalidInputs(std::back_inserter(fixedDataVector));
+			}
+		}
+	}
+	if (false == fixedDataVector.empty())
+	{
+		pFixedListResponse->mutable_list()->Add(fixedDataVector.begin(), fixedDataVector.end());
+
+		for (auto toolId : request.taskids())
+		{
+			auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
+			if (nullptr != pTool)
+			{
+				pTool->resetAllObjects();
+			}
+		}
+	}
+	return cmdResponse;
 }
 } //namespace SvCmd

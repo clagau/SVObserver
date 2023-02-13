@@ -1189,6 +1189,20 @@ message DeleteModuleRequest
 	string guid = 1;
 }
 
+//Try to fix all inputs (which are invalid) and return the list of inputs which are invalid before call the message.
+//But if the flag only_but_all_groupTool_Inputs is set, than it task must be a groupTool and only the inputs but all inputs will be added to the list.
+message FixInputsAndGetInputListRequest
+{
+	repeated uint32 taskIds = 1;
+	bool complete_grouptool_inputs_only = 2;	
+}
+
+message FixInputsAndGetInputListResponse
+{
+	repeated FixedInputData list = 1;
+}
+
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -1272,7 +1286,8 @@ message InspectionCmdRequest
 		GetDependencyRequest getDependencyRequest = 77;
 		GetToolDepthRequest getToolDepthRequest = 78;
 		GetModuleListRequest getModuleListRequest = 79;
-		DeleteModuleRequest DeleteModuleRequest = 80;
+		DeleteModuleRequest deleteModuleRequest = 80;
+		FixInputsAndGetInputListRequest fixInputsAndGetInputListRequest = 81; 
 		}
 }
 
@@ -1339,5 +1354,6 @@ message InspectionCmdResponse
 		GetDependencyResponse getDependencyResponse = 57;
 		GetToolDepthResponse getToolDepthResponse = 58;
 		GetModuleListResponse getModuleListResponse = 59;
+		FixInputsAndGetInputListResponse fixInputsAndGetInputListResponse = 60;
 		}
 }

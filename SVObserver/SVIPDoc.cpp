@@ -494,9 +494,36 @@ std::string SVIPDoc::makeNameUnique(const std::string& rToolName, const std::vec
 	return m_toolGroupings.makeNameUnique(rToolName, rAdditionalNames, useExplorerStyle);
 }
 
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
+void OpenInputDlgForModuleTool(uint32_t inspectionId, uint32_t toolId, const std::string& rTitle)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_fixinputsandgetinputlistrequest();
+	pRequest->add_taskids(toolId);
+	pRequest->set_complete_grouptool_inputs_only(true);
+	SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+
+	if (responseCmd.has_fixinputsandgetinputlistresponse())
+	{
+		if (const auto& rFixData = responseCmd.fixinputsandgetinputlistresponse().list(); 0 < rFixData.size())
+		{
+			SvOg::InputConflictDlg ConflictDlg(inspectionId, rFixData, {toolId}, rTitle.c_str());
+			ConflictDlg.DoModal();
+
+			//@TODO[MZA][10.20][14.03.2022] Wird z.b ein WindowTool in einem Module benutzt und das Module in einer neuen Inspektion eingefügt (synchrone zum Kopieren eines GroupTool (s. Methode fixInputs), wird durch ein Reset die Images nicht richtig angepasst.
+			//Deshalb muss man noch ein Reset machen. Wenn das Reset verbessert wird, könnte das zweite Reset vielleicht überflüssig werden.
+			auto* pInsp = SVObjectManagerClass::Instance().GetObject(inspectionId);
+			if (nullptr != pInsp)
+			{
+				pInsp->resetAllObjects();
+			}
+		}
+	}
+	else
+	{
+		Log_Assert(false);
+	}
+}
 
 bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId, int index)
 {
@@ -543,7 +570,6 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId, int index)
 	uint32_t OwnerID = SvDef::InvalidObjectId;
 	if (bAddToToolSet)
 	{
-
 		OwnerID = pToolSet->getObjectId();
 
 		TaskObjectInsertBeforeID = GetObjectIdFromToolToInsertBefore(Selection);
@@ -566,6 +592,11 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId, int index)
 	{
 		Success = true;
 		newObjectID = responseCmd.createobjectresponse().objectid();
+		if (SvPb::ModuleToolClassId == classId)
+		{
+			OpenInputDlgForModuleTool(m_InspectionID, newObjectID, "Add Module");
+		}
+
 		if (bAddToToolSet)
 		{
 			m_toolGroupings.AddTool(responseCmd.createobjectresponse().name(), Selection);
@@ -1277,35 +1308,26 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 
 void fixInputs(uint32_t inspectionId, const std::vector<uint32_t>& rToolIds)
 {
-	std::vector<SvPb::FixedInputData> fixedDataVector;
-	for (auto toolId : rToolIds)
-	{
-		SVObjectClass* pToolObject(SVObjectManagerClass::Instance().GetObject(toolId));
-		if (nullptr != pToolObject)
-		{
-			pToolObject->fixInvalidInputs(std::back_inserter(fixedDataVector));
-		}
-	}
-	if (false == fixedDataVector.empty())
-	{
-		for (auto toolId : rToolIds)
-		{
-			auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
-			if (nullptr != pTool)
-			{
-				pTool->resetAllObjects();
-			}
-		}
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto pToolIds = requestCmd.mutable_fixinputsandgetinputlistrequest()->mutable_taskids();
+	pToolIds->Add(rToolIds.begin(), rToolIds.end());
+	SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
 
-		SvOg::InputConflictDlg ConflictDlg(inspectionId, fixedDataVector, rToolIds);
-		ConflictDlg.DoModal();
-
-		for (auto toolId : rToolIds)
+	if (responseCmd.has_fixinputsandgetinputlistresponse())
+	{
+		if (const auto& rFixData = responseCmd.fixinputsandgetinputlistresponse().list(); 0 < rFixData.size())
 		{
-			auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
-			if (nullptr != pTool)
+			SvOg::InputConflictDlg ConflictDlg(inspectionId, rFixData, rToolIds);
+			ConflictDlg.DoModal();
+
+			for (auto toolId : rToolIds)
 			{
-				pTool->resetAllObjects();
+				auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
+				if (nullptr != pTool)
+				{
+					pTool->resetAllObjects();
+				}
 			}
 		}
 	}
@@ -3037,7 +3059,7 @@ void SVIPDoc::fixModuleMenuItems()
 	assert(nullptr != pConfig);
 
 	int pos = FindMenuItem(pMenu, "&Add");
-	if (pos == -1 && nullptr == pConfig)
+	if (pos == -1 || nullptr == pConfig)
 	{
 		return;
 	}
