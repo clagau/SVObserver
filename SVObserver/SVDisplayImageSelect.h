@@ -11,9 +11,7 @@
 
 #pragma once
 
-#pragma region Includes
-
-#pragma endregion Includes
+#include "SVMFCControls/DlgItemResizer.h"
 
 class SVDisplayImageSelect : public CDialog
 {
@@ -43,7 +41,12 @@ protected:
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
 	virtual BOOL OnInitDialog() override;
+	afx_msg void OnPaint();								//needed for "Gripper" functionality only
+	afx_msg void OnSize(UINT nType, int cx, int cy);	//needed for "Gripper" functionality only
+
+
 	//}}AFX_MSG
+	afx_msg void OnReloadImageList();
 	DECLARE_MESSAGE_MAP()
 private:
 	/// Add the current inspection's name to the default window's title.
@@ -51,7 +54,12 @@ private:
 	/// \returns void
 	void SetTitle();
 
+	void LoadImageList();
+
+	CString m_WildcardPattern;
 	uint32_t m_inspectionId;
 	uint32_t m_imageId;
+	CRect m_Gripper;					//needed for "Gripper" functionality only
+	SvMc::DlgItemResizer m_Resizer;		//needed for "Gripper" functionality only
 };
 

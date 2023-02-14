@@ -23,17 +23,23 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
 /////////////////////////////////////////////////////////////////////////////
 // SVDisplayImageSelect dialog
 
+
+const int DependentColumnNumber = 1;
 
 SVDisplayImageSelect::SVDisplayImageSelect(uint32_t inspectionId, uint32_t imageId, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVDisplayImageSelect::IDD, pParent)
 	, m_inspectionId(inspectionId)
 	, m_imageId(imageId)
+	, m_WildcardPattern(_T(""))
 {
 	//{{AFX_DATA_INIT(SVDisplayImageSelect)
 	//}}AFX_DATA_INIT
+
+
 }
 
 SVDisplayImageSelect::~SVDisplayImageSelect()
@@ -45,12 +51,18 @@ void SVDisplayImageSelect::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVDisplayImageSelect)
 	DDX_Control(pDX, IDC_IMAGE_SELECT_LIST, m_ImageSelectList);
+	DDX_Text(pDX, IDC_WILDCARD_PATTERN, m_WildcardPattern);
+
 	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(SVDisplayImageSelect, CDialog)
 	//{{AFX_MSG_MAP(SVDisplayImageSelect)
+	ON_WM_PAINT()	//needed for "Gripper" functionality only
+	ON_WM_SIZE()	//needed for "Gripper" functionality only
+	ON_EN_CHANGE(IDC_WILDCARD_PATTERN, OnReloadImageList)
 	//}}AFX_MSG_MAP
+
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -72,13 +84,19 @@ void SVDisplayImageSelect::OnCancel()
 	CDialog::OnCancel();
 }
 
-BOOL SVDisplayImageSelect::OnInitDialog() 
+
+void SVDisplayImageSelect::OnReloadImageList()
 {
-	CDialog::OnInitDialog();
-		
+	UpdateData(TRUE);
+	LoadImageList();
+}
+
+
+void SVDisplayImageSelect::LoadImageList()
+{
 	constexpr const char* c_NoImage = _T("[None]");
 
-	SetTitle();
+	m_ImageSelectList.ResetContent();
 
 	int index = m_ImageSelectList.AddString(c_NoImage);
 	m_ImageSelectList.SetItemData(index, static_cast<DWORD_PTR>(0));
@@ -92,7 +110,7 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 	auto getImageName = [](SvIe::SVImageClass* pImage) {
 		std::string imageName;
 
-		if (auto* pParent = pImage->GetParent() ;
+		if (auto* pParent = pImage->GetParent();
 			nullptr != pParent && SvPb::SVObjectTypeEnum::SVToolSetObjectType == pParent->GetObjectType())
 		{
 			imageName = pImage->GetName();
@@ -121,11 +139,16 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 			{
 				name = pObject->GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
 			}
-			index = m_ImageSelectList.AddString(name.c_str());
-			m_ImageSelectList.SetItemData(index, pObject->getObjectId());
-			if (pObject->getObjectId() == m_imageId)
+
+			auto wildcardPatternPlusAsterisk = m_WildcardPattern + _T("*");
+			if (m_WildcardPattern == _T("") || PathMatchSpecA(name.c_str(), wildcardPatternPlusAsterisk.GetBuffer(0)))
 			{
-				selectedName = std::move(name);
+				index = m_ImageSelectList.AddString(name.c_str());
+				m_ImageSelectList.SetItemData(index, pObject->getObjectId());
+				if (pObject->getObjectId() == m_imageId)
+				{
+					selectedName = std::move(name);
+				}
 			}
 		}
 	}// end while
@@ -141,9 +164,20 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 
 	UpdateData(FALSE);
 
+
+}
+
+
+BOOL SVDisplayImageSelect::OnInitDialog() 
+{
+	CDialog::OnInitDialog();
+		
+	SetTitle();
+
+	LoadImageList();
+
 	return TRUE;
 }// end OnInitDialog
-
 
 
 void SVDisplayImageSelect::SetTitle()
@@ -157,3 +191,31 @@ void SVDisplayImageSelect::SetTitle()
 		SetWindowText(title);
 	}
 }
+
+
+void SVDisplayImageSelect::OnPaint() //needed for "Gripper" functionality only
+{
+	CPaintDC dc(this);
+
+	CRect Rect;
+	GetClientRect(&Rect);
+
+	// Get the standard size of the gripper
+	Rect.left = Rect.right - ::GetSystemMetrics(SM_CXHSCROLL);
+	Rect.top = Rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
+
+	// Draw it
+	dc.DrawFrameControl(&Rect, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
+
+	// Save the painted rect so we can invalidate the rect on next OnSize()
+	m_Gripper = Rect;
+}
+
+void SVDisplayImageSelect::OnSize(UINT nType, int cx, int cy) //needed for "Gripper" functionality only
+{
+	CDialog::OnSize(nType, cx, cy);
+
+	InvalidateRect(m_Gripper, true);
+	m_Resizer.Resize(this);
+}
+

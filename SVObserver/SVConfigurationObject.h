@@ -126,7 +126,7 @@ public:
 	void LoadEnvironment(SVTreeType& rTree, bool& rConfigurationColor);
 
 	//************************************
-	//! Load IO sectiom 
+	//! Load IO section 
 	//! \param rTree [in]
 	//! \throw  MessageContainer
 	//! \returns false if no io section was found 

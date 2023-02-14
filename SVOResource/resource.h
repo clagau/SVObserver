@@ -2500,6 +2500,7 @@
 #define IDS_OBJECTNAME_ACTIVE           16258
 #define IDC_MODULE_LIST                 16259
 #define IDC_HISTORY_TEXT                16260
+#define IDC_WILDCARD_PATTERN           16261
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2687,7 +2688,7 @@
 #define IDC_EDIT_MAX_QUEUE              20374
 #define IDC_BUTTON_MAX_QUEUE            20375
 #define ID_ADD_MODULE_FIRST             20376
-//DON'T use the ids between, because its can be used by modules 
+//DON'T use the ids between ID_ADD_MODULE_FIRST and ID_ADD_MODULE_LAST: they are meant for Modules!
 #define ID_ADD_MODULE_LAST              20475
 #define ID_TRIGGER_SETTINGS             21017
 #define ID_VIEW_TOOLSETDRAW             32999
@@ -2742,9 +2743,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11155
+#define _APS_NEXT_RESOURCE_VALUE        11156
 #define _APS_NEXT_COMMAND_VALUE         20372
-#define _APS_NEXT_CONTROL_VALUE         16261
+#define _APS_NEXT_CONTROL_VALUE         16262
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif
