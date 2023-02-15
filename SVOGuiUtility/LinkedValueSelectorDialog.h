@@ -21,13 +21,7 @@ class SVFormulaEditorPageClass;
 using ValidCheckCallback = std::function<bool(const variant_t&, SvStl::MessageContainer&)>;
 using ConvertValueCallback = std::function<CString(const variant_t&)>;
 
-enum class LinkedValueSelectorTypesEnum
-{
-	None,
-	Indirect,
-	DirectIndirect,
-	All
-};
+
 
 class LinkedValueSelectorDialog : public CDialog
 {
@@ -44,6 +38,7 @@ public:
 	LinkedValueData getData() { return m_data; };
 	static bool createVariantFromString(VARTYPE vtType, const std::string& rStrValue, variant_t& rVariantValue);
 
+	CComboBox m_CtrlComboStates;
 protected:
 
 	// Overrides
@@ -64,27 +59,26 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	void Init();
 	void changeType(SvPb::LinkedSelectedOption newType);
 	void createObjectPage();
 	void createFormulaPage();
 	void updateShownControls();
 	bool checkAndSetDirectValue();
 
-protected:
-	SvPb::LinkedSelectedOption m_type;
-
-	//Value
-	CString m_directValue;
-
 private:
+	SvPb::LinkedSelectedOption m_type = SvPb::None;
+	CString m_directValue;
+	std::vector<std::pair<int, std::string>> m_DefaultStateTypes;
 	SvPb::LinkedValueTypeEnum m_LinkedValueType = SvPb::LinkedValueTypeEnum::TypeDecimal;
-	uint32_t m_inspectionId;
-	uint32_t m_objectId;
+	uint32_t m_inspectionId =0 ;
+	uint32_t m_objectId=0;
 	const std::string m_ObjectName;
 	LinkedValueData m_data;
-	VARTYPE m_vtType;
-	LinkedValueSelectorTypesEnum m_possibleTypes = LinkedValueSelectorTypesEnum::All;
-
+	VARTYPE m_vtType = VT_EMPTY;
+	bool m_CanFormula = true;
+	bool m_CanValue = true;
+	bool m_CanDefaultState = true;
 	ValidCheckCallback m_validCheckCallback = nullptr;
 
 	//linked 

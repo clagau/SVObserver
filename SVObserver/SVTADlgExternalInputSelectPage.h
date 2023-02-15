@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGuiUtility/DataController.h"
-#include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
 class SVRPropertyItemEdit;

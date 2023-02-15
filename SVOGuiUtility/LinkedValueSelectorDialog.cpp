@@ -54,26 +54,16 @@ namespace SvOgu
 		: CDialog(LinkedValueSelectorDialog::IDD)
 		, m_inspectionId(inspectionId)
 		, m_objectId(objectId)
-		, m_data(resultdata.m_data )
+		, m_data(resultdata.m_data)
 		, m_vtType(resultdata.m_data.m_Value.vt)
 		, m_ObjectName(resultdata.m_name)
 		, m_validCheckCallback(nullptr)
 		, m_LinkedValueType(resultdata.m_type)
+		
 	{
-		m_type = m_data.m_selectedOption;
-		if (VT_EMPTY == m_vtType)
-		{
-			m_possibleTypes = LinkedValueSelectorTypesEnum::Indirect;
-		}
-		else if (VT_ARRAY == (m_vtType & VT_ARRAY) || VT_BSTR == m_vtType || SvDef::InvalidObjectId == m_data.m_equationId)
-		{
-			m_possibleTypes = LinkedValueSelectorTypesEnum::DirectIndirect;
-		}
-		else
-		{
-			m_possibleTypes = LinkedValueSelectorTypesEnum::All;
-			m_FormulaController = std::make_shared<FormulaController>(m_inspectionId, m_objectId, m_data.m_equationId);
-		}
+	
+		Init();
+		
 	}
 
 	LinkedValueSelectorDialog::LinkedValueSelectorDialog(uint32_t inspectionId, uint32_t objectId, const std::string& rName, const LinkedValueData& data, VARTYPE vtType, ValidCheckCallback validCallback /*= nullptr*/)
@@ -84,20 +74,49 @@ namespace SvOgu
 		, m_vtType(vtType)
 		, m_ObjectName(rName)
 		, m_validCheckCallback(validCallback)
+		,m_LinkedValueType(SvPb::TypeDecimal)
+	{
+		Init();
+	}
+	void LinkedValueSelectorDialog::Init()
 	{
 		m_type = m_data.m_selectedOption;
 		if (VT_EMPTY == m_vtType)
 		{
-			m_possibleTypes = LinkedValueSelectorTypesEnum::Indirect;
+			m_CanFormula = false;
+			m_CanValue = false;
+			m_CanDefaultState = false;
+
 		}
 		else if (VT_ARRAY == (m_vtType & VT_ARRAY) || VT_BSTR == m_vtType || SvDef::InvalidObjectId == m_data.m_equationId)
 		{
-			m_possibleTypes = LinkedValueSelectorTypesEnum::DirectIndirect;
+			m_CanFormula = false;
+		}
+		if (m_LinkedValueType == SvPb::LinkedValueTypeEnum::TypeStates)
+		{
+			m_CanFormula = false;
+			m_CanValue = false;
+			// cppcheck-suppress redundantAssignment
+			m_CanDefaultState = true;
 		}
 		else
 		{
-			m_possibleTypes = LinkedValueSelectorTypesEnum::All;
+			m_CanDefaultState = false;
+		}
+		if (m_CanFormula)
+		{
 			m_FormulaController = std::make_shared<FormulaController>(m_inspectionId, m_objectId, m_data.m_equationId);
+		}
+		if (m_CanDefaultState)
+		{
+			for (int i = SvPb::StateDefaultType_MIN; i <= SvPb::StateDefaultType_MAX; i++)
+			{
+				m_DefaultStateTypes.push_back(std::pair<int, std::string>(i, SvPb::StateDefaultType_Name(i)));
+			}
+		}
+		if ((!m_CanDefaultState && !m_CanValue && !m_CanFormula) == true)
+		{
+			m_type = SvPb::LinkedSelectedOption::IndirectValue;
 		}
 	}
 
@@ -129,6 +148,7 @@ namespace SvOgu
 		CDialog::DoDataExchange(pDX);
 		//{{AFX_DATA_MAP(LinkedValueSelectorDialog)
 		DDX_Text(pDX, IDC_VALUE_EDIT, m_directValue);
+		DDX_Control(pDX, IDC_COMBO1, m_CtrlComboStates);
 		//}}AFX_DATA_MAP
 	}
 
@@ -136,32 +156,44 @@ namespace SvOgu
 	{
 		CDialog::OnInitDialog();
 
-		switch (m_possibleTypes)
-		{
-		case LinkedValueSelectorTypesEnum::All:
-			break;
-		case LinkedValueSelectorTypesEnum::DirectIndirect:
-			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
-			break;
-		case LinkedValueSelectorTypesEnum::Indirect:
-			m_type = SvPb::LinkedSelectedOption::IndirectValue;
-			GetDlgItem(IDC_VALUE)->ShowWindow(SW_HIDE);
-			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
-			break;
-		default:
-			Log_Assert(false);
-			return false;
-		}
-		
-		if(m_LinkedValueType == SvPb::LinkedValueTypeEnum::TypeStates)
-			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_FORMULA)->ShowWindow(m_CanFormula? SW_SHOW : SW_HIDE);
+		 //valueButton
+		GetDlgItem(IDC_VALUE)->ShowWindow(m_CanValue|| m_CanDefaultState ? SW_SHOW : SW_HIDE);
+		m_CtrlComboStates.ShowWindow(m_CanDefaultState ? SW_SHOW : SW_HIDE);
+		m_CtrlComboStates.EnableWindow(m_CanDefaultState);
 
-		//Value
-		m_directValue = SvUl::VariantToString(m_data.m_directValue).c_str();
-		CString textStr;
-		GetWindowText(textStr);
-		textStr = textStr + ":" + m_ObjectName.c_str();
-		SetWindowText(textStr);
+		if (m_CanDefaultState)
+		{
+			for (auto val : m_DefaultStateTypes)
+			{
+				int index = m_CtrlComboStates.AddString(val.second.c_str());
+				m_CtrlComboStates.SetItemData(index, val.first);
+			}
+		}
+	
+		if (m_CanValue)
+		{
+			m_directValue = SvUl::VariantToString(m_data.m_directValue).c_str();
+			CString textStr;
+			GetWindowText(textStr);
+			textStr = textStr + ":" + m_ObjectName.c_str();
+			SetWindowText(textStr);
+		}
+		if (m_CanDefaultState)
+		{
+			int state = (int )m_data.m_directValue;
+
+			for (int n = 0; n < m_CtrlComboStates.GetCount(); n++)
+			{	
+				if (m_CtrlComboStates.GetItemData(n) == state)
+				{
+					m_CtrlComboStates.SetCurSel(n);
+					break;
+				}
+			}
+
+		}
+
 
 		createObjectPage();
 		Log_Assert(m_pDlgLinkedPage);
@@ -171,7 +203,7 @@ namespace SvOgu
 		}
 		m_dlgLinkedSheet.AddPage(m_pDlgLinkedPage.get());
 
-		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes)
+		if (m_CanFormula)
 		{
 			createFormulaPage();
 			Log_Assert(m_pDlgFormulaPage);
@@ -230,7 +262,7 @@ namespace SvOgu
 		}
 
 		//formula check
-		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes && m_FormulaController 
+		if (m_CanFormula && m_FormulaController 
 			&& m_pDlgFormulaPage && m_pDlgFormulaPage->GetSafeHwnd()) //If m_pDlgFormulaPage is not initialized, not try to set it, because getEquationText return a empty string. 
 		{
 			auto equationText = m_pDlgFormulaPage->getEquationText();
@@ -365,8 +397,9 @@ namespace SvOgu
 		CWnd* pWnd = GetDlgItem(IDC_VALUE_EDIT);
 		if (pWnd)
 		{
-			pWnd->ShowWindow(SvPb::DirectValue == m_type ? SW_SHOW : SW_HIDE);
+			pWnd->ShowWindow(SvPb::DirectValue == m_type && m_CanValue ? SW_SHOW : SW_HIDE);
 		}
+		m_CtrlComboStates.ShowWindow(SvPb::DirectValue == m_type && m_CanDefaultState ? SW_SHOW : SW_HIDE);
 
 		pWnd = GetDlgItem(IDC_VALUE);
 		if (pWnd)
@@ -393,7 +426,7 @@ namespace SvOgu
 			isSheet = true;
 		}
 
-		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes && SvPb::LinkedSelectedOption::Formula == m_type)
+		if (m_CanFormula && SvPb::LinkedSelectedOption::Formula == m_type)
 		{
 			m_dlgLinkedSheet.SetActivePage(1);
 			isSheet = true;
@@ -404,7 +437,7 @@ namespace SvOgu
 
 	bool LinkedValueSelectorDialog::checkAndSetDirectValue()
 	{
-		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes || LinkedValueSelectorTypesEnum::DirectIndirect == m_possibleTypes)
+		if (m_CanValue)
 		{
 			bool isOk = createVariantFromString(m_vtType, std::string {m_directValue}, m_data.m_directValue);
 				
@@ -434,6 +467,19 @@ namespace SvOgu
 				}
 			}
 		}
+		if (m_CanDefaultState)
+		{
+
+			int state = SvPb::Passed;
+			int sel = m_CtrlComboStates.GetCurSel();
+			if (sel != CB_ERR)
+			{
+				state = (int)m_CtrlComboStates.GetItemData(sel);
+			}
+
+			m_data.m_directValue = state;
+		}
+
 		return true;
 	}
 } //namespace SvOgu

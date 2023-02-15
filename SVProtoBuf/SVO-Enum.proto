@@ -1482,9 +1482,9 @@ enum LinkedValueTypeEnum
 };
 enum StateDefaultType
 {
-	TypePassed =0;
-	TypeFailed =1;
-	TypeWarned =2;
+	Passed =0;
+	Failed =1;
+	Warned =2;
 }
 enum ResetType
 {

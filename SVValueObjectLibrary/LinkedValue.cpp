@@ -27,6 +27,7 @@
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include <string>
+#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 namespace SvVol
@@ -224,6 +225,7 @@ HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 	if (0 == (rValue.vt & VT_ARRAY))
 	{
 		SetArraySize(1);
+		// cppcheck-suppress redundantAssignment
 		hres = __super::SetDefaultValue(rValue, bResetAll);
 	}
 	else
@@ -300,7 +302,21 @@ HRESULT LinkedValue::SetValueKeepType(LPCTSTR Value, int Index)
 HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 {
 	setSelectedOption(rData.option());
-	SvPb::ConvertProtobufToVariant(rData.directvalue(), m_directValue);
+	//make  sure value is consistent
+	_variant_t defaultValue;
+	SvPb::ConvertProtobufToVariant(rData.defaultvalue(), defaultValue);
+	Log_Assert(defaultValue == GetDefaultValue());
+	_variant_t directValue;
+	SvPb::ConvertProtobufToVariant(rData.directvalue(),directValue);
+	if (S_OK != ::VariantChangeTypeEx(&directValue, &directValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultValue().vt))
+	{
+		m_directValue = defaultValue;
+	}
+	else
+	{
+		m_directValue = directValue;
+	}
+	
 	m_indirectValueRef = SVObjectReference {rData.indirectidstring()};
 	m_formulaString = rData.formula();
 	setComment(rData.comment());
@@ -1582,15 +1598,15 @@ bool LinkedValue::UpdateChildrenForDefaultState(SvStl::MessageContainerVector* p
 	switch (int(val))
 	{
 
-		case SvPb::StateDefaultType::TypePassed:
+		case SvPb::StateDefaultType::Passed:
 			values[2] = 1;
 			break;
 
-		case SvPb::StateDefaultType::TypeFailed:
+		case SvPb::StateDefaultType::Failed:
 			values[3] = 1;
 			break;
 
-		case  SvPb::StateDefaultType::TypeWarned:
+		case  SvPb::StateDefaultType::Warned:
 			values[4] = 1;
 			break;
 		default:
