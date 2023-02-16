@@ -13,21 +13,21 @@
 
 #pragma region Includes
 
-#include "CameraLibrary/SVDeviceParams.h"
-#include "CameraLibrary/SVBoolValueDeviceParam.h"
-#include "CameraLibrary/SVi64ValueDeviceParam.h"
-#include "CameraLibrary/SVLongValueDeviceParam.h"
-#include "CameraLibrary/SVParamListDeviceParam.h"
-#include "CameraLibrary/SVStringValueDeviceParam.h"
-#include "CameraLibrary/SVCustomDeviceParam.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
 #pragma region Includes
 
 class SVConfigurationObject;
 class SVObjectClass;
 class SVInspectionProcess;
 class SVPPQObject;
+
+class SVDeviceParam;
+class SVLongValueDeviceParam;
+class SVBoolValueDeviceParam;
+class SVi64ValueDeviceParam;
+class SVStringValueDeviceParam;
+class SVCustomDeviceParam;
+class SVCameraFormatsDeviceParam;
 
 namespace SvIe
 {
@@ -126,35 +126,20 @@ public:
 	const std::string operator()() { return reinterpret_cast<const char*>(::GlobalLock(hg)); }
 };
 
-class SVDeviceParamConfigXMLHelper :
-	public SvCam::BaseVisitor,
-	public SvCam::Visitor<SVDeviceParam>,
-	public SvCam::Visitor<SVLongValueDeviceParam>,
-	public SvCam::Visitor<SVi64ValueDeviceParam>,
-	public SvCam::Visitor<SVBoolValueDeviceParam>,
-	public SvCam::Visitor<SVStringValueDeviceParam>,
-	public SvCam::Visitor<SVParamListDeviceParam>,
-	public SvCam::Visitor<SVLutDeviceParam>,
-	public SvCam::Visitor<SVLightReferenceDeviceParam>,
-	public SvCam::Visitor<SVCameraFormatsDeviceParam>,
-	public SvCam::Visitor<SVCustomDeviceParam>
+class SVDeviceParamConfigXMLHelper
 {
 public:
-	SVDeviceParamConfigXMLHelper(Writer writer, SVDeviceParamCollection& rCamFileParams);
-	HRESULT Visit(SVDeviceParam&);
-	HRESULT Visit(SVLongValueDeviceParam&);
-	HRESULT Visit(SVi64ValueDeviceParam&);
-	HRESULT Visit(SVBoolValueDeviceParam&);
-	HRESULT Visit(SVStringValueDeviceParam&);
-	HRESULT Visit(SVParamListDeviceParam&);
-	HRESULT Visit(SVLutDeviceParam&);
-	HRESULT Visit(SVLightReferenceDeviceParam&);
-	HRESULT Visit(SVCameraFormatsDeviceParam&);
-	HRESULT Visit(SVCustomDeviceParam&);
+	explicit SVDeviceParamConfigXMLHelper(Writer writer);
+	HRESULT Visit(SVDeviceParam*);
+	HRESULT Visit(SVLongValueDeviceParam*);
+	HRESULT Visit(SVi64ValueDeviceParam*);
+	HRESULT Visit(SVBoolValueDeviceParam*);
+	HRESULT Visit(SVStringValueDeviceParam*);
+	HRESULT Visit(SVCameraFormatsDeviceParam*);
+	HRESULT Visit(SVCustomDeviceParam*);
 
 private:
 	Writer m_writer;
-	SVDeviceParamCollection& m_rCamFileParams;
 };
 }
 

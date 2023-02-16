@@ -21,7 +21,6 @@
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVi64ValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
-#include "CameraLibrary\SVParamListDeviceParam.h"
 #include "CameraLibrary\SVStringValueDeviceParam.h"
 #include "CameraLibrary\SVCustomDeviceParam.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
@@ -149,35 +148,20 @@ const std::vector<SvPb::ClassIdEnum>& NonPrintClassIds()
 	return g_classIdNonPrintArray;
 }
 
-class SVDeviceParamConfigPrintHelper :
-	public SvCam::BaseVisitor,
-	public SvCam::Visitor<SVDeviceParam>,
-	public SvCam::Visitor<SVLongValueDeviceParam>,
-	public SvCam::Visitor<SVi64ValueDeviceParam>,
-	public SvCam::Visitor<SVBoolValueDeviceParam>,
-	public SvCam::Visitor<SVStringValueDeviceParam>,
-	public SvCam::Visitor<SVParamListDeviceParam>,
-	public SvCam::Visitor<SVLutDeviceParam>,
-	public SvCam::Visitor<SVLightReferenceDeviceParam>,
-	public SvCam::Visitor<SVCameraFormatsDeviceParam>,
-	public SvCam::Visitor<SVCustomDeviceParam>
+class SVDeviceParamConfigPrintHelper
 {
 public:
-	SVDeviceParamConfigPrintHelper(SVConfigurationPrint* pPrint, SVDeviceParamCollection& rCamFileParams, CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
-	HRESULT Visit(SVDeviceParam&);
-	HRESULT Visit(SVLongValueDeviceParam&);
-	HRESULT Visit(SVi64ValueDeviceParam&);
-	HRESULT Visit(SVBoolValueDeviceParam&);
-	HRESULT Visit(SVStringValueDeviceParam&);
-	HRESULT Visit(SVParamListDeviceParam&);
-	HRESULT Visit(SVLutDeviceParam&);
-	HRESULT Visit(SVLightReferenceDeviceParam&);
-	HRESULT Visit(SVCameraFormatsDeviceParam&);
-	HRESULT Visit(SVCustomDeviceParam&);
+	SVDeviceParamConfigPrintHelper(SVConfigurationPrint* pPrint, CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	HRESULT Visit(SVDeviceParam*);
+	HRESULT Visit(SVLongValueDeviceParam*);
+	HRESULT Visit(SVi64ValueDeviceParam*);
+	HRESULT Visit(SVBoolValueDeviceParam*);
+	HRESULT Visit(SVStringValueDeviceParam*);
+	HRESULT Visit(SVCameraFormatsDeviceParam*);
+	HRESULT Visit(SVCustomDeviceParam*);
 
 private:
 	SVConfigurationPrint* m_pPrint;
-	SVDeviceParamCollection& m_rCamFileParams;
 	CDC* m_pDC;
 	CPoint& m_rptCurPos;
 	int m_nIndentLevel;
@@ -1587,8 +1571,6 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 						/*HRESULT hr =*/ pAcqDevice->GetCameraFileParameters(l_CameraFileParams);
 						CPoint pt(ptCurPos);
 						pt.x += m_shortTabPixels;
-						SVDeviceParamConfigPrintHelper helper(this, l_CameraFileParams, pDC, pt, nIndentLevel+1);
-						const int iDetailLevel = 0;
 
 						SVDeviceParamIndexer index( pDeviceParams->mapParameters );	// print in order
 						SVDeviceParamIndexer::iterator iter;
@@ -1596,18 +1578,25 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 						{
 							SVDeviceParamWrapper& rw = pDeviceParams->GetParameter( *iter );
 							SVDeviceParam* pParam = static_cast <SVDeviceParam*> (rw);
-							if ( pParam )
+							if (nullptr != pParam)
 							{
-								SVDeviceParam* pCamFileParam = l_CameraFileParams.GetParameter( pParam->Type() );
-								if ( nullptr == pCamFileParam )
-									continue;
-								if ( pCamFileParam->DetailLevel() > iDetailLevel )
-									continue;
+								constexpr int cHiddenDetail = 99;
+								SVDeviceParam* pCamFileParam = l_CameraFileParams.GetParameter(pParam->Type());
+								if (nullptr != pCamFileParam && pCamFileParam->DetailLevel() != cHiddenDetail)
+								{
+									SVDeviceParamConfigPrintHelper helper(this, pDC, pt, nIndentLevel + 1);
+									if (SVDeviceParamDataTypeEnum::DeviceDataTypeCustom == pParam->DataType())
+									{
+										pParam->SetName(pCamFileParam->VisualName());
+									}
+									else
+									{
+										pParam->SetName(pCamFileParam->Name());
+									}
 
-								/*hr = */pParam->Accept(helper);
+									helper.Visit(pParam);
+								}
 							}
-							// Visitor was used instead of a huge switch statement.
-							// It was done this way partly as an example of how to use Visitor.
 						}
 						ptCurPos.y = pt.y;
 					}// end if ( pDeviceParams && pDeviceParams->mapParameters.size() > 0 )
@@ -2286,113 +2275,141 @@ void SVConfigurationPrint::PrintGlobalConstants( CDC* pDC, CPoint& ptCurPos, int
 	}
 }
 
-SVDeviceParamConfigPrintHelper::SVDeviceParamConfigPrintHelper(
-	SVConfigurationPrint* pPrint, SVDeviceParamCollection& rCamFileParams, CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
-	: m_pPrint(pPrint), m_rCamFileParams(rCamFileParams), m_pDC(pDC), m_rptCurPos(ptCurPos), m_nIndentLevel(nIndentLevel)
+SVDeviceParamConfigPrintHelper::SVDeviceParamConfigPrintHelper(SVConfigurationPrint* pPrint, CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
+	: m_pPrint(pPrint), m_pDC(pDC), m_rptCurPos(ptCurPos), m_nIndentLevel(nIndentLevel)
 {
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit(SVDeviceParam&)
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVDeviceParam* pParam)
 {
-	return S_OK;
+	if (nullptr != pParam)
+	{
+		if (SVDeviceParamEnum::DeviceParamCameraFormats == pParam->Type())
+		{
+			SVCameraFormatsDeviceParam* pCameraFormat = dynamic_cast<SVCameraFormatsDeviceParam*> (pParam);
+			return Visit(pCameraFormat);
+		}
+		switch (pParam->DataType())
+		{
+			case SVDeviceParamDataTypeEnum::DeviceDataTypeLong:
+			{
+				SVLongValueDeviceParam* pLong = dynamic_cast<SVLongValueDeviceParam*> (pParam);
+				return Visit(pLong);
+			}
+
+			case SVDeviceParamDataTypeEnum::DeviceDataTypei64:
+			{
+				SVi64ValueDeviceParam* pI64 = dynamic_cast<SVi64ValueDeviceParam*> (pParam);
+				return Visit(pI64);
+			}
+
+			case SVDeviceParamDataTypeEnum::DeviceDataTypeBool:
+			{
+				SVBoolValueDeviceParam* pBool = dynamic_cast<SVBoolValueDeviceParam*> (pParam);
+				return Visit(pBool);
+			}
+
+			case SVDeviceParamDataTypeEnum::DeviceDataTypeString:
+			{
+				SVStringValueDeviceParam* pString = dynamic_cast<SVStringValueDeviceParam*> (pParam);
+				return Visit(pString);
+			}
+
+			case SVDeviceParamDataTypeEnum::DeviceDataTypeCustom:
+			{
+				SVCustomDeviceParam* pCustom = dynamic_cast<SVCustomDeviceParam*> (pParam);
+				return Visit(pCustom);
+			}
+
+			default:
+			{
+				return S_OK;
+			}
+		}
+	}
+	return E_POINTER;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVLongValueDeviceParam& param )
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVLongValueDeviceParam* pParam)
 {
-	const SVLongValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter( param.Type() ).DerivedValue( pCamFileParam );
-	if ( pCamFileParam )
+	if (nullptr != pParam)
 	{
 		std::string Value;
-		if ( pCamFileParam->info.options.size() > 0 )
+		if (pParam->info.options.size() > 0 )
 		{
 			SVLongValueDeviceParam::OptionsType::const_iterator iterOption;
-			iterOption = std::find( pCamFileParam->info.options.begin(), pCamFileParam->info.options.end(), param.lValue );
-			if ( iterOption != pCamFileParam->info.options.end() )
+			iterOption = std::find(pParam->info.options.begin(), pParam->info.options.end(), pParam->lValue );
+			if ( iterOption != pParam->info.options.end() )
 			{
 				Value = iterOption->m_Description;
 			}
 		}
 		if ( Value.empty() )
 		{
-			Value = std::format( _T("{}{}"), static_cast<unsigned long> (param.GetScaledValue()), param.info.sUnits.empty() ? _T("") : std::string(_T(" ") + param.info.sUnits).c_str() );
+			Value = std::format( _T("{}{}"), static_cast<unsigned long> (pParam->GetScaledValue()), pParam->info.sUnits.empty() ? _T("") : std::string(_T(" ") + pParam->info.sUnits).c_str() );
 		}
-		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pCamFileParam->Name(), Value.c_str() );
+		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pParam->Name(), Value.c_str() );
+		return S_OK;
 	}
-	return S_OK;
+	return E_POINTER;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVi64ValueDeviceParam& param )
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVi64ValueDeviceParam* pParam)
 {
-	const SVi64ValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter( param.Type() ).DerivedValue( pCamFileParam );
-	if ( pCamFileParam )
+	if (nullptr != pParam)
 	{
-		std::string Text = std::format( _T("{:d}"), param.iValue );
-		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pCamFileParam->Name(), Text.c_str() );
+		std::string Text = std::format( _T("{:d}"), pParam->iValue );
+		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pParam->Name(), Text.c_str() );
+		return S_OK;
 	}
-	return S_OK;
+	return E_POINTER;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVBoolValueDeviceParam& param )
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVBoolValueDeviceParam* pParam)
 {
-	const SVBoolValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter( param.Type() ).DerivedValue( pCamFileParam );
-	if ( pCamFileParam )
+	if (nullptr != pParam)
 	{
 		std::string Text;
-		if ( pCamFileParam->info.options.size() > 0 )
+		if (pParam->info.options.size() > 0 )
 		{
 			SVBoolValueDeviceParam::OptionsType::const_iterator iterOption;
-			iterOption = std::find( pCamFileParam->info.options.begin(), pCamFileParam->info.options.end(), param.bValue );
-			if ( iterOption != pCamFileParam->info.options.end() )
+			iterOption = std::find(pParam->info.options.begin(), pParam->info.options.end(), pParam->bValue );
+			if ( iterOption != pParam->info.options.end() )
 			{
 				Text = iterOption->m_Description.c_str();
 			}
 		}
 		if ( Text.empty() )
 		{
-			Text = param.bValue ? _T("TRUE") : _T("FALSE");
+			Text = pParam->bValue ? _T("TRUE") : _T("FALSE");
 		}
-		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pCamFileParam->Name(), Text.c_str() );
+		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pParam->Name(), Text.c_str());
+		return S_OK;
 	}
-	return S_OK;
+	return E_POINTER;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit(SVStringValueDeviceParam& param)
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVStringValueDeviceParam* pParam)
 {
-	const SVStringValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter( param.Type() ).DerivedValue( pCamFileParam );
-	if ( pCamFileParam )
+	if (nullptr != pParam)
 	{
-		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pCamFileParam->Name(), param.strValue.c_str() );
+		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pParam->Name(), pParam->strValue.c_str() );
+		return S_OK;
 	}
-	return S_OK;
+	return E_POINTER;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit(SVParamListDeviceParam&)
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCameraFormatsDeviceParam* pParam)
 {
-	return S_OK;
-}
-
-HRESULT SVDeviceParamConfigPrintHelper::Visit(SVLutDeviceParam&)
-{
-	return S_OK;
-}
-
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVLightReferenceDeviceParam&)
-{
-	return S_OK;
-}
-
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVCameraFormatsDeviceParam& param )
-{
-	const SVCameraFormatsDeviceParam* pCamFileParam = m_rCamFileParams.Parameter( param.Type() ).DerivedValue( pCamFileParam );
-	if ( pCamFileParam )
+	if (nullptr != pParam)
 	{
 		std::string Text;
 		SVCameraFormat* pFormat = nullptr;
-		if ( param.options.size() > 0 )
+		if (pParam->options.size() > 0 )
 		{
-			SVCameraFormat& rFormat = param.options[ param.strValue ];
-			const SVCameraFormat& rCamFileFormat = pCamFileParam->options.find( param.strValue )->second;
-			if ( rCamFileFormat.m_strName == param.strValue )
+			SVCameraFormat& rFormat = pParam->options[pParam->strValue];
+			const SVCameraFormat& rCamFileFormat = pParam->options.find(pParam->strValue )->second;
+			if ( rCamFileFormat.m_strName == pParam->strValue )
 			{
 				Text = rCamFileFormat.m_strDescription;
 				pFormat = &rFormat;
@@ -2400,9 +2417,9 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVCameraFormatsDeviceParam& param
 		}
 		if ( Text.empty() )
 		{
-			Text = param.strValue;
+			Text = pParam->strValue;
 		}
-		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pCamFileParam->Name(), Text.c_str() );
+		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pParam->Name(), Text.c_str() );
 
 		if ( pFormat )
 		{
@@ -2420,15 +2437,16 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVCameraFormatsDeviceParam& param
 	return S_OK;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam* pParam)
 {
-	const SVCustomDeviceParam* pParam = m_rCamFileParams.Parameter(param.Type()).DerivedValue(pParam);
-	if (pParam)
+	HRESULT result {E_POINTER};
+	if (nullptr != pParam)
 	{
 		SVDeviceParamWrapper w(pParam->GetHeldParam());
-		SVDeviceParam* p = w;
-		Visit(*p);
+		SVDeviceParam* pHeldParam = static_cast<SVDeviceParam*> (w);
+		pHeldParam->SetName(pParam->Name());
+		result = Visit(pHeldParam);
 	}
-	return S_OK;
+	return result;
 }
 

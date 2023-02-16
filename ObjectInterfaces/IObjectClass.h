@@ -167,7 +167,8 @@ namespace SvOi
 
 		/// Get the object class ID
 		virtual SvPb::ClassIdEnum GetClassID() const = 0;
-			
+		virtual LPCTSTR GetClassName() const = 0;
+
 		//! Gets the value for Value object NOTE: This is placed here instead of IValueObject for performance reasons !
 		//! \param rValue [out] The reference to write the value to
 		//! \param Index [in] The corresponding array index to write to, if required
