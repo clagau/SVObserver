@@ -75,13 +75,16 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_Height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemToolAndDependent, false);
 	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, SvPb::EnableAuxiliaryExtentsEId, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone, true);
 	///m_ObjectID is of type double as math tool results are also double which would cause problems with m_InspectedObectID which should only be of one type
-	RegisterEmbeddedObject(&m_ObjectID, SvPb::ObjectIDEId, SvDef::c_ObjectID, false, SvOi::SVResetItemNone, false);
-	RegisterEmbeddedObject(&m_ObjectType, SvPb::ObjectTypeEId, SvDef::c_ObjectType, false, SvOi::SVResetItemNone, false);
-	RegisterEmbeddedObject(&m_TriggerIndex, SvPb::TriggerIndexEId, SvDef::c_TriggerIndex, false, SvOi::SVResetItemNone, false);
-	RegisterEmbeddedObject(&m_TriggerPerObjectID, SvPb::TriggerPerObjectIDEId, SvDef::c_TriggerPerObjectID, false, SvOi::SVResetItemNone, true);
-	RegisterEmbeddedObject(&m_InspectedObjectID, SvPb::InspectedObjectIDEId, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP, true);
-	
-	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameEId, SvDef::c_InspectionName, false, SvOi::SVResetItemIP, false);
+	RegisterEmbeddedObject(&m_ObjectID, SvPb::ObjectIDEId, SvDef::cObjectID, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_ObjectType, SvPb::ObjectTypeEId, SvDef::cObjectType, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_TriggerIndex, SvPb::TriggerIndexEId, SvDef::cTriggerIndex, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_TriggerPerObjectID, SvPb::TriggerPerObjectIDEId, SvDef::cTriggerPerObjectID, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_InspectedObjectID, SvPb::InspectedObjectIDEId, SvDef::cInspectedObjectID, false, SvOi::SVResetItemIP, true);
+	RegisterEmbeddedObject(&m_LoopMode, SvPb::LoopModeEId, SvDef::cLoopMode, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_RotationNumber, SvPb::RotationNumberEId, SvDef::cRotationNumber, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedObject(&m_MeasurementValue, SvPb::MeasurementValueEId, SvDef::cMeasurementValue, false, SvOi::SVResetItemNone, true);
+
+	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameEId, SvDef::cInspectionName, false, SvOi::SVResetItemIP, false);
 
 	RegisterEmbeddedObject(&m_MissingImageCountTS, SvPb::MissingImageCountEId, IDS_OBJECTNAME_MISSING_IMAGE_COUNT, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_NotCompleteCountTS, SvPb::NotCompleteCountEId, IDS_OBJECTNAME_NOT_COMPLETE_COUNT, false, SvOi::SVResetItemNone, false);
@@ -93,6 +96,9 @@ void SVToolSet::init()
 	m_ObjectType.SetOutputFormat(SvVol::OutputFormat_int);
 	m_TriggerIndex.SetOutputFormat(SvVol::OutputFormat_int);
 	m_TriggerPerObjectID.SetOutputFormat(SvVol::OutputFormat_int);
+	m_LoopMode.SetOutputFormat(SvVol::OutputFormat_int);
+	m_RotationNumber.SetOutputFormat(SvVol::OutputFormat_int);
+	m_MeasurementValue.SetOutputFormat(SvVol::OutputFormat_int);
 
 
 	// Set Embedded defaults
@@ -157,6 +163,12 @@ void SVToolSet::init()
 	m_TriggerIndex.setSaveValueFlag(false);
 	m_TriggerPerObjectID.setDefaultValue(0);
 	m_TriggerPerObjectID.setSaveValueFlag(false);
+	m_LoopMode.setDefaultValue(BOOL(false));
+	m_LoopMode.setSaveValueFlag(false);
+	m_RotationNumber.setDefaultValue(0);
+	m_RotationNumber.setSaveValueFlag(false);
+	m_MeasurementValue.setDefaultValue(0);
+	m_MeasurementValue.setSaveValueFlag(false);
 	/// Set the default value so that the linked variant type is set to double!
 	m_InspectedObjectID.setDefaultValue(0.0);
 	
@@ -374,11 +386,14 @@ SvVol::SVEnumerateValueObjectClass* SVToolSet::GetDrawFlagObject()
 
 void SVToolSet::setTriggerData(const SvTrig::TriggerData& rTriggerData)
 {
-	////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
+	//@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
 	m_ObjectID.SetValue(static_cast<double> (rTriggerData.m_objectData[0].m_objectID));
+	m_RotationNumber.SetValue(static_cast<DWORD> (rTriggerData.m_objectData[0].m_rotationNr));
+	m_MeasurementValue.SetValue(rTriggerData.m_objectData[0].m_measurementValue);
 	m_ObjectType.SetValue(static_cast<DWORD> (rTriggerData.m_objectType));
 	m_TriggerIndex.SetValue(static_cast<DWORD> (rTriggerData.m_triggerIndex));
 	m_TriggerPerObjectID.SetValue(static_cast<DWORD> (rTriggerData.m_triggerPerObjectID));
+	m_LoopMode.SetValue(rTriggerData.m_loopMode);
 }
 
 long SVToolSet::getTriggerCount() const

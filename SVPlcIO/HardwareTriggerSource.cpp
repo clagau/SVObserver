@@ -159,6 +159,7 @@ void HardwareTriggerSource::createTriggerData(uint8_t channel)
 			triggerData.m_triggerIndex = rChannel.m_triggerIndex;
 			triggerData.m_triggerPerObjectID = rChannel.m_triggerCount;
 			triggerData.m_triggerTimestamp = triggerTimeStamp;
+			triggerData.m_loopMode = (0 != rChannel.m_loopMode);
 			//Convert to double as SVO uses only this type
 			for (int i = 0; i < cObjectMaxNr; ++i)
 			{
@@ -182,6 +183,7 @@ void HardwareTriggerSource::createTriggerData(uint8_t channel)
 		bool channelTriggerDataValid {rChannel != rPrevChannel};
 		channelTriggerDataValid &= (0 != rInspectionCmd.m_socRelative);
 		channelTriggerDataValid &= (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+		channelTriggerDataValid &= m_previousSequenceCode[channel] != rChannel.m_sequence && (0 != rChannel.m_sequence % 2);
 
 		if (m_logOperationDataFile.is_open())
 		{
@@ -201,6 +203,7 @@ void HardwareTriggerSource::createTriggerData(uint8_t channel)
 			triggerData.m_triggerTimestamp = triggerTimeStamp;
 
 			sendTriggerData(triggerData);
+			m_previousSequenceCode[channel] = rChannel.m_sequence;
 		}
 	}
 }

@@ -25,6 +25,7 @@ struct TriggerData
 	uint8_t m_objectType {0};
 	uint8_t m_triggerIndex {0};
 	uint8_t m_triggerPerObjectID {0};
+	bool m_loopMode {false};
 	double m_triggerTimestamp {0.0};
 	//Do not use std::array due to struct being used over Dll boundary
 	ObjectData m_objectData[cObjectMaxNr];

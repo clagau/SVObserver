@@ -101,7 +101,7 @@ void ToolAdjustToolSetPage::OnBtnObjectPicker()
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(Items);
 
 	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
-	std::string Title = std::format( _T("{} - {}"), ToolsetOutput, SvDef::c_InspectedObjectID);
+	std::string Title = std::format( _T("{} - {}"), ToolsetOutput, SvDef::cInspectedObjectID);
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );

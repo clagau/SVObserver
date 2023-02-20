@@ -23,7 +23,7 @@ public:
 
 #pragma region Member Variables
 public:
-	bool m_isEnabled {false};
+	uint8_t m_isStarted {false};
 	uint8_t m_objectType{ 0 };
 	uint32_t m_objectID{ 0 };
 	std::array<uint8_t, cResultSize> m_results

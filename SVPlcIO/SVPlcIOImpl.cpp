@@ -401,7 +401,8 @@ void SVPlcIOImpl::NotifyTriggerData(const SvTrig::TriggerData& rTriggerData)
 			std::string objectIDList;
 			for (int i = 0; i < cObjectMaxNr; ++i)
 			{
-				objectIDList += (0 == i) ? "" : "," + std::to_string(rData.m_objectData[i].m_objectID);
+				objectIDList += (0 == i) ? "" : ",";
+				objectIDList += std::to_string(rData.m_objectData[i].m_objectID);
 			}
 			///This is required as m_inputCount[rData.m_channel] is atomic
 			uint32_t inputCount = m_inputCount[rData.m_channel];

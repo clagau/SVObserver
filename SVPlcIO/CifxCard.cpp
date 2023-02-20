@@ -142,12 +142,17 @@ void CifXCard::readProcessData(uint32_t notification)
 						{
 							sendInpectionState = std::move(m_inspectionStateQueue.front());
 							m_inspectionStateQueue.pop();
-							}
+						}
 						if (m_hTelegramReadEvent != nullptr)
 						{
 							m_inputDataQueue.emplace(std::move(inputData));
 							::SetEvent(m_hTelegramReadEvent);
 						}
+					}
+					//@TODO[GRA][10.30][20.02.2023] Remove temporary code to write data into serialization code
+					for (unsigned int i = 0; i < cNumberOfChannels; ++i)
+					{
+						sendInpectionState.m_channels[i].m_serializationCode[0] = sendInpectionState.m_channels[i].m_objectID;
 					}
 					sendOperationData(telegram, sendInpectionState);
 
@@ -240,7 +245,7 @@ HRESULT CifXCard::OpenAndInitializeCifX()
 				boost::log::core::get()->add_sink(m_pSink);
 				std::string fileData(cPlcContentHeading);
 				BOOST_LOG(m_logger) << fileData.c_str();
-	}
+			}
 		}
 	}
 	else
@@ -714,7 +719,16 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 
 				for (int i = 0; i < insCmd.m_channels.size(); ++i)
 				{
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_unitControl)], startByte, sizeof(ChannelIn1::m_unitControl) };
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_activation)], startByte, sizeof(ChannelIn1::m_activation)};
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_start)], startByte, sizeof(ChannelIn1::m_start)};
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_loopMode)], startByte, sizeof(ChannelIn1::m_loopMode)};
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_unitControl)], startByte, sizeof(ChannelIn1::m_unitControl)};
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_sequence)], startByte, sizeof(ChannelIn1::m_sequence) };
@@ -723,16 +737,22 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_timeStamp)], startByte, sizeof(ChannelIn1::m_timeStamp) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_triggerIndex)], startByte, sizeof(ChannelIn1::m_triggerIndex)};
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_triggerCount)], startByte, sizeof(ChannelIn1::m_triggerCount)};
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_objectType)], startByte, sizeof(ChannelIn1::m_objectType) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_objectID)], startByte, sizeof(ChannelIn1::m_objectID) };
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_objectID[0])], startByte, sizeof(ChannelIn1::m_objectID)};
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_triggerIndex)], startByte, sizeof(ChannelIn1::m_triggerIndex) };
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_rotationNr[0])], startByte, sizeof(ChannelIn1::m_rotationNr)};
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_triggerCount)], startByte, sizeof(ChannelIn1::m_triggerCount) };
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_measurementValue[0])], startByte, sizeof(ChannelIn1::m_measurementValue)};
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 				}
@@ -815,8 +835,11 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 			{
 				for (int i = 0; i < cNumberOfChannels; ++i)
 				{
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_objectType)], startByte, sizeof(ChannelOut1::m_objectType) };
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_isStarted)], startByte, sizeof(ChannelOut1::m_isStarted)};
 					//Do startByte always before configIndex
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_objectType)], startByte, sizeof(ChannelOut1::m_objectType) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_objectID)], startByte, sizeof(ChannelOut1::m_objectID) };
@@ -826,6 +849,10 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_measurementValue)], startByte, sizeof(ChannelOut1::m_measurementValue) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					//@TODO[GRA][10.30][20.02.2023] Remove temporary uint8_t to make it compatible for the small PLC
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(uint8_t)], startByte, sizeof(ChannelOut1::m_serializationCode)};
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 				}

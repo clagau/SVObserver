@@ -193,6 +193,9 @@ private:
 	SvVol::SVDWordValueObjectClass m_TriggerIndex;	//! The trigger index, which has been received by the PLC
 	SvVol::SVDWordValueObjectClass m_TriggerPerObjectID;//! The trigger total for this ObjectID
 	SvVol::LinkedValue m_InspectedObjectID;			//! The inspected object ID, which will be passed to the PLC to identify the inspection result
+	SvVol::SVBoolValueObjectClass m_LoopMode;		//! True when the PLC is in loop mode
+	SvVol::SVDWordValueObjectClass m_RotationNumber;//! The rotation number in loop mode
+	SvVol::SVDoubleValueObjectClass m_MeasurementValue;	//! The measurement value, which has been received by the PLC
 	SvVol::SVStringValueObjectClass m_InspectionName;
 
 	SvVol::SVLongValueObjectClass m_MissingImageCountTS; //MissingImageCount in ppq  at the time the inspection is started
