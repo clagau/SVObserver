@@ -1249,6 +1249,9 @@ enum EmbeddedIdEnum
 	ArchiveImageFilepathRootSeparatorEId = 595;
 	ModuleCommentEId = 596;
 	ToolActiveEId = 597;
+	LoopModeEId = 598;
+	RotationNumberEId = 599;
+	MeasurementValueEId = 600;
 
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
