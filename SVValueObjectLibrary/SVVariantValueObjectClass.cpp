@@ -314,7 +314,7 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 		{
 			if ( bScript )
 			{
-				Result = SvUl::Format( _T("%d, "), vt.vt );
+				Result = std::format( _T("{:d}, "), vt.vt );
 				Result += _T("0");
 			}
 			break;
@@ -326,7 +326,7 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 			{
 				std::string Temp = SvUl::createStdString( rValue.bstrVal );
 				SvUl::AddEscapeSpecialCharacters( Temp, true );
-				Result = SvUl::Format(_T("%d, \"%s\""), vt.vt, Temp.c_str());
+				Result = std::format(_T("{:d}, \"{}\""), vt.vt, Temp);
 			}
 			else
 			{
@@ -341,7 +341,7 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 			{
 				if( bScript)
 				{
-					Result = SvUl::Format(_T("%d, 0"), VT_EMPTY);
+					Result = "0, 0";
 				}
 			}
 			else
@@ -352,7 +352,7 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 				{
 					if( bScript)
 					{
-						Result = SvUl::Format(_T("%d, "), l_OldType);
+						Result = std::format(_T("{:d}, "), l_OldType);
 					}
 
 					Result += SvUl::createStdString( rValue.bstrVal );
@@ -365,7 +365,7 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 				{
 					if( bScript)
 					{
-						Result = SvUl::Format(_T("%d, 0"), VT_EMPTY);
+						Result = "0, 0";
 					}
 				}
 			}

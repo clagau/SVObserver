@@ -130,7 +130,7 @@ void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 		SVPoint<long> PointValue;
 		//Make sure this is not a derived virtual method which is called
 		SVPointValueObjectClass::GetValue(PointValue, i);
-		TempValue = SvUl::Format(_T("%d, %d"), PointValue.m_x, PointValue.m_y);
+		TempValue = std::format(_T("{:d}, {:d}"), PointValue.m_x, PointValue.m_y);
 		Value.SetString(TempValue.c_str());
 		list.push_back(Value);
 		Value.Clear();
@@ -141,7 +141,7 @@ void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 void SVPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	std::string TempValue;
-	TempValue = SvUl::Format(_T("%d, %d"), GetDefaultValue().m_x, GetDefaultValue().m_y);
+	TempValue = std::format(_T("{:d}, {:d}"), GetDefaultValue().m_x, GetDefaultValue().m_y);
 	_variant_t Value;
 	Value.SetString(TempValue.c_str());
 	rWriter.WriteAttribute(scDefaultTag, Value);

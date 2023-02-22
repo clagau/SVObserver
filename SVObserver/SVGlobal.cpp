@@ -90,7 +90,7 @@ BOOL SVGetVersionString( std::string& rCurrentVersion, DWORD dwVersion )
 		Beta = std::format( _T( " Beta {:d}" ), subVersion );
 	}
 
-	rCurrentVersion = std::vformat(_T("Version {}.{:2.2d}{}"), std::make_format_args((int)LOBYTE(HIWORD(dwVersion)), (int)HIBYTE(LOWORD(dwVersion)), Beta.c_str()));
+	rCurrentVersion = std::format(_T("Version {}.{:02d}{}"), (int)LOBYTE(HIWORD(dwVersion)), (int)HIBYTE(LOWORD(dwVersion)), Beta.c_str());
 
 #ifdef _DEBUG
 	rCurrentVersion += _T("d");        // For debug builds.

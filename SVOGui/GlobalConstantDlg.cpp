@@ -102,7 +102,7 @@ namespace SvOg
 		{
 		case VT_R8:
 			{
-				m_Value = std::format( _T("{:.06}"), m_rData.m_Value.dblVal ).c_str();
+				m_Value = std::format( _T("{:.06f}"), m_rData.m_Value.dblVal ).c_str();
 				if( SvUl::GlobalConstantData::DecimalType < m_Type.GetCount() )
 				{
 					m_Type.SetCurSel( SvUl::GlobalConstantData::DecimalType );

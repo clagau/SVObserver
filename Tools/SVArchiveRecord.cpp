@@ -59,11 +59,11 @@ void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectRef
 			{
 				if (rObject.getObject()->GetObjectSubType() == SvPb::SVTimerValueObjectType)
 				{
-					m_formatString = _T("%I64d");
+					m_formatString = _T("{:d}");
 				}
 				else
 				{
-					m_formatString = _T("");
+					m_formatString = _T("{}");
 				}
 			}
 		}

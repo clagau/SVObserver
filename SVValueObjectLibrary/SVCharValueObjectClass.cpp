@@ -126,7 +126,7 @@ void SVCharValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) co
 
 void SVCharValueObjectClass::setStandardFormatString()
 {
-	setOutputFormat(_T("%c"));
+	setOutputFormat(_T("{:c}"));
 }
 
 void SVCharValueObjectClass::LocalInitialize()

@@ -173,7 +173,7 @@ void printMessage(CifxMessage messageID, int32_t result = 0, LPCTSTR pText = nul
 	}
 	else
 	{
-		std::cout << std::vformat(cMissingMessageID, std::make_format_args(static_cast<int>(messageID)));
+		std::cout << std::format(cMissingMessageID, static_cast<int>(messageID));
 	}
 }
 

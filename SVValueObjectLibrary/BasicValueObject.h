@@ -67,7 +67,7 @@ public:
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>& ) const override { return E_NOTIMPL; }
 	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
-	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")/*currently always ignored*/) const override;
+	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("{}")/*currently always ignored*/) const override;
 	virtual void setResetOptions( bool , SvOi::SVResetItemEnum  ) override {};
 	virtual void validateValue( const _variant_t&, const _variant_t&) const override {};
 	virtual bool isArray() const override { return false; };

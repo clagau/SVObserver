@@ -191,7 +191,7 @@ HRESULT SVValueObjectClass<T>::SetValue(const T& rValue, int Index)
 	}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
-	std::string DebugString = SvUl::Format(_T("SetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index);
+	std::string DebugString = std::format(_T("SetValue, {}, {}, {}\r\n"), GetName(), ConvertType2String(rValue), Index);
 	::OutputDebugString(DebugString.c_str());
 #endif
 	return Result;
@@ -227,7 +227,7 @@ HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index) const
 		rValue = m_DefaultValue;
 	}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
-	std::string DebugString = SvUl::Format(_T("GetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index);
+	std::string DebugString = std::format(_T("GetValue, {}, {}, {}\r\n"), GetName(), ConvertType2String(rValue), Index);
 	::OutputDebugString(DebugString.c_str());
 #endif
 	return Result;
@@ -603,7 +603,7 @@ HRESULT SVValueObjectClass<T>::getValue(std::string& rValueString, int Index /*=
 		Result = GetValue(Value, Index);
 		if (S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result)
 		{
-			rValueString = (rFormatString.size() > 0) ? FormatOutput(Value, rFormatString): ConvertType2String(Value);
+			rValueString = (rFormatString != "{}") ? FormatOutput(Value, rFormatString) : ConvertType2String(Value);
 		}
 	}
 	return Result;
@@ -787,28 +787,28 @@ template <typename T>
 std::string SVValueObjectClass<T>::FormatOutput(const T& rValue, const std::string& rFormatString) const
 {
 	std::string Result;
-	if (!rFormatString.empty())
+	if (rFormatString != "{}")
 	{
 		if constexpr (true == std::is_same<T, std::string>::value)
 		{
-			Result = SvUl::Format(rFormatString.c_str(), rValue.c_str());
+			Result = std::vformat(rFormatString, std::make_format_args(rValue));
 		}
 		else if constexpr(true == std::is_arithmetic<T>::value)
 		{
-			Result = SvUl::Format(rFormatString.c_str(), rValue);
+			Result = std::vformat(rFormatString, std::make_format_args(rValue));
 		}
 	}
 	else
 	{
-		if (!m_OutFormat.empty())
+		if (m_OutFormat.empty() == false)
 		{
 			if constexpr (true == std::is_same<T, std::string>::value)
 			{
-				Result = SvUl::Format(m_OutFormat.c_str(), rValue.c_str());
+				Result = std::vformat(m_OutFormat, std::make_format_args(rValue));
 			}
 			else if constexpr (true == std::is_arithmetic<T>::value)
 			{
-				Result = SvUl::Format(m_OutFormat.c_str(), rValue);
+				Result = std::vformat(m_OutFormat, std::make_format_args(rValue));
 			}
 		}
 	}

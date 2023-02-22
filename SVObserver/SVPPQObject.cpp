@@ -172,7 +172,7 @@ HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectName
 HRESULT SVPPQObject::ObserverUpdate(const SVInspectionInfoPair& rData)
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-	::OutputDebugString(std::format(_T("{} Inspection {} completed TRI={:d} State={:x}\n"), GetName(), rData.second.m_pInspection->GetName(), rData.first, rData.second.m_InspectedState).c_str());
+	::OutputDebugString(std::format(_T("{} Inspection {} completed TRI={:d} State={:x}\n"), GetName(), rData.second.m_pInspection->GetName(), rData.first, static_cast<int> (rData.second.m_InspectedState)).c_str());
 #endif
 	m_lastPPQPosition = m_PPQPositions.GetIndexByTriggerCount(rData.first);
 
@@ -1969,7 +1969,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 		SV_LOG_GLOBAL(trace) << "Product Incomplete: " << GetName() << " : " << rProduct.triggerCount() << " : " << m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
-		::OutputDebugString(std::format(_T("{} Product incomplete TRI={:d}, PPQPos={:D}\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
+		::OutputDebugString(std::format(_T("{} Product incomplete TRI={:d}, PPQPos={:d}\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
 #endif
 		if (isNak)
 		{

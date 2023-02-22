@@ -184,18 +184,18 @@ namespace SvVol
 			case VT_I4:
 			case VT_I8:
 			{
-				rValueString = SvUl::Format(_T("%lld"), static_cast<long long> (m_Value));
+				rValueString = std::format(_T("{:d}"), static_cast<long long> (m_Value));
 			}
 			case VT_UI4:
 			case VT_UI8:
 			{
-				rValueString = SvUl::Format(_T("%llu"), static_cast<unsigned long long> (m_Value));
+				rValueString = std::format(_T("{}"), static_cast<unsigned long long> (m_Value));
 			}
 			break;
 			case VT_R4:
 			case VT_R8:
 			{
-				rValueString = SvUl::Format(_T("%f"), static_cast<double> (m_Value));
+				rValueString = std::format(_T("{:f}"), static_cast<double> (m_Value));
 			}
 			break;
 			default:

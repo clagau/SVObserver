@@ -89,10 +89,10 @@ HRESULT SVByteValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
 	switch (outputFormat)
 	{
 	case OutputFormat_int:
-		setOutputFormat( _T("%d") );
+		setOutputFormat( _T("{}") );
 		break;
 	case OutputFormat_hex:
-		setOutputFormat( _T("0x%2.2x") );
+		setOutputFormat( _T("{:#04x}") );
 		break;
 	default:
 		Result = E_INVALIDARG;

@@ -5076,7 +5076,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_CHANGE_DLL_EXTERNAL_TOOL 
-                            "Warning: Some of %s outputs are being used by other objects in the system.\r\nIt is advisable to edit the dependent objects before changing the %s.\r\nTo change the %s, select OK.\r\nTo cancel %s, select Cancel."
+                            "Warning: Some of {} outputs are being used by other objects in the system.\r\nIt is advisable to edit the dependent objects before changing the {}.\r\nTo change the {}, select OK.\r\nTo cancel {}, select Cancel."
     IDS_OBJECTNAME_ROTATION_ANGLE "Rotation Angle Extent"
     IDS_OBJECTNAME_ROTATION_POINT_X "Rotation Point X"
     IDS_OBJECTNAME_ROTATION_POINT_Y "Rotation Point Y"
@@ -6019,7 +6019,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_DELETE_CHECK_DEPENDENCIES 
-                            "Warning: Some of %s outputs are being used by other objects in the system.\r\nIt is advisable to edit the dependent objects before deleting %s.\r\nTo continue deleting %s, select OK.\r\nTo abort deleting %s, select Cancel."
+                            "Warning: Some of {} outputs are being used by other objects in the system.\r\nIt is advisable to edit the dependent objects before deleting {}.\r\nTo continue deleting {}, select OK.\r\nTo abort deleting {}, select Cancel."
 END
 
 STRINGTABLE

@@ -96,7 +96,7 @@ public:
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>& rValues) const override;
 	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
-	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")) const override;
+	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("{}")) const override;
 	virtual void setResetOptions(bool p_bResetAlways, SvOi::SVResetItemEnum p_eResetItem) override;
 	virtual void validateValue(const _variant_t& rValue, const _variant_t& rDefaultValue) const override;
 	virtual std::string getTypeName() const override { return m_TypeName; };
@@ -175,7 +175,7 @@ protected:
 	ValueType* valuePtr() { return m_pValue; }
 	const ValueType* valuePtr() const { return m_pValue; }
 
-	std::string FormatOutput(const T& rValue, const std::string& rFormatString = _T("")) const;
+	std::string FormatOutput(const T& rValue, const std::string& rFormatString = _T("{}")) const;
 	void setOutputFormat(LPCTSTR OutFormat) { m_OutFormat = OutFormat; };
 	LPCTSTR getOutputFormat() const { return m_OutFormat.c_str(); };
 	bool isLegacyVectorObjectCompatibility() const { return m_LegacyVectorObjectCompatibility; };
@@ -217,7 +217,7 @@ private:
 	bool m_shouldSaveDefaultValue {false};	//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.
 	bool m_ResetAlways {false};
 	bool m_LegacyVectorObjectCompatibility {false};
-	std::string m_OutFormat;				//This is used to format the value object to a string
+	std::string m_OutFormat {"{}"};				//This is used to format the value object to a string
 	bool m_externallySettableFlag {false};
 
 	SvOi::SVResetItemEnum m_eResetItem {SvOi::SVResetItemIP};

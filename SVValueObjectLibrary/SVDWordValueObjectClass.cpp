@@ -67,10 +67,10 @@ HRESULT SVDWordValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
 	switch (outputFormat)
 	{
 	case OutputFormat_int:
-		setOutputFormat( _T("%d") );
+		setOutputFormat( _T("{}") );
 		break;
 	case OutputFormat_hex:
-		setOutputFormat( _T("0x%8.8x") );
+		setOutputFormat( _T("{:#010x}") );
 		break;
 	default:
 		Result = E_INVALIDARG;

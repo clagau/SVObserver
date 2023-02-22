@@ -58,7 +58,7 @@ bool SVTimerValueObjectClass::Stop()
 
 void SVTimerValueObjectClass::setStandardFormatString()
 {
-	setOutputFormat(_T("%I64d (µs)"));
+	setOutputFormat(_T("{} (µs)"));
 }
 
 

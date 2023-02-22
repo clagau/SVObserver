@@ -91,7 +91,7 @@ namespace SvOi
 		//! \param Index [in] The corresponding array index to write to, if required
 		//! \param rFormatString [in] the formatString be used
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")) const = 0;
+		virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("{}")) const = 0;
 
 		//! Set the reset options for the value object
 		//! \param bResetAlways [in] 

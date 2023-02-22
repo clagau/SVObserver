@@ -100,7 +100,7 @@ HRESULT SVDoubleValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
 	{
 		//This displays a double as an integer
 		case OutputFormat_int:
-			setOutputFormat(_T("%.0lf"));
+			setOutputFormat(_T("{:.0f}"));
 			break;
 		default:
 			Result = E_INVALIDARG;
@@ -112,13 +112,13 @@ HRESULT SVDoubleValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
 
 void SVDoubleValueObjectClass::setStandardFormatString()
 {
-	setOutputFormat(_T("%lf"));
+	setOutputFormat(_T("{:.6f}"));
 }
 
 std::string SVDoubleValueObjectClass::getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
 {
 	std::ostringstream formatStream;
-	formatStream << "%" << totalWidth << "." << decimals << "lf";
+	formatStream << "{:" << totalWidth << "." << decimals << "f}";
 	return formatStream.str();
 }
 
