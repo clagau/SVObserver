@@ -11,26 +11,35 @@
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/bind/bind.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #pragma endregion Includes
 
 using namespace boost::interprocess;
 
 SharedMemory::SharedMemory()
-	: mLockState(LockState::Unlocked)
+	: mLockState{.acquired=false, .owner=LockOwner::SVOGateway, .username="", .host=""}
 	, mMutex()
 {
 }
 
-SharedMemoryLock::SharedMemoryLock(const std::string& name)
-	: mMemoryName(name)
+SharedMemoryLock::SharedMemoryLock(
+	boost::asio::io_service& ioService,
+	boost::asio::deadline_timer::duration_type expiryTime,
+	const lock_state_changed_callback_t& onLockStateChangedCb,
+	const std::string& name)
+	: mIoService(ioService)
+	, mOnLockStateChangedCb(onLockStateChangedCb)
+	, mMemoryName(name)
 	, mSharedMemoryHandlerPtr(nullptr)
 	, mMappedRegionPtr(nullptr)
 	, mSharedMemory(nullptr)
-	, mChanged(false)
+	, mLockStateCheckTimer(ioService)
 {
 	cleanSharedMemory(); // Clean potential garbage
 	createOrOpenSharedMemorySegment();
+	{
+		mLastLockState = GetLockState();
+	}
+	scheduleLockStateCheck(expiryTime);
 }
 
 void SharedMemoryLock::createOrOpenSharedMemorySegment()
@@ -72,7 +81,44 @@ void SharedMemoryLock::createOrOpenSharedMemorySegment()
 	}
 }
 
-bool SharedMemoryLock::Acquire(const LockState lockState, const std::string& username)
+void SharedMemoryLock::scheduleLockStateCheck(boost::asio::deadline_timer::duration_type expiryTime)
+{
+	mLockStateCheckTimer.expires_from_now(expiryTime);
+	auto waitFunctor = [this, expiryTime](const boost::system::error_code& rError) {
+		return onLockStateCheckTimerExpired(expiryTime, rError);
+	};
+	mLockStateCheckTimer.async_wait(waitFunctor);
+}
+
+void SharedMemoryLock::onLockStateCheckTimerExpired(
+	boost::asio::deadline_timer::duration_type expiryTime,
+	const boost::system::error_code& error)
+{
+	if (error)
+	{
+		SV_LOG_GLOBAL(error) << "Configuration lock state polling error: " << error.message();
+		return;
+	}
+
+	mSharedMemory->mMutex.lock();
+	auto currentLockState = mSharedMemory->mLockState;
+	mSharedMemory->mMutex.unlock();
+
+	if (mLastLockState.acquired != currentLockState.acquired ||
+		mLastLockState.owner != currentLockState.owner ||
+		mLastLockState.username != currentLockState.username ||
+		mLastLockState.host != currentLockState.host)
+	{
+		mLastLockState = currentLockState;
+		mIoService.dispatch([this]()
+		{
+			mOnLockStateChangedCb(mLastLockState);
+		});
+	}
+	scheduleLockStateCheck(expiryTime);
+}
+
+bool SharedMemoryLock::Acquire(LockOwner owner, const std::string& username, const std::string& host)
 {
 	if (mSharedMemory == nullptr)
 	{
@@ -80,60 +126,20 @@ bool SharedMemoryLock::Acquire(const LockState lockState, const std::string& use
 		return false;
 	}
 
-	if (lockState == LockState::Unlocked)
+	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+	if (!mSharedMemory->mLockState.acquired)
 	{
-		SV_LOG_GLOBAL(error) << "Acquire(): Acquiring lock using 'Unlocked' state is not allowed!";
-		return false;
+		mSharedMemory->mLockState.acquired = true;
+		mSharedMemory->mLockState.owner = owner;
+		mSharedMemory->mLockState.username = username;
+		mSharedMemory->mLockState.host = host;
+		return true;
 	}
 
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex, try_to_lock);
-	if (lock)
-	{
-		if (changeLockState(lockState))
-		{
-			mLockOwner = username;
-			mChanged = true;
-			return true;
-		}
-
-		return false;
-	}
-	else
-	{
-		SV_LOG_GLOBAL(debug) << "Interprocess mutex already locked by another process!";
-		return false;
-	}
+	return false;
 }
 
-bool SharedMemoryLock::changeLockState(const LockState lockState)
-{
-	const LockState currentLockState = getLockState();
-
-	if (currentLockState == LockState::LockedBySVOGateway)
-	{
-		SV_LOG_GLOBAL(info)
-			<< "Acquire(): Shared memory is already locked by RPC client connected to SVOGateway!";
-		return false;
-	}
-	else if (currentLockState == LockState::LockedBySVObserver)
-	{
-		if (lockState == LockState::LockedBySVObserver)
-		{
-			// In SVObserver we don't use RPC mechanism, so if lockState is the same
-			// as currentLockState then we treat it as true, because there is only one
-			// direct user of SVObserver
-			return true;
-		}
-
-		SV_LOG_GLOBAL(info) << "Acquire(): Shared memory is already locked by SVObserver!";
-		return false;
-	}
-
-	setLockState(lockState);
-	return true;
-}
-
-bool SharedMemoryLock::Takeover(const std::string& username)
+bool SharedMemoryLock::Takeover(LockOwner owner, const std::string& username, const std::string& host)
 {
 	if (mSharedMemory == nullptr)
 	{
@@ -142,18 +148,9 @@ bool SharedMemoryLock::Takeover(const std::string& username)
 	}
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	mLockOwner = username;
-	mChanged = true;
-	const LockState currentLockState = getLockState();
-
-	// This is a little hack because in SVObserver we're using IPC only,
-	// so it is difficult to notify SVObserver about changing lock state.
-	// The result will be in next call of Acquire() from SVObserver which 
-	// should return false
-	if (currentLockState == LockState::LockedBySVObserver)
-	{
-		setLockState(LockState::LockedBySVOGateway);
-	}
+	mSharedMemory->mLockState.owner = owner;
+	mSharedMemory->mLockState.username = username;
+	mSharedMemory->mLockState.host = host;
 
 	return true;
 }
@@ -167,22 +164,10 @@ void SharedMemoryLock::Release()
 	}
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	mSharedMemory->mLockState = LockState::Unlocked;
-	mLockOwner = "";
-	mChanged = true;
+	mSharedMemory->mLockState.acquired = false;
+	mSharedMemory->mLockState.username = "";
+	mSharedMemory->mLockState.host = "";
 	SV_LOG_GLOBAL(info) << "Release(): Shared memory lock released!";
-}
-
-bool SharedMemoryLock::ResetIfChanged()
-{
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	if (mChanged)
-	{
-		mChanged = false;
-		return true;
-	}
-
-	return mChanged;
 }
 
 void SharedMemoryLock::PushBackStream(const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
@@ -236,20 +221,10 @@ std::vector<std::shared_ptr<lock_acquisition_stream_t>>& SharedMemoryLock::GetSt
 	return mLockAcquisitionStreams;
 }
 
-std::string SharedMemoryLock::GetLockOwner() const
+LockState SharedMemoryLock::GetLockState() const
 {
-	return mLockOwner;
-}
-
-LockState SharedMemoryLock::getLockState() const
-{
+	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	return mSharedMemory->mLockState;
-}
-
-void SharedMemoryLock::setLockState(const LockState lockState)
-{
-	mSharedMemory->mLockState = lockState;
-	SV_LOG_GLOBAL(debug) << mMemoryName << " shared memory locked!";
 }
 
 void SharedMemoryLock::cleanSharedMemory()

@@ -148,11 +148,8 @@ private:
 	void check_trigger_record_pause_state_changed();
 	void on_trigger_record_pause_state_changed_impl(const std::vector<bool>&);
 	void send_trigger_record_pause_state_to_client(notification_stream_t&, const std::vector<bool>&);
-	void schedule_configuration_lock_status_update();
-	void on_configuration_lock_status_timer(const boost::system::error_code&);
-	void send_configuration_lock_status_if_changed();
-	void send_configuration_lock_status_update_to_clients();
-	void send_configuration_lock_status(notification_stream_t&, const std::shared_ptr<lock_acquisition_stream_t>&);
+	void send_configuration_lock_status(notification_stream_t&, const std::shared_ptr<lock_acquisition_stream_t>&, const LockState&);
+	void on_lock_state_changed(LockState);
 
 private:
 	struct message_stream_t
@@ -194,7 +191,6 @@ private:
 
 	SharedMemoryLock m_SharedMemoryLock;
 	boost::asio::deadline_timer m_DisconnectCheckTimer;
-	boost::asio::deadline_timer m_ConfigurationLockStatusTimer;
 
 	std::mutex m_NewTriggerMutex;
 	std::vector<SvOi::TrInterestEventData> m_NewTriggerQueue;
