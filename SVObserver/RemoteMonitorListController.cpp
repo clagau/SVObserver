@@ -164,7 +164,7 @@ void RemoteMonitorListController::ResetObject()
 }
 
 
-// must exist and must be published
+// must exist and from correct type
 bool RemoteMonitorListController::IsValidMonitoredObject(const SVObjectClass* pObject)
 {
 	bool bRetVal = false;

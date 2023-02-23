@@ -41,7 +41,6 @@ constexpr double		cDefaultPostTriggerTimeWindow = 1.8;
 constexpr COLORREF		cDefaultImageViewBackgroundColor = Ivory;
 
 // Default image settings...
-constexpr long			cDefaultSourceImageDepth = 15L;
 constexpr long			cDefaultCameraImageWidth = 640L;
 constexpr long			cDefaultCameraImageHeight = 480L;
 constexpr long			cDefaultImageViewWidth = cDefaultCameraImageWidth;

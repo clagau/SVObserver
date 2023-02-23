@@ -40,7 +40,7 @@ namespace  SvXml
 	constexpr const char* CTAG_INPUT                          = (_T("Input"));
 	constexpr const char* CTAG_ATTRIBUTE                      = (_T("Attribute"));
 	constexpr const char* CTAG_PPQ_LENGTH                     = (_T("PPQLength"));
-	constexpr const char* CTAG_PPQ_MAINTAIN_SRC_IMAGE         = (_T("PPQMaintainSrcImage"));
+	constexpr const char* CTAG_PPQ_MAINTAIN_SRC_IMAGE         = (_T("PPQMaintainSrcImage")); //obsolete
 	constexpr const char* CTAG_PPQ_INSPECTION_TIMEOUT         = (_T("PPQInspectionTimeout"));
 	constexpr const char* CTAG_PPQ_OUTPUT_RESET_DELAY_TIME    = (_T("PPQOutputResetDelayTime"));
 	constexpr const char* CTAG_PPQ_CONDITIONAL_OUTPUT         = (_T("PPQConditonalOutput"));

@@ -83,7 +83,6 @@ constexpr const char* INVALID_CAMERA          ( _T( "-Camera is invalid for curr
 constexpr const char* INVALID_TRIGGER         ( _T( "-Trigger is invalid for current product" ) );
 constexpr const char* INSPECTION_ERROR        ( _T( "-Inspection is not attached to a PPQ" ) );
 constexpr const char* TOOLSET_IMAGE_ERROR     ( _T( "-Inspection has no Toolset Image" ) );
-constexpr const char* PPQ_PROP_SRC_IMG_ERROR  ( _T( "- Property -'Maintain souce image' set to TRUE, PPQ length > ") );
 constexpr const char* PPQ_CONDITIONAL_OUTPUT_INVALID ( _T( "-Conditional Output for PPQ is not valid" ) );
 constexpr const char* MESSAGE_UNSUPPORTED_CAM_FILE ( _T("The camera file you have selected is not an SVResearch supported file.") );
 constexpr const char* MESSAGE_INCORRECT_CAM_FILE   ( _T("The selected camera file does not match the physical camera.") );
@@ -1673,7 +1672,6 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 			if( nullptr != pTriggerObj )
 			{
 				std::string TriggerDisplayName{ pTriggerObj->GetTriggerDisplayName() };
-				std::string DeviceName{ SVHardwareManifest::BuildTriggerDeviceName(m_lConfigurationType, pTriggerObj->GetTriggerDigNumber(), pTriggerObj->getTriggerType()) };
 
 				pTrigger = nullptr;
 				lCfgTrgCnt = pConfig->GetTriggerCount();
@@ -1708,6 +1706,7 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 
 				if ( nullptr != pTrigger )
 				{
+					std::string DeviceName {SVHardwareManifest::BuildTriggerDeviceName(m_lConfigurationType, pTriggerObj->GetTriggerDigNumber(), pTriggerObj->getTriggerType())};
 					SvTrig::SVTriggerClass* pMainTriggerDevice{ SvTrig::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str()) };
 					if (nullptr != pMainTriggerDevice)
 					{
@@ -2046,14 +2045,11 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 
 			if ( nullptr != pPPQ )
 			{
-				std::string PPQCameraName;
-
 				pPPQ->SetPPQOutputMode((SvDef::SVPPQOutputModeEnum)pPPQObj->GetPPQMode());
 
 				pPPQ->SetPPQLength(pPPQObj->GetPPQLength());
 				pPPQ->SetResetDelay(pPPQObj->GetPPQOutputResetDelay());
 				pPPQ->SetOutputDelay(pPPQObj->GetPPQOutputDelayTime());
-				pPPQ->SetMaintainSourceImages( pPPQObj->GetMaintainSourceImageProperty() );
 				pPPQ->setMaxProcessingOffset4Interest(pPPQObj->GetMaxProcessingOffsetProperty());
 				pPPQ->SetInspectionTimeout( pPPQObj->GetInspectionTimeout() );
 				pPPQ->SetConditionalOutputName( pPPQObj->GetConditionalOutputName() );
@@ -2065,7 +2061,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 				{
 					long lPosition = 0;
 
-					PPQCameraName = pPPQObj->GetAttachedCamera(j);
+					std::string PPQCameraName = pPPQObj->GetAttachedCamera(j);
 
 					SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
@@ -2613,7 +2609,6 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 				pPPQObj->SetPPQMode( static_cast<int> (pcfgPPQ->getPPQOutputMode()));
 				pPPQObj->SetPPQOutputDelayTime(pcfgPPQ->getOutputDelay());
 				pPPQObj->SetPPQOutputResetDelay(pcfgPPQ->getResetDelay());
-				pPPQObj->SetMaintainSourceImageProperty(pcfgPPQ->getMaintainSourceImages());
 				pPPQObj->SetMaxProcessingOffsetProperty(pcfgPPQ->getMaxProcessingOffset4Interest());
 				pPPQObj->SetInspectionTimeout(pcfgPPQ->getInspectionTimeout());
 				pPPQObj->SetConditionalOutputName(pcfgPPQ->GetConditionalOutputName());
@@ -3016,65 +3011,9 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 				}
 				case ITEM_ACTION_PROP:
 				{
-					// check to see if property is valid...
-					//if good remove message from list (if it is there)
-					//if bad add message to list, if not already there
-					//set errors
-					pPPQObj = GetPPQObjectByName(LabelName);
-					if ( pPPQObj )
-					{
-						CheckTriggers();
-						long l_lPpqLength = pPPQObj->GetPPQLength();
-						long l_lImageDepth = TheSVObserverApp().GetMaxPPQLength();
-						if ( pPPQObj->GetMaintainSourceImageProperty() )
-						{
-							if ( l_lPpqLength <= l_lImageDepth )
-							{
-								// remove error message if exist
-								std::string Msg = std::format( _T("{}{:d}"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
-								//create error display message
-								RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
-							}
-							else
-							{
-								// add error message if it does not exist
-								std::string Msg = std::format( _T("{}{:d}"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
-								//create error display message
-								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
-							}
-						}
-					}
+					CheckTriggers();
 					break;
 				}
-				case ITEM_PPQ_PROP_SRC_IMG:
-				{
-					//special property case for the PPQ's
-					pPPQObj = GetPPQObjectByName(LabelName);
-					if ( pPPQObj )
-					{
-						if ( pPPQObj->GetMaintainSourceImageProperty() )
-						{
-							long l_lPpqLength = pPPQObj->GetPPQLength();
-							long l_lImageDepth = TheSVObserverApp().GetMaxPPQLength();
-							if ( l_lPpqLength > l_lImageDepth )
-							{
-								std::string Msg = std::format( _T("{}{:d}"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
-								//create error display message
-								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
-							}
-						}
-						else
-						{
-							// see if error conditions exist, if so remove it
-							// maintain source image = false
-							long l_lImageDepth = TheSVObserverApp().GetMaxPPQLength();
-							std::string Msg = std::format( _T("{}{:d}"),PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
-							//create error display message
-							RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
-						}
-					}// end if ( pPpq )
-					break;
-				}// end case ITEM_PPQ_PROP_SRC_IMG:
 
 				default:
 				{

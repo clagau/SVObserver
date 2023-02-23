@@ -213,7 +213,6 @@ private:
 	LPCTSTR m_LastValidConfigPNVariableName;
 	std::string m_LastValidConfigPNVariableValue;
 
-	long m_lSouceImageDepth;
 	long m_LogDataManager;
 
 	SVMessageWindow* m_pMessageWindow;

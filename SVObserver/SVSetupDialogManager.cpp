@@ -139,7 +139,6 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(uint32_t inspection
 
 
 				// Rebuild results list/view
-				// what about published results list ?
 				pIPDoc->UpdateAllViews(nullptr);
 			}
 			else

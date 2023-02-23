@@ -354,11 +354,6 @@ void SVPPQObject::SetPPQLength(long lPPQLength)
 	}
 }
 
-void SVPPQObject::SetMaintainSourceImages(bool bMaintainImages)
-{
-	m_maintainSourceImages = bMaintainImages;
-}
-
 void SVPPQObject::SetInspectionTimeout(long lTimeoutMillisec)
 {
 	m_inspectionTimeoutMillisec = lTimeoutMillisec;
@@ -1934,13 +1929,11 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		}
 	}
 
-	if (false == getMaintainSourceImages())
+	for (auto& rValue : rProduct.m_svCameraInfos)
 	{
-		for (auto& rValue : rProduct.m_svCameraInfos)
-		{
-			rValue.second.ClearInfo(true);
-		}
+		rValue.second.ClearInfo(true);
 	}
+
 	return l_Status;
 }
 

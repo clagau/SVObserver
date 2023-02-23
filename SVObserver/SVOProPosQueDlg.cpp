@@ -289,7 +289,6 @@ void SVOProPosQueDlg::OnBtnNewPpq()
 
 void SVOProPosQueDlg::OnBtnPropPpq() 
 {
-    bool l_bSrcImgProp;
     int iCurSel = m_ctlPPQList.GetCurSel();
     if ( iCurSel != LB_ERR )
     {
@@ -298,7 +297,6 @@ void SVOProPosQueDlg::OnBtnPropPpq()
         SVOPPQObjPtr pPPQObj = m_pParent->GetPPQObjectByName(PPQName);
 		if( nullptr != pPPQObj )
 		{
-			l_bSrcImgProp = pPPQObj->GetMaintainSourceImageProperty();
 			SVOPropertyPageDlg oDlg;
 			SVOPPQObj& rTmpObj( oDlg.getPPQObject() );
 
@@ -309,12 +307,6 @@ void SVOProPosQueDlg::OnBtnPropPpq()
 			{
 				*pPPQObj = rTmpObj;
 				m_pParent->SetModified(TRUE);
-				// check to see if MaintainSrcImg property is different
-				if ( l_bSrcImgProp != pPPQObj->GetMaintainSourceImageProperty() )
-				{
-					// property value changed 
-					m_pParent->ItemChanged( PPQ_DLG, PPQName, ITEM_PPQ_PROP_SRC_IMG );
-				}
 				//send down general message that properties have changed
 				m_pParent->ItemChanged( PPQ_DLG, PPQName, ITEM_ACTION_PROP );
 	        }

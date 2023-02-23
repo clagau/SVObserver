@@ -309,15 +309,6 @@ BOOL SVObserverApp::InitInstance()
 
 	ValidateMRUList();
 
-	// Get SourceImageDepth
-	m_lSouceImageDepth = GetProfileInt(_T("Settings"), _T("Source Image Depth"), -1);
-	if (m_lSouceImageDepth == -1)
-	{
-		WriteProfileInt(_T("Settings"), _T("Source Image Depth"), SvDef::cDefaultSourceImageDepth);
-
-		m_lSouceImageDepth = SvDef::cDefaultSourceImageDepth;
-	}
-
 	// Get LogDataManager
 	m_LogDataManager = UpdateAndGetLogDataManager();
 
@@ -1240,13 +1231,6 @@ void SVObserverApp::UpdateAllMenuExtrasUtilities()
 		}
 		pMdiChild = dynamic_cast<CMDIChildWnd*>(pMdiChild->GetWindow(GW_HWNDNEXT));
 	}
-}
-
-// Returns sourceImageDepth for the PPQ Length
-// This is not the real sourceImageDepth.
-long SVObserverApp::GetMaxPPQLength() const
-{
-	return m_lSouceImageDepth;
 }
 
 long SVObserverApp::GetLogDataManager() const

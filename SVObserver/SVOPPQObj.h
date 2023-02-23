@@ -50,7 +50,6 @@ public:
 	void SetPPQLength(long lLength);
 	void SetPPQOutputResetDelay(long lResetDelay);
 	void SetPPQOutputDelayTime(long lDelayTime);
-	void SetMaintainSourceImageProperty(bool bValue);
 	void SetMaxProcessingOffsetProperty(int value);
 	void SetInspectionTimeout( long lTimeoutMillisec );
 
@@ -58,7 +57,6 @@ public:
 	long GetPPQLength() const;
 	long GetPPQOutputResetDelay() const;
 	long GetPPQOutputDelayTime() const;
-	bool GetMaintainSourceImageProperty() const;
 	int GetMaxProcessingOffsetProperty() const;
 	long GetInspectionTimeout() const;
 
@@ -85,7 +83,6 @@ private:
 	long m_lPPQLength {2};
 	long m_lPPQOutputResetDelay {0};
 	long m_lPPQOutputDelayTime {100};
-	bool m_bMaintainSrcImg {false};
 	int m_MaxProcessingOffset {0};
 	long m_lInspectionTimeout {0};
 	std::string m_conditionalOutputName {SvDef::cPpqConditionalOutputAlways};

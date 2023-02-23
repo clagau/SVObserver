@@ -1345,11 +1345,6 @@ void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 		}
 	}
 	PCmdUI->SetText(remoteInputsExist ? "Edit Remote Inputs" : "Add Remote Inputs");
-
-	//@HACK
-	// This code to add menu items for the Published Results does not belong here
-	// but we need a message when the edit menu is selected.  So this works until we can find a
-	// message for the Edit popup UpdateUI or similar.
 }
 
 void SVMainFrame::OnUpdateEditAddRemoteOutputs(CCmdUI* pCmdUI)

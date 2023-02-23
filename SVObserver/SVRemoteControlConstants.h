@@ -149,16 +149,6 @@ namespace SVRC
 		const std::string status = "Status";
 	}
 
-	//Data Definition List Object
-	namespace ddlo
-	{
-		const std::string name = "Name";
-		const std::string writable = "Writable";
-		const std::string published = "Published";
-		const std::string type = "Type";
-		const std::string add_info = "AdditionalInfo";
-	}
-
 	namespace stream
 	{
 		const std::string streamName = "StreamName";

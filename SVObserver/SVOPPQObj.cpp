@@ -188,19 +188,9 @@ long SVOPPQObj::GetPPQOutputDelayTime() const
 	return m_lPPQOutputDelayTime;
 }
 
-void SVOPPQObj::SetMaintainSourceImageProperty(bool bValue)
-{
-	m_bMaintainSrcImg = bValue;
-}
-
 void SVOPPQObj::SetMaxProcessingOffsetProperty(int value)
 {
 	m_MaxProcessingOffset = value;
-}
-
-bool SVOPPQObj::GetMaintainSourceImageProperty() const
-{
-	return m_bMaintainSrcImg;
 }
 
 int SVOPPQObj::GetMaxProcessingOffsetProperty() const

@@ -115,7 +115,6 @@ public:
 	void SetOutputDelay( long lDelayTime );
 	void SetResetDelay( long lResetTime );
 	void SetPPQLength( long lPPQLength );
-	void SetMaintainSourceImages( bool bMaintainImages );
 	void setMaxProcessingOffset4Interest(int maxProcessingOffset4Interest) { m_maxProcessingOffset4Interest = maxProcessingOffset4Interest; };
 	void SetInspectionTimeout( long lTimeoutMillisec );
 	void SetConditionalOutputName( const std::string& conditionName );
@@ -124,7 +123,6 @@ public:
 	long getOutputDelay() const { return m_outputDelay; }
 	long getResetDelay() const { return m_resetDelay; }
 	long getPPQLength() const;
-	bool getMaintainSourceImages() const { return m_maintainSourceImages; }
 	int getMaxProcessingOffset4Interest() const { return m_maxProcessingOffset4Interest; }
 	long getInspectionTimeout() const { return m_inspectionTimeoutMillisec; }
 	const std::string& GetConditionalOutputName() const;
@@ -390,7 +388,6 @@ private:
 	long m_outputDelay {cStandardOutputDelay};
 	long m_resetDelay {0};
 	long m_DataValidDelay;
-	bool m_maintainSourceImages {false};
 	long m_inspectionTimeoutMillisec {0};
 	bool m_bOnline {false};
 

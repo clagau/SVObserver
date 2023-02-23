@@ -986,21 +986,6 @@ void SVOPropertyPageDlg::SetupPPQ()
 			/*bool bResult = */pEdit->SetItemValue(m_PPQObj.GetPPQOutputResetDelay());
 		}
 		
-		//add new property for "Maintain Source Image"  default to FALSE;
-		// will be a new CreateComboBoxBool
-		pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
-		if ( pCombo )
-		{
-			std::string InfoString = std::format( _T("Enabling this option will maintain source images and published result images "
-				"throughout the length of the PPQ. Because of this, "
-				"the PPQ Length can not be > {:d}"),TheSVObserverApp().GetMaxPPQLength());
-			pCombo->SetCtrlID(PROP_PPQ_MAINTAIN_SRC_IMG);
-			pCombo->SetLabelText(_T("Maintain Published Images"));
-			pCombo->SetInfoText( InfoString.c_str() );
-			pCombo->CreateComboBoxBool();
-			pCombo->SetItemValue(m_PPQObj.GetMaintainSourceImageProperty());
-		}
-
 		pEdit = dynamic_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
 		if (nullptr != pEdit)
 		{
@@ -1705,14 +1690,6 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					}
 					m_PPQObj.SetPPQOutputDelayTime(iTime);
 					PPQHideItems();
-					break;
-				}
-
-				case PROP_PPQ_MAINTAIN_SRC_IMG:
-				{
-					long iVal;
-					m_Tree.FindItem(PROP_PPQ_MAINTAIN_SRC_IMG)->GetItemValue(iVal);
-					m_PPQObj.SetMaintainSourceImageProperty( iVal != 0 );
 					break;
 				}
 
