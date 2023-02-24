@@ -52,6 +52,7 @@ namespace SvOsl
 		The method updates the tree control 
 		***********/
 		virtual void updateTree() override;
+
 	#pragma endregion Public Methods
 
 	protected:
