@@ -2047,6 +2047,7 @@
 #define IDC_DLL_STATUS                  15765
 #define IDC_IMPORT                      15765
 #define IDC_INPUT_LIST                  15766
+#define IDC_RENAME                      15767
 #define IDC_RESULT_LIST                 15768
 #define IDC_CANCEL                      15769
 #define IDC_WARN_ON_FAIL_CHECK          15770

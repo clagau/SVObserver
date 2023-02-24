@@ -211,7 +211,8 @@ HRESULT RebuildOutputObjectListHelper(SVIODoc* pIODoc);
 
 #pragma endregion Declarations
 
-#pragma region local methods
+namespace
+{
 uint32_t getObjectAfterThis(uint32_t toolId)
 {
 	auto* pTool {SVObjectManagerClass::Instance().GetObject(toolId)};
@@ -272,7 +273,47 @@ std::unique_ptr<SVToolAdjustmentDialogSheetClass> GetToolAdjustmentSheet(SVIPDoc
 	return std::make_unique <SVToolAdjustmentDialogSheetClass>(pSVIPDoc, pSVIPDoc->GetInspectionID(), taskObjectID, _T("Tool Adjustment"), nullptr, tab);
 }
 
-#pragma endregion local methods
+void convertGroupToModuleTool(uint32_t inspectionId, uint32_t toolId, const std::string& moduleName)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_convertgrouptomoduletoolrequest();
+	pRequest->set_modulename(moduleName);
+	pRequest->set_grouptoolid(toolId);
+	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+	if (S_OK != hr)
+	{
+		if (0 < responseCmd.errormessage().messages_size())
+		{
+			throw SvPb::convertProtobufToMessage(responseCmd.errormessage().messages(0));
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+	}
+}
+
+void convertModuleToGroupTool(uint32_t inspectionId, uint32_t moduleId)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_convertmoduletogrouptoolrequest();
+	pRequest->set_moduletoolid(moduleId);
+	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+	if (S_OK != hr)
+	{
+		if (0 < responseCmd.errormessage().messages_size())
+		{
+			throw SvPb::convertProtobufToMessage(responseCmd.errormessage().messages(0));
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+	}
+}
+}
 
 #pragma region Constructor
 SVIPDoc::SVIPDoc()
@@ -1622,12 +1663,8 @@ void SVIPDoc::OnConvertToModul()
 		return;
 	}
 
-	SVConfigurationObject* pConfig = nullptr;
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	assert(nullptr != pConfig);
-
 	ToolSetView* pToolsetView = GetToolSetView();
-	if (nullptr != pConfig && nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
+	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
 		auto toolIDs = pToolsetView->GetAllSelectedToolIds();
 		if (1 == toolIDs.size() && SvDef::InvalidObjectId != toolIDs[0])
@@ -1638,12 +1675,12 @@ void SVIPDoc::OnConvertToModul()
 				switch (pObject->GetClassID())
 				{
 					case SvPb::GroupToolClassId:
-						convertGroupToolToModule(*pConfig, *pToolsetView, toolIDs[0]);
+						convertGroupToolToModule(*pToolsetView, toolIDs[0]);
 						break;
 					case SvPb::ModuleToolClassId:
 						try
 						{
-							pConfig->getModuleController().convertModuleInstance(toolIDs[0]);
+							convertModuleToGroupTool(m_InspectionID, toolIDs[0]);
 						}
 						catch (const SvStl::MessageContainer& rExp)
 						{
@@ -3052,6 +3089,10 @@ void SVIPDoc::fixModuleMenuItems()
 {
 	CMenu* pMenu;
 	CWnd* pWindow = AfxGetMainWnd();
+	if (nullptr == pWindow)
+	{
+		return;
+	}
 	pMenu = pWindow->GetMenu();
 
 	SVConfigurationObject* pConfig = nullptr;
@@ -4023,7 +4064,7 @@ bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType, uint32_t 
 	return Result;
 }
 
-void SVIPDoc::convertGroupToolToModule(SVConfigurationObject& rConfig, ToolSetView& rToolsetView, uint32_t toolID)
+void SVIPDoc::convertGroupToolToModule(ToolSetView& rToolsetView, uint32_t toolID)
 {
 	int preCount = 1;
 	std::string name;
@@ -4032,7 +4073,7 @@ void SVIPDoc::convertGroupToolToModule(SVConfigurationObject& rConfig, ToolSetVi
 		name = "Module" + std::to_string(preCount++);
 		try
 		{
-			rConfig.getModuleController().checkIfNameValid(name);
+			SvCmd::checkNewModuleName(name);
 		}
 		catch (const SvStl::MessageContainer&)
 		{
@@ -4040,7 +4081,7 @@ void SVIPDoc::convertGroupToolToModule(SVConfigurationObject& rConfig, ToolSetVi
 		}
 	}
 
-	EnterStringDlg nameDlg {name,  std::bind(&ModuleController::checkIfNameValid, rConfig.getModuleController(), std::placeholders::_1), "Enter Module Name", &rToolsetView};
+	EnterStringDlg nameDlg {name,  SvCmd::checkNewModuleName, "Enter Module Name", &rToolsetView};
 	if (IDOK != nameDlg.DoModal())
 	{
 		return;
@@ -4049,8 +4090,7 @@ void SVIPDoc::convertGroupToolToModule(SVConfigurationObject& rConfig, ToolSetVi
 
 	try
 	{
-		rConfig.getModuleController().checkIfNameValid(name);
-		rConfig.getModuleController().convertGroupTool(toolID, name);
+		convertGroupToModuleTool(m_InspectionID, toolID, name);
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{

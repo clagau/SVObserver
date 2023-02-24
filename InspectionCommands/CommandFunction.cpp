@@ -2322,6 +2322,36 @@ SvPb::InspectionCmdResponse deleteModule(SvPb::DeleteModuleRequest request)
 	return SvOi::deleteModule(SVGUID {request.guid()});
 }
 
+SvPb::InspectionCmdResponse checkNewModuleName(SvPb::CheckNewModuleNameRequest request)
+{
+	return SvOi::checkNewModuleName(request.name());
+}
+
+SvPb::InspectionCmdResponse convertGroupToModuleTool(SvPb::ConvertGroupToModuleToolRequest request)
+{
+	return SvOi::convertGroupToModuleTool(request.grouptoolid(), request.modulename());
+}
+
+SvPb::InspectionCmdResponse convertModuleToGroupTool(SvPb::ConvertModuleToGroupToolRequest request)
+{
+	return SvOi::convertModuleToGroupTool(request.moduletoolid());
+}
+
+SvPb::InspectionCmdResponse renameModule(SvPb::RenameModuleRequest request)
+{
+	return SvOi::renameModule(SVGUID {request.guid()}, request.name());
+}
+
+SvPb::InspectionCmdResponse importModule(SvPb::ImportModuleRequest request)
+{
+	return SvOi::importModule(request.name(), request.datastring());
+}
+
+SvPb::InspectionCmdResponse exportModule(SvPb::ExportModuleRequest request)
+{
+	return SvOi::exportModule(SVGUID {request.guid()});
+}
+
 SvPb::InspectionCmdResponse fixInputsAndGetList(SvPb::FixInputsAndGetInputListRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;

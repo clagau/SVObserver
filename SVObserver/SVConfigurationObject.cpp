@@ -93,6 +93,48 @@ constexpr int cPlcOutputCount = 14;
 //SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectId);
 #pragma endregion Declarations
 
+namespace
+{
+SvPb::InspectionCmdResponse calcConfigFunction(std::function<SvPb::InspectionCmdResponse(SVConfigurationObject&)> func)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig && func)
+	{
+		try
+		{
+			auto retVal = func(*pConfig);
+			pConfig->fixModuleMenuItems();
+			return retVal;
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvPb::InspectionCmdResponse cmdResponse;
+			SvPb::convertMessageToProtobuf(rExp, cmdResponse.mutable_errormessage()->add_messages());
+			cmdResponse.set_hresult(E_FAIL);
+			return cmdResponse;
+		}
+		catch (...)
+		{
+			SvPb::InspectionCmdResponse cmdResponse;
+			SvStl::MessageContainer message;
+			cmdResponse.set_hresult(E_FAIL);
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
+			SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
+			return cmdResponse;
+		}
+	}
+
+	SvPb::InspectionCmdResponse cmdResponse;
+	SvStl::MessageContainer message;
+	cmdResponse.set_hresult(E_FAIL);
+	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
+	SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
+	return cmdResponse;
+}
+}
+
 #pragma region Constructor
 SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(ObjectName)
 , m_pIOController{ std::make_unique<SVIOController>(this) }
@@ -5220,9 +5262,8 @@ const std::vector< SvUl::AuditFile>& SVConfigurationObject::GetAuditWhiteList() 
 	return m_AuditWhiteList.GetFiles();
 };
 
-SvPb::InspectionCmdResponse SVConfigurationObject::deleteModule(SVGUID guid)
+void SVConfigurationObject::fixModuleMenuItems()
 {
-	auto cmdResponse = m_moduleController.deleteModule(guid);
 	for (const auto* pInsp : m_arInspectionArray)
 	{
 		if (pInsp)
@@ -5234,7 +5275,6 @@ SvPb::InspectionCmdResponse SVConfigurationObject::deleteModule(SVGUID guid)
 			}
 		}
 	}
-	return cmdResponse;
 }
 
 void SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter, SvUl::AuditListType type) const
@@ -5470,38 +5510,89 @@ SvOi::IObjectClass* SvOi::ConstructAndAddModuleInstance(int index, uint32_t pare
 
 SvPb::InspectionCmdResponse SvOi::getModuleList()
 {
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
+	auto func = [](SVConfigurationObject& rConfig)
 	{
-		return pConfig->getModuleController().getModuleListResp();
-	}
+		return rConfig.getModuleController().getModuleListResp();
+	};
 
-	SvPb::InspectionCmdResponse cmdResponse;
-	SvStl::MessageContainer message;
-	cmdResponse.set_hresult(E_FAIL);
-	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
-	SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
-	return cmdResponse;
+	return calcConfigFunction(func);
 }
 
 SvPb::InspectionCmdResponse SvOi::deleteModule(SVGUID moduleGuid)
 {
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
+	auto func = [moduleGuid](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
 	{
-		return pConfig->deleteModule(moduleGuid);
-	}
+		rConfig.getModuleController().deleteModule(moduleGuid);
+		return {};
+	};
 
-	SvPb::InspectionCmdResponse cmdResponse;
-	SvStl::MessageContainer message;
-	cmdResponse.set_hresult(E_FAIL);
-	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
-	SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
-	return cmdResponse;
+	return calcConfigFunction(func); 
+}
+
+SvPb::InspectionCmdResponse SvOi::checkNewModuleName(const std::string& newName)
+{
+	auto func = [newName](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		rConfig.getModuleController().checkIfNameValid(newName);
+		return {};
+	};
+
+	return calcConfigFunction(func);
+}
+
+SvPb::InspectionCmdResponse SvOi::convertGroupToModuleTool(uint32_t groupToolId, const std::string& moduleName)
+{
+	auto func = [groupToolId, moduleName](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		rConfig.getModuleController().checkIfNameValid(moduleName);
+		rConfig.getModuleController().convertGroupTool(groupToolId, moduleName);
+		return {};
+	};
+
+	return calcConfigFunction(func);
+}
+
+SvPb::InspectionCmdResponse SvOi::convertModuleToGroupTool(uint32_t moduleToolId)
+{
+	auto func = [moduleToolId](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		rConfig.getModuleController().convertModuleInstance(moduleToolId);
+		return {};
+	};
+
+	return calcConfigFunction(func);
+}
+
+SvPb::InspectionCmdResponse SvOi::renameModule(SVGUID moduleGuid, const std::string& newName)
+{
+	auto func = [moduleGuid, newName](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		rConfig.getModuleController().renameModule(moduleGuid, newName);
+		return {};
+	};
+
+	return calcConfigFunction(func);
+}
+
+SvPb::InspectionCmdResponse SvOi::importModule(const std::string& moduleName, const std::string& moduleContainerStr)
+{
+	auto func = [moduleName, moduleContainerStr](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		rConfig.getModuleController().importModule(moduleName, moduleContainerStr);
+		return {};
+	};
+
+	return calcConfigFunction(func);
+}
+
+SvPb::InspectionCmdResponse SvOi::exportModule(SVGUID moduleGuid)
+{
+	auto func = [moduleGuid](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		return rConfig.getModuleController().exportModule(moduleGuid);
+	};
+
+	return calcConfigFunction(func);
 }
 
 void SvOi::registerModuleInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const HistoryList& rHistoryList)

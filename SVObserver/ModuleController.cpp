@@ -22,7 +22,8 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "FilesystemUtilities/FilepathUtilities.h"
-#include "SVProtoBuf/ConverterHelper.h"
+#include "SVXMLLibrary/SaxXMLHandler.h"
+#include "Definitions/TextDefinesSvDef.h"
 #pragma endregion Includes
 
 namespace
@@ -54,7 +55,7 @@ void createModuleLFile(SvTo::ModuleTool& rModuleTool, const std::string& rModule
 		throw msg;
 	}
 	::DeleteFile(rXmlFilePath.c_str());
-
+	
 	AddFileToConfig(moduleFilePath.c_str());
 }
 
@@ -90,6 +91,114 @@ std::vector<std::pair<time_t, std::string>> readHistory(SVTreeType& rTree, SVTre
 		}
 	} while (hHistory);
 	return historyVector;
+}
+
+std::string readModuleComment(SVTreeType& rTree, SVTreeType::SVBranchHandle hModule)
+{
+	SVTreeType::SVBranchHandle hEmbedded(nullptr);
+	SvXml::SVNavigateTree::GetItemBranch(rTree, scEmbeddedsTag, hModule, hEmbedded);
+	if (nullptr == hEmbedded)
+	{
+		return {};
+	}
+
+	SVTreeType::SVBranchHandle hComment(nullptr);
+	SvXml::SVNavigateTree::GetItemBranch(rTree, scModuleCommentTag, hEmbedded, hComment);
+	if (nullptr == hComment)
+	{
+		return {};
+	}
+
+	SVTreeType::SVBranchHandle hArray(nullptr);
+	SvXml::SVNavigateTree::GetItemBranch(rTree, SvDef::cArrayTag, hComment, hArray);
+	if (nullptr == hArray)
+	{
+		return {};
+	}
+	
+	_variant_t comment;
+	SvXml::SVNavigateTree::GetItem(rTree, scElementTag, hArray, comment);
+	auto commentStr = SvUl::createStdString(comment);
+	SvUl::RemoveEscapedSpecialCharacters(commentStr, true);
+	return commentStr;
+}
+
+void changeModuleName(std::string& xmlData, const std::string& newName)
+{
+	SvXml::SVXMLMaterialsTree rTree;
+	SvXml::convertXmlToTree(xmlData, rTree);
+	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem(nullptr);
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
+	{
+		SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem = rTree.getFirstBranch(ToolsItem);
+
+		int toolIndex = 0;
+		while (rTree.isValidBranch(ToolItem))
+		{
+			//Get names from tree
+			std::string fullToolNameTag {std::format(SvXml::FullToolNameTag, toolIndex)};
+			SvXml::SVXMLMaterialsTree::SVLeafHandle fullToolNameHandle;
+			SvXml::SVNavigateTree::GetItemLeaf(rTree, fullToolNameTag.c_str(), ToolsItem, fullToolNameHandle);
+			variant_t value;
+			rTree.getLeafData(fullToolNameHandle, value);
+			_variant_t ObjectName;
+			SvXml::SVNavigateTree::GetItem(rTree, scObjectNameTag, ToolItem, ObjectName);
+			auto oldToolName = SvUl::createStdString(ObjectName);
+			auto fullOldToolName = SvUl::createStdString(value);
+			auto fullNewToolName = fullOldToolName;
+			auto pos = fullNewToolName.rfind(oldToolName);
+			fullNewToolName.replace(pos, oldToolName.size(), newName);
+
+			replaceToolName(xmlData, oldToolName, newName, fullOldToolName, fullNewToolName);
+
+			//rename FullToolName part in XML.
+			constexpr auto FullNameFormatStr = _T("<DATA Name=\"FullToolName{}\" Type=\"VT_BSTR\">{}</DATA>");
+			SvUl::searchAndReplace(xmlData, std::format(FullNameFormatStr, toolIndex, fullOldToolName).c_str(), std::format(FullNameFormatStr, toolIndex, fullNewToolName).c_str());
+
+			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
+			++toolIndex;
+		}
+	}
+}
+
+ModuleData getModuleData(const auto& rXMLString)
+{
+	ModuleData retVal;
+	SvXml::SVXMLMaterialsTree tree;
+	SvXml::convertXmlToTree(rXMLString, tree);
+	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem(nullptr);
+	if (SvXml::SVNavigateTree::GetItemBranch(tree, SvXml::ToolsTag, nullptr, ToolsItem))
+	{
+		SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem = tree.getFirstBranch(ToolsItem);
+		if (tree.isValidBranch(ToolItem))
+		{
+			//Get names from tree
+			std::string fullToolNameTag {std::format(SvXml::FullToolNameTag, 0)};
+			SvXml::SVXMLMaterialsTree::SVLeafHandle fullToolNameHandle;
+			SvXml::SVNavigateTree::GetItemLeaf(tree, fullToolNameTag.c_str(), ToolsItem, fullToolNameHandle);
+			variant_t value;
+			SvXml::SVNavigateTree::GetItem(tree, scObjectNameTag, ToolItem, value);
+			retVal.m_name = SvUl::createStdString(value);
+			SvXml::SVNavigateTree::GetItem(tree, scModuleGuidTag, ToolItem, value);
+			retVal.m_guid = SVGUID {SvUl::createStdString(value)};
+
+			retVal.m_historyList = readHistory(tree, ToolItem);
+			retVal.m_comment = readModuleComment(tree, ToolItem);
+		}
+		else
+		{
+			SvStl::MessageManager e(SvStl::MsgType::Data);
+			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+			e.Throw();
+		}
+	}
+	else
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+	return retVal;
 }
 }
 
@@ -346,7 +455,7 @@ SvOi::IObjectClass* ModuleController::constructAndAddModuleInstance(int index, u
 	e.Throw();
 }
 
-SvPb::InspectionCmdResponse ModuleController::getModuleListResp()
+SvPb::InspectionCmdResponse ModuleController::getModuleListResp() const
 {
 	SvPb::InspectionCmdResponse cmdResp;
 	auto* pResp = cmdResp.mutable_getmodulelistresponse();
@@ -367,9 +476,8 @@ SvPb::InspectionCmdResponse ModuleController::getModuleListResp()
 	return cmdResp;
 }
 
-SvPb::InspectionCmdResponse ModuleController::deleteModule(SVGUID guid)
+void ModuleController::deleteModule(SVGUID guid)
 {
-	SvPb::InspectionCmdResponse cmdResp;
 	auto iter = std::ranges::find_if(m_moduleList, [guid](const auto& rEntry) { return rEntry.m_guid == guid; });
 	if (m_moduleList.end() != iter)
 	{
@@ -382,20 +490,69 @@ SvPb::InspectionCmdResponse ModuleController::deleteModule(SVGUID guid)
 		}
 		else
 		{
-			cmdResp.set_hresult(E_FAIL);
-			cmdResp.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(SvDef::InvalidObjectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_DeleteFailedModulesHasInstance));
+			SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DeleteFailedModulesHasInstance, SvStl::SourceFileParams(StdMessageParams));
+			throw msg;
 		}
 	}
 	else
 	{
-		cmdResp.set_hresult(E_FAIL);
-		cmdResp.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(SvDef::InvalidObjectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_ModuleNotFound));
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
 	}
-	
-	return cmdResp;
 }
 
-std::string ModuleController::getModuleName(SVGUID guid)
+
+void ModuleController::renameModule(SVGUID guid, const std::string& newName)
+{
+	SvPb::InspectionCmdResponse cmdResp;
+	auto iter = std::ranges::find_if(m_moduleList, [guid](const auto& rEntry) { return rEntry.m_guid == guid; });
+	if (m_moduleList.end() != iter)
+	{
+		if (iter->m_name == newName)
+		{
+			return;
+		}
+
+		checkIfNameValid(newName);
+
+		if (std::filesystem::exists(getModulePath(iter->m_name)))
+		{
+			SvDef::StringVector containedFilepaths;
+			if (!SvUl::unzipAll(getModulePath(iter->m_name), SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
+			{
+				SvStl::MessageManager e(SvStl::MsgType::Data);
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+				e.Throw();
+			}
+
+			auto xmlData = SvFs::readContentFromFile(m_xmlFilePath);
+			changeModuleName(xmlData, newName);
+
+			SvFs::writeStringToFile(m_xmlFilePath, xmlData, true);
+			const auto moduleFilePath = getModulePath(newName);
+			if (!SvUl::makeZipFile(moduleFilePath, containedFilepaths, _T(""), false))
+			{
+				SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
+				throw msg;
+			}
+			::DeleteFile(getModulePath(iter->m_name).c_str());
+
+			iter->m_name = newName;
+			return;
+		}
+		else
+		{
+			SvStl::MessageManager e(SvStl::MsgType::Data);
+			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
+			e.Throw();
+		}
+	}
+	SvStl::MessageManager e(SvStl::MsgType::Data);
+	e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
+	e.Throw();
+}
+
+std::string ModuleController::getModuleName(SVGUID guid) const
 {
 	SvPb::InspectionCmdResponse cmdResp;
 	auto iter = std::ranges::find_if(m_moduleList, [guid](const auto& rEntry) { return rEntry.m_guid == guid; });
@@ -404,4 +561,86 @@ std::string ModuleController::getModuleName(SVGUID guid)
 		return iter->m_name;
 	}
 	return {};
+}
+
+void ModuleController::importModule(const std::string& moduleName, const std::string& moduleContainerStr)
+{
+	auto tmpName = SvStl::GlobalPath::Inst().GetTempPath("Temp.svm");
+	::DeleteFile(tmpName.c_str());
+	SvFs::writeStringToFile(tmpName, moduleContainerStr, false);
+	SvDef::StringVector containedFilepaths;
+	if (!SvUl::unzipAll(tmpName, SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+
+	auto xmlData = SvFs::readContentFromFile(m_xmlFilePath, false);
+
+	ModuleData data = getModuleData(xmlData);
+	auto iter = std::ranges::find_if(m_moduleList, [data](const auto& rEntry) { return rEntry.m_guid == data.m_guid; });
+	if (m_moduleList.end() != iter)
+	{
+		for (const auto& rEntry : containedFilepaths)
+		{
+			::DeleteFile(rEntry.c_str());
+		}
+		::DeleteFile(tmpName.c_str());
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleExistAlready, {iter->m_name}, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+	if (std::ranges::any_of(m_moduleList, [moduleName](const auto& rEntry) { return rEntry.m_name == moduleName; }))
+	{
+		for (const auto& rEntry : containedFilepaths)
+		{
+			::DeleteFile(rEntry.c_str());
+		}
+		::DeleteFile(tmpName.c_str());
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNameExistAlready, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+
+	if (moduleName != data.m_name)
+	{
+		changeModuleName(xmlData, moduleName);
+
+		SvFs::writeStringToFile(m_xmlFilePath, xmlData, true);
+		data.m_name = moduleName;
+	}
+
+	::DeleteFile(tmpName.c_str());
+	const auto moduleFilePath = getModulePath(moduleName);
+	if (!SvUl::makeZipFile(moduleFilePath, containedFilepaths, _T(""), true))
+	{
+		for (const auto& rEntry : containedFilepaths)
+		{
+			::DeleteFile(rEntry.c_str());
+		}
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
+	}
+
+	AddFileToConfig(moduleFilePath.c_str());
+	m_moduleList.push_back(std::move(data));
+}
+
+SvPb::InspectionCmdResponse ModuleController::exportModule(SVGUID moduleGuid) const
+{
+	
+	auto iter = std::ranges::find_if(m_moduleList, [moduleGuid](const auto& rEntry) { return rEntry.m_guid == moduleGuid; });
+	if (m_moduleList.end() != iter && std::filesystem::exists(getModulePath(iter->m_name)))
+	{
+		SvPb::InspectionCmdResponse retValue;
+		auto* pCmd = retValue.mutable_exportmoduleresponse();
+		pCmd->set_datastring(SvFs::readContentFromFile(getModulePath(iter->m_name), false));
+		return retValue;
+	}
+	else
+	{
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
+	}
 }

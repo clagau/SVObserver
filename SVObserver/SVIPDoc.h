@@ -360,7 +360,7 @@ private:
 	//! \returns the selected string set of object names
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
 
-	void convertGroupToolToModule(SVConfigurationObject& rConfig, ToolSetView& rToolsetView, uint32_t toolID);
+	void convertGroupToolToModule(ToolSetView& rToolsetView, uint32_t toolID);
 #pragma endregion Private Methods
 
 	RegressionTestController m_regTest;

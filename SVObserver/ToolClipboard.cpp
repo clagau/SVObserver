@@ -399,36 +399,8 @@ void ToolClipboard::updateToolName(std::string& rXmlData, const SVObjectClass& r
 	ss << _T("ToolClipboard::updateToolName(): ") << ToolName << _T(" -> ") << NewToolName << "\n";
 	::OutputDebugString(ss.str().c_str());
 #endif
-
-	if (NewToolName != toolName)
-	{
-		size_t pos = rXmlData.find(scObjectNameTag);
-
-		if (pos != std::string::npos)
-		{
-			// adding ">" and "<" ensures that only the correct occurrences of the name in the XML string will be replaced
-			auto searchString = ">" + NewToolName + "<";
-			auto replacementString = ">" + toolName + "<";
-
-			pos += sizeof(scObjectNameTag);
-			pos = rXmlData.find(replacementString.c_str(), pos);
-			rXmlData.replace(pos, strlen(replacementString.c_str()), searchString.c_str());
-		}
-	}
-
-	if (false == rOldFullToolName.empty())
-	{ //update the dotted Name
-		std::string fullToolNameStr = rOldFullToolName + _T(".");
-		std::string fullToolNameNewStr = rOwner.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewToolName + _T(".");
-
-		SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
-
-		//ConnectedDotname should not be renamed, because it is to display the old connectedDotname if the id invalid. (Change is caused by SVB-743)
-		std::string tmpText = "<DATA Name=\"ConnectedDotname\" Type=\"VT_BSTR\">";
-		fullToolNameStr = tmpText + fullToolNameStr;
-		fullToolNameNewStr = tmpText + fullToolNameNewStr;
-		SvUl::searchAndReplace(rXmlData, fullToolNameNewStr.c_str(), fullToolNameStr.c_str());
-	}
+	std::string fullToolNameNewStr = rOwner.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewToolName;
+	replaceToolName(rXmlData, toolName, NewToolName, rOldFullToolName, fullToolNameNewStr);
 }
 
 std::string ToolClipboard::getUniqueToolName(const std::string& rToolName, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const
@@ -629,10 +601,6 @@ SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds, 
 	return filepaths;
 }
 
-/// This method parses the tree and generates the tool
-/// \param rTree [in] Reference to the tree to parse
-/// \param rOwner [in]
-/// \returns std::vector<uint32_t> list of tool Ids generated
 std::vector<uint32_t> parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass& rOwner)
 {
 	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem(nullptr);
@@ -662,4 +630,37 @@ std::vector<uint32_t> parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObject
 	}
 
 	return toolIds;
+}
+
+void replaceToolName(std::string& rXmlData, const std::string& rOldToolName, const std::string& rNewToolName, const std::string& rOldFullToolName, const std::string& rNewFullToolName)
+{
+	if (rNewToolName != rOldToolName)
+	{
+		size_t pos = rXmlData.find(scObjectNameTag);
+
+		if (pos != std::string::npos)
+		{
+			// adding ">" and "<" ensures that only the correct occurrences of the name in the XML string will be replaced
+			auto searchString = ">" + rNewToolName + "<";
+			auto replacementString = ">" + rOldToolName + "<";
+
+			pos += sizeof(scObjectNameTag);
+			pos = rXmlData.find(replacementString.c_str(), pos);
+			rXmlData.replace(pos, strlen(replacementString.c_str()), searchString.c_str());
+		}
+	}
+
+	if (false == rOldFullToolName.empty())
+	{ //update the dotted Name
+		std::string fullToolNameStr = rOldFullToolName + _T(".");
+		auto fullToolNameNewStr = rNewFullToolName + _T(".");
+
+		SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
+
+		//ConnectedDotname should not be renamed, because it is to display the old connectedDotname if the id invalid. (Change is caused by SVB-743)
+		std::string tmpText = "<DATA Name=\"ConnectedDotname\" Type=\"VT_BSTR\">";
+		fullToolNameStr = tmpText + fullToolNameStr;
+		fullToolNameNewStr = tmpText + fullToolNameNewStr;
+		SvUl::searchAndReplace(rXmlData, fullToolNameNewStr.c_str(), fullToolNameStr.c_str());
+	}
 }

@@ -44,5 +44,6 @@ namespace
 	extern const TCHAR scCommentTag[] = (_T("Comment"));
 	extern const TCHAR scModuleGuidTag[] = (_T("Module GUID"));
 	extern const TCHAR scHistoryTag[] = (_T("History"));
+	extern const TCHAR scModuleCommentTag[] = (_T("Module Comment"));
 }
 

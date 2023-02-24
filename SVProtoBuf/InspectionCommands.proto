@@ -1189,6 +1189,44 @@ message DeleteModuleRequest
 	string guid = 1;
 }
 
+message CheckNewModuleNameRequest
+{
+	string name = 1;
+}
+
+message ConvertGroupToModuleToolRequest
+{
+	uint32 groupToolId = 1;
+	string moduleName = 2;
+}
+
+message ConvertModuleToGroupToolRequest
+{
+	uint32 moduleToolId = 1;
+}
+
+message RenameModuleRequest
+{
+	string guid = 1;
+	string name = 2;
+}
+
+message ImportModuleRequest
+{
+	string name = 1;
+	string dataString = 2;
+}
+
+message ExportModuleRequest
+{
+	string guid = 1;
+}
+
+message ExportModuleResponse
+{
+	string dataString = 1;
+}
+
 //Try to fix all inputs (which are invalid) and return the list of inputs which are invalid before call the message.
 //But if the flag only_but_all_groupTool_Inputs is set, than it task must be a groupTool and only the inputs but all inputs will be added to the list.
 message FixInputsAndGetInputListRequest
@@ -1287,7 +1325,13 @@ message InspectionCmdRequest
 		GetToolDepthRequest getToolDepthRequest = 78;
 		GetModuleListRequest getModuleListRequest = 79;
 		DeleteModuleRequest deleteModuleRequest = 80;
-		FixInputsAndGetInputListRequest fixInputsAndGetInputListRequest = 81; 
+		CheckNewModuleNameRequest checkNewModuleNameRequest = 81;
+		ConvertGroupToModuleToolRequest convertGroupToModuleToolRequest = 82;
+		ConvertModuleToGroupToolRequest convertModuleToGroupToolRequest = 83;
+		RenameModuleRequest renameModuleRequest = 84;
+		ImportModuleRequest importModuleRequest = 85;
+		ExportModuleRequest exportModuleRequest = 86;
+		FixInputsAndGetInputListRequest fixInputsAndGetInputListRequest = 87; 
 		}
 }
 
@@ -1354,6 +1398,7 @@ message InspectionCmdResponse
 		GetDependencyResponse getDependencyResponse = 57;
 		GetToolDepthResponse getToolDepthResponse = 58;
 		GetModuleListResponse getModuleListResponse = 59;
-		FixInputsAndGetInputListResponse fixInputsAndGetInputListResponse = 60;
+		ExportModuleResponse exportModuleResponse = 60;
+		FixInputsAndGetInputListResponse fixInputsAndGetInputListResponse = 61;
 		}
 }

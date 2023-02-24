@@ -706,6 +706,8 @@ enum MessageTextEnum
 	Tid_WrongExtensionInOpenFile,
 	Tid_OpenSvxFileError,
 	Tid_CouldNotWrite_File,
-	Tid_RetryValueLarge
+	Tid_RetryValueLarge,
+	Tid_ModuleExistAlready,
+	Tid_ModuleNameExistAlready,
 };
 } //namespace SvStl

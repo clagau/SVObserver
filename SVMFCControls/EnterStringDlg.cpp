@@ -76,4 +76,16 @@ void EnterStringDlg::OnOK()
 		SvStl::MessageManager Exception(SvStl::MsgType::Display);
 		Exception.setMessage(rExp.getMessage());
 	}
+	catch (const SvStl::MessageContainerVector& rExp)
+	{
+		if (rExp.size())
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Display);
+			Exception.setMessage(rExp[0].getMessage());
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+	}
 }

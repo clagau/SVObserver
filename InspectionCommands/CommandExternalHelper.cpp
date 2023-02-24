@@ -9,6 +9,7 @@
 #include "StdAfx.h"
 #include "CommandExternalHelper.h"
 #include "ObjectInterfaces/ObjectInfo.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVUtilityLibrary/NameObjectIdList.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
@@ -319,5 +320,25 @@ HRESULT setComment(uint32_t inspectionId, uint32_t objectId, std::string comment
 	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
 	Log_Assert(S_OK == hr);
 	return hr;
+}
+
+void checkNewModuleName(const std::string& newName)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_checknewmodulenamerequest();
+	pRequest->set_name(newName);
+	HRESULT hr = SvCmd::InspectionCommands(SvDef::InvalidObjectId, requestCmd, &responseCmd);
+	if (S_OK != hr)
+	{
+		if (0 < responseCmd.errormessage().messages_size())
+		{
+			throw SvPb::convertProtobufToMessage(responseCmd.errormessage().messages(0));
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+	}
 }
 } //namespace SvCmd

@@ -80,6 +80,10 @@ SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vecto
 std::string getComment(uint32_t inspectionId, uint32_t objectId);
 HRESULT setComment(uint32_t inspectionId, uint32_t objectId, std::string commentStr);
 
+///  Check if the new module name valid. If invalid an exception will be thrown.
+void checkNewModuleName(const std::string& newName);
+
+
 template<class T>
 T getValueForProperties(const ::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type)
 {

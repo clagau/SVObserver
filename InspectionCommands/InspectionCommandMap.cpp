@@ -810,6 +810,60 @@ std::make_tuple(
 )
 },
 
+{SvPb::InspectionCmdRequest::kCheckNewModuleNameRequest,
+std::make_tuple(
+[] {return ThreadPref::cur; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  checkNewModuleName(rRequest.checknewmodulenamerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kConvertGroupToModuleToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  convertGroupToModuleTool(rRequest.convertgrouptomoduletoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kConvertModuleToGroupToolRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  convertModuleToGroupTool(rRequest.convertmoduletogrouptoolrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kRenameModuleRequest,
+std::make_tuple(
+[] {return ThreadPref::cur; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  renameModule(rRequest.renamemodulerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kImportModuleRequest,
+std::make_tuple(
+[] {return ThreadPref::cur; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  importModule(rRequest.importmodulerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kExportModuleRequest,
+std::make_tuple(
+[] {return ThreadPref::cur; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  exportModule(rRequest.exportmodulerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
 {SvPb::InspectionCmdRequest::kFixInputsAndGetInputListRequest,
 std::make_tuple(
 [] {return ThreadPref::inspection; },

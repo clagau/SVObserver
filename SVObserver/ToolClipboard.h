@@ -124,4 +124,17 @@ bool toolClipboardDataPresent(); ///<Checks to see if the clipboard data is vali
 /// \returns SvDef::StringVector List of all dependency files are needed by the tools.
 SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds, const std::string& rXmlFilePath);
 
+/// This method parses the tree and generates the tool
+/// \param rTree [in] Reference to the tree to parse
+/// \param rOwner [in]
+/// \returns std::vector<uint32_t> list of tool Ids generated
 std::vector<uint32_t> parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass& rOwner);
+
+/// Replace in the XML-string the tool name in all places.
+/// \param rXmlData [inout] The XML-string which will be changed.
+/// \param rOldToolName [in] Old tool name 
+/// \param rNewToolName [in] New tool name
+/// \param rOldFullToolName [in] The old full tool name. (Dotted Name) 
+/// \param rNewFullToolName [in] The new full tool name. (Dotted Name)
+/// \returns void
+void replaceToolName(std::string& rXmlData, const std::string& rOldToolName, const std::string& rNewToolName, const std::string& rOldFullToolName, const std::string& rNewFullToolName);

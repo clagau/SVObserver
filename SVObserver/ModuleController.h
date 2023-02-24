@@ -54,10 +54,15 @@ public:
 	void unregisterInstance(SVGUID guid, uint32_t instanceId);
 
 	SvOi::IObjectClass* constructAndAddModuleInstance(int index, uint32_t parentId);
-	SvPb::InspectionCmdResponse getModuleListResp();
-	SvPb::InspectionCmdResponse deleteModule(SVGUID guid);
+	SvPb::InspectionCmdResponse getModuleListResp() const;
+	void deleteModule(SVGUID guid);
 
-	std::string getModuleName(SVGUID guid);
+	//Attention: Throw exception in error case.
+	void renameModule(SVGUID guid, const std::string& newName);
+	std::string getModuleName(SVGUID guid) const;
+
+	void importModule(const std::string& moduleName, const std::string& moduleContainerStr);
+	SvPb::InspectionCmdResponse exportModule(SVGUID moduleGuid) const;
 
 	std::vector<ModuleData> getModuleList() { return m_moduleList; };
 

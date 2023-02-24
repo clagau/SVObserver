@@ -743,6 +743,8 @@ namespace SvStl
 		{Tid_WrongExtensionInOpenFile , _T("Wrong extension in open file")},
 		{Tid_OpenSvxFileError , _T("Open SVX file error")},
 		{Tid_CouldNotWrite_File ,  _T("PutConfig: Could not write {0}")},
-		{Tid_RetryValueLarge ,_T("Large retry value required while loading SVLptIO.dll")}
+		{Tid_RetryValueLarge , _T("Large retry value required while loading SVLptIO.dll")},
+		{Tid_ModuleExistAlready, _T("Module with the GUID exist already with the name \"{0}\".")},
+		{Tid_ModuleNameExistAlready, _T("Module with this name exist already.")},
 };
 } //namespace SvStl

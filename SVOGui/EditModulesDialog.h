@@ -10,7 +10,6 @@
 //Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
-#include "SVMFCControls/ObjectsListBox.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
@@ -47,13 +46,17 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeList();
 	void OnDeleteModule();
+	void OnImportModule();
+	void OnExportModule();
+	void OnRenameModule();
 
 	void initModuleListControl();
+	int getSelectedIndex();
 #pragma endregion Protected Methods
 	#pragma region Member variables
 private:
 	ModuleDataList m_moduleList;
-	SvMc::ObjectsListBox m_moduleListBox;
+	CListBox m_moduleListBox;
 	CString m_strComment;
 	CString m_strHistory;
 #pragma endregion Member variables

@@ -12,6 +12,12 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVMFCControls/EnterStringDlg.h"
+#include "SVSecurity/SVSecurityManager.h"
+#include "SVMFCControls/SVDlgFolder.h"
+#include "SVMFCControls/SVFileDialog.h"
+#include "SVMessage/SVMessage.h"
+#include "FilesystemUtilities/FilepathUtilities.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -49,6 +55,9 @@ namespace SvOg
 BEGIN_MESSAGE_MAP(EditModulesDialog, CDialog)
 	ON_LBN_SELCHANGE(IDC_MODULE_LIST, OnSelchangeList)
 	ON_BN_CLICKED(IDC_DELETE, OnDeleteModule)
+	ON_BN_CLICKED(IDC_IMPORT, OnImportModule)
+	ON_BN_CLICKED(IDC_EXPORT, OnExportModule)
+	ON_BN_CLICKED(IDC_RENAME, OnRenameModule)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
@@ -82,7 +91,7 @@ BOOL EditModulesDialog::OnInitDialog()
 	GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(false);
 	GetDlgItem(IDC_DELETE)->EnableWindow(false);
 	GetDlgItem(IDC_EXPORT)->EnableWindow(false);
-	GetDlgItem(IDC_IMPORT)->EnableWindow(false);
+	GetDlgItem(IDC_IMPORT)->EnableWindow(true);
 
 	UpdateData(FALSE);
 
@@ -91,7 +100,7 @@ BOOL EditModulesDialog::OnInitDialog()
 
 void EditModulesDialog::OnSelchangeList()
 {
-	int index = m_moduleListBox.GetCurSel() - 1;
+	int index = getSelectedIndex();
 	if (0 <= index && m_moduleList.size() > index)
 	{
 		m_strComment = m_moduleList[index].m_comment.c_str();
@@ -106,19 +115,23 @@ void EditModulesDialog::OnSelchangeList()
 			guidForFirstLine = "";
 		}
 		GetDlgItem(IDC_DELETE)->EnableWindow(0 == m_moduleList[index].m_numberOfUse);
+		GetDlgItem(IDC_EXPORT)->EnableWindow(true);
+		GetDlgItem(IDC_RENAME)->EnableWindow(true);
 	}
 	else
 	{
 		m_strComment = "";
 		m_strHistory = "";
 		GetDlgItem(IDC_DELETE)->EnableWindow(false);
+		GetDlgItem(IDC_EXPORT)->EnableWindow(false);
+		GetDlgItem(IDC_RENAME)->EnableWindow(false);
 	}	
 	UpdateData(FALSE);
 }
 
 void EditModulesDialog::OnDeleteModule()
 {
-	int index = m_moduleListBox.GetCurSel() - 1;
+	int index = getSelectedIndex();
 	if (0 <= index && m_moduleList.size() > index && 0 == m_moduleList[index].m_numberOfUse)
 	{
 		SvPb::InspectionCmdRequest requestCmd;
@@ -142,15 +155,196 @@ void EditModulesDialog::OnDeleteModule()
 	}
 }
 
+std::string scanModuleName(const std::string& pathName)
+{
+	auto endPos = pathName.rfind(".svm");
+	if (endPos == std::string::npos)
+	{
+		return {};
+	}
+	auto startPos = pathName.rfind("\\");
+	if (startPos == std::string::npos)
+	{
+		startPos = 0;
+	}
+	else
+	{
+		++startPos;
+	}
+	return pathName.substr(startPos, endPos - startPos);
+}
+
+SvPb::InspectionCmdResponse importModule(const std::string& moduleName, const std::string& moduleContainerStr)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_importmodulerequest();
+	pRequest->set_name(moduleName);
+	pRequest->set_datastring(moduleContainerStr);
+	SvCmd::InspectionCommands(SvDef::InvalidObjectId, requestCmd, &responseCmd);
+	return responseCmd;
+}
+
+void EditModulesDialog::OnImportModule()
+{
+	std::string data;
+	std::string moduleName;
+
+	static LPCTSTR ModuleFileFilters = _T("Module Import Files (*.svm)|*.svm||");
+	static LPCTSTR ModuleFileExt = _T("svm");
+	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+	bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	SvMc::SVFileDialog dlg(true, bFullAccess, ModuleFileExt, nullptr, dwFlags, ModuleFileFilters, this);
+	dlg.m_ofn.lpstrTitle = _T("Select File");
+
+	if (dlg.DoModal() == IDOK)
+	{
+		std::string PathName = dlg.GetPathName().GetString();
+		moduleName = scanModuleName(PathName);
+
+		try
+		{
+			data = SvFs::readContentFromFile(PathName, false);
+		}
+		catch (const SvStl::MessageContainer& rMsg)
+		{
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(rMsg.getMessage());
+			assert(false);
+			return;
+		}
+	}
+	else
+	{
+		return;
+	}
+
+	auto response = importModule(moduleName, data);
+	while (S_OK != response.hresult())
+	{
+		SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(response.errormessage());
+		if (errorMsgContainer.size() > 0)
+		{
+			if (SvStl::Tid_ModuleNameExistAlready == errorMsgContainer[0].getMessage().m_AdditionalTextId)
+			{
+				EnterStringDlg nameDlg {moduleName,  SvCmd::checkNewModuleName, "Name invalid or exists already, choose new Module Name", this};
+				if (IDOK != nameDlg.DoModal())
+				{
+					return;
+				}
+				moduleName = nameDlg.getString();
+				response = importModule(moduleName, data);
+			}
+			else
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Msg.setMessage(errorMsgContainer.at(0).getMessage());
+				return;
+			}
+		}
+		else
+		{
+			Log_Assert(false);
+			return;
+		}
+	}
+	initModuleListControl();
+}
+
+void EditModulesDialog::OnExportModule()
+{
+	auto index = getSelectedIndex();
+	if (0 <= index && m_moduleList.size() > index)
+	{
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_exportmodulerequest();
+		pRequest->set_guid(m_moduleList[index].m_guid.ToString());
+		HRESULT hr = SvCmd::InspectionCommands(SvDef::InvalidObjectId, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_exportmoduleresponse())
+		{
+			bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+			SvMc::SVDlgFolder dlg(bFullAccess);
+			dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
+
+			INT_PTR rc = dlg.DoModal();
+			if (IDOK == rc)
+			{
+				auto filePath = std::string {dlg.GetPathName()} + "\\" + m_moduleList[index].m_name + ".svm";
+				SvFs::writeStringToFile(filePath, responseCmd.exportmoduleresponse().datastring(), false);
+			}
+		}
+		else
+		{
+			SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+			if (errorMsgContainer.size() > 0)
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Msg.setMessage(errorMsgContainer.at(0).getMessage());
+			}
+			else
+			{
+				Log_Assert(false);
+			}
+		}
+	}
+}
+
+void EditModulesDialog::OnRenameModule()
+{
+	auto index = getSelectedIndex();
+	if (0 <= index && m_moduleList.size() > index)
+	{
+		EnterStringDlg nameDlg {m_moduleList[index].m_name,  SvCmd::checkNewModuleName, "Enter new Module Name", this};
+		if (IDOK != nameDlg.DoModal())
+		{
+			return;
+		}
+		auto newName = nameDlg.getString();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_renamemodulerequest();
+		pRequest->set_guid(m_moduleList[index].m_guid.ToString());
+		pRequest->set_name(newName);
+		HRESULT hr = SvCmd::InspectionCommands(SvDef::InvalidObjectId, requestCmd, &responseCmd);
+		if (S_OK != hr)
+		{
+			SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+			if (errorMsgContainer.size() > 0)
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Msg.setMessage(errorMsgContainer.at(0).getMessage());
+			}
+			else
+			{
+				Log_Assert(false);
+			}
+		}
+		initModuleListControl();
+	}
+}
+
 void EditModulesDialog::initModuleListControl()
 {
+	m_moduleListBox.ResetContent();
 	m_moduleList = getModuleData();
-	SvUl::NameObjectIdList nameList;
-	for (int i = 0; m_moduleList.size() > i; ++i)
+	if (m_moduleList.size())
 	{
-		nameList.emplace_back(m_moduleList[i].m_name + " (" + std::to_string(m_moduleList[i].m_numberOfUse) + ")", i);
+		for (int i = 0; m_moduleList.size() > i; ++i)
+		{
+			m_moduleListBox.SetItemData(m_moduleListBox.AddString((m_moduleList[i].m_name + " (" + std::to_string(m_moduleList[i].m_numberOfUse) + ")").c_str()), i);
+		}
 	}
-	m_moduleListBox.init(nameList, "<No Modules>");
+	else
+	{
+		m_moduleListBox.SetItemData(m_moduleListBox.AddString("<No Modules>"), 0);
+	}
+	
 	OnSelchangeList();
+}
+
+int EditModulesDialog::getSelectedIndex()
+{
+	return static_cast<int>(m_moduleListBox.GetItemData(m_moduleListBox.GetCurSel()));
 }
 } //namespace SvOg

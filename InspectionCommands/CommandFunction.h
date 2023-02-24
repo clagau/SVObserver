@@ -195,5 +195,11 @@ SvPb::InspectionCmdResponse getDependencyRequest(SvPb::GetDependencyRequest requ
 SvPb::InspectionCmdResponse getToolDepth(SvPb::GetToolDepthRequest request);
 SvPb::InspectionCmdResponse getModuleList();
 SvPb::InspectionCmdResponse deleteModule(SvPb::DeleteModuleRequest request);
+SvPb::InspectionCmdResponse checkNewModuleName(SvPb::CheckNewModuleNameRequest request);
+SvPb::InspectionCmdResponse convertGroupToModuleTool(SvPb::ConvertGroupToModuleToolRequest request);
+SvPb::InspectionCmdResponse convertModuleToGroupTool(SvPb::ConvertModuleToGroupToolRequest request);
+SvPb::InspectionCmdResponse renameModule(SvPb::RenameModuleRequest request);
+SvPb::InspectionCmdResponse importModule(SvPb::ImportModuleRequest request);
+SvPb::InspectionCmdResponse exportModule(SvPb::ExportModuleRequest request);
 SvPb::InspectionCmdResponse fixInputsAndGetList(SvPb::FixInputsAndGetInputListRequest request);
 } //namespace SvCmd
