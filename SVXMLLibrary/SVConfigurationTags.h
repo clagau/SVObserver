@@ -198,6 +198,11 @@ namespace  SvXml
 	constexpr const char* CTAG_MODULE_LIST = _T("ModuleList");
 	constexpr const char* CTAG_LAST_Modify = _T("LastModify");
 
+	constexpr const char* CTAG_RESULT_TABS = _T("ResultTabs");
+	constexpr const char* CTAG_RESULT_TABLE_TAB =  _T("ResultTableTab");
+
+
+
 	/// These are tool copy / paste tags
 	constexpr const char* ToolCopyTag = _T( "Tool-Copy" );
 	constexpr const char* ToolsTag = _T( "Tools" );

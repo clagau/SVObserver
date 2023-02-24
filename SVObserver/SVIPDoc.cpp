@@ -527,6 +527,7 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 
 	m_bAllowRefresh = true;
 
+	GetResultView()->initializeResultTabControl();
 	return l_bOk;
 }
 
@@ -1938,7 +1939,8 @@ void SVIPDoc::OnResultsTablePicker()
 				ResultTabbedView* pView = GetResultView();
 				if (nullptr != pView)
 				{
-					pView->UpdateTab();
+					pView->tableIdChanged();
+					pView->UpdateWindow();
 				}
 			}
 		}

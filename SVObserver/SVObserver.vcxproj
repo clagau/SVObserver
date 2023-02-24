@@ -205,6 +205,7 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="ResultTabbedView.cpp" />
+    <ClCompile Include="ResultTabControl.cpp" />
     <ClCompile Include="ResultTableListCtrl.cpp" />
     <ClCompile Include="ResultViewReferences.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
@@ -397,6 +398,7 @@ echo %time%
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResultListCtrl.h" />
     <ClInclude Include="ResultTabbedView.h" />
+    <ClInclude Include="ResultTabControl.h" />
     <ClInclude Include="ResultTableListCtrl.h" />
     <ClInclude Include="ResultViewReferences.h" />
     <ClInclude Include="RootChildren.h" />

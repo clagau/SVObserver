@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "ResultTabbedView.h"
 #include "ResultTableListCtrl.h"
+#include "ResultTabControl.h"
 #include "SVIPSplitterFrame.h"
 #include "SVIPDoc.h"
 #include "ObjectInterfaces/IObjectWriter.h"
@@ -28,7 +29,6 @@ IMPLEMENT_DYNCREATE(ResultTabbedView, CView)
 BEGIN_MESSAGE_MAP(ResultTabbedView, CView)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_REGISTERED_MESSAGE(AFX_WM_CHANGING_ACTIVE_TAB, &ResultTabbedView::OnChangingActiveTab)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
@@ -48,6 +48,8 @@ void ResultTabbedView::GetParameters(SvOi::IObjectWriter& rWriter)
 	svVariant = Rect.Width();
 	rWriter.WriteAttribute(SvXml::CTAG_CELL_WIDTH, svVariant);
 	svVariant.Clear();
+
+	m_customTabCtrl.Save(rWriter);
 }
 
 bool ResultTabbedView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
@@ -77,6 +79,8 @@ bool ResultTabbedView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHand
 	{
 		SetViewSize(l_Size);
 	}
+
+	m_customTabCtrl.Load(rTree, htiParent);
 
 	return bOk;
 }// end SetParameters
@@ -142,36 +146,18 @@ void ResultTabbedView::SetViewSize(CSize &Size)
 	}
 }
 
-void ResultTabbedView::UpdateTab(int TabIndex /*= -1*/)
-{
-	TabIndex = (-1 == TabIndex) ? m_TabCtrl.GetActiveTab() : TabIndex;
-	switch (TabIndex)
-	{
-		case 0:
-			m_ResultList.updateList();
-			break;
-		case 1:
-			m_ResultTableList.updateList();
-			break;
-
-		default:
-			break;
-	}
-}
 #pragma endregion Public Methods
 
 #pragma region Private Methods
 void ResultTabbedView::OnDraw(CDC* pDC)
 {
-	m_TabCtrl.RedrawWindow();
-	m_ResultList.RedrawWindow();
-	m_ResultTableList.RedrawWindow();
+	m_customTabCtrl.RedrawWindow();
 	__super::OnDraw(pDC);
 };
 
 void ResultTabbedView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
 {
-	UpdateTab();
+	m_customTabCtrl.updateTab();
 }
 
 int ResultTabbedView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -190,21 +176,11 @@ int ResultTabbedView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CRect Rect;
 	GetClientRect(Rect);
 
-	if (!m_TabCtrl.Create(CMFCTabCtrl::STYLE_3D_ROUNDED, Rect, this, 1))
+	if (!m_customTabCtrl.Create(CMFCTabCtrl::STYLE_FLAT, Rect, this, 1))
 	{
 		return -1;
 	}
 
-	m_ResultList.setIPDoc(m_pIPDoc);
-	m_ResultTableList.setIPDoc(m_pIPDoc);
-	m_ResultList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, Rect, &m_TabCtrl, 1);
-	m_ResultTableList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER , Rect, &m_TabCtrl, 2);
-
-	m_TabCtrl.AddTab(&m_ResultList, _T("Result"));
-	m_TabCtrl.AddTab(&m_ResultTableList, _T("Table Result"));
-	m_TabCtrl.SetActiveTab(0);
-
-	m_TabCtrl.AutoDestroyWindow(true);
 	return 0;
 }
 
@@ -212,20 +188,11 @@ void ResultTabbedView::OnSize(UINT nType, int cx, int cy)
 {
 	CView::OnSize(nType, cx, cy);
 
-	if (::IsWindow(m_TabCtrl.m_hWnd))
+	if (::IsWindow(m_customTabCtrl.m_hWnd))
 	{
 		CRect Rect;
 		GetClientRect(Rect);
-		m_TabCtrl.MoveWindow(Rect);
+		m_customTabCtrl.MoveWindow(Rect);
 	}
 }
 #pragma endregion Private Methods
-
-
-LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM)
-{
-	//! wParam contains the active tab index
-	UpdateTab(static_cast<int> (wParam));
-
-	return 0;
-}

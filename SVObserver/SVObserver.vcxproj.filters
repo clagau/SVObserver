@@ -492,6 +492,9 @@
     <ClCompile Include="ModuleController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ResultTabControl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1019,6 +1022,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ModuleController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultTabControl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -63,7 +63,8 @@ constexpr const char* SizeAdjustTextFormula = _T("Formula");
 constexpr const char* SizeAdjustTextAutoFitSize = _T("Auto Fit");
 constexpr const char* fileDlgFilterMilSupportedImageFilesTypes = _T("All Suitable Image Files (BMP, PNG, TIFF, MIM)|*.bmp; *.png; *.tif; *.mim|Bitmap Files(*.bmp)|*.bmp|PNG Files (*.png)|*.png|TIFF Files (*.tif)|*.tif|MIL Image Files (*.mim)|*.mim||");
 
-
+constexpr const char* cTableResultView = _T("Table Result");
+constexpr const char* cResultView = _T("Result");
 
 
 static std::initializer_list<const char*> c_allInterpolationModeNames

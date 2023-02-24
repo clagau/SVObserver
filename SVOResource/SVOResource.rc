@@ -56,6 +56,7 @@ BEGIN
     "#include ""afxolecl.rc""       // OLE-Container-Ressourcen\r\n"
     "#include ""afxolesv.rc""       // OLE-Server-Ressourcen\r\n"
     "#include ""afxdb.rc""          // Datenbankressourcen\r\n"
+    "#include ""afxribbon.rc"" // Ribbon and control bars\r\n"
     "#endif \0"
 END
 
@@ -242,7 +243,7 @@ BEGIN
     PUSHBUTTON      "Delete",IDC_DELETE,7,219,50,14
     PUSHBUTTON      "Export",IDC_EXPORT,61,219,50,14
     PUSHBUTTON      "Import",IDC_IMPORT,116,219,50,14
-    PUSHBUTTON      "Rename", IDC_RENAME, 171, 219, 50, 14
+    PUSHBUTTON      "Rename",IDC_RENAME,171,219,50,14
     LISTBOX         IDC_MODULE_LIST,7,7,138,200,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_HISTORY_TEXT,152,103,320,104,ES_MULTILINE | ES_WANTRETURN | WS_DISABLED | WS_VSCROLL
     EDITTEXT        IDC_EDIT_COMMENT,152,7,320,93,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
@@ -3025,7 +3026,7 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO
 BEGIN
-IDD_EDIT_MODULES, DIALOG
+    IDD_EDIT_MODULES, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 472
@@ -4252,7 +4253,7 @@ BEGIN
         END
         POPUP "Modules",                        65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "Edit Modules",        ID_EDIT_MODULES,MFT_STRING,MFS_ENABLED
+            MENUITEM "Edit Modules",                ID_EDIT_MODULES,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
     END
@@ -5010,6 +5011,7 @@ BEGIN
     100, 100, 0, 0,
     0, 100, 0, 0
 END
+
 IDD_LINKEDVALUE_SELECTOR_DIALOG AFX_DIALOG_LAYOUT
 BEGIN
     0
@@ -6999,6 +7001,7 @@ LANGUAGE 9, 1
 #include "afxolecl.rc"       // OLE-Container-Ressourcen
 #include "afxolesv.rc"       // OLE-Server-Ressourcen
 #include "afxdb.rc"          // Datenbankressourcen
+#include "afxribbon.rc" // Ribbon and control bars
 #endif 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

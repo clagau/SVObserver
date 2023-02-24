@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "ResultTableListCtrl.h"
 #include "SVIPDoc.h"
+#include "SVToolSet.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVClsids.h"
@@ -57,8 +58,21 @@ BOOL ResultTableListCtrl::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentW
 	return Result;
 }
 
+void ResultTableListCtrl::setTableIdInResultView()
+{
+	SVToolSet* toolset = m_pDoc->GetToolSet();
+	uint32_t currentTableId = toolset->GetResultList()->getTableId();
+
+	if (currentTableId != m_LinkedTableId)
+	{
+		toolset->GetResultList()->setTableId(m_LinkedTableId);
+		m_pDoc->RebuildResultsList();
+	}
+}
+
 void ResultTableListCtrl::updateList()
 {
+	setTableIdInResultView();
 	bool Update = true;
 	SVObjectClass* pObject(nullptr);
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentResultUpdateId, pObject);

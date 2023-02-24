@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "ResultTableListCtrl.h"
 #include "ResultListCtrl.h"
+#include "ResultTabControl.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
 
@@ -36,8 +37,8 @@ public:
 	bool SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
 	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
 	void SetViewSize(CSize &Size);
-
-	void UpdateTab(int TabIndex = -1);
+	void tableIdChanged() { m_customTabCtrl.tableIdChanged(); };
+	void initializeResultTabControl() { m_customTabCtrl.initializeResultTabControl(); };
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -47,13 +48,13 @@ private:
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg LRESULT OnChangingActiveTab(WPARAM wParam, LPARAM lParam);
 #pragma endregion Private Methods
 
 #pragma region Member variables
 private:
-	CMFCTabCtrl m_TabCtrl;
+	ResultTabControl m_customTabCtrl;
 	ResultListCtrl m_ResultList;
+	CEdit m_Wnd1;
 	ResultTableListCtrl m_ResultTableList;
 	SVIPDoc* m_pIPDoc {nullptr};
 #pragma endregion Member variables

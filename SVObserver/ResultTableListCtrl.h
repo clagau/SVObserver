@@ -33,7 +33,10 @@ public:
 
 	void setIPDoc(SVIPDoc* pDoc) { m_pDoc = pDoc; };
 	/// The method updates the list
+	void setTableIdInResultView();
 	void updateList();
+	void setTableId(uint32_t id) { m_LinkedTableId = id; }
+	uint32_t getTableId() { return m_LinkedTableId; }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -53,5 +56,6 @@ private:
 	int m_ColumnCount = 0;
 	mutable double m_UpdateTimeStamp = 0.0;
 	SVIPDoc* m_pDoc = nullptr;
+	uint32_t m_LinkedTableId = 0;
 #pragma endregion Member variables
 };
