@@ -303,14 +303,11 @@ HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 {
 	setSelectedOption(rData.option());
 	//make  sure value is consistent
-	_variant_t defaultValue;
-	SvPb::ConvertProtobufToVariant(rData.defaultvalue(), defaultValue);
-	Log_Assert(defaultValue == GetDefaultValue());
 	_variant_t directValue;
 	SvPb::ConvertProtobufToVariant(rData.directvalue(),directValue);
 	if (S_OK != ::VariantChangeTypeEx(&directValue, &directValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultValue().vt))
 	{
-		m_directValue = defaultValue;
+		Log_Assert(false);
 	}
 	else
 	{
@@ -673,12 +670,7 @@ _variant_t LinkedValue::validateValue(const SvPb::LinkedValue& rLinkedValue) con
 			{
 				value.boolVal = value.boolVal ? 1 : 0;
 			}
-			if (VT_BSTR == value.vt && SvUl::VTGroups::Text != SvUl::getVTGroup(defaultValue.vt).first)
-			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-				Exception.Throw();
-			}
+
 			if (S_OK != ::VariantChangeTypeEx(&value, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, ~(VT_ARRAY)&defaultValue.vt))
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);

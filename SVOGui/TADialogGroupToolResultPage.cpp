@@ -255,6 +255,7 @@ namespace SvOg
 				{
 					const auto& type = getType(cellText);
 					m_resultData[row - 1].m_type = static_cast<SvPb::LinkedValueTypeEnum>(type.second);
+					SvOgu::checkAndCorrectTypes(m_resultData[row - 1]);
 					FillGridControl();
 					break;
 				}

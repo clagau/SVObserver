@@ -48,6 +48,13 @@ SvStl::MessageContainerVector sendValuesToInspection(uint32_t ipId, uint32_t tas
 bool addEntry(const std::string& firstNameTry, std::vector<GroupInputResultData>& rDataList);
 void loadDataList(std::vector<GroupInputResultData>& rDataList, ValueController& rValueCtrl, SvPb::EmbeddedIdEnum valueEId, SvPb::EmbeddedIdEnum typeEId, const SvStl::MessageContainerVector& rErrorMessages);
 
+/// Convert a text to the correct variant depend of the type. If convert failed it throw an exception.
+variant_t convertTextToVariant(SvPb::LinkedValueTypeEnum type, const std::string& text);
+/// Fit an variant to the correct variant depend of the type. If convert failed it throw an exception.
+variant_t fitVariantToType(SvPb::LinkedValueTypeEnum type, const variant_t& value);
+
+void checkAndCorrectTypes(SvOgu::GroupInputResultData& rData);
+
 SvStl::MessageContainerVector checkParameterNames(uint32_t ipId, uint32_t taskId, const std::vector<GroupInputResultData>& rDataList);
 SvStl::MessageContainerVector checkParameterNames(uint32_t ipId, uint32_t taskId, const std::vector<std::string>& rDataList);
 }

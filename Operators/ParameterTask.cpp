@@ -12,6 +12,7 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
+#include "SVUtilityLibrary/SafeArrayHelper.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -348,15 +349,18 @@ namespace SvOp
 			{
 				variant_t value;
 				HRESULT hr = rObjectRef.getValue(value);
-				if (S_OK == hr && VT_EMPTY != value.vt)
+				if (S_OK == hr)
 				{
-					if (value.vt & VT_BSTR)
+					auto[type, _] = SvUl::getVTGroup(value.vt);
+					switch (type)
 					{
-						return SvPb::LinkedValueTypeEnum::TypeText;
-					}
-					else
-					{
-						return SvPb::LinkedValueTypeEnum::TypeDecimal;
+						case SvUl::VTGroups::Numbers:
+							return SvPb::LinkedValueTypeEnum::TypeDecimal;
+						case SvUl::VTGroups::Text:
+							return SvPb::LinkedValueTypeEnum::TypeText;
+						default:
+							Log_Assert(false);
+							return SvPb::LinkedValueTypeEnum::TypeText;
 					}
 				}
 				else

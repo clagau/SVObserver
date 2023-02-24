@@ -42,6 +42,7 @@ public:
 	void setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
+	virtual void changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject) override;
 
 	std::string GetUntranslatedFullResultFilepath();
 	std::string alternativeImageDirectory(const std::string& imagePathRoot);

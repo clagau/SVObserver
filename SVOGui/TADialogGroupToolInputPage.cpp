@@ -12,7 +12,7 @@
 #include "GridCtrlLibrary/GridCellCombo.h"
 #include "SVOGuiUtility/DisplayHelper.h"
 #include "SVOGuiUtility/LinkedValueSelectorDialog.h"
-#include "Definitions/GlobalConst.h"
+#include "Definitions/Color.h"
 #include "SVShowDependentsDialog.h"
 #pragma endregion Includes
 
@@ -73,73 +73,6 @@ std::string State2String(const _variant_t& var )
 	{
 		return "";
 	}
-}
-
-
-variant_t checkText(SvPb::LinkedValueTypeEnum type, const std::string& text)
-{
-	variant_t result {};
-	try
-	{
-		switch (type)
-		{
-			case SvPb::LinkedValueTypeEnum::TypeDecimal:
-				result = std::stod(text);
-				break;
-			case SvPb::LinkedValueTypeEnum::TypeText:
-				result = text.c_str();
-				break;
-			case SvPb::LinkedValueTypeEnum::TypeStates:
-				result = std::stoi(text);
-				break;
-
-
-			default: //do nothing, empty variant
-				break;
-		}
-	}
-	catch (...)
-	{
-		SvDef::StringVector msgList;
-		msgList.push_back(text);
-		SvStl::MessageManager msg(SvStl::MsgType::Data);
-		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConvertTextToVariantFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
-		msg.Throw();
-	}
-
-	return result;
-}
-
-variant_t checkText(SvPb::LinkedValueTypeEnum type, const variant_t& value)
-{
-	variant_t result {};
-	bool isValid {true};
-	switch (type)
-	{
-		case SvPb::LinkedValueTypeEnum::TypeDecimal:
-			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_R8));
-			break;
-		case SvPb::LinkedValueTypeEnum::TypeText:
-			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR));
-			break;
-		case SvPb::LinkedValueTypeEnum::TypeStates:
-			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_INT));
-			break;
-
-		default: //do nothing, empty variant
-			break;
-	}
-
-	if (false == isValid)
-	{
-		SvDef::StringVector msgList;
-		msgList.push_back(static_cast<std::string>(static_cast<CString>(value)));
-		SvStl::MessageManager msg(SvStl::MsgType::Data);
-		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConvertTextToVariantFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
-		msg.Throw();
-	}
-
-	return result;
 }
 }
 
@@ -497,7 +430,7 @@ void TADialogGroupToolInputPage::FillGridControl()
 		//check if defaultValue correct
 		try
 		{
-			m_inputData[i].m_data.m_defaultValue = checkText(m_inputData[i].m_type, m_inputData[i].m_data.m_defaultValue);
+			m_inputData[i].m_data.m_defaultValue = SvOgu::fitVariantToType(m_inputData[i].m_type, m_inputData[i].m_data.m_defaultValue);
 		}
 		catch (...)
 		{
@@ -724,6 +657,7 @@ bool TADialogGroupToolInputPage::OnValueChanged(int row, int column)
 			{
 				const auto& type = getType(cellText);
 				m_inputData[row - 1].m_type = static_cast<SvPb::LinkedValueTypeEnum>(type.second);
+				checkAndCorrectTypes(m_inputData[row - 1]);
 				FillGridControl();
 				break;
 			}
@@ -734,7 +668,7 @@ bool TADialogGroupToolInputPage::OnValueChanged(int row, int column)
 					try
 					{
 						//check if text a correct variant	
-						m_inputData[row - 1].m_data.m_defaultValue = checkText(m_inputData[row - 1].m_type, cellText);
+						m_inputData[row - 1].m_data.m_defaultValue = SvOgu::convertTextToVariant(m_inputData[row - 1].m_type, cellText);
 					}
 					catch (const SvStl::MessageContainer& rSvE)
 					{

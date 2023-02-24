@@ -170,6 +170,96 @@ void loadDataList(std::vector<GroupInputResultData>& rDataList, ValueController&
 	}
 }
 
+variant_t convertTextToVariant(SvPb::LinkedValueTypeEnum type, const std::string& text)
+{
+	variant_t result {};
+	try
+	{
+		switch (type)
+		{
+			case SvPb::LinkedValueTypeEnum::TypeDecimal:
+				result = std::stod(text);
+				break;
+			case SvPb::LinkedValueTypeEnum::TypeText:
+				result = text.c_str();
+				break;
+			case SvPb::LinkedValueTypeEnum::TypeStates:
+				result = std::stoi(text);
+				break;
+
+
+			default: //do nothing, empty variant
+				break;
+		}
+	}
+	catch (...)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(text);
+		SvStl::MessageManager msg(SvStl::MsgType::Data);
+		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConvertTextToVariantFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+		msg.Throw();
+	}
+
+	return result;
+}
+
+variant_t fitVariantToType(SvPb::LinkedValueTypeEnum type, const variant_t& value)
+{
+	variant_t result {};
+	bool isValid {true};
+	switch (type)
+	{
+		case SvPb::LinkedValueTypeEnum::TypeDecimal:
+			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_R8));
+			break;
+		case SvPb::LinkedValueTypeEnum::TypeText:
+			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR));
+			break;
+		case SvPb::LinkedValueTypeEnum::TypeStates:
+			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_INT));
+			break;
+
+		default: //do nothing, empty variant
+			break;
+	}
+
+	if (false == isValid)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(static_cast<std::string>(static_cast<CString>(value)));
+		SvStl::MessageManager msg(SvStl::MsgType::Data);
+		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConvertTextToVariantFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+		msg.Throw();
+	}
+
+	return result;
+}
+
+void checkAndCorrectTypes(SvOgu::GroupInputResultData& rData)
+{
+	try
+	{
+		rData.m_data.m_defaultValue = fitVariantToType(rData.m_type, rData.m_data.m_defaultValue);
+	}
+	catch (...)
+	{
+		rData.m_data.m_defaultValue = SvPb::getDefaultString(rData.m_type);
+	}
+
+	if (rData.m_data.m_selectedOption == SvPb::DirectValue)
+	{
+		try
+		{
+			rData.m_data.m_directValue = fitVariantToType(rData.m_type, rData.m_data.m_directValue);
+		}
+		catch (...)
+		{
+			rData.m_data.m_directValue = rData.m_data.m_defaultValue;
+		}
+	}
+}
+
 namespace
 {
 SvStl::MessageContainerVector checkParameterNames(uint32_t ipId, uint32_t taskId, SvPb::CheckParameterNamesRequest request)

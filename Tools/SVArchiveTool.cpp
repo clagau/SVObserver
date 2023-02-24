@@ -941,6 +941,38 @@ std::vector<std::string> SVArchiveTool::getToolAdjustNameList() const
 	return {cToolAdjustNameList.begin(), cToolAdjustNameList.end()};
 }
 
+void SVArchiveTool::changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject)
+{
+	auto oldName = rOldObject.GetCompleteName();
+	auto findStringPos = [oldName](const auto& rStringValue) -> int
+	{
+		for (int i = 0; rStringValue.getArraySize() > i; ++i)
+		{
+			std::string tmpName;
+			rStringValue.GetValue(tmpName, i);
+			if (oldName == tmpName)
+			{
+				return i;
+			}
+		}
+		return -1;
+	};
+
+	
+	int index = findStringPos(m_svoArchiveImageNames);
+	if (-1 < index)
+	{
+		m_svoArchiveImageNames.SetValue(rNewObject.GetCompleteName(), index);
+		return;
+	}
+	index = findStringPos(m_svoArchiveResultNames);
+	if (-1 < index)
+	{
+		m_svoArchiveResultNames.SetValue(rNewObject.GetCompleteName(), index);
+		return;
+	}
+}
+
 std::string SVArchiveTool::GetUntranslatedFullResultFilepath()
 {
 	auto filepath = GetResultFolderpathPart1() + GetResultFolderpathPart2() + _T("\\") + GetResultFilename();
