@@ -85,7 +85,7 @@ public:
 };
 
 
-
+constexpr int cResetDepth  = 3;
 uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  InIt, uint32_t toolobjectId);
 
 class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool
@@ -100,8 +100,8 @@ public:
 
 	
 
-	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) override;
-	bool resetAllDepedentObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr);
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, int nResetDepth = 0) override;
+	bool resetAllDepedentObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr,int dependend =0);
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;

@@ -15,7 +15,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-
+//#define TRACE_RESETALL true
 #ifdef TRACE_RESETALL
 
 extern std::unordered_map<int, int> ResetImageIds;
@@ -163,7 +163,9 @@ namespace SvOi
 		/// Reset this object and all children and required all friends.
 		/// \param pErrorMessages [in,out] Pointer to an Error Message Container. If the pointer unequal nullptr, an error message will be added if it happens during reset.
 		/// \returns bool
-		virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, bool dependend = false) = 0;
+		/// additional for a tool  dependends tools are also resete when nResetDepth is greater 0. 
+		/// This stops after the nDependents generation 
+		virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, int nDependends = 0) = 0;
 
 		/// Get the object class ID
 		virtual SvPb::ClassIdEnum GetClassID() const = 0;

@@ -113,7 +113,7 @@ public:
 	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) override;
 
 	bool getAvailableObjects(SVClassInfoStructVector* pList, const SvDef::SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
-	virtual bool resetAllObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr, bool dependend = false) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr, int nResetDepth = 0) override;
 
 	auto getTaskObject(size_t i) const { return m_TaskObjectVector[i]; }
 #pragma endregion Methods to replace processMessage

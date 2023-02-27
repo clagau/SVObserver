@@ -413,7 +413,7 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 	return nullptr;
 }
 
-bool SVObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool /*depended = false*/)
+bool SVObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, int  /*nResetDepth = 0*/)
 {
 	bool Result = true;
 	for (auto pObject : m_embeddedList)

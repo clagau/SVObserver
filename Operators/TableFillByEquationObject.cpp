@@ -27,13 +27,13 @@ SV_IMPLEMENT_CLASS(TableFillByEquationObject, SvPb::TableFillObjectId);
 
 
 #pragma region Constructor
-TableFillByEquationObject::TableFillByEquationObject( LPCTSTR ObjectName )
+TableFillByEquationObject::TableFillByEquationObject(LPCTSTR ObjectName)
 	: TableObject(ObjectName)
 {
 	Initialize();
 }
 
-TableFillByEquationObject::TableFillByEquationObject( SVObjectClass* pOwner, int StringResourceID )
+TableFillByEquationObject::TableFillByEquationObject(SVObjectClass* pOwner, int StringResourceID)
 	: TableObject(pOwner, StringResourceID)
 {
 	Initialize();
@@ -55,7 +55,16 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 	//after the load the m_equationList can be empty and m_ValueList has already loaded values. In this case copy the "loaded" equation to the m_equationList.
 	if (0 == m_equationList.size() && 0 < m_ValueList.size())
 	{
-		m_equationList.insert(m_equationList.begin(), columnList.begin(), columnList.begin()+m_ValueList.size());
+		auto end = columnList.end();
+		if (m_ValueList.size() <= columnList.size())
+		{
+			end = columnList.begin() + m_ValueList.size();
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+		m_equationList.insert(m_equationList.begin(), columnList.begin(), end);
 	}
 	Log_Assert(m_equationList.size() == m_ValueList.size());
 
@@ -63,7 +72,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 	for (std::vector<TableColumnEquation*>::iterator forIter = columnList.begin(); columnList.end() != forIter; ++forIter, i++)
 	{
 		//check if column at position i different between old equation list and new one
-		if (m_equationList.size() <=i || *forIter != *(m_equationList.begin()+i))
+		if (m_equationList.size() <= i || *forIter != *(m_equationList.begin() + i))
 		{
 			std::vector<TableColumnEquation*>::iterator findIter = std::find(m_equationList.begin(), m_equationList.end(), *forIter);
 			if (m_equationList.end() != findIter)
@@ -86,9 +95,9 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 					e.Throw();
 				}
 				createColumnObject(newId, (*forIter)->GetName(), maxArray);
-				m_equationList.insert(m_equationList.begin()+i, *forIter);
+				m_equationList.insert(m_equationList.begin() + i, *forIter);
 				//move object from last position to wanted
-				MoveValueColumn(static_cast<int>(m_ValueList.size()-1), i);
+				MoveValueColumn(static_cast<int>(m_ValueList.size() - 1), i);
 			}
 		}
 		else
@@ -112,26 +121,26 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableFillByEquationObject::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableFillByEquationObject::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
-	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
+	bool returnValue = __super::onRun(rRunStatus, pErrorMessages);
 	if (returnValue)
 	{
 		int nextPos = 0;
 		if (!m_spSortContainer->empty())
 		{
-			nextPos = (m_spSortContainer->at(0)+1)%(m_spSortContainer->capacity());
+			nextPos = (m_spSortContainer->at(0) + 1) % (m_spSortContainer->capacity());
 		}
 		m_spSortContainer->push_front(nextPos);
 
-		for (int i = 0; i < m_equationList.size(); ++i )
+		for (int i = 0; i < m_equationList.size(); ++i)
 		{
 			SvVol::DoubleSortValueObject* pValueObject = (m_ValueList[i]).get();
 			TableColumnEquation* pEquation = m_equationList[i];
 			if (nullptr != pValueObject && nullptr != pEquation)
 			{
 				pValueObject->setSortContainerPtr(m_spSortContainer);
-				pValueObject->SetValue(pEquation->GetYACCResult(), 0 );
+				pValueObject->SetValue(pEquation->GetYACCResult(), 0);
 			}
 		}
 
@@ -147,7 +156,7 @@ void TableFillByEquationObject::Initialize()
 {
 	// Set up your type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
-	m_ObjectTypeInfo.m_SubType    = SvPb::TableFillObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::TableFillObjectType;
 }
 #pragma endregion Private Methods
 

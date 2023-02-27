@@ -1035,7 +1035,7 @@ bool SVTaskObjectListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVe
 	return bRetVal;
 }
 
-bool SVTaskObjectListClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool /*depended = false*/)
+bool SVTaskObjectListClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, int  /*nResetDepth = 0*/)
 {
 	bool Result = __super::resetAllObjects(pErrorMessages);
 

@@ -87,7 +87,7 @@ SVTaskObjectClass::~SVTaskObjectClass()
 	Log_Assert(0 == m_inputs.size());
 }
 
-bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool /*dependand = false*/)
+bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, int /*nResetDepth*/)
 {
 	clearTaskMessages();
 	bool Result = (S_OK == updateImageExtent(true));
@@ -101,7 +101,8 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMes
 		}
 	}
 
-	Result = Result && __super::resetAllObjects(&m_ResetErrorMessages);
+	
+	Result =   __super::resetAllObjects(&m_ResetErrorMessages) && Result;
 	m_embeddedFormulaLinked.clear();
 	if (GetObjectSubType() != SvPb::ParameterResultObjectType) //for results in the GroupTool the formula must be calculated at the end (see ResultParameterTask::calcFormulaPost()).
 	{

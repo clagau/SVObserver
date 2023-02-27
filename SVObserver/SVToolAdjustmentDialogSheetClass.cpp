@@ -94,15 +94,15 @@ void SVToolAdjustmentDialogSheetClass::init()
 {
 	//This will remove the APPLY Button from the Tool Adjustment Dialogs.
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
-	
+
 	addPages();
 
 
 	SvOi::IObjectClass* pObject = GetTaskObject();
 	Log_Assert(pObject && pObject->GetObjectType() == SvPb::SVToolObjectType);
-	
+
 	m_dependentTools.clear();
-	
+
 	std::back_insert_iterator<std::vector<uint32_t>>  InsertIt(m_dependentTools);
 	SvTo::InsertDependentTools(InsertIt, pObject->getObjectId());
 	SvUl::RemoveDuplicates(m_dependentTools);
@@ -519,7 +519,7 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 		return;
 	}
 
-	
+
 	if (true == ResetTools())
 	{
 		markDocumentAsDirty(true);
@@ -612,7 +612,8 @@ bool SVToolAdjustmentDialogSheetClass::ResetTools()
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObj);
 		if (pObj)
 		{
-			isOK = pObj->resetAllObjects(nullptr,true) && isOK;
+			isOK = pObj->resetAllObjects(nullptr, SvTo::cResetDepth ) && isOK;
+			Log_Assert(pObj->getToolPtr() != nullptr);
 		}
 
 	}
@@ -669,15 +670,15 @@ SvOi::IObjectClass* SVToolAdjustmentDialogSheetClass::GetTaskObject() const
 
 SvOi::IObjectClass* SVToolAdjustmentDialogSheetClass::GetTopTool() const
 {
-	SVObjectClass* pTool  = static_cast<SVObjectClass *>( GetTaskObject());
+	SVObjectClass* pTool = static_cast<SVObjectClass*>(GetTaskObject());
 	if (pTool)
 	{
-		SVObjectClass*  pObject=  pTool->GetAncestor(SvPb::SVToolObjectType, true);
+		SVObjectClass* pObject = pTool->GetAncestor(SvPb::SVToolObjectType, true);
 		if (pObject)
 		{
 			return pObject;
 		}
-		
+
 	}
 	return pTool;
 }

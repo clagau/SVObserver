@@ -70,7 +70,7 @@ uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  
 		{
 			res++;
 			InIt = pair.client().toolobjectid();
-			OutputDebugString(pair.client().DebugString().c_str());
+	
 		}
 	}
 	return res;
@@ -407,7 +407,7 @@ bool SVToolClass::CloseObject()
 	return SVTaskObjectListClass::CloseObject();
 }
 
-bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool Resetdepended)
+bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages, int nResetDepth)
 {
 
 	BOOL freezeFlag(false);
@@ -416,15 +416,15 @@ bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/
 
 	bool result = __super::resetAllObjects(pErrorMessages);
 	m_isObjectValid.SetValue(BOOL(result));
-	if (Resetdepended)
+	if (nResetDepth >0 )
 	{
-		resetAllDepedentObjects(nullptr);
+		resetAllDepedentObjects(nullptr, nResetDepth -1 );
 	}
 
 	return result;
 }
 
-bool SVToolClass::resetAllDepedentObjects(SvStl::MessageContainerVector*)
+bool SVToolClass::resetAllDepedentObjects(SvStl::MessageContainerVector*,int dependend )
 {
 	bool ret {true};
 	if (m_ressetAll_Active)
@@ -442,9 +442,9 @@ bool SVToolClass::resetAllDepedentObjects(SvStl::MessageContainerVector*)
 	{
 		SVObjectClass* pObj = nullptr;
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObj);
-		if (pObj && pObj != this)
+		if (pObj && pObj != this )
 		{
-			ret = pObj->resetAllObjects(nullptr, true) && ret;
+			ret = pObj->resetAllObjects(nullptr, dependend) && ret;
 		}
 
 	}

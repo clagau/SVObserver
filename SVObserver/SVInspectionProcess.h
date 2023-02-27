@@ -68,7 +68,7 @@ public:
 	SVInspectionProcess( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
 	virtual ~SVInspectionProcess();
 
-	virtual bool resetAllObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr, bool dependend = false) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr, int nResetDepth = 0) override;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	

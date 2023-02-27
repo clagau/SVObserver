@@ -629,7 +629,7 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 	return bRetVal;
 }// end Run
 
-bool SVToolSet::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, bool /*dependend = false*/)
+bool SVToolSet::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, int /*nResetDepth =0 */ )
 {
 	bool result = __super::resetAllObjects(pErrorMessages);
 	m_isObjectValid.SetValue(BOOL(result));
