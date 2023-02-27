@@ -47,6 +47,7 @@ class SVToolGrouping
 public:
 	ToolGroupList m_ToolGroups;
 	bool Correct(const SvOi::ObjectInfoVector&  toolsetinfo, int& rNchanged);
+	void SetCollapseFromOldConfig(const SvOi::ObjectInfoVector& toolsetinfo);
 
 	std::string GetDefaultName() const;
 	//************************************

@@ -57,12 +57,6 @@ bool SVToolGrouping::Correct(const SvOi::ObjectInfoVector& toolsetinfo, int& rNc
 				std::string name = toolsetinfo.at(toolsetindex).DisplayName;
 				if (name == it->first.c_str())
 				{
-					//set collapse if saved with 10.20
-					if (auto objectId = toolsetinfo.at(toolsetindex).m_objectId; it->second.m_bCollapsed && SvDef::InvalidObjectId != objectId)
-					{
-						Collapse(objectId, true);
-					}
-
 					//ok  
 					it++;
 					toolsetindex++;
@@ -127,6 +121,31 @@ bool SVToolGrouping::Correct(const SvOi::ObjectInfoVector& toolsetinfo, int& rNc
 	return res;
 }
 
+void SVToolGrouping::SetCollapseFromOldConfig(const SvOi::ObjectInfoVector& toolsetinfo)
+{
+	int toolsetindex {0};
+	const int toolsetSize = static_cast<int>(toolsetinfo.size());
+
+	for (const auto& rEntry : m_ToolGroups )
+	{
+		if (rEntry.second.m_type == ToolGroupData::Tool)
+		{
+			if (toolsetindex < toolsetSize)
+			{
+				std::string name = toolsetinfo.at(toolsetindex).DisplayName;
+				if (name == rEntry.first.c_str())
+				{
+					//set collapse if saved with 10.20
+					if (auto objectId = toolsetinfo.at(toolsetindex).m_objectId; rEntry.second.m_bCollapsed && SvDef::InvalidObjectId != objectId)
+					{
+						Collapse(objectId, true);
+					}
+				}
+				toolsetindex++;
+			}
+		}
+	}
+}
 
 std::string SVToolGrouping::GetDefaultName() const
 {
