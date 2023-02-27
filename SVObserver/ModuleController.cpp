@@ -79,7 +79,9 @@ std::vector<std::pair<time_t, std::string>> readHistory(SVTreeType& rTree, SVTre
 
 				if (comment.vt == VT_BSTR)
 				{
-					historyVector.emplace_back(date, SvUl::createStdString(comment));
+					auto commentStr = SvUl::createStdString(comment);
+					SvUl::RemoveEscapedSpecialCharacters(commentStr, true);
+					historyVector.emplace_back(date, commentStr);
 				}
 			}
 			catch (...)
@@ -240,6 +242,7 @@ void ModuleController::loadModules(SVTreeType& rTree)
 		if (SvXml::SVNavigateTree::GetItem(rTree, scCommentTag, hModule, Value))
 		{
 			comment = SvUl::createStdString(Value);
+			SvUl::RemoveEscapedSpecialCharacters(comment, true);			
 		}
 		else
 		{
@@ -269,13 +272,18 @@ void ModuleController::saveModules(SvOi::IObjectWriter& rWriter) const
 		rWriter.StartElement(rData.m_name.c_str());
 		_variant_t svValue {rData.m_guid.ToString().c_str()};
 		rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svValue);
-		svValue = rData.m_comment.c_str();
+		std::string temp = rData.m_comment;
+		SvUl::AddEscapeSpecialCharacters(temp, true);
+		svValue.SetString(temp.c_str());
 		rWriter.WriteAttribute(scCommentTag, svValue);
 		rWriter.StartElement(scHistoryTag);
 		for (const auto& rValue : rData.m_historyList)
 		{
 			rWriter.StartElement(std::to_string(rValue.first).c_str());
-			rWriter.WriteAttribute(scCommentTag, rValue.second.c_str());
+			temp = rValue.second;
+			SvUl::AddEscapeSpecialCharacters(temp, true);
+			svValue.SetString(temp.c_str());
+			rWriter.WriteAttribute(scCommentTag, svValue);
 			rWriter.EndElement();
 		}
 		rWriter.EndElement();

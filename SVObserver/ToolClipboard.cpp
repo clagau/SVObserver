@@ -591,10 +591,11 @@ SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds, 
 	XmlWriter.EndElement(); //ToolsTag
 	XmlWriter.WriteAttribute(SvXml::ToolDepthTag, maxToolDepth);
 	XmlWriter.EndAllElements();
-	SvFs::writeStringToFile(rXmlFilePath, MemoryStream.str(), true);
+	auto xmlText = SvUl::to_ansi(MemoryStream.str());
+	SvFs::writeStringToFile(rXmlFilePath, xmlText, true);
 
 
-	auto DependencyFilepaths = findDependencyFiles(MemoryStream.str());
+	auto DependencyFilepaths = findDependencyFiles(xmlText);
 	SvDef::StringVector filepaths {DependencyFilepaths.begin(), DependencyFilepaths.end()};
 	filepaths.emplace_back(rXmlFilePath);
 
