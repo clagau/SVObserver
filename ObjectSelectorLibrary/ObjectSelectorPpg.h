@@ -41,7 +41,7 @@ namespace SvOsl
 		// Parameter:  Title <in>:  const string for page title
 		// Parameter:  SingleSelect <in>:  true for single selection mode (default)
 		//************************************
-		ObjectSelectorPpg( SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect = true );
+		ObjectSelectorPpg(SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect = true, LPCTSTR nodeToBeSelected = nullptr);
 
 		//************************************
 		// Description:  The virtual destructor
@@ -72,7 +72,6 @@ namespace SvOsl
 			m_HighlightedNode = rHighlightedNode;
 			UpdateData(false);
 		}
-
 
 		//************************************
 		// Description:  The method sets the Help ID for the dialog.
@@ -114,6 +113,7 @@ namespace SvOsl
 		CImageList m_ImageList;							//The image list
 		std::string m_HighlightedNode;						//The currently highlighted node location
 		int m_HelpID;									//The help id used to identify the property page
+		LPCTSTR m_nodeToBeSelected;
 	#pragma endregion Member Variables
 	};
 } //namespace SvOsl

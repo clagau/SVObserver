@@ -118,7 +118,6 @@ namespace SvOsl
 		}
 
 		SvCl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( m_NodeLocation );
-
 		if( getParentPropPage().getTreeContainer().end() != Iter )
 		{
 			SvCl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
@@ -139,6 +138,7 @@ namespace SvOsl
 			}
 		}
 	}
+
 
 #pragma endregion Public Methods
 

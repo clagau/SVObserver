@@ -2577,6 +2577,7 @@
 #define ID_ADD_MATHTOOL                 20094
 #define ID_ADD_ARCHIVETOOL              20095
 #define ID_RESULTS_PICKER               20096
+#define ID_RESULTS_PICKER_CURRENT_TOOL  20097
 #define ID_ADD_IMAGETOOL                20098
 #define ID_ADD_LOADIMAGETOOL            20099
 #define ID_ADD_STATISTICSTOOL           20100

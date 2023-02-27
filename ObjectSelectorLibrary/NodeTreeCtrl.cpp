@@ -128,6 +128,20 @@ namespace SvOsl
 		rUpdateItems.clear();
 	}
 
+	bool NodeTreeCtrl::SelectNodeByName(const std::string& rDottedName)
+	{
+		bool ret = false;
+		auto Iter = getParentPropPage().getTreeContainer().findItem(rDottedName);
+		if (getParentPropPage().getTreeContainer().end() != Iter)
+		{
+			Select(NULL, TVGN_CARET); // deselect all
+			ret = SelectItem(Iter->second->m_NodeItem);
+			ret = ret && SelectSetFirstVisible(Iter->second->m_NodeItem);
+		}
+
+		return ret;
+	}
+
 	void NodeTreeCtrl::UpdateAllNodes()
 	{
 		SvCl::ObjectTreeItems::pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );

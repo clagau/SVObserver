@@ -70,7 +70,7 @@ namespace SvOsl
 		m_TreeContainer.clearBranchMap();
 	}
 
-	INT_PTR ObjectTreeGenerator::showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent )
+	INT_PTR ObjectTreeGenerator::showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent, LPCTSTR nodeToBeSelected)
 	{
 		//Make sure Object result cleared could still have previous result
 		m_SelectedObjects.clear();
@@ -89,7 +89,7 @@ namespace SvOsl
 			pParent = AfxGetApp()->GetMainWnd();
 		}
 		SvMc::ResizablePropertySheet Sheet( title, pParent );
-		ObjectSelectorPpg selectorPage( m_TreeContainer, mainTabTitle, isSingleObject );
+		ObjectSelectorPpg selectorPage(m_TreeContainer, mainTabTitle, isSingleObject, nodeToBeSelected);
 		ObjectFilterPpg filterPage( m_TreeContainer, filterTabTitle, isSingleObject );
 
 		selectorPage.setHelpID(m_helpID);

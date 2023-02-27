@@ -58,6 +58,9 @@ namespace SvOsl
 		This method updates all nodes of the tree control.
 		***********/
 		void UpdateAllNodes();
+
+		bool SelectNodeByName(const std::string& rDottedName);
+
 	#pragma endregion Public Methods
 
 	protected:

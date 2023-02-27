@@ -174,6 +174,7 @@ public:
 	afx_msg void OnAddStatisticsTool();
 	afx_msg void OnEditToolSet();
 	afx_msg void OnResultsPicker();
+	afx_msg void OnResultsPickerCurrentTool();
 	afx_msg void OnResultsTablePicker();
 	afx_msg void OnSaveResultsToFile();
 	afx_msg void OnSaveTableResultsToFile();
@@ -262,6 +263,8 @@ protected:
 	//}}AFX_VIRTUAL
 
 	static DWORD WINAPI SVRegressionTestRunThread( LPVOID lpParam );
+	void StartResultsPicker(LPCTSTR nodeToBeSelected);
+
 
 	struct SVImageViewStatusStruct
 	{

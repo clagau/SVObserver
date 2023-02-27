@@ -138,6 +138,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_STATISTICSTOOL, OnAddStatisticsTool)
 	ON_COMMAND(ID_EDIT_EDITTOOLSET, OnEditToolSet)
 	ON_COMMAND(ID_RESULTS_PICKER, OnResultsPicker)
+	ON_COMMAND(ID_RESULTS_PICKER_CURRENT_TOOL, OnResultsPickerCurrentTool)
 	ON_COMMAND(ID_RESULTS_TABLE_PICKER, OnResultsTablePicker)
 	ON_COMMAND(ID_SAVE_RESULTS_TO_FILE, OnSaveResultsToFile)
 	ON_COMMAND(ID_SAVE_RESULTSTABLE_TO_FILE, OnSaveTableResultsToFile)
@@ -1826,9 +1827,21 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
+void SVIPDoc::OnResultsPickerCurrentTool()
+{
+	auto nodeToBeSelected = SvCmd::getDottedName(GetInspectionID(), Get1stSelectedToolID(), true);
+
+	StartResultsPicker(nodeToBeSelected.c_str());
+}
+
 void SVIPDoc::OnResultsPicker()
 {
+	StartResultsPicker(nullptr);
+}
 
+
+void SVIPDoc::StartResultsPicker(LPCTSTR nodeToBeSelected)
+{
 	//This shall change the state to editing only when previously in edit mode
 	//This will avoid changing the modes while in Run, Regression or Test mode
 	std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
@@ -1864,7 +1877,8 @@ void SVIPDoc::OnResultsPicker()
 			std::string ResultPicker = SvUl::LoadStdString(IDS_RESULT_PICKER);
 			std::string Title = std::format(_T("{} - {}"), ResultPicker.c_str(), InspectionName.c_str());
 			std::string Filter = SvUl::LoadStdString(IDS_FILTER);
-			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ResultPicker.c_str(), Filter.c_str());
+
+			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ResultPicker.c_str(), Filter.c_str(), nullptr, nodeToBeSelected);
 
 			if (IDOK == Result)
 			{

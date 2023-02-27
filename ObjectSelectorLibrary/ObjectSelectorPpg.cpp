@@ -36,12 +36,13 @@ namespace SvOsl
 	END_MESSAGE_MAP()
 
 	#pragma region Constructor
-	ObjectSelectorPpg::ObjectSelectorPpg( SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect )
+	ObjectSelectorPpg::ObjectSelectorPpg( SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect, LPCTSTR nodeToBeSelected)
 		: CPropertyPage( ObjectSelectorPpg::IDD )
 		, m_rTreeContainer( rTreeContainer )
 		, m_NodeTree( *this, SingleSelect )
 		, m_LeafTree( *this, SingleSelect )
 		, m_HelpID(0)
+		, m_nodeToBeSelected(nodeToBeSelected)
 	{
 		m_psp.pszTitle = Title;
 		m_psp.dwFlags |= PSP_USETITLE;
@@ -107,6 +108,12 @@ namespace SvOsl
 	BOOL ObjectSelectorPpg::OnSetActive()
 	{
 		m_NodeTree.UpdateAllNodes();
+		if (m_nodeToBeSelected)
+		{ 
+			m_NodeTree.SelectNodeByName(m_nodeToBeSelected);
+			m_nodeToBeSelected = nullptr; //only select that node once
+		}
+
 		m_LeafTree.updateTree();
 
 		return CPropertyPage::OnSetActive();

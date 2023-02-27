@@ -72,7 +72,7 @@ namespace SvOsl
 		//! \param pParent <in>:  pointer to the parent, default is nullptr
 		//! \return the result of the dialog
 		//************************************
-		INT_PTR showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent = nullptr );
+		INT_PTR showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent = nullptr, LPCTSTR nodeToBeSelected = nullptr);
 
 		//************************************
 		//! The method checks the items listed in the tree selector

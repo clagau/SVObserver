@@ -4402,6 +4402,8 @@ BEGIN
         MENUITEM "Convert To Module",           ID_CONVERT_TO_MODULE
         MENUITEM SEPARATOR
         MENUITEM "Dependencies",                ID_SHOW_RELATIONS
+        MENUITEM "Results Picker",              ID_RESULTS_PICKER_CURRENT_TOOL
+
     END
 END
 
