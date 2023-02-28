@@ -49,7 +49,7 @@ SharedMemoryAccess::SharedMemoryAccess(
 	, m_pause_timer(rIoService)
 	, m_overlay_controller(rIoService, rpcClient)
 	, m_pShareControlInstance {std::make_unique<SvSml::ShareControl>(ControlParameter)}
-	, m_SharedMemoryLock(rIoService, boost::posix_time::milliseconds(1),
+	, m_SharedMemoryLock(boost::posix_time::milliseconds(1),
 		[=](LockState state) { this->on_lock_state_changed(state); })
 	, m_DisconnectCheckTimer(rIoService)
 {
@@ -1199,9 +1199,9 @@ void SharedMemoryAccess::send_configuration_lock_status(
 	{
 		// Notification info is hardcoded for now
 		// as we don't have any feedback data from SVObserver yet
-		notification->set_status(SvPb::LockStatus::Locked);
-		notification->set_owner("SVObserver user");
-		notification->set_description("Configuration lock is already acquired by SVObserver user");
+		notification->set_status(state.acquired ? SvPb::LockStatus::Locked : SvPb::LockStatus::Unlocked);
+		notification->set_owner(state.acquired ? "SVObserver user" : "");
+		notification->set_description(state.acquired ? "Configuration lock is already acquired by SVObserver user" : "");
 		notification->set_host("0.0.0.0");
 	}
 	else if (lockOwnerStream != nullptr)

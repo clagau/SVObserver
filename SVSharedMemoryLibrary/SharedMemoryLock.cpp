@@ -22,19 +22,19 @@ SharedMemory::SharedMemory()
 }
 
 SharedMemoryLock::SharedMemoryLock(
-	boost::asio::io_service& ioService,
 	boost::asio::deadline_timer::duration_type expiryTime,
 	const lock_state_changed_callback_t& onLockStateChangedCb,
 	const std::string& name)
-	: mIoService(ioService)
-	, mOnLockStateChangedCb(onLockStateChangedCb)
+	: mOnLockStateChangedCb(onLockStateChangedCb)
 	, mMemoryName(name)
 	, mSharedMemoryHandlerPtr(nullptr)
 	, mMappedRegionPtr(nullptr)
 	, mSharedMemory(nullptr)
-	, mLockStateCheckTimer(ioService)
+	, mIoService()
+	, mIoWork(mIoService)
+	, mIoThread([&] {mIoService.run(); })
+	, mLockStateCheckTimer(mIoService)
 {
-	cleanSharedMemory(); // Clean potential garbage
 	createOrOpenSharedMemorySegment();
 	{
 		mLastLockState = GetLockState();
@@ -42,43 +42,23 @@ SharedMemoryLock::SharedMemoryLock(
 	scheduleLockStateCheck(expiryTime);
 }
 
+SharedMemoryLock::~SharedMemoryLock()
+{
+	mLockStateCheckTimer.cancel();
+	mIoService.stop();
+	if (mIoThread.joinable())
+	{
+		mIoThread.join();
+	}
+}
+
 void SharedMemoryLock::createOrOpenSharedMemorySegment()
 {
-	bool isSharedMemoryCreated = false;
-	try
-	{
-		mSharedMemoryHandlerPtr = std::make_unique<shared_memory_object>(
-			create_only, mMemoryName.c_str(), read_write);
-		mSharedMemoryHandlerPtr->truncate(sizeof(SharedMemory));
-		isSharedMemoryCreated = true;
-	}
-	catch (const interprocess_exception& e)
-	{
-		SV_LOG_GLOBAL(info) << "Couldn't create shared memory: " << e.what();
-		try
-		{
-			mSharedMemoryHandlerPtr = std::make_unique<shared_memory_object>(
-				open_only, mMemoryName.c_str(), read_write);
-		}
-		catch (const interprocess_exception& ex)
-		{
-			SV_LOG_GLOBAL(error) << "Couldn't open shared memory named " << mMemoryName << ": " << ex.what();
-			throw std::runtime_error("Shared memory error");
-		}
-	}
-
+	mSharedMemoryHandlerPtr = std::make_unique<shared_memory_object>(
+			open_or_create, mMemoryName.c_str(), read_write);
+	mSharedMemoryHandlerPtr->truncate(sizeof(SharedMemory));
 	mMappedRegionPtr = std::make_unique<mapped_region>(*mSharedMemoryHandlerPtr, read_write);
-	void* const address = mMappedRegionPtr->get_address();
-	if (isSharedMemoryCreated)
-	{
-		mSharedMemory = new (address) SharedMemory;
-		SV_LOG_GLOBAL(info) << "Shared memory " << mMemoryName << " created!";
-	}
-	else
-	{
-		mSharedMemory = static_cast<SharedMemory*>(address);
-		SV_LOG_GLOBAL(info) << "Shared memory " << mMemoryName << " opened!";
-	}
+	mSharedMemory = static_cast<SharedMemory*>(mMappedRegionPtr->get_address());
 }
 
 void SharedMemoryLock::scheduleLockStateCheck(boost::asio::deadline_timer::duration_type expiryTime)
@@ -100,10 +80,11 @@ void SharedMemoryLock::onLockStateCheckTimerExpired(
 		return;
 	}
 
-	mSharedMemory->mMutex.lock();
-	auto currentLockState = mSharedMemory->mLockState;
-	mSharedMemory->mMutex.unlock();
-
+	auto currentLockState = LockState();
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		currentLockState = mSharedMemory->mLockState;
+	}
 	if (mLastLockState.acquired != currentLockState.acquired ||
 		mLastLockState.owner != currentLockState.owner ||
 		mLastLockState.username != currentLockState.username ||
@@ -133,6 +114,7 @@ bool SharedMemoryLock::Acquire(LockOwner owner, const std::string& username, con
 		mSharedMemory->mLockState.owner = owner;
 		mSharedMemory->mLockState.username = username;
 		mSharedMemory->mLockState.host = host;
+		SV_LOG_GLOBAL(debug) << "Acquire(): Shared memory lock acquired!";
 		return true;
 	}
 
@@ -167,7 +149,7 @@ void SharedMemoryLock::Release()
 	mSharedMemory->mLockState.acquired = false;
 	mSharedMemory->mLockState.username = "";
 	mSharedMemory->mLockState.host = "";
-	SV_LOG_GLOBAL(info) << "Release(): Shared memory lock released!";
+	SV_LOG_GLOBAL(debug) << "Release(): Shared memory lock released!";
 }
 
 void SharedMemoryLock::PushBackStream(const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)

@@ -15,8 +15,8 @@ struct lock_acquisition_stream_t;
 
 enum class LockOwner : std::uint8_t
 {
-	SVOGateway,
-	SVObserver,
+	SVOGateway = 0,
+	SVObserver = 1,
 };
 
 struct LockState
@@ -41,10 +41,10 @@ class SharedMemoryLock
 {
 public:
 	SharedMemoryLock(
-		boost::asio::io_service& ioService,
 		boost::asio::deadline_timer::duration_type expiryTime,
 		const lock_state_changed_callback_t& onLockStateChangedCb,
 		const std::string& name = "sv_default_shared_memory");
+	~SharedMemoryLock();
 
 	bool Acquire(LockOwner owner, const std::string& username, const std::string& host);
 	bool Takeover(LockOwner owner, const std::string& username, const std::string& host);
@@ -65,7 +65,6 @@ private:
 		boost::asio::deadline_timer::duration_type expiryTime,
 		const boost::system::error_code& error);
 
-	boost::asio::io_service& mIoService;
 	const std::string& mMemoryName;
 	lock_state_changed_callback_t mOnLockStateChangedCb;
 	std::unique_ptr<boost::interprocess::shared_memory_object> mSharedMemoryHandlerPtr;
@@ -74,6 +73,10 @@ private:
 
 	std::vector<std::shared_ptr<lock_acquisition_stream_t>> mLockAcquisitionStreams;
 
-	boost::asio::deadline_timer mLockStateCheckTimer;
 	LockState mLastLockState;
+
+	boost::asio::io_service mIoService;
+	boost::asio::io_service::work mIoWork;
+	std::thread mIoThread;
+	boost::asio::deadline_timer mLockStateCheckTimer;
 };
