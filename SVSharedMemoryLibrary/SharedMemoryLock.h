@@ -8,7 +8,7 @@
 #include <boost/asio/basic_deadline_timer.hpp>
 #include <boost/asio/time_traits.hpp>
 #include <boost/interprocess/mapped_region.hpp>
-#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/windows_shared_memory.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 
 struct lock_acquisition_stream_t;
@@ -57,18 +57,14 @@ public:
 	LockState GetLockState() const;
 
 private:
-	void createOrOpenSharedMemorySegment();
-	void cleanSharedMemory();
-
 	void scheduleLockStateCheck(boost::asio::deadline_timer::duration_type expiryTime);
 	void onLockStateCheckTimerExpired(
 		boost::asio::deadline_timer::duration_type expiryTime,
 		const boost::system::error_code& error);
 
-	const std::string& mMemoryName;
 	lock_state_changed_callback_t mOnLockStateChangedCb;
-	std::unique_ptr<boost::interprocess::shared_memory_object> mSharedMemoryHandlerPtr;
-	std::unique_ptr<boost::interprocess::mapped_region> mMappedRegionPtr;
+	boost::interprocess::windows_shared_memory mSharedMemoryHandler;
+	boost::interprocess::mapped_region mMappedRegion;
 	SharedMemory* mSharedMemory;
 
 	std::vector<std::shared_ptr<lock_acquisition_stream_t>> mLockAcquisitionStreams;

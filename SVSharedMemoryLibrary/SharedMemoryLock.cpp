@@ -26,16 +26,14 @@ SharedMemoryLock::SharedMemoryLock(
 	const lock_state_changed_callback_t& onLockStateChangedCb,
 	const std::string& name)
 	: mOnLockStateChangedCb(onLockStateChangedCb)
-	, mMemoryName(name)
-	, mSharedMemoryHandlerPtr(nullptr)
-	, mMappedRegionPtr(nullptr)
-	, mSharedMemory(nullptr)
+	, mSharedMemoryHandler(open_or_create, name.c_str(), read_write, sizeof(SharedMemory))
+	, mMappedRegion(mSharedMemoryHandler, read_write)
+	, mSharedMemory(static_cast<SharedMemory*>(mMappedRegion.get_address()))
 	, mIoService()
 	, mIoWork(mIoService)
 	, mIoThread([&] {mIoService.run(); })
 	, mLockStateCheckTimer(mIoService)
 {
-	createOrOpenSharedMemorySegment();
 	{
 		mLastLockState = GetLockState();
 	}
@@ -50,15 +48,6 @@ SharedMemoryLock::~SharedMemoryLock()
 	{
 		mIoThread.join();
 	}
-}
-
-void SharedMemoryLock::createOrOpenSharedMemorySegment()
-{
-	mSharedMemoryHandlerPtr = std::make_unique<shared_memory_object>(
-			open_or_create, mMemoryName.c_str(), read_write);
-	mSharedMemoryHandlerPtr->truncate(sizeof(SharedMemory));
-	mMappedRegionPtr = std::make_unique<mapped_region>(*mSharedMemoryHandlerPtr, read_write);
-	mSharedMemory = static_cast<SharedMemory*>(mMappedRegionPtr->get_address());
 }
 
 void SharedMemoryLock::scheduleLockStateCheck(boost::asio::deadline_timer::duration_type expiryTime)
@@ -207,19 +196,4 @@ LockState SharedMemoryLock::GetLockState() const
 {
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	return mSharedMemory->mLockState;
-}
-
-void SharedMemoryLock::cleanSharedMemory()
-{
-	if (shared_memory_object::remove(mMemoryName.c_str()))
-	{
-		SV_LOG_GLOBAL(info) << mMemoryName << " shared memory removed!";
-	}
-	else
-	{
-		SV_LOG_GLOBAL(warning) << mMemoryName
-			<< " shared memory can't be removed becasue it doesn't exist"
-			<< ", is already open"
-			<< " or memory segment is still mapped by other processes";
-	}
 }
