@@ -2234,11 +2234,6 @@ void __stdcall SVPPQObject::triggerCallback(SvTrig::SVTriggerInfoStruct&& trigge
 #endif
 
 		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::Trigger]));
-
-		if (0 < m_PendingCameraResponses.size())
-		{
-			m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::CameraResponses]));
-		}
 	}
 }
 
@@ -2413,6 +2408,10 @@ void SVPPQObject::ProcessTrigger()
 				m_notifyInspectionList.push_back(pProduct->triggerCount());
 			}
 		}
+	}
+	if (0 < m_PendingCameraResponses.size())
+	{
+		m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::CameraResponses]));
 	}
 }
 
