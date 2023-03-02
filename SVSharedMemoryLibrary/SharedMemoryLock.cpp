@@ -69,7 +69,7 @@ void SharedMemoryLock::onLockStateCheckTimerExpired(
 		return;
 	}
 
-	auto currentLockState = LockState();
+	LockState currentLockState;
 	{
 		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 		currentLockState = mSharedMemory->mLockState;
