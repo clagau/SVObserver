@@ -238,8 +238,8 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 		}
 	}
 	
-	m_IsGainEnabled = m_values.Get<BOOL>(SvPb::ImageToolEnabledGainId);;
-	m_RecalculateOnce = m_values.Get<BOOL>(SvPb::ImageToolRecalculateOnceId);
+	m_IsGainEnabled = m_values.Get<bool>(SvPb::ImageToolEnabledGainId);;
+	m_RecalculateOnce = m_values.Get<bool>(SvPb::ImageToolRecalculateOnceId);
 	
 	
 	ShowGainAndOffset(lOperator);
