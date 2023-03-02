@@ -110,7 +110,8 @@ long SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		}
 	}// end if not found filename in queue else
 
-	return static_cast<long>(m_Queue.size());
+	//return current buffer number for the current Archive tool here, not m_Queue.size(): m_Queue contains image buffers for all Archive Tools
+	return static_cast<long>(m_currentBufferNumber[p_BufferInfo.m_toolPos]); 
 }
 #pragma endregion Public Methods
 
