@@ -1286,9 +1286,9 @@ void SVObjectManagerClass::listAllObjects()
 		std::string objectData{_T(";;")};
 		if (nullptr != pObject)
 		{
-			objectData = SvUl::Format(_T("%s; %ld; %ld"), pObject->GetCompleteName().c_str(), pObject->GetObjectType(), pObject->GetObjectSubType());
+			objectData = std::format(_T("{}; {:d}; {:d}"), pObject->GetCompleteName(), pObject->GetObjectType(), pObject->GetObjectSubType());
 		}
-		::OutputDebugString(SvUl::Format(_T("%lu; %s\n"), rEntry.second->m_ObjectID, objectData.c_str()).c_str());
+		::OutputDebugString(std::format(_T("{}; {}\n"), rEntry.second->m_ObjectID, objectData).c_str());
 	}
 #endif
 }

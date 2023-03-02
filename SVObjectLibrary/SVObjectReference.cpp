@@ -16,7 +16,6 @@
 #include "SVObjectManagerClass.h"
 #include "ObjectInterfaces/ILinkedObject.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVProtoBuf/GetObjectSelector.pb.h"
 #pragma endregion Includes
@@ -42,7 +41,7 @@ SVObjectReference::SVObjectReference(SVObjectClass* pObject, long lArrayIndex, s
 		registerNotification();
 	}
 	m_NameInfo.SetIsIndexPresent(true);
-	m_NameInfo.SetIndex(SvUl::Format(_T("%d"), lArrayIndex));
+	m_NameInfo.SetIndex(std::format(_T("{:d}"), lArrayIndex));
 	m_NameInfo.SetIsDefaultValuePresent(true);
 	m_NameInfo.SetDefaultValue(strDefaultValue);
 }
@@ -266,7 +265,7 @@ void SVObjectReference::SetArrayIndex( long lArrayIndex )
 {
 	m_ArrayIndex = lArrayIndex;  
 	m_NameInfo.SetIsIndexPresent(true);
-	m_NameInfo.SetIndex( SvUl::Format(_T("%d"), lArrayIndex ) );
+	m_NameInfo.SetIndex(std::format(_T("{:d}"), lArrayIndex ) );
 }
 
 std::string SVObjectReference::GetName(bool OneBased /*=false*/) const
@@ -374,7 +373,7 @@ std::string SVObjectReference::GetIndexString(bool OneBased /*=false*/) const
 	{
 		if ( m_ArrayIndex >= 0 )
 		{
-			Result = SvUl::Format(_T("[%d]"), OneBased ? m_ArrayIndex + 1 : m_ArrayIndex );
+			Result = std::format(_T("[{:d}]"), OneBased ? m_ArrayIndex + 1 : m_ArrayIndex );
 		}
 		else if (isEntireArray())
 		{

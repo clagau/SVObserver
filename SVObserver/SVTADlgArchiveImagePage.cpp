@@ -644,8 +644,16 @@ __int64 SVTADlgArchiveImagePage::recalculateRemainingImageMemory()
 
 	double megabytes = (double)FreeMem / (double)(SvDef::cBytesPerMegabyte);
 
-	std::string availableMemory = std::vformat(formatText, std::make_format_args(fabs(megabytes)));
-	m_wndAvailableArchiveImageMemory.SetWindowText(availableMemory.c_str());
+	try
+	{
+		std::string availableMemory = std::vformat(formatText, std::make_format_args(fabs(megabytes)));
+		m_wndAvailableArchiveImageMemory.SetWindowText(availableMemory.c_str());
+	}
+	catch (...)
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CouldNotExecuteFormatString, {formatText}, SvStl::SourceFileParams(StdMessageParams));
+	}
 
 	return FreeMem;
 }

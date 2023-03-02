@@ -19,7 +19,6 @@
 #include "AutoBuild/AutoBuild.h"
 #include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLLibrary/LoadConfiguration.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
@@ -362,7 +361,7 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 
 		if( std::string::npos != Name.find( _T("IOEntry") ) )
 		{
-			std::string NewName = SvUl::Format( _T("IOEntry%d"), count);
+			std::string NewName = std::format( _T("IOEntry{}"), count);
 			count++;
 			mTree.SetItemText(l_Current, NewName.c_str() );
 		}
@@ -427,7 +426,7 @@ void SVOFileConfigDlg::CheckConfiguration()
 		{
 			if( std::find( m_Inspections.begin(), m_Inspections.end(), Inspection) == m_Inspections.end() )
 			{
-				std::string strMessage = SvUl::Format( _T("%s\n"), it->second.c_str());
+				std::string strMessage = std::format( _T("{}\n"), it->second);
 				strMainMessage+= strMessage;
 
 				if( mTree.DeleteItem((*it).first) )
@@ -441,7 +440,7 @@ void SVOFileConfigDlg::CheckConfiguration()
 		{
 			if( std::find( m_PPQs.begin(), m_PPQs.end(), PPQName) == m_PPQs.end() )
 			{
-				std::string strMessage = SvUl::Format( _T("%s\n"), it->second.c_str());
+				std::string strMessage = std::format( _T("{}\n"), it->second);
 				strMainMessage+= strMessage;
 
 				if( mTree.DeleteItem((*it).first) )

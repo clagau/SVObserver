@@ -118,7 +118,18 @@ bool clarifyIfChangeWanted(uint32_t inspectionId, uint32_t taskObjectId, uint32_
 		if (false == dependencyList.empty())
 		{
 			std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
-			std::string DisplayText = std::vformat(FormatText, std::make_format_args(name, name, name, name));
+			std::string DisplayText;
+			
+			try
+			{
+				DisplayText = std::vformat(FormatText, std::make_format_args(name, name, name, name));
+			}
+			catch (...)
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CouldNotExecuteFormatString, {FormatText}, SvStl::SourceFileParams(StdMessageParams));
+			}
+
 			SVShowDependentsDialog Dlg(dependencyList, DisplayText.c_str(), SVShowDependentsDialog::DeleteConfirm);
 			return (IDOK == Dlg.DoModal());
 		}

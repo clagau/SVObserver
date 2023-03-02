@@ -16,7 +16,6 @@
 #include "SVObjectClass.h"
 #include "SVOResource/resource.h"
 #include "SVProtoBuf/SVO-Enum.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVClsids.h"
 #include "SVObjectManagerClass.h"
@@ -1670,7 +1669,7 @@ uint32_t calcObjectId(const _variant_t& rObjectIdVariant)
 
 std::string convertObjectIdToString(uint32_t objectId)
 {
-	return SvUl::Format("{#%u}", objectId);
+	return std::format("{{#{}}}", objectId);
 }
 
 _variant_t convertObjectIdToVariant(uint32_t objectId)
@@ -1835,7 +1834,7 @@ void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )
 		#ifdef _DEBUG
 			else
 			{
-				std::string Temp = SvUl::Format( _T("Duplicate Class encountered\n ClassName: %s\n ClassID: %d"), pClass->GetClassName(), pClass->GetClassID());
+				std::string Temp = std::format( _T("Duplicate Class encountered\n ClassName: {}\n ClassID: {}"), pClass->GetClassName(), static_cast<int>(pClass->GetClassID()));
 				::OutputDebugString( Temp.c_str() );
 				Log_Assert(false);
 			}

@@ -787,31 +787,43 @@ template <typename T>
 std::string SVValueObjectClass<T>::FormatOutput(const T& rValue, const std::string& rFormatString) const
 {
 	std::string Result;
-	if (rFormatString != "{}")
+
+	try
 	{
-		if constexpr (true == std::is_same<T, std::string>::value)
-		{
-			Result = std::vformat(rFormatString, std::make_format_args(rValue));
-		}
-		else if constexpr(true == std::is_arithmetic<T>::value)
-		{
-			Result = std::vformat(rFormatString, std::make_format_args(rValue));
-		}
-	}
-	else
-	{
-		if (m_OutFormat.empty() == false)
+
+
+		if (rFormatString != "{}")
 		{
 			if constexpr (true == std::is_same<T, std::string>::value)
 			{
-				Result = std::vformat(m_OutFormat, std::make_format_args(rValue));
+				Result = std::vformat(rFormatString, std::make_format_args(rValue));
 			}
 			else if constexpr (true == std::is_arithmetic<T>::value)
 			{
-				Result = std::vformat(m_OutFormat, std::make_format_args(rValue));
+				Result = std::vformat(rFormatString, std::make_format_args(rValue));
+			}
+		}
+		else
+		{
+			if (m_OutFormat.empty() == false)
+			{
+				if constexpr (true == std::is_same<T, std::string>::value)
+				{
+					Result = std::vformat(m_OutFormat, std::make_format_args(rValue));
+				}
+				else if constexpr (true == std::is_arithmetic<T>::value)
+				{
+					Result = std::vformat(m_OutFormat, std::make_format_args(rValue));
+				}
 			}
 		}
 	}
+	catch(...)
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CouldNotExecuteFormatString, {rFormatString}, SvStl::SourceFileParams(StdMessageParams));
+	}
+
 	return Result;
 }
 

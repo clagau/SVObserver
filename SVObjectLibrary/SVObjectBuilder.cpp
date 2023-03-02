@@ -20,7 +20,6 @@
 #include "SVObjectAttributeClass.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/ILinkedObject.h"
@@ -127,7 +126,8 @@ HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, uint32_t unique
 				{
 					Log_Assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-					std::string Temp = SvUl::Format(_T("SVObjectBuilder::CreateObject - ReplaceObject %.80s\n"), name.c_str() );
+					
+					std::string Temp = std::format(_T("SVObjectBuilder::CreateObject - ReplaceObject {:0>8s}\n"), name );
 					::OutputDebugString( Temp.c_str() );
 #endif
 					delete pObject;

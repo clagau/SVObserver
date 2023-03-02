@@ -14,7 +14,6 @@
 #include "SVObjectAttributeClass.h"
 #include "Definitions/TextDefinesSvDef.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
@@ -287,7 +286,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 		{
 			for ( int i = 0; i < static_cast<int> (m_ByteArray.size()); i++ )
 			{
-				std::string Temp = SvUl::Format( "%x", m_ByteArray[i] );
+				std::string Temp = std::format( "{:x}", m_ByteArray[i] );
 				rData.push_back( Temp );
 			}
 
@@ -306,7 +305,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 		{
 			for ( int i = 0; i < static_cast<int> (m_DoubleArray.size()); i++ )
 			{
-				std::string Temp = SvUl::Format( "%f", m_DoubleArray[i] );
+				std::string Temp = std::format( "{}", m_DoubleArray[i] );
 				rData.push_back(Temp);
 			}
 
@@ -318,7 +317,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 		{
 			for ( int i = 0; i < static_cast<int> (m_DWordArray.size()); i++)
 			{
-				std::string Temp = SvUl::Format( _T("%lx"), m_DWordArray[i] );
+				std::string Temp = std::format( _T("{:x}"), m_DWordArray[i] );
 				rData.push_back(Temp);
 			}
 
@@ -329,7 +328,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 		{
 			for ( int i = 0; i < static_cast<int> (m_LongArray.size()); i++)
 			{
-				std::string Temp = SvUl::Format( _T("%ld"), m_LongArray[i] );
+				std::string Temp = std::format( _T("{:d}"), m_LongArray[i] );
 				rData.push_back(Temp);
 			}
 
@@ -386,7 +385,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 		{
 			for ( int i = 0; i < static_cast<int> (m_Int64Array.size()); i++)
 			{
-				std::string Temp = SvUl::Format( _T("%I64d"), m_Int64Array[i] );
+				std::string Temp = std::format( _T("{:d}"), m_Int64Array[i] );
 
 				rData.push_back( Temp );
 			}

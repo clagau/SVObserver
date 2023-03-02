@@ -4390,7 +4390,16 @@ bool mayDeleteCurrentlySelectedTools(const std::set<uint32_t>& rIdsOfObjectsDepe
 	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 	std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
-	std::string DisplayText = std::vformat(FormatText, std::make_format_args("the selected tools'", "the selected tools", "the selected tools", "the selected tools"));
+	std::string DisplayText;
+	try
+	{
+		DisplayText = std::vformat(FormatText, std::make_format_args("the selected tools'", "the selected tools", "the selected tools", "the selected tools"));
+	}
+	catch (...)
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CouldNotExecuteFormatString, {FormatText}, SvStl::SourceFileParams(StdMessageParams));
+	}
 
 	return IDOK == SvOg::showDependentsDialogIfNecessary(rIdsOfObjectsDependedOn, DisplayText);
 }

@@ -627,9 +627,18 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 
 		for (const auto& rString : replaceStrings)
 		{
-			std::string oldString = std::vformat(rString, std::make_format_args(oldInspectionName));
-			std::string newString = std::vformat(rString, std::make_format_args(rNewInspectionName));
-			SvUl::searchAndReplace(xmlString, oldString.c_str(), newString.c_str());
+			try
+			{
+				std::string oldString = std::vformat(rString, std::make_format_args(oldInspectionName));
+				std::string newString = std::vformat(rString, std::make_format_args(rNewInspectionName));
+				SvUl::searchAndReplace(xmlString, oldString.c_str(), newString.c_str());
+			}
+			catch (...)
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CouldNotExecuteFormatString, {rString}, SvStl::SourceFileParams(StdMessageParams));
+			}
+
 		}
 	}
 

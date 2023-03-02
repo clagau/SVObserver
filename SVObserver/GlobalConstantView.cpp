@@ -393,8 +393,15 @@ bool GlobalConstantView::checkAllDependencies(SvVol::BasicValueObject* pObject, 
 		std::string Name( pObject->GetName() );
 		std::set<uint32_t> ObjectCheckList;
 
-		DisplayText = std::vformat(DisplayText, std::make_format_args(Name, Name, Name, Name));
-
+		try
+		{
+			DisplayText = std::vformat(DisplayText, std::make_format_args(Name, Name, Name, Name));
+		}
+		catch (...)
+		{
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CouldNotExecuteFormatString, {DisplayText}, SvStl::SourceFileParams(StdMessageParams));
+		}
 		ObjectCheckList.insert( pObject->getObjectId() );
 		
 		SvOg::SVShowDependentsDialog::DialogType Type( SvOg::SVShowDependentsDialog::Show );

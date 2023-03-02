@@ -61,6 +61,7 @@
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>			//Used by static library
+#include <format>
 #include <map>
 #include <memory>			//Used by static library
 #pragma warning(push)
