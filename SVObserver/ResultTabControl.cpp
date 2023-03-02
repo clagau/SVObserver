@@ -111,26 +111,20 @@ bool ResultTabControl::Load(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 
 		while (bOk && nullptr != htiTab)
 		{
-			CString tabLabel;
-			bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NAME, htiTab, svVariant);
-			if (bOk)
+			if (false == SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NAME, htiTab, svVariant))
 			{
-				tabLabel = svVariant;
-				svVariant.Clear();
+				return false;
+			}
+			CString tabLabel = svVariant;
+			svVariant.Clear();
+			
+			if (false == SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiTab, svVariant))
+			{
+				return false;
 			}
 
-			uint32_t tableId;
-			if (bOk)
-			{
-				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiTab, svVariant);
-				tableId = svVariant;
-				svVariant.Clear();
-			}
-
-			if (bOk)
-			{
-				addNewTab(tabLabel, tableId);
-			}
+			uint32_t tableId = svVariant;
+			addNewTab(tabLabel, tableId);
 
 			htiTab = rTree.getNextBranch(htiResultTabs, htiTab);
 		}
