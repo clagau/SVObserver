@@ -15,11 +15,18 @@
 
 using namespace boost::interprocess;
 
-SharedMemory::SharedMemory()
-	: mLockState{.acquired=false, .owner=LockOwner::SVOGateway, .username="", .host=""}
-	, mMutex()
+LockState::LockState()
+	: acquired(false)
+	, owner(LockOwner::SVOGateway)
 {
+	std::memset(username, 0, maxUsernameSize);
+	std::memset(host, 0, maxHostSize);
 }
+
+SharedMemory::SharedMemory()
+	: mLockState()
+	, mMutex()
+{}
 
 SharedMemoryLock::SharedMemoryLock(
 	boost::asio::deadline_timer::duration_type expiryTime,
@@ -76,8 +83,8 @@ void SharedMemoryLock::onLockStateCheckTimerExpired(
 	}
 	if (mLastLockState.acquired != currentLockState.acquired ||
 		mLastLockState.owner != currentLockState.owner ||
-		mLastLockState.username != currentLockState.username ||
-		mLastLockState.host != currentLockState.host)
+		std::strcmp(mLastLockState.username, currentLockState.username) != 0 ||
+		std::strcmp(mLastLockState.host, currentLockState.host) != 0)
 	{
 		mLastLockState = currentLockState;
 		mIoService.dispatch([this]()
@@ -95,14 +102,24 @@ bool SharedMemoryLock::Acquire(LockOwner owner, const std::string& username, con
 		SV_LOG_GLOBAL(error) << "Acquire(): Pointer to shared memory is not initialized!";
 		return false;
 	}
+	if (username.size() >= maxUsernameSize)
+	{
+		SV_LOG_GLOBAL(error) << "Acquire(): provided username it too long to store it in shared memory";
+		return false;
+	}
+	if (host.size() >= maxHostSize)
+	{
+		SV_LOG_GLOBAL(error) << "Acquire(): provided host it too long to store it in shared memory";
+		return false;
+	}
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	if (!mSharedMemory->mLockState.acquired)
 	{
 		mSharedMemory->mLockState.acquired = true;
 		mSharedMemory->mLockState.owner = owner;
-		mSharedMemory->mLockState.username = username;
-		mSharedMemory->mLockState.host = host;
+		std::strcpy(mSharedMemory->mLockState.username, username.c_str());
+		std::strcpy(mSharedMemory->mLockState.host, host.c_str());
 		SV_LOG_GLOBAL(debug) << "Acquire(): Shared memory lock acquired!";
 		return true;
 	}
@@ -117,11 +134,21 @@ bool SharedMemoryLock::Takeover(LockOwner owner, const std::string& username, co
 		SV_LOG_GLOBAL(error) << "Takeover(): Pointer to shared memory is not initialized!";
 		return false;
 	}
+	if (username.size() >= maxUsernameSize)
+	{
+		SV_LOG_GLOBAL(error) << "Takeover(): provided username it too long to store it in shared memory";
+		return false;
+	}
+	if (host.size() >= maxHostSize)
+	{
+		SV_LOG_GLOBAL(error) << "Takeover(): provided host it too long to store it in shared memory";
+		return false;
+	}
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	mSharedMemory->mLockState.owner = owner;
-	mSharedMemory->mLockState.username = username;
-	mSharedMemory->mLockState.host = host;
+	std::strcpy(mSharedMemory->mLockState.username, username.c_str());
+	std::strcpy(mSharedMemory->mLockState.host, host.c_str());
 
 	return true;
 }
@@ -136,8 +163,8 @@ void SharedMemoryLock::Release()
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	mSharedMemory->mLockState.acquired = false;
-	mSharedMemory->mLockState.username = "";
-	mSharedMemory->mLockState.host = "";
+	std::memset(mSharedMemory->mLockState.username, 0, maxUsernameSize);
+	std::memset(mSharedMemory->mLockState.host, 0, maxHostSize);
 	SV_LOG_GLOBAL(debug) << "Release(): Shared memory lock released!";
 }
 

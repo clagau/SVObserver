@@ -1200,9 +1200,9 @@ void SharedMemoryAccess::send_configuration_lock_status(
 		// Notification info is hardcoded for now
 		// as we don't have any feedback data from SVObserver yet
 		notification->set_status(state.acquired ? SvPb::LockStatus::Locked : SvPb::LockStatus::Unlocked);
-		notification->set_owner(state.acquired ? "SVObserver user" : "");
+		notification->set_owner(state.acquired ? state.username : "");
 		notification->set_description(state.acquired ? "Configuration lock is already acquired by SVObserver user" : "");
-		notification->set_host("0.0.0.0");
+		notification->set_host(state.host);
 	}
 	else if (lockOwnerStream != nullptr)
 	{

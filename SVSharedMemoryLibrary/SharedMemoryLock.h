@@ -13,6 +13,9 @@
 
 struct lock_acquisition_stream_t;
 
+constexpr size_t maxUsernameSize = 32;
+constexpr size_t maxHostSize = 16;
+
 enum class LockOwner : std::uint8_t
 {
 	SVOGateway = 0,
@@ -21,10 +24,12 @@ enum class LockOwner : std::uint8_t
 
 struct LockState
 {
+	LockState();
+
 	bool acquired;
 	LockOwner owner;
-	std::string username;
-	std::string host;
+	char username[maxUsernameSize];
+	char host[maxHostSize];
 };
 
 struct SharedMemory
