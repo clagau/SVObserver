@@ -1,15 +1,17 @@
-//*****************************************************************************
+//****************************************************************************
 /// \copyright COPYRIGHT (c) 2020,2020 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
-/// \file TestNonIO.cpp
-/// \brief Console main file for TestNonIO app
+/// \file TriggerToStartFrame.cpp
+/// \brief Console main file for TriggerToStartFrame application to test
+/// Trigger signal to image start frame packet or between different trigger signals
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
 #include "Digitizer.h"
-#include "SVDigitizerLoadLibraryClass.h"
 #include "SVIOTriggerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/TriggerData.h"
 #pragma endregion Includes
 
 constexpr uint8_t cNumberOfChannels = 4;
@@ -157,17 +159,17 @@ void OnImage(CameraInfo&& cameraInfo)
 	g_slaveTimestampQueue.push(cameraInfo.m_startFrameTimestamp);
 }
 
-void OnSlaveTrigger(const TriggerData& rTriggerData)
+void OnSlaveTrigger(const SvTrig::TriggerData& rTriggerData)
 {
-	double slaveTimestamp = (VT_EMPTY != rTriggerData[TriggerDataEnum::TimeStamp].vt) ? static_cast<double> (rTriggerData[TriggerDataEnum::TimeStamp]) : GetTimeStamp();
+	double slaveTimestamp = (0.0 != rTriggerData.m_triggerTimestamp) ? rTriggerData.m_triggerTimestamp : GetTimeStamp();
 
 	std::lock_guard<std::mutex> guard {g_slaveQueueMutex};
 	g_slaveTimestampQueue.push(slaveTimestamp);
 }
 
-void OnMasterTrigger(const TriggerData& rTriggerData)
+void OnMasterTrigger(const SvTrig::TriggerData& rTriggerData)
 {
-	double masterTimestamp = (VT_EMPTY != rTriggerData[TriggerDataEnum::TimeStamp].vt) ? static_cast<double> (rTriggerData[TriggerDataEnum::TimeStamp]) : GetTimeStamp();
+	double masterTimestamp = (0.0 != rTriggerData.m_triggerTimestamp) ? rTriggerData.m_triggerTimestamp : GetTimeStamp();
 
 	{
 		std::lock_guard<std::mutex> guard {g_masterQueueMutex};
@@ -187,7 +189,7 @@ void OnMasterTrigger(const TriggerData& rTriggerData)
 HRESULT PlcTriggerToStartFrame()
 {
 	SVIOTriggerLoadLibraryClass PlcIoDll;
-	SVDigitizerLoadLibraryClass DigitizerDll;
+	SvTrig::SVDigitizerLoadLibraryClass DigitizerDll;
 
 	HRESULT result = PlcIoDll.Open(cPlcIoDll);
 	if (S_OK == result)

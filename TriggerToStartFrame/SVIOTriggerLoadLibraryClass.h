@@ -10,22 +10,14 @@
 // ******************************************************************************
 
 #pragma once
-
-enum TriggerDataEnum : int
+/***Note this file is adapted to set the IO and Trigger data see SetParameterValue and TrigSetParameterValue***/
+namespace SvTrig
 {
-	TimeStamp = 0,
-	ObjectID,
-	TriggerIndex,
-	TriggerPerObjectID,
-	OutputData,
-	TriggerChannel,
-	ObjectType,
-	SoftwareTrigger,
-	TriggerDataNumber
-};
+struct TriggerData;
+struct ReseultData;
+}
 
-using TriggerData = std::array<_variant_t, TriggerDataEnum::TriggerDataNumber>;
-using TriggerCallBack = std::function<void(TriggerData&&)>;
+using TriggerCallBack = std::function<void(SvTrig::TriggerData&&)>;
 
 typedef HRESULT (WINAPI *SVCreatePtr)();
 typedef HRESULT (WINAPI *SVDestroyPtr)();
@@ -41,7 +33,7 @@ typedef _variant_t(WINAPI *SVTriggerGetParameterNamePtr)(unsigned long, unsigned
 typedef _variant_t (WINAPI *SVTriggerGetParameterValuePtr)(unsigned long, unsigned long);
 typedef HRESULT (WINAPI *SVTriggerSetParameterValuePtr)(unsigned long, unsigned long, const _variant_t&);
 
-typedef HRESULT(WINAPI* SVOutputSetDataPtr)(unsigned long,  const TriggerData& rData);
+typedef HRESULT(WINAPI* SVOutputSetDataPtr)(unsigned long,  const SvTrig::TriggerData& rData);
 typedef HRESULT(WINAPI* SVSetParameterValuePtr)(unsigned long, const _variant_t&);
 
 class SVIOTriggerLoadLibraryClass  
@@ -65,7 +57,6 @@ public:
 	_variant_t TrigGetParameterValue(unsigned long triggerIndex, unsigned long index) const;
 	HRESULT TrigSetParameterValue(unsigned long triggerIndex, unsigned long index, const _variant_t& rValue);
 
-	HRESULT SetOutputData(unsigned long channel, const TriggerData& rData);
 	HRESULT SetParameterValue(unsigned long index, const _variant_t& rValue);
 
 private:

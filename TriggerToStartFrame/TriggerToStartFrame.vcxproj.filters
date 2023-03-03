@@ -18,19 +18,13 @@
     <ClInclude Include="Stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVIOTriggerLoadLibraryClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDigitizerLoadLibraryClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Digitizer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVBitmapInfo.h">
+    <ClInclude Include="SVMatroxBuffer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxBuffer.h">
+    <ClInclude Include="SVIOTriggerLoadLibraryClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,19 +32,13 @@
     <ClCompile Include="Stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TriggerToStartFrame.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDigitizerLoadLibraryClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBitmapInfo.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxBuffer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

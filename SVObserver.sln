@@ -534,6 +534,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TriggerRecordControllerTest
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TriggerToStartFrame", "TriggerToStartFrame\TriggerToStartFrame.vcxproj", "{6BFC8DA7-21FB-447A-8CBF-BFB6CBC009BA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B022279A-59CD-41C3-9EA5-F9721FECAFDD} = {B022279A-59CD-41C3-9EA5-F9721FECAFDD}
+		{AA20BDB8-15C0-43EB-83B5-6FC716849F13} = {AA20BDB8-15C0-43EB-83B5-6FC716849F13}
+		{12178FE8-6FBA-45F2-A311-0B1659D6C1BE} = {12178FE8-6FBA-45F2-A311-0B1659D6C1BE}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebsocketLibrary", "WebsocketLibrary\WebsocketLibrary.vcxproj", "{C3C84C20-1039-4D97-95E2-B26143D86241}"
 	ProjectSection(ProjectDependencies) = postProject

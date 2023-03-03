@@ -9,9 +9,12 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:48:20  $
 // ******************************************************************************
 
+/***Note this file is adapted to set the IO and Trigger data see SetParameterValue and TrigSetParameterValue***/
+
 #pragma region Includes
 #include "stdafx.h"
 #include "SVIOTriggerLoadLibraryClass.h"
+#include "Triggering/TriggerData.h"
 #pragma endregion Includes
 
 SVIOTriggerLoadLibraryClass::~SVIOTriggerLoadLibraryClass()
@@ -45,7 +48,6 @@ HRESULT SVIOTriggerLoadLibraryClass::Open(LPCTSTR libraryPath)
 			m_pTrigGetParameterValue = (SVTriggerGetParameterValuePtr)::GetProcAddress( m_Handle, "SVTriggerGetParameterValue" );
 			m_pTrigSetParameterValue = (SVTriggerSetParameterValuePtr)::GetProcAddress( m_Handle, "SVTriggerSetParameterValue" );
 
-			m_pSetOutputData = (SVOutputSetDataPtr)::GetProcAddress(m_Handle, "SVOutputSetData");
 			m_pSetParameterValue = (SVSetParameterValuePtr)::GetProcAddress(m_Handle, "SVSetParameterValue");
 
 			if ( nullptr != m_pCreate &&
@@ -235,17 +237,6 @@ HRESULT SVIOTriggerLoadLibraryClass::TrigSetParameterValue( unsigned long trigge
 		result = m_pTrigSetParameterValue( triggerIndex, index, rValue);
 	}
 
-	return result;
-}
-
-HRESULT SVIOTriggerLoadLibraryClass::SetOutputData(unsigned long channel, const TriggerData& rData)
-{
-	HRESULT result {E_FAIL};
-
-	if (nullptr != m_pSetOutputData)
-	{
-		result = m_pSetOutputData(channel, rData);
-	}
 	return result;
 }
 

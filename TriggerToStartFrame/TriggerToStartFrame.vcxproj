@@ -36,9 +36,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -65,7 +67,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Lib>
@@ -100,8 +102,6 @@
   <ItemGroup>
     <ClInclude Include="Digitizer.h" />
     <ClInclude Include="Stdafx.h" />
-    <ClInclude Include="SVBitmapInfo.h" />
-    <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
     <ClInclude Include="SVIOTriggerLoadLibraryClass.h" />
     <ClInclude Include="SVMatroxBuffer.h" />
   </ItemGroup>
@@ -110,8 +110,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVBitmapInfo.cpp" />
-    <ClCompile Include="SVDigitizerLoadLibraryClass.cpp" />
     <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp" />
     <ClCompile Include="SVMatroxBuffer.cpp" />
     <ClCompile Include="TriggerToStartFrame.cpp" />
