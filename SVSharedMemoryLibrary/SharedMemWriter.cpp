@@ -111,9 +111,9 @@ namespace SvSml
 		return m_MLContainer.CalculateStoreIds();
 	}
 
-	void SharedMemWriter::setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTRCPos, const std::unordered_map<uint32_t, int>& rDataDefMap, const std::unordered_map<uint32_t, int>& rImageMap, const std::unordered_map<uint32_t, int>& rChildImageMap)
+	void SharedMemWriter::setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTRCPos, const std::unordered_map<uint32_t, int>& rDataDefMap, const std::unordered_map<uint32_t, int>& rImageMap, const std::unordered_map<uint32_t, int>& rChildImageMap, const std::unordered_map<uint32_t, std::pair<bool, int>>& rLinkedImageMap)
 	{
-		m_MLContainer.setDataTrcPos(rPPQName, inspectionStoreId, inspectionTRCPos, rDataDefMap, rImageMap, rChildImageMap);
+		m_MLContainer.setDataTrcPos(rPPQName, inspectionStoreId, inspectionTRCPos, rDataDefMap, rImageMap, rChildImageMap, rLinkedImageMap);
 	}
 
 	DWORD  SharedMemWriter::GetActiveMonitorListCount() const

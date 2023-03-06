@@ -539,7 +539,8 @@ bool SVInspectionProcess::CanGoOnline()
 			const auto& rDataDefMap = pTrc->getDataDefMap(m_trcPos);
 			const auto& rImageMap = pTrc->getImageDefMap(m_trcPos);
 			const auto& rChildImageMap = pTrc->getChildImageDefMap(m_trcPos);
-			SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, m_trcPos, rDataDefMap, rImageMap, rChildImageMap);
+			const auto& rLinkedImageMap = pTrc->getLinkedImageDefMap(m_trcPos);
+			SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, m_trcPos, rDataDefMap, rImageMap, rChildImageMap, rLinkedImageMap);
 		}
 	}
 

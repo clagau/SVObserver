@@ -20,6 +20,10 @@
 
 class SVInspectionProcess;
 class SVObjectReference;
+namespace SvIe
+{
+class SVImageClass;
+}
  
 class  CommandInspectionGetItems
 {
@@ -37,7 +41,7 @@ public:
 	
 
 private:
-	HRESULT UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount, const SvOi::ITriggerRecordRPtr pTriggerRecord);
+	HRESULT UpdateResultsWithImageData(const std::string& rItemName, const SvIe::SVImageClass& rImage, unsigned long TriggerCount, const SvOi::ITriggerRecordRPtr pTriggerRecord);
 	HRESULT UpdateResultsWithValueData(const std::string& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCount);
 	HRESULT UpdateResultsWithErrorData(const std::string& rItemName, HRESULT errorStatus, unsigned long TriggerCount);
 

@@ -37,7 +37,7 @@ namespace SvSml
 		///Calculates the Storindex, offset and itemindex for all images 
 		DWORD GetActiveMonitorListCount() const;
 		void CalculateStoreIds();
-		void setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTRCPos, const std::unordered_map<uint32_t, int>& rDataDefMap, const std::unordered_map<uint32_t, int>& rImageMap, const std::unordered_map<uint32_t, int>& rChildImageMap);
+		void setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTRCPos, const std::unordered_map<uint32_t, int>& rDataDefMap, const std::unordered_map<uint32_t, int>& rImageMap, const std::unordered_map<uint32_t, int>& rChildImageMap, const std::unordered_map<uint32_t, std::pair<bool, int>>& rLinkedImageMap);
 		void ClearMonitorListCpyVector(); //< clear m_MonitorListCpyVector
 		void Insert(MonitorListCpyPointer& MLCpyPtr);
 		DWORD GetInspectionStoreId(const std::string& InspectionName);

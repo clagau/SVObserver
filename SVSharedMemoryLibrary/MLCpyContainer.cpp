@@ -167,7 +167,7 @@ namespace SvSml
 		}
 	}
 
-	void MLCpyContainer::setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTrcPos, const std::unordered_map<uint32_t, int>& rDataDefMap, const std::unordered_map<uint32_t, int>& rImageMap, const std::unordered_map<uint32_t, int>& rChildImageMap)
+	void MLCpyContainer::setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTrcPos, const std::unordered_map<uint32_t, int>& rDataDefMap, const std::unordered_map<uint32_t, int>& rImageMap, const std::unordered_map<uint32_t, int>& rChildImageMap, const std::unordered_map<uint32_t, std::pair<bool, int>>& rLinkedImageMap)
 	{
 		MonitorListCpyMap::iterator  MLCPyIt;
 		for (auto& rMLCPy : m_MonitorListCpyMap)
@@ -203,6 +203,20 @@ namespace SvSml
 				if (rChildImageMap.end() != iterChildImage)
 				{
 					rEntry.second->data.m_triggerRecordPos = iterChildImage->second| MonitorEntryData::c_childFlagForTrPos;
+					continue;
+				}
+
+				auto iterLinkedImage = rLinkedImageMap.find(objectId);
+				if (rLinkedImageMap.end() != iterLinkedImage)
+				{
+					if (iterLinkedImage->second.first) //isChild
+					{
+						rEntry.second->data.m_triggerRecordPos = iterLinkedImage->second.second | MonitorEntryData::c_childFlagForTrPos;
+					}
+					else
+					{
+						rEntry.second->data.m_triggerRecordPos = iterLinkedImage->second.second;
+					}
 					continue;
 				}
 			}
