@@ -18,8 +18,8 @@ namespace SvMc
 {
 		WNDPROC SVDlgFolder::m_wndProc = nullptr;
 
-	SVDlgFolder::SVDlgFolder(bool bFullAccess, LPCTSTR initialDir) 
-		: SVFileDialog(true, bFullAccess, nullptr, _T("*..*"))      // Show folders only.
+	SVDlgFolder::SVDlgFolder(bool bFullAccess, LPCTSTR initialDir, CWnd* pParentWnd )
+		: SVFileDialog(true, bFullAccess, nullptr, _T("*..*"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,nullptr,pParentWnd)      // Show folders only.
 	{
 		m_ofn.lpstrInitialDir = initialDir;
 	}

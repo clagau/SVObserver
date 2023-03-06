@@ -19,7 +19,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-constexpr int PathBufferLen = MAX_PATH +2;
+constexpr int PathBufferLen = MAX_PATH + 2;
 constexpr int MaxNumberCameraEntries = 4;
 #pragma endregion Declarations 
 
@@ -32,7 +32,8 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 
 IMPLEMENT_DYNCREATE(SVRegressionFileSelectDlg, CPropertyPage)
-
+strMatrix SVRegressionFileSelectDlg::m_PreviousFolderSettings(MaxNumberCameraEntries, std::vector<std::string>());
+std::vector<int> SVRegressionFileSelectDlg::m_PreviousSelctedRadius(MaxNumberCameraEntries, RegressionFileEnum::RegSubDirectories);
 SVRegressionFileSelectDlg::SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName, bool isCamera, uint32_t toolId)
 	: CPropertyPage(SVRegressionFileSelectDlg::IDD)
 	, m_isCamera(isCamera)
@@ -41,7 +42,7 @@ SVRegressionFileSelectDlg::SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName, b
 	, m_iSelectFileRadio(RegressionFileEnum::RegSubDirectories)
 	, m_pParent(nullptr)
 {
-	
+
 	//{{AFX_DATA_INIT(SVRegressionFileSelectDlg)
 	//}}AFX_DATA_INIT
 	m_strCaption = lptstrDialogName;
@@ -50,16 +51,16 @@ SVRegressionFileSelectDlg::SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName, b
 }
 
 SVRegressionFileSelectDlg::~SVRegressionFileSelectDlg()
-{
-}
+{}
 
 void SVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVRegressionFileSelectDlg)
 	DDX_Control(pDX, IDC_BTN_REG_TEST_BROWSE_FILES, m_btnBrowseFiles);
-	DDX_Radio(pDX, IDC_RADIO_REG_LIST, m_iSelectFileRadio);
-	DDX_Text(pDX, IDC_EDIT_REG_SELECTED_FILES, m_RegTestFiles);
+	
+	DDX_Control(pDX, IDC_LIST_REG_SELECTED_FOLDER, m_SelectFolderList);
+	DDX_Control(pDX, IDC_EDIT_REG_SELECTED_FILES, m_EditRegTestFile);
 	//}}AFX_DATA_MAP
 }
 
@@ -67,54 +68,52 @@ void SVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(SVRegressionFileSelectDlg, CPropertyPage)
 	//{{AFX_MSG_MAP(SVRegressionFileSelectDlg)
 	ON_BN_CLICKED(IDC_BTN_REG_TEST_BROWSE_FILES, OnBtnRegTestBrowseFiles)
-	ON_BN_CLICKED(IDC_RADIO_REG_LIST, OnRadioRegUpdate)
-	ON_BN_CLICKED(IDC_RADIO_REG_NONE, OnRadioRegUpdate)
-	ON_BN_CLICKED(IDC_RADIO_REG_SINGLE, OnRadioRegUpdate)
-	ON_BN_CLICKED(IDC_RADIO_REG_DIRECTORY, OnRadioRegUpdate)
-	ON_BN_CLICKED(IDC_RADIO_REG_SUB_DIRECTORIES, OnRadioRegUpdate)
+	ON_BN_CLICKED(IDC_RADIO_REG_LIST, OnClickRadioList)
+	ON_BN_CLICKED(IDC_RADIO_REG_NONE, OnClickRadioNone)
+	ON_BN_CLICKED(IDC_RADIO_REG_SINGLE, OnClickRadioSingle)
+	ON_BN_CLICKED(IDC_RADIO_REG_DIRECTORY, OnClickRadioDirectory)
+	ON_BN_CLICKED(IDC_RADIO_REG_SUB_DIRECTORIES, OnClickRadioSubDirectory)
+	ON_BN_CLICKED(IDC_RADIO_REG_MULTDIR, OnClickRadioMultDir)
 	ON_BN_CLICKED(IDC_BTN_REMOVE, OnRemovePage)
+	ON_BN_CLICKED(IDC_BTN_REG_FOLDER_DEL, OnDeleteFolder)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRegressionFileSelectDlg message handlers
 
-void SVRegressionFileSelectDlg::SetDlgTitle( LPCTSTR lpszTitle )
+void SVRegressionFileSelectDlg::SetDlgTitle(LPCTSTR lpszTitle)
 {
 	m_DialogName = lpszTitle;
 }
 
-void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles() 
+
+void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 {
-	UpdateData(true);
-	int CameraNumber(0); 
-	int  Pos = m_strCaption.ReverseFind(_T('_'));
-	if(Pos != -1)
-	{		
-		CString sTemp = m_strCaption.Mid(Pos +1);
-		CameraNumber = _ttoi(sTemp.GetString());
-		CameraNumber = CameraNumber %  MaxNumberCameraEntries; 
-	}
 	//get last regression path for this camera from registry...
-	std::string KeyName = std::format( _T("LastPath_{}"), CameraNumber);
+	std::string KeyName = std::format(_T("LastPath_{}"), m_CameraNumber);
 	m_RegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), KeyName.c_str(), SvStl::GlobalPath::Inst().GetTempPath().c_str());
 	bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 
 	switch (m_iSelectFileRadio)
 	{
-	case RegressionFileEnum::RegSingleFile:
-	case RegressionFileEnum::RegFileList:
-	case RegressionFileEnum::RegSingleDirectory:
-		ShowSelectFileDlg(bFullAccess);
-		break;
-	case RegressionFileEnum::RegSubDirectories:
-		ShowSelectDirectoryDlg(bFullAccess);
-		break;
-	default:
-		//nothing to do
-		break;
+		case RegressionFileEnum::RegSingleFile:
+		case RegressionFileEnum::RegFileList:
+		case RegressionFileEnum::RegSingleDirectory:
+			ShowSelectFileDlg(bFullAccess);
+			break;
+		case RegressionFileEnum::RegSubDirectories:
+			ShowSelectDirectoryDlg(bFullAccess);
+			break;
+		case RegressionFileEnum::RegMultDirectories:
+			ShowSelectMultDirectoryDlg(bFullAccess);
+			break;
+
+		default:
+			//nothing to do
+			break;
 	}
-	
+	SetCurrentDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str());
 	int iPos = m_RegTestFiles.ReverseFind(_T('\\'));
 	if (iPos != -1) //only write out registry entry if the path is not empty.
 	{
@@ -124,25 +123,99 @@ void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 		{	//cut file name to save only path
 			sTmpDirName = m_RegTestFiles.Left(iPos);
 		}
-		
+
 		AfxGetApp()->WriteProfileString(_T("RegressionTest"), KeyName.c_str(), sTmpDirName);
 	}
+	ShowControls();
 
-	UpdateData(FALSE);
 }
 
-BOOL SVRegressionFileSelectDlg::OnInitDialog() 
+void SVRegressionFileSelectDlg::ShowControls()
+{
+	bool showFolder = (m_iSelectFileRadio == RegressionFileEnum::RegMultDirectories);
+	if (m_iSelectFileRadio == RegressionFileEnum::RegNone)
+	{
+		m_EditRegTestFile.ShowWindow(SW_HIDE);
+		m_SelectFolderList.ShowWindow(SW_HIDE);
+	}
+	else
+	{
+		m_EditRegTestFile.ShowWindow(showFolder ? SW_HIDE : SW_SHOW);
+		m_SelectFolderList.ShowWindow(showFolder ? SW_SHOW : SW_HIDE);
+		UpdateFolderList();
+	}
+	
+	GetDlgItem(IDC_BTN_REG_TEST_BROWSE_FILES)->SetWindowText(showFolder ? "add ..." : "...");
+	
+	GetDlgItem(IDC_BTN_REG_FOLDER_DEL)->ShowWindow(showFolder ? SW_SHOW : SW_HIDE);
+	UpdateTestFile();
+	
+
+}
+
+void SVRegressionFileSelectDlg::UpdateFolderList()
+{
+	if (m_iSelectFileRadio == RegressionFileEnum::RegMultDirectories)
+	{
+
+		m_SelectFolderList.ResetContent();
+		for (const auto& name : m_folders)
+		{
+			m_SelectFolderList.AddString(name.c_str());
+		}
+	}
+}
+
+void SVRegressionFileSelectDlg::UpdateRadioButton()
+{
+	UINT id = m_iSelectFileRadio + IDC_RADIO_REG_LIST;
+	CheckRadioButton(IDC_RADIO_REG_LIST, IDC_RADIO_REG_NONE, id);
+}
+
+
+void SVRegressionFileSelectDlg::UpdateTestFile()
+{
+	m_EditRegTestFile.SetWindowText(m_RegTestFiles.GetString());
+}
+void SVRegressionFileSelectDlg::OnDeleteFolder()
+{
+	int  nIndex = m_SelectFolderList.GetCurSel();
+	if (nIndex != LB_ERR)
+	{
+		CString cstext;
+		m_SelectFolderList.GetText(nIndex, cstext);
+		std::string folder = cstext.GetString();
+		std::erase(m_folders, folder);
+		m_SelectFolderList.DeleteString(nIndex);
+	}
+}
+
+BOOL SVRegressionFileSelectDlg::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-
+	int  Pos = m_strCaption.ReverseFind(_T('_'));
+	if (Pos != -1)
+	{
+		CString sTemp = m_strCaption.Mid(Pos + 1);
+		m_CameraNumber = _ttoi(sTemp.GetString());
+		m_CameraNumber = m_CameraNumber % MaxNumberCameraEntries;
+	}
+	
 	m_pParent = dynamic_cast<SVRegressionFileSelectSheet*>(GetParent());
 	m_pParent->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-	GetDlgItem(IDC_BTN_REMOVE)->ShowWindow(m_isCamera ? SW_HIDE : SW_SHOW );
-
-	UpdateData(FALSE);
+	GetDlgItem(IDC_BTN_REMOVE)->ShowWindow(m_isCamera ? SW_HIDE : SW_SHOW);
+	m_iSelectFileRadio = m_PreviousSelctedRadius[m_CameraNumber];
+	if (m_folders.size() == 0 && m_PreviousFolderSettings[m_CameraNumber].size() > 0)
+	{
+		auto inserter = std::back_inserter(m_folders);
+		std::copy(m_PreviousFolderSettings[m_CameraNumber].begin(), m_PreviousFolderSettings[m_CameraNumber].end(), inserter);
+	}
+	
+	ShowControls();
+	UpdateRadioButton();
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 RegressionFileEnum SVRegressionFileSelectDlg::GetFileSelectType()
@@ -161,18 +234,49 @@ CString SVRegressionFileSelectDlg::GetPageName()
 	return m_strCaption;
 }
 
-
-void SVRegressionFileSelectDlg::OnRadioRegUpdate() 
+void SVRegressionFileSelectDlg::OnClickRadio(int RegEnum)
 {
-	UpdateData(TRUE);
+	m_iSelectFileRadio = RegEnum;
+	m_PreviousSelctedRadius[m_CameraNumber] = m_iSelectFileRadio;
+	ShowControls();
 }
+
+
+void SVRegressionFileSelectDlg::OnClickRadioList()
+{
+	OnClickRadio(RegFileList);
+}
+
+void SVRegressionFileSelectDlg::OnClickRadioSingle()
+{
+	OnClickRadio(RegSingleFile);
+}
+void SVRegressionFileSelectDlg::OnClickRadioDirectory()
+{
+	OnClickRadio(RegSingleDirectory);
+}
+void SVRegressionFileSelectDlg::OnClickRadioSubDirectory()
+{
+	OnClickRadio(RegSubDirectories);
+}
+void SVRegressionFileSelectDlg::OnClickRadioMultDir()
+{
+	OnClickRadio(RegMultDirectories);
+}
+void SVRegressionFileSelectDlg::OnClickRadioNone()
+{
+	OnClickRadio(RegNone);
+}
+
+
 
 void SVRegressionFileSelectDlg::OnRemovePage()
 {
 	m_pParent->removeFilePage(this);
 }
 
-void SVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataStruct)
+
+void SVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct* pDataStruct)
 {
 	//set data from the struct...
 	m_iSelectFileRadio = pDataStruct->iFileMethod;
@@ -218,7 +322,7 @@ void SVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 
 void SVRegressionFileSelectDlg::ShowSelectDirectoryDlg(bool bFullAccess)
 {
-//	CFolderDialog dlg(_T("Select Directories"), m_RegistryPath.c_str(), this);
+	
 	SvMc::SVDlgFolder dlg(bFullAccess, m_RegistryPath.c_str());
 	dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
 
@@ -227,4 +331,28 @@ void SVRegressionFileSelectDlg::ShowSelectDirectoryDlg(bool bFullAccess)
 	{
 		m_RegTestFiles = dlg.GetPathName();
 	}
+
+}
+void SVRegressionFileSelectDlg::ShowSelectMultDirectoryDlg(bool bFullAccess)
+{
+	SvMc::SVDlgFolder dlg(bFullAccess, m_RegistryPath.c_str(), this);
+	dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
+	if (dlg.DoModal() == IDOK)
+	{
+		m_RegTestFiles = dlg.GetPathName();
+		std::string folder = m_RegTestFiles.GetString();
+		if (std::ranges::find(m_folders, folder) == m_folders.end())
+			m_folders.push_back(folder);
+
+		m_PreviousFolderSettings[m_CameraNumber].clear();
+		auto inserter = std::back_inserter(m_PreviousFolderSettings[m_CameraNumber]);
+		std::copy(m_folders.begin(), m_folders.end(), inserter);
+
+		if (m_folders.size())
+		{
+			m_RegTestFiles = m_folders[0].c_str();
+		}
+
+	}
+
 }

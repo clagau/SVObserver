@@ -154,6 +154,7 @@ void SVRegressionFileSelectSheet::OnOK()
 				regStruct.Name = pPage->GetPageName();
 				regStruct.firstFilepath = pPage->GetSelectedFile();
 				regStruct.objectId = pPage->getToolId();
+				regStruct.stdVectorFolder = pPage->GetFolders();
 				if (pPage->isCamera())
 				{
 					m_pRegressionCameraList->push_back(std::move(regStruct));
@@ -349,6 +350,7 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 	break;
 	case RegressionFileEnum::RegSingleDirectory:
 	case RegressionFileEnum::RegSubDirectories:
+	case RegressionFileEnum::RegMultDirectories:
 	{
 		if (rStruct.firstFilepath.empty())
 		{
@@ -444,16 +446,28 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 
 int SVRegressionFileSelectSheet::collectMatchingFilesInDirectories(RegressionTestStruct& rStruct, const std::string& rParentDirectory, ImageFileFormat fileFormat)
 {
-	int count = collectMatchingFilesInDirectory(rStruct, rParentDirectory, fileFormat);
-
-	if (RegressionFileEnum::RegSubDirectories == rStruct.iFileMethod)
+	int count {0};
+	if (RegressionFileEnum::RegMultDirectories == rStruct.iFileMethod)
 	{
-		SvDef::StringVector folderList = findSubdirectories(rParentDirectory);
+		for (auto const &folder: rStruct.stdVectorFolder)
+		{
+			count+= collectMatchingFilesInDirectory(rStruct, folder, fileFormat);
+		}
+		
+	}
+	else
+	{
+		count = collectMatchingFilesInDirectory(rStruct, rParentDirectory, fileFormat);
 
-		//StrCmpLogicalW is the sorting function used by Windows Explorer
-		auto FolderCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t {rLhs.c_str()}, _bstr_t {rRhs.c_str()}) < 0; };
-		std::sort(folderList.begin(), folderList.end(), FolderCompare);
-		count = std::accumulate(folderList.begin(), folderList.end(), count, [this, &rStruct, fileFormat](int sum, const auto& rFolder) {return sum + collectMatchingFilesInDirectories(rStruct, rFolder, fileFormat); });
+		if (RegressionFileEnum::RegSubDirectories == rStruct.iFileMethod)
+		{
+			SvDef::StringVector folderList = findSubdirectories(rParentDirectory);
+
+			//StrCmpLogicalW is the sorting function used by Windows Explorer
+			auto FolderCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t {rLhs.c_str()}, _bstr_t {rRhs.c_str()}) < 0; };
+			std::sort(folderList.begin(), folderList.end(), FolderCompare);
+			count = std::accumulate(folderList.begin(), folderList.end(), count, [this, &rStruct, fileFormat](int sum, const auto& rFolder) {return sum + collectMatchingFilesInDirectories(rStruct, rFolder, fileFormat); });
+		}
 	}
 	return count;
 }

@@ -26,6 +26,7 @@ RegressionRunFileStruct RegressionTestController::RegressionTestSetFiles(Regress
 		runState.bRunFlag = true;
 		if (!runState.bFirst)
 		{
+			Log_Assert(rRegTestStruct.stdIteratorCurrent != rRegTestStruct.stdVectorFile.end());
 			++rRegTestStruct.stdIteratorCurrent;
 		}
 		if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.end())

@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Von Microsoft Visual C++ generierte Includedatei.
-// Verwendet durch SVOResource.rc
+// Microsoft Visual C++ generated include file.
+// Used by SVOResource.rc
 //
 #define IDD_PROPPAGE_REGRESSION_FILESELECT 102
 #define IDS_FILTER                      102
@@ -2103,11 +2103,6 @@
 #define IDC_WHEN_TO_ARCHIVE             15836
 #define IDC_BTN_REG_TEST_BROWSE_FILES   15837
 #define IDC_EDIT_REG_SELECTED_FILES     15838
-#define IDC_RADIO_REG_LIST              15839
-#define IDC_RADIO_REG_SINGLE            15840
-#define IDC_RADIO_REG_DIRECTORY         15841
-#define IDC_RADIO_REG_SUB_DIRECTORIES   15842
-#define IDC_RADIO_REG_NONE              15843
 #define IDC_BTN_STOP                    15844
 #define IDC_EDT_DELAY_TIME              15845
 #define IDC_SPIN_DELAY_TIME             15846
@@ -2501,7 +2496,10 @@
 #define IDS_OBJECTNAME_ACTIVE           16258
 #define IDC_MODULE_LIST                 16259
 #define IDC_HISTORY_TEXT                16260
-#define IDC_WILDCARD_PATTERN           16261
+#define IDC_WILDCARD_PATTERN            16261
+#define IDC_LIST_REG_SELECTED_FOLDER    16262
+#define IDC_BTN_REG_FOLDER_DEL          16263
+#define IDC_BTN_REG_TEST_DELETE         16264
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2690,7 +2688,6 @@
 #define IDC_EDIT_MAX_QUEUE              20374
 #define IDC_BUTTON_MAX_QUEUE            20375
 #define ID_ADD_MODULE_FIRST             20376
-//DON'T use the ids between ID_ADD_MODULE_FIRST and ID_ADD_MODULE_LAST: they are meant for Modules!
 #define ID_ADD_MODULE_LAST              20475
 #define ID_TRIGGER_SETTINGS             21017
 #define ID_VIEW_TOOLSETDRAW             32999
@@ -2739,15 +2736,23 @@
 #define IDC_COLOR_CHECK                 61488
 #define IDS_OBJECTNAME_COLOR_IMAGE      61489
 #define ID_SAVE_CONFIG_REPORT           61490
+#define IDC_RADIO_REG_LIST              61491
+#define IDC_RADIO_REG_SINGLE            61492
+#define IDC_RADIO_REG_DIRECTORY         61493
+#define IDC_RADIO_REG_SUB_DIRECTORIES   61494
+#define IDC_RADIO_REG_MULTDIR           61495
+#define IDC_RADIO_REG_NONE              61496
+#define IDC_STATIC_TEXT                 61497
+#define IDC_STATIC_SELECT_TEXT          61498
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11156
+#define _APS_NEXT_RESOURCE_VALUE        11157
 #define _APS_NEXT_COMMAND_VALUE         20372
-#define _APS_NEXT_CONTROL_VALUE         16262
+#define _APS_NEXT_CONTROL_VALUE         16265
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

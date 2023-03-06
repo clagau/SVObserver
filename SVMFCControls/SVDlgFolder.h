@@ -19,10 +19,10 @@ namespace SvMc
 	class SVDlgFolder : public SVFileDialog
 	{
 	public:
-		explicit SVDlgFolder(bool bFullAccess, LPCTSTR initialDir = nullptr);
+		explicit SVDlgFolder(bool bFullAccess, LPCTSTR initialDir = nullptr, CWnd* pParentWnd = nullptr);
 		virtual ~SVDlgFolder();
 		void InitDlgFolder(LPCTSTR csTextOKButton, LPCTSTR csTextCaptionBar);
-
+		
 		virtual void OnInitDone() override;
 		CString GetPathName() const;
 		void SetSelectedPath(LPCTSTR path);

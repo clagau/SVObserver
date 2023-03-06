@@ -671,8 +671,16 @@ void SVRegressionRunDlg::SortSelectedFiles(std::vector<RegressionTestStruct>& rR
 		{
 			std::sort(rRegTest.stdVectorFile.begin(), rRegTest.stdVectorFile.end(), FileCompare);
 		}
-		bool hasStartFile = (RegressionFileEnum::RegSubDirectories == rRegTest.iFileMethod) ? false : true;
-		rRegTest.stdIteratorStart = hasStartFile ? std::find(rRegTest.stdVectorFile.begin(), rRegTest.stdVectorFile.end(), rRegTest.firstFilepath) : rRegTest.stdVectorFile.begin();
+		
+		switch (rRegTest.iFileMethod)
+		{
+			case RegressionFileEnum::RegSubDirectories:
+			case RegressionFileEnum::RegMultDirectories:
+				rRegTest.stdIteratorStart = rRegTest.stdVectorFile.begin();
+				break;
+			default:
+				rRegTest.stdIteratorStart = std::find(rRegTest.stdVectorFile.begin(), rRegTest.stdVectorFile.end(), rRegTest.firstFilepath);
+		}
 		rRegTest.stdIteratorCurrent = rRegTest.stdIteratorStart;
 	}
 }

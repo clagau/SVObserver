@@ -16,17 +16,20 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
+
 enum RegressionFileEnum
 {
 	RegFileList = 0, //For a listing of files
 	RegSingleFile = 1,
 	RegSingleDirectory = 2,
 	RegSubDirectories = 3,
-	RegNone = 4
+	RegMultDirectories = 4,
+	RegNone = 5
 };
 
 struct RegressionTestStruct
 {
+	std::vector<std::string> stdVectorFolder {};
 	std::string Name {};
 	std::string firstFilepath {};
 	uint32_t objectId{ SvDef::InvalidObjectId };
