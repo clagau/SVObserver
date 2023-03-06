@@ -45,7 +45,7 @@ const std::string c_resultName {"Result"};
 /// \returns SvStl::MessageContainerVector
 SvStl::MessageContainerVector sendValuesToInspection(uint32_t ipId, uint32_t taskId, const std::vector<GroupInputResultData>& rDataList, bool displayMessageBox);
 
-bool addEntry(const std::string& firstNameTry, std::vector<GroupInputResultData>& rDataList);
+bool addEntry(uint32_t ipId, uint32_t taskId, const std::string& firstNameTry, std::vector<GroupInputResultData>& rDataList);
 void loadDataList(std::vector<GroupInputResultData>& rDataList, ValueController& rValueCtrl, SvPb::EmbeddedIdEnum valueEId, SvPb::EmbeddedIdEnum typeEId, const SvStl::MessageContainerVector& rErrorMessages);
 
 /// Convert a text to the correct variant depend of the type. If convert failed it throw an exception.

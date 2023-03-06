@@ -290,7 +290,7 @@ namespace SvOg
 
 	void TADialogGroupToolResultPage::OnBnClickedButtonAdd()
 	{
-		addEntry(SvOgu::c_resultName, m_resultData);
+		addEntry(m_InspectionID, m_TaskObjectID, SvOgu::c_resultName, m_resultData);
 		setInspectionData(false);
 		FillGridControl();
 	}
@@ -434,7 +434,7 @@ namespace SvOg
 			setGridControlReadOnlyFlag(row, DependencyColumn, false);
 
 			m_Grid.SetItemText(row, NameColumn, m_resultData[i].m_name.c_str());
-			setGridControlReadOnlyFlag(row, NameColumn, false);
+			setGridControlReadOnlyFlag(row, NameColumn, m_isChangeAble);
 			using namespace SvGcl;
 			m_Grid.SetCellType(row, TypeColumn, RUNTIME_CLASS(GridCellCombo));
 			setGridControlReadOnlyFlag(row, TypeColumn, m_isChangeAble);

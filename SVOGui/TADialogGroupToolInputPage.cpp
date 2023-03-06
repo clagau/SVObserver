@@ -263,7 +263,7 @@ void TADialogGroupToolInputPage::OnSelectionChanged(NMHDR*, LRESULT*)
 
 void TADialogGroupToolInputPage::OnBnClickedButtonAdd()
 {
-	addEntry(SvOgu::c_inputName, m_inputData);
+	addEntry(m_InspectionID, m_TaskObjectID, SvOgu::c_inputName, m_inputData);
 	setInspectionData(false);
 	FillGridControl();
 }

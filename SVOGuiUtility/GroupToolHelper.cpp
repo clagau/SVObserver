@@ -125,21 +125,25 @@ SvStl::MessageContainerVector sendValuesToInspection(uint32_t ipId, uint32_t tas
 	return errorMessages;
 }
 
-bool addEntry(const std::string& firstNameTry, std::vector<GroupInputResultData>& rDataList)
+bool addEntry(uint32_t ipId, uint32_t taskId, const std::string& firstNameTry, std::vector<GroupInputResultData>& rDataList)
 {
+	auto errorMessage = SvOgu::checkParameterNames(ipId, taskId, rDataList);
+	if (0 < errorMessage.size())
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Display);
+		Msg.setMessage(errorMessage[0].getMessage());
+		return false;
+	}
+
 	if (rDataList.size() < SvDef::c_maxTableColumn)
 	{
 		GroupInputResultData& rData {rDataList.emplace_back(firstNameTry)};
-		if (0 < std::count_if(rDataList.begin(), rDataList.end(), [rData](const auto& rEntry) { return rEntry.m_name == rData.m_name; }))
-		{ //duplicate
-			std::string newName;
-			int additionalValue = 1;
-			do
-			{
-				newName = firstNameTry + std::to_string(additionalValue++);
-			} while (0 < std::count_if(rDataList.begin(), rDataList.end(), [newName](const auto& rEntry) { return rEntry.m_name == newName; }));
-			rData.m_name = newName;
+		int additionalValue = 1;
+		do
+		{ 
+			rData.m_name = firstNameTry + std::to_string(additionalValue++);
 		}
+		while (false == SvOgu::checkParameterNames(ipId, taskId, rDataList).empty());
 		return true;
 	}
 	return false;
