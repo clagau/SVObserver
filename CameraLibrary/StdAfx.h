@@ -55,6 +55,7 @@
 #include <ctime>			//Used by static library
 #include <direct.h>
 #include <float.h>
+#include <format>
 #include <functional>
 #include <io.h>
 #include <iostream>

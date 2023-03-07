@@ -39,6 +39,7 @@
 
 #include <array>
 #include <comdef.h>
+#include <format>
 #include <functional>
 #include <map>
 #include <memory>

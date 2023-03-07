@@ -98,11 +98,10 @@ void ResultTabControl::Save(SvOi::IObjectWriter& rWriter)
 
 bool ResultTabControl::Load(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
-	bool bOk = false;
 	_variant_t svVariant;
 	SVTreeType::SVBranchHandle htiResultTabs = nullptr;
 
-	bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_RESULT_TABS, htiParent, htiResultTabs);
+	bool bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_RESULT_TABS, htiParent, htiResultTabs);
 	if (bOk)
 	{
 		SVTreeType::SVBranchHandle htiTab(nullptr);

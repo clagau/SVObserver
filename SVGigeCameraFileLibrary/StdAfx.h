@@ -53,6 +53,7 @@
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <iterator>

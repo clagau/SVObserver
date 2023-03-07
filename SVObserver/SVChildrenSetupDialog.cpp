@@ -388,12 +388,11 @@ BOOL SVChildrenSetupDialog::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject
 	// show dependents dialog
 	if (pTaskObject)
 	{
-		std::set<uint32_t> rIdsOfObjectsDependedOn({pTaskObject->getObjectId()});
-
 		std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
 
 		try
 		{
+			std::set<uint32_t> rIdsOfObjectsDependedOn({pTaskObject->getObjectId()});
 			std::string DisplayText = std::vformat(FormatText, std::make_format_args(pTaskObject->GetName(), pTaskObject->GetName(), pTaskObject->GetName(), pTaskObject->GetName()));
 			INT_PTR rc = SvOg::showDependentsDialogIfNecessary(rIdsOfObjectsDependedOn, DisplayText);
 

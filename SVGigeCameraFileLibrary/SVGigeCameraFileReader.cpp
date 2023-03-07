@@ -17,7 +17,6 @@
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <iterator>
 #include "SVGigeCameraFileReader.h"
-#include "SVUtilityLibrary/StringHelper.h"
 
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
@@ -39,8 +38,8 @@ constexpr const char* cDESCRIPTION = _T("_Description");
 constexpr const char* cVISUALNAME = _T("_VisualName");
 constexpr const char* cORDER = _T("_Order");
 constexpr const char* cDETAILLEVEL = _T("_DetailLevel");
-constexpr const char* cOPTIONFORMAT = _T("%s_Option_%d");
-constexpr const char* cOPTIONDESCFORMAT = _T("%s_Option_%d_Description");
+constexpr const char* cOPTIONFORMAT = _T("{}_Option_{:d}");
+constexpr const char* cOPTIONDESCFORMAT = _T("{}_Option_{:d}_Description");
 
 // option qualifiers
 constexpr const char* cMIN = _T("_min");
@@ -333,13 +332,13 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollecti
 		// now load options
 		int iOption = 0;
 		std::string OptionKey;
-		OptionKey = SvUl::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+		OptionKey = std::format( cOPTIONFORMAT, rKey, ++iOption );
 		Value.clear();
 		Value.resize( MAX_STRING_BUFFER, '\0' );
 		while ( (ValueSize = GetPrivateProfileString( rSection.c_str(), OptionKey.c_str(), _T(""), &Value.at(0), MAX_STRING_BUFFER, m_Filename.c_str()) ) > 0 )
 		{
 			Value.resize( ValueSize );
-			OptionKey = SvUl::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );
+			OptionKey = std::format( cOPTIONDESCFORMAT, rKey, iOption );
 			std::string OptionDescription;
 			OptionDescription.resize( MAX_STRING_BUFFER, '\0' );
 			DWORD DescriptionSize = GetPrivateProfileString( rSection.c_str(), OptionKey.c_str(), _T(""), &OptionDescription.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
@@ -348,7 +347,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollecti
 			SVStringValueDeviceParam::OptionType option = SVStringValueDeviceParam::OptionType( Value, OptionDescription );
 			pParam->info.options.push_back(option);
 
-			OptionKey = SvUl::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+			OptionKey = std::format( cOPTIONFORMAT, rKey, ++iOption );
 			Value.clear();
 			Value.resize( MAX_STRING_BUFFER, '\0' );
 		}
@@ -378,10 +377,10 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileBoolParam( SVDeviceParamCollection
 		// load options
 		int iOption = 0;
 		std::string OptionKey;
-		OptionKey = SvUl::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+		OptionKey = std::format( cOPTIONFORMAT, rKey, ++iOption );
 		while ( iKEY_DOES_NOT_EXIST != (iVal = GetPrivateProfileInt( sSection.c_str(), OptionKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() )) )
 		{
-			OptionKey = SvUl::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );
+			OptionKey = std::format( cOPTIONDESCFORMAT, rKey, iOption );
 			std::string OptionDescription;
 			OptionDescription.resize( MAX_STRING_BUFFER, '\0' );
 			DWORD ValueSize = GetPrivateProfileString( sSection.c_str(), OptionKey.c_str(), _T(""), &OptionDescription.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
@@ -390,7 +389,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileBoolParam( SVDeviceParamCollection
 			SVBoolValueDeviceParam::OptionType option( iVal != 0, OptionDescription );
 			pParam->info.options.push_back(option);
 
-			OptionKey = SvUl::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+			OptionKey = std::format( cOPTIONFORMAT, rKey, ++iOption );
 		}
 	}
 	return S_OK;
@@ -414,11 +413,11 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileLongParam( SVDeviceParamCollection
 		// now load options
 		int iOption = 0;
 		std::string OptionKey;
-		OptionKey = SvUl::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+		OptionKey = std::format( cOPTIONFORMAT, rKey, ++iOption );
 
 		while ( iKEY_DOES_NOT_EXIST != (iVal = GetPrivateProfileInt( sSection.c_str(), OptionKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() )) )
 		{
-			OptionKey = SvUl::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );
+			OptionKey = std::format( cOPTIONDESCFORMAT, rKey, iOption );
 			std::string OptionDescription;
 			OptionDescription.resize( MAX_STRING_BUFFER, '\0' );
 			DWORD ValueSize = GetPrivateProfileString( sSection.c_str(), OptionKey.c_str(), _T(""), &OptionDescription.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
@@ -427,7 +426,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileLongParam( SVDeviceParamCollection
 			SVLongValueDeviceParam::OptionType option( iVal, OptionDescription );
 			pParam->info.options.push_back(option);
 
-			OptionKey = SvUl::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+			OptionKey = std::format( cOPTIONFORMAT, rKey, ++iOption );
 		}
 
 		ReadCameraFileLongValueInfo(sSection, rKey, m_Filename, pParam);
@@ -457,7 +456,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 		int iOption = 0;
 		std::string OptionKey;
 		std::string Option;
-		OptionKey = SvUl::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+		OptionKey = std::format( cOPTIONFORMAT, rKey, ++iOption );
 		Option.resize( MAX_STRING_BUFFER, '\0' );
 		while ( (ValueSize = GetPrivateProfileString( sSection.c_str(), OptionKey.c_str(), _T(""), &Option.at(0), MAX_STRING_BUFFER, m_Filename.c_str() )) > 0 )
 		{
@@ -466,7 +465,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 
 			cf.ParseAndAssignCameraFormat( Option );
 
-			std::string OptionDescriptionKey = SvUl::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );
+			std::string OptionDescriptionKey = std::format( cOPTIONDESCFORMAT, rKey, iOption );
 			std::string OptionDescription;
 			OptionDescription.resize( MAX_STRING_BUFFER, '\0' );
 			ValueSize = GetPrivateProfileString( sSection.c_str(), OptionDescriptionKey.c_str(), _T(""), &OptionDescription.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
@@ -508,7 +507,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 			cf.m_lOrder = iOption;
 			pParam->options[std::string(Option)] = cf;
 
-			OptionKey = SvUl::Format(cOPTIONFORMAT, rKey.c_str(), ++iOption);
+			OptionKey = std::format(cOPTIONFORMAT, rKey, ++iOption);
 			Option.clear();
 			Option.resize( MAX_STRING_BUFFER, '\0' );
 		}

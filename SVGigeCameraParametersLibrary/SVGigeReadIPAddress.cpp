@@ -13,7 +13,6 @@
 #include "SVGigeReadIPAddress.h"
 #include "SVGigeFeature.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& , _variant_t& rValue) const
@@ -23,7 +22,7 @@ HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerPtr Digitizer, const SV
 	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeIPAddress(*(Digitizer.get()), value);
 	if (l_Code == S_OK)
 	{
-		std::string sTmp = SvUl::Format("%u.%u.%u.%u",
+		std::string sTmp = std::format("{}.{}.{}.{}",
 					static_cast<unsigned char>(value),
 					static_cast<unsigned char>(value >> 8) & 0xFF,
 					static_cast<unsigned char>(value >> 16) & 0xFF,

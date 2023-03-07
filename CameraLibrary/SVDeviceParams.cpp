@@ -160,7 +160,7 @@ HRESULT ToVariant( __int64 iValue, VARIANT& rv )
 
 	// no real support for VT_I8 yet; stuff into a string; see also FromVariant
 	rv.vt = VT_BSTR;
-	rv.bstrVal = _bstr_t(SvUl::Format("%I64d", iValue).c_str()).Detach();
+	rv.bstrVal = _bstr_t(std::format("{:d}", iValue).c_str()).Detach();
 
 	return hr;
 }
