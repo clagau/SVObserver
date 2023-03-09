@@ -2035,9 +2035,12 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const std::string&
 	{
 		l_pInRequest->m_bUsingCameraName = true;
 		l_pInRequest->m_ObjectName = rCameraName;
-		SvIe::SVImageProcessingClass::LoadImageBuffer(rFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
+		hrOk = SvIe::SVImageProcessingClass::LoadImageBuffer(rFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
 
-		AddInputImageRequest(l_pInRequest);
+		if (hrOk == S_OK)
+		{
+			AddInputImageRequest(l_pInRequest);
+		}
 	}
 
 	return hrOk;

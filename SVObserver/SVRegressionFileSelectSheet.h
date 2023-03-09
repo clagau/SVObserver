@@ -43,6 +43,7 @@ protected:
 		// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+	void SetupDynamicLayout();
 
 	
 

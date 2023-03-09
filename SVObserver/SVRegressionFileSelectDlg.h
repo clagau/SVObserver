@@ -65,7 +65,6 @@ protected:
 	//{{AFX_MSG(SVRegressionFileSelectDlg)
 	afx_msg void OnBtnRegTestBrowseFiles();
 	virtual BOOL OnInitDialog() override;
-	afx_msg void OnRadioRegUpdate();
 	afx_msg void OnRemovePage();
 	afx_msg void OnClickRadioMultDir();
 	afx_msg void OnClickRadioList();
@@ -87,7 +86,7 @@ private:
 	void ShowSelectDirectoryDlg(bool bFullAccess);
 	void ShowSelectMultDirectoryDlg(bool bFullAccess);
 	void UpdateFolderList();
-	void UpdateTestFile();
+	void UpdateEditCtrlSelect();
 	void UpdateRadioButton();
 
 private:

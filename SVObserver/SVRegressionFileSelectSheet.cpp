@@ -506,6 +506,7 @@ int SVRegressionFileSelectSheet::collectMatchingFilesInDirectory(RegressionTestS
 BOOL SVRegressionFileSelectSheet::OnInitDialog()
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
+	ModifyStyle(WS_SYSMENU, WS_THICKFRAME, SWP_FRAMECHANGED);
 	int iPageCnt = GetPageCount();
 
 	for ( int i = 0; i <= iPageCnt; i++ )
@@ -547,6 +548,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 				}
 			}
 		}
+
 	}
 
 	if (0 < SvOg::getToolsWithReplaceableSourceImage(m_InspectionID).list_size())
@@ -560,6 +562,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 		m_addImageButton.SetFont(GetFont());
 		CenterWindow();
 	}
+	SetupDynamicLayout();
 	return bResult;
 }
 
@@ -587,4 +590,31 @@ SvPb::GetToolsWithReplaceableSourceImageResponse SVRegressionFileSelectSheet::cr
 void SVRegressionFileSelectSheet::updateActiveButton()
 {
 	GetDlgItem(IDC_ADD_BTN)->EnableWindow(0 < createToolNameList().list_size());
+}
+
+void SVRegressionFileSelectSheet::SetupDynamicLayout()
+{
+	EnableDynamicLayout(TRUE);
+	auto pManager = GetDynamicLayout();
+	if (pManager != nullptr)
+	{
+		pManager->Create(this);
+
+		for (CWnd* child = GetWindow(GW_CHILD); child; child = child->GetWindow(GW_HWNDNEXT))
+		{
+
+			// All buttons need to be moved 100% in all directions
+			if (child->SendMessage(WM_GETDLGCODE) & DLGC_BUTTON)
+			{
+				pManager->AddItem(child->GetSafeHwnd(),
+					CMFCDynamicLayout::MoveHorizontalAndVertical(100, 100), CMFCDynamicLayout::SizeNone());
+			}
+			else // This will be the main tab control which needs to be stretched in both directions
+			{
+				pManager->AddItem(child->GetSafeHwnd(),
+					CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100, 100));
+			}
+
+		}
+	}
 }

@@ -2500,6 +2500,7 @@
 #define IDC_LIST_REG_SELECTED_FOLDER    16262
 #define IDC_BTN_REG_FOLDER_DEL          16263
 #define IDC_BTN_REG_TEST_DELETE         16264
+#define IDC_BUTTON_ADD_FOLDER           16265
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2743,7 +2744,11 @@
 #define IDC_RADIO_REG_MULTDIR           61495
 #define IDC_RADIO_REG_NONE              61496
 #define IDC_STATIC_TEXT                 61497
+#define IDC_STATIC_SELECTED             61497
 #define IDC_STATIC_SELECT_TEXT          61498
+#define IDS_SELECTED_FILE				61499
+#define IDS_SELECTED_FOLDER				61500
+
 
 // Next default values for new objects
 // 
@@ -2752,7 +2757,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11157
 #define _APS_NEXT_COMMAND_VALUE         20372
-#define _APS_NEXT_CONTROL_VALUE         16265
+#define _APS_NEXT_CONTROL_VALUE         16266
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

@@ -16,6 +16,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/TextDefinesSvDef.h"
+#include "SVUtilityLibrary/VectorHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -58,7 +59,7 @@ void SVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVRegressionFileSelectDlg)
 	DDX_Control(pDX, IDC_BTN_REG_TEST_BROWSE_FILES, m_btnBrowseFiles);
-	
+
 	DDX_Control(pDX, IDC_LIST_REG_SELECTED_FOLDER, m_SelectFolderList);
 	DDX_Control(pDX, IDC_EDIT_REG_SELECTED_FILES, m_EditRegTestFile);
 	//}}AFX_DATA_MAP
@@ -67,6 +68,7 @@ void SVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(SVRegressionFileSelectDlg, CPropertyPage)
 	//{{AFX_MSG_MAP(SVRegressionFileSelectDlg)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_FOLDER, OnBtnRegTestBrowseFiles)
 	ON_BN_CLICKED(IDC_BTN_REG_TEST_BROWSE_FILES, OnBtnRegTestBrowseFiles)
 	ON_BN_CLICKED(IDC_RADIO_REG_LIST, OnClickRadioList)
 	ON_BN_CLICKED(IDC_RADIO_REG_NONE, OnClickRadioNone)
@@ -97,15 +99,15 @@ void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 
 	switch (m_iSelectFileRadio)
 	{
-		case RegressionFileEnum::RegSingleFile:
-		case RegressionFileEnum::RegFileList:
-		case RegressionFileEnum::RegSingleDirectory:
+		case RegressionFileEnum::RegSingleFile: //use single file 
+		case RegressionFileEnum::RegFileList://use list of files 
+		case RegressionFileEnum::RegSingleDirectory://use all files in directory
 			ShowSelectFileDlg(bFullAccess);
 			break;
-		case RegressionFileEnum::RegSubDirectories:
+		case RegressionFileEnum::RegSubDirectories://Select directory 
 			ShowSelectDirectoryDlg(bFullAccess);
 			break;
-		case RegressionFileEnum::RegMultDirectories:
+		case RegressionFileEnum::RegMultDirectories://Select directories
 			ShowSelectMultDirectoryDlg(bFullAccess);
 			break;
 
@@ -132,24 +134,50 @@ void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 
 void SVRegressionFileSelectDlg::ShowControls()
 {
-	bool showFolder = (m_iSelectFileRadio == RegressionFileEnum::RegMultDirectories);
-	if (m_iSelectFileRadio == RegressionFileEnum::RegNone)
+	switch (m_iSelectFileRadio)
 	{
-		m_EditRegTestFile.ShowWindow(SW_HIDE);
-		m_SelectFolderList.ShowWindow(SW_HIDE);
+		case  RegressionFileEnum::RegNone:
+			m_EditRegTestFile.ShowWindow(SW_HIDE);
+			m_SelectFolderList.ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BTN_REG_TEST_BROWSE_FILES)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BTN_REG_FOLDER_DEL)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_ADD_FOLDER)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_STATIC_SELECTED)->ShowWindow(SW_HIDE);
+			break;
+		case RegressionFileEnum::RegFileList:
+		case RegressionFileEnum::RegSingleFile:
+		case RegressionFileEnum::RegSingleDirectory:
+		case RegressionFileEnum::RegSubDirectories:
+		{
+			m_EditRegTestFile.ShowWindow(SW_SHOW);
+			m_SelectFolderList.ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BTN_REG_TEST_BROWSE_FILES)->ShowWindow(SW_SHOW);
+			GetDlgItem(IDC_BTN_REG_FOLDER_DEL)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_ADD_FOLDER)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_STATIC_SELECTED)->ShowWindow(SW_SHOW);
+			std::string text = SvUl::LoadStdString(IDS_SELECTED_FILE);
+			GetDlgItem(IDC_STATIC_SELECTED)->SetWindowText(text.c_str());
+			UpdateEditCtrlSelect();
+		}
+		break;
+		case RegressionFileEnum::RegMultDirectories:
+		{
+			m_EditRegTestFile.ShowWindow(SW_HIDE);
+			m_SelectFolderList.ShowWindow(SW_SHOW);
+			GetDlgItem(IDC_BTN_REG_TEST_BROWSE_FILES)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BTN_REG_FOLDER_DEL)->ShowWindow(SW_SHOW);
+			GetDlgItem(IDC_BUTTON_ADD_FOLDER)->ShowWindow(SW_SHOW);
+			GetDlgItem(IDC_STATIC_SELECTED)->ShowWindow(SW_SHOW);
+			std::string text = SvUl::LoadStdString(IDS_SELECTED_FOLDER);
+			GetDlgItem(IDC_STATIC_SELECTED)->SetWindowText(text.c_str());
+			UpdateFolderList();
+		}
+		break;
+
 	}
-	else
-	{
-		m_EditRegTestFile.ShowWindow(showFolder ? SW_HIDE : SW_SHOW);
-		m_SelectFolderList.ShowWindow(showFolder ? SW_SHOW : SW_HIDE);
-		UpdateFolderList();
-	}
-	
-	GetDlgItem(IDC_BTN_REG_TEST_BROWSE_FILES)->SetWindowText(showFolder ? "add ..." : "...");
-	
-	GetDlgItem(IDC_BTN_REG_FOLDER_DEL)->ShowWindow(showFolder ? SW_SHOW : SW_HIDE);
-	UpdateTestFile();
-	
+
+
+
 
 }
 
@@ -157,12 +185,39 @@ void SVRegressionFileSelectDlg::UpdateFolderList()
 {
 	if (m_iSelectFileRadio == RegressionFileEnum::RegMultDirectories)
 	{
-
+		CDC* pDC = m_SelectFolderList.GetDC();
+		CFont* pFont = m_SelectFolderList.GetFont();
+		// Select the listbox font, save the old font
+		CFont* pOldFont = pDC->SelectObject(pFont);
+		// Get the text metrics for avg char width
+		TEXTMETRIC tm;
+		pDC->GetTextMetrics(&tm);
+		
+		int dx = 0;
 		m_SelectFolderList.ResetContent();
 		for (const auto& name : m_folders)
 		{
-			m_SelectFolderList.AddString(name.c_str());
+			CString str(name.c_str());
+			m_SelectFolderList.AddString(str);
+
+			CSize sz = pDC->GetTextExtent(str);
+
+			// Add the avg width to prevent clipping
+			sz.cx += tm.tmAveCharWidth;
+
+			if (sz.cx > dx)
+			{
+				dx = sz.cx;
+			}
 		}
+		// Select the old font back into the DC
+		pDC->SelectObject(pOldFont);
+		m_SelectFolderList.ReleaseDC(pDC);
+
+		// Set the horizontal extent so every character of all strings
+		// can be scrolled to.
+		m_SelectFolderList.SetHorizontalExtent(dx);
+
 	}
 }
 
@@ -173,21 +228,31 @@ void SVRegressionFileSelectDlg::UpdateRadioButton()
 }
 
 
-void SVRegressionFileSelectDlg::UpdateTestFile()
+void SVRegressionFileSelectDlg::UpdateEditCtrlSelect()
 {
 	m_EditRegTestFile.SetWindowText(m_RegTestFiles.GetString());
 }
 void SVRegressionFileSelectDlg::OnDeleteFolder()
 {
-	int  nIndex = m_SelectFolderList.GetCurSel();
-	if (nIndex != LB_ERR)
+	int n = m_SelectFolderList.GetSelCount();
+	if (n > 0)
 	{
-		CString cstext;
-		m_SelectFolderList.GetText(nIndex, cstext);
-		std::string folder = cstext.GetString();
-		std::erase(m_folders, folder);
-		m_SelectFolderList.DeleteString(nIndex);
+		std::vector<int> nSelected(n, 0);
+		m_SelectFolderList.GetSelItems(n, nSelected.data());
+		for (int i = n - 1; i >= 0; i--)
+		{
+			CString cstext;
+			m_SelectFolderList.GetText(nSelected[i], cstext);
+			std::string folder = cstext.GetString();
+			std::erase(m_folders, folder);
+			m_SelectFolderList.DeleteString(nSelected[i]);
+		}
+		m_PreviousFolderSettings[m_CameraNumber].clear();
+		auto inserter = std::back_inserter(m_PreviousFolderSettings[m_CameraNumber]);
+		std::copy(m_folders.begin(), m_folders.end(), inserter);
+
 	}
+
 }
 
 BOOL SVRegressionFileSelectDlg::OnInitDialog()
@@ -200,18 +265,18 @@ BOOL SVRegressionFileSelectDlg::OnInitDialog()
 		m_CameraNumber = _ttoi(sTemp.GetString());
 		m_CameraNumber = m_CameraNumber % MaxNumberCameraEntries;
 	}
-	
+
 	m_pParent = dynamic_cast<SVRegressionFileSelectSheet*>(GetParent());
 	m_pParent->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 	GetDlgItem(IDC_BTN_REMOVE)->ShowWindow(m_isCamera ? SW_HIDE : SW_SHOW);
 	m_iSelectFileRadio = m_PreviousSelctedRadius[m_CameraNumber];
-	if (m_folders.size() == 0 && m_PreviousFolderSettings[m_CameraNumber].size() > 0)
+	if (m_iSelectFileRadio == RegressionFileEnum::RegMultDirectories && m_folders.size() == 0 && m_PreviousFolderSettings[m_CameraNumber].size() > 0)
 	{
 		auto inserter = std::back_inserter(m_folders);
 		std::copy(m_PreviousFolderSettings[m_CameraNumber].begin(), m_PreviousFolderSettings[m_CameraNumber].end(), inserter);
 	}
-	
+
 	ShowControls();
 	UpdateRadioButton();
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -307,6 +372,7 @@ void SVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 
 	if (dlg.DoModal() == IDOK)
 	{
+		m_PreviousFolderSettings[m_CameraNumber].clear();
 		m_RegTestFiles = dlg.GetPathName();
 		if (!m_RegTestFiles.IsEmpty())
 		{
@@ -322,13 +388,15 @@ void SVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 
 void SVRegressionFileSelectDlg::ShowSelectDirectoryDlg(bool bFullAccess)
 {
-	
+
 	SvMc::SVDlgFolder dlg(bFullAccess, m_RegistryPath.c_str());
 	dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
 
 	INT_PTR rc = dlg.DoModal();
 	if (IDOK == rc)
 	{
+		m_folders.clear();
+		m_PreviousFolderSettings[m_CameraNumber].clear();
 		m_RegTestFiles = dlg.GetPathName();
 	}
 
@@ -341,8 +409,32 @@ void SVRegressionFileSelectDlg::ShowSelectMultDirectoryDlg(bool bFullAccess)
 	{
 		m_RegTestFiles = dlg.GetPathName();
 		std::string folder = m_RegTestFiles.GetString();
-		if (std::ranges::find(m_folders, folder) == m_folders.end())
-			m_folders.push_back(folder);
+		m_folders.push_back(folder);
+
+		//add Subfolder
+		for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(folder, std::filesystem::directory_options::skip_permission_denied))
+		{
+			try
+			{
+				if (dir_entry.is_directory())
+				{
+					std::string stPath = dir_entry.path().string();
+					if ((stPath.size() == 0) || (stPath.at(0) == '_'))
+						continue;
+					std::string msg = std::format("{}\n", dir_entry.path().string());
+					OutputDebugString(msg.c_str());
+					m_folders.push_back(stPath);
+
+				}
+			}
+			catch (...)
+			{
+				;//Accessdinied
+			}
+		}
+		SvUl::RemoveDuplicates<std::string>(m_folders);
+
+
 
 		m_PreviousFolderSettings[m_CameraNumber].clear();
 		auto inserter = std::back_inserter(m_PreviousFolderSettings[m_CameraNumber]);
