@@ -193,6 +193,7 @@ public:
 	/// \param rCreateStructure [in]
 	/// \returns bool
 	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure );
+	virtual void refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure);
 
 	/// Call this method at the object owner to create an object
 	/// \param pChildObject [in] child object to create

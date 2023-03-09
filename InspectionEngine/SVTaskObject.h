@@ -84,6 +84,7 @@ public:
 	virtual bool CloseObject() override;
 	virtual void disconnectAllInputs() override;
 	virtual void getInputs(std::back_insert_iterator<std::vector<SvOl::InputObject*>> inserter) const;
+	virtual void refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure) override;
 
 	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
 	virtual void fixInvalidInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter) override;

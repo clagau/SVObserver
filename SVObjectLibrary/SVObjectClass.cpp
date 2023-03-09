@@ -836,19 +836,47 @@ std::string SVObjectClass::GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum 
 bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	if (!IsCreated() && !CreateObject(rCreateStructure))
-	{
-		Log_Assert(false);
+		{
+			Log_Assert(false);
 
-		SvDef::StringVector msgList;
-		msgList.push_back(GetName());
-		msgList.push_back(GetCompleteName());
-		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams));
+			SvDef::StringVector msgList;
+			msgList.push_back(GetName());
+			msgList.push_back(GetCompleteName());
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams));
 
-		return false;
+			return false;
 	}
 
 	return true;
+}
+
+void SVObjectClass::refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
+{
+	if (&rCreateStructure.m_rOwner != this && rCreateStructure.m_rOwner.getObjectId() != getObjectId())
+	{
+		SetObjectOwner(&rCreateStructure.m_rOwner);
+	}
+	else
+	{
+		Log_Assert(false);
+	}
+
+	SVObjectLevelCreateStruct cs {*this};
+	cs.m_pInspection = rCreateStructure.m_pInspection;
+	cs.m_pTool = rCreateStructure.m_pTool;
+	cs.m_pAnalyzer = rCreateStructure.m_pAnalyzer;
+	for (auto* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->refreshAllObjects(cs);
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+	}
 }
 
 SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID)

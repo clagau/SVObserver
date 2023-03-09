@@ -39,6 +39,8 @@ public:
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
+	virtual void refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure) override;
+
 	SVObjectClass* GetInspection() const { return m_pInspection;  };
 	SvOi::IInspectionProcess* GetInspectionInterface() const { return m_pInspectionInterface; };
 

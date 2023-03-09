@@ -698,6 +698,24 @@ bool SVTaskObjectListClass::createAllObjects( const SVObjectLevelCreateStruct& r
 	return Result;
 }
 
+void SVTaskObjectListClass::refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
+{
+	__super::refreshAllObjects(rCreateStructure);
+
+	SVObjectLevelCreateStruct createStruct(*this);
+	createStruct.m_pInspection = GetInspection();
+	createStruct.m_pTool = GetTool();
+	createStruct.m_pAnalyzer = GetAnalyzer();
+
+	for (int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++)
+	{
+		if (getTaskObject(i))
+		{
+			getTaskObject(i)->refreshAllObjects(createStruct);
+		}
+	}
+}
+
 void SVTaskObjectListClass::ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	__super::ConnectObject( rCreateStructure );

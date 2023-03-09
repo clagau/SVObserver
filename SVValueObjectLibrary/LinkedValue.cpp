@@ -531,6 +531,20 @@ bool LinkedValue::CloseObject()
 	return __super::CloseObject();
 }
 
+void LinkedValue::refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
+{
+	__super::refreshAllObjects(rCreateStructure);
+
+	SVObjectLevelCreateStruct equationCreateStructure {*this};
+	equationCreateStructure.m_pInspection = rCreateStructure.m_pInspection;
+	equationCreateStructure.m_pTool = rCreateStructure.m_pTool;
+	equationCreateStructure.m_pAnalyzer = rCreateStructure.m_pAnalyzer;
+
+	m_Content.refreshAllObjects(equationCreateStructure);
+	m_refOptionObject.refreshAllObjects(equationCreateStructure);
+	m_equation.refreshAllObjects(equationCreateStructure);
+}
+
 bool LinkedValue::isCorrectType(SvPb::ObjectSelectorType requiredType) const
 {
 	try

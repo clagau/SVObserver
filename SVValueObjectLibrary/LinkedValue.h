@@ -79,6 +79,7 @@ public:
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
+	virtual void refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure) override;
 
 	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType) const;
 	virtual const SvOi::IObjectClass* getLinkedObject() const override;

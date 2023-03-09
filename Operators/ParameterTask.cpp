@@ -466,6 +466,17 @@ namespace SvOp
 		}
 	}
 
+	void ParameterTask::refreshToolPointer()
+	{
+		for (auto& rObject : m_objects)
+		{
+			if (nullptr != rObject.get())
+			{
+				rObject->setExcludeSameLineageListForObjectSelector({SvPb::ParameterResultObjectType == m_ObjectTypeInfo.m_SubType ? this : GetAncestor(SvPb::SVToolObjectType)});
+			}
+		}
+	}
+
 	void ParameterTask::init()
 	{
 		// Identify our output type

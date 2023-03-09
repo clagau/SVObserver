@@ -330,10 +330,10 @@ void ModuleController::convertGroupTool(uint32_t toolId, const std::string& rNam
 		pOwner->InsertBefore(pGroupTool->getObjectId(), pModuleTool);
 		if (pModuleTool && !pModuleTool->is_Created())
 		{
+			pOwner->CreateChildObject(*pModuleTool, SvDef::SVMFSetDefaultInputs);
 			pModuleTool->moveObjectToThis(*pGroupTool);
 			pModuleTool->setModuleComment(pGroupTool->getComment());
 			pOwner->DestroyChildObject(pGroupTool, SvDef::SVMFSetDefaultInputs);
-			pOwner->CreateChildObject(*pModuleTool, SvDef::SVMFSetDefaultInputs);
 		}
 		else
 		{
@@ -376,11 +376,11 @@ void ModuleController::convertModuleInstance(uint32_t toolId)
 		pOwner->InsertBefore(pModuleTool->getObjectId(), pGroupTool);
 		if (pGroupTool && !pGroupTool->is_Created())
 		{
+			pOwner->CreateChildObject(*pGroupTool, SvDef::SVMFSetDefaultInputs);
 			unregisterInstance(pModuleTool->getModuleGuid(), pModuleTool->getObjectId());
 			pGroupTool->moveObjectToThis(*pModuleTool);
 			pGroupTool->setComment(pModuleTool->getModuleComment());
-			pOwner->DestroyChildObject(pModuleTool, SvDef::SVMFSetDefaultInputs);
-			pOwner->CreateChildObject(*pGroupTool, SvDef::SVMFResetInspection);
+			pOwner->DestroyChildObject(pModuleTool, SvDef::SVMFResetInspection);
 		}
 		else
 		{

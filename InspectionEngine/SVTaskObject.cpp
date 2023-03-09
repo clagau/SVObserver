@@ -1369,6 +1369,36 @@ void SVTaskObjectClass::getInputs(std::back_insert_iterator<std::vector<SvOl::In
 	std::copy(m_inputs.begin(), m_inputs.end(), inserter);
 }
 
+void SVTaskObjectClass::refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
+{
+	__super::refreshAllObjects(rCreateStructure);
+
+	SVObjectLevelCreateStruct createStruct(*this);
+	createStruct.m_pInspection = GetInspection();
+	createStruct.m_pTool = GetTool();
+	createStruct.m_pAnalyzer = GetAnalyzer();
+
+	for (size_t j = 0; j < m_friendList.size(); ++j)
+	{
+		if (nullptr != m_friendList[j])
+		{
+			m_friendList[j]->refreshAllObjects(createStruct);
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+	}
+
+	for (auto* pInput : m_inputs)
+	{
+		if (pInput)
+		{
+			pInput->refreshAllObjects(createStruct);
+		}
+	}
+}
+
 // Added to process friends
 bool SVTaskObjectClass::CloseObject()
 {

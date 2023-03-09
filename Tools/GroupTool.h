@@ -68,6 +68,7 @@ private:
 	SvDef::StringPairVector getInvalidDependenciesList() const;
 	bool isValid(const std::pair<std::string, std::string>& rEntry) const;
 	void updateValidCheckStrings();
+	void setParameterTaskPointer();
 
 private:
 	SvVol::SVBoolValueObjectClass m_isClosed;

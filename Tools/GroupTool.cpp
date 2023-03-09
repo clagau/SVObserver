@@ -15,6 +15,7 @@
 #include "SVProtoBuf/SVO-Enum.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/RunStatus.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #pragma endregion Includes
 
 //This comment is to avoid that the SVConditional include is marked as not required due to forward declaration from a base class
@@ -59,16 +60,14 @@ namespace SvTo
 		m_WarnedCount.SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::OverwriteAttribute);
 		m_drawToolFlag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
-		SvDef::SVObjectTypeInfoStruct info(SvPb::ParameterTaskObjectType, SvPb::ParameterInputObjectType);
-		m_pInputTask = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
+		setParameterTaskPointer();
+
 		if (nullptr == m_pInputTask)
 		{
 			m_pInputTask = new SvOp::InputParameterTask;
 			Add(m_pInputTask);
 		}
 
-		info.m_SubType = SvPb::ParameterResultObjectType;
-		m_pResultTask = dynamic_cast<SvOp::ResultParameterTask*>(getFirstObject(info));
 		if (nullptr == m_pResultTask)
 		{
 			m_pResultTask = new SvOp::ResultParameterTask;
@@ -351,11 +350,17 @@ namespace SvTo
 	{
 		DestroyFriends();
 		rGroupTool.movedAndDeleteFriends(m_friendList);
+		m_pToolConditional = nullptr;
 		for (int i = 0; m_friendList.size() > i; ++i)
 		{
 			if (m_friendList[i])
 			{
 				m_friendList[i]->SetObjectOwner(this);
+				if (0 == i)
+				{
+					//conditional must be the first friend because it will be blocked in runFriends if tool
+					m_pToolConditional = dynamic_cast<SvOp::SVConditional*> (m_friendList[i]);
+				}
 			}
 		}
 
@@ -368,11 +373,29 @@ namespace SvTo
 				pObject->SetObjectOwner(this);
 			}
 		}
-
+		
 		rGroupTool.moveEmbeddedObjects(m_embeddedList);
 
 		SetName(rGroupTool.GetName());
 		rGroupTool.moveObject(*this);
+		if (GetParent())
+		{
+			SVObjectLevelCreateStruct cs {*GetParent()};
+			cs.m_pInspection = GetInspection();
+			cs.m_pTool = this;
+			setParameterTaskPointer();
+			refreshAllObjects(cs);
+			updateValidCheckStrings();
+			connectInput(m_conditionBoolInput);
+			if (m_pInputTask)
+			{
+				m_pInputTask->refreshToolPointer();
+			}
+		}
+		else
+		{
+			Log_Assert(false);
+		}
 	}
 
 	void GroupTool::fixAndReturnAllGroupInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter)
@@ -450,5 +473,14 @@ namespace SvTo
 		m_resultStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_PARAMETER_TASK);
 		m_embeddedNameList.clear();
 		std::transform(m_embeddedList.begin(), m_embeddedList.end(), std::back_inserter(m_embeddedNameList), [](const auto* pObject) -> std::string { return pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType); });
+	}
+
+	void GroupTool::setParameterTaskPointer()
+	{
+		SvDef::SVObjectTypeInfoStruct info(SvPb::ParameterTaskObjectType, SvPb::ParameterInputObjectType);
+		m_pInputTask = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
+
+		info.m_SubType = SvPb::ParameterResultObjectType;
+		m_pResultTask = dynamic_cast<SvOp::ResultParameterTask*>(getFirstObject(info));
 	}
 } //namespace SvTo

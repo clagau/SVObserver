@@ -77,6 +77,17 @@ void SVObjectAppClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStr
 	}
 }
 
+void SVObjectAppClass::refreshAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
+{
+	UpdateConnections(rCreateStructure);
+
+	SVObjectLevelCreateStruct createStruct(rCreateStructure);
+	createStruct.m_pInspection = GetInspection();
+	createStruct.m_pTool = GetTool();
+	createStruct.m_pAnalyzer = GetAnalyzer();
+	__super::refreshAllObjects(createStruct);
+}
+
 #pragma region virtual methods (IObjectAppClass)
 bool SVObjectAppClass::CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context)
 {
