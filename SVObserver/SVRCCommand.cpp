@@ -465,13 +465,6 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 					if (S_OK != LoopStatus)
 					{
-						std::string FileName = SvUl::createStdString(rEntry.second.m_Storage.m_Variant);
-
-						if (!FileName.empty())
-						{
-							::remove(FileName.c_str());
-						}
-
 						SvPb::Value* pValue = Response.add_errorlist();
 						if (nullptr != pValue)
 						{
@@ -507,6 +500,19 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 					break;
 				}
+				}
+			}
+
+			//deleting of image files must done after setting all items, because it is possible that more than one item use the same image file.
+			for (const auto& rEntry : ResultItems)
+			{
+				if (SVVisionProcessor::SVStorageImageFileName == rEntry.second.m_Storage.m_StorageType)
+				{
+					std::string FileName = SvUl::createStdString(rEntry.second.m_Storage.m_Variant);
+					if (!FileName.empty())
+					{
+						::remove(FileName.c_str());
+					}
 				}
 			}
 		}
@@ -1407,8 +1413,6 @@ HRESULT SVRCCommand::ConvertStorageImageToProtobuf(const std::string& rName, con
 			ItemStatus = SVEncodeDecodeUtilities::FileToCharVector(FileName, FileData);
 			if (S_OK == ItemStatus)
 			{
-				::remove(FileName.c_str());
-
 				pValue->mutable_item()->set_type(VT_UI1 | VT_ARRAY);
 				pValue->mutable_item()->set_bytesval(&FileData[0], FileData.size());
 				pValue->mutable_item()->set_count(static_cast<uint32_t> (FileData.size()));
