@@ -66,6 +66,7 @@ public:
 
 public:
 	void onMessageContainer(const SvStl::MessageContainer& rMessage, int messageType);
+	void openSharedMemory();
 
 public:
 	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
@@ -189,7 +190,7 @@ private:
 	SvOi::RAIIPtr m_TrcResetSubscriptionRAII;
 	SvOi::RAIIPtr m_TrcNewInterestTrSubscriptionRAII;
 
-	SharedMemoryLock m_SharedMemoryLock;
+	std::unique_ptr<SharedMemoryLock> m_SharedMemoryLock;
 	boost::asio::deadline_timer m_DisconnectCheckTimer;
 
 	std::mutex m_NewTriggerMutex;

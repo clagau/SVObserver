@@ -49,8 +49,7 @@ SharedMemoryAccess::SharedMemoryAccess(
 	, m_pause_timer(rIoService)
 	, m_overlay_controller(rIoService, rpcClient)
 	, m_pShareControlInstance {std::make_unique<SvSml::ShareControl>(ControlParameter)}
-	, m_SharedMemoryLock(boost::posix_time::milliseconds(1),
-		[=](LockState state) { this->on_lock_state_changed(state); })
+	, m_SharedMemoryLock(nullptr)
 	, m_DisconnectCheckTimer(rIoService)
 {
 	schedule_trigger_record_pause_state();
@@ -289,8 +288,11 @@ void SharedMemoryAccess::GetGatewayNotificationStream(
 	send_trigger_record_pause_state_to_client(*state, m_pause_state);
 
 	// send current configuration lock status to client
-	auto currentLockState = m_SharedMemoryLock.GetLockState();
-	on_lock_state_changed(currentLockState);
+	if (m_SharedMemoryLock)
+	{
+		auto currentLockState = m_SharedMemoryLock->GetLockState();
+		on_lock_state_changed(currentLockState);
+	}
 }
 
 void SharedMemoryAccess::GetGatewayMessageStream(
@@ -1170,7 +1172,7 @@ void SharedMemoryAccess::on_lock_state_changed(LockState state)
 	auto lockOwnerStream = std::shared_ptr<lock_acquisition_stream_t> {nullptr};
 	if (state.owner == LockOwner::SVOGateway)
 	{
-		lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
+		lockOwnerStream = m_SharedMemoryLock->GetLockOwnerStream();
 	}
 
 	for (auto it = m_notification_streams.begin(); it != m_notification_streams.end();)
@@ -1266,6 +1268,16 @@ void SharedMemoryAccess::onMessageContainer(const SvStl::MessageContainer& rMess
 			msgStream.observer.onNext(std::move(response));
 		}
 		++it;
+	}
+}
+
+void SharedMemoryAccess::openSharedMemory()
+{
+	if (!m_SharedMemoryLock)
+	{
+		m_SharedMemoryLock = std::make_unique<SharedMemoryLock>(
+			boost::posix_time::milliseconds(1),
+			[=](LockState state) { this->on_lock_state_changed(state); });
 	}
 }
 
@@ -1414,7 +1426,7 @@ void SharedMemoryAccess::AcquireLockStream(
 		}
 	});
 
-	auto lockState = m_SharedMemoryLock.GetLockState();
+	auto lockState = m_SharedMemoryLock->GetLockState();
 	if (lockState.username == streamPtr->sessionContext.username())
 	{
 		SvPenv::Error error;
@@ -1424,13 +1436,13 @@ void SharedMemoryAccess::AcquireLockStream(
 		return;
 	}
 
-	m_io_service.dispatch([this, streamPtr] { m_SharedMemoryLock.PushBackStream(streamPtr); });
+	m_io_service.dispatch([this, streamPtr] { m_SharedMemoryLock->PushBackStream(streamPtr); });
 	acquire_lock(*streamPtr);
 }
 
 void SharedMemoryAccess::acquire_lock(lock_acquisition_stream_t& stream)
 {
-	const bool isAcquired = m_SharedMemoryLock.Acquire(
+	const bool isAcquired = m_SharedMemoryLock->Acquire(
 		LockOwner::SVOGateway, stream.sessionContext.username(), stream.sessionContext.host());
 
 	if (isAcquired)
@@ -1447,7 +1459,7 @@ void SharedMemoryAccess::acquire_lock(lock_acquisition_stream_t& stream)
 		return;
 	}
 
-	auto lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
+	auto lockOwnerStream = m_SharedMemoryLock->GetLockOwnerStream();
 
 	if (lockOwnerStream == nullptr)
 	{
@@ -1491,7 +1503,7 @@ void SharedMemoryAccess::notify_client_about_lock_acquisition(const lock_acquisi
 void SharedMemoryAccess::release_lock(lock_acquisition_stream_t& stream, const SvPb::LockReleaseReason reason)
 {
 	stream.isLockOwner = false;
-	m_SharedMemoryLock.Release();
+	m_SharedMemoryLock->Release();
 	broadcast_release_notification(stream, reason);
 }
 
@@ -1505,7 +1517,7 @@ void SharedMemoryAccess::broadcast_release_notification(
 	notification->set_lockid(stream.id);
 	notification->set_reason(reason);
 
-	for (auto& streamPtr : m_SharedMemoryLock.GetStreams())
+	for (auto& streamPtr : m_SharedMemoryLock->GetStreams())
 	{
 		if (!(streamPtr->streamContext->isCancelled()))
 		{
@@ -1518,7 +1530,7 @@ void SharedMemoryAccess::broadcast_release_notification(
 
 void SharedMemoryAccess::handle_lock_takeover_request(const lock_acquisition_stream_t& stream)
 {
-	auto lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
+	auto lockOwnerStream = m_SharedMemoryLock->GetLockOwnerStream();
 	if (lockOwnerStream == nullptr)
 	{
 		SvPenv::Error error;
@@ -1567,7 +1579,7 @@ void SharedMemoryAccess::on_disconnected_clients_check(const boost::system::erro
 
 void SharedMemoryAccess::check_disconnected_clients()
 {
-	auto& streams = m_SharedMemoryLock.GetStreams();
+	auto& streams = m_SharedMemoryLock->GetStreams();
 	for (auto it = streams.begin(); it != streams.end();)
 	{
 		if ((*it)->streamContext->isCancelled())
@@ -1585,7 +1597,7 @@ void SharedMemoryAccess::TakeoverLock(
 	const SvPb::LockTakeoverRequest& request,
 	SvRpc::Task<SvPb::LockTakeoverResponse> task)
 {
-	auto lockOwnerStream = m_SharedMemoryLock.GetLockOwnerStream();
+	auto lockOwnerStream = m_SharedMemoryLock->GetLockOwnerStream();
 
 	if (lockOwnerStream == nullptr || lockOwnerStream->id != request.lockid())
 	{
@@ -1597,7 +1609,7 @@ void SharedMemoryAccess::TakeoverLock(
 		return;
 	}
 
-	auto takeoverCandidateStream = m_SharedMemoryLock.GetStreamById(request.takeoverid());
+	auto takeoverCandidateStream = m_SharedMemoryLock->GetStreamById(request.takeoverid());
 
 	if (takeoverCandidateStream == nullptr)
 	{
@@ -1610,7 +1622,7 @@ void SharedMemoryAccess::TakeoverLock(
 	}
 
 	lockOwnerStream->isLockOwner = false;
-	m_SharedMemoryLock.Takeover(
+	m_SharedMemoryLock->Takeover(
 		LockOwner::SVOGateway,
 		takeoverCandidateStream->sessionContext.username(),
 		takeoverCandidateStream->sessionContext.host());
@@ -1624,7 +1636,7 @@ void SharedMemoryAccess::RejectLockTakeover(
 	const SvPb::LockTakeoverRejectedRequest& request,
 	SvRpc::Task<SvPb::LockTakeoverRejectedResponse> task)
 {
-	auto takeoverStream = m_SharedMemoryLock.GetStreamById(request.takeoverid());
+	auto takeoverStream = m_SharedMemoryLock->GetStreamById(request.takeoverid());
 
 	if (takeoverStream == nullptr)
 	{

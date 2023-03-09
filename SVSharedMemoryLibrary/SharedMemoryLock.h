@@ -48,7 +48,7 @@ public:
 	SharedMemoryLock(
 		boost::asio::deadline_timer::duration_type expiryTime,
 		const lock_state_changed_callback_t& onLockStateChangedCb,
-		const std::string& name = "sv_default_shared_memory");
+		const std::string& name = "Global\\sv_default_shared_memory");
 	~SharedMemoryLock();
 
 	bool Acquire(LockOwner owner, const std::string& username, const std::string& host);
