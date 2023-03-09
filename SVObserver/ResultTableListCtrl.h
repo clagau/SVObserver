@@ -35,8 +35,8 @@ public:
 	/// The method updates the list
 	void setTableIdInResultView();
 	void updateList();
-	void setTableId(uint32_t id) { m_LinkedTableId = id; }
-	uint32_t getTableId() { return m_LinkedTableId; }
+	void setTableIdForTab(uint32_t id) { m_LinkedTableId = id; }
+	uint32_t getTableIdForTab() { return m_LinkedTableId; }
 #pragma endregion Public Methods
 
 #pragma region Private Methods

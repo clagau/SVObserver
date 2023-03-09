@@ -12,7 +12,6 @@
 #include "ResultTabControl.h"
 #include "SVIPDoc.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -85,7 +84,7 @@ void ResultTabControl::Save(SvOi::IObjectWriter& rWriter)
 			rWriter.WriteAttribute(SvXml::CTAG_NAME, svVariant);
 			svVariant.Clear();
 
-			svVariant = tableListCtrl->getTableId();
+			svVariant = tableListCtrl->getTableIdForTab();
 			rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant);
 			svVariant.Clear();
 
@@ -154,7 +153,7 @@ void ResultTabControl::tableIdChanged()
 	ResultTableListCtrl* tableListCtrl = dynamic_cast<ResultTableListCtrl*> (view);
 
 	SVToolSet* toolset = m_pIPDoc->GetToolSet();
-	tableListCtrl->setTableId(toolset->GetResultList()->getTableId());
+	tableListCtrl->setTableIdForTab(toolset->GetResultList()->getTableId());
 	updateTab();
 
 	SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
@@ -217,7 +216,6 @@ BOOL ResultTabControl::SetActiveTab(int iTab)
 	{
 		EnableActiveTabCloseButton(false);
 		setActive = CMFCTabCtrl::SetActiveTab(iTab);
-		//EnableActiveTabCloseButton(false);
 	}
 	else
 	{
@@ -286,7 +284,7 @@ void ResultTabControl::addNewTab(const CString tabName, const uint32_t tableId)
 
 	std::shared_ptr<ResultTableListCtrl> newTableListControl = std::make_shared<ResultTableListCtrl>();
 	newTableListControl->setIPDoc(m_pIPDoc);
-	newTableListControl->setTableId(tableId);
+	newTableListControl->setTableIdForTab(tableId);
 	newTableListControl->Create(WS_CHILD | WS_VISIBLE | WS_BORDER, Rect, this, getNextViewIndex());
 	InsertTab(newTableListControl.get(), tabName, newInsertPosition);
 	
@@ -317,7 +315,7 @@ void ResultTabControl::addDefaultTabs()
 		m_pDefaultResultTableList = std::make_shared<ResultTableListCtrl>();
 		m_pDefaultResultTableList->setIPDoc(m_pIPDoc);
 		SVToolSet* toolset = m_pIPDoc->GetToolSet();
-		m_pDefaultResultTableList->setTableId(toolset->GetResultList()->getTableId());
+		m_pDefaultResultTableList->setTableIdForTab(toolset->GetResultList()->getTableId());
 		m_pDefaultResultTableList->Create(WS_CHILD | WS_VISIBLE | WS_BORDER, Rect, this, getNextViewIndex());
 		InsertTab(m_pDefaultResultTableList.get(), SvDef::cTableResultView, cResultTableDefaultposition);
 	}

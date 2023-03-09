@@ -19,6 +19,7 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "Operators/TableObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
@@ -215,6 +216,20 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 		}
 	}
 
+	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT) && nullptr != m_resultTable)
+	{
+		const std::vector<SvVol::DoubleSortValuePtr>& valueList = m_resultTable->getValueList();
+		bool result = std::any_of(valueList.begin(), valueList.end(), [](const SvVol::DoubleSortValuePtr valuePtr){
+			SvVol::DoubleSortValueObject* valueObject = valuePtr.get();
+			return (nullptr != valueObject) ? valueObject->getTrPos() == -1 : true;
+		});
+		if (result)
+		{
+			pIProcess->buildValueObjectData();
+			pIProcess->RunOnce();
+		}
+	}
+	
 	m_LastUpdateTimeStamp = SvUl::GetTimeStamp();
 }
 
