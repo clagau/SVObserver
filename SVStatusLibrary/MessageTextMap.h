@@ -639,6 +639,7 @@ namespace SvStl
 		{Tid_aDecimalValue, _T("a decimal value")},
 		{Tid_aTextValue, _T("a text value")},
 
+		{Tid_InvalidParameterName, _T("The name \"{0}\" is invalid.")},
 		{Tid_ForbiddenParameterName, _T("The name \"{0}\" is already used for another object in this parameter task.")},
 		{Tid_DuplicateParameterName, _T("It is not allowed to have duplicated parameter names:\n {0}")},
 		{Tid_DuplicateParameterNameWithLinked, _T("It is not allowed to have a parameter name which is already used\nby a linked parameter name: {0}")},
