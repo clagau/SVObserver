@@ -224,43 +224,6 @@ namespace SvUl
 		return rStringValue;
 	}
 
-	std::string Format( LPCSTR pFormat, ...)
-	{
-		std::string result;
-		Log_Assert(pFormat);
-
-		if (nullptr != pFormat)
-		{
-			va_list argList;
-			va_start(argList, pFormat);
-
-			char Text[cBufferSize];
-			vsprintf_s(Text, cBufferSize, pFormat, argList);
-			result = Text;
-			va_end(argList);
-		}
-		return result;
-	}
-
-	// formatting (using wsprintf style formatting)
-	std::string Format(LPCWSTR pFormat, ...)
-	{
-		std::string result;
-		Log_Assert(pFormat);
-
-		if (nullptr != pFormat)
-		{
-			va_list argList;
-			va_start(argList, pFormat);
-
-			wchar_t Text[cBufferSize];
-			vswprintf_s(Text, cBufferSize, pFormat, argList);
-			result = _bstr_t(Text);
-			va_end(argList);
-		}
-		return result;
-	}
-
 	template<typename T>
 	bool Convert2Number(const std::string& rStringValue, T& Value, bool failIfLeftoverChars)
 	{
@@ -362,8 +325,8 @@ namespace SvUl
 			{
 				std::string first;
 				std::string second;
-				first = Format(_T("\\%03o"), l_ch);
-				second = Format(_T("%c"), l_ch);
+				first = std::format(_T("\\{:03o}"), l_ch);
+				second = std::format(_T("{:c}"), l_ch);
 				FoundStrings[index] = StringPair(first, second);
 				bAdded = true;
 			}
@@ -427,8 +390,8 @@ namespace SvUl
 				std::string first;
 				std::string second;
 				int ctrlValue = (rString[index + 1] - _T('0')) * 64 + (rString[index + 2] - _T('0')) * 8 + (rString[index + 3] - _T('0'));
-				first = Format(_T("\\%03o"), ctrlValue);
-				second = Format(_T("%c"), ctrlValue);
+				first = std::format(_T("\\{:03o}"), ctrlValue);
+				second = std::format(_T("{:c}"), ctrlValue);
 				FoundStrings[static_cast<int> (index)] = StringPair(first, second);
 				index += 3;
 			}
@@ -469,7 +432,7 @@ namespace SvUl
 			return rOriginalName + _T("_Copy");
 		}
 
-		return rOriginalName + _T(Format("_Copy%u", copyIndex));
+		return rOriginalName + _T(std::format("_Copy{}", copyIndex));
 	}
 
 
@@ -541,7 +504,7 @@ namespace SvUl
 
 		if (0 != ToolIndex)
 		{
-			return Format(_T("%s%d"), ToolNameCore.c_str(), ToolIndex);
+			return std::format(_T("{}{}"), ToolNameCore, ToolIndex);
 		}
 
 		return ToolNameCore;

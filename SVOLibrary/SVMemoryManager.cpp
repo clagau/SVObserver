@@ -16,7 +16,6 @@
 #include "Definitions/GlobalConst.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
 #pragma endregion Includes
@@ -123,7 +122,7 @@ void SVMemoryManager::InitializeMemoryManager(long bufferSize)
 
 	//Log amount of physical memory - may help in debugging issues in the future.
 	SvDef::StringVector MessageList;
-	MessageList.push_back(SvUl::Format(_T("%ld MB"), ramSizeInMB));
+	MessageList.push_back(std::format(_T("{:d} MB"), ramSizeInMB));
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_54_EMPTY, SvStl::Tid_AmountOfSystemMemoryText, MessageList, SvStl::SourceFileParams(StdMessageParams));
 

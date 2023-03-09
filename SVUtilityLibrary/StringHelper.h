@@ -12,6 +12,7 @@
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comutil.h>
 //Moved to precompiled header: #include <tchar.h>
+#include <format>
 #pragma endregion Includes
 
 namespace SvUl
@@ -124,15 +125,6 @@ namespace SvUl
 	std::string& searchAndReplace( std::string& rStringValue, const std::string::traits_type::char_type* pFromStr, const std::string::traits_type::char_type* pToStr, size_t beginPos = 0);
 
 	//************************************
-	/// Converts the value of objects to strings based on the formats specified and inserts them into another string. 
-	/// \param pFormat [in] Format 
-	/// \param  [in] A list of objects
-	/// \returns std::string New created object
-	//************************************
-	std::string Format(LPCSTR pFormat, ...); //NOTE! Output maximum is 2000 characters
-	std::string Format(LPCWSTR pFormat, ...); //NOTE! Output maximum is 2000 characters
-
-	//************************************
 	/// Check if string can convert to a number and return this if possible.
 	/// \param Value [out] The converted number.
 	/// \param failIfLeftoverChars [in] If value == true, it retrun also false if after convert unused character left (expect of spaces), If value == false, it return only false if convert failed.
@@ -175,13 +167,13 @@ namespace SvUl
 	//************************************
 	bool RemoveEscapedSpecialCharacters(std::string& rString, bool bConvertCtrl);
 
-	inline std::string AsString(short Value) { return Format(_T("%d"), Value); };
-	inline std::string AsString(int Value) { return Format(_T("%d"), Value); };
-	inline std::string AsString(long Value) { return Format(_T("%d"), Value); };
-	inline std::string AsString(unsigned short Value) { return Format(_T("%u"), Value); };
-	inline std::string AsString(unsigned int Value) { return Format(_T("%u"), Value); };
-	inline std::string AsString(unsigned long Value) { return Format(_T("%u"), Value); };
-	inline std::string AsString(double Value) { return Format(_T("%f"), Value); };
+	inline std::string AsString(short Value) { return std::format(_T("{:d}"), Value); };
+	inline std::string AsString(int Value) { return std::format(_T("{:d}"), Value); };
+	inline std::string AsString(long Value) { return std::format(_T("{:d}"), Value); };
+	inline std::string AsString(unsigned short Value) { return std::format(_T("{}"), Value); };
+	inline std::string AsString(unsigned int Value) { return std::format(_T("{}"), Value); };
+	inline std::string AsString(unsigned long Value) { return std::format(_T("{}"), Value); };
+	inline std::string AsString(double Value) { return std::format(_T("{}"), Value); };
 
 	std::string makeNameUnique(const std::string& rOriginalName, const std::vector<std::string>& rStringsToBeSearched, bool useExplorerStyle);
 

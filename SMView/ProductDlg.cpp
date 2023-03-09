@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ProductDlg.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 LPCTSTR ProductDlg::ColHeader[] = { _T("Trigger"),_T("Name"),_T("Obj"),_T("Var"), _T("Size"),_T("data") };

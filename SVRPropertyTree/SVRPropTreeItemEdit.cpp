@@ -840,64 +840,64 @@ std::string SVRPropertyItemEdit::Data2String()
 		Result = *m_vtData.pboolVal ? _T("True") : _T("False");
 		break;
 	case VT_I1:
-		Result = SvUl::Format( _T("%c"), m_vtData.cVal );
+		Result = std::format( _T("{:c}"), m_vtData.cVal );
 		break;
 	case VT_I1 | VT_BYREF:
-		Result = SvUl::Format( _T("%c"), *m_vtData.pcVal );
+		Result = std::format( _T("{:c}"), *m_vtData.pcVal );
 		break;
 	case VT_UI1:
-		Result = SvUl::Format( _T("%#01.1hx"), m_vtData.bVal );
+		Result = std::format( _T("{:#01x}"), m_vtData.bVal);
 		break;
 	case VT_UI1 | VT_BYREF:
-		Result = SvUl::Format( _T("%#01.1hx"), *m_vtData.pbVal );
+		Result = std::format( _T("{:#01x}"), *m_vtData.pbVal);
 		break;
 	case VT_I2:
-		Result = SvUl::Format( _T("%hd"), m_vtData.iVal );
+		Result = std::format( _T("{:d}"), m_vtData.iVal );
 		break;
 	case VT_I2 | VT_BYREF:
-		Result = SvUl::Format( _T("%hd"), *m_vtData.piVal );
+		Result = std::format( _T("{:d}"), *m_vtData.piVal );
 		break;
 	case VT_UI2:
-		Result = SvUl::Format( _T("%#02.2hx"), m_vtData.uiVal );
+		Result = std::format( _T("{:#04x}"), m_vtData.uiVal);
 		break;
 	case VT_UI2 | VT_BYREF:
-		Result = SvUl::Format( _T("%#02.2hx"), *m_vtData.puiVal );
+		Result = std::format( _T("{:#04x}"), *m_vtData.puiVal);
 		break;
 	case VT_I4:
-		Result = SvUl::Format( _T("%ld"), m_vtData.lVal );
+		Result = std::format( _T("{}"), m_vtData.lVal );
 		break;
 	case VT_I4 | VT_BYREF:
-		Result = SvUl::Format( _T("%ld"), *m_vtData.plVal );
+		Result = std::format( _T("{}"), *m_vtData.plVal );
 		break;
 	case VT_UI4:
-		Result = SvUl::Format( _T("%#04.4lx"), m_vtData.ulVal );
+		Result = std::format( _T("{:#06x}"), m_vtData.ulVal);
 		break;
 	case VT_UI4 | VT_BYREF:
-		Result = SvUl::Format( _T("%#04.4lx"), *m_vtData.pulVal );
+		Result = std::format( _T("{:#06x}"), *m_vtData.pulVal);
 		break;
 	case VT_INT:
-		Result = SvUl::Format( _T("%d"), m_vtData.intVal );
+		Result = std::format( _T("{}"), m_vtData.intVal );
 		break;
 	case VT_INT | VT_BYREF:
-		Result = SvUl::Format( _T("%d"), *m_vtData.pintVal );
+		Result = std::format( _T("{}"), *m_vtData.pintVal );
 		break;
 	case VT_UINT:
-		Result = SvUl::Format( _T("%#04.4x"), m_vtData.uintVal );
+		Result = std::format( _T("{:#06x}"), m_vtData.uintVal);
 		break;
 	case VT_UINT | VT_BYREF:
-		Result = SvUl::Format( _T("%#04.4x"), *m_vtData.puintVal );
+		Result = std::format( _T("{:#06x}"), *m_vtData.puintVal);
 		break;
 	case VT_R4:
-		Result = SvUl::Format( _T("%g"), m_vtData.fltVal );
+		Result = std::format( _T("{:g}"), m_vtData.fltVal );
 		break;
 	case VT_R4 | VT_BYREF:
-		Result = SvUl::Format( _T("%g"), *m_vtData.pfltVal );
+		Result = std::format( _T("{:g}"), *m_vtData.pfltVal );
 		break;
 	case VT_R8:
-		Result = SvUl::Format( _T("%g"), m_vtData.dblVal );
+		Result = std::format( _T("{:g}"), m_vtData.dblVal );
 		break;
 	case VT_R8 | VT_BYREF:
-		Result = SvUl::Format( _T("%g"), *m_vtData.pdblVal );
+		Result = std::format( _T("{:g}"), *m_vtData.pdblVal );
 		break;
 	case VT_BSTR:
 		Result = SvUl::createStdString( m_vtData.bstrVal );

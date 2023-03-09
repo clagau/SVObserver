@@ -52,7 +52,7 @@
 #include <afxdisp.h>        // MFC Automation classes
 
 #include <comdef.h>
-
+#include <format>
 #include <assert.h>
 #include <map>
 #include <math.h>

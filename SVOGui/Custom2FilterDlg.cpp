@@ -19,7 +19,6 @@
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes

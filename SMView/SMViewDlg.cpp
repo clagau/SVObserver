@@ -13,7 +13,6 @@
 #include "SMViewDlg.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "MonitorLIstDlg.h"
 #include "SVSharedMemoryLibrary\MLProduct.h"
 #include "ProductDlg.h"

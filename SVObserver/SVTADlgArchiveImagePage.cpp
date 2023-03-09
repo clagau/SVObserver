@@ -250,8 +250,8 @@ void SVTADlgArchiveImagePage::updateAndCommitImageValues()
 	if (UpperLimitImageNumbers < m_maximumNumberOfArchiveImages)
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%ld"), m_maximumNumberOfArchiveImages));
-		msgList.push_back(SvUl::Format(_T("%ld"), UpperLimitImageNumbers));
+		msgList.push_back(std::format(_T("{:d}"), m_maximumNumberOfArchiveImages));
+		msgList.push_back(std::format(_T("{:d}"), UpperLimitImageNumbers));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_MaxImagesForArchiveToolTooHigh, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
