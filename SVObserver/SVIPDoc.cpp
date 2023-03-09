@@ -3445,6 +3445,7 @@ afx_msg void SVIPDoc::OnUpdateAddToolWithSubTools(CCmdUI* PCmdUI)
 			SvPb::InspectionCmdResponse responseCmd;
 			auto* pRequest = requestCmd.mutable_gettooldepthrequest();
 			pRequest->set_objectid(pNavElement->m_OwnerId);
+			pRequest->set_goupward(true);
 
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK == hr && responseCmd.has_gettooldepthresponse())
@@ -3458,7 +3459,7 @@ afx_msg void SVIPDoc::OnUpdateAddToolWithSubTools(CCmdUI* PCmdUI)
 		}
 		else
 		{
-			Enabled = false;
+			Enabled = true;
 		}
 	}
 	else
