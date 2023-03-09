@@ -75,14 +75,14 @@ namespace SvAo
 		RegisterEmbeddedObject(&m_sortEnumValue, SvPb::SortEnumEId, IDS_BLOBFEATURE_SORT, false, SvOi::SVResetItemOwner, false);
 		RegisterEmbeddedObject(&m_isExcludeValue, SvPb::IsExcludeEId, IDS_BLOBFEATURE_ISEXCLUDE, false, SvOi::SVResetItemOwner, false);
 		RegisterEmbeddedObject(&m_isInnerExcludeValue, SvPb::IsInnerExcludeEId, IDS_BLOBFEATURE_ISINNER_EXCLDUE, false, SvOi::SVResetItemOwner, false);
-		RegisterEmbeddedObject(&m_ExcludeLowerBoundValue, SvPb::ExcludeLowerBoundEId, IDS_BLOBFEATURE_EXCLUDE_LOWER, false, SvOi::SVResetItemOwner, false);
-		RegisterEmbeddedObject(&m_ExcludeUpperBoundValue, SvPb::ExcludeUpperBoundEId, IDS_BLOBFEATURE_EXCLUDE_UPPER, false, SvOi::SVResetItemOwner, false);
+		RegisterEmbeddedObject(&m_ExcludeLowerBoundValue, SvPb::ExcludeLowerBoundEId, IDS_BLOBFEATURE_EXCLUDE_LOWER, false, SvOi::SVResetItemOwner, true); //must be settable from externally for the "Input Conflict" dialog.
+		RegisterEmbeddedObject(&m_ExcludeUpperBoundValue, SvPb::ExcludeUpperBoundEId, IDS_BLOBFEATURE_EXCLUDE_UPPER, false, SvOi::SVResetItemOwner, true); //must be settable from externally for the "Input Conflict" dialog.
 		
 		RegisterEmbeddedObject(&m_isRangeValue, SvPb::IsRangeEId, IDS_BLOBFEATURE_ISRANGE, false, SvOi::SVResetItemOwner, false);
-		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailHigh], SvPb::RangeClassFailHighEId, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone, false);
-		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnHigh], SvPb::RangeClassWarnHighEId, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone, false);
-		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailLow], SvPb::RangeClassFailLowEId, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone, false);
-		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnLow], SvPb::RangeClassWarnLowEId, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone, false);
+		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailHigh], SvPb::RangeClassFailHighEId, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone, true);  //must be settable from externally for the "Input Conflict" dialog.
+		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnHigh], SvPb::RangeClassWarnHighEId, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone, true);
+		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailLow], SvPb::RangeClassFailLowEId, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone, true);
+		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnLow], SvPb::RangeClassWarnLowEId, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone, true);
 				
 		m_featureTypeValue.SetDefaultValue(0, true);
 		m_isCustomFeature.SetDefaultValue(BOOL(false), true);

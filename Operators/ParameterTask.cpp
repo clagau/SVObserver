@@ -791,7 +791,7 @@ namespace SvOp
 			m_objects[index] = std::make_unique<SvVol::LinkedValue>();
 			CreateChildObject(m_objects[index].get());
 			m_objects[index]->setSaveDefaultValueFlag(true);
-			RegisterEmbeddedObject(m_objects[index].get(), m_startEmbeddedIdValue + index, name.c_str(), false, SvOi::SVResetItemToolAndDependent, false);
+			RegisterEmbeddedObject(m_objects[index].get(), m_startEmbeddedIdValue + index, name.c_str(), false, SvOi::SVResetItemToolAndDependent, true); //must be settable from externally for the "Input Conflict" dialog.
 			m_objects[index]->setExcludeSameLineageListForObjectSelector({SvPb::ParameterResultObjectType == m_ObjectTypeInfo.m_SubType ? this : GetAncestor(SvPb::SVToolObjectType)});
 		}
 
