@@ -53,6 +53,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		ON_EN_KILLFOCUS(IDC_UPPER_EDIT, OnUpperEditLostFocus)
 		ON_CONTROL_RANGE(EN_KILLFOCUS, IDC_LUT_MIN_INPUT_EDIT, IDC_LUT_MAX_OUTPUT_EDIT, OnEditLostFocus)
 		ON_MESSAGE(SV_REFRESH_DIALOG, OnGraphRefresh)
+		ON_WM_SIZE()
 	END_MESSAGE_MAP()
 
 	#pragma region callback functions
@@ -189,7 +190,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		refresh( false );
 
 		UpdateData( false );
-
+		m_init = true;
 		return true;  // return TRUE unless you set the focus to a control
 					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 	}
@@ -362,6 +363,16 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 			}
 			refresh();
 		}		
+	}
+	void SVToolAdjustmentLUTPage::OnSize(UINT nType, int cx, int cy)
+	{
+		CPropertyPage::OnSize(nType, cx, cy);
+		
+		if (m_init)
+		{
+			refresh(false);
+			UpdateData(false);
+		}
 	}
 
 	void SVToolAdjustmentLUTPage::refresh(bool bSave /*= true*/)

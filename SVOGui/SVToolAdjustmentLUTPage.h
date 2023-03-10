@@ -64,6 +64,7 @@ namespace SvOg
 		afx_msg void OnLowerEditLostFocus();
 		afx_msg void OnUpperEditLostFocus();
 		afx_msg void OnEditLostFocus(UINT nID);
+		afx_msg void OnSize(UINT nType, int cx, int cy);
 		//}}AFX_MSG
 		afx_msg LRESULT OnGraphRefresh( WPARAM mp1, LPARAM mp2 );
 		DECLARE_MESSAGE_MAP()
@@ -158,6 +159,7 @@ namespace SvOg
 		const uint32_t m_TaskObjectID;
 		SvOgu::ValueController m_values;
 		SvOgu::ValueController m_LutEquation;
+		BOOL m_init = false;
 	#pragma endregion Member variables
 	};
 } //namespace SvOg

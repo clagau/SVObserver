@@ -70,6 +70,8 @@ namespace SvOg
 
 		void OnBnClickedMoveUp();
 		void OnBnClickedMoveDown();
+
+		afx_msg void OnSize(UINT nType, int cx, int cy);
 		//}}AFX_MSG
 
 #pragma endregion Protected Methods

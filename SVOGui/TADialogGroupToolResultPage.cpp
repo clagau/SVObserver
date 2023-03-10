@@ -77,6 +77,7 @@ namespace SvOg
 		ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
 		ON_COMMAND(ID_ADD_COLUMN, OnBnClickedButtonAdd)
 		ON_COMMAND(ID_REMOVE_COLUMNS, OnBnClickedButtonRemove)
+		ON_WM_SIZE()
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
@@ -340,6 +341,13 @@ namespace SvOg
 		}
 	}
 
+	void TADialogGroupToolResultPage::OnSize(UINT nType, int cx, int cy)
+	{
+		CPropertyPage::OnSize(nType, cx, cy);
+		m_Grid.AutoSizeColumns();
+		m_Grid.ExpandLastColumn();
+	}
+
 	void TADialogGroupToolResultPage::OnKillFocusComment()
 	{
 		SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
@@ -475,7 +483,8 @@ namespace SvOg
 				m_Grid.SetItem(&buttonItem);
 			}
 		}
-
+		m_Grid.AutoSizeColumns();
+		m_Grid.ExpandLastColumn();
 		m_Grid.Refresh();
 		UpdateEnableButtons();
 	}

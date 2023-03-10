@@ -89,6 +89,7 @@ BEGIN_MESSAGE_MAP(SVTADlgExternalInputSelectPage, CPropertyPage)
 	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_INPUT_LIST_TREE, OnItemQueryShowButton)
 	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_INPUT_LIST_TREE, OnItemButtonClick)
 	ON_BN_CLICKED(ID_UNDO_CHANGES, OnUndoChanges)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -282,6 +283,12 @@ void SVTADlgExternalInputSelectPage::OnUndoChanges()
 
 		pParent->PostMessage(SV_SELECT_INPUT_VALUE_PAGE);
 	}
+}
+
+void SVTADlgExternalInputSelectPage::OnSize(UINT nType, int cx, int cy)
+{
+	CPropertyPage::OnSize(nType, cx, cy);
+	// TODO THB: Find a way to resize that
 }
 
 void SVTADlgExternalInputSelectPage::OnItemQueryShowButton(NMHDR* , LRESULT* plResult)

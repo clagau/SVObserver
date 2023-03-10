@@ -462,6 +462,32 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	AddPage(createToolAdjustmentDialogCommentPage());
 }
 
+void SVToolAdjustmentDialogSheetClass::SetupDynamicLayout()
+{
+	EnableDynamicLayout(TRUE);
+	auto pManager = GetDynamicLayout();
+	if (pManager != nullptr)
+	{
+		pManager->Create(this);
+
+		for (CWnd* child = GetWindow(GW_CHILD); child; child = child->GetWindow(GW_HWNDNEXT))
+		{
+			
+			// All buttons need to be moved 100% in all directions
+			if (child->SendMessage(WM_GETDLGCODE) & DLGC_BUTTON)
+			{
+				pManager->AddItem(child->GetSafeHwnd(),
+					CMFCDynamicLayout::MoveHorizontalAndVertical(100, 100), CMFCDynamicLayout::SizeNone());
+			}
+			else // This will be the main tab control which needs to be stretched in both directions
+			{
+				pManager->AddItem(child->GetSafeHwnd(),
+					CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100, 100));
+			}
+			
+		}
+	}
+}
 
 BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()
 {
@@ -475,7 +501,7 @@ BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()
 		::ShowWindow(hWnd, SW_HIDE);
 	}
 	// Remove Close Button
-	ModifyStyle(WS_SYSMENU, 0, SWP_FRAMECHANGED);
+	ModifyStyle(WS_SYSMENU, WS_THICKFRAME, SWP_FRAMECHANGED);
 
 	// Send Errors to the display
 	SVObjectClass* pTaskObject = dynamic_cast<SVObjectClass*> (GetTaskObject());
@@ -494,6 +520,9 @@ BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()
 		Temp += pTaskObject->GetName();
 		SetWindowText(Temp);
 	}
+
+	SetupDynamicLayout();
+
 	return bResult;
 }
 

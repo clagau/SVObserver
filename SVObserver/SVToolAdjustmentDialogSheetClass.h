@@ -67,6 +67,7 @@ protected:
 	virtual void addPages();
 	bool ValidateAllSheets();
 	bool ResetTools();
+	void SetupDynamicLayout();
 
 	CPropertyPage* createToolAdjustmentDialogCommentPage();
 

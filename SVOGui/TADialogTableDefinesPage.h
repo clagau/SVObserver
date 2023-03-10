@@ -62,7 +62,9 @@ namespace SvOg
 		void OnGridDblClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
-		void OnSelectionChanged(NMHDR *pNotifyStruct, LRESULT* pResult);		
+		void OnSelectionChanged(NMHDR *pNotifyStruct, LRESULT* pResult);
+
+		afx_msg void OnSize(UINT nType, int cx, int cy);
 		//}}AFX_MSG
 
 #pragma endregion Protected Methods

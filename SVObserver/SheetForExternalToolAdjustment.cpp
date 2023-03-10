@@ -105,6 +105,21 @@ BOOL SheetForExternalToolAdjustment::OnInitDialog()
 
 	m_runOnceButton.SetFont(GetFont());
 
+	if (IsDynamicLayoutEnabled())
+	{
+		CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
+		if (!dynamicLayout->HasItem(m_reInitializeButton.m_hWnd))
+		{
+			dynamicLayout->AddItem(m_reInitializeButton.m_hWnd,
+				CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
+		}
+		if (!dynamicLayout->HasItem(m_runOnceButton.m_hWnd))
+		{
+			dynamicLayout->AddItem(m_runOnceButton.m_hWnd,
+				CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
+		}
+	}
+
 	return bResult;
 }
 

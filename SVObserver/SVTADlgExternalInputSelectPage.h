@@ -68,6 +68,7 @@ protected:
     afx_msg void OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 	afx_msg void OnUndoChanges();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	
 	DECLARE_MESSAGE_MAP()
 

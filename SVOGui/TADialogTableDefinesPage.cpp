@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(TADialogTableDefinesPage, CPropertyPage)
 	ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
 	ON_COMMAND(ID_ADD_COLUMN, OnBnClickedButtonAdd)
 	ON_COMMAND(ID_REMOVE_COLUMNS, OnBnClickedButtonRemove)
+	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -325,6 +326,13 @@ void TADialogTableDefinesPage::OnSelectionChanged(NMHDR*, LRESULT*)
 {
 	UpdateEnableButtons();
 }
+
+void TADialogTableDefinesPage::OnSize(UINT nType, int cx, int cy)
+{
+	CPropertyPage::OnSize(nType, cx, cy);
+	m_Grid.AutoSizeColumns();
+	m_Grid.ExpandLastColumn();
+}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -429,6 +437,8 @@ void TADialogTableDefinesPage::FillGridControl()
 		m_Grid.SetItem(&Item);
 		m_Grid.SetItemState(Item.row, cFormulaColumn, m_Grid.GetItemState(Item.row, cFormulaColumn) | GVIS_READONLY);
 	}
+	m_Grid.AutoSizeColumns();
+	m_Grid.ExpandLastColumn();
 	m_Grid.Refresh();
 	UpdateEnableButtons();
 }
