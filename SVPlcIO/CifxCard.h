@@ -99,9 +99,11 @@ private:
 
 	std::vector<std::pair<TelegramLayout, std::vector<ConfigDataSet>>> m_configDataSetVector;
 	std::filebuf m_logContentFile;
+	std::filebuf m_logSendFile;
 	typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_ostream_backend> text_sink;
 	boost::shared_ptr<text_sink> m_pSink {nullptr};
-	boost::log::sources::channel_logger_mt<std::string> m_logger;
+	boost::log::sources::channel_logger_mt<std::string> m_contentLogger;
+	boost::log::sources::channel_logger_mt<std::string> m_sendLogger;
 };
 
 } //namespace SvPlc

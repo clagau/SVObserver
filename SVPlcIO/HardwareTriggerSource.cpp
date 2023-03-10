@@ -23,12 +23,12 @@ constexpr uint32_t cTimeWrap = 65536;		//Constant when time offset negative need
 
 constexpr LPCTSTR cOperationDataName = _T("_OperationData.log");
 constexpr LPCTSTR cPlcOperationDataHeading = _T("ContentID;Channel;Timestamp;TriggerTimeStamp;TriggerDataValid;UnitControl;Sequence;TriggerIndex;ObjectType;ObjectID\n");
-constexpr LPCTSTR cOperationDataFormat = _T("{:d}; {:d}; {:f}; {:f}; {:b}; {:d}; {:d}; {:d}; {:d}; {:d}\n");
+constexpr LPCTSTR cOperationDataFormat = _T("{:d}; {:d}; {:f}; {:f}; {:b}; {:d}; {:d}; {:d}; {:d}; {}\n");
 
 HardwareTriggerSource::HardwareTriggerSource(const PlcInputParam& rPlcInput) : TriggerSource(rPlcInput.m_pTriggerDataCallBack)
 , m_plcInput {rPlcInput}
 , m_cifXCard(m_plcInput)
-, m_logger {boost::log::keywords::channel = cOperationDataName}
+, m_operationLogger {boost::log::keywords::channel = cOperationDataName}
 {
 	::OutputDebugString("Triggers are received from PLC via CifX card.\n");
 }
@@ -40,6 +40,10 @@ HardwareTriggerSource::~HardwareTriggerSource()
 		m_pSink->flush();
 		m_pSink->stop();
 		boost::log::core::get()->remove_sink(m_pSink);
+	}
+	if (m_logOperationDataFile.is_open())
+	{
+		m_logOperationDataFile.close();
 	}
 
 	m_cifXCard.closeCifX();
@@ -72,7 +76,7 @@ HRESULT HardwareTriggerSource::initialize()
 			m_pSink->set_filter(filterOperationData);
 			boost::log::core::get()->add_sink(m_pSink);
 			std::string fileData(cPlcOperationDataHeading);
-			BOOST_LOG(m_logger) << fileData.c_str();
+			BOOST_LOG(m_operationLogger) << fileData.c_str();
 		}
 	}
 	return result;
@@ -144,12 +148,16 @@ void HardwareTriggerSource::createTriggerData(uint8_t channel)
 		channelTriggerDataValid &= (0 != rInspectionCmd.m_socRelative);
 		channelTriggerDataValid &= (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
 		channelTriggerDataValid &= m_previousSequenceCode[channel] != rChannel.m_sequence && (0 != rChannel.m_sequence % 2);
-
-		if (m_logOperationDataFile.is_open())
+		bool isValidObjectID {std::any_of(std::begin(rChannel.m_objectID), std::end(rChannel.m_objectID), [](const auto& objectId){return 0 != objectId; })};
+		if (m_logOperationDataFile.is_open() && (0 == m_plcInput.m_logFilter || isValidObjectID))
 		{
+			std::string objectIDList = std::accumulate(std::begin(rChannel.m_objectID)+1, std::end(rChannel.m_objectID), std::to_string(rChannel.m_objectID[0]), [](const std::string& rText, uint32_t objectID)
+			{ 
+				return rText + "," + std::to_string(objectID);
+			});
 			std::string fileData = std::format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel + 1, m_inputData.m_notificationTime,
-				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_objectType, rChannel.m_objectID[0]);
-			BOOST_LOG(m_logger) << fileData.c_str();
+				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_objectType, objectIDList.c_str());
+			BOOST_LOG(m_operationLogger) << fileData.c_str();
 		}
 		if (channelTriggerDataValid)
 		{
@@ -185,11 +193,11 @@ void HardwareTriggerSource::createTriggerData(uint8_t channel)
 		channelTriggerDataValid &= (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
 		channelTriggerDataValid &= m_previousSequenceCode[channel] != rChannel.m_sequence && (0 != rChannel.m_sequence % 2);
 
-		if (m_logOperationDataFile.is_open())
+		if (m_logOperationDataFile.is_open() && (0 == m_plcInput.m_logFilter || 0 != rChannel.m_currentObjectID))
 		{
 			std::string fileData = std::format(cOperationDataFormat, m_inputData.m_telegram.m_contentID, channel + 1, m_inputData.m_notificationTime,
 				triggerTimeStamp, channelTriggerDataValid, rChannel.m_unitControl, rChannel.m_sequence, rChannel.m_triggerIndex, rChannel.m_currentObjectType, rChannel.m_currentObjectID);
-			BOOST_LOG(m_logger) << fileData.c_str();
+			BOOST_LOG(m_operationLogger) << fileData.c_str();
 		}
 		if (channelTriggerDataValid)
 		{

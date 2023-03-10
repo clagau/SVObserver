@@ -61,6 +61,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <numeric>
 #include <queue>
 #include <set>				//Used by static library
 #include <sstream>

@@ -48,6 +48,9 @@ static_assert(sizeof(Telegram) + cConfigListSize * sizeof(ConfigDataSet) <= cmax
 
 constexpr LPCTSTR cContentDataName = _T("_ContentData.log");
 constexpr LPCTSTR cPlcContentHeading = _T("Timestamp;ContentID;RefID;Content;Layout;Version\n");
+constexpr LPCTSTR cSendDataName = _T("_SendData.log");
+constexpr LPCTSTR cPlcSendHeading = _T("Channel; Timestamp; ObjectID; Results; Measurement Value\n");
+constexpr LPCTSTR cSendDataFormat = _T("{:d}; {:f}; {:d}; {}; {:f}\n");
 
 void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void* pvUser)
 {
@@ -65,7 +68,8 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void*
 
 CifXCard::CifXCard(const PlcInputParam& rPlcInput):
 	m_rPlcInput(rPlcInput)
-	, m_logger {boost::log::keywords::channel = cContentDataName}
+	, m_contentLogger {boost::log::keywords::channel = cContentDataName}
+	, m_sendLogger {boost::log::keywords::channel = cSendDataName}
 {
 }
 
@@ -166,7 +170,7 @@ void CifXCard::readProcessData(uint32_t notification)
 			if (m_logContentFile.is_open())
 			{
 				fileData += _T("\n");
-				BOOST_LOG(m_logger) << fileData.c_str();
+				BOOST_LOG(m_contentLogger) << fileData.c_str();
 		}
 	}
 	}
@@ -197,6 +201,15 @@ void CifXCard::closeCifX()
 		m_pSink->stop();
 		boost::log::core::get()->remove_sink(m_pSink);
 	}
+	if (m_logContentFile.is_open())
+	{
+		m_logContentFile.close();
+	}
+	if (m_logSendFile.is_open())
+	{
+		m_logSendFile.close();
+	}
+
 	if(m_cifxLoadLib.isInitilized())
 	{
 		::OutputDebugString("Closing application and freeing buffers...\n");
@@ -244,7 +257,25 @@ HRESULT CifXCard::OpenAndInitializeCifX()
 				m_pSink->set_filter(filterContent);
 				boost::log::core::get()->add_sink(m_pSink);
 				std::string fileData(cPlcContentHeading);
-				BOOST_LOG(m_logger) << fileData.c_str();
+				BOOST_LOG(m_contentLogger) << fileData.c_str();
+			}
+		}
+		if (LogType::PlcSendData == (m_rPlcInput.m_logType & LogType::PlcSendData))
+		{
+			std::string fileName {m_rPlcInput.m_logFileName + cSendDataName};
+			if (nullptr != m_logSendFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
+			{
+				boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logSendFile);
+				if (nullptr != m_pSink)
+				{
+					m_pSink = boost::make_shared<text_sink>();
+				}
+				m_pSink->locked_backend()->add_stream(stream);
+				auto filterContent = [](const boost::log::attribute_value_set& rAttribSet) -> bool {return rAttribSet["Channel"].extract<std::string>() == cSendDataName; };
+				m_pSink->set_filter(filterContent);
+				boost::log::core::get()->add_sink(m_pSink);
+				std::string fileData(cPlcSendHeading);
+				BOOST_LOG(m_sendLogger) << fileData.c_str();
 			}
 		}
 	}
@@ -558,14 +589,32 @@ void CifXCard::sendOperationData(const Telegram& rTelegram, const InspectionStat
 	{
 		for (unsigned int i = 0; i < cNumberOfChannels; ++i)
 		{
-			//ChannelOut2 does not have the measurement value array ChannelOut1 so do not copy it
-			memcpy(&insState2.m_channels[i], &rState.m_channels[i], sizeof(ChannelOut2));
+			//ChannelOut2 does not have the m_isStarted and measurement value array ChannelOut1 has so do not copy them
+			memcpy(&insState2.m_channels[i].m_objectType, &rState.m_channels[i].m_objectType, sizeof(ChannelOut2));
 		}
 		pData = reinterpret_cast<const uint8_t*> (&insState2);
 		dynamicDataSize = sizeof(InspectionState2);
 	}
 
 	writeResponseData(rTelegram, pData, dynamicDataSize);
+
+	if (m_logSendFile.is_open())
+	{
+		double now {SvUl::GetTimeStamp()};
+		for (size_t i=0; i < rState.m_channels.size(); ++i)
+		{
+			const auto& rChannel = rState.m_channels[i];
+			if (0 == m_rPlcInput.m_logFilter || 0 != rChannel.m_objectID)
+			{
+				std::string resultString = std::accumulate(rChannel.m_results.begin() + 1, rChannel.m_results.end(), std::to_string(rChannel.m_results[0]), [](const std::string& rText, uint8_t result)
+				{
+					return rText + "," + std::to_string(result);
+				});
+				std::string fileData = std::format(cSendDataFormat, i+1, now, rChannel.m_objectID, resultString.c_str(), rChannel.m_measurementValue);
+				BOOST_LOG(m_sendLogger) << fileData.c_str();
+			}
+		}
+	}
 }
 
 int32_t CifXCard::SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)

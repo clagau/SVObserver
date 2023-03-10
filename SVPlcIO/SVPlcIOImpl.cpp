@@ -30,12 +30,21 @@ constexpr LPCTSTR cPD0Version = _T("PD0Version");
 constexpr LPCTSTR cPLCNodeID = _T("PLC-NodeID");
 constexpr LPCTSTR cLogBaseFileName = _T("LogBaseFileName");
 constexpr LPCTSTR cLogType = _T("LogType");
-constexpr LPCTSTR cPlcInputName = _T("_PlcInput.log");
-constexpr LPCTSTR cPlcOutputName = _T("_PlcOutput.log");
-constexpr LPCTSTR cPlcInputHeading = _T("Channel; Count; Trigger Timestamp; ObjectID; Trigger Index; Trigger per ObjectID; TimeStamp\r\n");
-constexpr LPCTSTR cPlcOutputHeading = _T("Channel; Count; Timestamp; ObjectID; Results\r\n");
+constexpr LPCTSTR cLogFilter = _T("LogFilter");
+constexpr LPCTSTR cInputDataName = _T("_InputData.log");
+constexpr LPCTSTR cPlcInputHeading = _T("Channel; Count; Trigger Timestamp; ObjectID; Trigger Index; Trigger per ObjectID; TimeStamp\n");
+constexpr LPCTSTR cInputDataFormat = _T("{:d}; {:d}; {:f}; {}; {:d}; {:d}; {:f}\n");
+constexpr LPCTSTR cOutputDataName = _T("_OutputData.log");
+constexpr LPCTSTR cPlcOutputHeading = _T("Channel; Count; Timestamp; ObjectID; Results; Measurement Value\n");
+constexpr LPCTSTR cOutputDataFormat = _T("{:d}; {:d}; {:f}; {:d}; {}; {:f}\n");
 constexpr LPCTSTR cTriggerName = _T("HardwareTrigger.Dig_");			///This name must match the name in the SVHardwareManifest
 #pragma endregion Declarations
+
+SVPlcIOImpl::SVPlcIOImpl()
+	: m_inLogger {boost::log::keywords::channel = cInputDataName}
+	, m_outLogger {boost::log::keywords::channel = cOutputDataName}
+{
+}
 
 HRESULT SVPlcIOImpl::Initialize(bool bInit)
 {
@@ -76,6 +85,7 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 		m_plcInputParam.m_plcTransferTime = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str()));
 		m_plcInputParam.m_plcNodeID = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str()));
 		m_plcInputParam.m_logType = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cLogType, 0, iniFile.c_str()));
+		m_plcInputParam.m_logFilter = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cLogFilter, 0, iniFile.c_str()));
 		//Check if logging should stay active!
 		if (LogType::NoLogging != m_plcInputParam.m_logType)
 		{
@@ -139,13 +149,12 @@ HRESULT SVPlcIOImpl::SetOutputData(const SvTrig::ResultData& rResultData)
 	if (m_logOutFile.is_open() && cMaxPlcTriggers > rResultData.m_channel)
 	{
 		uint32_t outputCount = ++m_outputCount[rResultData.m_channel];
-		std::string resultString;
-		for (auto& rResult : rResultData.m_results)
+		std::string resultString = std::accumulate(std::begin(rResultData.m_results) + 1, std::end(rResultData.m_results), std::to_string(rResultData.m_results[0]), [](const std::string& rText, uint8_t result)
 		{
-			resultString += std::to_string(rResult) + ' ';
-		}
-		std::string fileData = std::format(_T("{}; {}; {}; {}; {}\r\n"), rResultData.m_channel+1, outputCount, SvUl::GetTimeStamp(), rResultData.m_objectID, resultString.c_str());
-		m_logOutFile.write(fileData.c_str(), fileData.size());
+			return rText + "," + std::to_string(result);
+		});
+		std::string fileData = std::format(cOutputDataFormat, rResultData.m_channel+1, outputCount, SvUl::GetTimeStamp(), rResultData.m_objectID, resultString.c_str(), rResultData.m_measurementValue);
+		BOOST_LOG(m_outLogger) << fileData.c_str();
 	}
 	return S_OK;
 }
@@ -176,26 +185,37 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 
 	if (false == m_engineStarted)
 	{
-		if (LogType::PlcIn == (m_plcInputParam.m_logType & LogType::PlcIn))
+		if (LogType::PlcInData == (m_plcInputParam.m_logType & LogType::PlcInData))
 		{
-			std::string fileName {m_plcInputParam.m_logFileName};
-			fileName += cPlcInputName;
-			m_logInFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
-			if (m_logInFile.is_open())
+			std::string fileName {m_plcInputParam.m_logFileName + cInputDataName};
+			if (nullptr != m_logInFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
 			{
+				boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logInFile);
+				m_pSink = boost::make_shared<text_sink>();
+				m_pSink->locked_backend()->add_stream(stream);
+				auto filterContent = [](const boost::log::attribute_value_set& rAttribSet) -> bool {return rAttribSet["Channel"].extract<std::string>() == cInputDataName; };
+				m_pSink->set_filter(filterContent);
+				boost::log::core::get()->add_sink(m_pSink);
 				std::string fileData(cPlcInputHeading);
-				m_logInFile.write(fileData.c_str(), fileData.size());
+				BOOST_LOG(m_inLogger) << fileData.c_str();
 			}
 		}
-		if (LogType::PlcOut == (m_plcInputParam.m_logType & LogType::PlcOut))
+		if (LogType::PlcOutData == (m_plcInputParam.m_logType & LogType::PlcOutData))
 		{
-			std::string fileName {m_plcInputParam.m_logFileName};
-			fileName += cPlcOutputName;
-			m_logOutFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
-			if (m_logOutFile.is_open())
+			std::string fileName {m_plcInputParam.m_logFileName + cOutputDataName};
+			if (nullptr != m_logOutFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
 			{
+				boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logOutFile);
+				if (nullptr != m_pSink)
+				{
+					m_pSink = boost::make_shared<text_sink>();
+				}
+				m_pSink->locked_backend()->add_stream(stream);
+				auto filterContent = [](const boost::log::attribute_value_set& rAttribSet) -> bool {return rAttribSet["Channel"].extract<std::string>() == cOutputDataName; };
+				m_pSink->set_filter(filterContent);
+				boost::log::core::get()->add_sink(m_pSink);
 				std::string fileData(cPlcOutputHeading);
-				m_logOutFile.write(fileData.c_str(), fileData.size());
+				BOOST_LOG(m_outLogger) << fileData.c_str();
 			}
 		}
 		m_plcInputParam.m_pTriggerDataCallBack = [this](const SvTrig::TriggerData& rTriggerData) { return NotifyTriggerData(rTriggerData); };
@@ -269,6 +289,12 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerIndex)
 			::OutputDebugString("Irq Enabled reset\n");
 			::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 
+			if (nullptr != m_pSink)
+			{
+				m_pSink->flush();
+				m_pSink->stop();
+				boost::log::core::get()->remove_sink(m_pSink);
+			}
 			if(m_logInFile.is_open())
 			{
 				m_logInFile.close();
@@ -398,16 +424,14 @@ void SVPlcIOImpl::NotifyTriggerData(const SvTrig::TriggerData& rTriggerData)
 		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerData.m_channel)
 		{
 			const SvTrig::TriggerData& rData = rTriggerData;
-			std::string objectIDList;
-			for (int i = 0; i < cObjectMaxNr; ++i)
+			std::string objectIDList = std::accumulate(std::begin(rData.m_objectData)+1, std::end(rData.m_objectData), std::to_string(rData.m_objectData[0].m_objectID), [](const std::string& rText, const auto& rObjectData)
 			{
-				objectIDList += (0 == i) ? "" : ",";
-				objectIDList += std::to_string(rData.m_objectData[i].m_objectID);
-			}
+				return rText + "," + std::to_string(rObjectData.m_objectID);
+			});
 			///This is required as m_inputCount[rData.m_channel] is atomic
 			uint32_t inputCount = m_inputCount[rData.m_channel];
-			std::string fileData = std::format(_T("{}; {}; {}; {}; {:d}; {:d}; {}\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, objectIDList.c_str(), rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
-			m_logInFile.write(fileData.c_str(), fileData.size());
+			std::string fileData = std::format(cInputDataFormat, triggerIndex, inputCount, rData.m_triggerTimestamp, objectIDList.c_str(), rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
+			BOOST_LOG(m_inLogger) << fileData.c_str();
 		}
 	}
 }
