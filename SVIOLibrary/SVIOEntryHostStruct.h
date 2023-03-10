@@ -53,7 +53,6 @@ struct SVIOEntryHostStruct
 	void setLinkedObject(SVObjectClass* pObject);
 	SVObjectClass* getObject() { return m_pObject; };
 	SvOi::IValueObject* getValueObject() { return (nullptr != m_pValueObject) ? m_pValueObject.get() : m_pLinkedValueObject; }
-	bool isAimObjectBool() const;
 
 	static bool PtrGreater( std::shared_ptr< SVIOEntryHostStruct > elem1, std::shared_ptr< SVIOEntryHostStruct > elem2 );
 

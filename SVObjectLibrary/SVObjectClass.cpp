@@ -621,6 +621,16 @@ void SVObjectClass::SetDisabled()
 
 bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType) const
 {
+	if (SvPb::LinkedValueClassId == GetClassID())
+	{
+		SVObjectReference ObjectRef {getObjectId()};
+		const auto pObject = ObjectRef.getFinalObject();
+		if (nullptr != pObject && this != pObject)
+		{
+			return pObject->isCorrectType(requiredType);
+		}
+	}
+
 	switch (requiredType)
 	{
 		case SvPb::allValueObjects:
