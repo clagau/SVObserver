@@ -451,6 +451,7 @@ int SVRegressionFileSelectSheet::collectMatchingFilesInDirectories(RegressionTes
 	{
 		for (auto const &folder: rStruct.stdVectorFolder)
 		{
+			// cppcheck-suppress useStlAlgorithm ;  using std::accumulate would be more difficult to read (see below)
 			count+= collectMatchingFilesInDirectory(rStruct, folder, fileFormat);
 		}
 		
