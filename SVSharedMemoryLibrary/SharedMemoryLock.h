@@ -16,20 +16,26 @@ struct lock_acquisition_stream_t;
 constexpr size_t maxUsernameSize = 32;
 constexpr size_t maxHostSize = 16;
 
-enum class LockOwner : std::uint8_t
+enum class EntityType : std::uint8_t
 {
-	SVOGateway = 0,
-	SVObserver = 1,
+	Empty = 0,
+	SVOGateway = 1,
+	SVObserver = 2,
+};
+
+struct LockEntity
+{
+	LockEntity();
+
+	EntityType type;
+	char username[maxUsernameSize];
+	char host[maxHostSize];
 };
 
 struct LockState
 {
-	LockState();
-
-	bool acquired;
-	LockOwner owner;
-	char username[maxUsernameSize];
-	char host[maxHostSize];
+	LockEntity owner;
+	LockEntity requester;
 };
 
 struct SharedMemory
@@ -46,13 +52,20 @@ class SharedMemoryLock
 {
 public:
 	SharedMemoryLock(
+		boost::interprocess::open_or_create_t openOrCreate,
+		boost::asio::deadline_timer::duration_type expiryTime,
+		const lock_state_changed_callback_t& onLockStateChangedCb,
+		const std::string& name = "Global\\sv_default_shared_memory");
+	SharedMemoryLock(
+		boost::interprocess::open_only_t openOnly,
 		boost::asio::deadline_timer::duration_type expiryTime,
 		const lock_state_changed_callback_t& onLockStateChangedCb,
 		const std::string& name = "Global\\sv_default_shared_memory");
 	~SharedMemoryLock();
 
-	bool Acquire(LockOwner owner, const std::string& username, const std::string& host);
-	bool Takeover(LockOwner owner, const std::string& username, const std::string& host);
+	bool Acquire(EntityType type, const std::string& username, const std::string& host);
+	bool Takeover(EntityType type, const std::string& username, const std::string& host);
+	bool RequestTakeover(EntityType type, const std::string& username, const std::string& host);
 	void Release();
 
 	void PushBackStream(const std::shared_ptr<lock_acquisition_stream_t>& streamPtr);

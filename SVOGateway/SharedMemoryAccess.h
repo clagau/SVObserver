@@ -171,6 +171,7 @@ private:
 	void schedule_disconnected_clients_check();
 	void on_disconnected_clients_check(const boost::system::error_code&);
 	void check_disconnected_clients();
+	bool open_shared_memory();
 
 private:
 	void subscribe_to_trc();

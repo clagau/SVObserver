@@ -15,9 +15,8 @@
 
 using namespace boost::interprocess;
 
-LockState::LockState()
-	: acquired(false)
-	, owner(LockOwner::SVOGateway)
+LockEntity::LockEntity()
+	: type(EntityType::Empty)
 {
 	std::memset(username, 0, maxUsernameSize);
 	std::memset(host, 0, maxHostSize);
@@ -29,11 +28,32 @@ SharedMemory::SharedMemory()
 {}
 
 SharedMemoryLock::SharedMemoryLock(
+	boost::interprocess::open_or_create_t openOrCreate,
 	boost::asio::deadline_timer::duration_type expiryTime,
 	const lock_state_changed_callback_t& onLockStateChangedCb,
 	const std::string& name)
 	: mOnLockStateChangedCb(onLockStateChangedCb)
-	, mSharedMemoryHandler(open_or_create, name.c_str(), read_write, sizeof(SharedMemory))
+	, mSharedMemoryHandler(openOrCreate, name.c_str(), read_write, sizeof(SharedMemory))
+	, mMappedRegion(mSharedMemoryHandler, read_write)
+	, mSharedMemory(static_cast<SharedMemory*>(mMappedRegion.get_address()))
+	, mIoService()
+	, mIoWork(mIoService)
+	, mIoThread([&] {mIoService.run(); })
+	, mLockStateCheckTimer(mIoService)
+{
+	{
+		mLastLockState = GetLockState();
+	}
+	scheduleLockStateCheck(expiryTime);
+}
+
+SharedMemoryLock::SharedMemoryLock(
+	boost::interprocess::open_only_t openOnly,
+	boost::asio::deadline_timer::duration_type expiryTime,
+	const lock_state_changed_callback_t& onLockStateChangedCb,
+	const std::string& name)
+	: mOnLockStateChangedCb(onLockStateChangedCb)
+	, mSharedMemoryHandler(openOnly, name.c_str(), read_write)
 	, mMappedRegion(mSharedMemoryHandler, read_write)
 	, mSharedMemory(static_cast<SharedMemory*>(mMappedRegion.get_address()))
 	, mIoService()
@@ -81,21 +101,37 @@ void SharedMemoryLock::onLockStateCheckTimerExpired(
 		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 		currentLockState = mSharedMemory->mLockState;
 	}
-	if (mLastLockState.acquired != currentLockState.acquired ||
-		mLastLockState.owner != currentLockState.owner ||
-		std::strcmp(mLastLockState.username, currentLockState.username) != 0 ||
-		std::strcmp(mLastLockState.host, currentLockState.host) != 0)
+	if (mLastLockState.owner.type != currentLockState.owner.type ||
+		mLastLockState.requester.type != currentLockState.requester.type ||
+		std::strcmp(mLastLockState.owner.username, currentLockState.owner.username) != 0 ||
+		std::strcmp(mLastLockState.owner.host, currentLockState.owner.host) != 0)
 	{
-		mLastLockState = currentLockState;
-		mIoService.dispatch([this]()
+		if (mLastLockState.requester.type != currentLockState.requester.type &&
+			currentLockState.requester.type == EntityType::Empty)
 		{
-			mOnLockStateChangedCb(mLastLockState);
+			mLastLockState = currentLockState;
+			return;
+		}
+
+		mIoService.dispatch([this, currentLockState]()
+		{
+			mOnLockStateChangedCb(currentLockState);
 		});
+
+		if (mLastLockState.requester.type != currentLockState.requester.type &&
+			currentLockState.requester.type != EntityType::Empty)
+		{
+			{
+				scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+				mSharedMemory->mLockState.requester.type = EntityType::Empty;
+			}
+		}
+		mLastLockState = currentLockState;
 	}
 	scheduleLockStateCheck(expiryTime);
 }
 
-bool SharedMemoryLock::Acquire(LockOwner owner, const std::string& username, const std::string& host)
+bool SharedMemoryLock::Acquire(EntityType type, const std::string& username, const std::string& host)
 {
 	if (mSharedMemory == nullptr)
 	{
@@ -114,12 +150,11 @@ bool SharedMemoryLock::Acquire(LockOwner owner, const std::string& username, con
 	}
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	if (!mSharedMemory->mLockState.acquired)
+	if (mSharedMemory->mLockState.owner.type == EntityType::Empty)
 	{
-		mSharedMemory->mLockState.acquired = true;
-		mSharedMemory->mLockState.owner = owner;
-		std::strcpy(mSharedMemory->mLockState.username, username.c_str());
-		std::strcpy(mSharedMemory->mLockState.host, host.c_str());
+		mSharedMemory->mLockState.owner.type = type;
+		std::strcpy(mSharedMemory->mLockState.owner.username, username.c_str());
+		std::strcpy(mSharedMemory->mLockState.owner.host, host.c_str());
 		SV_LOG_GLOBAL(debug) << "Acquire(): Shared memory lock acquired!";
 		return true;
 	}
@@ -127,7 +162,7 @@ bool SharedMemoryLock::Acquire(LockOwner owner, const std::string& username, con
 	return false;
 }
 
-bool SharedMemoryLock::Takeover(LockOwner owner, const std::string& username, const std::string& host)
+bool SharedMemoryLock::Takeover(EntityType type, const std::string& username, const std::string& host)
 {
 	if (mSharedMemory == nullptr)
 	{
@@ -146,11 +181,38 @@ bool SharedMemoryLock::Takeover(LockOwner owner, const std::string& username, co
 	}
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	mSharedMemory->mLockState.owner = owner;
-	std::strcpy(mSharedMemory->mLockState.username, username.c_str());
-	std::strcpy(mSharedMemory->mLockState.host, host.c_str());
+	mSharedMemory->mLockState.owner.type = type;
+	std::strcpy(mSharedMemory->mLockState.owner.username, username.c_str());
+	std::strcpy(mSharedMemory->mLockState.owner.host, host.c_str());
 
 	return true;
+}
+
+bool SharedMemoryLock::RequestTakeover(EntityType type, const std::string& username, const std::string& host)
+{
+	if (mSharedMemory == nullptr)
+	{
+		SV_LOG_GLOBAL(error) << "RequestTakeover(): Pointer to shared memory is not initialized!";
+		return false;
+	}
+	if (type == EntityType::Empty)
+	{
+		SV_LOG_GLOBAL(error) << "RequestTakeover(): Invalid argument!";
+		return false;
+	}
+
+	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+	if (mSharedMemory->mLockState.requester.type == EntityType::Empty)
+	{
+		mSharedMemory->mLockState.requester.type = type;
+		std::strcpy(mSharedMemory->mLockState.requester.username, username.c_str());
+		std::strcpy(mSharedMemory->mLockState.requester.host, host.c_str());
+		SV_LOG_GLOBAL(debug) << "RequestTakeover(): Shared memory lock takeover requested!";
+		return true;
+	}
+
+	SV_LOG_GLOBAL(debug) << "RequestTakeover(): Probably other client already requested a takeover";
+	return false;
 }
 
 void SharedMemoryLock::Release()
@@ -162,9 +224,12 @@ void SharedMemoryLock::Release()
 	}
 
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	mSharedMemory->mLockState.acquired = false;
-	std::memset(mSharedMemory->mLockState.username, 0, maxUsernameSize);
-	std::memset(mSharedMemory->mLockState.host, 0, maxHostSize);
+	mSharedMemory->mLockState.owner.type = EntityType::Empty;
+	mSharedMemory->mLockState.requester.type = EntityType::Empty;
+	std::memset(mSharedMemory->mLockState.owner.username, 0, maxUsernameSize);
+	std::memset(mSharedMemory->mLockState.owner.host, 0, maxHostSize);
+	std::memset(mSharedMemory->mLockState.requester.username, 0, maxUsernameSize);
+	std::memset(mSharedMemory->mLockState.requester.host, 0, maxHostSize);
 	SV_LOG_GLOBAL(debug) << "Release(): Shared memory lock released!";
 }
 
