@@ -128,7 +128,6 @@ bool SVBarCodeResult::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 	msv_bUseSingleMatchString.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	msv_szMatchStringFileName.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	msv_lMatchStringLine.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-	msv_lMatchStringLine.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 	msv_bUseMatchStringFile.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_dReadScore.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_isCreated = Result;

@@ -296,7 +296,7 @@ bool BarCodeAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 
 	// *** Set/Reset Printable Attributes ***
 	msv_szBarCodeValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
-	msv_szRegExpressionValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_szRegExpressionValue.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	msv_lBarCodeType.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	msv_dOrientation.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	msv_dSkewNegative.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
