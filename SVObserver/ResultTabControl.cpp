@@ -11,6 +11,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ResultTabControl.h"
 #include "SVIPDoc.h"
+#include "SVObjectLibrary/SVClassRegisterListClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -84,7 +85,9 @@ void ResultTabControl::Save(SvOi::IObjectWriter& rWriter)
 			rWriter.WriteAttribute(SvXml::CTAG_NAME, svVariant);
 			svVariant.Clear();
 
-			svVariant = tableListCtrl->getTableIdForTab();
+			//Ids can be converted to {#000000} format an then auto reassiging new ids should work
+			//convertObjectIdToVariant
+			svVariant = convertObjectIdToVariant(tableListCtrl->getTableIdForTab());
 			rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant);
 			svVariant.Clear();
 
@@ -107,7 +110,7 @@ bool ResultTabControl::Load(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 
 		htiTab = rTree.getFirstBranch(htiResultTabs);
 
-		while (bOk && nullptr != htiTab)
+		while (nullptr != htiTab)
 		{
 			if (false == SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NAME, htiTab, svVariant))
 			{
@@ -121,8 +124,22 @@ bool ResultTabControl::Load(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 				return false;
 			}
 
-			uint32_t tableId = svVariant;
-			addNewTab(tabLabel, tableId);
+			uint32_t tableId = calcObjectId(svVariant);
+
+			if (tabLabel == SvDef::cTableResultView && m_pDefaultResultTableList != nullptr)
+			{
+				CWnd* view = GetTabWndNoWrapper(cResultTableDefaultposition);
+				ResultTableListCtrl* tableListCtrl = dynamic_cast<ResultTableListCtrl*> (view);
+				if (nullptr != tableListCtrl)
+				{
+					tableListCtrl->setTableIdForTab(tableId);
+				}
+				SetActiveTab(cResultTableDefaultposition);
+			}
+			else
+			{
+				addNewTab(tabLabel, tableId);
+			}
 
 			htiTab = rTree.getNextBranch(htiResultTabs, htiTab);
 		}

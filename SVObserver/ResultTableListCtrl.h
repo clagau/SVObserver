@@ -56,6 +56,6 @@ private:
 	int m_ColumnCount = 0;
 	mutable double m_UpdateTimeStamp = 0.0;
 	SVIPDoc* m_pDoc = nullptr;
-	uint32_t m_LinkedTableId = 0;
+	uint32_t m_LinkedTableId = SvDef::InvalidObjectId;
 #pragma endregion Member variables
 };
