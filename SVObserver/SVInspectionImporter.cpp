@@ -591,6 +591,8 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		FileStream.close();
 	}
 
+	xmlString = SvUl::to_ansi(xmlString);
+
 	constexpr LPCTSTR cXmlSearch = _T("Type=\"VT_BSTR\">");
 	/// This replacement is required to insure rXmlData does not have multiple unique ID values
 	std::string searchString{ cXmlSearch };
