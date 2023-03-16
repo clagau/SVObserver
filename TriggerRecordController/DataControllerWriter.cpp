@@ -149,6 +149,12 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 	{
 		m_ImageDefMap[rTmp.objectid()] = pos++;
 	}
+	pos = SvOi::cTRCImageHiddenFlag;
+	for (const auto& rTmp : m_ImageList.hiddenlist())
+	{
+		m_ImageDefMap[rTmp.objectid()] = pos++;
+	}
+
 	m_ChildImageDefMap.clear();
 	pos = 0;
 	for (const auto& rTmp : m_ImageList.childlist())
@@ -167,12 +173,16 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 		{
 			m_LinkedImageDefMap[rTmp.sourceid()] = {true, childIter->second};
 		}
+		else
+		{
+			Log_Assert(false);
+		}
 	}
 }
 
 void TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trNumbers)
 {
-	unsigned int bufferSize = (sizeof(TriggerRecordData) + sizeof(int)*m_ImageList.list_size()) + sizeof(int) + getBasicData().m_dataListSize;
+	unsigned int bufferSize = sizeof(TriggerRecordData) + sizeof(int)*(m_ImageList.list_size()+m_ImageList.hiddenlist_size()) + sizeof(int) + getBasicData().m_dataListSize;
 	//Reserve memory space for the data size and the data
 	createTriggerRecordsBuffer(bufferSize, trNumbers);
 }
@@ -732,7 +742,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 				memset(pIPData->getTriggerRecords(), -1, pIPData->getBasicData().m_triggerRecordBufferSize*pIPData->getBasicData().m_TriggerRecordNumber);
 				for (int j = 0; j < pIPData->getBasicData().m_TriggerRecordNumber; j++)
 				{	//initialize buffer
-					getTRData(i, j).init(pIPData->getImageList().list_size());
+					getTRData(i, j).init(pIPData->getImageList().list_size(), pIPData->getImageList().hiddenlist_size());
 				}
 				pIPData->resetFreeTrNumber();
 			}
@@ -753,12 +763,15 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 		{
 			SvPb::ImageList tmpImageList = m_dataVector[i]->getImageList();
 			int modifyFlag = false;
-			for (auto& rImageData : (*tmpImageList.mutable_list()))
+			for (auto* pList : {tmpImageList.mutable_list(), tmpImageList.mutable_hiddenlist()})
 			{
-				if (rImageData.structid() == rChangePair.first)
+				for (auto& rImageData : *pList)
 				{
-					rImageData.set_structid(rChangePair.second);
-					modifyFlag = true;
+					if (rImageData.structid() == rChangePair.first)
+					{
+						rImageData.set_structid(rChangePair.second);
+						modifyFlag = true;
+					}
 				}
 			}
 			if (modifyFlag)

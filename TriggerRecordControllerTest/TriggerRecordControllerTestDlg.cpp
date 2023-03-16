@@ -102,6 +102,7 @@ namespace SvTrcT
 		DDX_Control(pDX, IDC_COMBO_VALUE, m_ValueCombo);
 		DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
 		DDX_Check(pDX, IDC_CHECK_COPY_IMAGE, m_isCopyTR);
+		DDX_Check(pDX, IDC_CHECK_HIDDEN, m_isHidden);
 		//}}AFX_DATA_MAP
 	}
 
@@ -119,8 +120,9 @@ namespace SvTrcT
 		ON_EN_CHANGE(IDC_EDIT_MAINIMAGE_WIDTH, OnInputChanged)
 		ON_EN_CHANGE(IDC_EDIT_TRNUMBERS, OnInputChanged)
 		ON_MESSAGE(ID_GET_CALLBACK, OnGetCallback)
+		ON_LBN_SELCHANGE(IDC_TOOLSET_LIST, OnSelchangeToolSetList)
+		ON_BN_CLICKED(IDC_CHECK_HIDDEN, OnCheckHidden)
 	END_MESSAGE_MAP()
-
 
 	// CTriggerRecordControllerTestDlg-Meldungshandler
 
@@ -502,13 +504,44 @@ namespace SvTrcT
 		return 0;
 	}
 
-	void CTriggerRecordControllerTestDlg::updateControls()
+	void CTriggerRecordControllerTestDlg::OnSelchangeToolSetList()
+	{
+		updateControls(false);
+	}
+
+	void CTriggerRecordControllerTestDlg::OnCheckHidden()
+	{
+		UpdateData(true);
+		int index = m_toolListBox.GetCurSel();
+		if (0 <= index && m_toolList.size() > index && nullptr != m_toolList.at(index))
+		{
+			m_toolList.at(index)->setHiddenFlag(m_isHidden);
+			m_isEdit = true;
+			updateButton();
+		}
+	}
+
+	void CTriggerRecordControllerTestDlg::updateControls(bool shouldUpdateToolList /*= true*/)
 	{
 		if (!m_isReader)
 		{
-			updateToolList();
+			if (shouldUpdateToolList)
+			{
+				updateToolList();
+			}
 			GetDlgItem(IDC_COMBO_VALUE)->ShowWindow(false);
 			GetDlgItem(IDC_TEXT_VALUE)->ShowWindow(false);
+			int index = m_toolListBox.GetCurSel();
+			if (0 <= index && m_toolList.size() > index && nullptr != m_toolList.at(index))
+			{
+				m_isHidden = m_toolList.at(index)->getHiddenFlag();
+				UpdateData(false);
+				GetDlgItem(IDC_CHECK_HIDDEN)->ShowWindow(true);
+			}
+			else
+			{
+				GetDlgItem(IDC_CHECK_HIDDEN)->ShowWindow(false);
+			}
 		}
 		else
 		{
@@ -524,6 +557,7 @@ namespace SvTrcT
 			GetDlgItem(IDC_STATIC_HEIGHT)->ShowWindow(false);
 			GetDlgItem(IDC_STATIC_TRNUMBER)->ShowWindow(false);
 			GetDlgItem(IDC_CHECK_COPY_IMAGE)->ShowWindow(false);
+			GetDlgItem(IDC_CHECK_HIDDEN)->ShowWindow(false);
 			GetDlgItem(IDC_STATIC_TOOLDESCRIPTION)->ShowWindow(false);
 			updateValueCombo();
 		}
@@ -575,10 +609,12 @@ namespace SvTrcT
 	void CTriggerRecordControllerTestDlg::updateToolList()
 	{
 		SvUl::NameObjectIdList availableList;
-		std::transform(m_toolList.begin(), m_toolList.end(), availableList.begin(), [](const auto& pTool)
-		{ 
-			return SvUl::NameObjectIdPair(pTool->getName(), pTool->getObjectId());
-		});
+
+		for (const auto& pTool : m_toolList)
+		{
+			// cppcheck-suppress useStlAlgorithm ;  using std::transform leads to an error. Maybe a compiler error.
+			availableList.emplace_back(pTool->getName(), pTool->getObjectId());
+		}
 		m_toolListBox.init(availableList, "<No Tool>");
 	}
 

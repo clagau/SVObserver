@@ -41,6 +41,13 @@ namespace SvTo
 
 		m_moduleComment.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
+		return m_isCreated;
+	}
+
+	bool ModuleTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
+	{
+		bool result = __super::ResetObject(pErrorMessages);
+
 		for (auto* pTask : m_TaskObjectVector)
 		{
 			if (pTask && SvPb::ParameterTaskObjectType != pTask->GetObjectType())
@@ -48,13 +55,6 @@ namespace SvTo
 				pTask->SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
 			}
 		}
-
-		return m_isCreated;
-	}
-
-	bool ModuleTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
-	{
-		bool result = __super::ResetObject(pErrorMessages);
 
 		try
 		{

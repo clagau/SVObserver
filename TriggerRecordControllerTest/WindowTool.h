@@ -49,6 +49,7 @@ namespace SvTrcT
 		int m_offsetX = 10;
 		int m_offsetY = 10;
 		uint32_t m_childId;
+		int m_childPos {-1};
 #pragma endregion Member Variables
 	};
 } //namespace SvTrcT

@@ -77,6 +77,8 @@ private:
 	_variant_t readValue(VARTYPE vtType, const BYTE* pMemBlock) const;
 	_variant_t readArrayValue(VARTYPE vtType, const BYTE* pMemBlock) const;
 	int getElementSize(VARTYPE vtType) const;
+
+	std::pair<int&, int> getImagePosRefAndStructId(int pos) const;
 #pragma endregion Private Methods
 
 #pragma region Member variables

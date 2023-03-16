@@ -93,7 +93,7 @@ public:
 	
 	virtual SvOi::TRC_RAIIPtr setGlobalInit() override;
 
-	virtual int addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1) override;
+	virtual int addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1, bool shouldHidden = false) override;
 	virtual int addOrChangeChildImage(uint32_t imageId, uint32_t parentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) override;
 
 	virtual int addOrChangeLinkedImage(uint32_t sourceId, uint32_t destinationId, int inspectionPos = -1) override;
@@ -160,6 +160,7 @@ private:
 	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
 
 	ResetEnum prepareChangingSubImage(int inspectionPos);
+	void prepareNewResetForAddImage(int inspectionPos);
 #pragma endregion Private Methods
 
 #pragma region Member variables

@@ -38,6 +38,8 @@ namespace SvTrcT
 		const SVMatroxBufferCreateStruct& getBufferIn() const { return m_bufferStructIn; };
 		const SVMatroxBufferCreateStruct& getBufferOut() const { return m_bufferStructOut; };
 		virtual CString getName() const = 0;
+		void setHiddenFlag(bool flag) { m_hiddenFlag = flag; };
+		bool getHiddenFlag() const { return m_hiddenFlag; };
 
 		/// After an trigger, this method will run the operation of the tool.
 		/// \param pTriggerRecord [in] The current record.
@@ -62,6 +64,7 @@ namespace SvTrcT
 		int m_sourcePos {-1};
 		SVMatroxBufferCreateStruct m_bufferStructIn;
 		SVMatroxBufferCreateStruct m_bufferStructOut;
+		bool m_hiddenFlag {false};
 #pragma endregion Member Variables
 	};
 } //namespace SvTrcT

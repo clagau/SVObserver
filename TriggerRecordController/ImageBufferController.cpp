@@ -274,16 +274,19 @@ SvOi::ITRCImagePtr ImageBufferController::createNewImageHandle(int structId, int
 void ImageBufferController::reduceRequiredBuffers(const SvPb::ImageList& imageList, int numbers)
 {
 	SvPb::ImageStructList newImageStructList = m_rDataController.getImageStructList();
-	for (const auto& rSizeData : imageList.list())
+	for (const auto& rList : {imageList.list(), imageList.hiddenlist()})
 	{
-		int id = rSizeData.structid();
-		if (0 <= id && newImageStructList.list_size() > id)
+		for (const auto& rSizeData : rList)
 		{
-			auto* pImageStruct = newImageStructList.mutable_list(id);
-			if (nullptr != pImageStruct)
+			int id = rSizeData.structid();
+			if (0 <= id && newImageStructList.list_size() > id)
 			{
-				Log_Assert(0 <= pImageStruct->numberofbuffersrequired() - numbers);
-				pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - numbers);
+				auto* pImageStruct = newImageStructList.mutable_list(id);
+				if (nullptr != pImageStruct)
+				{
+					Log_Assert(0 <= pImageStruct->numberofbuffersrequired() - numbers);
+					pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - numbers);
+				}
 			}
 		}
 	}

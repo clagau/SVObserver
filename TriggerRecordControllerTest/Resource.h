@@ -31,6 +31,7 @@
 #define IDC_STATIC_TOOLDESCRIPTION      1015
 #define IDC_COMBO_VALUE                 1016
 #define IDC_TEXT_VALUE                  1017
+#define IDC_CHECK_HIDDEN                1018
 #define IDC_DIALOGIMAGE                 15048
 
 // Next default values for new objects

@@ -266,7 +266,7 @@ long SVArchiveRecord::WriteArchiveImage(const SvOi::ITriggerRecordR* pTriggerRec
 	// Create a file and convert the image to a .bmp or .png type
 	// file.
 	//
-	SvOi::ITRCImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord, true);
+	SvOi::ITRCImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord, archiveMode() != SvDef::ArchiveMode::synchronous);
 	if (nullptr == pImageBuffer || pImageBuffer->isEmpty())
 	{
 		return 0; //nothing to do

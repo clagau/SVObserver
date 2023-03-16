@@ -44,18 +44,18 @@ void WindowTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCre
 	childStruct.m_lOffY = m_offsetY;
 	childStruct.m_lSizeX = m_bufferStructIn.m_lSizeX - 2 * m_offsetX;
 	childStruct.m_lSizeY = m_bufferStructIn.m_lSizeY - 2 * m_offsetY;
-	recordController.addOrChangeChildImage(m_childId, sourceId, childStruct);
+	m_childPos = recordController.addOrChangeChildImage(m_childId, sourceId, childStruct);
 
 	m_bufferStructOut = m_bufferStructIn;
 	m_bufferStructOut.m_lSizeX = childStruct.m_lSizeX;
 	m_bufferStructOut.m_lSizeY = childStruct.m_lSizeY;
-	m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut);
+	m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut, -1, m_hiddenFlag);
 };
 
 bool WindowTool::run(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	bool retValue = false;
-	const auto pSourceImage = pTriggerRecord->getImage(m_sourcePos);
+	const auto pSourceImage = pTriggerRecord->getChildImage(m_childPos);
 	auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_trPos);
 
 	if (nullptr != pSourceImage && nullptr != pSourceImage->getHandle() && nullptr != pDestinationImage && nullptr != pDestinationImage->getHandle())

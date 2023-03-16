@@ -272,7 +272,7 @@ SVMatroxBuffer SharedMemReader::GetImageBuffer(int triggerRecordId, int inspecti
 	if (nullptr != pTr)
 	{
 		SvOi::ITRCImagePtr pImage = nullptr;
-		if (imageIndex < MonitorEntryData::c_childFlagForTrPos)
+		if (0 == (imageIndex & MonitorEntryData::c_childFlagForTrPos))
 		{
 			pImage = pTr->getImage(imageIndex);
 		}

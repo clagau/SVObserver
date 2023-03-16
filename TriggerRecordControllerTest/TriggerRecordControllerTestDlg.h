@@ -52,10 +52,12 @@ namespace SvTrcT
 		void OnReadyUpdate();
 		void OnNewTrId(SvOi::TrEventData data);
 		LRESULT OnGetCallback(WPARAM wParam, LPARAM lParam);
+		void OnSelchangeToolSetList();
+		void OnCheckHidden();
 
 		SvOi::ITRCImagePtr LoadMainImage(const CString& Path);
 
-		void updateControls();
+		void updateControls(bool shouldUpdateToolList = true);
 
 		void updateButton();
 
@@ -74,6 +76,7 @@ namespace SvTrcT
 		int m_mainHeigth = 480;
 		int m_trIDToDisplay = -1;
 		BOOL m_isCopyTR = true;
+		BOOL m_isHidden = false;
 		CString m_lastID = _T("-1");
 		CString m_valueText;
 		std::vector<ToolObjectPtr> m_toolList;

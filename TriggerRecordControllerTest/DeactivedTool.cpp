@@ -30,7 +30,7 @@ void DeactivedTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBuffer
 {
 	ToolObject::reset(sourceId, sourcePos, bufferStructIn, recordController);
 	m_bufferStructOut = m_bufferStructIn;
-	m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut);
+	m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut, -1, m_hiddenFlag);
 };
 
 bool DeactivedTool::run(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)

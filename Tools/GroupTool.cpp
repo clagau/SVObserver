@@ -149,6 +149,15 @@ namespace SvTo
 	bool GroupTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	{
 		bool result = __super::ResetObject(pErrorMessages);
+
+		for (auto* pTask : m_TaskObjectVector)
+		{
+			if (pTask)
+			{
+				pTask->SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::AddAttribute);
+			}
+		}
+
 		updateValidCheckStrings();
 		return result;
 	}

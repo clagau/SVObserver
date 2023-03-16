@@ -286,13 +286,16 @@ void SVTaskObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<S
 
 void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 {
-	__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
-
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	if (0 != (ObjectAttributesAllowed() & SvPb::viewable) || addHidden)
 	{
-		if (nullptr != m_friendList[i])
+		__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+
+		for (size_t i = 0; i < m_friendList.size(); ++i)
 		{
-			m_friendList[i]->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+			if (nullptr != m_friendList[i])
+			{
+				m_friendList[i]->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+			}
 		}
 	}
 }

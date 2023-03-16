@@ -449,7 +449,7 @@ bool LinkedValue::isCircularReference() const
 
 void LinkedValue::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 {
-	if (SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID)
+	if (SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID && (0 != (ObjectAttributesAllowed() & SvPb::viewable) || addHidden))
 	{
 		try
 		{

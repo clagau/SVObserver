@@ -32,9 +32,7 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "ObjectInterfaces/ILinkedObject.h"
-
-
-#include "Tools/SVTool.h"
+#include "Tools/SVArchiveTool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1121,6 +1119,7 @@ const std::vector<double> SVImageClass::UnitMatrix = {1.0,0.0,0.0,0.0,1.0,0.0,0.
 void SVImageClass::setImage(SvOi::ITRCImagePtr pImage, const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	Log_Assert(nullptr != pTriggerRecord);
+	Log_Assert(m_BufferType == BufferType::TRCBuffer);
 	if (nullptr != pTriggerRecord)
 	{
 		Log_Assert(0 <= m_imagePosInTRC && BufferType::TRCBuffer == m_BufferType);
@@ -1190,10 +1189,12 @@ SvOi::ITRCImagePtr SVImageClass::getImageReadOnly(const SvOi::ITriggerRecordR* p
 				pImage = pTriggerRecord->getChildImage(m_imagePosInTRC, lockImage);
 				break;
 			case BufferType::LocalBuffer:
+				Log_Assert(false == lockImage); //LocalBuffer cannot be locked because it is only one and it can be overridden.
 				pImage = std::make_shared<LocalImage>(m_localBuffer, true);
 				break;
 			case BufferType::LocalChildBuffer:
 			{
+				Log_Assert(false == lockImage); //LocalBuffer cannot be locked because it is only one and it can be overridden.
 				SVImageClass* pParent = GetParentImage();
 				if (nullptr != pParent)
 				{
@@ -1566,6 +1567,66 @@ void SVImageClass::setInspectionPosForTrc()
 	}
 }
 
+bool SVImageClass::mustBeInTRC() const
+{
+	if (GetTool())
+	{
+		if (SvPb::RingBufferToolClassId == GetTool()->GetClassID())
+		{
+			return true;
+		}
+	}
+
+	auto list = getConnectedSet();
+	for (auto objectId : list)
+	{
+		auto* pObject = SVObjectManagerClass::Instance().GetObject(objectId);
+		if (nullptr != pObject)
+		{
+			switch (pObject->GetClassID())
+			{
+				case SvPb::InputConnectedClassId:
+					if (nullptr != pObject->GetParent() && SvPb::RingBufferToolClassId == pObject->GetParent()->GetClassID())
+					{
+						return true;
+					}
+					break;
+				case SvPb::ArchiveToolClassId:
+				{
+					if (auto* pArchive = dynamic_cast<SvTo::SVArchiveTool*>(pObject); nullptr != pArchive)
+					{
+						if (pArchive->areImagesNeededInTRC())
+						{
+							return true;
+						}
+					}
+					else
+					{
+						Log_Assert(false);
+					}
+					break;
+				}
+				case SvPb::LinkedValueClassId:
+				{
+					if (nullptr != pObject->GetParent() && SvPb::ParameterTaskObjectType == pObject->GetParent()->GetObjectType())
+					{
+						//@TODO[MZA][10.30][14.03.2023] here is missing a check if it is viewable.
+						//But if more ModuleTools nested it is possible that the first LinkValue is not viewable, but is used by another viewable linkedValue.
+						//Because the risk for an error is to high, this change will be done in a later version.
+						return true;
+					}
+					break;
+				}
+				default:
+					break;
+			}
+			
+		}
+	}
+	
+	return false;
+}
+
 bool SVImageClass::UpdateBuffers(SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
@@ -1575,15 +1636,22 @@ bool SVImageClass::UpdateBuffers(SvStl::MessageContainerVector* pErrorMessages)
 	}
 	if (isViewable())
 	{
-		return UpdateTRCBuffers(pErrorMessages);
+		return UpdateTRCBuffers(pErrorMessages, false);
 	}
 	else
 	{
-		return UpdateLocalBuffer(pErrorMessages);
+		if (mustBeInTRC())
+		{
+			return UpdateTRCBuffers(pErrorMessages, true);
+		}
+		else
+		{
+			return UpdateLocalBuffer(pErrorMessages);
+		}
 	}
 }
 
-bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessages)
+bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessages, bool shouldHidden)
 {
 	bool retValue = true;
 	if (0 <= m_inspectionPosInTRC)
@@ -1597,6 +1665,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 		if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
 			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 		{
+			Log_Assert(false != shouldHidden); //ChildImage can not be hidden
 			SVImageClass* pParent = GetParentImage();
 			if (nullptr != pParent)
 			{
@@ -1657,7 +1726,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 				{
 					m_BufferType = BufferType::TRCBuffer;
 					auto& rTRC = SvOi::getTriggerRecordControllerRWInstanceThrow();
-					m_imagePosInTRC = rTRC.addOrChangeImage(getObjectId(), bufferStruct, m_inspectionPosInTRC);
+					m_imagePosInTRC = rTRC.addOrChangeImage(getObjectId(), bufferStruct, m_inspectionPosInTRC, shouldHidden);
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{

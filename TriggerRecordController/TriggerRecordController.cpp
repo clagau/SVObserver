@@ -32,6 +32,29 @@
 #pragma endregion Includes
 //#define TRACE_TRC
 
+namespace
+{
+/// Return the imagePos and ImageDefinition, from primeIter. But if this iter empty, the secondIter must not empty and this iter will be moved from the second list to the first list.
+/// \param pPrimeList [inout]
+/// \param primeIter [in]
+/// \param pSecondList [inout]
+/// \param secondIter [in]
+/// \returns std::tuple<int, SvPb::ImageDefinition*, bool> (ImagePos, ImageDefinition, Swapped or not)
+std::tuple<int, SvPb::ImageDefinition*, bool> getImagePosAndDefinitionAndSwapEntryIfRequired(auto* pPrimeList, auto primeIter, auto* pSecondList, auto secondIter)
+{
+	if (pPrimeList->end() != primeIter)
+	{
+		return {static_cast<int> (std::distance(pPrimeList->begin(), primeIter)), &(*primeIter), false};
+	}
+	else
+	{
+		pPrimeList->Add(std::move(*secondIter));
+		pSecondList->erase(secondIter, secondIter+1);
+		return {static_cast<int> (pPrimeList->size() - 1), &(*pPrimeList->rbegin()), true};
+	}
+}
+}
+
 namespace SvTrc
 {
 int getAdditionalTriggerRecordNumber()
@@ -431,7 +454,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 		try
 		{
 			auto imageListTmp = m_pDataController->getImageDefList(inspectionPos, false);
-			if (0 < imageListTmp.list_size())
+			if (0 < imageListTmp.list_size() || 0 < imageListTmp.hiddenlist_size())
 			{
 				mustRecalc = true;
 				m_pDataController->setIpToInitFlagList(inspectionPos);
@@ -613,15 +636,18 @@ SvOi::TRC_RAIIPtr TriggerRecordController::startResetTriggerRecordStructure(int 
 		m_imageStructListResetTmp.Clear();
 		m_imageStructListResetTmp = m_pDataController->getImageStructList();
 		//remove number of buffers from required list from old reserved images of this inspection.
-		for (const auto& rSizeData : m_imageListResetTmp.list())
+		for (const auto& rList : {m_imageListResetTmp.list(), m_imageListResetTmp.hiddenlist()})
 		{
-			int id = rSizeData.structid();
-			if (0 <= id && m_imageStructListResetTmp.list_size() > id)
+			for (const auto& rSizeData : rList)
 			{
-				auto* pImageStruct = m_imageStructListResetTmp.mutable_list(id);
-				if (nullptr != pImageStruct)
+				int id = rSizeData.structid();
+				if (0 <= id && m_imageStructListResetTmp.list_size() > id)
 				{
-					pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - TrNumber);
+					auto* pImageStruct = m_imageStructListResetTmp.mutable_list(id);
+					if (nullptr != pImageStruct)
+					{
+						pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - TrNumber);
+					}
 				}
 			}
 		}
@@ -667,7 +693,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::setGlobalInit()
 	return std::make_unique<TRC_Raii>([this]() noexcept(false) {this->finishGlobalInit(); });
 }
 
-int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos /*= -1*/)
+int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos /*= -1*/, bool shouldHidden /*= false*/)
 {
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
 	if (ResetEnum::Invalid == resetEnum)
@@ -680,39 +706,12 @@ int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBu
 
 	if (ResetEnum::NewReset == resetEnum)
 	{
-		const auto ipData = m_pDataController->getInspections().list(inspectionPos);
-		int TriggerRecordSize = ipData.numberofrecords();
-		if (0 >= TriggerRecordSize || cMaxTriggerRecords < TriggerRecordSize)
-		{
-			Log_Assert(false);
-			SvDef::StringVector msgList;
-			msgList.push_back(std::format(_T("{:d}"), TriggerRecordSize));
-			msgList.push_back(std::format(_T("{:d}"), cMaxTriggerRecords));
-			SvStl::MessageManager Exception(SvStl::MsgType::Data);
-			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, msgList, SvStl::SourceFileParams(StdMessageParams));
-			Exception.Throw();
-		}
-
-
-		//prefer reset
-		m_resetStarted4IP = inspectionPos;
-		m_TriggerRecordNumberResetTmp = needNumberOfTr(ipData);
-		try
-		{
-			m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP, false);
-		}
-		catch (const SvStl::MessageContainer&)
-		{
-			//nothing to do, because if 
-			m_imageListResetTmp.Clear();
-		}
-		m_imageStructListResetTmp.Clear();
-		m_imageStructListResetTmp = m_pDataController->getImageStructList();
+		prepareNewResetForAddImage(inspectionPos);
 	}
 
 	//check if rBufferStruct already in sizeList
 	std::string typeStr(reinterpret_cast<const char*>(&rBufferStruct), sizeof(rBufferStruct));
-	auto pImageStructList = m_imageStructListResetTmp.mutable_list();
+	auto* pImageStructList = m_imageStructListResetTmp.mutable_list();
 	auto bufferStructIter = std::find_if(pImageStructList->begin(), pImageStructList->end(), [typeStr](const auto& rData)->bool
 	{
 		return (0 == rData.type().compare(typeStr));
@@ -729,23 +728,45 @@ int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBu
 	{
 		return (rData.objectid() == imageId);
 	});
+	auto* pHiddenList = m_imageListResetTmp.mutable_hiddenlist();
+	//check if image with this ID already in list
+	auto pHiddenImageIter = std::find_if(pHiddenList->begin(), pHiddenList->end(), [&imageId](const auto& rData)->bool
+	{
+		return (rData.objectid() == imageId);
+	});
 	int imagePos = -1;
 	SvPb::ImageDefinition* pImageDefinition = nullptr;
-	if (pList->end() != pImageIter)
+	if (pList->end() != pImageIter || pHiddenList->end() != pHiddenImageIter)
 	{
-		imagePos = static_cast<int> (std::distance(pList->begin(), pImageIter));
-		pImageDefinition = &(*pImageIter);
+		bool swapToOtherList = false;
+		if (shouldHidden)
+		{
+			std::tie(imagePos, pImageDefinition, swapToOtherList) = getImagePosAndDefinitionAndSwapEntryIfRequired(pHiddenList, pHiddenImageIter, pList, pImageIter);
+			if (0 <= imagePos)
+			{
+				imagePos += SvOi::cTRCImageHiddenFlag;
+			}
+		}
+		else
+		{
+			std::tie(imagePos, pImageDefinition, swapToOtherList) = getImagePosAndDefinitionAndSwapEntryIfRequired(pList, pImageIter, pHiddenList, pHiddenImageIter);
+		}
+		
 		if (pImageDefinition->type() == typeStr)
 		{ //it this the same type, nothing to do
 			if (ResetEnum::NewReset == resetEnum)
 			{
 				m_resetStarted4IP = -1;
+				if (swapToOtherList)
+				{
+					m_pDataController->setImageDefList(inspectionPos, std::move(m_imageListResetTmp));
+				}
 			}
 			return imagePos;
 		}
 
 		//Remove old struct from required list.
-		auto* pImageStruct = m_imageStructListResetTmp.mutable_list(pImageIter->structid());
+		auto* pImageStruct = m_imageStructListResetTmp.mutable_list(pImageDefinition->structid());
 		if (nullptr != pImageStruct)
 		{
 			pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - m_TriggerRecordNumberResetTmp);
@@ -753,11 +774,11 @@ int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBu
 	}
 	else
 	{
-		pImageDefinition = m_imageListResetTmp.add_list();
-		imagePos = pList->size() - 1;
+		pImageDefinition = shouldHidden ? m_imageListResetTmp.add_hiddenlist() : m_imageListResetTmp.add_list();
+		imagePos = shouldHidden ? pHiddenList->size() -1 + SvOi::cTRCImageHiddenFlag : pList->size() - 1;
 		pImageDefinition->set_objectid(imageId);
 	}
-
+	
 	setStructData(pStructData, pImageDefinition, typeStr);
 	if (ResetEnum::NewReset == resetEnum)
 	{
@@ -1200,12 +1221,15 @@ void TriggerRecordController::recalcRequiredBuffer()
 			const SvPb::ImageList& rImageDef = (m_resetStarted4IP != i) ? m_pDataController->getImageDefList(i, false) : m_imageListResetTmp;
 			int bufferCount = (m_resetStarted4IP != i) ? needNumberOfTr(m_pDataController->getInspections().list(i)) : m_TriggerRecordNumberResetTmp;
 			
-			for (const auto& rImageData : rImageDef.list())
+			for (const auto& rList : {rImageDef.list(), rImageDef.hiddenlist()})
 			{
-				if (rImageData.structid() < m_imageStructListResetTmp.list_size() && 0 <= rImageData.structid())
+				for (const auto& rImageData : rList)
 				{
-					auto pBufferStruct = m_imageStructListResetTmp.mutable_list(rImageData.structid());
-					pBufferStruct->set_numberofbuffersrequired(pBufferStruct->numberofbuffersrequired() + bufferCount);
+					if (rImageData.structid() < m_imageStructListResetTmp.list_size() && 0 <= rImageData.structid())
+					{
+						auto pBufferStruct = m_imageStructListResetTmp.mutable_list(rImageData.structid());
+						pBufferStruct->set_numberofbuffersrequired(pBufferStruct->numberofbuffersrequired() + bufferCount);
+					}
 				}
 			}
 		}
@@ -1431,6 +1455,38 @@ TriggerRecordController::ResetEnum TriggerRecordController::prepareChangingSubIm
 	}
 
 	return resetEnum;
+}
+
+void TriggerRecordController::prepareNewResetForAddImage(int inspectionPos)
+{
+	const auto ipData = m_pDataController->getInspections().list(inspectionPos);
+	int TriggerRecordSize = ipData.numberofrecords();
+	if (0 >= TriggerRecordSize || cMaxTriggerRecords < TriggerRecordSize)
+	{
+		Log_Assert(false);
+		SvDef::StringVector msgList;
+		msgList.push_back(std::format(_T("{:d}"), TriggerRecordSize));
+		msgList.push_back(std::format(_T("{:d}"), cMaxTriggerRecords));
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, msgList, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+
+	//prefer reset
+	m_resetStarted4IP = inspectionPos;
+	m_TriggerRecordNumberResetTmp = needNumberOfTr(ipData);
+	try
+	{
+		m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP, false);
+	}
+	catch (const SvStl::MessageContainer&)
+	{
+		//nothing to do, because if 
+		m_imageListResetTmp.Clear();
+	}
+	m_imageStructListResetTmp.Clear();
+	m_imageStructListResetTmp = m_pDataController->getImageStructList();
 }
 #pragma endregion Private Methods
 

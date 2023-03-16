@@ -521,7 +521,7 @@ enum MessageTextEnum
 	Tid_TRC_Error_ImageRefCount,
 	Tid_TRC_Error_SetImage_InvalidType,
 	Tid_TRC_Error_SetImage_TypeNotFit,
-	Tid_TRC_Error_SetImage_InvalidPos,
+	Tid_TRC_Error_InvalidPos,
 	Tid_TRC_Error_SetImages_SourceTROutOfData,
 	Tid_TRC_Error_NoBufferFree,
 	Tid_TRC_Error_UnknownStructID,

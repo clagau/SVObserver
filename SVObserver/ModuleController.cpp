@@ -351,6 +351,12 @@ void ModuleController::convertGroupTool(uint32_t toolId, const std::string& rNam
 		createModuleLFile(*pModuleTool, rName, m_xmlFilePath, pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType));
 
 		m_moduleList.emplace_back(rName, pModuleTool->getHistory(), pModuleTool->getModuleComment(), pModuleTool->getModuleGuid(), std::vector<uint32_t>{pModuleTool->getObjectId()});
+
+		if (pModuleTool->GetInspection())
+		{
+			//This is needed that the images is set correctly in TRC
+			pModuleTool->GetInspection()->resetAllObjects();
+		}
 	}
 	else
 	{

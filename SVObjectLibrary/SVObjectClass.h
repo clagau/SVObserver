@@ -255,6 +255,7 @@ protected:
 	virtual bool createAllObjectsFromChild( SVObjectClass& ) { return false; };
 
 	bool isUsed() const { return 0 < m_connectedSet.size(); };
+	const auto& getConnectedSet() const { return m_connectedSet; };
 
 private:
 	void init();

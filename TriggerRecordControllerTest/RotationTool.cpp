@@ -31,7 +31,7 @@ namespace SvTrcT
 	{
 		ToolObject::reset(sourceId, sourcePos, bufferStructIn, recordController);
 		m_bufferStructOut = m_bufferStructIn;
-		m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut);
+		m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut, -1, m_hiddenFlag);
 	};
 
 	bool RotationTool::run(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)

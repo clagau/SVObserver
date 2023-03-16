@@ -183,8 +183,9 @@ private:
 	void init();
 
 	void setInspectionPosForTrc();
+	bool mustBeInTRC() const;
 	bool UpdateBuffers(SvStl::MessageContainerVector* pErrorMessages);
-	bool UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessages);
+	bool UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessages, bool shouldHidden);
 	bool UpdateLocalBuffer(SvStl::MessageContainerVector* pErrorMessages);
 	void copyCurrent2SaveImage();
 

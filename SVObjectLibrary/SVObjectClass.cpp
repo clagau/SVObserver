@@ -466,22 +466,24 @@ void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb:
 
 void SVObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 {
-	if ((SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID || rObjectInfo.m_EmbeddedID == GetEmbeddedID()) &&
-		(SvPb::SVNotSetObjectType == rObjectInfo.m_ObjectType || rObjectInfo.m_ObjectType == GetObjectType()) &&
-		(SvPb::SVNotSetSubObjectType == rObjectInfo.m_SubType || rObjectInfo.m_SubType == GetObjectSubType())
-		)
+	if (0 != (ObjectAttributesAllowed() & SvPb::viewable) || addHidden)
 	{
-		inserter = this;
-	}
-
-	for (auto* pObject : m_embeddedList)
-	{
-		if (nullptr != pObject)
+		if ((SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID || rObjectInfo.m_EmbeddedID == GetEmbeddedID()) &&
+			(SvPb::SVNotSetObjectType == rObjectInfo.m_ObjectType || rObjectInfo.m_ObjectType == GetObjectType()) &&
+			(SvPb::SVNotSetSubObjectType == rObjectInfo.m_SubType || rObjectInfo.m_SubType == GetObjectSubType())
+			)
 		{
-			pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+			inserter = this;
+		}
+
+		for (auto* pObject : m_embeddedList)
+		{
+			if (nullptr != pObject)
+			{
+				pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+			}
 		}
 	}
-
 }
 
 uint32_t SVObjectClass::getFirstClosedParent(uint32_t stopSearchAtObjectId) const

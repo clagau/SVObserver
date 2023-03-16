@@ -559,7 +559,7 @@ namespace SvStl
 		{Tid_TRC_Error_ImageRefCount, _T("Error with reference count in ImageController")},
 		{Tid_TRC_Error_SetImage_InvalidType, _T("Set image failed: Invalid image type.")},
 		{Tid_TRC_Error_SetImage_TypeNotFit, _T("Set image failed: Buffer type don't fit to image.")},
-		{Tid_TRC_Error_SetImage_InvalidPos, _T("Set image failed: Invalid image position.")},
+		{Tid_TRC_Error_InvalidPos, _T("Invalid image position.")},
 		{Tid_TRC_Error_SetImages_SourceTROutOfData, _T("Set images failed: Source trigger record is Out-Of-Data.")},
 		{Tid_TRC_Error_NoBufferFree, _T("New image buffer for struct {0} failed: No buffer free.")},
 		{Tid_TRC_Error_UnknownStructID, _T("New image buffer failed : Unknown structID {0}.")},

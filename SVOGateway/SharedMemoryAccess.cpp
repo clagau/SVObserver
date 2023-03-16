@@ -1565,27 +1565,27 @@ void SharedMemoryAccess::handle_lock_takeover_request(const lock_acquisition_str
 	}
 	else if (lockState.owner.type == EntityType::SVOGateway)
 	{
-		auto lockOwnerStream = m_SharedMemoryLock->GetLockOwnerStream();
-		if (lockOwnerStream == nullptr)
-		{
-			SvPenv::Error error;
-			error.set_errorcode(SvPenv::ErrorCode::notFound);
-			error.set_message("Couldn't find current lock owner");
-			stream.observer.error(error);
+	auto lockOwnerStream = m_SharedMemoryLock->GetLockOwnerStream();
+	if (lockOwnerStream == nullptr)
+	{
+		SvPenv::Error error;
+		error.set_errorcode(SvPenv::ErrorCode::notFound);
+		error.set_message("Couldn't find current lock owner");
+		stream.observer.error(error);
 
-			return;
-		}
-
-		SvPb::LockAcquisitionStreamResponse response;
-
-		auto notification = response.mutable_locktakeovernotification();
-		notification->set_takeoverid(stream.id);
-		notification->set_message(stream.request.takeovermessage());
-		notification->set_user(stream.sessionContext.username());
-		notification->set_host(stream.sessionContext.host());
-
-		lockOwnerStream->observer.onNext(std::move(response));
+		return;
 	}
+
+	SvPb::LockAcquisitionStreamResponse response;
+
+	auto notification = response.mutable_locktakeovernotification();
+	notification->set_takeoverid(stream.id);
+	notification->set_message(stream.request.takeovermessage());
+	notification->set_user(stream.sessionContext.username());
+	notification->set_host(stream.sessionContext.host());
+
+	lockOwnerStream->observer.onNext(std::move(response));
+}
 }
 
 void SharedMemoryAccess::schedule_disconnected_clients_check()
@@ -1617,18 +1617,18 @@ void SharedMemoryAccess::check_disconnected_clients()
 {
 	if (open_shared_memory())
 	{
-		auto& streams = m_SharedMemoryLock->GetStreams();
-		for (auto it = streams.begin(); it != streams.end();)
+	auto& streams = m_SharedMemoryLock->GetStreams();
+	for (auto it = streams.begin(); it != streams.end();)
+	{
+		if ((*it)->streamContext->isCancelled())
 		{
-			if ((*it)->streamContext->isCancelled())
-			{
-				SV_LOG_GLOBAL(debug) << "client " << (*it)->id << " erased from streams vector";
-				it = streams.erase(it);
-				continue;
-			}
-			++it;
+			SV_LOG_GLOBAL(debug) << "client " << (*it)->id << " erased from streams vector";
+			it = streams.erase(it);
+			continue;
 		}
+		++it;
 	}
+}
 }
 
 bool SharedMemoryAccess::open_shared_memory()

@@ -1124,6 +1124,13 @@ std::string SVArchiveTool::getNextImageFileName()
 	return std::format(_T("{}{:08d}{}{:04d}{}"), baseFilename, Index1, centerFilename, Index2, firstImageFileNameExtension(m_imageFileFormat));
 }
 
+bool SVArchiveTool::areImagesNeededInTRC() const
+{
+	long archiveMode = 0;
+	m_evoArchiveMode.GetValue(archiveMode);
+	return IsEnabled() && SvDef::ArchiveMode::synchronous != SvDef::ArchiveMode(archiveMode);
+}
+
 
 long SVArchiveTool::CalculateImageMemory(SvIe::SVImageClass* pImage)
 {

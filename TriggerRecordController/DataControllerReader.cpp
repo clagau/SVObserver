@@ -71,6 +71,11 @@ void TRControllerReaderDataPerIP::reloadData()
 	{
 		m_ImageDefMap[rTmp.objectid()] = pos++;
 	}
+	pos = SvOi::cTRCImageHiddenFlag;
+	for (const auto& rTmp : m_ImageList.hiddenlist())
+	{
+		m_ImageDefMap[rTmp.objectid()] = pos++;
+	}
 
 	m_ChildImageDefMap.clear();
 	pos = 0;
@@ -89,6 +94,10 @@ void TRControllerReaderDataPerIP::reloadData()
 		else if (auto childIter = m_ChildImageDefMap.find(rTmp.destinationid()); m_ChildImageDefMap.end() != childIter)
 		{
 			m_LinkedImageDefMap[rTmp.sourceid()] = {true, childIter->second};
+		}
+		else
+		{
+			Log_Assert(false);
 		}
 	}
 

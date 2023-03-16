@@ -99,14 +99,17 @@ using TRC_RAIIPtr = std::unique_ptr<ITRC_Raii>;
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param rImageId [in] id of the image.
 		/// \param rBufferStruct [in] structure of the buffer of this image.
+		/// \param inspectionPos [in]
+		/// \param shouldHidden [in] if true, image will be added to hidden list, else it is in the normal list.
 		/// \returns int Return the position in the list. May use it for getImage or createNewImageHandle.
-		virtual int addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1 ) = 0;
+		virtual int addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1, bool shouldHidden = false ) = 0;
 		
 		/// Change the bufferStruct of the buffer, if for this image no entry available it will be added. It must not be in the reset state (called startResetTriggerRecordStructure before.)
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param imageId [in] id of the image.
 		/// \param parentId [in] id of the parent image.
 		/// \param rBufferStruct [in] structure of the buffer of this image.
+		/// \param inspectionPos [in]
 		/// \returns int Return the position in the child list. May use it for getChildImage.
 		virtual int addOrChangeChildImage(uint32_t imageId, uint32_t parentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) = 0;
 

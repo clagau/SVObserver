@@ -46,6 +46,12 @@ void TRControllerLocalDataPerIP::setImageList(SvPb::ImageList&& imageList)
 	{
 		m_ImageDefMap[rTmp.objectid()] = pos++;
 	}
+	pos = SvOi::cTRCImageHiddenFlag;
+	for (const auto& rTmp : m_ImageList.hiddenlist())
+	{
+		m_ImageDefMap[rTmp.objectid()] = pos++;
+	}
+
 	m_ChildImageDefMap.clear();
 	pos = 0;
 	for (const auto& rTmp : m_ImageList.childlist())
@@ -64,13 +70,17 @@ void TRControllerLocalDataPerIP::setImageList(SvPb::ImageList&& imageList)
 		{
 			m_LinkedImageDefMap[rTmp.sourceid()] = {true, childIter->second};
 		}
+		else
+		{
+			Log_Assert(false);
+		}
 	}
 }
 
 void TRControllerLocalDataPerIP::createTriggerRecordsBuffer(int trNumbers)
 {
 	getMutableBasicData().m_TriggerRecordNumber = trNumbers;
-	getMutableBasicData().m_triggerRecordBufferSize = (sizeof(TriggerRecordData) + sizeof(int)*m_ImageList.list_size());
+	getMutableBasicData().m_triggerRecordBufferSize = sizeof(TriggerRecordData) + sizeof(int)*(m_ImageList.list_size()+m_ImageList.hiddenlist_size());
 	//Reserve memory space for the data size and the data
 	getMutableBasicData().m_triggerRecordBufferSize += sizeof(int) + getBasicData().m_dataListSize;
 	setTriggerRecords(malloc(getBasicData().m_triggerRecordBufferSize * getBasicData().m_TriggerRecordNumber));
@@ -369,7 +379,7 @@ std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructur
 			memset(m_dataVector[i].getTriggerRecords(), -1, rBaseData.m_triggerRecordBufferSize*rBaseData.m_TriggerRecordNumber);
 			for (int j = 0; j < rBaseData.m_TriggerRecordNumber; j++)
 			{	//initialize buffer
-				getTRData(i, j).init(m_dataVector[i].getImageList().list_size());
+				getTRData(i, j).init(m_dataVector[i].getImageList().list_size(), m_dataVector[i].getImageList().hiddenlist_size());
 			}
 		}
 		else
@@ -386,11 +396,14 @@ std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructur
 		//update per Inspection
 		for (int i = 0; i < m_dataVector.size(); i++)
 		{
-			for (auto& rImageData : (*m_dataVector[i].getMutableImageList().mutable_list()))
+			for (auto* pList : {m_dataVector[i].getMutableImageList().mutable_list(), m_dataVector[i].getMutableImageList().mutable_hiddenlist()})
 			{
-				if (rImageData.structid() == rChangePair.first)
+				for (auto& rImageData : *pList)
 				{
-					rImageData.set_structid(rChangePair.second);
+					if (rImageData.structid() == rChangePair.first)
+					{
+						rImageData.set_structid(rChangePair.second);
+					}
 				}
 			}
 		}

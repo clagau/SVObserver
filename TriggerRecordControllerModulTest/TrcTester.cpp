@@ -663,7 +663,25 @@ bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
 
 			for (int j = 0; j < m_config.getNumberOfBuffersPerInspection(); j++)
 			{
-				m_pTrcRW->addOrChangeImage(getNextObjectId(), specifyBuffer(1 + j));
+				auto bufferStruct = specifyBuffer(1 + j);
+				auto objectId = getNextObjectId();
+				int pos = m_pTrcRW->addOrChangeImage(objectId, bufferStruct);
+				std::string errorStr = std::format(_T("Add Image at pos: #{}!"), pos);
+				m_rLogClass.Log(errorStr.c_str(), SvOi::cTRCImageHiddenFlag > pos ? LogLevel::Information_Level3 : LogLevel::Error, SvOi::cTRCImageHiddenFlag > pos ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetAndReadValues);
+
+				if (1 == j)
+				{
+					pos = m_pTrcRW->addOrChangeImage(objectId, bufferStruct, -1, true);
+					errorStr = std::format(_T("Add hidden Image at pos: #{}!"), pos);
+					m_rLogClass.Log(errorStr.c_str(), SvOi::cTRCImageHiddenFlag == pos ? LogLevel::Information_Level3 : LogLevel::Error, SvOi::cTRCImageHiddenFlag == pos ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetAndReadValues);
+				}
+				else if (3 == j)
+				{
+					pos = m_pTrcRW->addOrChangeImage(objectId, bufferStruct, -1, true);
+					pos = m_pTrcRW->addOrChangeImage(objectId, specifyBuffer(5), -1, true);
+					errorStr = std::format(_T("Add hidden Image at pos: #{}!"), pos);
+					m_rLogClass.Log(errorStr.c_str(), SvOi::cTRCImageHiddenFlag + 1 == pos ? LogLevel::Information_Level3 : LogLevel::Error, SvOi::cTRCImageHiddenFlag + 1 == pos ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetAndReadValues);
+				}
 			}
 
 			pResetHandle->free(); // i.e the current inspection will be completed

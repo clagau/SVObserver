@@ -32,6 +32,7 @@ message ImageList
 	repeated ImageDefinition list = 1;
 	repeated ChildImageDefinition childList = 2;
 	repeated LinkedImageDefinition linkedList = 3;
+	repeated ImageDefinition hiddenList = 4;
 }
 
 message ImageStructData

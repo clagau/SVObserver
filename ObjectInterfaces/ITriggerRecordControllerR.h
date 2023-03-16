@@ -55,6 +55,7 @@ namespace SvOi
 	};
 
 	using RAIIPtr = std::unique_ptr<void, std::function<void(void*)>>;
+	constexpr int cTRCImageHiddenFlag = 0x800000;
 
 	class ITriggerRecordControllerR
 	{
