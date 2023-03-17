@@ -88,5 +88,6 @@ private: //data members
 	std::vector<RegressionTestStruct>* m_pRegressionImageList = nullptr;
 	CButton m_addImageButton;
 	uint32_t m_InspectionID;
+	CScrollBar m_Gripper;
 };
 

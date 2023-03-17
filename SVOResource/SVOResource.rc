@@ -5157,7 +5157,20 @@ END
 
 IDD_PROPPAGE_REGRESSION_FILESELECT AFX_DIALOG_LAYOUT
 BEGIN
-0
+    0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
+    100, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 100,
+    100, 100, 0, 0,
+    100, 100, 0, 0
 END
 
 IDD_TA_LUT_DIALOG AFX_DIALOG_LAYOUT

@@ -192,7 +192,7 @@ void SVRegressionFileSelectDlg::UpdateFolderList()
 		// Get the text metrics for avg char width
 		TEXTMETRIC tm;
 		pDC->GetTextMetrics(&tm);
-		
+
 		int dx = 0;
 		m_SelectFolderList.ResetContent();
 		for (const auto& name : m_folders)
@@ -419,32 +419,33 @@ void SVRegressionFileSelectDlg::ShowSelectMultDirectoryDlg(bool bFullAccess)
 				if (dir_entry.is_directory())
 				{
 					std::string stPath = dir_entry.path().string();
-					if ((stPath.size() == 0) || (stPath.at(0) == '_'))
+					auto len = stPath.size();
+					auto  pos = stPath.find_last_of('\\');
+					if (pos == std::string::npos || (pos == (len - 1)) || (stPath.at(pos + 1) == '_'))
 						continue;
-					std::string msg = std::format("{}\n", dir_entry.path().string());
-					OutputDebugString(msg.c_str());
 					m_folders.push_back(stPath);
-
 				}
+
 			}
+
 			catch (...)
 			{
-				;//Accessdinied
+				;//Accessdenied
 			}
 		}
-		SvUl::RemoveDuplicates<std::string>(m_folders);
+	}
+	SvUl::RemoveDuplicates<std::string>(m_folders);
 
 
 
-		m_PreviousFolderSettings[m_CameraNumber].clear();
-		auto inserter = std::back_inserter(m_PreviousFolderSettings[m_CameraNumber]);
-		std::copy(m_folders.begin(), m_folders.end(), inserter);
+	m_PreviousFolderSettings[m_CameraNumber].clear();
+	auto inserter = std::back_inserter(m_PreviousFolderSettings[m_CameraNumber]);
+	std::copy(m_folders.begin(), m_folders.end(), inserter);
 
-		if (m_folders.size())
-		{
-			m_RegTestFiles = m_folders[0].c_str();
-		}
-
+	if (m_folders.size())
+	{
+		m_RegTestFiles = m_folders[0].c_str();
 	}
 
 }
+

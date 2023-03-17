@@ -2749,6 +2749,7 @@
 #define IDC_STATIC_SELECT_TEXT          61498
 #define IDS_SELECTED_FILE				61499
 #define IDS_SELECTED_FOLDER				61500
+#define IDC_REGRESSION_FILE_SELECT_GRIPPER 61501
 
 
 // Next default values for new objects
