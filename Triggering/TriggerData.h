@@ -7,7 +7,9 @@
 //******************************************************************************
 #pragma once
 
-constexpr uint8_t cObjectMaxNr = 4;
+#pragma region Includes
+#include "Definitions/GlobalConst.h"
+#pragma endregion Includes
 
 namespace SvTrig
 {
@@ -28,7 +30,7 @@ struct TriggerData
 	bool m_loopMode {false};
 	double m_triggerTimestamp {0.0};
 	//Do not use std::array due to struct being used over Dll boundary
-	ObjectData m_objectData[cObjectMaxNr];
+	ObjectData m_objectData[SvDef::cObjectIndexMaxNr];
 	//Uses pointer to a char array as the struct is used over Dll boundary
 	//note is only used for simulation mode and the pointer is continuously valid)
 	const char* m_pAcquisitionFile {nullptr};

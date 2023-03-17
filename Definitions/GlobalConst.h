@@ -67,6 +67,7 @@ constexpr long			cDefaultPolarTransformEndAngle = 330L;
 constexpr int			cMaximumCameras = 4;
 constexpr int			cMinPatternModelNewSize = 8;
 constexpr int			cMinPatternModelLoadSize = 4;
+constexpr int			cObjectIndexMaxNr = 4;
 
 constexpr const char* cExcludeCharsToolIpName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
 constexpr const char* cExcludeCharsConfigName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#");

@@ -57,5 +57,6 @@
 #include <queue>
 #include <stdio.h>
 #include <string>
+#include <tchar.h>
 #include <thread>
 #pragma endregion Precompiled Headers

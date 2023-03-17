@@ -169,7 +169,7 @@ void HardwareTriggerSource::createTriggerData(uint8_t channel)
 			triggerData.m_triggerTimestamp = triggerTimeStamp;
 			triggerData.m_loopMode = (0 != rChannel.m_loopMode);
 			//Convert to double as SVO uses only this type
-			for (int i = 0; i < cObjectMaxNr; ++i)
+			for (int i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
 			{
 				triggerData.m_objectData[i].m_objectID = rChannel.m_objectID[i];
 				triggerData.m_objectData[i].m_rotationNr = rChannel.m_rotationNr[i];

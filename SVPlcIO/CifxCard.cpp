@@ -900,8 +900,7 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_measurementValue)], startByte, sizeof(ChannelOut1::m_measurementValue) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
-					//@TODO[GRA][10.30][20.02.2023] Remove temporary uint8_t to make it compatible for the small PLC
-					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(uint8_t)], startByte, sizeof(ChannelOut1::m_serializationCode)};
+					result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_serializationCode[0])], startByte, sizeof(ChannelOut1::m_serializationCode)};
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 				}

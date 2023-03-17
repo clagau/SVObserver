@@ -335,7 +335,7 @@ void EthercatIOImpl::NotifyTriggerData(const SvTrig::TriggerData& rTriggerData)
 		{
 			const SvTrig::TriggerData& rData = rTriggerData;
 			std::string objectIDList;
-			for (int i = 0; i < cObjectMaxNr; ++i)
+			for (int i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
 			{
 				objectIDList += (0 == i) ? "" : "," + std::to_string(rData.m_objectData[i].m_objectID);
 			}

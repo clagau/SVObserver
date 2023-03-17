@@ -29,16 +29,16 @@ public:
 public:
 	bool m_activation {false};				//Only for HV
 	bool m_start {false};					//Only for HV
-	uint8_t m_loopMode {false};				//True when loop mode is activated
-	uint8_t m_unitControl {0};				//When true then do inspection
+	bool m_loopMode {false};				//True when loop mode is activated
+	uint8_t m_unitControl {0};				//When 1 then do inspection
 	int8_t m_sequence {0};
 	int16_t m_timeStamp {0};
 	uint8_t m_triggerIndex {0};
 	uint8_t m_triggerCount {0};
 	uint8_t m_objectType {0};
-	std::array <uint32_t, cObjectMaxNr> m_objectID {0UL, 0UL, 0UL, 0UL};
-	std::array <uint8_t, cObjectMaxNr> m_rotationNr {0, 0, 0, 0};
-	std::array <float, cObjectMaxNr> m_measurementValue {0.0, 0.0, 0.0, 0.0};
+	std::array <uint32_t, SvDef::cObjectIndexMaxNr> m_objectID {0UL, 0UL, 0UL, 0UL};
+	std::array <uint8_t, SvDef::cObjectIndexMaxNr> m_rotationNr {0, 0, 0, 0};
+	std::array <float, SvDef::cObjectIndexMaxNr> m_measurementValue {0.0, 0.0, 0.0, 0.0};
 #pragma endregion Member Variables
 };
 
