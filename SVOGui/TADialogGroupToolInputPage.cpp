@@ -14,6 +14,7 @@
 #include "SVOGuiUtility/LinkedValueSelectorDialog.h"
 #include "Definitions/Color.h"
 #include "SVShowDependentsDialog.h"
+#include "SVOGuiUtility/GroupToolHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -63,17 +64,12 @@ std::map<int, ColumnDef> g_columnInputObjectsDefArray = {
 };
 
 
-std::string State2String(const _variant_t& var )
-{
-	try
-	{
-		return SvPb::StateDefaultType_Name(SvPb::StateDefaultType(static_cast<int>(var)));
-	}
-	catch (...)
-	{
-		return "";
-	}
-}
+
+
+
+
+
+
 }
 
 SvStl::MessageContainerVector getErrorMessage(uint32_t inspectionId, uint32_t toolId)
@@ -450,7 +446,7 @@ void TADialogGroupToolInputPage::FillGridControl()
 		{
 			if (m_inputData[i].m_data.m_selectedOption == SvPb::LinkedSelectedOption::DirectValue)
 			{
-				res = State2String( m_inputData[i].m_data.m_Value);
+				res = SvOgu::StateHelper::toString( m_inputData[i].m_data.m_Value);
 			}
 		}
 		else if (SvPb::isValueType(m_inputData[i].m_type))
@@ -475,9 +471,20 @@ void TADialogGroupToolInputPage::FillGridControl()
 		{
 			if (type == SvPb::LinkedValueTypeEnum::TypeStates)
 			{
-				auto text = State2String(m_inputData[i].m_data.m_defaultValue);
-				m_Grid.SetItemText(row, DefaultColumn, text.c_str());
-				setGridControlReadOnlyFlag(row, DefaultColumn, false);
+				m_Grid.SetCellType(row, DefaultColumn, RUNTIME_CLASS(GridCellCombo));
+				setGridControlReadOnlyFlag(row, DefaultColumn, m_isInputsChangeAble);
+				auto* pCell_Def = dynamic_cast<SvGcl::GridCellCombo*>(m_Grid.GetCell(row, DefaultColumn));
+				CStringArray typePassed;
+				auto states = SvOgu::StateHelper::getStates();
+				for (auto el : states)
+				{
+					typePassed.Add(el.first.c_str());
+				}
+				pCell_Def->SetOptions(typePassed);
+				pCell_Def->SetStyle(CBS_DROPDOWNLIST);
+				auto text = SvOgu::StateHelper::toString(m_inputData[i].m_data.m_defaultValue);
+				pCell_Def->SetText(text.c_str());
+				
 			}
 			else
 			{
@@ -508,7 +515,7 @@ void TADialogGroupToolInputPage::setValueColumn(int pos)
 			if (SvPb::LinkedValueTypeEnum::TypeStates == m_inputData[pos].m_type)
 			{
 				isChangeable = false;
-				valueString = State2String(m_inputData[pos].m_data.m_directValue).c_str();
+				valueString = SvOgu::StateHelper::toString(m_inputData[pos].m_data.m_directValue).c_str();
 				 
 			}
 			else if (SvPb::isValueType(m_inputData[pos].m_type))

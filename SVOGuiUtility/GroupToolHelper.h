@@ -18,6 +18,9 @@ namespace SvOgu
 {
 class ValueController;
 
+
+
+
 struct GroupInputResultData
 {
 	std::string m_name {"GroupData"};
@@ -29,6 +32,19 @@ struct GroupInputResultData
 	
 	bool isOk() const;
 	bool setValue(const std::string& newStr);
+
+};
+
+class StateHelper
+{
+public:
+	static const std::array< std::pair<std::string, int>, 3>& getStates();
+	static int toState(const std::string& name);
+	static  std::string toString(int state);
+	static  std::string toString(const _variant_t& var);
+private:
+	static const std::array< std::pair<std::string, int>,3> m_states;
+
 
 };
 

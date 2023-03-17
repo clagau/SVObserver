@@ -58,7 +58,7 @@ bool GroupInputResultData::isOk() const
 	return (SvDef::InvalidObjectId == m_errorData.m_ObjectId);
 }
 
-bool GroupInputResultData::setValue( const std::string& newStr)
+bool GroupInputResultData::setValue(const std::string& newStr)
 {
 	if (SvPb::LinkedSelectedOption::DirectValue == m_data.m_selectedOption && SvPb::isValueType(m_type))
 	{
@@ -140,10 +140,9 @@ bool addEntry(uint32_t ipId, uint32_t taskId, const std::string& firstNameTry, s
 		GroupInputResultData& rData {rDataList.emplace_back(firstNameTry)};
 		int additionalValue = 1;
 		do
-		{ 
+		{
 			rData.m_name = firstNameTry + std::to_string(additionalValue++);
-		}
-		while (false == SvOgu::checkParameterNames(ipId, taskId, rDataList).empty());
+		} while (false == SvOgu::checkParameterNames(ipId, taskId, rDataList).empty());
 		return true;
 	}
 	return false;
@@ -182,13 +181,15 @@ variant_t convertTextToVariant(SvPb::LinkedValueTypeEnum type, const std::string
 		switch (type)
 		{
 			case SvPb::LinkedValueTypeEnum::TypeDecimal:
+				//@Todo[mec}
 				result = std::stod(text);
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeText:
 				result = text.c_str();
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeStates:
-				result = std::stoi(text);
+				result = StateHelper::toState(text);
+
 				break;
 
 
@@ -307,6 +308,65 @@ SvStl::MessageContainerVector checkParameterNames(uint32_t ipId, uint32_t taskId
 	{
 		message.add_parameter_names(data);
 	}
-	return checkParameterNames(ipId, taskId, message); 
+	return checkParameterNames(ipId, taskId, message);
 }
+
+
+
+
+
+const std::array< std::pair<std::string, int>, 3>& StateHelper::getStates()
+{
+	
+	return m_states;
+}
+ const std::array< std::pair<std::string, int>, 3> StateHelper::m_states = 
+ {
+	 std::pair(toString(SvPb::StateDefaultType::Passed), SvPb::StateDefaultType::Passed),
+	 std::pair(toString(SvPb::StateDefaultType::Failed), SvPb::StateDefaultType::Failed),
+	 std::pair(toString(SvPb::StateDefaultType::Warned), SvPb::StateDefaultType::Warned)
+};
+
+int StateHelper::toState(const std::string& name)
+{
+	
+	auto  found = std::find_if(m_states.begin(), m_states.end(), [&name](const auto e){return (e.first == name); });
+
+	if (found != m_states.end())
+		return found->second;
+	else 
+		return SvPb::StateDefaultType::Passed;
+
+		
+		
+}
+
+
+std::string StateHelper::toString(const _variant_t& var)
+{
+	try
+	{
+		return StateHelper::toString(static_cast<int>(var));
+	}
+	catch (...)
+	{
+		return "";
+	}
+}
+std::string StateHelper::toString(int var)
+{
+
+	try
+	{
+		return SvPb::StateDefaultType_Name(SvPb::StateDefaultType(var));
+	}
+	catch (...)
+	{
+		return "";
+	}
+
+}
+
+
+
 }

@@ -304,7 +304,7 @@ HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 	setSelectedOption(rData.option());
 	//make  sure value is consistent
 	_variant_t directValue;
-	SvPb::ConvertProtobufToVariant(rData.directvalue(),directValue);
+	SvPb::ConvertProtobufToVariant(rData.directvalue(), directValue);
 	if (S_OK != ::VariantChangeTypeEx(&directValue, &directValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultValue().vt))
 	{
 		Log_Assert(false);
@@ -313,7 +313,7 @@ HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 	{
 		m_directValue = directValue;
 	}
-	
+
 	m_indirectValueRef = SVObjectReference {rData.indirectidstring()};
 	m_formulaString = rData.formula();
 	setComment(rData.comment());
@@ -1026,14 +1026,14 @@ std::string LinkedValue::getContentStr() const
 	return value;
 }
 
-	void LinkedValue::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
+void LinkedValue::Persist(SvOi::IObjectWriter& rWriter, bool closeObject/* = true*/) const
 {
 	if (SvPb::noAttributes == ObjectAttributesAllowed() && false == isUsed())
 	{
 		return;
 	}
 
-		__super::Persist(rWriter, false);
+	__super::Persist(rWriter, false);
 	if (m_children.size())
 	{
 		rWriter.StartElement(scLinkedChildsTag);
@@ -1059,11 +1059,11 @@ std::string LinkedValue::getContentStr() const
 	Value = Temp.c_str();
 	rWriter.WriteAttribute(scLinkedFormulaTag, Value);
 
-		if (closeObject)
-		{
-			rWriter.EndElement();
-		}
+	if (closeObject)
+	{
+		rWriter.EndElement();
 	}
+}
 
 HRESULT LinkedValue::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
@@ -1110,13 +1110,13 @@ SvPb::LinkedSelectedOption LinkedValue::getSelectedOption() const
 	return m_refOption;
 }
 
-	void LinkedValue::resetToDefault()
-	{
-		m_formulaString = "";
-		m_equation.SetEquationText(m_formulaString);
-		m_indirectValueRef = {};
-		setDirectValue(GetDefaultValue());
-	}
+void LinkedValue::resetToDefault()
+{
+	m_formulaString = "";
+	m_equation.SetEquationText(m_formulaString);
+	m_indirectValueRef = {};
+	setDirectValue(GetDefaultValue());
+}
 
 HRESULT LinkedValue::setIndirectStringForOldStruct(const std::vector<_variant_t>& rValueString)
 {
@@ -1153,7 +1153,7 @@ void LinkedValue::setValueType(SvPb::LinkedValueTypeEnum type)
 			break;
 		case SvPb::TypeStates:
 		{
-			
+
 			if (VT_INT != defaultVt)
 				SetDefaultValue(int(0));
 			break;
@@ -1594,29 +1594,47 @@ bool LinkedValue::checkLinkedObjectRef(SvStl::MessageContainerVector* pErrorMess
 
 bool LinkedValue::UpdateChildrenForDefaultState(SvStl::MessageContainerVector* pErrorMessages)
 {
-	const int N = 9;
-	const int namesId[N] = {IDS_OBJECTNAME_ACTIVE, IDS_OBJECTNAME_ENABLED, IDS_OBJECTNAME_PASSED, IDS_OBJECTNAME_FAILED, IDS_OBJECTNAME_WARNED, IDS_OBJECTNAME_PASSED_COUNT, IDS_OBJECTNAME_FAILED_COUNT, IDS_OBJECTNAME_WARNED_COUNT,IDS_OBJECTNAME_ENABLED_COUNT};
-	bool isIndirectValue[N] = {1,1,0,0,0,0,0,0,0};
-	const SvPb::EmbeddedIdEnum embeddedIds[N] = {SvPb::ToolActiveEId ,SvPb::ToolEnabledEId, SvPb::PassedEId, SvPb::FailedEId, SvPb::WarnedEId, SvPb::PassedCountEId, SvPb::FailedCountEId, SvPb::WarnedCountEId, SvPb::EnabledCountEId};
-	int values[N] = {1,1,0,0,0,0,0,0,0};
+	struct dat
+	{
+		int NameID {0};
+		bool isIndirectValue {false};
+		SvPb::EmbeddedIdEnum embeddedId {0};
+		_variant_t value;
+	};
+
+	std::array<dat, 9>  data =
+	{
+		dat{IDS_OBJECTNAME_ACTIVE,true, SvPb::ToolActiveEId, _variant_t(true)},
+		dat{IDS_OBJECTNAME_ENABLED,true, SvPb::ToolEnabledEId, _variant_t(true)},
+		dat{IDS_OBJECTNAME_PASSED,false, SvPb::PassedEId, _variant_t(false)},
+		dat{IDS_OBJECTNAME_FAILED,false, SvPb::FailedEId, _variant_t(false)},
+		dat{IDS_OBJECTNAME_WARNED,false,SvPb::WarnedEId, _variant_t(false)},
+		dat{IDS_OBJECTNAME_PASSED_COUNT,false,SvPb::PassedCountEId, _variant_t(0)},
+		dat{IDS_OBJECTNAME_FAILED_COUNT,false,SvPb::FailedCountEId, _variant_t(0)},
+		dat{IDS_OBJECTNAME_WARNED_COUNT,false,SvPb::WarnedCountEId, _variant_t(0)},
+		dat{IDS_OBJECTNAME_ENABLED_COUNT,false,SvPb::EnabledCountEId, _variant_t(0)}
+
+	};
+
 	_variant_t val;
 	getValue(val);
 	switch (int(val))
 	{
 
 		case SvPb::StateDefaultType::Passed:
-			values[2] = 1;
+			data[2].value = true;
 			break;
 
 		case SvPb::StateDefaultType::Failed:
-			values[3] = 1;
+			data[3].value = true;
 			break;
 
 		case  SvPb::StateDefaultType::Warned:
-			values[4] = 1;
+			data[4].value = true;
+
 			break;
 		default:
-			values[2] = 1;
+			data[2].value = true;
 			break;
 
 	}
@@ -1626,15 +1644,15 @@ bool LinkedValue::UpdateChildrenForDefaultState(SvStl::MessageContainerVector* p
 	{
 		return false;
 	}
-
+	auto N = data.size();
 	m_children.resize(N);
 	bool result = true;
 	for (int i = 0; i < N; i++)
 	{
-		if (isIndirectValue[i])
+		if (data[i].isIndirectValue)
 		{
 			SvDef::SVObjectTypeInfoStruct info;
-			info.m_EmbeddedID = embeddedIds[i];
+			info.m_EmbeddedID = data[i].embeddedId;
 
 			auto pObject = pTool->getFirstObject(info);
 			SvOi::IValueObject* pValueObject = pObject ? pObject->getValueObjectPtr() : nullptr;
@@ -1664,10 +1682,11 @@ bool LinkedValue::UpdateChildrenForDefaultState(SvStl::MessageContainerVector* p
 
 			m_children[i]->donotCheckForDependency();
 			m_children[i]->SetObjectOwner(this);
-			m_children[i]->SetName(SvUl::LoadStdString(namesId[i]).c_str());
-			m_children[i]->setEmbeddedId(embeddedIds[i]);
-			m_children[i]->setDefaultValue(0);
-			m_children[i]->setDirectValue(values[i]);
+			m_children[i]->SetName(SvUl::LoadStdString(data[i].NameID).c_str());
+			m_children[i]->setEmbeddedId(data[i].embeddedId);
+			m_children[i]->setDefaultValue(data[i].value);
+			m_children[i]->setDirectValue(data[i].value);
+
 			result = m_children[i]->resetAllObjects(pErrorMessages) && result;
 
 		}
@@ -1718,7 +1737,7 @@ bool LinkedValue::updateLinkedValue(SVObjectReference& LinkedObjectRef, SvStl::M
 				break;
 			}
 			case SvPb::SVToolObjectType:
-			{ 
+			{
 				//Add children-LinkedValues for states of Tools
 				Result = resetChildren(pLinkedObject, {SvPb::ToolActiveEId ,SvPb::ToolEnabledEId, SvPb::PassedEId, SvPb::FailedEId, SvPb::WarnedEId, SvPb::PassedCountEId, SvPb::FailedCountEId, SvPb::WarnedCountEId, SvPb::EnabledCountEId}, pErrorMessages);
 				break;
