@@ -338,7 +338,7 @@ void SVPictureTabs::UpdateTabClient( SVPictureDialogRef p_Dialog )
 	CRect TabClient;
 	GetClientRect( &TabClient );
 	m_TabCtrl.AdjustRect( FALSE, &TabClient );
-	p_Dialog.get()->Resize(SIZE_RESTORED, 1, 1, TabClient.Width(), TabClient.Height());
+	p_Dialog.get()->Resize(1, 1, TabClient.Width(), TabClient.Height());
 }
 
 void SVPictureTabs::OnSize(UINT nType, int cx, int cy)

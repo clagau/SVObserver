@@ -63,23 +63,21 @@ std::map<int, ColumnDef> g_columnResultObjectsDefArray = {
 
 SvStl::MessageContainerVector getErrorMessage(uint32_t inspectionId, uint32_t toolId);
 
-
-BEGIN_MESSAGE_MAP(TADialogGroupToolResultPage, CPropertyPage)
-	//{{AFX_MSG_MAP(TaDlgGroupToolInput)
-	ON_BN_CLICKED(IDC_BUTTON_REMOVE, OnBnClickedButtonRemove)
-	ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedButtonAdd)
-	ON_BN_CLICKED(IDC_BUTTON_MOVEUP, OnBnClickedMoveUp)
-	ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
-	ON_EN_KILLFOCUS(IDC_EDIT_COMMENT, OnKillFocusComment)
-	ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
-	ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
-	ON_NOTIFY(GVN_VALUE_SELCHANGED, IDC_GRID, OnGridValueSelectionChanged)
-	ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
-	ON_COMMAND(ID_ADD_COLUMN, OnBnClickedButtonAdd)
-	ON_COMMAND(ID_REMOVE_COLUMNS, OnBnClickedButtonRemove)
-	ON_WM_SIZE()
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
+	BEGIN_MESSAGE_MAP(TADialogGroupToolResultPage, CPropertyPage)
+		//{{AFX_MSG_MAP(TaDlgGroupToolInput)
+		ON_BN_CLICKED(IDC_BUTTON_REMOVE, OnBnClickedButtonRemove)
+		ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedButtonAdd)
+		ON_BN_CLICKED(IDC_BUTTON_MOVEUP, OnBnClickedMoveUp)
+		ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
+		ON_EN_KILLFOCUS(IDC_EDIT_COMMENT, OnKillFocusComment)
+		ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
+		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
+		ON_NOTIFY(GVN_VALUE_SELCHANGED, IDC_GRID, OnGridValueSelectionChanged)
+		ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
+		ON_COMMAND(ID_ADD_COLUMN, OnBnClickedButtonAdd)
+		ON_COMMAND(ID_REMOVE_COLUMNS, OnBnClickedButtonRemove)
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
 
 #pragma region Constructor
 TADialogGroupToolResultPage::TADialogGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isInputsChangeAble)
@@ -339,13 +337,6 @@ void TADialogGroupToolResultPage::OnBnClickedMoveDown()
 		m_Grid.SetFocusCell(Selection.GetMaxRow(), Selection.GetMaxCol());
 		FillGridControl();
 	}
-}
-
-void TADialogGroupToolResultPage::OnSize(UINT nType, int cx, int cy)
-{
-	CPropertyPage::OnSize(nType, cx, cy);
-	m_Grid.AutoSizeColumns();
-	m_Grid.ExpandLastColumn();
 }
 
 void TADialogGroupToolResultPage::OnKillFocusComment()

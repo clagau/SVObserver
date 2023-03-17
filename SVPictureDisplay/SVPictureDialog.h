@@ -86,7 +86,7 @@ public:
 
 	HRESULT SetAllowEdit( long lHandle, long lEnable );
 	HRESULT SelectDrawObject( long lHandle );
-	void Resize( unsigned int nType, long x, long y, long Width, long Height );
+	void Resize(long x, long y, long Width, long Height );
 	HRESULT GetObjectCoords( long lHandle, long& rlX1, long& rlY1, long& rlX2, long& rlY2 );
 	HRESULT GetObjectParameter( long lHandle, VariantParamMap& ParameterMap );
 

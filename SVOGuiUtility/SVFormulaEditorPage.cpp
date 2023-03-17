@@ -166,10 +166,34 @@ BOOL SVFormulaEditorPageClass::OnInitDialog()
 	}
 
 	enableControls();
+	SetupDynamicLayout();
 	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void SVFormulaEditorPageClass::SetupDynamicLayout()
+{
+	if (IsDynamicLayoutEnabled())
+	{
+		CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
+		if (!dynamicLayout->HasItem(m_EditWnd.m_hWnd))
+		{
+			dynamicLayout->AddItem(m_EditWnd.m_hWnd,
+				CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100,100));
+		}
+		if (!dynamicLayout->HasItem(m_validateBar.m_hWnd))
+		{
+			dynamicLayout->AddItem(m_validateBar.m_hWnd,
+				CMFCDynamicLayout::MoveHorizontalAndVertical(100, 100), CMFCDynamicLayout::SizeNone());
+		}
+		if (!dynamicLayout->HasItem(m_cursorBar.m_hWnd))
+		{
+			dynamicLayout->AddItem(m_cursorBar.m_hWnd,
+				CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
+		}
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////

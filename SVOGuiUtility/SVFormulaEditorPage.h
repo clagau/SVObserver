@@ -98,7 +98,7 @@ namespace SvOgu
 		void createScintillaControl();
 		bool IsBrace( int c );
 		void CheckBrace();
-
+		void SetupDynamicLayout();
 	protected:
 		SvMc::SVToolBar m_logicalOperatorBar;
 		SvMc::SVToolBar m_functionOperatorBar;

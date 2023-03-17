@@ -465,6 +465,15 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 void SVToolAdjustmentDialogSheetClass::SetupDynamicLayout()
 {
 	EnableDynamicLayout(TRUE);
+
+	CRect clientRect;
+	GetClientRect(&clientRect);
+	
+	constexpr int gripperSize = 12;
+	CRect gripperRect(clientRect.right - gripperSize, clientRect.bottom - gripperSize, clientRect.right, clientRect.bottom);
+
+	m_resizeGripper.Create(SBS_SIZEGRIP | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, gripperRect, this, IDC_RESIZE_GRIPPER);
+
 	auto pManager = GetDynamicLayout();
 	if (pManager != nullptr)
 	{
@@ -487,6 +496,7 @@ void SVToolAdjustmentDialogSheetClass::SetupDynamicLayout()
 			
 		}
 	}
+
 }
 
 BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()

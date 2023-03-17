@@ -79,6 +79,7 @@ private:
 	void AddItemToTree(const SvPb::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID);
 	void setValueColumn(SvPb::EmbeddedIdEnum eId, SvPb::ExDllInterfaceType type, SVRPropertyItemEdit& rEdit);
 	bool setStringToData(SVRPropertyItem& rItem);
+	void SetupDynamicLayout();
 
 private:
 	SVRPropTree	m_Tree;

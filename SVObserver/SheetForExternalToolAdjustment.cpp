@@ -104,7 +104,12 @@ BOOL SheetForExternalToolAdjustment::OnInitDialog()
 			rect, this, IDC_RUN_ONCE);
 
 	m_runOnceButton.SetFont(GetFont());
+	SetupDynamicLayout();
+	return bResult;
+}
 
+void SheetForExternalToolAdjustment::SetupDynamicLayout()
+{
 	if (IsDynamicLayoutEnabled())
 	{
 		CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
@@ -119,8 +124,6 @@ BOOL SheetForExternalToolAdjustment::OnInitDialog()
 				CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
 		}
 	}
-
-	return bResult;
 }
 
 void SheetForExternalToolAdjustment::OnRunOnce()

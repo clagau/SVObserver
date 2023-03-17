@@ -45,6 +45,7 @@ namespace SvOg
 		//{{AFX_MSG(SVTADlgExternalToolImageSelectPage)
 		void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
 		void OnPropClick(NMHDR* pNotifyStruct, LRESULT* plResult);
+		afx_msg void OnSize(UINT nType, int cx, int cy);
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()
 	#pragma endregion Protected Methods
@@ -64,6 +65,7 @@ namespace SvOg
 		// Returns:   void
 		//************************************
 		void setImages(SvOgu::ImageController &imgCtrl);
+		void SetupDynamicLayout();
 
 	#pragma endregion Private Methods
 

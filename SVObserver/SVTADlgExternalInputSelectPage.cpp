@@ -198,12 +198,27 @@ BOOL SVTADlgExternalInputSelectPage::OnInitDialog()
 		GetDlgItem(IDC_NO_INPUT_TXT)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_INPUT_LIST)->ShowWindow(SW_HIDE);
 	}
+
+	SetupDynamicLayout();
+
 	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+void SVTADlgExternalInputSelectPage::SetupDynamicLayout()
+{
+	if (IsDynamicLayoutEnabled())
+	{
+		CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
+		if (!dynamicLayout->HasItem(m_Tree.m_hWnd))
+		{
+			dynamicLayout->AddItem(m_Tree.m_hWnd,
+				CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100, 100));
+		}
+	}
+}
 
 SVRPropertyItem* SVTADlgExternalInputSelectPage::AddGroupToTree(const std::string& groupName, std::map<std::string, SVRPropertyItem*>& rMapGroupItems, SVRPropertyItem* pRoot)
 {

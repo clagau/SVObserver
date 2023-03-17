@@ -86,10 +86,23 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 	m_Tree.Create(dwStyle, rc, this, IDC_RESULT_LIST);
 	m_Tree.SetColumn(m_Tree.GetColumn() * 2); //sets the splitter position to twice the default
 
+	SetupDynamicLayout();
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+void SVTADlgExternalResultPage::SetupDynamicLayout()
+{
+	if (IsDynamicLayoutEnabled())
+	{
+		CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
+		if (!dynamicLayout->HasItem(m_Tree.m_hWnd))
+		{
+			dynamicLayout->AddItem(m_Tree.m_hWnd,
+				CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100,100));
+		}
+	}
+}
 
 void SVTADlgExternalResultPage::rebuildPropertyTree()
 {

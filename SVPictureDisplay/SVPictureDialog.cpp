@@ -191,47 +191,46 @@ void SVPictureDialog::PositionPictureDisplay()
 	CRect rect;
 	CDialog::GetClientRect(&rect);
 	long ScrollBarWidth = IsScrollbarHidden() ? 0 : m_lScrollBarWidth;
-	long gap = 0;
 
 	switch( m_eAppearance )
 	{
 	case TopButtons:
 		{
 			m_PictDisplay.SetWindowPos(&CWnd::wndTop, 
-				0,														// x
-				m_ButtonSize,											// y
-				rect.Width() - ScrollBarWidth - gap,					// width
-				rect.Height() - m_ButtonSize - ScrollBarWidth - gap,	// Height
+				0,												// x
+				m_ButtonSize,									// y
+				rect.Width() - ScrollBarWidth,					// width
+				rect.Height() - m_ButtonSize - ScrollBarWidth,	// Height
 				SWP_SHOWWINDOW );
 			break;
 		}
 	case RightButtons:
 		{
 			m_PictDisplay.SetWindowPos(&CWnd::wndTop, 
-				0,													// x
-				0,													// y
-				rect.Width() - m_ButtonSize - ScrollBarWidth - gap,	// width
-				rect.Height() - ScrollBarWidth - gap,				// Height
+				0,												// x
+				0,												// y
+				rect.Width() - m_ButtonSize - ScrollBarWidth,	// width
+				rect.Height() - ScrollBarWidth,					// Height
 				SWP_SHOWWINDOW );
 			break;
 		}
 	case LeftButtons:
 		{
 			m_PictDisplay.SetWindowPos(&CWnd::wndTop, 
-				m_ButtonSize,										// x
-				0,													// y
-				rect.Width()- m_ButtonSize - ScrollBarWidth - gap,	// width
-				rect.Height() - ScrollBarWidth - gap,				// Height
+				m_ButtonSize,									// x
+				0,												// y
+				rect.Width()- m_ButtonSize - ScrollBarWidth,	// width
+				rect.Height() - ScrollBarWidth,					// Height
 				SWP_SHOWWINDOW );
 			break;
 		}
 	case BottomButtons:
 		{
 			m_PictDisplay.SetWindowPos(&CWnd::wndTop, 
-				0,														// x
-				0,														// y
-				rect.Width() - ScrollBarWidth - gap,					// width
-				rect.Height() - m_ButtonSize - ScrollBarWidth - gap,	// Height
+				0,												// x
+				0,												// y
+				rect.Width() - ScrollBarWidth,					// width
+				rect.Height() - m_ButtonSize - ScrollBarWidth,	// Height
 				SWP_SHOWWINDOW );
 			break;
 		}
@@ -239,10 +238,10 @@ void SVPictureDialog::PositionPictureDisplay()
 	case HideButtons:
 		{
 			m_PictDisplay.SetWindowPos(&CWnd::wndTop, 
-				0,										// x
-				0,										// y
-				rect.Width() - ScrollBarWidth - gap,	// width
-				rect.Height() - ScrollBarWidth - gap,	// Height
+				0,									// x
+				0,									// y
+				rect.Width() - ScrollBarWidth,		// width
+				rect.Height() - ScrollBarWidth,		// Height
 				SWP_SHOWWINDOW );
 			break;
 		}
@@ -997,15 +996,12 @@ void SVPictureDialog::OnSize(UINT nType, int cx, int cy)
 	SetupWindow();
 }
 
-void SVPictureDialog::Resize(unsigned int nType, long x, long y, long Width, long Height)
+void SVPictureDialog::Resize(long x, long y, long Width, long Height)
 {
 	if (::IsWindow(m_hWnd))
 	{
 		//It is important to use MoveWindow and not SetWindowPos here because SetWindowPos changes the window order.
 		MoveWindow( x, y, Width, Height);
-		CRect rect;
-		CDialog::GetClientRect( &rect );
-		OnSize(nType, rect.Width(), rect.Height() );
 		m_PictDisplay.CalculateZoomToFit();
 		SetScrollBars();
 		CloneScrollPosition(SB_BOTH);

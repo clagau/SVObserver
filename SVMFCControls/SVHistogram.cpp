@@ -364,6 +364,7 @@ void SVHistogram::OnSize(UINT nType, int cx, int cy)
 	CStatic::OnSize(nType, cx, cy);
 	GetClientRect(&m_client);
 	UpdateAnchors(m_client, m_func);
+	m_bmp.DeleteObject();
 	PaintBitmap();
 }
 

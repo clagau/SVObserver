@@ -50,6 +50,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 		//{{AFX_MSG_MAP(SVTADlgExternalToolImageSelectPage)
 		ON_NOTIFY(PTN_ITEMCHANGED, IDC_IMAGE_LIST, OnItemChanged)
 		ON_NOTIFY(PTN_PROPCLICK, IDC_IMAGE_LIST, OnPropClick)
+		ON_WM_SIZE()
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 	#pragma endregion Declarations
@@ -94,8 +95,22 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 			UpdateData(false); // set data to dialog
 		}
 
+		SetupDynamicLayout();
 		return TRUE;  // return TRUE unless you set the focus to a control
 					  // EXCEPTION: OCX Property Pages should return FALSE
+	}
+
+	void SVTADlgExternalToolImageSelectPage::SetupDynamicLayout()
+	{
+		if (IsDynamicLayoutEnabled())
+		{
+			CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
+			if (!dynamicLayout->HasItem(m_Tree.m_hWnd))
+			{
+				dynamicLayout->AddItem(m_Tree.m_hWnd,
+					CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeHorizontal(100));
+			}
+		}
 	}
 
 	void SVTADlgExternalToolImageSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
@@ -163,6 +178,15 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 	#pragma endregion Protected Methods
 
 	#pragma region Private Methods
+	void SVTADlgExternalToolImageSelectPage::OnSize(UINT nType, int cx, int cy)
+	{
+		CPropertyPage::OnSize(nType, cx, cy);
+		if (m_Tree)
+		{
+			
+		}
+	}
+
 	void SVTADlgExternalToolImageSelectPage::buildPropertyTree()
 	{
 		// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window

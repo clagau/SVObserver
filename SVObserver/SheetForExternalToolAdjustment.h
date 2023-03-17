@@ -44,6 +44,7 @@ protected:
 	LRESULT ExternalToolSelectInputValuePage(WPARAM, LPARAM);
 	LRESULT UpdateIpDocViews(WPARAM, LPARAM);
 
+	void SetupDynamicLayout();
 private:
 	SvOgu::ExternalToolTaskController m_externalToolTaskController;
 };

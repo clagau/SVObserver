@@ -39,6 +39,11 @@ namespace SvMc
 		void remove(const std::string& rItemName);
 
 	protected:
+		/// Avoid changing the combobox selection value with the mouse wheel!
+		virtual BOOL PreTranslateMessage(MSG* pMsg) override
+		{
+			return (pMsg->message == WM_MOUSEWHEEL) ? TRUE : CComboBox::PreTranslateMessage(pMsg);
+		}
 
 	private:
 		Container m_List;

@@ -281,16 +281,11 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 		// Rect from IDC_PICT this is the display area.
 		CRect rect = m_ViewMaxRect;
 
-		bool l_bFirstTime = false;
 		// Delete the old bitmap.
 		if( nullptr != m_memBitmap )
 		{
 			::DeleteObject( m_memBitmap );
 			m_memBitmap = nullptr;
-		}
-		else
-		{
-			l_bFirstTime = true;
 		}
 
 		// Create compatible Bitmap here...Rather than in OnPaint to save time.
@@ -335,7 +330,8 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 				}
 				m_BackgroundColor = BackgroundColor;
 
-				if( AdjustZoom && (l_bFirstTime || m_Zoom.IsFit()) )
+				static bool firstTime = true;
+				if( AdjustZoom && (firstTime || m_Zoom.IsFit()) )
 				{
 					SetZoom(ZoomEnum::ZoomFitAll);
 				}
@@ -344,6 +340,7 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 					// Set Default Zoom here.
 					SetZoom(ZoomEnum::ZoomNormal);
 				}
+				firstTime = false;
 			}
 			l_pPicture->Release();
 		}
@@ -1135,6 +1132,18 @@ void SVDisplayPicture::OnSize(UINT nType, int cx, int cy)
 	for( it = m_DrawObjects.begin(); it != m_DrawObjects.end(); ++it )
 	{
 		it->second->setViewSize(CSize(cx, cy));
+	}
+	if (nullptr != m_memBitmap)
+	{
+		::DeleteObject(m_memBitmap);
+		m_memBitmap = nullptr;
+	}
+	// Create compatible Bitmap here...Rather than in OnPaint to save time.
+	CDC* pDC = GetDC();
+	if (nullptr != pDC)
+	{
+		m_memBitmap = ::CreateCompatibleBitmap(pDC->m_hDC, m_ViewMaxRect.Width(), m_ViewMaxRect.Height());
+		ReleaseDC(pDC);
 	}
 }
 

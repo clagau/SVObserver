@@ -14,15 +14,12 @@
 #include "SVTADlgThresholdPage.h"
 #include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "InspectionEngine/SVDataBuffer.h"
 #include "Operators/SVAutoThresholdEquation.h"
 #include "Operators/SVLowerThresholdEquation.h"
 #include "Operators/SVThresholdClass.h"
 #include "Operators/SVUpperThresholdEquation.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVOGuiUtility/DataController.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMFCControls/SVHistogram.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
@@ -152,24 +149,27 @@ HRESULT SVTADlgThresholdPage::SetInspectionData()
 	}
 
 
-	if (S_OK == Result)
+	std::vector<long> histogramValues;
+	histogramValues.resize(MaxValues);
+	m_histState = 0;
+	if (m_thresholdActive)
 	{
-		m_histState = 0;
-		if (m_thresholdActive)
+		m_histState = histogram::shown;
+		if (!m_bUseAutoThreshold)
 		{
-			m_histState = histogram::shown;
-			if (!m_bUseAutoThreshold)
-			{
-				m_histState |= histogram::active;
-			}
+			m_histState |= histogram::active;
 		}
 		m_pCurrentThreshold->saveHistogram = true;
-		const std::vector<long> & l_val = m_pCurrentThreshold->GetHistogramValues();
-		m_histogram.SetPixelCounts(l_val.begin(), l_val.end());
-		m_histogram.PostMessage(ID_BOUND_CHANGE, 1, m_lowerThreshold.GetPos());
-		m_histogram.PostMessage(ID_BOUND_CHANGE, 2, m_upperThreshold.GetPos()|(m_histState << 8));
+		SvCmd::RunOnceSynchronous(m_pCurrentThreshold->GetInspection()->getObjectId());
+		histogramValues = m_pCurrentThreshold->GetHistogramValues();
 		m_pCurrentThreshold->saveHistogram = false;
 	}
+
+	m_histogram.SetPixelCounts(histogramValues.begin(), histogramValues.end());
+	m_histogram.PostMessage(ID_BOUND_CHANGE, 1, m_lowerThreshold.GetPos());
+	m_histogram.PostMessage(ID_BOUND_CHANGE, 2, m_upperThreshold.GetPos()|(m_histState << 8));
+	m_strWhitePixel.Format("White Pixel: %ld", histogramValues[MaxThresholdValue]);
+
 	UpdateData(false);
 
 	return Result;
@@ -221,34 +221,6 @@ void SVTADlgThresholdPage::initThreshold()
 	{
 		SetInspectionData();
 
-		if( m_pCurrentThreshold && m_pCurrentThreshold->getOutputImage() )
-		{
-			// Calculate And Show White Pixels...
-			// &&&
-			__int64 histResultID = M_NULL;
-			std::vector<long> l_alHistValues;
-			SvIe::SVDataBufferInfoClass svData;
-
-			l_alHistValues.resize(MaxValues);
-			svData.Length = MaxValues;
-			svData.Type = SvIe::SVDataBufferInfoClass::SVHistResult;
-			svData.HBuffer.milResult = histResultID;
-			if ( S_OK == SvIe::SVImageProcessingClass::CreateDataBuffer( &svData ) )
-			{
-				histResultID = svData.HBuffer.milResult;
-			}
-
-			SvOi::SVImageBufferHandlePtr pImageBuffer = m_pCurrentThreshold->getOutputImage()->getLastImage();
-
-			if ( nullptr != pImageBuffer && !pImageBuffer->empty())
-			{
-				/*HRESULT l_Code = */SVMatroxImageInterface::Histogram( histResultID, pImageBuffer->GetBuffer() );
-				/*l_Code = */SVMatroxImageInterface::GetResult( histResultID, l_alHistValues );
-				/*l_Code = */SVMatroxImageInterface::Destroy( histResultID );
-
-				m_strWhitePixel.Format( "White Pixel: %ld", l_alHistValues[ MaxThresholdValue ] );
-			}
-		}
 		setImages();
 		UpdateData(false); // set data to dialog
 	}
@@ -824,6 +796,8 @@ void SVTADlgThresholdPage::OnCheck1()
 				pWnd->ShowWindow( SW_HIDE );
 
 			// Show manual threshold controls...
+			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_CHECK)))
+				pWnd->ShowWindow(SW_SHOW);
 			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_CHECK)))
 				pWnd->ShowWindow( SW_SHOW );
 			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_CHECK)))
@@ -881,6 +855,8 @@ void SVTADlgThresholdPage::OnCheck1()
 			pWnd->ShowWindow( SW_HIDE );
 
 		// Hide auto threshold controls...
+		if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_CHECK)))
+			pWnd->ShowWindow(SW_HIDE);
 		if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_EDIT)))
 			pWnd->ShowWindow( SW_HIDE );
 		if (nullptr != (pWnd = GetDlgItem(IDC_BLACK_BACKGROUND_RADIO)))

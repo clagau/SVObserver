@@ -83,6 +83,8 @@ private:
 
 	typedef std::shared_ptr<SvOgu::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;
+
+	CScrollBar m_resizeGripper;
 };
 
 //{{AFX_INSERT_LOCATION}}
