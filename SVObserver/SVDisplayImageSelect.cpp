@@ -58,9 +58,8 @@ void SVDisplayImageSelect::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(SVDisplayImageSelect, CDialog)
 	//{{AFX_MSG_MAP(SVDisplayImageSelect)
-	ON_WM_PAINT()	//needed for "Gripper" functionality only
-	ON_WM_SIZE()	//needed for "Gripper" functionality only
 	ON_EN_CHANGE(IDC_WILDCARD_PATTERN, OnReloadImageList)
+	ON_WM_GETMINMAXINFO()
 	//}}AFX_MSG_MAP
 
 END_MESSAGE_MAP()
@@ -89,6 +88,13 @@ void SVDisplayImageSelect::OnReloadImageList()
 {
 	UpdateData(TRUE);
 	LoadImageList();
+}
+
+void SVDisplayImageSelect::OnGetMinMaxInfo(MINMAXINFO FAR* pMinMaxInfo)
+{
+	// Set the Minimum Track Size. Used while resizing.
+	pMinMaxInfo->ptMinTrackSize.x = m_minSize.cx;
+	pMinMaxInfo->ptMinTrackSize.y = m_minSize.cy;
 }
 
 
@@ -163,8 +169,6 @@ void SVDisplayImageSelect::LoadImageList()
 	}
 
 	UpdateData(FALSE);
-
-
 }
 
 
@@ -175,6 +179,10 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 	SetTitle();
 
 	LoadImageList();
+
+	CRect wndRect;
+	GetWindowRect(&wndRect);
+	m_minSize = {wndRect.Width(), wndRect.Height()};
 
 	return TRUE;
 }// end OnInitDialog
@@ -191,31 +199,3 @@ void SVDisplayImageSelect::SetTitle()
 		SetWindowText(title);
 	}
 }
-
-
-void SVDisplayImageSelect::OnPaint() //needed for "Gripper" functionality only
-{
-	CPaintDC dc(this);
-
-	CRect Rect;
-	GetClientRect(&Rect);
-
-	// Get the standard size of the gripper
-	Rect.left = Rect.right - ::GetSystemMetrics(SM_CXHSCROLL);
-	Rect.top = Rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
-
-	// Draw it
-	dc.DrawFrameControl(&Rect, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
-
-	// Save the painted rect so we can invalidate the rect on next OnSize()
-	m_Gripper = Rect;
-}
-
-void SVDisplayImageSelect::OnSize(UINT nType, int cx, int cy) //needed for "Gripper" functionality only
-{
-	CDialog::OnSize(nType, cx, cy);
-
-	InvalidateRect(m_Gripper, true);
-	m_Resizer.Resize(this);
-}
-
