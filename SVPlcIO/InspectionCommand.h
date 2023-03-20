@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include "PlcDataTypes.h"
-#include "Triggering/TriggerData.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
