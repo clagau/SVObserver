@@ -1293,15 +1293,6 @@ void SVMainFrame::OnUpdateFileUpdate(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateExtrasLogin(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_AVAILABLE | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_READY | SV_STATE_REGRESSION));
-
-	if (!TheSecurityManager().SVGetUseLogon())
-	{	// If not logon mode then remove the login and logout menu items.
-		CMenu* pMenu;
-		CWnd* pWindow = AfxGetMainWnd();
-		pMenu = pWindow->GetMenu();
-		pMenu->RemoveMenu(ID_EXTRAS_LOGIN, MF_BYCOMMAND);
-		pMenu->RemoveMenu(ID_EXTRAS_LOGOUT, MF_BYCOMMAND);
-	}
 }
 
 
@@ -1513,7 +1504,19 @@ void SVMainFrame::OnUpdateFilePrintConfig(CCmdUI* PCmdUI)
 
 void SVMainFrame::OnUpdateExtrasLogout(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(TheSecurityManager().SVIsLoggedOn());
+	if (nullptr != PCmdUI)
+	{
+		PCmdUI->Enable(TheSecurityManager().SVIsLoggedOn());
+
+		if (!TheSecurityManager().SVGetUseLogon())
+		{	// If not logon mode then remove the login and logout menu items (Do this in logout due to it being lower then login)
+			if (nullptr != PCmdUI->m_pMenu)
+			{
+				PCmdUI->m_pMenu->DeleteMenu(ID_EXTRAS_LOGIN, MF_BYCOMMAND);
+				PCmdUI->m_pMenu->DeleteMenu(ID_EXTRAS_LOGOUT, MF_BYCOMMAND);
+			}
+		}
+	}
 }
 
 
