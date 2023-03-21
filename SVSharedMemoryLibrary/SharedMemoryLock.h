@@ -30,12 +30,16 @@ struct LockEntity
 	EntityType type;
 	char username[maxUsernameSize];
 	char host[maxHostSize];
+
+	void operator=(const LockEntity& entity);
 };
 
 struct LockState
 {
 	LockEntity owner;
 	LockEntity requester;
+
+	void operator=(const LockState& state);
 };
 
 struct SharedMemory
@@ -94,3 +98,6 @@ private:
 	std::thread mIoThread;
 	boost::asio::deadline_timer mLockStateCheckTimer;
 };
+
+bool operator==(const LockEntity& lhs, const LockEntity& rhs);
+bool operator!=(const LockEntity& lhs, const LockEntity& rhs);

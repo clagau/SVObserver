@@ -22,6 +22,13 @@ LockEntity::LockEntity()
 	std::memset(host, 0, maxHostSize);
 }
 
+void LockEntity::operator=(const LockEntity& entity)
+{
+	type = entity.type;
+	std::strcpy(username, entity.username);
+	std::strcpy(host, entity.host);
+}
+
 SharedMemory::SharedMemory()
 	: mLockState()
 	, mMutex()
@@ -92,8 +99,7 @@ void SharedMemoryLock::onLockStateCheckTimerExpired(
 {
 	if (error)
 	{
-		SV_LOG_GLOBAL(error) << "Configuration lock state polling error: " << error.message();
-		return;
+		SV_LOG_GLOBAL(warning) << "Configuration lock state polling error: " << error.message();
 	}
 
 	LockState currentLockState;
@@ -101,32 +107,26 @@ void SharedMemoryLock::onLockStateCheckTimerExpired(
 		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 		currentLockState = mSharedMemory->mLockState;
 	}
-	if (mLastLockState.owner.type != currentLockState.owner.type ||
-		mLastLockState.requester.type != currentLockState.requester.type ||
-		std::strcmp(mLastLockState.owner.username, currentLockState.owner.username) != 0 ||
-		std::strcmp(mLastLockState.owner.host, currentLockState.owner.host) != 0)
+	if (mLastLockState.owner != currentLockState.owner || mLastLockState.requester != currentLockState.requester)
 	{
-		if (mLastLockState.requester.type != currentLockState.requester.type &&
-			currentLockState.requester.type == EntityType::Empty)
-		{
-			mLastLockState = currentLockState;
-			return;
-		}
-
 		mIoService.dispatch([this, currentLockState]()
 		{
 			mOnLockStateChangedCb(currentLockState);
 		});
 
-		if (mLastLockState.requester.type != currentLockState.requester.type &&
-			currentLockState.requester.type != EntityType::Empty)
 		{
+			scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+			if (mLastLockState.requester.type != currentLockState.requester.type &&
+				currentLockState.requester.type != EntityType::Empty)
 			{
-				scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-				mSharedMemory->mLockState.requester.type = EntityType::Empty;
+				mSharedMemory->mLockState.requester = LockEntity();
+				mLastLockState.requester = LockEntity();
+			}
+			else
+			{
+				mLastLockState = currentLockState;
 			}
 		}
-		mLastLockState = currentLockState;
 	}
 	scheduleLockStateCheck(expiryTime);
 }
@@ -288,4 +288,24 @@ LockState SharedMemoryLock::GetLockState() const
 {
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	return mSharedMemory->mLockState;
+}
+
+bool operator==(const LockEntity& lhs, const LockEntity& rhs)
+{
+	return lhs.type == rhs.type &&
+		std::strcmp(lhs.username, rhs.username) == 0 &&
+		std::strcmp(lhs.host, rhs.host) == 0;
+}
+
+bool operator!=(const LockEntity& lhs, const LockEntity& rhs)
+{
+	return lhs.type != rhs.type ||
+		std::strcmp(lhs.username, rhs.username) != 0 ||
+		std::strcmp(lhs.host, rhs.host) != 0;
+}
+
+void LockState::operator=(const LockState& state)
+{
+	owner = state.owner;
+	requester = state.requester;
 }
