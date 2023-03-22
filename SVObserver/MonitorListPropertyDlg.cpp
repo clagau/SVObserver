@@ -143,7 +143,6 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*)
 			m_Tree.FindItem(PROP_MONITOR_LIST_ISACTIVE)->GetItemValue(isActive);		
 				m_IsMonitorListActive = isActive;			
 		}
-
 	}
 }
 
@@ -154,7 +153,7 @@ void MonitorListPropertyDlg::OnOK()
 	{
 		RemoteMonitorNamedList namedList = it->second;
 
-		namedList.SetName(std::string(m_DisplayName));
+		namedList.SetName(SvUl::RemoveCharactersByRegexAndTrim(m_DisplayName, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank));//ABXX anpassen
 		namedList.SetRejectDepthQueue(m_MonitorListRejectQueueDepth);
 		m_MonitorList.erase(it);
 		m_MonitorList.insert(std::make_pair(m_DisplayName, namedList));
