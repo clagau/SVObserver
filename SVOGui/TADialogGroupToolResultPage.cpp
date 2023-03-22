@@ -479,8 +479,7 @@ void TADialogGroupToolResultPage::FillGridControl()
 			m_Grid.SetItem(&buttonItem);
 		}
 	}
-	m_Grid.AutoSizeColumns();
-	m_Grid.ExpandLastColumn();
+	
 	m_Grid.Refresh();
 	UpdateEnableButtons();
 }
