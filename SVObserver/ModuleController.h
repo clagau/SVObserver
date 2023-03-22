@@ -40,7 +40,9 @@ public:
 	~ModuleController() = default;
 
 	void loadModules(SVTreeType& rTree);
+	void addModules(SVTreeType& rTree, const std::string& zipFilename);
 	void saveModules(SvOi::IObjectWriter& rWriter) const;
+	void saveModulesForIP(SvOi::IObjectWriter& rWriter, uint32_t inspectionId) const;
 
 	//Attention: Throw exception in error case.
 	void checkIfNameValid(const std::string& rName) const;

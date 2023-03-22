@@ -33,6 +33,34 @@ std::string getModulePath(const std::string& rModuleName)
 	return SvStl::GlobalPath::Inst().GetRunPath((rModuleName + SvO::ModuleExtension).c_str());
 }
 
+std::string getModuleTempPath(const std::string& rModuleName)
+{
+	return SvStl::GlobalPath::Inst().GetTempPath((rModuleName + SvO::ModuleExtension).c_str());
+}
+
+void writeModule(SvOi::IObjectWriter& rWriter, const ModuleData& rData)
+{
+	rWriter.StartElement(rData.m_name.c_str());
+	_variant_t svValue {rData.m_guid.ToString().c_str()};
+	rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svValue);
+	std::string temp = rData.m_comment;
+	SvUl::AddEscapeSpecialCharacters(temp, true);
+	svValue.SetString(temp.c_str());
+	rWriter.WriteAttribute(scCommentTag, svValue);
+	rWriter.StartElement(scHistoryTag);
+	for (const auto& rValue : rData.m_historyList)
+	{
+		rWriter.StartElement(std::to_string(rValue.first).c_str());
+		temp = rValue.second;
+		SvUl::AddEscapeSpecialCharacters(temp, true);
+		svValue.SetString(temp.c_str());
+		rWriter.WriteAttribute(scCommentTag, svValue);
+		rWriter.EndElement();
+	}
+	rWriter.EndElement();
+	rWriter.EndElement(); //End of Module
+}
+
 void createModuleLFile(SvTo::ModuleTool& rModuleTool, const std::string& rModuleName, const std::string& rXmlFilePath, const std::string& rFullOwnerPath)
 {
 	//write Module to file
@@ -202,6 +230,37 @@ ModuleData getModuleData(const auto& rXMLString)
 	}
 	return retVal;
 }
+
+ModuleData getModuleData(SVTreeType& rTree, SVTreeType::SVBranchHandle hModule)
+{
+	ModuleData data;
+	data.m_name = rTree.getBranchName(hModule);
+
+	_variant_t Value;
+	if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hModule, Value))
+	{
+		data.m_guid = SVGUID {Value};
+	}
+	else
+	{
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleParameterLoadFailed, {data.m_name}, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
+	}
+
+	if (SvXml::SVNavigateTree::GetItem(rTree, scCommentTag, hModule, Value))
+	{
+		data.m_comment = SvUl::createStdString(Value);
+		SvUl::RemoveEscapedSpecialCharacters(data.m_comment, true);
+	}
+	else
+	{
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleParameterLoadFailed, {data.m_name}, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
+	}
+
+	data.m_historyList = readHistory(rTree, hModule);
+	return data;
+}
 }
 
 ModuleController::ModuleController()
@@ -224,43 +283,102 @@ void ModuleController::loadModules(SVTreeType& rTree)
 
 	while (nullptr != hModule)
 	{
-		std::string moduleName = rTree.getBranchName(hModule);
-		
-		SVGUID guid;
-		std::string comment;
-		_variant_t Value;
-		if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hModule, Value))
+		auto data = getModuleData(rTree, hModule);
+
+
+		if (false == std::filesystem::exists(getModulePath(data.m_name)))
 		{
-			guid = SVGUID{Value};
-		}
-		else
-		{
-			SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleParameterLoadFailed, {moduleName}, SvStl::SourceFileParams(StdMessageParams));
+			SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleFileLoadFailed, {getModulePath(data.m_name)}, SvStl::SourceFileParams(StdMessageParams));
 			throw msg;
 		}
 
-		if (SvXml::SVNavigateTree::GetItem(rTree, scCommentTag, hModule, Value))
-		{
-			comment = SvUl::createStdString(Value);
-			SvUl::RemoveEscapedSpecialCharacters(comment, true);			
-		}
-		else
-		{
-			SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleParameterLoadFailed, {moduleName}, SvStl::SourceFileParams(StdMessageParams));
-			throw msg;
-		}
-
-		auto historyVector = readHistory(rTree, hModule);
-
-		if (false == std::filesystem::exists(getModulePath(moduleName)))
-		{
-			SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleFileLoadFailed, {getModulePath(moduleName)}, SvStl::SourceFileParams(StdMessageParams));
-			throw msg;
-		}
-	
-		m_moduleList.emplace_back(moduleName, std::move(historyVector), comment, guid);
+		m_moduleList.emplace_back(data);
 		hModule = rTree.getNextBranch(hModuleList, hModule);
 	}
+}
+
+
+void ModuleController::addModules(SVTreeType& rTree, const std::string& zipFilename)
+{
+	SVTreeType::SVBranchHandle hModuleList(nullptr);
+	bool bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_MODULE_LIST, nullptr, hModuleList);
+
+	if (!bOk)
+	{	//no module list found (normal for old configurations)
+		return;
+	}
+
+	SvDef::StringVector Files;
+	if (false == SvUl::unzipAll(zipFilename, SvStl::GlobalPath::Inst().GetTempPath(), Files))
+	{
+		SvStl::MessageContainer msg(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
+	}
+
+	auto oldModuleList = m_moduleList;
+
+	try
+	{
+		SVTreeType::SVBranchHandle hModule = rTree.getFirstBranch(hModuleList);
+		while (nullptr != hModule)
+		{
+			auto data = getModuleData(rTree, hModule);
+
+			auto modulefilename = getModuleTempPath(data.m_name);
+
+			auto iter = std::ranges::find_if(m_moduleList, [data](const auto& rEntry) { return data.m_guid == rEntry.m_guid; });
+			if (m_moduleList.end() != iter)
+			{
+				//By now if guid exist, module exist, no editing needed. If modules editable, here is a check needed if version is equal.
+				::DeleteFile(modulefilename.c_str());
+				std::erase(Files, modulefilename);
+
+				hModule = rTree.getNextBranch(hModuleList, hModule);
+				continue;
+			}
+
+			if (false == std::filesystem::exists(modulefilename))
+			{
+				SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleFileLoadFailed, {data.m_name}, SvStl::SourceFileParams(StdMessageParams));
+				throw msg;
+			}
+
+			iter = std::ranges::find_if(m_moduleList, [data](const auto& rEntry) { return data.m_name == rEntry.m_name; });
+			if (m_moduleList.end() != iter)
+			{
+				//Name already used, rename new module.
+				int i = 1;
+				do
+				{
+					data.m_name = iter->m_name + std::to_string(i++);
+				} while (std::ranges::any_of(m_moduleList, [data](const auto& rEntry) { return data.m_name == rEntry.m_name; }));
+				const auto oldName = getModuleTempPath(iter->m_name);
+				const auto newName = getModuleTempPath(data.m_name);
+				rename(oldName.c_str(), newName.c_str());
+				auto fileIter = std::ranges::find(Files, oldName);
+				if (Files.end() != fileIter)
+				{
+					*fileIter = newName;
+				}
+			}
+
+			AddFileToConfig(getModulePath(data.m_name).c_str());
+			m_moduleList.emplace_back(data);
+			hModule = rTree.getNextBranch(hModuleList, hModule);
+		}
+	}
+	catch (...)
+	{
+		m_moduleList = oldModuleList;
+		for (const auto rEntry : Files)
+		{
+			::DeleteFile(rEntry.c_str());
+		}
+		throw;
+	}
+
+	::DeleteFile(zipFilename.c_str());
+	SvUl::makeZipFile(zipFilename, Files, _T(""), true);
 }
 
 void ModuleController::saveModules(SvOi::IObjectWriter& rWriter) const
@@ -269,27 +387,33 @@ void ModuleController::saveModules(SvOi::IObjectWriter& rWriter) const
 
 	for (const auto& rData : m_moduleList)
 	{
-		rWriter.StartElement(rData.m_name.c_str());
-		_variant_t svValue {rData.m_guid.ToString().c_str()};
-		rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svValue);
-		std::string temp = rData.m_comment;
-		SvUl::AddEscapeSpecialCharacters(temp, true);
-		svValue.SetString(temp.c_str());
-		rWriter.WriteAttribute(scCommentTag, svValue);
-		rWriter.StartElement(scHistoryTag);
-		for (const auto& rValue : rData.m_historyList)
-		{
-			rWriter.StartElement(std::to_string(rValue.first).c_str());
-			temp = rValue.second;
-			SvUl::AddEscapeSpecialCharacters(temp, true);
-			svValue.SetString(temp.c_str());
-			rWriter.WriteAttribute(scCommentTag, svValue);
-			rWriter.EndElement();
-		}
-		rWriter.EndElement();
-		rWriter.EndElement(); //End of Module
+		writeModule(rWriter, rData);
 	}
 	
+	rWriter.EndElement(); //End of Module List
+}
+
+void ModuleController::saveModulesForIP(SvOi::IObjectWriter& rWriter, uint32_t inspectionId) const
+{
+	rWriter.StartElement(SvXml::CTAG_MODULE_LIST);
+
+	for (const auto& rData : m_moduleList)
+	{
+		bool isUsedInIp = std::ranges::any_of(rData.m_moduleInstanceIds, [inspectionId](uint32_t toolId) 
+		{
+			auto* pGroupTool = dynamic_cast<SvTo::GroupTool*>(SVObjectManagerClass::Instance().GetObject(toolId));
+			if (pGroupTool)
+			{
+				return (nullptr != pGroupTool->GetInspection() && inspectionId == pGroupTool->GetInspection()->getObjectId());
+			}
+			return false;
+		});
+		if (isUsedInIp)
+		{
+			writeModule(rWriter, rData);
+		}
+	}
+
 	rWriter.EndElement(); //End of Module List
 }
 
@@ -550,6 +674,8 @@ void ModuleController::renameModule(SVGUID guid, const std::string& newName)
 				throw msg;
 			}
 			::DeleteFile(getModulePath(iter->m_name).c_str());
+			AddFileToConfig(moduleFilePath.c_str());
+			RemoveFileFromConfig(getModulePath(iter->m_name).c_str());
 
 			iter->m_name = newName;
 			return;

@@ -36,19 +36,36 @@ static LPCTSTR scExportExt = _T(".bxp");
 static LPCTSTR scColorExportExt = _T(".cxp");
 #pragma endregion Declarations
 
-static void WritePPQInputOutputs(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
+namespace
+{
+void WriteModules(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		pConfig->getModuleController().saveModulesForIP(rWriter, rInspection.getObjectId());
+	}
+	else
+	{
+		Log_Assert(false);
+	}
+}
+
+void WritePPQInputOutputs(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
 {
 	rWriter.StartElement(SvXml::CTAG_PPQ);
 
 	SVPPQObject* pPPQ = rInspection.GetPPQ();
-	if ( nullptr != pPPQ )
+	if (nullptr != pPPQ)
 	{
 		//These are the inputs which are attached to the PPQ (using the PPQ Bar)
 		pPPQ->PersistInputs(rWriter);
 
 		rWriter.StartElement(SvXml::CTAG_IO);
 		{
-			long count{ 0L };
+			long count {0L};
 			const SVIOEntryHostStructPtrVector& rUsedOutputs = pPPQ->getUsedOutputs();
 			for (const auto& rOutputEntry : rUsedOutputs)
 			{
@@ -72,18 +89,18 @@ static void WritePPQInputOutputs(SvOi::IObjectWriter& rWriter, const SVInspectio
 	rWriter.EndElement();
 }
 
-static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
+void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
 {
 	rWriter.StartElement(SvXml::CTAG_GLOBAL_CONSTANTS);
 
-	if (nullptr != rInspection.GetToolSet() )
+	if (nullptr != rInspection.GetToolSet())
 	{
 		SvVol::BasicValueObjects::ValueVector GlobalConstantObjects;
 
 		SvOl::DependencyManager::VertexSet GlobalConstantSet;
-		RootObject::getRootChildObjectList( GlobalConstantObjects, SvDef::FqnGlobal, 0 );
-		SvVol::BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
-		for( ; GlobalConstantObjects.end() != Iter; ++Iter )
+		RootObject::getRootChildObjectList(GlobalConstantObjects, SvDef::FqnGlobal, 0);
+		SvVol::BasicValueObjects::ValueVector::const_iterator Iter(GlobalConstantObjects.cbegin());
+		for (; GlobalConstantObjects.end() != Iter; ++Iter)
 		{
 			if (nullptr != *Iter)
 			{
@@ -101,8 +118,8 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, const SVInspectio
 		SvOl::DependencyManager::Instance().getDependents(GlobalConstantSet, Inserter, SvOl::JoinType(SvOl::JoinType::Dependent));
 
 		std::set<SvVol::BasicValueObject*> globalSet;
-		for(const auto& rEntry : DependencyList)
-		{ 
+		for (const auto& rEntry : DependencyList)
+		{
 			SVObjectClass* pObjectSupplier = SVObjectManagerClass::Instance().GetObject(rEntry.first);
 			SVObjectClass* pObjectClient = SVObjectManagerClass::Instance().GetObject(rEntry.second);
 			SVObjectClass* pOwner = (nullptr != pObjectClient) ? pObjectClient->GetAncestor(SvPb::SVInspectionObjectType) : nullptr;
@@ -137,13 +154,13 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, const SVInspectio
 	rWriter.EndElement();
 }
 
-static bool ShouldExcludeFile(LPCTSTR filename)
+bool ShouldExcludeFile(LPCTSTR filename)
 {
 	bool bRetVal = false;
-	LPCTSTR exclusions[] = { ".cvi", ".cca", ".cvf", ".odc", ".ogc" }; // exclude camera files
+	LPCTSTR exclusions[] = {".cvi", ".cca", ".cvf", ".odc", ".ogc"}; // exclude camera files
 	TCHAR ext[_MAX_EXT];
 	_tsplitpath(filename, nullptr, nullptr, nullptr, ext);
-	for (int i = 0;i < sizeof(exclusions) / sizeof(LPCTSTR); i++)
+	for (int i = 0; i < sizeof(exclusions) / sizeof(LPCTSTR); i++)
 	{
 		// Exclude certain file extensions
 		if (_tcscmp(ext, exclusions[i]) == 0)
@@ -155,9 +172,9 @@ static bool ShouldExcludeFile(LPCTSTR filename)
 	return bRetVal;
 }
 
-static bool WriteDependentFileList(SvOi::IObjectWriter& rWriter, const std::string& dstZipFile)
+bool WriteDependentFileList(SvOi::IObjectWriter& rWriter, const std::string& dstZipFile)
 {
-	bool Result{false};
+	bool Result {false};
 
 	// remove existing file
 	if (::_access(dstZipFile.c_str(), 0) == 0)
@@ -166,9 +183,9 @@ static bool WriteDependentFileList(SvOi::IObjectWriter& rWriter, const std::stri
 	}
 
 	WIN32_FIND_DATA findFileData;
-	HANDLE hFind = ::FindFirstFile(SvStl::GlobalPath::Inst().GetRunPath(_T("*")).c_str() , &findFileData);
+	HANDLE hFind = ::FindFirstFile(SvStl::GlobalPath::Inst().GetRunPath(_T("*")).c_str(), &findFileData);
 
-	if (hFind != INVALID_HANDLE_VALUE) 
+	if (hFind != INVALID_HANDLE_VALUE)
 	{
 		SvDef::StringVector DependencyFileNames;
 
@@ -179,12 +196,12 @@ static bool WriteDependentFileList(SvOi::IObjectWriter& rWriter, const std::stri
 				!ShouldExcludeFile(findFileData.cFileName))
 			{
 				// check file extension of configuration files and exclude them...
-				TCHAR drive[ _MAX_DRIVE];
+				TCHAR drive[_MAX_DRIVE];
 				TCHAR dir[MAX_PATH];
 				TCHAR filename[_MAX_FNAME];
 				TCHAR ext[_MAX_EXT];
 				_tsplitpath(findFileData.cFileName, drive, dir, filename, ext);
-				
+
 				std::string lowercaseExt = SvUl::MakeLower(ext);
 
 				if (lowercaseExt != SvDef::cConfigExtension)
@@ -203,18 +220,18 @@ static bool WriteDependentFileList(SvOi::IObjectWriter& rWriter, const std::stri
 		::FindClose(hFind);
 
 		rWriter.EndElement();
-		
+
 		Result = 0 < DependencyFileNames.size();
-		if(Result)
+		if (Result)
 		{
-			SvUl::makeZipFile( dstZipFile, DependencyFileNames, _T(""), false );
+			SvUl::makeZipFile(dstZipFile, DependencyFileNames, _T(""), false);
 		}
 	}
 
 	return Result;
 }
 
-static std::string GetFilenameWithoutExt(const std::string& filename)
+std::string GetFilenameWithoutExt(const std::string& filename)
 {
 	std::string result;
 	std::string::size_type pos = filename.find_last_of('.');
@@ -225,15 +242,16 @@ static std::string GetFilenameWithoutExt(const std::string& filename)
 	return result;
 }
 
-static void PersistDocument(uint32_t inspectionId, SvOi::IObjectWriter& rWriter)
+void PersistDocument(uint32_t inspectionId, SvOi::IObjectWriter& rWriter)
 {
-	SVIPDoc* pDoc =  GetIPDocByInspectionID(inspectionId);
+	SVIPDoc* pDoc = GetIPDocByInspectionID(inspectionId);
 	if (pDoc)
 	{
 		rWriter.StartElement(SvXml::CTAG_SVIPDOC);
 		pDoc->GetParameters(rWriter);
 		rWriter.EndElement();
 	}
+}
 }
 
 #pragma region Public Methods
@@ -268,6 +286,8 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 					writer.WriteStartOfBase();
 					{
 						writer.WriteShortEvirmonment(p_version);
+
+						WriteModules(writer, *pInspection);
 
 						WritePPQInputOutputs(writer, *pInspection);
 

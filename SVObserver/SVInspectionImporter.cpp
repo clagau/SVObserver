@@ -31,6 +31,8 @@
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 #pragma endregion Includes
 
+namespace
+{
 constexpr LPCTSTR scImportNewExt = _T(".new.xml");
 constexpr LPCTSTR scDependentsZipExt = _T(".dependents.zip");
 constexpr LPCTSTR scExportExt = _T(".bxp");
@@ -39,7 +41,7 @@ constexpr LPCTSTR scZipExt = _T(".zip");
 constexpr LPCTSTR scXMLExt = _T(".xml");
 constexpr int cImportOperationNumber = 11;
 
-static bool isZipFile(const std::string& filename)
+bool isZipFile(const std::string& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
@@ -51,7 +53,7 @@ static bool isZipFile(const std::string& filename)
 	return bRetVal;
 }
 
-static bool isXMLFile(const std::string& filename)
+bool isXMLFile(const std::string& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
@@ -63,19 +65,19 @@ static bool isXMLFile(const std::string& filename)
 	return bRetVal;
 }
 
-static bool isExportFile(const std::string& filename)
+bool isExportFile(const std::string& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
 	_splitpath(filename.c_str(), nullptr, nullptr, nullptr, ext);
-	if (0 == strcmp(ext, scExportExt) || 0 == strcmp(ext, scColorExportExt) )
+	if (0 == strcmp(ext, scExportExt) || 0 == strcmp(ext, scColorExportExt))
 	{
 		bRetVal = true;
 	}
 	return bRetVal;
 }
 
-static std::string GetFilenameWithoutExt(const std::string& filename)
+std::string GetFilenameWithoutExt(const std::string& filename)
 {
 	std::string result;
 	std::string::size_type pos = filename.find_last_of('.');
@@ -88,35 +90,35 @@ static std::string GetFilenameWithoutExt(const std::string& filename)
 
 using InputListInserter = std::insert_iterator<ImportedInputList>;
 using OutputListInserter = std::insert_iterator<ImportedOutputList>;
-static bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListInserter inputInserter, OutputListInserter outputInserter)
+bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListInserter inputInserter, OutputListInserter outputInserter)
 {
 	bool bOk = true;
-	
+
 	SVTreeType::SVBranchHandle hItem;
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_PPQ, nullptr, hItem))
 	{
 		SVTreeType::SVBranchHandle hItemIO;
-		if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_INPUT, hItem , hItemIO))
+		if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_INPUT, hItem, hItemIO))
 		{
-			SVTreeType::SVBranchHandle htiDataChild( nullptr );
+			SVTreeType::SVBranchHandle htiDataChild(nullptr);
 			htiDataChild = rTree.getFirstBranch(hItemIO);
-			while (bOk && nullptr != htiDataChild )
+			while (bOk && nullptr != htiDataChild)
 			{
-				std::string DataName( rTree.getBranchName(htiDataChild) );
+				std::string DataName(rTree.getBranchName(htiDataChild));
 				_variant_t value;
 				std::string inputType;
 				_variant_t inputValue = 0.0;
-				long PPQPosition{ -1L };
+				long PPQPosition {-1L};
 
 				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_TYPE, htiDataChild, value);
 				if (bOk)
 				{
-					inputType = SvUl::createStdString( value );
+					inputType = SvUl::createStdString(value);
 				}
 				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ITEM_NAME, htiDataChild, value);
 				if (bOk)
 				{
-					DataName = SvUl::createStdString( value );
+					DataName = SvUl::createStdString(value);
 				}
 				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_POSITION, htiDataChild, value);
 				if (bOk)
@@ -127,7 +129,7 @@ static bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListIn
 				{
 					inputValue = value;
 				}
-				inputInserter = ImportedInput{ DataName, inputType, PPQPosition, inputValue};
+				inputInserter = ImportedInput {DataName, inputType, PPQPosition, inputValue};
 				htiDataChild = rTree.getNextBranch(hItemIO, htiDataChild);
 			}
 		}
@@ -179,20 +181,20 @@ static bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListIn
 	return bOk;
 }
 
-static bool importGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::vector<SvUl::GlobalConstantData>& rImportedGlobals)
+bool importGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::vector<SvUl::GlobalConstantData>& rImportedGlobals)
 {
-	bool Result( true );
+	bool Result(true);
 
 	SVTreeType::SVBranchHandle hItem;
-	if (SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_GLOBAL_CONSTANTS, nullptr, hItem ))
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_GLOBAL_CONSTANTS, nullptr, hItem))
 	{
-		SVTreeType::SVBranchHandle hItemChild( nullptr );
+		SVTreeType::SVBranchHandle hItemChild(nullptr);
 
-		hItemChild = rTree.getFirstBranch( hItem );
+		hItemChild = rTree.getFirstBranch(hItem);
 
-		while( Result && nullptr != hItemChild )
+		while (Result && nullptr != hItemChild)
 		{
-			std::string dottedName = rTree.getBranchName( hItemChild );
+			std::string dottedName = rTree.getBranchName(hItemChild);
 			if (std::none_of(rImportedGlobals.begin(), rImportedGlobals.end(), [dottedName](const auto& rData) { return rData.m_DottedName == dottedName; }))
 			{
 				SvUl::GlobalConstantData& rGlobalData = rImportedGlobals.emplace_back();
@@ -219,15 +221,15 @@ static bool importGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::vector<
 					rGlobalData.m_Description = Description;
 				}
 			}
-			
-			hItemChild = rTree.getNextBranch( hItem, hItemChild );
+
+			hItemChild = rTree.getNextBranch(hItem, hItemChild);
 		}
 	}
 
 	return Result;
 }
 
-static void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std::back_insert_iterator<std::vector<std::pair<std::string, SVTreeType::SVBranchHandle>>> listInserter, SVTreeType::SVBranchHandle startBranch = nullptr )
+void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std::back_insert_iterator<std::vector<std::pair<std::string, SVTreeType::SVBranchHandle>>> listInserter, SVTreeType::SVBranchHandle startBranch = nullptr)
 {
 	if (nullptr != startBranch)
 	{
@@ -243,8 +245,8 @@ static void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std
 				rTree.getLeafData(leafItem, data);
 				if (VT_BSTR == data.vt)
 				{
-					std::string_view testString{ "Global." };
-					std::string value{ SvUl::createStdString(data.bstrVal) };
+					std::string_view testString {"Global."};
+					std::string value {SvUl::createStdString(data.bstrVal)};
 					if (value._Starts_with(testString))
 					{
 						_variant_t classIDVariant;
@@ -258,7 +260,7 @@ static void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std
 							classId = calcClassId(classIDVariant);
 							if (SvPb::VariantValueClassId == classId)
 							{
-								listInserter = { value, previousBranch };
+								listInserter = {value, previousBranch};
 							}
 						}
 					}
@@ -276,7 +278,7 @@ static void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std
 	}
 }
 
-static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& rXmlString, SvXml::SaxXMLHandler& rSaxHandler, SvUl::GlobalConflictPairVector& rGlobalConflicts)
+void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& rXmlString, SvXml::SaxXMLHandler& rSaxHandler, SvUl::GlobalConflictPairVector& rGlobalConflicts)
 {
 	std::vector<SvUl::GlobalConstantData> importedGlobals;
 	importGlobalConstants(rTree, importedGlobals);
@@ -288,7 +290,7 @@ static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& 
 	bool mustReload = false;
 	for (auto& rGlobalImport : importedGlobals)
 	{
-		SvVol::BasicValueObjectPtr pGlobalConstant = RootObject::getRootChildObjectValue(rGlobalImport.m_DottedName.c_str() );
+		SvVol::BasicValueObjectPtr pGlobalConstant = RootObject::getRootChildObjectValue(rGlobalImport.m_DottedName.c_str());
 		if (nullptr == pGlobalConstant)
 		{
 			//add Global constant
@@ -357,8 +359,39 @@ static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& 
 					}
 				}
 			}
-		}	
+		}
 	}
+}
+
+HRESULT addModules(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		try
+		{
+			pConfig->getModuleController().addModules(rXmlTree, zipFilename);
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvStl::MessageManager exception(SvStl::MsgType::Log);
+			exception.setMessage(rExp.getMessage());
+			return E_FAIL;
+		}
+		catch (...)
+		{
+			Log_Assert(false);
+			return E_FAIL;
+		}
+	}
+	else
+	{
+		Log_Assert(false);
+		return E_FAIL;
+	}
+	return S_OK;
 }
 
 HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SVIProgress& rProgress, int& currentOp)
@@ -453,12 +486,12 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 	}
 
 
-	if( SUCCEEDED(hr) )
+	if (SUCCEEDED(hr))
 	{
-		SvXml::SVXMLMaterialsTree::SVBranchHandle Root(rXmlTree.getRoot() );
-		SvXml::SVXMLMaterialsTree::SVBranchHandle IPDocItem( nullptr );
+		SvXml::SVXMLMaterialsTree::SVBranchHandle Root(rXmlTree.getRoot());
+		SvXml::SVXMLMaterialsTree::SVBranchHandle IPDocItem(nullptr);
 
-		if( SvXml::SVNavigateTree::FindBranch(rXmlTree, Root, SVFindPredicate(rXmlTree, SvXml::CTAG_SVIPDOC ), IPDocItem ) )
+		if (SvXml::SVNavigateTree::FindBranch(rXmlTree, Root, SVFindPredicate(rXmlTree, SvXml::CTAG_SVIPDOC), IPDocItem))
 		{
 			inspectionInfo.m_materialsTree.clear();
 			inspectionInfo.m_materialsTree = SVMaterialsTree(*IPDocItem);
@@ -468,8 +501,9 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 			hr = E_FAIL;
 		}
 	}
-	
+
 	return hr;
+}
 }
 
 HRESULT SVInspectionImporter::Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
@@ -511,7 +545,7 @@ HRESULT SVInspectionImporter::Import(const std::string& filename, const std::str
 
 	rProgress.UpdateText(_T("Loading Inspection XML..."));
 	SvXml::SVXMLMaterialsTree XmlTree;
-	HRESULT hr = loadAndReplaceData(inFileName, inspectionName, XmlTree, rGlobalConflicts);
+	HRESULT hr = loadAndReplaceData(inFileName, zipFilename, inspectionName, XmlTree, rGlobalConflicts);
 	if (S_OK == hr)
 	{
 		rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
@@ -569,7 +603,7 @@ HRESULT SVInspectionImporter::GetProperties(const std::string& rFileName, long& 
 	return Result;
 }
 
-HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, const std::string& rNewInspectionName, SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalConflictPairVector& rGlobalConflicts)
+HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, const std::string& zipFilename, const std::string& rNewInspectionName, SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalConflictPairVector& rGlobalConflicts)
 {
 	SvXml::SVXMLMaterialsTree XmlTree;
 	SvXml::SaxXMLHandler SaxHandler;
@@ -602,17 +636,22 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 	SvUl::searchAndReplace(xmlString, searchString.c_str(), replaceString.c_str());
 
 	//Replace each uniqueID with a new ID
-	SvDef::StringVector UniqueIDVector = XmlTree.getLeafValues(XmlTree.getRoot(), std::string(scUniqueReferenceIDTag));
-	for (auto rUniqueID : UniqueIDVector)
-	{
-		uint32_t newId = SVObjectManagerClass::Instance().getNextObjectId();
-		std::string newIdString = convertObjectIdToString(newId);
-		SvUl::searchAndReplace(rUniqueID, _T("{#"), _T("($"));
-		SvUl::searchAndReplace(xmlString, rUniqueID.c_str(), newIdString.c_str());
-	}
-	SvUl::searchAndReplace(xmlString, replaceString.c_str(), searchString.c_str());
-
 	SvXml::SVXMLMaterialsTree::SVBranchHandle hItem;
+	//replace only ids in Inspection Process, because the GUID from ModuleList must not be overriden.
+	if (SvXml::SVNavigateTree::GetItemBranch(XmlTree, SvXml::CTAG_INSPECTION_PROCESS, nullptr, hItem))
+	{
+		SvDef::StringVector UniqueIDVector = XmlTree.getLeafValues(hItem, std::string(scUniqueReferenceIDTag));
+		for (auto rUniqueID : UniqueIDVector)
+		{
+			uint32_t newId = SVObjectManagerClass::Instance().getNextObjectId();
+			std::string newIdString = convertObjectIdToString(newId);
+			SvUl::searchAndReplace(rUniqueID, _T("{#"), _T("($"));
+			SvUl::searchAndReplace(xmlString, rUniqueID.c_str(), newIdString.c_str());
+		}
+		SvUl::searchAndReplace(xmlString, replaceString.c_str(), searchString.c_str());
+	}
+
+
 	if (SvXml::SVNavigateTree::GetItemBranch(XmlTree, SvXml::CTAG_INSPECTION_PROCESS, nullptr, hItem))
 	{
 		_variant_t oldInspectionNameVariant;
@@ -649,7 +688,7 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 	if (S_OK == hr)
 	{
 		checkGlobalConstants(rTree, xmlString, SaxHandler, rGlobalConflicts);
-		return S_OK;
+		return addModules(rTree, zipFilename);
 	}
 	else
 	{
