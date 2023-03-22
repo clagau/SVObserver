@@ -1001,6 +1001,19 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 					{
 						IOName = SvDef::FqnEnvironmentModuleReady;
 					}
+					
+					if (IOName.size() > 6)
+					{
+						std::regex re("PPQ_[0-9].");
+						std::cmatch m;
+						bool isPPQVAr = std::regex_match(IOName.substr(0, 6).c_str(), m, re);
+						if (isPPQVAr)
+						{
+							bCombined = false;
+						}
+
+					}
+
 					pOutput = m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get();
 					SVDigitalOutputObject* pDigitalOutput = dynamic_cast<SVDigitalOutputObject*> (pOutput);
 					if (nullptr != pDigitalOutput)

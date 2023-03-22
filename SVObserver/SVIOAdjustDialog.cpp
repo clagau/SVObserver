@@ -226,6 +226,10 @@ void SVIOAdjustDialog::UpdateGroups()
 			showForcedGroup(SW_SHOW);
 			showInvertGroup(SW_SHOW);
 			showCombinedGroup(SvPb::SVObjectTypeEnum::SVPPQObjectType == objectType ? SW_HIDE : SW_SHOW);
+			if (SvPb::SVObjectTypeEnum::SVPPQObjectType == objectType)
+			{
+				m_sCombined = FALSE;
+			}
 			break;
 		}
 		case SVIOObjectType::IO_PLC_OUTPUT:
@@ -233,6 +237,9 @@ void SVIOAdjustDialog::UpdateGroups()
 			showForcedGroup(SW_HIDE);
 			showInvertGroup(SW_HIDE);
 			showCombinedGroup(SvPb::SVObjectTypeEnum::SVPPQObjectType == objectType ? SW_HIDE : SW_SHOW);
+			{
+				m_sCombined = FALSE;
+			}
 			break;
 		}
 		default:
