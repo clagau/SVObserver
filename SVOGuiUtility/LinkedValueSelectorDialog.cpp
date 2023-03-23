@@ -55,7 +55,7 @@ namespace SvOgu
 		, m_inspectionId(inspectionId)
 		, m_objectId(objectId)
 		, m_data(resultdata.m_data)
-		, m_vtType(resultdata.m_data.m_Value.vt)
+		, m_vtType(resultdata.m_data.m_Value.vt == VT_EMPTY?   resultdata.m_data.m_defaultValue.vt : resultdata.m_data.m_Value.vt)
 		, m_ObjectName(resultdata.m_name)
 		, m_validCheckCallback(nullptr)
 		, m_LinkedValueType(resultdata.m_type)

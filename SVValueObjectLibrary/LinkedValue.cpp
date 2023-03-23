@@ -1153,12 +1153,12 @@ void LinkedValue::setValueType(SvPb::LinkedValueTypeEnum type)
 			break;
 		case SvPb::TypeStates:
 		{
-
-			if (VT_INT != defaultVt)
-				SetDefaultValue(int(0));
+			if (VT_I4 != defaultVt)
+			{
+				SetDefaultValue(_variant_t(long(0),VT_I4));
+			}
 			break;
 		}
-
 		case SvPb::TypeTable:
 		case SvPb::TypeGrayImage:
 		case SvPb::TypeColorImage:
@@ -1609,10 +1609,10 @@ bool LinkedValue::UpdateChildrenForDefaultState(SvStl::MessageContainerVector* p
 		dat{IDS_OBJECTNAME_PASSED,false, SvPb::PassedEId, _variant_t(false)},
 		dat{IDS_OBJECTNAME_FAILED,false, SvPb::FailedEId, _variant_t(false)},
 		dat{IDS_OBJECTNAME_WARNED,false,SvPb::WarnedEId, _variant_t(false)},
-		dat{IDS_OBJECTNAME_PASSED_COUNT,false,SvPb::PassedCountEId, _variant_t(0)},
-		dat{IDS_OBJECTNAME_FAILED_COUNT,false,SvPb::FailedCountEId, _variant_t(0)},
-		dat{IDS_OBJECTNAME_WARNED_COUNT,false,SvPb::WarnedCountEId, _variant_t(0)},
-		dat{IDS_OBJECTNAME_ENABLED_COUNT,false,SvPb::EnabledCountEId, _variant_t(0)}
+		dat{IDS_OBJECTNAME_PASSED_COUNT,false,SvPb::PassedCountEId, variant_t(long(0),VT_I4)},
+		dat{IDS_OBJECTNAME_FAILED_COUNT,false,SvPb::FailedCountEId,variant_t(long(0),VT_I4)},
+		dat{IDS_OBJECTNAME_WARNED_COUNT,false,SvPb::WarnedCountEId, variant_t(long(0),VT_I4)},
+		dat{IDS_OBJECTNAME_ENABLED_COUNT,false,SvPb::EnabledCountEId, variant_t(long(0),VT_I4)}
 
 	};
 

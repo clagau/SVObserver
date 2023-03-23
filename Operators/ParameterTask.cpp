@@ -847,7 +847,7 @@ namespace SvOp
 				case SvPb::LinkedValueTypeEnum::TypeStates:
 					
 					SvPb::ConvertProtobufToVariant(rRequestValue.value().defaultvalue(), rDefaultValue);
-					if (VT_INT != rDefaultValue.vt)
+					if (VT_I4 != rDefaultValue.vt)
 					{
 						fillMessageToProtobuf(pErrorMessage, rValueObject.getObjectId(), SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams));
 						return false;

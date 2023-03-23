@@ -181,21 +181,24 @@ variant_t convertTextToVariant(SvPb::LinkedValueTypeEnum type, const std::string
 		switch (type)
 		{
 			case SvPb::LinkedValueTypeEnum::TypeDecimal:
-				//@Todo[mec}
 				result = std::stod(text);
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeText:
 				result = text.c_str();
 				break;
 			case SvPb::LinkedValueTypeEnum::TypeStates:
-				result = StateHelper::toState(text);
-
+			{
+				_variant_t temp(long(StateHelper::toState(text)), VT_I4);
+				result = temp;
 				break;
+			}
 
 
 			default: //do nothing, empty variant
+				
 				break;
 		}
+		fitVariantToType(type, result);
 	}
 	catch (...)
 	{
@@ -205,7 +208,7 @@ variant_t convertTextToVariant(SvPb::LinkedValueTypeEnum type, const std::string
 		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConvertTextToVariantFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		msg.Throw();
 	}
-
+	Log_Assert(result.vt != VT_INT);
 	return result;
 }
 
@@ -222,10 +225,12 @@ variant_t fitVariantToType(SvPb::LinkedValueTypeEnum type, const variant_t& valu
 			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR));
 			break;
 		case SvPb::LinkedValueTypeEnum::TypeStates:
-			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_INT));
+			isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_I4));
+			Log_Assert(result.vt == VT_I4);
 			break;
 
 		default: //do nothing, empty variant
+			
 			break;
 	}
 
