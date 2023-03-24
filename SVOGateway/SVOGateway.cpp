@@ -106,7 +106,6 @@ void StartWebServer(DWORD argc, LPTSTR* argv)
 			[&sharedMemoryAccess](const SvStl::MessageContainer& rMessage, int messageType)
 			{
 				sharedMemoryAccess.onMessageContainer(rMessage, messageType);
-				sharedMemoryAccess.openSharedMemory();
 			});
 
 		SvOgw::ServerRequestHandler requestHandler(&sharedMemoryAccess, &authManager);

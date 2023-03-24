@@ -41,7 +41,7 @@ constexpr DWORD SV_STATE_TEST			= 0x00000100;
 constexpr DWORD SV_STATE_REGRESSION		= 0x00000200;
 constexpr DWORD SV_STATE_EDIT			= 0x00000400;
 constexpr DWORD SV_STATE_STOP			= 0x00000800;
-
+	
 constexpr DWORD SV_STATE_MODIFIED		= 0x00000001;
 constexpr DWORD SV_STATE_REMOTE_CMD		= 0x00000002;
 
@@ -64,36 +64,52 @@ class SVSVIMStateClass
 {
 public:
 
-	//RAII helper struct for m_LockCountSvrc
+	//RAII helper struct for ms_LockCountSvrc
 	struct SVRCBlocker
 	{
 	public:
 		SVRCBlocker()
 		{
-			SVSVIMStateClass::m_LockCountSvrc++;
+			SVSVIMStateClass::ms_LockCountSvrc++;
 		}
 		~SVRCBlocker()
 		{
-			SVSVIMStateClass::m_LockCountSvrc--;
+			SVSVIMStateClass::ms_LockCountSvrc--;
 		}
 
 	};
 
 	//RAII class to set and reset the state
-	struct SetResetState
+	class SetResetState
 	{
-		explicit SetResetState(DWORD state) :
-			m_state(state)
+	public:
+		explicit SetResetState(DWORD state, std::function<bool()> acquirer = [](){return true; }, std::function<void()> releaser = [](){}) :
+			m_state(state), m_ok(acquirer()), m_releaser(releaser)
 		{
-			SVSVIMStateClass::AddState(m_state);
+			if(m_ok)
+			{
+				SVSVIMStateClass::AddState(m_state);
+			}
 		}
 
 		~SetResetState()
 		{
-			SVSVIMStateClass::RemoveState(m_state);
+			if (m_ok)
+			{
+				m_releaser();
+				SVSVIMStateClass::RemoveState(m_state);
+			}
 		}
+
+		bool conditionOk() const
+		{
+			return m_ok;
+		}
+
 	private:
-		DWORD m_state;
+		const DWORD m_state;
+		const bool m_ok;
+		std::function<void()> m_releaser;
 	};
 
 	static void OutputDebugState();
@@ -155,17 +171,14 @@ private:
 	// Returns: void
 	//************************************
 	static void CheckModeNotify();
-
 	
 	static  void SetHash(LPCSTR hash);
 	
 	static void setLastModifiedTime();
 
-	//This constructor does nothing.
-	SVSVIMStateClass();
+	SVSVIMStateClass() = delete;
 
-	//This destructor does nothing.
-	virtual ~SVSVIMStateClass();
+	virtual ~SVSVIMStateClass() = delete;
 
 	static NotifyFunctor m_pNotify;	//! Notify functor when state changes
 
@@ -176,12 +189,11 @@ private:
 
 	static std::atomic<__time64_t> m_lastModifiedTime;
 	static std::atomic<__time64_t> m_loadedSinceTime;
-	static std::mutex m_protectHash;
-	static std::string m_hash;
-	
+	static std::mutex ms_protectHash;
+	static std::string ms_hash;
+
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
-	///Lockcount >  0 prevents some  SVRC command to avoid crashes because of mult threading issues 
-	static std::atomic<int>  m_LockCountSvrc; //<  
+	static std::atomic<int>  ms_LockCountSvrc; //< ms_LockCountSvrc >  0 prevents some  SVRC command to avoid crashes because of multi threading issues 
 
 	static std::atomic<bool> m_isReloadedAfterCopyToolsToClipboard;
 };

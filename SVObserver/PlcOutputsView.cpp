@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EditLock.h"
 #include "SVConfigurationObject.h"
 #include "PlcOutputsView.h"
 #include "SVIOAdjustDialog.h"
@@ -153,7 +154,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 }
 
 void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
-{
+{ //@TODO [Arvid][10.30][15.3.2023] this function is too long
 
 	if (false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit())
 	{
@@ -224,7 +225,11 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_PpqIndex = item / m_maxOutputNumber;
 				dlg.m_ioObjectType = SVIOObjectType::IO_PLC_OUTPUT;
 
-				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+				SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+				if (false == srs.conditionOk())
+				{
+					return;
+				}
 				if (IDOK == dlg.DoModal())
 				{
 					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
@@ -276,7 +281,6 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 						}
 
 					}// end if
-
 				}
 				OnUpdate(nullptr, 0, nullptr);
 			}

@@ -10,6 +10,7 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/windows_shared_memory.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
+#include <boost/interprocess/sync/interprocess_condition.hpp>
 
 struct lock_acquisition_stream_t;
 
@@ -48,6 +49,14 @@ struct SharedMemory
 
 	LockState mLockState;
 	boost::interprocess::interprocess_mutex mMutex;
+
+	boost::interprocess::interprocess_condition mGatewayNotification;
+	bool mGatewayNotificationReady;
+	bool mGatewayNotificationsDone;
+
+	boost::interprocess::interprocess_condition mObserverNotification;
+	bool mObserverNotificationReady;
+	bool mObserverNotificationsDone;
 };
 
 using lock_state_changed_callback_t = std::function<void(LockState)>;
@@ -57,46 +66,61 @@ class SharedMemoryLock
 public:
 	SharedMemoryLock(
 		boost::interprocess::open_or_create_t openOrCreate,
-		boost::asio::deadline_timer::duration_type expiryTime,
 		const lock_state_changed_callback_t& onLockStateChangedCb,
-		const std::string& name = "Global\\sv_default_shared_memory");
+		const std::string& name);
 	SharedMemoryLock(
 		boost::interprocess::open_only_t openOnly,
-		boost::asio::deadline_timer::duration_type expiryTime,
 		const lock_state_changed_callback_t& onLockStateChangedCb,
-		const std::string& name = "Global\\sv_default_shared_memory");
-	~SharedMemoryLock();
+		const std::string& name);
 
 	bool Acquire(EntityType type, const std::string& username, const std::string& host);
 	bool Takeover(EntityType type, const std::string& username, const std::string& host);
 	bool RequestTakeover(EntityType type, const std::string& username, const std::string& host);
-	void Release();
+	bool Release();
 
-	void PushBackStream(const std::shared_ptr<lock_acquisition_stream_t>& streamPtr);
-	std::shared_ptr<lock_acquisition_stream_t> GetLockOwnerStream() const;
-	std::shared_ptr<lock_acquisition_stream_t> GetStreamById(const std::uint32_t id) const;
-	std::vector<std::shared_ptr<lock_acquisition_stream_t>>& GetStreams();
-	LockState GetLockState() const;
-
-private:
-	void scheduleLockStateCheck(boost::asio::deadline_timer::duration_type expiryTime);
-	void onLockStateCheckTimerExpired(
-		boost::asio::deadline_timer::duration_type expiryTime,
-		const boost::system::error_code& error);
-
+protected:
 	lock_state_changed_callback_t mOnLockStateChangedCb;
 	boost::interprocess::windows_shared_memory mSharedMemoryHandler;
 	boost::interprocess::mapped_region mMappedRegion;
 	SharedMemory* mSharedMemory;
+};
 
-	std::vector<std::shared_ptr<lock_acquisition_stream_t>> mLockAcquisitionStreams;
+class SVOGatewaySharedMemoryLock : public SharedMemoryLock
+{
+public:
+	explicit SVOGatewaySharedMemoryLock(
+		const lock_state_changed_callback_t& onLockStateChangedCb,
+		const std::string& name = "Global\\sv_default_shared_memory");
+	~SVOGatewaySharedMemoryLock();
 
-	LockState mLastLockState;
+	bool Acquire(const std::string& username, const std::string& host);
+	bool Takeover(const std::string& username, const std::string& host);
+	bool RequestTakeover(const std::string& username, const std::string& host);
+	bool Release();
 
-	boost::asio::io_service mIoService;
-	boost::asio::io_service::work mIoWork;
-	std::thread mIoThread;
-	boost::asio::deadline_timer mLockStateCheckTimer;
+	LockState GetLockState() const;
+
+private:
+	std::thread mNotificationsThread;
+};
+
+class SVObserverSharedMemoryLock : public SharedMemoryLock
+{
+public:
+	explicit SVObserverSharedMemoryLock(
+		const lock_state_changed_callback_t& onLockStateChangedCb,
+		const std::string& name = "Global\\sv_default_shared_memory");
+	~SVObserverSharedMemoryLock();
+
+	bool Acquire(const std::string& username, const std::string& host);
+	bool Takeover(const std::string& username, const std::string& host);
+	bool RequestTakeover(const std::string& username, const std::string& host);
+	bool Release();
+
+	LockState GetLockState() const;
+
+private:
+	std::thread mNotificationsThread;
 };
 
 bool operator==(const LockEntity& lhs, const LockEntity& rhs);

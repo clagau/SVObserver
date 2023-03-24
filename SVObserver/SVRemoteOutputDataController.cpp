@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <iterator>
+#include "EditLock.h"
 #include "SVRemoteOutputDataController.h"
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
@@ -511,7 +512,11 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
 	// these containers hold the list of ppq names that will be used for Remote Groups.
 	SvDef::StringVector AvailablePPQs;
 	// Initialize PPQ - Remote Groups by selecting from dialog.

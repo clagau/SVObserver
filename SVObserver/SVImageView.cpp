@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EditLock.h"
 #include "SVImageView.h"
 #include "SVDirectX.h"
 #include "SVDisplayImageSelect.h"
@@ -439,7 +440,19 @@ BOOL SVImageView::OnCommand(WPARAM wParam, LPARAM lParam)
 
 		case ID_SELECT_DISPLAY_IMAGE:
 		{
-			SelectDisplayImage();
+			{
+				// cppcheck-suppress unreadVariable; cppCheck doesn't understand RAII use of SetResetState pointer here
+				std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
+				if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+				{
+					pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING, EditLock::acquire, EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
+					if (false == pStateEditing->conditionOk())
+					{
+						break;
+					}
+				}
+				SelectDisplayImage();
+			}
 			break;
 		}
 		case ID_SAVEVIEW_WITHOVERLAYS:

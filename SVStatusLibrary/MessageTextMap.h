@@ -267,6 +267,7 @@ namespace SvStl
 		{Tid_SVObserver_ModelNumberInvalid, _T("The model number specified in OEMINFO.INI is invalid.")},
 		{Tid_SVObserver_AuthorizationFailed_Modification, _T("Authorization Failed.\n\nUtility Modification requires 'User Manager' privilege.")},
 		{Tid_SVObserver_AuthorizationFailed_Execution, _T("Authorization Failed.\n\nUtility Execution requires 'User Manager' privilege.")},
+		{Tid_SVObserver_NoEditLock, _T("EditLock not available.\nA request for the lock was sent to current owner {0}.")},
 		{Tid_SVObserver_MatroxGigELicenseNotFound, _T("Matrox GigE License not found")},
 		{Tid_SVObserver_MatroxLicenseNotFound, _T("Matrox License not found")},
 		{Tid_SVObserver_WrongVersionNumber, _T("This configuration was created by SVObserver {0}.\nYou are currently running SVObserver {1}.\n"

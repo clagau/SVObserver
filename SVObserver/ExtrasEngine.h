@@ -11,16 +11,12 @@
 
 class ExtrasEngine
 {
-#pragma region Constructor
 private:
 	ExtrasEngine(const ExtrasEngine&); // no copy allowed, i.e. '= delete' in C++11;
 
 public:
 	ExtrasEngine();
 
-#pragma endregion Constructor
-
-#pragma region Public Methods
 public:
 	//************************************
 	/// Poor man's Singleton: provides access to the one and only ExtrasEngine object
@@ -53,9 +49,6 @@ public:
 	//************************************
 	void ResetAutoSaveInformation();
 
-#pragma endregion Public Methods
-
-#pragma region Private Methods
 private:
 
 	//************************************
@@ -64,15 +57,9 @@ private:
 	//************************************
 	bool IsAutoSaveTimestampOlderThanDeltaTime();
 
-#pragma endregion Private Methods
-
-#pragma region Member Variables
-
 	static const int ms_defaultDeltaTimeInMinutes=10;///< the minimum (for most purposes) autosave interval in seconds, m_AutoSaveDeltaTime_s is derived from it
 	
 	double m_AutoSaveDeltaTime_s; ///< the minimum (for most purposes) autosave interval in seconds
 	time_t  m_lastAutoSaveTimestamp; ///< when was the latest automatic configuration backup done?
-
-#pragma endregion Member Variables
 };
 

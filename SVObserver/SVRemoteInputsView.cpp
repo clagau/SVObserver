@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EditLock.h"
 #include "SVConfigurationObject.h"
 #include "SVRemoteInputsView.h"
 #include "SVRemoteIOAdjustDialog.h"
@@ -176,22 +177,26 @@ void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 					dlg.SetIOName( Name.c_str() );
 					dlg.SetIOValue( value );
 
-					SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-					if(IDOK ==  dlg.DoModal())
+					SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+					if (false == srs.conditionOk())
 					{
-						dlg.GetIOValue( value );
+						return;
+					}
+					if (IDOK == dlg.DoModal())
+					{
+						dlg.GetIOValue(value);
 
-						pRemoteInput->writeCache( value );
+						pRemoteInput->writeCache(value);
 
-						SvVol::SVVariantValueObjectClass* pValueObject = dynamic_cast<SvVol::SVVariantValueObjectClass*> ( pIOEntry->getObject() );
-						if( nullptr != pValueObject )
+						SvVol::SVVariantValueObjectClass* pValueObject = dynamic_cast<SvVol::SVVariantValueObjectClass*> (pIOEntry->getObject());
+						if (nullptr != pValueObject)
 						{
-							pValueObject->SetDefaultValue( value, true );
+							pValueObject->SetDefaultValue(value, true);
 						}
 
-						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+						SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 					}
-					OnUpdate( nullptr, 0, nullptr );
+					OnUpdate(nullptr, 0, nullptr);
 				}
 			}
 		}

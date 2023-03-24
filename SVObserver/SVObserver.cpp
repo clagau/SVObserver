@@ -17,6 +17,7 @@
 #include "ConfigurationOuttakes.h"
 #include "GuiHelpers.h"
 #include "ExtrasEngine.h"
+#include "EditLock.h"
 #include "RootObject.h"
 #include "SVDirectX.h"
 #include "SVGigeCameraManagerDlg.h"
@@ -559,6 +560,12 @@ int SVObserverApp::Run()
 HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, ConfigFileType fileType /*= ConfigFileType::SvzStandard*/) 
 //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return E_FAIL;
+	}
+
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
 	TCHAR szFile[_MAX_FNAME];

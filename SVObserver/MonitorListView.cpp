@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EditLock.h"
 #include "MonitorListView.h"
 #include "SVObserver.h"
 #include "SVIODoc.h"
@@ -613,9 +614,12 @@ void MonitorListView::OnLButtonDblClk(UINT, CPoint point)
 	{
 		if (TheSVObserverApp().OkToEdit())
 		{
-			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-
-			if (EditMonitoredItem(item,false))
+			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			if (false == srs.conditionOk())
+			{
+				return;
+			}
+			if (EditMonitoredItem(item, false))
 			{
 				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 				SVIODoc* pIODoc = GetDocument();
@@ -992,8 +996,12 @@ void MonitorListView::AddItem()
 			item = m_rCtrl.GetNextSelectedItem(Pos);
 		}
 
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-		if (EditMonitoredItem(item,false))
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
+		if (EditMonitoredItem(item, false))
 		{
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 			SVIODoc* pIODoc = GetDocument();
@@ -1111,7 +1119,11 @@ void MonitorListView::OnAddRemoveList()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -1136,7 +1148,11 @@ void MonitorListView::OnEditListProperties()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (Pos)
 		{
@@ -1174,7 +1190,11 @@ void MonitorListView::OnDeleteItem()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (nullptr != Pos)
 		{
@@ -1211,12 +1231,16 @@ void MonitorListView::OnEditItem()
 {
 	OnEdit(false);
 }
+
 void MonitorListView::OnEdit(bool bImageItem)
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (nullptr != Pos)
 		{

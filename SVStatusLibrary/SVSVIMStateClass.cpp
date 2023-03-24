@@ -23,25 +23,20 @@ std::atomic_long SVSVIMStateClass::m_SVIMState {SV_STATE_AVAILABLE};
 bool SVSVIMStateClass::m_AutoSaveRequired {false};
 std::atomic<__time64_t> SVSVIMStateClass::m_lastModifiedTime {0LL};
 std::atomic<__time64_t> SVSVIMStateClass::m_loadedSinceTime {0LL};
-std::mutex SVSVIMStateClass::m_protectHash;
-std::string SVSVIMStateClass::m_hash;
+std::mutex SVSVIMStateClass::ms_protectHash;
+std::string SVSVIMStateClass::ms_hash;
 
 std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode {SvPb::DeviceModeType::unknownMode};
 NotifyFunctor SVSVIMStateClass::m_pNotify {nullptr};
 
-std::atomic<int>  SVSVIMStateClass::m_LockCountSvrc {0};
+std::atomic<int>  SVSVIMStateClass::ms_LockCountSvrc {0};
 std::atomic<bool> SVSVIMStateClass::m_isReloadedAfterCopyToolsToClipboard {false};
 
 
-SVSVIMStateClass::SVSVIMStateClass()
-{}
-
-SVSVIMStateClass::~SVSVIMStateClass()
-{}
 
 bool SVSVIMStateClass::isSvrcBlocked()
 {
-	return m_LockCountSvrc > 0;
+	return ms_LockCountSvrc > 0;
 }
 
 void SVSVIMStateClass::AddState(DWORD dwState)
@@ -192,21 +187,21 @@ void SVSVIMStateClass::ConfigWasUnloaded()
 
 void SVSVIMStateClass::SetHash(LPCSTR hash)
 {
-	std::lock_guard<std::mutex> lockGuard(m_protectHash);
+	std::lock_guard<std::mutex> lockGuard(ms_protectHash);
 	if (nullptr != hash)
 	{
-		m_hash = hash;
+		ms_hash = hash;
 	}
 	else
 	{
-		m_hash.clear();
+		ms_hash.clear();
 	}
 }
 
 std::string  SVSVIMStateClass::GetHash()
 {
-	std::lock_guard<std::mutex> lockGuard(m_protectHash);
-	std::string result(m_hash);
+	std::lock_guard<std::mutex> lockGuard(ms_protectHash);
+	std::string result(ms_hash);
 	return result;
 }
 
@@ -227,7 +222,6 @@ HRESULT SVSVIMStateClass::CheckNotAllowedState(DWORD States /*=SV_DefaultNotAllo
 
 void SVSVIMStateClass::OutputDebugState()
 {
-
 	std::unordered_map<DWORD, std::string> StateNames =
 	{
 	{SV_STATE_AVAILABLE, "SV_STATE_AVAILABLE"},
@@ -238,8 +232,8 @@ void SVSVIMStateClass::OutputDebugState()
 	{SV_STATE_LOADING, "SV_STATE_LOADING"},
 
 	{SV_STATE_SAVING, "SV_STATE_SAVING"},
-		{SV_STATE_CLOSING, "SV_STATE_CLOSING"},
-		{SV_STATE_EDITING, "SV_STATE_EDITING"},
+	{SV_STATE_CLOSING, "SV_STATE_CLOSING"},
+	{SV_STATE_EDITING, "SV_STATE_EDITING"},
 	{SV_STATE_CANCELING, "SV_STATE_CANCELING"},
 	{SV_STATE_INTERNAL_RUN, "SV_STATE_INTERNAL_RUN"},
 	{SV_STATE_START_PENDING, "SV_STATE_START_PENDING"},
@@ -272,6 +266,6 @@ void SVSVIMStateClass::OutputDebugState()
 	}
 	msg += "\n";
 	OutputDebugString(msg.c_str());
-	
-
 }
+
+

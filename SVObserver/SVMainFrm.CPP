@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "ConfigurationOuttakes.h"
 #include "ExtrasEngine.h"
+#include "EditLock.h"
 #include "GuiHelpers.h"
 #include "RemoteCommand.h"
 #include "RootObject.h"
@@ -194,13 +195,14 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_START_LAST_CONFIG, OnUpdateExtrasStartLastConfiguration)
 	ON_COMMAND(ID_EXTRAS_ENABLEAUTOSAVE, OnExtrasEnableAutoSave)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEAUTOSAVE, OnUpdateExtrasEnableAutoSave)
-	
+
 	ON_WM_SIZE()
 	ON_WM_SIZING()
 	//}}AFX_MSG_MAP
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_INFO, OnUpdateStatusInfo)
 	// Status Bar User information
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_USER, OnUpdateStatusInfo)
+	ON_UPDATE_COMMAND_UI(ID_INDICATOR_EDIT_LOCK, OnUpdateStatusInfo)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_MODE, OnUpdateStatusInfo)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_GIGE_LICENSE_ERROR, OnUpdateStatusInfo)
 
@@ -519,14 +521,10 @@ void SVMainFrame::OnRButtonDown(UINT nFlags, CPoint point)
 void SVMainFrame::OnSetFocus(CWnd* pOldWnd) 
 {
 	CMDIFrameWnd::OnSetFocus(pOldWnd);
-	
-	// TODO: Code für die Behandlungsroutine für Nachrichten hier einfügen
 }
 
 void SVMainFrame::OnLButtonDblClk(UINT nFlags, CPoint point) 
 {
-	// TODO: Code für die Behandlungsroutine für Nachrichten hier einfügen und/oder Standard aufrufen
-
 	CMDIFrameWnd::OnLButtonDblClk(nFlags, point);
 }
 
@@ -657,7 +655,11 @@ void SVMainFrame::OnFileOpenSVC()
 {
 	TheSVObserverApp().ValidateMRUList();
 
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release); /// do this before calling validate for security as it may display a logon dialog!
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
 	// Proof user rights...
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION))
 	{
@@ -700,6 +702,11 @@ void SVMainFrame::OnFileCloseConfig()
 {
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION))
 	{
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
 		SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 
 		TheSVObserverApp().ValidateMRUList();
@@ -913,13 +920,18 @@ void SVMainFrame::OnExtrasLogin()
 	}
 }
 
+
 void SVMainFrame::OnExtrasUtilitiesEdit()
 {
-	SVUtilities util;
-
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
 	{
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
+		SVUtilities util;
+
 		CWnd* pWindow = AfxGetMainWnd();
 		CMenu* pMenu = (nullptr != pWindow) ? pWindow->GetMenu() : nullptr;
 		pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"));
@@ -938,7 +950,11 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 
 void SVMainFrame::OnExtrasSecuritySetup()
 {
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
+	{
+		return;
+	}
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER))
 	{
 		TheSecurityManager().SVSetupDialog();
@@ -981,7 +997,11 @@ void SVMainFrame::OnExtrasSecuritySetup()
 
 void SVMainFrame::OnAuditTrailDefaultFiles()
 {
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if ((nullptr != pConfig))
@@ -1002,7 +1022,11 @@ void SVMainFrame::OnAuditTrailDefaultFiles()
 
 void SVMainFrame::OnAuditTrailAdditionalFiles()
 {
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
+	{
+		return;
+	}
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if ((nullptr != pConfig))
@@ -1706,6 +1730,17 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 
 			break;
 		}
+
+		case ID_INDICATOR_EDIT_LOCK:
+		{
+			std::string EdirLockInfo {_T("EditLock")};
+			CClientDC DC(nullptr);
+			int lWidth = DC.GetTextExtent(EdirLockInfo.c_str()).cx - static_cast<int> (EdirLockInfo.size() * 2) + 20;
+			m_wndStatusBar.SetPaneInfo(pCmdUI->m_nIndex, ID_INDICATOR_GIGE_LICENSE_ERROR, 0, lWidth);
+			pCtrl->SetText(EdirLockInfo.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW);
+
+			break;
+		}
 		case ID_INDICATOR_GIGE_LICENSE_ERROR:
 		{
 			bool l_bMatroxError = false;
@@ -2194,7 +2229,11 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 
 void SVMainFrame::OnExtrasStartLastConfiguration()
 {
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
+	{
+		return;
+	}
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON))
 	{
 		bool StartLastConfiguration(false);
@@ -2232,6 +2271,7 @@ void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 	pCmdUI->Enable( bEnable );
 	pCmdUI->SetCheck( ExtrasEngine::Instance().IsAutoSaveEnabled());
 }
+
 
 BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 {

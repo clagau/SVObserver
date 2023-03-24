@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EditLock.h"
 #include "SVRemoteOutputsView.h"
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
@@ -232,30 +233,33 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 	if ( l_item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL) && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		 TheSVObserverApp().OkToEdit() )
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-
-		pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( l_item )));
-		if( pRemoteOutput )
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
+		pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData(l_item)));
+		if (pRemoteOutput)
 		{
 			// The User clicked on the Item
-			if( EditOutput( l_item ) )
+			if (EditOutput(l_item))
 			{
-				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 			}
 		}
 		else
 		{	// The user clicked on the PPQ which means a new object.
 
 			// Edit DLL Properties.
-			SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( l_item )));
-			if( pOutputGroup )
+			SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>(reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData(l_item)));
+			if (pOutputGroup)
 			{
 				OnRemoteOutputProperties();
 			}
 		}
-		OnUpdate( nullptr, 0, nullptr );
+		OnUpdate(nullptr, 0, nullptr);
 
-		m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+		m_rCtrl.SetItemState(l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	} // if ( item >= 0 && ! SVSVIMStateClass::CheckState
 }// OnLButtonDbm_rCtrllk(
 
@@ -283,15 +287,18 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 					if( S_OK == RemoteOutputGroupNameAtItem( GroupName, l_item )  )
 					{
 						// New Entry...
-						SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-						if( AddOutput( l_item ) )
+						SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+						if (srs.conditionOk())
 						{
-							SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-							l_item++;
+							if (AddOutput(l_item))
+							{
+								SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+								l_item++;
+							}
+							OnUpdate(nullptr, 0, nullptr);
+							m_rCtrl.SetItemState(l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+							l_bRet = TRUE;
 						}
-						OnUpdate( nullptr, 0, nullptr );
-						m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-						l_bRet = TRUE;
 					}
 				}
 				else
@@ -301,23 +308,26 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 					if( S_OK == RemoteOutputGroupNameAtItem( GroupName, l_item )  )
 					{
 						// New Entry...
-						SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-						SVRemoteOutputObject* pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(l_pdwItemData));
-						if( pRemoteOutput )
+						SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+						if (srs.conditionOk())
 						{
-							if( EditOutput( l_item ) )
+							SVRemoteOutputObject* pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(l_pdwItemData));
+							if (pRemoteOutput)
 							{
-								SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+								if (EditOutput(l_item))
+								{
+									SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+								}
 							}
+							else
+							{
+								// Edit DLL Properties.
+								OnRemoteOutputProperties();
+							}
+							OnUpdate(nullptr, 0, nullptr);
+							m_rCtrl.SetItemState(l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+							l_bRet = TRUE;
 						}
-						else
-						{
-							// Edit DLL Properties.
-							OnRemoteOutputProperties();
-						}
-						OnUpdate( nullptr, 0, nullptr );
-						m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-						l_bRet = TRUE;
 					}
 				}
 				else
@@ -411,16 +421,20 @@ void SVRemoteOutputsView::OnRemoteOutputAdd()
 			l_item = m_rCtrl.GetNextSelectedItem(l_Pos);
 		}
 
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-		if( AddOutput( l_item ) )
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
 		{
-			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+			return;
+		}
+		if (AddOutput(l_item))
+		{
+			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 		}
 
-		OnUpdate( nullptr, 0, nullptr );
-		if( l_item > -1 )
+		OnUpdate(nullptr, 0, nullptr);
+		if (l_item > -1)
 		{
-			m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+			m_rCtrl.SetItemState(l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 		}
 	}
 }
@@ -508,6 +522,12 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 {
 	if( TheSVObserverApp().OkToEdit() )
 	{
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
+
 		POSITION l_Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if( nullptr != l_Pos )
 		{
@@ -575,10 +595,12 @@ void SVRemoteOutputsView::OnRemoteOutputEdit()
 {
 	if( TheSVObserverApp().OkToEdit() )
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-
-		EditOutput(m_CurrentItem);
-		OnUpdate( nullptr, 0, nullptr );
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (srs.conditionOk())
+		{
+			EditOutput(m_CurrentItem);
+			OnUpdate(nullptr, 0, nullptr);
+		}
 	}
 }
 

@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EditLock.h"
 #include "SVConfigurationObject.h"
 #include "SVDiscreteInputsView.h"
 #include "SVIOAdjustDialog.h"
@@ -187,12 +188,15 @@ void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;
 				dlg.m_ioObjectType = SVIOObjectType::IO_DIGITAL_INPUT;
 
-				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-				if(ID_OK == dlg.DoModal())
+				SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+				if (false == srs.conditionOk())
 				{
-					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+					return;
 				}
-
+				if (ID_OK == dlg.DoModal())
+				{
+					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+				}
 				OnUpdate( nullptr, 0, nullptr );
 			}
 		}

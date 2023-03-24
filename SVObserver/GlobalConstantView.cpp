@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EditLock.h"
 #include "GlobalConstantView.h"
 #include "RootObject.h"
 #include "SVConfigurationObject.h"
@@ -184,23 +185,27 @@ bool GlobalConstantView::editItem( int Item )
 		}
 	}
 
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-	if( IDOK == GlobalDlg.DoModal() )
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
 	{
-		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+		return false;
+	}
+	if (IDOK == GlobalDlg.DoModal())
+	{
+		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 		Result = true;
 
 		//New or editing Global value ?
-		if(SvDef::InvalidObjectId == GlobalData.m_objectId )
+		if (SvDef::InvalidObjectId == GlobalData.m_objectId)
 		{
-			insertGlobalConstant( GlobalData );
+			insertGlobalConstant(GlobalData);
 			updateView();
 		}
 		else
 		{
-			editGlobalConstant( GlobalData );
+			editGlobalConstant(GlobalData);
 			updateView();
-			updateAllIPDocs( false );
+			updateAllIPDocs(false);
 		}
 	}
 	return Result;
@@ -212,27 +217,31 @@ bool GlobalConstantView::deleteItem( int Item )
 
 	if( -1 != Item )
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return false;
+		}
 		LVITEM lvItem;
 		lvItem.mask = LVIF_PARAM;
 		lvItem.iItem = Item;
 		lvItem.iSubItem = 0;
 
-		if( m_rCtrl.GetItem( &lvItem ) )
+		if (m_rCtrl.GetItem(&lvItem))
 		{
 			SvVol::BasicValueObject* pObject(nullptr);
-			pObject = reinterpret_cast<SvVol::BasicValueObject*> ( lvItem.lParam );
+			pObject = reinterpret_cast<SvVol::BasicValueObject*> (lvItem.lParam);
 
-			if( nullptr != pObject )
+			if (nullptr != pObject)
 			{
-				if( checkAllDependencies( pObject, true ) )
+				if (checkAllDependencies(pObject, true))
 				{
-					if( S_OK ==  RootObject::deleteRootChildValue( pObject->GetCompleteName().c_str() ) )
+					if (S_OK == RootObject::deleteRootChildValue(pObject->GetCompleteName().c_str()))
 					{
-						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+						SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 						Result = true;
 						updateView();
-						updateAllIPDocs( true );
+						updateAllIPDocs(true);
 					}
 				}
 			}

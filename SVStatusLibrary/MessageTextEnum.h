@@ -238,6 +238,7 @@ enum MessageTextEnum
 	Tid_SVObserver_ModelNumberInvalid,
 	Tid_SVObserver_AuthorizationFailed_Modification,
 	Tid_SVObserver_AuthorizationFailed_Execution,
+	Tid_SVObserver_NoEditLock,
 	Tid_SVObserver_MatroxGigELicenseNotFound,
 	Tid_SVObserver_MatroxLicenseNotFound,
 	Tid_SVObserver_WrongVersionNumber,

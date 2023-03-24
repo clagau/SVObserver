@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "EditLock.h"
 #include "SVPPQBar.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVConfigurationObject.h"
@@ -449,54 +450,56 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 	// Click on PPQEntry button 
 	if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) )
 	{
-		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		{
-			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			if (srs.conditionOk())
+			{
+				int pos = nID - 50;
 
-			int pos = nID - 50;
-	
-			SVPPQEntryDialogPropertySheetClass dlg( _T( "PPQ Entry Dialog" ) );
-			dlg.m_pPPQ				= m_pPPQ;
-			dlg.m_lCurrentPosition	= pos;
-			//remove Apply button
-			dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
+				SVPPQEntryDialogPropertySheetClass dlg(_T("PPQ Entry Dialog"));
+				dlg.m_pPPQ = m_pPPQ;
+				dlg.m_lCurrentPosition = pos;
+				//remove Apply button
+				dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-            if ( dlg.DoModal() == IDOK )
-            {
-				SVConfigurationObject* pConfig( nullptr );
-
-				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-				if( nullptr != pConfig )
+				if (dlg.DoModal() == IDOK)
 				{
-					pConfig->RebuildInputOutputLists();
-				}
+					SVConfigurationObject* pConfig(nullptr);
 
-				RefreshAllIPDocuments();
+					SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-				if( buttonList.GetSize() > pos && buttonList.GetAt( pos ) )
-			    {
-				    if( dlg.m_bIsTaken )
-				    {
-						std::string Caption = std::format( _T("*{:d}*"), pos + 1 );
-					    buttonList.GetAt( pos )->SetWindowText( Caption.c_str() );
+					if (nullptr != pConfig)
+					{
+						pConfig->RebuildInputOutputLists();
+					}
 
-					    HICON hIc = AfxGetApp()->LoadIcon( IDI_ICON_CAMERA );
-					    if( hIc )
-					    {
-						    buttonList.GetAt( pos )->SetIcon( hIc );
-						    buttonList.GetAt( pos )->SetButtonStyle( BS_ICON );
-					    }
-				    }
-				    else
-				    {
-					    CString strCaption;
-					    strCaption.Format( "%d", pos + 1 );
-					    buttonList.GetAt( pos )->SetWindowText( strCaption );
-					    buttonList.GetAt( pos )->SetButtonStyle( BS_PUSHBUTTON );
-				    }
-			    }// end if( buttonList.GetSize() > pos && buttonList.GetAt( pos ) )
-            }// end if (iResult == IDOK)
+					RefreshAllIPDocuments();
+
+					if (buttonList.GetSize() > pos && buttonList.GetAt(pos))
+					{
+						if (dlg.m_bIsTaken)
+						{
+							std::string Caption = std::format(_T("*{:d}*"), pos + 1);
+							buttonList.GetAt(pos)->SetWindowText(Caption.c_str());
+
+							HICON hIc = AfxGetApp()->LoadIcon(IDI_ICON_CAMERA);
+							if (hIc)
+							{
+								buttonList.GetAt(pos)->SetIcon(hIc);
+								buttonList.GetAt(pos)->SetButtonStyle(BS_ICON);
+							}
+						}
+						else
+						{
+							CString strCaption;
+							strCaption.Format("%d", pos + 1);
+							buttonList.GetAt(pos)->SetWindowText(strCaption);
+							buttonList.GetAt(pos)->SetButtonStyle(BS_PUSHBUTTON);
+						}
+					}// end if( buttonList.GetSize() > pos && buttonList.GetAt( pos ) )
+				}// end if (iResult == IDOK)
+			}
 		}
 		else
 		{

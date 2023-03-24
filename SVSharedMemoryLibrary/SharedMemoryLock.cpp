@@ -29,107 +29,42 @@ void LockEntity::operator=(const LockEntity& entity)
 	std::strcpy(host, entity.host);
 }
 
+void LockState::operator=(const LockState& state)
+{
+	owner = state.owner;
+	requester = state.requester;
+}
+
 SharedMemory::SharedMemory()
 	: mLockState()
 	, mMutex()
+	, mGatewayNotification()
+	, mGatewayNotificationReady(false)
+	, mGatewayNotificationsDone(false)
+	, mObserverNotification()
+	, mObserverNotificationReady(false)
+	, mObserverNotificationsDone(false)
 {}
 
 SharedMemoryLock::SharedMemoryLock(
 	boost::interprocess::open_or_create_t openOrCreate,
-	boost::asio::deadline_timer::duration_type expiryTime,
 	const lock_state_changed_callback_t& onLockStateChangedCb,
 	const std::string& name)
 	: mOnLockStateChangedCb(onLockStateChangedCb)
 	, mSharedMemoryHandler(openOrCreate, name.c_str(), read_write, sizeof(SharedMemory))
 	, mMappedRegion(mSharedMemoryHandler, read_write)
 	, mSharedMemory(static_cast<SharedMemory*>(mMappedRegion.get_address()))
-	, mIoService()
-	, mIoWork(mIoService)
-	, mIoThread([&] {mIoService.run(); })
-	, mLockStateCheckTimer(mIoService)
-{
-	{
-		mLastLockState = GetLockState();
-	}
-	scheduleLockStateCheck(expiryTime);
-}
+{}
 
 SharedMemoryLock::SharedMemoryLock(
 	boost::interprocess::open_only_t openOnly,
-	boost::asio::deadline_timer::duration_type expiryTime,
 	const lock_state_changed_callback_t& onLockStateChangedCb,
 	const std::string& name)
 	: mOnLockStateChangedCb(onLockStateChangedCb)
 	, mSharedMemoryHandler(openOnly, name.c_str(), read_write)
 	, mMappedRegion(mSharedMemoryHandler, read_write)
 	, mSharedMemory(static_cast<SharedMemory*>(mMappedRegion.get_address()))
-	, mIoService()
-	, mIoWork(mIoService)
-	, mIoThread([&] {mIoService.run(); })
-	, mLockStateCheckTimer(mIoService)
-{
-	{
-		mLastLockState = GetLockState();
-	}
-	scheduleLockStateCheck(expiryTime);
-}
-
-SharedMemoryLock::~SharedMemoryLock()
-{
-	mLockStateCheckTimer.cancel();
-	mIoService.stop();
-	if (mIoThread.joinable())
-	{
-		mIoThread.join();
-	}
-}
-
-void SharedMemoryLock::scheduleLockStateCheck(boost::asio::deadline_timer::duration_type expiryTime)
-{
-	mLockStateCheckTimer.expires_from_now(expiryTime);
-	auto waitFunctor = [this, expiryTime](const boost::system::error_code& rError) {
-		return onLockStateCheckTimerExpired(expiryTime, rError);
-	};
-	mLockStateCheckTimer.async_wait(waitFunctor);
-}
-
-void SharedMemoryLock::onLockStateCheckTimerExpired(
-	boost::asio::deadline_timer::duration_type expiryTime,
-	const boost::system::error_code& error)
-{
-	if (error)
-	{
-		SV_LOG_GLOBAL(warning) << "Configuration lock state polling error: " << error.message();
-	}
-
-	LockState currentLockState;
-	{
-		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-		currentLockState = mSharedMemory->mLockState;
-	}
-	if (mLastLockState.owner != currentLockState.owner || mLastLockState.requester != currentLockState.requester)
-	{
-		mIoService.dispatch([this, currentLockState]()
-		{
-			mOnLockStateChangedCb(currentLockState);
-		});
-
-		{
-			scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-			if (mLastLockState.requester.type != currentLockState.requester.type &&
-				currentLockState.requester.type != EntityType::Empty)
-			{
-				mSharedMemory->mLockState.requester = LockEntity();
-				mLastLockState.requester = LockEntity();
-			}
-			else
-			{
-				mLastLockState = currentLockState;
-			}
-		}
-	}
-	scheduleLockStateCheck(expiryTime);
-}
+{}
 
 bool SharedMemoryLock::Acquire(EntityType type, const std::string& username, const std::string& host)
 {
@@ -149,7 +84,6 @@ bool SharedMemoryLock::Acquire(EntityType type, const std::string& username, con
 		return false;
 	}
 
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	if (mSharedMemory->mLockState.owner.type == EntityType::Empty)
 	{
 		mSharedMemory->mLockState.owner.type = type;
@@ -180,11 +114,10 @@ bool SharedMemoryLock::Takeover(EntityType type, const std::string& username, co
 		return false;
 	}
 
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	mSharedMemory->mLockState.owner.type = type;
 	std::strcpy(mSharedMemory->mLockState.owner.username, username.c_str());
 	std::strcpy(mSharedMemory->mLockState.owner.host, host.c_str());
-
+	SV_LOG_GLOBAL(debug) << "Takeover(): Shared memory lock taken over!";
 	return true;
 }
 
@@ -195,35 +128,37 @@ bool SharedMemoryLock::RequestTakeover(EntityType type, const std::string& usern
 		SV_LOG_GLOBAL(error) << "RequestTakeover(): Pointer to shared memory is not initialized!";
 		return false;
 	}
+	if (username.size() >= maxUsernameSize)
+	{
+		SV_LOG_GLOBAL(error) << "RequestTakeover(): provided username it too long to store it in shared memory";
+		return false;
+	}
+	if (host.size() >= maxHostSize)
+	{
+		SV_LOG_GLOBAL(error) << "RequestTakeover(): provided host it too long to store it in shared memory";
+		return false;
+	}
 	if (type == EntityType::Empty)
 	{
 		SV_LOG_GLOBAL(error) << "RequestTakeover(): Invalid argument!";
 		return false;
 	}
 
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	if (mSharedMemory->mLockState.requester.type == EntityType::Empty)
-	{
-		mSharedMemory->mLockState.requester.type = type;
-		std::strcpy(mSharedMemory->mLockState.requester.username, username.c_str());
-		std::strcpy(mSharedMemory->mLockState.requester.host, host.c_str());
-		SV_LOG_GLOBAL(debug) << "RequestTakeover(): Shared memory lock takeover requested!";
-		return true;
-	}
-
-	SV_LOG_GLOBAL(debug) << "RequestTakeover(): Probably other client already requested a takeover";
-	return false;
+	mSharedMemory->mLockState.requester.type = type;
+	std::strcpy(mSharedMemory->mLockState.requester.username, username.c_str());
+	std::strcpy(mSharedMemory->mLockState.requester.host, host.c_str());
+	SV_LOG_GLOBAL(debug) << "RequestTakeover(): Shared memory lock takeover requested!";
+	return true;
 }
 
-void SharedMemoryLock::Release()
+bool SharedMemoryLock::Release()
 {
 	if (mSharedMemory == nullptr)
 	{
 		SV_LOG_GLOBAL(error) << "Release(): Pointer to shared memory is not initialized!";
-		return;
+		return false;
 	}
 
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	mSharedMemory->mLockState.owner.type = EntityType::Empty;
 	mSharedMemory->mLockState.requester.type = EntityType::Empty;
 	std::memset(mSharedMemory->mLockState.owner.username, 0, maxUsernameSize);
@@ -231,60 +166,210 @@ void SharedMemoryLock::Release()
 	std::memset(mSharedMemory->mLockState.requester.username, 0, maxUsernameSize);
 	std::memset(mSharedMemory->mLockState.requester.host, 0, maxHostSize);
 	SV_LOG_GLOBAL(debug) << "Release(): Shared memory lock released!";
+	return true;
 }
 
-void SharedMemoryLock::PushBackStream(const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+SVOGatewaySharedMemoryLock::SVOGatewaySharedMemoryLock(
+	const lock_state_changed_callback_t& onLockStateChangedCb,
+	const std::string& name)
+	: SharedMemoryLock(boost::interprocess::open_only, onLockStateChangedCb, name)
+	, mNotificationsThread([this] {
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		while (true)
+		{
+			mSharedMemory->mGatewayNotification.wait(lock, [this] {
+				return mSharedMemory->mGatewayNotificationReady || mSharedMemory->mGatewayNotificationsDone;
+			});
+			if (mSharedMemory->mGatewayNotificationsDone)
+			{
+				mSharedMemory->mGatewayNotificationsDone = false;
+				break;
+			}
+			mOnLockStateChangedCb(mSharedMemory->mLockState);
+			mSharedMemory->mGatewayNotificationReady = false;
+		}
+		SV_LOG_GLOBAL(info) << "SVOGatewaySharedMemoryLock: notification thread is finished!";
+	})
+{}
+
+SVOGatewaySharedMemoryLock::~SVOGatewaySharedMemoryLock()
 {
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	mLockAcquisitionStreams.push_back(streamPtr);
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		mSharedMemory->mGatewayNotificationsDone = true;
+	}
+	mSharedMemory->mGatewayNotification.notify_one();
+	if (mNotificationsThread.joinable())
+	{
+		mNotificationsThread.join();
+	}
 }
 
-std::shared_ptr<lock_acquisition_stream_t> SharedMemoryLock::GetLockOwnerStream() const
+bool SVOGatewaySharedMemoryLock::Acquire(const std::string& username, const std::string& host)
+{
+	bool isAcquired = false;
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		isAcquired = SharedMemoryLock::Acquire(EntityType::SVOGateway, username, host);
+		mSharedMemory->mObserverNotificationReady = isAcquired;
+	}
+	if (isAcquired)
+	{
+		mSharedMemory->mObserverNotification.notify_one();
+	}
+	
+	return isAcquired;
+}
+
+bool SVOGatewaySharedMemoryLock::Takeover(const std::string& username, const std::string& host)
+{
+	bool isTakenOver = false;
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		isTakenOver = SharedMemoryLock::Takeover(EntityType::SVOGateway, username, host);
+		mSharedMemory->mObserverNotificationReady = isTakenOver;
+	}
+	if (isTakenOver)
+	{
+		mSharedMemory->mObserverNotification.notify_one();
+	}
+	return isTakenOver;
+}
+
+bool SVOGatewaySharedMemoryLock::RequestTakeover(const std::string& username, const std::string& host)
+{
+	bool isTakeoverRequested = false;
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		isTakeoverRequested = SharedMemoryLock::RequestTakeover(EntityType::SVOGateway, username, host);
+		mSharedMemory->mObserverNotificationReady = isTakeoverRequested;
+	}
+	if (isTakeoverRequested)
+	{
+		mSharedMemory->mObserverNotification.notify_one();
+	}
+	return isTakeoverRequested;
+}
+
+bool SVOGatewaySharedMemoryLock::Release()
+{
+	bool isReleased = false;
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		isReleased = SharedMemoryLock::Release();
+		mSharedMemory->mObserverNotificationReady = isReleased;
+	}
+	if (isReleased)
+	{
+		mSharedMemory->mObserverNotification.notify_one();
+	}
+	return isReleased;
+}
+
+LockState SVOGatewaySharedMemoryLock::GetLockState() const
 {
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	auto lockOwnerStream = std::find_if(
-		mLockAcquisitionStreams.begin(),
-		mLockAcquisitionStreams.end(),
-		[](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
-	{
-		return streamPtr->isLockOwner;
-	});
+	return mSharedMemory->mLockState;
+}
 
-	if (lockOwnerStream == mLockAcquisitionStreams.end() ||
-		(*lockOwnerStream)->streamContext->isCancelled())
+SVObserverSharedMemoryLock::SVObserverSharedMemoryLock(
+	const lock_state_changed_callback_t& onLockStateChangedCb,
+	const std::string& name)
+	: SharedMemoryLock(boost::interprocess::open_or_create, onLockStateChangedCb, name)
+	, mNotificationsThread([this] {
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		while (true)
+		{
+			mSharedMemory->mObserverNotification.wait(lock, [this] {
+				return mSharedMemory->mObserverNotificationReady || mSharedMemory->mObserverNotificationsDone;
+			});
+			if (mSharedMemory->mObserverNotificationsDone)
+			{
+				mSharedMemory->mObserverNotificationsDone = false;
+				break;
+			}
+			mOnLockStateChangedCb(mSharedMemory->mLockState);
+			mSharedMemory->mObserverNotificationReady = false;
+		}
+		SV_LOG_GLOBAL(info) << "SVObserverSharedMemoryLock: notification thread is finished!";
+	})
+{}
+
+SVObserverSharedMemoryLock::~SVObserverSharedMemoryLock()
+{
 	{
-		return nullptr;
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		mSharedMemory->mObserverNotificationsDone = true;
+	}
+	mSharedMemory->mObserverNotification.notify_one();
+	if (mNotificationsThread.joinable())
+	{
+		mNotificationsThread.join();
+	}
+}
+
+bool SVObserverSharedMemoryLock::Acquire(const std::string& username, const std::string& host)
+{
+	bool isAcquired = false;
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		isAcquired = SharedMemoryLock::Acquire(EntityType::SVObserver, username, host);
+		mSharedMemory->mGatewayNotificationReady = isAcquired;
+	}
+	if (isAcquired)
+	{
+		mSharedMemory->mGatewayNotification.notify_one();
 	}
 
-	return *lockOwnerStream;
+	return isAcquired;
 }
 
-std::shared_ptr<lock_acquisition_stream_t> SharedMemoryLock::GetStreamById(const std::uint32_t id) const
+bool SVObserverSharedMemoryLock::Takeover(const std::string& username, const std::string& host)
 {
-	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	auto stream = std::find_if(
-		mLockAcquisitionStreams.begin(),
-		mLockAcquisitionStreams.end(),
-		[id](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+	bool isTakenOver = false;
 	{
-		return id == streamPtr->id;
-	});
-
-	if (stream == mLockAcquisitionStreams.end() ||
-		(*stream)->streamContext->isCancelled())
-	{
-		return nullptr;
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		isTakenOver = SharedMemoryLock::Takeover(EntityType::SVObserver, username, host);
+		mSharedMemory->mGatewayNotificationReady = isTakenOver;
 	}
-
-	return *stream;
+	if (isTakenOver)
+	{
+		mSharedMemory->mGatewayNotification.notify_one();
+	}
+	return isTakenOver;
 }
 
-std::vector<std::shared_ptr<lock_acquisition_stream_t>>& SharedMemoryLock::GetStreams()
+bool SVObserverSharedMemoryLock::RequestTakeover(const std::string& username, const std::string& host)
 {
-	return mLockAcquisitionStreams;
+	bool isTakeoverRequested = false;
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		isTakeoverRequested = SharedMemoryLock::RequestTakeover(EntityType::SVObserver, username, host);
+		mSharedMemory->mGatewayNotificationReady = isTakeoverRequested;
+	}
+	if (isTakeoverRequested)
+	{
+		mSharedMemory->mGatewayNotification.notify_one();
+	}
+	return isTakeoverRequested;
 }
 
-LockState SharedMemoryLock::GetLockState() const
+bool SVObserverSharedMemoryLock::Release()
+{
+	bool isReleased = false;
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		isReleased = SharedMemoryLock::Release();
+		mSharedMemory->mGatewayNotificationReady = isReleased;
+	}
+	if (isReleased)
+	{
+		mSharedMemory->mGatewayNotification.notify_one();
+	}
+	return isReleased;
+}
+
+LockState SVObserverSharedMemoryLock::GetLockState() const
 {
 	scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
 	return mSharedMemory->mLockState;
@@ -302,10 +387,4 @@ bool operator!=(const LockEntity& lhs, const LockEntity& rhs)
 	return lhs.type != rhs.type ||
 		std::strcmp(lhs.username, rhs.username) != 0 ||
 		std::strcmp(lhs.host, rhs.host) != 0;
-}
-
-void LockState::operator=(const LockState& state)
-{
-	owner = state.owner;
-	requester = state.requester;
 }

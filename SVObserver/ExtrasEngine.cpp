@@ -6,7 +6,6 @@
 /// chosen from the Extras Pull down in the SVObserver Main Menu
 //*****************************************************************************
 
-#pragma region Includes
 #include "stdafx.h"
 #include "ConfigurationOuttakes.h"
 #include "ExtrasEngine.h"
@@ -16,32 +15,23 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVClock.h"
-#pragma endregion Includes
 
-#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-#pragma endregion Declarations
 
-#pragma region Constructor
-
-ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), 
-	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*SvUl::c_secondsPerMinute)
+ExtrasEngine::ExtrasEngine() : m_lastAutoSaveTimestamp(0),
+m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes* SvUl::c_secondsPerMinute)
 {
 	ResetAutoSaveInformation();
 }
 
-#pragma endregion Constructor
-
-#pragma region Public Methods
-
 ExtrasEngine& ExtrasEngine::Instance()
 {
-	static ExtrasEngine s_theAutoSaver; ///< the one and only AutoSaverObject (initialized to a delta time of 10 minutes (this can be changed via setDeltaTimeInMinutes()))
-	return s_theAutoSaver;
+	static ExtrasEngine s_theExtrasEngine; ///< the one and only ExtrasEngine
+	return s_theExtrasEngine;
 }
 
 void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
@@ -124,10 +114,6 @@ void ExtrasEngine::SetAutoSaveEnabled(bool enabled)
 	RootObject::setRootChildValue(SvDef::FqnEnvironmentAutoSave, enabled);
 }
 
-#pragma endregion Public Methods
-
-#pragma region Private Methods
-
 bool ExtrasEngine::IsAutoSaveTimestampOlderThanDeltaTime()
 {
 	time_t now;
@@ -141,5 +127,3 @@ bool ExtrasEngine::IsAutoSaveTimestampOlderThanDeltaTime()
 	return isOlder;
 }
 
-
-#pragma endregion Private Methods

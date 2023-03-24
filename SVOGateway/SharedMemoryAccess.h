@@ -66,7 +66,6 @@ public:
 
 public:
 	void onMessageContainer(const SvStl::MessageContainer& rMessage, int messageType);
-	void openSharedMemory();
 
 public:
 	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
@@ -162,9 +161,12 @@ private:
 	};
 
 private:
+	std::shared_ptr<lock_acquisition_stream_t> get_lock_owner_stream() const;
+	std::shared_ptr<lock_acquisition_stream_t> get_stream_by_id(const std::uint32_t id) const;
 	void acquire_lock(lock_acquisition_stream_t&);
 	void handle_lock_acquisition(lock_acquisition_stream_t&);
 	void notify_client_about_lock_acquisition(const lock_acquisition_stream_t&);
+	void broadcast_configuration_lock_status();
 	void release_lock(lock_acquisition_stream_t&, const SvPb::LockReleaseReason);
 	void broadcast_release_notification(const lock_acquisition_stream_t& stream, SvPb::LockReleaseReason);
 	void handle_lock_takeover_request(const lock_acquisition_stream_t&);
@@ -191,7 +193,8 @@ private:
 	SvOi::RAIIPtr m_TrcResetSubscriptionRAII;
 	SvOi::RAIIPtr m_TrcNewInterestTrSubscriptionRAII;
 
-	std::unique_ptr<SharedMemoryLock> m_SharedMemoryLock;
+	std::unique_ptr<SVOGatewaySharedMemoryLock> m_SharedMemoryLock;
+	std::vector<std::shared_ptr<lock_acquisition_stream_t>> m_LockAcquisitionStreams;
 	boost::asio::deadline_timer m_DisconnectCheckTimer;
 
 	std::mutex m_NewTriggerMutex;

@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <algorithm>
 #include "SVIPDoc.h"
+#include "EditLock.h"
 #include "ExtrasEngine.h"
 #include "ResultTabbedView.h"
 #include "SVCommandInspectionCollectImageData.h"
@@ -1724,7 +1725,11 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(Get1stSelectedToolID()));
 		if (nullptr != pTool)
 		{
-			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			if (false == srs.conditionOk())
+			{
+				return;
+			}
 			try
 			{
 				std::unique_ptr<SVToolAdjustmentDialogSheetClass> pSheet = GetToolAdjustmentSheet(this, tab);
@@ -1787,7 +1792,11 @@ void SVIPDoc::OnEditToolSet()
 	{
 		if (GetToolSet())
 		{
-			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			if (false == srs.conditionOk())
+			{
+				return;
+			}
 
 			SVToolAdjustmentDialogSheetClass toolSetDialog(this, GetInspectionID(), GetToolSet()->getObjectId(), _T("Tool Set Adjustment: "));
 			toolSetDialog.init();
@@ -1847,8 +1856,11 @@ void SVIPDoc::StartResultsPicker(LPCTSTR nodeToBeSelected)
 	std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
-		// cppcheck-suppress unreadVariable symbolName=pStateEditing ; RAII variable
-		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING);  /// do this before calling validate for security as it may display a logon dialog!
+		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING, EditLock::acquire, EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
+		if (false == pStateEditing->conditionOk())
+		{
+			return;
+		}
 	}
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
 	{
@@ -1907,8 +1919,11 @@ void SVIPDoc::OnResultsTablePicker()
 	std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
-		// cppcheck-suppress unreadVariable symbolName=pStateEditing ; RAII variable
-		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING);  /// do this before calling validate for security as it may display a logon dialog!
+		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING, EditLock::acquire, EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
+		if (false == pStateEditing->conditionOk())
+		{
+			return;
+		}
 	}
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
 	{
@@ -3247,7 +3262,12 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
 		if (GetImageView())
 		{
-			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			if (false == srs.conditionOk())
+			{
+				return;
+			}
+
 			std::string DlgName = std::format(_T("Adjust Tool Size and Position - {}"), pTool->GetName());
 			SvOg::SVAdjustToolSizePositionDlg dlg(m_InspectionID, pTool->getObjectId(), DlgName.c_str(), dynamic_cast<CWnd*>(this->GetMDIChild()));
 			dlg.DoModal();
@@ -3322,6 +3342,12 @@ void SVIPDoc::OnToolDependencies()
 	SVToolSet* pToolSet = GetToolSet();
 	if (nullptr != pToolSet)
 	{
+		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		if (false == srs.conditionOk())
+		{
+			return;
+		}
+
 		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		constexpr const TCHAR* Filter = _T("GraphViz Files (*.dot)|*.dot||");
@@ -4388,7 +4414,11 @@ void SetAllIPDocumentsOnline()
 
 bool mayDeleteCurrentlySelectedTools(const std::set<uint32_t>& rIdsOfObjectsDependedOn)
 {
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return false;
+	}
 
 	std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
 	std::string DisplayText;

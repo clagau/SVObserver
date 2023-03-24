@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EditLock.h"
 #include "SVConfigurationObject.h"
 #include "SVDiscreteOutputsView.h"
 #include "SVIOAdjustDialog.h"
@@ -166,7 +167,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* , LPARAM , CObject*  )
 }
 
 void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point) 
-{
+{//@TODO [Arvid][10.30][15.3.2023] this function is too long
 	SVIOController* pIOController{nullptr};
 
 	if( nullptr != m_pDocument)
@@ -249,16 +250,20 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_pDigOutput = pDigitalOutput;
 				dlg.m_ioObjectType = SVIOObjectType::IO_DIGITAL_OUTPUT;
 
-				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-				if(IDOK == dlg.DoModal())
+				SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+				if (false == srs.conditionOk())
 				{
-					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+					return;
+				}
+				if (IDOK == dlg.DoModal())
+				{
+					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 					if (nullptr != dlg.m_pLinkedObject && ObjectIdEnum::ModuleReadyId == dlg.m_pLinkedObject->getObjectId())
 					{
 						pIOEntry = pIOController->GetModuleReady();
 						pIOEntry->m_ObjectType = dlg.m_ioObjectType;
 					}
-					if(dlg.m_pLinkedObject != pLinkedObject)
+					if (dlg.m_pLinkedObject != pLinkedObject)
 					{
 						if (nullptr == pIOEntry)
 						{
@@ -266,21 +271,21 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 							pIOEntry->m_ObjectType = dlg.m_ioObjectType;
 						}
 						else
-						{									
+						{
 							// Make sure that we first reset the old output
-							if( nullptr != pOutputList )
+							if (nullptr != pOutputList)
 							{
-								pOutputList->ResetOutput( pIOEntry );
+								pOutputList->ResetOutput(pIOEntry);
 							}
 							pIOEntry->m_Enabled = false;
 							pIOEntry->m_IOId = SvDef::InvalidObjectId;
 						}
 
-						if(nullptr == dlg.m_pLinkedObject)
+						if (nullptr == dlg.m_pLinkedObject)
 						{
-							if( nullptr != pOutputList )
+							if (nullptr != pOutputList)
 							{
-								pOutputList->DetachOutput( pOutput->getObjectId() );
+								pOutputList->DetachOutput(pOutput->getObjectId());
 							}
 							pOutput = nullptr;
 							pIOEntry->clear();
@@ -290,37 +295,36 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 						{
 							pIOEntry->m_Enabled = true;
 							pIOEntry->setLinkedObject(dlg.m_pLinkedObject);
-							if(nullptr != pOutput && nullptr != pOutputList )
+							if (nullptr != pOutput && nullptr != pOutputList)
 							{
 								pIOEntry->m_IOId = pOutput->getObjectId();
 								pOutput->SetName(dlg.m_pLinkedObject->GetCompleteName().c_str());
-								pOutputList->AttachOutput( pOutput );
+								pOutputList->AttachOutput(pOutput);
 							}
 						}
 
 						long lPPQSize = 0;
 						// Force the PPQs to rebuild
-						if ( nullptr != pConfig ){ lPPQSize = pConfig->GetPPQCount( ); }
+						if (nullptr != pConfig) { lPPQSize = pConfig->GetPPQCount(); }
 
 						// Rebuild Outputs
-						for(long k = 0; k < lPPQSize; k++ )
+						for (long k = 0; k < lPPQSize; k++)
 						{
-							SVPPQObject* pPPQ = pConfig->GetPPQ( k );
+							SVPPQObject* pPPQ = pConfig->GetPPQ(k);
 
-							if( nullptr != pPPQ ){ pPPQ->RebuildOutputList(); }
+							if (nullptr != pPPQ) { pPPQ->RebuildOutputList(); }
 						}
 					}
 
 					// Force IO board to update if they still have one selected
-					if(nullptr != pIOEntry)
+					if (nullptr != pIOEntry)
 					{
-						if( nullptr != pOutputList )
+						if (nullptr != pOutputList)
 						{
-							pOutputList->ResetOutput( pIOEntry );
+							pOutputList->ResetOutput(pIOEntry);
 						}// end if
 					}// end if
 				}
-
 				OnUpdate( nullptr, 0, nullptr );
 			}
 			else

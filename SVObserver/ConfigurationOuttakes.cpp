@@ -8,6 +8,7 @@
 #include "stdafx.h"
 
 #include "ConfigurationOuttakes.h"
+#include "EditLock.h"
 #include "RootObject.h"
 #include "SVIODoc.h"
 #include "SVIOController.h"
@@ -192,7 +193,12 @@ SVConfigurationObject* CreateConfigAssistant(SVOConfigAssistantDlg& rDlg, bool n
 
 	rDlg.SetNewConfiguration(newConfiguration);
 
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return nullptr;
+	}
+
 	if (rDlg.DoModal() == IDOK)
 	{
 		if (rDlg.Modified())

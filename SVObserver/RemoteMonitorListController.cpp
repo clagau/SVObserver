@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <comdef.h>
+#include "EditLock.h"
 #include "RemoteMonitorListController.h"
 #include "MonitorListAddRemoveDlg.h"
 #include "RemoteMonitorList.h"
@@ -76,7 +77,11 @@ bool RemoteMonitorListController::IsEmpty() const
 bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 {
 	bool bRetVal = false;
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return false;
+	}
 	const PPQNameListNames& rPPQList = GetPPQMonitorLists(pConfig);
 	MonitorListAddRemoveDlg dlg(m_list, rPPQList);
 	INT_PTR rc = dlg.DoModal();
