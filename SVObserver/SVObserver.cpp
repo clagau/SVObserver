@@ -933,6 +933,10 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	{
 		eType = SVIM_PRODUCT_NEO;
 	}
+	else if (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_ETHERCAT))
+	{
+		eType = SVIM_PRODUCT_ETHERCATIO;
+	}
 	return eType;
 }
 

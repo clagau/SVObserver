@@ -142,10 +142,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CifxCard.cpp" />
-    <ClCompile Include="HardwareTriggerSource.cpp" />
-    <ClCompile Include="PowerLinkConnection.cpp" />
-    <ClCompile Include="SimulatedTriggerSource.cpp" />
+    <ClCompile Include="CifxCardEcat.cpp" />
+    <ClCompile Include="EtherCatConnection.cpp" />
+    <ClCompile Include="HardwareTriggerEcat.cpp" />
+    <ClCompile Include="SimulatedTriggerEcat.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="EtherCatIOExports.cpp" />
     <ClCompile Include="EtherCatIOImpl.cpp" />
@@ -161,12 +161,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
-    <ClInclude Include="CifxCard.h" />
-    <ClInclude Include="HardwareTriggerSource.h" />
-    <ClInclude Include="PlcDataTypes.h" />
-    <ClInclude Include="PowerLinkConnection.h" />
+    <ClInclude Include="CifxCardEcat.h" />
+    <ClInclude Include="EtherCatConnection.h" />
+    <ClInclude Include="EtherCatDataTypes.h" />
+    <ClInclude Include="HardwareTriggerEcat.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SimulatedTriggerSource.h" />
+    <ClInclude Include="SimulatedTriggerEcat.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="EtherCatIOExports.h" />
     <ClInclude Include="EtherCatIOImpl.h" />

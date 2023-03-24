@@ -7,23 +7,22 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerSource.h"
+#include "EtherCatDataTypes.h"
 #pragma endregion Includes
 
 
 namespace SvEcat
 {
-struct TriggerReport;
-struct ResultReport;
-enum class TriggerType;
+class TriggerSource;
+struct EcatInputParam;
 
 extern HANDLE g_hSignalEvent;
 
-class PowerlinkConnection
+class EtherCatConnection
 {
 public:
-	PowerlinkConnection(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, TriggerType triggerType, const std::string& rAdditionalData);
-	~PowerlinkConnection();
+	explicit EtherCatConnection(const EcatInputParam& rEcatInput);
+	~EtherCatConnection();
 
 	void setReady(bool ready);
 	void setTriggerChannel(uint8_t channel, bool active);
@@ -37,17 +36,8 @@ private:
 	void EventSignalThread(std::function<void()> pCallback);
 	void EventHandler();
 
-	//void SendProductsToPlc(); ///sends (via m_pdx) information with the CifX card
-	
-	//void useResult(const Product& rProduct); ///< prepares a product for sending to the cifX card
-	//void QueueProduct(const Product& rProduct); ///< called for products the reusults of which are ready to be sent to the PLC
-
 	std::thread m_eventSignalThread;
-
 	std::unique_ptr<TriggerSource> m_pTriggersource = nullptr;
-
-	uint32_t m_mostRecentlyReceivedOid[cNumberOfChannels] = {0,0,0,0};
-
 };
 
 } //namespace SvEcat

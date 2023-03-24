@@ -7,8 +7,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "PowerLinkConnection.h"
-#include "SimulatedTriggerSource.h"
+#include "EtherCatConnection.h"
+#include "SimulatedTriggerEcat.h"
 #include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Triggering/TriggerData.h"
@@ -37,18 +37,18 @@ std::mutex gTriggerDataMutex;
 std::array<SvTrig::TriggerData, cNumberOfChannels> gTriggerDataList;
 std::array<std::atomic_bool, cNumberOfChannels> gNewTrigger {false, false, false, false};
 
-SimulatedTriggerSource::SimulatedTriggerSource(std::function<void(const SvTrig::TriggerData&)> pSendTriggerData, const std::string& rSimulateFile) : TriggerSource(pSendTriggerData)
-	,m_plcSimulateFile{rSimulateFile}
+SimulatedTriggerEcat::SimulatedTriggerEcat(const EcatInputParam& rEcatInput) : TriggerSource(rEcatInput.m_pTriggerDataCallBack)
+	, m_simulatationFile {rEcatInput.m_simulationFile}
 {
 }
 
-HRESULT SimulatedTriggerSource::initialize()
+HRESULT SimulatedTriggerEcat::initialize()
 {
 	HRESULT result{ S_OK };
-	if(false == m_plcSimulateFile.empty())
+	if(false == m_simulatationFile.empty())
 	{
 		std::ifstream cycleFile;
-		cycleFile.open(m_plcSimulateFile.c_str(), std::ifstream::in | std::ifstream::binary);
+		cycleFile.open(m_simulatationFile.c_str(), std::ifstream::in | std::ifstream::binary);
 		if(false== cycleFile.is_open())
 		{
 			result = ERROR_FILE_NOT_FOUND;
@@ -96,7 +96,7 @@ HRESULT SimulatedTriggerSource::initialize()
 	return result;
 }
 
-bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
+bool SimulatedTriggerEcat::setTriggerChannel(uint8_t channel, bool active)
 {
 	if(channel < cNumberOfChannels)
 	{
@@ -108,10 +108,10 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 			{
 				///Write result file in same directory as cycles file
 				std::string resultFilename;
-				size_t pos = m_plcSimulateFile.rfind('\\');
+				size_t pos = m_simulatationFile.rfind('\\');
 				if(std::string::npos != pos)
 				{
-					resultFilename = m_plcSimulateFile.substr(0ULL, pos + 1);
+					resultFilename = m_simulatationFile.substr(0ULL, pos + 1);
 					resultFilename += cResultFilename;
 					resultFilename += m_channel[channel].m_simulatedTriggerData.m_name;
 					resultFilename += cResultExtension;
@@ -152,10 +152,10 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 	if(false == result)
 	{
 		std::string resultFilename;
-		size_t pos = m_plcSimulateFile.rfind('\\');
+		size_t pos = m_simulatationFile.rfind('\\');
 		if (std::string::npos != pos)
 		{
-			resultFilename = m_plcSimulateFile.substr(0ULL, pos + 1);
+			resultFilename = m_simulatationFile.substr(0ULL, pos + 1);
 			resultFilename += cResultFilename;
 			resultFilename += cResultExtension;
 		}
@@ -177,7 +177,6 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 					fileData += cObjectInvalid;
 					fileData += std::to_string(m_ObjectsInvalid[i]) + _T("\r\n");
 				}
-				// cppcheck-suppress invalidFunctionArg
 				resultFile.write(fileData.c_str(), static_cast<int64_t> (fileData.size()));
 				resultFile.close();
 			}
@@ -186,7 +185,7 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 	return result;
 }
 
-void SimulatedTriggerSource::analyzeTelegramData()
+void SimulatedTriggerEcat::analyzeTelegramData()
 {
 	if(std::any_of(gNewTrigger.cbegin(), gNewTrigger.cend(), [](const auto& rNew) { return rNew.load(); }))
 	{
@@ -194,7 +193,7 @@ void SimulatedTriggerSource::analyzeTelegramData()
 	}
 }
 
-void SimulatedTriggerSource::setOutput(uint8_t , bool )
+void SimulatedTriggerEcat::setOutput(uint8_t , bool )
 {
 	/// Highest priority is invalid then bad then good (of all 14 results)
 	//if (channelOut.m_results.end() != std::find(channelOut.m_results.begin(), channelOut.m_results.end(), cPlcInvalid))
@@ -237,7 +236,7 @@ void SimulatedTriggerSource::setOutput(uint8_t , bool )
 	//}
 }
 
-void SimulatedTriggerSource::createTriggerData(uint8_t channel)
+void SimulatedTriggerEcat::createTriggerData(uint8_t channel)
 {
 	if(gNewTrigger[channel])
 	{
@@ -258,7 +257,7 @@ void SimulatedTriggerSource::createTriggerData(uint8_t channel)
 	}
 }
 
-HRESULT SimulatedTriggerSource::initChannel(const std::vector<std::vector<std::string>>& rCycleParamList)
+HRESULT SimulatedTriggerEcat::initChannel(const std::vector<std::vector<std::string>>& rCycleParamList)
 {
 	if (0ULL == rCycleParamList.size())
 	{
@@ -309,11 +308,16 @@ HRESULT SimulatedTriggerSource::initChannel(const std::vector<std::vector<std::s
 	return S_OK;
 }
 
-void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double timestamp)
+void SimulatedTriggerEcat::dispatchTrigger(const std::string& rName, double timestamp)
 {
-	static uint32_t currentIndex {0UL};
-	static uint8_t currentTriggerIndex {1};
-	static uint32_t objectID {0};
+	struct CurrentTriggerData
+	{
+		uint32_t m_imageIndex {0UL};
+		uint8_t m_triggerIndex {1};
+		uint32_t m_objectID {0};
+		std::string m_acquisitionFile;
+	};
+	static std::array<CurrentTriggerData, cNumberOfChannels> currentTriggerData;
 	int triggerChannel {-1};
 
 	for (int i = 0; i < static_cast<int> (m_channel.size()); ++i)
@@ -332,32 +336,31 @@ void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double ti
 
 	if (m_channel[triggerChannel].m_intialize)
 	{
-		currentIndex = 0UL;
-		currentTriggerIndex = 1;
-		objectID = rSimTriggerData.m_objectID;
+		currentTriggerData[triggerChannel].m_imageIndex = 0UL;
+		currentTriggerData[triggerChannel].m_triggerIndex = 1;
+		currentTriggerData[triggerChannel].m_objectID = rSimTriggerData.m_objectID;
 		m_channel[triggerChannel].m_intialize = false;
 	}
 
-	std::string acquisitionFile;
-	if (currentIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
+	if (currentTriggerData[triggerChannel].m_imageIndex < static_cast<uint32_t> (rSimTriggerData.m_LoadImageList.size()))
 	{
-		acquisitionFile = rSimTriggerData.m_LoadImageList[currentIndex];
+		currentTriggerData[triggerChannel].m_acquisitionFile = rSimTriggerData.m_LoadImageList[currentTriggerData[triggerChannel].m_imageIndex];
 	}
-	if (false == acquisitionFile.empty())
+	if (false == currentTriggerData[triggerChannel].m_acquisitionFile.empty())
 	{
-		size_t pos2 = acquisitionFile.find_last_of('.');
-		size_t pos1 = acquisitionFile.find_last_of('_', pos2);
+		size_t pos2 = currentTriggerData[triggerChannel].m_acquisitionFile.find_last_of('.');
+		size_t pos1 = currentTriggerData[triggerChannel].m_acquisitionFile.find_last_of('_', pos2);
 		uint8_t triggerIndex {0};
 		if (std::string::npos != pos1 && std::string::npos != pos2)
 		{
-			triggerIndex = static_cast<uint8_t> (std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1 - 1)));
+			triggerIndex = static_cast<uint8_t> (std::stoul(currentTriggerData[triggerChannel].m_acquisitionFile.substr(pos1 + 1, pos2 - pos1 - 1)));
 			pos2 = pos1 - 1;
 		}
-		pos1 = acquisitionFile.find_last_of('_', pos2);
+		pos1 = currentTriggerData[triggerChannel].m_acquisitionFile.find_last_of('_', pos2);
 		if (std::string::npos != pos1 && std::string::npos != pos2 && 0 != triggerIndex)
 		{
-			objectID = std::stoul(acquisitionFile.substr(pos1 + 1, pos2 - pos1));
-			currentTriggerIndex = triggerIndex;
+			currentTriggerData[triggerChannel].m_objectID = std::stoul(currentTriggerData[triggerChannel].m_acquisitionFile.substr(pos1 + 1, pos2 - pos1));
+			currentTriggerData[triggerChannel].m_triggerIndex = triggerIndex;
 		}
 	}
 
@@ -366,34 +369,35 @@ void SimulatedTriggerSource::dispatchTrigger(const std::string& rName, double ti
 		SvTrig::TriggerData triggerData;
 		triggerData.m_triggerTimestamp = timestamp;
 		triggerData.m_channel = rSimTriggerData.m_channel;
-		triggerData.m_objectData[0].m_objectID = objectID;
+		//Use default objectID at the moment
+		triggerData.m_objectData[0].m_objectID = currentTriggerData[triggerChannel].m_objectID;;
 		triggerData.m_objectType = cSingleObjectType;
 		triggerData.m_triggerPerObjectID = rSimTriggerData.m_triggerPerObjectID;
-		triggerData.m_triggerIndex = currentTriggerIndex;
-		triggerData.m_pAcquisitionFile = acquisitionFile.c_str();
+		triggerData.m_triggerIndex = currentTriggerData[triggerChannel].m_triggerIndex;
+		triggerData.m_pAcquisitionFile = currentTriggerData[triggerChannel].m_acquisitionFile.c_str();
 		{
 			std::lock_guard<std::mutex> guard {gTriggerDataMutex};
 			gTriggerDataList[triggerData.m_channel] = std::move(triggerData);
 		}
 		gNewTrigger[rSimTriggerData.m_channel] = true;
-		++currentTriggerIndex;
-		++currentIndex;
+		++currentTriggerData[triggerChannel].m_triggerIndex;
+		++currentTriggerData[triggerChannel].m_imageIndex;
 		::SetEvent(g_hSignalEvent);
 	}
 
-	if (currentTriggerIndex > rSimTriggerData.m_triggerPerObjectID)
+	if (currentTriggerData[triggerChannel].m_triggerIndex > rSimTriggerData.m_triggerPerObjectID)
 	{
 		if (0 != rSimTriggerData.m_objectDelay)
 		{
 			std::this_thread::sleep_for(std::chrono::microseconds(rSimTriggerData.m_objectDelay));
 		}
-		currentTriggerIndex = 1;
-		objectID++;
-		if (rSimTriggerData.m_objectNumber > 0 && objectID >= rSimTriggerData.m_objectID + rSimTriggerData.m_objectNumber)
+		currentTriggerData[triggerChannel].m_triggerIndex = 1;
+		currentTriggerData[triggerChannel].m_objectID++;
+		if (rSimTriggerData.m_objectNumber > 0 && currentTriggerData[triggerChannel].m_objectID >= rSimTriggerData.m_objectID + rSimTriggerData.m_objectNumber)
 		{
 			m_channel[triggerChannel].m_timerInfo.m_pause = true;
 		}
-		if (0 < rSimTriggerData.m_LoadImageList.size() && currentIndex >= rSimTriggerData.m_LoadImageList.size())
+		if (0 < rSimTriggerData.m_LoadImageList.size() && currentTriggerData[triggerChannel].m_imageIndex >= rSimTriggerData.m_LoadImageList.size())
 		{
 			m_channel[triggerChannel].m_timerInfo.m_pause = true;
 		}

@@ -13,6 +13,8 @@
 
 namespace SvEcat
 {
+struct PlcInputParam;
+
 struct SimulatedTriggerData
 {
 	std::string m_name {};
@@ -36,7 +38,7 @@ struct ChannelData
 };
 
 /// a simplified simulation of HardwareTriggerSource
-class SimulatedTriggerSource : public TriggerSource
+class SimulatedTriggerEcat : public TriggerSource
 {
 	enum FileParamColumnPos
 	{
@@ -51,8 +53,8 @@ class SimulatedTriggerSource : public TriggerSource
 		validationFolder,
 	};
 public:
-	explicit SimulatedTriggerSource(std::function<void(const SvTrig::TriggerData&)> pReportTrigger, const std::string& rSimulateFile);
-	virtual ~SimulatedTriggerSource() = default;
+	explicit SimulatedTriggerEcat(const EcatInputParam& rEcatInput);
+	virtual ~SimulatedTriggerEcat() = default;
 
 	virtual HRESULT initialize() override;
 	virtual bool setTriggerChannel(uint8_t channel, bool active) override;
@@ -67,7 +69,7 @@ private:
 	void dispatchTrigger(const std::string& rName, double timestamp);
 
 	std::array<ChannelData, cNumberOfChannels> m_channel;
-	std::string m_plcSimulateFile;
+	std::string m_simulatationFile;
 
 	std::array<std::atomic_ulong, cNumberOfChannels> m_ObjectsGood{ 0UL, 0UL, 0UL, 0UL };
 	std::array<std::atomic_ulong, cNumberOfChannels> m_ObjectsBad {0UL, 0UL, 0UL, 0UL};

@@ -236,7 +236,8 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 						pDigitalOutput->SetChannel(item);
 						pDigitalOutput->SetName(_T(""));
 						pDigitalOutput->Force(false, false);
-						pDigitalOutput->Invert(true);
+						bool invert = SVIM_PRODUCT_ETHERCATIO != pConfig->GetProductType();
+						pDigitalOutput->Invert(invert);
 					}
 				}
 			}

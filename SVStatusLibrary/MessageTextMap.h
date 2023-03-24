@@ -317,6 +317,7 @@ namespace SvStl
 
 		{Tid_Camera_UseQuestion, _T("Would you like to use this camera file for all camera choices?")},
 		{Tid_Config_SwitchIOQuestion, _T("By switching the system (product) the input and outputs need to be reset, do you wish to continue?")},
+		{Tid_Config_SwitchIOInvert, _T("By switching the system from LptIO to EtherCat and vice versa the input and outputs invertion shall be reversed")},
 		{Tid_Config_InspectionImportFailed, _T("Inspection Import failed. Error = {0}")},
 		{Tid_Config_CameraFileNameInvalid, _T("Camera file name is invalid {0}")},
 		{Tid_Config_CameraFileInvalid, _T("Camera file is invalid {0}")},

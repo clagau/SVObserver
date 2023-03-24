@@ -8,9 +8,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "HardwareTriggerSource.h"
-#include "PowerLinkConnection.h"
-#include "SimulatedTriggerSource.h"
+#include "HardwareTriggerEcat.h"
+#include "EtherCatConnection.h"
+#include "SimulatedTriggerEcat.h"
 #include "TriggerEngineConnection.h"
 #pragma endregion Includes
 
@@ -19,24 +19,24 @@ namespace SvEcat
 HANDLE g_hSignalEvent {nullptr};
 std::atomic_bool g_runThread{false};
 
-PowerlinkConnection::PowerlinkConnection(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, TriggerType triggerType, const std::string& rAdditionalData)
+EtherCatConnection::EtherCatConnection(const EcatInputParam& rEcatInput)
 {
 	g_hSignalEvent = ::CreateEvent(nullptr, false, false, nullptr);
 
-	switch (triggerType)
+	switch (rEcatInput.m_triggerType)
 	{
-	case TriggerType::HardwareTrigger:
-		m_pTriggersource = std::make_unique<HardwareTriggerSource>(pTriggerDataCallback, rAdditionalData);
+	case EcatTriggerType::HardwareTriggerEcat:
+		m_pTriggersource = std::make_unique<HardwareTriggerEcat>(rEcatInput);
 		break;
-	case TriggerType::SimulatedTrigger:
-		m_pTriggersource = std::make_unique<SimulatedTriggerSource>(pTriggerDataCallback, rAdditionalData);
+	case EcatTriggerType::SimulatedTriggerEcat:
+		m_pTriggersource = std::make_unique<SimulatedTriggerEcat>(rEcatInput);
 		break;
 	default:
 		break;
 	}
 }
 
-PowerlinkConnection::~PowerlinkConnection()
+EtherCatConnection::~EtherCatConnection()
 {
 	if (nullptr != g_hSignalEvent)
 	{
@@ -45,12 +45,12 @@ PowerlinkConnection::~PowerlinkConnection()
 	}
 }
 
-void PowerlinkConnection::setReady(bool ready)
+void EtherCatConnection::setReady(bool ready)
 {
 	m_pTriggersource->setReady(ready);
 }
 
-void PowerlinkConnection::setTriggerChannel(uint8_t channel, bool active)
+void EtherCatConnection::setTriggerChannel(uint8_t channel, bool active)
 {
 	if(channel < cNumberOfChannels)
 	{
@@ -66,35 +66,35 @@ void PowerlinkConnection::setTriggerChannel(uint8_t channel, bool active)
 	}
 }
 
-uint32_t PowerlinkConnection::getInputs() const
+uint32_t EtherCatConnection::getInputs() const
 {
 	return m_pTriggersource->getInputs();
 }
 
-void PowerlinkConnection::setOutput(uint8_t outputNr, bool state)
+void EtherCatConnection::setOutput(uint8_t outputNr, bool state)
 {
 	m_pTriggersource->setOutput(outputNr, state);
 }
 
-HRESULT PowerlinkConnection::initialize()
+HRESULT EtherCatConnection::initialize()
 {
 	return m_pTriggersource->initialize();
 }
 
-void PowerlinkConnection::StartEventSignalThread()
+void EtherCatConnection::StartEventSignalThread()
 {
 	if (!m_eventSignalThread.joinable())
 	{
 		g_runThread = true;
 		auto eventHandler = [this]() { return EventHandler(); };
-		m_eventSignalThread = std::thread(&PowerlinkConnection::EventSignalThread, this, eventHandler);
+		m_eventSignalThread = std::thread(&EtherCatConnection::EventSignalThread, this, eventHandler);
 		
 		::SetThreadPriority(m_eventSignalThread.native_handle(), THREAD_PRIORITY_TIME_CRITICAL);
 		::OutputDebugString("Event signal thread started\n");
 	}
 }
 
-void PowerlinkConnection::StopEventSignalThread()
+void EtherCatConnection::StopEventSignalThread()
 {
 	g_runThread = false;
 	::SetEvent(g_hSignalEvent);
@@ -105,7 +105,7 @@ void PowerlinkConnection::StopEventSignalThread()
 	}
 }
 
-void PowerlinkConnection::EventSignalThread(std::function<void()> pCallback)
+void EtherCatConnection::EventSignalThread(std::function<void()> pCallback)
 {
 	while (g_runThread)
 	{
@@ -121,7 +121,7 @@ void PowerlinkConnection::EventSignalThread(std::function<void()> pCallback)
 	}
 }
 
-void PowerlinkConnection::EventHandler()
+void EtherCatConnection::EventHandler()
 {
 	m_pTriggersource->analyzeTelegramData();
 }

@@ -27,15 +27,16 @@ typedef std::map<SVIMProductEnum, SVIMProductEnumSet> SVIMProductCompatibilityLi
 const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap
 {
 	// SVIMProductEnum,                             SUPPORTED, DIGITIZERS, TRIGGERS
-	{SVIM_PRODUCT_X2_GD1A,       SVIMTypeInfoStruct(true,      1,			1)},
-	{SVIM_PRODUCT_X2_GD1A_COLOR, SVIMTypeInfoStruct(false,     1,			1)},
-	{SVIM_PRODUCT_X2_GD2A,       SVIMTypeInfoStruct(false,     2,			2)},
-	{SVIM_PRODUCT_X2_GD2A_COLOR, SVIMTypeInfoStruct(false,     2,			2)},
-	{SVIM_PRODUCT_X2_GD4A,       SVIMTypeInfoStruct(false,     4,			3)},
-	{SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct(false,     4,			3)},
-	{SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct(true,      8,			3)},
-	{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct(false,     8,			3)},
-	{ SVIM_PRODUCT_NEO,  SVIMTypeInfoStruct(true,      8,			4) }
+	{ SVIM_PRODUCT_X2_GD1A,			SVIMTypeInfoStruct(true,      1,			1)},
+	{ SVIM_PRODUCT_X2_GD1A_COLOR,	SVIMTypeInfoStruct(false,     1,			1)},
+	{ SVIM_PRODUCT_X2_GD2A,			SVIMTypeInfoStruct(false,     2,			2)},
+	{ SVIM_PRODUCT_X2_GD2A_COLOR,	SVIMTypeInfoStruct(false,     2,			2)},
+	{ SVIM_PRODUCT_X2_GD4A,			SVIMTypeInfoStruct(false,     4,			3)},
+	{ SVIM_PRODUCT_X2_GD4A_COLOR,	SVIMTypeInfoStruct(false,     4,			3)},
+	{ SVIM_PRODUCT_X2_GD8A,			SVIMTypeInfoStruct(true,      8,			3)},
+	{ SVIM_PRODUCT_X2_GD8A_COLOR,	SVIMTypeInfoStruct(false,     8,			3)},
+	{ SVIM_PRODUCT_NEO,				SVIMTypeInfoStruct(true,      8,			4) },
+	{ SVIM_PRODUCT_ETHERCATIO,		SVIMTypeInfoStruct(true,      8,			4) }
 };
 
 SVHardwareManifest& SVHardwareManifest::Instance()
@@ -45,8 +46,7 @@ SVHardwareManifest& SVHardwareManifest::Instance()
 }
 
 SVHardwareManifest::SVHardwareManifest()
-{
-}
+{}
 
 SVHardwareManifest::~SVHardwareManifest()
 {
@@ -154,6 +154,7 @@ std::string SVHardwareManifest::BuildTriggerDeviceName(SVIMProductEnum productTy
 					break;
 				}
 				case SVIM_PRODUCT_NEO:
+				case SVIM_PRODUCT_ETHERCATIO:
 				{
 					Result = SVHardwareManifest::BuildHardwareTriggerDeviceName(digitizerIndex);
 					break;
@@ -202,7 +203,7 @@ std::string SVHardwareManifest::BuildHardwareTriggerDeviceName(int iDig)
 
 bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType)
 {
-	static const SVIMProductEnumSet list
+	constexpr std::array<SVIMProductEnum, 10> list
 	{
 		SVIM_PRODUCT_X2_GD1A_COLOR,
 		SVIM_PRODUCT_X2_GD2A_COLOR,
@@ -213,9 +214,10 @@ bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType)
 		SVIM_PRODUCT_X2_GD4A,
 		SVIM_PRODUCT_X2_GD8A,
 		SVIM_PRODUCT_NEO,
+		SVIM_PRODUCT_ETHERCATIO,
 	};
 
-	SVIMProductEnumSet::const_iterator it = list.find(productType);
+	auto it = std::find(list.begin(), list.end(), productType);
 	return (it != list.end());
 }
 
@@ -228,10 +230,11 @@ bool SVHardwareManifest::IsCompatible(SVIMProductEnum ConfigType, SVIMProductEnu
 		{SVIM_PRODUCT_X2_GD4A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
 		{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
 
-		{SVIM_PRODUCT_X2_GD1A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
+		{SVIM_PRODUCT_X2_GD1A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A, SVIM_PRODUCT_ETHERCATIO}},
 		{SVIM_PRODUCT_X2_GD2A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
 		{SVIM_PRODUCT_X2_GD4A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
-		{SVIM_PRODUCT_X2_GD8A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD1A}},
+		{SVIM_PRODUCT_X2_GD8A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD1A, SVIM_PRODUCT_ETHERCATIO}},
+		{SVIM_PRODUCT_ETHERCATIO, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A, SVIM_PRODUCT_X2_GD1A}},
 	};
 
 
@@ -254,9 +257,9 @@ bool SVHardwareManifest::IsCompatible(SVIMProductEnum ConfigType, SVIMProductEnu
 	return l_bRet;
 }
 
-bool SVHardwareManifest::IsColorSystem(SVIMProductEnum p_ProductType)
+bool SVHardwareManifest::IsColorSystem(SVIMProductEnum productType)
 {
-	static const SVIMProductEnumSet ColorList
+	constexpr std::array<SVIMProductEnum, 4> colorList
 	{
 		SVIM_PRODUCT_X2_GD1A_COLOR,
 		SVIM_PRODUCT_X2_GD2A_COLOR,
@@ -264,38 +267,39 @@ bool SVHardwareManifest::IsColorSystem(SVIMProductEnum p_ProductType)
 		SVIM_PRODUCT_X2_GD8A_COLOR,
 	};
 
-	SVIMProductEnumSet::const_iterator it = ColorList.find(p_ProductType);
-	return (it != ColorList.end());
+	auto it = std::find(colorList.begin(), colorList.end(), productType);
+	return (it != colorList.end());
 }
 
-bool SVHardwareManifest::isDiscreteIOSystem(SVIMProductEnum p_ProductType)
+bool SVHardwareManifest::isDiscreteIOSystem(SVIMProductEnum productType)
 {
-	static const SVIMProductEnumSet DiscreteIOList
+	constexpr std::array<SVIMProductEnum, 5> discreteIOList
 	{
 		SVIM_PRODUCT_X2_GD1A,
 		SVIM_PRODUCT_X2_GD2A,
 		SVIM_PRODUCT_X2_GD4A,
 		SVIM_PRODUCT_X2_GD8A,
+		SVIM_PRODUCT_ETHERCATIO,
 	};
 
-	SVIMProductEnumSet::const_iterator it = DiscreteIOList.find(p_ProductType);
-	return (it != DiscreteIOList.end());
+	auto it = std::find(discreteIOList.begin(), discreteIOList.end(), productType);
+	return (it != discreteIOList.end());
 }
 
-bool SVHardwareManifest::isPlcSystem(SVIMProductEnum p_ProductType)
+bool SVHardwareManifest::isPlcSystem(SVIMProductEnum productType)
 {
-	static const SVIMProductEnumSet PlcList
+	constexpr std::array<SVIMProductEnum, 5> plcList
 	{
 		SVIM_PRODUCT_NEO,
 	};
 
-	SVIMProductEnumSet::const_iterator it = PlcList.find(p_ProductType);
-	return (it != PlcList.end());
+	auto it = std::find(plcList.begin(), plcList.end(), productType);
+	return (it != plcList.end());
 }
 
-bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum p_ProductType)
+bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum productType)
 {
-	static const SVIMProductEnumSet GigeList
+	constexpr std::array<SVIMProductEnum, 10> matroxGigeList
 	{
 		SVIM_PRODUCT_X2_GD1A,
 		SVIM_PRODUCT_X2_GD1A_COLOR,
@@ -305,16 +309,17 @@ bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum p_ProductType)
 		SVIM_PRODUCT_X2_GD4A_COLOR,
 		SVIM_PRODUCT_X2_GD8A,
 		SVIM_PRODUCT_X2_GD8A_COLOR,
-		SVIM_PRODUCT_NEO
+		SVIM_PRODUCT_NEO,
+		SVIM_PRODUCT_ETHERCATIO
 	};
 
-	SVIMProductEnumSet::const_iterator it = GigeList.find(p_ProductType);
-	return (it != GigeList.end());
+	auto it = std::find(matroxGigeList.begin(), matroxGigeList.end(), productType);
+	return (it != matroxGigeList.end());
 }
 
-bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum p_ProductType)
+bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum productType)
 {
-	static const SVIMProductEnumSet DigitalList
+	constexpr std::array<SVIMProductEnum, 10> digitalList
 	{
 		SVIM_PRODUCT_X2_GD1A,
 		SVIM_PRODUCT_X2_GD1A_COLOR,
@@ -324,9 +329,10 @@ bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum p_ProductType)
 		SVIM_PRODUCT_X2_GD4A_COLOR,
 		SVIM_PRODUCT_X2_GD8A,
 		SVIM_PRODUCT_X2_GD8A_COLOR,
-		SVIM_PRODUCT_NEO
+		SVIM_PRODUCT_NEO,
+		SVIM_PRODUCT_ETHERCATIO,
 	};
 
-	SVIMProductEnumSet::const_iterator it = DigitalList.find(p_ProductType);
-	return (it != DigitalList.end());
+	auto it = std::find(digitalList.begin(), digitalList.end(), productType);
+	return (it != digitalList.end());
 }

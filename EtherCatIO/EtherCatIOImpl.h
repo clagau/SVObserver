@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerEngineConnection.h"
+#include "EtherCatDataTypes.h"
 #include "Triggering/IODeviceBase.h"
 #pragma endregion Includes
 
@@ -16,7 +16,7 @@ namespace SvEcat
 {
 
 #pragma region Declarations
-constexpr unsigned long cMaxPlcTriggers = 4;
+constexpr unsigned long cMaxEtherCatTriggers = 4;
 
 struct TriggerReport;
 #pragma endregion Declarations
@@ -25,7 +25,7 @@ class EthercatIOImpl : public SvTrig::IODeviceBase
 {
 #pragma region Constructor
 public:
-	EthercatIOImpl() = default;
+	EthercatIOImpl();
 	virtual ~EthercatIOImpl() = default;
 #pragma endregion Constructor
 
@@ -69,19 +69,21 @@ private:
 
 #pragma region Member Variables
 private:
-	long m_PlcVersion {0L};
+	EcatInputParam m_ecatInputParam;
+
 	std::atomic_bool m_engineStarted {false};
 	std::atomic_bool m_engineInitialized {false};
-	std::array<std::atomic_bool, cMaxPlcTriggers> m_triggerStarted{false, false, false, false};
-	std::array<std::atomic_uint32_t, cMaxPlcTriggers> m_inputCount {0UL, 0UL, 0UL, 0UL};
-	std::array<std::atomic_uint32_t, cMaxPlcTriggers> m_outputCount {0UL, 0UL, 0UL, 0UL};
-	std::atomic_int8_t m_currentTriggerChannel{-1};
+	std::array<std::atomic_bool, cMaxEtherCatTriggers> m_triggerStarted{false, false, false, false};
+	std::array<uint32_t, cMaxEtherCatTriggers> m_inputCount {0UL, 0UL, 0UL, 0UL};
+	std::array<uint32_t, cMaxEtherCatTriggers> m_outputCount {0UL, 0UL, 0UL, 0UL};
+	int8_t m_currentTriggerChannel{-1};
 
-	std::string m_AdditionalData;
-	std::string m_logFileName;
-	std::ofstream m_logInFile;
-	std::ofstream m_logOutFile;
-	TriggerType m_triggerType{TriggerType::None};
+	std::filebuf m_logInFile;
+	std::filebuf m_logOutFile;
+	typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_ostream_backend> text_sink;
+	boost::shared_ptr<text_sink> m_pSink {nullptr};
+	boost::log::sources::channel_logger_mt<std::string> m_inLogger;
+	boost::log::sources::channel_logger_mt<std::string> m_outLogger;
 #pragma endregion Member Variables
 };
 

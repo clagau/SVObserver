@@ -10,22 +10,22 @@
     <ClCompile Include="EtherCatIOImpl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SimulatedTriggerSource.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TriggerSource.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TriggerEngineConnection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="PowerLinkConnection.cpp">
+    <ClCompile Include="EtherCatConnection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="CifxCard.cpp">
+    <ClCompile Include="HardwareTriggerEcat.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="HardwareTriggerSource.cpp">
+    <ClCompile Include="SimulatedTriggerEcat.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="CifxCardEcat.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,22 +48,22 @@
     <ClInclude Include="TriggerEngineConnection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="CifxCard.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="HardwareTriggerSource.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SimulatedTriggerSource.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="TriggerSource.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="PowerLinkConnection.h">
+    <ClInclude Include="EtherCatConnection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="PlcDataTypes.h">
+    <ClInclude Include="EtherCatDataTypes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="HardwareTriggerEcat.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CifxCardEcat.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SimulatedTriggerEcat.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

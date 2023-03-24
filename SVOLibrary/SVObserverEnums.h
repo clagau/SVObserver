@@ -11,11 +11,6 @@
 
 #pragma once
 
-#pragma region Includes
-//Moved to precompiled header: #include <vector>
-#pragma endregion Includes
-
-
 enum SVIMProductEnum
 {
 	SVIM_PRODUCT_INVALID_TYPE = 0,
@@ -28,5 +23,6 @@ enum SVIMProductEnum
 	SVIM_PRODUCT_X2_GD1A	= 1029,
 	SVIM_PRODUCT_X2_GD1A_COLOR	= 1030,
 	SVIM_PRODUCT_NEO = 1033,
+	SVIM_PRODUCT_ETHERCATIO = 1034,
 	SVIM_PRODUCT_TYPE_UNKNOWN = 0xFFFF,
 };

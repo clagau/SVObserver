@@ -277,6 +277,7 @@ enum MessageTextEnum
 
 	Tid_Camera_UseQuestion,
 	Tid_Config_SwitchIOQuestion,
+	Tid_Config_SwitchIOInvert,
 	Tid_Config_InspectionImportFailed,
 	Tid_Config_CameraFileNameInvalid,
 	Tid_Config_CameraFileInvalid,

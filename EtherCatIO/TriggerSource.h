@@ -7,12 +7,11 @@
 #pragma once
 
 #pragma region Includes
-#include "PlcDataTypes.h"
+#include "EtherCatDataTypes.h"
 #pragma endregion Includes
 
 namespace SvTrig
 {
-struct ResultData;
 struct TriggerData;
 }
 

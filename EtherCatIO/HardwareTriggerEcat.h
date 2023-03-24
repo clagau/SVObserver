@@ -1,13 +1,14 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017,2017 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
-/// \file HardwareTriggerSource.h
+/// \file HardwareTriggerEcat.h
 /// This is the class used for triggers set with the data from the Hilscher card
+/// using Master EtherCat
 //******************************************************************************
 #pragma once
 
 #pragma region Includes
-#include "CifxCard.h"
+#include "CifxCardEcat.h"
 #include "TriggerSource.h"
 #pragma endregion Includes
 
@@ -16,11 +17,11 @@
 namespace SvEcat
 {
 /// processes all information that is either gained from the incoming process data or put into outgoing process data 
-class HardwareTriggerSource : public TriggerSource
+class HardwareTriggerEcat : public TriggerSource
 {
 public:
-	explicit HardwareTriggerSource(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, const std::string& rAdditionalData);
-	virtual ~HardwareTriggerSource();
+	explicit HardwareTriggerEcat(const EcatInputParam& rEcatInput);
+	virtual ~HardwareTriggerEcat();
 
 	virtual bool isReady() const override	{ return m_cifXCard.isReady(); }
 	virtual HRESULT initialize() override;
@@ -32,19 +33,18 @@ public:
 private:
 	virtual  void createTriggerData(uint8_t channel) override;
 
-#if defined (ETHERCAT_TIMER)
-	void writeOutputs(double timestamp);
-#endif
+	const EcatInputParam& m_rEcatInput;
 
-	std::array<uint8_t, cEtherCatDataSize> m_previousInputData {0,0,0,0,0,0,0,0};
-	std::array<uint8_t, cEtherCatDataSize> m_outputData {0,0,0,0,0,0,0,0};
-
-	CifXCard m_cifXCard;
-	std::string m_additionalData;
+	EcatInputData m_inputData {};
+	EcatInputData m_previousInputData {};
+	
+	CifXCardEcat m_cifXCard;
 	bool m_initialized {false};
 
-	std::atomic_bool m_timerOn {false};
-	std::thread m_timerThread;
+	std::filebuf m_logOperationDataFile;
+	typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_ostream_backend> text_sink;
+	boost::shared_ptr<text_sink> m_pSink {nullptr};
+	boost::log::sources::channel_logger_mt<std::string> m_operationLogger;
 };
 
 } //namespace SvEcat

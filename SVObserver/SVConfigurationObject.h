@@ -477,6 +477,8 @@ private:
 	void PpqTimer(const std::string& rName, double timestamp) const;
 
 #pragma region Member Variables
+	//m_eProductType needs to be before m_pIOController as it is used in its construction
+	SVIMProductEnum m_eProductType {SVIM_PRODUCT_TYPE_UNKNOWN};
 	std::list<SvFs::FileHelper>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	std::unique_ptr<SVIOController> m_pIOController;
 	std::unique_ptr<SVInputObjectList> m_pInputObjectList;
@@ -485,7 +487,6 @@ private:
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
-	SVIMProductEnum m_eProductType{ SVIM_PRODUCT_TYPE_UNKNOWN };
 	volatile bool m_bConfigurationValid = false;
 
 	//Put filenames here

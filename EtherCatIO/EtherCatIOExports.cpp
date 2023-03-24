@@ -92,7 +92,7 @@ _variant_t WINAPI SVTriggerGetName(unsigned long triggerIndex)
 {
 	_variant_t result;
 
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		result = gEtherCat.GetTriggerName(triggerIndex);
 	} 
@@ -101,7 +101,7 @@ _variant_t WINAPI SVTriggerGetName(unsigned long triggerIndex)
 
 HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTrig::TriggerCallBack pTriggerCallback)
 {
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		return gEtherCat.RegisterCallback(triggerIndex, pTriggerCallback);
 	} 
@@ -110,7 +110,7 @@ HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTrig::TriggerCall
 
 HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex)
 {
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		return gEtherCat.UnRegisterCallback(triggerIndex);
 	} 
@@ -121,7 +121,7 @@ HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex)
 {
 	HRESULT result {E_FAIL};
 
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		result = gEtherCat.StartTrigger(triggerIndex);
 	}
@@ -132,7 +132,7 @@ HRESULT WINAPI SVTriggerStop(unsigned long triggerIndex)
 {
 	HRESULT result {E_FAIL};
 
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		result = gEtherCat.StopTrigger(triggerIndex);
 	} 
@@ -143,7 +143,7 @@ unsigned long WINAPI SVTriggerGetParameterCount(unsigned long triggerIndex)
 {
 	unsigned long result{ 0UL };
 
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		result = gEtherCat.TriggerGetParameterCount(triggerIndex);
 	}
@@ -154,7 +154,7 @@ _variant_t WINAPI SVTriggerGetParameterName(unsigned long triggerIndex, unsigned
 {
 	_variant_t result;
 
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		result = gEtherCat.TriggerGetParameterName(triggerIndex, index);
 	}
@@ -165,7 +165,7 @@ _variant_t WINAPI SVTriggerGetParameterValue(unsigned long triggerIndex, unsigne
 {
 	_variant_t result;
 
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		result = gEtherCat.TriggerGetParameterValue(triggerIndex, index);
 	}
@@ -176,7 +176,7 @@ HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerIndex, unsigned l
 {
 	HRESULT result {E_FAIL};
 
-	if (0 < triggerIndex && SvEcat::cMaxPlcTriggers >= triggerIndex)
+	if (0 < triggerIndex && SvEcat::cMaxEtherCatTriggers >= triggerIndex)
 	{
 		result = gEtherCat.TriggerSetParameterValue(triggerIndex, ulIndex, rValue);
 	}

@@ -40,6 +40,8 @@ public:
 	long getRemoteInputCount() const;
 	bool SetRemoteInput( long lIndex, const _variant_t& rValue );
 
+	std::vector<SVInputObjectPtr> GetInputs(SvPb::SVObjectSubTypeEnum ObjectSubType = SvPb::SVNotSetSubObjectType) const;
+
 private:
 	SVInputObjectPtr findInputName(const std::string& rInputName) const;
 

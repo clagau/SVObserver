@@ -31,7 +31,7 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "CompanyName", "Seidenader Maschinenbau GmbH, Muenchen, Germany"
+            VALUE "CompanyName", "Körber Pharma Inspection GmbH, Markt Schwaben, Germany"
             VALUE "FileDescription", "SVOFileConfig Application"
             VALUE "FileVersion", STRFILEVER
             VALUE "InternalName", "SVOFileConfig"

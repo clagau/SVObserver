@@ -3536,6 +3536,28 @@ void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType, bool ne
 	{
 		changeSystemResetIO(m_eProductType);
 	}
+	else if (prevType != m_eProductType && (prevType == SVIM_PRODUCT_ETHERCATIO || m_eProductType == SVIM_PRODUCT_ETHERCATIO))
+	{
+		///When changing from discrete IO to EtherCat IO or vice versa then we need to flip the invert setting
+		std::vector<SVInputObjectPtr> inputList = m_pInputObjectList->GetInputs(SvPb::SVDigitalInputObjectType);
+		for(auto pInput : inputList)
+		{
+			SVDigitalInputObject* pDigitalInput = dynamic_cast<SVDigitalInputObject*> (pInput.get());
+			if (nullptr != pDigitalInput)
+			{
+				pDigitalInput->Invert(!pDigitalInput->IsInverted());
+			}
+		}
+		std::vector<SVOutputObjectPtr> outputList = m_pOutputObjectList->GetOutputs(SvPb::SVDigitalOutputObjectType);
+		for (auto pOutput : outputList)
+		{
+			SVDigitalOutputObject* pDigitalOutput = dynamic_cast<SVDigitalOutputObject*> (pOutput.get());
+			if (nullptr != pDigitalOutput)
+			{
+				pDigitalOutput->Invert(!pDigitalOutput->IsInverted());
+			}
+		}
+	}
 }
 
 bool SVConfigurationObject::IsConfigurationLoaded() const
@@ -5127,6 +5149,11 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 					if (nullptr != pInput)
 					{
 						pInput->SetChannel(l);
+						//EtherCat has default no inverted signal 
+						if (SVIM_PRODUCT_ETHERCATIO == newConfigType)
+						{
+							pInput->Invert(pInput->IsInverted());
+						}
 					}
 				}
 			}
@@ -5138,6 +5165,11 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 
 				if (nullptr != pOutput && nullptr != pConfig->GetModuleReady())
 				{
+					//EtherCat has default no inverted signal 
+					if (SVIM_PRODUCT_ETHERCATIO == newConfigType)
+					{
+						pOutput->Invert(pOutput->IsInverted());
+					}
 					pOutput->SetChannel(cModuleReadyChannel);
 
 					pConfig->GetModuleReady()->m_IOId = pOutput->getObjectId();
@@ -5207,8 +5239,10 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 			}
 		}
 	}
-
-	initializeIO(newConfigType);
+	if (SVHardwareManifest::IsValidProductType(newConfigType))
+	{
+		initializeIO(newConfigType);
+	}
 
 	if (SVHardwareManifest::isPlcSystem(newConfigType))
 	{

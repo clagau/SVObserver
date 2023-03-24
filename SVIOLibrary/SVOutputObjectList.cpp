@@ -585,6 +585,20 @@ void SVOutputObjectList::setModuleReady(bool value)
 	SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVModuleReady, &moduleReadyState.GetVARIANT());
 }
 
+std::vector<SVOutputObjectPtr> SVOutputObjectList::GetOutputs(SvPb::SVObjectSubTypeEnum ObjectSubType /*= SvPb::SVNotSetSubObjectType*/) const
+{
+	std::vector<SVOutputObjectPtr> result;
+
+	std::lock_guard<std::mutex> guard(m_protectOutputList);
+	for (const auto& rOutput : m_outputObjectMap)
+	{
+		if (nullptr != rOutput.second && (SvPb::SVNotSetSubObjectType == ObjectSubType || rOutput.second->GetObjectSubType() == ObjectSubType))
+		{
+			result.push_back(rOutput.second);
+		}
+	}
+	return result;
+}
 	
 void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {

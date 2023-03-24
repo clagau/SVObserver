@@ -61,6 +61,8 @@ public:
 	void WriteOutputData(const SvTrig::ResultData& rResultData);
 	void setModuleReady(bool value);
 
+	std::vector<SVOutputObjectPtr> GetOutputs(SvPb::SVObjectSubTypeEnum ObjectSubType = SvPb::SVNotSetSubObjectType) const;
+
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage

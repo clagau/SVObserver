@@ -1,8 +1,8 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017,2017 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
-/// \file CifxCard.cpp
-/// \brief Implementation of the class CifXCard
+/// \file CifXCardEcat.cpp
+/// \brief Settings and interface to the CifX card as EtherCat Master
 //******************************************************************************
 
 #pragma region Includes
@@ -12,7 +12,8 @@
 #include <Hil_ApplicationCmd.h>
 #include <TLR_Types.h>
 
-#include "CifXCard.h"
+#include "CifXCardEcat.h"
+#include "EtherCatDataTypes.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
@@ -37,10 +38,9 @@ constexpr uint32_t cProductCode = 1UL;			///CIFX
 constexpr uint32_t cSerialNumber = 0UL;			///Use serial number from SecMem or FDL
 constexpr uint32_t cRevisionNumber = 0UL;
 
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
-//This is used to check which config set does not match
-ConfigDataSet gPlcConfig[cConfigListSize];
-#endif
+constexpr LPCTSTR cSendDataName = _T("_SendData.log");
+constexpr LPCTSTR cPlcSendHeading = _T("Timestamp; Output\n");
+constexpr LPCTSTR cSendDataFormat = _T("{:f}; {:#08x}\n");
 
 void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void* pvUser)
 {
@@ -51,61 +51,69 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void*
 		return;
 	}
 
-	CifXCard* pCifX = reinterpret_cast<CifXCard*> (pvUser);
+	CifXCardEcat* pCifX = reinterpret_cast<CifXCardEcat*> (pvUser);
 
 	pCifX->readProcessData(notification);
 }
 
-void CifXCard::readProcessData(uint32_t notification)
+CifXCardEcat::CifXCardEcat(const EcatInputParam& rEcatInput) :
+	m_rEcatInput(rEcatInput)
+	, m_sendLogger {boost::log::keywords::channel = cSendDataName}
 {
-	double timeStamp = SvUl::GetTimeStamp();
-	if (notification != CIFX_NOTIFY_PD0_IN || false == m_cifxLoadLib.isInitilized())
-	{
-		return;
-	}
+}
 
-	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, cEtherCatDataSize, m_pReadBuffer.get(), cTimeout);
+HRESULT CifXCardEcat::OpenAndInitializeCifX()
+{
+	HRESULT result = OpenCifX();
+
 	if (CIFX_NO_ERROR == result)
 	{
-		InputData inputData;
-		inputData.m_notificationTime = timeStamp;
-		memcpy(&inputData.m_dynamicData[0], m_pReadBuffer.get(), cEtherCatDataSize);
+		result = WarmstartAndInitializeCifX();
+	}
 
-		if (m_hTelegramReadEvent != nullptr)
+	if (CIFX_NO_ERROR == result)
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxInitializationSuccess, m_sourceFileParam);
+		
+		if (LogType::EcatSendData == (m_rEcatInput.m_logType & LogType::EcatSendData))
 		{
-			//Reduce lock guard scope
+			std::string fileName {m_rEcatInput.m_logFileName + cSendDataName};
+			if (nullptr != m_logSendFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
 			{
-				std::lock_guard<std::mutex> guard {m_cifxMutex};
-				m_inputDataQueue.emplace(std::move(inputData));
+				boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logSendFile);
+				m_pSink = boost::make_shared<text_sink>();
+				m_pSink->locked_backend()->add_stream(stream);
+				auto filterContent = [](const boost::log::attribute_value_set& rAttribSet) -> bool {return rAttribSet["Channel"].extract<std::string>() == cSendDataName; };
+				m_pSink->set_filter(filterContent);
+				boost::log::core::get()->add_sink(m_pSink);
+				std::string fileData(cPlcSendHeading);
+				BOOST_LOG(m_sendLogger) << fileData.c_str();
 			}
-
-			::SetEvent(m_hTelegramReadEvent);
 		}
 	}
-
-	static bool threadSetPriority {false};
-	if (false == threadSetPriority)
+	else
 	{
-		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
-		threadSetPriority = true;
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CifxInitializationError, m_sourceFileParam);
 	}
+	return result;
 }
 
-bool CifXCard::popInputDataQueue()
+void CifXCardEcat::closeCifX()
 {
-	std::lock_guard<std::mutex> guard {m_cifxMutex};
-	if (false == m_inputDataQueue.empty())
+	if (nullptr != m_pSink)
 	{
-		m_currentInputData = m_inputDataQueue.front();
-		m_inputDataQueue.pop();
-		return true;
+		m_pSink->flush();
+		m_pSink->stop();
+		boost::log::core::get()->remove_sink(m_pSink);
 	}
-	return false;
-}
+	if (m_logSendFile.is_open())
+	{
+		m_logSendFile.close();
+	}
 
-void CifXCard::closeCifX()
-{
-	if(m_cifxLoadLib.isInitilized())
+	if (m_cifxLoadLib.isInitilized())
 	{
 		::OutputDebugString("Closing application and freeing buffers...\n");
 		m_cifxLoadLib.m_pChannelUnregisterNotification(m_hChannel, CIFX_NOTIFY_PD0_IN);
@@ -121,41 +129,94 @@ void CifXCard::closeCifX()
 	}
 }
 
-
-HRESULT CifXCard::OpenAndInitializeCifX()
+void CifXCardEcat::readProcessData(uint32_t notification)
 {
-	HRESULT result = OpenCifX();
-
-	if (CIFX_NO_ERROR == result)
+	double timeStamp = SvUl::GetTimeStamp();
+	if (notification != CIFX_NOTIFY_PD0_IN || false == m_cifxLoadLib.isInitilized())
 	{
-		result = WarmstartAndInitializeCifX();
+		return;
 	}
 
+	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, cEtherCatDataSize, m_pReadBuffer.get(), cTimeout);
 	if (CIFX_NO_ERROR == result)
 	{
-		SvStl::MessageManager Msg(SvStl::MsgType::Log);
-		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxInitializationSuccess, m_sourceFileParam);
+		EcatInputData inputData;
+		inputData.m_notificationTime = timeStamp;
+		memcpy(&inputData.m_dynamicData[0], m_pReadBuffer.get(), cEtherCatDataSize);
+		bool outputDataChanged {false};
+
+		{
+			std::lock_guard<std::mutex> guard {m_cifxMutex};
+			if (m_hTelegramReadEvent != nullptr)
+			{
+				m_inputDataQueue.emplace(std::move(inputData));
+				::SetEvent(m_hTelegramReadEvent);
+			}
+			outputDataChanged = m_sentOutputData != m_outputData;
+
+			m_sentOutputData = m_outputData;
+		}
+		writeResponseData(m_sentOutputData);
+
+		if (m_logSendFile.is_open())
+		{
+			if (0 == m_rEcatInput.m_logFilter || outputDataChanged)
+			{
+				uint32_t outputValue {0};
+				memcpy(&outputValue, &m_sentOutputData[0], sizeof(outputValue));
+				std::string fileData = std::format(cSendDataFormat, timeStamp, outputValue);
+				BOOST_LOG(m_sendLogger) << fileData.c_str();
+			}
+		}
 	}
-	else
+
+	static bool threadSetPriority {false};
+	if (false == threadSetPriority)
 	{
-		SvStl::MessageManager Msg(SvStl::MsgType::Log);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CifxInitializationError, m_sourceFileParam);
+		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+		threadSetPriority = true;
+	}
+}
+
+EcatInputData CifXCardEcat::popInputDataQueue()
+{
+	EcatInputData result {};
+	std::lock_guard<std::mutex> guard {m_cifxMutex};
+	if (false == m_inputDataQueue.empty())
+	{
+		result = m_inputDataQueue.front();
+		m_inputDataQueue.pop();
 	}
 	return result;
 }
 
-void CifXCard::sendOperationData(const std::array<uint8_t, cEtherCatDataSize>& rOutputData)
+void CifXCardEcat::setOutput(uint8_t outputNr, bool state)
 {
-	writeResponseData(rOutputData);
+	constexpr uint8_t cBitsPerModule = 8;
+	uint8_t outputIndex = outputNr / cBitsPerModule;
+	uint8_t outputBit = outputNr % cBitsPerModule;
+	uint8_t outputMask = state ? (1 << outputBit) : ~(1 << outputBit);
+	if (outputIndex < m_outputData.size())
+	{
+		std::lock_guard<std::mutex> guard {m_cifxMutex};
+		if (state)
+		{
+			m_outputData[outputIndex] |= outputMask;
+		}
+		else
+		{
+			m_outputData[outputIndex] &= outputMask;
+		}
+	}
 }
 
-void CifXCard::setReady(bool ready)
+void CifXCardEcat::setReady(bool ready)
 {
 	std::lock_guard<std::mutex> guard{m_cifxMutex};
 	m_ready = ready;
 }
 
-int32_t CifXCard::OpenCifX()
+int32_t CifXCardEcat::OpenCifX()
 {
 	int32_t result {CIFX_DEV_NOT_READY};
 
@@ -228,7 +289,7 @@ int32_t CifXCard::OpenCifX()
 	return result;
 }
 
-int32_t CifXCard::WarmstartAndInitializeCifX()
+int32_t CifXCardEcat::WarmstartAndInitializeCifX()
 {
 	m_sourceFileParam.clear();
 	if (false == m_cifxLoadLib.isInitilized())
@@ -301,7 +362,7 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 	return result;
 }
 
-int32_t CifXCard::SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)
+int32_t CifXCardEcat::SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)
 {
 	if(nullptr == pSendPkt || nullptr == pRecvPkt)
 	{
@@ -336,8 +397,7 @@ int32_t CifXCard::SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)
 	return result;
 }
 
-
-int32_t CifXCard::SendRecvCmdPkt(uint32_t command)
+int32_t CifXCardEcat::SendRecvCmdPkt(uint32_t command)
 {
 	CIFX_PACKET sendPkt;
 	CIFX_PACKET recvPkt;
@@ -353,7 +413,7 @@ int32_t CifXCard::SendRecvCmdPkt(uint32_t command)
 	return SendRecvPkt(&sendPkt, &recvPkt);
 }
 
-void CifXCard::writeResponseData(const std::array<uint8_t, cEtherCatDataSize>& rOutputData)
+void CifXCardEcat::writeResponseData(const std::array<uint8_t, cEtherCatDataSize>& rOutputData)
 {
 	if(cEtherCatDataSize == rOutputData.size())
 	{

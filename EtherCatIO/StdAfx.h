@@ -60,6 +60,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <numeric>
 #include <queue>
 #include <set>				//Used by static library
 #include <sstream>
@@ -70,5 +71,13 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include "SVStatusLibrary/MessageManagerHelper.h"
+
+#include <boost/log/attributes/attribute_set.hpp>
+#include <boost/log/common.hpp>
+#include <boost/log/expressions/attr.hpp>
+#include <boost/log/sinks.hpp>
+#include <boost/log/sources/channel_feature.hpp>
+#include <boost/log/sources/channel_logger.hpp>
+#include <boost/shared_ptr.hpp>
+//#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Precompiled Headers

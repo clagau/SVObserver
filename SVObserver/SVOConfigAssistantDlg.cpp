@@ -113,7 +113,8 @@ const SVOConfigAssistantDlg::SVProductStringVector SVOConfigAssistantDlg::m_Prod
 	{SVIM_PRODUCT_X2_GD4A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD4A) + std::string(c_Color)},
 	{SVIM_PRODUCT_X2_GD8A, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A)},
 	{SVIM_PRODUCT_X2_GD8A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A) + std::string(c_Color)},
-	{SVIM_PRODUCT_NEO, std::string(SvDef::SVO_PRODUCT_SVIM_NEO)}
+	{SVIM_PRODUCT_NEO, std::string(SvDef::SVO_PRODUCT_SVIM_NEO)},
+	{SVIM_PRODUCT_ETHERCATIO, std::string(SvDef::SVO_PRODUCT_SVIM_ETHERCAT)}
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -306,6 +307,11 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 
 			m_lConfigurationType = newConfigType;
 			UpdateAvailableSystems( currentConfigType, m_lConfigurationType );
+			if (newConfigType != currentConfigType && (newConfigType == SVIM_PRODUCT_ETHERCATIO || currentConfigType == SVIM_PRODUCT_ETHERCATIO))
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchIOInvert, SvStl::SourceFileParams(StdMessageParams));
+			}
 		}
 		else
 		{
@@ -330,7 +336,7 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 					configTypeConvereted = true;
 				}
 			}
-			if(false == configTypeConvereted)
+			if (false == configTypeConvereted)
 			{
 				UINT l_NextIndex = m_ctlAvailableSys.FindStringExact(0, GetNameFromProductID(currentConfigType).c_str());
 
@@ -400,6 +406,7 @@ void SVOConfigAssistantDlg::ReloadForCurrentSystem()
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_NEO:
+			case SVIM_PRODUCT_ETHERCATIO:
 			{
 				CreateDefaultForSVIMDigital(2, SvDef::cTriggerFixedName);
 				break;

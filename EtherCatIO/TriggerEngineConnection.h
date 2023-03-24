@@ -1,28 +1,19 @@
+//*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017, 2017 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved
 /// \file TriggerEngineConnection.h
 /// \brief the interface to the TriggerEngine: declarations
+//******************************************************************************
 
 #pragma once
 
-namespace SvTrig
-{
-struct TriggerData;
-}
-
 namespace SvEcat
 {
-
-enum class TriggerType
-{
-	None,
-	HardwareTrigger,
-	SimulatedTrigger
-};
+struct EcatInputParam;
 
 namespace Tec
 {
-void startTriggerEngine(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, TriggerType triggerType, const std::string& rAdditionalData);
+void startTriggerEngine(const EcatInputParam& rEcatInput);
 void stopTriggerEngine();
 
 HRESULT initTriggerEngine();
@@ -34,6 +25,6 @@ uint32_t getInputs();
 void setOutput(uint8_t outputNr, bool state);
 } //namespace Tec
 
-} //namespace SvPlc
+} //namespace SvEcat
 
 

@@ -240,6 +240,21 @@ bool SVInputObjectList::SetRemoteInput( long index, const _variant_t& rValue)
 	return result;
 }
 
+std::vector<SVInputObjectPtr> SVInputObjectList::GetInputs(SvPb::SVObjectSubTypeEnum ObjectSubType /*= SvPb::SVNotSetSubObjectType*/) const
+{
+	std::vector<SVInputObjectPtr> result;
+
+	std::lock_guard<std::mutex> guard(m_protectInputObjectList);
+	for (const auto& rInput : m_inputObjectMap)
+	{
+		if (nullptr != rInput.second && (SvPb::SVNotSetSubObjectType == ObjectSubType || rInput.second->GetObjectSubType() == ObjectSubType))
+		{
+			result.push_back(rInput.second);
+		}
+	}
+	return result;
+}
+
 SVInputObjectPtr SVInputObjectList::findInputName(const std::string& rInputName) const
 {
 	SVInputObjectPtr pResult;

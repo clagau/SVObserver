@@ -6,18 +6,18 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TriggerEngineConnection.h"
-#include "PowerLinkConnection.h" 
+#include "EtherCatConnection.h" 
 #pragma endregion Includes
 
 namespace SvEcat
 {
-std::unique_ptr<PowerlinkConnection> g_pPowerLink;
+std::unique_ptr<EtherCatConnection> g_pPowerLink;
 
 namespace Tec
 {
-void startTriggerEngine(std::function<void(const SvTrig::TriggerData&)> pTriggerDataCallback, TriggerType triggerType, const std::string& rAdditionalData)
+void startTriggerEngine(const EcatInputParam& rEcatInput)
 {
-	g_pPowerLink = std::make_unique<PowerlinkConnection>(pTriggerDataCallback, triggerType, rAdditionalData);
+	g_pPowerLink = std::make_unique<EtherCatConnection>(rEcatInput);
 	::OutputDebugString("Start Trigger Engine!\n");
 }
 
