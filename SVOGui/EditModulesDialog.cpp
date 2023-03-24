@@ -58,6 +58,7 @@ BEGIN_MESSAGE_MAP(EditModulesDialog, CDialog)
 	ON_BN_CLICKED(IDC_IMPORT, OnImportModule)
 	ON_BN_CLICKED(IDC_EXPORT, OnExportModule)
 	ON_BN_CLICKED(IDC_RENAME, OnRenameModule)
+	ON_BN_CLICKED(IDHELP, OnHelpButton)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
@@ -322,6 +323,11 @@ void EditModulesDialog::OnRenameModule()
 		}
 		initModuleListControl();
 	}
+}
+
+void EditModulesDialog::OnHelpButton()
+{
+	OnCommandHelp(0, GetWindowContextHelpId());
 }
 
 void EditModulesDialog::initModuleListControl()

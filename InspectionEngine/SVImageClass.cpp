@@ -1665,7 +1665,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 		if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
 			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 		{
-			Log_Assert(false != shouldHidden); //ChildImage can not be hidden
+			Log_Assert(false == shouldHidden); //ChildImage can not be hidden
 			SVImageClass* pParent = GetParentImage();
 			if (nullptr != pParent)
 			{

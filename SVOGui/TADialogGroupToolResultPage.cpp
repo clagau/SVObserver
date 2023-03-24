@@ -80,12 +80,12 @@ SvStl::MessageContainerVector getErrorMessage(uint32_t inspectionId, uint32_t to
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-TADialogGroupToolResultPage::TADialogGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isInputsChangeAble)
+TADialogGroupToolResultPage::TADialogGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isModuleTool)
 	: CPropertyPage(TADialogGroupToolResultPage::IDD, IDS_CLASSNAME_RESULT_PARAMETER_TASK)
 	, m_InspectionID(inspectionId)
 	, m_toolId(toolId)
 	, m_TaskObjectID(taskId)
-	, m_isChangeAble(isInputsChangeAble)
+	, m_isModuleTool(isModuleTool)
 	, m_Values {SvOgu::BoundValues{ inspectionId, taskId }}
 {
 }
@@ -121,8 +121,9 @@ BOOL TADialogGroupToolResultPage::OnInitDialog()
 
 	m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
 
-	if (false == m_isChangeAble)
+	if (m_isModuleTool)
 	{
+		SetHelpID(IDD_MODULE_RESULT);
 		GetDlgItem(IDC_BUTTON_REMOVE)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BUTTON_ADD)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BUTTON_MOVEUP)->ShowWindow(SW_HIDE);
@@ -196,7 +197,7 @@ void TADialogGroupToolResultPage::OnGridClick(NMHDR* pNotifyStruct, LRESULT*)
 		}
 		case ValueButtonColumn:
 		{
-			if (m_isChangeAble)
+			if (false == m_isModuleTool)
 			{
 				SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1]);
 				if (IDOK == dlg.DoModal())
@@ -433,10 +434,10 @@ void TADialogGroupToolResultPage::FillGridControl()
 		setGridControlReadOnlyFlag(row, DependencyColumn, false);
 
 		m_Grid.SetItemText(row, NameColumn, m_resultData[i].m_name.c_str());
-		setGridControlReadOnlyFlag(row, NameColumn, m_isChangeAble);
+		setGridControlReadOnlyFlag(row, NameColumn, false == m_isModuleTool);
 		using namespace SvGcl;
 		m_Grid.SetCellType(row, TypeColumn, RUNTIME_CLASS(GridCellCombo));
-		setGridControlReadOnlyFlag(row, TypeColumn, m_isChangeAble);
+		setGridControlReadOnlyFlag(row, TypeColumn, false == m_isModuleTool);
 		auto* pCell = dynamic_cast<SvGcl::GridCellCombo*>(m_Grid.GetCell(row, TypeColumn));
 
 		pCell->SetOptions(typeOptions);
@@ -469,7 +470,7 @@ void TADialogGroupToolResultPage::FillGridControl()
 
 		setValueColumn(i);
 
-		if (m_isChangeAble)
+		if (false == m_isModuleTool)
 		{
 			SvGcl::GV_ITEM buttonItem;
 			buttonItem.mask = GVIF_IMAGE;
@@ -519,14 +520,14 @@ void TADialogGroupToolResultPage::setValueColumn(int pos)
 	if (isChangeable)
 	{
 		m_Grid.SetItemBkColour(pos + 1, ValueColumn, SvDef::White);
-		setGridControlReadOnlyFlag(pos + 1, ValueColumn, m_isChangeAble);
+		setGridControlReadOnlyFlag(pos + 1, ValueColumn, false == m_isModuleTool);
 	}
 	else
 	{
 		m_Grid.SetItemBkColour(pos + 1, ValueColumn, SvDef::WhiteSmoke);
 		setGridControlReadOnlyFlag(pos + 1, ValueColumn, false);
 	}
-	setGridControlReadOnlyFlag(pos + 1, ValueButtonColumn, m_isChangeAble);
+	setGridControlReadOnlyFlag(pos + 1, ValueButtonColumn, false == m_isModuleTool);
 }
 
 void TADialogGroupToolResultPage::showContextMenu(CPoint point)
@@ -576,7 +577,7 @@ void TADialogGroupToolResultPage::UpdateEnableButtons()
 		if (0 < Selection.GetMinRow() && Selection.GetMinRow() <= m_resultData.size())
 		{
 			GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(m_isChangeAble);
+			GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(false == m_isModuleTool);
 			m_strComment = m_resultData[Selection.GetMinRow() - 1].m_data.m_comment.c_str();
 			UpdateData(false);
 		}

@@ -168,7 +168,7 @@ bool ImageBufferController::decreaseImageRefCounter(int pos)
 		long value = InterlockedDecrement(pImageCount);
 		if (0 > value)
 		{
-			Log_Assert(false);
+			assert(false);
 			SvStl::MessageManager e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_TRC_GENERAL_WARNING, SvStl::Tid_TRC_Error_ImageRefCount, SvStl::SourceFileParams(StdMessageParams));
 			InterlockedExchange(pImageCount, 0);

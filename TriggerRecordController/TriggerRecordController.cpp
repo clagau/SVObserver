@@ -1547,7 +1547,7 @@ ITriggerRecordControllerRW* getTriggerRecordControllerRWInstance() noexcept
 		//Use reinterpret cast for speed as we know it fits!
 		return reinterpret_cast<ITriggerRecordControllerRW*> (pTRC);
 	}
-	Log_Assert(false);
+	assert(false);
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
 	return nullptr;

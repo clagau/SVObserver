@@ -48,6 +48,7 @@ namespace SvOg
 
 		if (m_isModuleComment)
 		{
+			SetHelpID(IDD_MODULE_COMMENT);
 			GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(false);
 			m_values.Init();
 			m_strComment = m_values.Get<CString>(SvPb::ModuleCommentEId);

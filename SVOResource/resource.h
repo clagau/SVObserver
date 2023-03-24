@@ -164,6 +164,9 @@
 #define IDD_CONDITIONAL_TOOLSET_PAGE    5128
 #define IDD_DLG_REPORT_FILE             5129
 #define IDD_INPUT_CONFLICT              5130
+#define IDD_MODULE_INPUT                5131
+#define IDD_MODULE_RESULT               5132
+#define IDD_MODULE_COMMENT              5133
 #define IDS_OF_STRING                   10000
 #define IDS_PAGE_STRING                 10001
 #define IDS_RESULT_STRING               10002

@@ -34,7 +34,7 @@ namespace SvOg
 		/// \param toolId [in]
 		/// \param taskId [in]
 		/// \param isInputsChangeAble [in] If false, for the inputs only the values is changeable.
-		TADialogGroupToolInputPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isInputsChangeAble = true);
+		TADialogGroupToolInputPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isModuleTool = false);
 
 		// Standard destructor
 		virtual ~TADialogGroupToolInputPage() = default;
@@ -107,7 +107,7 @@ namespace SvOg
 		const uint32_t m_toolId;
 		const uint32_t m_TaskObjectID;
 
-		const bool m_isInputsChangeAble;
+		const bool m_isModuleTool;
 
 		CBitmap m_downArrowBitmap;
 		CImageList m_ImageList;

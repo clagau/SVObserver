@@ -22,12 +22,12 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/ObjectUtilities.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageManagerHelper.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/RaiiLifeFlag.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include <string>
-#include "SVStatusLibrary/MessageManagerHelper.h"
 #pragma endregion Includes
 
 namespace SvVol
@@ -1793,7 +1793,7 @@ bool LinkedValue::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 		}
 	}
 
-	if (Result)
+	if (Result && false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		setOrRemoveLinkedImageToTRC();
 	}

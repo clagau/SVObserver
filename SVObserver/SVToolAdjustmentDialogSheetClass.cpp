@@ -422,13 +422,13 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			SvOi::IObjectClass* pObject = pTaskObject->getFirstObject(ObjectInfo);
 			if (nullptr != pObject)
 			{
-				AddPage(new SvOg::TADialogGroupToolInputPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId(), false));
+				AddPage(new SvOg::TADialogGroupToolInputPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId(), true));
 			}
 			ObjectInfo.m_SubType = SvPb::ParameterResultObjectType;
 			pObject = pTaskObject->getFirstObject(ObjectInfo);
 			if (nullptr != pObject)
 			{
-				AddPage(new SvOg::TADialogGroupToolResultPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId(), false));
+				AddPage(new SvOg::TADialogGroupToolResultPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId(), true));
 			}
 			addConditionalDialog();
 			AddPage(new SvOg::SVToolAdjustmentDialogCommentPage(m_InspectionID, m_TaskObjectID, true));

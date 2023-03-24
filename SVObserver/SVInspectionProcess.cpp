@@ -323,7 +323,7 @@ bool SVInspectionProcess::isReject(SvOi::ITriggerRecordRPtr pTriggerRecord)
 {
 	if (nullptr == pTriggerRecord)
 	{
-		Log_Assert(false);
+		assert(false);
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RejectClarifyFailedNoTR, SvStl::SourceFileParams(StdMessageParams));
 		return false;
@@ -344,7 +344,7 @@ bool SVInspectionProcess::isReject(SvOi::ITriggerRecordRPtr pTriggerRecord)
 			}
 			else
 			{
-				Log_Assert(false);
+				assert(false);
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RejectClarifyFailedUnknowData, {element->name}, SvStl::SourceFileParams(StdMessageParams));
 			}

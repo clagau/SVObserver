@@ -49,6 +49,7 @@ protected:
 	void OnImportModule();
 	void OnExportModule();
 	void OnRenameModule();
+	void OnHelpButton();
 
 	void initModuleListControl();
 	int getSelectedIndex();

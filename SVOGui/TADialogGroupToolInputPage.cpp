@@ -105,12 +105,12 @@ BEGIN_MESSAGE_MAP(TADialogGroupToolInputPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-TADialogGroupToolInputPage::TADialogGroupToolInputPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isInputsChangeAble)
+TADialogGroupToolInputPage::TADialogGroupToolInputPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isModuleTool)
 	: CPropertyPage(TADialogGroupToolInputPage::IDD)
 	, m_InspectionID(inspectionId)
 	, m_toolId(toolId)
 	, m_TaskObjectID(taskId)
-	, m_isInputsChangeAble(isInputsChangeAble)
+	, m_isModuleTool(isModuleTool)
 	, m_Values {SvOgu::BoundValues{ inspectionId, taskId }}
 {
 }
@@ -146,8 +146,9 @@ BOOL TADialogGroupToolInputPage::OnInitDialog()
 
 	m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
 
-	if (false == m_isInputsChangeAble)
+	if (m_isModuleTool)
 	{
+		SetHelpID(IDD_MODULE_INPUT);
 		GetDlgItem(IDC_BUTTON_REMOVE)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BUTTON_ADD)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BUTTON_MOVEUP)->ShowWindow(SW_HIDE);
@@ -403,11 +404,11 @@ void TADialogGroupToolInputPage::FillGridControl()
 		setGridControlReadOnlyFlag(row, DependencyColumn, false);
 
 		m_Grid.SetItemText(row, NameColumn, m_inputData[i].m_name.c_str());
-		setGridControlReadOnlyFlag(row, NameColumn, m_isInputsChangeAble);
+		setGridControlReadOnlyFlag(row, NameColumn, false == m_isModuleTool);
 
 		using namespace SvGcl;
 		m_Grid.SetCellType(row, TypeColumn, RUNTIME_CLASS(GridCellCombo));
-		setGridControlReadOnlyFlag(row, TypeColumn, m_isInputsChangeAble);
+		setGridControlReadOnlyFlag(row, TypeColumn, false == m_isModuleTool);
 		auto* pCell = dynamic_cast<SvGcl::GridCellCombo*>(m_Grid.GetCell(row, TypeColumn));
 
 		pCell->SetOptions(typeOptions);
@@ -464,7 +465,7 @@ void TADialogGroupToolInputPage::FillGridControl()
 			if (type == SvPb::LinkedValueTypeEnum::TypeStates)
 			{
 				m_Grid.SetCellType(row, DefaultColumn, RUNTIME_CLASS(GridCellCombo));
-				setGridControlReadOnlyFlag(row, DefaultColumn, m_isInputsChangeAble);
+				setGridControlReadOnlyFlag(row, DefaultColumn, false == m_isModuleTool);
 				auto* pCell_Def = dynamic_cast<SvGcl::GridCellCombo*>(m_Grid.GetCell(row, DefaultColumn));
 				CStringArray typePassed;
 				auto states = SvOgu::StateHelper::getStates();
@@ -481,7 +482,7 @@ void TADialogGroupToolInputPage::FillGridControl()
 			else
 			{
 				m_Grid.SetItemText(row, DefaultColumn, static_cast<CString>(m_inputData[i].m_data.m_defaultValue));
-				setGridControlReadOnlyFlag(row, DefaultColumn, m_isInputsChangeAble);
+				setGridControlReadOnlyFlag(row, DefaultColumn, false == m_isModuleTool);
 			}
 		}
 		else
@@ -582,7 +583,7 @@ void TADialogGroupToolInputPage::UpdateEnableButtons()
 		if (0 < Selection.GetMinRow() && Selection.GetMinRow() <= m_inputData.size())
 		{
 			GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(m_isInputsChangeAble);
+			GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(false == m_isModuleTool);
 			m_strComment = m_inputData[Selection.GetMinRow() - 1].m_data.m_comment.c_str();
 			UpdateData(false);
 		}

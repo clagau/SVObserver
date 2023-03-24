@@ -71,7 +71,7 @@ DataControllerBase::DataControllerBase()
 		msgList.push_back(std::format(_T("{:x}"), errorCode));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
-		Log_Assert(false);
+		assert(false);
 	}
 
 	m_hReadyEvent = ::CreateEvent(&sa, true, false, GNameReadyEvent);
@@ -82,7 +82,7 @@ DataControllerBase::DataControllerBase()
 		msgList.push_back(std::format(_T("{:x}"), errorCode));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
-		Log_Assert(false);
+		assert(false);
 	}
 }
 

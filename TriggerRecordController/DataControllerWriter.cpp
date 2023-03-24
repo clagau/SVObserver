@@ -1045,7 +1045,7 @@ void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSm
 		m_inspectionList.mutable_list(ipPos)->set_sizeofsm(smSize);
 		if (m_inspectionList.ByteSizeLong() > cMaxInspectionPbSize)
 		{
-			Log_Assert(false);
+			assert(false);
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
 		}
