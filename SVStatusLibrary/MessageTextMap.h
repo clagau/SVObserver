@@ -504,6 +504,7 @@ namespace SvStl
 		{Tid_RebuildFailed, _T("Rebuild failed.")},
 		{Tid_UpdateFromParentInformationFailed, _T("Update From Parent-Information failed.")},
 		{Tid_UpdateTRCBuffersFailed, _T("Update TRC-Buffers failed.")},
+		{Tid_HiddenChildImageShouldNotGoToTRC, _T("A hidden childImage should not go to TRC.")},
 		{Tid_InvalidOwner, _T("Invalid Owner.")},
 		{Tid_WrongType, _T("Wrong type.")},
 		{Tid_WrongValueType, _T("Wrong value type: Required Type is {0}.")},

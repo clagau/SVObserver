@@ -466,6 +466,7 @@ enum MessageTextEnum
 	Tid_RebuildFailed,
 	Tid_UpdateFromParentInformationFailed,
 	Tid_UpdateTRCBuffersFailed,
+	Tid_HiddenChildImageShouldNotGoToTRC,
 	Tid_InvalidOwner,
 	Tid_WrongType,
 	Tid_WrongValueType,

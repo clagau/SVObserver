@@ -176,6 +176,12 @@ SvOi::ITRCImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 				}
 			}
 		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(rExp.getMessage());
+			assert(false);
+		}
 		catch (...)
 		{
 			Log_Assert(false);
@@ -430,6 +436,12 @@ SvOi::ITRCImagePtr TriggerRecord::createNewImageHandle(int pos)
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(rExp.getMessage());
+			assert(false);
 		}
 		catch (...)
 		{

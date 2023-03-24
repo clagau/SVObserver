@@ -1217,7 +1217,7 @@ SvOi::ITRCImagePtr SVImageClass::getImageReadOnly(const SvOi::ITriggerRecordR* p
 			default:
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
-				Log_Assert(false);
+				assert(false);
 				break;
 		}
 	}
@@ -1248,7 +1248,7 @@ SvOi::ITRCImagePtr SVImageClass::getImageToWrite(const SvOi::ITriggerRecordRWPtr
 			default:
 				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
-				Log_Assert(false);
+				assert(false);
 				break;
 		}
 	}
@@ -1665,7 +1665,11 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 		if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
 			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 		{
-			Log_Assert(false == shouldHidden); //ChildImage can not be hidden
+			if (shouldHidden)
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_HiddenChildImageShouldNotGoToTRC, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+			}
 			SVImageClass* pParent = GetParentImage();
 			if (nullptr != pParent)
 			{
@@ -1697,7 +1701,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-					Log_Assert(false);
+					assert(false);
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -1746,8 +1750,6 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-				//@todo[mec] Sometimes the error case is used to check for valid user input 
-				//Log_Assert(false);
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
