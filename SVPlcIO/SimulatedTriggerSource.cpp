@@ -178,7 +178,10 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 					fileData += cObjectInvalid;
 					fileData += std::to_string(m_ObjectsInvalid[i]) + _T("\r\n");
 				}
-				resultFile.write(fileData.c_str(), static_cast<int64_t> (fileData.size()));
+				if (fileData.size() > 0)
+				{
+					resultFile.write(fileData.c_str(), static_cast<int64_t> (fileData.size()));
+				}
 				resultFile.close();
 			}
 		}
