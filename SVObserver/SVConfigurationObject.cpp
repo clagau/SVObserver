@@ -3445,7 +3445,6 @@ bool SVConfigurationObject::FinishIPDoc(SVInspectionProcess* pInspection, bool i
 
 			pInspection->RebuildInspection(isLoad);
 
-			//Rebuild output list must be called after rebuild inspection as it adds the published bool values
 			pPPQ->m_pOutputList = GetOutputObjectList();
 			pPPQ->RebuildOutputList();
 

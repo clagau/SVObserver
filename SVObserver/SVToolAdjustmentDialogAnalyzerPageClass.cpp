@@ -95,7 +95,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		
 		const auto subType = m_pTool->GetObjectSubType();
 		CWnd* pWnd;
-		// Set Result/Publish button...
+		// Set Result button...
 		switch (subType)
 		{
 			case SvPb::SVLinearToolObjectType:

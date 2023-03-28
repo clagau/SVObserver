@@ -179,8 +179,6 @@ void SVImageClass::init()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
 
-	// derived classes that are not result images (i.e. SVMainImageClass)
-	// need to remove the PUBLISH attribute.
 	SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_ParentImageInfo.second = nullptr;

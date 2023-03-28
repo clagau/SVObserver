@@ -2503,7 +2503,7 @@ STDMETHODIMP SVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName
 		l_saBounds[0].lLbound = 0;
 
 		// Second Dimension is the parts fo the Transfer Definition
-		// 0 = Name, 1 = Writable, 2 = Result is Published, 3 = Source Image Name
+		// 0 = Name, 1 = Writable, 2 = Result, 3 = Source Image Name
 		l_saBounds[1].cElements = 4;
 		l_saBounds[1].lLbound = 0;
 
