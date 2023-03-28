@@ -153,7 +153,7 @@ protected:
 	SvVol::SVBoolValueObjectClass m_ResetCountsObject;
 	SvVol::SVLongValueObjectClass m_TriggerCount;
 
-	
+	bool m_ResetCounts = false;
 
 	SVResultList m_ResultList;
 

@@ -62,7 +62,7 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_RegressionTestMode, SvPb::RegressionTestModeEId, IDS_OBJECTNAME_REGRESSIONTESTMODE, false, SvOi::SVResetItemNone, false);
 
 	RegisterEmbeddedObject(&m_DrawFlag, SvPb::ConditionalToolSetDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone, true);
-	RegisterEmbeddedObject(&m_ResetCountsObject, SvPb::ResetInspectionCountsEId, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemNone, false);
+	RegisterEmbeddedObject(&m_ResetCountsObject, SvPb::ResetInspectionCountsEId, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemIP, false);
 	RegisterEmbeddedObject(&m_TriggerCount, SvPb::TriggerCountEId, IDS_OBJECTNAME_TRIGGER_COUNT, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_PPQIndexAtCompletion, SvPb::PPQIndexEId, IDS_PPQ_INDEX_AT_COMPLETION, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerDelta], SvPb::TriggerDeltaEId, IDS_TRIGGER_DELTA, false, SvOi::SVResetItemNone, false);
@@ -494,7 +494,7 @@ void SVToolSet::ResetCounterDirectly()
 		m_ProcessedCount.SetValue(0);
 
 		m_bResetMinMaxToolsetTime = true;
-		
+		m_ResetCounts = false;
 
 		for (SVTaskObjectClass* tool : m_TaskObjectVector)
 		{ 
@@ -514,14 +514,10 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 	bool bRetVal = true;
 	clearRunErrorMessages();
 
-	BOOL bResetCounter(false);
-	if (S_OK == m_ResetCountsObject.GetValue(bResetCounter) && bResetCounter)
+	if (m_ResetCounts)
 	{
 		ResetCounterDirectly();
-		m_ResetCountsObject.SetValue(false);
 	}
-	
-	
 
 	double l_Timer = SvUl::GetTimeStamp();
 	m_ToolTime.Start();
@@ -644,7 +640,12 @@ bool SVToolSet::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
-	
+	BOOL bResetCounter(false);
+	if (S_OK == m_ResetCountsObject.GetValue(bResetCounter) && bResetCounter)
+	{
+		m_ResetCounts = true;
+		m_ResetCountsObject.SetValue(false);
+	}
 
 	m_inputConditionBool.validateInput();
 
