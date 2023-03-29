@@ -14,7 +14,6 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVMFCControls/EnterStringDlg.h"
 #include "SVSecurity/SVSecurityManager.h"
-#include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVMessage/SVMessage.h"
 #include "FilesystemUtilities/FilepathUtilities.h"
@@ -226,7 +225,7 @@ void EditModulesDialog::OnImportModule()
 		SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(response.errormessage());
 		if (errorMsgContainer.size() > 0)
 		{
-			if (SvStl::Tid_ModuleNameExistAlready == errorMsgContainer[0].getMessage().m_AdditionalTextId)
+			if (SvStl::Tid_ModuleNameExistAlready == errorMsgContainer[0].getMessage().m_AdditionalTextId || SvStl::Tid_NameContainsInvalidChars == errorMsgContainer[0].getMessage().m_AdditionalTextId)
 			{
 				EnterStringDlg nameDlg {moduleName,  SvCmd::checkNewModuleName, "Name invalid or exists already, choose new Module Name", this};
 				if (IDOK != nameDlg.DoModal())
@@ -265,14 +264,14 @@ void EditModulesDialog::OnExportModule()
 		if (S_OK == hr && responseCmd.has_exportmoduleresponse())
 		{
 			bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-			SvMc::SVDlgFolder dlg(bFullAccess);
-			dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
+			constexpr const TCHAR* filter = _T("Module Files (*.svm)|*.svm||");
+			SvMc::SVFileDialog dlg(false, bFullAccess, _T("svm"), nullptr, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, filter);
+			dlg.m_ofn.lpstrTitle = _T("Set filename to save");
 
 			INT_PTR rc = dlg.DoModal();
 			if (IDOK == rc)
 			{
-				auto filePath = std::string {dlg.GetPathName()} + "\\" + m_moduleList[index].m_name + ".svm";
-				SvFs::writeStringToFile(filePath, responseCmd.exportmoduleresponse().datastring(), false);
+				SvFs::writeStringToFile(std::string{dlg.GetPathName()}, responseCmd.exportmoduleresponse().datastring(), false);
 			}
 		}
 		else

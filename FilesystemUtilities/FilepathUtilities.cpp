@@ -339,6 +339,12 @@ void writeStringToFile(const std::string& rFileName, const std::string& rFileDat
 		FileStream.write(&rFileData.at(0), rFileData.size());
 		FileStream.close();
 	}
+	else
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteFileFailed, {rFileName}, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
 }
 
 std::vector<std::string> getFileList(LPCTSTR pPath, ImageFileFormat fileFormat, bool recursive)

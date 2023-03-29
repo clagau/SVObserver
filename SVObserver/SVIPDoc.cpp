@@ -2082,7 +2082,7 @@ void SVIPDoc::OnSaveResultsToFile()
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string {dlg.GetPathName()});
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }
@@ -2138,7 +2138,7 @@ void SVIPDoc::OnSaveTableResultsToFile()
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string {dlg.GetPathName()});
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }

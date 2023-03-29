@@ -480,6 +480,7 @@ void ModuleController::convertGroupTool(uint32_t toolId, const std::string& rNam
 		{
 			//This is needed that the images is set correctly in TRC
 			pModuleTool->GetInspection()->resetAllObjects();
+			dynamic_cast<SVInspectionProcess*>(pModuleTool->GetInspection())->RunOnce(); //This is needed to update the overlays
 		}
 	}
 	else
@@ -511,6 +512,7 @@ void ModuleController::convertModuleInstance(uint32_t toolId)
 			pGroupTool->moveObjectToThis(*pModuleTool);
 			pGroupTool->setComment(pModuleTool->getModuleComment());
 			pOwner->DestroyChildObject(pModuleTool, SvDef::SVMFResetInspection);
+			dynamic_cast<SVInspectionProcess*>(pOwner->GetInspection())->RunOnce(); //This is needed to update the overlays
 		}
 		else
 		{
@@ -731,6 +733,8 @@ void ModuleController::importModule(const std::string& moduleName, const std::st
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleExistAlready, {iter->m_name}, SvStl::SourceFileParams(StdMessageParams));
 		e.Throw();
 	}
+
+	checkIfNameValid(moduleName);
 	if (std::ranges::any_of(m_moduleList, [moduleName](const auto& rEntry) { return rEntry.m_name == moduleName; }))
 	{
 		for (const auto& rEntry : containedFilepaths)

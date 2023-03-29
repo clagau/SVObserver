@@ -510,7 +510,7 @@ enum MessageTextEnum
 	Tid_ColorToolExtentsChanged,
 	Tid_FailstatusNotFound,
 	Tid_WrongInputImageType,
-	Tid_WriteCSVFileFailed,
+	Tid_WriteFileFailed,
 	Tid_Error_SetServiceStatus,
 	Tid_Error_RegisterServiceHandler,
 	Tid_Error_CreateEvent,

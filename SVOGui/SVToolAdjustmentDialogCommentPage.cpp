@@ -49,7 +49,7 @@ namespace SvOg
 		if (m_isModuleComment)
 		{
 			SetHelpID(IDD_MODULE_COMMENT);
-			GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(false);
+			static_cast<CEdit*>(GetDlgItem(IDC_EDIT_COMMENT))->SetReadOnly(true);
 			m_values.Init();
 			m_strComment = m_values.Get<CString>(SvPb::ModuleCommentEId);
 		}

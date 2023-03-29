@@ -38,6 +38,9 @@ public:
 	void setHistory(const std::vector<std::pair<time_t, std::string>>& rHistoryVector) { m_historyList = rHistoryVector; };
 	std::vector<std::pair<time_t, std::string>> getHistory() const { return m_historyList; };
 
+	virtual HRESULT CollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector&) override { return S_OK; }; //Don't add overlays for ModuleTool by now.
+	virtual void addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc&) const override {}; //Don't add overlays for ModuleTool by now.
+
 private:
 	void Initialize();
 

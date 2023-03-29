@@ -548,7 +548,7 @@ namespace SvStl
 		{Tid_ColorToolExtentsChanged, _T("For backward compatibility: The ROI of at least one color tool in the configuration has been changed to the size of the Main image")},
 		{Tid_FailstatusNotFound, _T("Could not get Failstatus")},
 		{Tid_WrongInputImageType, _T("The input image is the wrong color type")},
-		{Tid_WriteCSVFileFailed, _T("Write to file {0} failed.")},
+		{Tid_WriteFileFailed, _T("Write to file {0} failed.")},
 		{Tid_Error_SetServiceStatus, _T("SetServiceStatus returned error")},
 		{Tid_Error_RegisterServiceHandler, _T("RegisterServiceCtrlHandler returned error")},
 		{Tid_Error_CreateEvent, _T("Could not create the Event Handler")},
