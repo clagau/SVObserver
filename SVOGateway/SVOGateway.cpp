@@ -187,19 +187,26 @@ void StartWebServer(DWORD argc, LPTSTR* argv)
 
 		//Should be done before destroyTriggerRecordController
 		sharedMemoryAccess.unsubscribe_from_trc();
-
+	}
+	catch (std::exception& e)
+	{
+		SV_LOG_GLOBAL(error) << e.what();
+	}
+	try
+	{
 		SvOi::destroyTriggerRecordController();
 	}
 	catch (std::exception& e)
 	{
 		SV_LOG_GLOBAL(error) << e.what();
 	}
+
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));
 }
 
 int main(int argc, _TCHAR* argv[])
 {
-	//this command is to send the assert to a messagebox (otherwise the assert abort the application)
+	//this command is to send the assert to a messagebox (otherwise the assert aborts the application)
 	_set_error_mode(_OUT_TO_MSGBOX);
 	int Result {0};
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);

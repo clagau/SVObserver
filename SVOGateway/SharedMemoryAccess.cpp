@@ -1169,7 +1169,6 @@ void SharedMemoryAccess::send_trigger_record_pause_state_to_client(notification_
 
 void SharedMemoryAccess::on_lock_state_changed(LockState state)
 {
-	SV_LOG_GLOBAL(warning) << "acquired: " << (state.owner.type != EntityType::Empty) << ", owner: " << static_cast<int>(state.owner.type) << ", owner username: " << std::string(state.owner.username) << ", owner host: " << std::string(state.owner.host) << ", requester: " << static_cast<int>(state.requester.type) << ", requester username: " << state.requester.username << ", requester host: " << state.requester.host;
 	if (state.requester.type != EntityType::Empty)
 	{
 		if (state.requester.type == EntityType::SVObserver)
@@ -1202,7 +1201,7 @@ void SharedMemoryAccess::on_lock_state_changed(LockState state)
 
 	for (auto it = m_notification_streams.begin(); it != m_notification_streams.end();)
 	{
-		if ((*it)->ctx->isCancelled())
+		if (!(*it) || (*it)->ctx->isCancelled())
 		{
 			it = m_notification_streams.erase(it);
 			continue;
@@ -1465,41 +1464,42 @@ void SharedMemoryAccess::AcquireLockStream(
 
 std::shared_ptr<lock_acquisition_stream_t> SharedMemoryAccess::get_lock_owner_stream() const
 {
-	auto lockOwnerStream = std::find_if(
-		m_LockAcquisitionStreams.begin(),
-		m_LockAcquisitionStreams.end(),
-		[](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+	std::shared_ptr<lock_acquisition_stream_t> lockOwnerStream;
+	for (const auto& stream : m_LockAcquisitionStreams)
 	{
-		return streamPtr->isLockOwner;
-	});
+		if (stream->isLockOwner)
+		{
+			lockOwnerStream = stream;
+			break;
+		}
+	}
 
-	if (lockOwnerStream == m_LockAcquisitionStreams.end() ||
-		(*lockOwnerStream)->streamContext->isCancelled())
+	if (!lockOwnerStream || lockOwnerStream->streamContext->isCancelled())
 	{
 		return nullptr;
 	}
 
-	return *lockOwnerStream;
+	return lockOwnerStream;
 }
 
 std::shared_ptr<lock_acquisition_stream_t> SharedMemoryAccess::get_stream_by_id(const std::uint32_t id) const
 {
-	//scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
-	auto stream = std::find_if(
-		m_LockAcquisitionStreams.begin(),
-		m_LockAcquisitionStreams.end(),
-		[id](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+	std::shared_ptr<lock_acquisition_stream_t> foundStream;
+	for (const auto& stream : m_LockAcquisitionStreams)
 	{
-		return id == streamPtr->id;
-	});
+		if (id == stream->id)
+		{
+			foundStream = stream;
+			break;
+		}
+	}
 
-	if (stream == m_LockAcquisitionStreams.end() ||
-		(*stream)->streamContext->isCancelled())
+	if (!foundStream || foundStream->streamContext->isCancelled())
 	{
 		return nullptr;
 	}
 
-	return *stream;
+	return foundStream;
 }
 
 void SharedMemoryAccess::acquire_lock(lock_acquisition_stream_t& stream)
@@ -1568,7 +1568,7 @@ void SharedMemoryAccess::broadcast_configuration_lock_status()
 	auto lockOwnerStream = get_lock_owner_stream();
 	for (auto it = m_notification_streams.begin(); it != m_notification_streams.end();)
 	{
-		if ((*it)->ctx->isCancelled())
+		if (!(*it) || (*it)->ctx->isCancelled())
 		{
 			it = m_notification_streams.erase(it);
 			continue;
@@ -1683,7 +1683,7 @@ void SharedMemoryAccess::check_disconnected_clients()
 	auto& streams = m_LockAcquisitionStreams;
 	for (auto it = streams.begin(); it != streams.end();)
 	{
-		if ((*it)->streamContext->isCancelled())
+		if (!(*it) || (*it)->streamContext->isCancelled())
 		{
 			SV_LOG_GLOBAL(debug) << "client " << (*it)->id << " erased from streams vector";
 			it = streams.erase(it);
