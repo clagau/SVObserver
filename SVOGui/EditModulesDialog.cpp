@@ -271,7 +271,15 @@ void EditModulesDialog::OnExportModule()
 			INT_PTR rc = dlg.DoModal();
 			if (IDOK == rc)
 			{
-				SvFs::writeStringToFile(std::string{dlg.GetPathName()}, responseCmd.exportmoduleresponse().datastring(), false);
+				try
+				{
+					SvFs::writeStringToFile(std::string {dlg.GetPathName()}, responseCmd.exportmoduleresponse().datastring(), false);
+				}
+				catch (const SvStl::MessageContainer& rExp)
+				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Msg.setMessage(rExp.getMessage());
+				}
 			}
 		}
 		else
