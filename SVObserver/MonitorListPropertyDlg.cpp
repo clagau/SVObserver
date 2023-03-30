@@ -153,7 +153,7 @@ void MonitorListPropertyDlg::OnOK()
 	{
 		RemoteMonitorNamedList namedList = it->second;
 
-		namedList.SetName(SvUl::RemoveCharactersByRegexAndTrim(m_DisplayName, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank));//ABXX anpassen
+		namedList.SetName(SvUl::RemoveCharactersByRegexAndTrim(m_DisplayName, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank));
 		namedList.SetRejectDepthQueue(m_MonitorListRejectQueueDepth);
 		m_MonitorList.erase(it);
 		m_MonitorList.insert(std::make_pair(m_DisplayName, namedList));

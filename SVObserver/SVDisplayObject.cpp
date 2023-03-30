@@ -16,7 +16,6 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
-#include "SVLibrary/SVWinUtility.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -195,7 +194,13 @@ BOOL SVDisplayObject::Destroy()
 		DWORD exitCode = 0;
 		do
 		{
-			SVYieldMessages();
+			MSG msg;
+
+			while (::PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+			{
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
+			}
 			::Sleep(1);
 			::GetExitCodeThread(m_hDisplayThread, &exitCode);
 		} while (exitCode == STILL_ACTIVE);

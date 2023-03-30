@@ -118,7 +118,6 @@
     <ClCompile Include="SVOIniLoader.cpp" />
     <ClCompile Include="SVPackedFile.cpp" />
     <ClCompile Include="SVValueBaseNormalizerClass.cpp" />
-    <ClCompile Include="SVWinUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InitialInformation.h" />
@@ -131,7 +130,6 @@
     <ClInclude Include="SVTemplate.h" />
     <ClInclude Include="SVUtilityIniClass.h" />
     <ClInclude Include="SVValueBaseNormalizerClass.h" />
-    <ClInclude Include="SVWinUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

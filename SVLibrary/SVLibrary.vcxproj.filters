@@ -33,9 +33,6 @@
     <ClCompile Include="SVValueBaseNormalizerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVWinUtility.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVGraphix.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -66,9 +63,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVValueBaseNormalizerClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVWinUtility.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVGraphix.h">

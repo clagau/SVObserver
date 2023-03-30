@@ -27,7 +27,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "FilesystemUtilities/FileHelperManager.h"
-#include "SVLibrary/SVWinUtility.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVMessage/SVMessage.h"
@@ -144,10 +143,6 @@ void StopSvo()
 		return;
 	}
 
-	CDialog infoDlg;
-	infoDlg.Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
-	infoDlg.ShowWindow(SW_SHOW);
-
 #ifdef LOG_HEAP_INFO
 	SvUl::logHeap(_T("Leaving run mode"));
 #endif
@@ -166,8 +161,6 @@ void StopSvo()
 		SVSVIMStateClass::AddState(SV_STATE_STOP_PENDING);
 		return;
 	}
-
-	SVYieldPaintMessages();
 
 	bool wasInRunMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 
