@@ -481,7 +481,7 @@ variant_t getDefaultString(SvPb::LinkedValueTypeEnum type)
 		return "";
 		
 	case SvPb::LinkedValueTypeEnum::TypeStates:
-		return int(0);
+		return _variant_t(0L, VT_I4);
 	default: //do nothing
 		return {};
 	}
