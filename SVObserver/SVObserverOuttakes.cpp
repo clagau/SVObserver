@@ -22,7 +22,6 @@
 #include "SVToolSet.h"
 #include "SVUtilities.h"
 #include "SoftwareTriggerDlg.h"
-#include "CameraLibrary/SVDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
