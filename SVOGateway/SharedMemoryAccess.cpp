@@ -1464,15 +1464,13 @@ void SharedMemoryAccess::AcquireLockStream(
 
 std::shared_ptr<lock_acquisition_stream_t> SharedMemoryAccess::get_lock_owner_stream() const
 {
-	std::shared_ptr<lock_acquisition_stream_t> lockOwnerStream;
-	for (const auto& stream : m_LockAcquisitionStreams)
+	auto isOwner = [](std::shared_ptr<lock_acquisition_stream_t> stream){return stream->isLockOwner; };
+	auto iter = std::find_if(m_LockAcquisitionStreams.begin(), m_LockAcquisitionStreams.end(), isOwner);
+	if (m_LockAcquisitionStreams.end() == iter)
 	{
-		if (stream->isLockOwner)
-		{
-			lockOwnerStream = stream;
-			break;
-		}
-	}
+		return nullptr;
+	}	
+	std::shared_ptr<lock_acquisition_stream_t> lockOwnerStream = *iter;
 
 	if (!lockOwnerStream || lockOwnerStream->streamContext->isCancelled())
 	{
@@ -1484,15 +1482,14 @@ std::shared_ptr<lock_acquisition_stream_t> SharedMemoryAccess::get_lock_owner_st
 
 std::shared_ptr<lock_acquisition_stream_t> SharedMemoryAccess::get_stream_by_id(const std::uint32_t id) const
 {
-	std::shared_ptr<lock_acquisition_stream_t> foundStream;
-	for (const auto& stream : m_LockAcquisitionStreams)
+	auto hasId = [id](std::shared_ptr<lock_acquisition_stream_t> stream){return id == stream->id; };
+	auto iter = std::find_if(m_LockAcquisitionStreams.begin(), m_LockAcquisitionStreams.end(), hasId);
+	if (m_LockAcquisitionStreams.end() == iter)
 	{
-		if (id == stream->id)
-		{
-			foundStream = stream;
-			break;
-		}
+		return nullptr;
 	}
+
+	std::shared_ptr<lock_acquisition_stream_t> foundStream = *iter;
 
 	if (!foundStream || foundStream->streamContext->isCancelled())
 	{
