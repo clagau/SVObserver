@@ -1847,22 +1847,17 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	int iInsCnt = m_InspectList.GetInspectionListCount();
 	if ( iInsCnt > 0 )
 	{
-		std::string Key;
-		std::string inspectionName;
-		std::string ToolsetImage;
-		std::string NewDisableMethod;
-		bool EnableAuxiliaryExtent;
-
 		for ( int i = 0; i < iInsCnt; i++ )
 		{
 			const SVOInspectionObjPtr pInspectionObj( GetInspectionObject(i) );
 			if( nullptr != pInspectionObj )
 			{
-				Key = pInspectionObj->GetOriginalName();
-				inspectionName = pInspectionObj->GetInspectionName();
-				ToolsetImage = pInspectionObj->GetToolsetImage();
-				NewDisableMethod = pInspectionObj->GetNewDisableMethodString();
-				EnableAuxiliaryExtent = (1 == pInspectionObj->GetEnableAuxiliaryExtent());
+				std::string Key = pInspectionObj->GetOriginalName();
+				std::string inspectionName = pInspectionObj->GetInspectionName();
+				std::string ToolsetImage = pInspectionObj->GetToolsetImage();
+				std::string NewDisableMethod = pInspectionObj->GetNewDisableMethodString();
+				bool EnableAuxiliaryExtent = (1 == pInspectionObj->GetEnableAuxiliaryExtent());
+				DWORD objectIdIndex = pInspectionObj->GetObjectIdIndex();
 
 				lCfgInsCnt = pConfig->GetInspectionCount();
 
@@ -1929,6 +1924,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 									bool bNewDisableMethod = pInspection->IsNewDisableMethodSet();
 									NewDisableMethod = (bNewDisableMethod) ? _T( "Method 2" ): _T( "Method 1" );
 									EnableAuxiliaryExtent = pInspection->getEnableAuxiliaryExtent();
+									objectIdIndex = pInspection->GetObjectIdIndex();
 								}
 							}
 							resolveGlobalConflicts( importer.GlobalConflicts );
@@ -1977,6 +1973,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					{
 						pInspection->resetAllObjects();
 					}
+					pInspection->SetObjectIdIndex(objectIdIndex);
 				}
 				pInspection = nullptr;
 			}
@@ -2522,7 +2519,6 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	//end of trigger section
 	
 	//load inspection section...
-	CString sDisable;
 	for (long lIns = 0; lIns < pConfig->GetInspectionCount(); ++lIns)
 	{
 		SVInspectionProcess* pcfgInspection = pConfig->GetInspection(lIns);
@@ -2539,30 +2535,17 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 			
 			m_InspectList.SetColor(InspectionName.c_str(), pcfgInspection->IsColorCamera() );
 
-			if( pcfgInspection->IsNewDisableMethodSet() )
-			{
-				sDisable = _T( "Method 2" );
-			}// end if
-			else
-			{
-				sDisable = _T( "Method 1" );
-			}// end else
+			CString sDisable = pcfgInspection->IsNewDisableMethodSet() ? _T( "Method 2" ) :  _T( "Method 1" );
 
 			m_InspectList.SetNewDisableMethod(InspectionName.c_str(), sDisable );
 
 			m_InspectList.SetShowAuxExtent(InspectionName.c_str() );
 
 			// Enable Auxiliary Extent
-			long l_lEnable = 0;
-			if( pcfgInspection->getEnableAuxiliaryExtent() )
-			{
-				l_lEnable = 1;
-			}
-			else
-			{
-				l_lEnable = 0;
-			}
-			m_InspectList.SetEnableAuxiliaryExtent(InspectionName.c_str(), l_lEnable );
+			long auxExtent = pcfgInspection->getEnableAuxiliaryExtent() ? 1 : 0;
+			m_InspectList.SetEnableAuxiliaryExtent(InspectionName.c_str(), auxExtent);
+
+			m_InspectList.SetObjectIdIndex(InspectionName.c_str(), pcfgInspection->GetObjectIdIndex());
 		}
 		else
 		{

@@ -197,7 +197,6 @@
     <ClCompile Include="TADialogGroupToolInputPage.cpp" />
     <ClCompile Include="TATableAnalyzerPage.cpp" />
     <ClCompile Include="TATableSourcePage.cpp" />
-    <ClCompile Include="ToolAdjustToolSetPage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuditFilesDialog.h" />
@@ -277,7 +276,6 @@
     <ClInclude Include="TADialogGroupToolInputPage.h" />
     <ClInclude Include="TATableAnalyzerPage.h" />
     <ClInclude Include="TATableSourcePage.h" />
-    <ClInclude Include="ToolAdjustToolSetPage.h" />
     <ClInclude Include="TextDefinesSvOg.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVOCameraObj.h"
-#include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
@@ -21,26 +20,6 @@
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-
-SVOCameraObj::SVOCameraObj() :
- m_DigNumber( 0 )
-, m_CameraID( 0 )
-, m_BandNumber( 0 )
-, m_IsColor( false )
-, m_CameraFileSet( false )
-, m_CameraFileChanged( false )
-, m_FileAcquisition( false )
-, m_imageSizeEditModeFileBased( true )
-, m_fileMode( ContinuousMode )
-{
-	m_fileImageSize.cx = 640;
-	m_fileImageSize.cy = 480;
-}
-
-SVOCameraObj::~SVOCameraObj()
-{
-
-}
 
 const std::string& SVOCameraObj::GetCameraDisplayName() const
 {

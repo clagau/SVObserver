@@ -234,9 +234,6 @@
     <ClCompile Include="SVOInspectionList.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVOInspectionObj.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVOInspectionSourceDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

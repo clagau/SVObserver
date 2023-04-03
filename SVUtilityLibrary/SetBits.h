@@ -6,22 +6,26 @@
 
 namespace SvUl
 {
-	/*
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	#define SetBits(nData, bits, bOn) if (bOn) (nData) |= (bits); else (nData) &= ~(bits);
-	// sets the specified bits of the input value to either on or off
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	*/
-	template <typename DATATYPE, typename BITSTYPE>
-	inline void SetBits(DATATYPE& rDest, BITSTYPE bits, bool bOnOff)
+template <typename T>
+inline void SetBit(T& rDest, int bitNumber, bool state)
+{
+	constexpr cMaxBitNr {sizeof(T) * 8};
+	if (bitNumber < cMaxBitNr)
 	{
-		if (bOnOff)
-		{
-			rDest |= bits;
-		}
-		else
-		{
-			rDest &= ~bits;
-		}
+		T bitMask {1 << bitNumber};
+		rDest = state ? (rDest | bitMask) : (rDest & ~bitMask);
 	}
+}
+
+template <typename T>
+inline bool GetBit(const T& rSource, int bitNumber)
+{
+	bool result {false};
+	constexpr cMaxBitNr {sizeof(T) * 8};
+	if (bitNumber < cMaxBitNr)
+	{
+		T bitMask {1 << bitNumber};
+		result = (rSource & bitMask) == bitMask;
+	}
+}
 } // namespace SvUl

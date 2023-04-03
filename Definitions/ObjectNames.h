@@ -16,6 +16,7 @@ constexpr const TCHAR* cObjectType = _T("Object Type");
 constexpr const TCHAR* cTriggerIndex = _T("Trigger Index");
 constexpr const TCHAR* cTriggerPerObjectID = _T("Trigger per Object ID");
 constexpr const TCHAR* cInspectedObjectID = _T("Inspected Object ID");
+constexpr const TCHAR* cObjectIdIndex = _T("Object ID Index");
 constexpr const TCHAR* cLoopMode = _T("Loop Mode");
 constexpr const TCHAR* cRotationNumber = _T("Rotation Number");
 constexpr const TCHAR* cMeasurementValue = _T("Measurement Value");

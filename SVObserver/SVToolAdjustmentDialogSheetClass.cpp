@@ -52,7 +52,6 @@
 #include "SVOGui/TATableAnalyzerPage.h"
 #include "SVOGui/TADialogDrawPage.h"
 #include "SVOGui/TATableSourcePage.h"
-#include "SVOGui/ToolAdjustToolSetPage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Tools/SVTool.h"
 #include "SVOGui/TADialogGroupToolResultPage.h"
@@ -97,17 +96,15 @@ void SVToolAdjustmentDialogSheetClass::init()
 
 	addPages();
 
-
 	SvOi::IObjectClass* pObject = GetTaskObject();
-	Log_Assert(pObject && pObject->GetObjectType() == SvPb::SVToolObjectType);
+	auto objectType = (nullptr != pObject) ? pObject->GetObjectType() : SvPb::SVNotSetObjectType;
+	Log_Assert(objectType == SvPb::SVToolObjectType || objectType == SvPb::SVToolSetObjectType);
 
 	m_dependentTools.clear();
 
 	std::back_insert_iterator<std::vector<uint32_t>>  InsertIt(m_dependentTools);
 	SvTo::InsertDependentTools(InsertIt, pObject->getObjectId());
 	SvUl::RemoveDuplicates(m_dependentTools);
-
-
 }
 
 SVToolAdjustmentDialogSheetClass::~SVToolAdjustmentDialogSheetClass()
@@ -444,7 +441,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			//Special case for the Tool Set parameters
 			if (SvPb::SVObjectTypeEnum::SVToolSetObjectType == pTaskObject->GetObjectType())
 			{
-				AddPage(new SvOg::ToolAdjustToolSetPage(m_InspectionID, m_TaskObjectID));
 				addConditionalDialog();
 			}
 			else

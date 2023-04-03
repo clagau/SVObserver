@@ -113,7 +113,6 @@ SVProductInfoStruct::SVProductInfoStruct(const SVProductInfoStruct& rRhs)
 	, m_prevTriggerNAK(rRhs.m_prevTriggerNAK)
 	, m_triggerInfo(rRhs.m_triggerInfo)
 	, m_outputsInfo(rRhs.m_outputsInfo)
-	, m_pPPQ(rRhs.m_pPPQ)
 	, m_svCameraInfos(rRhs.m_svCameraInfos)
 	, m_svInspectionInfos(rRhs.m_svInspectionInfos)
 	, m_ProductActive(0)
@@ -152,7 +151,6 @@ SVProductInfoStruct& SVProductInfoStruct::operator=(const SVProductInfoStruct& r
 
 		m_triggerInfo = rRhs.m_triggerInfo;
 		m_outputsInfo = rRhs.m_outputsInfo;
-		m_pPPQ = rRhs.m_pPPQ;
 
 		m_svCameraInfos = rRhs.m_svCameraInfos;
 		m_svInspectionInfos = rRhs.m_svInspectionInfos;
@@ -187,7 +185,6 @@ HRESULT SVProductInfoStruct::Assign(const SVProductInfoStruct& rData, bool shoul
 		m_NotCompleteCount = rData.m_NotCompleteCount;
 		m_triggerInfo = rData.m_triggerInfo;
 		m_outputsInfo = rData.m_outputsInfo;
-		m_pPPQ = rData.m_pPPQ;
 		m_svCameraInfos = rData.m_svCameraInfos;
 		m_svInspectionInfos.clear();
 
@@ -237,7 +234,7 @@ void SVProductInfoStruct::InitProductInfo()
 	m_CantProcessReason = CantProcessEnum::NoReason;
 	m_triggered = false;
 	m_dataComplete = false;
-	m_prevTriggerNAK = false;
+	m_prevTriggerNAK = {false, false, false, false};
 	m_outputsInfo.clear();
 	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});
 	
@@ -262,9 +259,8 @@ void SVProductInfoStruct::Reset()
 	}
 	m_triggered = false;
 	m_dataComplete = false;
-	m_prevTriggerNAK = false;
+	m_prevTriggerNAK = {false, false, false, false};
 	m_outputsInfo.clear();
-	m_pPPQ = nullptr;
 	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});
 
 	for (auto& rCamera : m_svCameraInfos)

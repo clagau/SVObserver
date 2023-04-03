@@ -19,8 +19,8 @@
 class SVOCameraObj  
 {
 public:
-	SVOCameraObj();
-	virtual ~SVOCameraObj();
+	SVOCameraObj() = default;
+	virtual ~SVOCameraObj() = default;
     SVOCameraObj& operator =(const SVOCameraObj &source);
     SVOCameraObj* operator =(const SVOCameraObj *source);
 
@@ -70,24 +70,24 @@ public:
 	inline bool IsColor() const { return m_IsColor; };
 
 private:  //data members
-    std::string m_CameraDisplayName;
-	int m_DigNumber;
-	int m_CameraID;
-    int m_BandNumber;
-    bool m_IsColor;
-    std::string m_CameraFile;
-    bool m_CameraFileSet;
-	bool m_CameraFileChanged;
-	std::string m_sequenceCameraFile;
+	std::string m_CameraDisplayName {};
+	int m_DigNumber {0};
+	int m_CameraID {0};
+    int m_BandNumber {0};
+    bool m_IsColor {false};
+	std::string m_CameraFile {};
+    bool m_CameraFileSet {false};
+	bool m_CameraFileChanged {false};
+	std::string m_sequenceCameraFile {};
 	SVDeviceParamCollection m_CameraDeviceParams;
 	SVDeviceParamCollection m_CameraFileParams;
 
-	bool m_FileAcquisition;
-	std::string m_imageFilename;
-	std::string m_imageDirectory;
-	bool m_imageSizeEditModeFileBased;
-	SIZE m_fileImageSize;
-	long m_fileMode;
+	bool m_FileAcquisition {false};
+	std::string m_imageFilename {};
+	std::string m_imageDirectory {};
+	bool m_imageSizeEditModeFileBased {true};
+	SIZE m_fileImageSize {640, 480};
+	long m_fileMode {false};
 };
 
 typedef std::shared_ptr< SVOCameraObj > SVOCameraObjPtr;

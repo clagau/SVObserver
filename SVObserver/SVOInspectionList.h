@@ -31,7 +31,8 @@ public:
 	bool SetToolsetImage( LPCTSTR InspectionName,  LPCTSTR Image );
 	bool SetColor( LPCTSTR InspectionName, bool Color );
 	bool SetNewDisableMethod( LPCTSTR InspectionName,  LPCTSTR Disable );
-	bool SetEnableAuxiliaryExtent( LPCTSTR InspectionName, long sEnable );
+	bool SetEnableAuxiliaryExtent(LPCTSTR InspectionName, long sEnable);
+	bool SetObjectIdIndex(LPCTSTR InspectionName, DWORD objectIdIndex);
 	bool SetShowAuxExtent( LPCTSTR InspectionName, bool p_bShow=true );
 	bool RenameInspection( LPCTSTR InspectionName,  LPCTSTR NewInspectionName );
 	bool RemoveInspectionFromList( LPCTSTR InspectionName);

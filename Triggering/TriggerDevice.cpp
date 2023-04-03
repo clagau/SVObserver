@@ -39,9 +39,10 @@ void __stdcall TriggerDevice::ProcessCallback(ULONG_PTR pCaller)
 				if (0.0 < triggerInfo.m_Data.m_triggerTimestamp)
 				{
 					triggerInfo.m_triggerTimeStamp = triggerInfo.m_Data.m_triggerTimestamp;
-					////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
+					const auto& rObjectData = triggerInfo.m_Data.m_objectData;
 					//When ObjectID is present then PLC connected so make sure the acquisition is done after the trigger timestamp
-					if (triggerInfo.m_Data.m_objectData[0].m_objectID > 0)
+					bool isValidObjectID {std::any_of(std::begin(rObjectData), std::end(rObjectData), [](const auto& rObject) { return 0 != rObject.m_objectID; })};
+					if (isValidObjectID)
 					{
 						double timeDifference = triggerInfo.m_triggerTimeStamp - SvUl::GetTimeStamp();
 						bool isTimeInTheFuture = timeDifference > 0.0;

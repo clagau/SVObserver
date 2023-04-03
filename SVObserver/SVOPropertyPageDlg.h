@@ -52,6 +52,7 @@ enum PROPERTY_PAGE_PROPERTY
 	PROP_PPQ_OUTPUT_DELAY_TIME,
 	PROP_INS_NEW_DISABLE_METHOD,
 	PROP_INS_ENABLE_AUX_EXTENT,
+	PROP_INS_OBJECT_ID_INDEX,
 	PROP_PPQ_INSPECTION_TIMEOUT,
 	PROP_CAMERA_TYPE_FILE_OR_REAL,
 	PROP_FILECAMERA_FILENAME,
@@ -146,12 +147,12 @@ private: //data members
     SvTrig::SVOTriggerObj m_TriggerObj;
     SVOInspectionObj m_InspectionObj;
     SVOPPQObj m_PPQObj;
-	SVOConfigAssistantDlg* m_pAssistant;
+	SVOConfigAssistantDlg* m_pAssistant {nullptr};
 
-	CMapStringToPtr	*m_pMap;
-	int				m_nID;
-    SVIMProductEnum m_eProduct;
-	std::string m_InitialCameraFileName;
+	CMapStringToPtr* m_pMap {nullptr};
+	int	m_nID;
+	SVIMProductEnum m_eProduct {SVIM_PRODUCT_TYPE_UNKNOWN};
+	std::string m_InitialCameraFileName {};
 
     void CameraAdvancedHideItems();
     void PPQHideItems();

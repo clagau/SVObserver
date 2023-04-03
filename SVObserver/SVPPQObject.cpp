@@ -60,6 +60,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 constexpr double TwentyPercent = .20;
+constexpr int cDefaultObjectIdIndexSize {1};
 bool SVPPQObject::m_timerResolution {false};
 #pragma endregion Declarations
 
@@ -69,7 +70,13 @@ void SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 	{
 		SetProductIncomplete(rProduct);
 	}
-	if (WriteOutputs(&rProduct))
+	bool done {true};
+	if (cDefaultObjectIdIndexSize == m_multipleObjectIdCount)
+	{
+		constexpr int cDefaultObjectIdIndex {0};
+		done = WriteOutputs(&rProduct, cDefaultObjectIdIndex);
+	}
+	if (done)
 	{
 		rProduct.m_outputsInfo.m_EndProcess = SvUl::GetTimeStamp();
 
@@ -187,28 +194,8 @@ bool SVPPQObject::Create()
 	// Return if already created
 	if (m_isCreated) { return false; }
 
-	for (int i = 0; i < static_cast<long>(m_PPQPositions.size()); ++i)
-	{
-		RecycleProductInfo(m_PPQPositions.GetProductAt(i));
-
-		m_PPQPositions.SetProductAt(i, nullptr);
-	}
-
-	// Create buckets for the PPQ positions
-	m_PPQPositions.resize(getPPQLength());
-
-	SetupProductInfoStructs();
-
 	m_isCreated = true;
-
-	m_notifyInspectionList.clear();
-	calcUseProcessingOffset4InterestFlag();
-
-		// Force the Inspections to rebuild
-		for (auto pInspection : m_arInspections)
-		{
-			pInspection->RebuildInspection();
-		}// end for
+	Rebuild();
 
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
@@ -231,6 +218,7 @@ bool SVPPQObject::Rebuild()
 	if (!m_isCreated) { return false; }
 
 	m_PPQPositions.clear();
+	m_notifyInspectionList.clear();
 
 	m_qAvailableProductInfos.RemoveAll();
 
@@ -245,11 +233,14 @@ bool SVPPQObject::Rebuild()
 
 	calcUseProcessingOffset4InterestFlag();
 
+	std::set<int> objectIDNumber;
 	// Force the Inspections to rebuild as well
 	for (auto pInspection : m_arInspections)
 	{
 		pInspection->RebuildInspection(false);
-	}// end for
+		objectIDNumber.insert(pInspection->GetObjectIdIndex());
+	}
+	m_multipleObjectIdCount = static_cast<int> (objectIDNumber.size());
 
 	return result;
 }// end Rebuild
@@ -1195,7 +1186,7 @@ bool SVPPQObject::EvaluateConditionalOutput() const
 	return bRetVal;
 }
 
-bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
+bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct, int ObjectIdIndex)
 {
 	bool result {true};
 	bool bNak {true};
@@ -1208,18 +1199,8 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 
 	if (nullptr != pProduct)
 	{
-		//As all inspections have been tested to have the same object ID we will set it to the first inspection
-		ObjectIdSVInspectionInfoStructMap::const_iterator iter{ pProduct->m_svInspectionInfos.begin() };
-		if (pProduct->m_svInspectionInfos.end() != iter)
-		{
-			inspectedObjectID = iter->second.m_ObjectID;
-		}
-		if (0 == inspectedObjectID)
-		{
-			//Set the default inspected object ID which would be the input object ID
-			////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
-			inspectedObjectID = static_cast<DWORD> (pProduct->m_triggerInfo.m_Data.m_objectData[0].m_objectID);
-		}
+		inspectedObjectID = pProduct->m_triggerInfo.m_Data.m_objectData[ObjectIdIndex].m_objectID;
+		bNak = pProduct->m_outputsInfo.m_NakResult[ObjectIdIndex];
 
 		objectType = pProduct->m_triggerInfo.m_Data.m_objectType;
 		uint8_t triggerIndex {pProduct->m_triggerInfo.m_Data.m_triggerIndex};
@@ -1228,7 +1209,6 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 		writeOutputData = (0 != triggerIndex && 0 != triggerPerObjectID) ? (triggerIndex == triggerPerObjectID) : false;
 
 		pProduct->m_outputsInfo.m_OutputToggleResult = m_OutputToggle;
-		bNak = pProduct->m_outputsInfo.m_NakResult;
 		dataValidResult = pProduct->m_outputsInfo.m_DataValidResult;
 	}
 
@@ -1458,7 +1438,10 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTrigge
 		if (nullptr != pPrevProduct)
 		{
 			pNewProduct->m_triggerInfo.m_PreviousTrigger = pPrevProduct->m_triggerInfo.m_triggerTimeStamp;
-			bool isNAK = pPrevProduct->m_outputsInfo.m_NakResult || pPrevProduct->m_prevTriggerNAK;
+			auto& rNAKList = pPrevProduct->m_outputsInfo.m_NakResult;
+			bool isNAK = std::any_of(rNAKList.begin(), rNAKList.end(), [](const bool& rNAK) { return rNAK; });
+			auto& rPrevNAKList = pPrevProduct->m_prevTriggerNAK;
+			isNAK |= std::any_of(rPrevNAKList.begin(), rPrevNAKList.end(), [](const bool& rNAK) { return rNAK; });
 			if (pPrevProduct->m_dataComplete && isNAK)
 			{
 				setPreviousNAK(*pPrevProduct, pNewProduct);
@@ -1646,8 +1629,8 @@ bool SVPPQObject::StartInspection(uint32_t inspectionID)
 			{
 				SetProductIncomplete(*pTempProduct);
 				//Here we need to reset the NAK flag otherwise the m_NewNAKCounter would be incremented and cause the PPQ to be reset again
-				pTempProduct->m_outputsInfo.m_NakResult = false;
-				pTempProduct->m_prevTriggerNAK = true;
+				pTempProduct->m_outputsInfo.m_NakResult = {false, false, false, false};
+				pTempProduct->m_prevTriggerNAK = {true, true, true, true};
 				pTempProduct = nullptr;
 				if (0 != m_NewNAKCount)
 				{
@@ -1663,6 +1646,9 @@ bool SVPPQObject::StartInspection(uint32_t inspectionID)
 		pProduct->m_lastPPQPosition = m_lastPPQPosition;
 		pProduct->m_NotCompleteCount = m_NotCompleteCount;
 		pProduct->m_MissingImageCount = m_MissingImageCount;
+		//inspectionObjectIdIndex can only be set to a valid index so no extra check!
+		DWORD inspectionObjectIdIndex {pProduct->m_svInspectionInfos[inspectionID].m_pInspection->GetObjectIdIndex()};
+		pProduct->m_svInspectionInfos[inspectionID].m_ObjectID = pProduct->m_triggerInfo.m_Data.m_objectData[inspectionObjectIdIndex].m_objectID;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->triggerCount());
 		std::string inspectionName = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->GetName();
@@ -1722,24 +1708,22 @@ void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
 	}
 }
 
-void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
+void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct, uint32_t inspId)
 {
-	bool bValid {rProduct.m_svInspectionInfos.size() > 0};
+	bool bValid {true};
 	long oState {0};
-	DWORD previousObjectID {0};
-	for (const auto& rInspectionInfo : rProduct.m_svInspectionInfos)
+	if (cDefaultObjectIdIndexSize == m_multipleObjectIdCount)
 	{
-		oState |= rInspectionInfo.second.m_InspectedState;
-		bValid &= (rInspectionInfo.second.m_EndInspection > 0.0);
-		//Make sure that the inspected object ID is the same for all inspections if not then failed
-		if (0 == previousObjectID)
+		for (const auto& rInspectionInfo : rProduct.m_svInspectionInfos)
 		{
-			previousObjectID = rInspectionInfo.second.m_ObjectID;
+			oState |= rInspectionInfo.second.m_InspectedState;
+			bValid &= (rInspectionInfo.second.m_EndInspection > 0.0);
 		}
-		else if (rInspectionInfo.second.m_ObjectID != previousObjectID)
-		{
-			oState |= PRODUCT_INSPECTION_FAILED;
-		}
+	}
+	else
+	{
+		oState = rProduct.m_svInspectionInfos[inspId].m_InspectedState;
+		bValid = rProduct.m_svInspectionInfos[inspId].m_EndInspection > 0.0;
 	}
 	m_PpqOutputs[PpqOutputEnums::DataValid].SetValue(BOOL(bValid));
 
@@ -1825,18 +1809,24 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 	{
 		m_pOutputToggle->getValueObject()->setValue(_variant_t(m_OutputToggle));
 	}
+	DWORD objectIdIndex = rProduct.m_svInspectionInfos[inspId].m_pInspection->GetObjectIdIndex();
 	BOOL bACK(false);
 	BOOL bNAK(true);
 	m_PpqOutputs[PpqOutputEnums::ACK].GetValue(bACK);
 	m_PpqOutputs[PpqOutputEnums::NAK].GetValue(bNAK);
 	//Previous trigger NAK is true when Trigger per Object > 1 and a NAK occured during a previous trigger with the same objectID
-	bACK &= (false == rProduct.m_prevTriggerNAK) ? TRUE : FALSE;
+	bACK &= (false == rProduct.m_prevTriggerNAK[objectIdIndex]) ? TRUE : FALSE;
 
 	setOutputResults(0, rProduct.m_outputsInfo.m_outputResult);
-	bool objectNak = (bNAK || rProduct.m_prevTriggerNAK) ? true : false;
+	bool objectNak = (bNAK || rProduct.m_prevTriggerNAK[objectIdIndex]) ? true : false;
 	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, rProduct.m_outputsInfo.m_outputResult, false, bACK ? true : false, objectNak);
-	rProduct.m_outputsInfo.m_NakResult = bNAK ? true : false;
+	rProduct.m_outputsInfo.m_NakResult[objectIdIndex]= bNAK ? true : false;
 	rProduct.m_outputsInfo.m_DataValidResult = bValid && !bNAK;
+
+	if (m_multipleObjectIdCount > cDefaultObjectIdIndexSize)
+	{
+		WriteOutputs(&rProduct, objectIdIndex);
+	}
 }
 
 bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t inspId)
@@ -1849,19 +1839,17 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t 
 		isReject |= rInsp.second.m_bReject;
 	}
 
-	if (bValid)
+	if (bValid || m_multipleObjectIdCount > cDefaultObjectIdIndexSize)
 	{
-		// Currently only used for Remote Outputs and Fail Status Stream.
-		// returns E_FAIL when there are no listeners/observers.  Not having 
-		// Remote Outputs or Fail Status is not an error in this case.
-		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cPPQObjectTag), getObjectId(), rProduct);
-		AddResultsToPPQ(rProduct);
+		AddResultsToPPQ(rProduct, inspId);
 	}
 
 	//Only place that could set bDataComplete to true
 	rProduct.m_dataComplete = bValid;
 	if (rProduct.m_dataComplete)
 	{
+		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cPPQObjectTag), getObjectId(), rProduct);
+
 		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_outputMode) ||
 			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_outputMode))
 		{
@@ -1881,15 +1869,14 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t 
 		}
 	}
 
-
 	return bValid;
 }
 
 bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 {
-
 	bool l_Status = true;
-	bool isNAK = rProduct.m_outputsInfo.m_NakResult;
+	auto& rNAKList = rProduct.m_outputsInfo.m_NakResult;
+	bool isNAK = std::any_of(rNAKList.begin(), rNAKList.begin() + m_multipleObjectIdCount, [](const bool& rNAK) { return rNAK; });
 
 	//@TODO[MEC][10.20][29.07.2021] 
 	//This function is also called under certain circumstances when NAKs occur. 
@@ -1918,14 +1905,17 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 #endif
 	}
 
-	bool isPreviousNAK = rProduct.m_outputsInfo.m_NakResult || rProduct.m_prevTriggerNAK;
-	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
-	if (isPreviousNAK && rProduct.m_dataComplete && ppqIndex > 0)
+	for (int i = 0; i < m_multipleObjectIdCount; ++i)
 	{
-		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
-		if (nullptr != pNextProduct)
+		bool isPreviousNAK = rProduct.m_outputsInfo.m_NakResult[i] || rProduct.m_prevTriggerNAK[i];
+		long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
+		if (isPreviousNAK && rProduct.m_dataComplete && ppqIndex > 0)
 		{
-			setPreviousNAK(rProduct, pNextProduct);
+			SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
+			if (nullptr != pNextProduct)
+			{
+				setPreviousNAK(rProduct, pNextProduct);
+			}
 		}
 	}
 
@@ -1952,8 +1942,12 @@ bool SVPPQObject::SetProductIncomplete(long p_PPQIndex)
 
 bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 {
-	bool isNak = rProduct.m_outputsInfo.m_NakResult;
-	bool l_Status = true;
+	bool result {true};
+	bool isNAK {false};
+	for (int i = 0; i < m_multipleObjectIdCount; ++i)
+	{
+		isNAK |= rProduct.m_outputsInfo.m_NakResult[i];
+	}
 
 	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 	if (rProduct.IsProductActive())
@@ -1964,7 +1958,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
 		::OutputDebugString(std::format(_T("{} Product incomplete TRI={:d}, PPQPos={:d}\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
 #endif
-		if (isNak)
+		if (isNAK)
 		{
 			checkNakReason(rProduct.m_CantProcessReason);
 		}
@@ -1975,14 +1969,17 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 	rProduct.m_dataComplete = true;
 	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, rProduct.m_outputsInfo.m_outputResult, true, false, true);
 
-	bool isNAK = rProduct.m_outputsInfo.m_NakResult || rProduct.m_prevTriggerNAK;
-	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
-	if (isNAK && ppqIndex > 0)
+	for (int i = 0; i < m_multipleObjectIdCount; ++i)
 	{
-		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
-		if (nullptr != pNextProduct)
+		isNAK = rProduct.m_outputsInfo.m_NakResult[i] || rProduct.m_prevTriggerNAK[i];
+		long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
+		if (isNAK && ppqIndex > 0)
 		{
-			setPreviousNAK(rProduct, pNextProduct);
+			SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
+			if (nullptr != pNextProduct)
+			{
+				setPreviousNAK(rProduct, pNextProduct);
+			}
 		}
 	}
 
@@ -1990,7 +1987,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 	{
 		rCamera.second.ClearInfo(true);
 	}
-	return l_Status;
+	return result;
 }
 
 bool SVPPQObject::RecycleProductInfo(SVProductInfoStruct* pProduct)
@@ -2252,7 +2249,6 @@ SVProductInfoStruct* SVPPQObject::GetProductInfoStruct(long processCount) const
 SVProductInfoStruct SVPPQObject::getProductReadyForRunOnce(uint32_t ipId)
 {
 	SVProductInfoStruct product;
-	product.m_pPPQ = this;
 
 	BuildCameraInfos(product.m_svCameraInfos);
 
@@ -2446,7 +2442,7 @@ void SVPPQObject::ProcessNotifyInspections()
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 							::OutputDebugString(std::format(_T("{} Start Inspection {} failed TRI={:d}\n"), GetName(), m_arInspections[i]->GetName(), triggerCount).c_str());
 #endif
-					}
+						}
 					}
 					else
 					{
@@ -3025,7 +3021,6 @@ bool SVPPQObject::SetupProductInfoStructs()
 	long outputSize {getOutputCount()};
 	for (int j = 0; j < getPPQLength() + cPPQExtraBufferSize; j++)
 	{
-		m_pMasterProductInfos[j].m_pPPQ = this;
 		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
 		m_pMasterProductInfos[j].m_outputsInfo.m_outputResult.resize(outputSize);
@@ -3240,48 +3235,52 @@ void SVPPQObject::checkNakReason(CantProcessEnum cantProcessReason)
 		}
 	}
 }
+
 void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const
 {
-	////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
-	uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[0].m_objectID};
-	uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[0].m_objectID};
-
-	if (nextObjectID != 0 && nextObjectID == currentObjectID)
+	for (int i = 0; i < m_multipleObjectIdCount; ++i)
 	{
-		//Object has more than 1 trigger per Object then relay NAK result to new product
-		if (1u < pNextProduct->m_triggerInfo.m_Data.m_triggerIndex)
+		uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[i].m_objectID};
+		uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[i].m_objectID};
+
+		if (nextObjectID != 0 && nextObjectID == currentObjectID)
 		{
-			pNextProduct->m_prevTriggerNAK = true;
+			//Object has more than 1 trigger per Object then relay NAK result to new product
+			if (1u < pNextProduct->m_triggerInfo.m_Data.m_triggerIndex)
+			{
+				pNextProduct->m_prevTriggerNAK[i] = true;
+			}
 		}
 	}
 }
 
 void SVPPQObject::checkTriggerIndex(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const
 {
-	////@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
-	uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[0].m_objectID};
-	uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[0].m_objectID};
-	uint8_t nextTriggerIndex {pNextProduct->m_triggerInfo.m_Data.m_triggerIndex};
+	for (int i = 0; i < m_multipleObjectIdCount; ++i)
+	{
+		uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[i].m_objectID};
+		uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[i].m_objectID};
+		uint8_t nextTriggerIndex {pNextProduct->m_triggerInfo.m_Data.m_triggerIndex};
 
-	if (nextObjectID != 0 && nextObjectID == currentObjectID)
-	{
-		uint8_t currentTriggerIndex {rCurrentProduct.m_triggerInfo.m_Data.m_triggerIndex};
-		//Check that trigger index has been incremented
-		if (currentTriggerIndex + 1 != nextTriggerIndex)
+		if (nextObjectID != 0 && nextObjectID == currentObjectID)
 		{
-			pNextProduct->m_prevTriggerNAK = true;
+			uint8_t currentTriggerIndex {rCurrentProduct.m_triggerInfo.m_Data.m_triggerIndex};
+			//Check that trigger index has been incremented
+			if (currentTriggerIndex + 1 != nextTriggerIndex)
+			{
+				pNextProduct->m_prevTriggerNAK[i] = true;
+			}
 		}
-	}
-	else
-	{
-		//Check when next objectID that trigger index is 1
-		if (1 != nextTriggerIndex)
+		else
 		{
-			pNextProduct->m_prevTriggerNAK = true;
+			//Check when next objectID that trigger index is 1
+			if (1 != nextTriggerIndex)
+			{
+				pNextProduct->m_prevTriggerNAK[i] = true;
+			}
 		}
 	}
 }
-
 
 void SVPPQObject::setOutputResults(uint32_t inspectedID, std::vector<bool>& rOutputResult) const
 {

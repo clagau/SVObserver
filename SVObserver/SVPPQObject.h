@@ -179,8 +179,8 @@ public:
 	const SVIOEntryHostStructPtrVector& GetUsedInputs() const {return m_UsedInputs;}
 	SVIOEntryHostStructPtr GetInput( const std::string& rName ) const;
 
-	bool RemoveOutput( SVIOEntryHostStructPtr pOutput );
-	bool WriteOutputs(SVProductInfoStruct* pProduct);
+	bool RemoveOutput(SVIOEntryHostStructPtr pOutput);
+	bool WriteOutputs(SVProductInfoStruct* pProduct, int ObjectIdIndex);
 	bool ResetOutputs();
 	bool RebuildOutputList();
 	void AddPpqResults();
@@ -283,7 +283,7 @@ protected:
 	void StartOutputs( SVProductInfoStruct* p_pProduct );
 	bool StartInspection(uint32_t inspectionID );
 
-	void AddResultsToPPQ(SVProductInfoStruct& rProduct);
+	void AddResultsToPPQ(SVProductInfoStruct& rProduct, uint32_t inspId);
 	bool SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t inspId);
 
 	bool SetProductComplete( SVProductInfoStruct& rProduct );
@@ -389,6 +389,7 @@ private:
 	long m_resetDelay {0};
 	long m_DataValidDelay;
 	long m_inspectionTimeoutMillisec {0};
+	int m_multipleObjectIdCount {0};
 	bool m_bOnline {false};
 
 	UINT m_uOutputTimer {0};
@@ -415,6 +416,8 @@ private:
 
 	int m_MissingImageCount{ 0 };
 	int m_NotCompleteCount{ 0 };
+
+	uint32_t m_ppqState {0UL};
 	
 	static bool m_timerResolution;
 };

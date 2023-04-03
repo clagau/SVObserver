@@ -153,11 +153,6 @@ void CifXCard::readProcessData(uint32_t notification)
 							::SetEvent(m_hTelegramReadEvent);
 						}
 					}
-					//@TODO[GRA][10.30][20.02.2023] Remove temporary code to write data into serialization code
-					for (unsigned int i = 0; i < cNumberOfChannels; ++i)
-					{
-						sendInpectionState.m_channels[i].m_serializationCode[0] = sendInpectionState.m_channels[i].m_objectID;
-					}
 					sendOperationData(telegram, sendInpectionState);
 
 					break;
@@ -266,7 +261,7 @@ HRESULT CifXCard::OpenAndInitializeCifX()
 			if (nullptr != m_logSendFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
 			{
 				boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logSendFile);
-				if (nullptr != m_pSink)
+				if (nullptr == m_pSink)
 				{
 					m_pSink = boost::make_shared<text_sink>();
 				}

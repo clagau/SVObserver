@@ -95,13 +95,15 @@ public:
 	void setTime(double time, ToolSetTimes timeType) { m_Times[timeType].SetValue(static_cast<__int64> (time)); }
 	void setPpqPosition(long ppqPosition) { m_PPQIndexAtCompletion.SetValue(ppqPosition); }
 	void setTriggerData(const SvTrig::TriggerData& rTriggerData);
-	DWORD getInspectedObjectID() { double value; m_InspectedObjectID.getValue(value); return static_cast<DWORD> (value); }
 	void setInspectionname(std::string Inspectionname) { m_InspectionName.SetValue(Inspectionname);};
 	void setMissingImageCount(int missingeImageCount) { m_MissingImageCountTS.SetValue(missingeImageCount); }
 	void setNotCompleteCount(int notCompleteCount) { m_NotCompleteCountTS.SetValue(notCompleteCount); }
 
 	long getTriggerCount() const;
 	SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const;
+	
+	DWORD GetObjectIdIndex() const { DWORD objectIdIndex {0}; m_ObjectIdIndex.GetValue(objectIdIndex); return objectIdIndex; }
+	void SetObjectIdIndex(DWORD objectIdIndex);
 
 #pragma region virtual method (IToolSet)
 	virtual bool IsToolPreviousToSelected(uint32_t toolID) const override;
@@ -135,25 +137,23 @@ private:
 #pragma endregion Private Methods
 
 #pragma region Member Variables
-protected:
+private:
 	SvVol::SVBoolValueObjectClass m_RegressionTestMode;
 
-	long m_SetNumber;
+	long m_SetNumber {0L};
 
-	double m_StartTime;
-	double m_EndTime;
-	double m_AverageTime;
-	double m_ProcessTime;
+	double m_StartTime {0.0};
+	double m_EndTime {0.0};
+	double m_AverageTime {0.0};
+	double m_ProcessTime {0.0};
 
-	double m_TimeStampStart;
-	double m_TimeStampEnd;
+	bool m_ResetCounts = false;
+	bool m_bResetMinMaxToolsetTime {true};
 
 	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 	SvVol::SVBoolValueObjectClass m_Enabled;
 	SvVol::SVBoolValueObjectClass m_ResetCountsObject;
 	SvVol::SVLongValueObjectClass m_TriggerCount;
-
-	bool m_ResetCounts = false;
 
 	SVResultList m_ResultList;
 
@@ -176,23 +176,21 @@ protected:
 	SvVol::SVEnumerateValueObjectClass m_DrawFlag;
 	SvVol::SVTimerValueObjectClass m_ToolTime;
 
-	bool m_bResetMinMaxToolsetTime;
-
 	SvVol::SVTimerValueObjectClass m_MinToolsetTime;
 	SvVol::SVTimerValueObjectClass m_MaxToolsetTime;
 
-private:
 	// Embedded Object:
 	SvIe::SVMainImageClass m_MainImageObject;	// Main toolset image
 	SvVol::SVLongValueObjectClass m_PPQIndexAtCompletion; // the PPQ position at which the product was located when at completion
 	SvVol::SVTimerValueObjectClass m_Times[ToolSetTimes::MaxCount]; ///The times relevant to the tool set see the enums for detailed description
 	SvVol::SVDoubleValueObjectClass m_Width;		//! The toolset image width			
 	SvVol::SVDoubleValueObjectClass m_Height;		//! The toolset image height
-	SvVol::SVDoubleValueObjectClass m_ObjectID;		//! The object ID, which has been received by the PLC, to be inspected
+	SvVol::SVDWordValueObjectClass m_ObjectID;		//! The object ID, which has been received by the PLC, to be inspected
 	SvVol::SVDWordValueObjectClass m_ObjectType;	//! The objectType, which has been received by the PLC
 	SvVol::SVDWordValueObjectClass m_TriggerIndex;	//! The trigger index, which has been received by the PLC
 	SvVol::SVDWordValueObjectClass m_TriggerPerObjectID;//! The trigger total for this ObjectID
-	SvVol::LinkedValue m_InspectedObjectID;			//! The inspected object ID, which will be passed to the PLC to identify the inspection result
+	SvVol::LinkedValue m_InspectedObjectID;			//! The inspected object ID (is always set to the incoming object ID), is no longer used must stay for compatibility reasons
+	SvVol::SVDWordValueObjectClass m_ObjectIdIndex;	//! The object ID index 
 	SvVol::SVBoolValueObjectClass m_LoopMode;		//! True when the PLC is in loop mode
 	SvVol::SVDWordValueObjectClass m_RotationNumber;//! The rotation number in loop mode
 	SvVol::SVDoubleValueObjectClass m_MeasurementValue;	//! The measurement value, which has been received by the PLC

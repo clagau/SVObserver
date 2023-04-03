@@ -35,6 +35,7 @@ SVToolSet::SVToolSet(SVObjectClass* POwner, int StringResourceID)
 
 void SVToolSet::init()
 {
+	m_isCreated = false;
 	// Identify our output type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSetObjectType;
 
@@ -80,6 +81,7 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_TriggerIndex, SvPb::TriggerIndexEId, SvDef::cTriggerIndex, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_TriggerPerObjectID, SvPb::TriggerPerObjectIDEId, SvDef::cTriggerPerObjectID, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedObject(&m_InspectedObjectID, SvPb::InspectedObjectIDEId, SvDef::cInspectedObjectID, false, SvOi::SVResetItemIP, true);
+	RegisterEmbeddedObject(&m_ObjectIdIndex, SvPb::ObjectIdIndexEId, SvDef::cObjectIdIndex, false, SvOi::SVResetItemIP, true);
 	RegisterEmbeddedObject(&m_LoopMode, SvPb::LoopModeEId, SvDef::cLoopMode, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedObject(&m_RotationNumber, SvPb::RotationNumberEId, SvDef::cRotationNumber, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedObject(&m_MeasurementValue, SvPb::MeasurementValueEId, SvDef::cMeasurementValue, false, SvOi::SVResetItemNone, true);
@@ -99,7 +101,6 @@ void SVToolSet::init()
 	m_LoopMode.SetOutputFormat(SvVol::OutputFormat_int);
 	m_RotationNumber.SetOutputFormat(SvVol::OutputFormat_int);
 	m_MeasurementValue.SetOutputFormat(SvVol::OutputFormat_int);
-
 
 	// Set Embedded defaults
 	m_MissingImageCountTS.SetDefaultValue(0, true);
@@ -129,8 +130,6 @@ void SVToolSet::init()
 	m_ToolTime.setSaveValueFlag(false);
 	m_ToolTime.SetName("Tool Set Time");
 
-	m_bResetMinMaxToolsetTime = true;
-
 	m_MinToolsetTime.SetDefaultValue(0LL);
 	m_MinToolsetTime.setSaveValueFlag(false);
 	m_MaxToolsetTime.SetDefaultValue(0LL);
@@ -155,7 +154,7 @@ void SVToolSet::init()
 
 	m_EnableAuxiliaryExtents.SetDefaultValue(BOOL(false));
 
-	m_ObjectID.setDefaultValue(0.0);
+	m_ObjectID.setDefaultValue(0);
 	m_ObjectID.setSaveValueFlag(false);
 	m_ObjectType.setDefaultValue(0);
 	m_ObjectType.setSaveValueFlag(false);
@@ -163,24 +162,16 @@ void SVToolSet::init()
 	m_TriggerIndex.setSaveValueFlag(false);
 	m_TriggerPerObjectID.setDefaultValue(0);
 	m_TriggerPerObjectID.setSaveValueFlag(false);
+	m_InspectedObjectID.setDefaultValue(0UL);
+	m_InspectedObjectID.setSaveValueFlag(false);
+	m_ObjectIdIndex.setDefaultValue(0);
 	m_LoopMode.setDefaultValue(BOOL(false));
 	m_LoopMode.setSaveValueFlag(false);
 	m_RotationNumber.setDefaultValue(0);
 	m_RotationNumber.setSaveValueFlag(false);
 	m_MeasurementValue.setDefaultValue(0);
 	m_MeasurementValue.setSaveValueFlag(false);
-	/// Set the default value so that the linked variant type is set to double!
-	m_InspectedObjectID.setDefaultValue(0.0);
 	
-
-	// Set local defaults
-	m_StartTime = 0.0;
-	m_EndTime = 0.0;
-	m_AverageTime = 0.0;
-	m_ProcessTime = 0.0;
-	m_SetNumber = 0;
-	m_isCreated = false;
-
 	SvOp::SVConditional* pConditional = new SvOp::SVConditional(this);
 	AddFriend(pConditional);
 
@@ -238,6 +229,9 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_TriggerIndex.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_TriggerPerObjectID.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_InspectedObjectID.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_LoopMode.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_RotationNumber.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_MeasurementValue.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_EnableAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_MainImageObject.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
@@ -249,13 +243,8 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	if (nullptr != pInspection)
 	{
 		m_EnableAuxiliaryExtents.SetValue(BOOL(pInspection->getInitialAuxiliaryExtents()));
-	}
 
-
-	SVObjectClass* p_Parent = GetParent();
-	if (nullptr != p_Parent)
-	{
-		std::string inspectionName = p_Parent->GetName();
+		std::string inspectionName = pInspection->GetName();
 		m_InspectionName.SetValue(inspectionName);
 	}
 
@@ -386,10 +375,11 @@ SvVol::SVEnumerateValueObjectClass* SVToolSet::GetDrawFlagObject()
 
 void SVToolSet::setTriggerData(const SvTrig::TriggerData& rTriggerData)
 {
-	//@TODO[GRA][10.30][27.01.2023] Need to implement SVO-3902
-	m_ObjectID.SetValue(static_cast<double> (rTriggerData.m_objectData[0].m_objectID));
-	m_RotationNumber.SetValue(static_cast<DWORD> (rTriggerData.m_objectData[0].m_rotationNr));
-	m_MeasurementValue.SetValue(rTriggerData.m_objectData[0].m_measurementValue);
+	DWORD objectIdIndex {0};
+	m_ObjectIdIndex.GetValue(objectIdIndex);
+	m_ObjectID.SetValue(static_cast<DWORD> (rTriggerData.m_objectData[objectIdIndex].m_objectID));
+	m_RotationNumber.SetValue(static_cast<DWORD> (rTriggerData.m_objectData[objectIdIndex].m_rotationNr));
+	m_MeasurementValue.SetValue(rTriggerData.m_objectData[objectIdIndex].m_measurementValue);
 	m_ObjectType.SetValue(static_cast<DWORD> (rTriggerData.m_objectType));
 	m_TriggerIndex.SetValue(static_cast<DWORD> (rTriggerData.m_triggerIndex));
 	m_TriggerPerObjectID.SetValue(static_cast<DWORD> (rTriggerData.m_triggerPerObjectID));
@@ -419,6 +409,15 @@ SvPb::OverlayDesc SVToolSet::getOverlayStruct(const SvOi::ISVImage& rImage) cons
 		}
 	}
 	return overlayDesc;
+}
+
+void SVToolSet::SetObjectIdIndex(DWORD objectIdIndex)
+{
+	//Make sure objectIdIndex is valid as it is not checked later in run mode!
+	if (objectIdIndex < SvDef::cObjectIndexMaxNr)
+	{
+		m_ObjectIdIndex.SetValue(objectIdIndex);
+	}
 }
 
 #pragma region virtual method (IToolSet)

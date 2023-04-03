@@ -40,14 +40,9 @@ private:
 	void EventSignalThread(std::function<void()> pCallback);
 	void EventHandler();
 
-	//void SendProductsToPlc(); ///sends (via m_pdx) information with the CifX card
-	
-	//void useResult(const Product& rProduct); ///< prepares a product for sending to the cifX card
-	//void QueueProduct(const Product& rProduct); ///< called for products the reusults of which are ready to be sent to the PLC
-
 	std::thread m_eventSignalThread;
 
-	std::unique_ptr<TriggerSource> m_pTriggersource = nullptr;
+	std::unique_ptr<TriggerSource> m_pTriggersource {nullptr};
 
 	uint32_t m_mostRecentlyReceivedOid[cNumberOfChannels] = {0,0,0,0};
 };

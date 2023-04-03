@@ -151,6 +151,9 @@ public:
 	virtual bool getEnableAuxiliaryExtent() const override;
 	virtual void setEnableAuxiliaryExtent(bool Enabled) override;
 
+	DWORD GetObjectIdIndex() const;
+	void SetObjectIdIndex(DWORD objectIdIndex);
+
 	//new GetOverlay method for use with the ActiveX
 	HRESULT CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray);
 
@@ -289,8 +292,6 @@ protected:
 
 	static void __stdcall ProcessCallback(ULONG_PTR pCaller);
 
-	void ThreadProcess( bool& p_WaitForEvents );
-
 	HRESULT ProcessInspection();
 	HRESULT ProcessNotifyWithLastInspected();
 	HRESULT ProcessCommandQueue();
@@ -347,8 +348,6 @@ private:
 
 	bool m_bNewDisableMethod{false};
 	bool m_initialAuxiliaryExtents {false}; //This is only required to be able to read old configuration files with extents set
-
-	DWORD               m_dwThreadId{0};
 
 	// JMS - this variable is only used for configuration conversion.
 	SvOp::SVConditional* m_pToolSetConditional{nullptr};

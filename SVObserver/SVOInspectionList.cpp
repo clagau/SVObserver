@@ -122,6 +122,18 @@ bool SVOInspectionList::SetEnableAuxiliaryExtent( LPCTSTR InspectionName, long l
 	return bRet;
 }
 
+bool SVOInspectionList::SetObjectIdIndex(LPCTSTR InspectionName, DWORD objectIdIndex)
+{
+	SVOInspectionObjPtr pObj = GetInspectionByName(InspectionName);
+
+	if (nullptr != pObj)
+	{
+		pObj->SetObjectIdIndex(objectIdIndex);
+		return true;
+	}
+
+	return false;
+}
 
 bool SVOInspectionList::RenameInspection( LPCTSTR InspectionName,  LPCTSTR NewInspectionName)
 {

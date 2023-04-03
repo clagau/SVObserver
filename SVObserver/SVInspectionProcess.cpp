@@ -254,7 +254,6 @@ HRESULT SVInspectionProcess::ProcessInspection()
 				time = (rIPInfo.m_EndInspection - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
 				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToCompletion);
 
-				rIPInfo.m_ObjectID = m_pCurrentToolset->getInspectedObjectID();
 #ifdef _DEBUG
 				//					std::string l_TempStateString = std::format( _T( "SVInspectionProcess::ProcessInspection|{}|TRI={:d}\n" ),
 				//						GetName(), p_rProduct.ProcessCount() );
@@ -1991,6 +1990,24 @@ void SVInspectionProcess::setEnableAuxiliaryExtent(bool Enabled)
 	if (nullptr != m_pCurrentToolset)
 	{
 		return m_pCurrentToolset->setEnableAuxiliaryExtents(Enabled);
+	}
+}
+
+DWORD SVInspectionProcess::GetObjectIdIndex() const
+{
+	if (nullptr != m_pCurrentToolset)
+	{
+		return m_pCurrentToolset->GetObjectIdIndex();
+	}
+	//Default is object id index 0
+	return 0;
+}
+
+void SVInspectionProcess::SetObjectIdIndex(DWORD objectIdIndex)
+{
+	if (nullptr != m_pCurrentToolset)
+	{
+		return m_pCurrentToolset->SetObjectIdIndex(objectIdIndex);
 	}
 }
 

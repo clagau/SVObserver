@@ -177,9 +177,6 @@
     <ClCompile Include="TATableSourcePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ToolAdjustToolSetPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="BlobAnalyzer2Sheet.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -414,9 +411,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvOg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ToolAdjustToolSetPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BlobAnalyzer2Sheet.h">

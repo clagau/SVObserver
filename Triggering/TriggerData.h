@@ -25,7 +25,7 @@ struct TriggerData
 {
 	uint8_t m_channel {0};
 	uint8_t m_objectType {0};
-	uint8_t m_triggerIndex {1};//must be 1 for io systems
+	uint8_t m_triggerIndex {1}; //Default trigger index is 1
 	uint8_t m_triggerPerObjectID {0};
 	bool m_loopMode {false};
 	double m_triggerTimestamp {0.0};

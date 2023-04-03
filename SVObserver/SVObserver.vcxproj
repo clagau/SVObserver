@@ -289,7 +289,6 @@ echo %time%
     <ClCompile Include="SVOConfigAssistantDlg.cpp" />
     <ClCompile Include="SVOFileExecutionConfigDlg.cpp" />
     <ClCompile Include="SVOInspectionList.cpp" />
-    <ClCompile Include="SVOInspectionObj.cpp" />
     <ClCompile Include="SVOInspectionSourceDlg.cpp" />
     <ClCompile Include="SVOPPQList.cpp" />
     <ClCompile Include="SVOPPQObj.cpp" />

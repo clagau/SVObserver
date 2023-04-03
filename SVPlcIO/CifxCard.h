@@ -79,8 +79,8 @@ private:
 
 	CIFXHANDLE m_hDriver {nullptr};
 	CIFXHANDLE m_hChannel {nullptr};
-	std::unique_ptr<uint8_t[]> m_pReadBuffer;
-	std::unique_ptr<uint8_t[]> m_pWriteBuffer;
+	std::unique_ptr<uint8_t[]> m_pReadBuffer {nullptr};
+	std::unique_ptr<uint8_t[]> m_pWriteBuffer {nullptr};
 
 	bool m_protocolInitialized {false};
 	bool m_ready {false};
@@ -89,21 +89,21 @@ private:
 
 	HANDLE m_hTelegramReadEvent {nullptr};
 
-	std::mutex m_cifxMutex;
-	SvTrig::CifxLoadLibrary m_cifxLoadLib;
-	std::queue<InputData> m_inputDataQueue;
+	std::mutex m_cifxMutex {};
+	SvTrig::CifxLoadLibrary m_cifxLoadLib {};
+	std::queue<InputData> m_inputDataQueue {};
 	PlcVersion m_plcVersion{ PlcVersion::PlcDataNone };
-	std::queue<InspectionState1> m_inspectionStateQueue;
+	std::queue<InspectionState1> m_inspectionStateQueue {};
 	uint32_t m_triggerDataOffset{ 0UL };	//The memory offset in bytes to the trigger data starting from the inspection command struct
-	SvStl::SourceFileParams m_sourceFileParam; //The last recorded source file parameter setting
+	SvStl::SourceFileParams m_sourceFileParam {}; //The last recorded source file parameter setting
 
-	std::vector<std::pair<TelegramLayout, std::vector<ConfigDataSet>>> m_configDataSetVector;
-	std::filebuf m_logContentFile;
-	std::filebuf m_logSendFile;
+	std::vector<std::pair<TelegramLayout, std::vector<ConfigDataSet>>> m_configDataSetVector {};
+	std::filebuf m_logContentFile {};
+	std::filebuf m_logSendFile {};
 	typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_ostream_backend> text_sink;
 	boost::shared_ptr<text_sink> m_pSink {nullptr};
-	boost::log::sources::channel_logger_mt<std::string> m_contentLogger;
-	boost::log::sources::channel_logger_mt<std::string> m_sendLogger;
+	boost::log::sources::channel_logger_mt<std::string> m_contentLogger {};
+	boost::log::sources::channel_logger_mt<std::string> m_sendLogger {};
 };
 
 } //namespace SvPlc

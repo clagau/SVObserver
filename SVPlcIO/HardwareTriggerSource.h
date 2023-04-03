@@ -33,7 +33,7 @@ private:
 	int32_t getPlcTriggerTime(int32_t socRelative, int16_t timeStamp);
 	double getExecutionTime(int32_t socRelative, int16_t timeStamp, double notificationTime);
 
-	PlcInputParam m_plcInput;		//This value must be above m_cifxCard as it is passed by reference
+	PlcInputParam m_plcInput {};	//This value must be above m_cifxCard as it is passed by reference
 	uint16_t m_svimContentID {0};
 	uint32_t m_numberOfFailures {0UL};
 
@@ -46,10 +46,10 @@ private:
 	CifXCard m_cifXCard;
 	bool m_initialized {false};
 
-	std::filebuf m_logOperationDataFile;
+	std::filebuf m_logOperationDataFile {};
 	typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_ostream_backend> text_sink;
 	boost::shared_ptr<text_sink> m_pSink {nullptr};
-	boost::log::sources::channel_logger_mt<std::string> m_operationLogger;
+	boost::log::sources::channel_logger_mt<std::string> m_operationLogger {};
 };
 
 } //namespace SvPlc

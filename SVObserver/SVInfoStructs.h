@@ -78,7 +78,7 @@ struct SVOutputsInfoStruct
 	{
 		m_DataValidResult = false;
 		m_OutputToggleResult = false;
-		m_NakResult = true;
+		m_NakResult = {true, true, true, true};
 		m_EndOutputDelay = 0.0;
 		m_EndResetDelay = 0.0;
 		m_EndDataValidDelay = 0.0;
@@ -90,7 +90,7 @@ struct SVOutputsInfoStruct
 
 	bool m_DataValidResult {false};
 	bool m_OutputToggleResult {false};
-	bool m_NakResult {true};
+	std::array<bool, SvDef::cObjectIndexMaxNr> m_NakResult {true, true, true, true};
 	double m_EndOutputDelay {0.0};
 	double m_EndResetDelay {0.0};
 	double m_EndDataValidDelay {0.0};
@@ -134,14 +134,14 @@ struct SVInspectionInfoStruct
 	double m_BeginToolset {0.0};
 	double m_EndToolset {0.0};
 	
-	int m_inspectionPosInTrc = -1; //position of the inspection in triggerRecordController
-	SvOi::ITriggerRecordRWPtr m_triggerRecordWrite = nullptr;
-	SvOi::ITriggerRecordRPtr  m_triggerRecordComplete = nullptr;
+	int m_inspectionPosInTrc {-1}; //position of the inspection in triggerRecordController
+	SvOi::ITriggerRecordRWPtr m_triggerRecordWrite {nullptr};
+	SvOi::ITriggerRecordRPtr  m_triggerRecordComplete {nullptr};
 
 	double m_ToolSetEndTime {0.0};
 	double m_ToolSetAvgTime {0.0};
-	DWORD m_ObjectID{0};
-	bool m_bReject = false;
+	DWORD m_ObjectID {0};
+	bool m_bReject {false};
 };
 
 typedef std::map< uint32_t, SVInspectionInfoStruct > ObjectIdSVInspectionInfoStructMap;
@@ -187,14 +187,13 @@ struct SVProductInfoStruct
 	bool m_triggered {false};
 	bool m_hasCameraImage[SvDef::cMaximumCameras];
 	bool m_dataComplete {false};
-	bool m_prevTriggerNAK {false};
+	std::array<bool, SvDef::cObjectIndexMaxNr> m_prevTriggerNAK{false, false, false, false};
 	long m_lastPPQPosition {-1};
 	CantProcessEnum m_CantProcessReason = CantProcessEnum::NoReason ; //last Reason which prevent start of inspection
 	int m_MissingImageCount {0};
 	int m_NotCompleteCount {0};
 	SvTrig::SVTriggerInfoStruct m_triggerInfo;
 	SVOutputsInfoStruct m_outputsInfo;
-	SVPPQObject* m_pPPQ = nullptr;
 
 	SvIe::SVObjectIdSVCameraInfoStructMap m_svCameraInfos;
 	ObjectIdSVInspectionInfoStructMap	m_svInspectionInfos;
