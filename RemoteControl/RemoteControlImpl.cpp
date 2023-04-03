@@ -31,8 +31,15 @@ SVLog(e.what(), __FILE__, __LINE__); \
 }\
 catch (std::exception & e)\
 {\
-Status = E_UNEXPECTED; \
-SVLog(e.what(), __FILE__, __LINE__); \
+	if (strcmp(e.what(), _T("Error 504 timeout")) == 0)\
+	{\
+		result = RPC_E_TIMEOUT;\
+	}\
+	else\
+	{\
+		result = E_UNEXPECTED;\
+	}\
+	SVLog(e.what(), __FILE__, __LINE__); \
 }\
 catch (...)\
 {\
