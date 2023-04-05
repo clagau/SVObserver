@@ -87,8 +87,8 @@ BOOL EditModulesDialog::OnInitDialog()
 
 	initModuleListControl();
 
-	GetDlgItem(IDC_HISTORY_TEXT)->EnableWindow(false);
-	GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(false);
+	static_cast<CEdit*>(GetDlgItem(IDC_HISTORY_TEXT))->SetReadOnly(true);
+	static_cast<CEdit*>(GetDlgItem(IDC_EDIT_COMMENT))->SetReadOnly(true);
 	GetDlgItem(IDC_DELETE)->EnableWindow(false);
 	GetDlgItem(IDC_EXPORT)->EnableWindow(false);
 	GetDlgItem(IDC_IMPORT)->EnableWindow(true);
