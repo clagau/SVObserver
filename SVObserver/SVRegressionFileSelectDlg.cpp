@@ -410,7 +410,7 @@ void SVRegressionFileSelectDlg::ShowSelectMultDirectoryDlg(bool bFullAccess)
 		m_RegTestFiles = dlg.GetPathName();
 		std::string folder = m_RegTestFiles.GetString();
 		m_folders.push_back(folder);
-
+		auto  FolderSize = folder.size();                       
 		//add Subfolder
 		for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(folder, std::filesystem::directory_options::skip_permission_denied))
 		{
@@ -419,10 +419,11 @@ void SVRegressionFileSelectDlg::ShowSelectMultDirectoryDlg(bool bFullAccess)
 				if (dir_entry.is_directory())
 				{
 					std::string stPath = dir_entry.path().string();
-					auto len = stPath.size();
-					auto  pos = stPath.find_last_of('\\');
-					if (pos == std::string::npos || (pos == (len - 1)) || (stPath.at(pos + 1) == '_'))
+					auto pos = stPath.find("\\_", FolderSize);
+					if (pos != std::string::npos)
+					{
 						continue;
+					}
 					m_folders.push_back(stPath);
 				}
 
