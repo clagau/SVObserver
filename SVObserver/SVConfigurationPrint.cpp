@@ -1499,8 +1499,14 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 			bool bOk = pConfig->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams );
 			Log_Assert( bOk );
 			Log_Assert( pfnac );
-			if ( bOk )
+			SVDeviceParamCollection  DeviceParams;
+			if (bOk)
 			{
+				if (nullptr != pAcqDevice && nullptr != pfnac && S_OK == pAcqDevice->GetDeviceParameters(DeviceParams))
+				{
+					pDeviceParams = &DeviceParams;
+				}
+
 				// print camera name
 				ptCurPos.x   = (nIndentLevel+1) * m_shortTabPixels;
 				if (nullptr != pCamera->GetAcquisitionDevice())

@@ -28,6 +28,7 @@ class SVi64ValueDeviceParam;
 class SVStringValueDeviceParam;
 class SVCustomDeviceParam;
 class SVCameraFormatsDeviceParam;
+class SVLutDeviceParam;
 
 namespace SvIe
 {
@@ -72,6 +73,7 @@ public:
 class SVConfigXMLPrint
 {
 public:
+	SVConfigXMLPrint() = default;
 	const std::string Print() const;
 
 private:
@@ -107,8 +109,8 @@ private:
 	void WriteGlobalConstants(Writer writer) const;
 
 	void WriteExternalFiles(Writer writer) const;
-	mutable SVConfigurationObject* m_cfo;
-	mutable int nToolNumber;
+	mutable SVConfigurationObject* m_cfo {nullptr};
+	mutable int nToolNumber {0};
 };
 
 class HG2String
@@ -135,8 +137,9 @@ public:
 	HRESULT Visit(SVi64ValueDeviceParam*);
 	HRESULT Visit(SVBoolValueDeviceParam*);
 	HRESULT Visit(SVStringValueDeviceParam*);
-	HRESULT Visit(SVCameraFormatsDeviceParam*);
 	HRESULT Visit(SVCustomDeviceParam*);
+	HRESULT Visit(SVCameraFormatsDeviceParam*);
+	HRESULT Visit(SVLutDeviceParam*);
 
 private:
 	Writer m_writer;
