@@ -269,7 +269,7 @@ SvPb::InspectionCmdResponse ValidateAndSetEquation(SvPb::ValidateAndSetEquationR
 		SvOi::EquationTestResult testResult = pEquation->Test(&messageContainers);
 
 		SvPb::ValidateAndSetEquationResponse* pResponse = cmdResponse.mutable_validateandsetequationresponse();
-		pResponse->mutable_messages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
+		cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 		int retValue = 0;
 		if (testResult.bPassed)
 		{// set result and set return value to successful
@@ -304,7 +304,7 @@ SvPb::InspectionCmdResponse getObjectsForMonitorList(SvPb::GetObjectsForMonitorL
 		SvStl::MessageContainerVector messageContainers;
 		SvOi::ParametersForML paramList = pTool->getParameterForMonitorList(messageContainers);
 		SvPb::GetObjectsForMonitorListResponse* pResponse = cmdResponse.mutable_getobjectsformonitorlistresponse();
-		pResponse->mutable_messages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
+		cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 		for (auto& item : paramList)
 		{
 			auto* pEntry = pResponse->add_list();
@@ -404,7 +404,7 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
-				SvPb::convertMessageToProtobuf(rExp, pResponse->mutable_messages()->add_messages());
+				SvPb::convertMessageToProtobuf(rExp, cmdResponse.mutable_errormessage()->add_messages());
 				cmdResponse.set_hresult(E_FAIL);
 				return cmdResponse;
 			}
@@ -431,7 +431,7 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 			if (!pObject->getImage(request.embeddedid(), data))
 			{
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));
-				SvPb::convertMessageToProtobuf(message, pResponse->mutable_messages()->add_messages());
+				SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
 				cmdResponse.set_hresult(E_FAIL);
 				return cmdResponse;
 			}
@@ -441,7 +441,7 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 			if (!pObject->getSpecialImage(request.imagename(), data))
 			{
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));
-				SvPb::convertMessageToProtobuf(message, pResponse->mutable_messages()->add_messages());
+				SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
 				cmdResponse.set_hresult(E_FAIL);
 				return cmdResponse;
 			}
@@ -461,7 +461,7 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 	else
 	{
 		SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));
-		SvPb::convertMessageToProtobuf(message, pResponse->mutable_messages()->add_messages());
+		SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
 		cmdResponse.set_hresult(E_POINTER);
 	}
 	return cmdResponse;
@@ -1163,12 +1163,6 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 	{
 		SvOi::ResetParameter resetParameter(request.resettype());
 		SvStl::MessageContainerVector messageContainers = pTaskObject->validateAndSetEmbeddedValues(ChangedValues, true, &resetParameter);
-
-#ifdef USE_EMBEDDED_VALUE_RESPONSE
-		SvPb::SetEmbeddedValuesResponse* pResponse = cmdResponse.mutable_setembeddedvaluesresponse();
-		pResponse->set_resettype(resetParameter.result);
-#endif 	
-
 		if (0 != messageContainers.size())
 		{
 			cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
@@ -1205,8 +1199,7 @@ SvPb::InspectionCmdResponse validateLinkedValue(SvPb::ValidateLinkedValueRequest
 		catch (const SvStl::MessageContainer& rSvE)
 		{
 			cmdResponse.set_hresult(E_FAIL);
-			auto* pResponse = cmdResponse.mutable_validatelinkedvalueresponse();
-			SvPb::convertMessageToProtobuf(rSvE, pResponse->mutable_errormessage());
+			SvPb::convertMessageToProtobuf(rSvE, cmdResponse.mutable_errormessage()->add_messages());
 		}
 	}
 	else
@@ -1834,12 +1827,20 @@ SvPb::InspectionCmdResponse initializeExternalToolTask(SvPb::InitializeExternalT
 		auto* pResponse = cmdResponse.mutable_initializeexternaltooltaskresponse();
 
 		Log_Assert(pResponse != nullptr);
-		std::vector<std::string> statusMessages;
-	cmdResponse.set_hresult(pExternalToolTask->Initialize(statusMessages, request.increationprocess(), request.initializeall()));
-
-		for (const auto& message : statusMessages)
+		try
 		{
-			pResponse->add_statusmessages(message);
+			std::vector<std::string> statusMessages;
+			cmdResponse.set_hresult(pExternalToolTask->Initialize(statusMessages, request.increationprocess(), request.initializeall()));
+
+			for (const auto& message : statusMessages)
+			{
+				pResponse->add_statusmessages(message);
+			}
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvPb::convertMessageToProtobuf(rExp, cmdResponse.mutable_errormessage()->add_messages());
+			cmdResponse.set_hresult(E_FAIL);
 		}
 	}
 	else
@@ -1857,14 +1858,12 @@ SvPb::InspectionCmdResponse resetAllObjects(SvPb::ResetAllObjectsRequest request
 
 	if (nullptr != pObject)
 	{
-		auto* pResponse = cmdResponse.mutable_resetallobjectsresponse();
-
 		if (false == pObject->resetAllObjects())
 		{
 			SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject*> (pObject);
 			if (nullptr != pTask)
 			{
-				pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(pTask->getErrorMessages()));
+				cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(pTask->getErrorMessages()));
 			}
 
 			cmdResponse.set_hresult(S_FALSE);
@@ -1872,6 +1871,7 @@ SvPb::InspectionCmdResponse resetAllObjects(SvPb::ResetAllObjectsRequest request
 	}
 	else
 	{
+		cmdResponse.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(request.objectid(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_UnexpectedError));
 		cmdResponse.set_hresult(E_POINTER);
 	}
 	return cmdResponse;
@@ -2030,8 +2030,7 @@ SvPb::InspectionCmdResponse validateValueParameterExternalTool(SvPb::ValidateVal
 			SvStl::MessageContainer msg;
 			msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), request.taskobjectid());
 			messageContainers.push_back(msg);
-			SvPb::ValidateValueParameterExternalToolResponse* pResponse = cmdResponse.mutable_validatevalueparameterexternaltoolresponse();
-			pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
+			cmdResponse.mutable_errormessage()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 		}
 	}
 	else

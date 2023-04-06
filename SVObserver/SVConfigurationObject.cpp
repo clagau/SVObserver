@@ -120,7 +120,7 @@ SvPb::InspectionCmdResponse calcConfigFunction(std::function<SvPb::InspectionCmd
 			SvPb::InspectionCmdResponse cmdResponse;
 			SvStl::MessageContainer message;
 			cmdResponse.set_hresult(E_FAIL);
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, {std::to_string(E_FAIL)}, SvStl::SourceFileParams(StdMessageParams));
 			SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
 			return cmdResponse;
 		}
@@ -4639,7 +4639,7 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, uint32_t
 				}
 			}
 
-			SvStl::MessageContainerVector messages = SvPb::convertProtobufToMessageVector(response.getobjectsformonitorlistresponse().messages());
+			SvStl::MessageContainerVector messages = SvPb::convertProtobufToMessageVector(response.errormessage());
 			retVal &= (0 == messages.size());
 		}
 	}
@@ -4683,7 +4683,7 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 			}
 			iter->second.SetProductValuesList(productList);
 			SetRemoteMonitorList(monitorList);
-			messages = SvPb::convertProtobufToMessageVector(response.getobjectsformonitorlistresponse().messages());
+			messages = SvPb::convertProtobufToMessageVector(response.errormessage());
 		}
 		else
 		{
@@ -4731,7 +4731,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 			}
 			iter->second.SetProductValuesList(productList);
 			SetRemoteMonitorList(monitorList);
-			messages = SvPb::convertProtobufToMessageVector(response.getobjectsformonitorlistresponse().messages());
+			messages = SvPb::convertProtobufToMessageVector(response.errormessage());
 		}
 		else
 		{

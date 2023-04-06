@@ -10,6 +10,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvOgu
@@ -43,7 +44,14 @@ NormalizerController::NormalizerValues NormalizerController::getValues()
 	else
 	{
 		SvStl::MessageManager msg(SvStl::MsgType::Data);
-		msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
+		if (SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage()); errorMsgContainer.size() > 0)
+		{
+			msg.setMessage(errorMsgContainer.at(0).getMessage());
+		}
+		else
+		{
+			msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, {std::to_string(hr)}, SvStl::SourceFileParams(StdMessageParams));
+		}
 		msg.Throw();
 	}
 
@@ -81,7 +89,14 @@ NormalizerController::NormalizerValues NormalizerController::setRanges(double re
 	else
 	{
 		SvStl::MessageManager msg(SvStl::MsgType::Data);
-		msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
+		if (SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage()); errorMsgContainer.size() > 0)
+		{
+			msg.setMessage(errorMsgContainer.at(0).getMessage());
+		}
+		else
+		{
+			msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, {std::to_string(hr)}, SvStl::SourceFileParams(StdMessageParams));
+		}
 		msg.Throw();
 	}
 	return m_normalizerValues;

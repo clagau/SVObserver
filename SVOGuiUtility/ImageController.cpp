@@ -183,21 +183,17 @@ namespace SvOgu
 				pRequest->set_parentid(m_TaskObjectID);
 
 				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-				if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.getimageresponse().messages().messages().size())
+				if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.errormessage().messages_size())
 				{
 					DisplayHelper::convertPBImageToIPictureDisp(responseCmd.getimageresponse().imagedata(), rWidth, rHeight, &idisp);
 				}
 				else
 				{
-					Log_Assert(false);
-					SvStl::MessageContainerVector messageList;
-					if (responseCmd.has_getimageresponse())
-					{
-						messageList = SvPb::convertProtobufToMessageVector(responseCmd.getimageresponse().messages());
-					}
-
+					SvStl::MessageContainerVector messageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+					Log_Assert(0 < messageList.size());
 					if (0 < messageList.size())
 					{
+						assert(false);
 						SvStl::MessageManager Exception(SvStl::MsgType::Log);
 						Exception.setMessage(messageList[0].getMessage());
 					}
@@ -222,19 +218,14 @@ namespace SvOgu
 		pRequest->set_embeddedid(embeddedId);
 		pRequest->set_parentid(m_TaskObjectID);
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.getimageresponse().messages().messages().size())
+		if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.errormessage().messages_size())
 		{
 			DisplayHelper::convertPBImageToIPictureDisp(responseCmd.getimageresponse().imagedata(), rWidth, rHeight, &idisp);
 		}
 		else
 		{
-			Log_Assert(false);
-			SvStl::MessageContainerVector messageList;
-			if (responseCmd.has_getimageresponse())
-			{
-				messageList = SvPb::convertProtobufToMessageVector(responseCmd.getimageresponse().messages());
-			}
-
+			SvStl::MessageContainerVector messageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+			Log_Assert(0 < messageList.size());
 			if (0 < messageList.size())
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
@@ -259,18 +250,13 @@ namespace SvOgu
 		pRequest->set_imageid(imageID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.getimageresponse().messages().messages().size())
+		if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.errormessage().messages_size())
 		{
 			DisplayHelper::convertPBImageToIPictureDisp(responseCmd.getimageresponse().imagedata(), rWidth, rHeight, &idisp);
 		}
 		else
 		{
-			SvStl::MessageContainerVector messageList;
-			if (responseCmd.has_getimageresponse())
-			{
-				messageList = SvPb::convertProtobufToMessageVector(responseCmd.getimageresponse().messages());
-			}
-
+			SvStl::MessageContainerVector messageList = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 			if (0 < messageList.size())
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);

@@ -243,7 +243,7 @@ namespace SvOg
 			pRequest->set_imageid(m_imageId);
 
 			HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
-			if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.getimageresponse().messages().messages().size())
+			if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.errormessage().messages_size())
 			{
 				CComPtr<IPictureDisp> picDisp;
 				long width, height;

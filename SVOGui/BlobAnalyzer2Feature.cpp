@@ -500,7 +500,7 @@ namespace SvOg
 							}
 						}
 						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.setfeaturesresponse().messages());
+						SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 						if (0 < tmpMessages.size())
 						{
 							Msg.setMessage(tmpMessages[0].getMessage());
@@ -514,9 +514,9 @@ namespace SvOg
 					}
 				}
 			}
-			else if (responseCmd.setfeaturesresponse().has_messages())
+			else if (responseCmd.has_errormessage())
 			{
-				SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.setfeaturesresponse().messages());
+				SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 				if (0 < tmpMessages.size())
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

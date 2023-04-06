@@ -122,7 +122,9 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 				msg += rExp.getMessage().getAdditionalText().c_str();
 				OutputDebugString(msg.c_str());
 #endif
-			throw (rExp);
+				SvPb::convertMessageToProtobuf(rExp, pResponse->mutable_errormessage()->add_messages());
+				pResponse->set_hresult(E_FAIL);
+				assert(false);
 			}
 
 			catch (std::exception& ex)
@@ -133,11 +135,11 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 				msg += ex.what();
 				OutputDebugString(msg.c_str());
 #endif 
-				std::vector<std::string> msgList;
-				msgList.push_back(ex.what());
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, msgList, SvStl::SourceFileParams(StdMessageParams));
-				MesMan.Throw();
+				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, {ex.what()}, SvStl::SourceFileParams(StdMessageParams));
+				SvPb::convertMessageToProtobuf(MesMan.getMessageContainer(), pResponse->mutable_errormessage()->add_messages());
+				pResponse->set_hresult(E_FAIL);
+				assert(false);
 			}
 			catch (HRESULT&  hr)
 			{
@@ -146,22 +148,22 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 				msg += std::to_string(hr);
 				OutputDebugString(msg.c_str());
 #endif 
-				std::vector<std::string> msgList;
-				msgList.push_back(std::to_string(hr).c_str());
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, msgList, SvStl::SourceFileParams(StdMessageParams));
-				MesMan.Throw();
+				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, {std::to_string(hr)}, SvStl::SourceFileParams(StdMessageParams));
+				SvPb::convertMessageToProtobuf(MesMan.getMessageContainer(), pResponse->mutable_errormessage()->add_messages());
+				pResponse->set_hresult(E_FAIL);
+				assert(false);
 			}
 			catch (...)
 			{
 #ifdef TRACE_CATCH	
 				OutputDebugString("InspectionCommands:  catch ...");
 #endif 				
-				std::vector<std::string> msgList;
-				msgList.push_back("...");
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, msgList, SvStl::SourceFileParams(StdMessageParams));
-				MesMan.Throw();
+				MesMan.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_StdException, {"..."}, SvStl::SourceFileParams(StdMessageParams));
+				SvPb::convertMessageToProtobuf(MesMan.getMessageContainer(), pResponse->mutable_errormessage()->add_messages());
+				pResponse->set_hresult(E_FAIL);
+				assert(false);
 			}
 		}
 	}

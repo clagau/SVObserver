@@ -303,18 +303,16 @@ namespace SvOgu
 		}
 		else
 		{
-			if (responseCmd.has_validatelinkedvalueresponse())
+			SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+			if (errorMsgContainer.size() > 0)
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Display);
-				Msg.setMessage(SvPb::convertProtobufToMessage(responseCmd.validatelinkedvalueresponse().errormessage()).getMessage());
+				Msg.setMessage(errorMsgContainer.at(0).getMessage());
 			}
 			else
 			{
-				SvDef::StringVector msgList;
-				msgList.push_back(m_ObjectName);
 				SvStl::MessageManager Msg(SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
-				Log_Assert(false);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, {m_ObjectName}, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}

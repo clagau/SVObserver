@@ -100,8 +100,8 @@ namespace SvAo
 	{
 		BOOL isGrayValid = false;
 		m_isGrayImageValue.GetValue(isGrayValid);
-		auto pCmdResp = m_pBlobFeatureList->setFeatures(request, isGrayValid);
-		SvPb::SetFeaturesResponse* pResponse = pCmdResp.mutable_setfeaturesresponse();
+		auto cmdResp = m_pBlobFeatureList->setFeatures(request, isGrayValid);
+		SvPb::SetFeaturesResponse* pResponse = cmdResp.mutable_setfeaturesresponse();
 		if (0 == pResponse->error_list_size())
 		{
 			SvStl::MessageContainerVector errorMessages;
@@ -116,7 +116,7 @@ namespace SvAo
 						auto* pError = pResponse->add_error_list();
 						pError->set_row(row);
 						pError->set_fieldid(SvPb::FeatureData::kLowerBoundFieldNumber);
-						SvPb::convertMessageToProtobuf(rMessage, pResponse->mutable_messages()->add_messages());
+						SvPb::convertMessageToProtobuf(rMessage, cmdResp.mutable_errormessage()->add_messages());
 					}
 					catch (...)
 					{
@@ -146,7 +146,7 @@ namespace SvAo
 						}
 
 						
-						SvPb::convertMessageToProtobuf(rMessage, pResponse->mutable_messages()->add_messages());
+						SvPb::convertMessageToProtobuf(rMessage, cmdResp.mutable_errormessage()->add_messages());
 					}
 					catch (...)
 					{
@@ -156,13 +156,13 @@ namespace SvAo
 				}
 				else
 				{
-					SvPb::convertMessageToProtobuf(rMessage, pResponse->mutable_messages()->add_messages());
+					SvPb::convertMessageToProtobuf(rMessage, cmdResp.mutable_errormessage()->add_messages());
 				}
 			}
 		}
 
 
-		return pCmdResp;
+		return cmdResp;
 	}
 #pragma endregion IBlobAnalyzer
 
@@ -229,7 +229,7 @@ namespace SvAo
 			if (S_OK != MatroxCode || M_NULL == m_BlobContextID)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				throw;
 			}
 
@@ -243,7 +243,7 @@ namespace SvAo
 			if (nullptr == m_pBlobFeatureList)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				throw;
 			}
 			m_numberOfBlobsFound.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -261,7 +261,7 @@ namespace SvAo
 			if (nullptr == m_pDrawTask)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 				throw;
 			}
 			m_pDrawTask->setResultBufferId(m_ResultBufferID);

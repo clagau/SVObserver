@@ -357,7 +357,7 @@ namespace SvOg
 							}
 						}
 						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.setfeaturesresponse().messages());
+						SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 						if (0 < tmpMessages.size())
 						{
 							Msg.setMessage(tmpMessages[0].getMessage());

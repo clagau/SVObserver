@@ -37,6 +37,7 @@ public:
 
 	HRESULT setExternalToolTaskId();
 
+	/// initialize the External Dll. In error case it can throw an exception
 	std::pair<HRESULT, SvPb::InitializeExternalToolTaskResponse> initialize(bool initializeall);
 	std::pair<bool, std::string> resetAllObjects(bool showFirstError);
 	HRESULT runOnce();

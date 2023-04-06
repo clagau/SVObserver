@@ -15,7 +15,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
-
 namespace SvOgu
 {
 ExternalToolTaskController::ExternalToolTaskController(uint32_t inspectionId, uint32_t ownerId)
@@ -56,6 +55,10 @@ std::pair<HRESULT, SvPb::InitializeExternalToolTaskResponse> ExternalToolTaskCon
 	pRequest->set_initializeall(initializeall);
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 
+	if (SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage()); 0 < errorMsgContainer.size())
+	{
+		throw errorMsgContainer[0];
+	}
 	SvPb::InitializeExternalToolTaskResponse response;
 
 	if (responseCmd.has_initializeexternaltooltaskresponse())
@@ -80,32 +83,22 @@ std::pair<bool, std::string> ExternalToolTaskController::resetAllObjects(bool sh
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 	std::pair<bool, std::string> result(false, ""); // ok? / error description
 
-	if (responseCmd.has_resetallobjectsresponse())
+	if (S_OK == hr)
 	{
-		SvPb::ResetAllObjectsResponse response = responseCmd.resetallobjectsresponse();
-
-		SvStl::MessageContainerVector errorMessages = SvPb::convertProtobufToMessageVector(response.errormessages());
-
-		if (S_OK == hr)
-		{
-			result.first = true;
-		}
-		else
-		{
-			if (false == errorMessages.empty() && showFirstError)
-			{
-				SvStl::MessageManager mm(SvStl::MsgType::Log); // will be displayed in "DLL Status" widget in TA Dialog
-				auto& mc = errorMessages[0]; //currently just the first error message is displayed
-				mm.setMessage(mc.getMessage());
-				mm.Process();
-				result.second = mc.What();
-			}
-			return result;
-		}
+		result.first = true;
 	}
 	else
 	{
-		result.second = "Wrong response type";
+		SvStl::MessageContainerVector errorMessages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+		if (false == errorMessages.empty() && showFirstError)
+		{
+			SvStl::MessageManager mm(SvStl::MsgType::Log); // will be displayed in "DLL Status" widget in TA Dialog
+			auto& mc = errorMessages[0]; //currently just the first error message is displayed
+			mm.setMessage(mc.getMessage());
+			mm.Process();
+			result.second = mc.What();
+		}
+		return result;
 	}
 
 	return result;
@@ -215,29 +208,15 @@ bool ExternalToolTaskController::validateValueParameterWrapper(uint32_t taskObje
 
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 
-	if (S_OK == hr)
+	if (S_OK == hr && S_OK == responseCmd.hresult())
 	{
-		hr = responseCmd.hresult();
-
-		if (S_OK == hr)
-		{
-			return true;
-		}
+		return true;
 	}
 
-	SvStl::MessageContainerVector messageContainers;
-
-	if (responseCmd.has_validatevalueparameterexternaltoolresponse())
+	SvStl::MessageContainerVector messageContainers = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+	if (0 == messageContainers.size())
 	{
-		messageContainers = SvPb::convertProtobufToMessageVector(responseCmd.validatevalueparameterexternaltoolresponse().errormessages());
-	}
-	else
-	{
-		SvDef::StringVector msgList;
-		msgList.push_back(_T("<error description missing>"));
-
-		SvStl::MessageContainer msg;
-		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), getExternalToolTaskObjectId());
+		SvStl::MessageContainer msg {static_cast<long>(SVMSG_SVO_93_GENERAL_WARNING), SvStl::Tid_ExternalDllError, {_T("<error description missing>")}, SvStl::SourceFileParams(StdMessageParams), getExternalToolTaskObjectId()};
 		messageContainers.push_back(msg);
 	}
 

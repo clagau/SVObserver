@@ -21,7 +21,6 @@
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
@@ -100,11 +99,17 @@ std::string FormulaController::GetEquationText() const
 	}
 	else
 	{
-		SvDef::StringVector msgList;
-		msgList.push_back(std::format(_T("{}"), hr));
-		SvStl::MessageManager e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-		Log_Assert(false);
+		assert(false);
+		SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		if (errorMsgContainer.size() > 0)
+		{
+			Msg.setMessage(errorMsgContainer.at(0).getMessage());
+		}
+		else
+		{
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, {std::to_string(hr)}, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
 	return equationText;
 }
@@ -219,16 +224,21 @@ int FormulaController::ValidateEquation_NoReset(const std::string& equationStrin
 	{
 		retValue = responseCmd.validateandsetequationresponse().validatestatus();
 		result = responseCmd.validateandsetequationresponse().result();
-		rErrorMessages = SvPb::convertProtobufToMessageVector(responseCmd.validateandsetequationresponse().messages());;
-		
+		rErrorMessages = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
 	}
 	else
 	{
-		SvDef::StringVector msgList;
-		msgList.push_back(std::format(_T("{}"), hr));
-		SvStl::MessageManager e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-		Log_Assert(false);
+		assert(false);
+		SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.errormessage());
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		if (errorMsgContainer.size() > 0)
+		{
+			Msg.setMessage(errorMsgContainer.at(0).getMessage());
+		}
+		else
+		{
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, {std::format(_T("{}"), hr)}, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
 	return retValue;
 }
@@ -281,11 +291,9 @@ void FormulaController::Init()
 			}
 			else
 			{
-				SvDef::StringVector msgList;
-				msgList.push_back(std::format(_T("{}"), hr));
 				SvStl::MessageManager e(SvStl::MsgType::Log);
-				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-				Log_Assert(false);
+				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, {std::to_string(hr)}, SvStl::SourceFileParams(StdMessageParams));
+				assert(false);
 			}
 		}
 	}
@@ -301,11 +309,9 @@ void FormulaController::Init()
 		}
 		else
 		{
-			SvDef::StringVector msgList;
-			msgList.push_back(std::format(_T("{}"), hr));
 			SvStl::MessageManager e(SvStl::MsgType::Log);
-			e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-			Log_Assert(false);
+			e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, {std::to_string(hr)}, SvStl::SourceFileParams(StdMessageParams));
+			assert(false);
 		}
 	}
 	if (m_isConditional)

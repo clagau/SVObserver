@@ -328,7 +328,6 @@ message ValidateAndSetEquationResponse
 {
 	sint32 validateStatus = 1; //return validateSuccessful if text is valid, else it return the position of the first error in the text.
 	double result = 2; //if validateStatus is validateSuccessful, this variable contain the result of the equation.
-	MessageContainerVector Messages = 3; //list of error messages
 }
 
 // This is the message to get a list of object which should be added to the monitorlist.
@@ -341,7 +340,6 @@ message GetObjectsForMonitorListRequest
 message GetObjectsForMonitorListResponse
 {
 	repeated ObjectNameIdPair list = 1;
-	MessageContainerVector Messages = 2; //list of messages
 }
 
 // This message moved an object in a taskObject- or friend-list to another position.
@@ -385,7 +383,6 @@ message GetImageRequest
 message GetImageResponse
 {
 	Image imageData = 1;
-	MessageContainerVector Messages = 2; //list of error messages
 }
 
 //get an image(if imageId is set, return this, else try to get image with name and parent)
@@ -489,7 +486,6 @@ message GetAvailableObjectsRequest
 message GetAvailableObjectsResponse
 {
 	repeated ObjectNameIdPair list = 1;
-	MessageContainerVector Messages = 2; //list of messages
 }
 
 message GetSpecialImageListRequest
@@ -623,14 +619,6 @@ message SetEmbeddedValuesRequest
 	ResetType  resetType = 3;
 }
 
-//not Used yet
-message SetEmbeddedValuesResponse
-{
-	MessageContainerVector errorMessages = 1;
-	ResetType  resetType = 3;
-
-}
-
 message ValidateLinkedValueRequest
 {
 	ValueObjectValues data = 1;
@@ -639,7 +627,6 @@ message ValidateLinkedValueRequest
 message ValidateLinkedValueResponse
 {
 	Variant value = 1;
-	MessageContainer errorMessage = 2;
 }
 
 message GetOutputRectangleRequest
@@ -868,7 +855,6 @@ message FeatureSetError
 message SetFeaturesResponse
 {
 	repeated FeatureSetError error_list = 1;
-	MessageContainerVector Messages = 2;
 }
 
 message GetAvailableFeaturesRequest
@@ -966,11 +952,6 @@ message ResetAllObjectsRequest
 	uint32 objectId = 1;
 }
 
-message ResetAllObjectsResponse
-{
-	MessageContainerVector errorMessages = 1;
-}
-
 message ClearDataExternalToolRequest
 {
 	uint32 objectId = 1;
@@ -1020,11 +1001,6 @@ message ValidateValueParameterExternalToolRequest
 	sint32 index = 2;
 	Variant newValue = 3;
 	uint32 exDllInterfaceType = 4;
-}
-
-message ValidateValueParameterExternalToolResponse
-{
-	MessageContainerVector errorMessages = 1;
 }
 
 message GetDllMessageStringRequest
@@ -1388,12 +1364,9 @@ message InspectionCmdResponse
 		GetImageInfoExternalToolResponse getImageInfoExternalToolResponse = 46;
 		SetAndSortEmbeddedValueResponse setAndSortEmbeddedValueResponse = 48;
 		GetInvalidDependenciesResponse getInvalidDependenciesResponse = 49;
-		ValidateValueParameterExternalToolResponse validateValueParameterExternalToolResponse = 50;
-		ResetAllObjectsResponse resetAllObjectsResponse = 51;
 		GetObjectNameResponse getObjectNameResponse = 52;
 		ValidateLinkedValueResponse validateLinkedValueResponse = 53;
 		GetInputDataResponse getInputDataResponse = 54;
-		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 55;
 		CheckParameterNamesResponse checkParameterNamesResponse = 56;
 		GetDependencyResponse getDependencyResponse = 57;
 		GetToolDepthResponse getToolDepthResponse = 58;
