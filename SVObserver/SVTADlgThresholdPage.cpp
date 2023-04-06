@@ -761,6 +761,8 @@ void SVTADlgThresholdPage::OnCheck1()
 				pWnd->ShowWindow( SW_HIDE );
 
 			// Show auto threshold controls...
+			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_CHECK)))
+				pWnd->ShowWindow(SW_SHOW);
 			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_EDIT)))
 				pWnd->ShowWindow( SW_SHOW );
 			if (nullptr != (pWnd = GetDlgItem(IDC_BLACK_BACKGROUND_RADIO)))
