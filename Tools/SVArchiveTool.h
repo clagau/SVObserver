@@ -58,7 +58,7 @@ public:
 	bool ensureArchiveImageDirectoryExists(SvStl::MessageContainerVector* pErrorMessages);
 
 	std::string getNextImageFileName();
-	bool areImagesNeededInTRC() const;
+	virtual bool areImagesNeededInTRC() const override;
 	
 #pragma region Methods to replace processMessage
 	virtual void disconnectObjectInput(uint32_t objectId) override;

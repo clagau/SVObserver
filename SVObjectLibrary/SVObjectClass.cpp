@@ -27,6 +27,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVProtoBuf/InspectionCommands.h"
+#include "SVUtilityLibrary/RaiiLifeFlag.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -758,6 +759,55 @@ SvOi::ObjectNotificationRAIIPtr SVObjectClass::registerNotification(SvOi::Object
 		delete pValue;
 		this->m_notificationList.Remove(pFunc);
 	}));
+}
+
+bool SVObjectClass::areImagesNeededInTRC() const
+{
+	if (m_CircularReference_AreImagesNeededInTRC)
+	{
+		return false;
+	}
+	SvDef::RaiiLifeFlag circularCheck(m_CircularReference_AreImagesNeededInTRC);
+	auto list = getConnectedSet();
+	for (auto objectId : list)
+	{
+		auto* pObject = SVObjectManagerClass::Instance().GetObject(objectId);
+		if (nullptr != pObject)
+		{
+			switch (pObject->GetClassID())
+			{
+				case SvPb::InputConnectedClassId:
+					if (nullptr != pObject->GetParent() && SvPb::RingBufferToolClassId == pObject->GetParent()->GetClassID())
+					{
+						return true;
+					}
+					break;
+				case SvPb::ArchiveToolClassId:
+				{
+					if (pObject->areImagesNeededInTRC())
+					{
+						return true;
+					}
+					else
+					{
+						Log_Assert(false);
+					}
+					break;
+				}
+				case SvPb::LinkedValueClassId:
+				{
+					if (nullptr != pObject->GetParent() && SvPb::ParameterTaskObjectType == pObject->GetParent()->GetObjectType())
+					{
+						return pObject->areImagesNeededInTRC();
+					}
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+	return false;
 }
 
 /*

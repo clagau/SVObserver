@@ -232,6 +232,7 @@ public:
 	HRESULT setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString);
 
 	SvOi::ObjectNotificationRAIIPtr registerNotification(SvOi::ObjectNotificationFunctionPtr pFunc);
+	virtual bool areImagesNeededInTRC() const; //<This method is initially called from images, to check if the image needs to be in TRC.
 	void SetLateReset() { m_LateReset = true; }
 	bool GetLateReset() const { return m_LateReset; } 
 protected:
@@ -287,6 +288,7 @@ private:
 	std::string m_comment;	//
 	std::set <uint32_t> m_connectedSet;
 	std::mutex m_inputMutex;
+	mutable bool m_CircularReference_AreImagesNeededInTRC {false};
 
 	SVThreadSafeList<SvOi::ObjectNotificationFunctionPtr> m_notificationList;
 };

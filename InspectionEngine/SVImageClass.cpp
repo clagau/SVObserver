@@ -32,7 +32,6 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "ObjectInterfaces/ILinkedObject.h"
-#include "Tools/SVArchiveTool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1575,54 +1574,7 @@ bool SVImageClass::mustBeInTRC() const
 		}
 	}
 
-	auto list = getConnectedSet();
-	for (auto objectId : list)
-	{
-		auto* pObject = SVObjectManagerClass::Instance().GetObject(objectId);
-		if (nullptr != pObject)
-		{
-			switch (pObject->GetClassID())
-			{
-				case SvPb::InputConnectedClassId:
-					if (nullptr != pObject->GetParent() && SvPb::RingBufferToolClassId == pObject->GetParent()->GetClassID())
-					{
-						return true;
-					}
-					break;
-				case SvPb::ArchiveToolClassId:
-				{
-					if (auto* pArchive = dynamic_cast<SvTo::SVArchiveTool*>(pObject); nullptr != pArchive)
-					{
-						if (pArchive->areImagesNeededInTRC())
-						{
-							return true;
-						}
-					}
-					else
-					{
-						Log_Assert(false);
-					}
-					break;
-				}
-				case SvPb::LinkedValueClassId:
-				{
-					if (nullptr != pObject->GetParent() && SvPb::ParameterTaskObjectType == pObject->GetParent()->GetObjectType())
-					{
-						//@TODO[MZA][10.30][14.03.2023] here is missing a check if it is viewable.
-						//But if more ModuleTools nested it is possible that the first LinkValue is not viewable, but is used by another viewable linkedValue.
-						//Because the risk for an error is to high, this change will be done in a later version.
-						return true;
-					}
-					break;
-				}
-				default:
-					break;
-			}
-			
-		}
-	}
-	
-	return false;
+	return areImagesNeededInTRC();
 }
 
 bool SVImageClass::UpdateBuffers(SvStl::MessageContainerVector* pErrorMessages)

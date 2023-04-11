@@ -2108,7 +2108,11 @@ void LinkedValue::setOrRemoveLinkedImageToTRC()
 		{
 			if (auto* pObject = m_LinkedObjectRef.getFinalObject(); nullptr != pObject && SvPb::SVImageObjectType == pObject->GetObjectType())
 			{
-				linkedImageId = pObject->getObjectId();
+				if (auto* pImage = dynamic_cast<SvIe::SVImageClass*>(pObject); nullptr != pImage &&
+					(SvIe::SVImageClass::BufferType::TRCBuffer == pImage->getBufferType() || SvIe::SVImageClass::BufferType::TRCChildImage == pImage->getBufferType()))
+				{
+					linkedImageId = pObject->getObjectId();
+				}
 			}
 		}
 		if (SvDef::InvalidObjectId == linkedImageId)

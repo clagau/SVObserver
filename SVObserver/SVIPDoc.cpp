@@ -1697,7 +1697,7 @@ void SVIPDoc::OnConvertToModul()
 				}
 				
 
-				UpdateAllViews(nullptr);
+				UpdateAllViews(nullptr, SVIPDoc::RefreshView);
 			}
 		}
 	}
