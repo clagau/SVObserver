@@ -69,7 +69,7 @@ protected:
 	bool m_IsMonitorListActive;
 	void SetupMonitorListProperties();
 	bool IsValidListName(const std::string& rName, const std::string& rOriginalName) const;
-	std::string ValidateLabelText(const std::string& rNewText) const;
+	std::string makeValidLabeltext(const std::string& rNewText) const;
 
 #pragma endregion Private
 };

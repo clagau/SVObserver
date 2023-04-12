@@ -75,7 +75,7 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 
 /////////////////////////////////////////////////////////////////////////////
 // Validate label text and remove unwanted characters.
-std::string MonitorListPropertyDlg::ValidateLabelText(const std::string& rNewText) const
+std::string MonitorListPropertyDlg::makeValidLabeltext(const std::string& rNewText) const
 {
 	std::string Result = SvUl::RemoveCharactersByRegexAndTrim(rNewText, SvDef::cPatternAllExceptAlnumUnderscoreAndBlank);
 
@@ -115,9 +115,7 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*)
 		{
 			std::string Name;
 			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->GetItemValue(Name);
-			Name = SvUl::Trim(Name.c_str());
-			
-			ValidateLabelText(Name);
+			Name = makeValidLabeltext(Name);
 			if (IsValidListName(Name, m_DisplayName))
 			{ 
 				m_DisplayName = Name;
