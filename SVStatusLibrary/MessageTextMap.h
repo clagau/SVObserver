@@ -739,6 +739,7 @@ namespace SvStl
 		{Tid_ModuleCommentDifferent, _T("Module Comment different to the Module.")},
 		{Tid_ModuleHistoryDifferent, _T("History different to the history in the Module.")},
 		{Tid_DeleteFailedModulesHasInstance, _T("Delete of Module failed, because there still instances in this config.")},
+		{Tid_ModuleToolInModuleInvalid, _T("It is invalid to have a moduleTool in a moduleTool.")},
 		{Tid_ConfigurationObjectNotFound, _T("Configuration Object not found.")},
 		{Tid_ObjectIdToLarge_OID, _T("The objectid  \"{0}\" is too large. You must Clean up ObjectIds for current the config.")},
 		{Tid_ConfigurationNotLoaded , _T("Configuration is not loaded")},

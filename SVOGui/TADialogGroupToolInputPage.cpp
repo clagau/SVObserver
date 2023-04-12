@@ -583,7 +583,7 @@ void TADialogGroupToolInputPage::UpdateEnableButtons()
 		if (0 < Selection.GetMinRow() && Selection.GetMinRow() <= m_inputData.size())
 		{
 			GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_EDIT_COMMENT)->EnableWindow(false == m_isModuleTool);
+			static_cast<CEdit*>(GetDlgItem(IDC_EDIT_COMMENT))->SetReadOnly(m_isModuleTool);
 			m_strComment = m_inputData[Selection.GetMinRow() - 1].m_data.m_comment.c_str();
 			UpdateData(false);
 		}

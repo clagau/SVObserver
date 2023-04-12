@@ -449,6 +449,14 @@ void ModuleController::convertGroupTool(uint32_t toolId, const std::string& rNam
 			throw msg;
 		}
 
+		std::vector<SvOi::IObjectClass*> list;
+		pGroupTool->fillObjectList(std::back_inserter(list), SvDef::SVObjectTypeInfoStruct{SvPb::SVToolObjectType, SvPb::ModuleToolObjectType}, true);
+		if (false == list.empty())
+		{
+			SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleToolInModuleInvalid, SvStl::SourceFileParams(StdMessageParams), toolId);
+			throw msg;
+		}
+
 		//create ModulTool and delete GroupTool
 		auto* pModuleTool = new SvTo::ModuleTool(pOwner);
 		pOwner->InsertBefore(pGroupTool->getObjectId(), pModuleTool);

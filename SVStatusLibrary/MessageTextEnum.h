@@ -701,6 +701,7 @@ enum MessageTextEnum
 	Tid_ModuleCommentDifferent,
 	Tid_ModuleHistoryDifferent,
 	Tid_DeleteFailedModulesHasInstance,
+	Tid_ModuleToolInModuleInvalid,
 	Tid_ConfigurationObjectNotFound,
 	Tid_ObjectIdToLarge_OID,
 	Tid_ConfigurationNotLoaded,
