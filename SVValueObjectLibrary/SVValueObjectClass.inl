@@ -340,6 +340,7 @@ UINT SVValueObjectClass<T>::SetObjectAttributesAllowed(UINT Attributes, SvOi::Se
 	{
 		m_pValue = reserveLocalMemory();
 		m_memOffset = -1;
+		m_pResultSize = nullptr;
 	}
 
 	return newAttribute;
@@ -677,6 +678,7 @@ void SVValueObjectClass<T>::setTrData(int32_t memOffset, int32_t memSize, int32_
 	{
 		m_pValue = reserveLocalMemory();
 		m_trPos = -1L;
+		m_pResultSize = nullptr;
 		m_memOffset = -1L;
 		m_memSizeReserved = 0L;
 		return;

@@ -207,7 +207,8 @@ protected:
 	ValueType m_MaxValue {};
 	ValueType m_MinValue {};
 	bool m_UseMaxMinValue {false};
-
+	int32_t m_memOffset {-1L};		///The memory offset in the inspection data
+	int32_t* m_pResultSize {nullptr};
 
 
 #pragma region Member Variables
@@ -226,9 +227,6 @@ private:
 	//>Use int_32_t to make sure it stays constant in size for Shared Memory
 	int32_t m_ArraySize {0L};
 	int32_t m_ResultSize {1L};
-	int32_t* m_pResultSize {nullptr};
-
-
 	ValueType m_DefaultValue {};
 	///This value object pointer is always a pointer to the template type, for SVStringValueObjectClass and SVVariantValueObjectClass
 	///the memory block pointer is stored in the derived class
@@ -236,7 +234,7 @@ private:
 
 	std::vector<uint8_t> m_valueData;	///Local memory when value object not part of inspection or during startup
 
-	int32_t m_memOffset {-1L};		///The memory offset in the inspection data
+	
 	int32_t m_memSizeReserved {0L};	///The block memory size reserved
 	int32_t m_trPos {-1L};			///The trigger record position
 	mutable bool m_hasChanged {true};///Flag if value has changed since last update

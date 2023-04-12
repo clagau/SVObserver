@@ -389,6 +389,14 @@ _variant_t* SVVariantValueObjectClass::reserveLocalMemory()
 	}
 	return pResult;
 }
+void  SVVariantValueObjectClass::clearMemoryBlockPointer()
+{
+	if (-1 == m_memOffset)
+	{
+		m_pResultSize = nullptr;
+		m_pMemBlockData = nullptr;
+	}
+}
 
 double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) const
 {

@@ -1168,6 +1168,17 @@ void LinkedValue::setValueType(SvPb::LinkedValueTypeEnum type)
 			break;
 	}
 }
+
+
+UINT  LinkedValue::ObjectAttributesAllowed() const
+{
+	UINT ret = __super::ObjectAttributesAllowed();
+	if (m_valueType == SvPb::TypeStates)
+	{
+		ret &= ~SvPb::useable;
+	}
+	return ret;
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

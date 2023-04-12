@@ -51,8 +51,7 @@ protected:
 	static std::string ToString(const VARIANT& rvt, bool bScript = false );
 
 	virtual _variant_t* reserveLocalMemory() override;
-	virtual void clearMemoryBlockPointer() override { m_pMemBlockData = nullptr; }
-
+	virtual void clearMemoryBlockPointer() override;
 	virtual double ValueType2Double(const _variant_t& rValue) const override;
 	virtual _variant_t ValueType2Variant(const _variant_t* pValue) const override { return (nullptr != pValue) ? *pValue : _variant_t(); }
 	virtual _variant_t Variant2ValueType(const _variant_t& rValue) const override;

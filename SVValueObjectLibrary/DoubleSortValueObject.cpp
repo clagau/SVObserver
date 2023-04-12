@@ -184,6 +184,7 @@ void DoubleSortValueObject::setMemBlockPointer(uint8_t* pMemBlockBase)
 	int32_t memOffset = getMemOffset();
 	if (nullptr != pMemBlockBase && -1 != memOffset)
 	{
+		Log_Assert(isArray());
 		///This is always an array
 		setResultSizePointer(reinterpret_cast<int32_t*> (pMemBlockBase + memOffset));
 		m_pMemBlockData = (pMemBlockBase + memOffset + sizeof(int32_t));
@@ -267,7 +268,14 @@ double* DoubleSortValueObject::reserveLocalMemory()
 	}
 	return pResult;
 }
-
+void  DoubleSortValueObject::clearMemoryBlockPointer() 
+{
+	if (-1 == m_memOffset)
+	{
+		m_pMemBlockData = nullptr;
+		m_pResultSize = nullptr;
+	}
+}
 
 size_t DoubleSortValueObject::getSortContainerSize() const 
 { 
