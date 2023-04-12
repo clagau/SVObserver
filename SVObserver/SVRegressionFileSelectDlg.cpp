@@ -66,6 +66,38 @@ void SVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
+void SVRegressionFileSelectDlg::OnSelectAll()
+{
+	
+
+		for (int i = 0; i < m_SelectFolderList.GetCount(); i++)
+		{
+			m_SelectFolderList.SetSel(i, TRUE);
+		}
+
+}
+
+BOOL SVRegressionFileSelectDlg::PreTranslateMessage(MSG* pMsg)
+{
+	
+
+	if (pMsg->message == WM_CHAR)
+	{
+		
+			
+		TCHAR chr = static_cast<TCHAR>(pMsg->wParam);
+		if(chr == 0x01) // 0x01 is the key code for ctrl-a and also for ctrl-A
+		{
+			OnSelectAll();
+		}
+
+	}
+
+
+	return CPropertyPage::PreTranslateMessage(pMsg);
+}
+
+
 BEGIN_MESSAGE_MAP(SVRegressionFileSelectDlg, CPropertyPage)
 	//{{AFX_MSG_MAP(SVRegressionFileSelectDlg)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_FOLDER, OnBtnRegTestBrowseFiles)

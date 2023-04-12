@@ -32,6 +32,7 @@ public:
 	virtual ~SVRegressionFileSelectDlg();
 	void SetDlgTitle(LPCTSTR lpszTitle);
 	void ShowControls();
+	void OnSelectAll();
 	RegressionFileEnum GetFileSelectType();
 	CString GetSelectedFile();
 	CString GetPageName();
@@ -56,6 +57,7 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVRegressionFileSelectDlg)
 protected:
+	virtual BOOL PreTranslateMessage(MSG*);
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
