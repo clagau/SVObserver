@@ -11,6 +11,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "RotationTool.h"
 #include "DeactivedTool.h"
+#include "Definitions/TextDefinesSvDef.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVHBitmapUtilitiesLibrary/BitmapHelper.h"
@@ -332,7 +333,7 @@ namespace SvTrcT
 
 	void CTriggerRecordControllerTestDlg::OnTrigger()
 	{
-		CFileDialog dlg(true, nullptr, nullptr, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, "Image Files(*.bmp)|*.bmp||", this, 0, false);
+		CFileDialog dlg(true, nullptr, nullptr, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, SvDef::fileDlgFilterMilSupportedImageFilesTypes, this, 0, false);
 		dlg.m_ofn.lpstrTitle = _T("Select Main Image");
 
 		if (IDOK != dlg.DoModal())			// Start the FileDialog
@@ -710,7 +711,7 @@ namespace SvTrcT
 			auto imageHandle = pImage->getHandle();
 			if (nullptr != imageHandle)
 			{
-				HRESULT hr = SVMatroxBufferInterface::Import(imageHandle->GetBuffer(), std::string(rPath), ImageFileFormat::bmp, false);
+				HRESULT hr = SVMatroxBufferInterface::Import(imageHandle->GetBuffer(), std::string(rPath), inferredMilImageFileFormat(rPath), false);
 				assert(S_OK == hr);
 				if (S_OK != hr)
 				{

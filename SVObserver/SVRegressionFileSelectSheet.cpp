@@ -308,7 +308,7 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 				throw Exception;
 			}
 
-			if (ImageFileFormat::invalid == inferMilImageFileFormat(rStruct.firstFilepath))
+			if (ImageFileFormat::invalid == inferredMilImageFileFormat(rStruct.firstFilepath))
 			{
 				SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidImageFileType, SvStl::SourceFileParams(StdMessageParams));
 				throw Exception;
@@ -416,7 +416,7 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 {
 	std::string currentPath = rStruct.firstFilepath;
 
-	ImageFileFormat fileFormat = inferMilImageFileFormat(currentPath);
+	ImageFileFormat fileFormat = inferredMilImageFileFormat(currentPath);
 	if (RegressionFileEnum::RegSingleDirectory == rStruct.iFileMethod)
 	{
 		if (ImageFileFormat::invalid == fileFormat)
@@ -519,9 +519,9 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 	SVRegressionFileSelectDlg *pPage;
 	if (m_pRegressionCameraList->size() > 0 || m_pRegressionImageList->size() > 0 )
 	{
-		for ( int l_iCount = 0; l_iCount <= iPageCnt-1; l_iCount++ )
+		for ( int iCount = 0; iCount <= iPageCnt-1; iCount++ )
 		{
-			pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(l_iCount));
+			pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(iCount));
 			if (pPage)
 			{
 				std::string TmpName = pPage->GetPageName().GetString();

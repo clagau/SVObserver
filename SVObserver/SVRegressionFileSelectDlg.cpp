@@ -408,7 +408,7 @@ void SVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 		m_RegTestFiles = dlg.GetPathName();
 		if (!m_RegTestFiles.IsEmpty())
 		{
-			if (ImageFileFormat::invalid == inferMilImageFileFormat(m_RegTestFiles.GetString()))
+			if (ImageFileFormat::invalid == inferredMilImageFileFormat(m_RegTestFiles.GetString()))
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidImageFileType, SvStl::SourceFileParams(StdMessageParams));

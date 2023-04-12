@@ -289,7 +289,7 @@ HRESULT SVImageProcessingClass::InitBuffer(SvOi::SVImageBufferHandlePtr rHandle,
 
 HRESULT SVImageProcessingClass::LoadImageBuffer(const TCHAR* pImageFilepath, SVImageInfoClass& rInfo, SvOi::SVImageBufferHandlePtr& rHandle)
 {
-	ImageFileFormat fileFormat(inferMilImageFileFormat(pImageFilepath));
+	ImageFileFormat fileFormat(inferredMilImageFileFormat(pImageFilepath));
 
 	if (fileFormat != ImageFileFormat::invalid)
 	{

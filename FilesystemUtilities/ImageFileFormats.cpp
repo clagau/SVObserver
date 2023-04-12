@@ -5,9 +5,9 @@
 #include "ImageFileFormats.h"
 #include "SVUtilityLibrary/StringHelper.h"
 
-ImageFileFormat inferMilImageFileFormat(const TCHAR* pFilepath)
+ImageFileFormat inferredMilImageFileFormat(const TCHAR* pFilepath)
 {
-	return (nullptr == pFilepath) ? ImageFileFormat::invalid : inferMilImageFileFormat(std::string(pFilepath));
+	return (nullptr == pFilepath) ? ImageFileFormat::invalid : inferredMilImageFileFormat(std::string(pFilepath));
 }
 
 auto fileformats = {ImageFileFormat::mim, ImageFileFormat::tiff, ImageFileFormat::bmp, ImageFileFormat::png}; //These are the file formats corresponding to a valid extension
@@ -24,7 +24,7 @@ bool filenameMatchesImageFormat(const std::string& rFilenameOrPath, ImageFileFor
 }
 
 
-ImageFileFormat inferMilImageFileFormat(const std::string& rFilenameOrPath)
+ImageFileFormat inferredMilImageFileFormat(const std::string& rFilenameOrPath)
 {
 	auto result = std::ranges::find_if(fileformats,
 		[rFilenameOrPath](auto fileFormat){return filenameMatchesImageFormat(rFilenameOrPath, fileFormat); });

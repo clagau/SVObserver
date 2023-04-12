@@ -180,7 +180,7 @@ SvPb::InspectionCmdResponse CreateModel(SvPb::CreateModelRequest request)
 		{
 			std::string FileName = request.filename();
 			// Now save the Model Image buffer to a file
-			ImageFileFormat fileFormat = inferMilImageFileFormat(FileName);
+			ImageFileFormat fileFormat = inferredMilImageFileFormat(FileName);
 
 			SVMatroxBuffer milBuffer = imageHandle->GetBuffer();
 			HRESULT result = SVMatroxBufferInterface::Export(milBuffer, FileName, fileFormat);

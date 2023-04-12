@@ -853,7 +853,7 @@ HRESULT SVImageClass::LoadImage(LPCTSTR fileName, const SvOi::ITriggerRecordRWPt
 		{
 			if (0 < strlen(fileName))
 			{
-				ImageFileFormat fileFormat = inferMilImageFileFormat(fileName);
+				ImageFileFormat fileFormat = inferredMilImageFileFormat(fileName);
 
 				if (fileFormat != ImageFileFormat::invalid && 0 == _access(fileName, 0))
 				{
@@ -1487,7 +1487,7 @@ HRESULT SVImageClass::Save(const std::string& rFilename)
 	SvOi::SVImageBufferHandlePtr pImage = getLastImage();
 	if (nullptr != pImage && !pImage->empty())
 	{
-		ImageFileFormat fileFormat(inferMilImageFileFormat(rFilename));
+		ImageFileFormat fileFormat(inferredMilImageFileFormat(rFilename));
 
 		if (fileFormat != ImageFileFormat::invalid)
 		{

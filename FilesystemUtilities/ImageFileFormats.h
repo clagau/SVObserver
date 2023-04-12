@@ -16,8 +16,8 @@ enum class ImageFileFormat : long ///< used to define which image file format(s)
 };
 
 
-[[nodiscard]] ImageFileFormat inferMilImageFileFormat(const TCHAR* pFilepath);
-[[nodiscard]] ImageFileFormat inferMilImageFileFormat(const std::string& filenameOrPath);
+[[nodiscard]] ImageFileFormat inferredMilImageFileFormat(const TCHAR* pFilepath);
+[[nodiscard]] ImageFileFormat inferredMilImageFileFormat(const std::string& filenameOrPath);
 [[nodiscard]] bool filenameMatchesImageFormat(const std::string& rFilenameOrPath, ImageFileFormat fileFormat);
 
 std::string firstImageFileNameExtension(ImageFileFormat fileFormat);

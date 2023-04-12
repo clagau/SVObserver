@@ -119,14 +119,14 @@ namespace SvOg
 
 	BOOL SVPatternAnalyzerModelPage::OnSetActive()
 	{
-		BOOL l_bOk = CPropertyPage::OnSetActive();
+		BOOL bOk = CPropertyPage::OnSetActive();
 
-		if ( l_bOk )
+		if ( bOk )
 		{
 			InitializeData();
 		}
 
-		return l_bOk;
+		return bOk;
 	}
 
 	BOOL SVPatternAnalyzerModelPage::OnKillActive()

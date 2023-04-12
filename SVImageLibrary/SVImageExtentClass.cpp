@@ -1859,7 +1859,7 @@ HRESULT SVImageExtentClass::SetDataFromFile(LPCTSTR pFileName)
 
 	if (0 < strlen(pFileName))
 	{
-		ImageFileFormat fileFormat = inferMilImageFileFormat(pFileName);
+		ImageFileFormat fileFormat = inferredMilImageFileFormat(pFileName);
 
 		if (fileFormat != ImageFileFormat::invalid && 0 == _access(pFileName, 0))
 		{

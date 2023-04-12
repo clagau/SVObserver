@@ -193,7 +193,6 @@ namespace SvOgu
 					Log_Assert(0 < messageList.size());
 					if (0 < messageList.size())
 					{
-						assert(false);
 						SvStl::MessageManager Exception(SvStl::MsgType::Log);
 						Exception.setMessage(messageList[0].getMessage());
 					}

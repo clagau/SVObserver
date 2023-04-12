@@ -954,11 +954,11 @@ HRESULT PatternAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLi
 
 		for (int i=0; i < figureList.size(); i++)
 		{
-			SVExtentMultiLineStruct l_multiLine;
-			l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
-			l_multiLine.AssignExtentFigure( figureList[i], SvDef::DefaultSubFunctionColor1 );
-			UpdateOverlayIDs( l_multiLine );
-			rMultiLineArray.push_back( l_multiLine );
+			SVExtentMultiLineStruct multiLine;
+			multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
+			multiLine.AssignExtentFigure( figureList[i], SvDef::DefaultSubFunctionColor1 );
+			UpdateOverlayIDs( multiLine );
+			rMultiLineArray.push_back( multiLine );
 		}
 	}
 	return S_OK;
@@ -1386,6 +1386,7 @@ bool PatternAnalyzer::getNewUseDontCareValue(const SvOi::SetValueStructVector &r
 	return useDontCare ? true : false;
 }
 
+//@TODO [Arvid][10.30][12.4.2023] code duplication with PatternAnalyzer::validateNewModelFileName()
 bool PatternAnalyzer::validateNewDontCareFileName(const SvOi::SetValueStructVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
 {
 	bool isValueToSet = false;
@@ -1401,7 +1402,7 @@ bool PatternAnalyzer::validateNewDontCareFileName(const SvOi::SetValueStructVect
 		std::string newFileName = SvUl::createStdString(rValueStruct.m_Value.bstrVal);
 
 		SVMatroxBuffer importHandle;
-		if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, ImageFileFormat::bmp, true) ||
+		if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, inferredMilImageFileFormat(newFileName), true) ||
 			S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeX, rDontCareWidth) ||
 			S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeY, rDontCareHeight))
 		{
@@ -1429,6 +1430,7 @@ bool PatternAnalyzer::validateNewDontCareFileName(const SvOi::SetValueStructVect
 	return isValueToSet;
 }
 
+//@TODO [Arvid][10.30][12.4.2023] code duplication with PatternAnalyzer::validateNewDontCareFileName()
 bool PatternAnalyzer::validateNewModelFileName(const SvOi::SetValueStructVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages)
 {
 	bool isValueToSet = false;
@@ -1447,7 +1449,7 @@ bool PatternAnalyzer::validateNewModelFileName(const SvOi::SetValueStructVector 
 		if (fileName != newFileName)
 		{
 			SVMatroxBuffer importHandle;
-			if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, ImageFileFormat::bmp, true) ||
+			if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, inferredMilImageFileFormat(newFileName), true) ||
 				S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeX, rModelWidth) ||
 				S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeY, rModelHeight))
 			{
@@ -1568,7 +1570,7 @@ bool PatternAnalyzer::ReloadImage(const std::string& rImageFile, SvVol::SVLongVa
 	bool bOk = true;
 	SVMatroxBuffer importHandle;
 
-	HRESULT MatroxCode = SVMatroxBufferInterface::Import(importHandle, rImageFile, ImageFileFormat::bmp, true);
+	HRESULT MatroxCode = SVMatroxBufferInterface::Import(importHandle, rImageFile, inferredMilImageFileFormat(rImageFile), true);
 
 	if (S_OK == MatroxCode)
 	{
