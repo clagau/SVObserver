@@ -33,10 +33,6 @@ namespace SvO
 	const TCHAR* const AvailableArchiveImageMemory = _T("Remaining Archive Image Memory:  {:8.1f} MB");
 	const TCHAR* const AvailableArchiveImageMemoryExceeded = _T("Available Archive Image Memory EXCEEDED by {:6.1f} MB!!!");
 
-	const TCHAR* const cInspectionProcessTag = _T( "SVInspectionProcess" );
-	const TCHAR* const cPPQObjectTag = _T( "SVPPQObject" );
-	const TCHAR* const cRemoteOutputGroupTag = _T( "SVRemoteOutputGroup" );
-
 	const TCHAR* const cCameraContrast = _T( "Contrast" );		//Legacy name for Gain was Contrast and needs to be checked on loading
 
 	const TCHAR* const cTrue = _T( "True" );

@@ -142,14 +142,14 @@ void SVDisplayObject::SetInspectionID(uint32_t inspectionID, SVIPDoc* pDoc)
 
 	if( SvDef::InvalidObjectId != m_InspectionID )
 	{
-		SVObjectManagerClass::Instance().DetachObserver( "SVInspectionProcess", m_InspectionID, getObjectId() );
+		SVObjectManagerClass::Instance().DetachObserver(SVObjectManagerClass::ObserverIdEnum::IP, m_InspectionID, getObjectId() );
 	}
 
 	m_InspectionID = inspectionID;
 
 	if(SvDef::InvalidObjectId != m_InspectionID )
 	{
-		SVObjectManagerClass::Instance().AttachObserver( "SVInspectionProcess", m_InspectionID, getObjectId() );
+		SVObjectManagerClass::Instance().AttachObserver(SVObjectManagerClass::ObserverIdEnum::IP, m_InspectionID, getObjectId() );
 	}
 }
 
@@ -181,7 +181,7 @@ BOOL SVDisplayObject::Destroy()
 {
 	if(SvDef::InvalidObjectId != m_InspectionID )
 	{
-		SVObjectManagerClass::Instance().DetachObserver( "SVInspectionProcess", m_InspectionID, getObjectId() );
+		SVObjectManagerClass::Instance().DetachObserver(SVObjectManagerClass::ObserverIdEnum::IP, m_InspectionID, getObjectId() );
 
 		m_InspectionID = SvDef::InvalidObjectId;
 	}

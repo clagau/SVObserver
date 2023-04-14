@@ -20,7 +20,6 @@
 #include "SVObserver.h"
 #include "SVToolSet.h"
 #include "SVVisionProcessorHelper.h"
-#include "TextDefinesSvO.h"
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
@@ -1714,14 +1713,14 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct, uint32_t inspId
 	long oState {0};
 	if (cDefaultObjectIdIndexSize == m_multipleObjectIdCount)
 	{
-		for (const auto& rInspectionInfo : rProduct.m_svInspectionInfos)
-		{
-			oState |= rInspectionInfo.second.m_InspectedState;
-			bValid &= (rInspectionInfo.second.m_EndInspection > 0.0);
+	for (const auto& rInspectionInfo : rProduct.m_svInspectionInfos)
+	{
+		oState |= rInspectionInfo.second.m_InspectedState;
+		bValid &= (rInspectionInfo.second.m_EndInspection > 0.0);
 		}
 	}
 	else
-	{
+		{
 		oState = rProduct.m_svInspectionInfos[inspId].m_InspectedState;
 		bValid = rProduct.m_svInspectionInfos[inspId].m_EndInspection > 0.0;
 	}
@@ -1848,7 +1847,7 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t 
 	rProduct.m_dataComplete = bValid;
 	if (rProduct.m_dataComplete)
 	{
-		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cPPQObjectTag), getObjectId(), rProduct);
+		SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::PPQ, getObjectId(), rProduct);
 
 		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_outputMode) ||
 			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_outputMode))
@@ -1908,15 +1907,15 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 	for (int i = 0; i < m_multipleObjectIdCount; ++i)
 	{
 		bool isPreviousNAK = rProduct.m_outputsInfo.m_NakResult[i] || rProduct.m_prevTriggerNAK[i];
-		long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
-		if (isPreviousNAK && rProduct.m_dataComplete && ppqIndex > 0)
+	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
+	if (isPreviousNAK && rProduct.m_dataComplete && ppqIndex > 0)
+	{
+		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
+		if (nullptr != pNextProduct)
 		{
-			SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
-			if (nullptr != pNextProduct)
-			{
-				setPreviousNAK(rProduct, pNextProduct);
-			}
+			setPreviousNAK(rProduct, pNextProduct);
 		}
+	}
 	}
 
 	for (auto& rValue : rProduct.m_svCameraInfos)
@@ -1972,15 +1971,15 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 	for (int i = 0; i < m_multipleObjectIdCount; ++i)
 	{
 		isNAK = rProduct.m_outputsInfo.m_NakResult[i] || rProduct.m_prevTriggerNAK[i];
-		long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
-		if (isNAK && ppqIndex > 0)
+	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
+	if (isNAK && ppqIndex > 0)
+	{
+		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
+		if (nullptr != pNextProduct)
 		{
-			SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
-			if (nullptr != pNextProduct)
-			{
-				setPreviousNAK(rProduct, pNextProduct);
-			}
+			setPreviousNAK(rProduct, pNextProduct);
 		}
+	}
 	}
 
 	for (auto& rCamera : rProduct.m_svCameraInfos)
@@ -2442,7 +2441,7 @@ void SVPPQObject::ProcessNotifyInspections()
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 							::OutputDebugString(std::format(_T("{} Start Inspection {} failed TRI={:d}\n"), GetName(), m_arInspections[i]->GetName(), triggerCount).c_str());
 #endif
-						}
+					}
 					}
 					else
 					{
@@ -3243,11 +3242,11 @@ void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVP
 		uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[i].m_objectID};
 		uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[i].m_objectID};
 
-		if (nextObjectID != 0 && nextObjectID == currentObjectID)
+	if (nextObjectID != 0 && nextObjectID == currentObjectID)
+	{
+		//Object has more than 1 trigger per Object then relay NAK result to new product
+		if (1u < pNextProduct->m_triggerInfo.m_Data.m_triggerIndex)
 		{
-			//Object has more than 1 trigger per Object then relay NAK result to new product
-			if (1u < pNextProduct->m_triggerInfo.m_Data.m_triggerIndex)
-			{
 				pNextProduct->m_prevTriggerNAK[i] = true;
 			}
 		}
@@ -3260,22 +3259,22 @@ void SVPPQObject::checkTriggerIndex(const SVProductInfoStruct& rCurrentProduct, 
 	{
 		uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[i].m_objectID};
 		uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[i].m_objectID};
-		uint8_t nextTriggerIndex {pNextProduct->m_triggerInfo.m_Data.m_triggerIndex};
+	uint8_t nextTriggerIndex {pNextProduct->m_triggerInfo.m_Data.m_triggerIndex};
 
-		if (nextObjectID != 0 && nextObjectID == currentObjectID)
+	if (nextObjectID != 0 && nextObjectID == currentObjectID)
+	{
+		uint8_t currentTriggerIndex {rCurrentProduct.m_triggerInfo.m_Data.m_triggerIndex};
+		//Check that trigger index has been incremented
+		if (currentTriggerIndex + 1 != nextTriggerIndex)
 		{
-			uint8_t currentTriggerIndex {rCurrentProduct.m_triggerInfo.m_Data.m_triggerIndex};
-			//Check that trigger index has been incremented
-			if (currentTriggerIndex + 1 != nextTriggerIndex)
-			{
 				pNextProduct->m_prevTriggerNAK[i] = true;
-			}
 		}
-		else
+	}
+	else
+	{
+		//Check when next objectID that trigger index is 1
+		if (1 != nextTriggerIndex)
 		{
-			//Check when next objectID that trigger index is 1
-			if (1 != nextTriggerIndex)
-			{
 				pNextProduct->m_prevTriggerNAK[i] = true;
 			}
 		}

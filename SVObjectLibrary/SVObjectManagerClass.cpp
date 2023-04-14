@@ -237,16 +237,7 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier(uint32_t objectID, SVObjectC
 
 	if (Status)
 	{
-		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(objectID);
-
-		if (nullptr != pUniqueObject)
-		{
-			rpObject = pUniqueObject->m_pObject;
-		}
-		else
-		{
-			rpObject = nullptr;
-		}
+		rpObject = getUniqueObjectEntry(objectID);
 	}
 	else
 	{
@@ -350,24 +341,15 @@ bool SVObjectManagerClass::CreateObjectID(SVObjectClass* pObject)
 
 		if (Result)
 		{
-			SVUniqueObjectEntryStructPtr pUniqueObject {new SVUniqueObjectEntryStruct};
+			auto objectID = getNextObjectId();
+			pObject->setObjectId(objectID);
+			m_UniqueObjectEntries[objectID] = pObject;
 
-			Result = (nullptr != pUniqueObject);
-
-			if (Result)
+			SvOl::DependencyManager::Instance().Add(objectID);
+			uint32_t OwnerId = pObject->GetParentID();
+			if (SvDef::InvalidObjectId != OwnerId && OwnerId != objectID)
 			{
-				pUniqueObject->m_ObjectID = getNextObjectId();
-
-				pUniqueObject->m_pObject = pObject;
-				pObject->setObjectId(pUniqueObject->m_ObjectID);
-				m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
-
-				SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
-				uint32_t OwnerId = pObject->GetParentID();
-				if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
-				{
-					SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType(SvOl::JoinType::Owner));
-				}
+				SvOl::DependencyManager::Instance().Connect(OwnerId, objectID, SvOl::JoinType(SvOl::JoinType::Owner));
 			}
 		}
 	}
@@ -438,22 +420,19 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass& rObject)
 			Autolock.lock();
 		}
 
-		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(rObject.getObjectId());
+		auto* pUniqueObject = getUniqueObjectEntry(rObject.getObjectId());
 		Log_Assert(nullptr == pUniqueObject);
 		Result = (nullptr == pUniqueObject);
 
 		if (Result)
 		{
-			pUniqueObject = std::make_shared<SVUniqueObjectEntryStruct>();
-			pUniqueObject->m_pObject = &rObject;
-			pUniqueObject->m_ObjectID = rObject.getObjectId();
-			m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
+			m_UniqueObjectEntries[rObject.getObjectId()] = &rObject;
 
-			SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
+			SvOl::DependencyManager::Instance().Add(rObject.getObjectId());
 			uint32_t OwnerId = rObject.GetParentID();
-			if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
+			if (SvDef::InvalidObjectId != OwnerId && OwnerId != rObject.getObjectId())
 			{
-				SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType(SvOl::JoinType::Owner));
+				SvOl::DependencyManager::Instance().Connect(OwnerId, rObject.getObjectId(), SvOl::JoinType(SvOl::JoinType::Owner));
 			}
 		}
 		else
@@ -476,15 +455,8 @@ bool SVObjectManagerClass::CloseUniqueObjectID(const SVObjectClass& rObject)
 
 		uint32_t ObjectID(rObject.getObjectId());
 		DetachSubjectsAndObservers(ObjectID);
-
 		SvOl::DependencyManager::Instance().Remove(ObjectID);
-
-		SVUniqueObjectEntryMap::iterator l_Iter(m_UniqueObjectEntries.find(ObjectID));
-
-		if (l_Iter != m_UniqueObjectEntries.end())
-		{
-			m_UniqueObjectEntries.erase(l_Iter);
-		}
+		m_UniqueObjectEntries.erase(ObjectID);
 	}
 
 	return Result;
@@ -532,13 +504,7 @@ SVObjectClass* SVObjectManagerClass::GetObject(uint32_t objectId) const
 		return pObject;
 	}
 
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(objectId);
-	if (nullptr != pUniqueObject)
-	{
-		pObject = pUniqueObject->m_pObject;
-	}
-
-	return pObject;
+	return getUniqueObjectEntry(objectId);
 }
 
 SVObjectClass* SVObjectManagerClass::GetObjectCompleteName(LPCTSTR Name)
@@ -611,12 +577,9 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 		Autolock.lock();
 	}
 
-	SVUniqueObjectEntryMap::const_iterator Iter(m_UniqueObjectEntries.begin());
-
-	for (; m_UniqueObjectEntries.end() != Iter; ++Iter)
+	for (const auto& rPair : m_UniqueObjectEntries)
 	{
-		SVObjectClass* pObject = Iter->second->m_pObject;
-
+		SVObjectClass* pObject = rPair.second;
 		if (nullptr != pObject)
 		{
 			//Check only 
@@ -669,38 +632,44 @@ void SVObjectManagerClass::fillObjectList(std::back_insert_iterator<std::vector<
 	}
 }
 
-uint32_t SVObjectManagerClass::getObserverSubject(const std::string& rSubjectDataName, uint32_t observerID) const
+uint32_t SVObjectManagerClass::getObserverSubject(ObserverIdEnum observerIdEnum, uint32_t observerID) const
 {
-	return GetSubjectID(rSubjectDataName, getUniqueObjectEntry(observerID));
-}
-
-HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
-{
-	HRESULT Result = S_OK;
-
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
 	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
-		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry(observerID);
+	}
 
-		if (nullptr != pSubjectObject && nullptr != pObserverObject)
+	auto iter = std::ranges::find_if(m_subjectObserverList, [observerIdEnum, observerID](const auto& rEntry)
+	{
+		return rEntry.m_observerIdEnum == observerIdEnum && rEntry.m_observerID == observerID;
+	});
+	if (m_subjectObserverList.end() != iter)
+	{
+		return iter->m_subjectID;
+	}
+
+	return SvDef::InvalidObjectId;
+}
+
+HRESULT SVObjectManagerClass::AttachObserver(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID)
+{
+	HRESULT Result = S_OK;
+	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
+	{
+		Autolock.lock();
+		auto iter = std::ranges::find_if(m_subjectObserverList, [observerIdEnum, subjectID](const auto& rEntry)
 		{
-			uint32_t oldSubjectId = GetSubjectID(rSubjectDataName, pObserverObject);
-
-			if (SvDef::InvalidObjectId != oldSubjectId)
-			{
-				DetachObserver(rSubjectDataName, oldSubjectId, observerID);
-			}
-
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName][observerID] = 1;
-			pObserverObject->m_SubjectIDs[rSubjectDataName] = subjectID;
+			return rEntry.m_observerIdEnum == observerIdEnum && rEntry.m_subjectID == subjectID;
+		});
+		if (m_subjectObserverList.end() == iter)
+		{
+			m_subjectObserverList.emplace_back(observerIdEnum, subjectID, observerID);
 		}
 		else
 		{
-			Result = E_FAIL;
+			iter->m_observerID = observerID;
 		}
 	}
 	else
@@ -711,28 +680,18 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
+HRESULT SVObjectManagerClass::DetachObserver(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID)
 {
 	HRESULT Result = S_OK;
-
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
 	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
-		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry(observerID);
-
-		if (nullptr != pObserverObject)
+		std::erase_if(m_subjectObserverList, [observerIdEnum, subjectID, observerID](const auto& rEntry)
 		{
-			pObserverObject->m_SubjectIDs.erase(rSubjectDataName);
-		}
-
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
-
-		if (nullptr != pSubjectObject)
-		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].erase(observerID);
-		}
+			return rEntry.m_observerIdEnum == observerIdEnum && rEntry.m_subjectID == subjectID && rEntry.m_observerID == observerID;
+		});
 	}
 	else
 	{
@@ -742,27 +701,22 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataName, uint32_t subjectID)
+HRESULT SVObjectManagerClass::DetachObservers(ObserverIdEnum observerIdEnum, uint32_t subjectID)
 {
-	SVSubjectEnabledObserverMap Observers;
+	HRESULT Result = S_OK;
+	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	HRESULT Result = GetObservers(rSubjectDataName, subjectID, Observers);
-
-	if (S_OK == Result)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
-		SVSubjectEnabledObserverMap::iterator Iter = Observers.begin();
-
-		while (Iter != Observers.end())
+		Autolock.lock();
+		std::erase_if(m_subjectObserverList, [observerIdEnum, subjectID](const auto& rEntry)
 		{
-			HRESULT l_Temp = DetachObserver(rSubjectDataName, subjectID, Iter->first);
-
-			if (S_OK == Result)
-			{
-				Result = l_Temp;
-			}
-
-			++Iter;
-		}
+			return rEntry.m_observerIdEnum == observerIdEnum && rEntry.m_subjectID == subjectID;
+		});
+	}
+	else
+	{
+		Result = E_FAIL;
 	}
 
 	return Result;
@@ -770,57 +724,20 @@ HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataNam
 
 HRESULT SVObjectManagerClass::DetachSubjectsAndObservers(uint32_t objectID)
 {
-	HRESULT Result = DetachObservers(objectID);
-	HRESULT SubjectStatus = DetachSubjects(objectID);
+	HRESULT Result = S_OK;
+	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (S_OK == Result)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
-		Result = SubjectStatus;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DetachSubjects(uint32_t observerID)
-{
-	SVSubjectDataNameDeque SubjectDataNames;
-
-	HRESULT Result = GetObserverDataNames(observerID, SubjectDataNames);
-
-	if (S_OK == Result)
-	{
-		SVSubjectDataNameDeque::iterator Iter;
-
-		for (Iter = SubjectDataNames.begin(); SubjectDataNames.end() != Iter; ++Iter)
+		Autolock.lock();
+		std::erase_if(m_subjectObserverList, [objectID](const auto& rEntry)
 		{
-			uint32_t subjectId = getObserverSubject(*Iter, observerID);
-			DetachObserver(*Iter, subjectId, observerID);
-		}
+			return rEntry.m_subjectID == objectID || rEntry.m_observerID == objectID;
+		});
 	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DetachObservers(uint32_t subjectID)
-{
-	SVSubjectDataNameDeque SubjectDataNames;
-
-	HRESULT Result = GetSubjectDataNames(subjectID, SubjectDataNames);
-
-	if (S_OK == Result)
+	else
 	{
-		
-		SVSubjectDataNameDeque::iterator Iter;
-
-		for (Iter = SubjectDataNames.begin(); SubjectDataNames.end() != Iter; ++Iter)
-		{
-			HRESULT Temp = DetachObservers(*Iter, subjectID);
-
-			if (S_OK == Result)
-			{
-				Result = Temp;
-			}
-		}
+		Result = E_FAIL;
 	}
 
 	return Result;
@@ -973,39 +890,31 @@ HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectRefe
 			objectIdSet.insert(pStartObject->getObjectId());
 		}
 
-		SVUniqueObjectEntryStructPtr pUniqueObjectEntry;
-
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
 		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
 
-
-		SVUniqueObjectEntryMap::const_iterator Iter(m_UniqueObjectEntries.begin());
-
-		while (Iter != m_UniqueObjectEntries.end())
+		for (const auto& rPair : m_UniqueObjectEntries)
 		{
-			pUniqueObjectEntry = Iter->second;
-
-			if (nullptr != pUniqueObjectEntry && nullptr != pUniqueObjectEntry->m_pObject)
+			SVObjectClass* pObject = rPair.second;
+			if (nullptr != pObject)
 			{
-				if ((pUniqueObjectEntry->m_pObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter)
+				if ((pObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter)
 				{
 					//Check if owner is in list
-					std::string ObjectPath = pUniqueObjectEntry->m_pObject->GetCompleteName();
+					std::string ObjectPath = pObject->GetCompleteName();
 					std::string::size_type Pos = ObjectPath.find(InternalPath.c_str());
 					if (std::string::npos != Pos)
 					{
 						if (ObjectPath.size() == Pos + InternalPath.size() || ObjectPath[Pos + InternalPath.size()] == '.')
 						{
-							objectIdSet.insert(pUniqueObjectEntry->m_pObject->getObjectId());
+							objectIdSet.insert(pObject->getObjectId());
 						}
 					}
 				}
 			}
-			++Iter;
 		}
 
 	}
@@ -1021,41 +930,9 @@ HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectRefe
 	return Result;
 }
 
-uint32_t SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry) const
+SVObjectClass* SVObjectManagerClass::getUniqueObjectEntry(uint32_t objectId) const
 {
-	uint32_t Result = SvDef::InvalidObjectId;
-
-	if (nullptr != pObjectEntry)
-	{
-		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-
-
-		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-		{
-			Autolock.lock();
-		}
-
-		SVSubjectDataNameSubjectIDMap::const_iterator l_Iter = pObjectEntry->m_SubjectIDs.find(rSubjectDataName);
-
-		if (l_Iter != pObjectEntry->m_SubjectIDs.end())
-		{
-			Result = l_Iter->second;
-		}
-
-	}
-
-	return Result;
-}
-
-SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntry(uint32_t objectId) const
-{
-	SVUniqueObjectEntryStructPtr pUniqueObjectEntry(nullptr);
-
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-
-
 	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
@@ -1066,155 +943,44 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 
 	if (Iter != m_UniqueObjectEntries.end())
 	{
-		pUniqueObjectEntry = Iter->second;
+		return Iter->second;
 	}
 
-
-	return pUniqueObjectEntry;
+	return nullptr;
 }
 
-SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntry(const std::string& rName) const
-{
-	SVUniqueObjectEntryStructPtr pUniqueObjectEntry(nullptr);
 
+SVObjectClass* SVObjectManagerClass::getUniqueObjectEntry(const std::string& rName) const
+{
+	SVObjectClass* pRetObject {nullptr};
 	if (!rName.empty())
 	{
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-
 		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
 
-
 		SVUniqueObjectEntryMap::const_iterator Iter(m_UniqueObjectEntries.begin());
-
-		while (nullptr == pUniqueObjectEntry && Iter != m_UniqueObjectEntries.end())
+		while (nullptr == pRetObject && Iter != m_UniqueObjectEntries.end())
 		{
-			pUniqueObjectEntry = Iter->second;
-
-			if (nullptr != pUniqueObjectEntry)
+			pRetObject = Iter->second;
+			if (nullptr != pRetObject)
 			{
-				if (nullptr == pUniqueObjectEntry->m_pObject || pUniqueObjectEntry->m_pObject->GetName() != rName)
+				if (pRetObject->GetName() != rName)
 				{
-					pUniqueObjectEntry.reset();
+					pRetObject = nullptr;
 				}
 			}
 
-			if (nullptr == pUniqueObjectEntry)
+			if (nullptr == pRetObject)
 			{
 				++Iter;
 			}
 		}
-
 	}
 
-	return pUniqueObjectEntry;
-}
-
-HRESULT SVObjectManagerClass::GetSubjectDataNames(uint32_t subjectID, SVSubjectDataNameDeque& rSubjectDataNames) const
-{
-	HRESULT Result = S_OK;
-
-	rSubjectDataNames.clear();
-
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(subjectID);
-
-	if (nullptr != pUniqueObject)
-	{
-		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-
-
-		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-		{
-			Autolock.lock();
-		}
-
-		SVSubjectDataNameObserverMap::const_iterator Iter;
-
-		for (Iter = pUniqueObject->m_DataNameSubjectObservers.begin(); pUniqueObject->m_DataNameSubjectObservers.end() != Iter; ++Iter)
-		{
-			rSubjectDataNames.push_back(Iter->first);
-		}
-
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::GetObserverDataNames(uint32_t observerID, SVSubjectDataNameDeque& rSubjectDataNames) const
-{
-	HRESULT Result = S_OK;
-
-	rSubjectDataNames.clear();
-
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(observerID);
-
-	if (nullptr != pUniqueObject)
-	{
-		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-		{
-			Autolock.lock();
-		}
-
-		SVSubjectDataNameSubjectIDMap::const_iterator Iter;
-
-		for (Iter = pUniqueObject->m_SubjectIDs.begin(); pUniqueObject->m_SubjectIDs.end() != Iter; ++Iter)
-		{
-			rSubjectDataNames.push_back(Iter->first);
-		}
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers)
-{
-	HRESULT Result = S_OK;
-
-	rObservers.clear();
-
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(subjectID);
-
-	if (nullptr != pUniqueObject)
-	{
-		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-		{
-			Autolock.lock();
-		}
-
-		SVSubjectDataNameObserverMap::iterator Iter = pUniqueObject->m_DataNameSubjectObservers.find(rSubjectDataName);
-
-		if (Iter != pUniqueObject->m_DataNameSubjectObservers.end())
-		{
-			rObservers = Iter->second;
-		}
-		else
-		{
-			Result = E_FAIL;
-		}
-
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
+	return pRetObject;
 }
 
 HRESULT SVObjectManagerClass::RegisterSubObject(uint32_t subObjectID)

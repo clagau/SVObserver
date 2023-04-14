@@ -364,7 +364,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected()
 			m_lastRunProduct.m_svInspectionInfos[getObjectId()].m_bReject = isReject(m_lastRunProduct.m_svInspectionInfos[getObjectId()].m_triggerRecordComplete);
 		}
 		std::pair<long, SVInspectionInfoStruct> data {m_lastRunProduct.triggerCount(), m_lastRunProduct.m_svInspectionInfos[getObjectId()]};
-		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
+		SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::IP, getObjectId(), data);
 
 		if (m_lastRunProduct.m_triggered && SvDef::InvalidObjectId != m_PPQId)
 		{
@@ -485,7 +485,7 @@ void __stdcall SVInspectionProcess::ProcessCallback(ULONG_PTR pCaller)
 
 void SVInspectionProcess::DestroyInspection()
 {
-	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), SVRemoveSubjectStruct());
+	SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::IP, getObjectId(), SVRemoveSubjectStruct());
 	m_NotifyWithLastInspected = false;
 	::Sleep(0);
 	m_processThread.Destroy();
@@ -1211,7 +1211,7 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 		{
 			std::pair<long, SVInspectionInfoStruct> data {l_svProduct.triggerCount(), l_svProduct.m_svInspectionInfos[getObjectId()]};
 
-			SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
+			SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::IP, getObjectId(), data);
 		}
 	}
 }
@@ -1778,7 +1778,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 			{
 				SVRemoveValues l_Data;
 
-				SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), l_Data);
+				SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::IP, getObjectId(), l_Data);
 			}
 		}// end if ( nullptr != m_pCurrentToolset )
 	}// end while( m_lInputRequestMarkerCount > 0L )
@@ -2308,7 +2308,7 @@ HRESULT SVInspectionProcess::RemoveImage(SvIe::SVImageClass* pImage)
 
 		l_Data.m_Images.insert(pImage->getObjectId());
 
-		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), l_Data);
+		SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::IP, getObjectId(), l_Data);
 	}
 	else
 	{
@@ -2692,7 +2692,7 @@ void SVInspectionProcess::ResetName()
 
 	SVInspectionNameUpdate l_Data(GetName());
 
-	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), l_Data);
+	SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::IP, getObjectId(), l_Data);
 }
 
 void SVInspectionProcess::SetName(LPCTSTR StrString)
@@ -2701,7 +2701,7 @@ void SVInspectionProcess::SetName(LPCTSTR StrString)
 
 	SVInspectionNameUpdate l_Data(GetName());
 
-	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), l_Data);
+	SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::IP, getObjectId(), l_Data);
 
 	if (nullptr != m_pCurrentToolset)
 	{

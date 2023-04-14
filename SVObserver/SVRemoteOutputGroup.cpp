@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 #include "SVRemoteOutputGroup.h"
-#include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -304,7 +303,7 @@ uint32_t SVRemoteOutputGroup::GetPPQObjectId() const
 std::string SVRemoteOutputGroup::GetPPQName() const
 {
 	std::string l_SubjectName;
-	uint32_t subjectID = SVObjectManagerClass::Instance().getObserverSubject(std::string(SvO::cPPQObjectTag), getObjectId());
+	uint32_t subjectID = SVObjectManagerClass::Instance().getObserverSubject(SVObjectManagerClass::ObserverIdEnum::PPQ, getObjectId());
 
 	if (SvDef::InvalidObjectId != subjectID)
 	{
@@ -322,7 +321,7 @@ std::string SVRemoteOutputGroup::GetPPQName() const
 		if (nullptr != l_pSubject)
 		{
 			l_SubjectName = l_pSubject->GetCompleteName();
-			SVObjectManagerClass::Instance().AttachObserver(std::string(SvO::cPPQObjectTag), m_PPQObjectId, getObjectId());
+			SVObjectManagerClass::Instance().AttachObserver(SVObjectManagerClass::ObserverIdEnum::PPQ, m_PPQObjectId, getObjectId());
 		}
 	}
 
@@ -336,20 +335,20 @@ HRESULT SVRemoteOutputGroup::SetPPQName(const std::string& p_rPPQ)
 	if (nullptr != l_pObject)
 	{
 		m_PPQObjectId = l_pObject->getObjectId();
-		uint32_t tmpId = SVObjectManagerClass::Instance().getObserverSubject(std::string(SvO::cPPQObjectTag), getObjectId());
+		uint32_t tmpId = SVObjectManagerClass::Instance().getObserverSubject(SVObjectManagerClass::ObserverIdEnum::PPQ, getObjectId());
 
 		if (SvDef::InvalidObjectId == tmpId)
 		{
 			// Attach Observer No previous attachment...
-			SVObjectManagerClass::Instance().AttachObserver(std::string(SvO::cPPQObjectTag), m_PPQObjectId, getObjectId());
+			SVObjectManagerClass::Instance().AttachObserver(SVObjectManagerClass::ObserverIdEnum::PPQ, m_PPQObjectId, getObjectId());
 		}
 		else
 		{
 			if (tmpId != m_PPQObjectId)
 			{
 				// Detach Observer then attach new...
-				/*l_hr = */SVObjectManagerClass::Instance().DetachObserver(std::string(SvO::cPPQObjectTag), tmpId, getObjectId());
-				/*l_hr = */SVObjectManagerClass::Instance().AttachObserver(std::string(SvO::cPPQObjectTag), m_PPQObjectId, getObjectId());
+				/*l_hr = */SVObjectManagerClass::Instance().DetachObserver(SVObjectManagerClass::ObserverIdEnum::PPQ, tmpId, getObjectId());
+				/*l_hr = */SVObjectManagerClass::Instance().AttachObserver(SVObjectManagerClass::ObserverIdEnum::PPQ, m_PPQObjectId, getObjectId());
 			}
 			else
 			{

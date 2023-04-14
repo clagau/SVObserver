@@ -44,6 +44,12 @@ public:
 		ReadWrite = 2,
 	};
 
+	enum class ObserverIdEnum
+	{
+		IP = 0,
+		PPQ = 1,
+	};
+
 	typedef std::map<std::string, uint32_t> RootNameChildMap;
 
 	typedef std::deque<std::string> SVSubjectDataNameDeque;
@@ -122,14 +128,12 @@ public:
 
 	void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden = false, bool stopIfClosed = false);
 
-	HRESULT GetObserverDataNames(uint32_t observerID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
+	uint32_t getObserverSubject(ObserverIdEnum observerIdEnum, uint32_t observerID) const;
 
-	uint32_t getObserverSubject( const std::string& rSubjectDataName, uint32_t observerID ) const;
+	HRESULT AttachObserver(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID );
 
-	HRESULT AttachObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
-
-	HRESULT DetachObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
-	HRESULT DetachObservers( const std::string& rSubjectDataName, uint32_t subjectID );
+	HRESULT DetachObserver(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID );
+	HRESULT DetachObservers(ObserverIdEnum observerIdEnum, uint32_t subjectID );
 
 	HRESULT DetachSubjectsAndObservers( uint32_t objectID );
 
@@ -137,7 +141,7 @@ public:
 	HRESULT UpdateObserver( uint32_t observerID, const SVDataType& rData );
 
 	template< typename SVDataType >
-	HRESULT UpdateObservers( const std::string& rSubjectDataName, uint32_t subjectID, const SVDataType& rData );
+	HRESULT UpdateObservers(ObserverIdEnum observerIdEnum, uint32_t subjectID, const SVDataType& rData );
 
 	HRESULT DisconnectObjects( uint32_t source, uint32_t destination );
 
@@ -205,38 +209,24 @@ public:
 
 
 protected:
-	typedef std::map<std::string, uint32_t> SVSubjectDataNameSubjectIDMap;
-
-	typedef std::map< uint32_t, long > SVSubjectEnabledObserverMap;
-
-	typedef std::map<std::string, SVSubjectEnabledObserverMap> SVSubjectDataNameObserverMap;
-
-	struct SVUniqueObjectEntryStruct
+	struct SubjectObserverStruct
 	{
-		uint32_t m_ObjectID{SvDef::InvalidObjectId};
-		SVObjectClass* m_pObject{nullptr};
+		SubjectObserverStruct(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID) :
+			m_observerIdEnum {observerIdEnum}
+			, m_subjectID {subjectID}
+			, m_observerID {observerID}
+		{}
 
-		SVSubjectDataNameSubjectIDMap m_SubjectIDs;
-		SVSubjectDataNameObserverMap m_DataNameSubjectObservers;
+		ObserverIdEnum m_observerIdEnum;
+		uint32_t m_subjectID;
+		uint32_t m_observerID;
 	};
-
-	typedef std::shared_ptr< SVUniqueObjectEntryStruct > SVUniqueObjectEntryStructPtr;
-	typedef std::unordered_map< uint32_t, SVUniqueObjectEntryStructPtr > SVUniqueObjectEntryMap;
+	std::vector<SubjectObserverStruct> m_subjectObserverList;
 
 	SVObjectManagerClass();
 
-	HRESULT GetSubjectDataNames( uint32_t subjectID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
-
-	HRESULT GetObservers( const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers );
-
-	uint32_t GetSubjectID( const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry ) const;
-
-	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( uint32_t objectId ) const;
-	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const std::string& rName ) const;
-
-	HRESULT DetachSubjects( uint32_t observerID );
-
-	HRESULT DetachObservers( uint32_t subjectID );
+	SVObjectClass* getUniqueObjectEntry( uint32_t objectId ) const;
+	SVObjectClass* getUniqueObjectEntry( const std::string& rName ) const;
 
 	std::tuple<HRESULT, SVObjectClass*, SVObjectNameInfo> getObjectByDottedName(const std::string& rFullName) const;
 
@@ -244,6 +234,8 @@ protected:
 
 	//@Todo[MEC][8.20] [15.05.2019] probaly after some code cleanup std::mutex would be enough  
 	mutable std::recursive_mutex m_Mutex;
+
+	typedef std::unordered_map< uint32_t, SVObjectClass*> SVUniqueObjectEntryMap;
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
 	
 	RootNameChildMap		m_RootNameChildren;

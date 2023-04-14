@@ -105,27 +105,19 @@ HRESULT SVObjectManagerClass::UpdateObserver( uint32_t observerID, const SVDataT
 }
 
 template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataName, uint32_t subjectID, const SVDataType& rData )
+HRESULT SVObjectManagerClass::UpdateObservers(ObserverIdEnum observerIdEnum, uint32_t subjectID, const SVDataType& rData )
 {
 	HRESULT Result = S_OK;
 
-	SVSubjectEnabledObserverMap Observers;
-
-	Result = GetObservers( rSubjectDataName, subjectID, Observers );
-
-	if( S_OK == Result )
+	for (const auto& rTupel : m_subjectObserverList)
 	{
-		SVSubjectEnabledObserverMap::iterator Iter = Observers.begin();
-		for( ; Observers.end() != Iter;  ++Iter )
+		if (rTupel.m_observerIdEnum == observerIdEnum && rTupel.m_subjectID == subjectID)
 		{
-			if( Iter->second == 1 )
-			{
-				HRESULT Temp = UpdateObserver( Iter->first, rData );
+			HRESULT Temp = UpdateObserver(rTupel.m_observerID, rData);
 
-				if( S_OK == Result )
-				{
-					Result = Temp;
-				}
+			if (S_OK == Result)
+			{
+				Result = Temp;
 			}
 		}
 	}
