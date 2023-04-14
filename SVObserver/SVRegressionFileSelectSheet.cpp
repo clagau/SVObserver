@@ -547,6 +547,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 						pPage->SetRegressionData(&(*foundIter));
 					}
 				}
+				pPage->ShowControls();
 			}
 		}
 
