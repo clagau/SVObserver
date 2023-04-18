@@ -1,8 +1,6 @@
-//**************************************************************************
-
-
+//*****************************************************************************
 /// \copyright COPYRIGHT (c) 2015,2015 by Körber Pharma Inspection GmbH. All Rights Reserved /// All Rights Reserved 
-/// \Author	Robert Yoho
+/// \file SVArchiveRecord.cpp
 //*****************************************************************************
 
 #pragma region Includes
@@ -145,7 +143,6 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile)
 }
 
 
-
 HRESULT SVArchiveRecord::GetNextAlternativeImageFilePath(std::string& rImageFile, std::string& rImageDirectoryPath)
 {
 	if (false == CountImages())
@@ -162,7 +159,6 @@ HRESULT SVArchiveRecord::GetNextAlternativeImageFilePath(std::string& rImageFile
 
 	return S_OK;
 }
-
 
 long SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName, const std::string& rImageDirectoryPath)
 {
@@ -193,16 +189,32 @@ HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMa
 	m_lMaxIndex = 0;
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getFinalObject());
 	//It must more add-on buffer for the parent image not for the child image.
-	while (nullptr != pImage && SvIe::SVImageClass::BufferType::TRCBuffer != pImage->getBufferType())
+	while (nullptr != pImage && (SvIe::SVImageClass::BufferType::TRCBuffer != pImage->getBufferType() && SvIe::SVImageClass::BufferType::Undefined != pImage->getBufferType()))
+		//@TODO [Arvid][10.30][17.4.2023] this is a bit hacky. It might be better to ensure that the bufferType cannot be undefined (e.g. by calling a Reset if it is)
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE_RECORD)
+		::OutputDebugString(std::format(_T("\t'{}'\n\t\t-> "), pImage->getInfoString(true)).c_str());
+#endif
 		pImage = pImage->GetParentImage();
+#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE_RECORD)
+		if (nullptr != pImage)
+		{
+			::OutputDebugString(std::format(_T("'{}\n"), pImage->getInfoString()).c_str());
+	}
+#endif
 	}
 	Log_Assert(pImage);
 	if (pImage)
 	{
 		m_ImageInfo = pImage->GetImageInfo();
+
 		SVMatroxBufferCreateStruct bufferStruct;
 		HRESULT Result = SvIe::SVImageProcessingClass::FillBufferStructFromInfo(m_ImageInfo, bufferStruct);
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE_RECORD)
+		::OutputDebugString(std::format(_T("allocate for {}: "), pImage->getInfoString(true)).c_str());
+#endif
+
 		if (S_OK == Result)
 		{
 			auto iter = rBufferMap.find(bufferStruct);

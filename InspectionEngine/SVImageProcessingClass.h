@@ -39,7 +39,7 @@ class SVImageProcessingClass
 {
 public:
 	static HRESULT CreateImageBuffer( const SVImageInfoClass& rInfo, SvOi::SVImageBufferHandlePtr& rHandle, SvStl::MessageContainerVector* pErrorContainer = nullptr);
-	static HRESULT CreateImageBuffer( const SvOi::SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum p_lConversionType, SvOi::SVImageBufferHandlePtr& rToHandle );
+	static HRESULT CreateImageBuffer( const SvOi::SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum optype, SvOi::SVImageBufferHandlePtr& rToHandle );
 	static HRESULT convertToMILBuffer(HBITMAP hBmp, SvOi::SVImageBufferHandlePtr& rToHandle);
 
 	static HRESULT CreateImageChildBuffer( const SVImageInfoClass& rParentInfo, SvOi::SVImageBufferHandlePtr rParentHandle,
@@ -70,21 +70,21 @@ public:
 	/// \returns HRESULT
 	static HRESULT FillChildBufferStructFromInfo(const SVImageInfoClass& rParentInfo, SVImageInfoClass& rChildInfo, MatroxBufferChildDataStruct& rChildBufferStruct);
 private:
-	static HRESULT GetOutputImageCreateData( const SVImageInfoClass &p_rsvInfo,
-															      SvDef::SVImageFormatEnum &p_reFormat,
-															      int &p_riPixelDepth,
-															      int &p_riBandNumber,
-															      int &p_riBandLink,
-															      long &p_rlWidth,
-															      long &p_rlHeight );
+	static HRESULT GetOutputImageCreateData( const SVImageInfoClass &rInfo,
+															      SvDef::SVImageFormatEnum &rFormat,
+															      int &rPixelDepth,
+															      int &rBandNumber,
+															      int &rBandLink,
+															      long &rWidth,
+															      long &rHeight );
 	
-	static HRESULT GetChildImageCreateData( const SVImageInfoClass &p_rsvInfo,
-															     SvDef::SVImageFormatEnum &p_reFormat,
-															     int &p_riPixelDepth,
-															     int &p_riBandNumber,
-															     int &p_riBandLink,
-															     long &p_rlWidth,
-															     long &p_rlHeight );
+	static HRESULT GetChildImageCreateData( const SVImageInfoClass &rInfo,
+															     SvDef::SVImageFormatEnum &rFormat,
+															     int &rPixelDepth,
+															     int &rBandNumber,
+															     int &rBandLink,
+															     long &rWidth,
+															     long &rHeight );
 	
 
 	static HRESULT CreateImageBuffer(SVMatroxBufferCreateStruct& bufferStruct, SvOi::SVImageBufferHandlePtr &rHandle);

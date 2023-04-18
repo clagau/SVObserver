@@ -72,7 +72,7 @@ HRESULT SVImageProcessingClass::CreateImageBuffer(const SVImageInfoClass& rInfo,
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::CreateImageBuffer(const SvOi::SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum p_lConversionType, SvOi::SVImageBufferHandlePtr& rToHandle)
+HRESULT SVImageProcessingClass::CreateImageBuffer(const SvOi::SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum optype, SvOi::SVImageBufferHandlePtr& rToHandle)
 {
 	HRESULT Result = S_OK;
 
@@ -90,7 +90,7 @@ HRESULT SVImageProcessingClass::CreateImageBuffer(const SvOi::SVImageBufferHandl
 
 		if (S_OK == Result)
 		{
-			Result = SVMatroxImageInterface::Convert(l_Temp, rFromHandle->GetBuffer(), p_lConversionType);
+			Result = SVMatroxImageInterface::Convert(l_Temp, rFromHandle->GetBuffer(), optype);
 		}
 	}
 	else
@@ -618,33 +618,33 @@ HRESULT SVImageProcessingClass::CreateBarCodeBuffer(SVBarCodeBufferInfoClass* pD
 
 HRESULT SVImageProcessingClass::FillBufferStructFromInfo(const SVImageInfoClass& rInfo, SVMatroxBufferCreateStruct& bufferStruct)
 {
-	SvDef::SVImageFormatEnum l_eFormat;
+	SvDef::SVImageFormatEnum format;
 	int bandNumber = 0;
 	int bandLink = 0;
 	int pixelDepth = 0;
 	long width = 0;
 	long height = 0;
-	SVMatroxBufferAttributeEnum format{SVBufAttUnknown};
+	SVMatroxBufferAttributeEnum bufferAttribute{SVBufAttUnknown};
 
-	HRESULT Result = GetOutputImageCreateData(rInfo, l_eFormat, pixelDepth, bandNumber, bandLink, width, height);
+	HRESULT Result = GetOutputImageCreateData(rInfo, format, pixelDepth, bandNumber, bandLink, width, height);
 
 	if (S_OK == Result)
 	{
-		switch (l_eFormat)
+		switch (format)
 		{
 			case SvDef::SVImageFormatBGR888:
 			{
-				format = rInfo.getDibBufferFlag() ? SVBuffAttImageProcPackedOffBoardDibPagedBgr24 : SVBuffAttImageProcPackedOffBoardPagedBgr24;
+				bufferAttribute = rInfo.getDibBufferFlag() ? SVBuffAttImageProcPackedOffBoardDibPagedBgr24 : SVBuffAttImageProcPackedOffBoardPagedBgr24;
 				break;
 			}
 			case SvDef::SVImageFormatBGR888X:
 			{
-				format = rInfo.getDibBufferFlag() ? SVBufAttImageProcPackedOffBoardDibPagedBgr32 : SVBufAttImageProcPackedOffBoardPagedBgr32;
+				bufferAttribute = rInfo.getDibBufferFlag() ? SVBufAttImageProcPackedOffBoardDibPagedBgr32 : SVBufAttImageProcPackedOffBoardPagedBgr32;
 				break;
 			}
 			default:
 			{
-				format = rInfo.getDibBufferFlag() ? SVBufAttImageProcDib : SVBufAttImageProc;
+				bufferAttribute = rInfo.getDibBufferFlag() ? SVBufAttImageProcDib : SVBufAttImageProc;
 			}
 		}
 	}
@@ -656,7 +656,7 @@ HRESULT SVImageProcessingClass::FillBufferStructFromInfo(const SVImageInfoClass&
 		bufferStruct.m_lSizeX = width;
 		bufferStruct.m_lSizeY = height;
 		SetImageDepth(bufferStruct, pixelDepth);
-		bufferStruct.m_eAttribute = format;
+		bufferStruct.m_eAttribute = bufferAttribute;
 	}
 	else
 	{
@@ -858,91 +858,91 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::GetOutputImageCreateData(const SVImageInfoClass &p_rsvInfo,
-	SvDef::SVImageFormatEnum &p_reFormat,
-	int &p_riPixelDepth,
-	int &p_riBandNumber,
-	int &p_riBandLink,
-	long &p_rlWidth,
-	long &p_rlHeight)
+HRESULT SVImageProcessingClass::GetOutputImageCreateData(const SVImageInfoClass &rInfo,
+	SvDef::SVImageFormatEnum &rFormat,
+	int &rPixelDepth,
+	int &rBandNumber,
+	int &rBandLink,
+	long &rWidth,
+	long &rHeight)
 {
-	HRESULT Result = p_rsvInfo.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, p_rlWidth);
+	HRESULT Result = rInfo.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, rWidth);
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, p_rlHeight);
+		Result = rInfo.GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, rHeight);
 	}
 
 	if (S_OK == Result)
 	{
 		int l_iFormat = SvDef::SVImageFormatUnknown;
 
-		Result = p_rsvInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat);
+		Result = rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat);
 
 		if (S_OK == Result)
 		{
-			p_reFormat = (SvDef::SVImageFormatEnum)l_iFormat;
+			rFormat = (SvDef::SVImageFormatEnum)l_iFormat;
 		}
 	}
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, p_riBandNumber);
+		Result = rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, rBandNumber);
 	}
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, p_riBandLink);
+		Result = rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, rBandLink);
 	}
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, p_riPixelDepth);
+		Result = rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, rPixelDepth);
 	}
 
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::GetChildImageCreateData(const SVImageInfoClass &p_rsvInfo,
-	SvDef::SVImageFormatEnum &p_reFormat,
-	int &p_riPixelDepth,
-	int &p_riBandNumber,
-	int &p_riBandLink,
-	long &p_rlWidth,
-	long &p_rlHeight)
+HRESULT SVImageProcessingClass::GetChildImageCreateData(const SVImageInfoClass &rInfo,
+	SvDef::SVImageFormatEnum &rFormat,
+	int &rPixelDepth,
+	int &rBandNumber,
+	int &rBandLink,
+	long &rWidth,
+	long &rHeight)
 {
-	HRESULT Result = p_rsvInfo.GetExtentProperty(SvPb::SVExtentPropertyWidth, p_rlWidth);
+	HRESULT Result = rInfo.GetExtentProperty(SvPb::SVExtentPropertyWidth, rWidth);
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetExtentProperty(SvPb::SVExtentPropertyHeight, p_rlHeight);
+		Result = rInfo.GetExtentProperty(SvPb::SVExtentPropertyHeight, rHeight);
 	}
 
 	if (S_OK == Result)
 	{
 		int l_iFormat = SvDef::SVImageFormatUnknown;
 
-		Result = p_rsvInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat);
+		Result = rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat);
 
 		if (S_OK == Result)
 		{
-			p_reFormat = (SvDef::SVImageFormatEnum)l_iFormat;
+			rFormat = (SvDef::SVImageFormatEnum)l_iFormat;
 		}
 	}
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, p_riBandNumber);
+		Result = rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, rBandNumber);
 	}
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, p_riBandLink);
+		Result = rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, rBandLink);
 	}
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, p_riPixelDepth);
+		Result = rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, rPixelDepth);
 	}
 
 	return Result;

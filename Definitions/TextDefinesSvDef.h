@@ -67,6 +67,10 @@ constexpr const char* fileDlgFilterMilSupportedImageFilesTypes = _T("All Suitabl
 constexpr const char* cTableResultView = _T("Table Result");
 constexpr const char* cResultView = _T("Result");
 
+constexpr const char* cAvailableImageMemory = _T("{:8.2f} MB available image memory\n");
+constexpr const char* cMegabytesUsed = _T("{:8.2f} MB available image memory\n");
+constexpr const char* cMegabytesRemaining = _T("{:8.2f} MB remaining\n");
+
 
 static std::initializer_list<const char*> c_allInterpolationModeNames
 {

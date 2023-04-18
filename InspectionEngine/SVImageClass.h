@@ -140,6 +140,9 @@ public:
 	int getImagePosInTRC() const { return m_imagePosInTRC; };
 
 	void setTransfermatrix(const std::vector<double>& rMatrix);
+
+	std::string getInfoString(bool addDetails=false);
+
 	static const std::vector<double> UnitMatrix;
 #pragma region virtual method (ISVImage)
 	virtual SvPb::SVImageTypeEnum GetImageType() const override;

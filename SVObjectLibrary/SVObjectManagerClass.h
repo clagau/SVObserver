@@ -254,5 +254,8 @@ protected:
 	
 };
 
+std::string getCompleteObjectNameForId(uint32_t ownerId);
+
+
 #include "SVObjectManagerClass.inl"
 

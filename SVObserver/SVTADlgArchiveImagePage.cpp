@@ -560,7 +560,6 @@ void SVTADlgArchiveImagePage::updateMemoryAndQueueLengthVisibility()
 }
 
 
-
 void SVTADlgArchiveImagePage::OnSelchangeImageFormat()
 {
 	UpdateData();
@@ -574,12 +573,12 @@ void SVTADlgArchiveImagePage::OnSelchangeImageFormat()
 	UpdateData();
 }
 
+
 void SVTADlgArchiveImagePage::OnDetails()
 {
-	auto poolInfo = SVMemoryManager::Instance().poolInfo();
-	std::string memoryInformation = std::accumulate(poolInfo.begin(), poolInfo.end(), std::string(), [](const auto& a, const auto& b){return a + b; });
-	AfxMessageBox(memoryInformation.c_str());
+	AfxMessageBox(SVMemoryManager::Instance().MemoryInfoByOwner().c_str());
 }
+
 
 void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 {

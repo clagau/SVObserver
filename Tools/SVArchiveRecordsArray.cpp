@@ -70,6 +70,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SvVol::SVStringValueObjectClass
 		if (!Name.empty())
 		{
 			std::string NewName = AdaptDottedNameToInspectionName(Name);
+
 			SVObjectReference ObjectRef;
 			SVObjectManagerClass::Instance().GetObjectByDottedName(NewName.c_str(), ObjectRef);
 			size_t Pos = Name.find('[');

@@ -36,6 +36,13 @@ SVObjectManagerClass& SVObjectManagerClass::Instance()
 	return l_Object;
 }
 
+
+std::string getCompleteObjectNameForId(uint32_t ownerId)
+{
+	return SVObjectManagerClass::Instance().GetCompleteObjectName(ownerId);
+}
+
+
 SVObjectManagerClass::SVObjectManagerClass()
 	: m_State(ReadWrite)
 	, m_ShortPPQIndicator(0)

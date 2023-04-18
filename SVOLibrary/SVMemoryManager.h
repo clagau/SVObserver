@@ -30,7 +30,7 @@ public:
 
 	HRESULT ReservePoolMemory(uint32_t ownerId, __int64 sizeInBytes);
 	HRESULT ReleasePoolMemory(uint32_t ownerId);
-	std::vector<std::string> poolInfo();
+	std::vector<std::string> poolInfoStrings() const;
 	bool hasOwner(uint32_t ownerId);
 
 	__int64 remainingMemoryInBytes() const;
@@ -88,12 +88,11 @@ public:
 	__int64 remainingMemoryInBytes() const ;
 	__int64 TotalBytes() const;
 	__int64 ReservedBytes()const { return TotalBytes() - remainingMemoryInBytes();}
-
-	std::vector<std::string> poolInfo() {return m_pool.poolInfo();}
+	std::string MemoryInfoByOwner() const;
 
 private:
+
 	std::mutex m_memoryMutex;
 	SVMemoryPool m_pool;
 
 };// end class SVMemoryManager
-

@@ -360,10 +360,8 @@ bool SVArchiveTool::InitializeAndValidate(SvStl::MessageContainerVector* pErrorM
 	m_removeEntriesIfDisconnected = false;
 	m_ImageCollection.InitializeObjects(m_svoArchiveImageNames);
 	m_ImageCollection.ValidateImageObjects();	// makes sure the images are connected as inputs
-
 	m_ResultCollection.InitializeObjects(m_svoArchiveResultNames);
 	//the next line is needed to reset the names if objects have changed (e.g. because an array has become a single value).
-
 	refreshResultArchiveList(assembleResultReferenceVector());
 	m_removeEntriesIfDisconnected = true;
 	m_ResultCollection.ValidateResultsObjects();	// makes sure the results are connected as inputs
@@ -734,8 +732,10 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector* pErrorMe
 					for (const auto& iter : bufferMap)
 					{
 						long bufferNumber = iter.second * dwMaxImages;
-						__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
-						hrAllocate = SVMemoryManager::Instance().ReserveMemory(getObjectId(), l_lImageBufferSize);
+						__int64 imageBufferSize = getBufferSize(iter.first) * bufferNumber;
+
+						hrAllocate = SVMemoryManager::Instance().ReserveMemory(getObjectId(), imageBufferSize);
+
 						if (S_OK != hrAllocate)
 						{
 							if (nullptr != pErrorMessages)

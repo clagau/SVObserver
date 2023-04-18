@@ -22,8 +22,6 @@ namespace  SvXml
 {
 HRESULT SVOCMLoadConfiguration(unsigned long& ulSVOConfigVersion, LPCTSTR FileName, SVXMLMaterialsTree& p_rTree)
 {
-
-
 	SvXml::SaxExtractPropertiesHandler   SaxExtractHandler;
 	HRESULT hrOK = SaxExtractHandler.ExtractProperties(FileName, ulSVOConfigVersion);
 
@@ -42,9 +40,8 @@ HRESULT SVOCMLoadConfiguration(unsigned long& ulSVOConfigVersion, LPCTSTR FileNa
 			SvXml::SaxXMLHandler  SaxHandler;
 			hrOK = SaxHandler.BuildFromXMLFile(&p_rTree, FileName);
 		}
-
-
 	}
+
 	return hrOK;
 }
 
