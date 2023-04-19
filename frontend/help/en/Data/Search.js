@@ -1,1 +1,0 @@
-define({r:0.5,st:'Stem',n:1,t:[0],m:[],u:['../Content/General structure/General structure.htm'],s:['$','dynam','noth','thousand'],p:[['$',47],['an',64],['been',62],['conditions',64],['disclaim',48],['finished',20],['iii',64],['items',49],['menus',13],['of',65],['perform',61],['reproduce',58],['source',55],['the',36],['to',64],['what',45]]});
