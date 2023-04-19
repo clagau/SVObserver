@@ -26,18 +26,18 @@ SV_IMPLEMENT_CLASS(DoubleSortValueObject, SvPb::DoubleSortValueClassId);
 
 #pragma region Constructor
 DoubleSortValueObject::DoubleSortValueObject(LPCTSTR ObjectName)
-	: SVDoubleValueObjectClass(ObjectName) 
+	: SVDoubleValueObjectClass(ObjectName)
 {
 	LocalInitialize();
 }
 
 DoubleSortValueObject::DoubleSortValueObject(SVObjectClass* POwner, int StringResourceID)
-	: SVDoubleValueObjectClass(POwner, StringResourceID) 
+	: SVDoubleValueObjectClass(POwner, StringResourceID)
 {
 	LocalInitialize();
 }
 
-DoubleSortValueObject::DoubleSortValueObject( const DoubleSortValueObject& rhs )
+DoubleSortValueObject::DoubleSortValueObject(const DoubleSortValueObject& rhs)
 	: SVDoubleValueObjectClass()
 {
 	LocalInitialize();
@@ -83,7 +83,7 @@ HRESULT DoubleSortValueObject::setSortContainerDummy(const DummySortContainer& r
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Index )
+HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Index)
 {
 
 	if (m_DummySortContainer.bIsActive)
@@ -94,15 +94,15 @@ HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Index )
 			return SVValueObjectClass<double>::SetValue(rValue, Index);
 		}
 	}
-	else if (0 <= Index && m_spSortContainer.get()&& m_spSortContainer->size() > Index)
+	else if (0 <= Index && m_spSortContainer.get() && m_spSortContainer->size() > Index)
 	{
 		setHasChanged(true);
-		return SVValueObjectClass<double>::SetValue( rValue, m_spSortContainer->at(Index));
+		return SVValueObjectClass<double>::SetValue(rValue, m_spSortContainer->at(Index));
 	}
 	return E_FAIL;
 }
 
-HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
+HRESULT DoubleSortValueObject::GetValue(double& rValue, int Index) const
 {
 	//! When Value Object is an array and index is -1 then use first index
 	if (0 > Index)
@@ -110,7 +110,7 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
 		Index = 0;
 	}
 	rValue = 0.0;
-	if(0 <= Index)
+	if (0 <= Index)
 	{
 		if (m_DummySortContainer.bIsActive)
 		{
@@ -124,7 +124,7 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
 			Index = m_spSortContainer->at(Index);
 			return SVValueObjectClass<double>::GetValue(rValue, Index);
 		}
-		
+
 		return E_BOUNDS;
 	}
 	return E_FAIL;
@@ -136,7 +136,7 @@ HRESULT DoubleSortValueObject::SetArrayValues(const ValueVector& rValues)
 
 	int32_t Size = static_cast<int32_t> (rValues.size());
 	Log_Assert(Size <= getArraySize());
- 	if (Size <= m_doubleData.size())
+	if (Size <= m_doubleData.size())
 	{
 		SetResultSize(Size);
 		if (0 < Size && m_DummySortContainer.bIsActive)
@@ -161,15 +161,15 @@ HRESULT DoubleSortValueObject::SetArrayValues(const ValueVector& rValues)
 	return Result;
 }
 
-HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues) const
+HRESULT DoubleSortValueObject::getValues(std::vector<_variant_t>& rValues) const
 {
-	HRESULT Result( S_OK );
+	HRESULT Result(S_OK);
 
 	int ResultSize = getResultSize();
-	Log_Assert( ResultSize <= getArraySize() );
-	rValues.resize( ResultSize );
+	Log_Assert(ResultSize <= getArraySize());
+	rValues.resize(ResultSize);
 	_variant_t Value;
-	for( int i=0; i < ResultSize && S_OK == Result; i++ )
+	for (int i = 0; i < ResultSize && S_OK == Result; i++)
 	{
 		//must be get once by once, because values can be disorder and not in a row.
 		Result = getValue(Value, i);
@@ -205,7 +205,7 @@ void DoubleSortValueObject::updateMemBlockData()
 		{
 			uint8_t* pMemoryLocation = m_pMemBlockData;
 			std::vector<double> sortedResult;
-			if(S_OK == GetArrayValues(sortedResult) && dataByteSize == static_cast<int32_t> (sortedResult.size() * sizeof(double)))
+			if (S_OK == GetArrayValues(sortedResult) && dataByteSize == static_cast<int32_t> (sortedResult.size() * sizeof(double)))
 			{
 				memcpy(pMemoryLocation, &sortedResult.at(0), dataByteSize);
 			}
@@ -219,7 +219,7 @@ void DoubleSortValueObject::updateMemBlockData()
 			///Clear the memory block data
 			memset(m_pMemBlockData, 0, getMemSizeReserved());
 			setHasChanged(false);
-			if(0 < dataByteSize)
+			if (0 < dataByteSize)
 			{
 				///Memory block reserved for value object is to small. This should not happen!
 				Log_Assert(false);
@@ -235,8 +235,8 @@ HRESULT DoubleSortValueObject::GetArrayValues(std::vector<double>& rValues) cons
 	HRESULT Result(S_OK);
 
 	int resultSize = getResultSize();
-	Log_Assert( resultSize <= getArraySize() );
-	rValues.resize( resultSize );
+	Log_Assert(resultSize <= getArraySize());
+	rValues.resize(resultSize);
 	if (m_DummySortContainer.bIsActive && m_doubleData.size())
 	{
 		std::copy(m_doubleData.begin(), m_doubleData.begin() + resultSize, rValues.begin());
@@ -244,7 +244,7 @@ HRESULT DoubleSortValueObject::GetArrayValues(std::vector<double>& rValues) cons
 	else
 	{
 		double value = 0;
-		for (int i=0; i < resultSize && S_OK==Result; i++)
+		for (int i = 0; i < resultSize && S_OK == Result; i++)
 		{
 			//must get one by one, because values can be disordered
 			Result = GetValue(value, i);
@@ -268,17 +268,14 @@ double* DoubleSortValueObject::reserveLocalMemory()
 	}
 	return pResult;
 }
-void  DoubleSortValueObject::clearMemoryBlockPointer() 
+void  DoubleSortValueObject::clearMemoryBlockPointer()
 {
-	if (-1 == m_memOffset)
-	{
-		m_pMemBlockData = nullptr;
-		m_pResultSize = nullptr;
-	}
+	m_pMemBlockData = nullptr;
+	m_pResultSize = nullptr;
 }
 
-size_t DoubleSortValueObject::getSortContainerSize() const 
-{ 
+size_t DoubleSortValueObject::getSortContainerSize() const
+{
 	if (m_DummySortContainer.bIsActive)
 	{
 		return m_DummySortContainer.SimpleSize;
@@ -309,7 +306,7 @@ size_t  DoubleSortValueObject::getSortContainerCapacity() const
 }
 int32_t  DoubleSortValueObject::getResultSize() const
 {
-	int32_t result{static_cast<int32_t> (getSortContainerSize())};
+	int32_t result {static_cast<int32_t> (getSortContainerSize())};
 	return result;
 }
 
@@ -319,7 +316,7 @@ HRESULT DoubleSortValueObject::ValidateIndex(int ArrayIndex) const
 
 	///The array index for double sort can be out of range as long as it is smaller than the array size
 	///Note the base function already tests that the array index > 0
-	if(SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result && ArrayIndex < getArraySize())
+	if (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result && ArrayIndex < getArraySize())
 	{
 		result = S_OK;
 	}
@@ -333,7 +330,7 @@ HRESULT DoubleSortValueObject::ValidateIndex(int ArrayIndex) const
 void DoubleSortValueObject::LocalInitialize()
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::DoubleSortValueObjectType;
-	SetTypeName( _T("Decimal") );
+	SetTypeName(_T("Decimal"));
 
 	//normally the DoubleSortValueObject is a result value and should not be print. 
 	//If a parameter should be printed, it has to be set after creating.

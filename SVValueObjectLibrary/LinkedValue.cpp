@@ -549,6 +549,11 @@ bool LinkedValue::isCorrectType(SvPb::ObjectSelectorType requiredType) const
 {
 	try
 	{
+		if (SvPb::ObjectSelectorType::toolObjects == requiredType && m_valueType == SvPb::TypeStates)
+		{
+			return true;
+		}
+
 		if (VT_EMPTY != GetDefaultType())
 		{
 			return __super::isCorrectType(requiredType);

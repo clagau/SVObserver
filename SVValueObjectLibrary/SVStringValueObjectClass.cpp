@@ -243,6 +243,12 @@ std::string* SVStringValueObjectClass::reserveLocalMemory()
 	return pResult;
 }
 
+void  SVStringValueObjectClass::clearMemoryBlockPointer()
+{
+	m_pMemBlockData = nullptr;
+	m_pResultSize = nullptr;
+} 
+
 int32_t SVStringValueObjectClass::getByteSize(bool useResultSize, bool memBlockData) const
 {
 	int32_t result(0L);

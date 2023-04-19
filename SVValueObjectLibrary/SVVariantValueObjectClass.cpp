@@ -32,43 +32,42 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVVariantValueObjectClass, SvPb::VariantValueClassId);
 
-SVVariantValueObjectClass::SVVariantValueObjectClass( LPCTSTR ObjectName )
-: SVValueObjectClass<_variant_t>( ObjectName ) 
+SVVariantValueObjectClass::SVVariantValueObjectClass(LPCTSTR ObjectName)
+	: SVValueObjectClass<_variant_t>(ObjectName)
 {
 	LocalInitialize();
 }
 
-SVVariantValueObjectClass::SVVariantValueObjectClass( SVObjectClass* pOwner, int StringResourceID )
-: SVValueObjectClass<_variant_t>( pOwner, StringResourceID )
+SVVariantValueObjectClass::SVVariantValueObjectClass(SVObjectClass* pOwner, int StringResourceID)
+	: SVValueObjectClass<_variant_t>(pOwner, StringResourceID)
 {
 	LocalInitialize();
 }
 
-SVVariantValueObjectClass::SVVariantValueObjectClass( const SVVariantValueObjectClass& rhs )
-: SVValueObjectClass<_variant_t>()
+SVVariantValueObjectClass::SVVariantValueObjectClass(const SVVariantValueObjectClass& rhs)
+	: SVValueObjectClass<_variant_t>()
 {
 	LocalInitialize();
 	*this = rhs;
 }
 
-SVVariantValueObjectClass& SVVariantValueObjectClass::operator = (const SVVariantValueObjectClass& rhs )
+SVVariantValueObjectClass& SVVariantValueObjectClass::operator = (const SVVariantValueObjectClass& rhs)
 {
 	__super::operator = (rhs);
 	return *this;
 }
 
 SVVariantValueObjectClass::~SVVariantValueObjectClass()
-{
-}
+{}
 
 HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
-	HRESULT Result( E_FAIL );
+	HRESULT Result(E_FAIL);
 
 	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
 	ValueVector ValueArray;
-	
-	bool bOk{pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue())};
+
+	bool bOk {pDataObject->GetArrayData(SvDef::cArrayTag, ValueArray, DefaultValue())};
 	// new-style: store all array elements:
 	if (bOk)
 	{
@@ -77,37 +76,37 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		for (int32_t i = 0; i < arraySize; i++)
 		{
 			_variant_t& rValue = ValueArray[i];
-			if( rValue.vt == VT_BSTR )
+			if (rValue.vt == VT_BSTR)
 			{
-				std::string Temp = SvUl::createStdString( rValue.bstrVal );
-				if ( SvUl::RemoveEscapedSpecialCharacters(Temp, true) )
+				std::string Temp = SvUl::createStdString(rValue.bstrVal);
+				if (SvUl::RemoveEscapedSpecialCharacters(Temp, true))
 				{
-					rValue.SetString( Temp.c_str() );
+					rValue.SetString(Temp.c_str());
 				}
 			}
 			SetValue(rValue, i);
 		}
 	}
-	else if(true == (bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ValueArray)))
+	else if (true == (bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ValueArray)))
 	{
-		if ( 0 < ValueArray.size() )
+		if (0 < ValueArray.size())
 		{
-			DefaultValue() = ValueArray[ValueArray.size()-1];
+			DefaultValue() = ValueArray[ValueArray.size() - 1];
 		}
 	}
-	else if(true == (bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), BucketArray, DefaultValue())))
+	else if (true == (bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), BucketArray, DefaultValue())))
 	{
 		int32_t arraySize = static_cast<int32_t> (ValueArray.size());
 		SetArraySize(arraySize);
-		for(int32_t i = 0 ; i < BucketArray.size(); i++ )
+		for (int32_t i = 0; i < BucketArray.size(); i++)
 		{
 			_variant_t& rValue = BucketArray[i][0];
-			if( rValue.vt == VT_BSTR )
+			if (rValue.vt == VT_BSTR)
 			{
-				std::string Temp = SvUl::createStdString( rValue.bstrVal );
-				if ( SvUl::RemoveEscapedSpecialCharacters( Temp, true ) )
+				std::string Temp = SvUl::createStdString(rValue.bstrVal);
+				if (SvUl::RemoveEscapedSpecialCharacters(Temp, true))
 				{
-					rValue.SetString( Temp.c_str() );
+					rValue.SetString(Temp.c_str());
 				}
 			}
 			SetValue(rValue, i);
@@ -145,7 +144,7 @@ HRESULT SVVariantValueObjectClass::SetArrayValues(const ValueVector& rValues)
 	if (Size <= m_variantData.size())
 	{
 		SetResultSize(Size);
-		if(0 < Size)
+		if (0 < Size)
 		{
 			std::copy(rValues.begin(), rValues.end(), m_variantData.begin());
 			setHasChanged(true);
@@ -167,7 +166,7 @@ HRESULT SVVariantValueObjectClass::SetArrayValues(const ValueVector& rValues)
 HRESULT SVVariantValueObjectClass::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 {
 	HRESULT hres = __super::SetDefaultValue(rValue, bResetAll);
-	
+
 	if (-1 != getMemOffset() && getMemSizeReserved() != getByteSize(false, false))
 	{
 		setTrData(-1L, -1L, -1L);
@@ -267,9 +266,9 @@ void SVVariantValueObjectClass::updateMemBlockData()
 			{
 				///Memory block reserved for value object is to small. This should not happen!
 				//Log_Assert(false);
-				#ifdef _DEBUG
+#ifdef _DEBUG
 				OutputDebugString("Memory block reserved for value object is to small. This should not happen!");
-				#endif 
+#endif 
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 			}
@@ -284,14 +283,14 @@ HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Index)
 	_variant_t vtTemp;
 	vtTemp = Value;
 
-	if( VT_EMPTY != DefaultValue().vt )
+	if (VT_EMPTY != DefaultValue().vt)
 	{
-		hr = ::VariantChangeTypeEx( &vtTemp, &vtTemp, SvDef::LCID_USA, 0, DefaultValue().vt );
+		hr = ::VariantChangeTypeEx(&vtTemp, &vtTemp, SvDef::LCID_USA, 0, DefaultValue().vt);
 	}
 
-	if( S_OK == hr)
+	if (S_OK == hr)
 	{
-		hr = __super::SetValue( vtTemp, Index );
+		hr = __super::SetValue(vtTemp, Index);
 	}
 
 	return hr;
@@ -302,19 +301,19 @@ bool SVVariantValueObjectClass::isArray() const
 	return __super::isArray() || 0 != (GetDefaultType() & VT_ARRAY);
 }
 
-std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript )
+std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript)
 {
 	std::string Result;
 	_variant_t vt = rValue;
 
 
-	switch ( vt.vt )
+	switch (vt.vt)
 	{
 		case VT_EMPTY:
 		{
-			if ( bScript )
+			if (bScript)
 			{
-				Result = std::format( _T("{:d}, "), vt.vt );
+				Result = std::format(_T("{:d}, "), vt.vt);
 				Result += _T("0");
 			}
 			break;
@@ -322,24 +321,24 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 
 		case VT_BSTR:
 		{
-			if ( bScript )
+			if (bScript)
 			{
-				std::string Temp = SvUl::createStdString( rValue.bstrVal );
-				SvUl::AddEscapeSpecialCharacters( Temp, true );
+				std::string Temp = SvUl::createStdString(rValue.bstrVal);
+				SvUl::AddEscapeSpecialCharacters(Temp, true);
 				Result = std::format(_T("{:d}, \"{}\""), vt.vt, Temp);
 			}
 			else
 			{
-				Result += SvUl::createStdString( rValue.bstrVal );
+				Result += SvUl::createStdString(rValue.bstrVal);
 			}
 		}
 		break;
 
 		default:
 		{
-			if( VT_ARRAY == (vt.vt & VT_ARRAY) )
+			if (VT_ARRAY == (vt.vt & VT_ARRAY))
 			{
-				if( bScript)
+				if (bScript)
 				{
 					Result = "0, 0";
 				}
@@ -348,22 +347,22 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 			{
 				VARTYPE l_OldType = vt.vt;
 				HRESULT hr = ::VariantChangeTypeEx(&vt, &vt, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
-				if ( S_OK == hr )
+				if (S_OK == hr)
 				{
-					if( bScript)
+					if (bScript)
 					{
 						Result = std::format(_T("{:d}, "), l_OldType);
 					}
 
-					Result += SvUl::createStdString( rValue.bstrVal );
-					if( VT_BOOL == rValue.vt )
+					Result += SvUl::createStdString(rValue.bstrVal);
+					if (VT_BOOL == rValue.vt)
 					{
 						Result = SvUl::MakeUpper(Result.c_str());
 					}
 				}
 				else
 				{
-					if( bScript)
+					if (bScript)
 					{
 						Result = "0, 0";
 					}
@@ -377,7 +376,7 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 
 _variant_t* SVVariantValueObjectClass::reserveLocalMemory()
 {
-	_variant_t* pResult{nullptr};
+	_variant_t* pResult {nullptr};
 
 	if (m_variantData.size() != static_cast<size_t> (getArraySize()))
 	{
@@ -391,11 +390,8 @@ _variant_t* SVVariantValueObjectClass::reserveLocalMemory()
 }
 void  SVVariantValueObjectClass::clearMemoryBlockPointer()
 {
-	if (-1 == m_memOffset)
-	{
-		m_pResultSize = nullptr;
-		m_pMemBlockData = nullptr;
-	}
+	m_pResultSize = nullptr;
+	m_pMemBlockData = nullptr;
 }
 
 double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) const
@@ -404,28 +400,28 @@ double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) con
 
 	switch (rValue.vt)
 	{
-	case VT_BOOL:
-		Result = rValue.boolVal ? 1.0 : 0.0;
-		break;
-	case VT_I1:
-	case VT_UI1:
-	case VT_I2:
-	case VT_UI2:
-	case VT_I4:
-	case VT_UI4:
-	case VT_I8:
-	case VT_UI8:
-	case VT_INT:
-	case VT_UINT:
-		Result = static_cast<double> (rValue);
-		break;
-	case VT_R8:
-		Result = rValue.dblVal;
-		break;
-	case VT_BSTR:
-		std::string Value = SvUl::createStdString(rValue);
-		Result = atof( Value.c_str() );
-		break;
+		case VT_BOOL:
+			Result = rValue.boolVal ? 1.0 : 0.0;
+			break;
+		case VT_I1:
+		case VT_UI1:
+		case VT_I2:
+		case VT_UI2:
+		case VT_I4:
+		case VT_UI4:
+		case VT_I8:
+		case VT_UI8:
+		case VT_INT:
+		case VT_UINT:
+			Result = static_cast<double> (rValue);
+			break;
+		case VT_R8:
+			Result = rValue.dblVal;
+			break;
+		case VT_BSTR:
+			std::string Value = SvUl::createStdString(rValue);
+			Result = atof(Value.c_str());
+			break;
 	}
 	return Result;
 }
@@ -440,7 +436,7 @@ _variant_t SVVariantValueObjectClass::Variant2ValueType(const _variant_t& rValue
 	return result;
 }
 
-_variant_t SVVariantValueObjectClass::ConvertString2Type( const std::string& rValue ) const
+_variant_t SVVariantValueObjectClass::ConvertString2Type(const std::string& rValue) const
 {
 	return ConvertString2Type(rValue, GetDefaultValue());
 }
@@ -464,17 +460,17 @@ _variant_t SVVariantValueObjectClass::ConvertString2Type(const std::string& rVal
 	return Result;
 }
 
-std::string SVVariantValueObjectClass::ConvertType2String( const _variant_t& rValue ) const
+std::string SVVariantValueObjectClass::ConvertType2String(const _variant_t& rValue) const
 {
 	std::string Result;
 
-	switch ( rValue.vt )
+	switch (rValue.vt)
 	{
-	case VT_BSTR:
-		Result = SvUl::createStdString( rValue );
-		break;
+		case VT_BSTR:
+			Result = SvUl::createStdString(rValue);
+			break;
 
-	default:
+		default:
 		{
 			if (0 == (rValue.vt & VT_ARRAY))
 			{
@@ -511,50 +507,50 @@ int32_t SVVariantValueObjectClass::getByteSize(bool useResultSize, bool memBlock
 	GetValue(value, 0);
 	switch (value.vt)
 	{
-	case VT_BOOL:
-		result = sizeof(VARIANT::boolVal);
-		break;
-	case VT_I1:
-		result = sizeof(VARIANT::cVal);
-		break;
-	case VT_UI1:
-		result = sizeof(VARIANT::bVal);
-		break;
-	case VT_I2:
-		result = sizeof(VARIANT::iVal);
-		break;
-	case VT_UI2:
-		result = sizeof(VARIANT::uiVal);
-		break;
-	case VT_I4:
-		result = sizeof(VARIANT::lVal);
-		break;
-	case VT_UI4:
-		result = sizeof(VARIANT::ulVal);
-		break;
-	case VT_I8:
-		result = sizeof(VARIANT::llVal);
-		break;
-	case VT_UI8:
-		result = sizeof(VARIANT::ullVal);
-		break;
-	case VT_INT:
-		result = sizeof(VARIANT::intVal);
-		break;
-	case VT_UINT:
-		result = sizeof(VARIANT::uintVal);
-		break;
-	case VT_R4:
-		result = sizeof(VARIANT::fltVal);
-		break;
-	case VT_R8:
-		result = sizeof(VARIANT::dblVal);
-		break;
-	case VT_BSTR:
-		result = getMaxTextSize();
-		break;
-	default:
-		break;
+		case VT_BOOL:
+			result = sizeof(VARIANT::boolVal);
+			break;
+		case VT_I1:
+			result = sizeof(VARIANT::cVal);
+			break;
+		case VT_UI1:
+			result = sizeof(VARIANT::bVal);
+			break;
+		case VT_I2:
+			result = sizeof(VARIANT::iVal);
+			break;
+		case VT_UI2:
+			result = sizeof(VARIANT::uiVal);
+			break;
+		case VT_I4:
+			result = sizeof(VARIANT::lVal);
+			break;
+		case VT_UI4:
+			result = sizeof(VARIANT::ulVal);
+			break;
+		case VT_I8:
+			result = sizeof(VARIANT::llVal);
+			break;
+		case VT_UI8:
+			result = sizeof(VARIANT::ullVal);
+			break;
+		case VT_INT:
+			result = sizeof(VARIANT::intVal);
+			break;
+		case VT_UINT:
+			result = sizeof(VARIANT::uintVal);
+			break;
+		case VT_R4:
+			result = sizeof(VARIANT::fltVal);
+			break;
+		case VT_R8:
+			result = sizeof(VARIANT::dblVal);
+			break;
+		case VT_BSTR:
+			result = getMaxTextSize();
+			break;
+		default:
+			break;
 	}
 
 	int32_t numberOfElements = useResultSize ? getResultSize() : getArraySize();
@@ -589,7 +585,7 @@ void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 			SvUl::AddEscapeSpecialCharacters(temp, true);
 			Value.SetString(temp.c_str());
 		}
-			
+
 		// The parser does not like reading in empty safe array.
 		// Therefore if an empty array is detected then set the variant type to VT_EMPTY.
 		// 
@@ -602,7 +598,7 @@ void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 			if (dim > 0)
 			{
 				HRESULT hr = ::SafeArrayGetLBound(Value.parray, 1, &lBound);
-				if(S_OK == hr)
+				if (S_OK == hr)
 				{
 					hr = ::SafeArrayGetUBound(Value.parray, 1, &uBound);
 				}
@@ -633,7 +629,7 @@ void SVVariantValueObjectClass::LocalInitialize()
 	m_ObjectTypeInfo.m_SubType = SvPb::SVVariantValueObjectType;
 	DefaultValue().Clear();
 
-	SetTypeName( _T("Variant") );
+	SetTypeName(_T("Variant"));
 
 	init();
 }

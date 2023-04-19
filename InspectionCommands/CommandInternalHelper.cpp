@@ -292,6 +292,7 @@ void SvOi::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem
 		case SvPb::LinkedValueTypeEnum::TypeStates:
 		{
 			type = SvPb::toolObjects;
+			attribute = SvPb::viewable;
 			break;
 		}
 		default:
