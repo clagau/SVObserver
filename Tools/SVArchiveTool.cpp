@@ -1234,42 +1234,44 @@ void SVArchiveTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const s
 		replaceType = ReplaceType::Search;
 	}
 
-
-	int iSize = m_svoArchiveResultNames.getResultSize();
-
-	for (int i = 0; i < iSize; i++)
+	for (auto pNameList : {&m_svoArchiveResultNames, &m_svoArchiveImageNames})
 	{
-		std::string Name;
-		m_svoArchiveResultNames.GetValue(Name, i);
+		int iSize = pNameList->getResultSize();
 
-		switch (replaceType)
+		for (int i = 0; i < iSize; i++)
 		{
-			case ReplaceType::Search:
-				SvUl::searchAndReplace(Name, oldPrefix.c_str(), newPrefix.c_str());
-				break;
-			case ReplaceType::First:
-				if (0 == Name.compare(0, oldPrefix.length(), oldPrefix))
-				{
-					Name.replace(0, oldPrefix.length(), newPrefix);
-				}
-				break;
-			case ReplaceType::Full:
+			std::string Name;
+			pNameList->GetValue(Name, i);
+
+			switch (replaceType)
 			{
-				std::string indirectTmp = Name;
-				size_t pos = indirectTmp.find('[');
-				if (std::string::npos != pos)
-				{	//if array ("[x]") in the name, remove it for the check
-					indirectTmp = indirectTmp.substr(0, pos);
-				}
-				//only replace the name if it is the full name. Do NOT replace parts of the name, because then it is another object with a similar name.
-				if (oldPrefix == indirectTmp)
-				{
+				case ReplaceType::Search:
 					SvUl::searchAndReplace(Name, oldPrefix.c_str(), newPrefix.c_str());
+					break;
+				case ReplaceType::First:
+					if (0 == Name.compare(0, oldPrefix.length(), oldPrefix))
+					{
+						Name.replace(0, oldPrefix.length(), newPrefix);
+					}
+					break;
+				case ReplaceType::Full:
+				{
+					std::string indirectTmp = Name;
+					size_t pos = indirectTmp.find('[');
+					if (std::string::npos != pos)
+					{	//if array ("[x]") in the name, remove it for the check
+						indirectTmp = indirectTmp.substr(0, pos);
+					}
+					//only replace the name if it is the full name. Do NOT replace parts of the name, because then it is another object with a similar name.
+					if (oldPrefix == indirectTmp)
+					{
+						SvUl::searchAndReplace(Name, oldPrefix.c_str(), newPrefix.c_str());
+					}
 				}
+				break;
 			}
-			break;
+			pNameList->SetValue(Name, i);
 		}
-		m_svoArchiveResultNames.SetValue(Name, i);
 	}
 
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
