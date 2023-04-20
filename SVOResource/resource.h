@@ -2180,7 +2180,6 @@
 #define IDC_FIXEDEDIT                   15917
 #define IDC_SIZE_EDIT                   15917
 #define IDC_FIRSTPEAK_RANGE             15918
-#define IDC_VALUE_OBJECT_NAME_COMBO     15919
 #define IDC_VALLEYCOLOR                 15920
 #define IDC_BLOCK_SIZE_EDIT             15920
 #define IDC_QUEUE_SIZE_EDIT             15921

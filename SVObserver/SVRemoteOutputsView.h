@@ -43,6 +43,8 @@ protected:
 	afx_msg void OnRemoteOutputEdit();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 
+	uint32_t selectObject(uint32_t selectedId);
+
 private:
 	CListCtrl& m_rCtrl;
 	SVIODoc* m_pDocument;

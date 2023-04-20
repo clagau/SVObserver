@@ -12,41 +12,29 @@
 
 #pragma region Includes
 #include "Definitions/ObjectDefines.h"
-#include "SVIOLibrary/SVIOEntryHostStruct.h"
-
 #pragma endregion Includes
-
-class SVRemoteOutputObject;
 
 class SVRemoteOutputEditDialog : public CDialog
 {
 	public:
 	enum { IDD = IDD_REMOTE_OUTPUT_EDIT };
 	std::string  m_GroupName;
-	std::string m_ValueObjectSourceName;
-
-protected:
-	virtual BOOL OnInitDialog() override;
-	virtual void OnCancel() override;
-	virtual void OnOK() override;
-	virtual void DoDataExchange(CDataExchange* pDX) override;
-	afx_msg void OnCbnSelchangeValueObjectNameCombo();
-	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
-
-	DECLARE_MESSAGE_MAP()
+	uint32_t m_InputObjectID = SvDef::InvalidObjectId;
 
 public:
 	SVRemoteOutputEditDialog(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRemoteOutputEditDialog();
 
-	uint32_t m_InputObjectID = SvDef::InvalidObjectId;
-	SVIOEntryHostStructPtr m_TriggerCount;
-
 protected:
-	void UpdateValueObjectFromCombo();
+	virtual BOOL OnInitDialog() override;
+	virtual void DoDataExchange(CDataExchange* pDX) override;
+	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
+	void OnObjectSelector();
+
+	DECLARE_MESSAGE_MAP()
 
 private:
-	CComboBox m_ValueObjectNameCombo;
-	std::map<unsigned long, SVIOEntryHostStructPtr> m_Items;
+	CComboBox	m_inspectionCtrl;
+	CString		m_IOName;
 };
 

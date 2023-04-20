@@ -666,7 +666,6 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 
 		// The User clicked on the Item
 		dlg.m_GroupName = pRemoteOutput->GetGroupID();
-		dlg.m_ValueObjectSourceName = pRemoteOutput->GetInputValueObjectName();
 		dlg.m_InputObjectID = pRemoteOutput->GetInputValueObjectID(  );
 
 		// if this is the first (Trigger Count) item in the list then gray out the object.
