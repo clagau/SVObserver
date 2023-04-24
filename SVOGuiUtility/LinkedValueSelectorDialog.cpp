@@ -98,7 +98,7 @@ void LinkedValueSelectorDialog::Init()
 	if (m_LinkedValueType == SvPb::LinkedValueTypeEnum::TypeStates)
 	{
 		m_CanFormula = false;
-		m_CanValue = false;
+		m_CanValue = true;
 		// cppcheck-suppress redundantAssignment
 		m_CanDefaultState = true;
 	}

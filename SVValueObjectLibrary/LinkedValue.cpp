@@ -1581,14 +1581,17 @@ bool LinkedValue::checkLinkedObjectRef(SvStl::MessageContainerVector* pErrorMess
 		case SvPb::TypeStates:
 			if (SvPb::SVToolObjectType != pLinkedObject->GetObjectType())
 			{
-				if (nullptr != pErrorMessages)
+				if (auto* pTmp = dynamic_cast<LinkedValue*>(pLinkedObject); nullptr == pTmp || SvPb::TypeStates != pTmp->getValueType())
 				{
-					SvDef::StringVector msgList;
-					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTool));
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-					pErrorMessages->push_back(Msg);
+					if (nullptr != pErrorMessages)
+					{
+						SvDef::StringVector msgList;
+						msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTool));
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongValueType, msgList, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+					return false;
 				}
-				return false;
 			}
 			break;
 		default:
@@ -1764,32 +1767,41 @@ bool LinkedValue::updateLinkedValue(SVObjectReference& LinkedObjectRef, SvStl::M
 				break;
 			}
 			default:
-				m_children.clear();
-				m_childrenIds.clear();
-				if (0 != (GetDefaultType() & VT_ARRAY))
+			{
+				if (auto* pLinkValue = dynamic_cast<LinkedValue*>(pLinkedObject); nullptr != pLinkValue && SvPb::LinkedValueTypeEnum::TypeStates == pLinkValue->getValueType())
 				{
-					if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(pLinkedObject); nullptr != pValue)
-					{
-						if (-1 == m_LinkedObjectRef.getIndex())
-						{
-							SetArraySize(pValue->getArraySize());
-						}
-						else
-						{
-							SetArraySize(1);
-						}
-					}
+					Result = useChildrenFromLinked(pLinkValue, pErrorMessages);
 				}
-				if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(m_LinkedObjectRef.getObject()); nullptr != pValue && SvUl::VTGroups::Text == SvUl::getVTGroup(pValue->getDefaultValue().vt).first && SvUl::VTGroups::Text != SvUl::getVTGroup(GetDefaultType()).first)
+				else
 				{
-					if (nullptr != pErrorMessages)
+					m_children.clear();
+					m_childrenIds.clear();
+					if (0 != (GetDefaultType() & VT_ARRAY))
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-						pErrorMessages->push_back(Msg);
+						if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(pLinkedObject); nullptr != pValue)
+						{
+							if (-1 == m_LinkedObjectRef.getIndex())
+							{
+								SetArraySize(pValue->getArraySize());
+							}
+							else
+							{
+								SetArraySize(1);
+							}
+						}
 					}
-					return false;
+					if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(m_LinkedObjectRef.getObject()); nullptr != pValue && SvUl::VTGroups::Text == SvUl::getVTGroup(pValue->getDefaultValue().vt).first && SvUl::VTGroups::Text != SvUl::getVTGroup(GetDefaultType()).first)
+					{
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+							pErrorMessages->push_back(Msg);
+						}
+						return false;
+					}
 				}
 				break;
+			}
 		}
 	}
 	return Result;
@@ -1970,6 +1982,18 @@ void LinkedValue::setSelectedOption(SvPb::LinkedSelectedOption option)
 		m_refOption = option;
 		m_refOptionObject.SetValue(option);
 	}
+}
+
+bool LinkedValue::useChildrenFromLinked(const LinkedValue* const pLinkedValue, SvStl::MessageContainerVector* pErrorMessages)
+{
+	m_children.resize(pLinkedValue->m_children.size());
+	SVObjectLevelCreateStruct createStruct(*this);
+	bool result = true;
+	for (int i = 0; i < pLinkedValue->m_children.size(); ++i)
+	{
+		result = resetChild(i, pLinkedValue->m_children[i].get(), pErrorMessages, createStruct) && result;
+	}
+	return result;
 }
 
 bool LinkedValue::resetChildren(const SVObjectClass* const pLinkedObject, const std::vector<SvPb::EmbeddedIdEnum>& rEmbeddedIdList, SvStl::MessageContainerVector* pErrorMessages)

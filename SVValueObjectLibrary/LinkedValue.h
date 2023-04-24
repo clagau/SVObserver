@@ -126,6 +126,7 @@ public:
 	virtual void setChildIds(const std::vector<uint32_t>& rObjectIds) override;
 
 	void setValueType(SvPb::LinkedValueTypeEnum type);
+	SvPb::LinkedValueTypeEnum getValueType() const { return m_valueType; };
 	void setExcludeSameLineageListForObjectSelector(std::vector<SvOi::IObjectClass*> value) { m_excludeSameLineageList = std::move(value); };
 	virtual UINT ObjectAttributesAllowed() const override;
 #pragma endregion Public Methods
@@ -181,6 +182,7 @@ private:
 
 	void setSelectedOption(SvPb::LinkedSelectedOption option);
 
+	bool useChildrenFromLinked(const LinkedValue* const pLinkedValue, SvStl::MessageContainerVector* pErrorMessages);
 	bool resetChildren(const SVObjectClass* const pLinkedObject, const std::vector<SvPb::EmbeddedIdEnum>& rEmbeddedIdList, SvStl::MessageContainerVector* pErrorMessages);
 	bool resetChild(int pos, SvOi::IValueObject* pValue, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct);
 
