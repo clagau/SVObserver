@@ -297,20 +297,19 @@ volatile long* DataControllerReader::getResetLockCounterRef()
 
 const SvPb::InspectionList& DataControllerReader::getInspections() const 
 {
-	isUpToDate();
 	return m_inspectionList; 
 }
 
 const SvPb::ImageStructList& DataControllerReader::getImageStructList() const 
 {
-	isUpToDate();
 	return m_imageStructList; 
 }
 
 SvOi::ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
 {
 	std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
-	if (isUpToDate() && 0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos]->getBasicData().m_bInit)
+	isUpToDateException();
+	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
 		TRControllerReaderDataPerIP* pIPData = m_dataVector[inspectionPos].get();
 		if (nullptr != pIPData && validFunc)
@@ -425,21 +424,27 @@ std::vector<SvOi::ITriggerRecordRPtr> DataControllerReader::getTRsOfInterest(int
 TRControllerBaseDataPerIP* DataControllerReader::getTRControllerData(int inspectionId)
 {
 	std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
-	if (isUpToDate() && 0 <= inspectionId && m_dataVector.size() > inspectionId)
+	isUpToDateException();
+	if (0 > inspectionId || m_dataVector.size() <= inspectionId)
 	{
-		return m_dataVector[inspectionId].get();
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
 	}
-	return nullptr;
+	return m_dataVector[inspectionId].get();
 }
 
 const TRControllerBaseDataPerIP* DataControllerReader::getTRControllerData(int inspectionId) const
 {
 	std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
-	if (isUpToDate() && 0 <= inspectionId && m_dataVector.size() > inspectionId)
+	isUpToDateException();
+	if (0 > inspectionId || m_dataVector.size() <= inspectionId)
 	{
-		return m_dataVector[inspectionId].get();
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
 	}
-	return nullptr;
+	return m_dataVector[inspectionId].get();
 }
 
 long* DataControllerReader::getImageRefCountPtr(int pos)
@@ -454,6 +459,16 @@ long* DataControllerReader::getImageRefCountPtr(int pos)
 bool DataControllerReader::isUpToDate() const
 { 
 	return m_isInit && nullptr != m_pCommonData && m_lastResetId == m_pCommonData->m_resetId && 0 < m_lastResetId;
+}
+
+void DataControllerReader::isUpToDateException() const
+{
+	if (false == isUpToDate())
+	{
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotUpToDate, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
 }
 
 void DataControllerReader::initAndreloadData()

@@ -108,7 +108,9 @@ private:
 
 	/// It checked if class already initialed and up to date. 
 	/// \returns bool True, if all correct
-	bool isUpToDate() const;
+	[[nodiscard]] bool isUpToDate() const;
+	/// It checked if class already initialed and up to date, throw an exception if not. 
+	void isUpToDateException() const;
 
 	void initAndreloadData();
 

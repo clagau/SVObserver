@@ -205,7 +205,18 @@ SvOi::ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObject(int 
 	Log_Assert(-1 == m_resetStarted4IP);
 	if (-1 == m_resetStarted4IP && 0 <= trId)
 	{
-		return m_pDataController->createTriggerRecordObject(inspectionPos, [trId](TriggerRecordData& rData) -> bool { return rData.m_trId == trId; });
+		try
+		{
+			return m_pDataController->createTriggerRecordObject(inspectionPos, [trId](TriggerRecordData& rData) -> bool { return rData.m_trId == trId; });
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			//This is the topmost catch for MessageContainer exceptions
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(rExp.getMessage());
+			SvStl::MessageManager Exception2(SvStl::MsgType::Data);
+			Exception2.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_createTriggerRecordObject, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
 	return nullptr;
 }
@@ -215,7 +226,18 @@ SvOi::ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObjectPerTr
 	Log_Assert(-1 == m_resetStarted4IP);
 	if (-1 == m_resetStarted4IP && 0 <= triggerCount)
 	{
-		return m_pDataController->createTriggerRecordObject(inspectionPos, [triggerCount](TriggerRecordData& rData) -> bool { return rData.m_triggerData.m_TriggerCount == triggerCount; });
+		try
+		{
+			return m_pDataController->createTriggerRecordObject(inspectionPos, [triggerCount](TriggerRecordData& rData) -> bool { return rData.m_triggerData.m_TriggerCount == triggerCount; });
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			//This is the topmost catch for MessageContainer exceptions
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(rExp.getMessage());
+			SvStl::MessageManager Exception2(SvStl::MsgType::Data);
+			Exception2.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_createTriggerRecordObject, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
 	return nullptr;
 }
@@ -333,12 +355,21 @@ std::vector<SvOi::ITriggerRecordRPtr> TriggerRecordController::getTrsOfInterest(
 	auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
 	if (nullptr != pLock)
 	{
-		return m_pDataController->getTRsOfInterest(inspectionPos, n);
+		try
+		{
+			return m_pDataController->getTRsOfInterest(inspectionPos, n);
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			//This is the topmost catch for MessageContainer exceptions
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(rExp.getMessage());
+			SvStl::MessageManager Exception2(SvStl::MsgType::Data);
+			Exception2.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_getTrsOfInterest, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
-	else
-	{
-		return {};
-	}
+
+	return {};
 }
 
 void TriggerRecordController::pauseTrsOfInterest(bool pauseFlag, int inspectionPos)
@@ -486,17 +517,26 @@ SvOi::ITriggerRecordRWPtr TriggerRecordController::createTriggerRecordObjectToWr
 
 	if (-1 == m_resetStarted4IP)
 	{
-		SvOi::ITriggerRecordRWPtr pTriggerRecord = m_pDataController->createTriggerRecordObjectToWrite(inspectionPos);
-		if(nullptr != pTriggerRecord)
+		try
 		{
-			pTriggerRecord->initValueData();
+			SvOi::ITriggerRecordRWPtr pTriggerRecord = m_pDataController->createTriggerRecordObjectToWrite(inspectionPos);
+			if (nullptr != pTriggerRecord)
+			{
+				pTriggerRecord->initValueData();
+			}
+			return pTriggerRecord;
 		}
-		return pTriggerRecord;
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			//This is the topmost catch for MessageContainer exceptions
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(rExp.getMessage());
+			SvStl::MessageManager Exception2(SvStl::MsgType::Data);
+			Exception2.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_createTriggerRecordObject, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
-	else
-	{
-		return nullptr;
-	}
+
+	return nullptr;
 };
 
 SvOi::ITriggerRecordRPtr TriggerRecordController::closeWriteAndOpenReadTriggerRecordObject(SvOi::ITriggerRecordRWPtr& pTriggerRecord)

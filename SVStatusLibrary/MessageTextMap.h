@@ -580,6 +580,8 @@ namespace SvStl
 		{Tid_TRC_Error_InvalidResetState, _T("Invalid Reset-state. Action can not be done.")},
 		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetImagDefList.")},
 		{Tid_TRC_Error_GetDataDefList, _T("Error in method GetDataDefList.")},
+		{Tid_TRC_Error_createTriggerRecordObject, _T("Error in method createTriggerRecordObject.")},
+		{Tid_TRC_Error_getTrsOfInterest, _T("Error in method getTrsOfInterest.")},
 		{Tid_TRC_Error_CopyValueObjData, _T("Error copying value object data")},
 		{Tid_TRC_Error_GetTRCFailed, _T("Error getting TriggerRecordInstance. You must create it before call the get-function.")},
 		{Tid_TRC_Error_CreateSMCommonData, _T("Error creating SharedMemory for Common data in TRC.")},
@@ -599,6 +601,7 @@ namespace SvStl
 		{Tid_TRC_Error_setTrOfInterestFailed, _T("setTrOfInterest failed.")},
 		{Tid_TRC_Error_StopReloadingReader, _T("Stopping Reloading TRC-Reader, because of new reset.")},
 		{Tid_TRC_Error_GetTRData, _T("GetTrData failed: Pos = {0}, TRNumber = {1}.")},
+		{Tid_TRC_Error_NotUpToDate, _T("TRC is not up to date.")},
 
 		{Tid_TRC_Error_ResetInspectionFailed, _T("Reset of TRC failed, because buffer creation failed.\nPossible Reason is too little resources, maybe the PPQs are too long.")},
 		{Tid_TRC_Error_CounterTimeOut, _T("ResetCounter is not go back to zero in {0} seconds. Maybe a client is die without reset the counter. The current value is {1}.")},

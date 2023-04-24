@@ -113,20 +113,38 @@ TriggerRecordData& DataControllerBase::getTRData(int inspectionPos, int pos) con
 
 void DataControllerBase::setLastFinishedTr(const SvOi::TrEventData& data)
 {
-	auto* pData = getTRControllerData(data.m_inspectionPos);
-	if (nullptr != pData)
+	try
 	{
-		pData->setLastFinishedTRID(data.m_trId);
+		auto* pData = getTRControllerData(data.m_inspectionPos);
+		if (nullptr != pData)
+		{
+			pData->setLastFinishedTRID(data.m_trId);
+		}
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		//This is the topmost catch for MessageContainer exceptions
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		Exception.setMessage(rExp.getMessage());
 	}
 }
 
 int DataControllerBase::getLastTrId(int inspectionPos) const
 {
 	int id = -1;
-	auto* pData = getTRControllerData(inspectionPos);
-	if (nullptr != pData)
+	try
 	{
-		id = pData->getBasicData().m_lastFinishedTRID;
+		auto* pData = getTRControllerData(inspectionPos);
+		if (nullptr != pData)
+		{
+			id = pData->getBasicData().m_lastFinishedTRID;
+		}
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		//This is the topmost catch for MessageContainer exceptions
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		Exception.setMessage(rExp.getMessage());
 	}
 	return id;
 }
@@ -189,10 +207,19 @@ const std::unordered_map<uint32_t, std::pair<bool, int>>& DataControllerBase::ge
 
 int DataControllerBase::getTriggerRecordNumber(int inspectionPos) const
 {
-	auto* pData = getTRControllerData(inspectionPos);
-	if (nullptr != pData)
+	try
 	{
-		return pData->getBasicData().m_TriggerRecordNumber;
+		auto* pData = getTRControllerData(inspectionPos);
+		if (nullptr != pData)
+		{
+			return pData->getBasicData().m_TriggerRecordNumber;
+		}
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		//This is the topmost catch for MessageContainer exceptions
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		Exception.setMessage(rExp.getMessage());
 	}
 	return 0;
 }
@@ -235,11 +262,20 @@ void DataControllerBase::sendReadyCallbackIfReady(const std::function<void()>& r
 
 bool DataControllerBase::isIPInit(int inspectionPos)
 {
-	auto* pData = getTRControllerData(inspectionPos);
-	Log_Assert(nullptr != pData);
-	if (nullptr != pData)
+	try
 	{
-		return pData->getBasicData().m_bInit;
+		auto* pData = getTRControllerData(inspectionPos);
+		Log_Assert(nullptr != pData);
+		if (nullptr != pData)
+		{
+			return pData->getBasicData().m_bInit;
+		}
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		//This is the topmost catch for MessageContainer exceptions
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		Exception.setMessage(rExp.getMessage());
 	}
 	return false;
 }
@@ -264,10 +300,19 @@ void DataControllerBase::prepareReset()
 
 void DataControllerBase::increaseNumberOfFreeTr(int inspectionPos)
 {
-	auto* pTrDataIp = getTRControllerData(inspectionPos);
-	if (nullptr != pTrDataIp)
+	try
 	{
-		pTrDataIp->increaseFreeTrNumber();
+		auto* pTrDataIp = getTRControllerData(inspectionPos);
+		if (nullptr != pTrDataIp)
+		{
+			pTrDataIp->increaseFreeTrNumber();
+		}
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		//This is the topmost catch for MessageContainer exceptions
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		Exception.setMessage(rExp.getMessage());
 	}
 }
 
@@ -276,15 +321,24 @@ bool DataControllerBase::setTrOfInterest(const std::vector<InterestStruct>& rTrV
 	bool isSet = false;
 	for (const auto& rData : rTrVec)
 	{
-		auto* pTrDataIp = getTRControllerData(rData.m_ipPos);
-		if (nullptr != pTrDataIp)
+		try
 		{
-			if (rData.m_isInterest && !getPauseTrsOfInterest(rData.m_ipPos) && 0 < pTrDataIp->getBasicData().m_TrOfInterestNumber)
+			auto* pTrDataIp = getTRControllerData(rData.m_ipPos);
+			if (nullptr != pTrDataIp)
 			{
-				pTrDataIp->setTrOfInterest(rData.m_ipPos, rData.m_trPos);
-				isSet = true;
+				if (rData.m_isInterest && !getPauseTrsOfInterest(rData.m_ipPos) && 0 < pTrDataIp->getBasicData().m_TrOfInterestNumber)
+				{
+					pTrDataIp->setTrOfInterest(rData.m_ipPos, rData.m_trPos);
+					isSet = true;
+				}
+				pTrDataIp->setLastSetOfInterestFlagPos(rData.m_trPos);
 			}
-			pTrDataIp->setLastSetOfInterestFlagPos(rData.m_trPos);
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			//This is the topmost catch for MessageContainer exceptions
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(rExp.getMessage());
 		}
 	}
 	return isSet;

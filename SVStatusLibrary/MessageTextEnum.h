@@ -542,6 +542,8 @@ enum MessageTextEnum
 	Tid_TRC_Error_InvalidResetState,
 	Tid_TRC_Error_GetImageDefList,
 	Tid_TRC_Error_GetDataDefList,
+	Tid_TRC_Error_createTriggerRecordObject,
+	Tid_TRC_Error_getTrsOfInterest,
 	Tid_TRC_Error_CopyValueObjData,
 	Tid_TRC_Error_GetTRCFailed,
 	Tid_TRC_Error_CreateSMCommonData,
@@ -561,6 +563,7 @@ enum MessageTextEnum
 	Tid_TRC_Error_setTrOfInterestFailed,
 	Tid_TRC_Error_StopReloadingReader,
 	Tid_TRC_Error_GetTRData,
+	Tid_TRC_Error_NotUpToDate,
 
 	Tid_TRC_Error_ResetInspectionFailed,
 	Tid_TRC_Error_CounterTimeOut,

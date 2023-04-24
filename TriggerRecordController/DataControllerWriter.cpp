@@ -992,20 +992,24 @@ std::vector<SvOi::ITriggerRecordRPtr> DataControllerWriter::getTRsOfInterest(int
 
 TRControllerBaseDataPerIP* DataControllerWriter::getTRControllerData(int inspectionId)
 {
-	if (0 <= inspectionId && m_dataVector.size() > inspectionId)
+	if (0 > inspectionId || m_dataVector.size() <= inspectionId)
 	{
-		return m_dataVector[inspectionId].get();
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
 	}
-	return nullptr;
+	return m_dataVector[inspectionId].get();
 }
 
 const TRControllerBaseDataPerIP* DataControllerWriter::getTRControllerData(int inspectionId) const
 {
-	if (0 <= inspectionId && m_dataVector.size() > inspectionId)
+	if (0 > inspectionId || m_dataVector.size() <= inspectionId)
 	{
-		return m_dataVector[inspectionId].get();
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
 	}
-	return nullptr;
+	return m_dataVector[inspectionId].get();
 }
 
 long* DataControllerWriter::getImageRefCountPtr(int pos)
