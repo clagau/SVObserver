@@ -572,7 +572,9 @@ void DataControllerWriter::setImageDefList(int inspectionPos, SvPb::ImageList&& 
 {
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos)
 	{
+		prepareReset();
 		m_dataVector[inspectionPos]->setImageList(std::move(imageList));
+		finishedReset();
 	}
 }
 

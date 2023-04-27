@@ -43,7 +43,7 @@ namespace SvTrc
 				volatile long* pResetLockCounter = pTRC->getResetLockCounterRef();
 				if (nullptr != pResetLockCounter)
 				{
-					if (0 != pTRC->getResetId())
+					if (0 < pTRC->getResetId())
 					{
 						ResetLockerPtr retValue = std::make_unique<ResetLocker>(*pResetLockCounter);
 						if (pTRC->getResetId() == resetId)

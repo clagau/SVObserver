@@ -1105,6 +1105,8 @@ void TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefL
 
 	if (ResetEnum::NewReset == resetEnum)
 	{
+		m_pDataController->prepareReset();
+
 		//prefer reset
 		m_resetStarted4IP = inspectionPos;
 		m_TriggerRecordNumberResetTmp = m_pDataController->getTriggerRecordNumber(m_resetStarted4IP);
