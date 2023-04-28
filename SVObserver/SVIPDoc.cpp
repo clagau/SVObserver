@@ -576,6 +576,12 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId, int index)
 	{
 		return false;
 	}
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return false;
+	}
+
 	pToolsetView->getListCtrl().EnsureOneIsSelected();
 
 	PtrNavigatorElement pNavElement = pToolsetView->Get1stSelNavigatorElement();
@@ -1217,6 +1223,14 @@ void SVIPDoc::OnEditDelete()
 	{
 		return;
 	}
+
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
+
+
 	ToolSetView* pToolsetView = GetToolSetView();
 	SVToolSet* pToolSet = GetToolSet();
 	if (!pToolSet || !pToolsetView || pToolsetView->IsLabelEditing())
@@ -1286,6 +1300,11 @@ void SVIPDoc::OnEditDelete()
 
 void SVIPDoc::OnEditCut()
 {
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
 	ToolSetView* pToolsetView = GetToolSetView();
 	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
@@ -1302,6 +1321,14 @@ void SVIPDoc::OnEditCopy()
 	{
 		return;
 	}
+
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
+
+
 
 	ToolSetView* pToolsetView = GetToolSetView();
 	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
@@ -1387,6 +1414,12 @@ void fixInputs(uint32_t inspectionId, const std::vector<uint32_t>& rToolIds)
 void SVIPDoc::OnEditPaste()
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_READY) || !SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	{
+		return;
+	}
+
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
 	{
 		return;
 	}

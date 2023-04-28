@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
+#include "EditLock.h"
 #include "ToolSetView.h"
 #include "SVObserver.h"
 #include "SVIPDoc.h"
@@ -374,9 +375,15 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 
 void ToolSetView::OnEditToolName()
 {
-	CWaitCursor l_cwcMouse;
+	CWaitCursor waitcursor;
 
 	if (!SvOi::isOkToEdit())
+	{
+		return;
+	}
+
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
 	{
 		return;
 	}

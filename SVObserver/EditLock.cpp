@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "EditLock.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVMessage/SVMessage.h"
 
 namespace
@@ -156,6 +157,11 @@ bool setEditLock(bool toBeLocked)
 
 	bool acquire()
 	{
+		if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)) //we are currently executing a remote command so we don't need (or want) to acquire the edit lock
+		{
+			return true;
+		}
+
 		return setEditLock(true);
 	}
 
