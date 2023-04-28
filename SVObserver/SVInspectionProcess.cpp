@@ -3479,7 +3479,15 @@ void SVInspectionProcess::buildValueObjectData()
 			}
 		}
 	}
-
+#ifdef TRACE_MEMORYBLOCK
+	if (m_memValueDataOffsetPrev != m_memValueDataOffset)
+	{
+	
+		std::string msg = std::format("memsize Changed from {} to {} for Insp{}\n", m_memValueDataOffsetPrev, m_memValueDataOffset, m_trcPos);
+		OutputDebugString(msg.c_str());
+		m_memValueDataOffsetPrev = m_memValueDataOffset;
+	}
+#endif 
 	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
 	if (nullptr != pTrcRW)
 	{

@@ -363,6 +363,9 @@ private:
 	///TRC and Memory block data
 	int m_trcPos = -1;
 	long m_memValueDataOffset{0L};			///Is the current memory data offset 
+#ifdef TRACE_MEMORYBLOCK
+	long m_memValueDataOffsetPrev {0L};
+#endif 
 	SvOi::IValueObjectPtrSet m_updateValueObjectSet; //The value objects which need updating
 	std::vector<uint8_t> m_valueData;		///The memory block used to store all value objects of the inspection
 	std::atomic_bool m_resetting{false};

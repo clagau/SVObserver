@@ -498,7 +498,7 @@ int32_t SVVariantValueObjectClass::getByteSize(bool useResultSize, bool memBlock
 	int32_t result(0L);
 
 	///When for memory block and has no attributes then no memory requirements and return 0
-	if (memBlockData && 0 == ObjectAttributesAllowed())
+	if (memBlockData && (false == isViewable()))
 	{
 		return result;
 	}

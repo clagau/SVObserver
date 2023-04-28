@@ -42,6 +42,24 @@ struct NotificationHandler
 
 };
 
+struct ProductStreamHandler
+{
+	SvSyl::SVFuture<void>  OnNext(const SvPb::GetProductStreamResponse& resp)
+	{
+		SV_LOG_GLOBAL(info) << "Get New ProductStream: " << "\\" << "Trigger: " << resp.trigger() <<  "ImageAndValuecount:" <<  resp.values_size()  << ":" << resp.images_size() <<  std::endl;
+		return SvSyl::SVFuture<void>::make_ready();
+	}
+	void OnFinish()
+	{
+		SV_LOG_GLOBAL(info) << "Last Product" << std::endl;
+		return;
+	}
+	void OnError(const SvPenv::Error& er)
+	{
+		std::runtime_error(std::to_string(er));
+		return;
+	}
+};
 
 void GetNotifications(SvWsl::SVRCClientService& client)
 {
@@ -110,7 +128,7 @@ DWORD GetObjectId(const std::string& dottedName, SvRpc::RPCClient& rClient)
 int main(int argc, char* argv[])
 {
 	SvHttp::WebsocketClientSettings ClientSettings;
-	ClientSettings.Host = "192.168.10.110";
+	ClientSettings.Host = "192.168.178.96";
 	ClientSettings.Port = SvHttp::Default_Port;
 	if (argc > 1)
 	{
@@ -128,6 +146,12 @@ int main(int argc, char* argv[])
 
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotificationObserver(nextNotificationFunction, finishNotificationFunction, errorNotificationFunction);
 	SvRpc::ClientStreamContext csx(nullptr);
+	ProductStreamHandler productHandler;
+	auto nextFunction = [&productHandler](const SvPb::GetProductStreamResponse& rResponse) { return productHandler.OnNext(rResponse); };
+	auto finishFunction = [&productHandler]() { return productHandler.OnFinish(); };
+	auto errorFunction = [&productHandler](const SvPenv::Error& error) { return productHandler.OnError(error); };
+	SvRpc::Observer<SvPb::GetProductStreamResponse> ProductObserver(nextFunction, finishFunction, errorFunction);
+	SvRpc::ClientStreamContext clientProductStream[5] = {SvRpc::ClientStreamContext(nullptr),SvRpc::ClientStreamContext(nullptr),SvRpc::ClientStreamContext(nullptr),SvRpc::ClientStreamContext(nullptr),SvRpc::ClientStreamContext(nullptr)};
 
 
 	std::unique_ptr< SvRpc::RPCClient> pRpcClient;
@@ -171,6 +195,7 @@ int main(int argc, char* argv[])
 					<< "  h  Hilfe" << std::endl
 					<< "  m  (GetMode)" << std::endl
 					<< "  n  notification" << std::endl
+					<< "  cn  stop notification" << std::endl
 					<< "  e  (editmode)" << std::endl
 					<< "  r  runmode" << std::endl
 					<< "  c getconfig" << std::endl
@@ -185,6 +210,7 @@ int main(int argc, char* argv[])
 					<< "  g get config data" << std::endl
 					<< " gci  get configuration info" << std::endl
 					<< " s  software trigger" << std::endl
+					<< " gps  start stream Produvt" << std::endl
 					<< " set_v  {value} {n, o, i, t }  inspection command set embedded value" << std::endl
 					<< " set_l  {value} {n, o, i, t }  inspection command set embedded linked value" << std::endl
 					<< " get   {BAR ,BA, AR }  inspection command get embedded value" << std::endl
@@ -281,7 +307,39 @@ int main(int argc, char* argv[])
 					SV_LOG_GLOBAL(error) << "Unable to get notifications: " << e.what();
 				}
 			}
+			else if (words[0] == "gps")
+			{
+				DWORD ObjectIdInspection = GetObjectId("Inspections.C11 Fingergrip", *pRpcClient);
+				DWORD   ObjecTIdResult =      GetObjectId("Inspections.C11 Fingergrip.Tool Set.040 W fill blob.Blob Analyzer.Number of Blobs", *pRpcClient);
+				DWORD ObjecTIdTriggerCount  = GetObjectId("Inspections.C11 Fingergrip.Tool Set.Trigger Count", *pRpcClient);
+				DWORD ObjecTIdWarn = GetObjectId("Inspections.C11 Fingergrip.Tool Set.040 W fill blob.Blob Analyzer.Result Box Y Min.Range.Warn High", *pRpcClient);
+				DWORD ToolsetImageId = GetObjectId("Inspections.C11 Fingergrip.Tool Set.Image1", *pRpcClient);
+				SvRpc::SimpleClient
+					<SvPb::SVRCMessages, SvPb::GetProductStreamRequest, SvPb::GetProductStreamResponse>
+					streamClient(*pRpcClient);
+				for (int i = 0; i < 5; i++)
+				{
+					SvPb::GetProductStreamRequest getProductStreamRequest;
+					getProductStreamRequest.set_inspectionid(ObjectIdInspection);
+					getProductStreamRequest.set_startattriggercount(-1);
+					getProductStreamRequest.set_rejectsonly(false);
+					getProductStreamRequest.set_includefailstatusvalues(false);
+					getProductStreamRequest.add_valueids(ObjecTIdTriggerCount);
+					getProductStreamRequest.add_valueids(ObjecTIdResult);
+					getProductStreamRequest.add_valueids(ObjecTIdWarn);
 
+					getProductStreamRequest.add_rejectvalueids(ObjecTIdTriggerCount);
+					getProductStreamRequest.add_rejectvalueids(ObjecTIdResult);
+					getProductStreamRequest.add_rejectvalueids(ObjecTIdWarn);
+					getProductStreamRequest.add_imageids(ToolsetImageId);
+					clientProductStream[i] = streamClient.stream(std::move(getProductStreamRequest), ProductObserver);
+				}
+			}
+			else if (words[0] == "cgps")
+			{
+				for (int i = 0; i < 5; i++)
+					clientProductStream[i].cancel();
+			}
 			/// Notification
 			else if (words[0] == "n" || words[0] == "N")
 			{

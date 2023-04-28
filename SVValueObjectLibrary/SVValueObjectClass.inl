@@ -336,7 +336,7 @@ UINT SVValueObjectClass<T>::SetObjectAttributesAllowed(UINT Attributes, SvOi::Se
 	UINT newAttribute = __super::SetObjectAttributesAllowed(Attributes, Type);
 
 	///When the attributes are set to no attributes and MemBlock is reserved we need to reserve local memory and copy the original values back
-	if(isViewable() && nullptr != m_pValue && 0 != m_memSizeReserved)
+	if(false == isViewable() && nullptr != m_pValue && 0 != m_memSizeReserved  )
 	{
 		m_pValue = reserveLocalMemory();
 		m_memOffset = -1;
