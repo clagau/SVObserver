@@ -119,9 +119,6 @@
     <ClInclude Include="SVObjectScriptEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVObserverTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVToolsetScriptTags.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

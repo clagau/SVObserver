@@ -302,59 +302,24 @@ uint32_t SVRemoteOutputGroup::GetPPQObjectId() const
 
 std::string SVRemoteOutputGroup::GetPPQName() const
 {
-	std::string l_SubjectName;
-	uint32_t subjectID = SVObjectManagerClass::Instance().getObserverSubject(SVObjectManagerClass::ObserverIdEnum::PPQ, getObjectId());
+	std::string subjectName;
+	auto* pSubject = SVObjectManagerClass::Instance().GetObject(m_PPQObjectId);
 
-	if (SvDef::InvalidObjectId != subjectID)
+	if (nullptr != pSubject)
 	{
-		SVObjectClass* l_pSubject = SVObjectManagerClass::Instance().GetObject(subjectID);
-
-		if (nullptr != l_pSubject)
-		{
-			l_SubjectName = l_pSubject->GetCompleteName();
-		}
-	}
-	else
-	{
-		SVObjectClass* l_pSubject = SVObjectManagerClass::Instance().GetObject(m_PPQObjectId);
-
-		if (nullptr != l_pSubject)
-		{
-			l_SubjectName = l_pSubject->GetCompleteName();
-			SVObjectManagerClass::Instance().AttachObserver(SVObjectManagerClass::ObserverIdEnum::PPQ, m_PPQObjectId, getObjectId());
-		}
+		subjectName = pSubject->GetCompleteName();
 	}
 
-	return l_SubjectName;
+	return subjectName;
 }
 
 HRESULT SVRemoteOutputGroup::SetPPQName(const std::string& p_rPPQ)
 {
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectCompleteName(p_rPPQ.c_str());
+	auto* pObject = SVObjectManagerClass::Instance().GetObjectCompleteName(p_rPPQ.c_str());
 
-	if (nullptr != l_pObject)
+	if (nullptr != pObject && pObject->getObjectId() != m_PPQObjectId)
 	{
-		m_PPQObjectId = l_pObject->getObjectId();
-		uint32_t tmpId = SVObjectManagerClass::Instance().getObserverSubject(SVObjectManagerClass::ObserverIdEnum::PPQ, getObjectId());
-
-		if (SvDef::InvalidObjectId == tmpId)
-		{
-			// Attach Observer No previous attachment...
-			SVObjectManagerClass::Instance().AttachObserver(SVObjectManagerClass::ObserverIdEnum::PPQ, m_PPQObjectId, getObjectId());
-		}
-		else
-		{
-			if (tmpId != m_PPQObjectId)
-			{
-				// Detach Observer then attach new...
-				/*l_hr = */SVObjectManagerClass::Instance().DetachObserver(SVObjectManagerClass::ObserverIdEnum::PPQ, tmpId, getObjectId());
-				/*l_hr = */SVObjectManagerClass::Instance().AttachObserver(SVObjectManagerClass::ObserverIdEnum::PPQ, m_PPQObjectId, getObjectId());
-			}
-			else
-			{
-				// leave alone it is already attached..
-			}
-		}
+		m_PPQObjectId = pObject->getObjectId();
 	}
 	return S_OK;
 }

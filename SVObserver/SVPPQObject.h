@@ -19,7 +19,6 @@
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "Triggering/TriggerDevice.h"
 #include "SVSystemLibrary/SVThread.h"
@@ -57,8 +56,7 @@ constexpr long getMaxPpqLength()
 };
 
 class SVPPQObject : 
-	public SVObjectClass,
-	public SVObserverTemplate<std::pair<long, SVInspectionInfoStruct>>
+	public SVObjectClass
 {
 	enum PpqOutputEnums
 	{
@@ -104,7 +102,7 @@ public:
 	void SetNAKMode(SvDef::NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
-	virtual HRESULT ObserverUpdate( const SVInspectionInfoPair& rData) override;
+	HRESULT ObserverUpdate( const SVInspectionInfoPair& rData);
 
 	bool Create();
 	bool Rebuild();

@@ -156,7 +156,6 @@
     <ClInclude Include="SVObjectNameInfo.h" />
     <ClInclude Include="SVObjectReference.h" />
     <ClInclude Include="SVObjectScriptEnums.h" />
-    <ClInclude Include="SVObserverTemplate.h" />
     <ClInclude Include="SVToolsetScriptTags.h" />
     <ClInclude Include="TextDefinesSvOl.h" />
   </ItemGroup>

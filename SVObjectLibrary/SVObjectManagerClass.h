@@ -44,12 +44,6 @@ public:
 		ReadWrite = 2,
 	};
 
-	enum class ObserverIdEnum
-	{
-		IP = 0,
-		PPQ = 1,
-	};
-
 	typedef std::map<std::string, uint32_t> RootNameChildMap;
 
 	typedef std::deque<std::string> SVSubjectDataNameDeque;
@@ -128,21 +122,6 @@ public:
 
 	void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden = false, bool stopIfClosed = false);
 
-	uint32_t getObserverSubject(ObserverIdEnum observerIdEnum, uint32_t observerID) const;
-
-	HRESULT AttachObserver(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID );
-
-	HRESULT DetachObserver(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID );
-	HRESULT DetachObservers(ObserverIdEnum observerIdEnum, uint32_t subjectID );
-
-	HRESULT DetachSubjectsAndObservers( uint32_t objectID );
-
-	template< typename SVDataType >
-	HRESULT UpdateObserver( uint32_t observerID, const SVDataType& rData );
-
-	template< typename SVDataType >
-	HRESULT UpdateObservers(ObserverIdEnum observerIdEnum, uint32_t subjectID, const SVDataType& rData );
-
 	HRESULT DisconnectObjects( uint32_t source, uint32_t destination );
 
 	///Resets all the indicators, which are used to determine if the display should be updated
@@ -209,20 +188,6 @@ public:
 
 
 protected:
-	struct SubjectObserverStruct
-	{
-		SubjectObserverStruct(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID) :
-			m_observerIdEnum {observerIdEnum}
-			, m_subjectID {subjectID}
-			, m_observerID {observerID}
-		{}
-
-		ObserverIdEnum m_observerIdEnum;
-		uint32_t m_subjectID;
-		uint32_t m_observerID;
-	};
-	std::vector<SubjectObserverStruct> m_subjectObserverList;
-
 	SVObjectManagerClass();
 
 	SVObjectClass* getUniqueObjectEntry( uint32_t objectId ) const;

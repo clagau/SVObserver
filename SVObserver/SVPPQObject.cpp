@@ -1848,7 +1848,8 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t 
 	rProduct.m_dataComplete = bValid;
 	if (rProduct.m_dataComplete)
 	{
-		SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::PPQ, getObjectId(), rProduct);
+		//@TODO[MZA][10.40][14.04.2023] check ob das gebraucht wird, war bisher so implementiert das es nicht funktioniert hat.
+		//SVObjectManagerClass::Instance().UpdateObservers(SVObjectManagerClass::ObserverIdEnum::PPQ, getObjectId(), rProduct);
 
 		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_outputMode) ||
 			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_outputMode))

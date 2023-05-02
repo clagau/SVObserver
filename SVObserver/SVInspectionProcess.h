@@ -26,6 +26,7 @@
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
+#include "SVDisplayObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -226,6 +227,19 @@ public:
 
 	void setIOObjectIdMap(std::map<std::string, uint32_t>&& ioObjectMap);
 
+	void attachObserver(SVDisplayObject* pDisplayObject);
+	void detachObserver(SVDisplayObject* pDisplayObject);
+	template< typename SVDataType >
+	void updateObserver(const SVDataType& rData) 
+	{
+		for (auto* pObject : m_observerList)
+		{
+			if (pObject)
+			{
+				pObject->ObserverUpdate(rData);
+			}
+		}
+	};
 
 #pragma region Methods to replace processMessage
 	virtual bool createAllObjects();
@@ -374,6 +388,7 @@ private:
 	std::atomic_bool m_processActive{ false };
 	SVProductInfoStruct m_product{};
 	std::array <InspectionProcessFunction, InspectionFunction::Size> m_processFunctions;
+	std::vector<SVDisplayObject*> m_observerList;
 };
 
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;

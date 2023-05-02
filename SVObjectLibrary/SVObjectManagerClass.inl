@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVObjectManagerClass.h"
-#include "SVObserverTemplate.h"
 #include "SVObjectClass.h"
 #include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/IObjectManager.h"
@@ -83,44 +82,4 @@ template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& rpObject )
 {
 	return GetRootChildObject( rpObject, SvDef::FqnConfiguration );
-}
-
-template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObserver( uint32_t observerID, const SVDataType& rData )
-{
-	HRESULT Result = E_FAIL;
-
-	SVObjectClass* pObject = GetObject( observerID );
-
-	if( nullptr != pObject )
-	{
-		SVObserverTemplate< SVDataType >* pObserver = dynamic_cast<SVObserverTemplate<SVDataType>*> (pObject);
-		if( nullptr != pObserver )
-		{
-			Result = pObserver->ObserverUpdate( rData );
-		}
-	}
-
-	return Result;
-}
-
-template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObservers(ObserverIdEnum observerIdEnum, uint32_t subjectID, const SVDataType& rData )
-{
-	HRESULT Result = S_OK;
-
-	for (const auto& rTupel : m_subjectObserverList)
-	{
-		if (rTupel.m_observerIdEnum == observerIdEnum && rTupel.m_subjectID == subjectID)
-		{
-			HRESULT Temp = UpdateObserver(rTupel.m_observerID, rData);
-
-			if (S_OK == Result)
-			{
-				Result = Temp;
-			}
-		}
-	}
-
-	return Result;
 }

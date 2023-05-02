@@ -12,30 +12,24 @@
 
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVInfoStructs.h"
 #pragma endregion Includes
 
 class SVIPDoc;
 
 class SVDisplayObject : 
-	public SVObjectClass, 
-	public SVObserverTemplate< std::pair<long, SVInspectionInfoStruct> >,
-	public SVObserverTemplate< SVInspectionNameUpdate >,
-	public SVObserverTemplate< SVRemoveImages >,
-	public SVObserverTemplate< SVRemoveValues >,
-	public SVObserverTemplate< SVRemoveSubjectStruct >
+	public SVObjectClass
 {
 public:
 	explicit SVDisplayObject(LPCSTR ObjectName);
 	SVDisplayObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDISPLAYOBJECT );
 	virtual ~SVDisplayObject();
 
-	virtual HRESULT ObserverUpdate( const std::pair<long, SVInspectionInfoStruct>& p_rData ) override;
-	virtual HRESULT ObserverUpdate( const SVInspectionNameUpdate& p_rData ) override;
-	virtual HRESULT ObserverUpdate( const SVRemoveImages& p_rData ) override;
-	virtual HRESULT ObserverUpdate( const SVRemoveValues& p_rData ) override;
-	virtual HRESULT ObserverUpdate( const SVRemoveSubjectStruct& p_rData ) override;
+	HRESULT ObserverUpdate( const std::pair<long, SVInspectionInfoStruct>& p_rData );
+	HRESULT ObserverUpdate( const SVInspectionNameUpdate& p_rData );
+	HRESULT ObserverUpdate( const SVRemoveImages& p_rData );
+	HRESULT ObserverUpdate( const SVRemoveValues& p_rData );
+	HRESULT ObserverUpdate( const SVRemoveSubjectStruct& p_rData );
 
 	void SetInspectionID(uint32_t inspectionID, SVIPDoc* pDoc );
 

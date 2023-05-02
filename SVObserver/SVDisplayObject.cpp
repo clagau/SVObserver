@@ -140,16 +140,22 @@ void SVDisplayObject::SetInspectionID(uint32_t inspectionID, SVIPDoc* pDoc)
 {
 	m_pDoc = pDoc;
 
-	if( SvDef::InvalidObjectId != m_InspectionID )
+	if (m_InspectionID != inspectionID)
 	{
-		SVObjectManagerClass::Instance().DetachObserver(SVObjectManagerClass::ObserverIdEnum::IP, m_InspectionID, getObjectId() );
-	}
+		auto* pObject = dynamic_cast<SVInspectionProcess*>(SVObjectManagerClass::Instance().GetObject(m_InspectionID));
 
-	m_InspectionID = inspectionID;
+		if (nullptr != pObject)
+		{
+			pObject->detachObserver(this);
+		}
 
-	if(SvDef::InvalidObjectId != m_InspectionID )
-	{
-		SVObjectManagerClass::Instance().AttachObserver(SVObjectManagerClass::ObserverIdEnum::IP, m_InspectionID, getObjectId() );
+		m_InspectionID = inspectionID;
+
+		pObject = dynamic_cast<SVInspectionProcess*>(SVObjectManagerClass::Instance().GetObject(m_InspectionID));
+		if (nullptr != pObject)
+		{
+			pObject->attachObserver(this);
+		}
 	}
 }
 
@@ -179,12 +185,12 @@ BOOL SVDisplayObject::Create()
 
 BOOL SVDisplayObject::Destroy()
 {
-	if(SvDef::InvalidObjectId != m_InspectionID )
+	auto* pObject = dynamic_cast<SVInspectionProcess*>(SVObjectManagerClass::Instance().GetObject(m_InspectionID));
+	if (nullptr != pObject)
 	{
-		SVObjectManagerClass::Instance().DetachObserver(SVObjectManagerClass::ObserverIdEnum::IP, m_InspectionID, getObjectId() );
-
-		m_InspectionID = SvDef::InvalidObjectId;
+		pObject->detachObserver(this);
 	}
+	m_InspectionID = SvDef::InvalidObjectId;
 
 	if (m_hStopEvent && m_hDisplayThread)
 	{

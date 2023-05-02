@@ -461,7 +461,6 @@ bool SVObjectManagerClass::CloseUniqueObjectID(const SVObjectClass& rObject)
 		std::lock_guard<std::recursive_mutex>  AutoLock(m_Mutex);
 
 		uint32_t ObjectID(rObject.getObjectId());
-		DetachSubjectsAndObservers(ObjectID);
 		SvOl::DependencyManager::Instance().Remove(ObjectID);
 		m_UniqueObjectEntries.erase(ObjectID);
 	}
@@ -637,117 +636,6 @@ void SVObjectManagerClass::fillObjectList(std::back_insert_iterator<std::vector<
 	{
 		pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed, true);
 	}
-}
-
-uint32_t SVObjectManagerClass::getObserverSubject(ObserverIdEnum observerIdEnum, uint32_t observerID) const
-{
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-	}
-
-	auto iter = std::ranges::find_if(m_subjectObserverList, [observerIdEnum, observerID](const auto& rEntry)
-	{
-		return rEntry.m_observerIdEnum == observerIdEnum && rEntry.m_observerID == observerID;
-	});
-	if (m_subjectObserverList.end() != iter)
-	{
-		return iter->m_subjectID;
-	}
-
-	return SvDef::InvalidObjectId;
-}
-
-HRESULT SVObjectManagerClass::AttachObserver(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID)
-{
-	HRESULT Result = S_OK;
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-		auto iter = std::ranges::find_if(m_subjectObserverList, [observerIdEnum, subjectID](const auto& rEntry)
-		{
-			return rEntry.m_observerIdEnum == observerIdEnum && rEntry.m_subjectID == subjectID;
-		});
-		if (m_subjectObserverList.end() == iter)
-		{
-			m_subjectObserverList.emplace_back(observerIdEnum, subjectID, observerID);
-		}
-		else
-		{
-			iter->m_observerID = observerID;
-		}
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DetachObserver(ObserverIdEnum observerIdEnum, uint32_t subjectID, uint32_t observerID)
-{
-	HRESULT Result = S_OK;
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-		std::erase_if(m_subjectObserverList, [observerIdEnum, subjectID, observerID](const auto& rEntry)
-		{
-			return rEntry.m_observerIdEnum == observerIdEnum && rEntry.m_subjectID == subjectID && rEntry.m_observerID == observerID;
-		});
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DetachObservers(ObserverIdEnum observerIdEnum, uint32_t subjectID)
-{
-	HRESULT Result = S_OK;
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-		std::erase_if(m_subjectObserverList, [observerIdEnum, subjectID](const auto& rEntry)
-		{
-			return rEntry.m_observerIdEnum == observerIdEnum && rEntry.m_subjectID == subjectID;
-		});
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DetachSubjectsAndObservers(uint32_t objectID)
-{
-	HRESULT Result = S_OK;
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-		std::erase_if(m_subjectObserverList, [objectID](const auto& rEntry)
-		{
-			return rEntry.m_subjectID == objectID || rEntry.m_observerID == objectID;
-		});
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
 }
 
 HRESULT SVObjectManagerClass::DisconnectObjects(uint32_t objectID, uint32_t remoteID)
