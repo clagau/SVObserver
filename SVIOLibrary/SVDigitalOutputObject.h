@@ -29,6 +29,8 @@ public:
 	virtual bool isCombined() const override;
 	virtual bool isAndACK() const override;
 	virtual long GetChannel() const override { return m_channel;}
+	virtual void SetValueObjectID(uint32_t objectID, DWORD objectIDIndex = 0) override;
+	virtual uint32_t GetValueObjectID(DWORD objectIDIndex = 0) const override;
 
 	bool Force( bool bForce, bool bForcedValue );
 	bool Invert( bool bInvert );
@@ -55,5 +57,6 @@ private:
 	bool m_bLastValue {false};
 	bool m_bDefaultValue {false};
 	bool m_isAndACK {true};
+	uint32_t m_valueObjectID {SvDef::InvalidObjectId};
 #pragma endregion Member Variables
 };

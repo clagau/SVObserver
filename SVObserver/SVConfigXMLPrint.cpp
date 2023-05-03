@@ -911,8 +911,7 @@ void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 						{
 							if (pEntry->getObject()->IsCreated())
 							{
-								//std::wstring t = SvUl::to_utf16(pEntry->getObject()->GetName(), cp_dflt);
-								WriteStartEndElement writerObjectName(writer, nullptr, SvUl::to_utf16(pEntry->getObject()->GetName(), cp_dflt).c_str(), nullptr);
+								WriteStartEndElement writerObjectName(writer, nullptr, SvUl::to_utf16(pEntry->m_name.c_str(), cp_dflt).c_str(), nullptr);
 								if (!bPosPrint)
 								{
 									writer->WriteAttributeString(nullptr, L"Position", nullptr, _itow(intPPQPos + 1, buff, 10));

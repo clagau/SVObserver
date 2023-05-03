@@ -39,6 +39,13 @@ BEGIN_MESSAGE_MAP(PlcOutputsView, CListView)
 	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
+constexpr const char* cPlcOutputName = _T("PLC Output {:d}");
+constexpr int cOutputColIndex = 0;
+constexpr int cPpqColIndex = 1;
+constexpr int cLinkColIndex = 2;
+constexpr int cStandradColWidth = 125;
+constexpr int cLinkColWidth = 250;
+
 PlcOutputsView::PlcOutputsView() :
 	m_rCtrl(GetListCtrl())
 {
@@ -64,13 +71,17 @@ BOOL PlcOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD
 	m_rCtrl.SetImageList(&m_StateImageList, LVSIL_STATE);
 	m_rCtrl.SetImageList(&m_ImageList, LVSIL_SMALL);
 
-	m_rCtrl.InsertColumn(0, _T("Outputs"), LVCFMT_LEFT, -1, -1);
-	m_rCtrl.InsertColumn(1, _T("PPQ"), LVCFMT_LEFT, -1, -1);
-	m_rCtrl.InsertColumn(2, _T("Link"), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(cOutputColIndex, _T("Outputs"), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.SetColumnWidth(cOutputColIndex, cStandradColWidth);
+	m_rCtrl.InsertColumn(cPpqColIndex, _T("PPQ"), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.SetColumnWidth(cPpqColIndex, cStandradColWidth);
 
-	m_rCtrl.SetColumnWidth(0, 125);
-	m_rCtrl.SetColumnWidth(1, 125);
-	m_rCtrl.SetColumnWidth(2, 500);
+	for (long int i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
+	{
+		std::string linkName = std::format(_T("Link Object {:d}"), i);
+		m_rCtrl.InsertColumn(cLinkColIndex + i, linkName.c_str(), LVCFMT_LEFT, -1, -1);
+		m_rCtrl.SetColumnWidth(cLinkColIndex + i, cLinkColWidth);
+	}
 	m_maxOutputNumber = SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount();
 	return RetVal;
 }
@@ -106,6 +117,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 		if (0 == lPPQSize) { return; }
 		m_maxOutputNumber = SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount();
 
+		m_maxObjectIDCount = 0L;
 		for (int i = 0; i < lPPQSize; ++i)
 		{
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
@@ -117,37 +129,46 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 			}
 			else
 			{
+				long objectIDCount {pPPQ->GetObjectIDCount()};
+				m_maxObjectIDCount = std::max(m_maxObjectIDCount, objectIDCount);
 				for (long j = 0; j < m_maxOutputNumber; ++j)
 				{
 					int indexRow = j + m_maxOutputNumber * i;
-					std::string Item = std::format(_T("PLC Output {:d}"), j + 1);
-					m_rCtrl.InsertItem(LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
-									   indexRow, Item.c_str(),
-									   INDEXTOSTATEIMAGEMASK(1),
-									   LVIS_STATEIMAGEMASK,
-									   1, 0);
+					std::string Item = std::format(cPlcOutputName, j + 1);
+					m_rCtrl.InsertItem(LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, indexRow, Item.c_str(), INDEXTOSTATEIMAGEMASK(1), LVIS_STATEIMAGEMASK, 1, 0);
 
-					m_rCtrl.SetItemText(indexRow, 1, pPPQ->GetName());
+					m_rCtrl.SetItemText(indexRow, cPpqColIndex, pPPQ->GetName());
 					for (const auto& pIOEntry : pPPQ->getUsedOutputs())
 					{
 						if (pIOEntry->m_ObjectType != SVIOObjectType::IO_PLC_OUTPUT) { continue; }
 
 						PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId));
 
-						if (!pPlcOutput) { continue; }
+						if (nullptr == pPlcOutput) { continue; }
 
 						if (indexRow == pPlcOutput->GetChannel())
 						{
-							m_rCtrl.SetItem(indexRow, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
+							m_rCtrl.SetItem(indexRow, cOutputColIndex, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
 
 							m_Items[indexRow] = pIOEntry;
-
-							m_rCtrl.SetItemText(indexRow, 2, pPlcOutput->GetName());
+							for (int k = 0; k < objectIDCount; ++k)
+							{
+								SVObjectClass* pLinkedObj = pIOEntry->getObject(k);
+								if (nullptr != pLinkedObj)
+								{
+									m_rCtrl.SetItemText(indexRow, cLinkColIndex + k, pLinkedObj->GetCompleteName().c_str());
+								}
+							}
 							break;
 						}
 					}
 				}
 			}
+		}
+
+		for (long int i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
+		{
+			m_rCtrl.SetColumnWidth(cLinkColIndex + i, (i < m_maxObjectIDCount) ? cLinkColWidth : 0);
 		}
 		m_rCtrl.SetRedraw(true);
 	}
@@ -218,9 +239,12 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 			if (nullptr != pPlcOutput)
 			{
 				SVIOAdjustDialog dlg {usedOutputList};
-				dlg.m_IOName = m_rCtrl.GetItemText(item, 2);
-				SVObjectClass* pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;
-				dlg.m_pLinkedObject = pLinkedObject;
+				std::array<SVObjectClass*, SvDef::cObjectIndexMaxNr> pObjectLinkList {nullptr, nullptr, nullptr, nullptr};
+				for (long i = 0; i < m_maxObjectIDCount; ++i)
+				{
+					pObjectLinkList[i] = nullptr != pIOEntry ? pIOEntry->getObject(i) : nullptr;
+				}
+				dlg.m_pObjectLinkList = pObjectLinkList;
 				dlg.m_pPlcOutput = pPlcOutput;
 				dlg.m_PpqIndex = item / m_maxOutputNumber;
 				dlg.m_ioObjectType = SVIOObjectType::IO_PLC_OUTPUT;
@@ -234,53 +258,58 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				{
 					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 
-					// Check if they picked a new output
-					if (dlg.m_pLinkedObject != pLinkedObject)
+					for (long i = 0; i < m_maxObjectIDCount; ++i)
 					{
-						if (nullptr == pIOEntry)
+						// Check if they picked a new output
+						if (dlg.m_pObjectLinkList[i] != pObjectLinkList[i])
 						{
-							pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-						}
-						else
-						{
-							// Make sure that we first reset the old output
-							if (nullptr != pOutputList)
+							if (nullptr == pIOEntry)
 							{
-								pOutputList->ResetOutput(pIOEntry);
+								pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 							}
-							pIOEntry->m_Enabled = false;
-							pIOEntry->m_IOId = SvDef::InvalidObjectId;
-						}
-
-						if (nullptr == dlg.m_pLinkedObject)
-						{
-							if (nullptr != pOutputList)
+							else
 							{
-								pOutputList->DetachOutput(pOutput->getObjectId());
+								// Make sure that we first reset the old output
+								if (nullptr != pOutputList)
+								{
+									pOutputList->ResetOutput(pIOEntry);
+								}
+								pIOEntry->m_Enabled = false;
+								pIOEntry->m_IOId = SvDef::InvalidObjectId;
 							}
-							pOutput = nullptr;
-							pIOEntry->clear();
-							pIOEntry.reset();
-						}
-						else
-						{
-							pIOEntry->m_Enabled = true;
-							pIOEntry->setLinkedObject(dlg.m_pLinkedObject);
-							if (nullptr != pOutput && nullptr != pOutputList)
+
+							if (nullptr == dlg.m_pObjectLinkList[i])
 							{
-								pOutput->SetName(dlg.m_pLinkedObject->GetCompleteName().c_str());
-								pOutputList->AttachOutput(pOutput);
+								if (nullptr != pOutputList)
+								{
+									pOutputList->DetachOutput(pOutput->getObjectId());
+								}
+								pOutput = nullptr;
+								pIOEntry->clear();
+								pIOEntry.reset();
+							}
+							else
+							{
+								pIOEntry->m_Enabled = true;
+								pIOEntry->setValueObject(dlg.m_pObjectLinkList[i], i);
+								if (nullptr != pOutput && nullptr != pOutputList)
+								{
+									pIOEntry->m_IOId = pOutput->getObjectId();
+									pOutput->SetName(dlg.m_pObjectLinkList[i]->GetCompleteName().c_str());
+									pOutput->SetValueObjectID(dlg.m_pObjectLinkList[i]->getObjectId(), i);
+									pOutputList->AttachOutput(pOutput);
+								}
 							}
 						}
+					}
 
-						// Rebuild Outputs
-						SVPPQObject* pPPQ = pConfig->GetPPQ(dlg.m_PpqIndex);
-						if (nullptr != pPPQ)
-						{
-							pPPQ->RebuildOutputList();
-						}
+					// Rebuild Outputs
+					SVPPQObject* pPPQ = pConfig->GetPPQ(dlg.m_PpqIndex);
+					if (nullptr != pPPQ)
+					{
+						pPPQ->RebuildOutputList();
+					}
 
-					}// end if
 				}
 				OnUpdate(nullptr, 0, nullptr);
 			}

@@ -71,7 +71,7 @@ void SVIOController::initializeOutputs()
 			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(ObjectIdEnum::ModuleReadyId);
 			if (nullptr != pObject)
 			{
-				m_pModuleReady->setLinkedObject(pObject);
+				m_pModuleReady->setValueObject(pObject);
 			}
 		}
 

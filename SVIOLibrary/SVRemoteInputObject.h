@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVInputObject.h"
 #include "SVOResource/resource.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
 class SVRemoteInputObject : public SVInputObject 
@@ -30,6 +31,7 @@ public:
 
 	virtual HRESULT Read(_variant_t& rValue) const override;
 	virtual long GetChannel() const override { return m_channel; }
+	virtual SVObjectClass* GetValueObject() override { return &m_ValueObject; }
 
 	HRESULT writeCache(const _variant_t& rValue);
 
@@ -48,5 +50,6 @@ private:
 
 	_variant_t m_remoteCache{0.0};
 	long m_channel{-1};
+	SvVol::SVVariantValueObjectClass m_ValueObject {};
 #pragma endregion Member Variables
 };

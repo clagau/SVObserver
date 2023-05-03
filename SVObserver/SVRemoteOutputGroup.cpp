@@ -93,7 +93,7 @@ bool SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
 	{
 		std::string Branch = std::format(_T("{}_{:d}"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, i + 1);
 		rWriter.StartElement(Branch.c_str());
-		m_RemoteOutputs[i]->GetParameters(rWriter);
+		m_RemoteOutputs[i]->Persist(rWriter);
 		rWriter.EndElement();
 	}
 	return true;

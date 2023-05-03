@@ -34,6 +34,8 @@ public:
 	virtual bool isCombined() const = 0;
 	virtual bool isAndACK() const = 0;		///The signal is combined is set either to And ACK or OR NAK
 	virtual long GetChannel() const = 0;
+	virtual void SetValueObjectID(uint32_t objectID, DWORD objectIDIndex = 0) = 0;
+	virtual uint32_t GetValueObjectID(DWORD objectIDIndex = 0) const = 0;
 
 	/// Update the objectId to a fixed ID depended on an index (must between 0 and 0x100).
 	/// \param position [in]

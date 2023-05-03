@@ -846,7 +846,7 @@ void SVOPropertyPageDlg::SetupInspection()
 			m_Tree.InsertItem(pEdit, pRoot);
 			pEdit->SetCtrlID(PROP_INS_OBJECT_ID_INDEX);
 			pEdit->SetLabelText(_T("Object ID Index"));
-			pEdit->SetInfoText(_T("Zero based index (valid values 0-3)"));
+			pEdit->SetInfoText(_T("Zero based index (valid values 0-3) that need to be set in ascending order\r\nOnly required for NonIO configurations, otherwise set this value to 0"));
 			pEdit->SetItemValue(m_InspectionObj.GetObjectIdIndex());
 		}
 		pRoot->Select(true);
@@ -1613,12 +1613,12 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_INS_OBJECT_ID_INDEX:
 				{
-					DWORD objectIdIndex {0};
+					long objectIdIndex {0L};
 					m_Tree.FindItem(PROP_INS_OBJECT_ID_INDEX)->GetItemValue(objectIdIndex);
 					
-					if (objectIdIndex >= SvDef::cObjectIndexMaxNr)
+					if (objectIdIndex < 0 || objectIdIndex >= SvDef::cObjectIndexMaxNr)
 					{
-						objectIdIndex = 0;
+						objectIdIndex = 0L;
 					}
 					m_InspectionObj.SetObjectIdIndex(objectIdIndex);
 					break;

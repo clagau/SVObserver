@@ -32,7 +32,15 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr const char* cDigitalInputName = ("Digital Input {:d}");
+constexpr const char* cDigitalInputName = _T("Digital Input {:d}");
+constexpr int cInputColIndex = 0;
+constexpr int cDescriptionColIndex = 1;
+constexpr int cForcedColIndex = 2;
+constexpr int cInvertedColIndex = 3;
+constexpr int cInputColWidth = 150;
+constexpr int cDescriptionColWidth = 500;
+constexpr int cForcedColWidth = 50;
+constexpr int cInvertedColWidth = 55;
 
 IMPLEMENT_DYNCREATE(SVDiscreteInputsView, CListView)
 
@@ -64,15 +72,15 @@ BOOL SVDiscreteInputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
 	m_rCtrl.SetImageList( &m_StateImageList, LVSIL_STATE );
 	m_rCtrl.SetImageList( &m_ImageList, LVSIL_SMALL );
 
-	m_rCtrl.InsertColumn( 0, _T( "Inputs" ), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 1, _T( "Description" ), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 2, _T( "Forced" ), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 3, _T( "Inverted" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn(cInputColIndex, _T("Inputs"), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(cDescriptionColIndex, _T("Description"), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(cForcedColIndex, _T( "Forced" ), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(cInvertedColIndex, _T("Inverted"), LVCFMT_LEFT, -1, -1);
 
-	m_rCtrl.SetColumnWidth( 0, 125 );
-	m_rCtrl.SetColumnWidth( 1, 500 );
-	m_rCtrl.SetColumnWidth( 2,  50 );
-	m_rCtrl.SetColumnWidth( 3,  55 );
+	m_rCtrl.SetColumnWidth(cInputColIndex, cInputColWidth);
+	m_rCtrl.SetColumnWidth(cDescriptionColIndex, cDescriptionColWidth);
+	m_rCtrl.SetColumnWidth(cForcedColIndex,  cForcedColWidth);
+	m_rCtrl.SetColumnWidth(cInvertedColIndex,  cInvertedColWidth);
 
 	return RetVal;
 }
@@ -114,7 +122,7 @@ void SVDiscreteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 									  i, Item.c_str(),
 									  INDEXTOSTATEIMAGEMASK(1),
 									  LVIS_STATEIMAGEMASK,
-									  1, 0 );
+									  1, 0);
 
 			for(const auto& pIOEntry : inputEntryVector)
 			{
@@ -132,24 +140,21 @@ void SVDiscreteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 
 				if( i == pDigInput->GetChannel() )
 				{
-					m_rCtrl.SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
+					m_rCtrl.SetItem(i, cInputColIndex, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
 
 					m_Items[i] = pIOEntry;
 
-					// Column: Description
-					m_rCtrl.SetItemText( i, 1, pDigInput->GetName() );
+					m_rCtrl.SetItemText( i, cDescriptionColIndex, pDigInput->GetName() );
 
-					// Column: Force
 					if( pDigInput->IsForced() )
 					{
-						Item = std::format( _T( "{:d}" ), pDigInput->GetForcedValue() ? 1 : 0 );
-						m_rCtrl.SetItemText( i, 2, Item.c_str() );
-					}// end if
+						Item = std::format( _T( "{:d}" ), pDigInput->GetForcedValue() ? 1 : 0);
+						m_rCtrl.SetItemText(i, cForcedColIndex, Item.c_str());
+					}
 
 					// Column: Inverted
 					Item = pDigInput->IsInverted() ? _T( "1" ) : _T( "" );
-					m_rCtrl.SetItemText( i, 3, Item.c_str() );
-
+					m_rCtrl.SetItemText(i, cInvertedColIndex, Item.c_str());
 					break;
 				}
 			}
@@ -182,7 +187,7 @@ void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 			if( pDigInput )
 			{
 				SVIOAdjustDialog dlg {std::vector<std::string>{}};
-				dlg.m_IOName = m_rCtrl.GetItemText( item, 1 );
+				dlg.m_IOName = m_rCtrl.GetItemText(item, cDescriptionColIndex);
 				dlg.m_IOValue.Format( "%d", pDigInput->GetValue() ? 1 : 0 );
 				dlg.m_pDigInput = pDigInput;
 				dlg.m_pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;

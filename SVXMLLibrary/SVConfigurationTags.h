@@ -201,6 +201,8 @@ namespace  SvXml
 	constexpr const char* CTAG_RESULT_TABS = _T("ResultTabs");
 	constexpr const char* CTAG_RESULT_TABLE_TAB =  _T("ResultTableTab");
 
+	constexpr const char* CTAGF_VALUE_OBJECT_X = (_T("ValueObject_{:d}")); // CTAGF indicates formatting is required.
+
 
 
 	/// These are tool copy / paste tags

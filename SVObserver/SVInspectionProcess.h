@@ -128,7 +128,7 @@ public:
 	
 	HRESULT StartProcess( SVProductInfoStruct *pProduct );
 
-	bool RebuildInspectionInputList();
+	void RebuildInspectionInputList(const SVIOEntryHostStructPtrVector& rUsedInputs);
 	
 	void RemoveCamera( const std::string& rCameraName );
 	
@@ -325,7 +325,7 @@ private:
 
 	SvOi::SVResetItemEnum  AddToResetIds(SvOi::SVResetItemEnum eResetItem, SVObjectClass* pObject, std::back_insert_iterator<std::vector<uint32_t>>  ResetIdIt);
 	
-	SVIOEntryHostStructPtrVector m_PPQInputs;
+	std::vector<std::shared_ptr<SvOi::IValueObject>> m_InputObjects;
 
 	bool m_bForceOffsetUpdate{true}; // Force Global Extent data to update
 

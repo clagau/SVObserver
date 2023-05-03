@@ -2264,7 +2264,7 @@ void SVIPDoc::RunRegressionTest()
 
 			for (const SVIOEntryHostStructPtr pOutputEntry : pInspection->GetPPQ()->getUsedOutputs())
 			{
-				if (m_InspectionID == pOutputEntry->m_inspectionId)
+				if (m_InspectionID == pOutputEntry->getInspectionID())
 				{
 					SVOutputObject* pOutput = dynamic_cast<SVOutputObject*> (SVObjectManagerClass::Instance().GetObject(pOutputEntry->m_IOId));
 					if (nullptr != pOutput)

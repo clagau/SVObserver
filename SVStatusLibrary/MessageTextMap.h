@@ -754,5 +754,8 @@ namespace SvStl
 		{Tid_RetryValueLarge , _T("Large retry value required while loading SVLptIO.dll")},
 		{Tid_ModuleExistAlready, _T("Module with the GUID exist already with the name \"{0}\".")},
 		{Tid_ModuleNameExistAlready, _T("Module with this name exist already.")},
+
+		{Tid_ErrorMultiObjectID, _T("Multi Object ID per trigger can only be used in SVIM_NEO configurations\nChange the configuration type or use the Object ID index 0 for all inspections")},
+		{Tid_ErrorMultiObjectIDOrder, _T("NEO must use 'Extended Time Delay & Data Completion' PPQ mode. When using multi Object ID per trigger the object ID index in the inspection properties must match the order of the inspections in the inspection list (0-3 in ascending order)")},
 };
 } //namespace SvStl

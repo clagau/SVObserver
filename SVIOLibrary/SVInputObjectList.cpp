@@ -190,18 +190,23 @@ SVIOEntryHostStructPtrVector SVInputObjectList::getInputList() const
 		pIOEntry->m_IOId = rInput.second->getObjectId();
 		pIOEntry->m_name = rInput.second->GetName();
 		pIOEntry->m_PPQIndex = rInput.second->GetPpqIndex();
-		pIOEntry->m_Enabled = (-1l != pIOEntry->m_PPQIndex);
+		pIOEntry->m_Enabled = (-1L != pIOEntry->m_PPQIndex);
+		if (pIOEntry->m_Enabled)
+		{
+			//For inputs we always need the internal value object as the value object!
+			pIOEntry->setValueObject(rInput.second->GetValueObject());
+		}
 
 		switch (rInput.second->GetObjectSubType())
 		{
-		case SvPb::SVDigitalInputObjectType:
-			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
-			break;
-		case SvPb::SVRemoteInputObjectType:
-			pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-			break;
-		default:
-			break;
+			case SvPb::SVDigitalInputObjectType:
+				pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
+				break;
+			case SvPb::SVRemoteInputObjectType:
+				pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
+				break;
+			default:
+				break;
 		}
 		result.emplace_back(pIOEntry);
 	}

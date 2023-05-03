@@ -6,8 +6,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOResource/resource.h"
 #include "SVInputObject.h"
+#include "SVOResource/resource.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #pragma endregion Includes
 
 class SVDigitalInputObject : public SVInputObject
@@ -26,6 +27,7 @@ public:
 
 	virtual HRESULT Read( _variant_t& rValue ) const override;
 	virtual long GetChannel() const override { return m_Channel; }
+	virtual SVObjectClass* GetValueObject() override { return &m_ValueObject; }
 
 	bool Force( bool bForce, bool bForcedValue );
 	bool Invert( bool bInvert );
@@ -46,5 +48,6 @@ private:
 #pragma region Member Variables
 private:
 	long m_Channel{-1L};
+	SvVol::SVBoolValueObjectClass m_ValueObject {};
 #pragma endregion Member Variables
 };

@@ -666,7 +666,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 
 		// The User clicked on the Item
 		dlg.m_GroupName = pRemoteOutput->GetGroupID();
-		dlg.m_InputObjectID = pRemoteOutput->GetInputValueObjectID(  );
+		dlg.m_InputObjectID = pRemoteOutput->GetValueObjectID(  );
 
 		// if this is the first (Trigger Count) item in the list then gray out the object.
 		if(nullptr != pConfig && pConfig->GetFirstRemoteOutputObject( dlg.m_GroupName ) == pRemoteOutput )
@@ -679,7 +679,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 	{
 		case IDOK:
 		{
-			pRemoteOutput->SetInputObjectId( dlg.m_InputObjectID );
+			pRemoteOutput->SetValueObjectID( dlg.m_InputObjectID );
 			pRemoteOutput->SetGroupID( dlg.m_GroupName );
 			l_bRet = true;
 			break;

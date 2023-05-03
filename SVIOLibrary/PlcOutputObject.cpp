@@ -51,7 +51,33 @@ void PlcOutputObject::Persist(SvOi::IObjectWriter& rWriter, bool /*closeObject =
 	rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED_ACK, svVariant);
 	svVariant.Clear();
 
+	for(DWORD i=0; i < SvDef::cObjectIndexMaxNr; ++i)
+	{
+		std::string valueObjectName = std::format(SvXml::CTAGF_VALUE_OBJECT_X, i);
+		svVariant = convertObjectIdToVariant(m_valueObjectIDList[i]);
+		rWriter.WriteAttribute(valueObjectName.c_str(), svVariant);
+		svVariant.Clear();
+	}
+
 }
+
+void PlcOutputObject::SetValueObjectID(uint32_t objectID, DWORD objectIDIndex /*= 0*/)
+{
+	if (objectIDIndex < SvDef::cObjectIndexMaxNr)
+	{
+		m_valueObjectIDList[objectIDIndex] = objectID;
+	}
+}
+
+uint32_t PlcOutputObject::GetValueObjectID(DWORD objectIDIndex /*= 0*/) const
+{
+	if (objectIDIndex < SvDef::cObjectIndexMaxNr)
+	{
+		return m_valueObjectIDList[objectIDIndex];
+	}
+	return SvDef::InvalidObjectId;
+}
+
 void PlcOutputObject::Combine( bool bCombine, bool bCombineACK )
 {
 	m_isCombined = bCombine;

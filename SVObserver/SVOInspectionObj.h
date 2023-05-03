@@ -56,8 +56,8 @@ public:
 	bool IsColor() const { return m_Color; }
 	void SetColor(bool Color) { m_Color = Color; }
 
-	DWORD GetObjectIdIndex() const { return m_ObjectIdIndex; }
-	void SetObjectIdIndex(DWORD objectIdIndex) { m_ObjectIdIndex = objectIdIndex; }
+	long GetObjectIdIndex() const { return m_ObjectIdIndex; }
+	void SetObjectIdIndex(long objectIdIndex) { m_ObjectIdIndex = objectIdIndex; }
 
 private:
 	std::string m_ToolsetImage {};
@@ -66,7 +66,7 @@ private:
 	std::string m_NewDisableMethod {_T("Method 1")};
 	std::string m_ImportFilename {};
 	long m_lEnableAuxiliaryExtent {0L};
-	DWORD m_ObjectIdIndex {0};
+	long m_ObjectIdIndex {0L};		//Use long instead of DWORD otherwise is displayed as hex value
 	bool m_ShowAuxExtent {true};
 	bool m_NameChanged {false};
 	bool m_NewInspection {false};

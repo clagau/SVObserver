@@ -716,5 +716,8 @@ enum MessageTextEnum
 	Tid_RetryValueLarge,
 	Tid_ModuleExistAlready,
 	Tid_ModuleNameExistAlready,
+
+	Tid_ErrorMultiObjectID,
+	Tid_ErrorMultiObjectIDOrder,
 };
 } //namespace SvStl

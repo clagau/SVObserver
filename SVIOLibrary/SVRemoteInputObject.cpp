@@ -60,6 +60,11 @@ HRESULT SVRemoteInputObject::writeCache( const _variant_t& rValue )
 
 	if( S_OK == l_Status )
 	{
+		if (VT_R8 != l_Temp.vt)
+		{
+			//Remote inputs are now of type VT_R8
+			l_Temp.ChangeType(VT_R8);
+		}
 		std::lock_guard<std::mutex> guard(m_protectRemoteInput);
 		m_remoteCache = l_Temp;
 	}

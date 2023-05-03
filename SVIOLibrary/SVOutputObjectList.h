@@ -43,7 +43,7 @@ public:
 	HRESULT AttachOutput(SVOutputObjectPtr pOutput);
 	HRESULT DetachOutput(uint32_t outputID );
 
-	ObjectIdVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, const std::vector<bool>& rOutputResult, bool useDefaults, bool p_ACK, bool p_NAK);
+	void getOutputValues(std::back_insert_iterator<ObjectIdVariantPairVector> insertIter,  const SVIOEntryHostStructPtrVector& rIOEntries, DWORD objectIDIndex, bool useDefaults, bool p_ACK, bool p_NAK);
 	bool ResetOutputs(const SVIOEntryHostStructPtrVector& rIOEntries);
 	bool WriteOutputs(const ObjectIdVariantPairVector& rOutputValues);
 	bool WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool p_ACK, bool p_NAK );
@@ -60,6 +60,7 @@ public:
 	///This function returns no error because the IO PLC dll is the only type which supports this functionality
 	void WriteOutputData(const SvTrig::ResultData& rResultData);
 	void setModuleReady(bool value);
+	void setOutputCount(int outputCount) { m_outputCount = outputCount; }
 
 	std::vector<SVOutputObjectPtr> GetOutputs(SvPb::SVObjectSubTypeEnum ObjectSubType = SvPb::SVNotSetSubObjectType) const;
 
@@ -68,10 +69,11 @@ public:
 #pragma endregion Methods to replace processMessage
 
 private:
-	std::pair<uint32_t, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, const std::vector<bool>& rOutputResult, bool useDefault, bool p_ACK, bool p_NAK );
+	std::pair<uint32_t, _variant_t> getOutputValue(const SVIOEntryHostStructPtr& pIOEntry, DWORD objectIDIndex, bool useDefault, bool p_ACK, bool p_NAK);
 	SVOutputObjectPtr findOutputName(const std::string& rOutputName) const;
 
 	mutable std::mutex m_protectOutputList;
+	int m_outputCount {0};
 
 	ObjectIdSVOutputObjectPtrMap m_outputObjectMap;
 };

@@ -27,7 +27,8 @@ protected:
 	virtual void OnOK() override;
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnObjectSelector();
-	
+	afx_msg void OnSelchangeInspection();
+
 public:
 	explicit SVIOAdjustDialog(const std::vector<std::string>& rUsedOutputList, CWnd* pParent = nullptr );
 	virtual ~SVIOAdjustDialog() = default;
@@ -39,6 +40,7 @@ public:
 
 public:
 	SVObjectClass* m_pLinkedObject {nullptr};
+	std::array<SVObjectClass*, SvDef::cObjectIndexMaxNr> m_pObjectLinkList {nullptr, nullptr, nullptr, nullptr};
 	SVIOObjectType m_ioObjectType {SVIOObjectType::IO_INVALID_OBJECT};
 	SVDigitalInputObject* m_pDigInput {nullptr};
 	SVDigitalOutputObject* m_pDigOutput {nullptr};

@@ -33,7 +33,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
@@ -189,7 +188,6 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	{
 		SVIOEntryHostStructPtrVector inputEntryVector = pInputList->getInputList();
 
-		long lPPQSize = pConfig->GetPPQCount( );
 		long lSize = static_cast<long>(inputEntryVector.size());
 
 		long count = pInputList->getRemoteInputCount();
@@ -213,33 +211,6 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 						if (nullptr != pRemoteInput)
 						{
 							pRemoteInput->SetChannel(i + 1);
-
-							for (int j = 0; j < lPPQSize; ++j)
-							{
-								SVPPQObject* pPPQ = pConfig->GetPPQ(j);
-								if (nullptr != pPPQ)
-								{
-									pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-									std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
-
-									if (nullptr != pIOEntry && nullptr != pInputValueObject)
-									{
-										pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-										SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-										if (nullptr != pObject)
-										{
-											pObject->SetName(RemoteInputName.c_str());
-											pObject->SetObjectOwner(GetIOController());
-										}
-										pIOEntry->m_IOId = pRemoteInput->getObjectId();
-										pIOEntry->m_Enabled = FALSE;
-										pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-										pIOEntry->setValueObject(pInputValueObject);
-
-										pPPQ->AddInput(pIOEntry);
-									}// end if
-								}// end if
-							}// end for
 						}// end if
 					}// end for
 				}// end if
@@ -269,12 +240,6 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							if (RemoteInputName == pObject->GetName())
 							{
 								bFound = true;
-
-								for (int j = 0; j < lPPQSize; ++j)
-								{
-									SVPPQObject* pPPQ = pConfig->GetPPQ(j);
-									if (nullptr != pPPQ) { pPPQ->RemoveInput(pIOEntry); }
-								}// end for
 
 								SVRemoteInputObject* pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pObject);
 

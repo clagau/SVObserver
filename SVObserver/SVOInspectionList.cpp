@@ -128,7 +128,7 @@ bool SVOInspectionList::SetObjectIdIndex(LPCTSTR InspectionName, DWORD objectIdI
 
 	if (nullptr != pObj)
 	{
-		pObj->SetObjectIdIndex(objectIdIndex);
+		pObj->SetObjectIdIndex(static_cast<long> (objectIdIndex));
 		return true;
 	}
 

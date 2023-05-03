@@ -31,7 +31,7 @@ SVRemoteOutputObject::SVRemoteOutputObject()
 std::string SVRemoteOutputObject::GetInputValueObjectName()
 {
 	// Use the ID to get an object.
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObjectA(m_InputObjectId);
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(m_valueObjectID);
 	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 	{	// Get the object name from the object pointer.
 		m_strObjectName = pObject->GetCompleteName();
@@ -44,15 +44,13 @@ std::string SVRemoteOutputObject::GetGroupID( ) const
 	return m_strGroupID;
 }
 
-
-// Parameters >> Tree
-bool SVRemoteOutputObject::GetParameters(SvOi::IObjectWriter& rWriter ) const
+void SVRemoteOutputObject::Persist(SvOi::IObjectWriter& rWriter ) const
 {
 	_variant_t svVariant = convertObjectIdToVariant(getObjectId());
 	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
-	svVariant = convertObjectIdToVariant(m_InputObjectId);
+	svVariant = convertObjectIdToVariant(m_valueObjectID);
 	rWriter.WriteAttribute( SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_ID, svVariant );
 	svVariant.Clear();
 
@@ -63,11 +61,8 @@ bool SVRemoteOutputObject::GetParameters(SvOi::IObjectWriter& rWriter ) const
 	svVariant = _variant_t(m_strObjectName.c_str());
 	rWriter.WriteAttribute( SvXml::CTAG_REMOTE_OUTPUT_NAME, svVariant );
 	svVariant.Clear();
-
-	return true;
 }
 
-// Sets parameters from Tree Control
 bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
 {
 	_variant_t svVariant;
@@ -89,7 +84,7 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 		{
 			return false;
 		}
-		m_InputObjectId = calcObjectId(svVariant);
+		m_valueObjectID = calcObjectId(svVariant);
 	}
 
 	bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_GROUP_ID, htiParent, svVariant);
@@ -111,33 +106,21 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 	return true;
 }
 
-HRESULT SVRemoteOutputObject::SetInputObject(SVObjectClass* pObject )
+void SVRemoteOutputObject::SetValueObjectID(uint32_t objectID, DWORD objectIDIndex /*= 0*/)
 {
-	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
+	if (0 == objectIDIndex)
 	{
-		m_InputObjectId = pObject->getObjectId();
+		m_valueObjectID = objectID;
 	}
-	else
-	{
-		m_InputObjectId = SvDef::InvalidObjectId;
-	}
-
-	return S_OK;
 }
 
-HRESULT SVRemoteOutputObject::SetInputObjectId(uint32_t ObjectId )
+uint32_t SVRemoteOutputObject::GetValueObjectID(DWORD objectIDIndex /*= 0*/) const
 {
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( ObjectId );
-	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
+	if (0 == objectIDIndex)
 	{
-		m_InputObjectId = ObjectId;
+		return m_valueObjectID;
 	}
-	return S_OK;
-}
-
-uint32_t SVRemoteOutputObject::GetInputValueObjectID() const
-{
-	return m_InputObjectId;
+	return SvDef::InvalidObjectId;
 }
 
 HRESULT SVRemoteOutputObject::SetGroupID( const std::string& p_strGroupID )

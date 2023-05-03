@@ -11,8 +11,7 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <memory>
-//Moved to precompiled header: #include <vector>
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -33,6 +32,13 @@ enum SVIOObjectType
 	IO_REMOTE_OUTPUT	= 0x0020,	// 0000 0000 0010 0000
 };
 
+struct IOLinkedValueObj
+{
+	uint32_t m_inspectionId {0UL};
+	SVObjectClass* m_pObject {nullptr};
+	SvOi::IValueObject* m_pValueObject {nullptr};
+};
+
 struct SVIOEntryHostStruct 
 {
 	SVIOEntryHostStruct() = default;
@@ -47,20 +53,16 @@ struct SVIOEntryHostStruct
 	SVIOObjectType m_ObjectType{IO_INVALID_OBJECT};
 
 	uint32_t m_IOId{0UL};
-	uint32_t m_inspectionId {0UL};
 
-	void setValueObject(std::shared_ptr<SvOi::IValueObject> pValueObject);
-	void setLinkedObject(SVObjectClass* pObject);
-	SVObjectClass* getObject() { return m_pObject; };
-	SvOi::IValueObject* getValueObject() { return (nullptr != m_pValueObject) ? m_pValueObject.get() : m_pLinkedValueObject; }
+	void setValueObject(SVObjectClass* pObject, DWORD objectIDIndex = 0);
+	SVObjectClass* getObject(DWORD objectIDIndex = 0) const;
+	SvOi::IValueObject* getValueObject(DWORD objectIDIndex = 0) const;
+	uint32_t getInspectionID(DWORD objectIDIndex = 0) const;
 
 	static bool PtrGreater( std::shared_ptr< SVIOEntryHostStruct > elem1, std::shared_ptr< SVIOEntryHostStruct > elem2 );
 
 private:
-	SVObjectClass* m_pObject{nullptr};
-	///m_pLinkedValueObject is not owned while m_pValueObject is owned by IO entry
-	SvOi::IValueObject* m_pLinkedValueObject {nullptr};
-	std::shared_ptr<SvOi::IValueObject> m_pValueObject;
+	std::array<IOLinkedValueObj, SvDef::cObjectIndexMaxNr> m_ioLinkedValues {};
 };
 
 typedef std::shared_ptr< SVIOEntryHostStruct > SVIOEntryHostStructPtr;

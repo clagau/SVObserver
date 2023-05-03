@@ -142,10 +142,9 @@ HRESULT SVOutputObjectList::DetachOutput(uint32_t outputID)
 	return l_Status;
 }
 
-ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, const std::vector<bool>& rOutputResult, bool useDefaults, bool ACK, bool NAK)
+void SVOutputObjectList::getOutputValues(std::back_insert_iterator<ObjectIdVariantPairVector> insertIter, const SVIOEntryHostStructPtrVector& rIOEntries, DWORD objectIDIndex, bool useDefaults, bool ACK, bool NAK)
 {
-	ObjectIdVariantPairVector Result;
-
+	std::pair<uint32_t, _variant_t> plcValue;
 	for(const auto& pIOEntry :rIOEntries)
 	{
 		// Check if output is enabled for this call (This is to filter outputs which are set later eg. Data Valid and Output toggle
@@ -155,41 +154,40 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 			{
 				case SVIOObjectType::IO_DIGITAL_OUTPUT:
 				{
-					std::pair<uint32_t, _variant_t> OutputValue = getDigitalOutputValue(pIOEntry, rOutputResult, useDefaults, ACK, NAK);
+					std::pair<uint32_t, _variant_t> OutputValue = getOutputValue(pIOEntry, objectIDIndex, useDefaults, ACK, NAK);
 					if (SvDef::InvalidObjectId != OutputValue.first && VT_EMPTY != OutputValue.second.vt)
 					{
-						Result.push_back(OutputValue);
+						insertIter = OutputValue;
 					}
 					break;
 				}
 				case SVIOObjectType::IO_PLC_OUTPUT:
 				{
-					std::pair<uint32_t, _variant_t> OutputValue = getDigitalOutputValue(pIOEntry, rOutputResult, useDefaults, ACK, NAK);
+					std::pair<uint32_t, _variant_t> OutputValue = getOutputValue(pIOEntry, objectIDIndex, useDefaults, ACK, NAK);
 					if (VT_UI1 == OutputValue.second.vt)
 					{
 						///This is to get the correct index for the respective PPQ
-						long index = OutputValue.first % rOutputResult.size();
-						if(Result.size() > 0)
+						long index = OutputValue.first % m_outputCount;
+						if((VT_UI1 | VT_ARRAY) == plcValue.second.vt)
 						{
-							if(rOutputResult.size() > index)
+							if(m_outputCount > index)
 							{
-								::SafeArrayPutElement(Result[0].second.parray, &index, static_cast<void*>(&OutputValue.second.bVal));
+								::SafeArrayPutElement(plcValue.second.parray, &index, static_cast<void*>(&OutputValue.second.bVal));
 							}
 						}
 						else
 						{
-							_variant_t outputResults;
+							plcValue.first = 0UL;
 							SAFEARRAYBOUND arrayBound;
 							arrayBound.lLbound = 0;
-							arrayBound.cElements =static_cast<ULONG> (rOutputResult.size());
-							outputResults.vt = VT_UI1 | VT_ARRAY;
-							outputResults.parray = ::SafeArrayCreate(VT_UI1, 1, &arrayBound);
-							memset(outputResults.parray->pvData, 0, rOutputResult.size() * sizeof(uint8_t));
-							if (rOutputResult.size() > index)
+							arrayBound.cElements =static_cast<ULONG> (m_outputCount);
+							plcValue.second.vt = VT_UI1 | VT_ARRAY;
+							plcValue.second.parray = ::SafeArrayCreate(VT_UI1, 1, &arrayBound);
+							memset(plcValue.second.parray->pvData, 0, m_outputCount * sizeof(uint8_t));
+							if (index < m_outputCount)
 							{
-								::SafeArrayPutElement(outputResults.parray, &index, static_cast<void*>(&OutputValue.second.bVal));
+								::SafeArrayPutElement(plcValue.second.parray, &index, static_cast<void*>(&OutputValue.second.bVal));
 							}
-							Result.emplace_back(std::pair<uint32_t, _variant_t>(0UL, outputResults));
 						}
 					}
 					break;
@@ -210,7 +208,7 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 						}
 						if (SvDef::InvalidObjectId != OutputValue.first && VT_EMPTY != OutputValue.second.vt)
 						{
-							Result.push_back(OutputValue);
+							insertIter = OutputValue;
 						}
 					}
 					break;
@@ -220,8 +218,10 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 			}
 		}
 	}
-
-	return Result;
+	if ((VT_UI1 | VT_ARRAY) == plcValue.second.vt)
+	{
+		insertIter = plcValue;
+	}
 }
 
 bool SVOutputObjectList::ResetOutputs(const SVIOEntryHostStructPtrVector& rIOEntries )
@@ -271,7 +271,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool ACK,
 	{
 		if( SVIOObjectType::IO_DIGITAL_OUTPUT == pIOEntry->m_ObjectType)
 		{
-			std::pair<uint32_t, _variant_t> ValueOutput = getDigitalOutputValue(pIOEntry, std::vector<bool>{}, false, ACK, NAK);
+			std::pair<uint32_t, _variant_t> ValueOutput = getOutputValue(pIOEntry, 0, false, ACK, NAK);
 
 			SVOutputObjectPtr pOutput = GetOutput(ValueOutput.first);
 			if (nullptr != pOutput)
@@ -362,6 +362,19 @@ SVIOEntryHostStructPtrVector SVOutputObjectList::getOutputList() const
 
 			pIOEntry->m_IOId = rOutput.second->getObjectId();
 			pIOEntry->m_name = rOutput.second->GetName();
+			for (DWORD i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
+			{
+				uint32_t valueObjectID {rOutput.second->GetValueObjectID(i)};
+				if (SvDef::InvalidObjectId != valueObjectID)
+				{
+					SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(valueObjectID);
+					if (nullptr != pObject)
+					{
+						pIOEntry->setValueObject(pObject, i);
+					}
+					pIOEntry->m_Enabled = true;
+				}
+			}
 
 			switch (rOutput.second->GetObjectSubType())
 			{
@@ -630,7 +643,7 @@ void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, co
 	}// end for
 }
 
-std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, const std::vector<bool>& rOutputResult, bool useDefault, bool ACK, bool NAK )
+std::pair<uint32_t, _variant_t>  SVOutputObjectList::getOutputValue(const SVIOEntryHostStructPtr& pIOEntry, DWORD objectIDIndex, bool useDefault, bool ACK, bool NAK )
 {
 	std::pair<uint32_t, _variant_t> Result{ SvDef::InvalidObjectId, _variant_t{} };
 	SVOutputObjectPtr pOutput = GetOutput(pIOEntry->m_IOId);
@@ -638,7 +651,7 @@ std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const
 	if( nullptr != pOutput )
 	{
 		_variant_t Value{false};
-		SvOi::IValueObject* pValueObject = pIOEntry->getValueObject();
+		SvOi::IValueObject* pValueObject = pIOEntry->getValueObject(objectIDIndex);
 
 		if(nullptr != pValueObject)
 		{
@@ -646,17 +659,9 @@ std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const
 			{
 				Value = pValueObject->getDefaultValue();
 			}
-			else if (ACK || (0 == pIOEntry->m_inspectionId))
+			else if (ACK || (0 == pIOEntry->getInspectionID()))
 			{
-				if (0 == rOutputResult.size())
-				{
-					pValueObject->getValue(Value);
-				}
-				else
-				{
-					int outputIndex = pOutput->GetChannel() % rOutputResult.size();
-					Value = rOutputResult[outputIndex];
-				}
+				pValueObject->getValue(Value);
 			}
 		}
 
@@ -684,15 +689,7 @@ std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const
 		{
 			if (nullptr != pValueObject)
 			{
-				if (0 == rOutputResult.size())
-				{
-					pValueObject->getValue(Value);
-				}
-				else
-				{
-					int outputIndex = pOutput->GetChannel() % rOutputResult.size();
-					Value = rOutputResult[outputIndex];
-				}
+				pValueObject->getValue(Value);
 			}
 		}
 		///Need to convert bool value to variant

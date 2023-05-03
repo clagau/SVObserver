@@ -39,21 +39,19 @@ public:
 	virtual bool isCombined() const override { return false; }
 	virtual bool isAndACK() const override { return false; }
 	virtual long GetChannel() const override { return -1; }
-
+	virtual void SetValueObjectID(uint32_t objectID, DWORD objectIDIndex = 0) override;
+	virtual uint32_t GetValueObjectID(DWORD objectIDIndex = 0) const override;
 
 	// Get Functions
 	std::string GetInputValueObjectName();
-	uint32_t GetInputValueObjectID() const;
 
 	std::string GetGroupID( ) const ;
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	bool GetParameters(SvOi::IObjectWriter& rWriter) const;
+	void Persist(SvOi::IObjectWriter& rWriter) const;
 
 	// Set Functions
-	HRESULT SetInputObject( SVObjectClass* p_pObject );
-	HRESULT SetInputObjectId(uint32_t objectId);
 	HRESULT SetGroupID( const std::string& p_strGroupID );
 
 	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
@@ -70,8 +68,7 @@ private:
 	// The Value Objects name.
 	std::string m_strObjectName;
 
-	// id of the value object used to output
-	uint32_t m_InputObjectId{SvDef::InvalidObjectId};
+	uint32_t m_valueObjectID {SvDef::InvalidObjectId};
 
 	std::string m_strGroupID;	// Which Output Group this output belongs to.
 #pragma endregion Member Variables

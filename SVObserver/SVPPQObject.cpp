@@ -60,7 +60,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 constexpr double TwentyPercent = .20;
-constexpr int cDefaultObjectIdIndexSize {1};
+constexpr DWORD cDefaultObjectIdCount {1};
 bool SVPPQObject::m_timerResolution {false};
 #pragma endregion Declarations
 
@@ -69,9 +69,16 @@ void SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 	if (false == rProduct.m_dataComplete)
 	{
 		SetProductIncomplete(rProduct);
+		if (cDefaultObjectIdCount < m_objectIdCount)
+		{
+			for (DWORD i = 0; i < m_objectIdCount; ++i)
+			{
+				WriteOutputs(&rProduct, i);
+			}
+		}
 	}
 	bool done {true};
-	if (cDefaultObjectIdIndexSize == m_multipleObjectIdCount)
+	if (cDefaultObjectIdCount == m_objectIdCount)
 	{
 		constexpr int cDefaultObjectIdIndex {0};
 		done = WriteOutputs(&rProduct, cDefaultObjectIdIndex);
@@ -233,14 +240,14 @@ bool SVPPQObject::Rebuild()
 
 	calcUseProcessingOffset4InterestFlag();
 
-	std::set<int> objectIDNumber;
+	std::set<DWORD> objectIDNumber;
 	// Force the Inspections to rebuild as well
 	for (auto pInspection : m_arInspections)
 	{
 		pInspection->RebuildInspection(false);
 		objectIDNumber.insert(pInspection->GetObjectIdIndex());
 	}
-	m_multipleObjectIdCount = static_cast<int> (objectIDNumber.size());
+	m_objectIdCount = static_cast<DWORD> (objectIDNumber.size());
 
 	return result;
 }// end Rebuild
@@ -773,6 +780,12 @@ void SVPPQObject::GoOnline()
 
 	m_storeForInterestMap.clear();
 
+	if (m_objectIdCount > cDefaultObjectIdCount && m_outputMode != SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode)
+	{
+		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ErrorMultiObjectID, {}, SvStl::SourceFileParams(StdMessageParams));
+		throw Msg;
+	}
+
 	bool bInspGoOnline = true;
 	for (auto* pInspection : m_arInspections)
 	{
@@ -971,18 +984,12 @@ bool SVPPQObject::RemoveInput(SVIOEntryHostStructPtr pInput)
 	bool result {false};
 	std::string strName;
 
-	if (nullptr != pInput->getObject())
+	if (nullptr != pInput)
 	{
-		strName = pInput->getObject()->GetName();
-	}
-	else if (SvDef::InvalidObjectId != pInput->m_IOId)
-	{
-		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pInput->m_IOId);
-
-		strName = l_pObject->GetName();
+		strName = pInput->m_name;
 	}
 
-	auto iter = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), [&strName](const auto& rEntry) {return rEntry->getObject()->GetName() == strName; });
+	auto iter = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), [&strName](const auto& rEntry) {return rEntry->m_name == strName; });
 	if (m_UsedInputs.end() != iter)
 	{
 		m_UsedInputs.erase(iter);
@@ -1028,63 +1035,27 @@ bool SVPPQObject::RebuildInputList()
 		m_UsedInputs = m_pInputList->getInputList();
 		for (auto& pEntry : m_UsedInputs)
 		{
+			//Not this is required to ensure inputs once inserted in the input list remain correctly in the list
 			uint32_t ioID {pEntry->m_IOId};
 			auto iter = std::find_if(previousInputs.begin(), previousInputs.end(), [&ioID](const auto& rpEntry) {return nullptr != rpEntry && ioID == rpEntry->m_IOId; });
 			if (previousInputs.end() != iter)
 			{
 				*pEntry = *(*iter);
 			}
-			else
-			{
-				SVObjectClass* pObject {nullptr};
-				std::shared_ptr<SvOi::IValueObject> pInputValueObject;
-				if (IO_REMOTE_INPUT == pEntry->m_ObjectType)
-				{
-					// new variant value object for Remote Inputs.
-					pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
-					_variant_t defaultValue;
-					defaultValue.ChangeType(VT_R8);
-					if (nullptr != pInputValueObject)
-					{
-						pInputValueObject->setDefaultValue(defaultValue);
-						pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-					}
-				}
-				else
-				{
-					// new Bool Value Object for Digital Inputs.
-					pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-					if (nullptr != pInputValueObject)
-					{
-						pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-					}
-				}
-
-				if (nullptr != pObject)
-				{
-					pObject->SetName(pEntry->m_name.c_str());
-					pObject->SetObjectOwner(this);
-					pObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::RemoveAttribute);
-					pObject->ResetObject();
-				}
-				pEntry->setValueObject(pInputValueObject);
-			}
 		}
 		std::sort(m_UsedInputs.begin(), m_UsedInputs.end(), &SVIOEntryHostStruct::PtrGreater);
+
+		for (auto& pInspection : m_arInspections)
+		{
+			if (nullptr != pInspection)
+			{
+				pInspection->RebuildInspectionInputList(m_UsedInputs);
+			}
+		}
 		return true;
-	}// end if
+	}
 
 	return false;
-}// end RebuildInputList
-
-SVIOEntryHostStructPtr SVPPQObject::GetInput(const std::string& name) const
-{
-	auto iter = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), [&name](const auto& rpEntry) {return nullptr != rpEntry && name == rpEntry->m_name; });
-	if (m_UsedInputs.end() != iter)
-	{
-		return *iter;
-	}
-	return SVIOEntryHostStructPtr();
 }
 
 bool SVPPQObject::RemoveOutput(SVIOEntryHostStructPtr pOutput)
@@ -1139,7 +1110,7 @@ bool SVPPQObject::ResolveConditionalOutput()
 		{
 			if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
 			{
-				return (pIoEntry->getObject()->GetName() == m_conditionalOutputName);
+				return (pIoEntry->m_name == m_conditionalOutputName);
 			}
 			return false;
 		};
@@ -1312,40 +1283,55 @@ bool SVPPQObject::RebuildOutputList()
 		SVIOEntryHostStructPtrVector allOutputs = m_pOutputList->getOutputList();
 		for (auto& pEntry : allOutputs)
 		{
-			SVObjectClass* pObject {nullptr};
-			std::string fqName {SvDef::FqnConfiguration};
-			fqName += '.' + pEntry->m_name;
-			SVObjectManagerClass::Instance().GetObjectByDottedName(fqName, pObject);
-			if (nullptr != pObject)
+			bool isPpqOutput {false};
+			for (DWORD i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
 			{
-				pEntry->setLinkedObject(pObject);
-				uint32_t inspectionID {pEntry->m_inspectionId};
-				auto iterIpd = std::find_if(m_arInspections.begin(), m_arInspections.end(), [&inspectionID](const auto* pEntry) { return pEntry->getObjectId() == inspectionID; });
-				bool isPpqOutput {m_arInspections.end() != iterIpd};
-				SVObjectClass* pPpq = pObject->GetAncestor(SvPb::SVObjectTypeEnum::SVPPQObjectType);
-				isPpqOutput |= (this == pPpq);
-				if(isPpqOutput)
+				if (i >= m_objectIdCount)
 				{
-					pEntry->m_Enabled = (nullptr != pObject);
-
-					m_UsedOutputs.push_back(pEntry);
-					//These outputs have special functionality and need to be disabled
-					if (pObject == &m_PpqOutputs[PpqOutputEnums::DataValid])
+					//Reset value object setting
+					pEntry->setValueObject(nullptr, i);
+					continue;
+				}
+				SVObjectClass* pObject {pEntry->getObject(i)};
+				if (nullptr == pObject)
+				{
+					std::string fqName {SvDef::FqnConfiguration};
+					fqName += '.' + pEntry->m_name;
+					SVObjectManagerClass::Instance().GetObjectByDottedName(fqName, pObject);
+					pEntry->setValueObject(pObject, i);
+				}
+				if (nullptr != pObject)
+				{
+					uint32_t inspectionID {pEntry->getInspectionID(i)};
+					auto iterIpd = std::find_if(m_arInspections.begin(), m_arInspections.end(), [&inspectionID](const auto* pEntry) { return pEntry->getObjectId() == inspectionID; });
+					isPpqOutput =  {m_arInspections.end() != iterIpd};
+					SVObjectClass* pPpq = pObject->GetAncestor(SvPb::SVObjectTypeEnum::SVPPQObjectType);
+					isPpqOutput |= (this == pPpq);
+					if (isPpqOutput)
 					{
-						m_pDataValid = pEntry;
-						pEntry->m_Enabled = false;
-					}
-					else if (pObject == &m_PpqOutputs[PpqOutputEnums::TriggerToggle])
-					{
-						m_pTriggerToggle = pEntry;
-						pEntry->m_Enabled = false;
-					}
-					else if (pObject == &m_PpqOutputs[PpqOutputEnums::OutputToggle])
-					{
-						m_pOutputToggle = pEntry;
-						pEntry->m_Enabled = false;
+						pEntry->m_Enabled = true;
+						//These outputs have special functionality and need to be disabled
+						if (pObject == &m_PpqOutputs[PpqOutputEnums::DataValid])
+						{
+							m_pDataValid = pEntry;
+							pEntry->m_Enabled = false;
+						}
+						else if (pObject == &m_PpqOutputs[PpqOutputEnums::TriggerToggle])
+						{
+							m_pTriggerToggle = pEntry;
+							pEntry->m_Enabled = false;
+						}
+						else if (pObject == &m_PpqOutputs[PpqOutputEnums::OutputToggle])
+						{
+							m_pOutputToggle = pEntry;
+							pEntry->m_Enabled = false;
+						}
 					}
 				}
+			}
+			if (isPpqOutput)
+			{
+				m_UsedOutputs.push_back(pEntry);
 			}
 		}
 		std::sort(m_UsedOutputs.begin(), m_UsedOutputs.end(), &SVIOEntryHostStruct::PtrGreater);
@@ -1712,7 +1698,7 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct, uint32_t inspId
 {
 	bool bValid {true};
 	long oState {0};
-	if (cDefaultObjectIdIndexSize == m_multipleObjectIdCount)
+	if (cDefaultObjectIdCount == m_objectIdCount)
 	{
 	for (const auto& rInspectionInfo : rProduct.m_svInspectionInfos)
 	{
@@ -1817,13 +1803,27 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct, uint32_t inspId
 	//Previous trigger NAK is true when Trigger per Object > 1 and a NAK occured during a previous trigger with the same objectID
 	bACK &= (false == rProduct.m_prevTriggerNAK[objectIdIndex]) ? TRUE : FALSE;
 
-	setOutputResults(0, rProduct.m_outputsInfo.m_outputResult);
 	bool objectNak = (bNAK || rProduct.m_prevTriggerNAK[objectIdIndex]) ? true : false;
-	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, rProduct.m_outputsInfo.m_outputResult, false, bACK ? true : false, objectNak);
+
+	SVIOEntryHostStructPtrVector outputList;
+	std::copy_if(m_UsedOutputs.begin(), m_UsedOutputs.end(), std::back_inserter(outputList), [bValid, inspId](const SVIOEntryHostStructPtr& rEntry)
+	{
+		if (bValid)
+		{
+			//InspectionID 0 are PPQ variables
+			return (inspId == rEntry->getInspectionID()) || (0 == rEntry->getInspectionID());
+		}
+		else
+		{
+			return inspId == rEntry->getInspectionID();
+		}
+	});
+	auto insertOutput = std::back_inserter(rProduct.m_outputsInfo.m_Outputs);
+	m_pOutputList->getOutputValues(insertOutput, outputList, objectIdIndex, false, bACK ? true : false, objectNak);
 	rProduct.m_outputsInfo.m_NakResult[objectIdIndex]= bNAK ? true : false;
 	rProduct.m_outputsInfo.m_DataValidResult = bValid && !bNAK;
 
-	if (m_multipleObjectIdCount > cDefaultObjectIdIndexSize)
+	if (m_objectIdCount > cDefaultObjectIdCount)
 	{
 		WriteOutputs(&rProduct, objectIdIndex);
 	}
@@ -1839,10 +1839,7 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t 
 		isReject |= rInsp.second.m_bReject;
 	}
 
-	if (bValid || m_multipleObjectIdCount > cDefaultObjectIdIndexSize)
-	{
-		AddResultsToPPQ(rProduct, inspId);
-	}
+	AddResultsToPPQ(rProduct, inspId);
 
 	//Only place that could set bDataComplete to true
 	rProduct.m_dataComplete = bValid;
@@ -1877,7 +1874,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 {
 	bool l_Status = true;
 	auto& rNAKList = rProduct.m_outputsInfo.m_NakResult;
-	bool isNAK = std::any_of(rNAKList.begin(), rNAKList.begin() + m_multipleObjectIdCount, [](const bool& rNAK) { return rNAK; });
+	bool isNAK = std::any_of(rNAKList.begin(), rNAKList.begin() + m_objectIdCount, [](const bool& rNAK) { return rNAK; });
 
 	//@TODO[MEC][10.20][29.07.2021] 
 	//This function is also called under certain circumstances when NAKs occur. 
@@ -1906,7 +1903,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 #endif
 	}
 
-	for (int i = 0; i < m_multipleObjectIdCount; ++i)
+	for (DWORD i = 0; i < m_objectIdCount; ++i)
 	{
 		bool isPreviousNAK = rProduct.m_outputsInfo.m_NakResult[i] || rProduct.m_prevTriggerNAK[i];
 	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
@@ -1945,7 +1942,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 {
 	bool result {true};
 	bool isNAK {false};
-	for (int i = 0; i < m_multipleObjectIdCount; ++i)
+	for (DWORD i = 0; i < m_objectIdCount; ++i)
 	{
 		isNAK |= rProduct.m_outputsInfo.m_NakResult[i];
 	}
@@ -1968,9 +1965,9 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 #endif
 	}
 	rProduct.m_dataComplete = true;
-	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, rProduct.m_outputsInfo.m_outputResult, true, false, true);
+	m_pOutputList->getOutputValues(std::back_inserter(rProduct.m_outputsInfo.m_Outputs), m_UsedOutputs, 0, true, false, true);
 
-	for (int i = 0; i < m_multipleObjectIdCount; ++i)
+	for (DWORD i = 0; i < m_objectIdCount; ++i)
 	{
 		isNAK = rProduct.m_outputsInfo.m_NakResult[i] || rProduct.m_prevTriggerNAK[i];
 	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
@@ -2679,10 +2676,6 @@ void SVPPQObject::ProcessCompleteInspections()
 		SVInspectionInfoPair inspectionInfoPair;
 		if (m_oInspectionQueue.RemoveHead(&inspectionInfoPair))
 		{
-			if (nullptr != inspectionInfoPair.second.m_pInspection)
-			{
-				StartInspection(inspectionInfoPair.second.m_pInspection->getObjectId());
-			}
 			SVProductInfoStruct* pProduct = m_PPQPositions.GetProductByTriggerCount(inspectionInfoPair.first);
 			if (nullptr != pProduct)
 			{
@@ -2694,8 +2687,6 @@ void SVPPQObject::ProcessCompleteInspections()
 
 					rPpqInspectionInfo = inspectionInfo;
 					rPpqInspectionInfo.ClearIndexes();
-
-					setOutputResults(inspectedID, pProduct->m_outputsInfo.m_outputResult);
 
 					// Inspection Process is done, let everyone know.
 					SetInspectionComplete(*pProduct, inspectionInfo.m_pInspection->getObjectId());
@@ -2738,7 +2729,12 @@ void SVPPQObject::ProcessCompleteInspections()
 						}
 					}
 				}
-			}
+				//Start inspection after results have been saved with SetProductComplete
+				if (nullptr != inspectionInfoPair.second.m_pInspection)
+				{
+					StartInspection(inspectionInfoPair.second.m_pInspection->getObjectId());
+				}
+		}
 		}
 		else
 		{
@@ -2850,7 +2846,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 					rWriter.WriteAttribute(SvXml::CTAG_IO_TYPE, l_svValue);
 					l_svValue.Clear();
 
-					l_svValue.SetString(pEntry->getObject()->GetName());
+					l_svValue.SetString(pEntry->m_name.c_str());
 					rWriter.WriteAttribute(SvXml::CTAG_ITEM_NAME, l_svValue);
 					l_svValue.Clear();
 
@@ -2870,7 +2866,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 					rWriter.WriteAttribute(SvXml::CTAG_IO_TYPE, l_svValue);
 					l_svValue.Clear();
 
-					l_svValue.SetString(pEntry->getObject()->GetName());
+					l_svValue.SetString(pEntry->m_name.c_str());
 					rWriter.WriteAttribute(SvXml::CTAG_ITEM_NAME, l_svValue);
 					l_svValue.Clear();
 
@@ -2935,7 +2931,6 @@ SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(SvIe::SVVirtualCamera* p
 {
 }
 #pragma endregion SVCameraQueueElement Constructor
-
 
 void SVPPQObject::ResetOutputValueObjects()
 {
@@ -3019,12 +3014,10 @@ bool SVPPQObject::SetupProductInfoStructs()
 	BuildCameraInfos(cameraInfos);
 	m_pMasterProductInfos = new SVProductInfoStruct[getPPQLength() + cPPQExtraBufferSize];
 
-	long outputSize {getOutputCount()};
 	for (int j = 0; j < getPPQLength() + cPPQExtraBufferSize; j++)
 	{
 		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
-		m_pMasterProductInfos[j].m_outputsInfo.m_outputResult.resize(outputSize);
 
 		for (auto* pInsp : m_arInspections)
 		{
@@ -3239,7 +3232,7 @@ void SVPPQObject::checkNakReason(CantProcessEnum cantProcessReason)
 
 void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const
 {
-	for (int i = 0; i < m_multipleObjectIdCount; ++i)
+	for (DWORD i = 0; i < m_objectIdCount; ++i)
 	{
 		uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[i].m_objectID};
 		uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[i].m_objectID};
@@ -3257,7 +3250,7 @@ void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVP
 
 void SVPPQObject::checkTriggerIndex(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const
 {
-	for (int i = 0; i < m_multipleObjectIdCount; ++i)
+	for (DWORD i = 0; i < m_objectIdCount; ++i)
 	{
 		uint32_t currentObjectID {rCurrentProduct.m_triggerInfo.m_Data.m_objectData[i].m_objectID};
 		uint32_t nextObjectID {pNextProduct->m_triggerInfo.m_Data.m_objectData[i].m_objectID};
@@ -3278,28 +3271,6 @@ void SVPPQObject::checkTriggerIndex(const SVProductInfoStruct& rCurrentProduct, 
 		if (1 != nextTriggerIndex)
 		{
 				pNextProduct->m_prevTriggerNAK[i] = true;
-			}
-		}
-	}
-}
-
-void SVPPQObject::setOutputResults(uint32_t inspectedID, std::vector<bool>& rOutputResult) const
-{
-	for (const auto& pIOEntry : m_UsedOutputs)
-	{
-		if (nullptr != pIOEntry && pIOEntry->m_Enabled && nullptr != pIOEntry->getValueObject())
-		{
-			//Note when inspectedID = 0 then we set the PPQ variables otherwise the specified inspection results
-			if (pIOEntry->m_inspectionId == inspectedID)
-			{
-				SVOutputObject* pOutput = dynamic_cast<SVOutputObject*> (SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId));
-				if (nullptr != pOutput && rOutputResult.size() > 0)
-				{
-					int outputIndex = pOutput->GetChannel() % rOutputResult.size();
-					_variant_t outputValue;
-					pIOEntry->getValueObject()->getValue(outputValue);
-					rOutputResult.at(outputIndex) = outputValue ? true : false;
-				}
 			}
 		}
 	}

@@ -29,6 +29,7 @@ public:
 
 	virtual HRESULT Read(_variant_t& rValue) const = 0;
 	virtual long GetChannel() const = 0;
+	virtual SVObjectClass* GetValueObject() { return nullptr; }
 
 	void SetPpqIndex(long ppqIndex) { m_ppqIndex = ppqIndex; }
 	long GetPpqIndex() const { return m_ppqIndex; }
@@ -40,6 +41,13 @@ public:
 		if (0 <= position && 0x100 > position && SvDef::InvalidObjectId != m_startID)
 		{
 			SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, m_startID + position);
+			SVObjectClass* pValueObj = GetValueObject();
+			if (nullptr != pValueObj)
+			{
+				//this is to set the value object to a fixed objectID
+				constexpr int cValueObjectOffset {100};
+				SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValueObj, m_startID + cValueObjectOffset + position);
+			}
 		}
 	}
 

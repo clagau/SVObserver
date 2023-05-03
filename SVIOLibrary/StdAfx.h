@@ -46,6 +46,7 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <array>
 #include <comdef.h>
 #include <comutil.h>
 #include <concrt.h>							//Used by static library

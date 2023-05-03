@@ -34,6 +34,7 @@ static char THIS_FILE[] = __FILE__;
 
 BEGIN_MESSAGE_MAP(SVIOAdjustDialog, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_SELECTOR, OnObjectSelector)
+	ON_CBN_SELCHANGE(IDC_COMBO_INSPECTION, OnSelchangeInspection)
 END_MESSAGE_MAP()
 
 SVIOAdjustDialog::SVIOAdjustDialog(const std::vector<std::string>& rUsedOutputList, CWnd* pParent /*=nullptr*/) : CDialog(SVIOAdjustDialog::IDD, pParent)
@@ -114,6 +115,7 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 		}
 	}
 	m_inspectionCtrl.SetCurSel(0);
+	OnSelchangeInspection();
 
 	UpdateGroups();
 
@@ -177,8 +179,45 @@ void SVIOAdjustDialog::OnObjectSelector()
 			m_pLinkedObject = pPrevLinkedObject;
 			m_IOName = prevName.c_str();
 		}
+		if (IO_PLC_OUTPUT == m_ioObjectType)
+		{
+			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (SVObjectManagerClass::Instance().GetObject(inspectionID));
+			if (nullptr != pInspection)
+			{
+				DWORD objectIdIndex {pInspection->GetObjectIdIndex()};
+				if (objectIdIndex < SvDef::cObjectIndexMaxNr)
+				{
+					m_pObjectLinkList[objectIdIndex] = m_pLinkedObject;
+				}
+			}
+		}
 	}
 	UpdateGroups();
+}
+
+void SVIOAdjustDialog::OnSelchangeInspection()
+{
+	if (IO_PLC_OUTPUT == m_ioObjectType)
+	{
+		int inspectionIndex {m_inspectionCtrl.GetCurSel()};
+
+		if (CB_ERR == inspectionIndex)
+		{
+			return;
+		}
+		uint32_t inspectionID {static_cast<uint32_t> (m_inspectionCtrl.GetItemData(inspectionIndex))};
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (SVObjectManagerClass::Instance().GetObject(inspectionID));
+		if (nullptr != pInspection)
+		{
+			DWORD objectIdIndex {pInspection->GetObjectIdIndex()};
+			if (objectIdIndex < SvDef::cObjectIndexMaxNr)
+			{
+				m_pLinkedObject = m_pObjectLinkList[objectIdIndex];
+			}
+		}
+		m_IOName = (nullptr != m_pLinkedObject) ? m_pLinkedObject->GetCompleteName().c_str() : _T("");
+		UpdateData(false);
+	}
 }
 
 void SVIOAdjustDialog::UpdateGroups()
@@ -248,7 +287,7 @@ void SVIOAdjustDialog::UpdateGroups()
 		}
 	}
 
-	UpdateData(FALSE);
+	UpdateData(false);
 }
 
 void SVIOAdjustDialog::showForcedGroup(int showState)

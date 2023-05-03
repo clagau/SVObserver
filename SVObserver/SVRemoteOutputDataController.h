@@ -39,7 +39,7 @@ public:
 
 	virtual ~SVRemoteOutputDataController();
 
-	HRESULT AddItem(const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, uint32_t InputObjectID, const std::string& rPPQ);
+	HRESULT AddItem(const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, uint32_t ValueObjectID, const std::string& rPPQ);
 
 	size_t GetItemCount( const std::string& rRemoteGroupId );
 	HRESULT GetItem( const std::string& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem );

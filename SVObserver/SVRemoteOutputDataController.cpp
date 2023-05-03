@@ -62,15 +62,15 @@ void SVRemoteOutputDataController::Destroy()
 }
 
 // AddItem creates a new RemoteOutputObject and adds it to the remote group parameters
-HRESULT SVRemoteOutputDataController::AddItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, uint32_t InputObjectID, const std::string& rPPQ )
+HRESULT SVRemoteOutputDataController::AddItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, uint32_t ValueObjectID, const std::string& rPPQ )
 {
 	HRESULT l_hr = E_FAIL;
 	SVRemoteOutputObject* l_pEntry = new SVRemoteOutputObject;
 	if( l_pEntry )
 	{
-		l_pEntry->SetInputObjectId( InputObjectID );
+		l_pEntry->SetValueObjectID(ValueObjectID);
 		l_pEntry->SetGroupID( rRemoteGroupId );
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( InputObjectID );
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(ValueObjectID);
 		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 		if( nullptr == pValueObject )
 		{
@@ -441,7 +441,7 @@ HRESULT SVRemoteOutputDataController::ValidateInputs()
 			SVRemoteOutputObject* l_pOutput = l_pGroup->GetItem( i );
 			if( l_pOutput )
 			{
-				SVObjectClass* l_pInputVO = SVObjectManagerClass::Instance().GetObject(l_pOutput->GetInputValueObjectID());
+				SVObjectClass* l_pInputVO = SVObjectManagerClass::Instance().GetObject(l_pOutput->GetValueObjectID());
 				if( nullptr == l_pInputVO )
 				{
 					l_pInputVO = SVObjectManagerClass::Instance().GetObjectCompleteName(l_pOutput->GetInputValueObjectName().c_str());

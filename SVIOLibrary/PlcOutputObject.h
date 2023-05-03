@@ -30,6 +30,8 @@ public:
 	virtual bool isCombined() const override {return m_isCombined; }
 	virtual bool isAndACK() const override { return m_isAndACK; }
 	virtual long GetChannel() const override {return m_Channel; }
+	virtual void SetValueObjectID(uint32_t objectID, DWORD objectIDIndex = 0) override;
+	virtual uint32_t GetValueObjectID(DWORD objectIDIndex = 0) const override;
 
 	void Combine( bool bCombine, bool bCombineACK );
 
@@ -47,5 +49,6 @@ private:
 	long m_Channel {-1L};
 	bool m_isCombined {false};
 	bool m_isAndACK {true};
+	std::array<uint32_t, SvDef::cObjectIndexMaxNr> m_valueObjectIDList {0, 0, 0, 0};
 #pragma endregion Member Variables
 };

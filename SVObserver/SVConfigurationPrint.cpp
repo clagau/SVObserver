@@ -1899,7 +1899,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
                     {
                         if ( pEntry->getObject()->IsCreated() )
                         {
-                            ptCurPos.y += PrintString(pDC, ptTemp, pEntry->getObject()->GetName());
+                            ptCurPos.y += PrintString(pDC, ptTemp, pEntry->m_name.c_str());
                         } // end if
                     } //end else
 				}

@@ -61,6 +61,11 @@ void SVDigitalOutputObject::Persist(SvOi::IObjectWriter& rWriter, bool /*closeOb
 	svVariant = isAndACK();
 	rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED_ACK, svVariant);
 	svVariant.Clear();
+
+	std::string valueObjectName = std::format(SvXml::CTAGF_VALUE_OBJECT_X, 0);
+	svVariant = convertObjectIdToVariant(m_valueObjectID);
+	rWriter.WriteAttribute(valueObjectName.c_str(), svVariant);
+	svVariant.Clear();
 }
 
 HRESULT SVDigitalOutputObject::Write( const _variant_t& rValue )
@@ -125,6 +130,23 @@ bool SVDigitalOutputObject::isCombined() const
 bool SVDigitalOutputObject::isAndACK() const
 {
 	return m_isAndACK;
+}
+
+void SVDigitalOutputObject::SetValueObjectID(uint32_t objectID, DWORD objectIDIndex /*= 0*/)
+{
+	if (0 == objectIDIndex)
+	{
+		m_valueObjectID = objectID;
+	}
+}
+
+uint32_t SVDigitalOutputObject::GetValueObjectID(DWORD objectIDIndex /*= 0*/) const
+{
+	if (0 == objectIDIndex)
+	{
+		return m_valueObjectID;
+	}
+	return SvDef::InvalidObjectId;
 }
 
 bool SVDigitalOutputObject::GetValue() const

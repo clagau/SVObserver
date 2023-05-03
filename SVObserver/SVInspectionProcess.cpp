@@ -130,8 +130,6 @@ HRESULT SVInspectionProcess::ProcessInspection()
 		SVInspectionInfoStruct& rIPInfo = iter->second;
 		rIPInfo.m_BeginInspection = SvUl::GetTimeStamp();
 
-		size_t l_InputXferCount = 0;
-
 		/// Note this is the PPQ position of the previous trigger
 		m_pCurrentToolset->setPpqPosition(product.m_lastPPQPosition);
 		double triggerTimeStamp = product.m_triggerInfo.m_triggerTimeStamp;
@@ -193,42 +191,33 @@ HRESULT SVInspectionProcess::ProcessInspection()
 		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
 		m_pCurrentToolset->setTriggerData(product.m_triggerInfo.m_Data);
 
-		Log_Assert(m_PPQInputs.size() == product.m_triggerInfo.m_Inputs.size());
+		Log_Assert(m_InputObjects.size() == product.m_triggerInfo.m_Inputs.size());
 		// Copy inputs to Inspection Process's Value objects
-		for (size_t i = 0; i < m_PPQInputs.size(); i++)
+		size_t inputXferCount {0};
+		for (size_t i = 0; i < m_InputObjects.size(); i++)
 		{
-			auto& rInputEntry = m_PPQInputs[i];
+			auto& rInputEntry = m_InputObjects[i];
 			const auto& rInputValue = product.m_triggerInfo.m_Inputs.at(i);
 
 			//Is the input enabled
-			if (nullptr != rInputEntry && rInputEntry->m_Enabled && VT_EMPTY != rInputValue.vt)
+			if (nullptr != rInputEntry)
 			{
-				switch (rInputEntry->m_ObjectType)
+				_variant_t value;
+				rInputEntry->getValue(value);
+				//Only use  the input value types when they match
+				if (value.vt == rInputValue.vt)
 				{
-					case IO_DIGITAL_INPUT:
-					case IO_REMOTE_INPUT:
-					{
-						if (nullptr != rInputEntry->getValueObject())
-						{
-							rInputEntry->getValueObject()->setValue(rInputValue);
-						}
-						++l_InputXferCount;
-						break;
-					}
-
-					default:
-					{
-						break;
-					}
+					rInputEntry->setValue(rInputValue);
+					++inputXferCount;
 				}
 			}
-			else if (nullptr == rInputEntry)
+			else
 			{
-				++l_InputXferCount;
+				++inputXferCount;
 			}
 		}
 
-		bool processed = (l_InputXferCount == m_PPQInputs.size()) && (isProductAlive(GetPPQ(), product.m_triggerInfo.lTriggerCount));
+		bool processed = (inputXferCount == m_InputObjects.size()) && (isProductAlive(GetPPQ(), product.m_triggerInfo.lTriggerCount));
 
 		// Check if tool set is alive and enabled...
 		if (false == processed)
@@ -499,7 +488,15 @@ void SVInspectionProcess::DestroyInspection()
 		SVObjectManagerClass::Instance().DecrementInspectionIndicator();
 		m_processActive = false;
 	}
-	m_PPQInputs.clear();
+	for (auto& pInputValueObj : m_InputObjects)
+	{
+		SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObj.get());
+		if (nullptr != pObject)
+		{
+			pObject->CloseObject();
+		}
+	}
+	m_InputObjects.clear();
 	m_PPQId = SvDef::InvalidObjectId;
 	SVResultList* pResultlist = GetResultList();
 	if (pResultlist)
@@ -659,10 +656,10 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct* pProduct, CantProcessE
 	}
 
 	// See if we have discrete inputs.
-	Log_Assert(m_PPQInputs.size() == pProduct->m_triggerInfo.m_Inputs.size());
-	for (size_t i = 0; bReady && i < m_PPQInputs.size(); i++)
+	Log_Assert(m_InputObjects.size() == pProduct->m_triggerInfo.m_Inputs.size());
+	for (size_t i = 0; bReady && i < m_InputObjects.size(); i++)
 	{
-		if (nullptr != m_PPQInputs[i] && m_PPQInputs[i]->m_Enabled)
+		if (nullptr != m_InputObjects[i])
 		{
 			//Is input value valid
 			bReady &= (VT_EMPTY != pProduct->m_triggerInfo.m_Inputs.at(i).vt);
@@ -710,7 +707,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 	HRESULT result {S_OK};
 
 	// Make sure that the lists are the same size
-	if (nullptr == pProduct || m_PPQInputs.size() != pProduct->m_triggerInfo.m_Inputs.size() || m_processActive)
+	if (nullptr == pProduct || m_InputObjects.size() != pProduct->m_triggerInfo.m_Inputs.size() || m_processActive)
 	{
 		return E_FAIL;
 	}
@@ -762,96 +759,75 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 	return result;
 }
 
-bool SVInspectionProcess::RebuildInspectionInputList()
+void SVInspectionProcess::RebuildInspectionInputList(const SVIOEntryHostStructPtrVector& rUsedInputs)
 {
-	SVPPQObject* pPPQ = GetPPQ();
+	long listSize = static_cast<long>(rUsedInputs.size());
 
-	if (nullptr == pPPQ)
+	std::vector<std::shared_ptr<SvOi::IValueObject>> previousInputObjects;
+	previousInputObjects.resize(listSize);
+
+	previousInputObjects.swap(m_InputObjects);
+
+	for (long i=0; i < listSize; ++i)
 	{
-		return false;
-	}
-	// Save old list
-	SVIOEntryHostStructPtrVector oldPPQInputs;
-	oldPPQInputs.swap(m_PPQInputs);
-	const SVIOEntryHostStructPtrVector& rUsedInputs = pPPQ->GetUsedInputs();
-
-	long lListSize = static_cast<long>(rUsedInputs.size());
-
-	// Make new list
-	m_PPQInputs.resize(lListSize, nullptr);
-
-	for (int iList = 0; iList < lListSize; ++iList)
-	{
-		const SVIOEntryHostStructPtr& rNewEntry = rUsedInputs[iList];
-		SVInputObject* pInput = dynamic_cast<SVInputObject*> (SVObjectManagerClass::Instance().GetObject(rNewEntry->m_IOId));
-		if (nullptr == rNewEntry || false == rNewEntry->m_Enabled || nullptr == pInput)
+		const auto& rEntry = rUsedInputs[i];
+		SVInputObject* pInput = dynamic_cast<SVInputObject*> (SVObjectManagerClass::Instance().GetObject(rEntry->m_IOId));
+		if (nullptr == rEntry || false == rEntry->m_Enabled || nullptr == pInput)
 		{
 			continue;
 		}
 
-		auto itInputEntry = std::find_if(oldPPQInputs.begin(), oldPPQInputs.end(), [&pInput](const auto& rpInputEntry)->bool
+		auto InputIter = std::find_if(previousInputObjects.begin(), previousInputObjects.end(), [&rEntry](const auto& pInput)->bool
 		{
-			return nullptr != rpInputEntry && 0 == strcmp(rpInputEntry->getObject()->GetName(), pInput->GetName());
+			SVObjectClass* pObject {dynamic_cast<SVObjectClass*> (pInput.get())};
+			return nullptr != pObject && 0 == strcmp(rEntry->m_name.c_str(), pObject->GetName());
 		});
-		if (itInputEntry != oldPPQInputs.end())
+		if (InputIter != previousInputObjects.end())
 		{
-			// We found it
-			m_PPQInputs[iList] = *itInputEntry;
-			m_PPQInputs[iList]->m_PPQIndex = rNewEntry->m_PPQIndex;
-			m_PPQInputs[iList]->m_Enabled = rNewEntry->m_Enabled;
-			m_PPQInputs[iList]->getObject()->ResetObject();
-			if (nullptr != m_PPQInputs[iList]->getValueObject())
+			SVObjectClass* pInputObject {dynamic_cast<SVObjectClass*> ( (*InputIter).get())};
+			if (nullptr != pInputObject)
+			{
+				pInputObject->ResetObject();
+			}
+			if (nullptr != rEntry->getValueObject())
 			{
 				variant_t inputValue;
 				pInput->Read(inputValue);
-				m_PPQInputs[iList]->getValueObject()->setValue(inputValue);
+				rEntry->getValueObject()->setValue(inputValue);
 			}
+			m_InputObjects[i] = *InputIter;
+			previousInputObjects.erase(InputIter);
 		}
 		else
 		{
 			SVObjectClass* pNewObject {nullptr};
 			std::shared_ptr<SvOi::IValueObject> pInputValueObject;
-
-			switch (rNewEntry->m_ObjectType)
+			switch (rEntry->m_ObjectType)
 			{
 				case IO_DIGITAL_INPUT:
 				{
 					pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-					if (nullptr != pInputValueObject)
-					{
-						pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-						pNewObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-						pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-					}
+					pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+					pNewObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 					break;
 				}
 				case IO_REMOTE_INPUT:
 				{
 					pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
-					if (nullptr != pInputValueObject)
-					{
-						pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-						variant_t inputValue;
-						inputValue.ChangeType(VT_R8);
-						pInputValueObject->setDefaultValue(inputValue);
-						inputValue.Clear();
-						pInput->Read(inputValue);
-						pInputValueObject->setValue(inputValue);
-						pNewObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-						pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-					}
+					pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+					variant_t inputValue;
+					inputValue.ChangeType(VT_R8);
+					pInputValueObject->setDefaultValue(inputValue);
+					inputValue.Clear();
+					pInput->Read(inputValue);
+					pInputValueObject->setValue(inputValue);
+					pNewObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 					break;
 				}
 				default:
-				{
-					pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
-					if (nullptr != pInputValueObject)
-					{
-						pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-						pNewObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-					}
 					break;
-				}
 			}
 
 			if (nullptr != pNewObject)
@@ -865,28 +841,32 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 				pNewObject->SetObjectOwner(this);
 				pNewObject->ResetObject();
 				CreateChildObject(pNewObject);
+				pNewObject->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::AddAttribute);
 			}
 
 			if (nullptr != pInputValueObject)
 			{
-				m_PPQInputs[iList] = std::make_shared<SVIOEntryHostStruct>();
-				m_PPQInputs[iList]->setValueObject(pInputValueObject);
-				m_PPQInputs[iList]->m_ObjectType = rNewEntry->m_ObjectType;
-				m_PPQInputs[iList]->m_IOId = rNewEntry->m_IOId;
-				m_PPQInputs[iList]->m_Enabled = rNewEntry->m_Enabled;
+				m_InputObjects[i] = pInputValueObject;
 			}
-		}// end if
-
-		m_PPQInputs[iList]->getObject()->SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::AddAttribute);
+		}
 	}// end for
+	for (auto& pInputValueObj : previousInputObjects)
+	{
+		if (nullptr != pInputValueObj)
+		{
+			SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObj.get());
+			if(nullptr != pObject)
+			{
+				pObject->CloseObject();
+			}
+		}
+	}
 
 	SVResultList* pResultlist = GetResultList();
 	if (pResultlist)
 	{
 		pResultlist->RebuildReferenceVector(this);
 	}
-
-	return true;
 }
 
 bool SVInspectionProcess::AddInputRequest(const SVObjectReference& rObjectRef, const _variant_t& rValue)
@@ -1335,29 +1315,32 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorM
 	return Result;
 }
 
-HRESULT SVInspectionProcess::FindPPQInputObjectByName(SVObjectClass*& p_rpObject, LPCTSTR p_FullName) const
+HRESULT SVInspectionProcess::FindPPQInputObjectByName(SVObjectClass*& rpObject, LPCTSTR p_FullName) const
 {
 	HRESULT l_Status = S_OK;
 
-	for (size_t l = 0; nullptr == p_rpObject && l < m_PPQInputs.size(); ++l)
+	for (size_t l = 0; nullptr == rpObject && l < m_InputObjects.size(); ++l)
 	{
-		if (nullptr != m_PPQInputs[l])
+		if (nullptr != m_InputObjects[l])
 		{
-			std::string l_LocalName = GetName();
-
-			l_LocalName += _T(".");
-			l_LocalName += m_PPQInputs[l]->getObject()->GetName();
-
-			if (l_LocalName == p_FullName)
+			SVObjectClass* pInputObject = dynamic_cast<SVObjectClass*> (m_InputObjects[l].get());
+			if (nullptr != pInputObject)
 			{
-				p_rpObject = m_PPQInputs[l]->getObject();
+				std::string l_LocalName = GetName();
+				l_LocalName += _T(".");
+				l_LocalName += pInputObject->GetName();
+
+				if (l_LocalName == p_FullName)
+				{
+					rpObject = pInputObject;
+				}
 			}
 		}
 	}
 
-	if (nullptr == p_rpObject)
+	if (nullptr == rpObject)
 	{
-		l_Status = S_FALSE;
+		l_Status = E_FAIL;
 	}
 
 	return l_Status;
@@ -2806,15 +2789,18 @@ void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter, bool closeObject
 	rWriter.WriteAttribute(SvXml::CTAG_INSPECTION_NEW_DISABLE_METHOD, value);
 	value.Clear();
 
-	if (m_PPQInputs.size())
+	if (m_InputObjects.size())
 	{
 		rWriter.StartElement(SvXml::CTAG_IO);
-		for (auto pElement : m_PPQInputs)
+		for (auto pElement : m_InputObjects)
 		{
-			if (nullptr != pElement && nullptr != pElement->getObject())
+			if (nullptr != pElement)
 			{
-				auto* pObject = pElement->getObject();
-				rWriter.WriteAttribute(pObject->GetName(), convertObjectIdToVariant(pObject->getObjectId()));
+				SVObjectClass* pInputObject = dynamic_cast<SVObjectClass*> (pElement.get());
+				if (nullptr != pInputObject)
+				{
+					rWriter.WriteAttribute(pInputObject->GetName(), convertObjectIdToVariant(pInputObject->getObjectId()));
+				}
 			}
 		}
 		rWriter.EndElement();
@@ -3096,11 +3082,11 @@ void SVInspectionProcess::setResultListUpdateFlag()
 
 bool SVInspectionProcess::IsDisabledPPQVariable(const SVObjectClass* pObject) const
 {
-	for (auto& rpInputEntry : m_PPQInputs)
+	for (auto& pInput : m_InputObjects)
 	{
-		if (nullptr != rpInputEntry && false == rpInputEntry->m_Enabled)
+		if (nullptr != pInput)
 		{
-			if (pObject == rpInputEntry->getObject())
+			if (pObject == dynamic_cast<SVObjectClass*> (pInput.get()))
 			{
 				return true;
 			}
@@ -3116,12 +3102,11 @@ SVObjectPtrVector SVInspectionProcess::getPPQVariables() const
 	std::map<std::string, SVObjectClass*> NameObjectMap;
 	SvDef::StringVector PpqVariableNames;
 
-	for (const auto& rpInputEntry : m_PPQInputs)
+	for (auto& pInput : m_InputObjects)
 	{
-		//check if input is enable for this inspection
-		if (nullptr != rpInputEntry && rpInputEntry->m_Enabled)
+		if (nullptr != pInput)
 		{
-			SVObjectClass* pObject(rpInputEntry->getObject());
+			SVObjectClass* pObject {dynamic_cast<SVObjectClass*> (pInput.get())};
 			if (nullptr != pObject)
 			{
 				std::string Name(pObject->GetCompleteName());

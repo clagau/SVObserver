@@ -996,7 +996,15 @@ void SVOConfigAssistantDlg::OnOK()
 	}
 	UpdateData(false);
 
-	SendDataToConfiguration();
+	try
+	{
+		SendDataToConfiguration();
+	}
+	catch(const SvStl::MessageContainer&)
+	{
+		//Message has already been displayed and logged we just want to avoid closing the dialog
+		return;
+	}
 
 	CDialog::OnOK();
 }
@@ -1844,6 +1852,8 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 		}
 	}
 
+	bool isPLCSystem = SVHardwareManifest::isPlcSystem(GetProductType());
+
 	int iInsCnt = m_InspectList.GetInspectionListCount();
 	if ( iInsCnt > 0 )
 	{
@@ -1857,7 +1867,24 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				std::string ToolsetImage = pInspectionObj->GetToolsetImage();
 				std::string NewDisableMethod = pInspectionObj->GetNewDisableMethodString();
 				bool EnableAuxiliaryExtent = (1 == pInspectionObj->GetEnableAuxiliaryExtent());
-				DWORD objectIdIndex = pInspectionObj->GetObjectIdIndex();
+				DWORD objectIdIndex = static_cast<DWORD> (pInspectionObj->GetObjectIdIndex());
+
+				SVOPPQObjPtr pPpqObj = GetPPQObjectByInspectionName(pInspectionObj->GetInspectionName());
+				auto OutputMode = (nullptr != pPpqObj) ? static_cast<SvDef::SVPPQOutputModeEnum> (pPpqObj->GetPPQMode()) : SvDef::SVPPQOutputModeEnum::SVPPQUnknownMode;
+				
+				bool isValidSetting {(static_cast<DWORD> (i) == objectIdIndex || 0 == objectIdIndex) && OutputMode == SvDef::SVPPQOutputModeEnum::SVPPQExtendedTimeDelayAndDataCompleteMode};
+				if (false == isPLCSystem && 0 != objectIdIndex)
+				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_ErrorMultiObjectID, SvStl::SourceFileParams(StdMessageParams));
+					Msg.Throw();
+				}
+				else if (true == isPLCSystem && false == isValidSetting)
+				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_ErrorMultiObjectIDOrder, SvStl::SourceFileParams(StdMessageParams));
+					Msg.Throw();
+				}
 
 				lCfgInsCnt = pConfig->GetInspectionCount();
 
@@ -1875,8 +1902,6 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 							//rename in configuration
 							pInspection->OnObjectRenamed(*pInspection, Key);
-
-							TheSVObserverApp().UpdateAllIOViews();
 							break;
 						}
 						pInspection = nullptr;
@@ -1964,8 +1989,8 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				if ( nullptr != pInspection )
 				{
 					pInspection->SetToolsetImage(ToolsetImage);
-
 					pInspection->SetNewDisableMethod( NewDisableMethod == _T( "Method 2" ) );
+					pInspection->SetObjectIdIndex(objectIdIndex);
 
 					bool PrevEnable = pInspection->getEnableAuxiliaryExtent();
 					pInspection->setEnableAuxiliaryExtent( EnableAuxiliaryExtent );
@@ -1973,7 +1998,6 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					{
 						pInspection->resetAllObjects();
 					}
-					pInspection->SetObjectIdIndex(objectIdIndex);
 				}
 				pInspection = nullptr;
 			}
@@ -2049,7 +2073,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 
 			if ( nullptr != pPPQ )
 			{
-				pPPQ->SetPPQOutputMode((SvDef::SVPPQOutputModeEnum)pPPQObj->GetPPQMode());
+				pPPQ->SetPPQOutputMode(static_cast<SvDef::SVPPQOutputModeEnum> (pPPQObj->GetPPQMode()));
 
 				pPPQ->SetPPQLength(pPPQObj->GetPPQLength());
 				pPPQ->SetResetDelay(pPPQObj->GetPPQOutputResetDelay());
@@ -2385,6 +2409,7 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 	{
 		pConfig->SetConfigurationLoaded();
 	}
+	TheSVObserverApp().UpdateAllIOViews();
 	return bRet;
 }
 
@@ -2609,7 +2634,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 				{
 					if (IO_DIGITAL_INPUT == rEntry->m_ObjectType)
 					{
-						availableInputs.push_back(std::make_pair(rEntry->getObject()->GetName(), rEntry->m_IOId));
+						availableInputs.push_back(std::make_pair(rEntry->m_name, rEntry->m_IOId));
 					}
 				}
 				// make list of Name/objectId pairs

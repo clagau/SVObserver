@@ -908,13 +908,14 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 
 		_variant_t Data;
 		std::string IOName;
-		bool	bOutput{ false };
-		long	channel{ -1L };
-		bool	bForced{ false };
-		DWORD	dwForcedValue{ 0 };
-		bool	bInverted{ false };
-		bool	bCombined{ false };
-		bool	bCombinedACK{ false };
+		bool bOutput{ false };
+		long channel{ -1L };
+		bool bForced{ false };
+		DWORD dwForcedValue{ 0 };
+		bool bInverted{ false };
+		bool bCombined{ false };
+		bool bCombinedACK{ false };
+		std::array<uint32_t, SvDef::cObjectIndexMaxNr> valueObjectList {0, 0, 0, 0};
 		SvPb::SVObjectSubTypeEnum ioType{ SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType };
 
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_ENTRY_NAME, hSubChild, Data);
@@ -990,6 +991,14 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 			bCombinedACK = false;
 		}// end else
 
+		for (int j = 0; j < SvDef::cObjectIndexMaxNr; ++j)
+		{
+			std::string ValueObject = std::format(SvXml::CTAGF_VALUE_OBJECT_X, j);
+			if (SvXml::SVNavigateTree::GetItem(rTree, ValueObject.c_str(), hSubChild, Data))
+			{
+				valueObjectList[j] = calcObjectId(Data);
+			}
+		}
 		if (channel > -1L)
 		{
 			if (bOutput)
@@ -1022,6 +1031,8 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 						pDigitalOutput->Force(bForced, (dwForcedValue != FALSE));
 						pDigitalOutput->Invert(bInverted);
 						pDigitalOutput->Combine(bCombined, bCombinedACK);
+						//here only the Object ID 0 can be used
+						pDigitalOutput->SetValueObjectID(valueObjectList[0]);
 
 						if (SvDef::FqnEnvironmentModuleReady == IOName)
 						{
@@ -1037,6 +1048,10 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 					{
 						pPlcOutput->SetChannel(channel);
 						pPlcOutput->Combine(bCombined, bCombinedACK);
+						for (int j = 0; j < SvDef::cObjectIndexMaxNr; ++j)
+						{
+							pPlcOutput->SetValueObjectID(valueObjectList[j], j);
+						}
 					}
 				}
 			}
@@ -2144,8 +2159,6 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 			bOk = pPPQ->Create();
 
 			bOk &= pPPQ->RebuildInputList();
-
-			bOk &= pPPQ->RebuildOutputList();
 
 			if (bOk)
 			{
@@ -3430,33 +3443,34 @@ void SVConfigurationObject::SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter,
 
 bool SVConfigurationObject::FinishIPDoc(SVInspectionProcess* pInspection, bool isLoad)
 {
-	bool bOk = false;
+	bool result {false};
 
 	if (nullptr != pInspection)
 	{
 		SVPPQObject* pPPQ(pInspection->GetPPQ());
-
 		if (nullptr != pPPQ)
 		{
+			pPPQ->Rebuild();
 			pPPQ->m_pInputList = GetInputObjectList();
 			pPPQ->RebuildInputList();
-
-			pInspection->RebuildInspectionInputList();
 
 			pInspection->RebuildInspection(isLoad);
 
 			pPPQ->m_pOutputList = GetOutputObjectList();
 			pPPQ->RebuildOutputList();
+			if (nullptr != pPPQ->m_pOutputList)
+			{
+				pPPQ->m_pOutputList->setOutputCount(pPPQ->getOutputCount());
+			}
 
 			// Init Document
 			pInspection->ValidateAndInitialize(true);
-
-			bOk = true;
+			result = true;
 		}
 
 	}
 
-	return bOk;
+	return result;
 }
 
 void SVConfigurationObject::RunOnce() const

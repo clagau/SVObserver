@@ -35,7 +35,15 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr const char* cDigitalOutputName = ("Digital Output {:d}");
+constexpr const char* cDigitalOutputName = _T("Digital Output {:d}");
+constexpr int cOutputColIndex = 0;
+constexpr int cDescriptionColIndex = 1;
+constexpr int cForcedColIndex = 2;
+constexpr int cInvertedColIndex = 3;
+constexpr int cOutputColWidth = 150;
+constexpr int cDescriptionColWidth = 500;
+constexpr int cForcedColWidth = 50;
+constexpr int cInvertedColWidth = 55;
 
 IMPLEMENT_DYNCREATE(SVDiscreteOutputsView, CListView)
 
@@ -71,15 +79,15 @@ BOOL SVDiscreteOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName
 	m_rCtrl.SetImageList( &m_ImageList, LVSIL_SMALL );
 
 
-	m_rCtrl.InsertColumn( 0, _T( "Outputs" ), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 1, _T( "Description" ), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 2, _T( "Forced" ), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 3, _T( "Inverted" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn(cOutputColIndex, _T( "Outputs" ), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(cDescriptionColIndex, _T( "Description" ), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(cForcedColIndex, _T( "Forced" ), LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(cInvertedColIndex, _T( "Inverted" ), LVCFMT_LEFT, -1, -1);
 	
-	m_rCtrl.SetColumnWidth( 0, 125 );
-	m_rCtrl.SetColumnWidth( 1, 500 );
-	m_rCtrl.SetColumnWidth( 2,  50 );
-	m_rCtrl.SetColumnWidth( 3,  55 );
+	m_rCtrl.SetColumnWidth(cOutputColIndex, cOutputColWidth);
+	m_rCtrl.SetColumnWidth(cDescriptionColIndex, cDescriptionColWidth);
+	m_rCtrl.SetColumnWidth(cForcedColIndex,  cForcedColWidth);
+	m_rCtrl.SetColumnWidth(cInvertedColIndex,  cInvertedColWidth);
 
 	m_pDocument = dynamic_cast<SVIODoc*> (CListView::GetDocument());
 	return RetVal;
@@ -244,7 +252,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 
 			if( nullptr != pDigitalOutput )
 			{
-				dlg.m_IOName = m_rCtrl.GetItemText( item, 1 );
+				dlg.m_IOName = m_rCtrl.GetItemText(item, cDescriptionColIndex);
 				dlg.m_IOValue.Format( "%d", pDigitalOutput->GetValue() ? 1 : 0 );
 				SVObjectClass* pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;
 				dlg.m_pLinkedObject = pLinkedObject;
@@ -295,11 +303,12 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 						else
 						{
 							pIOEntry->m_Enabled = true;
-							pIOEntry->setLinkedObject(dlg.m_pLinkedObject);
+							pIOEntry->setValueObject(dlg.m_pLinkedObject);
 							if (nullptr != pOutput && nullptr != pOutputList)
 							{
 								pIOEntry->m_IOId = pOutput->getObjectId();
 								pOutput->SetName(dlg.m_pLinkedObject->GetCompleteName().c_str());
+								pOutput->SetValueObjectID(dlg.m_pLinkedObject->getObjectId());
 								pOutputList->AttachOutput(pOutput);
 							}
 						}
@@ -351,16 +360,16 @@ bool SVDiscreteOutputsView::setListItem(int rowIndex, SVIOEntryHostStructPtr pIO
 		{
 			if (rowIndex == pDigOutput->GetChannel())
 			{
-				m_rCtrl.SetItem(rowIndex, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
+				m_rCtrl.SetItem(rowIndex, cOutputColIndex, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
 				m_Items[rowIndex] = pIOEntry;
-				m_rCtrl.SetItemText(rowIndex, 1, pDigOutput->GetName());
+				m_rCtrl.SetItemText(rowIndex, cDescriptionColIndex, pDigOutput->GetName());
 
 				if (pDigOutput->IsForced())
 				{
-					m_rCtrl.SetItemText(rowIndex, 2, pDigOutput->GetForcedValue() ? "1" : "0");
+					m_rCtrl.SetItemText(rowIndex, cForcedColIndex, pDigOutput->GetForcedValue() ? "1" : "0");
 				}
 
-				m_rCtrl.SetItemText(rowIndex, 3, pDigOutput->IsInverted() ? "1" : "");
+				m_rCtrl.SetItemText(rowIndex, cInvertedColIndex, pDigOutput->IsInverted() ? "1" : "");
 				return true;
 			}
 		}

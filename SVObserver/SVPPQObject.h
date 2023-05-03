@@ -175,7 +175,6 @@ public:
 	HRESULT GetInputIOValues(std::vector<_variant_t>& rInputValues) const;
 	bool RebuildInputList();
 	const SVIOEntryHostStructPtrVector& GetUsedInputs() const {return m_UsedInputs;}
-	SVIOEntryHostStructPtr GetInput( const std::string& rName ) const;
 
 	bool RemoveOutput(SVIOEntryHostStructPtr pOutput);
 	bool WriteOutputs(SVProductInfoStruct* pProduct, int ObjectIdIndex);
@@ -214,6 +213,8 @@ public:
 
 	bool requiresTimer() const;
 	HRESULT setModuleReady(bool set);
+
+	int GetObjectIDCount() const { return m_objectIdCount; }
 
 protected:
 
@@ -374,7 +375,6 @@ private:
 
 	void setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const;
 	void checkTriggerIndex(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const;
-	void setOutputResults(uint32_t inspectedID, std::vector<bool>& rOutputResult) const;
 
 	void AttachAcqToTriggers(bool setSoftwareTrigger);
 
@@ -387,7 +387,7 @@ private:
 	long m_resetDelay {0};
 	long m_DataValidDelay;
 	long m_inspectionTimeoutMillisec {0};
-	int m_multipleObjectIdCount {0};
+	DWORD m_objectIdCount {0};
 	bool m_bOnline {false};
 
 	UINT m_uOutputTimer {0};

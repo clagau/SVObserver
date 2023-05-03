@@ -85,7 +85,6 @@ struct SVOutputsInfoStruct
 		m_BeginProcess = 0.0;
 		m_EndProcess = 0.0;
 		m_Outputs.clear();
-		std::fill(m_outputResult.begin(), m_outputResult.end(), false);
 	}
 
 	bool m_DataValidResult {false};
@@ -97,7 +96,6 @@ struct SVOutputsInfoStruct
 	double m_BeginProcess {0.0};
 	double m_EndProcess {0.0};
 	ObjectIdVariantPairVector m_Outputs;
-	std::vector<bool> m_outputResult;
 };
 
 
