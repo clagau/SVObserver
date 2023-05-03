@@ -417,7 +417,7 @@ void LinkedValueSelectorDialog::updateShownControls()
 	CWnd* pWnd = GetDlgItem(IDC_VALUE_EDIT);
 	if (pWnd)
 	{
-		pWnd->ShowWindow(SvPb::DirectValue == m_type && m_CanValue ? SW_SHOW : SW_HIDE);
+		pWnd->ShowWindow(SvPb::DirectValue == m_type && m_CanValue && (false == m_CanDefaultState) ? SW_SHOW : SW_HIDE);
 	}
 	m_CtrlComboStates.ShowWindow(SvPb::DirectValue == m_type && m_CanDefaultState ? SW_SHOW : SW_HIDE);
 
@@ -457,7 +457,20 @@ void LinkedValueSelectorDialog::updateShownControls()
 
 bool LinkedValueSelectorDialog::checkAndSetDirectValue()
 {
-	if (m_CanValue)
+	if (m_CanDefaultState)
+	{
+
+		int state = SvPb::Passed;
+		int sel = m_CtrlComboStates.GetCurSel();
+		if (sel != CB_ERR)
+		{
+			state = (int)m_CtrlComboStates.GetItemData(sel);
+		}
+
+		m_data.m_directValue = state;
+		return true;
+	}
+	else if (m_CanValue)
 	{
 		bool isOk = createVariantFromString(m_vtType, std::string {m_directValue}, m_data.m_directValue);
 
@@ -487,18 +500,7 @@ bool LinkedValueSelectorDialog::checkAndSetDirectValue()
 			}
 		}
 	}
-	if (m_CanDefaultState)
-	{
-
-		int state = SvPb::Passed;
-		int sel = m_CtrlComboStates.GetCurSel();
-		if (sel != CB_ERR)
-		{
-			state = (int)m_CtrlComboStates.GetItemData(sel);
-		}
-
-		m_data.m_directValue = state;
-	}
+	
 
 	return true;
 }
