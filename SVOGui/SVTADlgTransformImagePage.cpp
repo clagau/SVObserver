@@ -58,21 +58,18 @@ namespace SvOg
 
 	void SVTADlgTransformImagePage::CheckSourceImage()
 	{
-		const auto& images = getImageController().GetInputImageList();
-		if (images.size())
+		auto imageData = getImageController().GetInputData(SvPb::ImageInputEId);
+		// Check if Main Image Type
+		const SvPb::SVImageTypeEnum& rImageType = getImageController().GetImageType(imageData.connected_objectid());
+		if (SvPb::SVImageTypeMain == rImageType)
 		{
-			// Check if Main Image Type
-			const SvPb::SVImageTypeEnum& rImageType = getImageController().GetImageType(images.begin()->connected_objectid());
-			if (SvPb::SVImageTypeMain == rImageType)
-			{
-				m_useExtentsOnly = false;
-				// use Extents Only does not Apply
-				m_useExtentsOnlyCheckBox.EnableWindow(false);
-			}
-			else
-			{
-				m_useExtentsOnlyCheckBox.EnableWindow(true);
-			}
+			m_useExtentsOnly = false;
+			// use Extents Only does not Apply
+			m_useExtentsOnlyCheckBox.EnableWindow(false);
+		}
+		else
+		{
+			m_useExtentsOnlyCheckBox.EnableWindow(true);
 		}
 	}
 

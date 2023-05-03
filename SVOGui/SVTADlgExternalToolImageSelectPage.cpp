@@ -141,10 +141,9 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 						if (it != availImages.end())
 						{
 							const std::string& imageName = it->first;
-							std::string inputName = m_imageInputList[ctrlID];
-							if (!imageName.empty() && !inputName.empty())
+							if (!imageName.empty())
 							{
-								HRESULT hr = ImgCtrl.ConnectToImage(inputName, imageName);
+								HRESULT hr = ImgCtrl.ConnectToImage(SvPb::ImageInputEId+static_cast<int>(ctrlID), imageName);
 								if (S_OK == hr)
 								{
 									setImages(ImgCtrl);
@@ -212,38 +211,35 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 		//to obtain such a list
 		SvOgu::ImageController justForInputImageListGeneration(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
 		justForInputImageListGeneration.Init();
-		const auto& rNameObjectIdPairs = justForInputImageListGeneration.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
 
-		int i = 0;
-		for (const auto& rData: rNameObjectIdPairs)
+		auto numSize = std::min(static_cast<int>(m_numImages), imageInfoList.size());
+		for(int ctrlID = 0; ctrlID < numSize; ++ctrlID)
 		{
-			SvOgu::ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(imageInfoList[i].maybecolor(), imageInfoList[i].maybeblackandwhite()));
+			SvOgu::ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(imageInfoList[ctrlID].maybecolor(), imageInfoList[ctrlID].maybeblackandwhite()));
 			ImgCtrl.Init();
 			const SvUl::NameObjectIdList& availImages = ImgCtrl.GetAvailableImageList();
-			std::string Temp = imageInfoList[i].displayname();
+			std::string Temp = imageInfoList[ctrlID].displayname();
 
 			SVRPropertyItemCombo* pCombo = static_cast<SVRPropertyItemCombo *>(m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot));
 
 			if (nullptr != pCombo)
 			{
-				UINT ctrlID = static_cast<UINT>(i++);
 				pCombo->SetCtrlID(ctrlID);
 				pCombo->SetLabelText( Temp.c_str() );
 				pCombo->CreateComboBox();
 				int curSel = 0;
+				auto connectedName = justForInputImageListGeneration.GetInputData(SvPb::ImageInputEId+ctrlID).connected_objectdottedname();
 				for (SvUl::NameObjectIdList::const_iterator availIt = availImages.begin();availIt != availImages.end();++availIt)
 				{
 					int index = pCombo->AddString(availIt->first.c_str());
 					size_t imageIndex = std::distance(availImages.begin(), availIt);
 					pCombo->SetItemData(index, imageIndex);
-					if (availIt->first == rData.connected_objectdottedname())
+					if (availIt->first == connectedName)
 					{
 						curSel = static_cast<int>(imageIndex);
 					}
 				}
 				pCombo->SetItemValue(curSel);
-
-				m_imageInputList.insert(std::make_pair(ctrlID, rData.inputname()));
 			}
 			m_ImageDisplay.AddTab( Temp.c_str() );
 		}
@@ -254,12 +250,11 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 	void SVTADlgExternalToolImageSelectPage::setImages(SvOgu::ImageController &imgCtrl)
 	{
 		imgCtrl.ToolRunOnce();
-		const auto& rInputDataList = imgCtrl.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
-		int imageIndex = 0;
-		for (const auto& rInputData : rInputDataList)
+		
+		for(int imageIndex = 0; imageIndex < m_numImages; ++imageIndex)
 		{
-			m_ImageDisplay.setImage(imgCtrl.GetImage(rInputData.connected_objectid()), imageIndex);
-			m_ImageDisplay.SetZoom(imageIndex++, -1.0);
+			m_ImageDisplay.setImage(imgCtrl.GetImage(imgCtrl.GetInputData(SvPb::ImageInputEId + imageIndex).connected_objectdottedname()), imageIndex);
+			m_ImageDisplay.SetZoom(imageIndex, -1.0);
 		}
 		m_ImageDisplay.Refresh();
 		UpdateData(false); // set data to dialog

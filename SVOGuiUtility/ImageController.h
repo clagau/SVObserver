@@ -42,7 +42,6 @@ namespace SvOgu
 
 		const SvUl::NameObjectIdList& GetAvailableImageList() const;
 		const SvDef::StringVector& GetSpecialImageList() const;
-		const SvPb::InputDataList& GetInputImageList(uint32_t childObjectID = SvDef::InvalidObjectId, size_t maxImages = 0) const;
 		SvPb::InputData GetInputData(SvPb::EmbeddedIdEnum embeddedId, uint32_t instanceID = SvDef::InvalidObjectId) const;
 		SvUl::NameObjectIdList GetResultImages() const;
 

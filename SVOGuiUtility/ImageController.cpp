@@ -98,31 +98,6 @@ namespace SvOgu
 		return {};
 	}
 
-	const SvPb::InputDataList& ImageController::GetInputImageList(uint32_t instanceID, size_t maxImages) const
-	{
-		uint32_t objectID = m_TaskObjectID;
-		if (SvDef::InvalidObjectId != instanceID)
-		{
-			objectID = instanceID;
-		}
-		SvPb::InspectionCmdRequest requestCmd;
-		SvPb::InspectionCmdResponse responseCmd;
-		auto* pRequest = requestCmd.mutable_getinputsrequest();
-		pRequest->set_objectid(objectID);
-		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
-		pRequest->set_maxrequested(static_cast<int32_t>(maxImages));
-		pRequest->set_exclude_first_object_name_in_conntected_name(true); //used only for LinkedValue-names
-		pRequest->set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType); //used only for LinkedValue-names
-
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		if (S_OK == hr && responseCmd.has_getinputsresponse())
-		{
-			m_connectedList = responseCmd.getinputsresponse().list();
-		}
-
-		return m_connectedList;
-	}
-
 	SvPb::InputData ImageController::GetInputData(SvPb::EmbeddedIdEnum embeddedId, uint32_t instanceID) const
 	{
 		uint32_t objectID = m_TaskObjectID;

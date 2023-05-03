@@ -60,27 +60,22 @@ BOOL TATableSourcePage::OnInitDialog()
 
 	RetrieveAvailableList();
 
-	std::string selectedTableName;
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getinputsrequest();
+	auto* pRequest = requestCmd.mutable_getinputdatarequest();
 	pRequest->set_objectid(m_TaskObjectID);
-	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
+	pRequest->set_embeddedid(SvPb::SourceTableInputEId);
 	pRequest->set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType);
 	pRequest->set_exclude_first_object_name_in_conntected_name(true);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
+	if (S_OK != hr || false == responseCmd.has_getinputdataresponse())
 	{
-		m_inputName = responseCmd.getinputsresponse().list(0).inputname();
-		selectedTableName = responseCmd.getinputsresponse().list(0).connected_objectdottedname();
-	}
-	else
-	{	//this block should not reached, but if no input found, use default inputName and try with them to solve the problem. 
-		m_inputName = SvDef::cInputTag_SourceTable;
+		Log_Assert(false);
+		return false;
 	}
 
-	m_availableSourceTableCB.Init(m_availableList, selectedTableName, NoTableTag);
+	m_availableSourceTableCB.Init(m_availableList, responseCmd.getinputdataresponse().data().connected_objectdottedname(), NoTableTag);
 
 	UpdateData(false); // set data to dialog
 
@@ -99,11 +94,11 @@ void TATableSourcePage::OnSelchangeCombo1()
 		m_availableSourceTableCB.GetLBText(index, tableName);
 		if (!tableName.IsEmpty() && tableName != NoTableTag)
 		{
-			HRESULT hr = ConnectToObject(m_inputName, std::string(tableName));
+			HRESULT hr = ConnectToObject(SvPb::SourceTableInputEId, std::string(tableName));
 			if (S_OK != hr)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(m_inputName);
+				msgList.push_back(SvDef::cInputTag_SourceTable);
 				msgList.push_back(std::string(tableName));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConnectTableSourceFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -145,7 +140,7 @@ public:
 	bool operator()(const SvUl::NameObjectIdPair& rVal) const { return rVal.first == m_name; }
 };
 
-HRESULT TATableSourcePage::ConnectToObject(const std::string& inputName, const std::string& name)
+HRESULT TATableSourcePage::ConnectToObject(SvPb::EmbeddedIdEnum id, const std::string& name)
 {
 	HRESULT hr = E_INVALIDARG;
 	SvUl::NameObjectIdList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
@@ -154,7 +149,7 @@ HRESULT TATableSourcePage::ConnectToObject(const std::string& inputName, const s
 		SvPb::InspectionCmdRequest requestCmd;
 		auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
 		pRequest->set_objectid(m_TaskObjectID);
-		pRequest->set_inputname(inputName);
+		pRequest->set_embeddedid(id);
 		pRequest->set_newconnectedid(it->second);
 		pRequest->set_objecttype(SvPb::TableObjectType);
 

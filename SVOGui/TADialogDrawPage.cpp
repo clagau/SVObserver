@@ -581,16 +581,6 @@ void TADialogDrawPage::setAddTaskCtrl(const SvOgu::TreeNodeData& rData)
 	}
 }
 
-std::pair<std::string, std::string> TADialogDrawPage::getBGImageNamePair()
-{
-	const auto& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
-	if (rImageList.size())
-	{
-		return {rImageList.begin()->inputname(), rImageList.begin()->connected_objectdottedname()};
-	}
-	return {};
-}
-
 void TADialogDrawPage::setBaseImageGeneralCtrl()
 {
 	m_BSOAControls[BOSAEnum::Check1].ShowWindow(SW_SHOW);
@@ -605,9 +595,7 @@ void TADialogDrawPage::setBaseImageGeneralCtrl()
 		m_BSOAControls[BOSAEnum::Static2].ShowWindow(SW_SHOW);
 		m_BSOAControls[BOSAEnum::Static2].SetWindowText("Source Image:");
 		const SvUl::NameObjectIdList& rAvailableImageList = m_ImageController.GetAvailableImageList();
-		std::string selectedImageName;
-		std::tie(m_availableSourceInputName, selectedImageName) = getBGImageNamePair();
-		m_comboBox2.Init(rAvailableImageList, selectedImageName, NoImageTag);
+		m_comboBox2.Init(rAvailableImageList, m_ImageController.GetInputData(SvPb::ImageInputEId).connected_objectdottedname(), NoImageTag);
 		m_comboBox2.ShowWindow(SW_SHOW);
 
 		m_BSOAControls[BOSAEnum::Static3].ShowWindow(SW_SHOW);
@@ -921,7 +909,7 @@ void TADialogDrawPage::OnSelchangeBackGroundCombo()
 			//setImage must be before ConnectToImage because ConnectToImage does a reset and then it cannot get the image.
 			IPictureDisp* pImage = m_ImageController.GetImage(svImageName);
 			m_dialogImage.setImage(pImage);
-			m_ImageController.ConnectToImage(m_availableSourceInputName, svImageName);
+			m_ImageController.ConnectToImage(SvPb::ImageInputEId, svImageName);
 			SvStl::MessageContainerVector errorMessages;
 			HRESULT result = m_ImageController.ResetTask(errorMessages);
 
@@ -1028,8 +1016,7 @@ void TADialogDrawPage::refreshNodeText(HTREEITEM hItem)
 
 		if (SvOgu::DrawNodeType::BaseImage == pData->m_type && SvOgu::DrawNodeSubType::GeneralData == pData->m_subType && m_drawToolController.useBackgroundImage())
 		{
-			auto [_, selectedImageName] = getBGImageNamePair();
-			textStr += selectedImageName;
+			textStr += m_ImageController.GetInputData(SvPb::ImageInputEId).connected_objectdottedname();
 		}
 		if (false == textStr.empty())
 		{

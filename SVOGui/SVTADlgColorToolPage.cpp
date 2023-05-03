@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorToolPage.h"
-#include "Definitions/TextDefinesSvDef.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
@@ -46,7 +45,6 @@ namespace SvOg
 	, m_TaskObjectID(taskObjectId)
 	, m_values{ SvOgu::BoundValues{ inspectionId, taskObjectId } }
 	, m_convertToHSI{ false }
-	, m_InputName{ SvDef::cColorToolInputImage }
 	{
 	}
 
@@ -87,17 +85,7 @@ namespace SvOg
 		m_convertToHSI = m_values.Get<bool>(SvPb::ConvertToHSIEId);
 
 		const SvUl::NameObjectIdList& rAvailableImageList = m_Images.GetAvailableImageList();
-
-		// This requires that the input name sorts in descending natural order
-		// and that the images we are concerned with are first in the list
-		std::string SelectedImageName;
-		const auto& rImageList = m_Images.GetInputImageList();
-		const auto iter = std::ranges::find_if(rImageList, [&](const auto& rEntry) { return rEntry.inputname() == m_InputName; });
-		if (rImageList.cend() != iter)
-		{
-			SelectedImageName = iter->connected_objectdottedname();
-		}
-		m_availableSourceImageListBox.Init(rAvailableImageList, SelectedImageName, cNoImageTag);
+		m_availableSourceImageListBox.Init(rAvailableImageList, m_Images.GetInputData(SvPb::ImageInputEId).connected_objectdottedname(), cNoImageTag);
 		m_dialogImage.AddTab(cImageTag);
 		SetImage();
 		UpdateData( false );
@@ -118,7 +106,7 @@ namespace SvOg
 			std::string ImageName(Text);
 			if (!ImageName.empty() && cNoImageTag !=  ImageName)
 			{
-				m_Images.ConnectToImage(m_InputName, ImageName);
+				m_Images.ConnectToImage(SvPb::ImageInputEId, ImageName);
 				SvStl::MessageContainerVector errorMessages;
 				HRESULT result = m_Images.ResetTask(errorMessages);
 				m_Images.ToolRunOnce();

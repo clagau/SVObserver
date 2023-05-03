@@ -55,7 +55,6 @@ namespace SvOg
 		SvMc::AvailableObjectListComboBox<uint32_t> m_availableSourceImageListBox;
 
 		BOOL	m_convertToHSI;
-		std::string m_InputName;
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;

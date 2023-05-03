@@ -56,10 +56,10 @@ namespace SvOg
 		HRESULT RetrieveAvailableList();
 
 		/// Connect a table object to the input.
-		/// \param inputName [in] The name of the input.
+		/// \param id [in] The embedded id of the input.
 		/// \param name [in] Name of the object from the available list.
 		/// \returns HRESULT
-		HRESULT ConnectToObject(const std::string& inputName, const std::string& name);
+		HRESULT ConnectToObject(SvPb::EmbeddedIdEnum id, const std::string& name);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -68,7 +68,6 @@ namespace SvOg
 		
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		std::string m_inputName;
 		SvUl::NameObjectIdList m_availableList;
 #pragma endregion Member Variables
 	};

@@ -339,12 +339,14 @@ namespace SvOg
 				SvPb::InspectionCmdRequest requestCmd;
 				auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
 				pRequest->set_objectid(m_TaskObjectID);
-				pRequest->set_inputname(m_inputName_toolForColorOverlay);
+				pRequest->set_embeddedid(SvPb::OverlayColorInputEId);
 				pRequest->set_newconnectedid(iter->second);
 				pRequest->set_objecttype(SvPb::SVToolObjectType);
 
 				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 				Log_Assert(S_OK == hr);
+
+				
 			}
 		}
 		refresh();
@@ -368,20 +370,19 @@ namespace SvOg
 
 	void SVTADlgGeneralPage::initToolForOverlayColor()
 	{
-		uint32_t inputObjectId = SvDef::InvalidObjectId;
-		uint32_t selectedId = SvDef::InvalidObjectId;
+		SvPb::InputData inputData;
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
-		auto* pRequest = requestCmd.mutable_getinputsrequest();
-		pRequest->set_objectid(m_TaskObjectID);
-		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVToolObjectType);
+		auto* pDataRequest = requestCmd.mutable_getinputdatarequest();
+		pDataRequest->set_objectid(m_TaskObjectID);
+		pDataRequest->set_embeddedid(SvPb::OverlayColorInputEId);
+		pDataRequest->set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType);
+		pDataRequest->set_exclude_first_object_name_in_conntected_name(false);
+		responseCmd.Clear();
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
+		if (S_OK == hr && responseCmd.has_getinputdataresponse())
 		{
-			auto inputValues = responseCmd.getinputsresponse().list(0);
-			selectedId = inputValues.connected_objectid();
-			m_inputName_toolForColorOverlay = inputValues.inputname();
-			inputObjectId = inputValues.inputid();
+			inputData = responseCmd.getinputdataresponse().data();
 		}
 		else
 		{
@@ -390,25 +391,14 @@ namespace SvOg
 
 		auto* pAvailableRequest = requestCmd.mutable_getavailableobjectsrequest();
 		auto* pInputSearchParameter = pAvailableRequest->mutable_input_search();
-		pInputSearchParameter->set_input_connected_objectid(inputObjectId);
+		pInputSearchParameter->set_input_connected_objectid(inputData.inputid());
 		pAvailableRequest->set_desired_first_object_type_for_name(SvPb::SVToolSetObjectType);
 
 		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 		{
 			m_availableToolList = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
-			if (SvDef::InvalidObjectId == selectedId)
-			{
-				selectedId = m_TaskObjectID;
-			}
-
-			auto iter = std::find_if(m_availableToolList.begin(), m_availableToolList.end(), [selectedId](const auto& rEntry) { return rEntry.second == selectedId; });
-			std::string selectedName{};
-			if (m_availableToolList.end() != iter)
-			{
-				selectedName = iter->first;
-			}
-			m_AvailableToolForColorOverlayCombo.Init(m_availableToolList, selectedName, "");
+			m_AvailableToolForColorOverlayCombo.Init(m_availableToolList, inputData.connected_objectdottedname(), "");
 		}
 		else
 		{

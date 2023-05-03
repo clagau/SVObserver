@@ -101,16 +101,12 @@ private:
 	void ShowControls(int iMaskType);
 	void setImages();
 
-	void RetreiveCurrentlySelectedImageNames();
-
 	static SVToolAdjustmentDialogMaskPageClass* m_pThis;
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
 	SvOgu::ImageController m_ImageController;
 	SvOgu::ValueController m_Values;
 	SvOgu::MaskController m_maskController;
-	std::string m_imageInputName;
-	std::string m_imageName;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

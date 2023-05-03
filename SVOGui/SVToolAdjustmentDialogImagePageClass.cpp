@@ -75,16 +75,7 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 	m_ToolsizeHelper.InitValues();
 	m_ImageController.Init();
 	const SvUl::NameObjectIdList& rAvailableImageList = m_ImageController.GetAvailableImageList();
-
-	// This requires that the input name sorts in descending natural order
-	// and that the images we are concerned with are first in the list
-	std::string selectedImageName;
-	const auto& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
-	if (rImageList.size())
-	{
-		m_inputName = rImageList.begin()->inputname();
-		selectedImageName = rImageList.begin()->connected_objectdottedname();
-	}
+	auto selectedImageName = m_ImageController.GetInputData(SvPb::ImageInputEId).connected_objectdottedname();
 
 	m_availableSourceImageListBox.Init(rAvailableImageList, selectedImageName, NoImageTag);
 	m_dialogImage.AddTab(ImageTag);
@@ -113,7 +104,7 @@ void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1()
 			//setImage must be before ConnectToImage because ConnectToImage does a reset and then it cannot get the image.
 			IPictureDisp* pImage = m_ImageController.GetImage(svImageName);
 			m_dialogImage.setImage(pImage);
-			m_ImageController.ConnectToImage(m_inputName, svImageName);
+			m_ImageController.ConnectToImage(SvPb::ImageInputEId, svImageName);
 			refresh();
 			SvStl::MessageContainerVector errorMessages;
 			HRESULT result = m_ImageController.ResetTask(errorMessages);

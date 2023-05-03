@@ -24,8 +24,6 @@ namespace SvOg
 {
 	class SVTADlgExternalToolImageSelectPage : public CPropertyPage
 	{
-		typedef std::map<UINT, std::string> ImageInputList; // maps CtrlID to InputName
-
 	#pragma region Constructor
 	public:
 		SVTADlgExternalToolImageSelectPage(uint32_t inspectionId, uint32_t taskObjectId, int id = IDD);
@@ -82,8 +80,6 @@ namespace SvOg
 		const uint32_t m_TaskObjectID;
 		SvOgu::ExternalToolTaskController m_externalToolTaskController;
 		size_t m_numImages;
-		ImageInputList m_imageInputList;
-		
 	#pragma endregion Member variables
 	};
 } //namespace SvOg

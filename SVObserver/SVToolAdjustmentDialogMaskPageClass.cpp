@@ -197,8 +197,6 @@ BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog()
 	m_Values.Init();
 	m_maskController.Init();
 
-	RetreiveCurrentlySelectedImageNames();
-
 	m_dialogImage.AddTab(_T("Tool Input"));
 	m_dialogImage.AddTab(_T("Mask"));
 	m_dialogImage.AddTab(_T("Tool Result"));
@@ -473,7 +471,7 @@ void SVToolAdjustmentDialogMaskPageClass::ShowControls(int p_iMaskType)
 void SVToolAdjustmentDialogMaskPageClass::SetupImageMaskCombo()
 {
 	const SvUl::NameObjectIdList& rAvailableImageList = m_ImageController.GetAvailableImageList();
-	m_cbAvailableSourceImageList.Init(rAvailableImageList, m_imageName, NoImageTag);
+	m_cbAvailableSourceImageList.Init(rAvailableImageList, m_ImageController.GetInputData(SvPb::UserMaskImageInputEId).connected_objectdottedname(), NoImageTag);
 }
 
 void SVToolAdjustmentDialogMaskPageClass::OnSelchangeComboImageMask()
@@ -485,7 +483,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeComboImageMask()
 	{
 		CString name;
 		m_cbAvailableSourceImageList.GetLBText(index, name);
-		m_ImageController.ConnectToImage(m_imageInputName, name.GetString(), m_maskController.GetInstanceID());
+		m_ImageController.ConnectToImage(SvPb::UserMaskImageInputEId, name.GetString(), m_maskController.GetInstanceID());
 	}
 	initMask();
 }
@@ -589,8 +587,6 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeComboFillOptions()
 
 void SVToolAdjustmentDialogMaskPageClass::setImages()
 {
-	RetreiveCurrentlySelectedImageNames();
-
 	IPictureDisp* pSourceImage = m_maskController.GetReferenceImage();
 	IPictureDisp* pMaskImage = m_maskController.GetMaskImage();
 	IPictureDisp* pResultImage = m_maskController.GetResultImage();
@@ -605,16 +601,4 @@ void SVToolAdjustmentDialogMaskPageClass::setImages()
 void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria()
 {
 	initMask();
-}
-
-void SVToolAdjustmentDialogMaskPageClass::RetreiveCurrentlySelectedImageNames()
-{
-	const auto& rImageList = m_ImageController.GetInputImageList(m_maskController.GetInstanceID(), 1);
-
-	auto it = rImageList.begin();
-	if (it != rImageList.end())
-	{
-		m_imageInputName = it->inputname();
-		m_imageName = it->connected_objectdottedname();
-	}
 }

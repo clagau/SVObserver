@@ -889,16 +889,13 @@ void TaTableAnalyzerPage::setSourceTableObjectId()
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getinputsrequest();
+	auto* pRequest = requestCmd.mutable_getinputdatarequest();
 	pRequest->set_objectid(m_TaskObjectID);
-	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
-	pRequest->set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType);
-	pRequest->set_exclude_first_object_name_in_conntected_name(true);
-
+	pRequest->set_embeddedid(SvPb::SourceTableInputEId);
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
+	if (S_OK == hr && responseCmd.has_getinputdataresponse())
 	{
-		m_sourceTableObjectId = responseCmd.getinputsresponse().list(0).connected_objectid();
+		m_sourceTableObjectId = responseCmd.getinputdataresponse().data().connected_objectid();
 	}
 	else
 	{

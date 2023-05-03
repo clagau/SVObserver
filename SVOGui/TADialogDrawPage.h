@@ -103,7 +103,6 @@ namespace SvOg
 		enum { IDD = IDD_TA_DRAW_DIALOG };
 		SvMc::AvailableObjectListComboBox<uint32_t> m_comboBox2;
 		SvMc::SVEnumerateCombo m_comboBox2Enum;
-		std::string m_availableSourceInputName;
 		SvOgu::DrawTaskTree m_treeCtrl;
 		SvOgu::PictureDisplay m_dialogImage;
 		//}}AFX_DATA
@@ -130,7 +129,6 @@ namespace SvOg
 		void loadNode(HTREEITEM item, uint32_t objectId);
 		void hideAllBOSACtrl();
 		void setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, SvOgu::ValueController& rValueController, TADialogDrawPage::BOSAEnum ctrlEnum, int min, int max, const std::string& fieldName, bool readOnly = false);
-		std::pair<std::string, std::string> getBGImageNamePair();
 		void ObjectChangedExDialogImage(long, long, VARIANT* ParameterList, VARIANT* ParameterValue);
 		void setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, SvOgu::TreeNodeData& rData, SvOgu::ValidCheckCallback validCallback = nullptr);
 		void setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, SvOgu::TreeNodeData& rData, SvOgu::ValidCheckCallback validCallback = nullptr);

@@ -70,7 +70,6 @@ namespace SvOg
 		BOOL m_bCloseTool = false;
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableToolForColorOverlayCombo;
 		SvUl::NameObjectIdList m_availableToolList;
-		std::string m_inputName_toolForColorOverlay{};
 
 		bool m_bAuxExtentsAvailable = false; //Are Auxextents calculation enabled for this Inspection 
 		const uint32_t m_InspectionID;
