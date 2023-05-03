@@ -15,6 +15,8 @@
     </FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,10 +29,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -72,16 +72,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxSVRemoteControlLib">
-      <HintPath>..\Release\x64\bin\AxSVRemoteControlLib.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="SVRemoteControlLib">
-      <HintPath>..\Release\x64\bin\SVRemoteControlLib.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
     <Reference Include="System">
       <HintPath>C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll</HintPath>
     </Reference>
@@ -226,9 +218,32 @@
   <ItemGroup>
     <None Include="Resources\Chrysanthemum.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxSVRemoteControlLib">
+      <Guid>{46406B18-E3C7-449D-898F-E857B6A9D945}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="SVRemoteControlLib">
+      <Guid>{46406B18-E3C7-449D-898F-E857B6A9D945}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\AxImp.exe"  "$(TargetDir)SVRemotecontrol.ocx"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
