@@ -6,14 +6,14 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVToolAdjustmentDialogSheetClass.h"
+#include "TADlgSheetClass.h"
 #include "SheetForExternalToolAdjustment.h"
 #include "SVIPDoc.h"
-#include "SVTADlgExternalSelectDllPage.h"
-#include "SVTADlgExternalInputSelectPage.h"
-#include "SVTADlgExternalResultPage.h"
+#include "TADlgExternalSelectDllPage.h"
+#include "TADlgExternalInputSelectPage.h"
+#include "TADlgExternalResultPage.h"
 #include "Definitions/SVUserMessage.h"
-#include "SVOGui/SVTADlgExternalToolImageSelectPage.h"
+#include "SVOGui/TADlgExternalToolImageSelectPage.h"
 
 
 #pragma endregion Includes
@@ -53,9 +53,9 @@ private:
 
 };
 
-IMPLEMENT_DYNAMIC(SheetForExternalToolAdjustment, SVToolAdjustmentDialogSheetClass)
+IMPLEMENT_DYNAMIC(SheetForExternalToolAdjustment, TADlgSheetClass)
 
-BEGIN_MESSAGE_MAP(SheetForExternalToolAdjustment, SVToolAdjustmentDialogSheetClass)
+BEGIN_MESSAGE_MAP(SheetForExternalToolAdjustment, TADlgSheetClass)
 	//{{AFX_MSG_MAP(SheetForExternalToolAdjustment)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	//}}AFX_MSG_MAP
@@ -69,14 +69,14 @@ END_MESSAGE_MAP()
 
 SheetForExternalToolAdjustment::SheetForExternalToolAdjustment(SVIPDoc* p_pIPDoc, uint32_t inspectionID, uint32_t taskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: 
-	SVToolAdjustmentDialogSheetClass(p_pIPDoc, inspectionID, taskObjectID, pszCaption, pParentWnd, iSelectPage), 
+	TADlgSheetClass(p_pIPDoc, inspectionID, taskObjectID, pszCaption, pParentWnd, iSelectPage), 
 	m_externalToolTaskController(inspectionID, taskObjectID)
 {
 }
 
 BOOL SheetForExternalToolAdjustment::OnInitDialog()
 {
-	BOOL bResult = SVToolAdjustmentDialogSheetClass::OnInitDialog();
+	BOOL bResult = TADlgSheetClass::OnInitDialog();
 
 	CRect rect, tabrect;
 
@@ -131,14 +131,14 @@ void SheetForExternalToolAdjustment::OnRunOnce()
 	GreyOutHelper goh(m_runOnceButton, _T("<Running>"));
 
 	//if active page, the inputs must be send to business logic, before the run once will be done.
-	if (auto pInputValuePage = dynamic_cast<SVTADlgExternalInputSelectPage*>(GetActivePage()); nullptr != pInputValuePage)
+	if (auto pInputValuePage = dynamic_cast<TADlgExternalInputSelectPage*>(GetActivePage()); nullptr != pInputValuePage)
 	{
 		pInputValuePage->updateInputValuesFromPropertyTree();
 	}
 
 	m_externalToolTaskController.runOnce();
 
-	auto pOutputValuePage = dynamic_cast<SVTADlgExternalResultPage*>(GetActivePage());
+	auto pOutputValuePage = dynamic_cast<TADlgExternalResultPage*>(GetActivePage());
 	if (nullptr != pOutputValuePage) // if we are currently on the results page ...
 	{
 		pOutputValuePage->DisplayResults(); //... show the current results now ...
@@ -152,7 +152,7 @@ void SheetForExternalToolAdjustment::OnReInitialize()
 
 	SetActivePage(c_indexOfSelectDllPage);
 
-	auto pSelectDllPage = dynamic_cast<SVTADlgExternalSelectDllPage*>(GetPage(c_indexOfSelectDllPage));
+	auto pSelectDllPage = dynamic_cast<TADlgExternalSelectDllPage*>(GetPage(c_indexOfSelectDllPage));
 
 	if (nullptr != pSelectDllPage)
 	{
@@ -164,7 +164,7 @@ void SheetForExternalToolAdjustment::addPages()
 {
 	SvDef::SVObjectTypeInfoStruct ObjectInfo;
 
-	AddPage(new SVTADlgExternalSelectDllPage(GetInspectionID(), GetTaskObjectID(), *this, m_externalToolTaskController));
+	AddPage(new TADlgExternalSelectDllPage(GetInspectionID(), GetTaskObjectID(), *this, m_externalToolTaskController));
 	AddPage(createToolAdjustmentDialogCommentPage());
 };
 
@@ -185,9 +185,9 @@ LRESULT SheetForExternalToolAdjustment::AdaptToTestedDll(WPARAM, LPARAM)
 	m_runOnceButton.ShowWindow(SW_SHOW);
 	m_reInitializeButton.ShowWindow(SW_SHOW);
 
-	AddPage(new SvOg::SVTADlgExternalToolImageSelectPage(GetInspectionID(), GetTaskObjectID()));
-	AddPage(new SVTADlgExternalInputSelectPage(_T("Input Values"), GetInspectionID(), GetTaskObjectID(), m_externalToolTaskController));
-	AddPage(new SVTADlgExternalResultPage(_T("Result Values"), GetInspectionID(), m_externalToolTaskController.getExternalToolTaskObjectId(), m_externalToolTaskController));
+	AddPage(new SvOg::TADlgExternalToolImageSelectPage(GetInspectionID(), GetTaskObjectID()));
+	AddPage(new TADlgExternalInputSelectPage(_T("Input Values"), GetInspectionID(), GetTaskObjectID(), m_externalToolTaskController));
+	AddPage(new TADlgExternalResultPage(_T("Result Values"), GetInspectionID(), m_externalToolTaskController.getExternalToolTaskObjectId(), m_externalToolTaskController));
 
 	AddAdditionalPagesForExternalTool();
 

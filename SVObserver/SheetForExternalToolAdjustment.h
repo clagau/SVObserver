@@ -10,7 +10,7 @@
 #include "SVOGuiUtility/ExternalToolTaskController.h"
 #pragma endregion Includes
 
-class SheetForExternalToolAdjustment :public SVToolAdjustmentDialogSheetClass
+class SheetForExternalToolAdjustment :public TADlgSheetClass
 {
 
 	DECLARE_DYNAMIC(SheetForExternalToolAdjustment)

@@ -36,7 +36,7 @@
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVPPQObject.h"
 #include "SVRegressionRunDlg.h"
-#include "SVToolAdjustmentDialogSheetClass.h"
+#include "TADlgSheetClass.h"
 #include "SheetForExternalToolAdjustment.h"
 #include "SVToolSet.h"
 #include "SVUtilities.h"
@@ -258,7 +258,7 @@ LPCTSTR getViewClassName(CView* pView)
 	return nullptr;
 }
 
-std::unique_ptr<SVToolAdjustmentDialogSheetClass> GetToolAdjustmentSheet(SVIPDoc* pSVIPDoc, int tab)
+std::unique_ptr<TADlgSheetClass> GetToolAdjustmentSheet(SVIPDoc* pSVIPDoc, int tab)
 {
 	auto taskObjectID = pSVIPDoc->Get1stSelectedToolID();
 
@@ -272,7 +272,7 @@ std::unique_ptr<SVToolAdjustmentDialogSheetClass> GetToolAdjustmentSheet(SVIPDoc
 		}
 	}
 
-	return std::make_unique <SVToolAdjustmentDialogSheetClass>(pSVIPDoc, pSVIPDoc->GetInspectionID(), taskObjectID, _T("Tool Adjustment"), nullptr, tab);
+	return std::make_unique <TADlgSheetClass>(pSVIPDoc, pSVIPDoc->GetInspectionID(), taskObjectID, _T("Tool Adjustment"), nullptr, tab);
 }
 
 void convertGroupToModuleTool(uint32_t inspectionId, uint32_t toolId, const std::string& moduleName)
@@ -1765,7 +1765,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 			}
 			try
 			{
-				std::unique_ptr<SVToolAdjustmentDialogSheetClass> pSheet = GetToolAdjustmentSheet(this, tab);
+				std::unique_ptr<TADlgSheetClass> pSheet = GetToolAdjustmentSheet(this, tab);
 
 				INT_PTR dlgResult = E_POINTER;
 
@@ -1831,7 +1831,7 @@ void SVIPDoc::OnEditToolSet()
 				return;
 			}
 
-			SVToolAdjustmentDialogSheetClass toolSetDialog(this, GetInspectionID(), GetToolSet()->getObjectId(), _T("Tool Set Adjustment: "));
+			TADlgSheetClass toolSetDialog(this, GetInspectionID(), GetToolSet()->getObjectId(), _T("Tool Set Adjustment: "));
 			toolSetDialog.init();
 
 			INT_PTR dlgResult = toolSetDialog.DoModal();

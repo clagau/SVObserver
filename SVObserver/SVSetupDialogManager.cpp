@@ -42,7 +42,7 @@
 #include "SVOGui/SVPixelAnalyzerDlg.h"
 #include "SVOGui/SVProfileEdgeMarkerAdjustmentPage.h"
 #include "Operators/SVResult.h"
-#include "SVTADlgColorThresholdSheet.h"
+#include "TADlgColorThresholdSheet.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVOGui/RangeXDialogClass.h"
 #include "Operators/SVRange.h"
@@ -188,7 +188,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t inspectionId,
 		if (nullptr != pIPDoc)
 		{
 			// Create the Train Color Property Sheet
-			SVTADlgColorThresholdSheet dlg(pTool, Title.c_str());
+			TADlgColorThresholdSheet dlg(pTool, Title.c_str());
 			if (ID_OK == dlg.DoModal())
 			{
 				pIPDoc->SetModifiedFlag();

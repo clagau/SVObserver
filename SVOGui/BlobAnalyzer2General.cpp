@@ -78,7 +78,7 @@ namespace SvOg
 	void BlobAnalyzer2General::DoDataExchange(CDataExchange* pDX)
 	{
 		CPropertyPage::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(SVToolAdjustmentDialogFilterPageClass)
+		//{{AFX_DATA_MAP(BlobAnalyzer2General)
 		DDX_Text(pDX, IDC_EDIT_MAX_BLOB_DATA_ARRAY_SIZE, m_maxBlobArraySize);
 		DDV_MinMaxLong(pDX, m_maxBlobArraySize, 1, 10000);
 		DDX_Control(pDX, IDC_FIRST_IMAGE, m_resultImage);
