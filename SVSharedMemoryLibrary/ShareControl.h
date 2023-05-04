@@ -30,6 +30,7 @@ public:
 	bool GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRejectResponse& rResponse, SvPenv::Error& rError);
 	bool GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, SvPb::GetFailStatusResponse& rResponse, SvPenv::Error& rError);
 	bool GetImageFromId(const  SvPb::GetImageFromIdRequest& rRequest, SvPb::GetImageFromIdResponse& rResponse, SvPenv::Error& rError);
+	void clearTR();
 	
 
 private:

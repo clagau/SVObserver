@@ -157,6 +157,11 @@ bool ShareControl::GetImageFromId(const  SvPb::GetImageFromIdRequest& req, SvPb:
 	return true;
 }
 
+void ShareControl::clearTR()
+{
+	m_lastResponseData.ClearHeld();
+}
+
 bool ShareControl::EventHandler(DWORD event)
 {
 	bool res(false);

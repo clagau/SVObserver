@@ -1312,6 +1312,10 @@ void SharedMemoryAccess::subscribe_to_trc()
 		{
 			SV_LOG_GLOBAL(debug) << "TRC was reset";
 			m_trc_ready = false;
+			if (nullptr != m_pShareControlInstance)
+			{
+				m_pShareControlInstance->clearTR();
+			}
 		});
 		m_TrcNewInterestTrSubscriptionRAII = pTrc->registerNewInterestTrCallback([this](const std::vector<SvOi::TrInterestEventData>& rEvents)
 		{

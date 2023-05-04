@@ -79,6 +79,7 @@
 #include "SVVisionProcessorHelper.h"
 #include "SVMFCControls/EnterStringDlg.h"
 #include "GuiHelpers.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -392,6 +393,15 @@ void SVIPDoc::init()
 
 	m_bAllowRefresh = false;
 	m_oDisplay.Create();
+
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTrc)
+	{
+		m_TrcResetSubscriptionRAII = pTrc->registerResetCallback([this]()
+		{
+			m_triggerRecord = nullptr;
+		});
+	}
 }
 
 //******************************************************************************
@@ -399,6 +409,8 @@ void SVIPDoc::init()
 //******************************************************************************
 SVIPDoc::~SVIPDoc()
 {
+	m_triggerRecord = nullptr;
+	m_TrcResetSubscriptionRAII.reset();
 	m_isDestroying = true;
 	::InterlockedExchange(&m_AllViewsUpdated, 1);
 	m_oDisplay.SetIPDocDisplayComplete();

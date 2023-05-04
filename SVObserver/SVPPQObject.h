@@ -404,6 +404,7 @@ private:
 
 	using IpInfoDeque = std::deque<SVInspectionInfoStruct>;
 	std::unordered_map<uint32_t, IpInfoDeque> m_storeForInterestMap;
+	SvOi::RAIIPtr m_TrcResetSubscriptionRAII;
 
 	SVObjectPtrVector m_childObjects;
 

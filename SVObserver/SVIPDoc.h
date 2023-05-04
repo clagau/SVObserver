@@ -334,6 +334,7 @@ protected:
 	SVImageIdImageDataStructMap m_Images;
 	SvIe::SVIPResultData m_Results;
 	SvOi::ITriggerRecordRPtr m_triggerRecord = nullptr;
+	SvOi::RAIIPtr m_TrcResetSubscriptionRAII;
 	long m_AllViewsUpdated;
 
 	//

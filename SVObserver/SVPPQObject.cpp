@@ -113,6 +113,7 @@ SVPPQObject::SVPPQObject(SVObjectClass* POwner, int StringResourceID) : SVObject
 SVPPQObject::~SVPPQObject()
 {
 	SVObjectManagerClass::Instance().ClearShortPPQIndicator();
+	m_TrcResetSubscriptionRAII.reset();
 
 	if (m_isCreated)
 	{
@@ -157,6 +158,22 @@ void SVPPQObject::init()
 	}
 	m_cameraCallback = [this](ULONG_PTR pCaller, const CameraInfo& rCameraInfo) { cameraCallback(pCaller, rCameraInfo); };
 	m_triggerCallback = [this](SvTrig::SVTriggerInfoStruct&& triggerInfo) { triggerCallback(std::move(triggerInfo)); };
+
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTrc)
+	{
+		m_TrcResetSubscriptionRAII = pTrc->registerResetCallback([this]()
+		{
+			for (auto* pIP : m_arInspections)
+			{
+				if (nullptr != pIP)
+				{
+					pIP->resetLastProduct();
+				}
+			}
+			m_storeForInterestMap.clear();
+		});
+	}
 }
 
 HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
@@ -2773,42 +2790,24 @@ void SVPPQObject::ProcessProductRequests()
 	}
 }
 
-HRESULT SVPPQObject::GetProduct(SVProductInfoStruct& p_rProduct, long lProcessCount) const
+HRESULT SVPPQObject::GetProduct(SVProductInfoStruct& rProduct, long lProcessCount) const
 {
 	HRESULT l_Status = S_OK;
-
-	p_rProduct.InitProductInfo();
-
+	rProduct.InitProductInfo();
 	if (m_processThread.IsActive())
 	{
-		SVProductInfoStruct* l_pProduct = new SVProductInfoStruct;
-
-		if (nullptr != l_pProduct)
+		SVProductRequestPair l_Request(lProcessCount, SVProductInfoRequestStruct(&rProduct));
+		if (m_ProductRequests.AddTail(l_Request))
 		{
-			SVProductRequestPair l_Request(lProcessCount, SVProductInfoRequestStruct(l_pProduct));
-
-			if (m_ProductRequests.AddTail(l_Request))
+			m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::ProductRequests]));
+			l_Status = l_Request.second.WaitForRequest();
+			if (S_OK == l_Status)
 			{
-				m_processThread.Signal(reinterpret_cast<ULONG_PTR> (&m_processFunctions[PpqFunction::ProductRequests]));
-
-				l_Status = l_Request.second.WaitForRequest();
-
-				if (S_OK == l_Status)
+				if (rProduct.triggerCount() < 1)
 				{
-					p_rProduct = *l_pProduct;
-
-					if (p_rProduct.triggerCount() < 1)
-					{
-						l_Status = E_FAIL;
-					}
+					l_Status = E_FAIL;
 				}
 			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-
-			delete l_pProduct;
 		}
 		else
 		{
