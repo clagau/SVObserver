@@ -23,7 +23,7 @@
 //    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as released
 //    d is used for the revision number underlying the build (if zero it is ignored)
 
-#define FILEVER        10,40,0,1
+#define FILEVER        10,40,0,2
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
