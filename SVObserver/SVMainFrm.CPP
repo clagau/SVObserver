@@ -796,6 +796,12 @@ void SVMainFrame::OnModeEdit()
 		return;
 	}
 
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
+
 	// If Running, check if access to exit run.
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
@@ -1125,6 +1131,17 @@ void SVMainFrame::OnSVOFilePrintSetup()
 
 void SVMainFrame::OnStop()
 {
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION))
+	{
+		return;
+	}
+
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
+
 	StopSvo();
 }
 
@@ -2432,6 +2449,12 @@ void SVMainFrame::InitToolBars()
 void SVMainFrame::startDesiredState(DWORD desiredState)
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD | desiredState))
+	{
+		return;
+	}
+
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
 	{
 		return;
 	}

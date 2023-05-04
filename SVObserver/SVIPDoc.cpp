@@ -2193,6 +2193,12 @@ void SVIPDoc::RunRegressionTest()
 		return;
 	}
 
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
+
 	bool hasRunMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 
 	bool hasTestMode = SVSVIMStateClass::CheckState(SV_STATE_TEST);
