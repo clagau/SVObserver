@@ -160,7 +160,6 @@ private:
 	afx_msg void OnUpdateEditEditTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditEditToolSet(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditRemoteInputs(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditAddRemoteOutputs(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasLightReference(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFilePrintSetup(CCmdUI* PCmdUI);
@@ -200,7 +199,6 @@ private:
 	afx_msg void OnUpdateTriggerSettings(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI);
-	afx_msg void OnEditRemoteOutputs();
 	afx_msg void OnRCCloseAndCleanUpDownloadDirectory();
 
 	afx_msg void OnViewToolBar();

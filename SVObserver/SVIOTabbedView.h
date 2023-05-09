@@ -21,19 +21,17 @@ enum SVTabbedViewSplitterIDEnum
 	SVIORemoteInputsViewID = 3,
 	SVIODiscreteOutputsViewID = 5,
 	SVIOPlcOutputsViewID = 6,
-	SVRemoteOutputsViewID = 8,
 	SVRemoteMonitorListViewID = 9,
 	SVGlobalConstantViewID = 10,
 	//If you add here then add it to the list below as well
 };
 ///This list is used to iterate through all IO tabbed views so 
-constexpr std::array<SVTabbedViewSplitterIDEnum, 7> IOTabViews  =
+constexpr std::array<SVTabbedViewSplitterIDEnum, 6> IOTabViews  =
 { 
 	SVIODiscreteInputsViewID,
 	SVIORemoteInputsViewID,
 	SVIODiscreteOutputsViewID,
 	SVIOPlcOutputsViewID,
-	SVRemoteOutputsViewID,
 	SVRemoteMonitorListViewID,
 	SVGlobalConstantViewID
 };

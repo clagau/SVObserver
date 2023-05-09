@@ -124,7 +124,6 @@
     <ClCompile Include="SVIOEntryHostStruct.cpp" />
     <ClCompile Include="SVOutputObjectList.cpp" />
     <ClCompile Include="SVRemoteInputObject.cpp" />
-    <ClCompile Include="SVRemoteOutputObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PlcOutputObject.h" />
@@ -141,7 +140,6 @@
     <ClInclude Include="SVOutputObject.h" />
     <ClInclude Include="SVOutputObjectList.h" />
     <ClInclude Include="SVRemoteInputObject.h" />
-    <ClInclude Include="SVRemoteOutputObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

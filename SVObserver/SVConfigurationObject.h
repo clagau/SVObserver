@@ -63,8 +63,6 @@ class SVDeviceParam;
 class SvFs::FileNameContainer;
 class SVIOController;
 class SVNavigateTree;
-class SVRemoteOutputGroup;
-class SVRemoteOutputObject;
 class SVPPQObject;
 class SVLightReference;
 #pragma endregion Declarations
@@ -263,20 +261,6 @@ public:
 	SVIOEntryHostStructPtr GetModuleReady();
 
 	SVIOController* GetIOController() const { return (nullptr != m_pIOController) ? m_pIOController.get() : nullptr; }
-
-	uint32_t GetRemoteOutputController() const;
-	size_t GetRemoteOutputGroupCount() const;
-	void SetupRemoteOutput();
-	HRESULT ClearRemoteOutputUnUsedData();
-	HRESULT GetRemoteOutputGroupNames(SvDef::StringVector& rPPQs) const;
-	SVRemoteOutputGroup* GetRemoteOutputGroup(const std::string& rRemoteGroupID) const;
-	size_t GetRemoteOutputGroupItemCount(const std::string& rRemoteGroupID) const;
-	HRESULT GetRemoteOutputItem(const std::string& rRemoteGroupID, long l_lIndex, SVRemoteOutputObject*& p_rItem) const;
-	SVRemoteOutputObject* GetFirstRemoteOutputObject(const std::string& rRemoteGroupID) const;
-	HRESULT AddRemoteOutputItem(const std::string& rRemoteGroupID, SVRemoteOutputObject*& p_pNewOutput, uint32_t p_InputObjectID, const std::string& rPPQ);
-	HRESULT DeleteRemoteOutput(const std::string& rRemoteGroupID);
-	HRESULT DeleteRemoteOutputEntry(const std::string& rRemoteGroupID, SVRemoteOutputObject* p_pOutputObject);
-	HRESULT RemoteOutputValidateInputs();
 
 	void AddInspectionRemoteInput(const std::string& name, long ppqIndex, const _variant_t& p_Value);
 	void AddInspectionDigitalInput(const std::string& name, long ppqIndex);

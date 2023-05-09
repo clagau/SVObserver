@@ -67,20 +67,11 @@ void HideTabsAfterOpenSvxFile(SVIODoc* pIODoc)
 
 		if (nullptr != pConfig)
 		{
-			if (pConfig->GetRemoteOutputGroupCount() == 0)
-			{
-				pIODoc->HideIOTab(SVRemoteOutputsViewID);
-			}
-
 			const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
 			if (!rList.size())
 			{
 				pIODoc->HideIOTab(SVRemoteMonitorListViewID);
 			}
-		}
-		else
-		{
-			pIODoc->HideIOTab(SVRemoteOutputsViewID);
 		}
 		// Update Remote Inputs Tab
 		UpdateRemoteInputTabs(pIODoc);

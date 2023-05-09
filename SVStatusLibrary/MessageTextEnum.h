@@ -250,9 +250,6 @@ enum MessageTextEnum
 	Tid_RegressionTest_NoFilesSelected,
 	Tid_RegressionTest_FileNotExist,
 	Tid_RegressionTest_EmptyDirectory,
-	Tid_RemoteOutput_TriggerCountDeleteError,
-	Tid_RemoteOutput_DeletingOutput,
-	Tid_RemoteOutput_DeletingAllOutput,
 	Tid_ResultView_InitFailed,
 	Tid_StatTool_ResultFailed,
 

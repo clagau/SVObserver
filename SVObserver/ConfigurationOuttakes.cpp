@@ -207,7 +207,6 @@ SVConfigurationObject* CreateConfigAssistant(SVOConfigAssistantDlg& rDlg, bool n
 		}
 		if (nullptr != pConfig)
 		{
-			pConfig->ClearRemoteOutputUnUsedData();
 			pConfig->ValidateRemoteMonitorList();
 			SVIODoc* pIODoc = GetTheIODoc();
 			if (pIODoc)

@@ -314,11 +314,6 @@ echo %time%
     <ClCompile Include="SVRemoteCommandData.cpp" />
     <ClCompile Include="SVRemoteInputsView.cpp" />
     <ClCompile Include="SVRemoteIOAdjustDialog.cpp" />
-    <ClCompile Include="SVRemoteOutputDataController.cpp" />
-    <ClCompile Include="SVRemoteOutputEditDialog.cpp" />
-    <ClCompile Include="SVRemoteOutputGroup.cpp" />
-    <ClCompile Include="SVRemoteOutputGroupAddRemoveDlg.cpp" />
-    <ClCompile Include="SVRemoteOutputsView.cpp" />
     <ClCompile Include="SVResultList.cpp" />
     <ClCompile Include="SVROIFigureEditor.cpp" />
     <ClCompile Include="SVSetupDialogManager.cpp" />
@@ -500,11 +495,6 @@ echo %time%
     <ClInclude Include="SVRemoteControlConstants.h" />
     <ClInclude Include="SVRemoteInputsView.h" />
     <ClInclude Include="SVRemoteIOAdjustDialog.h" />
-    <ClInclude Include="SVRemoteOutputDataController.h" />
-    <ClInclude Include="SVRemoteOutputEditDialog.h" />
-    <ClInclude Include="SVRemoteOutputGroup.h" />
-    <ClInclude Include="SVRemoteOutputGroupAddRemoveDlg.h" />
-    <ClInclude Include="SVRemoteOutputsView.h" />
     <ClInclude Include="SVResultList.h" />
     <ClInclude Include="SVROIFigureEditor.h" />
     <ClInclude Include="SVSetupDialogManager.h" />

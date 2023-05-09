@@ -123,8 +123,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_FILE_PRINT_SETUP, OnSVOFilePrintSetup)
 	ON_COMMAND(ID_RC_CLOSE, OnRCClose)
 
-	ON_COMMAND(ID_EDIT_ADD_REMOTE_OUTPUTS, OnEditRemoteOutputs)
-
 	ON_UPDATE_COMMAND_UI(ID_TRIGGER_SETTINGS, OnUpdateTriggerSettings)
 	ON_UPDATE_COMMAND_UI(ID_MODE_RUN, OnUpdateModeRun)
 
@@ -179,7 +177,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_AUDITTRAIL_DEFAULTFILES, OnUpdateAuditTrailDefaultFiles)
 	ON_UPDATE_COMMAND_UI(ID_AUDITTRAIL_ADDITIONALFILES, OnUpdateAuditTrailAdditionalFiles)
 
-	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_REMOTE_OUTPUTS, OnUpdateEditAddRemoteOutputs)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_MONITORLIST, OnUpdateEditAddMonitorList)
 
 
@@ -616,19 +613,6 @@ void SVMainFrame::OnFileNewConfig()
 			// Logic to remove unused remote inputs.
 			SVConfigurationObject* pConfig(nullptr);
 			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-			if (nullptr != pConfig)
-			{
-
-				if (pConfig->GetRemoteOutputGroupCount() == 0)
-				{
-					HideIOTabIfPossible(SVRemoteOutputsViewID);
-				}
-			}
-			else
-			{
-				HideIOTabIfPossible(SVRemoteOutputsViewID);
-			}
 
 			// Never any Remotely Monitored Items on a New Configuration...
 			HideIOTabIfPossible(SVRemoteMonitorListViewID);
@@ -1379,24 +1363,6 @@ void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 	PCmdUI->SetText(remoteInputsExist ? "Edit Remote Inputs" : "Add Remote Inputs");
 }
 
-void SVMainFrame::OnUpdateEditAddRemoteOutputs(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
-		SVSVIMStateClass::CheckState(SV_STATE_EDIT));
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig && pConfig->GetRemoteOutputGroupCount() == 0)
-	{
-		pCmdUI->SetText("Add Remote Output");
-	}
-	else
-	{
-		pCmdUI->SetText("Edit Remote Output");
-	}
-}
-
 void SVMainFrame::OnUpdateEditAddMonitorList(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
@@ -1619,17 +1585,6 @@ void SVMainFrame::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI)
 void SVMainFrame::OnRCClose()
 {
 	DestroyConfig(false, true);
-}
-
-void SVMainFrame::OnEditRemoteOutputs()
-{
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		pConfig->SetupRemoteOutput();
-	}
 }
 
 void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )

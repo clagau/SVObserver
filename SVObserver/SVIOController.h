@@ -14,11 +14,8 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVRemoteOutputDataController.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
-#include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "RemoteMonitorListController.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace  SvOi
@@ -51,27 +48,9 @@ public:
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
-
-	bool GetParameters(SvOi::IObjectWriter& rWriter) const;
-
 	HRESULT SetModuleReady( bool p_Value );
 
 	SVIOEntryHostStructPtr GetModuleReady();
-
-	uint32_t GetRemoteOutputController() const;
-	size_t GetRemoteOutputGroupCount() const;
-	void SetupRemoteOutput( SVConfigurationObject* p_pConfig );
-	HRESULT ClearRemoteOutputUnUsedData( );
-	HRESULT GetRemoteOutputGroupNames( SvDef::StringVector& rPPQs );
-	SVRemoteOutputGroup* GetRemoteOutputGroup( const std::string& rRemoteGroupId ) const;
-	size_t GetRemoteOutputGroupItemCount( const std::string& rRemoteGroupId ) const;
-	HRESULT GetRemoteOutputItem( const std::string& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
-	SVRemoteOutputObject* GetFirstRemoteOutputObject( const std::string& rRemoteGroupId );
-	HRESULT AddRemoteOutputItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, uint32_t p_InputObjectID, const std::string& rPPQ );
-	HRESULT DeleteRemoteOutput( const std::string& rRemoteGroupId );
-	HRESULT DeleteRemoteOutputEntry( const std::string& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject );
-	HRESULT RemoteOutputValidateInputs();
 
 	bool SetupRemoteMonitorList(SVConfigurationObject* pConfig);
 	const RemoteMonitorListMap& GetRemoteMonitorList() const;
@@ -106,7 +85,6 @@ private:
 
 	SVIOEntryHostStructPtr m_pModuleReady;
 
-	std::unique_ptr<SVRemoteOutputDataController> m_pRemoteOutputController;
 	RemoteMonitorListController m_RemoteMonitorListController;
 	SVIODoc* m_pIODoc{nullptr};
 	bool m_discreteIO{false};

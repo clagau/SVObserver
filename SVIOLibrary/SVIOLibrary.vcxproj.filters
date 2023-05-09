@@ -39,9 +39,6 @@
     <ClCompile Include="SVRemoteInputObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVRemoteOutputObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVIODigitalLoadLibraryClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -87,9 +84,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteInputObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteOutputObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="PlcOutputObject.h">

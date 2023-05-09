@@ -15,7 +15,6 @@
 #include "SVDigitalOutputObject.h"
 #include "SVIOConfigurationInterfaceClass.h"
 #include "SVIOParameterEnum.h"
-#include "SVRemoteOutputObject.h"
 #include "SVOutputObjectList.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
@@ -70,19 +69,16 @@ SVOutputObjectPtr SVOutputObjectList::GetOutputFlyweight(const std::string& rNam
 	{
 		switch (ObjectSubType)
 		{
-		case SvPb::SVDigitalOutputObjectType:
-		{
-			pResult = std::make_shared<SVDigitalOutputObject>();
-			break;
-		}
-		case SvPb::PlcOutputObjectType:
-		{
-			pResult = std::make_shared<PlcOutputObject>();
-			break;
-		}
-		case SvPb::SVRemoteOutputObjectType:
-			pResult = std::make_shared<SVRemoteOutputObject>();
-			break;
+			case SvPb::SVDigitalOutputObjectType:
+			{
+				pResult = std::make_shared<SVDigitalOutputObject>();
+				break;
+			}
+			case SvPb::PlcOutputObjectType:
+			{
+				pResult = std::make_shared<PlcOutputObject>();
+				break;
+			}
 		}
 
 		if (nullptr != pResult)
@@ -310,7 +306,7 @@ bool SVOutputObjectList::WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, cons
 	{
 		SVOutputObjectPtr pOutput = GetOutput(pIOEntry->m_IOId);
 		SvPb::SVObjectSubTypeEnum outputType = (nullptr != pOutput) ? pOutput->GetObjectSubType() : SvPb::SVNotSetSubObjectType;
-		if (SvPb::SVDigitalOutputObjectType == outputType || SvPb::SVRemoteOutputObjectType  == outputType || SvPb::PlcOutputObjectType == outputType)
+		if (SvPb::SVDigitalOutputObjectType == outputType || SvPb::PlcOutputObjectType == outputType)
 		{
 			pOutput->Write(rValue);
 		}// end if
@@ -383,9 +379,6 @@ SVIOEntryHostStructPtrVector SVOutputObjectList::getOutputList() const
 				break;
 			case SvPb::PlcOutputObjectType:
 				pIOEntry->m_ObjectType = SVIOObjectType::IO_PLC_OUTPUT;
-				break;
-			case SvPb::SVRemoteOutputObjectType:
-				pIOEntry->m_ObjectType = SVIOObjectType::IO_REMOTE_OUTPUT;
 				break;
 			default:
 				break;

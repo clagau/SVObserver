@@ -309,21 +309,6 @@
     <ClCompile Include="SVRemoteIOAdjustDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVRemoteOutputDataController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRemoteOutputEditDialog.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRemoteOutputGroup.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRemoteOutputGroupAddRemoveDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRemoteOutputsView.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVResultList.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -836,21 +821,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteIOAdjustDialog.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteOutputDataController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteOutputEditDialog.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteOutputGroup.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteOutputGroupAddRemoveDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteOutputsView.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVResultList.h">

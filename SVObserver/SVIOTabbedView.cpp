@@ -16,7 +16,6 @@
 #include "SVDiscreteInputsView.h"
 #include "SVDiscreteOutputsView.h"
 #include "SVRemoteInputsView.h"
-#include "SVRemoteOutputsView.h"
 #include "MonitorListView.h"
 #include "GlobalConstantView.h"
 #pragma endregion Includes
@@ -44,7 +43,6 @@ BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT, CCreateContext* pContext)
 	TVisualObject* pPlcOutputsView = new TVisualObject(SVIOPlcOutputsViewID, _T("PLC Outputs"), pContext, RUNTIME_CLASS(PlcOutputsView));
 
 	TVisualObject* pRemoteInputsView = new TVisualObject(SVIORemoteInputsViewID, _T("Remote Inputs"), pContext, RUNTIME_CLASS(SVRemoteInputsView));
-	TVisualObject* pRemoteOutputsView = new TVisualObject(SVRemoteOutputsViewID, _T("Remote Outputs"), pContext, RUNTIME_CLASS(SVRemoteOutputsView));
 	TVisualObject* pRemoteMonitorListView = new TVisualObject(SVRemoteMonitorListViewID, _T("Monitor List"), pContext, RUNTIME_CLASS(MonitorListView));
 	TVisualObject* pGlobalConstantView = new TVisualObject(SVGlobalConstantViewID, _T("Global Constants"), pContext, RUNTIME_CLASS(GlobalConstantView));
 
@@ -54,7 +52,6 @@ BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT, CCreateContext* pContext)
 
 	m_Framework.Add(pIOTab, pDiscreteOutputsView);
 	m_Framework.Add(pIOTab, pPlcOutputsView);
-	m_Framework.Add(pIOTab, pRemoteOutputsView);
 
 	m_Framework.Add(pIOTab, pRemoteMonitorListView);
 	m_Framework.Add(pIOTab, pGlobalConstantView);

@@ -50,7 +50,6 @@ enum SVObjectTypeEnum
 	SVInputObjectListType					= 0x00000055;
 	SVOutputObjectListType					= 0x00000056;
 	SVIOControllerType                      = 0x00000057;
-	SVRemoteOutputGroupType					= 0x00000058;
 	SVIoObjectType							= 0x00000059;
 	SVLinearEdgeProcessingObjectType        = 0x00000060;
 	SVBasicValueObjectType			        = 0x00000061;
@@ -196,7 +195,6 @@ enum SVObjectSubTypeEnum
 	SVDigitalInputObjectType					= 0x00000500;
 	SVDigitalOutputObjectType					= 0x00000501;
 	SVRemoteInputObjectType						= 0x00000502;
-	SVRemoteOutputObjectType					= 0x00000503;
 	SVCameraDataInputObjectType					= 0x00000504;
 	PlcOutputObjectType							= 0x00000505;
 
@@ -658,15 +656,12 @@ enum ClassIdEnum
 	IndexEquationId = 435;
 	TableFillObjectId = 436;
 	TableCopyObjectId = 437;
-	RemoteOutputObjectId = 438;
 	EQAdjustSizeWidthClassId = 439;						
 	EQAdjustSizeHeightClassId = 440;
 	EQAdjustSizePositionXClassId = 441;
 	EQAdjustSizePositionYClassId = 442;
 	ShapeMaskHelperClassId = 443;
 	TableClassId = 444;
-	RemoteOutputGroupClassId = 445;
-	RemoteOutputDataControllerClassId = 446;
 	InputParameterTaskClassId = 448;
 	ResultParameterTaskClassId = 449;
 	InputConnectedClassId = 450;

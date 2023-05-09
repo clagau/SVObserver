@@ -147,15 +147,6 @@ namespace  SvXml
 
 	constexpr const char* CTAG_IODOC                          = _T("IODoc");
 
-	constexpr const char* CTAG_REMOTE_OUTPUT_PARAMETERS       = _T("RemoteOutputParameters");
-	constexpr const char* CTAG_REMOTE_OUTPUT_INPUT_OBJECT_ID = _T("RemoteOutputObjectId");
-	constexpr const char* CTAG_REMOTE_OUTPUT_NAME             = _T("RemoteOutputInputName");
-	constexpr const char* CTAG_REMOTE_GROUP_ID                = _T("RemoteOutputGroupID");
-	constexpr const char* CTAG_REMOTE_OUTPUT_PAR_NUM          = _T("RemoteOutputParNumber");
-	constexpr const char* CTAG_REMOTE_OUTPUT_ENTRY            = _T("RemoteOutputEntry");
-	constexpr const char* CTAG_REMOTE_GROUP_PPQ               = _T("RemoteGroupPPQ");
-	constexpr const char* CTAG_REMOTE_OUTPUT_QUEUE_SIZE       = _T("RemoteGroupQueueSize");
-
 	constexpr const char* CTAG_INSPECTION_PROCESS             = _T("Inspection Process");
 	constexpr const char* CTAG_TOOLSET_SET                    = _T("Tool Set");
 	constexpr const char* CTAG_DEPENDENT_FILES                = _T("Dependent Files");
