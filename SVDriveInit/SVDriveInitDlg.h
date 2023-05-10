@@ -23,30 +23,14 @@ class SVDriveInitDlg : public CDialog
 public:
 	SVDriveInitDlg(CWnd* pParent = nullptr);	// standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(SVDriveInitDlg)
 	enum { IDD = IDD_SVDRIVEINIT_DIALOG };
-	CButton m_SingleCamera;
-	CEdit	m_model_number;
-	CComboBox	m_type;
-	CEdit	m_cdkey[cCdKeyBlockNr];
-	CEdit	m_date;
-	CEdit	m_serviced_by;
-	CEdit	m_serial_number;
-	//}}AFX_DATA
 
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVDriveInitDlg)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;	// DDX/DDV support
-	//}}AFX_VIRTUAL
 
-// Implementation
 protected:
-	HICON m_hIcon;
+	HICON m_hIcon {NULL};
 
-	// Generated message map functions
-	//{{AFX_MSG(SVDriveInitDlg)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -54,7 +38,6 @@ protected:
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
 	afx_msg void OnChangeCdkey(UINT);
-	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -63,21 +46,14 @@ private:
 	bool GetOEMInfo();
 	bool GetSysPrepInfo();
 
-	bool UpdateRegistryInfo();
 	bool UpdateOEMInfo();
-	bool UpdateSVIMInfo();
 	bool UpdateSysPrepInfo();
 
-	HRESULT BackupBootIni();
+	CEdit	m_modelNumber {};
+	CEdit	m_cdKey[cCdKeyBlockNr] {};
+	CEdit	m_serialNumber {};
 
-	HRESULT UpdateIOInterfaceDLL(LPCTSTR p_szIOBoard);
-
-	HRESULT UpdateMatrox(LPCTSTR p_szDigitizer);
-	HRESULT UpdateMatroxRegistryMaxMem(size_t& p_rMaxSize, size_t p_MILSize);
-	HRESULT RemoveMatroxBootIniMaxMem();
-	HRESULT AddCommandBeforeSVObserver(LPCTSTR p_strNewCommand, bool p_bRemove);
-
-	SVProductId m_CDKey;
+	SVProductId m_CDKey {};
 };
 
 //{{AFX_INSERT_LOCATION}}

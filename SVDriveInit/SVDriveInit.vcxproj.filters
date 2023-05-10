@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CPassDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="StdAfx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -38,9 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="CPassDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
