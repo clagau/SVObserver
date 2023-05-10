@@ -394,8 +394,13 @@ bool DataControllerReader::getPauseTrsOfInterest(int inspectionPos) const
 
 std::vector<SvOi::ITriggerRecordRPtr> DataControllerReader::getTRsOfInterest(int inspectionPos, int n)
 {
-	auto pIPData = m_dataVector[inspectionPos];
 	std::vector<SvOi::ITriggerRecordRPtr> retVec;
+	std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
+	if (m_dataVector.size() <= inspectionPos)
+	{
+		return retVec;
+	}
+	auto pIPData = m_dataVector[inspectionPos];
 	if (nullptr != pIPData)
 	{
 		auto posVec = pIPData->getTRofInterestPos(n);
