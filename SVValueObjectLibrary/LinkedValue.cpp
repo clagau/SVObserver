@@ -305,7 +305,10 @@ HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 	//make  sure value is consistent
 	_variant_t directValue;
 	SvPb::ConvertProtobufToVariant(rData.directvalue(), directValue);
-	if (S_OK != ::VariantChangeTypeEx(&directValue, &directValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultValue().vt))
+	
+	bool isDifferntType = GetDefaultValue().vt != directValue.vt;
+	//VariantChangeTypeEx does not work for vt_array !
+	if (isDifferntType && S_OK != ::VariantChangeTypeEx(&directValue, &directValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultValue().vt))
 	{
 		Log_Assert(false);
 	}
