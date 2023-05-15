@@ -98,9 +98,9 @@ HRESULT WINAPI SVDigitizerStop(unsigned long digitizerHandle)
 	return g_matroxAcqDevice.CameraStop(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long digitizerHandle, LPCTSTR pAcquisitionFile)
+HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long digitizerHandle, LPCTSTR, DWORD)
 {
-	return g_matroxAcqDevice.InternalTrigger(digitizerHandle, pAcquisitionFile);
+	return g_matroxAcqDevice.InternalTrigger(digitizerHandle);
 }
 
 _variant_t WINAPI SVDigitizerParameterGetName(unsigned long digitizerHandle, int parameterID)

@@ -1012,7 +1012,7 @@ HRESULT SVMatroxGigeCameraProxy::EnableSoftwareTrigger(unsigned long hDigitizer,
 // For SingleGrabHelper
 HRESULT SVMatroxGigeCameraProxy::SoftwareTrigger(unsigned long hDigitizer, SvTrig::SVDigitizerLoadLibraryClass* pDigitizer)
 {
-	return pDigitizer->InternalTrigger(hDigitizer, nullptr);
+	return pDigitizer->InternalTrigger(hDigitizer, nullptr, 0U);
 }
 
 HRESULT SVMatroxGigeCameraProxy::SVLUTToSafeArray(const SVLut& lut, _variant_t& output)

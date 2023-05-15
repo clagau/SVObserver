@@ -44,13 +44,13 @@ public:
 	HRESULT CameraSetParameter(unsigned long cameraIndex, int parameterID, const _variant_t& rValue);
 	_variant_t CameraGetParameterList(unsigned long cameraIndex) const;
 
-	HRESULT InternalTrigger(unsigned long cameraIndex, LPCTSTR pAcquisitionFile);
+	HRESULT InternalTrigger(unsigned long cameraIndex, LPCTSTR pAcquisitionFile, DWORD preAcqPause);
 
 private:
 	HRESULT CameraProcessStartFrame( unsigned long cameraIndex);
 	HRESULT CameraProcessEndFrame( unsigned long cameraIndex);
 
-	HRESULT FireOneShot(unsigned long cameraIndex, LPCTSTR pAcquisitionFile);
+	HRESULT FireOneShot(unsigned long cameraIndex, LPCTSTR pAcquisitionFile, DWORD preAcqPause);
 
 private:
 	long m_lRefCount{ 0L };

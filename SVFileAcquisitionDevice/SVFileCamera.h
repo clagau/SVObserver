@@ -48,6 +48,7 @@ private:
 	int m_PreloadTimeDelay{ -1 };
 	mutable std::mutex m_fileCameraMutex;
 	std::string m_acquisitionFile;
+	DWORD m_preAcqPause {0U};
 
 	std::vector<MIL_ID> m_imageList;
 	std::vector<MIL_ID>::iterator m_currentImageIter {m_imageList.end()};
@@ -90,7 +91,7 @@ public:
 
 	bool IsRunning() const;
 
-	void DoOneShot(LPCTSTR pAcquisitionFile);
+	void DoOneShot(LPCTSTR pAcquisitionFile, DWORD preAcqPause);
 
 	HRESULT CopyImage(SvOi::ITRCImage* pImagePtr);
 

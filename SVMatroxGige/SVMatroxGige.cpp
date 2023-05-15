@@ -470,7 +470,7 @@ HRESULT SVMatroxGige::CameraStop( unsigned long digitizerHandle )
 	return hr;
 }
 
-HRESULT SVMatroxGige::InternalTrigger( unsigned long digitizerHandle, LPCTSTR)
+HRESULT SVMatroxGige::InternalTrigger( unsigned long digitizerHandle)
 {
 	HRESULT hr = S_FALSE;
 	if ( IsValidDigitizer(digitizerHandle) )

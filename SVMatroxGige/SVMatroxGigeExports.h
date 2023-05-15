@@ -37,7 +37,7 @@ HRESULT WINAPI SVDigitizerUnregisterBufferInterface(unsigned long digitizerHandl
 HRESULT WINAPI SVDigitizerStart(unsigned long digitizerHandle );
 HRESULT WINAPI SVDigitizerStop(unsigned long digitizerHandle );
 
-HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long digitizerHandle, LPCTSTR pAcquisitionFile);
+HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long digitizerHandle, LPCTSTR pAcquisitionFile, DWORD preAcqPause);
 
 _variant_t WINAPI SVDigitizerParameterGetName(unsigned long digitizerHandle, int parameterID);
 _variant_t WINAPI SVDigitizerParameterGetValue(unsigned long digitizerHandle, int parameterID);

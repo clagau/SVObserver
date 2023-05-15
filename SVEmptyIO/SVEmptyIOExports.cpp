@@ -252,7 +252,7 @@ HRESULT WINAPI SVDigitizerUnregisterBufferInterface(unsigned long)
 	return E_FAIL;
 }
 
-HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long, LPCTSTR )
+HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long, LPCTSTR, DWORD)
 {
 	return E_FAIL;
 }

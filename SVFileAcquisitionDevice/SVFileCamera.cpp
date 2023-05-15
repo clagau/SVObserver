@@ -210,11 +210,15 @@ MIL_ID SVFileCamera::GetNextImageId()
 	return result;
 }
 
-void SVFileCamera::DoOneShot(LPCTSTR pAcquisitionFile)
+void SVFileCamera::DoOneShot(LPCTSTR pAcquisitionFile, DWORD preAcqPause)
 {
 	{
 		std::lock_guard<std::mutex> guard(m_fileCameraMutex);
-		m_acquisitionFile = pAcquisitionFile;
+		if (nullptr != pAcquisitionFile)
+		{
+			m_acquisitionFile = pAcquisitionFile;
+		}
+		m_preAcqPause = preAcqPause;
 	}
 	m_processThread.Signal(reinterpret_cast<ULONG_PTR> (this));
 }
@@ -231,6 +235,10 @@ void __stdcall SVFileCamera::ProcessCallback(ULONG_PTR pCaller)
 	if (nullptr != pCamera)
 	{
 		std::string acuisitionFile = pCamera->getAcquisitionFile();
+		if (pCamera->m_preAcqPause > 0)
+		{
+			Sleep(pCamera->m_preAcqPause);
+		}
 		// fire StartFrame event
 		pCamera->m_startFrameEvent(pCamera->m_index);
 #ifdef TRACE_LOADTIME
