@@ -1452,16 +1452,6 @@ void SharedMemoryAccess::AcquireLockStream(
 		}
 	});
 
-	auto lockState = m_SharedMemoryLock->GetLockState();
-	if (lockState.owner.username == streamPtr->sessionContext.username())
-	{
-		SvPenv::Error error;
-		error.set_errorcode(SvPenv::ErrorCode::forbidden);
-		error.set_message("Shared memory already locked by the same user.");
-		streamPtr->observer.error(error);
-		return;
-	}
-
 	m_io_service.dispatch([this, streamPtr] { m_LockAcquisitionStreams.push_back(streamPtr); });
 	acquire_lock(*streamPtr);
 }
