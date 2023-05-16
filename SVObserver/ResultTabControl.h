@@ -37,6 +37,9 @@ public:
 	void tableIdChanged();
 	void initializeResultTabControl() { addDefaultTabs(); };
 
+	bool IsTableListCtrlActive();
+	bool IsResultListCtrlActive();
+
 private:
 	virtual void OnDraw(CDC* pDC) override;
 	virtual BOOL StartRenameTab(int iTab) override;

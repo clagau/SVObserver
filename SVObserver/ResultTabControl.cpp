@@ -164,12 +164,29 @@ void ResultTabControl::updateTab()
 	}
 }
 
+bool ResultTabControl::IsTableListCtrlActive()
+{
+	auto t = dynamic_cast<ResultTableListCtrl*> (GetTabWndNoWrapper(GetActiveTab()));
+	return(t != nullptr);
+
+}
+bool ResultTabControl::IsResultListCtrlActive()
+{
+	auto t = dynamic_cast<ResultListCtrl*> (GetTabWndNoWrapper(GetActiveTab()));
+	return(t != nullptr);
+}
+
 void ResultTabControl::tableIdChanged()
 {
-	CWnd* view = GetTabWndNoWrapper(GetActiveTab());
-	ResultTableListCtrl* tableListCtrl = dynamic_cast<ResultTableListCtrl*> (view);
+	
+	ResultTableListCtrl* tableListCtrl = dynamic_cast<ResultTableListCtrl*> (GetTabWndNoWrapper(GetActiveTab()));
 
 	SVToolSet* toolset = m_pIPDoc->GetToolSet();
+	if (!tableListCtrl)
+	{
+		Log_Assert(false);
+		return;
+	}
 	tableListCtrl->setTableIdForTab(toolset->GetResultList()->getTableId());
 	updateTab();
 

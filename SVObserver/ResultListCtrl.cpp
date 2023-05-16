@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "ResultListCtrl.h"
 #include "SVIPDoc.h"
-#include "SVSecurity/SVSecurityManager.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage/SVMessage.h"
@@ -32,13 +31,13 @@ IMPLEMENT_DYNCREATE( ResultListCtrl, CListCtrl )
 
 BEGIN_MESSAGE_MAP( ResultListCtrl, CListCtrl )
 	ON_WM_SIZE()
-	ON_WM_CONTEXTMENU()
+	
 END_MESSAGE_MAP()
 
 #pragma region Constructor
 ResultListCtrl::ResultListCtrl() : CListCtrl()
 {
-	VERIFY(m_ContextMenuItem.LoadMenu(IDR_RESULTS_CONTEXT_MENU));
+	
 }
 
 ResultListCtrl::~ResultListCtrl()
@@ -406,23 +405,7 @@ void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 	}
 }
 
-void ResultListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
-{
 
-	//	Allow the Result Picker in every mode except Stop
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_EDIT | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
-	{
-		CMenu* pPopupMenu = m_ContextMenuItem.GetSubMenu(0);
-		Log_Assert(nullptr != pPopupMenu);
-		CWnd* pOwner = this;
-		while (pOwner->GetStyle() & WS_CHILD)
-		{
-			pOwner = pOwner->GetParent();
-		}
-		pPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, pOwner);
-	}
-}
 
 std::string ResultListCtrl::CalcProcessesPerSecond(double p_LastTriggerDistance)
 {

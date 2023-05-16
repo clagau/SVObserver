@@ -32,6 +32,8 @@ protected:
 #pragma region Public Methods
 public:
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
+	
+
 
 	void GetParameters(SvOi::IObjectWriter& rWriter);
 	bool SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
@@ -43,6 +45,7 @@ public:
 
 #pragma region Private Methods
 private:
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	virtual void OnDraw(CDC* pDC) override;
 	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/) override;
 
@@ -54,7 +57,7 @@ private:
 private:
 	ResultTabControl m_customTabCtrl;
 	ResultListCtrl m_ResultList;
-	CEdit m_Wnd1;
+	
 	ResultTableListCtrl m_ResultTableList;
 	SVIPDoc* m_pIPDoc {nullptr};
 #pragma endregion Member variables

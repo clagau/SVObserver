@@ -51,7 +51,7 @@ private:
 private:
 	typedef std::vector<SvIe::SVIPResultItemDefinition> SVResultDefinitionVector;
 
-	CMenu m_ContextMenuItem;
+	
 	SVResultDefinitionVector m_ResultDefinitions;
 	SvIe::SVIPResultData m_ResultData;
 	bool m_ColumnWidthSet = false;

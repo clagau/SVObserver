@@ -15,6 +15,8 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
+#include <SVStatusLibrary/SVSVIMStateClass.h>
+#include <SVSecurity/SVSecurityManager.h>
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -27,6 +29,7 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(ResultTabbedView, CView)
 
 BEGIN_MESSAGE_MAP(ResultTabbedView, CView)
+	ON_WM_CONTEXTMENU()
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
@@ -125,10 +128,10 @@ bool ResultTabbedView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHa
 	return bOk;
 }// end CheckParameters
 
-void ResultTabbedView::SetViewSize(CSize &Size)
+void ResultTabbedView::SetViewSize(CSize& Size)
 {
-	CWnd *pWnd = this;
-	SVIPSplitterFrame *pSplitterFrame = nullptr;
+	CWnd* pWnd = this;
+	SVIPSplitterFrame* pSplitterFrame = nullptr;
 
 	do
 	{
@@ -136,7 +139,7 @@ void ResultTabbedView::SetViewSize(CSize &Size)
 
 		if (nullptr != pWnd)
 		{
-			pSplitterFrame = dynamic_cast<SVIPSplitterFrame *>(pWnd);
+			pSplitterFrame = dynamic_cast<SVIPSplitterFrame*>(pWnd);
 		}
 	} while (nullptr == pSplitterFrame && nullptr != pWnd);
 
@@ -193,6 +196,44 @@ void ResultTabbedView::OnSize(UINT nType, int cx, int cy)
 		CRect Rect;
 		GetClientRect(Rect);
 		m_customTabCtrl.MoveWindow(Rect);
+	}
+}
+
+
+void ResultTabbedView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+{
+	//	Allow the Result Picker in every mode except Stop
+	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_EDIT | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
+	{
+		CMenu Menu;
+		int MenuId {0};
+
+		if (m_customTabCtrl.IsTableListCtrlActive())
+		{
+			MenuId = IDR_RESULTS_TABLE_CONTEXT_MENU;
+
+		}
+		else if (m_customTabCtrl.IsResultListCtrlActive())
+		{
+			MenuId = IDR_RESULTS_CONTEXT_MENU;
+		}
+
+		if (MenuId == 0 || NULL == Menu.LoadMenu(MAKEINTRESOURCE(MenuId)))
+		{
+			Log_Assert(false);
+			return;
+		}
+
+		
+		CMenu* pPopupMenu = Menu.GetSubMenu(0);
+		Log_Assert(nullptr != pPopupMenu);
+		CWnd* pOwner = this;
+		while (pOwner->GetStyle() & WS_CHILD)
+		{
+			pOwner = pOwner->GetParent();
+		}
+		pPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, pOwner);
 	}
 }
 #pragma endregion Private Methods

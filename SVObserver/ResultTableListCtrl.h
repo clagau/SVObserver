@@ -49,7 +49,7 @@ private:
 
 #pragma region Member variables
 private:
-	CMenu m_ContextMenuItem;						//Menu object for context menu
+	
 
 	std::vector <SvIe::IPResultTableData> m_ResultData;
 	bool m_ColumnWidthSet = false;

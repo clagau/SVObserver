@@ -10,8 +10,6 @@
 #include "ResultTableListCtrl.h"
 #include "SVIPDoc.h"
 #include "SVToolSet.h"
-#include "SVSecurity/SVSecurityManager.h"
-#include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -33,13 +31,12 @@ IMPLEMENT_DYNCREATE( ResultTableListCtrl, CListCtrl )
 
 BEGIN_MESSAGE_MAP( ResultTableListCtrl, CListCtrl )
 	ON_WM_CREATE()
-	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 #pragma region Constructor
 ResultTableListCtrl::ResultTableListCtrl() : CListCtrl()
 {
-	VERIFY(m_ContextMenuItem.LoadMenu(IDR_RESULTS_TABLE_CONTEXT_MENU));
+
 }
 
 ResultTableListCtrl::~ResultTableListCtrl()
@@ -162,22 +159,6 @@ void ResultTableListCtrl::updateList()
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-void ResultTableListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
-{
-	//	Allow the Result Picker in every mode except Stop
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_EDIT | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
-	{
-		CMenu* pPopupMenu = m_ContextMenuItem.GetSubMenu(0);
-		Log_Assert(nullptr != pPopupMenu);
-		CWnd* pOwner = this;
-		while (pOwner->GetStyle() & WS_CHILD)
-		{
-			pOwner = pOwner->GetParent();
-		}
-		pPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, pOwner);
-	}
-}
 
 void ResultTableListCtrl::addColumnHeadings(const std::vector <SvIe::IPResultTableData>& rDataVec)
 {
