@@ -14,13 +14,16 @@
 #include "TADlgThresholdPage.h"
 #include "SVIPDoc.h"
 #include "TADlgSheetClass.h"
+#include "InspectionEngine/SVDataBuffer.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVAutoThresholdEquation.h"
 #include "Operators/SVLowerThresholdEquation.h"
 #include "Operators/SVThresholdClass.h"
 #include "Operators/SVUpperThresholdEquation.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVMFCControls/SVHistogram.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVOGuiUtility/DataController.h"
-#include "SVMFCControls/SVHistogram.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -168,7 +171,6 @@ HRESULT TADlgThresholdPage::SetInspectionData()
 	m_histogram.SetPixelCounts(histogramValues.begin(), histogramValues.end());
 	m_histogram.PostMessage(ID_BOUND_CHANGE, 1, m_lowerThreshold.GetPos());
 	m_histogram.PostMessage(ID_BOUND_CHANGE, 2, m_upperThreshold.GetPos()|(m_histState << 8));
-	m_strWhitePixel.Format("White Pixel: %ld", histogramValues[MaxThresholdValue]);
 
 	UpdateData(false);
 
@@ -217,10 +219,37 @@ void TADlgThresholdPage::DoDataExchange(CDataExchange* pDX)
 
 void TADlgThresholdPage::initThreshold()
 {
-	if( m_pCurrentThreshold )
+	if (nullptr != m_pCurrentThreshold)
 	{
 		SetInspectionData();
 
+		// Calculate And Show White Pixels...
+		if (m_pCurrentThreshold->getOutputImage())
+		{
+			__int64 histResultID = M_NULL;
+			std::vector<long> outHistValues;
+			SvIe::SVDataBufferInfoClass svData;
+
+			outHistValues.resize(MaxValues);
+			svData.Length = MaxValues;
+			svData.Type = SvIe::SVDataBufferInfoClass::SVHistResult;
+			svData.HBuffer.milResult = histResultID;
+			if (S_OK == SvIe::SVImageProcessingClass::CreateDataBuffer(&svData))
+			{
+				histResultID = svData.HBuffer.milResult;
+			}
+
+			SvOi::SVImageBufferHandlePtr pImageBuffer = m_pCurrentThreshold->getOutputImage()->getLastImage();
+
+			if (nullptr != pImageBuffer && !pImageBuffer->empty())
+			{
+				SVMatroxImageInterface::Histogram(histResultID, pImageBuffer->GetBuffer());
+				SVMatroxImageInterface::GetResult(histResultID, outHistValues);
+				SVMatroxImageInterface::Destroy(histResultID);
+
+				m_strWhitePixel = std::format("White Pixel: {:d}", outHistValues[MaxThresholdValue]).c_str();
+			}
+		}
 		setImages();
 		UpdateData(false); // set data to dialog
 	}
