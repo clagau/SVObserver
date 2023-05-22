@@ -281,7 +281,7 @@ void SVRPropertyItemEdit::OnActivate()
 	if ( !m_bKillFocusWorkaround )
 	{
 		OnRefresh();
-		EnableWindow(false == IsReadOnly());
+		SetReadOnly(true == IsReadOnly());
 		DisplayButton();
 		int iButtonWidth = 0;
 		if (m_bShowButton)
@@ -302,7 +302,7 @@ void SVRPropertyItemEdit::OnActivate()
 void SVRPropertyItemEdit::ReadOnlyActivate()
 {
 	Activate();
-	EnableWindow(FALSE);
+	SetReadOnly(TRUE);
 }
 
 void SVRPropertyItemEdit::HideEditItemCtrls()
