@@ -83,7 +83,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 constexpr uint32_t cOneMilliSecTimer = 1000;
-constexpr int cModuleReadyChannel = 15;
 constexpr int cDiscreteInputCount = 8;
 constexpr int cDiscreteOutputCount = 16;
 constexpr int cPlcInputCount = 0;
@@ -1037,6 +1036,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 						if (SvDef::FqnEnvironmentModuleReady == IOName)
 						{
 							l_ModuleReadyId = pOutput->getObjectId();
+							pDigitalOutput->SetValueObjectID(ObjectIdEnum::ModuleReadyId);
 						}
 					}
 				}
@@ -2201,32 +2201,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 HRESULT SVConfigurationObject::ValidateOutputList()
 {
-	HRESULT l_Status = S_OK;
-
-	SvDef::StringVector InspectionNames;
-	SvDef::StringVector PPQNames;
-
-	long l_iInspections = GetInspectionCount();
-
-	for (int i = 0; i < l_iInspections; i++)
-	{
-		SVInspectionProcess* pInspection = m_arInspectionArray[i];
-		if (nullptr != pInspection)
-		{
-			InspectionNames.push_back(std::string(pInspection->GetName()));
-		}
-	}
-	for (SVPPQObjectPtrVector::iterator it = m_arPPQArray.begin(); it != m_arPPQArray.end(); ++it)
-	{
-		if (nullptr != *it)
-		{
-			PPQNames.push_back(std::string((*it)->GetName()));
-		}
-	}
-
-	l_Status = m_pOutputObjectList->RemoveUnusedOutputs(InspectionNames, PPQNames);
-
-	return l_Status;
+	return m_pOutputObjectList->RemoveUnusedOutputs();
 }
 
 void SVConfigurationObject::UpgradeConfiguration()
@@ -4978,7 +4953,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 			SVOutputObjectList* pOutputObjectList = pConfig->GetOutputObjectList();
 			if (nullptr != pOutputObjectList)
 			{
-				SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::FqnEnvironmentModuleReady, SvPb::SVDigitalOutputObjectType, cModuleReadyChannel).get());
+				SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::FqnEnvironmentModuleReady, SvPb::SVDigitalOutputObjectType, SvDef::cModuleReadyChannel).get());
 
 				if (nullptr != pOutput && nullptr != pConfig->GetModuleReady())
 				{
@@ -4987,13 +4962,13 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 					{
 						pOutput->Invert(pOutput->IsInverted());
 					}
-					pOutput->SetChannel(cModuleReadyChannel);
+					pOutput->SetChannel(SvDef::cModuleReadyChannel);
 
 					pConfig->GetModuleReady()->m_IOId = pOutput->getObjectId();
 
-					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted(cModuleReadyChannel, pOutput->IsInverted());
-					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(cModuleReadyChannel, pOutput->IsForced());
-					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(cModuleReadyChannel, pOutput->GetForcedValue());
+					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted(SvDef::cModuleReadyChannel, pOutput->IsInverted());
+					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(SvDef::cModuleReadyChannel, pOutput->IsForced());
+					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(SvDef::cModuleReadyChannel, pOutput->GetForcedValue());
 				}
 			}
 		}

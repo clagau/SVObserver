@@ -1310,18 +1310,19 @@ bool SVPPQObject::RebuildOutputList()
 					continue;
 				}
 				SVObjectClass* pObject {pEntry->getObject(i)};
-				if (nullptr == pObject)
+				if (nullptr == pObject && cDefaultObjectIdCount == m_objectIdCount)
 				{
+					//Only search for the object by name for older configurations with ObjectID index 0
 					std::string fqName {SvDef::FqnConfiguration};
 					fqName += '.' + pEntry->m_name;
 					SVObjectManagerClass::Instance().GetObjectByDottedName(fqName, pObject);
 					pEntry->setValueObject(pObject, i);
 				}
-				if (nullptr != pObject)
+				if(nullptr != pObject)
 				{
 					uint32_t inspectionID {pEntry->getInspectionID(i)};
 					auto iterIpd = std::find_if(m_arInspections.begin(), m_arInspections.end(), [&inspectionID](const auto* pEntry) { return pEntry->getObjectId() == inspectionID; });
-					isPpqOutput =  {m_arInspections.end() != iterIpd};
+					isPpqOutput |=  m_arInspections.end() != iterIpd;
 					SVObjectClass* pPpq = pObject->GetAncestor(SvPb::SVObjectTypeEnum::SVPPQObjectType);
 					isPpqOutput |= (this == pPpq);
 					if (isPpqOutput)

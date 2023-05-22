@@ -1266,7 +1266,6 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 						bRet = pPPQ->DetachTrigger(pTrigger) && bRet;
 					}
 				}
-				pPPQ->RebuildOutputList();
 			}
 		}// if ppq != null
 		else
@@ -2275,6 +2274,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 				{
 					bRet = pPPQ->Rebuild() && bRet;
 				}
+				pPPQ->RebuildOutputList();
 				pPPQ = nullptr;
 			}
 		}

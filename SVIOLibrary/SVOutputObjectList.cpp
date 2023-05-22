@@ -17,7 +17,6 @@
 #include "SVIOParameterEnum.h"
 #include "SVOutputObjectList.h"
 #include "SVMessage/SVMessage.h"
-#include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -415,7 +414,7 @@ bool SVOutputObjectList::RenameInspection( LPCTSTR OldInspection, LPCTSTR NewIns
 }
 
 
-HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rInspectionNames, const SvDef::StringVector& rPPQNames )
+HRESULT SVOutputObjectList::RemoveUnusedOutputs()
 {
 	typedef std::deque<SVDigitalOutputObject*> SVDigitalOutputPtrList;
 	typedef std::map<long, SVDigitalOutputPtrList> SVDigitalOutputChannelMap;
@@ -423,44 +422,8 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 	HRESULT l_Status = S_OK;
 
 	std::lock_guard<std::mutex> guard(m_protectOutputList);
-	// if sizes are the same, Loop through inspection names and check for differences.
-	// if there is a difference, then search for the old name in the output object list.
-	// once we find the oldname in the output object list, replace with the new name.
-	SvDef::StringSet ValidObjects;
-
-	for( size_t l_lIndex = 0 ; l_lIndex < rInspectionNames.size() ; l_lIndex++ )
-	{
-		// for each output object search for the inspection name in the new names.
-		// if found
-		const std::string& rInspection = rInspectionNames[l_lIndex];
-
-		ObjectIdSVOutputObjectPtrMap::const_iterator Iter = m_outputObjectMap.begin();
-
-		while( m_outputObjectMap.end() != Iter  )
-		{
-			SVOutputObjectPtr pOutput = Iter->second;
-
-			std::string OutputName = pOutput->GetName();
-
-			std::string ObjInspectionName;
-			size_t Pos = OutputName.find('.');
-			if( std::string::npos != Pos )
-			{
-				ObjInspectionName = SvUl::Left( OutputName, Pos );
-			}
-
-			if( rInspection == ObjInspectionName )
-			{
-				ValidObjects.insert( OutputName );
-			}
-
-			++Iter;
-		}
-	}
 	SVDigitalOutputChannelMap l_ChannelOutputMap;
 
-	// if the output object inspection is not found, then delete the entry.
-	// but make sure it is not a ppq object.
 	if( !( m_outputObjectMap.empty() ) )
 	{
 		ObjectIdSVOutputObjectPtrMap::iterator l_Iter = m_outputObjectMap.begin();
@@ -468,66 +431,42 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 		while( l_Iter != m_outputObjectMap.end() )
 		{
 			SVOutputObjectPtr pOutput = l_Iter->second;
+			bool removeOutput {true};
 
-			std::string OutputName;
-
-			if( nullptr != pOutput )
+			if (nullptr != pOutput)
 			{
-				OutputName = pOutput->GetName();
-			}
-
-			bool Remove = OutputName.empty();
-
-			if( !Remove )
-			{
-				bool l_Skip = false;
-
-				// Check if the name starts with a valid PPQ_X prefix. Skip these outputs.
-				for(const std::string& rName : rPPQNames)
+				for (int i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
 				{
-					if( 0 == OutputName.compare( 0, rName.length(), rName) )
+					uint32_t objectID {pOutput->GetValueObjectID(i)};
+					if (SvDef::InvalidObjectId != objectID && nullptr != SVObjectManagerClass::Instance().GetObject(objectID))
 					{
-						l_Skip = true;
+						removeOutput = false;
 						break;
 					}
 				}
-
-				l_Skip = l_Skip || (SvDef::FqnEnvironmentModuleReady == OutputName );
-
-				if( ! l_Skip )
-				{
-					SvDef::StringSet::const_iterator l_OkIter = ValidObjects.find( OutputName );
-
-					Remove = ( l_OkIter == ValidObjects.end() );
-					Remove = Remove || OutputIsNotValid( pOutput->GetName() );
-				}
 			}
 
-			if( Remove )
+			if(removeOutput)
 			{
 				l_Iter = m_outputObjectMap.erase( l_Iter );
 			}
 			else
 			{
-				if( nullptr != pOutput )
-				{
-					SVDigitalOutputObject* pDigital = dynamic_cast<SVDigitalOutputObject*> (pOutput.get());
+				SVDigitalOutputObject* pDigital = dynamic_cast<SVDigitalOutputObject*> (pOutput.get());
 
-					if( nullptr != pDigital )
+				if( nullptr != pDigital )
+				{
+					if( 0 <= pDigital->GetChannel() && pDigital->GetChannel() <= 15 )
 					{
-						if( 0 <= pDigital->GetChannel() && pDigital->GetChannel() <= 15 )
-						{
-							l_ChannelOutputMap[ pDigital->GetChannel() ].push_back( pDigital );
-						}
+						l_ChannelOutputMap[ pDigital->GetChannel() ].push_back( pDigital );
 					}
 				}
-
 				++l_Iter;
 			}
 		}
 	}
 
-	SVDigitalOutputChannelMap::iterator l_ChannelIter = l_ChannelOutputMap.find( 15 );
+	SVDigitalOutputChannelMap::iterator l_ChannelIter = l_ChannelOutputMap.find(SvDef::cModuleReadyChannel);
 
 	if( l_ChannelIter != l_ChannelOutputMap.end() )
 	{
@@ -567,16 +506,6 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 
 	return l_Status;
 }
-
-bool SVOutputObjectList::OutputIsNotValid(const std::string& rName )
-{
-	SVObjectClass* l_pObject = nullptr;
-	SVObjectManagerClass::Instance().GetObjectByDottedName( rName, l_pObject );
-
-	// Return true if object does not exist.
-	return nullptr == l_pObject;
-}
-
 
 void SVOutputObjectList::WriteOutputData(const SvTrig::ResultData& rResultData)
 {

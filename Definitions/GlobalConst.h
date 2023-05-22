@@ -33,42 +33,42 @@ constexpr bool			cDefaultToolLowerThresholdActivate = true;
 
 // Default PreTriggerTimeWindow is in milliseconds (750µs)
 constexpr double		cDefaultPreTriggerTimeWindow = 0.75;
-// Default PostTriggerTimeWindow is in milliseconds (1.8ms)
+// Default PostTriggerTimeWindow is in milliseconds (2.5ms)
 // Note that the camera shutter time is added to the PostTriggerTimeWindow
-constexpr double		cDefaultPostTriggerTimeWindow = 1.8;
+constexpr double		cDefaultPostTriggerTimeWindow = 2.5;
 
 // Default view color settings...
 constexpr COLORREF		cDefaultImageViewBackgroundColor = Ivory;
 
 // Default image settings...
-constexpr long			cDefaultCameraImageWidth = 640L;
-constexpr long			cDefaultCameraImageHeight = 480L;
-constexpr long			cDefaultImageViewWidth = cDefaultCameraImageWidth;
-constexpr long			cDefaultImageViewHeight = cDefaultCameraImageHeight;
-constexpr long			cDefaultToolsetViewWidth = 200L;
-constexpr long			cDefaultToolsetViewHeight = 400L;
-constexpr long			cDefaultResultViewWidth = 840L;
-constexpr long			cDefaultResultViewHeight = 200L;
+constexpr long cDefaultCameraImageWidth = 640L;
+constexpr long cDefaultCameraImageHeight = 480L;
+constexpr long cDefaultImageViewWidth = cDefaultCameraImageWidth;
+constexpr long cDefaultImageViewHeight = cDefaultCameraImageHeight;
+constexpr long cDefaultToolsetViewWidth = 200L;
+constexpr long cDefaultToolsetViewHeight = 400L;
+constexpr long cDefaultResultViewWidth = 840L;
+constexpr long cDefaultResultViewHeight = 200L;
 
 // Default tool extents
-constexpr double		cDefaultWindowToolLeft = 0;//10.0;
-constexpr double		cDefaultWindowToolTop = 0;//10.0;
-constexpr double		cDefaultWindowToolWidth = 100.0;
-constexpr double		cDefaultWindowToolHeight = 100.0;
-constexpr double		cDefaultScaleFactor = 1.0;
+constexpr double cDefaultWindowToolLeft = 0.0;
+constexpr double cDefaultWindowToolTop = 0.0;
+constexpr double cDefaultWindowToolWidth = 100.0;
+constexpr double cDefaultWindowToolHeight = 100.0;
+constexpr double cDefaultScaleFactor = 1.0;
 
-constexpr long			cDefaultPolarTransformCenterX = 200L;
-constexpr long			cDefaultPolarTransformCenterY = 50L;
-constexpr long			cDefaultPolarTransformStartRadius = 200L;
-constexpr long			cDefaultPolarTransformEndRadius = 100L;
-constexpr long			cDefaultPolarTransformStartAngle = 210L;
-constexpr long			cDefaultPolarTransformEndAngle = 330L;
+constexpr long cDefaultPolarTransformCenterX = 200L;
+constexpr long cDefaultPolarTransformCenterY = 50L;
+constexpr long cDefaultPolarTransformStartRadius = 200L;
+constexpr long cDefaultPolarTransformEndRadius = 100L;
+constexpr long cDefaultPolarTransformStartAngle = 210L;
+constexpr long cDefaultPolarTransformEndAngle = 330L;
 
-constexpr int			cMaximumCameras = 4;
-constexpr int			cMinPatternModelNewSize = 8;
-constexpr int			cMinPatternModelLoadSize = 4;
-constexpr long			cObjectIndexMaxNr = 4;
-
+constexpr int cModuleReadyChannel = 15;
+constexpr int cMaximumCameras = 4;
+constexpr int cMinPatternModelNewSize = 8;
+constexpr int cMinPatternModelLoadSize = 4;
+constexpr long cObjectIndexMaxNr = 4;
 
 constexpr const char* cExcludeCharsToolIpName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
 constexpr const char* cExcludeCharsConfigName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#");

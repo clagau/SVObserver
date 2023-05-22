@@ -280,13 +280,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 
 							if (nullptr == dlg.m_pObjectLinkList[i])
 							{
-								if (nullptr != pOutputList)
-								{
-									pOutputList->DetachOutput(pOutput->getObjectId());
-								}
-								pOutput = nullptr;
-								pIOEntry->clear();
-								pIOEntry.reset();
+								pOutput->SetValueObjectID(SvDef::InvalidObjectId, i);
 							}
 							else
 							{
@@ -301,6 +295,21 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 								}
 							}
 						}
+					}
+					bool outputUsed {false};
+					for (long i = 0; i < m_maxObjectIDCount; ++i)
+					{
+						outputUsed |= pOutput->GetValueObjectID(i) != 0;
+					}
+					if (false == outputUsed)
+					{
+						if (nullptr != pOutputList)
+						{
+							pOutputList->DetachOutput(pOutput->getObjectId());
+						}
+						pOutput.reset();
+						pIOEntry->clear();
+						pIOEntry.reset();
 					}
 
 					// Rebuild Outputs

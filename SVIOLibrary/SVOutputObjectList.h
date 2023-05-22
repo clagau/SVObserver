@@ -16,7 +16,6 @@
 #include "SVOutputObject.h"
 #include "SVIOEntryHostStruct.h"
 #include "SVIODigitalLoadLibraryClass.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvTrig
@@ -50,11 +49,9 @@ public:
 	bool WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
 	bool ResetOutput( SVIOEntryHostStructPtr pIOEntry );
 	bool RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName);
-	HRESULT RemoveUnusedOutputs( const SvDef::StringVector& rInspectionNames, const SvDef::StringVector& rPPQNames );
+	HRESULT RemoveUnusedOutputs();
 
 	SVIOEntryHostStructPtrVector getOutputList() const;
-
-	bool OutputIsNotValid(const std::string& rName);
 
 	typedef  std::map<int, _variant_t> IntVariantMap;
 	///This function returns no error because the IO PLC dll is the only type which supports this functionality
