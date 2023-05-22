@@ -19,7 +19,7 @@
 #include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
+#include <SVMatroxLibrary/SVMatroxImageFile.h>
 #pragma endregion Includes
 
 namespace SvTo
@@ -33,10 +33,10 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 constexpr int GrayScaleBitDepth = 8;
-SV_IMPLEMENT_CLASS( SVLoadImageToolClass, SvPb::LoadImageToolClassId );
+SV_IMPLEMENT_CLASS(SVLoadImageToolClass, SvPb::LoadImageToolClassId);
 
-SVLoadImageToolClass::SVLoadImageToolClass( SVObjectClass* POwner, int StringResourceID )
-					 :SVToolClass(ToolExtType::All, POwner, StringResourceID )
+SVLoadImageToolClass::SVLoadImageToolClass(SVObjectClass* POwner, int StringResourceID)
+	:SVToolClass(ToolExtType::All, POwner, StringResourceID)
 {
 	init();
 }
@@ -46,22 +46,22 @@ void SVLoadImageToolClass::init()
 	m_canResizeToParent = true;
 	// Set up your type...
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_ObjectTypeInfo.m_SubType    = SvPb::SVToolLoadImageObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVToolLoadImageObjectType;
 
 	// Identify our input type needs
-	
+
 	// Register Embedded Objects
-	RegisterEmbeddedImage( &m_fileImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
-	RegisterEmbeddedObject( &m_currentPathName, SvPb::PathNameEId, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemToolAndDependent, true);
-	RegisterEmbeddedObject( &m_continuousReload, SvPb::ContinuousReloadEId, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone, true);
+	RegisterEmbeddedImage(&m_fileImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedObject(&m_currentPathName, SvPb::PathNameEId, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemToolAndDependent, true);
+	RegisterEmbeddedObject(&m_continuousReload, SvPb::ContinuousReloadEId, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedObject(&m_isColorImage, SvPb::IsColorImageCheckEId, IDS_OBJECTNAME_COLOR_IMAGE, false, SvOi::SVResetItemNone, true);
 
 
 	// Set Embedded defaults
-	m_currentPathName.SetDefaultValue( _T( "" ), true );
-	m_continuousReload.SetDefaultValue( false, true );
+	m_currentPathName.SetDefaultValue(_T(""), true);
+	m_continuousReload.SetDefaultValue(false, true);
 
-	m_fileImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
+	m_fileImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 
 	// Default taskObjectList items:
 
@@ -71,32 +71,31 @@ void SVLoadImageToolClass::init()
 }
 
 SVLoadImageToolClass::~SVLoadImageToolClass()
-{ 
-}
+{}
 
-bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLoadImageToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
-	if( bOk )
+	if (bOk)
 	{
 		// Create Image...
 		SVImageInfoClass ImageInfo = m_fileImage.GetImageInfo();
 
 		// Setup...
-		ImageInfo.SetOwner( getObjectId() );
-		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
-		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
-		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+		ImageInfo.SetOwner(getObjectId());
+		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8);
+		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
+		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
 		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned);
 
 		bOk = (S_OK == m_fileImage.UpdateImageSetParentAndImageInfo(SvDef::InvalidObjectId, ImageInfo));
 	}
 
 	// Set / Reset Printable Flags
-	m_fileImage.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_currentPathName.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
-	m_continuousReload.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_fileImage.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_currentPathName.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_continuousReload.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
 	if (bOk)
 	{
@@ -117,7 +116,7 @@ bool SVLoadImageToolClass::CloseObject()
 	return false;
 }
 
-bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	// All inputs and outputs must be validated first
 	if (ValidateLocal(pErrorMessages) && __super::onRun(rRunStatus, pErrorMessages))
@@ -152,7 +151,7 @@ bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 
 			m_ReloadFileImage = false;
 		}
-		
+
 
 
 
@@ -169,10 +168,10 @@ bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 	return false;
 }
 
-bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
-	
+
 	m_ReloadFileImage = true;
 
 	bool correctModeForImage = true;
@@ -185,12 +184,15 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 
 	if (bIsColorImage)
 	{
-		SVImageFile FileImage;
 		std::string ImagePathName;
 		m_currentPathName.GetValue(ImagePathName);
-		if (S_OK == SVImageFileLoader::LoadFirstFile(ImagePathName.c_str(), ImageFileFormat::any, FileImage))
+
+
+
+		SVMatroxImageFile ImageFile;
+		if (ImageFile.LoadFirstFile(ImagePathName.c_str(), ImageFileFormat::any))
 		{
-			bool selectedFileIsColor = FileImage.GetBitDepth() > GrayScaleBitDepth;
+			bool selectedFileIsColor = ImageFile.IsColor();
 			if (selectedFileIsColor && SvDef::SVImageFormatBGR888X != imagePropertyFormat)
 			{
 				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
@@ -265,7 +267,7 @@ HRESULT SVLoadImageToolClass::SetImageExtent(const SVImageExtentClass& rImageExt
 
 	const SVExtentFigureStruct& rFigure = rImageExtent.GetFigure();
 
-	if ( (rFigure.m_svTopLeft.m_x >= 0) && (rFigure.m_svTopLeft.m_y >= 0) )
+	if ((rFigure.m_svTopLeft.m_x >= 0) && (rFigure.m_svTopLeft.m_y >= 0))
 	{
 		l_hrOk = SVToolClass::SetImageExtent(rImageExtent);
 	}
@@ -300,15 +302,15 @@ HRESULT SVLoadImageToolClass::SetImageExtentToParent()
 	return l_hrOk;
 }
 
-HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent ) const
+HRESULT SVLoadImageToolClass::GetParentExtent(SVImageExtentClass& rParentExtent) const
 {
 	HRESULT hr = S_OK;
 	std::string ImagePathName;
-	if( S_OK == hr )
+	if (S_OK == hr)
 	{
-		hr = m_currentPathName.GetValue( ImagePathName );
+		hr = m_currentPathName.GetValue(ImagePathName);
 	}
-	if( S_OK == hr )
+	if (S_OK == hr)
 	{
 		hr = rParentExtent.SetDataFromFile(ImagePathName.c_str());
 	}
@@ -325,22 +327,22 @@ std::vector<std::string> SVLoadImageToolClass::getToolAdjustNameList() const
 		_T("General"),
 		_T("Comment"),
 	};
-	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+	return {cToolAdjustNameList.begin(), cToolAdjustNameList.end()};
 }
 
-bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector* pErrorMessages) const
 {
 	std::string PathName;
-	m_currentPathName.GetValue( PathName );
+	m_currentPathName.GetValue(PathName);
 
-	if(0 == _access(PathName.c_str(), 0))
+	if (0 == _access(PathName.c_str(), 0))
 	{
 		return true;
 	}
 
 	if (nullptr != pErrorMessages)
 	{
-		SvStl::MessageContainer message( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
+		SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		pErrorMessages->push_back(message);
 	}
 	return false;

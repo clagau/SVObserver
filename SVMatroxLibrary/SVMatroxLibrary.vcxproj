@@ -144,6 +144,7 @@
     <ClCompile Include="SVMatroxGraphicsInterface.cpp" />
     <ClCompile Include="SVMatroxImageBuffer.cpp" />
     <ClCompile Include="SVMatroxImageChildBuffer.cpp" />
+    <ClCompile Include="SVMatroxImageFile.cpp" />
     <ClCompile Include="SVMatroxImageInterface.cpp" />
     <ClCompile Include="SVMatroxImageRotateStruct.cpp" />
     <ClCompile Include="SVMatroxLicenseInterface.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="SVMatroxIdentifierEnum.h" />
     <ClInclude Include="SVMatroxImageBuffer.h" />
     <ClInclude Include="SVMatroxImageChildBuffer.h" />
+    <ClInclude Include="SVMatroxImageFile.h" />
     <ClInclude Include="SVMatroxImageInterface.h" />
     <ClInclude Include="SVMatroxImageRotateStruct.h" />
     <ClInclude Include="SVMatroxImagingLibrary.h" />

@@ -17,7 +17,6 @@
 #include "SVObserver.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "CameraLibrary/SVDeviceParam.h"
 #include "CameraLibrary/SVDeviceParams.h"
@@ -43,6 +42,7 @@
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVRPropertyTree/SVRPropTreeItemFile.h"
+#include "SVMatroxLibrary/SVMatroxImageFile.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -731,7 +731,7 @@ void SVOPropertyPageDlg::UpdateFileImageSize()
 bool SVOPropertyPageDlg::ScanForImageSize(SIZE& size)
 {
 	bool Result( false );
-	SVImageFile FileImage;
+	
 	std::string Name;
 
 	if ( 0 == m_CameraObj.GetFileLoadingMode() ) // use File
@@ -743,11 +743,16 @@ bool SVOPropertyPageDlg::ScanForImageSize(SIZE& size)
 		Name = m_CameraObj.GetImageDirectoryName();
 	}
 
-	if( S_OK == SVImageFileLoader::LoadFirstFile( Name.c_str(), ImageFileFormat::any, FileImage ) )
+
+	SVMatroxImageFile  ImageFile;
+
+	if(ImageFile.LoadFirstFile( Name.c_str(), ImageFileFormat::any) )
 	{
-		size = FileImage.GetSize();
+		size = ImageFile.GetSize();
 		Result = true;
 	}
+	
+	//OutputDebugString(ImageFile.GetDebugString().c_str());
 	return Result;
 }
 

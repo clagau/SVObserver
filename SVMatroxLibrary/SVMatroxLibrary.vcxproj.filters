@@ -114,6 +114,9 @@
     <ClCompile Include="LookUp.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVMatroxImageFile.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MatroxImageProps.h">
@@ -234,6 +237,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="LookUp.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMatroxImageFile.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

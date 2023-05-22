@@ -21,7 +21,6 @@
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #include "CameraLibrary/SVboolValueDeviceParam.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
@@ -52,6 +51,8 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/AcquisitionName.h"
+#include "SVMatroxLibrary/SVMatroxImageFile.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -3512,7 +3513,7 @@ HRESULT SVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFi
 			}
 		}
 
-		SVImageFile FileImage;
+		
 		std::string Name;
 
 		if ( 0 == rCameraObj.GetFileLoadingMode() )
@@ -3523,10 +3524,13 @@ HRESULT SVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFi
 		{
 			Name = rCameraObj.GetImageDirectoryName();
 		}
-
-		if( S_OK == SVImageFileLoader::LoadFirstFile( Name.c_str(), ImageFileFormat::any, FileImage ) )
+		SVMatroxImageFile ImageFile;
+		
+		if(ImageFile.LoadFirstFile(Name.c_str(), ImageFileFormat::any))
 		{
-			bool isColorImage = FileImage.GetBitDepth() > GrayScaleBitDepth;
+			//std::string msg = ImageFile.GetDebugString();
+			//OutputDebugString(msg.c_str());
+			bool isColorImage = ImageFile.IsColor();
 
 			if ( rCameraObj.IsColor() != isColorImage )
 			{
