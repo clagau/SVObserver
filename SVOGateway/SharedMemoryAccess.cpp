@@ -30,7 +30,14 @@
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #pragma endregion Includes
 
-
+namespace
+{
+// Unique takeover id (in case of SVObserver takeover attempt)
+// This is only a temporary solution to recognize requests from SVO side.
+// In final solution protobuf messages should include some flag that tells
+// this is a message from SVObserver.
+constexpr uint32_t SVObserverTakeoverId = 0xffff;
+}
 namespace SvOgw
 {
 
@@ -1183,7 +1190,7 @@ void SharedMemoryAccess::on_lock_state_changed(LockState state)
 			SvPb::LockAcquisitionStreamResponse response;
 
 			auto notification = response.mutable_locktakeovernotification();
-			notification->set_takeoverid(0xffff); // TODO: send unique takeover id (in case of SVObserver takeover attempt)
+			notification->set_takeoverid(SVObserverTakeoverId);
 			notification->set_message("SVIM user requests the config lock!");
 			notification->set_user(state.requester.username);
 			notification->set_host(state.requester.host);
@@ -1312,10 +1319,6 @@ void SharedMemoryAccess::subscribe_to_trc()
 		{
 			SV_LOG_GLOBAL(debug) << "TRC was reset";
 			m_trc_ready = false;
-			if (nullptr != m_pShareControlInstance)
-			{
-				m_pShareControlInstance->clearTR();
-			}
 		});
 		m_TrcNewInterestTrSubscriptionRAII = pTrc->registerNewInterestTrCallback([this](const std::vector<SvOi::TrInterestEventData>& rEvents)
 		{
@@ -1731,23 +1734,31 @@ void SharedMemoryAccess::TakeoverLock(
 		return;
 	}
 
-	auto takeoverCandidateStream = get_stream_by_id(request.takeoverid());
-
-	if (takeoverCandidateStream == nullptr)
+	auto takeoverId = request.takeoverid();
+	if (takeoverId == SVObserverTakeoverId)
 	{
-		SvPenv::Error error;
-		error.set_errorcode(SvPenv::ErrorCode::notFound);
-		error.set_message("Couldn't find takeover candidate!");
-		task.error(error);
-
-		return;
+		release_lock(*lockOwnerStream, SvPb::LockReleaseReason::ExplicitRelease);
 	}
+	else
+	{
+		auto takeoverCandidateStream = get_stream_by_id(takeoverId);
 
-	lockOwnerStream->isLockOwner = false;
-	m_SharedMemoryLock->Takeover(
-		takeoverCandidateStream->sessionContext.username(),
-		takeoverCandidateStream->sessionContext.host());
-	handle_lock_acquisition(*takeoverCandidateStream);
+		if (takeoverCandidateStream == nullptr)
+		{
+			SvPenv::Error error;
+			error.set_errorcode(SvPenv::ErrorCode::notFound);
+			error.set_message("Couldn't find takeover candidate!");
+			task.error(error);
+
+			return;
+		}
+
+		lockOwnerStream->isLockOwner = false;
+		m_SharedMemoryLock->Takeover(
+			takeoverCandidateStream->sessionContext.username(),
+			takeoverCandidateStream->sessionContext.host());
+		handle_lock_acquisition(*takeoverCandidateStream);
+	}
 	SvPb::LockTakeoverResponse response;
 	task.finish(std::move(response));
 }
@@ -1767,22 +1778,29 @@ void SharedMemoryAccess::RejectLockTakeover(
 		return;
 	}
 
-	auto takeoverStream = get_stream_by_id(request.takeoverid());
-
-	if (takeoverStream == nullptr)
+	auto takeoverId = request.takeoverid();
+	if (takeoverId == SVObserverTakeoverId)
 	{
-		SvPenv::Error error;
-		error.set_errorcode(SvPenv::ErrorCode::notFound);
-		error.set_message("Couldn't find takeover candidate!");
-		task.error(error);
-
-		return;
+		m_SharedMemoryLock->RejectTakeover();
 	}
+	else
+	{
+		auto takeoverStream = get_stream_by_id(takeoverId);
 
-	SvPb::LockAcquisitionStreamResponse notificationResponse;
-	notificationResponse.mutable_locktakeoverrejectednotification();
-	takeoverStream->observer.onNext(std::move(notificationResponse));
+		if (takeoverStream == nullptr)
+		{
+			SvPenv::Error error;
+			error.set_errorcode(SvPenv::ErrorCode::notFound);
+			error.set_message("Couldn't find takeover candidate!");
+			task.error(error);
 
+			return;
+		}
+
+		SvPb::LockAcquisitionStreamResponse notificationResponse;
+		notificationResponse.mutable_locktakeoverrejectednotification();
+		takeoverStream->observer.onNext(std::move(notificationResponse));
+	}
 	SvPb::LockTakeoverRejectedResponse taskResponse;
 	task.finish(std::move(taskResponse));
 }

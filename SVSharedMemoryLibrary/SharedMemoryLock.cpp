@@ -29,10 +29,17 @@ void LockEntity::operator=(const LockEntity& entity)
 	std::strcpy(host, entity.host);
 }
 
+LockState::LockState()
+	: owner()
+	, requester()
+	, notification(NotificationType::None)
+{}
+
 void LockState::operator=(const LockState& state)
 {
 	owner = state.owner;
 	requester = state.requester;
+	notification = state.notification;
 }
 
 SharedMemory::SharedMemory()
@@ -86,6 +93,7 @@ bool SharedMemoryLock::Acquire(EntityType type, const std::string& username, con
 
 	if (mSharedMemory->mLockState.owner.type == EntityType::Empty)
 	{
+		mSharedMemory->mLockState.notification = NotificationType::LockAcquired;
 		mSharedMemory->mLockState.owner.type = type;
 		std::strcpy(mSharedMemory->mLockState.owner.username, username.c_str());
 		std::strcpy(mSharedMemory->mLockState.owner.host, host.c_str());
@@ -114,9 +122,13 @@ bool SharedMemoryLock::Takeover(EntityType type, const std::string& username, co
 		return false;
 	}
 
+	mSharedMemory->mLockState.notification = NotificationType::LockTakenOver;
 	mSharedMemory->mLockState.owner.type = type;
 	std::strcpy(mSharedMemory->mLockState.owner.username, username.c_str());
 	std::strcpy(mSharedMemory->mLockState.owner.host, host.c_str());
+	mSharedMemory->mLockState.requester.type = EntityType::Empty;
+	std::memset(mSharedMemory->mLockState.requester.username, 0, maxUsernameSize);
+	std::memset(mSharedMemory->mLockState.requester.host, 0, maxHostSize);
 	SV_LOG_GLOBAL(debug) << "Takeover(): Shared memory lock taken over!";
 	return true;
 }
@@ -144,6 +156,7 @@ bool SharedMemoryLock::RequestTakeover(EntityType type, const std::string& usern
 		return false;
 	}
 
+	mSharedMemory->mLockState.notification = NotificationType::LockTakeoverRequested;
 	mSharedMemory->mLockState.requester.type = type;
 	std::strcpy(mSharedMemory->mLockState.requester.username, username.c_str());
 	std::strcpy(mSharedMemory->mLockState.requester.host, host.c_str());
@@ -159,6 +172,7 @@ bool SharedMemoryLock::Release()
 		return false;
 	}
 
+	mSharedMemory->mLockState.notification = NotificationType::LockReleased;
 	mSharedMemory->mLockState.owner.type = EntityType::Empty;
 	mSharedMemory->mLockState.requester.type = EntityType::Empty;
 	std::memset(mSharedMemory->mLockState.owner.username, 0, maxUsernameSize);
@@ -249,6 +263,18 @@ bool SVOGatewaySharedMemoryLock::RequestTakeover(const std::string& username, co
 		mSharedMemory->mObserverNotification.notify_one();
 	}
 	return isTakeoverRequested;
+}
+
+bool SVOGatewaySharedMemoryLock::RejectTakeover()
+{
+	bool isTakeoverRejected = true;
+	{
+		scoped_lock<interprocess_mutex> lock(mSharedMemory->mMutex);
+		mSharedMemory->mLockState.notification = NotificationType::LockTakeoverRejected;
+		mSharedMemory->mObserverNotificationReady = isTakeoverRejected;
+	}
+	mSharedMemory->mObserverNotification.notify_one();
+	return isTakeoverRejected;
 }
 
 bool SVOGatewaySharedMemoryLock::Release()

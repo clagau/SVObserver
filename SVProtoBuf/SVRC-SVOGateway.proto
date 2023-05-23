@@ -467,6 +467,8 @@ message LockTakeoverRequest
 {
 	uint32 lockId = 1;
 	uint32 takeoverId = 2;
+	string takeoverUser = 3;
+	string takeoverHost = 4;
 }
 
 message LockTakeoverResponse

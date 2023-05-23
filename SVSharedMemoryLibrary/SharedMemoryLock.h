@@ -24,6 +24,16 @@ enum class EntityType : std::uint8_t
 	SVObserver = 2,
 };
 
+enum class NotificationType : std::uint8_t
+{
+	None = 0,
+	LockAcquired = 1,
+	LockReleased = 2,
+	LockTakeoverRequested = 3,
+	LockTakeoverRejected = 4,
+	LockTakenOver = 5,
+};
+
 struct LockEntity
 {
 	LockEntity();
@@ -37,8 +47,11 @@ struct LockEntity
 
 struct LockState
 {
+	LockState();
+
 	LockEntity owner;
 	LockEntity requester;
+	NotificationType notification;
 
 	void operator=(const LockState& state);
 };
@@ -96,6 +109,7 @@ public:
 	bool Acquire(const std::string& username, const std::string& host);
 	bool Takeover(const std::string& username, const std::string& host);
 	bool RequestTakeover(const std::string& username, const std::string& host);
+	bool RejectTakeover();
 	bool Release();
 
 	LockState GetLockState() const;
