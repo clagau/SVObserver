@@ -20,7 +20,6 @@
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "CameraLibrary/SVboolValueDeviceParam.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"

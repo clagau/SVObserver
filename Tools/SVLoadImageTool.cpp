@@ -18,7 +18,6 @@
 #include "Operators/ToolSizeAdjustTask.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include <SVMatroxLibrary/SVMatroxImageFile.h>
 #pragma endregion Includes
 

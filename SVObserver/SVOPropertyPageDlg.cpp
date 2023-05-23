@@ -16,7 +16,6 @@
 #include "SVOPropertyPageDlg.h"
 #include "SVObserver.h"
 #include "SVSecurity/SVSecurityManager.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "CameraLibrary/SVDeviceParam.h"
 #include "CameraLibrary/SVDeviceParams.h"
