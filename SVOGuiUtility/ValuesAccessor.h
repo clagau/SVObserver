@@ -120,6 +120,7 @@ public:
 				SvPb::ConvertVariantToProtobuf(rLinkedData.m_directValue, pValue->mutable_directvalue());
 				pValue->set_indirectidstring(rLinkedData.m_indirectIdName);
 				pValue->set_formula(rLinkedData.m_formula);
+				pValue->set_comment(rLinkedData.m_comment);
 				break;
 			}
 			default:
