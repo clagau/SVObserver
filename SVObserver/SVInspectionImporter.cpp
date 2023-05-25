@@ -688,7 +688,14 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 	if (S_OK == hr)
 	{
 		checkGlobalConstants(rTree, xmlString, SaxHandler, rGlobalConflicts);
-		return addModules(rTree, zipFilename);
+		if (std::filesystem::exists(zipFilename))
+		{
+			return addModules(rTree, zipFilename);
+		}
+		else
+		{
+			return S_OK;
+		}
 	}
 	else
 	{
