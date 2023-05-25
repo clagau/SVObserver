@@ -68,10 +68,6 @@ public:
 	bool IsConditionalOutputCameraInput() const;
 	void RemoveCameraInputConditionalOutput();
 
-	void SetImportedInspectionInfo(SVImportedInspectionInfo&& importedInspectionInfo) { m_importedInspectionInfo = std::move(importedInspectionInfo); };
-	const SVImportedInspectionInfo& GetImportedInspectionInfo() const { return m_importedInspectionInfo; }
-	void ClearImportedInspectionInfo() { m_importedInspectionInfo = {}; }
-
 private:
 	std::string m_PPQName {};
 	std::string m_AttachedTrigger {};
@@ -87,7 +83,6 @@ private:
 	long m_lInspectionTimeout {0};
 	std::string m_conditionalOutputName {SvDef::cPpqConditionalOutputAlways};
 	SVNameObjectIdPairList m_availableInputs;
-	SVImportedInspectionInfo m_importedInspectionInfo;
 };
 
 typedef std::shared_ptr< SVOPPQObj > SVOPPQObjPtr;

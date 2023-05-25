@@ -172,6 +172,14 @@ bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListInserter 
 						{
 							importedOutput.m_isAndAck = value ? true : false;
 						}
+						for (int j = 0; j < SvDef::cObjectIndexMaxNr; ++j)
+						{
+							std::string ValueObject = std::format(SvXml::CTAGF_VALUE_OBJECT_X, j);
+							if (SvXml::SVNavigateTree::GetItem(rTree, ValueObject.c_str(), hSubChild, value))
+							{
+								importedOutput.m_valueObjectIDList[j] = calcObjectId(value);
+							}
+						}
 						outputInserter = importedOutput;
 					}
 				}

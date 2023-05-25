@@ -44,8 +44,8 @@ public:
 			SVObjectClass* pValueObj = GetValueObject();
 			if (nullptr != pValueObj)
 			{
-				//this is to set the value object to a fixed objectID
-				constexpr int cValueObjectOffset {100};
+				//this is to set the value object to a fixed objectID and splits the available range (0x100 = 256) between input and value object
+				constexpr int cValueObjectOffset {128};
 				SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValueObj, m_startID + cValueObjectOffset + position);
 			}
 		}

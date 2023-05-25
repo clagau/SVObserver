@@ -11,6 +11,7 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
@@ -39,14 +40,8 @@ struct ImportedOutput
 	long m_channel{ 0L };
 	bool m_isCombined{ false };
 	bool m_isAndAck{ false };
+	std::array<uint32_t, SvDef::cObjectIndexMaxNr> m_valueObjectIDList {0, 0, 0, 0};
 
-	explicit ImportedOutput(const std::string& rName, long subType, long channel, bool isCombined, bool isAndAck)
-		: m_name{ rName }
-		, m_subType{ subType }
-		, m_channel{ channel }
-		, m_isCombined {isCombined}
-		, m_isAndAck{isAndAck}
-	{}
 	ImportedOutput() = default;
 	~ImportedOutput() = default;
 };

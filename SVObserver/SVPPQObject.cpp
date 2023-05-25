@@ -503,8 +503,6 @@ bool SVPPQObject::DetachInspection(SVInspectionProcess* pInspection)
 
 	if (!bFound) { return false; }
 
-	pInspection->SetPPQIdentifier(SvDef::InvalidObjectId);
-
 	m_arInspections[i]->resetLastProduct();
 
 	m_arInspections.erase(m_arInspections.begin() + i);
@@ -1318,7 +1316,11 @@ bool SVPPQObject::RebuildOutputList()
 					SVObjectManagerClass::Instance().GetObjectByDottedName(fqName, pObject);
 					pEntry->setValueObject(pObject, i);
 				}
-				if(nullptr != pObject)
+				if (nullptr == pObject)
+				{
+					pEntry->setValueObject(nullptr, i);
+				}
+				else
 				{
 					uint32_t inspectionID {pEntry->getInspectionID(i)};
 					auto iterIpd = std::find_if(m_arInspections.begin(), m_arInspections.end(), [&inspectionID](const auto* pEntry) { return pEntry->getObjectId() == inspectionID; });
