@@ -364,7 +364,7 @@ namespace SvStl
 		{Tid_UnknownCommitError, _T("Unknown Commit or Reset error {0}.")},
 		{Tid_UnknownCommandError, _T("Unknown Command error {0}.")},
 
-		{Tid_MoreThanPercentUsed, _T("\nMore than %s% [%s%] has been used.")},
+		{Tid_MoreThanPercentUsed, _T("\nMore than {0}% [{1}%] has been used.")},
 		{Tid_ConnectTableSourceFailed, _T("Connect Table Source \"{0}\" with \"{1}\" failed.")},
 		{Tid_ConnectFailed, _T("Connect \"{0}\" failed.")},
 		{Tid_ConnectInputFailed, _T("Connect Input failed.")},
@@ -637,7 +637,7 @@ namespace SvStl
 		{Tid_NoParentExtentForAnalyzer, _T("For Analyzer is not a parent extent possible.")},
 		{Tid_SetOfReadOnlyValueFailed, _T("Value is readOnly. Set is forbidden.")},
 		{Tid_SetOfValueFailed, _T("Set of embeddedValue with the ID {0} failed.")},
-		{Tid_DuplicateObjectId, _T("By creating an object, there is a duplicate of the objectId %s found.")},
+		{Tid_DuplicateObjectId, _T("By creating an object, there is a duplicate of the objectId {0} found.")},
 		{Tid_RejectClarifyFailedNoTR, _T("Reject clarification failed, no valid triggerRecord.")},
 		{Tid_RejectClarifyFailedUnknowData, _T("Reject clarification failed, unknown data: {}.")},
 		{Tid_ModuleNameAlreadyUsed, _T("The Modulename \"{0}\" already used.")},
