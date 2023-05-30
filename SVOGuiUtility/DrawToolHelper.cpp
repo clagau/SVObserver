@@ -346,7 +346,12 @@ void setOverlayProperties(DrawNodeType type, ValueController& rValueController, 
 				bool isXAxisAngleUsed = (0 != static_cast<int>(rValueController.Get<LinkedValueData>(SvPb::XAxisAngleEId).m_Value));
 				if (isXAxisAngleUsed)
 				{
-					setPointPairsToValueController(ParaMap[CDSVPictureDisplay::P_ARRAY_XY], SvPb::CenterXEId, SvPb::CenterYEId, rValueController);
+					long size = ParaMap[CDSVPictureDisplay::P_ARRAY_XY].parray->rgsabound[0].cElements;
+					if (2 <= size)
+					{
+						rValueController.Set(SvPb::CenterXEId, safeArrayGetValue(ParaMap[CDSVPictureDisplay::P_ARRAY_XY], 0));
+						rValueController.Set(SvPb::CenterYEId, safeArrayGetValue(ParaMap[CDSVPictureDisplay::P_ARRAY_XY], 1));
+					}
 				}
 				else
 				{
@@ -409,7 +414,12 @@ void setOverlayProperties(DrawNodeType type, ValueController& rValueController, 
 		case DrawNodeType::BucketFill:
 			if (isResizeable || isMoveable)
 			{
-				setPointPairsToValueController(ParaMap[CDSVPictureDisplay::P_ARRAY_XY], SvPb::X1EId, SvPb::Y1EId, rValueController);
+				long size = ParaMap[CDSVPictureDisplay::P_ARRAY_XY].parray->rgsabound[0].cElements;
+				if (2 <= size)
+				{
+					rValueController.Set(SvPb::X1EId, safeArrayGetValue(ParaMap[CDSVPictureDisplay::P_ARRAY_XY], 0));
+					rValueController.Set(SvPb::Y1EId, safeArrayGetValue(ParaMap[CDSVPictureDisplay::P_ARRAY_XY], 1));
+				}
 			}
 			break;
 		default:
