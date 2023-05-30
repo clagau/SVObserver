@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <utility>
-#include "SVImportedInspectionInfo.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
