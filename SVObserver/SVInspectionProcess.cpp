@@ -2989,6 +2989,8 @@ HRESULT SVInspectionProcess::resetToolAndDependends(SvOi::IObjectClass* pTool)
 	std::vector<uint32_t> vec;
 	std::back_insert_iterator<std::vector<uint32_t>> backiter(vec);
 	SvTo::InsertDependentTools(backiter, pTool->getObjectId());
+	SvUl::RemoveDuplicates(vec);
+
 
 	for (const auto id : vec)
 	{

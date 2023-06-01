@@ -874,6 +874,7 @@ int TriggerRecordController::addOrChangeLinkedImage(uint32_t sourceId, uint32_t 
 	});
 
 	int imagePos = -1;
+	
 	SvPb::LinkedImageDefinition* pImageDefinition = nullptr;
 	if (pList->end() != imageIter)
 	{
@@ -885,8 +886,14 @@ int TriggerRecordController::addOrChangeLinkedImage(uint32_t sourceId, uint32_t 
 		pImageDefinition = m_imageListResetTmp.add_linkedlist();
 		imagePos = pList->size() - 1;
 	}
+	if (pImageDefinition->sourceid() == sourceId && pImageDefinition->destinationid() == destinationId)
+	{
+		return imagePos;
+	}
+
 	pImageDefinition->set_sourceid(sourceId);
 	pImageDefinition->set_destinationid(destinationId);
+	
 	
 	if (ResetEnum::NewReset == resetEnum)
 	{

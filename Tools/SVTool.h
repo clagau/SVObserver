@@ -85,7 +85,7 @@ public:
 };
 
 
-constexpr int cResetDepth  = 3;
+constexpr int cResetDepth  = 1;
 uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  InIt, uint32_t toolobjectId);
 
 class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool
