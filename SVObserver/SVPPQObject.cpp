@@ -2515,12 +2515,12 @@ void SVPPQObject::ProcessDelayOutputs()
 				switch (getPPQOutputMode())
 				{
 					case SvDef::SVPPQTimeDelayMode:
+					case SvDef::SVPPQTimeDelayAndDataCompleteMode:
 					case SvDef::SVPPQExtendedTimeDelayMode:
 					{
 						m_NextOutputDelayTimestamp = pProduct->m_outputsInfo.m_EndOutputDelay;
 						break;
 					}
-					case SvDef::SVPPQTimeDelayAndDataCompleteMode:
 					case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 					{
 						if (pProduct->m_dataComplete)
@@ -2715,20 +2715,11 @@ void SVPPQObject::ProcessCompleteInspections()
 				if (pProduct->m_dataComplete)
 				{
 					SetProductComplete(*pProduct);
-					switch (getPPQOutputMode())
+					if(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_outputMode)
 					{
-						case SvDef::SVPPQTimeDelayAndDataCompleteMode:
-						case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
-						{
 							long triggerCount {pProduct->triggerCount()};
 							m_oOutputsDelayQueue.RemoveHead(&triggerCount);
 							ProcessOutputs(*pProduct);
-							break;
-						}
-						default:
-						{
-							break;
-						}
 					}
 
 					size_t ppqIndex = m_PPQPositions.GetIndexByTriggerCount(inspectionInfoPair.first);

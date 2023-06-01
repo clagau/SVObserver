@@ -28,7 +28,7 @@ namespace SvDef
 		SVPPQExtendedTimeDelayMode                = 3,  // Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
 														// Aborts waiting if product leaves PPQ.
 
-		SVPPQExtendedTimeDelayAndDataCompleteMode = 4,  // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
+		SVPPQExtendedTimeDelayAndDataCompleteMode = 4,  // Doesn't reset outputs on trigger. Writes outputs after delay time is over or data is complete.
 														// Aborts waiting if product leaves PPQ.
 	};
 

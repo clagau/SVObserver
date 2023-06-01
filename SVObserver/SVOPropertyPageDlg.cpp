@@ -72,7 +72,7 @@ constexpr std::array<const char*, 5> cTriggerModeInfo
 {
 	_T("Next Trigger Mode - in this mode outputs are written on each trigger."),
 	_T("Time Delay Mode - in this mode outputs are written after the specified Output Delay Time."),
-	_T("Time Delay && Data Completion Mode - in this mode outputs are written after completion of the Inspection or after the specified Output Delay Time."),
+	_T("Time Delay && Data Completion Mode - in this mode outputs are written after completion of the Inspection and after the specified Output Delay Time."),
 	_T("Extended Time Delay Mode - in this mode outputs are written after the specified Output Delay Time. This Output Delay Time can exceed the time distance between triggers."),
 	_T("Extended Time Delay && Data Completion Mode - in this mode outputs are written after completion of the Inspection or after the specified Output Delay Time. This Output Delay Time can exceed the time between triggers.")
 };
