@@ -233,6 +233,25 @@ bool SVPPQObject::Create()
 	m_processFunctions[PpqFunction::CompleteInspections] = [this]() {ProcessCompleteInspections(); };
 	m_processFunctions[PpqFunction::ProductRequests] = [this]() {ProcessProductRequests(); };
 
+	std::string PpqName = GetName();
+	long PpqID(-1L);
+	const size_t PpqFixedNameLength = strlen(SvDef::cPpqFixedName);
+	if (PpqFixedNameLength < PpqName.size())
+	{
+		PpqID = atol(PpqName.c_str() + PpqFixedNameLength);
+		//Zero based PPQ ID, note PPQ name is one based!
+		PpqID--;
+	}
+
+	//Make sure it is above 0
+	if (0 <= PpqID && nullptr != m_spPpqLength)
+	{
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_spTiggercount.get(), ObjectIdEnum::PpqBaseTriggerCountId + PpqID);
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_spPpqLength.get(), ObjectIdEnum::PpqBaseLengthId + PpqID);
+		m_spTiggercount->SetObjectOwner(this);
+		m_spPpqLength->SetObjectOwner(this);
+	}
+
 	return m_isCreated;
 }
 
@@ -1403,25 +1422,6 @@ void SVPPQObject::AddPpqResults()
 		rOutput.SetDefaultValue(BOOL(cPpqOutputDefaults[i]), true);
 		rOutput.SetValue(BOOL(cPpqOutputDefaults[i]));
 		rOutput.ResetObject();
-	}
-
-	std::string PpqName = GetName();
-	long PpqID(0);
-	const size_t PpqFixedNameLength = strlen(SvDef::cPpqFixedName);
-	if (PpqFixedNameLength < PpqName.size())
-	{
-		PpqID = atol(PpqName.c_str() + PpqFixedNameLength);
-		//Zero based PPQ ID, note PPQ name is one based!
-		PpqID--;
-	}
-
-	//Make sure it is above 0
-	if (0 <= PpqID && nullptr != m_spPpqLength)
-	{
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_spTiggercount.get(), ObjectIdEnum::PpqBaseTriggerCountId + PpqID);
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_spPpqLength.get(), ObjectIdEnum::PpqBaseLengthId + PpqID);
-		m_spTiggercount->SetObjectOwner(this);
-		m_spPpqLength->SetObjectOwner(this);
 	}
 }
 
