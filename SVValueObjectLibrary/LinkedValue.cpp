@@ -1813,6 +1813,11 @@ bool LinkedValue::updateLinkedValue(SVObjectReference& LinkedObjectRef, SvStl::M
 bool LinkedValue::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = SVVariantValueObjectClass::ResetObject(pErrorMessages);
+	if (nullptr == m_indirectValueRef.getObject() && SvDef::InvalidObjectId != m_indirectValueRef.getObjectId())
+	{
+		m_indirectValueRef.update();
+	}
+
 	Result = Result && UpdateConnection(pErrorMessages);
 	if (isCircularReference())
 	{
