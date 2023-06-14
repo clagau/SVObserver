@@ -132,6 +132,12 @@ void RPCServer::on_stream(int id, SvPenv::Envelope&& Request)
 		Observer<SvPenv::Envelope>(
 		[this, ctx, id, txId](SvPenv::Envelope&& Response) -> SvSyl::SVFuture<void>
 	{
+		if (ctx->isCancelled())
+		{
+			SV_LOG_GLOBAL(info) << "RPCServer::on_stream on cancelled context " << id;
+			remove_stream_context(id, txId);
+			return SvSyl::SVFuture<void>::make_ready();
+		}
 		if (ctx->isThrottlingEnabled())
 		{
 			auto t = ctx->new_throttled_response();
