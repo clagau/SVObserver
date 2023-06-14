@@ -117,12 +117,14 @@ private:
 	std::vector<std::shared_ptr<SvSyl::SVPromise<void>>> m_ConnectPromises;
 	std::atomic_bool m_IsConnected {false};
 	boost::asio::deadline_timer m_ReconnectTimer;
-	uint64_t m_NextTransactionId = 0;
+	uint64_t m_NextTransactionId {0ULL};
+	
 	std::map<uint64_t, Task<SvPenv::Envelope>> m_PendingRequests;
 	// deadline_timer is neither movable nor copyable :/ therefore the shared_ptr workaround
 	using DeadlineTimerPtr = std::shared_ptr<boost::asio::deadline_timer>;
 	std::map<uint64_t, DeadlineTimerPtr> m_PendingRequestsTimer;
 	std::map<uint64_t, Observer<SvPenv::Envelope>> m_PendingStreams;
+	std::mutex m_protectMutex;
 	
 	std::thread m_IoThread;
 };

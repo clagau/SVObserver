@@ -25,8 +25,7 @@ RPCClient::RPCClient(SvHttp::WebsocketClientSettings& rSettings)
 	, m_WebsocketClientFactory(rSettings)
 	, m_WebsocketClient(m_WebsocketClientFactory.create(this))
 	, m_ReconnectTimer(m_IoContex)
-{
-}
+{}
 
 RPCClient::~RPCClient()
 {
@@ -137,8 +136,10 @@ void RPCClient::request_impl(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> 
 	Request.set_transactionid(tx_id);
 	Request.set_type(SvPenv::MessageType::request);
 
-	m_PendingRequests.insert({tx_id, Task});
-
+	{
+		const std::lock_guard<std::mutex> lock(m_protectMutex);
+		m_PendingRequests.insert({tx_id, Task});
+	}
 	send_envelope(std::move(Request));
 }
 
@@ -149,7 +150,11 @@ void RPCClient::schedule_timeout(uint64_t tx_id, boost::posix_time::time_duratio
 	timer->expires_from_now(timeout);
 	auto waitFunctor = [this, tx_id](const boost::system::error_code& rError) { return on_request_timeout(rError, tx_id);  };
 	timer->async_wait(waitFunctor);
-	m_PendingRequestsTimer.emplace(tx_id, timer);
+	
+	{
+		const std::lock_guard<std::mutex> lock(m_protectMutex);
+		m_PendingRequestsTimer.emplace(tx_id, timer);
+	}
 }
 
 ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer)
@@ -163,8 +168,11 @@ ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPen
 	Request.set_transactionid(txId);
 	Request.set_type(SvPenv::MessageType::streamRequest);
 
-	m_PendingStreams.insert({txId, Observer});
-	SV_LOG_GLOBAL(debug) << "RPCClient::stream TransactionId: " << txId << " Pending Nr " << m_PendingStreams.size() << std::endl;
+	{
+		const std::lock_guard<std::mutex> lock(m_protectMutex);
+		m_PendingStreams.insert({txId, Observer});
+		SV_LOG_GLOBAL(debug) << "RPCClient::stream TransactionId: " << txId << " Pending Nr " << m_PendingStreams.size() << std::endl;
+	}
 
 	send_envelope(std::move(Request));
 
@@ -316,16 +324,17 @@ void RPCClient::on_request_timeout(const boost::system::error_code& error, uint6
 		SV_LOG_GLOBAL(warning) << error;
 		return;
 	}
-
-	m_PendingRequestsTimer.erase(tx_id);
-
-	auto it = m_PendingRequests.find(tx_id);
-	if (it != m_PendingRequests.end())
 	{
-		auto cb = it->second;
-		m_PendingRequests.erase(it);
+		const std::lock_guard<std::mutex> lock(m_protectMutex);
+		m_PendingRequestsTimer.erase(tx_id);
+		auto it = m_PendingRequests.find(tx_id);
+		if (it != m_PendingRequests.end())
+		{
+			auto cb = it->second;
+			m_PendingRequests.erase(it);
 
-		cb.error(SvStl::build_error(SvPenv::ErrorCode::timeout));
+			cb.error(SvStl::build_error(SvPenv::ErrorCode::timeout));
+		}
 	}
 }
 
@@ -351,6 +360,7 @@ void RPCClient::cancel_all_pending_requests()
 	//We catch the exception and remove it as clients may have disconnected in the mean time
 	try
 	{
+		const std::lock_guard<std::mutex> lock(m_protectMutex);
 		while (!m_PendingRequests.empty())
 		{
 			auto it = m_PendingRequests.begin();
@@ -372,6 +382,7 @@ void RPCClient::cancel_all_pending_streams()
 	//We catch the exception and remove it as clients may have disconnected in the mean time
 	try
 	{
+		const std::lock_guard<std::mutex> lock(m_protectMutex);
 		while (!m_PendingStreams.empty())
 		{
 			auto it = m_PendingStreams.begin();
@@ -392,6 +403,7 @@ void RPCClient::on_response(SvPenv::Envelope&& Response)
 	try
 	{
 		auto txId = Response.transactionid();
+		const std::lock_guard<std::mutex> lock(m_protectMutex);
 		cancel_request_timeout(txId);
 		auto it = m_PendingRequests.find(txId);
 		if (it != m_PendingRequests.end())
@@ -413,6 +425,7 @@ void RPCClient::on_error_response(SvPenv::Envelope&& Response)
 	try
 	{
 		auto txId = Response.transactionid();
+		const std::lock_guard<std::mutex> lock(m_protectMutex);
 		cancel_request_timeout(txId);
 		auto it = m_PendingRequests.find(txId);
 		if (it != m_PendingRequests.end())
@@ -432,6 +445,8 @@ void RPCClient::on_stream_response(SvPenv::Envelope&& Response)
 {
 	auto txid = Response.transactionid();
 	auto seqNr = Response.sequencenumber();
+
+	const std::lock_guard<std::mutex> lock(m_protectMutex);
 	auto it = m_PendingStreams.find(txid);
 	if (it != m_PendingStreams.end())
 	{
@@ -452,6 +467,7 @@ void RPCClient::on_stream_response(SvPenv::Envelope&& Response)
 
 void RPCClient::on_stream_error_response(SvPenv::Envelope&& Response)
 {
+	const std::lock_guard<std::mutex> lock(m_protectMutex);
 	auto it = m_PendingStreams.find(Response.transactionid());
 	if (it != m_PendingStreams.end())
 	{
@@ -471,6 +487,7 @@ void RPCClient::on_stream_error_response(SvPenv::Envelope&& Response)
 
 void RPCClient::on_stream_finish(SvPenv::Envelope&& Response)
 {
+	const std::lock_guard<std::mutex> lock(m_protectMutex);
 	auto it = m_PendingStreams.find(Response.transactionid());
 	if (it != m_PendingStreams.end())
 	{
