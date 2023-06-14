@@ -675,7 +675,7 @@ void HttpServerConnection::ws_on_handshake(const boost::system::error_code& erro
 
 	if (m_rSettings.pEventHandler)
 	{
-		m_rSettings.pEventHandler->onConnect(m_ConnectionId, *this);
+		m_rSettings.pEventHandler->onConnect(m_ConnectionId, shared_from_this());
 	}
 
 	ws_do_read();

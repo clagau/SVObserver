@@ -44,7 +44,7 @@ public:
 
 protected:
 	virtual bool onHandshake(int id, const std::string&) override;
-	virtual void onConnect(int id, SvHttp::HttpServerConnection&) override;
+	virtual void onConnect(int id, std::weak_ptr<SvHttp::HttpServerConnection>) override;
 	virtual void onTextMessage(int id, std::vector<char>&&) override;
 	virtual void onBinaryMessage(int id, std::vector<char>&&) override;
 	virtual void onDisconnect(int id) override;
@@ -69,7 +69,7 @@ private:
 	std::vector<int> connections_ids() const;
 
 	RequestHandlerBase* m_pRequestHandler;
-	std::map<int, SvHttp::HttpServerConnection*> m_Connections;
+	std::map<int, std::weak_ptr<SvHttp::HttpServerConnection>> m_Connections;
 	std::map<int, SvAuth::SessionContext> m_SessionContexts;
 	std::map<int, std::map<uint64_t, std::weak_ptr<ServerStreamContext>>> m_ServerStreamContexts;
 };

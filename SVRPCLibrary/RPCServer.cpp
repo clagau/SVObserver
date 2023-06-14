@@ -33,12 +33,17 @@ void RPCServer::disconnect_all_connections()
 	}
 }
 
-void RPCServer::onConnect(int id, SvHttp::HttpServerConnection& rConnection)
+void RPCServer::onConnect(int id, std::weak_ptr<SvHttp::HttpServerConnection> pConnection)
 {
 	SV_LOG_GLOBAL(info) << "[http] Client connected id: " << id;
-	m_Connections[id] = &rConnection;
+	m_Connections[id] = pConnection;
 	m_ServerStreamContexts[id] = {};
-	m_SessionContexts[id].set_host(rConnection.getIpAddress());
+	auto pThis = pConnection.lock();
+	if (nullptr != pThis)
+	{
+		m_SessionContexts[id].set_host(pThis->getIpAddress());
+	}
+
 	// NOTE: m_SessionContexts[id] already initialized in onHandshake which is called before onConnect
 }
 
@@ -272,8 +277,9 @@ SvSyl::SVFuture<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& r
 	std::vector<char> buf;
 	buf.resize(resSize);
 	rEnvelope.SerializeToArray(buf.data(), static_cast<int> (resSize));
+	auto pThis = it->second.lock();
 
-	return it->second->sendBinaryMessage(buf);
+	return (nullptr != pThis) ? pThis->sendBinaryMessage(buf) : SvSyl::SVFuture<void>::make_ready();
 }
 
 std::vector<int> RPCServer::connections_ids() const

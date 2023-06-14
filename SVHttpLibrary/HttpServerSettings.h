@@ -36,7 +36,7 @@ protected:
 	/// Will be called after successful WebSocket handshake and connection
 	/// is fully established. The Connection handle can be used to send
 	/// messages to the client.
-	virtual void onConnect(int id, HttpServerConnection&) = 0;
+	virtual void onConnect(int id, std::weak_ptr<HttpServerConnection>) = 0;
 
 	/// Will be called on incoming text message.
 	virtual void onTextMessage(int id, std::vector<char>&&) = 0;
