@@ -86,9 +86,9 @@ if (($ioboard_code -as [int] -le 22) -and ($ioboard_code -as [int] -gt 0))
   Start-Sleep -s 20
   # On a good run through InitializeIOSubsystem takes 13 seconds on both 
   C:\SVObserver\bin\InitializeIOSubsystem.exe
-  # Wait 20 Seconds
-  Start-Sleep -s 20
 }
+# Wait 20 Seconds
+Start-Sleep -s 20
 
 restart-service $SVOWebSrvName
 

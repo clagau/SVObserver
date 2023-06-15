@@ -18,6 +18,8 @@ SVO-3835 Improve behavouir from Counter and MathTool-Results by loading and go i
 SVO-3824 Implement a new assert functionality which additional log an error in release mode
 SVO-3797 Create Default Inputs for States
 SVO-3779 Add ReadOnly-Flag for GetEmbeddedValuesRequest and check it for SetEmbeddedValuesRequest
+SVO-3770 Update Protobuf library version
+SVO-3769 Update Boost library version
 SVO-3763 Extend TRC to resolve linked image objects to use them in the Gateway
 SVO-3750 Make TA-Dialogs resizeable
 SVO-3702 Camera parameters missing in audit trail file
@@ -29,11 +31,14 @@ SVO-3681 ArchiveToolTA-Results: FilePath improvement
 SVO-3680 ArchiveTool: QueueSize in Async-Mode selectable for every tool separately
 SVO-3679 Merge Memory Counter in ArchiveTool
 SVO-3673 Replace Multimedia Timer
+SVO-3672 Remove CppCheck errors
+SVO-3671 Remove unnecessary templates in code
 SVO-3662 Combine Trigger and IO Dll
 SVO-3634 Remove all use of ProgramCode from SVMessage
 SVO-3627 Blob Analyser 2 feature Selector, Reihenfolge der features
 SVO-3612 BlobAnalyzer2 Failed/Passed Funktion für einzelne Features
 SVO-3608 Remove PPQ size 2 restriction when correlating trigger and camera image
+SVO-3600 Clean up and Verify the Correct Functionality of the Executable Files (.exe, .bat) which are Available Under C:\SVObserver\bin
 SVO-3593 Change APC signal to call the ProcessFunction
 SVO-3584 New ObjectAttributes to hide Objects
 SVO-3563 ArchiveTool: Save Images in PNG, TIFF, MIM Format (Besides the (regular) BMP Format)
@@ -66,7 +71,6 @@ SVO-3764 Fit protobuf changes and check WebApp with changes from SVO-3583
 SVO-3740 Graying out of buttons in Runmode
 SVO-3739 Filmstrip Length Configuration
 SVO-3589 Streamline Versions
-SVO-2704 Imageview: Interactable Overlays
 SVO-2184 WebApp: Create a version number in the Help
 SVO-2182 Highlight the selected reject
 SVO-2181 Add a help icon to the SVOWebApp View
@@ -103,6 +107,7 @@ SVO-3714 Dependency Issue when Formulas are Set as Linked Values
 SVO-3703 Table Analyzer Tool: No columns available for the Delete Column Analyzer, if the source table object is a Group Tool input 
 SVO-3646 SVO crash, when in a Window Tool the Masking is activated and the "Use Image As Mask" radio button is set"
 SVO-3618 NAK Signal not applied at the Digital Output
+SVO-3602 Group result State dependency not updated correctly
 SVO-3594 Remove Slot Manager
 SVO-3591 Crash when changing toolsize
 SVO-3532 SVO crash when trying to edit the config after import of an inspection
