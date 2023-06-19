@@ -1445,9 +1445,9 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTrigge
 		{
 			pNewProduct->m_triggerInfo.m_PreviousTrigger = pPrevProduct->m_triggerInfo.m_triggerTimeStamp;
 			auto& rNAKList = pPrevProduct->m_outputsInfo.m_NakResult;
-			bool isNAK = std::any_of(rNAKList.begin(), rNAKList.end(), [](const bool& rNAK) { return rNAK; });
+			bool isNAK = std::any_of(rNAKList.begin(), rNAKList.begin() + m_objectIdCount, [](const bool& rNAK) { return rNAK; });
 			auto& rPrevNAKList = pPrevProduct->m_prevTriggerNAK;
-			isNAK |= std::any_of(rPrevNAKList.begin(), rPrevNAKList.end(), [](const bool& rNAK) { return rNAK; });
+			isNAK |= std::any_of(rPrevNAKList.begin(), rPrevNAKList.begin() + m_objectIdCount, [](const bool& rNAK) { return rNAK; });
 			if (pPrevProduct->m_dataComplete && isNAK)
 			{
 				setPreviousNAK(*pPrevProduct, pNewProduct);

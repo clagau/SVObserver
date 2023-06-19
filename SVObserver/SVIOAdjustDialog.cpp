@@ -276,6 +276,7 @@ void SVIOAdjustDialog::UpdateGroups()
 			showForcedGroup(SW_HIDE);
 			showInvertGroup(SW_HIDE);
 			showCombinedGroup(SvPb::SVObjectTypeEnum::SVPPQObjectType == objectType ? SW_HIDE : SW_SHOW);
+			if (SvPb::SVObjectTypeEnum::SVPPQObjectType == objectType)
 			{
 				m_sCombined = FALSE;
 			}

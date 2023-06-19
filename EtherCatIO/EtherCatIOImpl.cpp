@@ -175,7 +175,7 @@ void EthercatIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 			if (nullptr != m_logOutFile.open(fileName.c_str(), std::ios::out | std::ios::trunc))
 			{
 				boost::shared_ptr<std::ostream> stream = boost::make_shared<std::ostream>(&m_logOutFile);
-				if (nullptr != m_pSink)
+				if (nullptr == m_pSink)
 				{
 					m_pSink = boost::make_shared<text_sink>();
 				}

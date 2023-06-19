@@ -1043,8 +1043,8 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 				else if (SvPb::PlcOutputObjectType == ioType)
 				{
 					pOutput = m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get();
-					PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get());
-					if (nullptr != pOutput)
+					PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (pOutput);
+					if (nullptr != pPlcOutput)
 					{
 						pPlcOutput->SetChannel(channel);
 						pPlcOutput->Combine(bCombined, bCombinedACK);
@@ -4923,53 +4923,53 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 	SVIOConfigurationInterfaceClass::Instance().initializeIO(inputCount, outputCount);
 	if (isDiscrete)
 	{
-		SVConfigurationObject* pConfig(nullptr);
-		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-		if (nullptr != pConfig)
+		// Create all the default inputs
+		SVInputObjectList* pInputObjectList = GetInputObjectList();
+		if (nullptr != pInputObjectList)
 		{
-			// Create all the default inputs
-			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
-			if (nullptr != pInputObjectList)
+			for (unsigned long l = 0; l < cDiscreteInputCount; l++)
 			{
-				for (unsigned long l = 0; l < cDiscreteInputCount; l++)
+				std::string Name = std::format(_T("DIO.Input{:d}"), l + 1);
+
+				SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l).get());
+
+				if (nullptr != pInput)
 				{
-					std::string Name = std::format(_T("DIO.Input{:d}"), l + 1);
-
-					SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l).get());
-
-					if (nullptr != pInput)
-					{
-						pInput->SetChannel(l);
-						//EtherCat has default no inverted signal 
-						if (SVIM_PRODUCT_ETHERCATIO == newConfigType)
-						{
-							pInput->Invert(pInput->IsInverted());
-						}
-					}
-				}
-			}
-			// Create all the default outputs
-			SVOutputObjectList* pOutputObjectList = pConfig->GetOutputObjectList();
-			if (nullptr != pOutputObjectList)
-			{
-				SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::FqnEnvironmentModuleReady, SvPb::SVDigitalOutputObjectType, SvDef::cModuleReadyChannel).get());
-
-				if (nullptr != pOutput && nullptr != pConfig->GetModuleReady())
-				{
+					pInput->SetChannel(l);
 					//EtherCat has default no inverted signal 
 					if (SVIM_PRODUCT_ETHERCATIO == newConfigType)
 					{
-						pOutput->Invert(pOutput->IsInverted());
+						pInput->Invert(pInput->IsInverted());
 					}
-					pOutput->SetChannel(SvDef::cModuleReadyChannel);
-
-					pConfig->GetModuleReady()->m_IOId = pOutput->getObjectId();
-
-					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted(SvDef::cModuleReadyChannel, pOutput->IsInverted());
-					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(SvDef::cModuleReadyChannel, pOutput->IsForced());
-					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(SvDef::cModuleReadyChannel, pOutput->GetForcedValue());
 				}
+			}
+		}
+		// Create all the default outputs
+		SVOutputObjectList* pOutputObjectList = GetOutputObjectList();
+		if (nullptr != pOutputObjectList)
+		{
+			SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::FqnEnvironmentModuleReady, SvPb::SVDigitalOutputObjectType, SvDef::cModuleReadyChannel).get());
+
+			if (nullptr != pOutput && nullptr != GetModuleReady())
+			{
+				//EtherCat has default no inverted signal 
+				if (SVIM_PRODUCT_ETHERCATIO == newConfigType)
+				{
+					pOutput->Invert(pOutput->IsInverted());
+				}
+				pOutput->SetChannel(SvDef::cModuleReadyChannel);
+				SvOi::IValueObject* pValueObj = GetModuleReady()->getValueObject();
+				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (pValueObj);
+				if (nullptr != pObject)
+				{
+					pOutput->SetValueObjectID(pObject->getObjectId());
+				}
+
+				GetModuleReady()->m_IOId = pOutput->getObjectId();
+
+				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted(SvDef::cModuleReadyChannel, pOutput->IsInverted());
+				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(SvDef::cModuleReadyChannel, pOutput->IsForced());
+				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(SvDef::cModuleReadyChannel, pOutput->GetForcedValue());
 			}
 		}
 	}
