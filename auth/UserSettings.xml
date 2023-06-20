@@ -134,33 +134,20 @@
 <permission name="service.diagnose.PLC.tabPVI.*" actions="-write"></permission>
 <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"></permission>
 <permission name="service.diagnose.Vision.*" actions="-write"></permission>
-<permission name="webapp.configuration.save"></permission>
 <permission name="webapp.logs.read"></permission>
-<permission name="webapp.viewset.add"></permission>
-<permission name="webapp.viewset.read"></permission>
-<permission name="webapp.viewset.edit"></permission>
-<permission name="webapp.viewset.remove"></permission>
-<permission name="svobserver.clientlogs.store"></permission>
 <permission name="svobserver.command.execute"></permission>
 <permission name="svobserver.configuration.read"></permission>
-<permission name="svobserver.configuration.write"></permission>
 <permission name="svobserver.file.read"></permission>
-<permission name="svobserver.file.write"></permission>
 <permission name="svobserver.inspectionstate.edit"></permission>
 <permission name="svobserver.inspectionstate.read"></permission>
-<permission name="svobserver.machinestate.set"></permission>
-<permission name="svobserver.mode.edit"></permission>
 <permission name="svobserver.mode.read"></permission>
 <permission name="svobserver.notifications.subscribe"></permission>
-<permission name="svobserver.tool.add"></permission>
-<permission name="svobserver.tool.edit"></permission>
 <permission name="svobserver.tool.read"></permission>
-<permission name="svobserver.tool.remove"></permission>
-<permission name="svobserver.value.edit"></permission>
 <permission name="svobserver.value.read"></permission>
-<permission name="webapp.view[type=AnyView].add"></permission>
-<permission name="webapp.view[type=AnyView].read"></permission>
-<permission name="webapp.view[type=AnyView].remove"></permission>
+<permission name="webapp.view[type=ImageView].read"></permission>
+<permission name="webapp.view[type=ListView].read"></permission>
+<permission name="webapp.view[type=ImageStripView].read"></permission>
+<permission name="webapp.view[type=ToolSetView].read"></permission>
 </permissions>
 </workEnvironment>
 </userGroup>
@@ -228,37 +215,20 @@
 <permission name="service.diagnose.Rotation.*" actions="-write"></permission>
 <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"></permission>
 <permission name="service.diagnose.Vision.*" actions="-write"></permission>
-<permission name="webapp.configuration.save"></permission>
 <permission name="webapp.logs.read"></permission>
-<permission name="webapp.viewset.add"></permission>
-<permission name="webapp.viewset.read"></permission>
-<permission name="webapp.viewset.edit"></permission>
-<permission name="webapp.viewset.remove"></permission>
-<permission name="svobserver.clientlogs.store"></permission>
 <permission name="svobserver.command.execute"></permission>
 <permission name="svobserver.configuration.read"></permission>
-<permission name="svobserver.configuration.write"></permission>
 <permission name="svobserver.file.read"></permission>
-<permission name="svobserver.file.write"></permission>
 <permission name="svobserver.inspectionstate.edit"></permission>
 <permission name="svobserver.inspectionstate.read"></permission>
-<permission name="svobserver.machinestate.set"></permission>
-<permission name="svobserver.mode.edit"></permission>
 <permission name="svobserver.mode.read"></permission>
 <permission name="svobserver.notifications.subscribe"></permission>
-<permission name="svobserver.tool.add"></permission>
-<permission name="svobserver.tool.edit"></permission>
 <permission name="svobserver.tool.read"></permission>
-<permission name="svobserver.tool.remove"></permission>
-<permission name="svobserver.value.edit"></permission>
 <permission name="svobserver.value.read"></permission>
-<permission name="webapp.view[type=AnyView].add"></permission>
-<permission name="webapp.view[type=AnyView].read"></permission>
-<permission name="webapp.view[type=AnyView].remove"></permission>
-<permission name="webapp.view[type=ImageView].edit"></permission>
-<permission name="webapp.view[type=ListView].edit"></permission>
-<permission name="webapp.view[type=ParameterView].edit"></permission>
-<permission name="webapp.view[type=ToolSetView].edit"></permission>
+<permission name="webapp.view[type=ImageStripView].read"></permission>
+<permission name="webapp.view[type=ImageView].read"></permission>
+<permission name="webapp.view[type=ListView].read"></permission>
+<permission name="webapp.view[type=ToolSetView].read"></permission>
 </permissions>
 </workEnvironment>
 </userGroup>
@@ -327,37 +297,20 @@
 <permission name="service.diagnose.Rotation.*" actions="+write"></permission>
 <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"></permission>
 <permission name="service.diagnose.Vision.*" actions="-write"></permission>
-<permission name="webapp.configuration.save"></permission>
 <permission name="webapp.logs.read"></permission>
-<permission name="webapp.viewset.add"></permission>
-<permission name="webapp.viewset.read"></permission>
-<permission name="webapp.viewset.edit"></permission>
-<permission name="webapp.viewset.remove"></permission>
-<permission name="svobserver.clientlogs.store"></permission>
 <permission name="svobserver.command.execute"></permission>
 <permission name="svobserver.configuration.read"></permission>
-<permission name="svobserver.configuration.write"></permission>
 <permission name="svobserver.file.read"></permission>
-<permission name="svobserver.file.write"></permission>
 <permission name="svobserver.inspectionstate.edit"></permission>
 <permission name="svobserver.inspectionstate.read"></permission>
-<permission name="svobserver.machinestate.set"></permission>
-<permission name="svobserver.mode.edit"></permission>
 <permission name="svobserver.mode.read"></permission>
 <permission name="svobserver.notifications.subscribe"></permission>
-<permission name="svobserver.tool.add"></permission>
-<permission name="svobserver.tool.edit"></permission>
 <permission name="svobserver.tool.read"></permission>
-<permission name="svobserver.tool.remove"></permission>
-<permission name="svobserver.value.edit"></permission>
 <permission name="svobserver.value.read"></permission>
-<permission name="webapp.view[type=AnyView].add"></permission>
-<permission name="webapp.view[type=AnyView].read"></permission>
-<permission name="webapp.view[type=AnyView].remove"></permission>
-<permission name="webapp.view[type=ImageView].edit"></permission>
-<permission name="webapp.view[type=ListView].edit"></permission>
-<permission name="webapp.view[type=ParameterView].edit"></permission>
-<permission name="webapp.view[type=ToolSetView].edit"></permission>
+<permission name="webapp.view[type=ImageView].read"></permission>
+<permission name="webapp.view[type=ListView].read"></permission>
+<permission name="webapp.view[type=ImageStripView].read"></permission>
+<permission name="webapp.view[type=ToolSetView].read"></permission>
 </permissions>
 </workEnvironment>
 </userGroup>
@@ -426,37 +379,20 @@
 <permission name="service.diagnose.Rotation.*" actions="+write"></permission>
 <permission name="service.diagnose.Rotation.tabMaintenance.*" actions="-write"></permission>
 <permission name="service.diagnose.Vision.*" actions="+write"></permission>
-<permission name="webapp.configuration.save"></permission>
 <permission name="webapp.logs.read"></permission>
-<permission name="webapp.viewset.add"></permission>
-<permission name="webapp.viewset.read"></permission>
-<permission name="webapp.viewset.edit"></permission>
-<permission name="webapp.viewset.remove"></permission>
-<permission name="svobserver.clientlogs.store"></permission>
 <permission name="svobserver.command.execute"></permission>
 <permission name="svobserver.configuration.read"></permission>
-<permission name="svobserver.configuration.write"></permission>
 <permission name="svobserver.file.read"></permission>
-<permission name="svobserver.file.write"></permission>
 <permission name="svobserver.inspectionstate.edit"></permission>
 <permission name="svobserver.inspectionstate.read"></permission>
-<permission name="svobserver.machinestate.set"></permission>
-<permission name="svobserver.mode.edit"></permission>
 <permission name="svobserver.mode.read"></permission>
 <permission name="svobserver.notifications.subscribe"></permission>
-<permission name="svobserver.tool.add"></permission>
-<permission name="svobserver.tool.edit"></permission>
 <permission name="svobserver.tool.read"></permission>
-<permission name="svobserver.tool.remove"></permission>
-<permission name="svobserver.value.edit"></permission>
 <permission name="svobserver.value.read"></permission>
-<permission name="webapp.view[type=AnyView].add"></permission>
-<permission name="webapp.view[type=AnyView].read"></permission>
-<permission name="webapp.view[type=AnyView].remove"></permission>
-<permission name="webapp.view[type=ImageView].edit"></permission>
-<permission name="webapp.view[type=ListView].edit"></permission>
-<permission name="webapp.view[type=ParameterView].edit"></permission>
-<permission name="webapp.view[type=ToolSetView].edit"></permission>
+<permission name="webapp.view[type=ToolSetView].read"></permission>
+<permission name="webapp.view[type=ImageStripView].read"></permission>
+<permission name="webapp.view[type=ListView].read"></permission>
+<permission name="webapp.view[type=ImageView].read"></permission>
 </permissions>
 </workEnvironment>
 </userGroup>
@@ -551,11 +487,8 @@
 <permission name="svobserver.value.read"></permission>
 <permission name="webapp.view[type=AnyView].add"></permission>
 <permission name="webapp.view[type=AnyView].read"></permission>
+<permission name="webapp.view[type=AnyView].edit"></permission>
 <permission name="webapp.view[type=AnyView].remove"></permission>
-<permission name="webapp.view[type=ImageView].edit"></permission>
-<permission name="webapp.view[type=ListView].edit"></permission>
-<permission name="webapp.view[type=ParameterView].edit"></permission>
-<permission name="webapp.view[type=ToolSetView].edit"></permission>
 </permissions>
 </workEnvironment>
 </userGroup>
@@ -648,6 +581,8 @@
 <permission name="svobserver.tool.remove"></permission>
 <permission name="svobserver.value.edit"></permission>
 <permission name="svobserver.value.read"></permission>
+<permission name="usermanagement.userpermissions.edit"></permission>
+<permission name="usermanagement.userpermissions.read"></permission>
 <permission name="webapp.view[type=AnyView].add"></permission>
 <permission name="webapp.view[type=AnyView].read"></permission>
 <permission name="webapp.view[type=AnyView].edit"></permission>
