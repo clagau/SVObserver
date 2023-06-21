@@ -16,15 +16,17 @@
 #include "SVStatusLibrary/RegistryAccess.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #include "TriggerRecordData.h"
+
+
 #pragma endregion Includes
 
 namespace SvTrc
 {
 int getNumberOfTRKeepFreeForWrite()
 {
-	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	SvLib::SVOINIClass SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 	constexpr int cTriggerRecordMax = 10;
-	int retVal = l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("NumberOfTRKeepFreeForWriter"), 2);
+	int retVal = SvimIni.GetValueInt(_T("TriggerRecordController"), _T("NumberOfTRKeepFreeForWriter"), 2);
 	return std::max(0, std::min(cTriggerRecordMax, retVal));
 }
 const int g_cNumberOfTRKeepFreeForWrite = getNumberOfTRKeepFreeForWrite();
@@ -51,13 +53,27 @@ DataControllerBase::DataControllerBase()
 		}
 	}
 
-	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
-	int maxBufferSizeInMB = l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("MaxBufferSizeInMBytes"), 8000);
-	m_maxBufferSizeInBytes = maxBufferSizeInMB *c_MBInBytes;
+	ULONGLONG physicalMemory_kB=0;
+	BOOL ok = GetPhysicallyInstalledSystemMemory(&physicalMemory_kB);
+	volatile ULONGLONG availablePhysicalMemory_GB = ok ? (physicalMemory_kB /(SvDef::cKilobytesPerGigabyte)) : SvDef::cMainMemoryInGigabyteX2C;
+	// if GetPhysicallyInstalledSystemMemory() fails (which should only happen on virtual machines) we assume an X2C.
 
-	PSECURITY_DESCRIPTOR psd = (PSECURITY_DESCRIPTOR)LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
+	bool memoryIsSmall = ok ? (availablePhysicalMemory_GB < 4ull*SvDef::cMainMemoryInGigabyteX2C) : false;
+	// if we do not have have a machine at least like NEO2 (with 64 GB of memory) we assess the available memory to be "small"
+
+	SvLib::SVOINIClass SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	int64_t maxBufferSizeInMB = SvimIni.GetValueInt(_T("TriggerRecordController"), _T("MaxBufferSizeInMBytes"), 0);
+
+	if (0 == maxBufferSizeInMB)
+	{ // use default buffer size (which is dependent on the SVIM model): see SVO-3435
+		maxBufferSizeInMB = memoryIsSmall ? SvDef::cSmallTrcBufferSize_MB : SvDef::cBigTrcBufferSize_MB;
+	}
+
+	m_maxBufferSizeInBytes = maxBufferSizeInMB * static_cast<int64_t>(SvDef::cBytesPerMegabyte);
+
+	auto psd = (PSECURITY_DESCRIPTOR)LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
 	InitializeSecurityDescriptor(psd, SECURITY_DESCRIPTOR_REVISION);
-	SetSecurityDescriptorDacl(psd, TRUE, NULL, FALSE);
+	SetSecurityDescriptorDacl(psd, TRUE, nullptr, FALSE);
 	SECURITY_ATTRIBUTES sa = {0};
 	sa.nLength = sizeof(sa);
 	sa.lpSecurityDescriptor = psd;

@@ -8,6 +8,7 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/GlobalConst.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #pragma endregion Includes
@@ -25,7 +26,6 @@ typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
 typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
 }
 
-constexpr long long c_MBInBytes = 1048576LL;//1024 * 1024
 #pragma endregion Declarations
 
 namespace SvTrc
@@ -275,7 +275,7 @@ protected:
 
 	std::vector<SVMatroxBuffer> m_bufferVector;
 	int m_maxNumberOfRequiredBuffer = 9000;
-	long long m_maxBufferSizeInBytes = 8'000 * c_MBInBytes;
+	long long m_maxBufferSizeInBytes = 8'000 * static_cast<long long>(SvDef::cBytesPerMegabyte);
 	std::function<void()> m_reloadCallback;
 	std::function<void()> m_readyCallback;
 	std::function<void(SvOi::TrEventData)> m_newTrIdCallback;

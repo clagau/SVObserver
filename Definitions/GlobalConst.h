@@ -22,9 +22,13 @@ constexpr int			cTableMaxRowMax = 10000;
 constexpr int			cMaxStringByteSize = 200;
 
 constexpr long			cBytesPerKilobyte = 1024;
-constexpr long			cBytesPerMegabyte = 1024*1024;
+constexpr long			cBytesPerMegabyte = 1024 * 1024;
+constexpr long			cKilobytesPerGigabyte = cBytesPerMegabyte;
 constexpr long			cMin8BitPixelValue = 0;
 constexpr long			cMax8BitPixelValue = 255;
+constexpr uint64_t		cMainMemoryInGigabyteX2C = 16; 
+constexpr long			cSmallTrcBufferSize_MB = 8000; // chosen according to tests with X2C that Marc made some time ago
+constexpr long			cBigTrcBufferSize_MB = 32768;// i.e. 32 GB - chosen according to tests that Christoph made in the course of SVO-3435 (and documented there)
 constexpr long			cDefaultToolUpperThreshold = cMax8BitPixelValue;
 constexpr long			cDefaultToolLowerThreshold = 40L;
 constexpr bool			cDefaultToolThresholdActivate = true;
