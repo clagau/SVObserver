@@ -2103,7 +2103,12 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct* 
 				}
 				else
 				{
-					auto pImage = rCameraInfoPair.second.GetNextImage();
+					auto pImage = rCameraInfoPair.second.getImage();
+					if (nullptr == pImage || pImage->isEmpty())
+					{
+						Log_Assert(false);
+						pImage = rCameraInfoPair.second.GetNextImage();
+					}
 					if (nullptr != pImage && pImage->isValid())
 					{
 						auto tmpImage = pCamera->getTempImage();
@@ -2115,6 +2120,10 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct* 
 						{
 							SVMatroxBufferInterface::ClearBuffer(pImage->getHandle()->GetBuffer(), 0);
 						}
+					}
+					else
+					{
+						Log_Assert(false);
 					}
 				}
 				if (!Copied)

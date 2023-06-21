@@ -880,15 +880,15 @@ int TriggerRecordController::addOrChangeLinkedImage(uint32_t sourceId, uint32_t 
 	{
 		pImageDefinition = &(*imageIter);
 		imagePos = static_cast<int> (std::distance(pList->begin(), imageIter));
+		if (pImageDefinition->sourceid() == sourceId && pImageDefinition->destinationid() == destinationId)
+		{
+			return imagePos;
+		}
 	}
 	else
 	{
 		pImageDefinition = m_imageListResetTmp.add_linkedlist();
 		imagePos = pList->size() - 1;
-	}
-	if (pImageDefinition->sourceid() == sourceId && pImageDefinition->destinationid() == destinationId)
-	{
-		return imagePos;
 	}
 
 	pImageDefinition->set_sourceid(sourceId);

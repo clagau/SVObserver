@@ -51,6 +51,7 @@ public:
 	virtual void setTrOfInterestNumber(int number) override;
 	virtual void setTrOfInterest(int inspectionPos, int pos) override;
 	std::vector<int> getTRofInterestPos(int n);
+	void resetTRofInterestArray();
 	
 private:
 	void createSMBuffer(const BasicData& basicData, const SMData& smData);
@@ -153,6 +154,7 @@ private:
 	void ResetInspectionData(TRControllerWriterDataPerIP& rData, bool shouldReduceRequiredBuffer = true);
 
 	void setInspectionSMData(int ipPos, const std::string& rSmName, int smSize);
+	void resetTriggerRecords(int ipPos, TRControllerWriterDataPerIP& data);
 #pragma endregion Private Methods
 
 #pragma region Member variables

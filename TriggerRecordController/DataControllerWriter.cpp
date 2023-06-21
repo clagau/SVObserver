@@ -267,7 +267,7 @@ void TRControllerWriterDataPerIP::setTrOfInterestNumber(int number)
 			{
 				m_pBasicData->m_TrOfInterestNumber = number;
 			}
-			std::fill(m_pTRofInterestArray, m_pTRofInterestArray + TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
+			resetTRofInterestArray();
 		}
 		else
 		{
@@ -347,6 +347,11 @@ std::vector<int> TRControllerWriterDataPerIP::getTRofInterestPos(int n)
 	return retVec;
 }
 
+void TRControllerWriterDataPerIP::resetTRofInterestArray()
+{
+	std::fill(m_pTRofInterestArray, m_pTRofInterestArray + TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
+}
+
 void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, const SMData& rSmData)
 {
 	SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
@@ -370,7 +375,7 @@ void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, co
 		*m_pSmData = rSmData;
 		offset += sizeof(SMData);
 		m_pTRofInterestArray = reinterpret_cast<int*>(pTemp + offset);
-		std::fill(m_pTRofInterestArray, m_pTRofInterestArray + TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
+		resetTRofInterestArray();
 		offset += sizeof(int) *(TriggerRecordController::cMaxTriggerRecordsOfInterest + 1);
 		m_pImageListInSM = pTemp + offset;
 		offset += rSmData.m_maxImageListSize;
@@ -739,20 +744,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 				pIPData->setImageList(std::move(rImageList));
 				pIPData->createTriggerRecordsBuffer(triggerRecordNumber);
 			}
-			if (nullptr != pIPData->getTriggerRecords() && 0 < pIPData->getBasicData().m_triggerRecordBufferSize)
-			{
-				memset(pIPData->getTriggerRecords(), -1, pIPData->getBasicData().m_triggerRecordBufferSize*pIPData->getBasicData().m_TriggerRecordNumber);
-				for (int j = 0; j < pIPData->getBasicData().m_TriggerRecordNumber; j++)
-				{	//initialize buffer
-					getTRData(i, j).init(pIPData->getImageList().list_size(), pIPData->getImageList().hiddenlist_size());
-				}
-				pIPData->resetFreeTrNumber();
-			}
-			else
-			{
-				pIPData->createTriggerRecordsBuffer(0, 0);
-				pIPData->setInitFlag(false);
-			}
+			resetTriggerRecords(i, *pIPData);
 		}
 	}
 
@@ -907,6 +899,21 @@ void DataControllerWriter::finishedReset()
 		}
 	}
 		
+	for (int i = 0; i < m_dataVector.size(); i++)
+	{
+		auto pIPData = m_dataVector[i];
+		if (nullptr != pIPData)
+		{
+			resetTriggerRecords(i, *pIPData);
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+	}
+
+	resetImageRefCounter();
+
 	InterlockedExchange(&m_pCommonData->m_resetId, std::max(1l, m_lastResetId + 1));
 	m_lastResetId = m_pCommonData->m_resetId;
 	if (m_readyCallback)
@@ -1060,6 +1067,24 @@ void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSm
 			m_pCommonData->m_inspectionListPBSize = static_cast<int> (m_inspectionList.ByteSizeLong());
 			m_inspectionList.SerializePartialToArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
 		}
+	}
+}
+
+void DataControllerWriter::resetTriggerRecords(int ipPos, TRControllerWriterDataPerIP& data)
+{
+	if (nullptr != data.getTriggerRecords() && 0 < data.getBasicData().m_triggerRecordBufferSize)
+	{
+		memset(data.getTriggerRecords(), -1, data.getBasicData().m_triggerRecordBufferSize * data.getBasicData().m_TriggerRecordNumber);
+		for (int j = 0; j < data.getBasicData().m_TriggerRecordNumber; j++)
+		{	//initialize buffer
+			getTRData(ipPos, j).init(data.getImageList().list_size(), data.getImageList().hiddenlist_size());
+		}
+		data.resetFreeTrNumber();
+	}
+	else
+	{
+		data.createTriggerRecordsBuffer(0, 0);
+		data.setInitFlag(false);
 	}
 }
 
