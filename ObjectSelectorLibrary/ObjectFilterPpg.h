@@ -118,6 +118,10 @@ namespace SvOsl
 		SvMc::SVEditControlWithHelp m_FilterLocationControl; //Control to filter objects based on their locations
 		CComboBox m_checkedControl;						//Control to filter objects based on the states of their checkboxes
 		CComboBox m_TypeControl;						//Control to filter objects based on their types
+
+		bool m_initFinished = false;
+		std::string m_nameFilterCurrent;
+		std::string m_locationFilterCurrent;
 	#pragma endregion Member Variables
 	};
 } //namespace SvOsl

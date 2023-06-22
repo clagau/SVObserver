@@ -18,7 +18,7 @@
 #include "GridCtrlLibrary\GridCellCheck.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SVOResource\ConstGlobalSvOr.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include <Shlwapi.h>
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -101,6 +101,7 @@ namespace SvOsl
 
 		std::set<std::string> typeSet;
 		SvCl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
+		
 		while( m_rTreeContainer.pre_order_end() != Iter )
 		{
 			if( Iter->second->isLeaf() )
@@ -109,6 +110,7 @@ namespace SvOsl
 			}
 			++Iter;
 		}
+		
 		m_TypeControl.AddString( FilterAll );
 		for(std::set<std::string>::const_iterator iter=typeSet.cbegin(); iter != typeSet.cend(); ++iter)
 		{
@@ -118,6 +120,8 @@ namespace SvOsl
 		m_FilterNameControl.setHelpText( FilterEnterNameHelp );
 		m_FilterLocationControl.setHelpText( FilterEnterLocationHelp );
 
+		m_initFinished = true;
+
 		UpdateData(FALSE);
 
 		return TRUE;
@@ -126,7 +130,6 @@ namespace SvOsl
 	BOOL ObjectFilterPpg::OnSetActive()
 	{
 		loadGridCtrl();
-
 		return CPropertyPage::OnSetActive();
 	}
 
@@ -170,7 +173,15 @@ namespace SvOsl
 	void ObjectFilterPpg::OnChangeFilter()
 	{
 		UpdateData(TRUE);
-		loadGridCtrl();
+		std::string nameFilterNew {m_FilterNameControl.getEditText()};
+		std::string locationFilterNew {m_FilterLocationControl.getEditText()};
+
+		if (m_initFinished && nameFilterNew != m_nameFilterCurrent || locationFilterNew != m_locationFilterCurrent)
+		{
+			m_nameFilterCurrent = nameFilterNew;
+			m_locationFilterCurrent = locationFilterNew;
+			loadGridCtrl();
+		}
 	}
 
 	void ObjectFilterPpg::OnResetFilter()
@@ -271,11 +282,17 @@ namespace SvOsl
 		Item.strText = FilterColumnType;
 		m_Grid.SetItem(&Item);
 
+		auto wildcardPatternPlusAsteriskName = m_nameFilterCurrent + _T("*");
+		auto wildcardPatternPlusAsteriskLocation = m_locationFilterCurrent + _T("*");
+
 		//add leaves
-		int i = 1;
-		m_Grid.SetRowCount(i);
-		std::string filterNameUpper = SvUl::MakeUpper(m_FilterNameControl.getEditText());
-		std::string filterLocationUpper = SvUl::MakeUpper(m_FilterLocationControl.getEditText());
+		int rowCount = 1;
+		m_Grid.SetRowCount(rowCount);
+		int checkSelection = m_checkedControl.GetCurSel();
+		int typeSelection = m_TypeControl.GetCurSel();
+		CString typeText = _T("");
+		m_TypeControl.GetLBText(typeSelection, typeText);
+
 		SvCl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 		while( m_rTreeContainer.pre_order_end() != Iter )
 		{
@@ -285,30 +302,25 @@ namespace SvOsl
 				{
 					m_CheckedLocation = Iter->first;
 				}
-				int checkSelection = m_checkedControl.GetCurSel();
-				int typeSelection = m_TypeControl.GetCurSel();
-				std::string nameUpper = SvUl::MakeUpper(Iter->second->m_Name.c_str());
-				std::string locationUpper = SvUl::MakeUpper(Iter->second->m_Location.c_str());
-				bool isNameValid = SvUl::isSubmatch(nameUpper, filterNameUpper);
-				bool isLocationValid = SvUl::isSubmatch(locationUpper, filterLocationUpper);
-				CString typeText = _T("");
-				m_TypeControl.GetLBText(typeSelection, typeText);
+				bool isNameValid = PathMatchSpecA(Iter->second->m_Name.c_str(), wildcardPatternPlusAsteriskName.c_str());
+				bool isLocationValid = PathMatchSpecA(Iter->second->m_Location.c_str(), wildcardPatternPlusAsteriskLocation.c_str());
+
 				if ( (isNameValid && isLocationValid) &&
 					 (0 == checkSelection || 
 						( 1 == checkSelection && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState) || 
 						( 2 == checkSelection && SvCl::ObjectSelectorItem::CheckedEnabled != Iter->second->m_CheckedState) ) &&
 					 (0 == typeSelection || typeText == Iter->second->m_ItemTypeName.c_str() ))
 				{
-					m_Grid.SetRowCount(i + 1);
-					m_Grid.SetItemText(i, NameColumn, Iter->second->m_Name.c_str());
-					m_Grid.SetItemState(i, NameColumn, m_Grid.GetItemState(i, 0) | GVIS_READONLY);
-					m_Grid.SetItemText(i, LocationColumn, Iter->second->m_Location.c_str());
-					m_Grid.SetItemState(i, LocationColumn, m_Grid.GetItemState(i, LocationColumn) | GVIS_READONLY);
-					m_Grid.SetItemData(i, LocationColumn, reinterpret_cast<LPARAM> (&Iter->first) );
+					m_Grid.SetRowCount(rowCount + 1);
+					m_Grid.SetItemText(rowCount, NameColumn, Iter->second->m_Name.c_str());
+					m_Grid.SetItemState(rowCount, NameColumn, m_Grid.GetItemState(rowCount, 0) | GVIS_READONLY);
+					m_Grid.SetItemText(rowCount, LocationColumn, Iter->second->m_Location.c_str());
+					m_Grid.SetItemState(rowCount, LocationColumn, m_Grid.GetItemState(rowCount, LocationColumn) | GVIS_READONLY);
+					m_Grid.SetItemData(rowCount, LocationColumn, reinterpret_cast<LPARAM> (&Iter->first) );
 					//We need to use the using here because the macro RUNTIME_CLASS cannot handle namespaces
 					using namespace SvGcl;
-					m_Grid.SetCellType(i, CheckColumn, RUNTIME_CLASS( GridCellCheck ));
-					SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
+					m_Grid.SetCellType(rowCount, CheckColumn, RUNTIME_CLASS( GridCellCheck ));
+					SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(rowCount, CheckColumn));
 					if (nullptr != cell)
 					{
 						if (SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState)
@@ -316,7 +328,7 @@ namespace SvOsl
 							cell->SetCheck( TRUE );
 							if (m_SingleSelect)
 							{
-								m_CheckedRow = i;
+								m_CheckedRow = rowCount;
 							}
 						}
 						else
@@ -325,14 +337,13 @@ namespace SvOsl
 						}
 					}
 
-					m_Grid.SetItemText(i, TypeColumn, Iter->second->m_ItemTypeName.c_str());
-					m_Grid.SetItemState(i, TypeColumn, m_Grid.GetItemState(i, TypeColumn) | GVIS_READONLY);
-					i++;
+					m_Grid.SetItemText(rowCount, TypeColumn, Iter->second->m_ItemTypeName.c_str());
+					m_Grid.SetItemState(rowCount, TypeColumn, m_Grid.GetItemState(rowCount, TypeColumn) | GVIS_READONLY);
+					rowCount++;
 				}
 			}
 			++Iter;
 		}
-
 		m_Grid.SetRedraw(TRUE, TRUE);
 	}
 
