@@ -308,8 +308,11 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 							pOutputList->DetachOutput(pOutput->getObjectId());
 						}
 						pOutput.reset();
-						pIOEntry->clear();
-						pIOEntry.reset();
+						if (nullptr != pIOEntry)
+						{
+							pIOEntry->clear();
+							pIOEntry.reset();
+						}
 					}
 
 					// Rebuild Outputs
