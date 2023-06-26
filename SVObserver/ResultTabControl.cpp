@@ -149,31 +149,39 @@ bool ResultTabControl::Load(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 
 void ResultTabControl::updateTab()
 {
-	CWnd* view = GetTabWndNoWrapper(GetActiveTab());
+	CWnd* pTab = GetTabWndNoWrapper(GetActiveTab());
 
-	ResultTableListCtrl* tableListCtrl = dynamic_cast<ResultTableListCtrl*> (view);
-	if (nullptr != tableListCtrl)
+	ResultTableListCtrl* pTableListCtrl = dynamic_cast<ResultTableListCtrl*> (pTab);
+	if (nullptr != pTableListCtrl)
 	{
-		tableListCtrl->updateList();
+		pTableListCtrl->updateList();
 	}
 
-	ResultListCtrl* listCtrl = dynamic_cast<ResultListCtrl*> (view);
-	if (nullptr != listCtrl)
+	ResultListCtrl* pListCtrl = dynamic_cast<ResultListCtrl*> (pTab);
+	if (nullptr != pListCtrl)
 	{
-		listCtrl->updateList();
+		pListCtrl->updateList();
+	}
+}
+
+void ResultTabControl::setVariableToolID(CPoint point)
+{
+	auto pListCtrl = dynamic_cast<ResultListCtrl*> (GetTabWndNoWrapper(GetActiveTab()));
+	if (nullptr != pListCtrl)
+	{
+		pListCtrl->setVariableToolID(point);
 	}
 }
 
 bool ResultTabControl::IsTableListCtrlActive()
 {
-	auto t = dynamic_cast<ResultTableListCtrl*> (GetTabWndNoWrapper(GetActiveTab()));
-	return(t != nullptr);
-
+	auto* pListCtrl = dynamic_cast<ResultTableListCtrl*> (GetTabWndNoWrapper(GetActiveTab()));
+	return nullptr != pListCtrl;
 }
 bool ResultTabControl::IsResultListCtrlActive()
 {
-	auto t = dynamic_cast<ResultListCtrl*> (GetTabWndNoWrapper(GetActiveTab()));
-	return(t != nullptr);
+	auto* pListCtrl = dynamic_cast<ResultListCtrl*> (GetTabWndNoWrapper(GetActiveTab()));
+	return nullptr != pListCtrl;
 }
 
 void ResultTabControl::tableIdChanged()

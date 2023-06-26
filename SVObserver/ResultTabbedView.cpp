@@ -12,6 +12,7 @@
 #include "ResultTabControl.h"
 #include "SVIPSplitterFrame.h"
 #include "SVIPDoc.h"
+#include "Definitions/SVUserMessage.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -212,11 +213,11 @@ void ResultTabbedView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		if (m_customTabCtrl.IsTableListCtrlActive())
 		{
 			MenuId = IDR_RESULTS_TABLE_CONTEXT_MENU;
-
 		}
 		else if (m_customTabCtrl.IsResultListCtrlActive())
 		{
 			MenuId = IDR_RESULTS_CONTEXT_MENU;
+			m_customTabCtrl.setVariableToolID(point);
 		}
 
 		if (MenuId == 0 || NULL == Menu.LoadMenu(MAKEINTRESOURCE(MenuId)))
@@ -234,6 +235,7 @@ void ResultTabbedView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			pOwner = pOwner->GetParent();
 		}
 		pPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, pOwner);
+		pOwner->PostMessage(SV_SET_IPDOC_EDIT_TOOLID, static_cast<WPARAM> (m_pIPDoc->GetInspectionID()), 0L);
 	}
 }
 #pragma endregion Private Methods

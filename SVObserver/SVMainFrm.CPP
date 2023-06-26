@@ -224,6 +224,7 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_MESSAGE(SV_REGISTER_MONITOR_LIST, &SVMainFrame::RemoteRegisterMonitorList)
 	ON_MESSAGE(SV_ADD_FILE_TO_CONFIG, &SVMainFrame::onAddFileToConfig)
 	ON_MESSAGE(SV_SAVE_CONFIG, &SVMainFrame::onSaveConfig)
+	ON_MESSAGE(SV_SET_IPDOC_EDIT_TOOLID, SetIPDocEditToolID)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -1811,6 +1812,16 @@ LRESULT SVMainFrame::UpdateIPDocViews(WPARAM wParam, LPARAM lParam)
 	if (nullptr != pDoc)
 	{
 		pDoc->UpdateAllViews(nullptr, lParam);
+	}
+	return 0;
+}
+
+LRESULT SVMainFrame::SetIPDocEditToolID(WPARAM wParam, LPARAM lParam)
+{
+	SVIPDoc* pDoc = GetIPDocByInspectionID(static_cast<uint32_t> (wParam));
+	if (nullptr != pDoc)
+	{
+		pDoc->setEditToolID(static_cast<uint32_t> (lParam));
 	}
 	return 0;
 }

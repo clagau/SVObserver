@@ -4424,6 +4424,7 @@ BEGIN
     BEGIN
         MENUITEM "Results Picker\tCtrl+&K",     ID_RESULTS_PICKER
         MENUITEM "Save Results\tCtrl+Shift+R",  ID_SAVE_RESULTS_TO_FILE
+        MENUITEM "Edit tool",                   ID_EDIT_EDITTOOL
     END
 END
 

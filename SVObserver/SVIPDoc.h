@@ -232,7 +232,7 @@ public:
 	//! \param tab [in] selected tab
 	//! \returns void
 	//************************************
-	void OpenToolAdjustmentDialog(int tab); 
+	void OpenToolAdjustmentDialog(int tab);
 	virtual BOOL OnNewDocument() override;
 	virtual BOOL CanCloseFrame(CFrameWnd* pFrame) override;
 	virtual void SetTitle(LPCTSTR lpszTitle) override;
@@ -258,6 +258,7 @@ public:
 	bool isImageAvailable(SvPb::SVObjectSubTypeEnum ImageType, uint32_t isBeforeToolId) const;
 	SvOi::ITriggerRecordRPtr getLastTriggerRecord() const { return m_triggerRecord; };
 
+	void setEditToolID(uint32_t toolID) { m_editToolID = toolID; }
 protected:
 	virtual BOOL SaveModified() override;
 	//}}AFX_VIRTUAL
@@ -369,13 +370,14 @@ private:
 
 	RegressionTestController m_regTest;
 
-	uint32_t m_InspectionID;
+	uint32_t m_InspectionID {0UL};
 	SVDisplayObject m_oDisplay;
 
 	CMDIChildWnd* m_pMDIChildWnd;
 	SVToolGrouping m_toolGroupings;
 	bool m_isDestroying = false;
 	HANDLE m_RegressionTestHandle = nullptr;
+	uint32_t m_editToolID {0UL};
 };
 
 SVIPDoc* NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspection);

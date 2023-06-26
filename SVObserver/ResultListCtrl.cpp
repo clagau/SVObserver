@@ -158,6 +158,24 @@ void ResultListCtrl::updateList()
 
 	EnsureVisible(topIndex + GetCountPerPage() - 1, FALSE); //this keeps the scrollbar at the same position it had before the update as per SVO-1496
 }
+
+void ResultListCtrl::setVariableToolID(CPoint point)
+{
+	LVHITTESTINFO lvHitTest;
+	lvHitTest.pt = point;
+	ScreenToClient(&lvHitTest.pt);
+
+	int itemIndex = SubItemHitTest(&lvHitTest);
+	if (-1 != itemIndex && itemIndex < m_ResultDefinitions.size())
+	{
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(m_ResultDefinitions[itemIndex].GetObjectID());
+		if (nullptr != pObject)
+		{
+			SVObjectClass* pTool = pObject->GetAncestor(SvPb::SVToolObjectType);
+			m_pDoc->setEditToolID((nullptr != pTool) ? pTool->getObjectId() : SvDef::InvalidObjectId);
+		}
+	}
+}
 #pragma endregion Public Methods
 
 #pragma region Private Methods

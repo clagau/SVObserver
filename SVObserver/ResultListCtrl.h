@@ -33,14 +33,13 @@ public:
 	void setIPDoc(SVIPDoc* pDoc) { m_pDoc = pDoc; };
 	/// The method updates the list
 	void updateList();
+	void setVariableToolID(CPoint point);
 #pragma endregion Public Methods
 
 #pragma region Private Methods
 private:
 	int updateResults(bool bRedrawDefinitions);
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
-
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 	std::string CalcProcessesPerSecond(double p_LastTriggerDistance);
 	void addColumnHeadings();

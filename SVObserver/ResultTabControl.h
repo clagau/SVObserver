@@ -36,6 +36,7 @@ public:
 	void updateTab();
 	void tableIdChanged();
 	void initializeResultTabControl() { addDefaultTabs(); };
+	void setVariableToolID(CPoint point);
 
 	bool IsTableListCtrlActive();
 	bool IsResultListCtrlActive();

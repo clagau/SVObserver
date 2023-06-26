@@ -259,10 +259,8 @@ LPCTSTR getViewClassName(CView* pView)
 	return nullptr;
 }
 
-std::unique_ptr<TADlgSheetClass> GetToolAdjustmentSheet(SVIPDoc* pSVIPDoc, int tab)
+std::unique_ptr<TADlgSheetClass> GetToolAdjustmentSheet(SVIPDoc* pSVIPDoc, uint32_t taskObjectID, int tab)
 {
-	auto taskObjectID = pSVIPDoc->Get1stSelectedToolID();
-
 	SvOi::IObjectClass* pTaskObject = SvOi::getObject(taskObjectID);
 
 	if (nullptr != pTaskObject)
@@ -1767,7 +1765,8 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 	// Check current user access...
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(Get1stSelectedToolID()));
+		uint32_t toolIDToEdit = (SvDef::InvalidObjectId == m_editToolID) ? Get1stSelectedToolID() : m_editToolID;
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(toolIDToEdit));
 		if (nullptr != pTool)
 		{
 			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
@@ -1777,7 +1776,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 			}
 			try
 			{
-				std::unique_ptr<TADlgSheetClass> pSheet = GetToolAdjustmentSheet(this, tab);
+				std::unique_ptr<TADlgSheetClass> pSheet = GetToolAdjustmentSheet(this, toolIDToEdit, tab);
 
 				INT_PTR dlgResult = E_POINTER;
 
