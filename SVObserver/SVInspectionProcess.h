@@ -201,13 +201,6 @@ public:
 	//************************************
 	SVObjectPtrVector getPPQVariables() const;
 	
-	//************************************
-	//! Check if the pValueObject is an inactive ppqVarable for the used inspection.
-	//! \param pValueObject [in]
-	//! \returns 
-	//************************************
-	bool IsDisabledPPQVariable( const SVObjectClass* pObject ) const;
-	
 	virtual DWORD GetObjectColor() const override;
 
 	//************************************

@@ -173,18 +173,8 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 	std::list<SvIe::ResultViewItemDef>::iterator it = m_ResultViewItemDefList.begin();
 	while( it != m_ResultViewItemDefList.end() )
 	{
-		bool bInsert(false);
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( it->getObjectId() );
-		if( nullptr != pObject )
-		{
-			bInsert = true;
-			if( nullptr != pIProcess && true == pIProcess->IsDisabledPPQVariable(pObject) )
-			{
-				bInsert = false;
-			}
-
-		}
-		if( bInsert )
+		if(nullptr != pObject)
 		{
 			SVObjectReference ObjectRef(pObject);
 			if( it->hasIndex() )

@@ -3091,22 +3091,6 @@ void SVInspectionProcess::setResultListUpdateFlag()
 }
 #pragma endregion IInspectionProcess methods
 
-bool SVInspectionProcess::IsDisabledPPQVariable(const SVObjectClass* pObject) const
-{
-	for (auto& pInput : m_InputObjects)
-	{
-		if (nullptr != pInput)
-		{
-			if (pObject == dynamic_cast<SVObjectClass*> (pInput.get()))
-			{
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
 SVObjectPtrVector SVInspectionProcess::getPPQVariables() const
 {
 	SVObjectPtrVector Result;

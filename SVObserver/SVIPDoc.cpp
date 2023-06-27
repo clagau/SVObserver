@@ -2615,13 +2615,15 @@ SvDef::StringSet SVIPDoc::TranslateSelectedObjects(const SVObjectReferenceVector
 	{
 		std::string SearchName;
 		std::string ReplaceName;
-		SearchName = rInspectionName + '.' + SvDef::RemoteInputStr;
+		SearchName = rInspectionName + _T(".") + SvDef::RemoteInputStr;
 		ReplaceName = SvDef::FqnPPQVariables;
-		ReplaceName += '.' + SvDef::RemoteInputStr;
+		ReplaceName += _T(".");
+		ReplaceName += SvDef::RemoteInputStr;
 		TranslateNames[SearchName] = ReplaceName;
-		SearchName = rInspectionName + '.' + SvDef::DioInputStr;
+		SearchName = rInspectionName + _T(".") + SvDef::DioInputStr;
 		ReplaceName = SvDef::FqnPPQVariables;
-		ReplaceName += '.' + SvDef::DioInputStr;
+		ReplaceName += _T(".");
+		ReplaceName += SvDef::DioInputStr;
 		TranslateNames[SearchName] = ReplaceName;
 		SearchName = rInspectionName + _T(".");
 		SearchName += SvUl::LoadedStrings::g_ToolSetName;
