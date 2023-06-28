@@ -410,7 +410,15 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
 	SvDef::StringVector Files;
-	SvUl::unzipAll(zipFilename, SvStl::GlobalPath::Inst().GetRunPath(), Files);
+	SvUl::unzipAll(zipFilename, SvStl::GlobalPath::Inst().GetTempPath(), Files);
+	for (const auto& dependentFile : Files)
+	{
+		std::string destination {dependentFile};
+		destination = SvUl::searchAndReplace(destination, SvStl::GlobalPath::Inst().GetTempPath().c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str());
+		std::error_code error;
+		std::filesystem::copy_file(dependentFile.c_str(), destination.c_str(), std::filesystem::copy_options::skip_existing, error);
+		std::filesystem::remove(dependentFile.c_str(), error);
+	}
 
 	rProgress.UpdateText(_T("Importing PPQ Inputs/Outputs ..."));
 	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
