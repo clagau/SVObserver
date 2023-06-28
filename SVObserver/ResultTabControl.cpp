@@ -339,7 +339,7 @@ void ResultTabControl::addNewTab(const CString tabName, const uint32_t tableId)
 		m_additionalTabs.push_back(newTableListControl);
 	}
 
-	SetActiveTab(newInsertPosition);
+	
 }
 
 void ResultTabControl::addDefaultTabs()

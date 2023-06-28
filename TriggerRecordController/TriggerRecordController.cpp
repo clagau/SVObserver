@@ -844,6 +844,10 @@ int TriggerRecordController::addOrChangeChildImage(uint32_t imageId, uint32_t pa
 	{
 		pImageDefinition = &(*imageIter);
 		imagePos = static_cast<int> (std::distance(pList->begin(), imageIter));
+		if (pImageDefinition->objectid() == imageId && pImageDefinition->parentimageid() == parentId)
+		{
+			return imagePos;
+		}
 	}
 	else
 	{
