@@ -97,21 +97,27 @@ TADlgArchiveImagePage::TADlgArchiveImagePage(uint32_t inspectionId, uint32_t tas
 , m_FilepathRootSeparatorWidgetHelper(m_ImageFilepathrootSeparator, SvPb::ArchiveImageFilepathRootSeparatorEId, m_ValueController)
 {
 	m_strCaption = m_psp.pszTitle;
-	if( nullptr != m_pParent )
+
+	if (nullptr != m_pParent)
 	{
-		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
-		if (nullptr == m_pTool)
+		m_pArchiveTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
+
+		if (nullptr != m_pArchiveTool)
 		{
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
-			e.Throw();
+			auto [ok, name] = SvCmd::getInspectionName(inspectionId);
+
+			if (ok)
+			{
+				m_inspectionName = name;
+				return;
+			}
 		}
 	}
-}
 
+	SvStl::MessageManager e(SvStl::MsgType::Data);
+	e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
+	e.Throw();
 
-TADlgArchiveImagePage::~TADlgArchiveImagePage()
-{
 }
 #pragma endregion Constructor
 
@@ -123,7 +129,7 @@ bool TADlgArchiveImagePage::QueryAllowExit()
 	if (SvDef::memoryNeedsToBeConsidered(m_selectedMode))
 	{
 		//check to see if any items are selected in the image tree
-		int iSize = static_cast<int> (m_ImagesToBeArchived.size());
+		auto iSize = static_cast<int> (m_ImagesToBeArchived.size());
 		if( 0 < iSize )
 		{
 			//if memory usage < 0 do not all them to exit
@@ -208,12 +214,12 @@ bool TADlgArchiveImagePage::validateArchiveImageFilepath()
 	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePathButton.GetCheck() ? true : false);
 	m_ValueController.Commit(SvOgu::PostAction::doNothing); //changes need to be committed before paths can be built
 
-	if (!m_pTool->updateCurrentImagePathRoot(nullptr, true))
+	if (!m_pArchiveTool->updateCurrentImagePathRoot(nullptr, true))
 	{
 		return false; // the current image path root cannot even be determined
 	}
 
-	std::string imageDirectoryPath = m_pTool->archiveImageDirectory();
+	std::string imageDirectoryPath = m_pArchiveTool->archiveImageDirectory();
 
 	try
 	{
@@ -265,7 +271,7 @@ void TADlgArchiveImagePage::updateAndCommitImageValues()
 	m_ValueController.Set<DWORD>(SvPb::ArchiveMaxImagesCountEId, static_cast<DWORD> (m_maximumNumberOfArchiveImages));
 	m_ValueController.Set<DWORD>(SvPb::ArchiveStopAtMaxImagesEId, m_StopAtMaxImagesButton.GetCheck() ? 1 : 0);
 
-	m_pTool->setImageArchiveList(m_ImagesToBeArchived);
+	m_pArchiveTool->setImageArchiveList(m_ImagesToBeArchived);
 
 	m_ValueController.Commit(SvOgu::PostAction::doReset);
 }
@@ -334,7 +340,7 @@ BOOL TADlgArchiveImagePage::OnInitDialog()
 	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
 	m_useAlternativeImagePathButton.SetCheck(m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId));
 	
-	SVObjectReferenceVector imageVector{m_pTool->getImageArchiveList()};
+	SVObjectReferenceVector imageVector{m_pArchiveTool->getImageArchiveList()};
 	m_ImagesToBeArchived.swap(imageVector);
 
 	m_Init = false;
@@ -395,7 +401,7 @@ void TADlgArchiveImagePage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
 
-	std::string Prefix = std::format( _T("{}.{}."), m_pTool->GetInspection()->GetName(), SvUl::LoadedStrings::g_ToolSetName );
+	std::string Prefix = std::format( _T("{}.{}."), m_inspectionName, SvUl::LoadedStrings::g_ToolSetName );
 
 	int Index = 0;
 
@@ -427,13 +433,11 @@ void TADlgArchiveImagePage::ReadSelectedObjects()
 
 void TADlgArchiveImagePage::ShowObjectSelector()
 {
-	uint32_t inspectionId(m_pTool->GetInspection()->getObjectId());
-
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, inspectionId, SvPb::viewable, SvDef::InvalidObjectId, false, SvPb::allImageObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId());
-	SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+		{SvPb::SearchArea::toolsetItems}, m_inspectionId, SvPb::viewable, SvDef::InvalidObjectId, false, SvPb::allImageObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_taskId);
+	SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (responseCmd.has_getobjectselectoritemsresponse())
@@ -448,7 +452,7 @@ void TADlgArchiveImagePage::ShowObjectSelector()
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	std::string Title = std::format( _T("{} - {}"), m_strCaption.GetString(), m_pTool->GetInspection()->GetName());
+	std::string Title = std::format( _T("{} - {}"), m_strCaption.GetString(), m_inspectionName);
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption.GetString(), Filter.c_str(), this );
 

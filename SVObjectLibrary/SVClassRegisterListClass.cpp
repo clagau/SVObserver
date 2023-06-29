@@ -986,7 +986,7 @@ std::unordered_map<GUID, SvPb::EmbeddedIdEnum> g_ExchangeEmbeddedID = {
 	{ SVArchiveUseTriggerCountForImagesGuid, SvPb::ArchiveUseTriggerCountForImages_obsolete_EId },
 	{ SVArchiveMaxImagesCountGuid, SvPb::ArchiveMaxImagesCountEId },
 	{ SVArchiveMethodGuid, SvPb::ArchiveMethodEId },
-	{ SVArchiveUseHeadersGUID, SvPb::ArchiveUseHeadersEId },
+	{ SVArchiveUseHeadersGUID, SvPb::ArchiveUseColumnHeadersEId },
 	{ SVArchiveHeaderLabelGUID, SvPb::ArchiveHeaderLabelEId },
 	{ SVArchiveHeaderObjectGUID, SvPb::ArchiveHeaderEId },
 	{ SVArchiveResultNamesObjectGuid, SvPb::ArchiveResultNamesEId },

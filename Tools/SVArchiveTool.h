@@ -44,7 +44,6 @@ public:
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 	virtual void changeSource(const SVObjectReference& rOldObject, SVObjectClass& rNewObject) override;
 
-	std::string GetUntranslatedFullResultFilepath();
 	std::string alternativeImageDirectory(const std::string& imagePathRoot);
 
 	static long CalculateImageMemory(SvIe::SVImageClass* pImage );
@@ -73,24 +72,18 @@ public:
 	SVArchiveRecordsArray  m_ResultCollection;
 	SVArchiveRecordsArray  m_ImageCollection;
 
-	SvVol::SVDWordValueObjectClass m_dwAppendArchiveFile;
 	SvVol::SVDWordValueObjectClass m_bvoFormatResults;
+
 	SvVol::SVDWordValueObjectClass m_dwArchiveResultsMinimumNumberOfCharacters;
 	SvVol::SVDWordValueObjectClass m_dwArchiveResultsNumberOfDecimals;
 
 	SvVol::SVDWordValueObjectClass m_dwArchiveStopAtMaxImages;
 	SvVol::SVDWordValueObjectClass m_dwArchiveMaxImagesCount;
-	SvVol::SVEnumerateValueObjectClass m_evoArchiveMode;
-	SvVol::SVEnumerateValueObjectClass m_evoImageFileFormat;
 
 	SvDef::ArchiveMode m_archiveMode;
 	ImageFileFormat m_imageFileFormat;
 
-	SvVol::SVBoolValueObjectClass m_bvoUseHeaders;
 	SvVol::SVBoolValueObjectClass m_useAlternativeImagePath;
-	
-	SvVol::SVStringValueObjectClass	m_HeaderLabelNames;
-	SvVol::SVStringValueObjectClass	m_HeaderObjectIDs;
 
 protected:
 	SV_DECLARE_CLASS
@@ -115,6 +108,8 @@ private:
 	bool InitializeAndValidate(SvStl::MessageContainerVector* pErrorMessages);
 
 	void updateResultFilepathInformation(bool considerOldConfigurations);
+
+	std::string GetUntranslatedFullResultFilepath();
 
 	std::string GetResultFolderpathPart1() const;
 	std::string GetResultFolderpathPart2() const;
@@ -141,14 +136,24 @@ private:
 	//
 	bool m_bInitializedForRun;
 
+	SvVol::SVDWordValueObjectClass m_dwAppendArchiveFile;
+
+	SvVol::SVEnumerateValueObjectClass m_evoArchiveMode;
+	SvVol::SVEnumerateValueObjectClass m_evoImageFileFormat;
+
+	SvVol::SVBoolValueObjectClass m_bvoUseHeaders;
+
+	SvVol::SVStringValueObjectClass	m_HeaderLabelNames;
+	SvVol::SVStringValueObjectClass	m_HeaderObjectIDs;
+
 	SvVol::SVLongValueObjectClass m_currentImageQueueLength; // current _archive_ image queue length
 	SvVol::LinkedValue m_maximumImageQueueLength; // maximum _archive_ image queue length
 
 	SvVol::LinkedValue m_resultFolderpathPart1;
 	SvVol::LinkedValue m_resultFolderpathPart2;
-	SvVol::LinkedValue m_ResultFilename; 
+	SvVol::LinkedValue m_ResultFilename;
 	SvVol::LinkedValue m_resultFolderpathPart3;
-	SvVol::LinkedValue m_resultFilepath;
+	SvVol::LinkedValue m_resultFilepath; //@TODO [Arvid][10.40][27.6.2023] should be a SVStringValueObjectClass. But if is, Tid_ObjectBuilder_SetObjectValueError is displayed when loading a existing configuration containing an Archive Tool
 
 	SvVol::LinkedValue m_imageFileRootPath1; 
 	SvVol::LinkedValue m_imageFileRootPath2;

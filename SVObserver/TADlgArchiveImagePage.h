@@ -100,7 +100,7 @@ class TADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPage
 #pragma region Constructor
 public:
 	TADlgArchiveImagePage( uint32_t inspectionId, uint32_t taskObjectId, TADlgSheetClass* pParent );
-	virtual ~TADlgArchiveImagePage();
+	virtual ~TADlgArchiveImagePage() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -165,7 +165,7 @@ private:
 	TADlgSheetClass* m_pParent;		//Pointer to the Tool Adjust sheet
 	CListCtrl   m_ItemsSelected;						//The selected list control
 	SVObjectReferenceVector m_ImagesToBeArchived;       //contains references to Images that are to be archived
-	SvTo::SVArchiveTool* m_pTool = nullptr;				//Pointer to Archive Tool
+	SvTo::SVArchiveTool* m_pArchiveTool = nullptr;		//Pointer to Archive Tool
 	CImageList m_StateImageList;						//The state image list
 	CButton m_Select;									//The tree select button
 	CBitmap m_TreeBitmap;								//The bitmap for the tree button
@@ -195,6 +195,8 @@ private:
 	CButton m_useAlternativeImagePathButton;
 	uint32_t m_inspectionId;
 	uint32_t m_taskId;
+
+	std::string m_inspectionName;
 
 	int		m_WhenToArchiveIndex = -1;
 	int		m_FormatIndex = -1;

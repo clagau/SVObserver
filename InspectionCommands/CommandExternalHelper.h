@@ -83,6 +83,10 @@ HRESULT setComment(uint32_t inspectionId, uint32_t objectId, std::string comment
 ///  Check if the new module name valid. If invalid an exception will be thrown.
 void checkNewModuleName(const std::string& newName);
 
+std::pair<bool, std::string> getInspectionName(uint32_t inspectionId);
+
+
+
 
 template<class T>
 T getValueForProperties(const ::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type)

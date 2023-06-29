@@ -343,4 +343,23 @@ void checkNewModuleName(const std::string& newName)
 		}
 	}
 }
+
+
+std::pair<bool, std::string> getInspectionName(uint32_t inspectionId)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	SvPb::GetObjectParametersRequest* pIsValidRequest = requestCmd.mutable_getobjectparametersrequest();
+	pIsValidRequest->set_objectid(inspectionId);
+
+	HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
+	{
+		return {true, responseCmd.getobjectparametersresponse().name()};
+	}
+	return {false,{ _T("")}};
+}
+
+
+
 } //namespace SvCmd

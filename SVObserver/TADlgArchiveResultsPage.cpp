@@ -17,12 +17,14 @@
 #include "SVInspectionProcess.h"
 #include "TADlgSheetClass.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVOGuiUtility/GuiValueHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilitylibrary/Safearrayhelper.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/ArchiveToolHelper.h"
 #pragma endregion Includes
@@ -42,7 +44,7 @@ BEGIN_MESSAGE_MAP(TADlgArchiveResultsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
 	ON_BN_CLICKED(IDC_FORMAT_RESULTS, OnFormatResults)
 	ON_BN_CLICKED(IDC_HEADER_BTN, &TADlgArchiveResultsPage::OnBnClickedHeaderBtn)
-	ON_BN_CLICKED(IDC_HEADER_CHECK, &TADlgArchiveResultsPage::OnBnClickedHeaderCheck)
+	ON_BN_CLICKED(IDC_USE_HEADERS, &TADlgArchiveResultsPage::OnBnClickedHeaderCheck)
 
 	ON_BN_CLICKED(IDC_BUTTON_RESULT_FOLDERPATH1, OnButtonResultFolderpathPart1)
 	ON_EN_KILLFOCUS(IDC_ARCHIVE_RESULT_FOLDERPATH1, OnKillFocusResultFolderpathPart1)
@@ -59,37 +61,38 @@ constexpr int IconNumber = 1;
 constexpr int IconGrowBy = 2;
 #pragma endregion Declarations
 
-
 #pragma region Constructor
 TADlgArchiveResultsPage::TADlgArchiveResultsPage(uint32_t inspectionId, uint32_t taskObjectId, TADlgSheetClass* Parent)
 : CPropertyPage(TADlgArchiveResultsPage::IDD)
 , m_pParent(Parent)
-, m_ColumnHeaders(false)
-, m_AppendArchive(false)
-, m_FormatResults(false)
 , m_inspectionId(inspectionId)
 , m_taskId(taskObjectId)
 , m_ValueController {SvOgu::BoundValues{ inspectionId, taskObjectId }}
-, m_TotalWidth(8)
-, m_Decimals(2)
 {
 	m_strCaption = m_psp.pszTitle;
-	if( nullptr != m_pParent )
+
+	if (nullptr != m_pParent)
 	{
-		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
-		if (nullptr == m_pTool)
+		m_pArchiveTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
+
+		if (nullptr != m_pArchiveTool)
 		{
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
-			e.Throw();
+			auto [ok, name] = SvCmd::getInspectionName(inspectionId);
+
+			if (ok)
+			{
+				m_inspectionName = name;
+				return;
+			}
 		}
 	}
-}
 
-TADlgArchiveResultsPage::~TADlgArchiveResultsPage()
-{
+	SvStl::MessageManager e(SvStl::MsgType::Data);
+	e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
+	e.Throw();
 }
 #pragma endregion Constructor
+
 
 #pragma region Public Methods
 bool TADlgArchiveResultsPage::QueryAllowExit() 
@@ -97,10 +100,13 @@ bool TADlgArchiveResultsPage::QueryAllowExit()
 	UpdateData(TRUE); 
 
 	m_ValueController.Commit(SvOgu::PostAction::doReset);
+	m_ValueController.Init();
 
 	// Check the file path to the archive file for associated archive tool.
 
-	std::string ArchiveFilepath = m_pTool->GetUntranslatedFullResultFilepath();
+	//@TODO [Arvid][10.40][27.6.2023] should be: std::string ArchiveFilepath =m_ValueController.Get<_variant_t>(SvPb::ArchiveResultFilepathEId); (but see below)
+	std::string ArchiveFilepath = SvUl::createStdString(m_ValueController.Get<SvOgu::LinkedValueData>(SvPb::ArchiveResultFilepathEId).m_Value); //@TODO [Arvid][10.40][27.6.2023] ArchiveResultFilepathEId should refer to a SVStringValueObjectClass. But if does, Tid_ObjectBuilder_SetObjectValueError is displayed when loading a existing configuration containing an Archive Tool
+	
 
 	//check for valid drive for text archive
 	SvTo::ArchiveToolHelper athArchivePathAndName;
@@ -113,7 +119,7 @@ bool TADlgArchiveResultsPage::QueryAllowExit()
 		if (athArchivePathAndName.areTokensValid())
 		{
 			std::string TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFilepath );
-			if (false == SvFs::pathCanProbablyBeCreatedOrExistsAlready(TmpArchiveFileName.c_str()))
+			if (false == SvFs::pathCanProbablyBeCreatedOrExistsAlready(TmpArchiveFileName))
 			{
 				pathErrorDescriptionId = SvStl::Tid_InvalidKeywordsInPath;
 			}
@@ -141,17 +147,17 @@ bool TADlgArchiveResultsPage::QueryAllowExit()
 		return false;
 	}
 
-	m_pTool->m_dwAppendArchiveFile.SetValue(static_cast<DWORD> (m_AppendArchive));
-	m_pTool->m_bvoFormatResults.SetValue(m_FormatResults);
-	m_pTool->m_dwArchiveResultsMinimumNumberOfCharacters.SetValue(m_TotalWidth);
-	m_pTool->m_dwArchiveResultsNumberOfDecimals.SetValue(m_Decimals);
+	m_ValueController.Set<DWORD>(SvPb::ArchiveAppendArchiveFileEId, m_appendArchive);
+	m_ValueController.Set<BOOL>(SvPb::FormatArchiveToolResultsEId, m_formatResults);
+	m_ValueController.Set<DWORD>(SvPb::ArchiveResultsMinimumNumberOfCharactersEId, m_minimumNumberOfCharacters);
+	m_ValueController.Set<DWORD>(SvPb::ArchiveResultsNumberOfDecimalsEId, m_numberOfDecimals);
 
-	m_pTool->refreshResultArchiveList(m_ResultsToBeArchived);
+	m_ValueController.Commit();
+
+	m_pArchiveTool->refreshResultArchiveList(m_ResultsToBeArchived);
 
 	// Add newly selected values to headers.
-	BOOL bUseHeaders( false );
-	HRESULT hr = m_pTool->m_bvoUseHeaders.GetValue( bUseHeaders );
-	if( S_OK == hr && bUseHeaders )
+	if(m_ValueController.Get<DWORD>(SvPb::ArchiveUseColumnHeadersEId))
 	{
 		auto selectedHeaderNamePairs = GetSelectedHeaderNamePairs();
 		StoreHeaderValuesToTool(selectedHeaderNamePairs);
@@ -172,21 +178,29 @@ void TADlgArchiveResultsPage::DoDataExchange(CDataExchange* pDX)
 	CPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_SELECTED, m_selectedResultsWidget);
 	DDX_Control(pDX, IDC_SELECT_BUTTON, m_Select);
-	DDX_Check(pDX, IDC_CHECK_APPEND, m_AppendArchive);
-	DDX_Check(pDX, IDC_FORMAT_RESULTS, m_FormatResults);
-	DDX_Text(pDX, IDC_TOTAL_WIDTH, m_TotalWidth);
-	DDX_Text(pDX, IDC_DECIMAL, m_Decimals);
-	DDX_Check(pDX, IDC_HEADER_CHECK, m_ColumnHeaders);                  
-	DDX_Control(pDX, IDC_TOTAL_WIDTH, m_TotalWidthEdit);
-	DDX_Control(pDX, IDC_DECIMAL, m_DecimalsEdit);
+	DDX_Check(pDX, IDC_CHECK_APPEND, m_appendArchive);
+	DDX_Check(pDX, IDC_FORMAT_RESULTS, m_formatResults);
+	DDX_Text(pDX, IDC_MINIMUM_CHARACTERS, m_minimumNumberOfCharacters);
+	DDX_Text(pDX, IDC_DECIMAL, m_numberOfDecimals);
+	m_useColumnHeaders = (0 != m_useColumnHeaders) ? 1 : 0; //m_ValueController.Get<DWORD>(SvPb::ArchiveUseColumnHeadersEId) may have returned -1
+	DDX_Check(pDX, IDC_USE_HEADERS, m_useColumnHeaders);
+	DDX_Control(pDX, IDC_MINIMUM_CHARACTERS, m_minimumNumberOfCharactersEdit);
+	DDX_Control(pDX, IDC_DECIMAL, m_numberOfDecimalsEdit);
 	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FOLDERPATH1, m_resultFolderpathPart1Edit);
 	DDX_Control(pDX, IDC_BUTTON_RESULT_FOLDERPATH1, m_resultFolderpathPart1Button);
 	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FOLDERPATH2, m_resultFolderpathPart2Edit);
 	DDX_Control(pDX, IDC_BUTTON_RESULT_FOLDERPATH2, m_resultFolderpathPart2Button);
 	DDX_Control(pDX, IDC_ARCHIVE_RESULT_FILENAME, m_ResultFilenameEdit);
 	DDX_Control(pDX, IDC_BUTTON_RESULT_FILENAME, m_ResultFilenameButton);
-	m_DecimalsEdit.EnableWindow(m_FormatResults);
-	m_TotalWidthEdit.EnableWindow(m_FormatResults);
+	m_numberOfDecimalsEdit.EnableWindow(m_formatResults);
+	m_minimumNumberOfCharactersEdit.EnableWindow(m_formatResults);
+
+	CWnd *pHeaderButton = GetDlgItem(IDC_HEADER_BTN);
+
+	if (nullptr != pHeaderButton)
+	{
+		pHeaderButton->EnableWindow(0 != m_ResultsToBeArchived.size());
+	}
 }
 
 
@@ -194,9 +208,14 @@ BOOL TADlgArchiveResultsPage::OnInitDialog()
 {
 	CWaitCursor wait;
 
-	CPropertyPage::OnInitDialog();
-
 	m_ValueController.Init();
+
+	//these must be read from m_ValueController before CPropertyPage::OnInitDialog() is called
+	m_appendArchive = m_ValueController.Get<BOOL>(SvPb::ArchiveAppendArchiveFileEId);
+	m_formatResults = m_ValueController.Get<BOOL>(SvPb::FormatArchiveToolResultsEId);
+	m_useColumnHeaders = m_ValueController.Get<DWORD>(SvPb::ArchiveUseColumnHeadersEId);
+
+	CPropertyPage::OnInitDialog();
 
 	GetWindowText( m_strCaption );
 
@@ -210,27 +229,14 @@ BOOL TADlgArchiveResultsPage::OnInitDialog()
 	m_TreeBitmap.LoadBitmap( IDB_TREE );
 	m_Select.SetBitmap( static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()) );
 
-	DWORD dwTemp = 0;
-	m_pTool->m_dwAppendArchiveFile.GetValue(dwTemp);
-	m_AppendArchive = (int)dwTemp;
-
-	dwTemp = 0;
-	m_pTool->m_bvoFormatResults.GetValue(dwTemp);
-	m_FormatResults = (BOOL)dwTemp;
-
 	m_ResultFolderpathWidgetHelpers[0] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_resultFolderpathPart1Edit, m_resultFolderpathPart1Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFolderpathPart1EId, &m_ValueController);
 	m_ResultFolderpathWidgetHelpers[1] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_resultFolderpathPart2Edit, m_resultFolderpathPart2Button, m_inspectionId, m_taskId, SvPb::ArchiveResultFolderpathPart2EId, &m_ValueController);
 	m_ResultFolderpathWidgetHelpers[2] = std::make_unique<SvOgu::LinkedValueWidgetHelper>(m_ResultFilenameEdit, m_ResultFilenameButton, m_inspectionId, m_taskId, SvPb::ArchiveResultFilenameEId, &m_ValueController);
 
+	m_minimumNumberOfCharacters = m_ValueController.Get<DWORD>(SvPb::ArchiveResultsMinimumNumberOfCharactersEId);
+	m_numberOfDecimals = m_ValueController.Get<DWORD>(SvPb::ArchiveResultsNumberOfDecimalsEId);
 
-	m_pTool->m_dwArchiveResultsMinimumNumberOfCharacters.GetValue(m_TotalWidth);
-
-	m_pTool->m_dwArchiveResultsNumberOfDecimals.GetValue(m_Decimals);
-
-	m_pTool->m_bvoUseHeaders.GetValue(m_ColumnHeaders);
-	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(m_ColumnHeaders);
-
-	SVObjectReferenceVector resultVector = m_pTool->assembleResultReferenceVector();
+	SVObjectReferenceVector resultVector = m_pArchiveTool->assembleResultReferenceVector();
 	m_ResultsToBeArchived.swap(resultVector);
 
 	ReadSelectedObjects();
@@ -280,7 +286,7 @@ void TADlgArchiveResultsPage::ReadSelectedObjects()
 {
 	m_selectedResultsWidget.DeleteAllItems();
 
-	std::string toolsetPrefix = m_pTool->GetInspection()->GetName();
+	std::string toolsetPrefix = m_inspectionName;
 	toolsetPrefix += _T(".Tool Set.");
 
 	int Index = 0;
@@ -302,15 +308,13 @@ void TADlgArchiveResultsPage::ReadSelectedObjects()
 
 void TADlgArchiveResultsPage::ShowObjectSelector()
 {
-	uint32_t InspectionId(m_pTool->GetInspection()->getObjectId());
-
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::toolsetItems }, InspectionId, SvPb::viewable, 
-		SvDef::InvalidObjectId, false, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId());
+		{ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::toolsetItems }, m_inspectionId, SvPb::viewable, 
+		SvDef::InvalidObjectId, false, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_taskId);
 
-	SvCmd::InspectionCommands(InspectionId, requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
@@ -324,7 +328,7 @@ void TADlgArchiveResultsPage::ShowObjectSelector()
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	std::string Title = std::format( _T("{} - {}"), m_strCaption.GetString(), m_pTool->GetInspection()->GetName() );
+	std::string Title = std::format( _T("{} - {}"), m_strCaption.GetString(), m_inspectionName );
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption.GetString(), Filter.c_str(), this );
 
@@ -352,7 +356,7 @@ void TADlgArchiveResultsPage::OnBrowse()
 	SvFs::ensureDirectoryExists( firstPart.c_str(), TRUE );
 
 	folderpathPart1.SetFileType(SvFs::FileType::defaultType);
-	folderpathPart1.SetDefaultPathName(firstPart.c_str() );
+	folderpathPart1.SetDefaultPathName(firstPart );
 	if (folderpathPart1.SelectPath())
 	{
 		m_resultFolderpathPart1Edit.SetWindowText(folderpathPart1.GetPathName().c_str());
@@ -365,6 +369,7 @@ void TADlgArchiveResultsPage::OnFormatResults()
 	UpdateData(TRUE);
 }
 
+
 SvDef::StringPairVector TADlgArchiveResultsPage::GetSelectedHeaderNamePairs()
 {
 	// Inputs:
@@ -373,21 +378,19 @@ SvDef::StringPairVector TADlgArchiveResultsPage::GetSelectedHeaderNamePairs()
 	// output a vector of Object Name / Label pairs filtered by the selected objects..
 
 	// Get Lists....
-	SvDef::StringVector headerLabels;
-	SvDef::StringVector objectrefIdentifiers;
-	m_pTool->m_HeaderLabelNames.GetArrayValues( headerLabels );
-	m_pTool->m_HeaderObjectIDs.GetArrayValues( objectrefIdentifiers );
+
+	SvDef::StringVector headerLabels = m_ValueController.getStringVector(SvPb::ArchiveHeaderLabelEId);
+	SvDef::StringVector objectrefIdentifiers = m_ValueController.getStringVector(SvPb::ArchiveHeaderEId); //@TODO [Arvid][10.40][27.6.2023] this is empty (and the corresponding variant not even of array type the first time (only). Why?)
 
 	std::map<std::string, std::string> headerLabelByObjectRefIdentifier;
 
 	// Create an associative array for finding header labels by objectRefIdentifier
-	for( SvDef::StringVector::const_iterator it = objectrefIdentifiers.begin(),it1 = headerLabels.begin() ; it != objectrefIdentifiers.end() ;++it1, ++it)
+	for( SvDef::StringVector::const_iterator it = objectrefIdentifiers.begin(), it1 = headerLabels.begin() ; it != objectrefIdentifiers.end() ;++it1, ++it)
 	{
 		headerLabelByObjectRefIdentifier[*it] = *it1;
 	}
 
-	std::string toolsetPrefix = m_pTool->GetInspection()->GetName();
-	toolsetPrefix += _T(".Tool Set.");
+	std::string toolsetPrefix = m_inspectionName + _T(".Tool Set.");
 
 	SvDef::StringPairVector selectedHeaderPairs;
 	for(auto const& rEntry : m_ResultsToBeArchived)
@@ -416,24 +419,25 @@ SvDef::StringPairVector TADlgArchiveResultsPage::GetSelectedHeaderNamePairs()
 	return selectedHeaderPairs;
 }
 
+
 void TADlgArchiveResultsPage::StoreHeaderValuesToTool(SvDef::StringPairVector& HeaderPairs)
 {
 	SvDef::StringVector headerLabels;
 	SvDef::StringVector objectrefIdentifiers;
-	for(SvDef::StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
+	for(SvDef::StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end(); ++it)
 	{
 		objectrefIdentifiers.push_back( it->first );
 		headerLabels.push_back( it->second );
 	}
-	m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-	m_pTool->m_HeaderObjectIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-	m_pTool->m_HeaderLabelNames.SetArrayValues(headerLabels);
-	m_pTool->m_HeaderObjectIDs.SetArrayValues( objectrefIdentifiers);
+
+	m_ValueController.writeStringVector(headerLabels, SvPb::ArchiveHeaderLabelEId);
+	m_ValueController.writeStringVector(objectrefIdentifiers, SvPb::ArchiveHeaderEId);
+	m_ValueController.Commit();
 }
 
 void TADlgArchiveResultsPage::OnBnClickedHeaderBtn()
 {
-	// Get a collection of header name/Label pairs from this class and the tool.
+	// Get a collection of header name/label pairs from this class and the tool.
 	
 	SvDef::StringPairVector HeaderPairs = GetSelectedHeaderNamePairs(); // filters by what is selected.
 
@@ -452,10 +456,8 @@ void TADlgArchiveResultsPage::OnBnClickedHeaderCheck()
 {
 	UpdateData( TRUE );
 
-	BOOL bEnable = 0 != m_ResultsToBeArchived.size() && m_ColumnHeaders;
-	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(bEnable);
-
-	m_pTool->m_bvoUseHeaders.SetValue(m_ColumnHeaders);
+	m_ValueController.Set<DWORD>(SvPb::ArchiveUseColumnHeadersEId, m_useColumnHeaders);
+	m_ValueController.Commit();
 }
 
 

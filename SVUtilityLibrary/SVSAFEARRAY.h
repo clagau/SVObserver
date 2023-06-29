@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2008 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSAFEARRAY
+//* .Module Name   : SVSAFEARRAY
 //* .File Name       : $Workfile:   SVSAFEARRAY.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -100,26 +100,26 @@ inline std::vector<T> getVectorFromOneDim(const _variant_t& rValue)
 		//set all value to array
 		for (long i = 0; i < arraySize; i++)
 		{
-			T  value;
+			T value;
 			switch (rValue.vt)
 			{
 
-				case  (VT_ARRAY | VT_I8):
+				case (VT_ARRAY | VT_I8):
 				{
-					long long  temp;
+					long long temp;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&temp));
 					value = static_cast<T>(temp);
 					break;
 				}
 
-				case  (VT_ARRAY | VT_R8):
+				case (VT_ARRAY | VT_R8):
 				{
 					double dtemp;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&dtemp));
 					value = static_cast<T>(dtemp);
 					break;
 				}
-				case  (VT_ARRAY | VT_R4):
+				case (VT_ARRAY | VT_R4):
 				{
 					float temp;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&temp));
@@ -136,7 +136,7 @@ inline std::vector<T> getVectorFromOneDim(const _variant_t& rValue)
 				}
 				case VT_ARRAY | VT_UI4:
 				{
-					unsigned long  ulong;
+					unsigned long ulong;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&ulong));
 					value = static_cast<T>(ulong);
 					break;
@@ -144,18 +144,28 @@ inline std::vector<T> getVectorFromOneDim(const _variant_t& rValue)
 
 				case VT_ARRAY | VT_UI2:
 				{
-					unsigned short  ushort;
+					unsigned short ushort;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&ushort));
 					value = static_cast<T>(ushort);
 					break;
 				}
+
 				case VT_ARRAY | VT_I2:
 				{
-					short  shortv;
+					short shortv;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&shortv));
 					value = static_cast<T>(shortv);
 					break;
 				}
+
+				case VT_ARRAY | VT_BSTR:
+				{
+					value = 0; //avoid warning
+					Log_Assert(false); // this function is only meant for numbers!
+					break;
+				}
+
+
 				default:
 				{
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&value));
@@ -188,12 +198,39 @@ inline std::vector<SVPoint<long>> getVectorFromOneDim<SVPoint<long>>(const _vari
 }
 
 template<>
-inline std::vector<std::string> getVectorFromOneDim<std::string>(const _variant_t& )
+inline std::vector<std::string> getVectorFromOneDim<std::string>(const _variant_t& rValue)
 {
 	std::vector<std::string> result;
-	Log_Assert(false);
+	long arraySize = getArraySizeFromOneDim(rValue);
+	if (arraySize > 0)
+	{
+		result.resize(arraySize);
+		//set all value to array
+		for (long i = 0; i < arraySize; i++)
+		{
+			std::string value;
+			switch (rValue.vt)
+			{
+				case VT_ARRAY | VT_BSTR:
+				{
+					_bstr_t str;
+
+					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*>(str.GetAddress()));
+					value = createStdString(str);
+					break;
+				}
+				default:
+				{
+					Log_Assert(false); // this function is not meant for numbers!
+					break;
+				}
+			}
+			result[i] = value;
+		}
+	}
 	return result;
 }
+
 
 template<>
 inline std::vector<_variant_t> getVectorFromOneDim<_variant_t>(const _variant_t& rValue)
@@ -218,14 +255,14 @@ inline std::vector<_variant_t> getVectorFromOneDim<_variant_t>(const _variant_t&
 					break;
 				}
 
-				case  (VT_ARRAY | VT_R8):
+				case (VT_ARRAY | VT_R8):
 				{
 					double dtemp;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&dtemp));
 					value = dtemp;
 					break;
 				}
-				case  (VT_ARRAY | VT_R4):
+				case (VT_ARRAY | VT_R4):
 				{
 					float temp;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&temp));
@@ -242,7 +279,7 @@ inline std::vector<_variant_t> getVectorFromOneDim<_variant_t>(const _variant_t&
 				}
 				case VT_ARRAY | VT_UI4:
 				{
-					unsigned long  ulong;
+					unsigned long ulong;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&ulong));
 					value = ulong;
 					break;
@@ -250,14 +287,14 @@ inline std::vector<_variant_t> getVectorFromOneDim<_variant_t>(const _variant_t&
 
 				case VT_ARRAY | VT_UI2:
 				{
-					unsigned short  ushort;
+					unsigned short ushort;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&ushort));
 					value = ushort;
 					break;
 				}
 				case VT_ARRAY | VT_I2:
 				{
-					short  shortv;
+					short shortv;
 					::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&shortv));
 					value = shortv;
 					break;
@@ -285,15 +322,15 @@ inline bool getSingleVariantFromArrayOneDim(const _variant_t& rValue, long pos, 
 		switch (rValue.vt)
 		{
 
-			case  (VT_ARRAY | VT_I8):
+			case (VT_ARRAY | VT_I8):
 			{
-				long long  temp;
+				long long temp;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&temp));
 				value = static_cast<T>(temp);
 				break;
 			}
 
-			case  (VT_ARRAY | VT_R8):
+			case (VT_ARRAY | VT_R8):
 			{
 				double dtemp;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&dtemp));
@@ -301,7 +338,7 @@ inline bool getSingleVariantFromArrayOneDim(const _variant_t& rValue, long pos, 
 				break;
 			}
 
-			case  (VT_ARRAY | VT_R4):
+			case (VT_ARRAY | VT_R4):
 			{
 				float temp;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&temp));
@@ -317,7 +354,7 @@ inline bool getSingleVariantFromArrayOneDim(const _variant_t& rValue, long pos, 
 			}
 			case VT_ARRAY | VT_UI4:
 			{
-				unsigned long  ulong;
+				unsigned long ulong;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&ulong));
 				value = static_cast<T>(ulong);
 				break;
@@ -325,14 +362,14 @@ inline bool getSingleVariantFromArrayOneDim(const _variant_t& rValue, long pos, 
 
 			case VT_ARRAY | VT_UI2:
 			{
-				unsigned short  ushort;
+				unsigned short ushort;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&ushort));
 				value = static_cast<T>(ushort);
 				break;
 			}
 			case VT_ARRAY | VT_I2:
 			{
-				short  shortv;
+				short shortv;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&shortv));
 				value = static_cast<T>(shortv);
 				break;
@@ -358,15 +395,15 @@ inline bool getSingleVariantFromArrayOneDim<_variant_t>(const _variant_t& rValue
 		switch (rValue.vt)
 		{
 
-			case  (VT_ARRAY | VT_I8):
+			case (VT_ARRAY | VT_I8):
 			{
-				long long  temp;
+				long long temp;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&temp));
 				value = temp;
 				break;
 			}
 
-			case  (VT_ARRAY | VT_R8):
+			case (VT_ARRAY | VT_R8):
 			{
 				double dtemp;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&dtemp));
@@ -374,7 +411,7 @@ inline bool getSingleVariantFromArrayOneDim<_variant_t>(const _variant_t& rValue
 				break;
 			}
 
-			case  (VT_ARRAY | VT_R4):
+			case (VT_ARRAY | VT_R4):
 			{
 				float temp;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&temp));
@@ -390,7 +427,7 @@ inline bool getSingleVariantFromArrayOneDim<_variant_t>(const _variant_t& rValue
 			}
 			case VT_ARRAY | VT_UI4:
 			{
-				unsigned long  ulong;
+				unsigned long ulong;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&ulong));
 				value = ulong;
 				break;
@@ -398,14 +435,14 @@ inline bool getSingleVariantFromArrayOneDim<_variant_t>(const _variant_t& rValue
 
 			case VT_ARRAY | VT_UI2:
 			{
-				unsigned short  ushort;
+				unsigned short ushort;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&ushort));
 				value = ushort;
 				break;
 			}
 			case VT_ARRAY | VT_I2:
 			{
-				short  shortv;
+				short shortv;
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, static_cast<void*> (&shortv));
 				value = shortv;
 				break;

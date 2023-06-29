@@ -171,7 +171,7 @@ HRESULT DoubleSortValueObject::getValues(std::vector<_variant_t>& rValues) const
 	_variant_t Value;
 	for (int i = 0; i < ResultSize && S_OK == Result; i++)
 	{
-		//must be get once by once, because values can be disorder and not in a row.
+		//must be gotten one by one, because values can be disordered and not in a row.
 		Result = getValue(Value, i);
 		rValues[i] = Value;
 	}

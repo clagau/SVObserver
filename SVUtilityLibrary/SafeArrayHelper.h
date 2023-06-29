@@ -40,7 +40,7 @@ _variant_t GetEmptySafeArray(VARTYPE  vart);
 
 bool isSameVar(const _variant_t& rValue1, const _variant_t& rValue2);
 
-/// function converts 1 dim safearray of type T to  ; seperated values
+/// function converts 1 dim safearray of type T to a string of ';'-separated values 
 template<typename T>
 std::string SafeArrayToString(SAFEARRAY* pArray)
 {
@@ -67,8 +67,8 @@ std::string SafeArrayToString(SAFEARRAY* pArray)
 	return {};
 }
 
-template<typename T>
-std::vector<T> SafeArrayToVector(SAFEARRAY* pArray)
+template<typename T> // T must be a number type
+std::vector<T> SafeArrayToVector(SAFEARRAY* pArray) 
 {
 	if (nullptr != pArray)
 	{
@@ -91,7 +91,7 @@ std::vector<T> SafeArrayToVector(SAFEARRAY* pArray)
 
 ///function creates a 1 dim safe array of type T from comma separated string. return value is size of array  
 ///empty string is array of size 0, negative result signals an error.
-template<typename T>
+template<typename T> // T must be a number type
 int StringToSafeArray(const std::string& rText, _variant_t& rVariant)
 {
 	T tempType {};
@@ -137,4 +137,6 @@ int StringToSafeArray(const std::string& rText, _variant_t& rVariant)
 
 template<typename T>
 variant_t vectorToSafeArray(const std::vector<T>& rVec);
+
+_variant_t getVariantFromStringVector(const std::vector<std::string>& strings);
 }

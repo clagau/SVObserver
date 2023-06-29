@@ -803,7 +803,7 @@ enum EmbeddedIdEnum
 	ArchiveUseTriggerCountForImages_obsolete_EId = 128;
 	ArchiveMaxImagesCountEId = 129;
 	ArchiveMethodEId = 130;
-	ArchiveUseHeadersEId = 131;
+	ArchiveUseColumnHeadersEId = 131;
 	ArchiveHeaderLabelEId = 132;
 	ArchiveHeaderEId = 133;
 	ArchiveResultNamesEId = 134;

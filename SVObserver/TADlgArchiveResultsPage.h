@@ -35,7 +35,7 @@ class TADlgArchiveResultsPage : public CPropertyPage, public SvOg::ISVPropertyPa
 #pragma region Constructor
 public:
 	TADlgArchiveResultsPage( uint32_t inspectionId, uint32_t taskObjectId, TADlgSheetClass* pParent);
-	virtual ~TADlgArchiveResultsPage();
+	virtual ~TADlgArchiveResultsPage() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -77,22 +77,24 @@ protected:
 
 #pragma region Private Members
 private:
-	TADlgSheetClass* m_pParent;		//Pointer to the Tool Adjust sheet
+	TADlgSheetClass* m_pParent;							//Pointer to the Tool Adjust sheet
 	CListCtrl   m_selectedResultsWidget;			    //The list control containing the selected results
 	SVObjectReferenceVector m_ResultsToBeArchived;      //contains references to objects that are to be archived
-	SvTo::SVArchiveTool* m_pTool = nullptr;				//Pointer to Archive Tool
+	SvTo::SVArchiveTool* m_pArchiveTool = nullptr;		//Pointer to Archive Tool
 	CImageList m_StateImageList;						//The state image list
 	CButton m_Select;									//The tree select button
 	CBitmap m_TreeBitmap;								//The bitmap for the tree button
-	BOOL	m_AppendArchive;							//Append archive flag
-	BOOL    m_FormatResults;							//Flag: Use special format for Archive Tool value strings?
-	DWORD   m_TotalWidth;								//Minimum total number of characters for Archive Tool value strings
-	CEdit	m_TotalWidthEdit;						    //Edit control for minimum total number of characters
-	DWORD   m_Decimals;									//Number of decimal places for Archive Tool value strings - but only if if that value has decimal places
-	CEdit	m_DecimalsEdit;								//Edit control for number of decimal places 
-	BOOL	m_ColumnHeaders;							//Column headers flag
+	BOOL	m_appendArchive = false;					//Append archive flag
+	BOOL    m_formatResults = false;					//Flag: Use special format for Archive Tool value strings?
+	DWORD   m_minimumNumberOfCharacters = 8;							//Minimum total number of characters for Archive Tool value strings
+	CEdit	m_minimumNumberOfCharactersEdit;						    //Edit control for minimum total number of characters
+	DWORD   m_numberOfDecimals = 2;  							//Number of decimal places for Archive Tool value strings - but only if if that value has decimal places
+	CEdit	m_numberOfDecimalsEdit;								//Edit control for number of decimal places 
+	BOOL	m_useColumnHeaders = false;					//Column headers flag
 	uint32_t m_inspectionId;
 	uint32_t m_taskId;
+
+	std::string m_inspectionName;
 
 	//edit boxes for the parts of the archive file path and buttons to manipulate them
 	CEdit	m_resultFolderpathPart1Edit;					

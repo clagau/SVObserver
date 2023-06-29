@@ -8,8 +8,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include <boost/lexical_cast.hpp>
-#include "Safearrayhelper.h"
+#include "SafeArrayHelper.h"
 #include <atlsafe.h>
+
+#include <locale> 
+#include <codecvt>
 #pragma endregion Includes
 namespace SvUl
 {
@@ -476,9 +479,26 @@ variant_t vectorToSafeArray<__int64>(const std::vector<__int64>& rVec)
 {
 	return vectorToSafeArray(rVec, VT_I8);
 }
+
+_variant_t getVariantFromStringVector(const std::vector<std::string>& strings)
+{
+	_variant_t var;
+	var.vt = VT_ARRAY | VT_BSTR;
+
+	SAFEARRAYBOUND sa_bound;
+	sa_bound.cElements = static_cast<ULONG>(strings.size());
+	sa_bound.lLbound = 0;
+	var.parray = SafeArrayCreate(VT_BSTR, 1, &sa_bound);
+
+	for (long j = 0; j < static_cast<long>(strings.size()); ++j)
+	{
+		_bstr_t bstTmp = strings[j].c_str();
+		SafeArrayPutElement(var.parray, &j, bstTmp.GetBSTR());
+	}
+
+	return var;
 }
 
 
 
-
-
+}

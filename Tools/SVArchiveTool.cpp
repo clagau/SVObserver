@@ -96,8 +96,6 @@ void SVArchiveTool::initializeArchiveTool()
 	m_currentImageQueueLength.setSaveValueFlag(false);
 
 	RegisterEmbeddedObject(&m_resultFilepath, SvPb::ArchiveResultFilepathEId, IDS_OBJECTNAME_ARCHIVE_RESULT_FILEPATH, true, SvOi::SVResetItemToolAndDependent, false);
-	m_resultFilepath.SetDefaultValue(_variant_t(""), true);
-	m_resultFilepath.setValueType(SvPb::TypeText);
 
 	RegisterEmbeddedObject(&m_resultFolderpathPart1, SvPb::ArchiveResultFolderpathPart1EId, IDS_OBJECTNAME_ARCHIVE_RESULT_FOLDERPATH1, true, SvOi::SVResetItemToolAndDependent, true);
 	m_resultFolderpathPart1.SetDefaultValue(_variant_t(""), true);
@@ -186,7 +184,6 @@ void SVArchiveTool::initializeArchiveTool()
 		SvPb::ArchiveImageFileFormatEId,
 		IDS_OBJECTNAME_ARCHIVE_TOOL_FORMAT,
 		false, SvOi::SVResetItemNone, true);
-	
 
 	RegisterEmbeddedObject(
 		&m_HeaderLabelNames,
@@ -202,7 +199,7 @@ void SVArchiveTool::initializeArchiveTool()
 
 	RegisterEmbeddedObject(
 		&m_bvoUseHeaders,
-		SvPb::ArchiveUseHeadersEId,
+		SvPb::ArchiveUseColumnHeadersEId,
 		IDS_OBJECTNAME_ENABLE_HEADERS,
 		false, SvOi::SVResetItemNone, true);
 

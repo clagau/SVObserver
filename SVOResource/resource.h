@@ -1588,7 +1588,7 @@
 #define IDC_SECOND_IMAGE                15209
 #define IDC_BROWSE                      15217
 #define IDC_SORT_FEATURE_EDT            15218
-#define IDC_TOTAL_WIDTH                 15218
+#define IDC_MINIMUM_CHARACTERS                 15218
 #define IDC_RUN_ONCE                    15219
 #define IDC_BROWSE2                     15220
 #define IDC_RE_INITIALIZE               15220
@@ -2259,7 +2259,7 @@
 #define IDC_STATIC_HORIZ                16018
 #define IDC_HEADER_BTN                  16019
 #define IDC_STRING_LIST_EDIT            16021
-#define IDC_HEADER_CHECK                16022
+#define IDC_USE_HEADERS                16022
 #define IDC_SELECTED_TEXT               16023
 #define IDC_DISABLE_TOOL                16024
 #define IDC_AVAILABLE_PPQ_LIST          16025

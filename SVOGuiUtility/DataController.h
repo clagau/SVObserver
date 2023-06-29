@@ -12,6 +12,7 @@
 #include "Definitions\NameValueVector.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary\SVSafeArray.h"
 #include "LinkedValue.h"
 #include "ValuesAccessor.h"
 #pragma endregion Includes
@@ -203,7 +204,21 @@ namespace SvOgu
 				return false;
 			}
 			return true;
+
 		}
+
+		SvDef::StringVector getStringVector(SvPb::EmbeddedIdEnum embeddedID)
+		{
+			return SvUl::getVectorFromOneDim<std::string>(Get<_variant_t>(embeddedID));
+		}
+
+		void writeStringVector(SvDef::StringVector& strings, SvPb::EmbeddedIdEnum embeddedID)
+		{
+			_variant_t var = SvUl::getVariantFromStringVector(strings);
+
+			Set<_variant_t>(embeddedID, var);
+		}
+
 #pragma endregion Public Methods
 
 #pragma region Member Variables
