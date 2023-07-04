@@ -15,7 +15,7 @@
 #include "SVPPQEntryDialog.h"
 #include "SVPPQObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 //******************************************************************************
@@ -220,7 +220,7 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 		}
 	}
 
-	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+	SvimState::AddState( SV_STATE_MODIFIED );
 
 	CPropertyPage::OnOK();
 }

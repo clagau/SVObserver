@@ -13,7 +13,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
@@ -80,7 +80,7 @@ void ResultTableListCtrl::updateList()
 		pObject->getValue(Value);
 		Update = 0.0 < Value ? true : false;
 	}
-	Update = Update || !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+	Update = Update || !SvimState::CheckState(SV_STATE_RUNNING);
 	if (!Update)
 	{ 
 		return;

@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2008 by Körber Pharma Inspection GmbH. All Rights Reserved, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSVIMStateClass
-//* .File Name       : $Workfile:   SVSVIMStateClass.h
+//* .Module Name     : SvimState
+//* .File Name       : $Workfile:   SvimState.h
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
@@ -11,8 +11,6 @@
 
 #pragma once
 #pragma region Includes
-//Moved to precompiled header: #include <atomic>
-//Moved to precompiled header: #include <functional>
 #include "SVProtoBuf/SVRC-Enum.h"
 #pragma endregion Includes
 
@@ -60,21 +58,22 @@ typedef std::function<void(SvPb::NotifyType, const _variant_t&)> NotifyFunctor;
 //RUNNING - SVIM on-line (processing inspection documents).
 //UNAVAILABLE - SVIM is busy or cannot respond to a command 
 //at this time.
-class SVSVIMStateClass
+
+
+class SvimState
 {
 public:
-
 	//RAII helper struct for ms_LockCountSvrc
 	struct SVRCBlocker
 	{
 	public:
 		SVRCBlocker()
 		{
-			SVSVIMStateClass::ms_LockCountSvrc++;
+			SvimState::ms_LockCountSvrc++;
 		}
 		~SVRCBlocker()
 		{
-			SVSVIMStateClass::ms_LockCountSvrc--;
+			SvimState::ms_LockCountSvrc--;
 		}
 
 	};
@@ -82,13 +81,25 @@ public:
 	//RAII class to set and reset the state
 	class SetResetState
 	{
+
 	public:
-		explicit SetResetState(DWORD state, std::function<bool()> acquirer = [](){return true; }, std::function<void()> releaser = [](){}) :
-			m_state(state), m_ok(acquirer()), m_releaser(releaser)
+		explicit SetResetState(DWORD state, std::function<bool()> acquire = [](){return true; }, std::function<void()> release = [](){}) :
+			m_state(state), m_ok(acquire()), m_release(release)
 		{
 			if(m_ok)
 			{
-				SVSVIMStateClass::AddState(m_state);
+				bool addState = true;
+				if (m_state == SV_STATE_EDITING)
+				{
+					if (++ms_EditingStates > 1) // i.e. we _are_ already in that state: we don't enter it again!
+					{
+						addState = false;
+					}
+				}
+				if (addState)
+				{
+					SvimState::AddState(m_state);
+				}
 			}
 		}
 
@@ -96,8 +107,18 @@ public:
 		{
 			if (m_ok)
 			{
-				m_releaser();
-				SVSVIMStateClass::RemoveState(m_state);
+				bool removeState = true;
+				if (m_state == SV_STATE_EDITING)
+				{
+					removeState = (--ms_EditingStates <= 0);
+					// i.e., we are currently leaving an editing state ON TOP on another editing state. Hence, we do not remove the flag yet!
+				}
+
+				if (removeState)
+				{
+					m_release();
+					SvimState::RemoveState(m_state);
+				}
 			}
 		}
 
@@ -107,13 +128,14 @@ public:
 		}
 
 	private:
+
 		const DWORD m_state;
 		const bool m_ok;
-		std::function<void()> m_releaser;
+		std::function<void()> m_release;
 	};
 
 	static void OutputDebugState();
-	static long GetState() { return m_SVIMState; }
+	static long GetState() { return ms_fullState; }
 
 	//This operation adds a sub-state to the existing state 
 	//value.  The value passed in as a parameter is ORed to 
@@ -138,11 +160,11 @@ public:
 	/// \param removeStates [in] States which should be removed.
 	static void changeState(DWORD addStates, DWORD removeStates);
 
-	static SvPb::DeviceModeType getCurrentMode() { return m_CurrentMode; }
+	static SvPb::DeviceModeType getCurrentMode() { return ms_CurrentMode; }
 
-	static __time64_t getLastModifiedTime() { return m_lastModifiedTime; }
+	static __time64_t getLastModifiedTime() { return ms_lastModifiedTime; }
 
-	static __time64_t getLoadedSinceTime() { return m_loadedSinceTime;}
+	static __time64_t getLoadedSinceTime() { return ms_loadedSinceTime;}
 
 	//************************************
 	//! Sets the notification function
@@ -150,8 +172,8 @@ public:
 	//************************************
 	static void setNotificationFunction(const NotifyFunctor& Notify);
 
-	static bool IsAutoSaveRequired() { return m_AutoSaveRequired; }
-	static void SetAutoSaveRequired(bool required) { m_AutoSaveRequired = required; }
+	static bool IsAutoSaveRequired() { return ms_AutoSaveRequired; }
+	static void SetAutoSaveRequired(bool required) { ms_AutoSaveRequired = required; }
 
 	static bool isSvrcBlocked();
 
@@ -160,6 +182,10 @@ public:
 	static std::string GetHash();
 	static void ConfigWasLoaded(LPCSTR hash = nullptr);
 	static void ConfigWasUnloaded();
+
+	static bool IsReloadedAfterCopyToolsToClipboard() { return ms_isReloadedAfterCopyToolsToClipboard; };
+	static void SetReloadAfterCopyToolsToClipboard(bool flag) { ms_isReloadedAfterCopyToolsToClipboard = flag; };
+
 
 private:
 	//************************************
@@ -173,24 +199,27 @@ private:
 	
 	static void setLastModifiedTime();
 
-	SVSVIMStateClass() = delete;
+	SvimState() = delete;
 
-	virtual ~SVSVIMStateClass() = delete;
+	virtual ~SvimState() = delete;
 
-	static NotifyFunctor m_pNotify;	//! Notify functor when state changes
+	static NotifyFunctor ms_notify;	//! Notify functor when state changes
 
 	//This attribute contain the SVIM state value.
-	static std::atomic_long m_SVIMState;
+	static std::atomic_long ms_fullState;
 
-	static std::atomic<SvPb::DeviceModeType> m_CurrentMode;
+	static std::atomic<SvPb::DeviceModeType> ms_CurrentMode;
 
-	static std::atomic<__time64_t> m_lastModifiedTime;
-	static std::atomic<__time64_t> m_loadedSinceTime;
+	static std::atomic<__time64_t> ms_lastModifiedTime;
+	static std::atomic<__time64_t> ms_loadedSinceTime;
 	static std::mutex ms_protectHash;
 	static std::string ms_hash;
 
-	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
+	static bool ms_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
 	static std::atomic<int>  ms_LockCountSvrc; //< ms_LockCountSvrc >  0 prevents some  SVRC command to avoid crashes because of multi threading issues 
+
+	static std::atomic<bool> ms_isReloadedAfterCopyToolsToClipboard;
+	static int64_t ms_EditingStates;
 };
 
 

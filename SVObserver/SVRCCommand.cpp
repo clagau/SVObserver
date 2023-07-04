@@ -29,7 +29,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "Triggering/SVTriggerClass.h"
@@ -43,9 +43,9 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Ta
 	DWORD notAllowedStates = SV_STATE_UNAVAILABLE;
 
 	SvPb::GetVersionResponse Response;
-	if (false == SVSVIMStateClass::CheckState(notAllowedStates))
+	if (false == SvimState::CheckState(notAllowedStates))
 	{
-		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetShortTitleVersion()));
 	}
 	task.finish(std::move(Response));
@@ -55,8 +55,8 @@ void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<S
 {
 	SvPb::GetDeviceModeResponse Response;
 	{
-		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-		Response.set_mode(SVSVIMStateClass::getCurrentMode());
+		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		Response.set_mode(SvimState::getCurrentMode());
 	}
 	task.finish(std::move(Response));
 }
@@ -64,7 +64,7 @@ void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<S
 void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
 	
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 
 	if (S_OK == result)
 	{
@@ -77,7 +77,7 @@ void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRp
 			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 			if (nullptr != pConfig)
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				//Note this needs to be done using SendMessage due to this being a worker thread
 				result = GlobalRCSetMode(static_cast<unsigned long> (DesiredMode));
 			}
@@ -101,25 +101,25 @@ void SVRCCommand::GetState(const SvPb::GetStateRequest&, SvRpc::Task<SvPb::GetSt
 	SvPb::GetStateResponse Response;
 	unsigned long State{ 0L };
 
-	State |= SVSVIMStateClass::CheckState(SV_STATE_READY) ? SvDef::SVIM_CONFIG_LOADED : 0;
-	State |= SVSVIMStateClass::CheckState(SV_STATE_SAVING) ? SvDef::SVIM_SAVING_CONFIG : 0;
-	State |= SVSVIMStateClass::CheckState(SV_STATE_LOADING) ? SvDef::SVIM_CONFIG_LOADING : 0;
-	State |= SVSVIMStateClass::CheckState(SV_STATE_EDIT) ? SvDef::SVIM_SETUPMODE : 0;
-	State |= SVSVIMStateClass::CheckState(SV_STATE_CLOSING) ? SvDef::SVIM_STOPPING : 0;
-	State |= SVSVIMStateClass::CheckState(SV_STATE_START_PENDING) ? SvDef::SVIM_ONLINE_PENDING : 0;
+	State |= SvimState::CheckState(SV_STATE_READY) ? SvDef::SVIM_CONFIG_LOADED : 0;
+	State |= SvimState::CheckState(SV_STATE_SAVING) ? SvDef::SVIM_SAVING_CONFIG : 0;
+	State |= SvimState::CheckState(SV_STATE_LOADING) ? SvDef::SVIM_CONFIG_LOADING : 0;
+	State |= SvimState::CheckState(SV_STATE_EDIT) ? SvDef::SVIM_SETUPMODE : 0;
+	State |= SvimState::CheckState(SV_STATE_CLOSING) ? SvDef::SVIM_STOPPING : 0;
+	State |= SvimState::CheckState(SV_STATE_START_PENDING) ? SvDef::SVIM_ONLINE_PENDING : 0;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		State |= SvDef::SVIM_ONLINE;
 		// testing (but not regression testing) sets the running flag
-		State |= !SVSVIMStateClass::CheckState(SV_STATE_TEST) ? SvDef::SVIM_RUNNING : 0;
+		State |= !SvimState::CheckState(SV_STATE_TEST) ? SvDef::SVIM_RUNNING : 0;
 	}
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+	if (SvimState::CheckState(SV_STATE_REGRESSION))
 	{
 		State |= SvDef::SVIM_REGRESSION_TEST;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_TEST))// can be testing without regression testing, but can't be regression testing without testing
+	else if (SvimState::CheckState(SV_STATE_TEST))// can be testing without regression testing, but can't be regression testing without testing
 	{
 		State |= SvDef::SVIM_RUNNING_TEST;
 	}
@@ -130,7 +130,7 @@ void SVRCCommand::GetState(const SvPb::GetStateRequest&, SvRpc::Task<SvPb::GetSt
 
 void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<SvPb::GetConfigResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetConfigResponse Response;
 
 	if (S_OK == result)
@@ -160,7 +160,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 			{
 				try
 				{
-					SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+					SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 					result = GlobalRCSaveConfiguration(TempFileName.c_str());
 				}
 				catch (const SvStl::MessageContainer& rSvE)
@@ -200,12 +200,12 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
 
 	// Check if we are in an allowed state first
 	// Not allowed to perform if in Regression or Test
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	if (SvimState::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
 	{
 		result = SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
@@ -242,7 +242,7 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 				fileType = (1 == fileVersion) ? ConfigFileType::PackedFormat : fileType;
 
 				{
-					SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+					SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 					result = GlobalRCLoadPackedConfiguration(TempFileName.c_str(), fileType);
 				}
 				::remove(TempFileName.c_str());
@@ -275,12 +275,12 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 
 void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Task<SvPb::GetOfflineCountResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetOfflineCountResponse Response;
 
 	if (S_OK == result)
 	{
-		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		Response.set_count(getSvoOfflineCount());
 	}
 
@@ -289,10 +289,10 @@ void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Ta
 
 void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES |SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ SvimState::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES |SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
 	SvPb::StandardResponse Response;
 
-	if (S_OK == result && SVSVIMStateClass::CheckState(SV_STATE_READY))
+	if (S_OK == result && SvimState::CheckState(SV_STATE_READY))
 	{
 		SVConfigurationObject* pConfig = nullptr;
 
@@ -301,7 +301,7 @@ void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rR
 		{
 			std::string listName = SvUl::to_ansi(rRequest.listname());
 			bool bActivate = rRequest.activate();
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = pConfig->ActivateRemoteMonitorList(listName, bActivate);
 		}
 		else
@@ -321,7 +321,7 @@ void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rR
 
 void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest, SvRpc::Task<SvPb::GetProductFilterResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetProductFilterResponse Response;
 
 	if (S_OK == result)
@@ -335,7 +335,7 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 			std::string listName = SvUl::to_ansi(rRequest.listname());
 
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				result = pConfig->GetRemoteMonitorListProductFilter(listName, ProductFilter);
 			}
 
@@ -364,7 +364,7 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 
 void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ SvimState::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result)
@@ -387,7 +387,7 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 				break;
 			}
 			std::string listName = SvUl::to_ansi(rRequest.listname());
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = pConfig->SetRemoteMonitorListProductFilter(listName, ProductFilter);
 		}
 		else
@@ -402,7 +402,7 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 
 void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<SvPb::GetItemsResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetItemsResponse Response;
 
 	if (S_OK == result)
@@ -418,7 +418,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 		if (false == ItemNameSet.empty())
 		{
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				result = SVVisionProcessorHelper::Instance().GetItems(ItemNameSet, ResultItems);
 			}
 
@@ -528,7 +528,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<SvPb::SetItemsResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::SetItemsResponse Response;
 
 	if (S_OK == result)
@@ -547,7 +547,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 		{
 			if (!Items.empty())
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				result = SVVisionProcessorHelper::Instance().SetItems(Items, ItemResults, rRequest.runonce());
 			}
 			else
@@ -590,7 +590,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb::GetFileResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetFileResponse Response;
 
 	if (S_OK == result)
@@ -624,7 +624,7 @@ void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result)
@@ -657,7 +657,7 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 
 			if (S_OK == result && rRequest.saveinconfig())
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				//Note this needs to be done using SendMessage due to this being a worker thread
 				result = GlobalRCAddFileToConfig(destinationPath.c_str());
 			}
@@ -675,7 +675,7 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rRequest, SvRpc::Task<SvPb::RegisterMonitorListResponse> task)
 {
-	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ SvimState::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
 	SvPb::RegisterMonitorListResponse Response;
 
 	if (S_OK == result)
@@ -703,7 +703,7 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 		SVNameStatusMap ItemResults;
 
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = SVVisionProcessorHelper::Instance().RegisterMonitorList(MonitorListName, PpqName, rejectDepth, prodList, rejectCondList, failStatusList, ItemResults);
 		}
 
@@ -728,7 +728,7 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 
 void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest&, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::NamesResponse Response;
 
 	if (S_OK == result)
@@ -736,7 +736,7 @@ void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest&, SvR
 		SvDef::StringSet InspectionNames;
 
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = SVVisionProcessorHelper::Instance().GetInspectionNames(InspectionNames);
 		}
 
@@ -753,7 +753,7 @@ void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest&, SvR
 
 void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result)
@@ -786,7 +786,7 @@ void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesRequest& rRequest, SvRpc::Task<SvPb::GetMonitorListPropertiesResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetMonitorListPropertiesResponse Response;
 
 	if (S_OK == result)
@@ -794,7 +794,7 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 		MonitorlistProperties  MonitorListProp;
 
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = SVVisionProcessorHelper::Instance().GetMonitorListProperties(SvUl::to_ansi(rRequest.listname()), MonitorListProp);
 		}
 
@@ -808,12 +808,12 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 
 void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest&, SvRpc::Task<SvPb::GetMaxRejectDepthResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetMaxRejectDepthResponse Response;
 
 	if (S_OK == result)
 	{
-		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		Response.set_maxrejectdepth(RemoteMonitorNamedList::GetMaxRejectQueueDepth());
 	}
 	task.finish(std::move(Response));
@@ -821,7 +821,7 @@ void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest&, SvRpc
 
 void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest&, SvRpc::Task<SvPb::GetConfigReportResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetConfigReportResponse Response;
 
 	if (S_OK == result)
@@ -829,7 +829,7 @@ void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest&, SvRpc::Ta
 		std::string Report;
 
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = SVVisionProcessorHelper::Instance().GetConfigurationPrintReport(Report);
 		}
 		//No conversion to utf8 as the report is already utf16 (XML)
@@ -842,7 +842,7 @@ void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest&, SvRpc::Ta
 
 void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest& rRequest, SvRpc::Task<SvPb::GetDataDefinitionListResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetDataDefinitionListResponse Response;
 
 	if (S_OK == result)
@@ -853,7 +853,7 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 		SVDataDefinitionListType DataDefinitionType = static_cast<SVDataDefinitionListType> (rRequest.type());
 
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = SVVisionProcessorHelper::Instance().GetDataDefinitionList(InspectionName, DataDefinitionType, DataDefinitionList);
 		}
 
@@ -883,7 +883,7 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 
 void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::NamesResponse Response;
 
 	if(S_OK == result)
@@ -891,7 +891,7 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 		SvDef::StringSet Items;
 
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			std::string listName = SvUl::to_ansi(rRequest.listname());
 			switch (rRequest.type())
 			{
@@ -930,7 +930,7 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 
 void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest&, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::NamesResponse Response;
 
 	if (S_OK == result)
@@ -938,7 +938,7 @@ void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest
 		SvDef::StringSet Items;
 		
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = SVVisionProcessorHelper::Instance().QueryMonitorListNames(Items);
 		}
 
@@ -955,7 +955,7 @@ void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest
 
 void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES| SV_STATE_RUNNING) };
+	HRESULT result{ SvimState::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES| SV_STATE_RUNNING) };
 	SvPb::StandardResponse Response;
 
 	if (S_OK == result)
@@ -968,7 +968,7 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 			pConfig->GetInspection(SvUl::to_ansi(rRequest.inspectionname()).c_str(), pInspection);
 			if (nullptr != pInspection)
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 			}
 			else
@@ -989,12 +989,12 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::StandardResponse Response;
 
 	// Check if we are in an allowed state first
 	// Not allowed to perform if in Regression or Test
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	if (SvimState::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
 	{
 		result = SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
@@ -1005,12 +1005,12 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 		
 		if (configFile.empty())
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			GlobalRCCloseConfiguration();
 		}
 		else
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = SVVisionProcessorHelper::Instance().LoadConfiguration(configFile);
 		}
 	}
@@ -1021,7 +1021,7 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 
 void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetObjectSelectorItemsResponse selectorResponse;
 
 	if (S_OK == result)
@@ -1031,7 +1031,7 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 		*requestCmd.mutable_getobjectselectoritemsrequest() = rRequest;
 
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			SvCmd::InspectionCommands(rRequest.inspectionid(), requestCmd, &responseCmd);
 		}
 
@@ -1070,7 +1070,7 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 		}
 		
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			SvCmd::InspectionCommands(inspectionID, rRequest, &response);
 		}
 
@@ -1130,7 +1130,7 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 
 void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&, SvRpc::Task<SvPb::GetConfigurationTreeResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::GetConfigurationTreeResponse response;
 
 	if (S_OK == result)
@@ -1142,7 +1142,7 @@ void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&,
 			std::vector<SvPb::ConfigTreeItem> configVector;
 
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				const SVInspectionProcessVector& rInspectionVector = pConfig->GetInspections();
 				for (const auto* pInspection : rInspectionVector)
 				{
@@ -1174,7 +1174,7 @@ void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&,
 
 void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRpc::Task<SvPb::ConfigCommandResponse> task)
 {
-	HRESULT result{SVSVIMStateClass::CheckNotAllowedState()};
+	HRESULT result{SvimState::CheckNotAllowedState()};
 	SvPb::ConfigCommandResponse response;
 
 	if (S_OK == result)
@@ -1191,9 +1191,9 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 				SvPb::ConfigDataResponse* pConfigDataResponse = response.mutable_configdataresponse();
 				if (nullptr != pConfigDataResponse)
 				{
-					SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+					SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 					pConfigDataResponse->set_configfileloaded(GlobalRCGetConfigurationName(false));
-					pConfigDataResponse->set_lastmodified(static_cast<unsigned long>(SVSVIMStateClass::getLastModifiedTime()));
+					pConfigDataResponse->set_lastmodified(static_cast<unsigned long>(SvimState::getLastModifiedTime()));
 				}
 				break;
 			}
@@ -1209,7 +1209,7 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 
 void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES  |SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ SvimState::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES  |SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
 
 	if (S_OK == result)
 	{
@@ -1231,7 +1231,7 @@ void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest
 					{
 						_variant_t plcSimulatedFile;
 						plcSimulatedFile.SetString(fileName.c_str());
-						SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+						SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 						result = pTrigger->getDLLTrigger()->SetParameterValue(pTrigger->getTriggerChannel() + 1, SVIOParameterEnum::PlcSimulatedTrigger, plcSimulatedFile);
 						break;
 					}
@@ -1251,13 +1251,13 @@ void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&,
 
 	SvPb::GetConfigurationInfoResponse Response;
 
-	if (SVSVIMStateClass::CheckState(cNotAllowedStates) == false)
+	if (SvimState::CheckState(cNotAllowedStates) == false)
 	{
-		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		Response.set_filename(GlobalRCGetConfigurationName(false).c_str());
-		Response.set_lastmodified(SVSVIMStateClass::getLastModifiedTime());
-		Response.set_loadedsince(SVSVIMStateClass::getLoadedSinceTime());
-		Response.set_hash(SVSVIMStateClass::GetHash());
+		Response.set_lastmodified(SvimState::getLastModifiedTime());
+		Response.set_loadedsince(SvimState::getLoadedSinceTime());
+		Response.set_hash(SvimState::GetHash());
 	}
 
 	task.finish(std::move(Response));
@@ -1267,7 +1267,7 @@ void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&,
 void SVRCCommand::SoftwareTrigger(const SvPb::SoftwareTriggerRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
 	DWORD checkAdditional = (0 < rRequest.period()) ? SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION : 0;
-	HRESULT result{ SVSVIMStateClass::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES  | checkAdditional) };
+	HRESULT result{ SvimState::CheckNotAllowedState(SV_DEFAULT_NOT_ALLOWED_STATES  | checkAdditional) };
 
 	if (S_OK == result)
 	{
@@ -1613,7 +1613,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 			HRESULT result {S_OK};
 
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				result = toolClipboard.writeToolDataToClipboard({rRequest.objectid()});
 			}
 			pResponse->set_hresult(result);
@@ -1638,7 +1638,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 					HRESULT result {S_OK};
 
 					{
-						SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+						SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 						auto XmlData = toolClipboard.readlToolDataFromClipboard();
 						if (false == XmlData.empty())
 						{
@@ -1677,7 +1677,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 			HRESULT result {S_OK};
 
 			{
-				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				result = toolClipboard.writeToolDataToClipboard({rRequest.objectid()});
 			}
 			pResponse->set_hresult(result);
@@ -1701,7 +1701,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 					SvPb::DeleteObjectRequest* pDelObj = requestCmd.mutable_deleteobjectrequest();
 					pDelObj->set_objectid(rRequest.objectid());
 
-					SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+					SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 					SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 					if (false == deleteObjectName.empty())
 					{

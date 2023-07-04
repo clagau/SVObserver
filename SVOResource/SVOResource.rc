@@ -6731,6 +6731,7 @@ STRINGTABLE
 BEGIN
     ID_INDICATOR_USER       "User: Operator Name"
     ID_INDICATOR_MODE       "Mode: Stop"
+    ID_INDICATOR_EDIT_LOCK  "Edit Lock: off"
 END
 
 STRINGTABLE

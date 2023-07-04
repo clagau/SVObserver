@@ -17,7 +17,7 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "Definitions/GlobalConst.h"
 #include "SVImageView.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVIPSplitterFrame.h"
 #include "SVMainFrm.h"
@@ -131,7 +131,7 @@ BOOL SVImageViewScroll::Create(LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DW
 
 void SVImageViewScroll::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+	if( !SvimState::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 	{
 		int l_iMapMode;
 		SIZE l_oSizeTotal;

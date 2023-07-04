@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "EditLock.h"
 #include "SVImageView.h"
 #include "SVDirectX.h"
 #include "SVDisplayImageSelect.h"
@@ -35,9 +34,10 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/SVAdjustToolSizePositionDlg.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "Tools/SVTool.h"
@@ -442,10 +442,10 @@ BOOL SVImageView::OnCommand(WPARAM wParam, LPARAM lParam)
 		{
 			{
 				// cppcheck-suppress unreadVariable; cppCheck doesn't understand RAII use of SetResetState pointer here
-				std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
-				if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+				std::unique_ptr<SvimState::SetResetState> pStateEditing {nullptr};
+				if (SvimState::CheckState(SV_STATE_EDIT))
 				{
-					pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING, EditLock::acquire, EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
+					pStateEditing = std::make_unique<SvimState::SetResetState>(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
 					if (false == pStateEditing->conditionOk())
 					{
 						break;
@@ -540,7 +540,7 @@ void SVImageView::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 void SVImageView::OnContextMenu(CWnd*, CPoint point)
 {
 	CMenu l_menu;
-	bool RunOrTestMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+	bool RunOrTestMode = SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 
 	m_mousePoint.x = point.x;
 	m_mousePoint.y = point.y;
@@ -716,7 +716,7 @@ void SVImageView::ShowExtremeLUT(bool show /* = true */)
 
 void SVImageView::OnDraw(CDC*)
 {
-	if (ImageIsEmpty() || SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
+	if (ImageIsEmpty() || SvimState::CheckState(SV_STATE_CLOSING))
 	{
 		ReleaseImageSurface();
 	}
@@ -782,7 +782,7 @@ void SVImageView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		Update = 0.0 < Value ? true : false;
 	}
 
-	Update = Update || !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+	Update = Update || !SvimState::CheckState(SV_STATE_RUNNING);
 
 	if (Update)
 	{
@@ -810,7 +810,7 @@ void SVImageView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void SVImageView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		SVIPDoc* l_psvIPDoc = GetIPDoc();
 		CPoint l_point = point;
@@ -840,7 +840,7 @@ void SVImageView::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void SVImageView::OnRButtonDblClk(UINT nFlags, CPoint point)
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		CPoint l_point = point;
 		SVIPDoc* l_psvIPDoc = GetIPDoc();
@@ -877,7 +877,7 @@ void SVImageView::OnRButtonDblClk(UINT nFlags, CPoint point)
 void SVImageView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
+	if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
 		TheSVObserverApp().OkToEdit())
 	{
 		if (false == ImageIsEmpty())
@@ -931,7 +931,7 @@ void SVImageView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void SVImageView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
+	if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
 		TheSVObserverApp().OkToEdit())
 	{
 		if (m_lastMouseMovePoint == point)
@@ -1054,7 +1054,7 @@ void SVImageView::OnLButtonUp(UINT nFlags, CPoint point)
 
 	CWnd::OnLButtonUp(nFlags, point);
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION))
+	if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION))
 	{
 		GetIPDoc()->RunOnce();
 	}
@@ -2190,7 +2190,7 @@ HRESULT SVImageView::RecreateLostSurface()
 			// cause a Repaint if Surface was Rrestored/Recreated
 			if (DD_OK == l_hrRestore)
 			{
-				if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+				if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 				{
 					Invalidate(false);
 				}
@@ -2278,7 +2278,7 @@ HRESULT SVImageView::UpdateSurface()
 {
 	HRESULT status = S_OK;
 
-	if (!(SVSVIMStateClass::CheckState(SV_STATE_CLOSING | SV_STATE_CANCELING)))
+	if (!(SvimState::CheckState(SV_STATE_CLOSING | SV_STATE_CANCELING)))
 	{
 		SVBitmapInfo l_BitmapInfo = GetBitmapInfo();
 		const unsigned char* l_pBitmapBits = GetBitmapBits();
@@ -2328,7 +2328,7 @@ HRESULT SVImageView::DisplaySurface()
 {
 	HRESULT status = S_OK;
 
-	if (!(SVSVIMStateClass::CheckState(SV_STATE_CLOSING | SV_STATE_CANCELING)))
+	if (!(SvimState::CheckState(SV_STATE_CLOSING | SV_STATE_CANCELING)))
 	{
 		SVBitmapInfo l_BitmapInfo = GetBitmapInfo();
 		CWnd* l_pParent = GetParent(); // The parent of ImageView window is ImageViewScroll.

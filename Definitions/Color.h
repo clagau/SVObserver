@@ -80,6 +80,7 @@ constexpr COLORREF Wheat = RGB(245, 222, 179);
 constexpr COLORREF PaleYellow = RGB(255, 255, 75);
 
 constexpr COLORREF KoerberGray = RGB(204, 204, 204);
+constexpr COLORREF StatusBarBackground = RGB(240, 240, 240);
 
 constexpr COLORREF DefaultTextColor = Black;
 constexpr COLORREF DefaultInactiveColor = Blue;

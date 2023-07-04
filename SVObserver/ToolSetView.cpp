@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
-#include "EditLock.h"
 #include "ToolSetView.h"
 #include "SVObserver.h"
 #include "SVIPDoc.h"
@@ -26,7 +25,8 @@
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVIPSplitterFrame.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/EditLock.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOGui/SVTextEditDialog.h"
 #include "Tools/GroupTool.h"
@@ -313,7 +313,7 @@ bool ToolSetView::ToolSetListHasChanged()
 }
 void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+	if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		SVIPDoc* pCurrentDocument = GetIPDoc();
 
@@ -382,7 +382,7 @@ void ToolSetView::OnEditToolName()
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -755,7 +755,7 @@ void ToolSetView::EditToolComment(uint32_t toolId)
 		if (IDOK == Dlg.DoModal())
 		{
 			SvCmd::setComment(pInspection->getObjectId(), toolId, std::string{Dlg.getText()});
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			SvimState::AddState(SV_STATE_MODIFIED);
 		}
 	}
 
@@ -796,7 +796,7 @@ void ToolSetView::OnRunOnce()
 {
 	CWaitCursor l_cwcMouse;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+	if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		return;
 	}

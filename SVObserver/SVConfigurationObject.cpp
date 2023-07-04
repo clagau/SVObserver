@@ -58,7 +58,7 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
@@ -2217,7 +2217,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 			SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolExtentsChanged, SvStl::SourceFileParams(StdMessageParams));
 
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			SvimState::AddState(SV_STATE_MODIFIED);
 			break;
 		}
 	}
@@ -3261,7 +3261,7 @@ void SVConfigurationObject::ConvertColorToStandardProductType(bool& rConfigColor
 	{
 		rConfigColor = isColor;
 		SetProductType(CurrentType);
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 	}
 }
 
@@ -3482,9 +3482,9 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 		{
 			if (nullptr != pInspection)
 			{
-				SVSVIMStateClass::AddState(SV_STATE_INTERNAL_RUN);
+				SvimState::AddState(SV_STATE_INTERNAL_RUN);
 				pInspection->RunOnce();
-				SVSVIMStateClass::RemoveState(SV_STATE_INTERNAL_RUN);
+				SvimState::RemoveState(SV_STATE_INTERNAL_RUN);
 			}
 		}
 	}
@@ -3877,7 +3877,7 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 		SVInspectionMap l_ValueInspections;
 		SVInspectionMap l_Inspections;
 
-		bool l_Online = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+		bool l_Online = SvimState::CheckState(SV_STATE_RUNNING);
 
 		for (SVNameStorageMap::const_iterator l_Iter = p_rItems.begin(); l_Iter != p_rItems.end(); ++l_Iter)
 		{
@@ -4058,7 +4058,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems(const SVNameStorageMap& p_rIt
 
 	if (!(p_rItems.empty()))
 	{
-		bool l_Online = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+		bool l_Online = SvimState::CheckState(SV_STATE_RUNNING);
 
 		for (SVNameStorageMap::const_iterator l_Iter = p_rItems.begin(); l_Iter != p_rItems.end(); ++l_Iter)
 		{
@@ -4189,7 +4189,7 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 
 	if (!(rItems.empty()))
 	{
-		bool Online = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+		bool Online = SvimState::CheckState(SV_STATE_RUNNING);
 
 		for (SVNameStorageMap::const_iterator Iter = rItems.begin(); Iter != rItems.end(); ++Iter)
 		{
@@ -4773,7 +4773,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 				else
 				{
 					//Configuration has changed so set it to modified
-					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+					SvimState::AddState(SV_STATE_MODIFIED);
 				}
 			}
 			hLeaf = rTree.getNextLeaf(hChild, hLeaf);
@@ -5264,7 +5264,7 @@ void RemoveFileFromConfig(LPCTSTR FilePath) //@TODO [Arvid][10.20][26.10.2021] t
 			const SvFs::FileHelper& rSVFileName = *iter;
 			pConfig->getAdditionalFiles().remove(rSVFileName);
 			SvFs::FileHelperManager::Instance().RemoveItem(&rSVFileName);
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			SvimState::AddState(SV_STATE_MODIFIED);
 		}
 	}
 }
@@ -5284,7 +5284,7 @@ void AddFileToConfig(LPCTSTR FilePath) //@TODO [Arvid][10.20][26.10.2021] this s
 		}
 		pConfig->getAdditionalFiles().emplace_back(SvFs::FileHelper {FilePath});
 		SvFs::FileHelperManager::Instance().AddItem(&pConfig->getAdditionalFiles().back());
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 	}
 }
 

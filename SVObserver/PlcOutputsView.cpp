@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "EditLock.h"
 #include "SVConfigurationObject.h"
 #include "PlcOutputsView.h"
 #include "SVIOAdjustDialog.h"
@@ -23,8 +22,9 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -177,7 +177,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 { //@TODO [Arvid][10.30][15.3.2023] this function is too long
 
-	if (false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit())
+	if (false == SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit())
 	{
 		std::vector<std::string> usedOutputList;
 		for (const auto& rEntry : m_Items)
@@ -249,14 +249,14 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_PpqIndex = item / m_maxOutputNumber;
 				dlg.m_ioObjectType = SVIOObjectType::IO_PLC_OUTPUT;
 
-				SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+				SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 				if (false == srs.conditionOk())
 				{
 					return;
 				}
 				if (IDOK == dlg.DoModal())
 				{
-					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+					SvimState::AddState(SV_STATE_MODIFIED);
 
 					for (long i = 0; i < m_maxObjectIDCount; ++i)
 					{
@@ -332,7 +332,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 
 				if (IDOK == dlg.DoModal())
 				{
-					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+					SvimState::AddState(SV_STATE_MODIFIED);
 				}
 				OnUpdate(nullptr, 0, nullptr);
 			}

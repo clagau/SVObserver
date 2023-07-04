@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MessageManager.h"
-#include "SVSVIMStateClass.h"
+#include "SvimState.h"
 #include "SVMessage/SVMessage.h"
 #include "MessageManagerHelper.h"
 #include "MessageTextGenerator.h"
@@ -182,7 +182,7 @@ void MessageManager::Log() const
 
 void MessageManager::Notify() const
 {
-	bool doNotify = (MsgType::Notify & m_Type) || (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) && (MsgType::Display & m_Type));
+	bool doNotify = (MsgType::Notify & m_Type) || (SvimState::CheckState(SV_STATE_REMOTE_CMD) && (MsgType::Display & m_Type));
 
 	if (nullptr != m_ppNotify && nullptr != *m_ppNotify && doNotify)
 	{
@@ -196,7 +196,7 @@ INT_PTR MessageManager::Display(const UINT MsgBoxType)
 
 	//If the message has already been displayed do not display again
 	if (nullptr != m_ppShowDisplay && nullptr != *m_ppShowDisplay && (MsgType::Display & m_Type)
-		&& !SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)
+		&& !SvimState::CheckState(SV_STATE_REMOTE_CMD)
 		&& !m_MessageContainer.getMessage().m_Displayed)
 	{
 		std::string Msg;

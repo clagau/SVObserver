@@ -21,7 +21,7 @@
 #include "FilesystemUtilities/FileHelperManager.h"
 #include "SVOLibrary/ObsoleteItemChecker.h"
 #include "SVOLibrary/SVHardwareManifest.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/SHA256.h"
 #include "SVUtilityLibrary/Heapwalk.h"
 #include "SVUtilityLibrary/SVClock.h"
@@ -363,9 +363,9 @@ namespace
 			return {false, hr};
 		}
 
-		SVSVIMStateClass::AddState(SV_STATE_INTERNAL_RUN);
+		SvimState::AddState(SV_STATE_INTERNAL_RUN);
 		pConfig->RunOnce();
-		SVSVIMStateClass::RemoveState(SV_STATE_INTERNAL_RUN);
+		SvimState::RemoveState(SV_STATE_INTERNAL_RUN);
 
 		if (pConfig->IsConfigurationLoaded())
 		{
@@ -409,7 +409,7 @@ bool LoadSvxFilePart1(unsigned long& ulSVOConfigVersion, unsigned long svoVersio
 		hash.clear();
 	}
 
-	SVSVIMStateClass::ConfigWasLoaded(hash.c_str());
+	SvimState::ConfigWasLoaded(hash.c_str());
 
 	try
 	{

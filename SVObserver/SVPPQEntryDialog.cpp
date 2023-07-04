@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVPPQEntryDialog.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "SVPPQObject.h"
 
@@ -176,7 +176,7 @@ void SVPPQEntryDialogCameraPageClass::OnOK()
 
 	}// end for
 
-	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+	SvimState::AddState( SV_STATE_MODIFIED );
 	
 	CPropertyPage::OnOK();
 

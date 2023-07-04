@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <comdef.h>
-#include "EditLock.h"
 #include "RemoteMonitorListController.h"
 #include "MonitorListAddRemoveDlg.h"
 #include "RemoteMonitorList.h"
@@ -25,8 +24,9 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 LPCTSTR RemoteMonitorListController::s_DefaultMonitorListName = _T("MonitorList_");
@@ -77,7 +77,7 @@ bool RemoteMonitorListController::IsEmpty() const
 bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 {
 	bool bRetVal = false;
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return false;

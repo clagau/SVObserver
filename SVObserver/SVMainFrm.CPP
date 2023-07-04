@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "ConfigurationOuttakes.h"
 #include "ExtrasEngine.h"
-#include "EditLock.h"
 #include "GuiHelpers.h"
 #include "RemoteCommand.h"
 #include "RootObject.h"
@@ -48,8 +47,9 @@
 #include "SVMessage/SVMessage.h"
 #include "SVOGui/AuditFilesDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #pragma endregion Includes
 
@@ -392,7 +392,7 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 		lstrcat( szText, l_Version );
 
 		// Get title of currently active SVC
-		if( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) )
+		if( SvimState::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) )
 		{
 			lstrcat( szText, _T( " - " ) );
 			lstrcat( szText, getConfigFileName().c_str() );
@@ -530,14 +530,14 @@ void SVMainFrame::OnClose()
 {
 	bool l_bAllowAccess = false;
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+	if ( SvimState::CheckState( SV_STATE_REGRESSION ) )
 	{
 		//not allowed to exit during regression test
 		return;
 	}
 
 	// If Running, check if access to exit run.
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	if ( SvimState::CheckState( SV_STATE_RUNNING ) )
 	{
 		if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_FILE_MENU_EXIT, 
 			SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) )
@@ -553,7 +553,7 @@ void SVMainFrame::OnClose()
 
 	if( l_bAllowAccess )
 	{
-		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+		if( SvimState::CheckState( SV_STATE_TEST ) )
 		{
 			OnStop();
 		}
@@ -575,7 +575,7 @@ void SVMainFrame::OnClose()
 		// Last checking...
 		if (S_OK == DestroyConfig())
 		{
-			SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE, SV_STATE_READY);
+			SvimState::changeState(SV_STATE_UNAVAILABLE, SV_STATE_READY);
 			CMDIFrameWnd::OnClose();
 		}
 	}
@@ -598,7 +598,7 @@ void SVMainFrame::OnAppAbout()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnFileNewConfig()
 {
-	SVSVIMStateClass::AddState(SV_STATE_CREATING);
+	SvimState::AddState(SV_STATE_CREATING);
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_NEW))
 	{
 		if ((TheSVObserverApp().UpdateConfiguration(true))) // if not cancelled
@@ -622,7 +622,7 @@ void SVMainFrame::OnFileNewConfig()
 			UpdateRemoteInputTabs(GetTheIODoc());
 		}
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_CREATING);
+	SvimState::RemoveState(SV_STATE_CREATING);
 }
 
 void SVMainFrame::OnFileSaveConfig(bool saveAs /*= false*/)
@@ -640,7 +640,7 @@ void SVMainFrame::OnFileOpenSVC()
 {
 	TheSVObserverApp().ValidateMRUList();
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release); /// do this before calling validate for security as it may display a logon dialog!
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release); /// do this before calling validate for security as it may display a logon dialog!
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -687,12 +687,12 @@ void SVMainFrame::OnFileCloseConfig()
 {
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION))
 	{
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return;
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
+		SvimState::RemoveState(SV_STATE_EDIT);
 
 		TheSVObserverApp().ValidateMRUList();
 
@@ -716,7 +716,7 @@ void SVMainFrame::OnFileSaveAsSVC()
 {
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS))
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+		if (SvimState::CheckState(SV_STATE_READY))
 		{
 			// Call save as svx with file dialog...
 			OnFileSaveConfig(true);
@@ -760,14 +760,14 @@ void SVMainFrame::OnRunMode()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnStopTestMode()
 {
-	if (false == SVSVIMStateClass::CheckState(SV_STATE_TEST))
+	if (false == SvimState::CheckState(SV_STATE_TEST))
 	{
 		return;
 	}
 
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_STOP))
 	{
-		SVSVIMStateClass::SVRCBlocker block;
+		SvimState::SVRCBlocker block;
 		OnStop();
 	}
 }
@@ -776,19 +776,19 @@ void SVMainFrame::OnModeEdit()
 {
 	bool l_bAllowAccess = false;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT | SV_STATE_REMOTE_CMD))
+	if (SvimState::CheckState(SV_STATE_EDIT | SV_STATE_REMOTE_CMD))
 	{
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
 	}
 
 	// If Running, check if access to exit run.
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,
 			SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
@@ -804,19 +804,19 @@ void SVMainFrame::OnModeEdit()
 
 	if (l_bAllowAccess)
 	{
-		if (!SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+		if (!SvimState::CheckState(SV_STATE_EDIT))
 		{
-			if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+			if (SvimState::CheckState(SV_STATE_REGRESSION))
 			{
 				StopRegression();
 			}
 
-			if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
+			if (SvimState::CheckState(SV_STATE_TEST))
 			{
 				OnStop();
 			}
 
-			if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+			if (SvimState::CheckState(SV_STATE_READY))
 			{
 				TheSVObserverApp().SetModeEdit(true); // Set Edit mode
 			}
@@ -831,7 +831,7 @@ void SVMainFrame::OnModeEdit()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnGoOffline()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_EDIT
+	if (!SvimState::CheckState(SV_STATE_EDIT
 		| SV_STATE_REGRESSION
 		| SV_STATE_TEST
 		| SV_STATE_RUNNING
@@ -845,7 +845,7 @@ void SVMainFrame::OnGoOffline()
 
 	SetStatusInfoText(_T(""));
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		// Dual Security access point
 		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_STOP,
@@ -856,7 +856,7 @@ void SVMainFrame::OnGoOffline()
 	}
 	else if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_STOP))
 	{
-		bool isRegression = SVSVIMStateClass::CheckState(SV_STATE_REGRESSION);
+		bool isRegression = SvimState::CheckState(SV_STATE_REGRESSION);
 		//Call OnStop first otherwise the SV_STATE_STOP is not set as StopRegression removes SV_STATE_REGRESSION
 		OnStop();
 		if (isRegression)
@@ -880,7 +880,7 @@ void SVMainFrame::OnFilePrintConfig()
 {
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_PRINT))
 	{
-		if (!SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_RUNNING) ||
+		if (!SvimState::CheckState(SV_STATE_READY | SV_STATE_RUNNING) ||
 			std::string(getConfigFullFileName()).empty())
 		{
 			return;
@@ -896,11 +896,11 @@ void SVMainFrame::OnExtrasLogin()
 	TheSecurityManager().SVLogon();
 
 	// Check if Edit Mode should continue.
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	if (SvimState::CheckState(SV_STATE_EDIT))
 	{	// If this user is not allowed to edit then remove the edit mode
 		if (!TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 		{
-			SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
+			SvimState::RemoveState(SV_STATE_EDIT);
 		}
 		else
 		{	// If they are still allowed then select the current tool.
@@ -916,7 +916,7 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 {
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
 	{
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return;
@@ -941,7 +941,7 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 
 void SVMainFrame::OnExtrasSecuritySetup()
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
 	{
 		return;
@@ -974,12 +974,12 @@ void SVMainFrame::OnExtrasSecuritySetup()
 			}
 		}
 
-		if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+		if (SvimState::CheckState(SV_STATE_EDIT))
 		{
-			SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
+			SvimState::RemoveState(SV_STATE_EDIT);
 		}
 
-		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		if (SvimState::CheckState(SV_STATE_REGRESSION))
 		{
 			StopRegression();
 		}
@@ -988,7 +988,7 @@ void SVMainFrame::OnExtrasSecuritySetup()
 
 void SVMainFrame::OnAuditTrailDefaultFiles()
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -1007,13 +1007,13 @@ void SVMainFrame::OnAuditTrailDefaultFiles()
 	if (Dlg.DoModal() == IDOK)
 	{
 		pConfig->SetAuditDefaultList(std::move(Dlg.GetFiles()));
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 	}
 }
 
 void SVMainFrame::OnAuditTrailAdditionalFiles()
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
 	{
 		return;
@@ -1032,7 +1032,7 @@ void SVMainFrame::OnAuditTrailAdditionalFiles()
 	if (Dlg.DoModal() == IDOK)
 	{
 		pConfig->SetAuditWhiteList(std::move(Dlg.GetFiles()));
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 	}
 }
 
@@ -1056,12 +1056,12 @@ void SVMainFrame::OnExtrasLogout()
 	// Force log out, regardless auto login mode...
 	TheSecurityManager().SVLogout();
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	if (SvimState::CheckState(SV_STATE_EDIT))
 	{
-		SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
+		SvimState::RemoveState(SV_STATE_EDIT);
 	}
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+	if (SvimState::CheckState(SV_STATE_REGRESSION))
 	{
 		StopRegression();
 	}
@@ -1078,7 +1078,7 @@ void SVMainFrame::OnRCGoOffline()
 
 void SVMainFrame::OnRCGoOnline()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		TheSVObserverApp().SetMode(static_cast<long> (SvPb::DeviceModeType::runMode));
 	}
@@ -1116,12 +1116,12 @@ void SVMainFrame::OnSVOFilePrintSetup()
 
 void SVMainFrame::OnStop()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION))
+	if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION))
 	{
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -1136,9 +1136,9 @@ void SVMainFrame::OnRunMostRecentMRU()
 {
 	TheSVObserverApp().ValidateMRUList();
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_UNAVAILABLE))
+	if (!SvimState::CheckState(SV_STATE_UNAVAILABLE))
 	{
-		bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+		bool bRunning = SvimState::CheckState(SV_STATE_RUNNING);
 
 		if (!bRunning)
 		{
@@ -1156,7 +1156,7 @@ void SVMainFrame::OnEditMonitorList()
 	{
 		if (pConfig->SetupRemoteMonitorList())
 		{
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			SvimState::AddState(SV_STATE_MODIFIED);
 			SVIODoc* pIODoc = GetTheIODoc();
 			if (pIODoc)
 			{
@@ -1169,8 +1169,8 @@ void SVMainFrame::OnEditMonitorList()
 void SVMainFrame::OnUpdateAllIOViews()
 {
 	if (GetTheIODoc() &&
-		SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_RUNNING) &&
-		!SVSVIMStateClass::CheckState(SV_STATE_CANCELING))
+		SvimState::CheckState(SV_STATE_READY | SV_STATE_RUNNING) &&
+		!SvimState::CheckState(SV_STATE_CANCELING))
 	{
 		GetTheIODoc()->UpdateAllViews(nullptr);
 	}
@@ -1185,12 +1185,12 @@ void SVMainFrame::OnAppExit()
 {
 	bool l_bAllowAccess = true;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+	if (SvimState::CheckState(SV_STATE_REGRESSION))
 	{
 		return;
 	}
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,
 			SECURITY_POINT_FILE_MENU_EXIT))
@@ -1227,8 +1227,8 @@ void SVMainFrame::OnUpdateAuditTrailAdditionalFiles(CCmdUI* PCmdUI)
 
 void SVMainFrame::OnUpdateModeRun(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY) &&
-		!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) &&
+	PCmdUI->Enable(SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY) &&
+		!SvimState::CheckState(SV_STATE_RUNNING) &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_RUN));
 }
 
@@ -1239,8 +1239,8 @@ void SVMainFrame::OnUpdateModeRun(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateEditEnvironment(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_READY) &&
-		!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+	PCmdUI->Enable(SvimState::CheckState(SV_STATE_READY) &&
+		!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
 		TheSVObserverApp().OkToEdit());
 }
 
@@ -1251,25 +1251,25 @@ void SVMainFrame::OnUpdateEditEnvironment(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateEditIOList(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		SVSVIMStateClass::CheckState(SV_STATE_EDIT) && nullptr != GetTheIODoc());
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+		SvimState::CheckState(SV_STATE_EDIT) && nullptr != GetTheIODoc());
 }
 
 void SVMainFrame::OnUpdateFileClose(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION));
 }
 
 void SVMainFrame::OnUpdateFileNew(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_NEW) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
 void SVMainFrame::OnUpdateFileOpen(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
@@ -1280,69 +1280,69 @@ void SVMainFrame::OnUpdateFileOpen(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateFileOpenSVC(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
 void SVMainFrame::OnUpdateFileSaveAll(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& SVSVIMStateClass::CheckState(SV_STATE_READY)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+		&& SvimState::CheckState(SV_STATE_READY)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION));
 }
 
 void SVMainFrame::OnUpdateFileSaveAs(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& SVSVIMStateClass::CheckState(SV_STATE_READY)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+		&& SvimState::CheckState(SV_STATE_READY)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS));
 }
 
 void SVMainFrame::OnUpdateFileSaveCopyAs(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdateFileSaveImage(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
-		&& SVSVIMStateClass::CheckState(SV_STATE_READY)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
+		&& SvimState::CheckState(SV_STATE_READY)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_IMAGE));
 }
 
 void SVMainFrame::OnUpdateFileUpdate(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION));
 }
 
 
 void SVMainFrame::OnUpdateExtrasLogin(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_AVAILABLE | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_READY | SV_STATE_REGRESSION));
+	PCmdUI->Enable(SvimState::CheckState(SV_STATE_AVAILABLE | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_READY | SV_STATE_REGRESSION));
 }
 
 
 void SVMainFrame::OnUpdateEditDelete(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
 		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateEditEditTool(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
 		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateEditEditToolSet(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
 		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
 		TheSVObserverApp().OkToEdit());
 	SVInputObjectList* pInputs(nullptr);
 	SVConfigurationObject* pConfig(nullptr);
@@ -1366,8 +1366,8 @@ void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 
 void SVMainFrame::OnUpdateEditAddMonitorList(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
-		SVSVIMStateClass::CheckState(SV_STATE_EDIT));
+	pCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
+		SvimState::CheckState(SV_STATE_EDIT));
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1384,80 +1384,80 @@ void SVMainFrame::OnUpdateEditAddMonitorList(CCmdUI* pCmdUI)
 
 void SVMainFrame::OnUpdateExtrasLightReference(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
 		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateFilePrintPreview(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT));
 }
 
 void SVMainFrame::OnUpdateFilePrintSetup(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT_SETUP));
 }
 
 void SVMainFrame::OnUpdateExtrasTestOutputs(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS));
 }
 
 void SVMainFrame::OnUpdateHelp(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING));
 }
 
 void SVMainFrame::OnUpdateHelpFinder(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING));
 }
 
 void SVMainFrame::OnUpdateModeTest(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
+	PCmdUI->Enable((SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST));
 
-	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_TEST) &&
-		!SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
+	PCmdUI->SetCheck(SvimState::CheckState(SV_STATE_TEST) &&
+		!SvimState::CheckState(SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdateNextPane(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdatePrevPane(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdateWindowArrange(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdateWindowCascade(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdateWindowNew(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdateWindowTileHorz(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdateWindowTileVert(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION));
 }
 
 
@@ -1468,7 +1468,7 @@ void SVMainFrame::OnUpdateWindowTileVert(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateAppExit(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT));
 }
 
@@ -1482,12 +1482,12 @@ void SVMainFrame::OnUpdateAppAbout(CCmdUI*)
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateGoOffline(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
-		SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
+	PCmdUI->Enable((SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
+		SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
 		(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE) ||
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_STOP)));
 
-	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_STOP));
+	PCmdUI->SetCheck(SvimState::CheckState(SV_STATE_STOP));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1497,16 +1497,16 @@ void SVMainFrame::OnUpdateGoOffline(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateGoOnline(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP) &&
-		SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
+	PCmdUI->Enable(SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP) &&
+		SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_RUN));
 
-	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
+	PCmdUI->SetCheck(SvimState::CheckState(SV_STATE_RUNNING));
 }
 
 void SVMainFrame::OnUpdateFilePrintConfig(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
+	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT));
 }
 
@@ -1535,25 +1535,25 @@ void SVMainFrame::OnUpdateExtraUtilities(CCmdUI* PCmdUI)
 
 void SVMainFrame::OnUpdateResultsPicker(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(((SVSVIMStateClass::CheckState(SV_STATE_READY)
-		&& SVSVIMStateClass::CheckState(SV_STATE_EDIT))
-		|| SVSVIMStateClass::CheckState(SV_STATE_RUNNING)
-		|| SVSVIMStateClass::CheckState(SV_STATE_REGRESSION)
-		|| SVSVIMStateClass::CheckState(SV_STATE_TEST)));
+	PCmdUI->Enable(((SvimState::CheckState(SV_STATE_READY)
+		&& SvimState::CheckState(SV_STATE_EDIT))
+		|| SvimState::CheckState(SV_STATE_RUNNING)
+		|| SvimState::CheckState(SV_STATE_REGRESSION)
+		|| SvimState::CheckState(SV_STATE_TEST)));
 }
 
 void SVMainFrame::OnUpdateRegressionTest(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
+	pCmdUI->SetCheck(SvimState::CheckState(SV_STATE_REGRESSION));
 }
 
 void SVMainFrame::OnUpdateModeEdit(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY)) &&
-		SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
+	pCmdUI->Enable((SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY)) &&
+		SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 
-	pCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_EDIT));
+	pCmdUI->SetCheck(SvimState::CheckState(SV_STATE_EDIT));
 }
 
 void SVMainFrame::OnUpdateTriggerSettings(CCmdUI* pCmdUI)
@@ -1567,20 +1567,20 @@ void SVMainFrame::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI)
 	{
 		bool l_bEnable = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP) ||
 			(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN) &&
-				!SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
+				!SvimState::CheckState(SV_STATE_RUNNING));
 		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
 		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
 	}
 	else
 	{
 		pCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP) &&
-			!SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
+			!SvimState::CheckState(SV_STATE_RUNNING));
 	}
 }
 
 void SVMainFrame::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST));
+	pCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST));
 }
 
 void SVMainFrame::OnRCClose()
@@ -1595,9 +1595,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 
 void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 {
-
 	CStatusBarCtrl* pCtrl = ( CStatusBarCtrl* )pCmdUI->m_pOther;
-
 	switch( pCmdUI->m_nID )
 	{
 		case ID_INDICATOR_INFO:
@@ -1699,18 +1697,17 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 			int l_Width = DC.GetTextExtent( Mode.c_str() ).cx - static_cast<int> ( Mode.size() * 2 );
 
 			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_MODE, 0, l_Width );
-			pCtrl->SetText( Mode.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW );
+			pCtrl->SetText(Mode.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW);
 
 			break;
 		}
 
 		case ID_INDICATOR_EDIT_LOCK:
 		{
-			std::string EdirLockInfo {_T("EditLock")};
 			CClientDC DC(nullptr);
-			int lWidth = DC.GetTextExtent(EdirLockInfo.c_str()).cx - static_cast<int> (EdirLockInfo.size() * 2) + 20;
-			m_wndStatusBar.SetPaneInfo(pCmdUI->m_nIndex, ID_INDICATOR_GIGE_LICENSE_ERROR, 0, lWidth);
-			pCtrl->SetText(EdirLockInfo.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW);
+			int lWidth = DC.GetTextExtent("no Edit Lock").cx/4*3;// DC.GetTextExtent does not seem to provide the proper width: need only 75 %
+			m_wndStatusBar.SetPaneInfo(pCmdUI->m_nIndex, ID_INDICATOR_EDIT_LOCK, 0, lWidth);
+			pCtrl->SetText("no EditLock", pCmdUI->m_nIndex, SBT_OWNERDRAW);
 
 			break;
 		}
@@ -1973,7 +1970,7 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 
 	// Indicate to the world that a configuration is loaded, parsed,
 	// and is ready to run.
-	SVSVIMStateClass::changeState(SV_STATE_READY, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
+	SvimState::changeState(SV_STATE_READY, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 
 	//
 	// If the configuration is required to start immediately after loading
@@ -1982,7 +1979,7 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 	//
 	bool StartLastConfiguration(false);
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
-	if ( StartLastConfiguration || SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
+	if ( StartLastConfiguration || SvimState::CheckState( SV_STATE_START_PENDING ) )
 	{
 		PostMessage ( WM_COMMAND, MAKEWPARAM (ID_MODE_RUN, 0), 0 );
 	}
@@ -2169,7 +2166,7 @@ void SVMainFrame::OnViewImageDisplayUpdate()
 {
 	if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE ) )
 	{
-		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+		SvimState::AddState( SV_STATE_MODIFIED );
 
 		bool ImageUpdate = false;
 		RootObject::getRootChildValue( SvDef::FqnEnvironmentImageUpdate, ImageUpdate );
@@ -2180,7 +2177,7 @@ void SVMainFrame::OnViewImageDisplayUpdate()
 void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 {
 	BOOL bEnable = TheSecurityManager().SVIsDisplayable( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE );
-	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
+	bEnable &= !SvimState::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 	bool ImageUpdate( false );
 	RootObject::getRootChildValue( SvDef::FqnEnvironmentImageUpdate, ImageUpdate );
@@ -2191,7 +2188,7 @@ void SVMainFrame::OnViewResultDisplayUpdate()
 {
 	if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE ) )
 	{
-		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+		SvimState::AddState( SV_STATE_MODIFIED );
 
 		bool ResultOnline = false;
 		RootObject::getRootChildValue( SvDef::FqnEnvironmentResultUpdate, ResultOnline );
@@ -2202,7 +2199,7 @@ void SVMainFrame::OnViewResultDisplayUpdate()
 void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 {
 	BOOL bEnable = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE );
-	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
+	bEnable &= !SvimState::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 
 	bool ResultOnline( false );
@@ -2212,7 +2209,7 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 
 void SVMainFrame::OnExtrasStartLastConfiguration()
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
 	{
 		return;
@@ -2228,7 +2225,7 @@ void SVMainFrame::OnExtrasStartLastConfiguration()
 
 void SVMainFrame::OnUpdateExtrasStartLastConfiguration(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+	pCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
 				   && TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON) 
 				   && (SVOLicenseManager::Instance().HasMatroxLicense()));
 
@@ -2414,12 +2411,12 @@ void SVMainFrame::InitToolBars()
 
 void SVMainFrame::startDesiredState(DWORD desiredState)
 {
-	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD | desiredState))
+	if (SvimState::CheckState(SV_STATE_REMOTE_CMD | desiredState))
 	{
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -2431,12 +2428,12 @@ void SVMainFrame::startDesiredState(DWORD desiredState)
 	long securityMode = (SV_STATE_TEST == desiredState) ? SECURITY_POINT_MODE_MENU_TEST : SECURITY_POINT_MODE_MENU_RUN;
 	if (S_OK == TheSecurityManager().SVValidate(securityMode))
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		if (SvimState::CheckState(SV_STATE_REGRESSION))
 		{
 			StopRegression();
 		}
 		DWORD oppositeState {(SV_STATE_RUNNING == desiredState) ? SV_STATE_TEST : SV_STATE_RUNNING};
-		if (SVSVIMStateClass::CheckState(oppositeState))
+		if (SvimState::CheckState(oppositeState))
 		{
 			//Check if currently in run mode if allowed to exit run mode
 			if (SV_STATE_RUNNING == oppositeState && S_OK != TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE))
@@ -2447,12 +2444,12 @@ void SVMainFrame::startDesiredState(DWORD desiredState)
 		}
 
 		//After Regression and test both going to stop this should only be either Stop or Edit mode
-		long prevState = SVSVIMStateClass::CheckState(SV_STATE_EDIT) ? SV_STATE_EDIT : SVSVIMStateClass::CheckState(SV_STATE_STOP) ? SV_STATE_STOP : 0L;
-		prevState |= SVSVIMStateClass::CheckState(SV_STATE_READY) ? SV_STATE_READY : 0L;
+		long prevState = SvimState::CheckState(SV_STATE_EDIT) ? SV_STATE_EDIT : SvimState::CheckState(SV_STATE_STOP) ? SV_STATE_STOP : 0L;
+		prevState |= SvimState::CheckState(SV_STATE_READY) ? SV_STATE_READY : 0L;
 
-		if (SVSVIMStateClass::CheckState(SV_STATE_READY) && false == SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
+		if (SvimState::CheckState(SV_STATE_READY) && false == SvimState::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
 		{
-			SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
+			SvimState::RemoveState(SV_STATE_EDIT);
 			TheSVObserverApp().DeselectTool();
 
 			if (S_OK == getIniInfoHandler().GetInitializationStatusFlags())
@@ -2478,7 +2475,7 @@ void SVMainFrame::startDesiredState(DWORD desiredState)
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, TheSVObserverApp().m_rInitialInfoSvo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams));
-					SVSVIMStateClass::changeState(prevState, desiredState);
+					SvimState::changeState(prevState, desiredState);
 				}
 			}
 			else
@@ -2490,10 +2487,10 @@ void SVMainFrame::startDesiredState(DWORD desiredState)
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams));
 
-				SVSVIMStateClass::changeState(prevState, desiredState);
+				SvimState::changeState(prevState, desiredState);
 			}
 
-			if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
+			if (SvimState::CheckState(SV_STATE_STOP_PENDING))
 			{
 				PostMessage(WM_COMMAND, MAKEWPARAM(ID_STOP, 0), 0);
 			}
@@ -2501,7 +2498,7 @@ void SVMainFrame::startDesiredState(DWORD desiredState)
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(exceptionContainer.getMessage());
-				SVSVIMStateClass::changeState(prevState, desiredState);
+				SvimState::changeState(prevState, desiredState);
 			}
 		}
 	}

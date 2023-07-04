@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 #include "SVIODoc.h"
-#include "EditLock.h"
 #include "GlobalConstantView.h"
 #include "GuiHelpers.h"
 #include "SVDiscreteInputsView.h"
@@ -32,7 +31,8 @@
 #include "SVMFCControls/SVRemoteInputDialog.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/EditLock.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
@@ -70,7 +70,7 @@ SVIODoc::~SVIODoc()
 
 void SVIODoc::OnCloseDocument()
 {
-	if ( ! SVSVIMStateClass::CheckState( SV_STATE_CLOSING | SV_STATE_CANCELING ) )
+	if ( ! SvimState::CheckState( SV_STATE_CLOSING | SV_STATE_CANCELING ) )
 	{
 		return;
 	}
@@ -121,7 +121,7 @@ void SVIODoc::SetTitle(LPCTSTR lpszTitle)
 
 BOOL SVIODoc::SaveModified()
 {
-	if ( SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) )
+	if ( SvimState::CheckState( SV_STATE_CANCELING ) )
 	{
 		return TRUE;
 	}
@@ -139,7 +139,7 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 		
 	if( TheSecurityManager().SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 	{
-		if( SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) || SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
+		if( SvimState::CheckState( SV_STATE_CANCELING ) || SvimState::CheckState( SV_STATE_CLOSING ) )
 		{
 			bCanClose = CDocument::CanCloseFrame(pFrame);
 		}
@@ -156,14 +156,14 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 
 void SVIODoc::OnExtrasTestoutputs()
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
 	}
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS))
 	{
-		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+		if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		{
 			SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
 		}
@@ -194,12 +194,12 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		SvMc::SVRemoteInputDialog oDlg;
 		oDlg.m_lRemoteInputCount = count;
 
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (srs.conditionOk())
 		{
 			if (IDOK == oDlg.DoModal())
 			{
-				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+				SvimState::AddState(SV_STATE_MODIFIED);
 				if (oDlg.m_lRemoteInputCount >= count)
 				{
 					// Add new ones until we have enough
@@ -307,7 +307,7 @@ void SVIODoc::InitMenu()
 
 void SVIODoc::OnUpdateFileExit( CCmdUI* pCmdUI )
 {
-	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
+	pCmdUI->Enable( ! SvimState::CheckState( SV_STATE_RUNNING ) );
 }
 
 CFile* SVIODoc::GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError )

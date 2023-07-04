@@ -23,7 +23,7 @@
 #include "Operators/SVRange.h"
 #include "Operators/TableObject.h"
 #include "Tools/SVTool.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "InspectionEngine/RunStatus.h"
 #pragma endregion Includes
 
@@ -1589,7 +1589,7 @@ HRESULT BlobAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineS
 
 			// if running only show N Blob Figures according to the specified
 			// MaxBlobDataArraySize variable
-			if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+			if ( SvimState::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 			{
 				long numBlobs = 0;
 				m_lvoMaxBlobDataArraySize.GetValue(numBlobs);

@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "EditLock.h"
 #include "SVPPQBar.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVConfigurationObject.h"
@@ -20,7 +19,8 @@
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVPPQEntryDialog.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/EditLock.h"
+#include "SVStatusLibrary/SvimState.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -450,9 +450,9 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 	// Click on PPQEntry button 
 	if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) )
 	{
-		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+		if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		{
-			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 			if (srs.conditionOk())
 			{
 				int pos = nID - 50;

@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CommandLineArgs.cpp" />
+    <ClCompile Include="EditLock.cpp" />
     <ClCompile Include="GlobalPath.cpp" />
     <ClCompile Include="MessageContainer.cpp" />
     <ClCompile Include="MessageData.cpp" />
@@ -168,10 +169,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVSVIMStateClass.cpp" />
+    <ClCompile Include="SvimState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandLineArgs.h" />
+    <ClInclude Include="EditLock.h" />
     <ClInclude Include="ErrorUtil.h" />
     <ClInclude Include="GlobalPath.h" />
     <ClInclude Include="MessageContainer.h" />
@@ -184,7 +186,7 @@
     <ClInclude Include="RegistryAccess.h" />
     <ClInclude Include="SourceFileParams.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVSVIMStateClass.h" />
+    <ClInclude Include="SvimState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

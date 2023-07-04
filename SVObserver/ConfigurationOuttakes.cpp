@@ -8,7 +8,6 @@
 #include "stdafx.h"
 
 #include "ConfigurationOuttakes.h"
-#include "EditLock.h"
 #include "RootObject.h"
 #include "SVIODoc.h"
 #include "SVIOController.h"
@@ -25,8 +24,9 @@
 #include "SVLibrary/SVPackedFile.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVSecurity/SVSecurityManager.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 
 
 struct ConfigFilenames
@@ -159,7 +159,7 @@ bool PrepareForNewConfiguration()
 	TheSVObserverApp().InitPath(std::string(SvFs::FileHelperManager::Instance().GetRunPathName() + _T("\\")).c_str(), true, true);
 
 	// Ensure that DestroyConfig() can do his work...
-	SVSVIMStateClass::AddState(SV_STATE_READY);
+	SvimState::AddState(SV_STATE_READY);
 
 	return true;
 }
@@ -193,7 +193,7 @@ SVConfigurationObject* CreateConfigAssistant(SVOConfigAssistantDlg& rDlg, bool n
 
 	rDlg.SetNewConfiguration(newConfiguration);
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return nullptr;
@@ -203,7 +203,7 @@ SVConfigurationObject* CreateConfigAssistant(SVOConfigAssistantDlg& rDlg, bool n
 	{
 		if (rDlg.Modified())
 		{
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			SvimState::AddState(SV_STATE_MODIFIED);
 		}
 		if (nullptr != pConfig)
 		{
@@ -288,7 +288,7 @@ SVConfigurationObject* UseConfigAssistant(SVOConfigAssistantDlg& rAssistantDlg, 
 	if (newConfiguration)
 	{
 		TheSVObserverApp().UpdateAllMenuExtrasUtilities();
-		SVSVIMStateClass::changeState(SV_STATE_READY, SV_STATE_AVAILABLE);
+		SvimState::changeState(SV_STATE_READY, SV_STATE_AVAILABLE);
 	}
 
 	// Rebuild PPQBar Buttons
@@ -378,7 +378,7 @@ bool fileSaveAsSVXWrapper(const std::string& rFileName, bool resetAutoSave)
 
 	CWaitCursor wait;
 	bool result {true};
-	SVSVIMStateClass::AddState(SV_STATE_SAVING);
+	SvimState::AddState(SV_STATE_SAVING);
 	ResetAllIPDocModifyFlag(false);
 
 	SVConfigurationObject* pConfig(nullptr);
@@ -391,7 +391,7 @@ bool fileSaveAsSVXWrapper(const std::string& rFileName, bool resetAutoSave)
 		result = fileSaveAsSVX(pConfig, svxFilePath, rFileName, resetAutoSave);
 	}
 
-	SVSVIMStateClass::RemoveState(SV_STATE_SAVING);
+	SvimState::RemoveState(SV_STATE_SAVING);
 	return result;
 }
 
@@ -412,7 +412,7 @@ void SaveConfig(bool saveAs /*= false*/)
 		if (0 == _access(fileName.c_str(), 0))
 		{
 			AfxGetApp()->AddToRecentFileList(fileName.c_str());
-			SVSVIMStateClass::RemoveState(SV_STATE_MODIFIED);
+			SvimState::RemoveState(SV_STATE_MODIFIED);
 		}
 
 		((CMDIFrameWnd*)AfxGetMainWnd())->OnUpdateFrameTitle(TRUE);
@@ -423,14 +423,14 @@ HRESULT SavePackedConfiguration(LPCTSTR pFileName)
 {
 	HRESULT Result {S_OK};
 
-	bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+	bool bRunning = SvimState::CheckState(SV_STATE_RUNNING);
 
 	if (bRunning)
 	{
 		TheSVObserverApp().StopIfRunning();
 	}
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+	if (SvimState::CheckState(SV_STATE_READY))
 	{
 		if (false == fileSaveAsSVXWrapper(pFileName, false))
 		{
@@ -561,11 +561,11 @@ HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 HRESULT DestroyConfig(bool AskForSavingOrClosing /* = true */,
 	bool CloseWithoutHint /* = false */)
 {
-	SVSVIMStateClass::SVRCBlocker block;
+	SvimState::SVRCBlocker block;
 
 	HRESULT hr = S_OK;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST))
+	if (SvimState::CheckState(SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		hr = DestroyConfigStandard(AskForSavingOrClosing, CloseWithoutHint);
 	}
@@ -595,7 +595,7 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 
 	if (CloseWithoutHint)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_CANCELING);
+		SvimState::AddState(SV_STATE_CANCELING);
 	}
 	else
 	{
@@ -612,7 +612,7 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 
 	if (bClose)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+		if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		{
 			StopSvo();
 		}
@@ -622,7 +622,7 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 
 	if (bClose)
 	{
-		bOk = bClose = SVSVIMStateClass::CheckState(SV_STATE_READY);
+		bOk = bClose = SvimState::CheckState(SV_STATE_READY);
 	}
 
 	if (bClose)
@@ -631,8 +631,8 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 		configName.SetString(getConfigFullFileName().c_str());
 		SVVisionProcessorHelper::Instance().FireNotification(SvPb::NotifyType::configUnloaded, configName);
 		SVOLicenseManager::Instance().ClearLicenseErrors();
-		SVSVIMStateClass::ConfigWasUnloaded();
-		SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
+		SvimState::ConfigWasUnloaded();
+		SvimState::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
 
 		if (bOk)
 		{
@@ -654,7 +654,7 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 
 			wait.Restore();
 
-			SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING);
+			SvimState::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING);
 
 			bOk = setConfigFullFileName(nullptr, true);
 
@@ -676,7 +676,7 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 
 	return hr;
 
-}// end if bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING );
+}// end if bOk = ! SvimState::CheckState( SV_STATE_READY | SV_STATE_RUNNING );
 
 
 
@@ -707,7 +707,7 @@ std::pair<bool, bool> OkToClose(bool AskForSavingOrClosing)
 	if (AskForSavingOrClosing)
 	{
 		// Check if current config is modified and ask for saving
-		if (SVSVIMStateClass::CheckState(SV_STATE_MODIFIED))
+		if (SvimState::CheckState(SV_STATE_MODIFIED))
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(getConfigFileName());
@@ -717,7 +717,7 @@ std::pair<bool, bool> OkToClose(bool AskForSavingOrClosing)
 			{
 				case IDNO:
 				{
-					SVSVIMStateClass::AddState(SV_STATE_CANCELING);
+					SvimState::AddState(SV_STATE_CANCELING);
 					ResetAllIPDocModifyFlag(false);
 					break;
 				}
@@ -732,7 +732,7 @@ std::pair<bool, bool> OkToClose(bool AskForSavingOrClosing)
 						// If not, an error or an user cancel
 						// command occured!
 						bClose = !std::string(getConfigFullFileName()).empty() &&
-							!SVSVIMStateClass::CheckState(SV_STATE_MODIFIED);
+							!SvimState::CheckState(SV_STATE_MODIFIED);
 					}
 					break;
 				}
@@ -744,11 +744,11 @@ std::pair<bool, bool> OkToClose(bool AskForSavingOrClosing)
 					break;
 				}
 			}// end switch( result )
-		}// end if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
+		}// end if ( SvimState::CheckState( SV_STATE_MODIFIED ) )
 	}
 	else
 	{
-		SVSVIMStateClass::AddState(SV_STATE_CANCELING);
+		SvimState::AddState(SV_STATE_CANCELING);
 	}
 	return {bClose, bCancel};
 }

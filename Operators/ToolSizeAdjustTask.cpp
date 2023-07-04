@@ -14,7 +14,7 @@
 #include "ToolSizeAdjustTask.h"
 #include "Tools/SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/Color.h"
 #include "Definitions/StringTypeDef.h"
@@ -212,7 +212,7 @@ SvTo::SVToolClass* ToolSizeAdjustTask::GetTool() const
 bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	///Do nothing if we are in Run Mode 
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		return true;
 	}

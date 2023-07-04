@@ -13,7 +13,7 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #include "CommandExternalHelper.h"
 #include "CommandFunction.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 
 
 #pragma endregion Includes

@@ -28,7 +28,7 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
 
@@ -59,7 +59,7 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration(std::string& rFileName) const
 {
 	HRESULT Result{S_OK};
 
-	if (false == SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	if (false == SvimState::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
 	{
 		TCHAR szDrive[_MAX_DRIVE];
 		TCHAR szDir[_MAX_DIR];
@@ -370,7 +370,7 @@ static HRESULT CheckForRemoteInputProblems(const SVObjectNameInfo& rInfo, const 
 
 HRESULT SVVisionProcessorHelper::SetItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool RunOnce)
 {
-	if (SVSVIMStateClass::isSvrcBlocked())
+	if (SvimState::isSvrcBlocked())
 	{
 		return SVMSG_SVO_ACCESS_DENIED;
 	}
@@ -516,7 +516,7 @@ HRESULT SVVisionProcessorHelper::GetStandardItems(const SvDef::StringSet& rNames
 
 HRESULT SVVisionProcessorHelper::GetInspectionItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
-	if (SVSVIMStateClass::isSvrcBlocked())
+	if (SvimState::isSvrcBlocked())
 	{
 		return SVMSG_SVO_ACCESS_DENIED;
 	}
@@ -541,7 +541,7 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems(const SvDef::StringSet& rNam
 
 HRESULT SVVisionProcessorHelper::GetRemoteInputItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
-	if (SVSVIMStateClass::isSvrcBlocked())
+	if (SvimState::isSvrcBlocked())
 	{
 		return SVMSG_SVO_ACCESS_DENIED;
 	}
@@ -572,7 +572,7 @@ HRESULT SVVisionProcessorHelper::SetStandardItems(const SVNameStorageMap& rItems
 
 	if (!(rItems.empty()))
 	{
-		bool Online = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+		bool Online = SvimState::CheckState(SV_STATE_RUNNING);
 
 		for (SVNameStorageMap::const_iterator Iter = rItems.begin(); Iter != rItems.end(); ++Iter)
 		{
@@ -645,7 +645,7 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems(const SVNameStorageMap& rIte
 
 HRESULT SVVisionProcessorHelper::SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool )
 {
-	if (SVSVIMStateClass::isSvrcBlocked())
+	if (SvimState::isSvrcBlocked())
 	{
 		return SVMSG_SVO_ACCESS_DENIED;
 	}
@@ -693,7 +693,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SvOi::IObjectClass& r
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
 
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	if (SvimState::CheckState(notAllowedStates))
 	{
 		return SVMSG_SVO_ACCESS_DENIED;
 	}
@@ -914,7 +914,7 @@ HRESULT SVVisionProcessorHelper::ActivateMonitorList(const std::string& rListNam
 	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION |
 		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-	if (!SVSVIMStateClass::CheckState(notAllowedStates) && SVSVIMStateClass::CheckState(SV_STATE_READY))
+	if (!SvimState::CheckState(notAllowedStates) && SvimState::CheckState(SV_STATE_READY))
 	{
 		SVConfigurationObject* pConfig = nullptr;
 
@@ -1012,7 +1012,7 @@ HRESULT SVVisionProcessorHelper::GetProductFilter(const std::string& rListName, 
 HRESULT SVVisionProcessorHelper::RegisterMonitorList(const std::string& rListName, const std::string& rPPQName, int rejectDepth, const SvDef::StringSet& rProdList, const SvDef::StringSet& rRejectCondList, const SvDef::StringSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError)
 {
 	HRESULT hr = S_OK;
-	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+	if (SvimState::CheckState(SV_STATE_READY))
 	{
 		SVConfigurationObject* pConfig = nullptr;
 		hr = SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1081,7 +1081,7 @@ void SVVisionProcessorHelper::Startup()
 	SvStl::MessageManager::setNotificationFunction(msgNotifier);
 
 	NotifyFunctor notifier = [this](SvPb::NotifyType notifyType, const _variant_t& parameter) {return FireNotification(notifyType, parameter); };
-	SVSVIMStateClass::setNotificationFunction(notifier);
+	SvimState::setNotificationFunction(notifier);
 }
 
 void SVVisionProcessorHelper::Shutdown()
@@ -1101,7 +1101,7 @@ void SVVisionProcessorHelper::Shutdown()
 	m_Subscriptions.clear();
 	m_MessageSubscriptions.clear();
 	SvStl::MessageManager::setNotificationFunction(nullptr);
-	SVSVIMStateClass::setNotificationFunction(nullptr);
+	SvimState::setNotificationFunction(nullptr);
 }
 
 void SVVisionProcessorHelper::FireNotification(SvPb::NotifyType notifyType, const _variant_t& parameter) const

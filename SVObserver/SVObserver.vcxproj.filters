@@ -408,9 +408,6 @@
     <ClCompile Include="ResultTabControl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="EditLock.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TADlgAcquisitionSourcePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -926,9 +923,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ResultTabControl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="EditLock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADlgAcquisitionSourcePage.h">

@@ -26,7 +26,7 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVRange.h"
 #include "Operators/SVResultLong.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "InspectionEngine/RunStatus.h"
 #include "Tools/SVTool.h"
 #include "SVUtilityLibrary/GeoHelper.h"
@@ -945,7 +945,7 @@ HRESULT PatternAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLi
 		msv_lpatNumFoundOccurances.GetValue(lOccurances);
 
 		// If Run mode or test mode, show only one occurance (the best match)
-		if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) && lOccurances > 0 )
+		if ( SvimState::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) && lOccurances > 0 )
 		{
 			lOccurances = 1;
 		}

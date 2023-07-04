@@ -15,7 +15,7 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "Tools/SVTool.h"
 #include "BlobAnalyzer2.h"
 #include "BlobFeatureList.h"
@@ -541,7 +541,7 @@ namespace SvAo
 
 			// if running only show N Blob Figures according to the specified
 			// MaxBlobDataArraySize variable
-			if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && 1 < numberOfBlobs)
+			if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && 1 < numberOfBlobs)
 			{
 				numberOfBlobs = 1;
 			}

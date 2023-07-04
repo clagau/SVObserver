@@ -29,7 +29,7 @@
 #include "Tools/SVTool.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVConditional.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/Color.h"
@@ -91,7 +91,7 @@ void fillList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> result, con
 
 bool isProductAlive(SVPPQObject* pPPQ, long triggerCount)
 {
-	bool l_Status = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+	bool l_Status = !SvimState::CheckState(SV_STATE_RUNNING);
 
 	if (!l_Status && nullptr != pPPQ)
 	{
@@ -891,7 +891,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 {
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_CLOSING;
 
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	if (SvimState::CheckState(notAllowedStates))
 	{
 		return false;
 	}
@@ -1030,7 +1030,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVInputImageRequestInfoStructP
 {
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_CLOSING;
 
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	if (SvimState::CheckState(notAllowedStates))
 	{
 		return E_FAIL;
 	}
@@ -1187,7 +1187,7 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 	if (p_Refresh)
 	{
 		// Result View, Display Image and Overlay Update
-		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+		if (!SvimState::CheckState(SV_STATE_RUNNING))
 		{
 			std::pair<long, SVInspectionInfoStruct> data {l_svProduct.triggerCount(), l_svProduct.m_svInspectionInfos[getObjectId()]};
 
@@ -1231,7 +1231,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorM
 
 		Result = __super::resetAllObjects(&ErrorMessages) && Result;
 
-		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION))
+		if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION))
 		{
 			buildValueObjectData();
 		}
@@ -1842,7 +1842,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 			if (nullptr != rIpInfoStruct.m_triggerRecordWrite && nullptr != pImageBuffer && !pImageBuffer->isEmpty() && nullptr != l_pInRequest->m_ImageHandlePtr)
 			{
 				/*HRESULT l_Code = */SVMatroxBufferInterface::CopyBuffer(pImageBuffer->getHandle()->GetBuffer(), l_pInRequest->m_ImageHandlePtr->GetBuffer());
-				if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && nullptr != pVirtualCamera)
+				if (!SvimState::CheckState(SV_STATE_RUNNING) && nullptr != pVirtualCamera)
 				{
 					pVirtualCamera->setTempImage(l_pInRequest->m_ImageHandlePtr->GetBuffer());
 				}
@@ -2382,7 +2382,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 						try
 						{
 							l_pImage->setImage(Iter->second.getImage(), rIpInfoStruct.m_triggerRecordWrite);
-							if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && SVSVIMStateClass::CheckState(SV_STATE_READY) && Iter->second.getImage()->isValid())
+							if (!SvimState::CheckState(SV_STATE_RUNNING) && SvimState::CheckState(SV_STATE_READY) && Iter->second.getImage()->isValid())
 							{
 								pCamera->setTempImage(Iter->second.getImage()->getHandle()->GetBuffer());
 							}

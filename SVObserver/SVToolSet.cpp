@@ -17,7 +17,7 @@
 #include "AnalyzerOperators/Analyzer.h"
 #include "Operators/SVConditional.h"
 #include "SVInspectionProcess.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "Tools/SVTool.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "Tools/SVColorTool.h"
@@ -648,7 +648,7 @@ bool SVToolSet::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	m_inputConditionBool.validateInput();
 
-	m_RegressionTestMode.SetDefaultValue(SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
+	m_RegressionTestMode.SetDefaultValue(SvimState::CheckState(SV_STATE_REGRESSION));
 
 	SVImageExtentClass ImageExtent(m_MainImageObject.GetImageExtents());
 	double Width(0.0);

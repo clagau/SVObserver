@@ -6,9 +6,16 @@
 
 #include "SVSharedMemoryLibrary/SharedMemoryLock.h"
 
+namespace SvStl
+{
+
 namespace EditLock
 {
-	bool setEditLock(bool toBeLocked);
-	bool acquire();
-	void release();
-};
+bool isAcquiredBySVIM();
+
+bool setEditLock(bool toBeLocked);
+bool acquire();
+void release();
+}
+
+}

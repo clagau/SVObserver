@@ -25,7 +25,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "ArchiveDataAsynchron.h"
@@ -389,7 +389,7 @@ void SVArchiveTool::updateResultFilepathInformation(bool considerOldConfiguratio
 bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool result = SVToolClass::ResetObject(pErrorMessages);
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		m_lastBufferMap.clear();
 		updateResultFilepathInformation(false);
@@ -796,7 +796,7 @@ bool SVArchiveTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVe
 		// Usually a condition where user is 'moving' a tool that causes the
 		// toolset to 'run'.
 		//
-		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_STOPING))
+		if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_STOPING))
 		{
 			return true;
 		}
@@ -1430,7 +1430,7 @@ bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector* pErrorMessages)
 	{
 		if (m_ImageCollection.GetSize() > 0) //If no images are to be archived we do not need to run through the checking of disk space.
 		{
-			bool setCurrentImagePathRoot = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+			bool setCurrentImagePathRoot = !SvimState::CheckState(SV_STATE_RUNNING);
 			if (setCurrentImagePathRoot)
 			{
 				bOk = ValidateImagePathAndAvailableSpace(getObjectId(), pErrorMessages);

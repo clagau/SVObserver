@@ -13,7 +13,7 @@
 #include "SVMainFrm.h"
 #include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/SVClock.h"
 
 #ifdef _DEBUG
@@ -36,7 +36,7 @@ ExtrasEngine& ExtrasEngine::Instance()
 
 void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 {
-	if(!(IsAutoSaveEnabled() && SVSVIMStateClass::IsAutoSaveRequired()))
+	if(!(IsAutoSaveEnabled() && SvimState::IsAutoSaveRequired()))
 	{
 		return; //not enabled by user (or configuration not modified):do nothing
 	}
@@ -90,7 +90,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 void ExtrasEngine::ResetAutoSaveInformation()
 {
 	time(&m_lastAutoSaveTimestamp);
-	SVSVIMStateClass::SetAutoSaveRequired(false);
+	SvimState::SetAutoSaveRequired(false);
 }
 
 

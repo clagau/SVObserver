@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2008 by Körber Pharma Inspection GmbH. All Rights Reserved, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSVIMStateClass
-//* .File Name       : $Workfile:   SVSVIMStateClass.cpp  $
+//* .Module Name     : SvimState
+//* .File Name       : $Workfile:   SvimState.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.5  $
 //* .Check In Date   : $Date:   09 Dec 2014 10:12:44  $
@@ -12,33 +12,37 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
-#include "SVSVIMStateClass.h"
+#include "SvimState.h"
 #include "Definitions/StringTypeDef.h"
 #include "MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
-std::atomic_long SVSVIMStateClass::m_SVIMState {SV_STATE_AVAILABLE};
+std::atomic_long SvimState::ms_fullState {SV_STATE_AVAILABLE};
 
-bool SVSVIMStateClass::m_AutoSaveRequired {false};
-std::atomic<__time64_t> SVSVIMStateClass::m_lastModifiedTime {0LL};
-std::atomic<__time64_t> SVSVIMStateClass::m_loadedSinceTime {0LL};
-std::mutex SVSVIMStateClass::ms_protectHash;
-std::string SVSVIMStateClass::ms_hash;
+bool SvimState::ms_AutoSaveRequired {false};
+std::atomic<__time64_t> SvimState::ms_lastModifiedTime {0LL};
+std::atomic<__time64_t> SvimState::ms_loadedSinceTime {0LL};
+std::mutex SvimState::ms_protectHash;
+std::string SvimState::ms_hash;
 
-std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode {SvPb::DeviceModeType::unknownMode};
-NotifyFunctor SVSVIMStateClass::m_pNotify {nullptr};
+std::atomic<SvPb::DeviceModeType> SvimState::ms_CurrentMode {SvPb::DeviceModeType::unknownMode};
+NotifyFunctor SvimState::ms_notify {nullptr};
 
-std::atomic<int>  SVSVIMStateClass::ms_LockCountSvrc {0};
+std::atomic<int>  SvimState::ms_LockCountSvrc {0};
+std::atomic<bool> SvimState::ms_isReloadedAfterCopyToolsToClipboard {false};
 
-bool SVSVIMStateClass::isSvrcBlocked()
+int64_t SvimState::ms_EditingStates = 0; 
+
+
+bool SvimState::isSvrcBlocked()
 {
 	return ms_LockCountSvrc > 0;
 }
 
-void SVSVIMStateClass::AddState(DWORD dwState)
+void SvimState::AddState(DWORD dwState)
 {
-	m_SVIMState |= dwState;
+	ms_fullState |= dwState;
 
 	if (dwState & SV_STATE_MODIFIED)
 	{
@@ -47,21 +51,21 @@ void SVSVIMStateClass::AddState(DWORD dwState)
 	}
 	if (dwState & SV_STATE_LOADING)
 	{
-		m_lastModifiedTime = 0;
+		ms_lastModifiedTime = 0;
 	}
 	CheckModeNotify();
 }
 
-void SVSVIMStateClass::RemoveState(DWORD dwState)
+void SvimState::RemoveState(DWORD dwState)
 {
-	m_SVIMState &= ~dwState;
+	ms_fullState &= ~dwState;
 	CheckModeNotify();
 }
 
-void SVSVIMStateClass::changeState(DWORD addStates, DWORD removeStates)
+void SvimState::changeState(DWORD addStates, DWORD removeStates)
 {
-	m_SVIMState |= addStates;
-	m_SVIMState &= ~removeStates;
+	ms_fullState |= addStates;
+	ms_fullState &= ~removeStates;
 
 	if (addStates & SV_STATE_MODIFIED)
 	{
@@ -70,25 +74,25 @@ void SVSVIMStateClass::changeState(DWORD addStates, DWORD removeStates)
 	}
 	if (addStates & SV_STATE_LOADING)
 	{
-		m_lastModifiedTime = 0;
+		ms_lastModifiedTime = 0;
 	}
 
 	CheckModeNotify();
 }
 
-bool SVSVIMStateClass::CheckState(DWORD dwState)
+bool SvimState::CheckState(DWORD dwState)
 {
-	bool l_Status = (dwState & m_SVIMState) != 0;
+	bool l_Status = (dwState & ms_fullState) != 0;
 
 	return l_Status;
 }
 
-SvPb::DeviceModeType SVSVIMStateClass::GetMode()
+SvPb::DeviceModeType SvimState::GetMode()
 {
 	SvPb::DeviceModeType result {SvPb::DeviceModeType::unknownMode};
 
 	// Pending conditions...
-	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING |
+	if (SvimState::CheckState(SV_STATE_START_PENDING |
 		SV_STATE_STARTING |
 		SV_STATE_STOP_PENDING |
 		SV_STATE_STOPING |
@@ -102,31 +106,31 @@ SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 	{
 		result = SvPb::DeviceModeType::modeChanging;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	else if (SvimState::CheckState(SV_STATE_EDIT))
 	{
 		result = SvPb::DeviceModeType::editMode;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	else if (SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		result = SvPb::DeviceModeType::runMode;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+	else if (SvimState::CheckState(SV_STATE_REGRESSION))
 	{
 		result = SvPb::DeviceModeType::regressionMode;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
+	else if (SvimState::CheckState(SV_STATE_TEST))
 	{
 		result = SvPb::DeviceModeType::testMode;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_STOP))
+	else if (SvimState::CheckState(SV_STATE_STOP))
 	{
 		result = SvPb::DeviceModeType::stopMode;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_AVAILABLE))
+	else if (SvimState::CheckState(SV_STATE_AVAILABLE))
 	{
 		result = SvPb::DeviceModeType::available;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+	else if (SvimState::CheckState(SV_STATE_READY))
 	{
 		result = SvPb::DeviceModeType::modeChanging;
 	}
@@ -138,51 +142,51 @@ SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 	return result;
 }
 
-void SVSVIMStateClass::setNotificationFunction(const NotifyFunctor& Notify)
+void SvimState::setNotificationFunction(const NotifyFunctor& Notify)
 {
-	m_pNotify = Notify;
+	ms_notify = Notify;
 }
 
 
-void SVSVIMStateClass::CheckModeNotify()
+void SvimState::CheckModeNotify()
 {
 	SvPb::DeviceModeType NewMode = GetMode();
 
-	if (NewMode != m_CurrentMode)
+	if (NewMode != ms_CurrentMode)
 	{
-		m_CurrentMode = NewMode;
+		ms_CurrentMode = NewMode;
 
-		if (nullptr != m_pNotify)
+		if (nullptr != ms_notify)
 		{
-			(m_pNotify)(SvPb::NotifyType::currentMode, _variant_t(static_cast<long> (m_CurrentMode)));
+			(ms_notify)(SvPb::NotifyType::currentMode, _variant_t(static_cast<long> (ms_CurrentMode)));
 		}
 	}
 	//OutputDebugState();
 }
 
-void SVSVIMStateClass::setLastModifiedTime()
+void SvimState::setLastModifiedTime()
 {
-	m_lastModifiedTime = ::_time64(nullptr);
+	ms_lastModifiedTime = ::_time64(nullptr);
 
-	if (nullptr != m_pNotify)
+	if (nullptr != ms_notify)
 	{
-		(m_pNotify)(SvPb::NotifyType::lastModified, _variant_t(SVSVIMStateClass::getLastModifiedTime()));
+		(ms_notify)(SvPb::NotifyType::lastModified, _variant_t(SvimState::getLastModifiedTime()));
 	}
 }
 
-void SVSVIMStateClass::ConfigWasLoaded(LPCSTR hash)
+void SvimState::ConfigWasLoaded(LPCSTR hash)
 {
-	m_loadedSinceTime = ::_time64(nullptr);
+	ms_loadedSinceTime = ::_time64(nullptr);
 	SetHash(hash);
 }
-void SVSVIMStateClass::ConfigWasUnloaded()
+void SvimState::ConfigWasUnloaded()
 {
-	m_loadedSinceTime = 0L;
+	ms_loadedSinceTime = 0L;
 	SetHash(nullptr);
 }
 
 
-void SVSVIMStateClass::SetHash(LPCSTR hash)
+void SvimState::SetHash(LPCSTR hash)
 {
 	std::lock_guard<std::mutex> lockGuard(ms_protectHash);
 	if (nullptr != hash)
@@ -195,21 +199,21 @@ void SVSVIMStateClass::SetHash(LPCSTR hash)
 	}
 }
 
-std::string  SVSVIMStateClass::GetHash()
+std::string  SvimState::GetHash()
 {
 	std::lock_guard<std::mutex> lockGuard(ms_protectHash);
 	std::string result(ms_hash);
 	return result;
 }
 
-HRESULT SVSVIMStateClass::CheckNotAllowedState(DWORD States /*=SV_DefaultNotAllowedStates*/)
+HRESULT SvimState::CheckNotAllowedState(DWORD States /*=SV_DefaultNotAllowedStates*/)
 {
 
-	bool accessDenied = SVSVIMStateClass::CheckState(States);
+	bool accessDenied = SvimState::CheckState(States);
 	if (accessDenied)
 	{
 		SvDef::StringVector msgList;
-		msgList.emplace_back(std::move(std::format(_T("{:#X}"), SVSVIMStateClass::GetState())));
+		msgList.emplace_back(std::move(std::format(_T("{:#X}"), SvimState::GetState())));
 		msgList.emplace_back(std::move(std::format(_T("{:#X}"), States)));
 		SvStl::MessageManager message(SvStl::MsgType::Log);
 		message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVRC_AccessDenied, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -217,7 +221,7 @@ HRESULT SVSVIMStateClass::CheckNotAllowedState(DWORD States /*=SV_DefaultNotAllo
 	return  accessDenied ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 }
 
-void SVSVIMStateClass::OutputDebugState()
+void SvimState::OutputDebugState()
 {
 	std::unordered_map<DWORD, std::string> StateNames =
 	{
@@ -250,7 +254,7 @@ void SVSVIMStateClass::OutputDebugState()
 	int count {0};
 	for (auto& entry : StateNames)
 	{
-		if (entry.first & m_SVIMState)
+		if (entry.first & ms_fullState)
 		{
 			if (count++ == 0)
 				msg = entry.second;

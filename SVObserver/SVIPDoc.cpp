@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVIPDoc.h"
-#include "EditLock.h"
 #include "ExtrasEngine.h"
 #include "ResultTabbedView.h"
 #include "SVCommandInspectionCollectImageData.h"
@@ -66,13 +65,14 @@
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "Tools/SVTool.h"
 #include "Triggering/SVTriggerObject.h"
 #include "ObjectInterfaces/ObjectInfo.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVMFCControls/EnterStringDlg.h"
@@ -588,7 +588,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId, int index)
 	{
 		return false;
 	}
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return false;
@@ -850,7 +850,7 @@ BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 
 	if (TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION))
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_CANCELING) || SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
+		if (SvimState::CheckState(SV_STATE_CANCELING) || SvimState::CheckState(SV_STATE_CLOSING))
 		{
 			bCanClose = CDocument::CanCloseFrame(pFrame);
 		}
@@ -868,7 +868,7 @@ BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 BOOL SVIPDoc::SaveModified()
 {
 	// Don't save modified
-	if (SVSVIMStateClass::CheckState(SV_STATE_CANCELING)) { return TRUE; }
+	if (SvimState::CheckState(SV_STATE_CANCELING)) { return TRUE; }
 
 	int index = 0;
 	if ((index = m_strTitle.Find(_TCHAR('.'))) >= 0)
@@ -891,7 +891,7 @@ BOOL SVIPDoc::OnNewDocument()
 
 void SVIPDoc::CloseDocument()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_CANCELING | SV_STATE_CLOSING) &&
+	if (!SvimState::CheckState(SV_STATE_CANCELING | SV_STATE_CLOSING) &&
 		!(S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION)))
 	{
 		return;
@@ -921,13 +921,13 @@ void SVIPDoc::OnUpdateRunRegressionTest(CCmdUI* PCmdUI)
 {
 	// @WARNING:  Pointers should be checked before they are dereferenced.
 	PCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_REGRESSION_TEST));
-	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
+	PCmdUI->SetCheck(SvimState::CheckState(SV_STATE_REGRESSION));
 }
 
 void SVIPDoc::OnAllowAdjustLightReference(CCmdUI* pCmdUI)
 {
-	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
-		SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_EDIT) &&
+	bool bEnable = (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
+		SvimState::CheckState(SV_STATE_TEST | SV_STATE_EDIT) &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 	if (bEnable)
 	{
@@ -941,8 +941,8 @@ void SVIPDoc::OnAllowAdjustLightReference(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnAllowAdjustLut(CCmdUI* pCmdUI)
 {
-	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
-		SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_EDIT) &&
+	bool bEnable = (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
+		SvimState::CheckState(SV_STATE_TEST | SV_STATE_EDIT) &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 	if (bEnable)
 	{
@@ -994,7 +994,7 @@ void SVIPDoc::OnAdjustLightReference()
 
 	if (dlg.CreatePages(cameraVector, LightRefVector))
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		SvimState::SetResetState stateEditing {SV_STATE_EDITING};
 
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1066,7 +1066,7 @@ void SVIPDoc::OnAdjustLut()
 
 	if (bSuccess)
 	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		SvimState::SetResetState stateEditing {SV_STATE_EDITING};
 
 		if (dlg.DoModal() == IDOK)
 		{
@@ -1224,7 +1224,7 @@ void SVIPDoc::OnAddModuleTool(UINT nId)
 
 void SVIPDoc::OnExportTools()
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -1282,12 +1282,12 @@ void SVIPDoc::OnUpdateExportTools(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnImportTools()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_READY) || !SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	if (!SvimState::CheckState(SV_STATE_READY) || !SvimState::CheckState(SV_STATE_EDIT))
 	{
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -1407,12 +1407,12 @@ void SVIPDoc::OnEditDelete()
 	}
 
 	// Don't allow deletion of tools while inspecting
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+	if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -1488,7 +1488,7 @@ void SVIPDoc::OnEditDelete()
 
 void SVIPDoc::OnEditCut()
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -1505,12 +1505,12 @@ void SVIPDoc::OnEditCut()
 
 void SVIPDoc::OnEditCopy()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_READY) || !SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	if (!SvimState::CheckState(SV_STATE_READY) || !SvimState::CheckState(SV_STATE_EDIT))
 	{
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -1601,12 +1601,12 @@ void fixInputs(uint32_t inspectionId, const std::vector<uint32_t>& rToolIds)
 
 void SVIPDoc::OnEditPaste()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_READY) || !SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	if (!SvimState::CheckState(SV_STATE_READY) || !SvimState::CheckState(SV_STATE_EDIT))
 	{
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
@@ -1880,7 +1880,7 @@ void SVIPDoc::OnUpdateConvertToModul(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnConvertToModul()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	if (!SvimState::CheckState(SV_STATE_EDIT))
 	{
 		return;
 	}
@@ -1945,7 +1945,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(toolIDToEdit));
 		if (nullptr != pTool)
 		{
-			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 			if (false == srs.conditionOk())
 			{
 				return;
@@ -2012,7 +2012,7 @@ void SVIPDoc::OnEditToolSet()
 	{
 		if (GetToolSet())
 		{
-			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 			if (false == srs.conditionOk())
 			{
 				return;
@@ -2032,7 +2032,7 @@ void SVIPDoc::OnEditToolSet()
 
 void SVIPDoc::OnFileSaveImage()
 {
-	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+	SvimState::SetResetState stateEditing {SV_STATE_EDITING};
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_IMAGE))
 	{
 		SvOg::SVSaveToolSetImageDialogClass dlg(GetInspectionID(), GetToolSet()->getObjectId());
@@ -2073,10 +2073,10 @@ void SVIPDoc::StartResultsPicker(LPCTSTR nodeToBeSelected)
 {
 	//This shall change the state to editing only when previously in edit mode
 	//This will avoid changing the modes while in Run, Regression or Test mode
-	std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	std::unique_ptr<SvimState::SetResetState> pStateEditing {nullptr};
+	if (SvimState::CheckState(SV_STATE_EDIT))
 	{
-		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING, EditLock::acquire, EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
+		pStateEditing = std::make_unique<SvimState::SetResetState>(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
 		if (false == pStateEditing->conditionOk())
 		{
 			return;
@@ -2136,10 +2136,10 @@ void SVIPDoc::OnResultsTablePicker()
 {
 	//This shall change the state to editing only when previously in edit mode
 	//This will avoid changing the modes while in Run, Regression or Test mode
-	std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	std::unique_ptr<SvimState::SetResetState> pStateEditing {nullptr};
+	if (SvimState::CheckState(SV_STATE_EDIT))
 	{
-		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING, EditLock::acquire, EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
+		pStateEditing = std::make_unique<SvimState::SetResetState>(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
 		if (false == pStateEditing->conditionOk())
 		{
 			return;
@@ -2375,20 +2375,20 @@ void SVIPDoc::RebuildResultsList()
 
 void SVIPDoc::RunRegressionTest()
 {
-	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_REMOTE_CMD))
+	if (SvimState::CheckState(SV_STATE_REGRESSION | SV_STATE_REMOTE_CMD))
 	{  // already in regression mode, do nothing...
 		return;
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return;
 	}
 
-	bool hasRunMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+	bool hasRunMode = SvimState::CheckState(SV_STATE_RUNNING);
 
-	bool hasTestMode = SVSVIMStateClass::CheckState(SV_STATE_TEST);
+	bool hasTestMode = SvimState::CheckState(SV_STATE_TEST);
 
 	if (hasRunMode || hasTestMode)
 	{
@@ -2425,7 +2425,7 @@ void SVIPDoc::RunRegressionTest()
 
 		if (l_bAllowAccess)
 		{
-			SVSVIMStateClass::changeState(SV_STATE_REGRESSION, SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_STOP);
+			SvimState::changeState(SV_STATE_REGRESSION, SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_STOP);
 
 			TheSVObserverApp().DeselectTool();
 
@@ -2548,12 +2548,12 @@ void SVIPDoc::OnUpdateViewToolSetDraw(CCmdUI* pCmdUI)
 {
 	if (pCmdUI->m_pSubMenu)
 	{
-		unsigned int l_uiGray = SVSVIMStateClass::CheckState(SV_STATE_EDIT) ? 0 : MF_GRAYED;
+		unsigned int l_uiGray = SvimState::CheckState(SV_STATE_EDIT) ? 0 : MF_GRAYED;
 		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
 	}
 	else
 	{
-		pCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_EDIT));
+		pCmdUI->Enable(SvimState::CheckState(SV_STATE_EDIT));
 	}
 }
 
@@ -2567,11 +2567,11 @@ void SVIPDoc::OnUpdateViewToolSetDraw(CCmdUI* pCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnUpdateViewToolSetDrawSubMenus(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_EDIT) && !SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
+	PCmdUI->Enable(SvimState::CheckState(SV_STATE_EDIT) && !SvimState::CheckState(SV_STATE_RUNNING));
 
 	SVToolSet* pSet = GetToolSet();
 
-	if (pSet && !SVSVIMStateClass::CheckState(SV_STATE_LOADING | SV_STATE_CANCELING | SV_STATE_CLOSING))
+	if (pSet && !SvimState::CheckState(SV_STATE_LOADING | SV_STATE_CANCELING | SV_STATE_CLOSING))
 	{
 		SvVol::SVEnumerateValueObjectClass* pEnum = pSet->GetDrawFlagObject();
 		if (pEnum)
@@ -2714,7 +2714,7 @@ void SVIPDoc::RecreateImageSurfaces()
 
 void SVIPDoc::OnUpdateFileExit(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && !SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) && !SVSVIMStateClass::CheckState(SV_STATE_TEST)
+	pCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING) && !SvimState::CheckState(SV_STATE_REGRESSION) && !SvimState::CheckState(SV_STATE_TEST)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT));
 }
 
@@ -3294,7 +3294,7 @@ void SVIPDoc::SetModifiedFlag(BOOL bModified /*= TRUE*/)
 	CDocument::SetModifiedFlag(bModified);
 	if (bModified)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 	}
 }
 
@@ -3490,7 +3490,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
 		if (GetImageView())
 		{
-			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 			if (false == srs.conditionOk())
 			{
 				return;
@@ -3570,13 +3570,13 @@ void SVIPDoc::OnToolDependencies()
 	SVToolSet* pToolSet = GetToolSet();
 	if (nullptr != pToolSet)
 	{
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return;
 		}
 
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		SvimState::SetResetState stateEditing {SV_STATE_EDITING};
 		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		constexpr const TCHAR* Filter = _T("GraphViz Files (*.dot)|*.dot||");
 		SvMc::SVFileDialog fileDlg(false, bFullAccess, _T("dot"), nullptr, 0, Filter, nullptr);
@@ -3651,7 +3651,7 @@ void SVIPDoc::OnUpdateAddGeneralTool(CCmdUI* PCmdUI)
 
 void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 {
-	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+	bool Enabled = !SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 
 	Enabled = Enabled && TheSVObserverApp().OkToEdit();
 
@@ -3668,7 +3668,7 @@ void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnUpdateAddTransformationTool(CCmdUI* pCmdUI)
 {
-	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+	bool Enabled = !SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	Enabled = Enabled && TheSVObserverApp().OkToEdit();
 
 	pCmdUI->Enable(Enabled);
@@ -3676,7 +3676,7 @@ void SVIPDoc::OnUpdateAddTransformationTool(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnUpdateAddColorTool(CCmdUI* PCmdUI)
 {
-	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+	bool Enabled = !SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
 	Enabled = Enabled && TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageColorType, Get1stSelectedToolID());
 
@@ -3685,7 +3685,7 @@ void SVIPDoc::OnUpdateAddColorTool(CCmdUI* PCmdUI)
 
 afx_msg void SVIPDoc::OnUpdateAddToolWithSubTools(CCmdUI* PCmdUI)
 {
-	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+	bool Enabled = !SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
 	Enabled = Enabled && TheSVObserverApp().OkToEdit();
 
@@ -3744,14 +3744,14 @@ void SVIPDoc::OnViewResetCountsCurrentIP()
 			pInspection->GetToolSet()->ResetCounts();
 		}
 
-		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		if (SvimState::CheckState(SV_STATE_REGRESSION))
 		{
 			if (m_regTest.isDoRunOnce())
 			{
 				RunOnce();
 			}
 		}
-		else if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+		else if (!SvimState::CheckState(SV_STATE_RUNNING))
 		{
 			RunOnce();
 		}
@@ -3776,7 +3776,7 @@ void SVIPDoc::RegressionTestComplete()
 	}
 
 	CloseHandle(m_RegressionTestHandle);
-	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
+	SvimState::RemoveState(SV_STATE_REGRESSION);
 }
 
 void SVIPDoc::RegressionTestModeChanged()
@@ -3786,7 +3786,7 @@ void SVIPDoc::RegressionTestModeChanged()
 	::BringWindowToTop(AfxGetMainWnd()->GetSafeHwnd());
 	m_regTest.stopRunning();
 
-	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
+	SvimState::RemoveState(SV_STATE_REGRESSION);
 
 	SVToolSet* pToolSet = GetToolSet();
 	if (nullptr != pToolSet)
@@ -4576,7 +4576,7 @@ void RefreshAllIPDocuments()
 void RunAllIPDocuments()
 {
 	//get list of IPDoc's.
-	SVSVIMStateClass::SVRCBlocker block;
+	SvimState::SVRCBlocker block;
 	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	if (pos)
 	{
@@ -4609,7 +4609,7 @@ void RunAllIPDocuments()
 void SetAllIPDocumentsOnline()
 {
 	//get list of IPDoc's.
-	SVSVIMStateClass::SVRCBlocker block;
+	SvimState::SVRCBlocker block;
 	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	if (pos)
 	{
@@ -4642,7 +4642,7 @@ void SetAllIPDocumentsOnline()
 
 bool mayDeleteCurrentlySelectedTools(const std::set<uint32_t>& rIdsOfObjectsDependedOn)
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return false;

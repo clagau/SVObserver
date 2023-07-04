@@ -28,7 +28,7 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "ObjectInterfaces/ILinkedObject.h"
@@ -1578,7 +1578,7 @@ bool SVImageClass::mustBeInTRC() const
 
 bool SVImageClass::UpdateBuffers(SvStl::MessageContainerVector* pErrorMessages)
 {
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+	if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		//[MZA][8.10][26.06.2018] In Run-mode it is not valid to updated TRC-Buffer. Return true to avoid abort of the run.
 		return true;

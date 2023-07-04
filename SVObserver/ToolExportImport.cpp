@@ -31,6 +31,7 @@
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"

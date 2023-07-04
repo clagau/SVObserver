@@ -29,7 +29,7 @@
 
 #include "SVInfoStructs.h"
 #include "SVIPDoc.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVToolSet.h"
 #include "InspectionEngine/SVImageBuffer.h"	//SVImageOverlayClass
 #include "SVConfigurationPrint.h"
@@ -116,7 +116,7 @@ STDMETHODIMP SVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
 	{
 		return SVMSG_64_SVIM_MODE_NOT_REMOTELY_SETABLE;
 	}
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	if (SvimState::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
 	{
 		return SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
@@ -171,7 +171,7 @@ STDMETHODIMP SVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 {
 	HRESULT hrResult = S_OK;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDITING))
+	if (SvimState::CheckState(SV_STATE_EDITING))
 	{
 		hrResult = SVMSG_52_MODE_GUI_IN_USE_ERROR;
 	}
@@ -184,7 +184,7 @@ STDMETHODIMP SVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 			{
 				// Check if we are in an allowed state first
 				// Not allowed to perform if State is Regression or Test
-				if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+				if (SvimState::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
 				{
 					return SVMSG_63_SVIM_IN_WRONG_MODE;
 				}
@@ -318,7 +318,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 
 	// Check if we are in an allowed state first
 	// Not allowed to perform if Mode is Regression or Test
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	if (SvimState::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
 	{
 		return SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
@@ -372,7 +372,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 
 		if (bLastFlag)
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			bSuccess = S_OK == GlobalRCLoadPackedConfiguration(PackedFileName.c_str(), fileType);
 			PackedFileName.clear();
 			fileType = ConfigFileType::SvzFormatDefaultName;
@@ -565,13 +565,13 @@ STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlo
 
 STDMETHODIMP SVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 {
-	HRESULT result = (SVSVIMStateClass::CheckState(cDefaultNotAllowedStates) || SVSVIMStateClass::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
+	HRESULT result = (SvimState::CheckState(cDefaultNotAllowedStates) || SvimState::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 
 	if (S_OK == result)
 	{
 		std::string ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
 
-		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
 	}
 
@@ -994,7 +994,7 @@ STDMETHODIMP SVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaN
 
 	//check to see if in Run Mode.  if not return SVMSG_53_SVIM_NOT_IN_RUN_MODE
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		return SVMSG_53_SVIM_NOT_IN_RUN_MODE;
 	}
@@ -1213,7 +1213,7 @@ STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psa
 
 	//check to see if in Run Mode.  if not return SVMSG_53_SVIM_NOT_IN_RUN_MODE
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		return SVMSG_53_SVIM_NOT_IN_RUN_MODE;
 	}
@@ -1896,12 +1896,12 @@ STDMETHODIMP SVCommand::SVRunOnce(BSTR bstrName)
 {
 	HRESULT              hrResult = S_FALSE;
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		SVInspectionProcess* pInspection(nullptr);
 		if (SVConfigurationObject::GetInspection(SvUl::createStdString(bstrName).c_str(), pInspection))
 		{
-			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			hrResult = SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 		}
 	}// end if
@@ -1918,7 +1918,7 @@ STDMETHODIMP SVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 {
 	HRESULT                  hrResult = S_OK;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST | SV_STATE_RUNNING))
+	if (SvimState::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST | SV_STATE_RUNNING))
 	{
 		hrResult = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
 		return hrResult;
@@ -1950,7 +1950,7 @@ STDMETHODIMP SVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 
 STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY**)
 {
-	HRESULT result = (SVSVIMStateClass::CheckState(cDefaultNotAllowedStates) || SVSVIMStateClass::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
+	HRESULT result = (SvimState::CheckState(cDefaultNotAllowedStates) || SvimState::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 
 	if (S_OK != result)
 	{
@@ -2020,7 +2020,7 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 	if (S_OK == result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
 	}
 
@@ -2143,7 +2143,7 @@ HRESULT SVCommand::SVSetImageList(SAFEARRAY* psaNames, SAFEARRAY* psaImages, SAF
 
 HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY**)
 {
-	HRESULT result = (SVSVIMStateClass::CheckState(cDefaultNotAllowedStates) || SVSVIMStateClass::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
+	HRESULT result = (SvimState::CheckState(cDefaultNotAllowedStates) || SvimState::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 
 	if (S_OK != result)
 	{
@@ -2210,7 +2210,7 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 	if (S_OK == result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
 	}
 

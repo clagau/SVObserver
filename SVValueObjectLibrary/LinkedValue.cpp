@@ -23,7 +23,7 @@
 #include "SVObjectLibrary/ObjectUtilities.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageManagerHelper.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/RaiiLifeFlag.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
@@ -1829,7 +1829,7 @@ bool LinkedValue::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 		}
 	}
 
-	if (Result && false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+	if (Result && false == SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		setOrRemoveLinkedImageToTRC();
 	}

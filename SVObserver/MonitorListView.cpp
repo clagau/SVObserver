@@ -11,16 +11,16 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "EditLock.h"
 #include "MonitorListView.h"
 #include "SVObserver.h"
 #include "SVIODoc.h"
 #include "SVConfigurationObject.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "MonitorListPropertyDlg.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "TextDefinesSvO.h"
 #include "MonitorListSelector.h"
 
@@ -614,14 +614,14 @@ void MonitorListView::OnLButtonDblClk(UINT, CPoint point)
 	{
 		if (TheSVObserverApp().OkToEdit())
 		{
-			SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 			if (false == srs.conditionOk())
 			{
 				return;
 			}
 			if (EditMonitoredItem(item, false))
 			{
-				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+				SvimState::AddState(SV_STATE_MODIFIED);
 				SVIODoc* pIODoc = GetDocument();
 				if (pIODoc)
 				{
@@ -996,14 +996,14 @@ void MonitorListView::AddItem()
 			item = m_rCtrl.GetNextSelectedItem(Pos);
 		}
 
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return;
 		}
 		if (EditMonitoredItem(item, false))
 		{
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			SvimState::AddState(SV_STATE_MODIFIED);
 			SVIODoc* pIODoc = GetDocument();
 			if (pIODoc)
 			{
@@ -1119,7 +1119,7 @@ void MonitorListView::OnAddRemoveList()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return;
@@ -1132,7 +1132,7 @@ void MonitorListView::OnAddRemoveList()
 			bool bRet = pConfig->SetupRemoteMonitorList();
 			if (bRet)
 			{
-				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+				SvimState::AddState(SV_STATE_MODIFIED);
 				SVIODoc* pIODoc = GetDocument();
 				if (pIODoc)
 				{
@@ -1148,7 +1148,7 @@ void MonitorListView::OnEditListProperties()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return;
@@ -1171,7 +1171,7 @@ void MonitorListView::OnEditListProperties()
 
 					if (IDOK == dlg.DoModal())
 					{
-						SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+						SvimState::AddState(SV_STATE_MODIFIED);
 						SVIODoc* pIODoc = GetDocument();
 						if (pIODoc)
 						{
@@ -1190,7 +1190,7 @@ void MonitorListView::OnDeleteItem()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return;
@@ -1202,7 +1202,7 @@ void MonitorListView::OnDeleteItem()
 			int Nextitem = m_rCtrl.GetNextItem(item, LVNI_ABOVE);
 			if (RemoveMonitoredItem(item))
 			{
-				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+				SvimState::AddState(SV_STATE_MODIFIED);
 				SVIODoc* pIODoc = GetDocument();
 				if (pIODoc)
 				{
@@ -1236,7 +1236,7 @@ void MonitorListView::OnEdit(bool bImageItem)
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return;
@@ -1247,7 +1247,7 @@ void MonitorListView::OnEdit(bool bImageItem)
 			int item = m_rCtrl.GetNextSelectedItem(Pos);
 			if (EditMonitoredItem(item, bImageItem))
 			{
-				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+				SvimState::AddState(SV_STATE_MODIFIED);
 				SVIODoc* pIODoc = GetDocument();
 				if (pIODoc)
 				{

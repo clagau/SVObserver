@@ -13,7 +13,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
@@ -79,7 +79,7 @@ void ResultListCtrl::updateList()
 		pObject->getValue(Value);
 		Update = 0.0 < Value ? true : false;
 	}
-	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+	Update = Update || !SvimState::CheckState( SV_STATE_RUNNING );
 
 	m_pDoc->GetResultData(m_ResultData);
 	//If Result Definition time stamp invalid return (Initial value is 0.0)

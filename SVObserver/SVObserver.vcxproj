@@ -183,7 +183,6 @@ echo %time%
   <ItemGroup>
     <ClCompile Include="ConfigurationOuttakes.cpp" />
     <ClCompile Include="Custom2Filter_ImportExport.cpp" />
-    <ClCompile Include="EditLock.cpp" />
     <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="FramedSplitterWnd.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
@@ -371,7 +370,6 @@ echo %time%
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="ConfigurationOuttakes.h" />
-    <ClInclude Include="EditLock.h" />
     <ClInclude Include="ExtrasEngine.h" />
     <ClInclude Include="FramedSplitterWnd.h" />
     <ClInclude Include="GlobalConstantView.h" />

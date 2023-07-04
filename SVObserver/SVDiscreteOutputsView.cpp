@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "EditLock.h"
 #include "SVConfigurationObject.h"
 #include "SVDiscreteOutputsView.h"
 #include "SVIOAdjustDialog.h"
@@ -25,8 +24,9 @@
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -182,7 +182,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 	{
 		pIOController = m_pDocument->GetIOController();
 	}
-	if (false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit() && nullptr != pIOController )
+	if (false == SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit() && nullptr != pIOController )
 	{
 		UINT flags {0};
 
@@ -259,14 +259,14 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_pDigOutput = pDigitalOutput;
 				dlg.m_ioObjectType = SVIOObjectType::IO_DIGITAL_OUTPUT;
 
-				SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+				SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 				if (false == srs.conditionOk())
 				{
 					return;
 				}
 				if (IDOK == dlg.DoModal())
 				{
-					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+					SvimState::AddState(SV_STATE_MODIFIED);
 					if (nullptr != dlg.m_pLinkedObject && ObjectIdEnum::ModuleReadyId == dlg.m_pLinkedObject->getObjectId())
 					{
 						pIOEntry = pIOController->GetModuleReady();
@@ -343,7 +343,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 
 				if(IDOK == dlg.DoModal())
 				{
-					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+					SvimState::AddState( SV_STATE_MODIFIED );
 				}
 				OnUpdate( nullptr, 0, nullptr );
 			}

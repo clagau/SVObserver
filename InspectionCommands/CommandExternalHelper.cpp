@@ -18,7 +18,7 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManagerHelper.h"
@@ -42,7 +42,7 @@ HRESULT InspectionCommandsCheckState(const SvPb::InspectionCmdRequest& rRequest,
 	if (it != InspectionCommandMap.end())
 	{
 		DWORD ForbiddenStates = (std::get<FoSFkt>(it->second))();
-		HRESULT hres = SVSVIMStateClass::CheckNotAllowedState(ForbiddenStates);
+		HRESULT hres = SvimState::CheckNotAllowedState(ForbiddenStates);
 		pResponse->set_hresult(hres);
 	}
 	return pResponse->hresult();

@@ -14,7 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #pragma endregion Includes
@@ -168,7 +168,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			m_isBufferFull = false;
 			BOOL freezeFlag(false);
 			m_editFreezeFlag.GetValue(freezeFlag);
-			if (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) && FALSE == freezeFlag)
+			if (false == SvimState::CheckState(SV_STATE_REGRESSION) && FALSE == freezeFlag)
 			{
 				m_nextBufferPos = -1;
 			}

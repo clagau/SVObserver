@@ -19,7 +19,7 @@
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary\SVSVIMStateClass.h"
+#include "SVStatusLibrary\SvimState.h"
 #pragma endregion Includes
 
 constexpr long MATROX_FILTER_EVENT = 525843;
@@ -118,7 +118,7 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 {
 	if( p_rStatusInfo.m_StatusCode != 0 )
 	{
-		bool running = SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+		bool running = SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 		DWORD OsError = static_cast<DWORD> ( p_rStatusInfo.m_StatusCode );
 		DWORD MessageCode( 0 );
 		if( SUCCEEDED( p_rStatusInfo.m_StatusCode ) ) 

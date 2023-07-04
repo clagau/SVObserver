@@ -4,10 +4,12 @@
 
 #include "stdafx.h"
 #include "EditLock.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "MessageManager.h"
+#include "SvimState.h"
 #include "SVMessage/SVMessage.h"
 
+namespace SvStl
+{
 namespace
 {
 
@@ -16,11 +18,6 @@ auto g_svimHostname = _T("<SVIM>");
 void onEditLockStateChange(LockState state); //callback function
 
 LockEntity g_currentLockOwner;
-
-bool isEditLockAcquiredBySVIM()
-{
-	return g_currentLockOwner.type == EntityType::SVObserver;
-}
 
 LockEntity SvimUser()
 {
@@ -113,65 +110,67 @@ void onEditLockStateChange(LockState state)
 
 namespace EditLock
 {
+bool isAcquiredBySVIM()
+{
+	return g_currentLockOwner.type == EntityType::SVObserver;
+}
+
 bool setEditLock(bool toBeLocked)
+{
+	if (isAcquiredBySVIM() == toBeLocked) //nothing to do
 	{
-		if (isEditLockAcquiredBySVIM() == toBeLocked) //nothing to do
+		return isAcquiredBySVIM();
+	}
+
+	if (toBeLocked)
+	{
+		auto acquired = getEditLockInstance().Acquire(g_svimUsername, g_svimHostname);
+
+		if (false == acquired)
 		{
-			return isEditLockAcquiredBySVIM();
-		}
+			getEditLockInstance().RequestTakeover(g_svimUsername, g_svimHostname);
 
-		if (toBeLocked)
-		{
-			auto acquired = getEditLockInstance().Acquire(g_svimUsername, g_svimHostname);
-
-			if (false == acquired)
-			{
-				getEditLockInstance().RequestTakeover(g_svimUsername, g_svimHostname);
-
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_NoEditLock, {LockEntityInfo(g_currentLockOwner)}, SvStl::SourceFileParams(StdMessageParams));
-			}
-			else
-			{
-				g_currentLockOwner = SvimUser();
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_EDIT_LOCK)
-				OutputDebugString("\t[Acquired]\n");
-#endif	
-			}
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_NoEditLock, {LockEntityInfo(g_currentLockOwner)}, SvStl::SourceFileParams(StdMessageParams));
 		}
 		else
 		{
-			getEditLockInstance().Release();
-
-			g_currentLockOwner = NoOne();
+			g_currentLockOwner = SvimUser();
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_EDIT_LOCK)
-			OutputDebugString("\t[Released]\n");
+			OutputDebugString("\t[Acquired]\n");
 #endif	
 		}
-
-		return isEditLockAcquiredBySVIM();
 	}
-
-
-	bool acquire()
+	else
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)) //we are currently executing a remote command so we don't need (or want) to acquire the edit lock
-		{
-			return true;
-		}
+		getEditLockInstance().Release();
 
-		return setEditLock(true);
+		g_currentLockOwner = NoOne();
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_EDIT_LOCK)
+		OutputDebugString("\t[Released]\n");
+#endif	
 	}
 
-
-	void release()
-	{
-		setEditLock(false);
-	}
+	return isAcquiredBySVIM();
 }
 
 
+bool acquire()
+{
+	if (SvimState::CheckState(SV_STATE_REMOTE_CMD)) //we are currently executing a remote command so we don't need (or want) to acquire the edit lock
+	{
+		return true;
+	}
+
+	return setEditLock(true);
+}
 
 
+void release()
+{
+	setEditLock(false);
+}
+}
+}// namespace SvStl

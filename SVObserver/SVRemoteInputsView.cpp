@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "EditLock.h"
 #include "SVConfigurationObject.h"
 #include "SVRemoteInputsView.h"
 #include "SVRemoteIOAdjustDialog.h"
@@ -21,8 +20,9 @@
 #include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/EditLock.h"
+#include "SVStatusLibrary/SvimState.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
@@ -151,7 +151,7 @@ void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 	UINT flags;
 
 	int item = m_rCtrl.HitTest( point, &flags );
-	if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) && SvOi::isOkToEdit())
+	if ( ! SvimState::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) && SvOi::isOkToEdit())
 	{
 		if( item >= 0 && item < m_rCtrl.GetItemCount() && flags & LVHT_ONITEM)
 		{
@@ -177,7 +177,7 @@ void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 					dlg.SetIOName( Name.c_str() );
 					dlg.SetIOValue( value );
 
-					SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+					SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 					if (false == srs.conditionOk())
 					{
 						return;
@@ -194,7 +194,7 @@ void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 							pValueObject->SetDefaultValue(value, true);
 						}
 
-						SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+						SvimState::AddState(SV_STATE_MODIFIED);
 					}
 					OnUpdate(nullptr, 0, nullptr);
 				}

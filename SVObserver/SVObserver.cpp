@@ -17,7 +17,6 @@
 #include "ConfigurationOuttakes.h"
 #include "GuiHelpers.h"
 #include "ExtrasEngine.h"
-#include "EditLock.h"
 #include "RootObject.h"
 #include "SVDirectX.h"
 #include "SVGigeCameraManagerDlg.h"
@@ -67,9 +66,10 @@
 #include "SVSharedMemoryLibrary/ShareEvents.h"
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVSystemLibrary/SVThread.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/Heapwalk.h"
@@ -410,7 +410,7 @@ BOOL SVObserverApp::InitInstance()
 
 	Logout();
 
-	SVSVIMStateClass::AddState(SV_STATE_AVAILABLE);
+	SvimState::AddState(SV_STATE_AVAILABLE);
 
 	bool StartLastConfiguration = false;
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
@@ -456,8 +456,8 @@ BOOL SVObserverApp::InitInstance()
 void SVObserverApp::UpdateAllIOViews()
 {
 	if (GetTheIODoc() &&
-		SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_RUNNING) &&
-		!SVSVIMStateClass::CheckState(SV_STATE_CANCELING))
+		SvimState::CheckState(SV_STATE_READY | SV_STATE_RUNNING) &&
+		!SvimState::CheckState(SV_STATE_CANCELING))
 	{
 		GetTheIODoc()->UpdateAllViews(nullptr);
 	}
@@ -560,7 +560,7 @@ int SVObserverApp::Run()
 HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, ConfigFileType fileType /*= ConfigFileType::SvzStandard*/) 
 //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return E_FAIL;
@@ -693,7 +693,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 	{
 		SVOLicenseManager::Instance().ClearLicenseErrors();
 
-		SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING, SV_STATE_AVAILABLE);
+		SvimState::changeState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING, SV_STATE_AVAILABLE);
 
 		try
 		{
@@ -719,7 +719,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				Log_Error(SvStl::Tid_OpenSvxFileError);
 				
 				// If there was an error during configuration loading...
-				SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
+				SvimState::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 
 				//Use E_FAIL to stop the loading but do not show any error messages
 				if (E_FAIL != hr)
@@ -751,13 +751,13 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 			bOk = false;
 
-			SVSVIMStateClass::RemoveState(SV_STATE_LOADING);
+			SvimState::RemoveState(SV_STATE_LOADING);
 
 			DestroyConfig(false, true);
 
 			setConfigFullFileName(nullptr, true);
 
-			SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE);
+			SvimState::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE);
 		}  // catch
 
 		break;
@@ -766,7 +766,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 	if (!bOk)
 	{
 		setConfigFullFileName(nullptr, true);
-		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
+		SvimState::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 		Log_Error(SvStl::Tid_OpenSvxFileError);
 	}
 
@@ -959,7 +959,7 @@ void SVObserverApp::ValidateMRUList()
 
 void SVObserverApp::ResetAllCounts()
 {
-	SVSVIMStateClass::SVRCBlocker block;
+	SvimState::SVRCBlocker block;
 	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	while (nullptr != pos)
 	{
@@ -984,29 +984,29 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 {
 	HRESULT result {S_OK};
 
-	long originalState = SVSVIMStateClass::GetState();
+	long originalState = SvimState::GetState();
 	SvPb::DeviceModeType Mode = SvPb::DeviceModeType_IsValid(lNewMode) ? static_cast<SvPb::DeviceModeType> (lNewMode) : SvPb::DeviceModeType::unknownMode;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING))
+	if (SvimState::CheckState(SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING))
 	{
 		result = SVMSG_50_MODE_CHANGING_ERROR;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_LOADING))
+	else if (SvimState::CheckState(SV_STATE_LOADING))
 	{
 		result = SVMSG_51_MODE_CONFIGURATION_LOADING_ERROR;
 	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_EDITING))
+	else if (SvimState::CheckState(SV_STATE_EDITING))
 	{
 		result = SVMSG_52_MODE_GUI_IN_USE_ERROR;
 	}
 	else if (SvPb::DeviceModeType::runMode == Mode)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
+		if (SvimState::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
 		{
 			StopSvo();
 		}
 		// Try to go online...
-		if (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) && SVSVIMStateClass::CheckState(SV_STATE_READY))
+		if (false == SvimState::CheckState(SV_STATE_REGRESSION) && SvimState::CheckState(SV_STATE_READY))
 		{
 			try
 			{
@@ -1027,7 +1027,7 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 	else if (SvPb::DeviceModeType::stopMode == Mode)
 	{
 		// Go offline
-		if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+		if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		{
 			StopSvo();
 		}
@@ -1041,16 +1041,16 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 		// when two IPDs are present.  Therefore the activeX user must first
 		// put the system in some offline mode and then put it into test mode
 		// in two steps.  If running then return request rejected.
-		if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+		if (SvimState::CheckState(SV_STATE_RUNNING))
 		{
 			result = SVMSG_SVIMCMD_REQUEST_REJECTED;
 		}
-		else if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		else if (SvimState::CheckState(SV_STATE_REGRESSION))
 		{
 			StopSvo();
 		}
 
-		if (false == SVSVIMStateClass::CheckState(SV_STATE_TEST) && SVSVIMStateClass::CheckState(SV_STATE_READY))
+		if (false == SvimState::CheckState(SV_STATE_TEST) && SvimState::CheckState(SV_STATE_READY))
 		{
 			try
 			{
@@ -1075,12 +1075,12 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 	}
 	else if (SvPb::DeviceModeType::editMode == Mode)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
+		if (SvimState::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
 		{
 			StopSvo();
 		}
 
-		if (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) && SVSVIMStateClass::CheckState(SV_STATE_READY))
+		if (false == SvimState::CheckState(SV_STATE_REGRESSION) && SvimState::CheckState(SV_STATE_READY))
 		{
 			SetModeEdit(true);
 		}
@@ -1095,7 +1095,7 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 	}
 	if (S_OK != result)
 	{
-		SVSVIMStateClass::changeState(static_cast<DWORD> (originalState), 0);
+		SvimState::changeState(static_cast<DWORD> (originalState), 0);
 	}
 
 	PostMessage(m_pMainWnd->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0);
@@ -1154,7 +1154,7 @@ bool SVObserverApp::AlreadyExistsIPDocTitle(LPCTSTR)
 bool SVObserverApp::UpdateConfiguration(bool newConfiguration /*= false*/)
 {
 	// Access denied, if... // Check Edit Mode
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+	if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		return false;
 
 	if (newConfiguration)
@@ -1168,7 +1168,7 @@ bool SVObserverApp::UpdateConfiguration(bool newConfiguration /*= false*/)
 	{
 		CWaitCursor wait;
 
-		SVSVIMStateClass::CheckState(SV_STATE_READY);
+		SvimState::CheckState(SV_STATE_READY);
 		ResetAllIPDocModifyFlag(false);
 	}
 
@@ -1177,7 +1177,7 @@ bool SVObserverApp::UpdateConfiguration(bool newConfiguration /*= false*/)
 
 	if (!ok && newConfiguration)
 	{
-		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_READY | SV_STATE_MODIFIED);
+		SvimState::changeState(SV_STATE_AVAILABLE, SV_STATE_READY | SV_STATE_MODIFIED);
 	}
 
 	return ok;
@@ -1187,7 +1187,7 @@ bool SVObserverApp::UpdateConfiguration(bool newConfiguration /*= false*/)
 bool SVObserverApp::OkToEdit()
 {
 	bool Result{ false };
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT) && SVSVIMStateClass::CheckState(SV_STATE_READY))
+	if (SvimState::CheckState(SV_STATE_EDIT) && SvimState::CheckState(SV_STATE_READY))
 	{
 		if (TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 		{
@@ -1379,11 +1379,11 @@ HRESULT SVObserverApp::SetModeEdit(bool p_bState)
 	HRESULT hr = S_OK;
 	if (p_bState)
 	{
-		SVSVIMStateClass::changeState(SV_STATE_EDIT, SV_STATE_STOP);
+		SvimState::changeState(SV_STATE_EDIT, SV_STATE_STOP);
 	}
 	else
 	{
-		SVSVIMStateClass::changeState(SV_STATE_STOP, SV_STATE_EDIT);
+		SvimState::changeState(SV_STATE_STOP, SV_STATE_EDIT);
 
 		//
 		// We need to deselect any tool that might be set for operator move.
@@ -1395,7 +1395,7 @@ HRESULT SVObserverApp::SetModeEdit(bool p_bState)
 
 void SVObserverApp::Start(DWORD desiredState)
 {
-	SVSVIMStateClass::SVRCBlocker block;
+	SvimState::SVRCBlocker block;
 
 	if (false == InitialChecks(desiredState))
 	{
@@ -1415,7 +1415,7 @@ void SVObserverApp::Start(DWORD desiredState)
 		executePreOrPostExecutionFile(pConfig->getPreRunExecutionFilePath());
 	}
 
-	SVSVIMStateClass::RemoveState(SV_STATE_EDIT | SV_STATE_STOP);
+	SvimState::RemoveState(SV_STATE_EDIT | SV_STATE_STOP);
 
 	UpdateAndGetLogDataManager();
 
@@ -1437,7 +1437,7 @@ void SVObserverApp::Start(DWORD desiredState)
 
 	//SvSml::SharedMemWriter::Instance().RebuildMonitorEntryMap();
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+	if (SvimState::CheckState(SV_STATE_READY))
 	{
 		RunInspections(pConfig, desiredState);
 
@@ -1457,7 +1457,7 @@ void SVObserverApp::Start(DWORD desiredState)
 		SetThreadPriority(THREAD_PRIORITY_BELOW_NORMAL);
 	}// end if
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
+	if (SvimState::CheckState(SV_STATE_STOP_PENDING))
 	{
 		PostMessage(m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM(ID_STOP, 0), 0);
 	}
@@ -1466,19 +1466,19 @@ void SVObserverApp::Start(DWORD desiredState)
 
 bool SVObserverApp::InitialChecks(DWORD desiredState)
 {
-	if (SVSVIMStateClass::CheckState(desiredState | SV_STATE_STARTING))
+	if (SvimState::CheckState(desiredState | SV_STATE_STARTING))
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING))
+		if (SvimState::CheckState(SV_STATE_START_PENDING))
 		{
-			SVSVIMStateClass::RemoveState(SV_STATE_START_PENDING);
+			SvimState::RemoveState(SV_STATE_START_PENDING);
 		}
 
 		return false;
 	}
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_LOADING | SV_STATE_STOPING))
+	if (SvimState::CheckState(SV_STATE_LOADING | SV_STATE_STOPING))
 	{
-		SVSVIMStateClass::AddState(SV_STATE_START_PENDING);
+		SvimState::AddState(SV_STATE_START_PENDING);
 		return false;
 	}
 
@@ -1522,14 +1522,14 @@ void SVObserverApp::PrepareForStart(SVConfigurationObject* pConfig)
 	catch (SvStl::MessageContainer&)
 	{
 		//cleanup goOnline, after fail, before exception leave this method
-		SVSVIMStateClass::RemoveState(SV_STATE_START_PENDING);
+		SvimState::RemoveState(SV_STATE_START_PENDING);
 		RunAllIPDocuments();
 		throw;
 	}
 	catch (std::exception& ex)
 	{
 		//cleanup goOnline, after fail, before exception leave this method
-		SVSVIMStateClass::RemoveState(SV_STATE_START_PENDING);
+		SvimState::RemoveState(SV_STATE_START_PENDING);
 		RunAllIPDocuments();
 		SvDef::StringVector msgList;
 		msgList.push_back(ex.what());
@@ -1605,7 +1605,7 @@ void SVObserverApp::RunInspections(SVConfigurationObject* pConfig, DWORD desired
 			}
 		}// end for
 
-		SVSVIMStateClass::RemoveState(SV_STATE_START_PENDING);
+		SvimState::RemoveState(SV_STATE_START_PENDING);
 
 		RunAllIPDocuments();
 		SetAllIPDocumentsOffline();
@@ -1615,7 +1615,7 @@ void SVObserverApp::RunInspections(SVConfigurationObject* pConfig, DWORD desired
 
 	SetAllIPDocumentsOnline();
 	DWORD removeState = (desiredState == SV_STATE_RUNNING) ? SV_STATE_READY | SV_STATE_START_PENDING : SV_STATE_START_PENDING;
-	SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING, removeState);
+	SvimState::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING, removeState);
 
 	SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
@@ -1624,7 +1624,7 @@ void SVObserverApp::RunInspections(SVConfigurationObject* pConfig, DWORD desired
 		pTrcRW->lockReset();
 	}
 
-	SVSVIMStateClass::changeState(desiredState, SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
+	SvimState::changeState(desiredState, SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
 
 	//Now that we are in the running state we allow trigger processing!
 	StartTrigger(pConfig);
@@ -1831,7 +1831,7 @@ void SVObserverApp::EnterRunMode()
 
 void SVObserverApp::StopIfRunning()
 {
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		StopSvo();
 
@@ -1951,9 +1951,9 @@ BOOL SVObserverApp::OnOpenRecentFile(UINT nID)
 	{
 		ValidateMRUList();
 
-		if (!SVSVIMStateClass::CheckState(SV_STATE_UNAVAILABLE))
+		if (!SvimState::CheckState(SV_STATE_UNAVAILABLE))
 		{
-			bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+			bool bRunning = SvimState::CheckState(SV_STATE_RUNNING);
 
 			if (!bRunning)
 			{
@@ -1974,7 +1974,7 @@ void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
 {
 	CWinApp::OnUpdateRecentFileMenu(PCmdUI);
 
-	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
+	bool bEnable = (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 
 	if (false == bEnable)
@@ -1994,7 +1994,7 @@ void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonit
 	SVPPQObject::SetTimerResolution(TheSVObserverApp().m_rInitialInfoSvo.m_timerResolution);
 	long lSize = pConfig->GetPPQCount();
 
-	bool isLocalStart {false == SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)};
+	bool isLocalStart {false == SvimState::CheckState(SV_STATE_REMOTE_CMD)};
 	///In this loop the ImageStores are created 
 	for (long l = 0; S_OK == Result && l < lSize; l++)
 	{

@@ -16,7 +16,7 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
-#include <SVStatusLibrary/SVSVIMStateClass.h>
+#include <SVStatusLibrary/SvimState.h>
 #include <SVSecurity/SVSecurityManager.h>
 #pragma endregion Includes
 
@@ -204,7 +204,7 @@ void ResultTabbedView::OnSize(UINT nType, int cx, int cy)
 void ResultTabbedView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	//	Allow the Result Picker in every mode except Stop
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_EDIT | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+	if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_EDIT | SV_STATE_TEST | SV_STATE_REGRESSION) &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 	{
 		CMenu Menu;

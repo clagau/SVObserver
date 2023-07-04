@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <array>
 //Moved to precompiled header: #include <functional>
 #include "SVAdjustToolSizePositionDlg.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -282,7 +282,7 @@ void SVAdjustToolSizePositionDlg::OnOK()
 	if (hasChanged)
 	{	//This AddState is not clean separated, because it is not possible this value to set from GUI2.0
 		//But the modified topic should be reviewed for GUI2.0 anyway.
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 		SvCmd::RunOnceSynchronous(m_ipId);
 	}
 

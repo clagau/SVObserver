@@ -36,7 +36,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/Heapwalk.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "Triggering/SVTriggerObject.h"
@@ -131,13 +131,13 @@ void executePreOrPostExecutionFile(const std::string& filepath, bool inRunMode)
 void StopSvo()
 {
 	CWaitCursor wait;
-	SVSVIMStateClass::SVRCBlocker block;
+	SvimState::SVRCBlocker block;
 
 	GetSvoMainFrame()->SetStatusInfoText(_T(""));
 
 	EnableTriggerSettings(false);
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION))
+	if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION))
 	{
 		return;
 	}
@@ -146,24 +146,24 @@ void StopSvo()
 	SvUl::logHeap(_T("Leaving run mode"));
 #endif
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_STOPING))
+	if (SvimState::CheckState(SV_STATE_STOPING))
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
+		if (SvimState::CheckState(SV_STATE_STOP_PENDING))
 		{
-			SVSVIMStateClass::RemoveState(SV_STATE_STOP_PENDING);
+			SvimState::RemoveState(SV_STATE_STOP_PENDING);
 		}
 		return;
 	}
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_STARTING))
+	if (SvimState::CheckState(SV_STATE_STARTING))
 	{
-		SVSVIMStateClass::AddState(SV_STATE_STOP_PENDING);
+		SvimState::AddState(SV_STATE_STOP_PENDING);
 		return;
 	}
 
-	bool wasInRunMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+	bool wasInRunMode = SvimState::CheckState(SV_STATE_RUNNING);
 
-	SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING, SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
+	SvimState::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING, SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
 	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
 	if (nullptr != pTrcRW)
 	{
@@ -210,9 +210,9 @@ void StopSvo()
 		executePreOrPostExecutionFile(pConfig->getPostRunExecutionFilePath(), wasInRunMode);
 	}
 
-	SVSVIMStateClass::changeState(SV_STATE_READY | SV_STATE_STOP, SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
+	SvimState::changeState(SV_STATE_READY | SV_STATE_STOP, SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING))
+	if (SvimState::CheckState(SV_STATE_START_PENDING))
 	{
 		GetSvoMainFrame()->PostMessage(WM_COMMAND, MAKEWPARAM(ID_MODE_RUN, 0), 0);
 	}
@@ -227,7 +227,7 @@ void StopAll()
 	{
 		pSVMainFrame->SetStatusInfoText(_T(""));
 
-		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING | SV_STATE_TEST);
+		SvimState::RemoveState(SV_STATE_RUNNING | SV_STATE_TEST);
 
 		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 
@@ -419,7 +419,7 @@ HRESULT DisconnectCameras()
 
 void StartTrigger(SVConfigurationObject* pConfig)
 {
-	SVSVIMStateClass::SVRCBlocker block;
+	SvimState::SVRCBlocker block;
 	//The pointer is usually checked by the caller
 	if (nullptr != pConfig)
 	{
@@ -524,7 +524,7 @@ void StopRegression()
 	//get list of IPDoc's.
 	//see if the IPDoc is running regression, if so send command to stop.
 	//since only 1 IPDoc can run regression at a time, as soon as 1 is found, break...
-	SVSVIMStateClass::SVRCBlocker block;
+	SvimState::SVRCBlocker block;
 	CDocTemplate* pDocTemplate = nullptr;
 	CString strExt;
 	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();

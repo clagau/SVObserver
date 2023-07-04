@@ -24,7 +24,7 @@
 #include "SVDigitizerProcessingClass.h"
 #include "FilesystemUtilities/FileHelperManager.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
@@ -273,7 +273,7 @@ HRESULT SVAcquisitionClass::LoadFiles(const SvFs::FileNameContainer &rArray)
 
 	mFiles = rArray;
 	m_CameraFileDeviceParams.Clear();
-	bool LogOnly(SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD));
+	bool LogOnly(SvimState::CheckState(SV_STATE_REMOTE_CMD));
 	for (long l = 0; l < static_cast<long> (mFiles.size()); ++l)
 	{
 		if (false == SvFs::FileHelperManager::Instance().AddItem(&(mFiles[l])))

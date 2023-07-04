@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVConditional.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -87,7 +87,7 @@ bool SVConditional::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerV
 
 	// Bypass all conditional execution if we are performing an internal run
 	// This is used to initially setup certain objects.
-	if( SVSVIMStateClass::CheckState( SV_STATE_INTERNAL_RUN ) )
+	if( SvimState::CheckState( SV_STATE_INTERNAL_RUN ) )
 	{
 		result.SetValue(BOOL(true));
 		return true;

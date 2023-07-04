@@ -19,7 +19,7 @@
 #include "Operators/ToolSizeAdjustTask.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "InspectionEngine/RunStatus.h"
 #pragma endregion Includes
 
@@ -68,7 +68,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 				BOOL hasROI(false);
 				m_hasROI.GetValue(hasROI);
 
-				if (!hasROI && SVSVIMStateClass::CheckState(SV_STATE_LOADING))
+				if (!hasROI && SvimState::CheckState(SV_STATE_LOADING))
 				{
 					m_ConvertTool = true;
 				}

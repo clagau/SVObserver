@@ -9,7 +9,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "EditLock.h"
 #include "GlobalConstantView.h"
 #include "RootObject.h"
 #include "SVConfigurationObject.h"
@@ -25,7 +24,8 @@
 #include "SVOGui/GlobalConstantDlg.h"
 #include "SVOGui/SVShowDependentsDialog.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/EditLock.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 
@@ -185,14 +185,14 @@ bool GlobalConstantView::editItem( int Item )
 		}
 	}
 
-	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 	if (false == srs.conditionOk())
 	{
 		return false;
 	}
 	if (IDOK == GlobalDlg.DoModal())
 	{
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 		Result = true;
 
 		//New or editing Global value ?
@@ -217,7 +217,7 @@ bool GlobalConstantView::deleteItem( int Item )
 
 	if( -1 != Item )
 	{
-		SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 		if (false == srs.conditionOk())
 		{
 			return false;
@@ -238,7 +238,7 @@ bool GlobalConstantView::deleteItem( int Item )
 				{
 					if (S_OK == RootObject::deleteRootChildValue(pObject->GetCompleteName().c_str()))
 					{
-						SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+						SvimState::AddState(SV_STATE_MODIFIED);
 						Result = true;
 						updateView();
 						updateAllIPDocs(true);

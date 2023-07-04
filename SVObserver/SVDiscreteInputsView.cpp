@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "EditLock.h"
 #include "SVConfigurationObject.h"
 #include "SVDiscreteInputsView.h"
 #include "SVIOAdjustDialog.h"
@@ -22,8 +21,9 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/EditLock.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -173,7 +173,7 @@ void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 	UINT flags;
 
 	int item = m_rCtrl.HitTest( point, &flags );
-	if (false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit())
+	if (false == SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit())
 	{
 		if( item >= 0 && item < m_rCtrl.GetItemCount() && flags & LVHT_ONITEM)
 		{
@@ -193,14 +193,14 @@ void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_pLinkedObject = nullptr != pIOEntry ? pIOEntry->getObject() : nullptr;
 				dlg.m_ioObjectType = SVIOObjectType::IO_DIGITAL_INPUT;
 
-				SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+				SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
 				if (false == srs.conditionOk())
 				{
 					return;
 				}
 				if (ID_OK == dlg.DoModal())
 				{
-					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+					SvimState::AddState(SV_STATE_MODIFIED);
 				}
 				OnUpdate( nullptr, 0, nullptr );
 			}

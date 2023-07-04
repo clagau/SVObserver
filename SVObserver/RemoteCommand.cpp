@@ -19,7 +19,7 @@
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion includes
 
 #pragma region Global functions
@@ -37,55 +37,55 @@ bool GlobalRCGetState( DWORD* pdwSVIMState )
 {
 	*pdwSVIMState = 0;
 
-	bool bOk = SVSVIMStateClass::CheckState( SV_STATE_AVAILABLE );
+	bool bOk = SvimState::CheckState( SV_STATE_AVAILABLE );
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+	if ( SvimState::CheckState( SV_STATE_READY ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_CONFIG_LOADED;
 	}
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_SAVING ) )
+	if ( SvimState::CheckState( SV_STATE_SAVING ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_SAVING_CONFIG;
 	}
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
+	if ( SvimState::CheckState( SV_STATE_LOADING ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_CONFIG_LOADING;
 	}
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	if ( SvimState::CheckState( SV_STATE_RUNNING ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_ONLINE;
 
 		// testing (but not regression testing) sets the running flag
-		if (! SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+		if (! SvimState::CheckState( SV_STATE_TEST ) )
 		{
 			*pdwSVIMState |= SvDef::SVIM_RUNNING;
 		}
 	}
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+	if ( SvimState::CheckState( SV_STATE_REGRESSION ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_REGRESSION_TEST;
 	}
 	// can be testing without regression testing, but can't be regression testing without testing
-	else if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+	else if ( SvimState::CheckState( SV_STATE_TEST ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_RUNNING_TEST;
 	}
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	if ( SvimState::CheckState( SV_STATE_EDIT ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_SETUPMODE;
 	}
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
+	if ( SvimState::CheckState( SV_STATE_CLOSING ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_STOPPING;
 	}
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
+	if ( SvimState::CheckState( SV_STATE_START_PENDING ) )
 	{
 		*pdwSVIMState |= SvDef::SVIM_ONLINE_PENDING;
 	}
@@ -104,7 +104,7 @@ HRESULT GlobalRCGetMode( unsigned long* pMode )
 {
 	if(nullptr != pMode)
 	{
-		*pMode = SVSVIMStateClass::getCurrentMode();
+		*pMode = SvimState::getCurrentMode();
 	}
 	else
 	{

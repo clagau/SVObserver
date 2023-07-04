@@ -12,7 +12,7 @@
 #include "ResultTabControl.h"
 #include "SVIPDoc.h"
 #include "SVObjectLibrary/SVClassRegisterListClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVToolSet.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -198,7 +198,7 @@ void ResultTabControl::tableIdChanged()
 	tableListCtrl->setTableIdForTab(toolset->GetResultList()->getTableId());
 	updateTab();
 
-	SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+	SvimState::AddState(SV_STATE_MODIFIED);
 }
 #pragma endregion Public Methods
 
@@ -215,7 +215,7 @@ void ResultTabControl::OnDraw(CDC* pDC)
 
 BOOL ResultTabControl::StartRenameTab(int iTab)
 {
-	if (isDefaultTab(iTab) || SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (isDefaultTab(iTab) || SvimState::CheckState(SV_STATE_RUNNING))
 	{
 		return false;
 	}
@@ -234,7 +234,7 @@ BOOL ResultTabControl::RenameTab()
 
 	if (newTabName != oldTabName)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 	}
 
 	return renameStatus;
@@ -283,7 +283,7 @@ void ResultTabControl::OnLButtonUp(UINT nFlags, CPoint point)
 		m_additionalTabs.erase(std::remove_if(m_additionalTabs.begin(), m_additionalTabs.end(), 
 			[view](std::shared_ptr<CListCtrl> tab){return tab.get() == view; }),
 			m_additionalTabs.end());
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		SvimState::AddState(SV_STATE_MODIFIED);
 	}
 	else
 	{
@@ -315,7 +315,7 @@ void ResultTabControl::addNewTab()
 	{
 		SetTabLabel(newInsertPosition, toolname.c_str());
 	}
-	SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+	SvimState::AddState(SV_STATE_MODIFIED);
 }
 
 void ResultTabControl::addNewTab(const CString tabName, const uint32_t tableId)

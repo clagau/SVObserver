@@ -22,7 +22,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/Overlay.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -607,8 +607,8 @@ bool  SVToolClass::isToolActive() const
 	m_editFreezeFlag.GetValue(freezeFlag);
 
 	if (freezeFlag
-		&& SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_EDIT)
-		&& (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST)))
+		&& SvimState::CheckState(SV_STATE_READY | SV_STATE_EDIT)
+		&& (false == SvimState::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST)))
 	{
 		return false;
 	}
@@ -626,7 +626,7 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 	m_editFreezeFlag.GetValue(freezeFlag);
 	if (TRUE == freezeFlag && isToolActive)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_EDIT) && (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST)))
+		if (SvimState::CheckState(SV_STATE_READY | SV_STATE_EDIT) && (false == SvimState::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST)))
 		{
 			Log_Assert(rRunStatus.m_triggerRecord);
 			if (nullptr != rRunStatus.m_triggerRecord)

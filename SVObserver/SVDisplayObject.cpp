@@ -18,7 +18,7 @@
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
@@ -290,13 +290,13 @@ DWORD WINAPI SVDisplayObject::SVDisplayThreadFunc( LPVOID lpParam )
 				::WaitForMultipleObjects( 2, l_pHandles, false, INFINITE );
 			}
 
-			if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+			if( SvimState::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 			{
 				l_Running = ( ::WaitForSingleObject( pDisplay->m_hStopEvent, 10 ) == WAIT_TIMEOUT );
 			}
 			else
 			{
-				l_Running = !( SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) );
+				l_Running = !( SvimState::CheckState( SV_STATE_CLOSING ) );
 				l_Running = l_Running && ( ::WaitForSingleObject( pDisplay->m_hStopEvent, 0 ) == WAIT_TIMEOUT );
 			}
 
@@ -330,7 +330,7 @@ HRESULT SVDisplayObject::ProcessInspectionComplete( bool& p_rProcessed )
 
 		if( m_CurrentTrigger == m_DisplayedTrigger )
 		{
-			if( !( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) ) )
+			if( !( SvimState::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) ) )
 			{
 				::InterlockedExchange( &m_DisplayedTrigger, -1 );
 			}
@@ -352,7 +352,7 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 	{
 		bool l_Process = true;
 
-		if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+		if( SvimState::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{
 			::Sleep( 0 );
 
@@ -449,11 +449,11 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<long, SVInspectionInf
 		ResultUpdate = 0.0 < Value ? true : false;
 	}
 
-	if( ImageUpdate || ResultUpdate  || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
+	if( ImageUpdate || ResultUpdate  || !SvimState::CheckState( SV_STATE_RUNNING ))
 	{
 		if( nullptr != m_hStartEvent )
 		{
-			bool l_State = !(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST));
+			bool l_State = !(SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST));
 
 			l_State = l_State || (rData.second.m_InspectedState == PRODUCT_INSPECTION_WARNING);
 			l_State = l_State || (rData.second.m_InspectedState == PRODUCT_INSPECTION_FAILED);

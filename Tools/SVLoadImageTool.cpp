@@ -17,7 +17,7 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
 #include "InspectionEngine/RunStatus.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #include <SVMatroxLibrary/SVMatroxImageFile.h>
 #pragma endregion Includes
 
@@ -154,7 +154,7 @@ bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 
 
 
-		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+		if (!SvimState::CheckState(SV_STATE_RUNNING))
 		{
 			//If not in runMode reload always, because outside of runMode it is not sure if the last image still valid.
 			m_ReloadFileImage = true;

@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVStatusBar.h"
 #include "Definitions/Color.h"
+#include "SVStatusLibrary/EditLock.h"
 
 SVStatusBar::SVStatusBar()
 	:m_lModeBKColor {SvDef::LightGray}
@@ -33,20 +34,33 @@ void SVStatusBar::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 			{
 				case ID_INDICATOR_MODE: 
 				{
-					COLORREF l_oldBKColor = dc.SetBkColor( m_lModeBKColor );
-					COLORREF l_oldForeColor = dc.SetTextColor( m_lModeForeColor );
-					dc.TextOut(lpDrawItemStruct->rcItem.left + 1, lpDrawItemStruct->rcItem.top, m_strModeText );
-					dc.SetBkColor( l_oldBKColor );
-					dc.SetTextColor( l_oldForeColor );
+					COLORREF oldBKColor = dc.SetBkColor(m_lModeBKColor);
+					COLORREF oldForeColor = dc.SetTextColor(m_lModeForeColor);
+					dc.TextOut(lpDrawItemStruct->rcItem.left + 1, lpDrawItemStruct->rcItem.top, m_strModeText);
+					dc.SetBkColor(oldBKColor);
+					dc.SetTextColor(oldForeColor);
+					break;
+				}
+				case ID_INDICATOR_EDIT_LOCK:
+				{
+
+					bool isLockAcquired = SvStl::EditLock::isAcquiredBySVIM();
+					std::string EditLockInfo {_T(isLockAcquired ? "   Edit Lock   " : "no Edit Lock")};
+
+					COLORREF oldBKColor = dc.SetBkColor(isLockAcquired ? SvDef::DarkYellow : SvDef::StatusBarBackground);
+					COLORREF oldForeColor = dc.SetTextColor(SvDef::Black);
+					dc.TextOut(lpDrawItemStruct->rcItem.left + 1, lpDrawItemStruct->rcItem.top, EditLockInfo.c_str());
+					dc.SetBkColor(oldBKColor );
+					dc.SetTextColor(oldForeColor );
 					break;
 				}
 				case ID_INDICATOR_GIGE_LICENSE_ERROR:
 				{
-					COLORREF l_oldBKColor = dc.SetBkColor( m_lErrorBKColor );
-					COLORREF l_oldForeColor = dc.SetTextColor( m_lErrorForeColor );
+					COLORREF oldBKColor = dc.SetBkColor( m_lErrorBKColor );
+					COLORREF oldForeColor = dc.SetTextColor( m_lErrorForeColor );
 					dc.TextOut(lpDrawItemStruct->rcItem.left + 1, lpDrawItemStruct->rcItem.top, m_strErrorText );
-					dc.SetBkColor( l_oldBKColor );
-					dc.SetTextColor( l_oldForeColor );
+					dc.SetBkColor(oldBKColor );
+					dc.SetTextColor(oldForeColor );
 
 					break;
 				}
