@@ -30,7 +30,6 @@ std::atomic<SvPb::DeviceModeType> SvimState::ms_CurrentMode {SvPb::DeviceModeTyp
 NotifyFunctor SvimState::ms_notify {nullptr};
 
 std::atomic<int>  SvimState::ms_LockCountSvrc {0};
-std::atomic<bool> SvimState::ms_isReloadedAfterCopyToolsToClipboard {false};
 
 int64_t SvimState::ms_EditingStates = 0; 
 

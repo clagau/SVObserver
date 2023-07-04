@@ -183,10 +183,6 @@ public:
 	static void ConfigWasLoaded(LPCSTR hash = nullptr);
 	static void ConfigWasUnloaded();
 
-	static bool IsReloadedAfterCopyToolsToClipboard() { return ms_isReloadedAfterCopyToolsToClipboard; };
-	static void SetReloadAfterCopyToolsToClipboard(bool flag) { ms_isReloadedAfterCopyToolsToClipboard = flag; };
-
-
 private:
 	//************************************
 	// Method: CheckModeNotify
@@ -218,7 +214,6 @@ private:
 	static bool ms_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
 	static std::atomic<int>  ms_LockCountSvrc; //< ms_LockCountSvrc >  0 prevents some  SVRC command to avoid crashes because of multi threading issues 
 
-	static std::atomic<bool> ms_isReloadedAfterCopyToolsToClipboard;
 	static int64_t ms_EditingStates;
 };
 
