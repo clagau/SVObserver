@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2014 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : Tool clipboard
-//* .File Name       : $Workfile:   ToolClipboard.cpp  $
+//* .Module Name     : Tool export import
+//* .File Name       : $Workfile:   ToolExportImport.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   13 Jan 2015 10:38:46  $
@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
-#include "ToolClipboard.h"
+#include "ToolExportImport.h"
 
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
@@ -31,12 +31,12 @@
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
+#include "Tools/ModuleTool.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -86,8 +86,8 @@ void writeToolParameter(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool, 
 
 ///  This method finds the dependency files in the tool Xml string
 /// \param rToolXmlString [in] Reference to the tool XML string to search
-/// \returns SvDef::StringVector vector of dependency filepaths
-SvDef::StringVector findDependencyFiles(const std::string& rToolXmlString)
+/// \param inserter SvDef::StringVector vector of dependency filepaths
+void findDependencyFiles(const std::string& rToolXmlString, std::back_insert_iterator<SvDef::StringVector> inserter)
 {
 	size_t StartPos(0);
 	size_t EndPos(0);
@@ -107,18 +107,12 @@ SvDef::StringVector findDependencyFiles(const std::string& rToolXmlString)
 
 	StartPos = ToolXmlString.find(SearchString.c_str(), EndPos);
 
-	SvDef::StringVector DependencyFilepaths;
-
 	while (std::string::npos != StartPos)
 	{
 		EndPos = ToolXmlString.find(SvXml::DataTag, StartPos);
 		if (std::string::npos != EndPos)
 		{
-			std::string FileName;
-			FileName = ToolXmlString.substr(StartPos, EndPos - StartPos);
-
-			DependencyFilepaths.emplace_back(FileName);
-
+			inserter = ToolXmlString.substr(StartPos, EndPos - StartPos);
 			StartPos = ToolXmlString.find(SearchString.c_str(), EndPos);
 		}
 		else
@@ -126,8 +120,6 @@ SvDef::StringVector findDependencyFiles(const std::string& rToolXmlString)
 			StartPos = std::string::npos;
 		}
 	}
-
-	return DependencyFilepaths;
 }
 
 uint32_t parseOneToolFromTree(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass& rOwner, SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem)
@@ -151,61 +143,291 @@ uint32_t parseOneToolFromTree(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass& r
 
 	return SvDef::InvalidObjectId;
 }
+
+std::string getModuleNameFromPath(const std::string& path)
+{
+	size_t pos = path.find_last_of("\\");
+	if (std::string::npos == pos)
+	{
+		pos = 0;
+	}
+	else
+	{
+		++pos;
+	}
+	auto name = path.substr(pos, path.size() - pos - strlen(SvO::ModuleExtension));
+
+	//check if name valid and correct it if invalid.
+	bool isValidName = false;
+	int i = 1;
+	do
+	{
+		auto startName = name;
+		auto cmd = SvOi::checkNewModuleName(name);
+		if (S_OK != cmd.hresult() && 0 < cmd.errormessage().messages_size())
+		{
+			if (SvStl::Tid_NameContainsInvalidChars == cmd.errormessage().messages(0).additionaltextid())
+			{ //invalid name, use any name
+				startName = "NewModuleName";
+				name = startName;
+			}
+			else if (SvStl::Tid_ModuleNameAlreadyUsed == cmd.errormessage().messages(0).additionaltextid())
+			{ //Name already used, rename new module.
+				name = startName + std::to_string(i++);
+			}
+		}
+		else
+		{
+			isValidName = true;
+		}
+	} while (false == isValidName);
+	return name;
+}
+
+void importModuleAndRemoveFromList(SvDef::StringVector& containedFilepaths)
+{
+	auto iter = std::ranges::find_if(containedFilepaths, [](const auto& rPath){ return rPath.ends_with(SvO::ModuleExtension); });
+	while (containedFilepaths.end() != iter)
+	{
+		auto data = SvFs::readContentFromFile(*iter, true);
+		auto name = getModuleNameFromPath(*iter);
+
+		SvOi::importModule(name, data);
+
+		containedFilepaths.erase(iter);
+		iter = std::ranges::find_if(containedFilepaths, [](const auto& rPath){ return rPath.ends_with(SvO::ModuleExtension); });
+	}
+}
+
+std::string readClipboardData()
+{
+	std::string ClipboardData;
+
+	if (::OpenClipboard(AfxGetApp()->GetMainWnd()->GetSafeHwnd()))
+	{
+
+		UINT  ClipboardFormat(::RegisterClipboardFormat(SvO::ToolClipboardFormat));
+		HGLOBAL ClipboardMemData = nullptr;
+
+		if (nullptr == (ClipboardMemData = ::GetClipboardData(ClipboardFormat)))
+		{
+			::CloseClipboard();
+
+			SvStl::MessageManager e(SvStl::MsgType::Data);
+			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_GetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams));
+			e.Throw();
+		}
+		else
+		{
+			size_t DataSize = ::GlobalSize(ClipboardMemData);
+			ClipboardData.resize(DataSize);
+			char* pClipboardData(nullptr);
+			pClipboardData = static_cast<char*> (::GlobalLock(ClipboardMemData));
+			if (nullptr != pClipboardData)
+			{
+				memcpy(&ClipboardData.at(0), pClipboardData, DataSize);
+			}
+			::GlobalUnlock(ClipboardMemData);
+			::CloseClipboard();
+		}
+	}
+
+	return ClipboardData;
+}
+
+void writeClipboardData(const std::string& rCliboardData)
+{
+	if (::OpenClipboard(AfxGetApp()->GetMainWnd()->GetSafeHwnd()))
+	{
+		UINT  ClipboardFormat(::RegisterClipboardFormat(SvO::ToolClipboardFormat));
+
+		if (::EmptyClipboard() && 0 != ClipboardFormat)
+		{
+			HGLOBAL ClipboardData = GlobalAlloc(GMEM_MOVEABLE, rCliboardData.size() + 1);
+
+			if (nullptr != ClipboardData)
+			{
+				memcpy(GlobalLock(ClipboardData), &rCliboardData.at(0), rCliboardData.size());
+				GlobalUnlock(ClipboardData);
+
+				if (nullptr == ::SetClipboardData(ClipboardFormat, ClipboardData))
+				{
+					::CloseClipboard();
+					::GlobalFree(ClipboardData);
+					SvStl::MessageManager e(SvStl::MsgType::Data);
+					e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_SetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams));
+					e.Throw();
+				}
+				ToolExportImport::SetReloadAfterCopyToolsToClipboard(false);
+			}
+			else
+			{
+				::CloseClipboard();
+				SvStl::MessageManager e(SvStl::MsgType::Data);
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardMemoryFailed, SvStl::SourceFileParams(StdMessageParams));
+				e.Throw();
+			}
+		}
+		::CloseClipboard();
+	}
+}
+
+SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds, const std::string& rXmlFilePath, bool addModuleFiles)
+{
+	std::ostringstream MemoryStream;
+	SvXml::SVObjectXMLWriter XmlWriter(MemoryStream);
+
+	std::string rootNodeName(SvXml::ToolCopyTag);
+	XmlWriter.WriteRootElement(rootNodeName.c_str());
+	XmlWriter.WriteSchema();
+	XmlWriter.WriteStartOfBase();
+	XmlWriter.WriteShortEvirmonment(TheSVObserverApp().getCurrentVersion());
+
+	XmlWriter.StartElement(SvXml::ToolsTag);
+
+	int maxToolDepth = 0;
+	SvDef::StringVector dependencyFilepaths;
+
+	for (int i = 0; rToolIds.size() > i; ++i)
+	{
+		if (SvDef::InvalidObjectId != rToolIds[i])
+		{
+			auto* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(rToolIds[i]));
+
+			if (nullptr == pTool)
+			{
+				SvStl::MessageManager e(SvStl::MsgType::Data);
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
+				e.Throw();
+			}
+
+			if (addModuleFiles)
+			{
+				if (auto* pModuleTool = dynamic_cast<SvTo::ModuleTool*>(pTool); pModuleTool)
+				{
+					std::string moduleFile = SvStl::GlobalPath::Inst().GetRunPath(SvOi::getModuleName(pModuleTool->getModuleGuid()).c_str()) + SvO::ModuleExtension;
+					dependencyFilepaths.push_back(moduleFile);
+				}
+			}
+
+			writeToolParameter(XmlWriter, *pTool, i);
+			pTool->Persist(XmlWriter);
+			maxToolDepth = std::max(maxToolDepth, pTool->getToolDepth(false));
+		}
+	}
+
+	XmlWriter.EndElement(); //ToolsTag
+	XmlWriter.WriteAttribute(SvXml::ToolDepthTag, maxToolDepth);
+	XmlWriter.EndAllElements();
+	auto xmlText = SvUl::to_ansi(MemoryStream.str());
+	SvFs::writeStringToFile(rXmlFilePath, xmlText, true);
+
+	findDependencyFiles(xmlText, std::back_inserter(dependencyFilepaths));
+	dependencyFilepaths.emplace_back(rXmlFilePath);
+
+	return dependencyFilepaths;
+}
+
+std::vector<uint32_t> parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass& rOwner)
+{
+	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem(nullptr);
+
+	std::vector<uint32_t> toolIds;
+
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
+	{
+		SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem(nullptr);
+
+		ToolItem = rTree.getFirstBranch(ToolsItem);
+
+		while (rTree.isValidBranch(ToolItem))
+		{
+			toolIds.push_back(parseOneToolFromTree(rTree, rOwner, ToolItem));
+			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
+		}
+	}
+
+	bool anyInvalidIds = std::any_of(toolIds.cbegin(), toolIds.cend(), [](const auto& toolID){return SvDef::InvalidObjectId == toolID; });
+
+	if (toolIds.empty() || anyInvalidIds)
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConversionFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+
+	return toolIds;
+}
+}
+
+bool toolClipboardDataPresent()
+{
+	try
+	{
+		readClipboardData();
+		return true;
+	}
+	catch (const SvStl::MessageContainer&)
+	{
+		//Exception means data not correct format
+		return false;
+	}
+}
+
+void replaceToolName(std::string& rXmlData, const std::string& rOldToolName, const std::string& rNewToolName, const std::string& rOldFullToolName, const std::string& rNewFullToolName)
+{
+	if (rNewToolName != rOldToolName)
+	{
+		size_t pos = rXmlData.find(scObjectNameTag);
+
+		if (pos != std::string::npos)
+		{
+			// adding ">" and "<" ensures that only the correct occurrences of the name in the XML string will be replaced
+			auto searchString = ">" + rNewToolName + "<";
+			auto replacementString = ">" + rOldToolName + "<";
+
+			pos += sizeof(scObjectNameTag);
+			pos = rXmlData.find(replacementString.c_str(), pos);
+			rXmlData.replace(pos, strlen(replacementString.c_str()), searchString.c_str());
+		}
+	}
+
+	if (false == rOldFullToolName.empty())
+	{ //update the dotted Name
+		std::string fullToolNameStr = rOldFullToolName + _T(".");
+		auto fullToolNameNewStr = rNewFullToolName + _T(".");
+
+		SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
+
+		//ConnectedDotname should not be renamed, because it is to display the old connectedDotname if the id invalid. (Change is caused by SVB-743)
+		std::string tmpText = "<DATA Name=\"ConnectedDotname\" Type=\"VT_BSTR\">";
+		fullToolNameStr = tmpText + fullToolNameStr;
+		fullToolNameNewStr = tmpText + fullToolNameNewStr;
+		SvUl::searchAndReplace(rXmlData, fullToolNameNewStr.c_str(), fullToolNameStr.c_str());
+	}
 }
 
 #pragma region Public Methods
+bool ToolExportImport::m_isReloadedAfterCopyToolsToClipboard {false};
 
-ToolClipboard::ToolClipboard() : m_baseFilePath(SvStl::GlobalPath::Inst().GetTempPath().c_str())
+ToolExportImport::ToolExportImport()
 {
-	m_baseFilePath += _T("\\");
-	m_baseFilePath += SvO::ClipboardFileName;
-	m_zipFilePath = m_baseFilePath + SvO::ZipExtension;
 }
 
 
-HRESULT ToolClipboard::writeXmlToolData(const std::vector<uint32_t>& rToolIds) const
+HRESULT ToolExportImport::writeToolDataToClipboard(const std::vector<uint32_t>& rToolIds) const
 {
 	HRESULT result(S_OK);
 
 	try
 	{
-		if (::OpenClipboard(AfxGetApp()->m_pMainWnd->m_hWnd))
-		{
-			UINT  ClipboardFormat(::RegisterClipboardFormat(SvO::ToolClipboardFormat));
+		std::string clipboardZipFile {SvStl::GlobalPath::Inst().GetTempPath() + '\\'};
+		clipboardZipFile += SvO::ExportToolsName;
+		clipboardZipFile += SvO::ZipExtension;
+		createToolsExportFile(rToolIds, clipboardZipFile.c_str(), _T(""), true);
+		std::string clipboardData = SvFs::readContentFromFile(clipboardZipFile);
 
-			if (::EmptyClipboard() && 0 != ClipboardFormat)
-			{
-				std::string zippedToolDataForAllTools = createToolDefinitionString(rToolIds);
-
-				HGLOBAL ClipboardData = GlobalAlloc(GMEM_MOVEABLE, zippedToolDataForAllTools.size() + 1);
-
-				if (nullptr != ClipboardData)
-				{
-					memcpy(GlobalLock(ClipboardData), &zippedToolDataForAllTools.at(0), zippedToolDataForAllTools.size());
-					GlobalUnlock(ClipboardData);
-
-					if (nullptr == ::SetClipboardData(ClipboardFormat, ClipboardData))
-					{
-						::CloseClipboard();
-						::GlobalFree(ClipboardData);
-						result = E_FAIL;
-						SvStl::MessageManager e(SvStl::MsgType::Data);
-						e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_SetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams));
-						e.Throw();
-					}
-					SVSVIMStateClass::SetReloadAfterCopyToolsToClipboard(false);
-				}
-				else
-				{
-					::CloseClipboard();
-					result = E_FAIL;
-					SvStl::MessageManager e(SvStl::MsgType::Data);
-					e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardMemoryFailed, SvStl::SourceFileParams(StdMessageParams));
-					e.Throw();
-				}
-			}
-			::CloseClipboard();
-		}
+		writeClipboardData(clipboardData);
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
@@ -216,30 +438,63 @@ HRESULT ToolClipboard::writeXmlToolData(const std::vector<uint32_t>& rToolIds) c
 	return result;
 }
 
-
-std::string ToolClipboard::readXmlToolData()
+std::string ToolExportImport::readlToolDataFromClipboard()
 {
-	CWaitCursor Wait;
+	std::string ClipboardData = readClipboardData();
 
-	std::string ClipboardData = clipboardDataToString();
+	std::string clipboardZipFile {SvStl::GlobalPath::Inst().GetTempPath() + '\\'};
+	clipboardZipFile += SvO::ExportToolsName;
+	clipboardZipFile += SvO::ZipExtension;
+	SvFs::writeStringToFile(clipboardZipFile, ClipboardData, false);
 
-	SvFs::writeStringToFile(m_zipFilePath, ClipboardData, false);
+	std::string result = importTools(clipboardZipFile.c_str());
+	::DeleteFile(clipboardZipFile.c_str());
 
-	SvDef::StringVector containedFilepaths;
-	if (!SvUl::unzipAll(m_zipFilePath, SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
-	{
-		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
-		e.Throw();
-	}
-	::DeleteFile(m_zipFilePath.c_str());
-	SvFs::moveFilesToFolder(containedFilepaths, SvStl::GlobalPath::Inst().GetRunPath(), m_baseFilePath);
-
-	return SvFs::readContentFromFile(xmlFilePath());
+	return result;
 }
 
+HRESULT ToolExportImport::exportTools(const std::vector<uint32_t>& rToolIds, LPCTSTR exportfileName, LPCTSTR xmlFileName, bool includeModuleFiles) const
+{
+	HRESULT result(S_OK);
 
-std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId, bool onlySameVersionValid /*= true*/, bool useExplorerStyle /*= true*/)
+	try
+	{
+		createToolsExportFile(rToolIds, exportfileName, xmlFileName, includeModuleFiles);
+	}
+	catch (const SvStl::MessageContainer& rSvE)
+	{
+		m_errorMessage.setMessage(rSvE.getMessage());
+		result = E_FAIL;
+	}
+
+	return result;
+}
+
+std::string ToolExportImport::importTools(LPCTSTR fileName) const
+{
+	SvDef::StringVector containedFilepaths;
+	if (SvUl::unzipAll(fileName, SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths) == false)
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+	std::string xmlExtension{SvO::XmlExtension};
+	auto iter = std::find_if(containedFilepaths.cbegin(), containedFilepaths.cend(), [xmlExtension](const auto& rEntry) { return rEntry.find(xmlExtension) != std::string::npos; });
+	std::string xmlFile;
+	if (containedFilepaths.cend() != iter)
+	{
+		xmlFile = *iter;
+	}
+
+	importModuleAndRemoveFromList(containedFilepaths);
+
+	SvFs::moveFilesToFolder(containedFilepaths, SvStl::GlobalPath::Inst().GetRunPath(), xmlFile);
+
+	return SvFs::readContentFromFile(xmlFile);
+}
+
+std::vector<uint32_t> ToolExportImport::createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId, bool onlySameVersionValid /*= true*/, bool useExplorerStyle /*= true*/)
 {
 	std::string XmlData(rXmlData);
 
@@ -305,23 +560,26 @@ std::vector<uint32_t> ToolClipboard::createToolsFromXmlData(const std::string& r
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-std::string ToolClipboard::createToolDefinitionString(const std::vector<uint32_t>& rToolIds) const
+void ToolExportImport::createToolsExportFile(const std::vector<uint32_t>& rToolIds, LPCTSTR exportFleName, LPCTSTR xmlFileName, bool includeModuleFiles) const
 {
-	SvDef::StringVector filepaths = streamToolsToXmlFile(rToolIds, xmlFilePath());
+	std::string xmlFilePath {xmlFileName};
+	if (xmlFilePath.empty())
+	{
+		xmlFilePath = SvStl::GlobalPath::Inst().GetTempPath() + _T("\\") + std::string {SvO::ExportToolsName} + SvO::XmlExtension;
+	}
+	SvDef::StringVector filepaths = streamToolsToXmlFile(rToolIds, xmlFilePath, includeModuleFiles);
 
-	if (!SvUl::makeZipFile(m_zipFilePath, filepaths, _T(""), false))
+	if (!SvUl::makeZipFile(exportFleName, filepaths, _T(""), false))
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsZipFailed, SvStl::SourceFileParams(StdMessageParams));
 		e.Throw();
 	}
-	
-	::DeleteFile(xmlFilePath().c_str());
 
-	return SvFs::readContentFromFile(m_zipFilePath);
+	::DeleteFile(xmlFilePath.c_str());
 }
 
-void ToolClipboard::checkVersion(SvXml::SVXMLMaterialsTree& rTree, bool onlySameVersionValid) const
+void ToolExportImport::checkVersion(SvXml::SVXMLMaterialsTree& rTree, bool onlySameVersionValid) const
 {
 	HRESULT Result(E_FAIL);
 
@@ -352,7 +610,7 @@ void ToolClipboard::checkVersion(SvXml::SVXMLMaterialsTree& rTree, bool onlySame
 	}
 }
 
-HRESULT ToolClipboard::updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const
+HRESULT ToolExportImport::updateAllToolNames(std::string& rXmlData, SVTreeType& rTree, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const
 {
 	HRESULT Result(E_FAIL);
 
@@ -390,7 +648,7 @@ HRESULT ToolClipboard::updateAllToolNames(std::string& rXmlData, SVTreeType& rTr
 	return Result;
 }
 
-void ToolClipboard::updateToolName(std::string& rXmlData, const SVObjectClass& rOwner, const SVIPDoc& rDoc, const std::string& toolName, const std::string& rOldFullToolName, bool useExplorerStyle) const
+void ToolExportImport::updateToolName(std::string& rXmlData, const SVObjectClass& rOwner, const SVIPDoc& rDoc, const std::string& toolName, const std::string& rOldFullToolName, bool useExplorerStyle) const
 {
 	std::string NewToolName = getUniqueToolName(toolName, rOwner, rDoc, useExplorerStyle);
 
@@ -403,7 +661,7 @@ void ToolClipboard::updateToolName(std::string& rXmlData, const SVObjectClass& r
 	replaceToolName(rXmlData, toolName, NewToolName, rOldFullToolName, fullToolNameNewStr);
 }
 
-std::string ToolClipboard::getUniqueToolName(const std::string& rToolName, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const
+std::string ToolExportImport::getUniqueToolName(const std::string& rToolName, const SVObjectClass& rOwner, const SVIPDoc& rDoc, bool useExplorerStyle) const
 {
 	std::string uniqueName;
 
@@ -440,7 +698,7 @@ std::string ToolClipboard::getUniqueToolName(const std::string& rToolName, const
 }
 
 
-HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree) const
+HRESULT ToolExportImport::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMaterialsTree& rTree) const
 {
 	HRESULT Result;
 
@@ -466,7 +724,7 @@ HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMater
 			SvUl::searchAndReplace(rUniqueID, _T("{#"), cTmpStart);
 			SvUl::searchAndReplace(rXmlData, rUniqueID.c_str(), newIdString.c_str());
 		}
-		if (SVSVIMStateClass::IsReloadedAfterCopyToolsToClipboard())
+		if (m_isReloadedAfterCopyToolsToClipboard)
 		{
 			size_t pos = rXmlData.find(cTmpStart, 0);
 
@@ -500,168 +758,5 @@ HRESULT ToolClipboard::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMater
 	return Result;
 }
 
-std::string ToolClipboard::xmlFilePath() const
-{
-	return m_baseFilePath + SvO::XmlExtension;
-}
-
 #pragma endregion Protected Methods
 
-bool toolClipboardDataPresent()
-{
-	try
-	{
-		clipboardDataToString();
-		return true;
-	}
-	catch (const SvStl::MessageContainer&)
-	{
-		//Exception means data not correct format
-		return false;
-	}
-}
-
-std::string clipboardDataToString()
-{
-	std::string ClipboardData;
-
-	if (::OpenClipboard(AfxGetApp()->m_pMainWnd->m_hWnd))
-	{
-
-		UINT  ClipboardFormat(::RegisterClipboardFormat(SvO::ToolClipboardFormat));
-		HGLOBAL ClipboardMemData = nullptr;
-
-		if (nullptr == (ClipboardMemData = ::GetClipboardData(ClipboardFormat)))
-		{
-			::CloseClipboard();
-
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_GetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams));
-			e.Throw();
-		}
-		else
-		{
-			size_t DataSize = ::GlobalSize(ClipboardMemData);
-			ClipboardData.resize(DataSize);
-			char* pClipboardData(nullptr);
-			pClipboardData = static_cast<char*> (::GlobalLock(ClipboardMemData));
-			memcpy(&ClipboardData.at(0), pClipboardData, DataSize);
-			::GlobalUnlock(ClipboardMemData);
-			::CloseClipboard();
-		}
-	}
-
-	return ClipboardData;
-}
-
-SvDef::StringVector streamToolsToXmlFile(const std::vector<uint32_t>& rToolIds, const std::string& rXmlFilePath)
-{
-	std::ostringstream MemoryStream;
-	SvXml::SVObjectXMLWriter XmlWriter(MemoryStream);
-
-	std::string rootNodeName(SvXml::ToolCopyTag);
-	XmlWriter.WriteRootElement(rootNodeName.c_str());
-	XmlWriter.WriteSchema();
-	XmlWriter.WriteStartOfBase();
-	XmlWriter.WriteShortEvirmonment(TheSVObserverApp().getCurrentVersion());
-
-	XmlWriter.StartElement(SvXml::ToolsTag);
-
-	int maxToolDepth = 0;
-
-	for (int i = 0; rToolIds.size() > i; ++i)
-	{
-		if (SvDef::InvalidObjectId != rToolIds[i])
-		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(rToolIds[i]));
-
-			if (nullptr == pTool)
-			{
-				SvStl::MessageManager e(SvStl::MsgType::Data);
-				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams));
-				e.Throw();
-			}
-
-			writeToolParameter(XmlWriter, *pTool, i);
-			pTool->Persist(XmlWriter);
-			maxToolDepth = std::max(maxToolDepth, pTool->getToolDepth(false));
-		}
-	}
-
-	XmlWriter.EndElement(); //ToolsTag
-	XmlWriter.WriteAttribute(SvXml::ToolDepthTag, maxToolDepth);
-	XmlWriter.EndAllElements();
-	auto xmlText = SvUl::to_ansi(MemoryStream.str());
-	SvFs::writeStringToFile(rXmlFilePath, xmlText, true);
-
-
-	auto DependencyFilepaths = findDependencyFiles(xmlText);
-	SvDef::StringVector filepaths {DependencyFilepaths.begin(), DependencyFilepaths.end()};
-	filepaths.emplace_back(rXmlFilePath);
-
-	return filepaths;
-}
-
-std::vector<uint32_t> parseTreeToTool(SvXml::SVXMLMaterialsTree& rTree, SVObjectClass& rOwner)
-{
-	SvXml::SVXMLMaterialsTree::SVBranchHandle ToolsItem(nullptr);
-
-	std::vector<uint32_t> toolIds;
-
-	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
-	{
-		SvXml::SVXMLMaterialsTree::SVBranchHandle ToolItem(nullptr);
-
-		ToolItem = rTree.getFirstBranch(ToolsItem);
-
-		while (rTree.isValidBranch(ToolItem))
-		{
-			toolIds.push_back(parseOneToolFromTree(rTree, rOwner, ToolItem));
-			ToolItem = rTree.getNextBranch(ToolsItem, ToolItem);
-		}
-	}
-
-	bool anyInvalidIds = std::any_of(toolIds.cbegin(), toolIds.cend(), [](const auto& toolID){return SvDef::InvalidObjectId == toolID; });
-
-	if (toolIds.empty() || anyInvalidIds)
-	{
-		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConversionFailed, SvStl::SourceFileParams(StdMessageParams));
-		e.Throw();
-	}
-
-	return toolIds;
-}
-
-void replaceToolName(std::string& rXmlData, const std::string& rOldToolName, const std::string& rNewToolName, const std::string& rOldFullToolName, const std::string& rNewFullToolName)
-{
-	if (rNewToolName != rOldToolName)
-	{
-		size_t pos = rXmlData.find(scObjectNameTag);
-
-		if (pos != std::string::npos)
-		{
-			// adding ">" and "<" ensures that only the correct occurrences of the name in the XML string will be replaced
-			auto searchString = ">" + rNewToolName + "<";
-			auto replacementString = ">" + rOldToolName + "<";
-
-			pos += sizeof(scObjectNameTag);
-			pos = rXmlData.find(replacementString.c_str(), pos);
-			rXmlData.replace(pos, strlen(replacementString.c_str()), searchString.c_str());
-		}
-	}
-
-	if (false == rOldFullToolName.empty())
-	{ //update the dotted Name
-		std::string fullToolNameStr = rOldFullToolName + _T(".");
-		auto fullToolNameNewStr = rNewFullToolName + _T(".");
-
-		SvUl::searchAndReplace(rXmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
-
-		//ConnectedDotname should not be renamed, because it is to display the old connectedDotname if the id invalid. (Change is caused by SVB-743)
-		std::string tmpText = "<DATA Name=\"ConnectedDotname\" Type=\"VT_BSTR\">";
-		fullToolNameStr = tmpText + fullToolNameStr;
-		fullToolNameNewStr = tmpText + fullToolNameNewStr;
-		SvUl::searchAndReplace(rXmlData, fullToolNameNewStr.c_str(), fullToolNameStr.c_str());
-	}
-}

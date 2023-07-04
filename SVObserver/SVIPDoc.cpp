@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <algorithm>
 #include "SVIPDoc.h"
 #include "EditLock.h"
 #include "ExtrasEngine.h"
@@ -40,7 +38,7 @@
 #include "SheetForExternalToolAdjustment.h"
 #include "SVToolSet.h"
 #include "SVUtilities.h"
-#include "ToolClipboard.h"
+#include "ToolExportImport.h"
 #include "ToolSetView.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
@@ -130,6 +128,10 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_REMOVE_TOOL_PARA_TO_MONITORLIST, OnUpdateRemoveParameterToMonitorList)
 	ON_UPDATE_COMMAND_UI(ID_CONVERT_TO_MODULE, OnUpdateConvertToModul)
 	ON_COMMAND(ID_CONVERT_TO_MODULE, OnConvertToModul)
+	ON_COMMAND(ID_EXPORT_TOOLS, OnExportTools)
+	ON_UPDATE_COMMAND_UI(ID_EXPORT_TOOLS, OnUpdateExportTools)
+	ON_COMMAND(ID_IMPORT_TOOLS, OnImportTools)
+	ON_UPDATE_COMMAND_UI(ID_IMPORT_TOOLS, OnUpdateImportTools)
 	ON_COMMAND(ID_EDIT_DELETE, OnEditDelete)
 	ON_COMMAND(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAdjustLightReference)
 	ON_COMMAND(ID_EDIT_ADJUSTLUT, OnAdjustLut)
@@ -1220,6 +1222,182 @@ void SVIPDoc::OnAddModuleTool(UINT nId)
 	AddTool(SvPb::ModuleToolClassId, nId - ID_ADD_MODULE_FIRST );
 }
 
+void SVIPDoc::OnExportTools()
+{
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
+
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
+	{
+		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+		constexpr const TCHAR* Filter = _T("Tools export file (*.svt)|*.svt||");
+		SvMc::SVFileDialog fileDlg(false, bFullAccess, _T("svt"), nullptr, 0, Filter, nullptr);
+		fileDlg.m_ofn.lpstrTitle = _T("Select File");
+		if (fileDlg.DoModal() == IDOK)
+		{
+			auto toolIDs = pToolsetView->GetAllSelectedToolIds();
+			ToolExportImport toolExport;
+			toolExport.exportTools(toolIDs, fileDlg.GetPathName().GetString(), _T(""), true);
+		}
+	}
+}
+
+void SVIPDoc::OnUpdateExportTools(CCmdUI* pCmdUI)
+{
+	// Check current user access...
+	bool Enabled(false);
+	ToolSetView* pToolsetView = GetToolSetView();
+
+	if (TheSVObserverApp().OkToEdit() && nullptr != pToolsetView)
+	{
+		Enabled = true;
+		uint16_t numberOfSelectedTools = 0;
+		for (auto pNavElement : pToolsetView->GetSelectedNavigatorElements())
+		{
+			if (pNavElement)
+			{
+				switch (pNavElement->m_Type)
+				{
+					case NavElementType::SubTool:
+					case NavElementType::Tool:
+						numberOfSelectedTools++;
+						break;
+					default:
+						Enabled = false;
+						break;
+				}
+			}
+		}
+		if (0 == numberOfSelectedTools)
+		{
+			Enabled = false;
+		}
+	}
+	pCmdUI->Enable(Enabled);
+}
+
+void SVIPDoc::OnImportTools()
+{
+	if (!SVSVIMStateClass::CheckState(SV_STATE_READY) || !SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	{
+		return;
+	}
+
+	SVSVIMStateClass::SetResetState srs(SV_STATE_EDITING, EditLock::acquire, EditLock::release);
+	if (false == srs.conditionOk())
+	{
+		return;
+	}
+
+	SVInspectionProcess* pInspection(GetInspectionProcess());
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr == pInspection || nullptr == pToolsetView)
+	{
+		return;
+	}
+
+	auto pNavElement = pToolsetView->Get1stSelNavigatorElement();
+
+	SVToolSet* pToolSet(pInspection->GetToolSet());
+	if (nullptr == pNavElement || nullptr == pToolSet)
+	{
+		return;
+	}
+	uint32_t postToolId(SvDef::InvalidObjectId);
+	uint32_t ownerId(pToolSet->getObjectId());
+	switch (pNavElement->m_Type)
+	{
+		case NavElementType::SubTool:
+		case NavElementType::EndDelimiterTool:
+			ownerId = pNavElement->m_OwnerId;
+			if (SvDef::InvalidObjectId == pNavElement->m_navigatorObjectId)
+			{	//at the end of the Group/Loop-Tool, get the objectId of the next tool after this tool
+				postToolId = getObjectAfterThis(ownerId);
+			}
+			else
+			{
+				postToolId = pNavElement->m_navigatorObjectId;
+			}
+			break;
+		case NavElementType::StartGrouping:
+		case NavElementType::EndGrouping:
+		{
+			std::string toolName = m_toolGroupings.GetToolToInsertBefore(pNavElement->m_DisplayName);
+			for (int i = 0; i < pToolSet->GetSize(); i++)
+			{
+				const SvIe::SVTaskObjectClass* pTool = pToolSet->getTaskObject(i);
+				if (pTool && pTool->GetName() == toolName)
+				{
+					postToolId = pTool->getObjectId();
+					break;
+				}
+			}
+		}
+		break;
+		case NavElementType::Tool:
+			postToolId = pNavElement->m_navigatorObjectId;
+			break;
+		case NavElementType::EndDelimiterToolSet:
+		case NavElementType::Empty:
+		default:
+			break;
+	}
+
+	ToolExportImport toolClipboard;
+	try
+	{
+		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+		constexpr const TCHAR* Filter = _T("Tools export file (*.svt)|*.svt||");
+		SvMc::SVFileDialog fileDlg(true, bFullAccess, _T("svt"), nullptr, 0, Filter, nullptr);
+		fileDlg.m_ofn.lpstrTitle = _T("Select File");
+		if (fileDlg.DoModal() == IDOK)
+		{
+			auto XmlData = toolClipboard.importTools(fileDlg.GetPathName().GetString());
+			auto pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerId, false);
+			if (pastedToolIDs.empty() == false)
+			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLCLIPBOARD)
+				std::stringstream ss;
+				ss << _T("Toolids in SVIPDoc::OnImportTools(): ");
+
+				for (auto id : pastedToolIDs)
+				{
+					ss << id << _T(" ");
+				}
+				ss << _T("\n");
+				::OutputDebugString(ss.str().c_str());
+#endif
+				updateToolsetView(pastedToolIDs, postToolId, ownerId, pNavElement->m_DisplayName);
+			}
+		}
+	}
+	catch (const SvStl::MessageContainer& rSvE)
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		e.setMessage(rSvE.getMessage());
+	}
+}
+
+void SVIPDoc::OnUpdateImportTools(CCmdUI* pCmdUI)
+{
+	ToolSetView* pToolsetView = GetToolSetView();
+	SVToolSet* pToolSet = GetToolSet();
+	bool enabled = TheSVObserverApp().OkToEdit() && nullptr != pToolSet && nullptr != pToolsetView && false == pToolsetView->IsLabelEditing();
+
+	if (enabled)
+	{
+		auto pNavElement = pToolsetView->Get1stSelNavigatorElement();
+
+		//Only if tool list active and a selected index is valid
+		enabled = (nullptr != pNavElement);
+	}
+	pCmdUI->Enable(enabled);
+}
+
 void SVIPDoc::OnEditDelete()
 {
 	SVInspectionProcess* pInspection(GetInspectionProcess());
@@ -1319,8 +1497,8 @@ void SVIPDoc::OnEditCut()
 	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
 		auto toolIDs = pToolsetView->GetAllSelectedToolIds();
-		ToolClipboard toolClipboard;
-		toolClipboard.writeXmlToolData(toolIDs);
+		ToolExportImport toolClipboard;
+		toolClipboard.writeToolDataToClipboard(toolIDs);
 		OnEditDelete();
 	}
 }
@@ -1344,8 +1522,8 @@ void SVIPDoc::OnEditCopy()
 	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
 		auto toolIDs = pToolsetView->GetAllSelectedToolIds();
-		ToolClipboard toolClipboard;
-		toolClipboard.writeXmlToolData(toolIDs);
+		ToolExportImport toolClipboard;
+		toolClipboard.writeToolDataToClipboard(toolIDs);
 	}
 }
 
@@ -1488,12 +1666,12 @@ void SVIPDoc::OnEditPaste()
 			break;
 	}
 
-	ToolClipboard toolClipboard;
+	ToolExportImport toolClipboard;
 	try
 	{
-		auto XmlData = toolClipboard.readXmlToolData();
+		auto XmlData = toolClipboard.readlToolDataFromClipboard();
 		auto pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerId);
-		if (!pastedToolIDs.empty())
+		if (pastedToolIDs.empty() == false)
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLCLIPBOARD)
 			std::stringstream ss;
@@ -1502,8 +1680,6 @@ void SVIPDoc::OnEditPaste()
 			for (auto id : pastedToolIDs)
 			{
 				ss << id << _T(" ");
-
-
 			}
 			ss << _T("\n");
 			::OutputDebugString(ss.str().c_str());

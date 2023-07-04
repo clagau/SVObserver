@@ -30,9 +30,6 @@ std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode {SvPb::DeviceM
 NotifyFunctor SVSVIMStateClass::m_pNotify {nullptr};
 
 std::atomic<int>  SVSVIMStateClass::ms_LockCountSvrc {0};
-std::atomic<bool> SVSVIMStateClass::m_isReloadedAfterCopyToolsToClipboard {false};
-
-
 
 bool SVSVIMStateClass::isSvrcBlocked()
 {

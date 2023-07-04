@@ -348,7 +348,7 @@
     <ClCompile Include="SVVisionProcessorHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ToolClipboard.cpp">
+    <ClCompile Include="ToolExportImport.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ToolSetView.cpp">
@@ -865,7 +865,7 @@
     <ClInclude Include="TextDefinesSvO.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ToolClipboard.h">
+    <ClInclude Include="ToolExportImport.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ToolSetView.h">

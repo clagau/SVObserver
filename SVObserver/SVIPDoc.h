@@ -164,6 +164,10 @@ public:
 	afx_msg void OnUpdateRemoveParameterToMonitorList(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateConvertToModul(CCmdUI* PCmdUI);
 	afx_msg void OnConvertToModul();
+	afx_msg void OnExportTools();
+	afx_msg void OnUpdateExportTools(CCmdUI* PCmdUI);
+	afx_msg void OnImportTools();
+	afx_msg void OnUpdateImportTools(CCmdUI* PCmdUI);
 	afx_msg void OnEditDelete();
 	afx_msg void OnAdjustLightReference();
 	afx_msg void OnAdjustLut();

@@ -351,7 +351,7 @@ echo %time%
     <ClCompile Include="TADlgTransformationLearnPage.cpp" />
     <ClCompile Include="TADlgTranslationPage.cpp" />
     <ClCompile Include="TADlgTranslationShiftPage.cpp" />
-    <ClCompile Include="ToolClipboard.cpp" />
+    <ClCompile Include="ToolExportImport.cpp" />
     <ClCompile Include="ToolSetView.cpp" />
     <ClCompile Include="WebSocketSettingsLoader.cpp" />
     <ClCompile Include="ZoomToolBar.cpp" />
@@ -534,7 +534,7 @@ echo %time%
     <ClInclude Include="TADlgTranslationPage.h" />
     <ClInclude Include="TADlgTranslationShiftPage.h" />
     <ClInclude Include="TextDefinesSvO.h" />
-    <ClInclude Include="ToolClipboard.h" />
+    <ClInclude Include="ToolExportImport.h" />
     <ClInclude Include="ToolSetView.h" />
     <ClInclude Include="TraceWin.h" />
     <ClInclude Include="WebsocketSettings.h" />

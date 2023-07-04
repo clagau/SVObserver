@@ -20,7 +20,7 @@
 #include "SVRemoteControlConstants.h"
 #include "SVStorageResult.h"
 #include "SVToolSet.h"
-#include "ToolClipboard.h"
+#include "ToolExportImport.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVIMCommand.h"
@@ -1609,12 +1609,12 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 	{
 		case SvPb::ClipboardActionEnum::Copy:
 		{
-			ToolClipboard toolClipboard;
+			ToolExportImport toolClipboard;
 			HRESULT result {S_OK};
 
 			{
 				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-				result = toolClipboard.writeXmlToolData({rRequest.objectid()});
+				result = toolClipboard.writeToolDataToClipboard({rRequest.objectid()});
 			}
 			pResponse->set_hresult(result);
 			if (S_OK != result)
@@ -1628,7 +1628,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		{
 			if (toolClipboardDataPresent())
 			{
-				ToolClipboard toolClipboard;
+				ToolExportImport toolClipboard;
 				uint32_t postID{ rRequest.objectid() };
 				SvOi::IObjectClass* pObject = SvOi::getObject(postID);
 				if (nullptr != pObject)
@@ -1639,7 +1639,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 
 					{
 						SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-						auto XmlData = toolClipboard.readXmlToolData();
+						auto XmlData = toolClipboard.readlToolDataFromClipboard();
 						if (false == XmlData.empty())
 						{
 							pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerID);
@@ -1666,19 +1666,19 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 			else
 			{
 				SvStl::MessageManager message(SvStl::MsgType::Log);
-				message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+				message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
 				convertMessageToProtobuf(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
 			}
 			break;
 		}
 		case SvPb::ClipboardActionEnum::Cut:
 		{
-			ToolClipboard toolClipboard;
+			ToolExportImport toolClipboard;
 			HRESULT result {S_OK};
 
 			{
 				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-				result = toolClipboard.writeXmlToolData({rRequest.objectid()});
+				result = toolClipboard.writeToolDataToClipboard({rRequest.objectid()});
 			}
 			pResponse->set_hresult(result);
 			if (S_OK == result)

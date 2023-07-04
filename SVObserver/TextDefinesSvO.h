@@ -11,7 +11,8 @@
 namespace SvO
 {
 	const TCHAR* const ToolClipboardFormat = _T( "SVO-Tool" );
-	const TCHAR* const ClipboardFileName = _T( "ClipboardFile" );
+	const TCHAR* const ExportToolsName = _T( "ExportTools" );
+	const TCHAR* const ModuleName = _T("Module");
 	const TCHAR* const ZipExtension = _T( ".7z" );
 	const TCHAR* const XmlExtension = _T( ".xml" );
 	const TCHAR* const ModuleExtension = _T(".svm");

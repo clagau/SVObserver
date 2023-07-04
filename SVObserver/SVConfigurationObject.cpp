@@ -28,6 +28,7 @@
 #include "SVObserver.h"
 #include "SVStorageResult.h"
 #include "TextDefinesSvO.h"
+#include "ToolExportImport.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVUserMessage.h"
 #include "CameraLibrary/SVDeviceParams.h"
@@ -2194,7 +2195,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		throw;
 	}
 	m_bConfigurationValid = true;
-	SVSVIMStateClass::SetReloadAfterCopyToolsToClipboard(true);
+	ToolExportImport::SetReloadAfterCopyToolsToClipboard(true);
 
 	return result;
 }

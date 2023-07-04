@@ -1588,7 +1588,7 @@
 #define IDC_SECOND_IMAGE                15209
 #define IDC_BROWSE                      15217
 #define IDC_SORT_FEATURE_EDT            15218
-#define IDC_MINIMUM_CHARACTERS                 15218
+#define IDC_MINIMUM_CHARACTERS          15218
 #define IDC_RUN_ONCE                    15219
 #define IDC_BROWSE2                     15220
 #define IDC_RE_INITIALIZE               15220
@@ -2259,7 +2259,7 @@
 #define IDC_STATIC_HORIZ                16018
 #define IDC_HEADER_BTN                  16019
 #define IDC_STRING_LIST_EDIT            16021
-#define IDC_USE_HEADERS                16022
+#define IDC_USE_HEADERS                 16022
 #define IDC_SELECTED_TEXT               16023
 #define IDC_DISABLE_TOOL                16024
 #define IDC_AVAILABLE_PPQ_LIST          16025
@@ -2635,6 +2635,8 @@
 #define ID_SELECTTOOL_NORMALIZE         20219
 #define ID_EDIT_NAME                    20220
 #define ID_SHOW_FIRST_ERROR             20221
+#define ID_EXPORT_TOOLS		            20222
+#define ID_IMPORT_TOOLS		            20223
 #define ID_FORMULA_UNDO                 20323
 #define ID_FORMULA_TEST                 20324
 #define ID_EDIT_ADD_MONITORLIST         20325

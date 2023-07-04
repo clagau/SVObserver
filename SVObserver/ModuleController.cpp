@@ -11,7 +11,7 @@
 #include "SVConfigurationObject.h"
 #include "ModuleController.h"
 #include "TextDefinesSvO.h"
-#include "ToolClipboard.h"
+#include "ToolExportImport.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
@@ -61,29 +61,19 @@ void writeModule(SvOi::IObjectWriter& rWriter, const ModuleData& rData)
 	rWriter.EndElement(); //End of Module
 }
 
-void createModuleLFile(SvTo::ModuleTool& rModuleTool, const std::string& rModuleName, const std::string& rXmlFilePath, const std::string& rFullOwnerPath)
+void createModuleFile(SvTo::ModuleTool& rModuleTool, const std::string& rModuleName, const std::string& rXmlFileName, const std::string& rFullOwnerPath)
 {
 	//write Module to file
 	std::string oldName = rModuleTool.GetName();
 	rModuleTool.SetName(rModuleName.c_str()); //Set name to Module name to have the name in xmlFile
-	auto dependencyFiles = streamToolsToXmlFile({rModuleTool.getObjectId()}, rXmlFilePath);
+	std::string fullToolName = rFullOwnerPath + _T(".") + oldName;
+	std::string fullToolNameNew = rFullOwnerPath + _T(".") + rModuleName;
+	ToolExportImport toolExport;
+	toolExport.setRenameValues(fullToolName, fullToolNameNew);
+	const auto moduleFilePath = getModulePath(rModuleName);
+	toolExport.exportTools({rModuleTool.getObjectId()}, moduleFilePath.c_str(), rXmlFileName.c_str(), false);
 	rModuleTool.SetName(oldName.c_str());
 
-	//Rename all old names to new name in XML-File
-	auto xmlData = SvFs::readContentFromFile(rXmlFilePath);
-	std::string fullToolNameStr = rFullOwnerPath + _T(".") + oldName;
-	std::string fullToolNameNewStr = rFullOwnerPath + _T(".") + rModuleName;
-	SvUl::searchAndReplace(xmlData, fullToolNameStr.c_str(), fullToolNameNewStr.c_str());
-	SvFs::writeStringToFile(rXmlFilePath, xmlData, true);
-
-	const auto moduleFilePath = getModulePath(rModuleName);
-	if (!SvUl::makeZipFile(moduleFilePath, dependencyFiles, _T(""), false))
-	{
-		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams), rModuleTool.getObjectId());
-		throw msg;
-	}
-	::DeleteFile(rXmlFilePath.c_str());
-	
 	AddFileToConfig(moduleFilePath.c_str());
 }
 
@@ -218,14 +208,14 @@ ModuleData getModuleData(const auto& rXMLString)
 		else
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
 			e.Throw();
 		}
 	}
 	else
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
 		e.Throw();
 	}
 	return retVal;
@@ -264,7 +254,7 @@ ModuleData getModuleData(SVTreeType& rTree, SVTreeType::SVBranchHandle hModule)
 }
 
 ModuleController::ModuleController()
-	: m_xmlFilePath {SvStl::GlobalPath::Inst().GetTempPath() + _T("\\Module.xml")}
+	: m_xmlFilePath {SvStl::GlobalPath::Inst().GetTempPath() + _T("\\") + std::string{SvO::ModuleName} + SvO::XmlExtension}
 {
 }
 
@@ -311,7 +301,7 @@ void ModuleController::addModules(SVTreeType& rTree, const std::string& zipFilen
 	SvDef::StringVector Files;
 	if (false == SvUl::unzipAll(zipFilename, SvStl::GlobalPath::Inst().GetTempPath(), Files))
 	{
-		SvStl::MessageContainer msg(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+		SvStl::MessageContainer msg(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
 		throw msg;
 	}
 
@@ -480,7 +470,7 @@ void ModuleController::convertGroupTool(uint32_t toolId, const std::string& rNam
 			guid = pModuleTool->renewModuleGuid();
 		}
 
-		createModuleLFile(*pModuleTool, rName, m_xmlFilePath, pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType));
+		createModuleFile(*pModuleTool, rName, m_xmlFilePath, pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType));
 
 		m_moduleList.emplace_back(rName, pModuleTool->getHistory(), pModuleTool->getModuleComment(), pModuleTool->getModuleGuid(), std::vector<uint32_t>{pModuleTool->getObjectId()});
 
@@ -581,13 +571,13 @@ SvOi::IObjectClass* ModuleController::constructAndAddModuleInstance(int index, u
 		if (!SvUl::unzipAll(getModulePath(m_moduleList[index].m_name), SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
 		{
 			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
 			e.Throw();
 		}
 		SvFs::moveFilesToFolder(containedFilepaths, SvStl::GlobalPath::Inst().GetRunPath(), m_xmlFilePath);
 
 		auto xmlData = SvFs::readContentFromFile(m_xmlFilePath);
-		ToolClipboard toolClipboard;
+		ToolExportImport toolClipboard;
 		auto pastedToolIDs = toolClipboard.createToolsFromXmlData(xmlData, parentId, false, false);
 		if (0 == pastedToolIDs.size())
 		{
@@ -669,7 +659,7 @@ void ModuleController::renameModule(SVGUID guid, const std::string& newName)
 			if (!SvUl::unzipAll(getModulePath(iter->m_name), SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
 			{
 				SvStl::MessageManager e(SvStl::MsgType::Data);
-				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
 				e.Throw();
 			}
 
@@ -680,7 +670,7 @@ void ModuleController::renameModule(SVGUID guid, const std::string& newName)
 			const auto moduleFilePath = getModulePath(newName);
 			if (!SvUl::makeZipFile(moduleFilePath, containedFilepaths, _T(""), false))
 			{
-				SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
+				SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsZipFailed, SvStl::SourceFileParams(StdMessageParams));
 				throw msg;
 			}
 			::DeleteFile(getModulePath(iter->m_name).c_str());
@@ -722,7 +712,7 @@ void ModuleController::importModule(const std::string& moduleName, const std::st
 	if (!SvUl::unzipAll(tmpName, SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
 		e.Throw();
 	}
 
@@ -771,7 +761,7 @@ void ModuleController::importModule(const std::string& moduleName, const std::st
 		{
 			::DeleteFile(rEntry.c_str());
 		}
-		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsZipFailed, SvStl::SourceFileParams(StdMessageParams));
 		throw msg;
 	}
 
