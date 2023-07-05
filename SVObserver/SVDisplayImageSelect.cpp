@@ -147,7 +147,7 @@ void SVDisplayImageSelect::LoadImageList()
 			}
 
 			auto wildcardPatternPlusAsterisk = m_WildcardPattern + _T("*");
-			if (m_WildcardPattern == _T("") || PathMatchSpecA(name.c_str(), wildcardPatternPlusAsterisk.GetBuffer(0)))
+			if (m_WildcardPattern == _T("") || PathMatchSpec(name.c_str(), wildcardPatternPlusAsterisk.GetString()))
 			{
 				index = m_ImageSelectList.AddString(name.c_str());
 				m_ImageSelectList.SetItemData(index, pObject->getObjectId());
