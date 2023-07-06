@@ -202,4 +202,5 @@ SvPb::InspectionCmdResponse renameModule(SvPb::RenameModuleRequest request);
 SvPb::InspectionCmdResponse importModule(SvPb::ImportModuleRequest request);
 SvPb::InspectionCmdResponse exportModule(SvPb::ExportModuleRequest request);
 SvPb::InspectionCmdResponse fixInputsAndGetList(SvPb::FixInputsAndGetInputListRequest request);
+SvPb::InspectionCmdResponse resetAllCounter(SvPb::ResetAllCounterRequest request);
 } //namespace SvCmd

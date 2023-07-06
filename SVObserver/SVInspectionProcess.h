@@ -106,6 +106,7 @@ public:
 	virtual bool usePropagateSizeAndPosition() const override;
 	virtual SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const override;
 	virtual void setResultListUpdateFlag() override;
+	virtual SvOi::IObjectClass* GetIObjectClassPtr()  override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const std::string& rCameraName ) const;
@@ -135,6 +136,7 @@ public:
 	bool AddInputRequest( const SVObjectReference& rObjectRef, const _variant_t& rValue );
 	bool AddInputRequest(SVInputRequestInfoStructPtr pInRequest);
 	bool AddInputRequestMarker();
+	bool AddInputRequestResetAllObject();
 
 	HRESULT AddInputImageRequest(SvIe::SVImageClass* p_psvImage, BSTR& p_rbstrValue );
 	HRESULT AddInputImageFileNameRequest(SvIe::SVImageClass* p_psvImage, const std::string& p_rFileName );
@@ -169,7 +171,9 @@ public:
 
 	HRESULT RebuildInspection(bool shouldCreateAllObject = true);
 	void ValidateAndInitialize( bool p_Validate );
-	void SetResetCounts( );
+	virtual void resetCounterDirectly() override;
+	void resetCounterSynchronous();
+	void requestResetAllObjects();
 
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szDeviceName );

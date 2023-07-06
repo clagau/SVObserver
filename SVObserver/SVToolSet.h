@@ -51,7 +51,7 @@ public:
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr, int nResetDepth = 0) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	void ResetCounterDirectly();
+	void resetCounterDirectly();
 
 	void Destroy();
 
@@ -59,7 +59,6 @@ public:
 
 	bool WasEnabled() const;
 
-	HRESULT ResetCounts();
 
 	//! Update the tool position
 	void updateToolPosition();
@@ -147,7 +146,7 @@ private:
 	double m_AverageTime {0.0};
 	double m_ProcessTime {0.0};
 
-	bool m_ResetCounts = false;
+
 	bool m_bResetMinMaxToolsetTime {true};
 
 	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded

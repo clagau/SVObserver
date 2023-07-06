@@ -55,7 +55,7 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 	SvPb::InspectionCmdResponse response;
 	SvPb::InspectionCmdResponse* pResponse = (nullptr != pResp) ? pResp : &response;
 	pResponse->set_hresult(E_FAIL);
-	
+
 	InspectionTask  CurrentTask;
 	ThreadPref  CurrentThread {ThreadPref::inspection};
 	std::chrono::milliseconds  CurrentTimout {std::chrono::milliseconds(120000)};
@@ -141,7 +141,7 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 				pResponse->set_hresult(E_FAIL);
 				assert(false);
 			}
-			catch (HRESULT&  hr)
+			catch (HRESULT& hr)
 			{
 #ifdef TRACE_CATCH
 				std::string msg("catch hr in InspectionCommands: ");
@@ -171,6 +171,15 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 	return pResponse->hresult();
 }
 
+HRESULT ResetCountsSynchronous(uint32_t inspectionID, bool resetallObject, bool doRunOnce)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	auto* pRequest = requestCmd.mutable_resetallcounterrequest();
+	pRequest->set_inspectionid(inspectionID);
+	pRequest->set_resetallobject(resetallObject);
+	pRequest->set_dorunonce(doRunOnce);
+	return SvCmd::InspectionCommands(inspectionID, requestCmd, nullptr);
+}
 HRESULT RunOnceSynchronous(uint32_t inspectionID)
 {
 	SvPb::InspectionCmdRequest requestCmd;

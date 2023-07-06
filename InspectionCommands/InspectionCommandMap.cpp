@@ -872,6 +872,15 @@ std::make_tuple(
 [](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
 )
 },
+
+{SvPb::InspectionCmdRequest::kResetAllCounterRequest,
+std::make_tuple(
+	[] {return ThreadPref::inspection; },
+	[] {return std::chrono::seconds{1}; } ,
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  resetAllCounter(rRequest.resetallcounterrequest()); },
+	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 };
 
 }

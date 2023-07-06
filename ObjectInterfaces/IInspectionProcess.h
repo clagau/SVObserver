@@ -101,5 +101,8 @@ namespace SvOi
 		virtual SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const = 0;
 
 		virtual void setResultListUpdateFlag() = 0;
+
+		virtual void resetCounterDirectly() = 0;
+		virtual SvOi::IObjectClass* GetIObjectClassPtr()  = 0;
 	};
 } //namespace SvOi

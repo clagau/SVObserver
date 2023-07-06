@@ -59,6 +59,8 @@ HRESULT InspectionCommandsCheckState( const SvPb::InspectionCmdRequest& rRequest
 
 HRESULT RunOnceSynchronous(uint32_t inspectionID);
 
+HRESULT ResetCountsSynchronous(uint32_t inspectionID, bool resetallObject, bool doRunOnce);
+
 /// Returns the dotted name up to "Tool Set".
 /// \param inspectionId [in] The inspectionId of this object.
 /// \param objectId [in] The objectId as string possible without index.

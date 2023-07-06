@@ -3739,9 +3739,9 @@ void SVIPDoc::OnViewResetCountsCurrentIP()
 		SVInspectionProcess* pInspection = GetInspectionProcess();
 
 		// @TODO:  What should we do if there's an error?  (Method is void.)
-		if (nullptr != pInspection && nullptr != pInspection->GetToolSet())
+		if (nullptr != pInspection)
 		{
-			pInspection->GetToolSet()->ResetCounts();
+			SvCmd::ResetCountsSynchronous(pInspection->getObjectId(), false, false);
 		}
 
 		if (SvimState::CheckState(SV_STATE_REGRESSION))

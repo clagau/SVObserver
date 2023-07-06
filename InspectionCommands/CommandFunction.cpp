@@ -58,6 +58,7 @@
 #include "ObjectInterfaces\ISVLinearAnalyzer.h"
 #include <atltypes.h>
 #include "Tools\GroupTool.h"
+#include "SVStatusLibrary\SVIMState.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -2390,6 +2391,32 @@ SvPb::InspectionCmdResponse fixInputsAndGetList(SvPb::FixInputsAndGetInputListRe
 				pTool->resetAllObjects();
 			}
 		}
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse resetAllCounter(SvPb::ResetAllCounterRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+	auto pIObject = SvOi::getObject(request.inspectionid());
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(pIObject);
+	if (nullptr != pInspection)
+	{
+		HRESULT hres {S_OK};
+		pInspection->resetCounterDirectly();
+		if (request.resetallobject())
+		{
+			hres = pIObject->resetAllObjects();
+		}
+		if (hres == S_OK && request.dorunonce() && (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST)) == false)
+		{
+			hres = pInspection->RunOnce();
+		}
+		cmdResponse.set_hresult(hres);
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
 	}
 	return cmdResponse;
 }

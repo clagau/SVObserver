@@ -101,6 +101,50 @@ bool isProductAlive(SVPPQObject* pPPQ, long triggerCount)
 	return l_Status;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//asums  input is a string or Safearray variant 
+std::string GetStringFromInputRequest(const _variant_t& rValue)
+{
+	std::string retValue;
+
+	if (VT_ARRAY == (rValue.vt & VT_ARRAY))
+	{
+		SvUl::SVSAFEARRAY::SVBounds Bounds;
+		SvUl::SVSAFEARRAY SafeArray {rValue};
+
+		SafeArray.GetBounds(Bounds);
+
+		if (1 == SafeArray.size())
+		{
+			_variant_t TempVariant;
+
+			SafeArray.GetElement(Bounds[0].lLbound, TempVariant);
+
+			retValue = SvUl::createStdString(TempVariant);
+		}
+		else if (1 < SafeArray.size())
+		{
+			for (size_t i = 0; i < Bounds[0].cElements; ++i)
+			{
+				_variant_t TempVariant;
+
+				SafeArray.GetElement((Bounds[0].lLbound + i), TempVariant);
+
+				if (i > 0)
+				{
+					retValue += _T(",");
+				}
+				retValue += std::format(_T("`{}`"), SvUl::createStdString(TempVariant).c_str());
+			}
+		}
+	}
+	else
+	{
+		retValue = SvUl::createStdString(rValue);
+	}
+	return retValue;
+}
+//////////////////////////////////////////////////////////////////////////
 HRESULT SVInspectionProcess::ProcessInspection()
 {
 	HRESULT l_Status = S_OK;
@@ -512,7 +556,8 @@ bool SVInspectionProcess::CanGoOnline()
 	CWaitCursor l_cwcMouse;
 
 
-	SetResetCounts();
+	resetCounterSynchronous();
+	requestResetAllObjects();
 
 	m_svReset.AddState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
@@ -549,7 +594,8 @@ bool SVInspectionProcess::CanRegressionGoOnline()
 
 	CWaitCursor l_cwcMouse;
 
-	SetResetCounts();
+	resetCounterSynchronous();
+	requestResetAllObjects();
 	m_svReset.AddState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
 	l_bOk = resetAllObjects();
@@ -768,7 +814,7 @@ void SVInspectionProcess::RebuildInspectionInputList(const SVIOEntryHostStructPt
 
 	previousInputObjects.swap(m_InputObjects);
 
-	for (long i=0; i < listSize; ++i)
+	for (long i = 0; i < listSize; ++i)
 	{
 		const auto& rEntry = rUsedInputs[i];
 		SVInputObject* pInput = dynamic_cast<SVInputObject*> (SVObjectManagerClass::Instance().GetObject(rEntry->m_IOId));
@@ -784,7 +830,7 @@ void SVInspectionProcess::RebuildInspectionInputList(const SVIOEntryHostStructPt
 		});
 		if (InputIter != previousInputObjects.end())
 		{
-			SVObjectClass* pInputObject {dynamic_cast<SVObjectClass*> ( (*InputIter).get())};
+			SVObjectClass* pInputObject {dynamic_cast<SVObjectClass*> ((*InputIter).get())};
 			if (nullptr != pInputObject)
 			{
 				pInputObject->ResetObject();
@@ -855,7 +901,7 @@ void SVInspectionProcess::RebuildInspectionInputList(const SVIOEntryHostStructPt
 		if (nullptr != pInputValueObj)
 		{
 			SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObj.get());
-			if(nullptr != pObject)
+			if (nullptr != pObject)
 			{
 				pObject->CloseObject();
 			}
@@ -871,10 +917,33 @@ void SVInspectionProcess::RebuildInspectionInputList(const SVIOEntryHostStructPt
 
 bool SVInspectionProcess::AddInputRequest(const SVObjectReference& rObjectRef, const _variant_t& rValue)
 {
-	bool Result(false);
 
+	//setting Reset Counters to true reset the counter
+	if (rObjectRef.getObject() == &(GetToolSet()->m_ResetCountsObject))
+	{
+		std::string Value = GetStringFromInputRequest(rValue);
+		BOOL bValue(FALSE);
+		// Convert to the appropriate type of value
+		if (0 == SvUl::CompareNoCase(Value, _T("TRUE")))
+		{
+			bValue = TRUE;
+		}
+		else
+		{
+			bValue = static_cast<BOOL> (atof(Value.c_str()));
+		}
+
+		if (TRUE == bValue)
+		{
+			SvCmd::ResetCountsSynchronous(m_pCurrentToolset->GetInspection()->getObjectId(), false, false);
+		}
+		return true;
+	}
+
+	bool Result(false);
 	try
 	{
+
 		SVInputRequestInfoStructPtr pInRequest {new SVInputRequestInfoStruct(rObjectRef, rValue)};
 
 		//add request to inspection process
@@ -921,6 +990,11 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 bool SVInspectionProcess::AddInputRequestMarker()
 {
 	return AddInputRequest(SVObjectReference {nullptr}, SvO::SVTOOLPARAMETERLIST_MARKER);
+}
+
+bool SVInspectionProcess::AddInputRequestResetAllObject()
+{
+	return AddInputRequest(SVObjectReference {nullptr}, SvO::RESETALLOBJECTS_MARKER);
 }
 
 HRESULT SVInspectionProcess::AddInputImageRequest(SvIe::SVImageClass* p_psvImage, BSTR& p_rbstrValue)
@@ -1139,13 +1213,31 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 	return l_Status;
 }
 
-void SVInspectionProcess::SetResetCounts()
+void SVInspectionProcess::resetCounterSynchronous()
 {
 	if (nullptr != m_pCurrentToolset)
 	{
-		m_pCurrentToolset->ResetCounts();
-		m_pCurrentToolset->ResetCounterDirectly();
+		SvCmd::ResetCountsSynchronous(m_pCurrentToolset->GetInspection()->getObjectId(), false, false);
 	}
+}
+
+void SVInspectionProcess::resetCounterDirectly()
+{
+	m_pCurrentToolset->resetCounterDirectly();
+}
+
+void SVInspectionProcess::requestResetAllObjects()
+{
+	AddInputRequestResetAllObject();
+	AddInputRequestMarker();
+}
+
+
+
+
+SvOi::IObjectClass* SVInspectionProcess::GetIObjectClassPtr()
+{
+	return this;
 }
 
 void SVInspectionProcess::ValidateAndInitialize(bool p_Validate)
@@ -1154,7 +1246,8 @@ void SVInspectionProcess::ValidateAndInitialize(bool p_Validate)
 	// so the SVEquation can rebuild its symbol table
 	if (p_Validate)
 	{
-		SetResetCounts();
+		resetCounterSynchronous();
+		requestResetAllObjects();
 
 		m_svReset.AddState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
@@ -1473,43 +1566,8 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 				break;
 			}// end if
 
-			std::string Value;
+			std::string Value = GetStringFromInputRequest(pInputRequest->m_Value);
 
-			if (VT_ARRAY == (pInputRequest->m_Value.vt & VT_ARRAY))
-			{
-				SvUl::SVSAFEARRAY::SVBounds l_Bounds;
-				SvUl::SVSAFEARRAY l_SafeArray {pInputRequest->m_Value};
-
-				l_SafeArray.GetBounds(l_Bounds);
-
-				if (1 == l_SafeArray.size())
-				{
-					_variant_t l_Variant;
-
-					l_SafeArray.GetElement(l_Bounds[0].lLbound, l_Variant);
-
-					Value = SvUl::createStdString(l_Variant);
-				}
-				else if (1 < l_SafeArray.size())
-				{
-					for (size_t i = 0; i < l_Bounds[0].cElements; ++i)
-					{
-						_variant_t l_Variant;
-
-						l_SafeArray.GetElement((l_Bounds[0].lLbound + i), l_Variant);
-
-						if (i > 0)
-						{
-							Value += _T(",");
-						}
-						Value += std::format(_T("`{}`"), SvUl::createStdString(l_Variant).c_str());
-					}
-				}
-			}
-			else
-			{
-				Value = SvUl::createStdString(pInputRequest->m_Value);
-			}
 
 			// New delimiter added after each SVSetToolParameterList call
 			// This breaks the list into pieces and we are only processing
@@ -1518,7 +1576,13 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 			{
 				m_lInputRequestMarkerCount--;
 				break;
-			}// end if
+			}
+
+			if (Value == SvO::RESETALLOBJECTS_MARKER)
+			{
+				rResetItem = SvOi::SVResetItemIP;
+			}
+
 
 			// Get the ValueObject that they are trying to set
 			SVObjectReference ObjectRef = pInputRequest->m_ValueObjectRef;
@@ -1748,7 +1812,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 					SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObject);
 					if (pObject)
 					{
-						bRet = pObject->resetAllObjects(nullptr, SvTo::cResetDepth ) && bRet;
+						bRet = pObject->resetAllObjects(nullptr, SvTo::cResetDepth) && bRet;
 					}
 
 				}
@@ -2504,7 +2568,7 @@ bool SVInspectionProcess::Run(SvIe::RunStatus& rRunStatus)
 	}
 
 	return retVal;
-}
+	}
 
 bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, const SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts)
 {
@@ -3007,7 +3071,7 @@ HRESULT SVInspectionProcess::resetToolAndDependends(SvOi::IObjectClass* pTool)
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObject);
 		if (pObject)
 		{
-			resetDependentsOK = pObject->resetAllObjects(nullptr, SvTo::cResetDepth ) && resetDependentsOK;
+			resetDependentsOK = pObject->resetAllObjects(nullptr, SvTo::cResetDepth) && resetDependentsOK;
 			Log_Assert(pObject->getToolPtr() != nullptr);
 		}
 
@@ -3459,7 +3523,7 @@ void SVInspectionProcess::buildValueObjectData()
 #ifdef TRACE_MEMORYBLOCK
 	if (m_memValueDataOffsetPrev != m_memValueDataOffset)
 	{
-	
+
 		std::string msg = std::format("memsize Changed from {} to {} for Insp{}\n", m_memValueDataOffsetPrev, m_memValueDataOffset, m_trcPos);
 		OutputDebugString(msg.c_str());
 		m_memValueDataOffsetPrev = m_memValueDataOffset;

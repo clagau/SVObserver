@@ -1216,6 +1216,12 @@ message FixInputsAndGetInputListResponse
 	repeated FixedInputData list = 1;
 }
 
+message ResetAllCounterRequest
+{
+	uint32 inspectionID = 1; //ID of the inspection.
+	bool	doRunOnce = 2;
+	bool    resetAllObject =3;
+}
 
 message InspectionCmdRequest
 {
@@ -1308,6 +1314,7 @@ message InspectionCmdRequest
 		ImportModuleRequest importModuleRequest = 85;
 		ExportModuleRequest exportModuleRequest = 86;
 		FixInputsAndGetInputListRequest fixInputsAndGetInputListRequest = 87; 
+		ResetAllCounterRequest  resetAllCounterRequest =88;
 		}
 }
 

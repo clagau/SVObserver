@@ -22,6 +22,7 @@ namespace SvO
 	const TCHAR* const EndListDelimiter	  = _T("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------" );
 	const TCHAR* const LoopToolDelimiter = EndListDelimiter;
 	const TCHAR* const SVTOOLPARAMETERLIST_MARKER = _T( "** SVSetToolParameterList MARKER **" );
+	const TCHAR* const RESETALLOBJECTS_MARKER = _T("** ResetAllObject MARKER **");
 
 	const TCHAR* const GlobalViewHeader[] = {_T("Global Constants"), _T("Type"), _T("Value"), _T("Description")};
 	const TCHAR* const Invalid = _T("Invalid");

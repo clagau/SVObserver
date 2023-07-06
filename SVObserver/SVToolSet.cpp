@@ -63,7 +63,7 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_RegressionTestMode, SvPb::RegressionTestModeEId, IDS_OBJECTNAME_REGRESSIONTESTMODE, false, SvOi::SVResetItemNone, false);
 
 	RegisterEmbeddedObject(&m_DrawFlag, SvPb::ConditionalToolSetDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone, true);
-	RegisterEmbeddedObject(&m_ResetCountsObject, SvPb::ResetInspectionCountsEId, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemIP, false);
+	RegisterEmbeddedObject(&m_ResetCountsObject, SvPb::ResetInspectionCountsEId, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_TriggerCount, SvPb::TriggerCountEId, IDS_OBJECTNAME_TRIGGER_COUNT, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_PPQIndexAtCompletion, SvPb::PPQIndexEId, IDS_PPQ_INDEX_AT_COMPLETION, false, SvOi::SVResetItemNone, false);
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerDelta], SvPb::TriggerDeltaEId, IDS_TRIGGER_DELTA, false, SvOi::SVResetItemNone, false);
@@ -171,7 +171,7 @@ void SVToolSet::init()
 	m_RotationNumber.setSaveValueFlag(false);
 	m_MeasurementValue.setDefaultValue(0);
 	m_MeasurementValue.setSaveValueFlag(false);
-	
+
 	SvOp::SVConditional* pConditional = new SvOp::SVConditional(this);
 	AddFriend(pConditional);
 
@@ -458,7 +458,7 @@ SvOi::IObjectClass* SVToolSet::getBand0Image() const
 // -----------------------------------------------------------------------------
 // .Description : runs this toolset
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSet::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	m_TriggerCount.SetValue(rRunStatus.m_lTriggerCount > 0L ? rRunStatus.m_lTriggerCount : 0L);
 
@@ -483,40 +483,36 @@ bool SVToolSet::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 //				: Otherwise it returns FALSE, that means: if the Tool Set should
 //				: not run, because the Tool Set Condition failed!
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolSet::ResetCounterDirectly()
+void SVToolSet::resetCounterDirectly()
+{
+	// Reset Counters...
+	m_PassedCount.SetValue(0);
+	m_FailedCount.SetValue(0);
+	m_WarnedCount.SetValue(0);
+	m_EnabledCount.SetValue(0);
+	m_ProcessedCount.SetValue(0);
+
+	m_bResetMinMaxToolsetTime = true;
+
+
+	for (SVTaskObjectClass* tool : m_TaskObjectVector)
 	{
-		// Reset Counters...
-		m_PassedCount.SetValue(0);
-		m_FailedCount.SetValue(0);
-		m_WarnedCount.SetValue(0);
-		m_EnabledCount.SetValue(0);
-		m_ProcessedCount.SetValue(0);
-
-		m_bResetMinMaxToolsetTime = true;
-		m_ResetCounts = false;
-
-		for (SVTaskObjectClass* tool : m_TaskObjectVector)
-		{ 
-			if (tool != nullptr)
+		if (tool != nullptr)
+		{
+			if (tool->m_ObjectTypeInfo.m_ObjectType == SvPb::SVObjectTypeEnum::SVToolObjectType)
 			{
-				if (tool->m_ObjectTypeInfo.m_ObjectType == SvPb::SVObjectTypeEnum::SVToolObjectType)
-				{
-					SvTo::SVToolClass* svtool = static_cast<SvTo::SVToolClass*>(tool);
-					svtool->resetCounters();
-				}
+				SvTo::SVToolClass* svtool = static_cast<SvTo::SVToolClass*>(tool);
+				svtool->resetCounters();
 			}
 		}
 	}
+}
 
-bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool bRetVal = true;
 	clearRunErrorMessages();
 
-	if (m_ResetCounts)
-	{
-		ResetCounterDirectly();
-	}
 
 	double l_Timer = SvUl::GetTimeStamp();
 	m_ToolTime.Start();
@@ -568,7 +564,7 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 			}
 			rRunStatus.m_triggerRecord = std::move(toolRunStatus.m_triggerRecord);
 		}
-		
+
 		// set our state according to the runStatus
 		// rRunStatus.SetValid();
 
@@ -628,23 +624,18 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 	return bRetVal;
 }// end Run
 
-bool SVToolSet::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, int /*nResetDepth =0 */ )
+bool SVToolSet::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */, int /*nResetDepth =0 */)
 {
 	bool result = __super::resetAllObjects(pErrorMessages);
 	m_isObjectValid.SetValue(BOOL(result));
 	return result;
 }
 
-bool SVToolSet::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
-	BOOL bResetCounter(false);
-	if (S_OK == m_ResetCountsObject.GetValue(bResetCounter) && bResetCounter)
-	{
-		m_ResetCounts = true;
-		m_ResetCountsObject.SetValue(false);
-	}
+
 
 	m_inputConditionBool.validateInput();
 
@@ -665,37 +656,9 @@ bool SVToolSet::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-HRESULT SVToolSet::ResetCounts()
-{
-	HRESULT Result = S_OK;
 
-	try
-	{
-		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
-		//add request to inspection process
-		if (nullptr != pInspection && pInspection->AddInputRequest(SVObjectReference{ &m_ResetCountsObject }, _T("true")))
-		{
-			//add request to inspection process
-			if (!pInspection->AddInputRequestMarker())
-			{
-				Result = E_FAIL;
-			}
-		}
-		else
-		{
-			Result = E_FAIL;
-		}
-	}
-	catch (...)
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVToolSet::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& )
+HRESULT SVToolSet::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector&)
 {
 	// override TaskObjectList implementation
 	return S_FALSE;	// no overlays for toolset
@@ -722,7 +685,7 @@ void SVToolSet::connectChildObject(SVTaskObjectClass& rChildObject)
 	rChildObject.ConnectObject(createStruct);
 }
 
-bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector* pErrorMessages) const
 {
 	if (m_inputConditionBool.IsConnected() && m_inputConditionBool.GetInputObjectInfo().getObject())
 	{
@@ -741,7 +704,7 @@ bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) con
 	}
 }
 
-void SVToolSet::setPostRunStatus(double timer, SvIe::RunStatus &rRunStatus)
+void SVToolSet::setPostRunStatus(double timer, SvIe::RunStatus& rRunStatus)
 {
 	double l_Elapsed = (SvUl::GetTimeStamp() - timer);
 	m_EndTime = SvUl::ConvertTo(SvUl::Seconds, l_Elapsed);
