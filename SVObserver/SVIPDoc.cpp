@@ -565,15 +565,15 @@ void OpenInputDlgForModuleTool(uint32_t inspectionId, uint32_t toolId, const std
 		{
 			SvOg::InputConflictDlg ConflictDlg(inspectionId, rFixData, {toolId}, rTitle.c_str());
 			ConflictDlg.DoModal();
-
-			//@TODO[MZA][10.20][14.03.2022] Wird z.b ein WindowTool in einem Module benutzt und das Module in einer neuen Inspektion eingefügt (synchrone zum Kopieren eines GroupTool (s. Methode fixInputs), wird durch ein Reset die Images nicht richtig angepasst.
-			//Deshalb muss man noch ein Reset machen. Wenn das Reset verbessert wird, könnte das zweite Reset vielleicht überflüssig werden.
-			auto* pInsp = SVObjectManagerClass::Instance().GetObject(inspectionId);
-			if (nullptr != pInsp)
+			auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
+			if (nullptr != pTool)
 			{
-				pInsp->resetAllObjects();
+				//fix missing input images when add to empty konfig
+				pTool->resetAllObjects();
 			}
+		
 		}
+		
 	}
 	else
 	{
@@ -664,7 +664,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId, int index)
 			m_toolGroupings.AddTool(responseCmd.createobjectresponse().name(), Selection);
 		}
 	}
-	else 
+	else
 	{
 		if (responseCmd.has_errormessage())
 		{
@@ -1219,7 +1219,7 @@ void SVIPDoc::OnEditModules()
 
 void SVIPDoc::OnAddModuleTool(UINT nId)
 {
-	AddTool(SvPb::ModuleToolClassId, nId - ID_ADD_MODULE_FIRST );
+	AddTool(SvPb::ModuleToolClassId, nId - ID_ADD_MODULE_FIRST);
 }
 
 void SVIPDoc::OnExportTools()
@@ -1372,8 +1372,8 @@ void SVIPDoc::OnImportTools()
 				::OutputDebugString(ss.str().c_str());
 #endif
 				updateToolsetView(pastedToolIDs, postToolId, ownerId, pNavElement->m_DisplayName);
-			}
-		}
+	}
+}
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
@@ -1443,7 +1443,7 @@ void SVIPDoc::OnEditDelete()
 			{
 				auto pTool = getCorrespondingToolPointer(ptrNavElem.get());
 
-				if(nullptr != pTool)
+				if (nullptr != pTool)
 				{
 					if (deleteTool(pTool))
 					{
@@ -1540,7 +1540,7 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 		{
 			Enabled = true;
 			uint16_t numberOfSelectedTools = 0;
-			for(auto pNavElement: pToolsetView->GetSelectedNavigatorElements())
+			for (auto pNavElement : pToolsetView->GetSelectedNavigatorElements())
 			{
 				if (pNavElement)
 				{
@@ -1580,23 +1580,19 @@ void fixInputs(uint32_t inspectionId, const std::vector<uint32_t>& rToolIds)
 			SvOg::InputConflictDlg ConflictDlg(inspectionId, rFixData, rToolIds);
 			ConflictDlg.DoModal();
 
-			for (auto toolId : rToolIds)
-			{
-				auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
-				if (nullptr != pTool)
-				{
-					pTool->resetAllObjects();
-				}
-			}
+		
 		}
 	}
-	//@TODO[MZA][10.20][14.03.2022] Wird z.b ein WindowTool von einer Inspection zu einer anderen Inspection kopiert, wird durch ein Reset die Images nicht richtig angepasst.
-	//Deshalb muss man noch ein Reset machen. Wenn das Reset verbessert wird, könnte das zweite Reset vielleicht überflüssig.
-	auto* pInsp = SVObjectManagerClass::Instance().GetObject(inspectionId);
-	if (nullptr != pInsp)
+	for (auto toolId : rToolIds)
 	{
-		pInsp->resetAllObjects();
-	}
+		auto* pTool = SVObjectManagerClass::Instance().GetObject(toolId);
+		if (nullptr != pTool)
+		{
+			//fix default inputs when copying to a different inspection
+			pTool->resetAllObjects();
+		}
+	}	
+
 }
 
 void SVIPDoc::OnEditPaste()
@@ -1685,7 +1681,7 @@ void SVIPDoc::OnEditPaste()
 			::OutputDebugString(ss.str().c_str());
 #endif
 			updateToolsetView(pastedToolIDs, postToolId, ownerId, pNavElement->m_DisplayName);
-		}
+}
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
@@ -1914,7 +1910,7 @@ void SVIPDoc::OnConvertToModul()
 						Log_Assert(false);
 						return;
 				}
-				
+
 
 				UpdateAllViews(nullptr, SVIPDoc::RefreshView);
 			}
@@ -3586,7 +3582,7 @@ void SVIPDoc::OnToolDependencies()
 			CWaitCursor MouseBusy;
 			std::set<uint32_t> ToolIDSet;
 			pToolSet->GetToolIds(std::inserter(ToolIDSet, ToolIDSet.end()));
-			
+
 			SvPb::InspectionCmdRequest requestCmd;
 			SvPb::InspectionCmdResponse responseCmd;
 			auto* pRequest = requestCmd.mutable_getdependencyrequest();
@@ -3720,7 +3716,7 @@ afx_msg void SVIPDoc::OnUpdateAddToolWithSubTools(CCmdUI* PCmdUI)
 	{
 		Enabled = false;
 	}
-	
+
 	PCmdUI->Enable(Enabled);
 }
 
