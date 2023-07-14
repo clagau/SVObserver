@@ -73,8 +73,78 @@ auto addEmbeddedListEntry(SvPb::GetEmbeddedValuesResponse& rResp, SvOi::IObjectC
 	pElement->set_is_readonly(false == isExternallySettable);
 	return pElement;
 }
+
+void addTaskInputImage(uint32_t taskObjectID, SvPb::EmbeddedIdEnum embeddedID, SvPb::GetSourceResultImageListResponse* pSourceResultImageResponse)
+{
+	SvPb::ObjectNameIdPair result;
+	SvPb::GetInputDataRequest requestCmd;
+	requestCmd.set_objectid(taskObjectID);
+	requestCmd.set_embeddedid(embeddedID);
+	requestCmd.set_desired_first_object_type_for_connected_name(SvPb::SVToolSetObjectType);
+	requestCmd.set_exclude_first_object_name_in_conntected_name(true);
+	SvPb::InspectionCmdResponse responseGetInputData = getInputData(requestCmd);
+	if (S_OK == responseGetInputData.hresult() && responseGetInputData.has_getinputdataresponse())
+	{
+		auto pIObject = SvOi::getObject(responseGetInputData.getinputdataresponse().data().inputid());
+		if (nullptr != pIObject && pIObject->ObjectAttributesAllowed() != SvPb::noAttributes)
+		{
+			result.set_objectid(responseGetInputData.getinputdataresponse().data().connected_objectid());
+			result.set_objectname(responseGetInputData.getinputdataresponse().data().inputname());
+			auto* pSourceImageList = pSourceResultImageResponse->add_sourceimagelist();
+			*pSourceImageList = result;
+		}
+	}
 }
 
+void addTaskOutputImage(uint32_t taskObjectID, SvPb::EmbeddedIdEnum embeddedID, SvPb::GetSourceResultImageListResponse* pSourceResultImageResponse)
+{
+	SvPb::ObjectNameIdPair result;
+	SvPb::GetObjectIdRequest requestCmd;
+	auto* pRequest = requestCmd.mutable_info();
+	pRequest->set_ownerid(taskObjectID);
+	auto* pInfo = pRequest->mutable_infostruct();
+	pInfo->set_objecttype(SvPb::SVImageObjectType);
+	pInfo->set_embeddedid(embeddedID);
+	SvPb::InspectionCmdResponse response = getObjectId(requestCmd);
+	if (S_OK == response.hresult() && response.has_getobjectidresponse())
+	{
+		auto pIObject = SvOi::getObject(response.getobjectidresponse().objectid());
+		if (nullptr != pIObject && pIObject->ObjectAttributesAllowed() != SvPb::noAttributes)
+		{
+			result.set_objectid(response.getobjectidresponse().objectid());
+			result.set_objectname(pIObject->GetObjectNameBeforeObjectType(SvPb::SVToolObjectType));
+			auto* pResultImageList = pSourceResultImageResponse->add_resultimagelist();
+			*pResultImageList = result;
+		}
+	}
+}
+
+void addColorToolImages(uint32_t taskObjectID, SvPb::GetSourceResultImageListResponse* pSourceResultImageResponse)
+{
+	std::vector<uint32_t> taskList;
+	taskList.push_back(taskObjectID);
+	SvPb::GetObjectIdRequest requestCmd;
+	auto* pRequest = requestCmd.mutable_info();
+	pRequest->set_ownerid(taskObjectID);
+	auto* pInfo = pRequest->mutable_infostruct();
+	pInfo->set_objecttype(SvPb::SVOperatorObjectType);
+	pInfo->set_subtype(SvPb::SVColorThresholdObjectType);
+	SvPb::InspectionCmdResponse response = getObjectId(requestCmd);
+	if (S_OK == response.hresult() && response.has_getobjectidresponse())
+	{
+		taskList.push_back(response.getobjectidresponse().objectid());
+	}
+	addTaskInputImage(taskObjectID, SvPb::ImageInputEId, pSourceResultImageResponse);
+	for (auto objectID : taskList)
+	{
+		constexpr std::array<SvPb::EmbeddedIdEnum, 4> colorOutputImageList {SvPb::Band0ImageEId, SvPb::Band1ImageEId, SvPb::Band2ImageEId, SvPb::OutputImageEId};
+		for (const auto& rEmbeddedID : colorOutputImageList)
+		{
+			addTaskOutputImage(objectID, rEmbeddedID, pSourceResultImageResponse);
+		}
+	}
+}
+}
 
 SvPb::InspectionCmdResponse InspectionRunOnce(SvPb::InspectionRunOnceRequest request)
 {
@@ -2417,6 +2487,60 @@ SvPb::InspectionCmdResponse resetAllCounter(SvPb::ResetAllCounterRequest request
 	else
 	{
 		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getSourceResultImageList(SvPb::GetSourceResultImageListRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+
+	SVObjectClass* pTaskObject {SVObjectManagerClass::Instance().GetObject(request.objectid())};
+	if (nullptr != pTaskObject)
+	{
+		uint32_t taskObjectID {pTaskObject->getObjectId()};
+		auto* pSourceResultImageList = cmdResponse.mutable_getsourceresultimagelistresponse();
+		switch (pTaskObject->GetObjectSubType())
+		{
+			case SvPb::SVObjectSubTypeEnum::SVColorToolObjectType:
+			{
+				addColorToolImages(taskObjectID, pSourceResultImageList);
+				break;
+			}
+			case SvPb::SVObjectSubTypeEnum::SVExternalToolObjectType:
+			{
+				constexpr int cMaxExternalToolImages {4};
+				for (int i = 0; i < cMaxExternalToolImages; ++i)
+				{
+					addTaskInputImage(taskObjectID, SvPb::ImageInputEId + i, pSourceResultImageList);
+					addTaskOutputImage(taskObjectID, SvPb::OutputImageEId + i, pSourceResultImageList);
+				}
+				break;
+			}
+			case SvPb::SVObjectSubTypeEnum::SVToolImageObjectType:
+			{
+				addTaskInputImage(taskObjectID, SvPb::ImageArithmeticAImageInputEId, pSourceResultImageList);
+				addTaskInputImage(taskObjectID, SvPb::ImageArithmeticBImageInputEId, pSourceResultImageList);
+				addTaskOutputImage(taskObjectID, SvPb::OutputImageEId, pSourceResultImageList);
+				break;
+			}
+			case SvPb::SVObjectSubTypeEnum::SVRingBufferToolObjectType:
+			{
+				addTaskInputImage(taskObjectID, SvPb::ImageInputEId, pSourceResultImageList);
+				for (int i = 0; i < SvDef::cRingBufferNumberOutputImages; i++)
+				{
+					addTaskOutputImage(taskObjectID, SvPb::OutputImageEId + i, pSourceResultImageList);
+				}
+				break;
+			}
+			default:
+			{
+				addTaskInputImage(taskObjectID, SvPb::ImageInputEId, pSourceResultImageList);
+				addTaskOutputImage(taskObjectID, SvPb::OutputImageEId, pSourceResultImageList);
+				break;
+			}
+		}
 	}
 	return cmdResponse;
 }

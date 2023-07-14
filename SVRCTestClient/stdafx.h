@@ -39,6 +39,7 @@
 #include <comutil.h>
 #include <stdio.h>
 #include <tchar.h>
+#include <format>
 #include <fstream>
 #include <functional>
 #include <future>

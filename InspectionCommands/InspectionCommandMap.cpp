@@ -881,6 +881,15 @@ std::make_tuple(
 	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
 )
 },
+
+{SvPb::InspectionCmdRequest::kGetSourceResultImageListRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  getSourceResultImageList(rRequest.getsourceresultimagelistrequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 };
 
 }

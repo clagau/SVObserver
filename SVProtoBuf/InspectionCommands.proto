@@ -75,6 +75,7 @@ message NameObjectIdToolId
 	uint32 objectId = 2;
 	uint32 toolObjectId =3;
 } 
+
 message DependencyPair
 {
 	NameObjectIdToolId supplier = 1;
@@ -1223,6 +1224,17 @@ message ResetAllCounterRequest
 	bool    resetAllObject =3;
 }
 
+message GetSourceResultImageListRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetSourceResultImageListResponse
+{
+	repeated ObjectNameIdPair sourceImageList = 1;
+	repeated ObjectNameIdPair resultImageList = 2;
+}
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -1315,7 +1327,8 @@ message InspectionCmdRequest
 		ExportModuleRequest exportModuleRequest = 86;
 		FixInputsAndGetInputListRequest fixInputsAndGetInputListRequest = 87; 
 		ResetAllCounterRequest  resetAllCounterRequest =88;
-		}
+		GetSourceResultImageListRequest getSourceResultImageListRequest = 89; 
+	}
 }
 
 message InspectionCmdResponse
@@ -1380,5 +1393,6 @@ message InspectionCmdResponse
 		GetModuleListResponse getModuleListResponse = 59;
 		ExportModuleResponse exportModuleResponse = 60;
 		FixInputsAndGetInputListResponse fixInputsAndGetInputListResponse = 61;
-		}
+		GetSourceResultImageListResponse getSourceResultImageListResponse = 62; 
+	}
 }
