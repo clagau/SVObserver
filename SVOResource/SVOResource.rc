@@ -4367,8 +4367,8 @@ BEGIN
         MENUITEM "Add to monitorlist",          ID_ADD_TOOL_PARA_TO_MONITORLIST
         MENUITEM "Remove from monitorlist",     ID_REMOVE_TOOL_PARA_TO_MONITORLIST
         MENUITEM "Convert To Module",           ID_CONVERT_TO_MODULE
-        MENUITEM "Export tools"                 ID_EXPORT_TOOLS
-        MENUITEM "Import tools"                 ID_IMPORT_TOOLS
+        MENUITEM "Export tools",                ID_EXPORT_TOOLS
+        MENUITEM "Import tools",                ID_IMPORT_TOOLS
         MENUITEM SEPARATOR
         MENUITEM "Dependencies",                ID_SHOW_RELATIONS
         MENUITEM "Results Picker",              ID_RESULTS_PICKER_CURRENT_TOOL
@@ -4381,7 +4381,7 @@ BEGIN
     BEGIN
         MENUITEM "Cut",                         ID_EDIT_CUT
         MENUITEM "Copy",                        ID_EDIT_COPY
-        MENUITEM "Export tools"                 ID_EXPORT_TOOLS
+        MENUITEM "Export tools",                ID_EXPORT_TOOLS
         MENUITEM SEPARATOR
         MENUITEM "Dependencies",                ID_SHOW_RELATIONS
     END
@@ -4401,7 +4401,7 @@ BEGIN
     BEGIN
         MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
         MENUITEM "Paste",                       ID_EDIT_PASTE
-        MENUITEM "Import tools"                 ID_IMPORT_TOOLS
+        MENUITEM "Import tools",                ID_IMPORT_TOOLS
     END
 END
 
