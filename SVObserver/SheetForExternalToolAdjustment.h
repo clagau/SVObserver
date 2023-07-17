@@ -12,8 +12,6 @@
 
 class SheetForExternalToolAdjustment :public TADlgSheetClass
 {
-
-	DECLARE_DYNAMIC(SheetForExternalToolAdjustment)
 public:
 	SheetForExternalToolAdjustment(SVIPDoc* p_pIPDoc, uint32_t inspectionID, uint32_t taskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
@@ -44,7 +42,6 @@ protected:
 	LRESULT ExternalToolSelectInputValuePage(WPARAM, LPARAM);
 	LRESULT UpdateIpDocViews(WPARAM, LPARAM);
 
-	void SetupDynamicLayout();
 private:
 	SvOgu::ExternalToolTaskController m_externalToolTaskController;
 };

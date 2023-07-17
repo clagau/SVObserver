@@ -7,6 +7,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVMFCControls/ResizablePropertySheet.h"
 #include "SVOGuiUtility/FormulaController.h"
 #include "SVOGuiUtility/ExternalToolTaskController.h"
 #pragma endregion Includes
@@ -15,7 +16,6 @@ namespace SvOi
 {
 	class IObjectClass;
 }
-
 
 namespace SvOg
 {
@@ -27,20 +27,14 @@ namespace SvOp
 	struct InputImageInformationStruct;
 }
 
-
 class SVIPDoc;
 
-class TADlgSheetClass : public CPropertySheet
+class TADlgSheetClass : public SvMc::ResizablePropertySheet
 {
-	DECLARE_DYNAMIC(TADlgSheetClass)
-	//{{AFX_VIRTUAL(TADlgSheetClass)
 public:
 	virtual BOOL OnInitDialog() override;
-	//}}AFX_VIRTUAL
 
-	//{{AFX_MSG(TADlgSheetClass)
 protected:
-	afx_msg void OnDestroy();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnOK();
 	afx_msg void OnCancel();
@@ -67,7 +61,6 @@ protected:
 	virtual void addPages();
 	bool ValidateAllSheets();
 	bool ResetTools();
-	void SetupDynamicLayout();
 
 	CPropertyPage* createToolAdjustmentDialogCommentPage();
 
@@ -86,7 +79,4 @@ private:
 
 	CScrollBar m_resizeGripper;
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 

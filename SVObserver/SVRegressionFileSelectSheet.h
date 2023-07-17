@@ -14,10 +14,11 @@
 #include "SVRegressionTestStruct.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "FilesystemUtilities/ImageFileFormats.h"
+#include "SVMFCControls/ResizablePropertySheet.h"
 #pragma endregion Includes
 
 
-class SVRegressionFileSelectSheet : public CPropertySheet
+class SVRegressionFileSelectSheet : public SvMc::ResizablePropertySheet
 {
 // Construction
 public:
@@ -43,9 +44,6 @@ protected:
 		// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-	void SetupDynamicLayout();
-
-	
 
 public:
 	void CreatePages(std::vector<RegressionTestStruct>* rRegessionList, std::vector<RegressionTestStruct>* pRegessionImageList, const SvIe::SVVirtualCameraPtrVector&  rCameraVector);
@@ -57,8 +55,6 @@ private: //methods
 	void ValidateAndFillFileList();
 
 	bool ValidateAndFillFileList(RegressionTestStruct& rStruct, long& lListCountSize);
-
-	void ClearRegressionList();
 
 	/// Fill the list of files with the RegressionFileEnum::RegFileList mode for one struct
 	/// \param rStruct [in,out] The struct which should to be filled
@@ -88,6 +84,5 @@ private: //data members
 	std::vector<RegressionTestStruct>* m_pRegressionImageList = nullptr;
 	CButton m_addImageButton;
 	uint32_t m_InspectionID;
-	CScrollBar m_Gripper;
 };
 

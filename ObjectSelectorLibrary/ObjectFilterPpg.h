@@ -16,7 +16,6 @@
 #include "SVOResource\resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
 #include "SVMFCControls/SVEditControlWithHelp.h"
-#include "SVMFCControls/DlgItemResizer.h"
 #pragma endregion Includes
 
 namespace SvCl
@@ -56,7 +55,6 @@ namespace SvOsl
 		virtual void DoDataExchange(CDataExchange* pDX) override;
 		virtual BOOL OnInitDialog() override;
 		virtual BOOL OnSetActive( ) override;
-		afx_msg void OnSize(UINT nType, int cx, int cy);
 		afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		afx_msg void OnChangeFilter();
@@ -70,11 +68,6 @@ namespace SvOsl
 		\param shouldCheck <in> check (true) or uncheck (false) 
 		***********/
 		void checkAllItem(bool shouldCheck);
-
-		/**********
-			The method sets the controls which are resized when the page is resized.
-		***********/
-		void setResizeControls();
 
 		/**********
 			The method load the grid control from tree.
@@ -107,7 +100,6 @@ namespace SvOsl
 		};
 
 		SvCl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
-		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls
 		SvGcl::GridCtrl m_Grid;						//The grid control to display the filtered items
 		CImageList m_StateImageList;					//The state image list
 		CImageList m_ImageList;							//The image list

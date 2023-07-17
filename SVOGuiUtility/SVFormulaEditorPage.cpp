@@ -180,18 +180,15 @@ void SVFormulaEditorPageClass::SetupDynamicLayout()
 		CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
 		if (!dynamicLayout->HasItem(m_EditWnd.m_hWnd))
 		{
-			dynamicLayout->AddItem(m_EditWnd.m_hWnd,
-				CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100,100));
+			dynamicLayout->AddItem(m_EditWnd.m_hWnd, CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100,100));
 		}
 		if (!dynamicLayout->HasItem(m_validateBar.m_hWnd))
 		{
-			dynamicLayout->AddItem(m_validateBar.m_hWnd,
-				CMFCDynamicLayout::MoveHorizontalAndVertical(100, 100), CMFCDynamicLayout::SizeNone());
+			dynamicLayout->AddItem(m_validateBar.m_hWnd, CMFCDynamicLayout::MoveHorizontalAndVertical(100, 100), CMFCDynamicLayout::SizeNone());
 		}
 		if (!dynamicLayout->HasItem(m_cursorBar.m_hWnd))
 		{
-			dynamicLayout->AddItem(m_cursorBar.m_hWnd,
-				CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
+			dynamicLayout->AddItem(m_cursorBar.m_hWnd, CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
 		}
 	}
 }

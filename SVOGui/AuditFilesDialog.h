@@ -7,7 +7,6 @@
 #pragma once
 #include "SVUtilityLibrary/AuditFiles.h"
 #include "GridCtrlLibrary/GridCtrl.h"
-#include "SVMFCControls/DlgItemResizer.h"
 
 namespace SvOg
 {
@@ -40,7 +39,6 @@ namespace SvOg
 		virtual BOOL OnInitDialog();
 		virtual void OnOK();
 		virtual void OnCancel();
-		afx_msg void OnSize(UINT nType, int cx, int cy);
 		afx_msg void OnHelp();
 		afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 		afx_msg void OnBnClickedButtonAdd();
@@ -48,13 +46,12 @@ namespace SvOg
 		afx_msg void OnBnClickedButtonHelp();
 		afx_msg void OnGridBeginEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
 		afx_msg void OnGridClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/);
+		afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* pMinMaxInfo);
 	private:
 		void FileGrid2Data();
-		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls
-		SvGcl::GridCtrl m_FileGrid;						
+		SvGcl::GridCtrl m_FileGrid;
 		DialogType m_DialogType;
-		SvUl::AuditFiles                 m_AuditFiles;
-		
-
+		SvUl::AuditFiles m_AuditFiles;
+		CSize m_minSize {0,0};
 	};
 }

@@ -74,6 +74,5 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-	void SetupDynamicLayout();
 };
 

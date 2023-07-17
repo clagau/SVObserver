@@ -58,13 +58,13 @@ SvDef::StringVector findSubdirectories(const std::string& rParentDirectory)
 
 
 SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(UINT nIDCaption, uint32_t inspectionID, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+	: SvMc::ResizablePropertySheet(nIDCaption, pParentWnd, iSelectPage)
 	, m_InspectionID(inspectionID)
 {
 }
 
 SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(LPCTSTR pszCaption, uint32_t inspectionID, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+	: SvMc::ResizablePropertySheet(pszCaption, pParentWnd, iSelectPage)
 	, m_InspectionID(inspectionID)
 {
 }
@@ -85,7 +85,7 @@ SVRegressionFileSelectSheet::~SVRegressionFileSelectSheet()
 }
 
 
-BEGIN_MESSAGE_MAP(SVRegressionFileSelectSheet, CPropertySheet)
+BEGIN_MESSAGE_MAP(SVRegressionFileSelectSheet, SvMc::ResizablePropertySheet)
 	//{{AFX_MSG_MAP(CSVRegressionFileSelectSheet)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	//}}AFX_MSG_MAP
@@ -503,11 +503,9 @@ int SVRegressionFileSelectSheet::collectMatchingFilesInDirectory(RegressionTestS
 	return count;
 }
 
-
 BOOL SVRegressionFileSelectSheet::OnInitDialog()
 {
-	BOOL bResult = CPropertySheet::OnInitDialog();
-	ModifyStyle(WS_SYSMENU, WS_THICKFRAME, SWP_FRAMECHANGED);
+	BOOL bResult = __super::OnInitDialog();
 	int iPageCnt = GetPageCount();
 
 	for ( int i = 0; i <= iPageCnt; i++ )
@@ -564,7 +562,6 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 		m_addImageButton.SetFont(GetFont());
 		CenterWindow();
 	}
-	SetupDynamicLayout();
 	return bResult;
 }
 
@@ -594,38 +591,3 @@ void SVRegressionFileSelectSheet::updateActiveButton()
 	GetDlgItem(IDC_ADD_BTN)->EnableWindow(0 < createToolNameList().list_size());
 }
 
-void SVRegressionFileSelectSheet::SetupDynamicLayout()
-{
-	EnableDynamicLayout(TRUE);
-
-	CRect clientRect;
-	GetClientRect(&clientRect);
-
-	constexpr int gripperSize = 12;
-	CRect gripperRect(clientRect.right - gripperSize, clientRect.bottom - gripperSize, clientRect.right, clientRect.bottom);
-
-	m_Gripper.Create(SBS_SIZEGRIP | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, gripperRect, this, IDC_RESIZE_GRIPPER);
-
-	auto pManager = GetDynamicLayout();
-	if (pManager != nullptr)
-	{
-		pManager->Create(this);
-
-		for (CWnd* child = GetWindow(GW_CHILD); child; child = child->GetWindow(GW_HWNDNEXT))
-		{
-
-			// All buttons need to be moved 100% in all directions
-			if (child->SendMessage(WM_GETDLGCODE) & DLGC_BUTTON)
-			{
-				pManager->AddItem(child->GetSafeHwnd(),
-					CMFCDynamicLayout::MoveHorizontalAndVertical(100, 100), CMFCDynamicLayout::SizeNone());
-			}
-			else // This will be the main tab control which needs to be stretched in both directions
-			{
-				pManager->AddItem(child->GetSafeHwnd(),
-					CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100, 100));
-			}
-
-		}
-	}
-}

@@ -85,8 +85,6 @@ namespace SvOsl
 	{
 		CPropertyPage::OnInitDialog();
 
-		setResizeControls();
-
 		m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
 
 		for(int i = IDI_EMPTY_ENABLED; i <= IDI_TRI_STATE_DISABLED; i++)
@@ -131,14 +129,6 @@ namespace SvOsl
 	{
 		loadGridCtrl();
 		return CPropertyPage::OnSetActive();
-	}
-
-	void ObjectFilterPpg::OnSize(UINT nType, int cx, int cy)
-	{
-		CPropertyPage::OnSize(nType, cx, cy);
-
-		//Resize all controls
-		m_Resizer.Resize(this);
 	}
 
 	void ObjectFilterPpg::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
@@ -232,12 +222,6 @@ namespace SvOsl
 			}
 		}
 		loadGridCtrl();
-	}
-
-	void ObjectFilterPpg::setResizeControls()
-	{
-		m_Resizer.Add(this, IDC_GRID_CONTROL, SvMc::RESIZE_LOCKALL );
-		m_Resizer.Add(this, IDC_RESET_BUTTON, SvMc::RESIZE_LOCKLEFT | SvMc::RESIZE_LOCKBOTTOM );
 	}
 
 	void ObjectFilterPpg::loadGridCtrl()

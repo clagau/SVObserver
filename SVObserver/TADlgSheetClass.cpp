@@ -71,9 +71,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-IMPLEMENT_DYNAMIC(TADlgSheetClass, CPropertySheet)
-
-BEGIN_MESSAGE_MAP(TADlgSheetClass, CPropertySheet)
+BEGIN_MESSAGE_MAP(TADlgSheetClass, SvMc::ResizablePropertySheet)
 	//{{AFX_MSG_MAP(TADlgSheetClass)
 	ON_WM_DESTROY()
 	ON_COMMAND(IDOK, OnOK)
@@ -83,7 +81,7 @@ BEGIN_MESSAGE_MAP(TADlgSheetClass, CPropertySheet)
 END_MESSAGE_MAP()
 
 TADlgSheetClass::TADlgSheetClass(SVIPDoc* p_pIPDoc, uint32_t inspectionID, uint32_t taskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
-	: CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+	: SvMc::ResizablePropertySheet(pszCaption, pParentWnd, iSelectPage)
 	, m_pIPDoc(p_pIPDoc)
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskObjectID)
@@ -458,46 +456,9 @@ void TADlgSheetClass::addPages()
 	AddPage(createToolAdjustmentDialogCommentPage());
 }
 
-void TADlgSheetClass::SetupDynamicLayout()
-{
-	EnableDynamicLayout(TRUE);
-
-	CRect clientRect;
-	GetClientRect(&clientRect);
-	
-	constexpr int gripperSize = 12;
-	CRect gripperRect(clientRect.right - gripperSize, clientRect.bottom - gripperSize, clientRect.right, clientRect.bottom);
-
-	m_resizeGripper.Create(SBS_SIZEGRIP | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, gripperRect, this, IDC_RESIZE_GRIPPER);
-
-	auto pManager = GetDynamicLayout();
-	if (pManager != nullptr)
-	{
-		pManager->Create(this);
-
-		for (CWnd* child = GetWindow(GW_CHILD); child; child = child->GetWindow(GW_HWNDNEXT))
-		{
-			
-			// All buttons need to be moved 100% in all directions
-			if (child->SendMessage(WM_GETDLGCODE) & DLGC_BUTTON)
-			{
-				pManager->AddItem(child->GetSafeHwnd(),
-					CMFCDynamicLayout::MoveHorizontalAndVertical(100, 100), CMFCDynamicLayout::SizeNone());
-			}
-			else // This will be the main tab control which needs to be stretched in both directions
-			{
-				pManager->AddItem(child->GetSafeHwnd(),
-					CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100, 100));
-			}
-			
-		}
-	}
-
-}
-
 BOOL TADlgSheetClass::OnInitDialog()
 {
-	BOOL bResult = CPropertySheet::OnInitDialog();
+	BOOL bResult = __super::OnInitDialog();
 
 	// Disable and Hide Cancel Button
 	HWND hWnd = ::GetDlgItem(m_hWnd, IDCANCEL);
@@ -527,23 +488,8 @@ BOOL TADlgSheetClass::OnInitDialog()
 		SetWindowText(Temp);
 	}
 
-	SetupDynamicLayout();
-
 	return bResult;
 }
-
-void TADlgSheetClass::OnDestroy()
-{
-	// reset Flag so errors do not go to the display.
-
-	CPropertySheet::OnDestroy();
-
-	// Don´t manipulate currentOperatorList at this point 
-	// ( e.g. currentOperatorList.RemoveAll(); ) !!!
-	// The right currentOperatorList destructor will be called in
-	// ~TADlgSheetClass() !!!
-}
-
 
 void TADlgSheetClass::OnOK()
 {
@@ -689,7 +635,7 @@ void TADlgSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 			return;
 	}
 
-	CPropertySheet::OnSysCommand(nID, lParam);
+	__super::OnSysCommand(nID, lParam);
 }
 
 

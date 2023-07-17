@@ -26,7 +26,6 @@ static char THIS_FILE[] = __FILE__;
 namespace SvOg
 {
 BEGIN_MESSAGE_MAP(SVShowDependentsDialog, CDialog)
-	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 ON_NOTIFY(NM_CUSTOMDRAW, IDC_DEPENDENCY_LIST, &SVShowDependentsDialog::OnCustomdrawDependencyList)
@@ -63,17 +62,11 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// Get the original client rect
-	GetClientRect(m_OrginalClient);
-
-	setResizeControls();
-
-	CWnd* pControl(nullptr);
 	if (DeleteConfirm == m_DialogType)
 	{
 		if (m_dependencyList.size() > 0 || m_dependencyResponse.dependencypair_size() > 0)
 		{
-			pControl = GetDlgItem(IDC_WARNING_TEXT);
+			CWnd* pControl = GetDlgItem(IDC_WARNING_TEXT);
 			if (nullptr != pControl)
 			{
 				pControl->SetWindowText(m_DisplayText.c_str());
@@ -87,7 +80,7 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 	}
 	else
 	{
-		pControl = GetDlgItem(IDC_WARNING_TEXT);
+		CWnd* pControl = GetDlgItem(IDC_WARNING_TEXT);
 		if (nullptr != pControl)
 		{
 			pControl->ShowWindow(SW_HIDE);
@@ -98,6 +91,10 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 			pControl->ShowWindow(SW_HIDE);
 		}
 	}
+
+	CRect wndRect;
+	GetWindowRect(&wndRect);
+	m_minSize = {wndRect.Width(), wndRect.Height()};
 
 	// Build ListCtrl Headers
 	addColumnHeadings();
@@ -111,44 +108,18 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 					// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVShowDependentsDialog::OnPaint()
-{
-	CPaintDC dc(this);
-
-	CRect Rect;
-	GetClientRect(&Rect);
-
-	// Get the standard size of the gripper
-	Rect.left = Rect.right - ::GetSystemMetrics(SM_CXHSCROLL);
-	Rect.top = Rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
-
-	// Draw it
-	dc.DrawFrameControl(&Rect, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
-
-	// Save the painted rect so we can invalidate the rect on next OnSize()
-	m_Gripper = Rect;
-}
-
 void SVShowDependentsDialog::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 
-	InvalidateRect(m_Gripper, true);
-	m_Resizer.Resize(this);
 	setColumnWidths();
 }
 
-void SVShowDependentsDialog::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+void SVShowDependentsDialog::OnGetMinMaxInfo(MINMAXINFO* pMinMaxInfo)
 {
-	CRect Rect = m_OrginalClient;
-
-	// Adjust it according to the window style
-	AdjustWindowRect(Rect, GetStyle(), false);
-	// Make sure it does not get smaller than the initial size
-	lpMMI->ptMinTrackSize.x = Rect.Width();
-	lpMMI->ptMinTrackSize.y = Rect.Height();
-
-	CDialog::OnGetMinMaxInfo(lpMMI);
+	// Set the Minimum Track Size. Used while resizing.
+	pMinMaxInfo->ptMinTrackSize.x = m_minSize.cx;
+	pMinMaxInfo->ptMinTrackSize.y = m_minSize.cy;
 }
 
 void SVShowDependentsDialog::OnCustomdrawDependencyList(NMHDR* pNMHDR, LRESULT* pResult)
@@ -193,15 +164,6 @@ void SVShowDependentsDialog::OnCustomdrawDependencyList(NMHDR* pNMHDR, LRESULT* 
 		// Tell Windows to paint the control itself.
 		*pResult = CDRF_DODEFAULT;
 	}
-}
-
-void SVShowDependentsDialog::setResizeControls()
-{
-	m_Resizer.Add(this, IDC_DEPENDENCY_LIST, SvMc::RESIZE_LOCKALL);
-	m_Resizer.Add(this, IDC_WARNING_TEXT, SvMc::RESIZE_LOCKLEFT | SvMc::RESIZE_LOCKBOTTOM);
-
-	m_Resizer.Add(this, IDOK, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
-	m_Resizer.Add(this, IDCANCEL, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
 }
 
 void SVShowDependentsDialog::FillDependencyList(const std::set<uint32_t>& rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType)

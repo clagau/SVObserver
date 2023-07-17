@@ -18,9 +18,6 @@
     <ClCompile Include="CLabel.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="DlgItemResizer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="ModelessMessageBox.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -132,9 +129,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CLabel.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DlgItemResizer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ModelessMessageBox.h">

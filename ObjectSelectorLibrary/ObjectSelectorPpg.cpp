@@ -76,8 +76,6 @@ namespace SvOsl
 	{
 		CPropertyPage::OnInitDialog();
 
-		setResizeControls();
-
 		m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
 
 		for(int i = IDI_EMPTY_ENABLED; i <= IDI_TRI_STATE_DISABLED; i++)
@@ -119,14 +117,6 @@ namespace SvOsl
 		return CPropertyPage::OnSetActive();
 	}
 
-	void ObjectSelectorPpg::OnSize(UINT nType, int cx, int cy)
-	{
-		CPropertyPage::OnSize(nType, cx, cy);
-
-		//Resize all controls
-		m_Resizer.Resize(this);
-	}
-
 	void ObjectSelectorPpg::OnHelp()
 	{
 		AfxGetApp()->HtmlHelp( m_HelpID );
@@ -137,18 +127,6 @@ namespace SvOsl
 		pHelpInfo->iCtrlId = m_HelpID;
 		AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
 		return TRUE ;
-	}
-
-	void ObjectSelectorPpg::setResizeControls()
-	{
-		m_Resizer.Add(this, IDC_LABEL_TREE_NODES, SvMc::RESIZE_LOCKTOPLEFT);
-		m_Resizer.Add(this, IDC_TREE_NODES, SvMc::RESIZE_LOCKALL );
-
-		m_Resizer.Add(this, IDC_LABEL_TREE_VALUES, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKTOP);
-		m_Resizer.Add(this, IDC_TREE_VALUES, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKTOP | SvMc::RESIZE_LOCKBOTTOM );
-
-		m_Resizer.Add(this, IDC_LABEL_HIGHLIGHTED_NODE, SvMc::RESIZE_LOCKTOPLEFT);
-		m_Resizer.Add(this, IDC_HIGHLIGHTED_NODE, SvMc::RESIZE_LOCKLEFT | SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKTOP );
 	}
 	#pragma endregion Protected Methods
 

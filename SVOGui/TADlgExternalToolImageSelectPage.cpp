@@ -95,22 +95,16 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 			UpdateData(false); // set data to dialog
 		}
 
-		SetupDynamicLayout();
-		return TRUE;  // return TRUE unless you set the focus to a control
-					  // EXCEPTION: OCX Property Pages should return FALSE
-	}
-
-	void TADlgExternalToolImageSelectPage::SetupDynamicLayout()
-	{
 		if (IsDynamicLayoutEnabled())
 		{
 			CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
 			if (!dynamicLayout->HasItem(m_Tree.m_hWnd))
 			{
-				dynamicLayout->AddItem(m_Tree.m_hWnd,
-					CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeHorizontal(100));
+				dynamicLayout->AddItem(m_Tree.m_hWnd, CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeHorizontal(100));
 			}
 		}
+		return TRUE;  // return TRUE unless you set the focus to a control
+					  // EXCEPTION: OCX Property Pages should return FALSE
 	}
 
 	void TADlgExternalToolImageSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)

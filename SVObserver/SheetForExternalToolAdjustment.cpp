@@ -53,8 +53,6 @@ private:
 
 };
 
-IMPLEMENT_DYNAMIC(SheetForExternalToolAdjustment, TADlgSheetClass)
-
 BEGIN_MESSAGE_MAP(SheetForExternalToolAdjustment, TADlgSheetClass)
 	//{{AFX_MSG_MAP(SheetForExternalToolAdjustment)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
@@ -90,40 +88,26 @@ BOOL SheetForExternalToolAdjustment::OnInitDialog()
 	auto width = rect.Width();
 
 	rect.left = tabrect.left; rect.right = tabrect.left + width;
-
-	m_reInitializeButton.Create("Re-Initialize",
-			BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			rect, this, IDC_RE_INITIALIZE);
-
+	m_reInitializeButton.Create("Re-Initialize", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, rect, this, IDC_RE_INITIALIZE);
 	m_reInitializeButton.SetFont(GetFont());
 
 	rect.left += width + 10; rect.right += width + 10;
-
-	m_runOnceButton.Create("Run Once",
-			BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			rect, this, IDC_RUN_ONCE);
-
+	m_runOnceButton.Create("Run Once", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, rect, this, IDC_RUN_ONCE);
 	m_runOnceButton.SetFont(GetFont());
-	SetupDynamicLayout();
-	return bResult;
-}
 
-void SheetForExternalToolAdjustment::SetupDynamicLayout()
-{
 	if (IsDynamicLayoutEnabled())
 	{
 		CMFCDynamicLayout* dynamicLayout = GetDynamicLayout();
 		if (!dynamicLayout->HasItem(m_reInitializeButton.m_hWnd))
 		{
-			dynamicLayout->AddItem(m_reInitializeButton.m_hWnd,
-				CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
+			dynamicLayout->AddItem(m_reInitializeButton.m_hWnd, CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
 		}
 		if (!dynamicLayout->HasItem(m_runOnceButton.m_hWnd))
 		{
-			dynamicLayout->AddItem(m_runOnceButton.m_hWnd,
-				CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
+			dynamicLayout->AddItem(m_runOnceButton.m_hWnd, CMFCDynamicLayout::MoveVertical(100), CMFCDynamicLayout::SizeNone());
 		}
 	}
+	return bResult;
 }
 
 void SheetForExternalToolAdjustment::OnRunOnce()

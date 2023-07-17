@@ -97,7 +97,6 @@ void SVDisplayImageSelect::OnGetMinMaxInfo(MINMAXINFO FAR* pMinMaxInfo)
 	pMinMaxInfo->ptMinTrackSize.y = m_minSize.cy;
 }
 
-
 void SVDisplayImageSelect::LoadImageList()
 {
 	constexpr const char* c_NoImage = _T("[None]");

@@ -37,28 +37,16 @@ namespace SvOg
 
 
 	BEGIN_MESSAGE_MAP(AuditFilesDialog, CDialog)
-		ON_WM_SIZE()
 		ON_NOTIFY(GVN_BEGINLABELEDIT, IDC_FILEGRID, OnGridBeginEdit)
 		ON_BN_CLICKED(IDC_BUTTON_ADD, &AuditFilesDialog::OnBnClickedButtonAdd)
 		ON_BN_CLICKED(IDC_BUTTON_REMOVE, &AuditFilesDialog::OnBnClickedButtonRemove)
 		ON_BN_CLICKED(IDHELP, &AuditFilesDialog::OnBnClickedButtonHelp)
 		ON_COMMAND(ID_HELP, OnHelp)
 		ON_NOTIFY(NM_CLICK, IDC_FILEGRID, OnGridClick)
+		ON_WM_GETMINMAXINFO()
 	END_MESSAGE_MAP()
 
 
-	// DlgReportDefaultFile message handlers
-
-	void AuditFilesDialog::setResizeControls()
-	{
-		m_Resizer.Add(this, IDC_FILEGRID, SvMc::RESIZE_LOCKALL);
-		m_Resizer.Add(this, IDHELP, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
-		m_Resizer.Add(this, IDCANCEL, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
-		m_Resizer.Add(this, IDOK, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
-		m_Resizer.Add(this, IDC_BUTTON_REMOVE, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
-		m_Resizer.Add(this, IDC_BUTTON_ADD, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
-
-	}
 	void AuditFilesDialog::InitFileGrid()
 	{
 
@@ -88,13 +76,15 @@ namespace SvOg
 	BOOL AuditFilesDialog::OnInitDialog()
 	{
 		CDialog::OnInitDialog();
+		CRect wndRect;
+		GetWindowRect(&wndRect);
+		m_minSize = {wndRect.Width(), wndRect.Height()};
+
 		// Remove Close Button
 		ModifyStyle(WS_SYSMENU, 0, SWP_FRAMECHANGED);
 
-		setResizeControls();
 		CWnd* pRemovButton = GetDlgItem(IDC_BUTTON_REMOVE);
 		CWnd* pAddButton = GetDlgItem(IDC_BUTTON_ADD);
-
 
 		if (m_DialogType == WhiteList)
 		{
@@ -232,14 +222,6 @@ namespace SvOg
 		*pResult = -1;
 	}
 
-	void AuditFilesDialog::OnSize(UINT nType, int cx, int cy)
-	{
-		CDialog::OnSize(nType, cx, cy);
-
-		m_Resizer.Resize(this);
-	}
-
-
 	void AuditFilesDialog::OnBnClickedButtonAdd()
 	{
 		if (m_DialogType != WhiteList)
@@ -357,5 +339,10 @@ namespace SvOg
 		}
 	}
 
-
+	void AuditFilesDialog::OnGetMinMaxInfo(MINMAXINFO FAR* pMinMaxInfo)
+	{
+		// Set the Minimum Track Size. Used while resizing.
+		pMinMaxInfo->ptMinTrackSize.x = m_minSize.cx;
+		pMinMaxInfo->ptMinTrackSize.y = m_minSize.cy;
+	}
 }

@@ -12,7 +12,6 @@
 #pragma once
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVMFCControls/DlgItemResizer.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVProtoBuf/SVO-Enum.h"
@@ -42,13 +41,9 @@ namespace SvOg
 	protected:
 		virtual BOOL OnInitDialog() override;
 		virtual void DoDataExchange(CDataExchange* pDX) override;
-		afx_msg void OnPaint();
 		afx_msg void OnSize(UINT nType, int cx, int cy);
-		afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+		afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* pMinMaxInfo);
 		afx_msg void OnCustomdrawDependencyList(NMHDR* pNMHDR, LRESULT* pResult);
-
-		//! Sets which controls are resized when the dialog is resized
-		void setResizeControls();
 
 		void FillDependencyList(const std::set<uint32_t>& m_rIdsOfObjectsDependedOn, SvPb::SVObjectTypeEnum objectType);
 		void addColumnHeadings();
@@ -58,9 +53,7 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		SvMc::DlgItemResizer m_Resizer;
-		CRect m_OrginalClient;
-		CRect m_Gripper;
+		CSize m_minSize {0,0};
 		CListCtrl m_ListCtrl;
 		SvDef::StringPairVector m_dependencyList;
 		std::string m_DisplayText;

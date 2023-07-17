@@ -63,7 +63,6 @@ namespace SvOg
 		// Returns:   void
 		//************************************
 		void setImages(SvOgu::ImageController &imgCtrl);
-		void SetupDynamicLayout();
 
 	#pragma endregion Private Methods
 

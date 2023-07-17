@@ -14,7 +14,6 @@
 
 #pragma region Includes
 #include "SVOResource\resource.h"
-#include "SVMFCControls/DlgItemResizer.h"
 #include "NodeTreeCtrl.h"
 #include "LeafTreeCtrl.h"
 #pragma endregion Includes
@@ -93,20 +92,13 @@ namespace SvOsl
 		virtual void DoDataExchange(CDataExchange* pDX) override;
 		virtual BOOL OnInitDialog() override;
 		virtual BOOL OnSetActive() override;
-		afx_msg void OnSize(UINT nType, int cx, int cy);
 		afx_msg void OnHelp();
 		afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-
-		//************************************
-		// Description:  The method sets the controls which are resized when the page is resized
-		//************************************
-		void setResizeControls();
 	#pragma endregion Protected Methods
 
 	private:
 	#pragma region Member Variables
 		SvCl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
-		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls
 		NodeTreeCtrl m_NodeTree;						//The node tree control
 		LeafTreeCtrl m_LeafTree;						//The leaf tree control
 		CImageList m_StateImageList;					//The state image list

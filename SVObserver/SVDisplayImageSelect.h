@@ -41,8 +41,8 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	afx_msg void OnReloadImageList();
-	DECLARE_MESSAGE_MAP()
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* pMinMaxInfo);
+	DECLARE_MESSAGE_MAP()
 private:
 	/// Add the current inspection's name to the default window's title.
 	/// Title format: "Select Display Image - [Inspection name]"
