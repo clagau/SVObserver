@@ -34,7 +34,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/SVAdjustToolSizePositionDlg.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SvimState.h"
@@ -441,12 +441,13 @@ BOOL SVImageView::OnCommand(WPARAM wParam, LPARAM lParam)
 		case ID_SELECT_DISPLAY_IMAGE:
 		{
 			{
-				// cppcheck-suppress unreadVariable; cppCheck doesn't understand RAII use of SetResetState pointer here
-				std::unique_ptr<SvimState::SetResetState> pStateEditing {nullptr};
+				// changes the state to editing ONLY when currently in edit mode: avoids entering that mode while in Run, Regression or Test mode
+				// cppcheck-suppress unreadVariable; cppCheck doesn't understand RAII use of TemporaryState_Editing pointer here
+				std::unique_ptr<SvSml::TemporaryState_Editing> pStateEditing {nullptr};
 				if (SvimState::CheckState(SV_STATE_EDIT))
 				{
-					pStateEditing = std::make_unique<SvimState::SetResetState>(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
-					if (false == pStateEditing->conditionOk())
+					pStateEditing = std::make_unique<SvSml::TemporaryState_Editing>();  /// do this before calling validate for security as it may display a logon dialog!
+					if (false == pStateEditing->stateWasEntered())
 					{
 						break;
 					}

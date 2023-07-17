@@ -20,7 +20,7 @@
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "TextDefinesSvO.h"
 #include "MonitorListSelector.h"
 
@@ -614,8 +614,8 @@ void MonitorListView::OnLButtonDblClk(UINT, CPoint point)
 	{
 		if (TheSVObserverApp().OkToEdit())
 		{
-			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-			if (false == srs.conditionOk())
+			SvSml::TemporaryState_Editing tse;
+			if (false == tse.stateWasEntered())
 			{
 				return;
 			}
@@ -996,8 +996,8 @@ void MonitorListView::AddItem()
 			item = m_rCtrl.GetNextSelectedItem(Pos);
 		}
 
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return;
 		}
@@ -1119,8 +1119,8 @@ void MonitorListView::OnAddRemoveList()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return;
 		}
@@ -1148,8 +1148,8 @@ void MonitorListView::OnEditListProperties()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return;
 		}
@@ -1190,8 +1190,8 @@ void MonitorListView::OnDeleteItem()
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return;
 		}
@@ -1236,8 +1236,8 @@ void MonitorListView::OnEdit(bool bImageItem)
 {
 	if (TheSVObserverApp().OkToEdit())
 	{
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return;
 		}

@@ -372,7 +372,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 
 		if (bLastFlag)
 		{
-			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::TemporaryState remoteCmd {SV_STATE_REMOTE_CMD};
 			bSuccess = S_OK == GlobalRCLoadPackedConfiguration(PackedFileName.c_str(), fileType);
 			PackedFileName.clear();
 			fileType = ConfigFileType::SvzFormatDefaultName;
@@ -571,7 +571,7 @@ STDMETHODIMP SVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 	{
 		std::string ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
 
-		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::TemporaryState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
 	}
 
@@ -1901,7 +1901,7 @@ STDMETHODIMP SVCommand::SVRunOnce(BSTR bstrName)
 		SVInspectionProcess* pInspection(nullptr);
 		if (SVConfigurationObject::GetInspection(SvUl::createStdString(bstrName).c_str(), pInspection))
 		{
-			SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvimState::TemporaryState remoteCmd {SV_STATE_REMOTE_CMD};
 			hrResult = SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 		}
 	}// end if
@@ -2020,7 +2020,7 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 	if (S_OK == result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::TemporaryState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
 	}
 
@@ -2210,7 +2210,7 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 	if (S_OK == result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		SvimState::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		SvimState::TemporaryState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
 	}
 

@@ -22,7 +22,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
@@ -249,8 +249,8 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_PpqIndex = item / m_maxOutputNumber;
 				dlg.m_ioObjectType = SVIOObjectType::IO_PLC_OUTPUT;
 
-				SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-				if (false == srs.conditionOk())
+				SvSml::TemporaryState_Editing tse;
+				if (false == tse.stateWasEntered())
 				{
 					return;
 				}

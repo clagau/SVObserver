@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
 #include "SvimState.h"
+#include "MessageManagerHelper.h"
 #include "Definitions/StringTypeDef.h"
 #include "MessageManager.h"
 #include "SVMessage/SVMessage.h"
@@ -33,31 +34,78 @@ std::atomic<int>  SvimState::ms_LockCountSvrc {0};
 
 int64_t SvimState::ms_EditingStates = 0; 
 
-
 bool SvimState::isSvrcBlocked()
 {
 	return ms_LockCountSvrc > 0;
 }
 
-void SvimState::AddState(DWORD dwState)
-{
-	ms_fullState |= dwState;
 
-	if (dwState & SV_STATE_MODIFIED)
+void SvimState::AddState_Editing()
+{
+	const DWORD state = SV_STATE_EDITING; // SV_STATE_EDITING must be treated separately because it may only be entered if an EditLock has been obtained
+
+	if (++ms_EditingStates <= 1) // if we _are_ already in that state, we don't enter it again!
+	{
+		ms_fullState |= state;
+		// CheckModeNotify() is not required here because entering or leaving SV_STATE_EDITING does not imply a mode change
+	}
+}
+
+
+void SvimState::AddState(DWORD state)
+{
+	Log_Assert(0 == (SV_STATE_EDITING & state));  // SV_STATE_EDITING must be treated separately because it may only be entered if an EditLock has been obtained
+
+	if (SV_STATE_EDITING & state)
+	{
+		SvStl::MessageManager msg(SvStl::MsgType::Data);
+		msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IllegalAttemptToModifyStateEditingDirectly, SvStl::SourceFileParams(StdMessageParams));
+		msg.Throw();
+	}
+
+	ms_fullState |= state;
+
+	if (state & SV_STATE_MODIFIED)
 	{
 		setLastModifiedTime();
 		SetAutoSaveRequired(true);
 	}
-	if (dwState & SV_STATE_LOADING)
+	if (state & SV_STATE_LOADING)
 	{
 		ms_lastModifiedTime = 0;
 	}
 	CheckModeNotify();
 }
 
-void SvimState::RemoveState(DWORD dwState)
+
+bool SvimState::RemoveState_Editing()
 {
-	ms_fullState &= ~dwState;
+	DWORD state = SV_STATE_EDITING;
+	bool removeState = (--ms_EditingStates <= 0);
+	// if we are currently leaving an editing state ON TOP of another editing state, we do not remove the flag yet!
+
+	if (removeState)
+	{
+		ms_fullState &= ~state;
+		// CheckModeNotify() is not required here because entering or leaving SV_STATE_EDITING does not imply a mode change
+		return true;
+	}
+	return false;
+}
+
+
+void SvimState::RemoveState(DWORD state)
+{
+	Log_Assert(0 == (SV_STATE_EDITING & state)); // SV_STATE_EDITING is treated separately because it may only be entered if an EditLock has been obtained
+
+	if (SV_STATE_EDITING & state)
+	{
+		SvStl::MessageManager msg(SvStl::MsgType::Data);
+		msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IllegalAttemptToModifyStateEditingDirectly, SvStl::SourceFileParams(StdMessageParams));
+		msg.Throw();
+	}
+
+	ms_fullState &= ~state;
 	CheckModeNotify();
 }
 
@@ -79,9 +127,9 @@ void SvimState::changeState(DWORD addStates, DWORD removeStates)
 	CheckModeNotify();
 }
 
-bool SvimState::CheckState(DWORD dwState)
+bool SvimState::CheckState(DWORD state)
 {
-	bool l_Status = (dwState & ms_fullState) != 0;
+	bool l_Status = (state & ms_fullState) != 0;
 
 	return l_Status;
 }

@@ -19,7 +19,7 @@
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVPPQEntryDialog.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/SvimState.h"
 
 #ifdef _DEBUG
@@ -452,8 +452,8 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 	{
 		if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		{
-			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-			if (srs.conditionOk())
+			SvSml::TemporaryState_Editing tse;
+			if (tse.stateWasEntered())
 			{
 				int pos = nID - 50;
 

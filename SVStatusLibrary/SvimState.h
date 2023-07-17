@@ -47,6 +47,10 @@ constexpr DWORD SV_DEFAULT_NOT_ALLOWED_STATES =
 SV_STATE_UNAVAILABLE | SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING | SV_STATE_EDITING |
 SV_STATE_CANCELING | SV_STATE_INTERNAL_RUN | SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_REMOTE_CMD;
 
+namespace SvSml
+{
+	class TemporaryState_Editing;
+}
 
 typedef std::function<void(SvPb::NotifyType, const _variant_t&)> NotifyFunctor;
 
@@ -62,6 +66,7 @@ typedef std::function<void(SvPb::NotifyType, const _variant_t&)> NotifyFunctor;
 
 class SvimState
 {
+	friend class SvSml::TemporaryState_Editing;
 public:
 	//RAII helper struct for ms_LockCountSvrc
 	struct SVRCBlocker
@@ -78,60 +83,24 @@ public:
 
 	};
 
-	//RAII class to set and reset the state
-	class SetResetState
+	//RAII class to automatically set and reset an SVIM state. NOT to be used for SV_STATE_EDITING! For this use SvSml::TemporaryState_Editing instead!
+	class TemporaryState
 	{
-
 	public:
-		explicit SetResetState(DWORD state, std::function<bool()> acquire = [](){return true; }, std::function<void()> release = [](){}) :
-			m_state(state), m_ok(acquire()), m_release(release)
+		explicit TemporaryState(DWORD state):
+			m_state(state)
 		{
-			if(m_ok)
-			{
-				bool addState = true;
-				if (m_state == SV_STATE_EDITING)
-				{
-					if (++ms_EditingStates > 1) // i.e. we _are_ already in that state: we don't enter it again!
-					{
-						addState = false;
-					}
-				}
-				if (addState)
-				{
-					SvimState::AddState(m_state);
-				}
-			}
+			SvimState::AddState(m_state);
 		}
 
-		~SetResetState()
+		~TemporaryState()
 		{
-			if (m_ok)
-			{
-				bool removeState = true;
-				if (m_state == SV_STATE_EDITING)
-				{
-					removeState = (--ms_EditingStates <= 0);
-					// i.e., we are currently leaving an editing state ON TOP on another editing state. Hence, we do not remove the flag yet!
-				}
-
-				if (removeState)
-				{
-					m_release();
-					SvimState::RemoveState(m_state);
-				}
-			}
-		}
-
-		bool conditionOk() const
-		{
-			return m_ok;
+			SvimState::RemoveState(m_state);
 		}
 
 	private:
 
 		const DWORD m_state;
-		const bool m_ok;
-		std::function<void()> m_release;
 	};
 
 	static void OutputDebugState();
@@ -140,18 +109,18 @@ public:
 	//This operation adds a sub-state to the existing state 
 	//value.  The value passed in as a parameter is ORed to 
 	//the existing value.
-	static void AddState( DWORD dwState );
+	static void AddState(DWORD state);	// Never use this function to set SV_STATE_EDITING!
 
 	//This operation removes a particular sub-state from the 
 	//existing state value.  This process takes the sub-state 
 	//value and inverts it and ANDs it to the existing state 
 	//value.
-	static void RemoveState( DWORD dwState );
+	static void RemoveState( DWORD state ); // Never use this function to remove SV_STATE_EDITING!
 
 	//This operation checks the parameter state value against 
 	//the internal value and outputs in the result parameter 
 	//whether there is at least one bit (state) matching.
-	static bool CheckState( DWORD dwState );
+	static bool CheckState( DWORD state );
 
 	static HRESULT CheckNotAllowedState(DWORD States = SV_DEFAULT_NOT_ALLOWED_STATES);
 
@@ -184,12 +153,10 @@ public:
 	static void ConfigWasUnloaded();
 
 private:
-	//************************************
-	// Method: CheckModeNotify
-	// Description: Determine if the mode has changed and fire the notification.
-	// Returns: void
-	//************************************
-	static void CheckModeNotify();
+	static void AddState_Editing();			// SV_STATE_EDITING is treated separately because it may only be entered if an EditLock has been obtained. ONLY access this function from class TemporaryState_Editing
+	static bool RemoveState_Editing();		// SV_STATE_EDITING is treated separately because it may only be entered if an EditLock has been obtained. ONLY access this function from class TemporaryState_Editing
+
+	static void CheckModeNotify(); // Determine if the mode has changed and fire the notification.
 	
 	static  void SetHash(LPCSTR hash);
 	

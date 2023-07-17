@@ -86,6 +86,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EditLock.cpp" />
     <ClCompile Include="LockAcquisitionStream.cpp" />
     <ClCompile Include="MesManHelper.cpp" />
     <ClCompile Include="MLCpyContainer.cpp" />
@@ -106,6 +107,7 @@
     <ClCompile Include="SVSharedMemorySettings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EditLock.h" />
     <ClInclude Include="LastResponseData.h" />
     <ClInclude Include="LockAcquisitionStream.h" />
     <ClInclude Include="MesManHelper.h" />

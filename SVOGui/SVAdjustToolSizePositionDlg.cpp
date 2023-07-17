@@ -268,14 +268,12 @@ void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 	std::map< SvPb::SVExtentPropertyEnum, double>  Extends = GetExtentsFromTree();
 	m_hResultFromSetExtent =  m_ToolSizeHelper.SetExtentsMap(Extends);
 	FillTreeFromExtents(false);
-
-
 }
 
 
 void SVAdjustToolSizePositionDlg::OnOK()
 {
-	//check if extents have change.  if they change set SV_STATE_MODIFIED
+	//check if extents have changes.  If so, set SV_STATE_MODIFIED
 	bool hasChanged = m_ToolSizeHelper.HasChanged(true);
 
 

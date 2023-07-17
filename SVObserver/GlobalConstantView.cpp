@@ -24,7 +24,7 @@
 #include "SVOGui/GlobalConstantDlg.h"
 #include "SVOGui/SVShowDependentsDialog.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
@@ -185,8 +185,8 @@ bool GlobalConstantView::editItem( int Item )
 		}
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return false;
 	}
@@ -217,8 +217,8 @@ bool GlobalConstantView::deleteItem( int Item )
 
 	if( -1 != Item )
 	{
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return false;
 		}

@@ -24,9 +24,8 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 LPCTSTR RemoteMonitorListController::s_DefaultMonitorListName = _T("MonitorList_");
@@ -77,8 +76,8 @@ bool RemoteMonitorListController::IsEmpty() const
 bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 {
 	bool bRetVal = false;
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return false;
 	}

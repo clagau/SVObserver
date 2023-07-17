@@ -24,7 +24,7 @@
 #include "SVLibrary/SVPackedFile.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVSecurity/SVSecurityManager.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SvimState.h"
 
@@ -193,8 +193,8 @@ SVConfigurationObject* CreateConfigAssistant(SVOConfigAssistantDlg& rDlg, bool n
 
 	rDlg.SetNewConfiguration(newConfiguration);
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return nullptr;
 	}

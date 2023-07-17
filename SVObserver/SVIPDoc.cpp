@@ -72,7 +72,7 @@
 #include "Tools/SVTool.h"
 #include "Triggering/SVTriggerObject.h"
 #include "ObjectInterfaces/ObjectInfo.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVMFCControls/EnterStringDlg.h"
@@ -588,8 +588,8 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId, int index)
 	{
 		return false;
 	}
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return false;
 	}
@@ -994,31 +994,33 @@ void SVIPDoc::OnAdjustLightReference()
 
 	if (dlg.CreatePages(cameraVector, LightRefVector))
 	{
-		SvimState::SetResetState stateEditing {SV_STATE_EDITING};
+		SvSml::TemporaryState_Editing tse;
+		if (tse.stateWasEntered())
+		{
+			SVConfigurationObject* pConfig(nullptr);
+			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+			Log_Assert(nullptr != pConfig);
 
-		SVConfigurationObject* pConfig(nullptr);
-		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		Log_Assert(nullptr != pConfig);
-
-		SVLightReferenceVector* pResultLightRefVector {nullptr};
-		if (nullptr != pConfig && dlg.DoModal() == IDOK)
-		{
-			SetModifiedFlag();
-			pResultLightRefVector = &LightRefVector;
-		}
-		else
-		{
-			pResultLightRefVector = &LightRefVectorOriginal;
-		}
-		if (nullptr != pResultLightRefVector)
-		{
-			for (size_t i = 0; i < cameraVector.size(); ++i)
+			SVLightReferenceVector* pResultLightRefVector {nullptr};
+			if (nullptr != pConfig && dlg.DoModal() == IDOK)
 			{
-				cameraVector[i]->SetLightReference(pResultLightRefVector->at(i));
-				SVLightReference lightRef; // get new device lra; camera Set only modifies its band(s)
-				cameraVector[i]->GetAcquisitionDevice()->GetLightReference(lightRef);
-				std::string deviceName {cameraVector[i]->GetAcquisitionDevice()->DeviceName()};
-				pConfig->ModifyAcquisitionDevice(deviceName.c_str(), lightRef);
+				SetModifiedFlag();
+				pResultLightRefVector = &LightRefVector;
+			}
+			else
+			{
+				pResultLightRefVector = &LightRefVectorOriginal;
+			}
+			if (nullptr != pResultLightRefVector)
+			{
+				for (size_t i = 0; i < cameraVector.size(); ++i)
+				{
+					cameraVector[i]->SetLightReference(pResultLightRefVector->at(i));
+					SVLightReference lightRef; // get new device lra; camera Set only modifies its band(s)
+					cameraVector[i]->GetAcquisitionDevice()->GetLightReference(lightRef);
+					std::string deviceName {cameraVector[i]->GetAcquisitionDevice()->DeviceName()};
+					pConfig->ModifyAcquisitionDevice(deviceName.c_str(), lightRef);
+				}
 			}
 		}
 	}
@@ -1066,40 +1068,43 @@ void SVIPDoc::OnAdjustLut()
 
 	if (bSuccess)
 	{
-		SvimState::SetResetState stateEditing {SV_STATE_EDITING};
+		SvSml::TemporaryState_Editing tse;
+		if (tse.stateWasEntered())
+		{
 
-		if (dlg.DoModal() == IDOK)
-		{
-			SetModifiedFlag();
-		}
-		else    // if cancel
-		{
-			// restore old LUT
-			for (auto* const pCamera : cameraVector)
+			if (dlg.DoModal() == IDOK)
 			{
-				if (nullptr != pCamera)
+				SetModifiedFlag();
+			}
+			else    // if cancel
+			{
+				// restore old LUT
+				for (auto* const pCamera : cameraVector)
 				{
-					pCamera->SetLut(aLutOrig[pCamera->getObjectId()]);
+					if (nullptr != pCamera)
+					{
+						pCamera->SetLut(aLutOrig[pCamera->getObjectId()]);
+					}
 				}
 			}
-		}
-		SVConfigurationObject* pConfig(nullptr);
-		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		Log_Assert(nullptr != pConfig);
+			SVConfigurationObject* pConfig(nullptr);
+			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+			Log_Assert(nullptr != pConfig);
 
-		if (nullptr != pConfig)
-		{
-			for (auto* const pCamera : cameraVector)
+			if (nullptr != pConfig)
 			{
-				SVLut lut;
-				SvIe::SVAcquisitionClassPtr pDevice = pCamera->GetAcquisitionDevice();
-				pDevice->GetLut(lut);
-				pConfig->ModifyAcquisitionDevice(pDevice->DeviceName().c_str(), lut);
+				for (auto* const pCamera : cameraVector)
+				{
+					SVLut lut;
+					SvIe::SVAcquisitionClassPtr pDevice = pCamera->GetAcquisitionDevice();
+					pDevice->GetLut(lut);
+					pConfig->ModifyAcquisitionDevice(pDevice->DeviceName().c_str(), lut);
 
-				// Update DeviceParameters as well...
-				SVDeviceParamCollection deviceParams;
-				pDevice->GetDeviceParameters(deviceParams);
-				pConfig->ModifyAcquisitionDevice(pDevice->DeviceName().c_str(), &deviceParams);
+					// Update DeviceParameters as well...
+					SVDeviceParamCollection deviceParams;
+					pDevice->GetDeviceParameters(deviceParams);
+					pConfig->ModifyAcquisitionDevice(pDevice->DeviceName().c_str(), &deviceParams);
+				}
 			}
 		}
 	}
@@ -1224,8 +1229,8 @@ void SVIPDoc::OnAddModuleTool(UINT nId)
 
 void SVIPDoc::OnExportTools()
 {
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -1287,8 +1292,8 @@ void SVIPDoc::OnImportTools()
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -1412,8 +1417,8 @@ void SVIPDoc::OnEditDelete()
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -1488,8 +1493,8 @@ void SVIPDoc::OnEditDelete()
 
 void SVIPDoc::OnEditCut()
 {
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -1510,8 +1515,8 @@ void SVIPDoc::OnEditCopy()
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -1602,8 +1607,8 @@ void SVIPDoc::OnEditPaste()
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -1941,8 +1946,8 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(toolIDToEdit));
 		if (nullptr != pTool)
 		{
-			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-			if (false == srs.conditionOk())
+			SvSml::TemporaryState_Editing tse;
+			if (false == tse.stateWasEntered())
 			{
 				return;
 			}
@@ -2008,8 +2013,8 @@ void SVIPDoc::OnEditToolSet()
 	{
 		if (GetToolSet())
 		{
-			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-			if (false == srs.conditionOk())
+			SvSml::TemporaryState_Editing tse;
+			if (false == tse.stateWasEntered())
 			{
 				return;
 			}
@@ -2028,11 +2033,14 @@ void SVIPDoc::OnEditToolSet()
 
 void SVIPDoc::OnFileSaveImage()
 {
-	SvimState::SetResetState stateEditing {SV_STATE_EDITING};
-	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_IMAGE))
+	SvSml::TemporaryState_Editing tse;
+	if (tse.stateWasEntered())
 	{
-		SvOg::SVSaveToolSetImageDialogClass dlg(GetInspectionID(), GetToolSet()->getObjectId());
-		dlg.DoModal();
+		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_IMAGE))
+		{
+			SvOg::SVSaveToolSetImageDialogClass dlg(GetInspectionID(), GetToolSet()->getObjectId());
+			dlg.DoModal();
+		}
 	}
 }
 
@@ -2067,13 +2075,13 @@ void SVIPDoc::OnResultsPicker()
 
 void SVIPDoc::StartResultsPicker(LPCTSTR nodeToBeSelected)
 {
-	//This shall change the state to editing only when previously in edit mode
-	//This will avoid changing the modes while in Run, Regression or Test mode
-	std::unique_ptr<SvimState::SetResetState> pStateEditing {nullptr};
+	// changes the state to editing ONLY when currently in edit mode: avoids entering that mode while in Run, Regression or Test mode
+	// cppcheck-suppress unreadVariable; cppCheck doesn't understand RAII use of TemporaryState_Editing pointer here
+	std::unique_ptr<SvSml::TemporaryState_Editing> ptse {nullptr};
 	if (SvimState::CheckState(SV_STATE_EDIT))
 	{
-		pStateEditing = std::make_unique<SvimState::SetResetState>(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
-		if (false == pStateEditing->conditionOk())
+		ptse = std::make_unique<SvSml::TemporaryState_Editing>();  /// do this before calling validate for security as it may display a logon dialog!
+		if (false == ptse->stateWasEntered())
 		{
 			return;
 		}
@@ -2130,13 +2138,13 @@ void SVIPDoc::StartResultsPicker(LPCTSTR nodeToBeSelected)
 
 void SVIPDoc::OnResultsTablePicker()
 {
-	//This shall change the state to editing only when previously in edit mode
-	//This will avoid changing the modes while in Run, Regression or Test mode
-	std::unique_ptr<SvimState::SetResetState> pStateEditing {nullptr};
+	// Changes the state to editing ONLY when currently in edit mode: avoids entering that mode while in Run, Regression or Test mode
+	// cppcheck-suppress unreadVariable; cppCheck doesn't understand RAII use of TemporaryState_Editing pointer here
+	std::unique_ptr<SvSml::TemporaryState_Editing> ptse {nullptr};
 	if (SvimState::CheckState(SV_STATE_EDIT))
 	{
-		pStateEditing = std::make_unique<SvimState::SetResetState>(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);  /// do this before calling validate for security as it may display a logon dialog!
-		if (false == pStateEditing->conditionOk())
+		ptse = std::make_unique<SvSml::TemporaryState_Editing>();  /// do this before calling validate for security as it may display a logon dialog!
+		if (false == ptse->stateWasEntered())
 		{
 			return;
 		}
@@ -2376,8 +2384,8 @@ void SVIPDoc::RunRegressionTest()
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -3486,8 +3494,8 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
 		if (GetImageView())
 		{
-			SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-			if (false == srs.conditionOk())
+			SvSml::TemporaryState_Editing tse;
+			if (false == tse.stateWasEntered())
 			{
 				return;
 			}
@@ -3566,13 +3574,12 @@ void SVIPDoc::OnToolDependencies()
 	SVToolSet* pToolSet = GetToolSet();
 	if (nullptr != pToolSet)
 	{
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return;
 		}
 
-		SvimState::SetResetState stateEditing {SV_STATE_EDITING};
 		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		constexpr const TCHAR* Filter = _T("GraphViz Files (*.dot)|*.dot||");
 		SvMc::SVFileDialog fileDlg(false, bFullAccess, _T("dot"), nullptr, 0, Filter, nullptr);
@@ -4638,8 +4645,8 @@ void SetAllIPDocumentsOnline()
 
 bool mayDeleteCurrentlySelectedTools(const std::set<uint32_t>& rIdsOfObjectsDependedOn)
 {
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return false;
 	}

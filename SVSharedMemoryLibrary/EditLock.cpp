@@ -4,12 +4,35 @@
 
 #include "stdafx.h"
 #include "EditLock.h"
-#include "MessageManager.h"
-#include "SvimState.h"
+#include "SVSharedMemoryLibrary/SharedMemoryLock.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "SVMessage/SVMessage.h"
 
-namespace SvStl
+namespace SvSml
 {
+
+	TemporaryState_Editing::TemporaryState_Editing()
+	{
+		m_editLockAcquired = EditLock::acquire();
+
+		if (m_editLockAcquired)
+		{
+			SvimState::AddState_Editing(); // Use only this function to set SV_STATE_EDITING!
+		}
+	}
+	TemporaryState_Editing::~TemporaryState_Editing()
+	{
+		if (m_editLockAcquired)
+		{
+			if (SvimState::RemoveState_Editing()) // Use only this function to remove SV_STATE_EDITING!
+			{
+				EditLock::release();
+			}
+		}
+
+	}
+
 namespace
 {
 

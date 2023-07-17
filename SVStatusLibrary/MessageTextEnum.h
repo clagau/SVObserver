@@ -624,6 +624,7 @@ enum MessageTextEnum
 	Tid_RetryValueLarge,
 	Tid_ModuleExistAlready,
 	Tid_ModuleNameExistAlready,
+	Tid_IllegalAttemptToModifyStateEditingDirectly,
 
 	Tid_ErrorMultiObjectID,
 	Tid_ErrorMultiObjectIDOrder,

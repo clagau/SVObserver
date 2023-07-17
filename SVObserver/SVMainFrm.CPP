@@ -47,7 +47,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVOGui/AuditFilesDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SvimState.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
@@ -640,8 +640,8 @@ void SVMainFrame::OnFileOpenSVC()
 {
 	TheSVObserverApp().ValidateMRUList();
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release); /// do this before calling validate for security as it may display a logon dialog!
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse; /// do this before calling validate for security as it may display a logon dialog!
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -687,8 +687,8 @@ void SVMainFrame::OnFileCloseConfig()
 {
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION))
 	{
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return;
 		}
@@ -781,8 +781,8 @@ void SVMainFrame::OnModeEdit()
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -916,8 +916,8 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 {
 	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
 	{
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (false == srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (false == tse.stateWasEntered())
 		{
 			return;
 		}
@@ -941,8 +941,8 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 
 void SVMainFrame::OnExtrasSecuritySetup()
 {
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered()) /// do this before calling validate for security as it may display a logon dialog!
 	{
 		return;
 	}
@@ -988,8 +988,8 @@ void SVMainFrame::OnExtrasSecuritySetup()
 
 void SVMainFrame::OnAuditTrailDefaultFiles()
 {
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -1013,8 +1013,8 @@ void SVMainFrame::OnAuditTrailDefaultFiles()
 
 void SVMainFrame::OnAuditTrailAdditionalFiles()
 {
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered()) /// do this before calling validate for security as it may display a logon dialog!
 	{
 		return;
 	}
@@ -1121,8 +1121,8 @@ void SVMainFrame::OnStop()
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -2209,8 +2209,8 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 
 void SVMainFrame::OnExtrasStartLastConfiguration()
 {
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk()) /// do this before calling validate for security as it may display a logon dialog!
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered()) /// do this before calling validate for security as it may display a logon dialog!
 	{
 		return;
 	}
@@ -2416,8 +2416,8 @@ void SVMainFrame::startDesiredState(DWORD desiredState)
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}

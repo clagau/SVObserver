@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVStatusBar.h"
 #include "Definitions/Color.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 
 SVStatusBar::SVStatusBar()
 	:m_lModeBKColor {SvDef::LightGray}
@@ -44,7 +44,7 @@ void SVStatusBar::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 				case ID_INDICATOR_EDIT_LOCK:
 				{
 
-					bool isLockAcquired = SvStl::EditLock::isAcquiredBySVIM();
+					bool isLockAcquired = SvSml::EditLock::isAcquiredBySVIM();
 					std::string EditLockInfo {_T(isLockAcquired ? "   Edit Lock   " : "no Edit Lock")};
 
 					COLORREF oldBKColor = dc.SetBkColor(isLockAcquired ? SvDef::DarkYellow : SvDef::StatusBarBackground);

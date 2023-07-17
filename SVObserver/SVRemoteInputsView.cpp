@@ -20,7 +20,7 @@
 #include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/SvimState.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
@@ -177,8 +177,8 @@ void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 					dlg.SetIOName( Name.c_str() );
 					dlg.SetIOValue( value );
 
-					SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-					if (false == srs.conditionOk())
+					SvSml::TemporaryState_Editing tse;
+					if (false == tse.stateWasEntered())
 					{
 						return;
 					}

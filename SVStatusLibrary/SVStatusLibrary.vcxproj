@@ -156,7 +156,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CommandLineArgs.cpp" />
-    <ClCompile Include="EditLock.cpp" />
     <ClCompile Include="GlobalPath.cpp" />
     <ClCompile Include="MessageContainer.cpp" />
     <ClCompile Include="MessageData.cpp" />
@@ -173,7 +172,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandLineArgs.h" />
-    <ClInclude Include="EditLock.h" />
     <ClInclude Include="ErrorUtil.h" />
     <ClInclude Include="GlobalPath.h" />
     <ClInclude Include="MessageContainer.h" />

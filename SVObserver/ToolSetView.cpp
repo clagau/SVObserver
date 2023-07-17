@@ -25,7 +25,7 @@
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVIPSplitterFrame.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/SvimState.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOGui/SVTextEditDialog.h"
@@ -382,8 +382,8 @@ void ToolSetView::OnEditToolName()
 		return;
 	}
 
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}

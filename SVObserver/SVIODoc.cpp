@@ -31,7 +31,7 @@
 #include "SVMFCControls/SVRemoteInputDialog.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/SvimState.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
@@ -156,8 +156,8 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 
 void SVIODoc::OnExtrasTestoutputs()
 {
-	SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-	if (false == srs.conditionOk())
+	SvSml::TemporaryState_Editing tse;
+	if (false == tse.stateWasEntered())
 	{
 		return;
 	}
@@ -194,8 +194,8 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		SvMc::SVRemoteInputDialog oDlg;
 		oDlg.m_lRemoteInputCount = count;
 
-		SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-		if (srs.conditionOk())
+		SvSml::TemporaryState_Editing tse;
+		if (tse.stateWasEntered())
 		{
 			if (IDOK == oDlg.DoModal())
 			{

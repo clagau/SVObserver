@@ -24,7 +24,7 @@
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/EditLock.h"
+#include "SVSharedMemoryLibrary/EditLock.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
@@ -259,8 +259,8 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_pDigOutput = pDigitalOutput;
 				dlg.m_ioObjectType = SVIOObjectType::IO_DIGITAL_OUTPUT;
 
-				SvimState::SetResetState srs(SV_STATE_EDITING, SvStl::EditLock::acquire, SvStl::EditLock::release);
-				if (false == srs.conditionOk())
+				SvSml::TemporaryState_Editing tse;
+				if (false == tse.stateWasEntered())
 				{
 					return;
 				}
