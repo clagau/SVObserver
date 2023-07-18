@@ -24,6 +24,7 @@
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #include "Triggering/SVDigitizerLoadLibraryClass.h"
+#include "SVStatusLibrary/SvimState.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -288,7 +289,10 @@ HRESULT SVMatroxGigeAcquisitionClass::InitializeDevice( const SVDeviceParamColle
 {
 	HRESULT hr = S_OK;
 
-	if( ! CameraMatchesCameraFile() )
+	 
+	//When loading a config, the toolsetwindow settings should always be applied.
+
+	if( ! CameraMatchesCameraFile() && SvimState::CheckState(SV_STATE_LOADING) == false)
 	{
 		hr = SVMSG_SVO_20_INCORRECT_CAMERA_FILE;
 	}
@@ -466,6 +470,7 @@ HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( int iBand,
 HRESULT SVMatroxGigeAcquisitionClass::SetStandardCameraParameter( const SVDeviceParamWrapper& rw )
 {
 	HRESULT hr = S_OK;
+	
 
 	if ( IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
@@ -762,7 +767,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const std::string&
 {
 	HRESULT hr = S_OK;
 	
-	if (IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
+	if (IsDigitizerSubsystemValid() &&  CameraMatchesCameraFile())
 	{
 		if (0 != m_hDigitizer)
 		{
