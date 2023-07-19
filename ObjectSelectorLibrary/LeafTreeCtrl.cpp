@@ -65,7 +65,7 @@ namespace SvOsl
 			SvCl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
 			while( Iter.node()->end() != IterChild )
 			{
-				if( IterChild->second->isLeaf() )
+				if( IterChild->second->isLeaf() && IterChild->second->m_displayItem )
 				{
 
 					HTREEITEM Item;
@@ -246,7 +246,7 @@ namespace SvOsl
 			++ParentIter;
 		}
 
-		getParentPropPage().updateData(this);
+		getParentPropPage().updateTreeData();
 
 		return true;
 	}

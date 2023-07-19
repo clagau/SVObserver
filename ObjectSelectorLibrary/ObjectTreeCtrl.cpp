@@ -271,7 +271,7 @@ namespace SvOsl
 			++ParentIter;
 		}
 
-		m_rParent.updateData( this );
+		m_rParent.updateTreeData();
 
 		return true;
 	}

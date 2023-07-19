@@ -208,11 +208,11 @@ namespace SvOsl
 		SvCl::ObjectSelectorItem SelectorItem{rTreeItem};
 		if (0 == rTreeItem.children_size())
 		{
-			SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);
+			SelectorItem.m_Attribute = SvCl::ObjectSelectorItem::Leaf;
 		}
 		else
 		{
-			SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Node | SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);
+			SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Node | SvCl::ObjectSelectorItem::Leaf);
 		}
 
 		m_TreeContainer.insertLeaf(SelectorItem.m_Location, SelectorItem );

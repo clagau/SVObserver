@@ -16,6 +16,7 @@
 #include "SVOResource\resource.h"
 #include "NodeTreeCtrl.h"
 #include "LeafTreeCtrl.h"
+#include "SVMFCControls/SVEditControlWithHelp.h"
 #pragma endregion Includes
 
 namespace SvCl
@@ -34,55 +35,28 @@ namespace SvOsl
 
 	public:
 	#pragma region Constructor
-		//************************************
-		// Description:  The class constructor
-		// Parameter:  rTreeContainer <in>:  a reference to the tree to display
-		// Parameter:  Title <in>:  const string for page title
-		// Parameter:  SingleSelect <in>:  true for single selection mode (default)
-		//************************************
 		ObjectSelectorPpg(SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect = true, LPCTSTR nodeToBeSelected = nullptr);
 
-		//************************************
-		// Description:  The virtual destructor
-		//************************************
 		virtual ~ObjectSelectorPpg();
 	#pragma endregion Constructor
 
 	public:
 	#pragma region Public Methods
-		//************************************
-		// Description:  The method gets the tree container
-		// Returns:  a reference to the tree container
-		//************************************
 		SvCl::ObjectTreeItems& getTreeContainer() const { return m_rTreeContainer; }
 
-		//************************************
-		// Description:  The method gets the display text for the current highlighted node.
-		// Returns:  the display text of the highlighted node
-		//************************************
 		std::string getHighlightedNode() const { return m_HighlightedNode; }
 
-		//************************************
-		// Description:  The method sets the current highlighted node.
-		// Parameter:  rHighlightedNode <in>:  a const reference to the display text of the node to be highlighted
-		//************************************
 		void setHighlightedNode( const std::string& rHighlightedNode )
 		{
 			m_HighlightedNode = rHighlightedNode;
 			UpdateData(false);
 		}
 
-		//************************************
-		// Description:  The method sets the Help ID for the dialog.
-		// Parameter:  HelpID <in>:  a unique identifier for this dialog
-		//************************************
 		void setHelpID(int HelpID) { m_HelpID = HelpID; }
 
-		//************************************
-		// Description:  The method is called to update the dialog with new data
-		// Parameter:  pFromTree <in>:  a pointer to the tree containing the data to be displayed
-		//************************************
-		void updateData( const ObjectTreeCtrl* const pFromTree );
+		void updateTreeData();
+
+		LPCTSTR getFilter() { return m_FilterNameControl.getEditText().GetString(); }
 	#pragma endregion Public Methods
 
 	protected:
@@ -91,6 +65,7 @@ namespace SvOsl
 
 		virtual void DoDataExchange(CDataExchange* pDX) override;
 		virtual BOOL OnInitDialog() override;
+		afx_msg void OnChangeFilter();
 		virtual BOOL OnSetActive() override;
 		afx_msg void OnHelp();
 		afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
@@ -98,13 +73,15 @@ namespace SvOsl
 
 	private:
 	#pragma region Member Variables
-		SvCl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
-		NodeTreeCtrl m_NodeTree;						//The node tree control
-		LeafTreeCtrl m_LeafTree;						//The leaf tree control
-		CImageList m_StateImageList;					//The state image list
-		CImageList m_ImageList;							//The image list
-		std::string m_HighlightedNode;						//The currently highlighted node location
-		int m_HelpID;									//The help id used to identify the property page
+		SvCl::ObjectTreeItems& m_rTreeContainer;
+		SvMc::SVEditControlWithHelp m_FilterNameControl;
+		NodeTreeCtrl m_NodeTree;
+		LeafTreeCtrl m_LeafTree;
+		CImageList m_StateImageList;
+		CImageList m_ImageList;
+		std::string m_HighlightedNode;
+		std::string m_lastFilter;
+		int m_HelpID;
 		LPCTSTR m_nodeToBeSelected;
 	#pragma endregion Member Variables
 	};

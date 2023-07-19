@@ -56,11 +56,12 @@ namespace SvOsl
 
 		DeleteAllItems();
 
+		filterItems();
+
 		HTREEITEM ParentItem = nullptr;
 		TreeItemSet CurrentItems;
 
 		SvCl::ObjectTreeItems::pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
-
 		while( getParentPropPage().getTreeContainer().pre_order_end() != Iter )
 		{
 			if( Iter.node()->is_root() )
@@ -74,19 +75,22 @@ namespace SvOsl
 			}
 			if( Iter->second->isNode() )
 			{
-				HTREEITEM Item = nullptr;
-				Item = InsertItem( TVIF_TEXT | TVIF_STATE | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM, 
-					Iter->second->m_Name.c_str(),
-					Iter->second->m_IconNumber,
-					Iter->second->m_IconNumber,
-					0,
-					0,
-					reinterpret_cast<LPARAM> (&Iter->first),
-					ParentItem,
-					TVI_LAST );
+				if (Iter->second->m_displayItem)
+				{
+					HTREEITEM Item = nullptr;
+					Item = InsertItem(TVIF_TEXT | TVIF_STATE | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM,
+						Iter->second->m_Name.c_str(),
+						Iter->second->m_IconNumber,
+						Iter->second->m_IconNumber,
+						0,
+						0,
+						reinterpret_cast<LPARAM> (&Iter->first),
+						ParentItem,
+						TVI_LAST);
 
-				SetItemState( Item, INDEXTOSTATEIMAGEMASK(Iter->second->m_NodeState), TVIS_STATEIMAGEMASK );
-				Iter->second->m_NodeItem =  Item;
+					SetItemState(Item, INDEXTOSTATEIMAGEMASK(Iter->second->m_NodeState), TVIS_STATEIMAGEMASK);
+					Iter->second->m_NodeItem = Item;
+				}
 			}
 			//On initial load check if leaf value selected when in single object selection mode
 			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState)
@@ -154,7 +158,10 @@ namespace SvOsl
 				continue;
 			}
 
-			UpdateNode(*Iter->second);
+			if (Iter->second->m_displayItem)
+			{
+				UpdateNode(*Iter->second);
+			}
 
 			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState )
 			{
@@ -276,7 +283,7 @@ namespace SvOsl
 			if( nullptr != pLocation )
 			{
 				getParentPropPage().setHighlightedNode( *pLocation );
-				getParentPropPage().updateData( this );
+				getParentPropPage().updateTreeData();
 
 			}
 		}
@@ -398,7 +405,7 @@ namespace SvOsl
 			++ParentIter;
 		}
 
-		getParentPropPage().updateData(this);
+		getParentPropPage().updateTreeData();
 
 		return true;
 	}
@@ -449,6 +456,53 @@ namespace SvOsl
 			{
 				SetItemState( treeItem, INDEXTOSTATEIMAGEMASK(rItem.m_NodeState), TVIS_STATEIMAGEMASK );
 			}
+		}
+	}
+
+	void NodeTreeCtrl::filterItems()
+	{
+		std::string filter {getParentPropPage().getFilter()};
+		std::string parentLocation;
+		bool filterActive {false == filter.empty()};
+
+		SvCl::ObjectTreeItems::pre_order_iterator Iter(getParentPropPage().getTreeContainer().pre_order_begin());
+		while (getParentPropPage().getTreeContainer().pre_order_end() != Iter)
+		{
+			bool showParent = filterActive && false == parentLocation.empty() && Iter->second->m_Location.starts_with(parentLocation);
+			if (Iter.node()->is_root())
+			{
+				++Iter;
+				continue;
+			}
+			if (filterActive)
+			{
+				if (false == showParent)
+				{
+					if (PathMatchSpec(Iter->second->m_Location.c_str(), filter.c_str()) || PathMatchSpec(Iter->second->m_Location.c_str(), (filter + _T("*")).c_str()))
+					{
+						parentLocation = Iter->second->m_Location;
+						Iter->second->m_displayItem = true;
+						auto* pParent = Iter.node()->parent();
+						while (nullptr != pParent && false == pParent->get()->second->m_displayItem)
+						{
+							pParent->get()->second->m_displayItem = true;
+							pParent = pParent->parent();
+						}
+					}
+					else
+					{
+						parentLocation.clear();
+						Iter->second->m_displayItem = false;
+						Iter->second->m_NodeItem = nullptr;
+						Iter->second->m_LeafItem = nullptr;
+					}
+				}
+			}
+			else
+			{
+				Iter->second->m_displayItem = true;
+			}
+			++Iter;
 		}
 	}
 	#pragma endregion Protected Methods

@@ -32,8 +32,6 @@ namespace SvCl
 			AttributeNone = 0,
 			Node = 1 << 1,
 			Leaf = 1 << 2,
-			Checkable = 1 << 3,
-			NameEditable = 1 << 4
 		};
 
 		/**********
@@ -83,18 +81,19 @@ namespace SvCl
 
 	#pragma region Member Variables
 	public:
-		std::string			m_Name;						//The name of the item
-		std::string			m_Location;					//The location of the item
-		std::string			m_ItemTypeName;				//The name of the data type of the item
-		std::string			m_ItemKey;					//The item key
-		HTREEITEM			m_NodeItem {nullptr};		//the node item handle
-		HTREEITEM			m_LeafItem {nullptr};		//the Leaf item handle
-		AttributeEnum		m_Attribute{AttributeNone};	//The item attribute
-		int					m_IconNumber{0};			//The corresponding item image number
-		bool				m_Modified{false};			//Modified flag
-		CheckedStateEnum	m_NodeState {EmptyEnabled};	//The node checked state
-		CheckedStateEnum	m_CheckedState{EmptyEnabled};		//The item checked state
-		CheckedStateEnum	m_OrgCheckedState{EmptyEnabled};	//The item original checked state
+		std::string			m_Name;
+		std::string			m_Location;
+		std::string			m_ItemTypeName;
+		std::string			m_ItemKey;
+		HTREEITEM			m_NodeItem {nullptr};
+		HTREEITEM			m_LeafItem {nullptr};
+		AttributeEnum		m_Attribute{AttributeNone};
+		int					m_IconNumber{0};
+		bool				m_Modified{false};
+		bool				m_displayItem {true};
+		CheckedStateEnum	m_NodeState {EmptyEnabled};
+		CheckedStateEnum	m_CheckedState{EmptyEnabled};
+		CheckedStateEnum	m_OrgCheckedState{EmptyEnabled};
 	#pragma endregion Member Variables
 	};
 

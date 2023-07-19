@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ObjectSelectorPpg.h"
+#include "TextDefinesSvOsl.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
@@ -31,6 +32,7 @@ namespace SvOsl
 {
 	BEGIN_MESSAGE_MAP(ObjectSelectorPpg, CPropertyPage)
 		ON_COMMAND(ID_HELP, OnHelp)
+		ON_EN_CHANGE(IDC_FILTER, OnChangeFilter)
 		ON_WM_SIZE()
 		ON_WM_HELPINFO()
 	END_MESSAGE_MAP()
@@ -54,7 +56,7 @@ namespace SvOsl
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
-	void ObjectSelectorPpg::updateData( const ObjectTreeCtrl* const)
+	void ObjectSelectorPpg::updateTreeData()
 	{
 		m_NodeTree.updateTree();
 		m_LeafTree.updateTree();
@@ -67,6 +69,7 @@ namespace SvOsl
 		CPropertyPage::DoDataExchange(pDX);
 		DDX_Control(pDX, IDC_TREE_NODES, m_NodeTree);
 		DDX_Control(pDX, IDC_TREE_VALUES, m_LeafTree);
+		DDX_Control(pDX, IDC_FILTER, m_FilterNameControl);
 		//This is ok when std::string is only being read, input from the dialog would be lost
 		CString tempStr{m_HighlightedNode.c_str()};
 		DDX_Text(pDX, IDC_HIGHLIGHTED_NODE, tempStr);
@@ -75,6 +78,8 @@ namespace SvOsl
 	BOOL ObjectSelectorPpg::OnInitDialog()
 	{
 		CPropertyPage::OnInitDialog();
+
+		m_FilterNameControl.setHelpText(FilterTreeNameHelp);
 
 		m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
 
@@ -101,6 +106,17 @@ namespace SvOsl
 		m_NodeTree.loadTree();
 
 		return TRUE;
+	}
+
+	void ObjectSelectorPpg::OnChangeFilter()
+	{
+		UpdateData(true);
+		if(m_lastFilter != m_FilterNameControl.getEditText().GetString())
+		{
+			m_NodeTree.loadTree();
+			m_LeafTree.loadTree();
+			m_lastFilter = m_FilterNameControl.getEditText().GetString();
+		}
 	}
 
 	BOOL ObjectSelectorPpg::OnSetActive()

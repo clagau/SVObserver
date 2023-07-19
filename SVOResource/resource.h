@@ -2272,7 +2272,7 @@
 #define IDC_LABEL_TREE_NODES            16032
 #define IDC_TREE_VALUES                 16033
 #define IDC_LABEL_TREE_VALUES           16034
-#define IDC_LABEL_HIGHLIGHTED_NODE      16035
+#define IDC_FILTER                      16035
 #define IDC_HIGHLIGHTED_NODE            16036
 #define IDC_GRID                        16037
 #define IDC_SUM_SELECTOR                16038
