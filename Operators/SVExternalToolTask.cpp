@@ -1689,16 +1689,7 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 			if (!CreateChildObject(pResult, SvDef::SVMFResetObject))
 			{
 				// Remove it from the TaskObjectList ( Destruct it )
-				uint32_t objectID = pResult->getObjectId();
-				if (SvDef::InvalidObjectId != objectID)
-				{
-					Delete(objectID);
-				}
-				else
-				{
-					delete pResult;
-				}
-
+				Delete(pResult);
 				throw - 12348;
 			}
 		}

@@ -34,6 +34,7 @@ struct ObjectInfo
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 	bool isValid = false;
 	std::string DisplayName;
+	bool canHasChildren = false;
 };
 typedef std::vector<ObjectInfo> ObjectInfoVector;
 

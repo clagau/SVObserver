@@ -55,6 +55,7 @@ message TaskObjectInfo
 	SVObjectTypeEnum objecttype = 3; 
 	SVObjectSubTypeEnum objectsubtype = 4;
 	bool isvalid = 5; 
+	bool canhaschildren = 6;
 }
 
 message NameValuePair
@@ -1204,6 +1205,22 @@ message ExportModuleResponse
 	string dataString = 1;
 }
 
+message StartEditModuleRequest
+{
+	uint32 moduleToolId = 1;
+}
+
+message SaveEditModuleRequest
+{
+	uint32 moduleToolId = 1;
+	string changeText = 2;
+}
+
+message CancelEditModuleRequest
+{
+	uint32 moduleToolId = 1;
+}
+
 //Try to fix all inputs (which are invalid) and return the list of inputs which are invalid before call the message.
 //But if the flag only_but_all_groupTool_Inputs is set, than it task must be a groupTool and only the inputs but all inputs will be added to the list.
 message FixInputsAndGetInputListRequest
@@ -1328,7 +1345,10 @@ message InspectionCmdRequest
 		FixInputsAndGetInputListRequest fixInputsAndGetInputListRequest = 87; 
 		ResetAllCounterRequest  resetAllCounterRequest =88;
 		GetSourceResultImageListRequest getSourceResultImageListRequest = 89; 
-	}
+		StartEditModuleRequest startEditModuleRequest = 90;
+		SaveEditModuleRequest saveEditModuleRequest = 91;
+		CancelEditModuleRequest cancelEditModuleRequest = 92;
+		}
 }
 
 message InspectionCmdResponse
@@ -1394,5 +1414,5 @@ message InspectionCmdResponse
 		ExportModuleResponse exportModuleResponse = 60;
 		FixInputsAndGetInputListResponse fixInputsAndGetInputListResponse = 61;
 		GetSourceResultImageListResponse getSourceResultImageListResponse = 62; 
-	}
+		}
 }

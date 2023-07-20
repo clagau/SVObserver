@@ -890,6 +890,33 @@ std::make_tuple(
 [](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
 )
 },
+
+{SvPb::InspectionCmdRequest::kStartEditModuleRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  startEditModule(rRequest.starteditmodulerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kSaveEditModuleRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  saveEditModule(rRequest.saveeditmodulerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
+
+{SvPb::InspectionCmdRequest::kCancelEditModuleRequest,
+std::make_tuple(
+[] {return ThreadPref::inspection; },
+[] {return std::chrono::seconds{120}; } ,
+[](const SvPb::InspectionCmdRequest& rRequest) {return  cancelEditModule(rRequest.canceleditmodulerequest()); },
+[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
+)
+},
 };
 
 }

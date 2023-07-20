@@ -162,12 +162,17 @@ public:
 	afx_msg void OnUpdateAddParameterToMonitorList(CCmdUI* PCmdUI);
 	afx_msg void OnRemoveParameterToMonitorList();
 	afx_msg void OnUpdateRemoveParameterToMonitorList(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateConvertToModul(CCmdUI* PCmdUI);
-	afx_msg void OnConvertToModul();
+	afx_msg void OnUpdateConvertToModule(CCmdUI* PCmdUI);
+	afx_msg void OnConvertToModule();
+	afx_msg void OnUpdateEditModule(CCmdUI* PCmdUI);
+	afx_msg void OnEditModule();
+	afx_msg void OnUpdateCancelEditModule(CCmdUI* PCmdUI);
+	afx_msg void OnCancelEditModule();
 	afx_msg void OnExportTools();
 	afx_msg void OnUpdateExportTools(CCmdUI* PCmdUI);
 	afx_msg void OnImportTools();
 	afx_msg void OnUpdateImportTools(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateEditDelete(CCmdUI* pCmdUI);
 	afx_msg void OnEditDelete();
 	afx_msg void OnAdjustLightReference();
 	afx_msg void OnAdjustLut();
@@ -370,6 +375,11 @@ private:
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
 
 	void convertGroupToolToModule(ToolSetView& rToolsetView, uint32_t toolID);
+	void startEditModule(uint32_t toolId);
+	bool saveEditModule(uint32_t toolId);
+	void cancelEditModule(uint32_t toolId);
+
+	void setModuleEditing(uint32_t id);
 #pragma endregion Private Methods
 
 	RegressionTestController m_regTest;

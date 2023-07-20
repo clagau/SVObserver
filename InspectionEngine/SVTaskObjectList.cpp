@@ -301,10 +301,7 @@ int  SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, SVTaskObjectCl
 		auto it = std::find_if(m_TaskObjectVector.begin(), m_TaskObjectVector.end(),
 			[&objectBeforeID](SVTaskObjectClass* pObject)
 		{
-			if (pObject == nullptr || pObject->getObjectId() == objectBeforeID)
-				return true;
-			else
-				return false;
+			return (pObject == nullptr || pObject->getObjectId() == objectBeforeID);
 		});
 
 		auto it2 = m_TaskObjectVector.insert(it, pTaskObject);
@@ -527,6 +524,7 @@ void   SVTaskObjectListClass::GetTaskObjectListInfo(SvPb::TaskObjectListResponse
 			pInfo->set_objectsubtype(pTaskObj->GetObjectSubType());
 			pInfo->set_objecttype(pTaskObj->GetObjectType());
 			pInfo->set_taskobjectid(pTaskObj->getObjectId());
+			pInfo->set_canhaschildren(pTaskObj->canHasChildren());
 		}
 	}
 }
@@ -570,25 +568,23 @@ int SVTaskObjectListClass::getToolDepth(bool goUpwards) const
 	return depth;
 }
 
-void SVTaskObjectListClass::Delete(uint32_t objectID)
+void SVTaskObjectListClass::Delete(IObjectClass* pTaskObject)
 {
-	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(objectID));
-	if (nullptr != pTaskObject)
+	if (nullptr == pTaskObject)
 	{
-		// look in friend list
-		if (RemoveFromTaskObjectVector(objectID) || RemoveFriend(objectID))
-		{
-			delete(pTaskObject);
-			return;
-		}
+		Log_Assert(false);
+		return;
 	}
-	// unknown owner!!
-	Log_Assert( false );
+		
+	auto objectID = pTaskObject->getObjectId();
+	bool isOk = RemoveFromTaskObjectVector(objectID) || RemoveFriend(objectID);
+	Log_Assert(isOk);
+	delete(pTaskObject);
 }
 
 void SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject)
 {
-	SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
+	auto* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
 	InsertBefore(objectBeforeID, pObject);
 }
 
@@ -606,7 +602,7 @@ void SVTaskObjectListClass::InsertAt(int pos, ITaskObject& rObject)
 
 bool SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD context)
 {
-	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
+	auto* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
 	return DestroyChildObject(pTaskObject, context);
 }
 
@@ -816,7 +812,7 @@ void SVTaskObjectListClass::getInputs(std::back_insert_iterator<std::vector<SvOl
 
 bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId)
 {
-	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(pObject);
+	auto* pTaskObject = dynamic_cast<SVTaskObjectClass*>(pObject);
 	if (nullptr != pTaskObject)
 	{
 		// NOTE:	Only dynamically generated objects could be replaced, 
@@ -826,7 +822,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId
 		pTaskObject->DestroyFriends();
 
 		// - Remove All Dynamic Children (they will be constructed anew)
-		if (SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pTaskObject))
+		if (auto* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pTaskObject))
 		{
 			// Kill all the Dynamic Children
 			pTaskObjectList->DeleteAll();
@@ -864,8 +860,8 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId
 			SVObjectClass* pOwner = pDuplicatedObject->GetParent();
 			if (pOwner)
 			{
-				SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
-				SVTaskObjectListClass* pTaskList = dynamic_cast<SVTaskObjectListClass*>(pDuplicatedObject);
+				auto* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
+				auto* pTaskList = dynamic_cast<SVTaskObjectListClass*>(pDuplicatedObject);
 				if (nullptr == pTaskListOwner || !pTaskListOwner->DestroyChildObject(pTaskList))
 				{
 					// must be a Friend

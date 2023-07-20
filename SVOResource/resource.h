@@ -2660,10 +2660,12 @@
 #define ID_TOOLBAR_ZOOM                 20342
 #define ID_ZOOMTOOLBAR                  20343
 #define ID_OK                           20344
+#define ID_START_EDIT_MODULE            20345
 #define ID_EXTRAS_ENABLEAUTOSAVE        20346
 #define ID_EDIT_EDITTOOLTAB1            20347
 #define ID_ADD_RESIZETOOL               20348
 #define ID_RESIZETOOL_CTRL              20349
+#define ID_CANCEL_EDIT_MODULE           20350
 #define ID_SAVEVIEW_WITHOVERLAYS        20351
 #define ID_SAVEVIEW_WITHOUTOVERLAYS     20352
 #define ID_SAVEIMAGE_WITHOUTOVERLAYS    20353

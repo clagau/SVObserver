@@ -499,10 +499,31 @@ void ToolSetView::loadAndAdaptMenu(const std::vector<PtrNavigatorElement>& rSele
 				if (reqModification.m_isModulTool)
 				{
 					menu.ModifyMenuA(ID_CONVERT_TO_MODULE, MF_BYCOMMAND | MF_STRING, ID_CONVERT_TO_MODULE, "Convert back to GroupTool");
+					if (SvimState::isModuleEditing())
+					{
+						if (rSelectedElements[0]->m_navigatorObjectId == SvimState::getModuleEditingId())
+						{
+							menu.ModifyMenuA(ID_START_EDIT_MODULE, MF_BYCOMMAND | MF_STRING, ID_START_EDIT_MODULE, "Save Module");
+						}
+						else
+						{
+							menu.RemoveMenu(ID_START_EDIT_MODULE, MF_BYCOMMAND);
+							menu.RemoveMenu(ID_CANCEL_EDIT_MODULE, MF_BYCOMMAND);
+						}
+					}
+					else
+					{
+						menu.RemoveMenu(ID_CANCEL_EDIT_MODULE, MF_BYCOMMAND);
+					}
 				}
-				else if (false == reqModification.m_isClosedGroupTool)
+				else
 				{
-					menu.RemoveMenu(ID_CONVERT_TO_MODULE, MF_BYCOMMAND);
+					menu.RemoveMenu(ID_START_EDIT_MODULE, MF_BYCOMMAND);
+					menu.RemoveMenu(ID_CANCEL_EDIT_MODULE, MF_BYCOMMAND);
+					if (false == reqModification.m_isClosedGroupTool)
+					{
+						menu.RemoveMenu(ID_CONVERT_TO_MODULE, MF_BYCOMMAND);
+					}
 				}
 				break;
 			}

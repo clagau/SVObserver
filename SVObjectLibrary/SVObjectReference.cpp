@@ -37,7 +37,7 @@ SVObjectReference::SVObjectReference(SVObjectClass* pObject, long lArrayIndex, s
 	m_objectId = m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
 	if (nullptr != m_pObject)
 	{
-		m_NameInfo.ParseObjectName(m_NameInfo, m_pObject->GetCompleteName().c_str());
+		m_NameInfo.ParseObjectName(m_NameInfo, m_pObject->GetCompleteName());
 		registerNotification();
 	}
 	m_NameInfo.SetIsIndexPresent(true);
@@ -65,7 +65,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	if (nullptr != m_pObject)
 	{
 		m_objectId = m_pObject->getObjectId();
-		m_NameInfo.ParseObjectName(m_pObject->GetCompleteName().c_str());
+		m_NameInfo.ParseObjectName(m_pObject->GetCompleteName());
 		registerNotification();
 	}
 }
@@ -464,9 +464,14 @@ void SVObjectReference::onChangeNotification(SvOi::ObjectNotificationType type, 
 			}
 			break;
 		case SvOi::ObjectNotificationType::SwitchObject:
-			setObjectId(objectId);
-			update();
+		{
+			if (m_objectId != objectId)
+			{
+				setObjectId(objectId);
+				update();
+			}
 			break;
+		}
 		default:
 			break;
 	}

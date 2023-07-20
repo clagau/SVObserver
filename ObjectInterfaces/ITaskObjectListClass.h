@@ -22,6 +22,7 @@ class  TaskObjectListResponse;
 namespace SvOi
 {
 class ITaskObject;
+class IObjectClass;
 
 //this class is a interface. It should only have pure virtual public method and no member variables
 class ITaskObjectListClass
@@ -33,7 +34,7 @@ public:
 		The method deletes one object from the this task object list object.
 		/param objectID <in> ID of the object to deleted.
 	***********/
-	virtual void Delete(uint32_t objectID) = 0;
+	virtual void Delete(IObjectClass* pObject) = 0;
 
 	/// The method inserts a task object to this task object list.
 	/// \param objectBeforeID [in] the ID where the new object is to be inserted before. If SvDef::InvalidObjectId, add at the end.

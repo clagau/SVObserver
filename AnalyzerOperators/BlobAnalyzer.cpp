@@ -354,15 +354,7 @@ DWORD BlobAnalyzer::AllocateResult(int FeatureIndex)
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams)); 
 					
 			// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
-			uint32_t objectID = pResult->getObjectId();
-			if (SvDef::InvalidObjectId != objectID)
-			{
-				Delete( objectID );
-			}
-			else
-			{
-				delete pResult;
-			}
+			Delete(pResult);
 		}
 	}
 
@@ -444,16 +436,8 @@ DWORD BlobAnalyzer::AllocateBlobResult ()
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() ); 
 				
-				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
-				uint32_t objectID = m_pResultBlob->getObjectId();
-				if(SvDef::InvalidObjectId != objectID )
-				{
-					Delete( objectID );
-				}
-				else
-				{
-					delete m_pResultBlob;
-				}
+				Delete(m_pResultBlob);
+				m_pResultBlob = nullptr;
 			}
 		}
 		

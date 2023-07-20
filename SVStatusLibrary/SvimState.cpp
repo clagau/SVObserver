@@ -15,6 +15,7 @@
 #include "SvimState.h"
 #include "MessageManagerHelper.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/ObjectDefines.h"
 #include "MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
@@ -28,6 +29,7 @@ std::mutex SvimState::ms_protectHash;
 std::string SvimState::ms_hash;
 
 std::atomic<SvPb::DeviceModeType> SvimState::ms_CurrentMode {SvPb::DeviceModeType::unknownMode};
+uint32_t SvimState::ms_ModuleEditingId = SvDef::InvalidObjectId;
 NotifyFunctor SvimState::ms_notify {nullptr};
 
 std::atomic<int>  SvimState::ms_LockCountSvrc {0};
@@ -148,14 +150,21 @@ SvPb::DeviceModeType SvimState::GetMode()
 		SV_STATE_SAVING |
 		SV_STATE_CLOSING |
 		SV_STATE_UNAVAILABLE |
-		SV_STATE_EDITING |
+		//SV_STATE_EDITING |
 		SV_STATE_CANCELING))
 	{
 		result = SvPb::DeviceModeType::modeChanging;
 	}
 	else if (SvimState::CheckState(SV_STATE_EDIT))
 	{
-		result = SvPb::DeviceModeType::editMode;
+		if (SvimState::isModuleEditing())
+		{
+			result = SvPb::DeviceModeType::editModuleMode;
+		}
+		else
+		{
+			result = SvPb::DeviceModeType::editMode;
+		}
 	}
 	else if (SvimState::CheckState(SV_STATE_RUNNING))
 	{
@@ -232,6 +241,14 @@ void SvimState::ConfigWasUnloaded()
 	SetHash(nullptr);
 }
 
+void SvimState::setModuleEditing(uint32_t id)
+{
+	//do not set directly from on id to another, always close before the ModuleEditing-mode.
+	assert(SvDef::InvalidObjectId == ms_ModuleEditingId || SvDef::InvalidObjectId == id);
+	
+	ms_ModuleEditingId = id;
+	CheckModeNotify();
+}
 
 void SvimState::SetHash(LPCSTR hash)
 {

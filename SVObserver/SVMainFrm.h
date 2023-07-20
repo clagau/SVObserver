@@ -157,7 +157,6 @@ private:
 	afx_msg void OnUpdateFileSaveCopyAs(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveImage(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileUpdate(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditDelete(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditEditTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditEditToolSet(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditRemoteInputs(CCmdUI* PCmdUI);

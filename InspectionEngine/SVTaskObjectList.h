@@ -91,7 +91,7 @@ public:
 	virtual HRESULT connectToObject(const SvPb::ConnectToObjectRequest& rConnectData) override;
 	virtual void getInputData(const SvPb::GetInputDataRequest& request, SvPb::InspectionCmdResponse& rCmdResponse) const override;
 #pragma region virtual methods (ITaskObjectListClass)
-	virtual void Delete(uint32_t objectID) override;
+	virtual void Delete(IObjectClass* pObject) override;
 	virtual void InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject) override;
 	virtual void InsertAt(int pos, ITaskObject& rObject) override;
 	virtual bool DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;

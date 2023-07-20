@@ -5403,6 +5403,40 @@ SvPb::InspectionCmdResponse SvOi::convertModuleToGroupTool(uint32_t moduleToolId
 	return calcConfigFunction(func);
 }
 
+SvPb::InspectionCmdResponse SvOi::startEditModule(uint32_t moduleToolId)
+{
+	auto func = [moduleToolId](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		rConfig.getModuleController().startEditModule(moduleToolId);
+		return {};
+	};
+
+	return calcConfigFunction(func);
+}
+
+SvPb::InspectionCmdResponse SvOi::saveEditModule(uint32_t moduleToolId, const std::string& rChangeText )
+{
+	auto func = [moduleToolId, rChangeText](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		rConfig.getModuleController().saveEditModule(moduleToolId, rChangeText);
+		return {};
+	};
+
+	return calcConfigFunction(func);
+}
+
+SvPb::InspectionCmdResponse SvOi::cancelEditModule(uint32_t moduleToolId)
+{
+	auto func = [moduleToolId](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	{
+		rConfig.getModuleController().cancelEditModule(moduleToolId);
+		return {};
+	};
+
+	return calcConfigFunction(func);
+}
+
+
 SvPb::InspectionCmdResponse SvOi::renameModule(SVGUID moduleGuid, const std::string& newName)
 {
 	auto func = [moduleGuid, newName](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
@@ -5435,14 +5469,14 @@ SvPb::InspectionCmdResponse SvOi::exportModule(SVGUID moduleGuid)
 	return calcConfigFunction(func);
 }
 
-void SvOi::registerModuleInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const HistoryList& rHistoryList)
+void SvOi::registerModuleInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const HistoryList& rHistoryList, bool checkComment)
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
 	if (nullptr != pConfig)
 	{
-		pConfig->getModuleController().registerInstance(guid, instanceId, rComment, rHistoryList);
+		pConfig->getModuleController().registerInstance(guid, instanceId, rComment, rHistoryList, checkComment);
 		return;
 	}
 

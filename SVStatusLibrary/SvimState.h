@@ -12,6 +12,7 @@
 #pragma once
 #pragma region Includes
 #include "SVProtoBuf/SVRC-Enum.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
 constexpr DWORD SV_STATE_UNKNOWN		= 0x00000000;
@@ -52,7 +53,7 @@ namespace SvSml
 	class TemporaryState_Editing;
 }
 
-typedef std::function<void(SvPb::NotifyType, const _variant_t&)> NotifyFunctor;
+using NotifyFunctor = std::function<void(SvPb::NotifyType, const _variant_t&)>;
 
 //This class manages the state variable and uses a lock to 
 //
@@ -68,6 +69,8 @@ class SvimState
 {
 	friend class SvSml::TemporaryState_Editing;
 public:
+	friend class SVIPDoc;
+
 	//RAII helper struct for ms_LockCountSvrc
 	struct SVRCBlocker
 	{
@@ -87,12 +90,12 @@ public:
 	class TemporaryState
 	{
 	public:
-		explicit TemporaryState(DWORD state):
+		explicit TemporaryState(DWORD state) :
 			m_state(state)
 		{
 			SvimState::AddState(m_state);
 		}
-
+		
 		~TemporaryState()
 		{
 			SvimState::RemoveState(m_state);
@@ -152,7 +155,12 @@ public:
 	static void ConfigWasLoaded(LPCSTR hash = nullptr);
 	static void ConfigWasUnloaded();
 
+	static bool isModuleEditing() { return SvDef::InvalidObjectId != ms_ModuleEditingId; };
+	static uint32_t getModuleEditingId() { return ms_ModuleEditingId; };
+
 private:
+	static void setModuleEditing(uint32_t id);
+
 	static void AddState_Editing();			// SV_STATE_EDITING is treated separately because it may only be entered if an EditLock has been obtained. ONLY access this function from class TemporaryState_Editing
 	static bool RemoveState_Editing();		// SV_STATE_EDITING is treated separately because it may only be entered if an EditLock has been obtained. ONLY access this function from class TemporaryState_Editing
 
@@ -172,6 +180,7 @@ private:
 	static std::atomic_long ms_fullState;
 
 	static std::atomic<SvPb::DeviceModeType> ms_CurrentMode;
+	static uint32_t ms_ModuleEditingId; //If value == InvalidObjectId, no Module is in editMode, else it the moduleId is set here
 
 	static std::atomic<__time64_t> ms_lastModifiedTime;
 	static std::atomic<__time64_t> ms_loadedSinceTime;

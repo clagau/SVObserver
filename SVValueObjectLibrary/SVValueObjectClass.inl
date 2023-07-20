@@ -993,15 +993,15 @@ std::string SVValueObjectClass<T>::getFixedWidthFormatString(uint32_t , uint32_t
 }
 
 template <typename T>
-void SVValueObjectClass<T>::moveObject(SVObjectClass& rObject)
+void SVValueObjectClass<T>::moveObject(SVObjectClass& rNewObject)
 {
-	__super::moveObject(rObject);
-	auto* pSourceObject = dynamic_cast<SVValueObjectClass<T>*>(&rObject);
-	if (nullptr != pSourceObject)
+	__super::moveObject(rNewObject);
+	auto* pDestinationObject = dynamic_cast<SVValueObjectClass<T>*>(&rNewObject);
+	if (nullptr != pDestinationObject)
 	{
 		_variant_t value;
 		getValue(value);
-		pSourceObject->setValue(value);
+		pDestinationObject->setValue(value);
 	}
 	else
 	{

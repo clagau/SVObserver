@@ -111,7 +111,7 @@ void EditModulesDialog::OnSelchangeList()
 			char mbstr[100];
 			std::strftime(mbstr, sizeof(mbstr), "%c", std::localtime(&rPair.first));
 			
-			m_strHistory = (std::string {mbstr} + ": " + rPair.second + guidForFirstLine + "\n").c_str() + m_strHistory;
+			m_strHistory = (std::string {mbstr} + ": " + rPair.second + guidForFirstLine + "\r\n").c_str() + m_strHistory;
 			guidForFirstLine = "";
 		}
 		GetDlgItem(IDC_DELETE)->EnableWindow(0 == m_moduleList[index].m_numberOfUse);

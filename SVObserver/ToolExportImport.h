@@ -68,8 +68,6 @@ public:
 	HRESULT exportTools(const std::vector<uint32_t>& rToolIds, LPCTSTR exportFileName, LPCTSTR xmlFileName, bool includeModuleFiles) const;
 	std::string importTools(LPCTSTR fileName) const;
 
-	void setRenameValues(const std::string& rOldName, const std::string& rNewName) { m_oldName = rOldName; m_newName = rNewName; }
-
 	std::vector<uint32_t> createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId, bool onlySameVersionValid = true, bool useExplorerStyle = true);
 
 	const SvStl::MessageManager& getLastErrorMessage() const { return m_errorMessage; }
@@ -112,8 +110,6 @@ private:
 #pragma region Member Variables
 	mutable SvStl::MessageManager m_errorMessage{SvStl::MsgType::Log | SvStl::MsgType::Display};
 	mutable std::vector<std::string> m_additionalNames;
-	std::string m_oldName {};
-	std::string m_newName {};
 
 	static bool m_isReloadedAfterCopyToolsToClipboard;
 #pragma endregion Member Variables

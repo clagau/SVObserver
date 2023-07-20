@@ -34,6 +34,7 @@ public:
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 	virtual void resetCounters() override;
 	virtual int getToolDepth(bool goUpwards = true) const override;
+	virtual bool canHasChildren() const override { return true; };
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };

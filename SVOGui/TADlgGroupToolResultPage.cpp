@@ -80,12 +80,12 @@ SvStl::MessageContainerVector getErrorMessage(uint32_t inspectionId, uint32_t to
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-TADlgGroupToolResultPage::TADlgGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isModuleTool)
+TADlgGroupToolResultPage::TADlgGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, ToolStateEnum toolState)
 	: CPropertyPage(TADlgGroupToolResultPage::IDD, IDS_CLASSNAME_RESULT_PARAMETER_TASK)
 	, m_InspectionID(inspectionId)
 	, m_toolId(toolId)
 	, m_TaskObjectID(taskId)
-	, m_isModuleTool(isModuleTool)
+	, m_toolState(toolState)
 	, m_Values {SvOgu::BoundValues{ inspectionId, taskId }}
 {
 }
@@ -121,7 +121,7 @@ BOOL TADlgGroupToolResultPage::OnInitDialog()
 
 	m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
 
-	if (m_isModuleTool)
+	if (ToolStateEnum::GroupTool != m_toolState)
 	{
 		SetHelpID(IDD_MODULE_RESULT);
 		GetDlgItem(IDC_BUTTON_REMOVE)->ShowWindow(SW_HIDE);
@@ -197,7 +197,7 @@ void TADlgGroupToolResultPage::OnGridClick(NMHDR* pNotifyStruct, LRESULT*)
 		}
 		case ValueButtonColumn:
 		{
-			if (false == m_isModuleTool)
+			if (ToolStateEnum::ModuleTool != m_toolState)
 			{
 				SvOgu::LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ResultObjectValueEId + (pItem->iRow - 1)), m_resultData[pItem->iRow - 1]);
 				if (IDOK == dlg.DoModal())
@@ -270,14 +270,14 @@ bool TADlgGroupToolResultPage::OnValueChanged(int row, int column)
 
 void TADlgGroupToolResultPage::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 {
-	SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
+	auto* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
 	bool bAcceptChange = OnValueChanged(pItem->iRow, pItem->iColumn);
 	*pResult = (bAcceptChange) ? 0 : -1;
 }
 
 void TADlgGroupToolResultPage::OnGridValueSelectionChanged(NMHDR* pNotifyStruct, LRESULT* pResult)
 {
-	SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
+	auto* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
 	bool bAcceptChange = OnValueChanged(pItem->iRow, pItem->iColumn);
 	*pResult = (bAcceptChange) ? 0 : -1;
 }
@@ -434,10 +434,10 @@ void TADlgGroupToolResultPage::FillGridControl()
 		setGridControlReadOnlyFlag(row, DependencyColumn, false);
 
 		m_Grid.SetItemText(row, NameColumn, m_resultData[i].m_name.c_str());
-		setGridControlReadOnlyFlag(row, NameColumn, false == m_isModuleTool);
+		setGridControlReadOnlyFlag(row, NameColumn, ToolStateEnum::GroupTool == m_toolState);
 		using namespace SvGcl;
 		m_Grid.SetCellType(row, TypeColumn, RUNTIME_CLASS(GridCellCombo));
-		setGridControlReadOnlyFlag(row, TypeColumn, false == m_isModuleTool);
+		setGridControlReadOnlyFlag(row, TypeColumn, ToolStateEnum::GroupTool == m_toolState);
 		auto* pCell = dynamic_cast<SvGcl::GridCellCombo*>(m_Grid.GetCell(row, TypeColumn));
 
 		pCell->SetOptions(typeOptions);
@@ -453,7 +453,7 @@ void TADlgGroupToolResultPage::FillGridControl()
 			pCell->SetText(typePairs[0].first.c_str());
 		}
 
-		std::string res = "";
+		std::string res;
 		if (m_resultData[i].m_type == SvPb::LinkedValueTypeEnum::TypeStates)
 		{
 			if (m_resultData[i].m_data.m_selectedOption == SvPb::LinkedSelectedOption::DirectValue)
@@ -470,7 +470,7 @@ void TADlgGroupToolResultPage::FillGridControl()
 
 		setValueColumn(i);
 
-		if (false == m_isModuleTool)
+		if (ToolStateEnum::ModuleTool != m_toolState)
 		{
 			SvGcl::GV_ITEM buttonItem;
 			buttonItem.mask = GVIF_IMAGE;
@@ -520,14 +520,14 @@ void TADlgGroupToolResultPage::setValueColumn(int pos)
 	if (isChangeable)
 	{
 		m_Grid.SetItemBkColour(pos + 1, ValueColumn, SvDef::White);
-		setGridControlReadOnlyFlag(pos + 1, ValueColumn, false == m_isModuleTool);
+		setGridControlReadOnlyFlag(pos + 1, ValueColumn, ToolStateEnum::ModuleTool != m_toolState);
 	}
 	else
 	{
 		m_Grid.SetItemBkColour(pos + 1, ValueColumn, SvDef::WhiteSmoke);
 		setGridControlReadOnlyFlag(pos + 1, ValueColumn, false);
 	}
-	setGridControlReadOnlyFlag(pos + 1, ValueButtonColumn, false == m_isModuleTool);
+	setGridControlReadOnlyFlag(pos + 1, ValueButtonColumn, ToolStateEnum::ModuleTool != m_toolState);
 }
 
 void TADlgGroupToolResultPage::showContextMenu(CPoint point)
@@ -551,11 +551,9 @@ SvDef::NameValuePair TADlgGroupToolResultPage::getType(const std::string& rTypeN
 	{
 		return *iter;
 	}
-	else
-	{
-		Log_Assert(false);
-		return {};
-	}
+	
+	Log_Assert(false);
+	return {};
 }
 
 void TADlgGroupToolResultPage::loadDataList()
@@ -577,7 +575,7 @@ void TADlgGroupToolResultPage::UpdateEnableButtons()
 		if (0 < Selection.GetMinRow() && Selection.GetMinRow() <= m_resultData.size())
 		{
 			GetDlgItem(IDC_EDIT_COMMENT)->ShowWindow(SW_SHOW);
-			static_cast<CEdit*>(GetDlgItem(IDC_EDIT_COMMENT))->SetReadOnly(m_isModuleTool);
+			static_cast<CEdit*>(GetDlgItem(IDC_EDIT_COMMENT))->SetReadOnly(ToolStateEnum::GroupTool != m_toolState);
 			m_strComment = m_resultData[Selection.GetMinRow() - 1].m_data.m_comment.c_str();
 			UpdateData(false);
 		}

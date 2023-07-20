@@ -397,6 +397,13 @@ bool fileSaveAsSVXWrapper(const std::string& rFileName, bool resetAutoSave)
 
 void SaveConfig(bool saveAs /*= false*/)
 {
+	if (SvPb::DeviceModeType::editModuleMode == SvimState::GetMode())
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ActionNotPossibleInModuleEditingMode, {getCompleteObjectNameForId(SvimState::getModuleEditingId())}, SvStl::SourceFileParams(StdMessageParams));
+		return;
+	}
+
 	if (saveAs || getConfigPathName().empty())
 	{
 		if (false == DetermineConfigurationSaveName())
@@ -458,7 +465,7 @@ bool DetermineConfigurationSaveName()
 	{
 		svFileName.SetPathName(AfxGetApp()->GetProfileString(_T("Settings"), _T("ConfigurationFilePath"), SvStl::GlobalPath::Inst().GetRunPath().c_str()));
 
-		if (0 == SvUl::CompareNoCase(svFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
+		if (0 == SvUl::CompareNoCase(svFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath()))
 		{
 			if (!SvFs::FileHelperManager::Instance().GetConfigurationPathName().empty())
 			{
@@ -709,41 +716,58 @@ std::pair<bool, bool> OkToClose(bool AskForSavingOrClosing)
 		// Check if current config is modified and ask for saving
 		if (SvimState::CheckState(SV_STATE_MODIFIED))
 		{
-			SvDef::StringVector msgList;
-			msgList.push_back(getConfigFileName());
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNOCANCEL);
-			switch (result)
+			if (SvimState::isModuleEditing())
 			{
-				case IDNO:
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionModuleEditCloseWithoutSaving, {getCompleteObjectNameForId(SvimState::getModuleEditingId())}, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNO);
+				if (IDYES == result)
 				{
 					SvimState::AddState(SV_STATE_CANCELING);
-					ResetAllIPDocModifyFlag(false);
-					break;
 				}
-				case IDYES:
-				{
-					if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION))
-					{
-						SaveConfig();
-						ResetAllIPDocModifyFlag(false);
-
-						// Check whether config saving is done.
-						// If not, an error or an user cancel
-						// command occured!
-						bClose = !std::string(getConfigFullFileName()).empty() &&
-							!SvimState::CheckState(SV_STATE_MODIFIED);
-					}
-					break;
-				}
-				case IDCANCEL:  // Fall through to default case.
-				default:	// Don´t close config!
+				else
 				{
 					bCancel = true;
 					bClose = false;
-					break;
 				}
-			}// end switch( result )
+			}
+			else
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(getConfigFileName());
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId, MB_YESNOCANCEL);
+				switch (result)
+				{
+					case IDNO:
+					{
+						SvimState::AddState(SV_STATE_CANCELING);
+						ResetAllIPDocModifyFlag(false);
+						break;
+					}
+					case IDYES:
+					{
+						if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION))
+						{
+							SaveConfig();
+							ResetAllIPDocModifyFlag(false);
+
+							// Check whether config saving is done.
+							// If not, an error or an user cancel
+							// command occured!
+							bClose = !std::string(getConfigFullFileName()).empty() &&
+								!SvimState::CheckState(SV_STATE_MODIFIED);
+						}
+						break;
+					}
+					case IDCANCEL:  // Fall through to default case.
+					default:	// Don´t close config!
+					{
+						bCancel = true;
+						bClose = false;
+						break;
+					}
+				}// end switch( result )
+			}
 		}// end if ( SvimState::CheckState( SV_STATE_MODIFIED ) )
 	}
 	else

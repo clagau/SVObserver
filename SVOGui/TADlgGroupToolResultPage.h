@@ -25,6 +25,14 @@ namespace SvOg
 		//{{AFX_DATA(TADlgGroupToolResultPage)
 		enum { IDD = IDD_GROUPTOOL_INPUTRESULT_DIALOG };
 		//}}AFX_DATA
+
+	public:
+		enum class ToolStateEnum
+		{
+			GroupTool,
+			ModuleTool,
+			ModuleToolEditing,
+		};
 #pragma endregion Declarations
 
 #pragma region Constructor
@@ -34,7 +42,7 @@ namespace SvOg
 		/// \param toolId [in]
 		/// \param taskId [in]
 		/// \param isInputsChangeAble [in] If false, for the inputs only the values is changeable.
-		TADlgGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, bool isModuleTool = false);
+		TADlgGroupToolResultPage(uint32_t inspectionId, uint32_t toolId, uint32_t taskId, ToolStateEnum toolState = ToolStateEnum::GroupTool);
 
 		// Standard destructor
 		virtual ~TADlgGroupToolResultPage() = default;
@@ -107,7 +115,7 @@ namespace SvOg
 		const uint32_t m_toolId;
 		const uint32_t m_TaskObjectID;
 
-		const bool m_isModuleTool;
+		const ToolStateEnum m_toolState;
 
 		CBitmap m_downArrowBitmap;
 		CImageList m_ImageList;

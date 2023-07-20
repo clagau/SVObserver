@@ -37,17 +37,21 @@ public:
 	void setModuleComment(const std::string& rText);
 	void setHistory(const std::vector<std::pair<time_t, std::string>>& rHistoryVector) { m_historyList = rHistoryVector; };
 	std::vector<std::pair<time_t, std::string>> getHistory() const { return m_historyList; };
+	void setEditFlag(bool editFlag) { m_isEditing = editFlag; setViewFlag(); };
 
 	virtual HRESULT CollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector&) override { return S_OK; }; //Don't add overlays for ModuleTool by now.
 	virtual void addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc&) const override {}; //Don't add overlays for ModuleTool by now.
+	virtual bool canHasChildren() const override { return m_isEditing; };
 
 private:
 	void Initialize();
+	void setViewFlag();
 
 private:
 	SvVol::SVStringValueObjectClass m_moduleComment;
 	std::vector<std::pair<time_t, std::string>> m_historyList; //first: time, second: comment
 	SVGUID m_moduleGuid;
+	bool m_isEditing = false;
 };
 
 } //namespace SvTo

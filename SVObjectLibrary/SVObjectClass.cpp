@@ -292,7 +292,7 @@ std::string SVObjectClass::GetCompleteName() const
 		Result = m_pOwner->GetCompleteName();
 	}
 
-	if (0 < Result.size())
+	if (false == Result.empty())
 	{
 		Result += _T(".");
 	}
@@ -724,7 +724,7 @@ bool SVObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb:
 {
 	bool Result(false);
 
-	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pEmbeddedObject);
+	auto* pValueObject = dynamic_cast<SvOi::IValueObject*> (pEmbeddedObject);
 	if (nullptr != pValueObject)
 	{
 		pValueObject->setExternallySettable(isExternallySettable);
@@ -798,7 +798,7 @@ bool SVObjectClass::areImagesNeededInTRC() const
 				{
 					if (nullptr != pObject->GetParent() && SvPb::ParameterTaskObjectType == pObject->GetParent()->GetObjectType())
 					{
-						return pObject->areImagesNeededInTRC();
+						return pObject->isViewable() || pObject->areImagesNeededInTRC();
 					}
 					break;
 				}
@@ -1196,10 +1196,15 @@ void SVObjectClass::setObjectId(uint32_t objectId)
 	sendChangeNotification(SvOi::ObjectNotificationType::ObjectIdChange, oldId);
 }
 
-void SVObjectClass::moveObject(SVObjectClass& rObject)
+void SVObjectClass::moveObject(SVObjectClass& rNewObject)
 {
-	SVObjectManagerClass::Instance().SwapUniqueObjectID(*this, rObject);
-	sendChangeNotification(SvOi::ObjectNotificationType::SwitchObject, rObject.getObjectId());
+	sendChangeNotification(SvOi::ObjectNotificationType::SwitchObject, rNewObject.getObjectId());
+	for (auto id : m_connectedSet)
+	{
+		SVObjectManagerClass::Instance().disconnectDependency(getObjectId(), id, SvOl::JoinType(SvOl::JoinType::Dependent));
+		rNewObject.connectObject(id);
+	}
+	m_connectedSet.clear();
 }
 
 /*
@@ -1249,7 +1254,7 @@ bool SVObjectClass::isViewable() const
 	return  isViewableFlag;
 }
 
-void SVObjectClass::sendChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId)
+void SVObjectClass::sendChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId) const
 {
 	if (m_notificationList.size())
 	{

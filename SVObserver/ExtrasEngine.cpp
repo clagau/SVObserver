@@ -36,9 +36,9 @@ ExtrasEngine& ExtrasEngine::Instance()
 
 void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 {
-	if(!(IsAutoSaveEnabled() && SvimState::IsAutoSaveRequired()))
+	if(!(IsAutoSaveEnabled() && SvimState::IsAutoSaveRequired()) || SvimState::isModuleEditing())
 	{
-		return; //not enabled by user (or configuration not modified):do nothing
+		return; //not enabled by user (or configuration not modified) or Module is editing:do nothing
 	}
 
 	if(!IsAutoSaveTimestampOlderThanDeltaTime()) 

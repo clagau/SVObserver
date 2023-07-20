@@ -23,11 +23,12 @@ namespace SvOg
 		ON_EN_SETFOCUS(IDC_EDIT_COMMENT, &TADlgCommentPage::OnSetFocusToEditComment)
 	END_MESSAGE_MAP()
 
-	TADlgCommentPage::TADlgCommentPage(uint32_t inspectionId, uint32_t taskObjectId, bool isModuleComment) 
+	TADlgCommentPage::TADlgCommentPage(uint32_t inspectionId, uint32_t taskObjectId, bool isModuleComment, bool isReadonly) 
 	: CPropertyPage(TADlgCommentPage::IDD, isModuleComment ? IDS_OBJECTNAME_MODULE_COMMENT : IDS_OBJECTNAME_COMMENT)
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
 	, m_isModuleComment{isModuleComment}
+	, m_isReadonly {isReadonly}
 	, m_values(SvOgu::BoundValues(inspectionId, taskObjectId))
 	{
 	}
@@ -46,10 +47,10 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
+		static_cast<CEdit*>(GetDlgItem(IDC_EDIT_COMMENT))->SetReadOnly(m_isReadonly);
 		if (m_isModuleComment)
 		{
 			SetHelpID(IDD_MODULE_COMMENT);
-			static_cast<CEdit*>(GetDlgItem(IDC_EDIT_COMMENT))->SetReadOnly(true);
 			m_values.Init();
 			m_strComment = m_values.Get<CString>(SvPb::ModuleCommentEId);
 		}
@@ -70,10 +71,19 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		if (false == m_isModuleComment)
+		if (false == m_isReadonly)
 		{
-			SvCmd::setComment(m_InspectionID, m_TaskObjectID, std::string {m_strComment});
+			if (false == m_isModuleComment)
+			{
+				SvCmd::setComment(m_InspectionID, m_TaskObjectID, std::string {m_strComment});
+			}
+			else
+			{
+				m_values.Set<CString>(SvPb::ModuleCommentEId, m_strComment);
+				m_values.Commit();
+			}
 		}
+		
 
 		return Result;
 	}

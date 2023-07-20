@@ -43,9 +43,9 @@ namespace SvOp
 		virtual bool CloseObject() override;
 		virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
-		SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request);
+		virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) override;
 
-		SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID);
+		virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 
 		void setToDefault();
 
@@ -54,6 +54,11 @@ namespace SvOp
 
 		void fixAndAddAllObjects(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter);
 		void refreshToolPointer();
+		void setObjectValueFromOtherObject(const ParameterTask& rParamTask);
+		
+		/// Move all connection from another object (plus children connection) to this object.
+		/// \param rOldParamTask [in]
+		void moveConnectionToThisObject(ParameterTask& rOldParamTask);
 #pragma endregion Public Methods
 
 	protected:

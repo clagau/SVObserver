@@ -41,6 +41,7 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
+#include "SVStatusLibrary\SvimState.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "FilesystemUtilities/ImageFileFormats.h"
@@ -58,7 +59,6 @@
 #include "ObjectInterfaces\ISVLinearAnalyzer.h"
 #include <atltypes.h>
 #include "Tools\GroupTool.h"
-#include "SVStatusLibrary\SVIMState.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -187,6 +187,13 @@ SvPb::InspectionCmdResponse DeleteObject(SvPb::DeleteObjectRequest request)
 		SvOi::IObjectClass* pParent = SvOi::getObject(pObject->GetParentID());
 		auto* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*> (pParent);
 		auto* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
+		if (SvimState::getModuleEditingId() == pObject->getObjectId())
+		{
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ActionNotPossibleInModuleEditingMode, {SVObjectManagerClass::Instance().GetCompleteObjectName(SvimState::getModuleEditingId())}, SvStl::SourceFileParams(StdMessageParams));
+			SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
+			cmdResponse.set_hresult(E_FAIL);
+			return cmdResponse;
+		}
 		if (nullptr != pTaskObject && nullptr != pTaskObjectList)
 		{
 			pTaskObjectList->DestroyChild(*pTaskObject, flag);
@@ -961,15 +968,7 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 						cmdResponse.set_hresult(E_FAIL);
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
-						uint32_t objectID = pObject->getObjectId();
-						if (SvDef::InvalidObjectId != objectID)
-						{
-							pParentTaskObjectList->Delete(objectID);
-						}
-						else
-						{
-							delete pTaskObject;
-						}
+						pParentTaskObjectList->Delete(pObject);
 						pObject = nullptr;
 					}
 					else
@@ -1821,20 +1820,17 @@ SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest
 
 SvPb::InspectionCmdResponse getFeatures(SvPb::GetFeaturesRequest request)
 {
-	SvPb::InspectionCmdResponse cmdResponse;
-
 	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	auto* pAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer2*> (pObject);
 
-	if (nullptr != pAnalyzer)
+	if (nullptr == pAnalyzer)
 	{
-		return pAnalyzer->getFeaturesData();
-	}
-	else
-	{
+		SvPb::InspectionCmdResponse cmdResponse;
 		cmdResponse.set_hresult(E_POINTER);
+		return cmdResponse;
 	}
-	return cmdResponse;
+	
+	return pAnalyzer->getFeaturesData();
 }
 
 SvPb::InspectionCmdResponse setFeatures(SvPb::SetFeaturesRequest request)
@@ -2543,5 +2539,20 @@ SvPb::InspectionCmdResponse getSourceResultImageList(SvPb::GetSourceResultImageL
 		}
 	}
 	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse startEditModule(SvPb::StartEditModuleRequest request)
+{
+	return SvOi::startEditModule(request.moduletoolid());
+}
+
+SvPb::InspectionCmdResponse saveEditModule(SvPb::SaveEditModuleRequest request)
+{
+	return SvOi::saveEditModule(request.moduletoolid(), request.changetext());
+}
+
+SvPb::InspectionCmdResponse cancelEditModule(SvPb::CancelEditModuleRequest request)
+{
+	return SvOi::cancelEditModule(request.moduletoolid());
 }
 } //namespace SvCmd

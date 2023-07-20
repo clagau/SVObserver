@@ -32,11 +32,14 @@ SvPb::InspectionCmdResponse deleteModule(SVGUID moduleGuid);
 SvPb::InspectionCmdResponse checkNewModuleName(const std::string& newName);
 SvPb::InspectionCmdResponse convertGroupToModuleTool(uint32_t groupToolId, const std::string& moduleName);
 SvPb::InspectionCmdResponse convertModuleToGroupTool(uint32_t moduleToolId);
+SvPb::InspectionCmdResponse startEditModule(uint32_t moduleToolId);
+SvPb::InspectionCmdResponse saveEditModule(uint32_t moduleToolId, const std::string& rChangeText);
+SvPb::InspectionCmdResponse cancelEditModule(uint32_t moduleToolId);
 SvPb::InspectionCmdResponse renameModule(SVGUID moduleGuid, const std::string& newName);
 SvPb::InspectionCmdResponse importModule(const std::string& moduleName, const std::string& moduleContainerStr);
 SvPb::InspectionCmdResponse exportModule(SVGUID moduleGuid);
 
-void registerModuleInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const HistoryList& rHistoryList);
+void registerModuleInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const HistoryList& rHistoryList, bool checkComment);
 void unregisterModuleInstance(SVGUID guid, uint32_t instanceId);
 
 std::string getModuleName(SVGUID guid);

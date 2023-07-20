@@ -278,10 +278,8 @@ namespace SvTo
 		{
 			return getObjectId();
 		}
-		else
-		{
-			return __super::getFirstClosedParent(stopSearchAtObjectId);
-		}
+
+		return __super::getFirstClosedParent(stopSearchAtObjectId);
 	}
 
 	bool GroupTool::isValidDependency(const std::pair<std::string, std::string>& rEntry) const
@@ -340,11 +338,11 @@ namespace SvTo
 		m_TaskObjectVector.clear();
 	}
 
-	void GroupTool::moveEmbeddedObjects(SVObjectPtrVector& rEmbeddedObjects)
+	void GroupTool::moveEmbeddedObjects(SVObjectPtrVector& rEmbeddedObjects, SvPb::EmbeddedIdEnum excludeIdForMove)
 	{
 		for (auto* pEmbeddedObject : m_embeddedList)
 		{
-			if (nullptr != pEmbeddedObject)
+			if (nullptr != pEmbeddedObject && excludeIdForMove != pEmbeddedObject->GetEmbeddedID())
 			{
 				auto iter = std::ranges::find_if(rEmbeddedObjects, [pEmbeddedObject](const auto* pEntry) {return nullptr != pEntry && pEntry->GetEmbeddedID() == pEmbeddedObject->GetEmbeddedID(); });
 				if (rEmbeddedObjects.end() != iter)
@@ -355,7 +353,7 @@ namespace SvTo
 		}
 	}
 
-	void GroupTool::moveObjectToThis(GroupTool& rGroupTool)
+	void GroupTool::moveObjectToThis(GroupTool& rGroupTool, bool includeTaskObjects)
 	{
 		DestroyFriends();
 		rGroupTool.movedAndDeleteFriends(m_friendList);
@@ -373,19 +371,28 @@ namespace SvTo
 			}
 		}
 
-		DeleteAll();
-		rGroupTool.movedAndDeleteTaskObjects(m_TaskObjectVector);
-		for (auto* pObject : m_TaskObjectVector)
+		if (includeTaskObjects)
 		{
-			if (pObject)
+			DeleteAll();
+			rGroupTool.movedAndDeleteTaskObjects(m_TaskObjectVector);
+			for (auto* pObject : m_TaskObjectVector)
 			{
-				pObject->SetObjectOwner(this);
+				if (pObject)
+				{
+					pObject->SetObjectOwner(this);
+				}
 			}
 		}
 		
-		rGroupTool.moveEmbeddedObjects(m_embeddedList);
+		rGroupTool.moveEmbeddedObjects(m_embeddedList, includeTaskObjects ? SvPb::NoEmbeddedId : SvPb::ModuleCommentEId);
 
+		std::string oldName = GetName();
 		SetName(rGroupTool.GetName());
+		if (nullptr != GetInspection())
+		{
+			GetInspection()->OnObjectRenamed(*this, oldName);
+		}
+		
 		rGroupTool.moveObject(*this);
 		if (GetParent())
 		{
@@ -417,6 +424,30 @@ namespace SvTo
 		{
 			Log_Assert(false);
 		}
+	}
+
+	void GroupTool::finishAddingAndMovingModule(GroupTool& rOldTool)
+	{
+		if (m_pInputTask && rOldTool.m_pInputTask)
+		{
+			m_pInputTask->setObjectValueFromOtherObject(*rOldTool.m_pInputTask);
+			m_pInputTask->moveConnectionToThisObject(*rOldTool.m_pInputTask);
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+
+		if (m_pResultTask && rOldTool.m_pResultTask)
+		{
+			m_pResultTask->moveConnectionToThisObject(*rOldTool.m_pResultTask);
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+
+		finishAddTool();
 	}
 
 	void GroupTool::Initialize()

@@ -24,7 +24,7 @@ class SVRegressionRunDlg : public CDialog
 {
 #pragma region Constructor
 public:
-	explicit SVRegressionRunDlg(RegressionTestController& rRegessionController, uint32_t inspectionID, CWnd* pParent = nullptr);   // standard constructor
+	explicit SVRegressionRunDlg(RegressionTestController& rRegessionController, uint32_t inspectionID, bool canGoBackToAllModes, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRegressionRunDlg();
 #pragma endregion Constructor
 
@@ -130,6 +130,7 @@ private:
 	BOOL m_isValidationMode {false};
 	int	m_timeDelayInMS {0};
 	uint32_t m_InspectionID {0UL};
+	bool m_canGoBackToAllModes = false;
 
 	RegressionTestController& m_rRegressionController;
 	SvOi::IFormulaControllerPtr m_pFormulaController;

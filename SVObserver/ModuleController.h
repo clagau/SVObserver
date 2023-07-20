@@ -51,8 +51,12 @@ public:
 	void convertGroupTool(uint32_t toolId, const std::string& rName);
 	void convertModuleInstance(uint32_t toolId);
 
+	void startEditModule(uint32_t toolId);
+	void saveEditModule(uint32_t toolId, const std::string& rChangeText);
+	void cancelEditModule(uint32_t toolId);
+
 	//Attention: Throw exception in error case.
-	void registerInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const SvOi::HistoryList& rHistoryList);
+	void registerInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const SvOi::HistoryList& rHistoryList, bool checkComment);
 	void unregisterInstance(SVGUID guid, uint32_t instanceId);
 
 	SvOi::IObjectClass* constructAndAddModuleInstance(int index, uint32_t parentId);

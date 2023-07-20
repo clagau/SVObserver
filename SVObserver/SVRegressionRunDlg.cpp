@@ -52,13 +52,14 @@ BEGIN_MESSAGE_MAP(SVRegressionRunDlg, CDialog)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-SVRegressionRunDlg::SVRegressionRunDlg(RegressionTestController& rRegessionController, uint32_t inspectionID, CWnd* pParent /*=nullptr*/)
+SVRegressionRunDlg::SVRegressionRunDlg(RegressionTestController& rRegessionController, uint32_t inspectionID, bool canGoBackToAllModes, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVRegressionRunDlg::IDD, pParent)
 	, m_rRegressionController(rRegessionController)
 	, m_pFormulaController(rRegessionController.getPlayEquationController())
 	, m_timeDelayText( _T( " 0.0" ) ) // Lead with a space for all values less than 10.
 	, m_InspectionID(inspectionID)
 	, m_bPlayByEquation(rRegessionController.usePlayCondition())
+	, m_canGoBackToAllModes(canGoBackToAllModes)
 {
 	m_sliderDelayTime.SetInvertVerticalArrowKeys(true);
 }
@@ -400,7 +401,7 @@ void SVRegressionRunDlg::OnBtnSettings()
 
 void SVRegressionRunDlg::OnBtnExit()
 {
-	SVRegressionExitDlg Dlg;
+	SVRegressionExitDlg Dlg(m_canGoBackToAllModes);
 
 	Dlg.DoModal();
 }
@@ -411,7 +412,7 @@ LRESULT  SVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM )
 
 	std::vector<RegressionRunFileStruct>* pRegressionFileVec = (std::vector<RegressionRunFileStruct>*) wParam;
 
-	int iCount = static_cast<int>(pRegressionFileVec->size());
+	auto iCount = static_cast<int>(pRegressionFileVec->size());
 
 	size_t MaxStringSize = 0;
 	std::string Text;

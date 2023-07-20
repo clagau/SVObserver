@@ -984,6 +984,13 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18
 {
 	HRESULT result {S_OK};
 
+	if (SvPb::DeviceModeType::editModuleMode == SvimState::GetMode())
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ActionNotPossibleInModuleEditingMode, {getCompleteObjectNameForId(SvimState::getModuleEditingId())}, SvStl::SourceFileParams(StdMessageParams));
+		return SVMSG_SVIMCMD_REQUEST_REJECTED;
+	}
+
 	long originalState = SvimState::GetState();
 	SvPb::DeviceModeType Mode = SvPb::DeviceModeType_IsValid(lNewMode) ? static_cast<SvPb::DeviceModeType> (lNewMode) : SvPb::DeviceModeType::unknownMode;
 
@@ -1153,6 +1160,13 @@ bool SVObserverApp::AlreadyExistsIPDocTitle(LPCTSTR)
 
 bool SVObserverApp::UpdateConfiguration(bool newConfiguration /*= false*/)
 {
+	if (SvPb::DeviceModeType::editModuleMode == SvimState::GetMode())
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ActionNotPossibleInModuleEditingMode, {getCompleteObjectNameForId(SvimState::getModuleEditingId())}, SvStl::SourceFileParams(StdMessageParams));
+		return false;
+	}
+
 	// Access denied, if... // Check Edit Mode
 	if (SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		return false;

@@ -1565,15 +1565,21 @@ void SVImageClass::setInspectionPosForTrc()
 
 bool SVImageClass::mustBeInTRC() const
 {
-	if (GetTool())
+	if (GetTool() && SvPb::RingBufferToolClassId == GetTool()->GetClassID())
 	{
-		if (SvPb::RingBufferToolClassId == GetTool()->GetClassID())
-		{
-			return true;
-		}
+		return true;
 	}
 
-	return areImagesNeededInTRC();
+	if (areImagesNeededInTRC())
+	{
+		return true;
+	}
+
+	return std::ranges::any_of(m_ChildArrays, [](const auto& rEntry)
+	{
+		auto* pChildObject = SVObjectManagerClass::Instance().GetObject(rEntry.first);
+		return pChildObject && pChildObject->areImagesNeededInTRC();
+	});
 }
 
 bool SVImageClass::UpdateBuffers(SvStl::MessageContainerVector* pErrorMessages)

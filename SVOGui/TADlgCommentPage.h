@@ -21,7 +21,7 @@ namespace SvOg
 	class TADlgCommentPage : public CPropertyPage
 	{
 	public:
-		TADlgCommentPage(uint32_t inspectionId, uint32_t taskObjectId, bool isModuleComment = false);   // standard constructor
+		TADlgCommentPage(uint32_t inspectionId, uint32_t taskObjectId, bool isModuleComment = false, bool isReadonly = false);   // standard constructor
 
 	public:
 		virtual ~TADlgCommentPage();
@@ -45,7 +45,8 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		bool m_isModuleComment;
+		bool m_isModuleComment = false;
+		bool m_isReadonly = false;
 		SvOgu::ValueController m_values;
 	};
 } //namespace SvOg

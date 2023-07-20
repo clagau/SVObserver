@@ -135,7 +135,7 @@ int SVToolSetListCtrl::InsertSubTools(int itemNo, int indent, uint32_t toolId)
 			pNavElement->m_navigatorObjectId = ObjectInfo.m_objectId;
 			pNavElement->m_Valid = ObjectInfo.isValid;
 			pNavElement->m_Type = NavElementType::SubTool;
-			pNavElement->m_canHaveChildren = SvPb::GroupToolObjectType == ObjectInfo.ObjectSubType || SvPb::LoopToolObjectType == ObjectInfo.ObjectSubType;
+			pNavElement->m_canHaveChildren = ObjectInfo.canHasChildren;
 			itemNo = InsertElement(itemNo, indent, pNavElement);
 			if (pNavElement->m_canHaveChildren && false == pNavElement->m_Collapsed)
 			{
@@ -230,7 +230,7 @@ void SVToolSetListCtrl::Rebuild(bool checkGrouping)
 						continue;
 					}
 
-					pNavElement->m_canHaveChildren = (SvPb::LoopToolObjectType == ToolSetIt->ObjectSubType || SvPb::GroupToolObjectType == ToolSetIt->ObjectSubType);
+					pNavElement->m_canHaveChildren = ToolSetIt->canHasChildren;
 					pNavElement->m_Type = NavElementType::Tool;
 					pNavElement->m_OwnerId = m_ToolSetId;
 					pNavElement->m_Collapsed = groupings.IsCollapsed(ToolSetIt->m_objectId);

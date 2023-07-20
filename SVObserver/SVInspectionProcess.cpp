@@ -518,6 +518,11 @@ void __stdcall SVInspectionProcess::ProcessCallback(ULONG_PTR pCaller)
 
 void SVInspectionProcess::DestroyInspection()
 {
+	auto* pPPQ = GetPPQ();
+	if (nullptr != pPPQ)
+	{
+		pPPQ->DetachInspection(this);
+	}
 	updateObserver(SVRemoveSubjectStruct());
 	m_NotifyWithLastInspected = false;
 	::Sleep(0);

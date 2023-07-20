@@ -48,6 +48,7 @@ public:
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 	virtual int getToolDepth(bool goUpwards = true) const override;
+	virtual bool canHasChildren() const override { return true; };
 	bool isClosed() const;
 
 	/// Moved FriendList from this tool to the parameter and clear it in this tool.
@@ -56,9 +57,13 @@ public:
 	void movedAndDeleteTaskObjects(SvIe::SVTaskObjectPtrVector& taskList);
 	///  Move the embeddedObjects to the attached list: switch objectId, copy value and move connection.
 	/// \param rEmbeddedObject [inout] List of embeddedObjects to move to.
-	void moveEmbeddedObjects(SVObjectPtrVector& rEmbeddedObjects);
-	void moveObjectToThis(GroupTool& rGroupTool);
+	void moveEmbeddedObjects(SVObjectPtrVector& rEmbeddedObjects, SvPb::EmbeddedIdEnum excludeIdForMove);
+	///  Moved this objects and the children from rGroupTool to this
+	/// \param rGroupTool [inout]
+	/// \param includeTaskObjects [in] if includeTaskObjects == false, taskobjectList will not be moved.
+	void moveObjectToThis(GroupTool& rGroupTool, bool includeTaskObjects = true);
 	void fixAndReturnAllGroupInputs(std::back_insert_iterator<std::vector<SvPb::FixedInputData>> inserter);
+	void finishAddingAndMovingModule(GroupTool& rOldTool);
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };

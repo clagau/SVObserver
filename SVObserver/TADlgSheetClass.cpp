@@ -53,6 +53,7 @@
 #include "SVOGui/TADlgDrawPage.h"
 #include "SVOGui/TADlgTableSourcePage.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SvimState.h"
 #include "Tools/SVTool.h"
 #include "SVOGui/TADlgGroupToolResultPage.h"
 #include "TADlgLinearResultRangesPage.h"
@@ -423,10 +424,10 @@ void TADlgSheetClass::addPages()
 			pObject = pTaskObject->getFirstObject(ObjectInfo);
 			if (nullptr != pObject)
 			{
-				AddPage(new SvOg::TADlgGroupToolResultPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId(), true));
+				AddPage(new SvOg::TADlgGroupToolResultPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId(), pTaskObject->getObjectId() == SvimState::getModuleEditingId() ? SvOg::TADlgGroupToolResultPage::ToolStateEnum::ModuleToolEditing : SvOg::TADlgGroupToolResultPage::ToolStateEnum::ModuleTool));
 			}
 			addConditionalDialog();
-			AddPage(new SvOg::TADlgCommentPage(m_InspectionID, m_TaskObjectID, true));
+			AddPage(new SvOg::TADlgCommentPage(m_InspectionID, m_TaskObjectID, true, pTaskObject->getObjectId() != SvimState::getModuleEditingId()));
 			break;
 		}
 

@@ -244,17 +244,7 @@ bool SVChildrenSetupDialog::CreateSelectedResults(SvIe::SVClassInfoStruct& rChil
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 			// Remove it from the Tool TaskObjectList ( Destruct it )
-			uint32_t objectID = pObject->getObjectId();
-			if (SvDef::InvalidObjectId != objectID)
-			{
-				m_pParentObject->Delete(objectID);
-			}
-			else
-			{
-				delete pObject;
-			}
-
-			pObject = nullptr;
+			m_pParentObject->Delete(pObject);
 			return true;
 		}
 	}

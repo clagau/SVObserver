@@ -204,4 +204,7 @@ SvPb::InspectionCmdResponse exportModule(SvPb::ExportModuleRequest request);
 SvPb::InspectionCmdResponse fixInputsAndGetList(SvPb::FixInputsAndGetInputListRequest request);
 SvPb::InspectionCmdResponse resetAllCounter(SvPb::ResetAllCounterRequest request);
 SvPb::InspectionCmdResponse getSourceResultImageList(SvPb::GetSourceResultImageListRequest request);
+SvPb::InspectionCmdResponse startEditModule(SvPb::StartEditModuleRequest request);
+SvPb::InspectionCmdResponse saveEditModule(SvPb::SaveEditModuleRequest request);
+SvPb::InspectionCmdResponse cancelEditModule(SvPb::CancelEditModuleRequest request);
 } //namespace SvCmd

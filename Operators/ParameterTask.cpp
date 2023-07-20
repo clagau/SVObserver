@@ -113,7 +113,7 @@ namespace SvOp
 	{
 		try
 		{
-			const SvVol::LinkedValue* pLinked = dynamic_cast<const SvVol::LinkedValue*>(pObject);
+			const auto* pLinked = dynamic_cast<const SvVol::LinkedValue*>(pObject);
 			return dynamic_cast<const T*>(nullptr != pLinked ? pLinked->getLinkedObject() : pObject);
 		}
 		catch (...)
@@ -128,7 +128,7 @@ namespace SvOp
 		{
 			if (nullptr != pObject)
 			{
-				const SvVol::LinkedValue* pLinked = dynamic_cast<const SvVol::LinkedValue*>(pObject);
+				const auto* pLinked = dynamic_cast<const SvVol::LinkedValue*>(pObject);
 				if (nullptr != pLinked)
 				{
 					auto pLinkedObject = pLinked->getLinkedObject();
@@ -473,6 +473,41 @@ namespace SvOp
 			if (nullptr != rObject.get())
 			{
 				rObject->setExcludeSameLineageListForObjectSelector({SvPb::ParameterResultObjectType == m_ObjectTypeInfo.m_SubType ? this : GetAncestor(SvPb::SVToolObjectType)});
+			}
+		}
+	}
+
+	void ParameterTask::setObjectValueFromOtherObject(const ParameterTask& rParamTask)
+	{
+		SvPb::SetAndSortEmbeddedValueRequest requestData;
+		for (int i = 0; m_objects.size() > i; ++i)
+		{
+			if (rParamTask.m_objects.size() > i && rParamTask.m_objects[i])
+			{
+				auto* pTmp = requestData.add_embeddedlist();
+				pTmp->set_name(rParamTask.m_objects[i]->GetName());
+				pTmp->set_oldembeddedid(rParamTask.m_objects[i]->GetEmbeddedID());
+				pTmp->set_type(rParamTask.m_objects[i]->getValueType());
+				rParamTask.m_objects[i]->fillLinkedData(*pTmp->mutable_value());
+			}
+		}
+		setAndSortEmbeddedValues(requestData);
+	}
+	
+	void ParameterTask::moveConnectionToThisObject(ParameterTask& rOldParamTask)
+	{
+		rOldParamTask.moveObject(*this);
+		for (auto* pObject : m_embeddedList)
+		{
+			if (pObject)
+			{
+				auto eId = pObject->GetEmbeddedID();
+				auto iter = std::ranges::find_if(rOldParamTask.m_embeddedList, [eId](const auto& rEntry) { return rEntry && eId == rEntry->GetEmbeddedID(); });
+				if (rOldParamTask.m_embeddedList.end() != iter && *iter)
+				{
+					//do not change the value only the id and connections
+					(*iter)->SVObjectClass::moveObject(*pObject);
+				}
 			}
 		}
 	}

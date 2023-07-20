@@ -144,7 +144,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_CONFIG, OnUpdateFilePrintConfig)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, OnUpdateFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, OnUpdateFilePrintSetup)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, OnUpdateEditDelete)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITIOLIST, OnUpdateEditIOList)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITENVIRONMENT, OnUpdateEditEnvironment)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITTOOL, OnUpdateEditEditTool)
@@ -692,12 +691,16 @@ void SVMainFrame::OnFileCloseConfig()
 		{
 			return;
 		}
-		SvimState::RemoveState(SV_STATE_EDIT);
 
 		TheSVObserverApp().ValidateMRUList();
 
 		// Check if current config is modified, ask for saving and try to close
-		DestroyConfig();
+		auto hr = DestroyConfig();
+
+		if (S_OK == hr)
+		{
+			SvimState::RemoveState(SV_STATE_EDIT);
+		}
 
 		TheSVObserverApp().ValidateMRUList();
 	}
@@ -737,7 +740,7 @@ void SVMainFrame::OnEditIOList()
 		POSITION pos = GetTheIODoc()->GetFirstViewPosition();
 		CView* pView = GetTheIODoc()->GetNextView(pos);
 
-		CMDIChildWnd* pFrame = (CMDIChildWnd*)pView->GetParentFrame();
+		auto* pFrame = (CMDIChildWnd*)pView->GetParentFrame();
 		pFrame->MDIActivate();
 	}// end if
 }
@@ -1116,6 +1119,13 @@ void SVMainFrame::OnSVOFilePrintSetup()
 
 void SVMainFrame::OnStop()
 {
+	if (SvPb::DeviceModeType::editModuleMode == SvimState::GetMode())
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ActionNotPossibleInModuleEditingMode, {getCompleteObjectNameForId(SvimState::getModuleEditingId())}, SvStl::SourceFileParams(StdMessageParams));
+		return;
+	}
+
 	if (!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION))
 	{
 		return;
@@ -1240,7 +1250,7 @@ void SVMainFrame::OnUpdateModeRun(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateEditEnvironment(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(SvimState::CheckState(SV_STATE_READY) &&
-		!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
+		!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) && false == SvimState::isModuleEditing() &&
 		TheSVObserverApp().OkToEdit());
 }
 
@@ -1287,14 +1297,14 @@ void SVMainFrame::OnUpdateFileOpenSVC(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateFileSaveAll(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& SvimState::CheckState(SV_STATE_READY)
+		&& SvimState::CheckState(SV_STATE_READY)  && false == SvimState::isModuleEditing()
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION));
 }
 
 void SVMainFrame::OnUpdateFileSaveAs(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& SvimState::CheckState(SV_STATE_READY)
+		&& SvimState::CheckState(SV_STATE_READY) && false == SvimState::isModuleEditing()
 		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS));
 }
 
@@ -1319,13 +1329,6 @@ void SVMainFrame::OnUpdateFileUpdate(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateExtrasLogin(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(SvimState::CheckState(SV_STATE_AVAILABLE | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_READY | SV_STATE_REGRESSION));
-}
-
-
-void SVMainFrame::OnUpdateEditDelete(CCmdUI* PCmdUI)
-{
-	PCmdUI->Enable(!SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
-		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateEditEditTool(CCmdUI* PCmdUI)
@@ -1419,7 +1422,7 @@ void SVMainFrame::OnUpdateHelpFinder(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateModeTest(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable((SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
-		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST));
+		false == SvimState::isModuleEditing() &&	TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST));
 
 	PCmdUI->SetCheck(SvimState::CheckState(SV_STATE_TEST) &&
 		!SvimState::CheckState(SV_STATE_REGRESSION));
@@ -1483,7 +1486,7 @@ void SVMainFrame::OnUpdateAppAbout(CCmdUI*)
 void SVMainFrame::OnUpdateGoOffline(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable((SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
-		SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
+		SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_READY) && false == SvimState::isModuleEditing() &&
 		(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE) ||
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_STOP)));
 
@@ -1498,7 +1501,7 @@ void SVMainFrame::OnUpdateGoOffline(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateGoOnline(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP) &&
-		SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
+		SvimState::CheckState(SV_STATE_RUNNING | SV_STATE_READY) && false == SvimState::isModuleEditing() &&
 		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_RUN));
 
 	PCmdUI->SetCheck(SvimState::CheckState(SV_STATE_RUNNING));
@@ -1595,7 +1598,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 
 void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 {
-	CStatusBarCtrl* pCtrl = ( CStatusBarCtrl* )pCmdUI->m_pOther;
+	auto* pCtrl = ( CStatusBarCtrl* )pCmdUI->m_pOther;
 	switch( pCmdUI->m_nID )
 	{
 		case ID_INDICATOR_INFO:
@@ -1674,6 +1677,13 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 					Mode += _T("Edit ");
 					break;
 				}
+				case SvPb::DeviceModeType::editModuleMode:
+				{
+					m_wndStatusBar.m_lModeBKColor = SvDef::PaleYellow;
+					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
+					Mode += _T("Edit Module");
+					break;
+				}
 				case SvPb::DeviceModeType::modeChanging:
 				{
 					m_wndStatusBar.m_lModeBKColor = SvDef::White;
@@ -1697,7 +1707,7 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 			int l_Width = DC.GetTextExtent( Mode.c_str() ).cx - static_cast<int> ( Mode.size() * 2 );
 
 			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_MODE, 0, l_Width );
-			pCtrl->SetText(Mode.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW);
+			pCtrl->SetText( Mode.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW );
 
 			break;
 		}
@@ -1783,20 +1793,20 @@ LRESULT SVMainFrame::RemoteRegisterMonitorList( WPARAM , LPARAM  )
 
 LRESULT SVMainFrame::onAddFileToConfig(WPARAM , LPARAM lParam)
 {
-	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
+	auto pFileName = reinterpret_cast<LPCTSTR> (lParam);
 	AddFileToConfig(pFileName);
 	return 0;
 }
 
 LRESULT SVMainFrame::onSaveConfig(WPARAM , LPARAM lParam)
 {
-	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
+	auto pFileName = reinterpret_cast<LPCTSTR> (lParam);
 	return SavePackedConfiguration(pFileName);
 }
 
 LRESULT SVMainFrame::Shutdown(WPARAM wParam, LPARAM)
 {
-	long shutdownOption = static_cast<long>(wParam);
+	auto shutdownOption = static_cast<long>(wParam);
 	char cmd[50];
 	sprintf_s(cmd, "SVShutdown.exe %d 15", shutdownOption);
 	system(cmd);
@@ -2068,7 +2078,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 						CDocument* pCurrentDocument = pMDIChild->GetActiveDocument();
 						if (pCurrentDocument)
 						{
-							SVIPDoc* pIPDoc = dynamic_cast<SVIPDoc *>(pCurrentDocument);
+							auto* pIPDoc = dynamic_cast<SVIPDoc *>(pCurrentDocument);
 							if (pIPDoc)
 							{
 								pIPDoc->RecreateImageSurfaces();
@@ -2260,17 +2270,17 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 
 	for (int i = 0; i < state.m_arrBarInfo.GetSize(); i++)
 	{
-		CControlBarInfo* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
+		auto* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
 
 		Log_Assert(nullptr != pInfo);
 
-		int nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
+		auto nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
 		if (nDockedCount > 0)
 		{
 			// dockbar
 			for (int j = 0; j < nDockedCount; j++)
 			{
-				UINT nID = (UINT) pInfo->m_arrBarID[j];
+				auto nID = (UINT) pInfo->m_arrBarID[j];
 				if (nID == 0) { continue; } // row separator
 
 				if (nID > 0xFFFF)
@@ -2374,7 +2384,7 @@ void SVMainFrame::EnableZoomToolbar(bool enable)
 
 bool SVMainFrame::IsZoomingPossible()
 {
-	CMDIChildWnd* pChild = dynamic_cast<CMDIChildWnd*>(GetActiveFrame());
+	auto* pChild = dynamic_cast<CMDIChildWnd*>(GetActiveFrame());
 
 	CView* pView = nullptr;
 	if(nullptr != pChild)
@@ -2382,7 +2392,7 @@ bool SVMainFrame::IsZoomingPossible()
 		pView = pChild->GetActiveView();
 	}
 
-	SVImageView* pImageView = dynamic_cast<SVImageView*>(pView);
+	auto* pImageView = dynamic_cast<SVImageView*>(pView);
 
 	if(nullptr != pImageView)
 	{
@@ -2394,7 +2404,7 @@ bool SVMainFrame::IsZoomingPossible()
 
 void SVMainFrame::RefreshAllSplitters()
 {
-	SVIPSplitterFrame* pSplitterFrame = dynamic_cast< SVIPSplitterFrame*>(GetActiveFrame());
+	auto* pSplitterFrame = dynamic_cast< SVIPSplitterFrame*>(GetActiveFrame());
 	if(nullptr != pSplitterFrame)
 	{
 		pSplitterFrame->RefreshAllSplitters();
@@ -2411,6 +2421,13 @@ void SVMainFrame::InitToolBars()
 
 void SVMainFrame::startDesiredState(DWORD desiredState)
 {
+	if (SvPb::DeviceModeType::editModuleMode == SvimState::GetMode())
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ActionNotPossibleInModuleEditingMode, {getCompleteObjectNameForId(SvimState::getModuleEditingId())}, SvStl::SourceFileParams(StdMessageParams));
+		return;
+	}
+
 	if (SvimState::CheckState(SV_STATE_REMOTE_CMD | desiredState))
 	{
 		return;
@@ -2516,7 +2533,7 @@ CMultiDocTemplate* getIPDocTemplate()
 	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	while (!pTemplate && pos)
 	{
-		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate*>(AfxGetApp()->GetNextDocTemplate(pos));
+		auto* pDocTemplate = dynamic_cast<CMultiDocTemplate*>(AfxGetApp()->GetNextDocTemplate(pos));
 		if (pDocTemplate)
 		{
 			POSITION posDoc = pDocTemplate->GetFirstDocPosition();

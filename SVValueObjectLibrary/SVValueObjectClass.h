@@ -124,7 +124,7 @@ public:
 	virtual IValueObject* getValueObjectPtr()  override { return this; };
 #pragma endregion virtual method (IObjectClass/IValueObject)
 
-	virtual void moveObject(SVObjectClass& rObject) override;
+	virtual void moveObject(SVObjectClass& rNewObject) override;
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
 
 	/// getter and setter for ShouldSaveValue-Flag

@@ -671,16 +671,7 @@ namespace SvAo
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 
-					// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
-					uint32_t objectID = m_pResultBlob->getObjectId();
-					if (SvDef::InvalidObjectId != objectID)
-					{
-						Delete(objectID);
-					}
-					else
-					{
-						delete m_pResultBlob;
-					}
+					Delete(m_pResultBlob);
 					m_pResultBlob = nullptr;
 				}
 			}

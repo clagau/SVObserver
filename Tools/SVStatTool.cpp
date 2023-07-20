@@ -334,15 +334,7 @@ void SVStatTool::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
 			if( !CreateChildObject(pResult) )
 			{
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
-				uint32_t objectID = pResult->getObjectId();
-				if (SvDef::InvalidObjectId != objectID)
-				{
-					Delete( objectID );
-				}
-				else
-				{
-					delete pResult;
-				}
+				Delete( pResult );
 
 				SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId() );
 				throw Exception;

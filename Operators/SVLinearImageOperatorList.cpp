@@ -123,7 +123,7 @@ bool SVLinearImageOperatorList::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageC
 {
 	clearRunErrorMessages();
 
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
+	auto* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
 	bool result = nullptr != pTool;
 	const SVImageExtentClass&  rImageExtent = result ? pTool->GetImageExtent() : SVImageExtentClass{};
 
@@ -361,7 +361,7 @@ HRESULT SVLinearImageOperatorList::UpdateLineExtentData()
 	RECT l_oRect;
 
 	// This is the new Absolute Extent of the Image
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
+	auto* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
 	if (nullptr != pTool &&
 		S_OK == pTool->GetImageExtent().GetOutputRectangle(l_oRect) &&
 		(S_OK == getInputProfileOrientation(projAngle)))
@@ -453,7 +453,7 @@ bool SVLinearImageOperatorList::RunLocalRotation(SvIe::RunStatus &rRunStatus, Sv
 		{
 			ChildRunStatus.ResetRunStateAndToolSetTimes();
 
-			SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass *>(getTaskObject(i));
+			auto*  pOperator = dynamic_cast<SVUnaryImageOperatorClass *>(getTaskObject(i));
 			if (nullptr != pOperator && nullptr != pOutputBuffer && !pOutputBuffer->isEmpty())
 			{
 				pOperator->Run(false, pOutputBuffer->getHandle(), pOutputBuffer->getHandle(), ChildRunStatus);
@@ -533,15 +533,7 @@ bool SVLinearImageOperatorList::initializeResult(SvOp::SVDoubleResult* pResult)
 				getObjectId());
 
 			// Remove it from the TaskObjectList ( Destruct it )
-			uint32_t objectID = pResult->getObjectId();
-			if (SvDef::InvalidObjectId != objectID)
-			{
-				Delete(objectID);
-			}
-			else
-			{
-				delete pResult;
-			}
+			Delete(pResult);
 			bRet = false;
 		}
 		else

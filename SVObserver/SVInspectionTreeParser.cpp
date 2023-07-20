@@ -667,7 +667,7 @@ HRESULT SVInspectionTreeParser::ProcessHistory(SvXml::SVXMLMaterialsTree::SVBran
 	SvXml::SVXMLMaterialsTree::SVBranchHandle hInput {m_rTree.getFirstBranch(hHistory)};
 	do
 	{
-		if (hHistory)
+		if (hHistory && hInput)
 		{
 			UpdateProgress(++m_count, m_totalSize);
 
@@ -689,9 +689,9 @@ HRESULT SVInspectionTreeParser::ProcessHistory(SvXml::SVXMLMaterialsTree::SVBran
 				Log_Assert(false);
 			}
 
-			hHistory = m_rTree.getNextBranch(hHistory, hInput);
+			hInput = m_rTree.getNextBranch(hHistory, hInput);
 		}
-	} while (hHistory);
+	} while (hInput);
 
 	if (historyVector.size())
 	{

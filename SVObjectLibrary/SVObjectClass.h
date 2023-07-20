@@ -139,7 +139,7 @@ public:
 	virtual void goingOffline() {};
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) {};
 	virtual bool isValidDependency(const std::pair<std::string, std::string>&) const { return true; };
-	bool isLoopOrGroupTool() const { return ((SvPb::LoopToolObjectType == GetObjectSubType() || SvPb::GroupToolObjectType == GetObjectSubType())); }
+	bool isLoopOrGroupTool() const { return (SvPb::LoopToolObjectType == GetObjectSubType() || SvPb::GroupToolObjectType == GetObjectSubType() || SvPb::ModuleToolObjectType == GetObjectSubType()); }
 
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
@@ -158,8 +158,8 @@ public:
 	virtual uint32_t getObjectId() const override {	return m_objectId; };
 	void setObjectId(uint32_t objectId);
 	/// Move this object data to the other object: switch objectId, copy value and move connection.
-	/// \param rObject [inout] source object
-	virtual void moveObject(SVObjectClass& rObject);
+	/// \param rNewObject [inout] new object
+	virtual void moveObject(SVObjectClass& rNewObject);
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
@@ -235,6 +235,8 @@ public:
 	virtual bool areImagesNeededInTRC() const; //<This method is initially called from images, to check if the image needs to be in TRC.
 	void SetLateReset() { m_LateReset = true; }
 	bool GetLateReset() const { return m_LateReset; } 
+	void sendChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId) const;
+
 protected:
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
@@ -261,8 +263,7 @@ protected:
 private:
 	void init();
 	void PersistEmbeddeds(SvOi::IObjectWriter& rWriter) const;
-	void sendChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId);
-
+	
 protected:
 	//This attribute holds the enumerated bits of allowed object attributes.
 	UINT m_ObjectAttributesAllowed;

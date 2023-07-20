@@ -61,18 +61,24 @@ void writeModule(SvOi::IObjectWriter& rWriter, const ModuleData& rData)
 	rWriter.EndElement(); //End of Module
 }
 
-void createModuleFile(SvTo::ModuleTool& rModuleTool, const std::string& rModuleName, const std::string& rXmlFileName, const std::string& rFullOwnerPath)
+void createModuleFile(SvTo::ModuleTool& rModuleTool, const std::string& rModuleName, const std::string& rXmlFileName)
 {
 	//write Module to file
 	std::string oldName = rModuleTool.GetName();
 	rModuleTool.SetName(rModuleName.c_str()); //Set name to Module name to have the name in xmlFile
-	std::string fullToolName = rFullOwnerPath + _T(".") + oldName;
-	std::string fullToolNameNew = rFullOwnerPath + _T(".") + rModuleName;
+	if (nullptr != rModuleTool.GetInspection())
+	{
+		rModuleTool.GetInspection()->OnObjectRenamed(rModuleTool, oldName);
+	}
+
 	ToolExportImport toolExport;
-	toolExport.setRenameValues(fullToolName, fullToolNameNew);
 	const auto moduleFilePath = getModulePath(rModuleName);
 	toolExport.exportTools({rModuleTool.getObjectId()}, moduleFilePath.c_str(), rXmlFileName.c_str(), false);
 	rModuleTool.SetName(oldName.c_str());
+	if (nullptr != rModuleTool.GetInspection())
+	{
+		rModuleTool.GetInspection()->OnObjectRenamed(rModuleTool, rModuleName);
+	}
 
 	AddFileToConfig(moduleFilePath.c_str());
 }
@@ -85,7 +91,7 @@ std::vector<std::pair<time_t, std::string>> readHistory(SVTreeType& rTree, SVTre
 	SvXml::SVXMLMaterialsTree::SVBranchHandle hInput {rTree.getFirstBranch(hHistory)};
 	do
 	{
-		if (hHistory)
+		if (hInput)
 		{
 			std::string branchName = rTree.getBranchName(hInput);
 			try
@@ -107,9 +113,9 @@ std::vector<std::pair<time_t, std::string>> readHistory(SVTreeType& rTree, SVTre
 				Log_Assert(false);
 			}
 
-			hHistory = rTree.getNextBranch(hHistory, hInput);
+			hInput = rTree.getNextBranch(hHistory, hInput);
 		}
-	} while (hHistory);
+	} while (hInput);
 	return historyVector;
 }
 
@@ -250,6 +256,59 @@ ModuleData getModuleData(SVTreeType& rTree, SVTreeType::SVBranchHandle hModule)
 
 	data.m_historyList = readHistory(rTree, hModule);
 	return data;
+}
+
+SvOi::IObjectClass* createModuleFromFile(const std::string& rName, const std::string& rXmlFilePath, uint32_t parentId)
+{
+	SvDef::StringVector containedFilepaths;
+	if (!SvUl::unzipAll(getModulePath(rName), SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+	SvFs::moveFilesToFolder(containedFilepaths, SvStl::GlobalPath::Inst().GetRunPath(), rXmlFilePath);
+
+	auto xmlData = SvFs::readContentFromFile(rXmlFilePath);
+	ToolExportImport toolClipboard;
+	auto pastedToolIDs = toolClipboard.createToolsFromXmlData(xmlData, parentId, false, false);
+	if (0 == pastedToolIDs.size())
+	{
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ModuleInstanceConstructFailed, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
+	}
+
+	return SvOi::getObject(pastedToolIDs[0]);
+}
+
+SvTo::ModuleTool* switchModuleToAnotherVersion(const std::string& name, const std::string& rXmlFilePath, SvTo::ModuleTool& rModuleTool)
+{
+	auto* pNewModule = dynamic_cast<SvTo::ModuleTool*>(createModuleFromFile(name, rXmlFilePath, rModuleTool.GetParentID()));
+	auto* pParentTaskObjectList = dynamic_cast<SvIe::SVTaskObjectListClass*>(rModuleTool.GetParent());
+	if (nullptr == pParentTaskObjectList || nullptr == pNewModule)
+	{
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateSFailed, {std::to_string(rModuleTool.getObjectId())}, SvStl::SourceFileParams(StdMessageParams), rModuleTool.getObjectId());
+		throw msg;
+	}
+
+	pParentTaskObjectList->moveTaskObject(pNewModule->getObjectId(), rModuleTool.getObjectId());
+	pNewModule->moveObjectToThis(rModuleTool, false);
+
+	if (!pNewModule->is_Created())
+	{
+		// And finally try to create the child object...
+		if (!dynamic_cast<SvOi::IObjectAppClass*>(pParentTaskObjectList)->CreateChildObject(*pNewModule, SvDef::SVMFResetObject))
+		{
+			pParentTaskObjectList->Delete(pNewModule);
+
+			SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateSFailed, {std::to_string(rModuleTool.getObjectId())}, SvStl::SourceFileParams(StdMessageParams), rModuleTool.getObjectId());
+			throw msg;
+		}
+	}
+	pNewModule->finishAddingAndMovingModule(rModuleTool);
+	pParentTaskObjectList->DestroyChildObject(&rModuleTool, SvDef::SVMFSetDefaultInputs);
+	return pNewModule;
 }
 }
 
@@ -470,7 +529,7 @@ void ModuleController::convertGroupTool(uint32_t toolId, const std::string& rNam
 			guid = pModuleTool->renewModuleGuid();
 		}
 
-		createModuleFile(*pModuleTool, rName, m_xmlFilePath, pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType));
+		createModuleFile(*pModuleTool, rName, m_xmlFilePath);
 
 		m_moduleList.emplace_back(rName, pModuleTool->getHistory(), pModuleTool->getModuleComment(), pModuleTool->getModuleGuid(), std::vector<uint32_t>{pModuleTool->getObjectId()});
 
@@ -525,12 +584,120 @@ void ModuleController::convertModuleInstance(uint32_t toolId)
 	}
 }
 
-void ModuleController::registerInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const SvOi::HistoryList& rHistoryList)
+void ModuleController::startEditModule(uint32_t toolId)
+{
+	auto* pModuleTool = dynamic_cast<SvTo::ModuleTool*>(SVObjectManagerClass::Instance().GetObject(toolId));
+	if (nullptr != pModuleTool)
+	{
+		pModuleTool->setEditFlag(true);
+		if (auto* pInsp = pModuleTool->GetInspection(); pInsp)
+		{
+			pInsp->resetAllObjects();
+		}
+	}
+	else
+	{
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ObjectNotFound, {std::to_string(toolId)}, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
+	}
+}
+
+void ModuleController::saveEditModule(uint32_t toolId, const std::string& rChangeText)
+{
+	auto* pModuleTool = dynamic_cast<SvTo::ModuleTool*>(SVObjectManagerClass::Instance().GetObject(toolId));
+	if (nullptr != pModuleTool)
+	{
+		pModuleTool->setEditFlag(false);
+		auto guid = pModuleTool->getModuleGuid();
+		auto iter = std::ranges::find_if(m_moduleList, [guid](const auto& rEntry) { return rEntry.m_guid == guid; });
+		if (m_moduleList.end() != iter)
+		{
+			iter->m_historyList.emplace_back(std::time(nullptr), rChangeText);
+			iter->m_comment = pModuleTool->getModuleComment();
+			pModuleTool->setHistory(iter->m_historyList);
+			createModuleFile(*pModuleTool, iter->m_name, m_xmlFilePath);
+			std::set<SVInspectionProcess*> resetIPList;
+			for (auto list = iter->m_moduleInstanceIds; auto id : list) //list will be changed, during switch, copy list before it will be used.
+			{
+				if (toolId != id)
+				{
+					auto* pModuleTool2 = dynamic_cast<SvTo::ModuleTool*>(SVObjectManagerClass::Instance().GetObject(id));
+					if (nullptr != pModuleTool2)
+					{
+						auto oldComment = pModuleTool2->getComment();
+						if (auto* pInsp = dynamic_cast<SVInspectionProcess*>(pModuleTool2->GetInspection()); pInsp)
+						{
+							resetIPList.insert(pInsp);
+						}
+						pModuleTool2 = switchModuleToAnotherVersion(iter->m_name, m_xmlFilePath, *pModuleTool2);
+						Log_Assert(pModuleTool2);
+						if (pModuleTool2)
+						{
+							pModuleTool2->setComment(oldComment);
+						}
+					}
+					else
+					{
+						Log_Assert(false);
+					}
+				}				
+			}
+			for (auto* pInsp : resetIPList)
+			{
+				//This is needed that the images is set correctly in TRC
+				pInsp->resetAllObjects();
+				pInsp->resetAllObjects();
+				pInsp->RunOnce(); //This is needed to update the overlays
+			}
+		}		
+	}
+	else
+	{
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ObjectNotFound, {std::to_string(toolId)}, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
+	}
+}
+
+void ModuleController::cancelEditModule(uint32_t toolId)
+{
+	auto* pModuleTool = dynamic_cast<SvTo::ModuleTool*>(SVObjectManagerClass::Instance().GetObject(toolId));
+	if (nullptr != pModuleTool)
+	{
+		auto* pInsp = pModuleTool->GetInspection();
+		pModuleTool->setEditFlag(false);
+		auto guid = pModuleTool->getModuleGuid();
+		auto iter = std::ranges::find_if(m_moduleList, [guid](const auto& rEntry) { return rEntry.m_guid == guid; });
+		if (m_moduleList.end() != iter)
+		{
+			auto oldComment = pModuleTool->getComment();
+			pModuleTool = switchModuleToAnotherVersion(iter->m_name, m_xmlFilePath, *pModuleTool);
+			Log_Assert(pModuleTool);
+			if (pModuleTool)
+			{
+				pModuleTool->setComment(oldComment);
+			}
+			if (pInsp)
+			{
+				//This is needed that the images is set correctly in TRC
+				pInsp->resetAllObjects();
+				pInsp->resetAllObjects();
+				dynamic_cast<SVInspectionProcess*>(pInsp)->RunOnce(); //This is needed to update the overlays
+			}
+		}
+	}
+	else
+	{
+		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ObjectNotFound, {std::to_string(toolId)}, SvStl::SourceFileParams(StdMessageParams));
+		throw msg;
+	}
+}
+
+void ModuleController::registerInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const SvOi::HistoryList& rHistoryList, bool checkComment)
 {
 	auto iter = std::ranges::find_if(m_moduleList, [guid](const auto& rEntry) { return rEntry.m_guid == guid; });
 	if (m_moduleList.end() != iter)
 	{
-		if (iter->m_comment != rComment)
+		if (checkComment && iter->m_comment != rComment)
 		{
 			SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleCommentDifferent, SvStl::SourceFileParams(StdMessageParams), instanceId);
 			throw msg;
@@ -567,27 +734,9 @@ SvOi::IObjectClass* ModuleController::constructAndAddModuleInstance(int index, u
 {
 	if (0 <= index && m_moduleList.size() > index && std::filesystem::exists(getModulePath(m_moduleList[index].m_name)))
 	{
-		SvDef::StringVector containedFilepaths;
-		if (!SvUl::unzipAll(getModulePath(m_moduleList[index].m_name), SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths))
-		{
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolsUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
-			e.Throw();
-		}
-		SvFs::moveFilesToFolder(containedFilepaths, SvStl::GlobalPath::Inst().GetRunPath(), m_xmlFilePath);
-
-		auto xmlData = SvFs::readContentFromFile(m_xmlFilePath);
-		ToolExportImport toolClipboard;
-		auto pastedToolIDs = toolClipboard.createToolsFromXmlData(xmlData, parentId, false, false);
-		if (0 == pastedToolIDs.size())
-		{
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ModuleInstanceConstructFailed, SvStl::SourceFileParams(StdMessageParams));
-			e.Throw();
-		}
-
-		return SvOi::getObject(pastedToolIDs[0]);
+		return createModuleFromFile(m_moduleList[index].m_name, m_xmlFilePath, parentId);
 	}
+
 	SvStl::MessageManager e(SvStl::MsgType::Data);
 	e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
 	e.Throw();
@@ -680,12 +829,10 @@ void ModuleController::renameModule(SVGUID guid, const std::string& newName)
 			iter->m_name = newName;
 			return;
 		}
-		else
-		{
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
-			e.Throw();
-		}
+		
+		SvStl::MessageManager e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
+		e.Throw();
 	}
 	SvStl::MessageManager e(SvStl::MsgType::Data);
 	e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
@@ -780,9 +927,7 @@ SvPb::InspectionCmdResponse ModuleController::exportModule(SVGUID moduleGuid) co
 		pCmd->set_datastring(SvFs::readContentFromFile(getModulePath(iter->m_name), false));
 		return retValue;
 	}
-	else
-	{
-		SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
-		throw msg;
-	}
+	
+	SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
+	throw msg;
 }

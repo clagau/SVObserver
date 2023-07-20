@@ -48,17 +48,11 @@ namespace SvTo
 	{
 		bool result = __super::ResetObject(pErrorMessages);
 
-		for (auto* pTask : m_TaskObjectVector)
-		{
-			if (pTask && SvPb::ParameterTaskObjectType != pTask->GetObjectType())
-			{
-				pTask->SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
-			}
-		}
+		setViewFlag();
 
 		try
 		{
-			SvOi::registerModuleInstance(m_moduleGuid, getObjectId(), getModuleComment(), m_historyList);
+			SvOi::registerModuleInstance(m_moduleGuid, getObjectId(), getModuleComment(), m_historyList, false == m_isEditing);
 		}
 		catch (SvStl::MessageContainer& rErr)
 		{
@@ -115,11 +109,9 @@ namespace SvTo
 				m_moduleGuid = SVGUID{pDataObject->getData()};
 				return S_OK;
 			}
-			else
-			{
-				Log_Assert(false);
-				return E_FAIL;
-			}
+			
+			Log_Assert(false);
+			return E_FAIL;
 		}
 		//else if (pDataObject->GetAttributeData(scLinkedIndirectValueTag, stringList))
 		//{
@@ -166,8 +158,26 @@ namespace SvTo
 		renewModuleGuid();
 		m_historyList.emplace_back(std::time(nullptr), "Init");
 
-		RegisterEmbeddedObject(&m_moduleComment, SvPb::ModuleCommentEId, IDS_OBJECTNAME_MODULE_COMMENT, false, SvOi::SVResetItemNone, false);
+		RegisterEmbeddedObject(&m_moduleComment, SvPb::ModuleCommentEId, IDS_OBJECTNAME_MODULE_COMMENT, false, SvOi::SVResetItemNone, true);
 		m_moduleComment.SetDefaultValue(_T(""));
+	}
+
+	void ModuleTool::setViewFlag()
+	{
+		for (auto* pTask : m_TaskObjectVector)
+		{
+			if (pTask && SvPb::ParameterTaskObjectType != pTask->GetObjectType())
+			{
+				if (m_isEditing)
+				{
+					pTask->SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::AddAttribute);
+				}
+				else
+				{
+					pTask->SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
+				}
+			}
+		}
 	}
 } //namespace SvTo
 
@@ -180,8 +190,6 @@ bool SvOi::setHistory(uint32_t objectID, const std::vector<std::pair<time_t, std
 		pModule->setHistory(rHistoryVector);
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+	
+	return false;
 }

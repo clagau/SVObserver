@@ -245,6 +245,7 @@ bool ResponseToObjectInfo(const SvPb::InspectionCmdResponse& rResponse, SvOi::Ob
 		objectInfo.isValid = rTOI.isvalid();
 		objectInfo.ObjectSubType = rTOI.objectsubtype();
 		objectInfo.ObjectType = rTOI.objecttype();
+		objectInfo.canHasChildren = rTOI.canhaschildren();
 		rToolSetInfos.push_back(objectInfo);
 	}
 	return true;

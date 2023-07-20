@@ -24,8 +24,9 @@ static char THIS_FILE[] = __FILE__;
 extern HRESULT GlobalRCSetMode(unsigned long lSVIMNewMode);
 
 
-SVRegressionExitDlg::SVRegressionExitDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVRegressionExitDlg::IDD, pParent)
+SVRegressionExitDlg::SVRegressionExitDlg(bool canGoBackToAllModes, CWnd* pParent /*=nullptr*/)
+	: m_canGoBackToAllModes(canGoBackToAllModes)
+	, CDialog(SVRegressionExitDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVRegressionExitDlg)
 	m_csExitModes = _T("");
@@ -58,9 +59,12 @@ BOOL SVRegressionExitDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_ctlExitModes.AddString("Run");
-	m_ctlExitModes.AddString("Stop");
-	m_ctlExitModes.AddString("Test");
+	if (m_canGoBackToAllModes)
+	{
+		m_ctlExitModes.AddString("Run");
+		m_ctlExitModes.AddString("Stop");
+		m_ctlExitModes.AddString("Test");
+	}
 	m_ctlExitModes.AddString("Edit");
 
 	m_ctlExitModes.SelectString(0,"Edit");

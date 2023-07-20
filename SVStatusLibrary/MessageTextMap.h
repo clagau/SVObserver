@@ -248,6 +248,7 @@ namespace SvStl
 		{Tid_ConfigLoadTime, _T("{0}\nload time {1} ms")},
 		{Tid_UserQuestionCloseConfig, _T("Are you sure you want to close the current SVObserver application {0}?\n\nALL CURRENT RUNNING INSPECTIONS WILL BE STOPPED!")},
 		{Tid_UserQuestionSaveChanges, _T("Save changes to {0}?")},
+		{Tid_UserQuestionModuleEditCloseWithoutSaving, _T("Module Instance \"{0}\" is editing. Saving not possible.\nClose without saving?")},
 		{Tid_UnableConfig, _T("Unable to {0} configuration {1} !")},
 		{Tid_Load, _T("load")},
 		{Tid_Save, _T("save")},
@@ -665,5 +666,6 @@ namespace SvStl
 
 		{Tid_ErrorMultiObjectID, _T("Multi Object ID per trigger can only be used in SVIM_NEO configurations\nChange the configuration type or use the Object ID index 0 for all inspections")},
 		{Tid_ErrorMultiObjectIDOrder, _T("NEO must use 'Extended Time Delay & Data Completion' PPQ mode. When using multi Object ID per trigger the object ID index in the inspection properties must match the order of the inspections in the inspection list (0-3 in ascending order)")},
+		{Tid_ActionNotPossibleInModuleEditingMode, _T("This action is not possible, while Module Instance \"{0}\" is editing.")},
 };
 } //namespace SvStl

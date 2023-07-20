@@ -210,6 +210,7 @@ enum MessageTextEnum
 	Tid_ConfigLoadTime,
 	Tid_UserQuestionCloseConfig,
 	Tid_UserQuestionSaveChanges,
+	Tid_UserQuestionModuleEditCloseWithoutSaving,
 	Tid_UnableConfig,
 	Tid_Load,
 	Tid_Save,
@@ -628,5 +629,6 @@ enum MessageTextEnum
 
 	Tid_ErrorMultiObjectID,
 	Tid_ErrorMultiObjectIDOrder,
+	Tid_ActionNotPossibleInModuleEditingMode,
 };
 } //namespace SvStl

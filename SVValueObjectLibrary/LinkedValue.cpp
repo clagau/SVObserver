@@ -522,6 +522,13 @@ bool LinkedValue::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 
 bool LinkedValue::CloseObject()
 {
+	auto* pTRC = SvOi::getTriggerRecordControllerRWInstance();
+	auto* pInsp = GetAncestorInterface(SvPb::SVInspectionObjectType);
+	if (nullptr != pTRC && nullptr != pInsp)
+	{
+		pTRC->removeLinkedImage(getObjectId(), SvOi::getInspectionPos(pInsp->getObjectId()));
+	}
+
 	for (auto& rLinked : m_children)
 	{
 		if (rLinked)
@@ -593,7 +600,7 @@ const SvOi::IObjectClass* LinkedValue::getLinkedObject() const
 	const SvOi::IObjectClass* pObject = m_LinkedObjectRef.getObject();
 	//@TODO[MEC][10.30][02.12.2022] avoiding dynamic_cast in run mode i.e by use GetClassID()
 	//if(pObject->GetClassID()  == SvPb::LinkedValueTypeEId)
-	const LinkedValue* pRefObject = dynamic_cast<const LinkedValue*>(pObject);
+	const auto* pRefObject = dynamic_cast<const LinkedValue*>(pObject);
 
 
 	if (nullptr == pRefObject)

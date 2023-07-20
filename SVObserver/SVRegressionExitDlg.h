@@ -15,7 +15,7 @@ class SVRegressionExitDlg : public CDialog
 {
 // Construction
 public:
-	SVRegressionExitDlg(CWnd* pParent = nullptr);   // standard constructor
+	explicit SVRegressionExitDlg(bool canGoBackToAllModes, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRegressionExitDlg();
 
 // Dialog Data
@@ -44,6 +44,7 @@ protected:
 
 private:
 	int m_iExitMode;
+	bool m_canGoBackToAllModes = false;
 };
 
 //{{AFX_INSERT_LOCATION}}

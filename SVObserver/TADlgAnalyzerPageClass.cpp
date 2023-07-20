@@ -248,16 +248,7 @@ void TADlgAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams));
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
-						uint32_t objectID = m_pCurrentAnalyzer->getObjectId();
-						if (SvDef::InvalidObjectId != objectID)
-						{
-							m_pTool->Delete(objectID);
-						}
-						else
-						{
-							delete m_pCurrentAnalyzer;
-						}
-
+						m_pTool->Delete(m_pCurrentAnalyzer);
 						m_pCurrentAnalyzer = nullptr;
 					}
 				}

@@ -376,7 +376,7 @@ namespace SvAo
 					{
 						SvStl::MessageManager Msg(SvStl::MsgType::Log);
 						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateChildBufferFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-						Delete(pObject->getObjectId());
+						Delete(pObject);
 					}					
 				}
 			}
@@ -389,7 +389,7 @@ namespace SvAo
 		{
 			if (nullptr != m_pEquation)
 			{
-				Delete(m_pEquation->getObjectId());
+				Delete(m_pEquation);
 				m_pEquation = nullptr;
 			}
 		}
