@@ -41,8 +41,6 @@ public:
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	HRESULT ParseToolsetScripts(SVTreeType& p_rTree);
-
 	void OnConfigurationFinishedInitializing();
 
 	BOOL BuildPPQButtons();
@@ -59,6 +57,8 @@ public:
 
 	virtual void OnUpdateFrameTitle(BOOL bAddToTitle) override;
 	void UpdateFrameTitleForDocument(LPCTSTR lpszDocName);
+
+	void updateStatusBar() { m_wndStatusBar.OnIdleUpdateCmdUI(1, 0); }
 
 	SVRegressionRunDlg* m_pregTestDlg;
 

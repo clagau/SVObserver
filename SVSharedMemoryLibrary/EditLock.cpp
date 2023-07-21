@@ -135,6 +135,10 @@ namespace EditLock
 {
 bool isAcquiredBySVIM()
 {
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_EDIT_LOCK)
+	::OutputDebugString(g_currentLockOwner.type == EntityType::SVObserver ? "\t\tLocked\n" : "\t\tUnlocked\n");
+#endif
 	return g_currentLockOwner.type == EntityType::SVObserver;
 }
 

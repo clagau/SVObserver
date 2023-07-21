@@ -1779,6 +1779,8 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 	m_wndStatusBar.Invalidate();
 }
 
+
+
 LRESULT SVMainFrame::InvalidateStatusBar( WPARAM , LPARAM  )
 {
 	m_wndStatusBar.Invalidate();

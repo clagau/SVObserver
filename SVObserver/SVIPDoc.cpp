@@ -386,16 +386,21 @@ bool isEditingModuleSelected(const std::set<uint32_t>& rIds)
 }
 
 #pragma region Constructor
-SVIPDoc::SVIPDoc()
-	: m_NewProductData(1)
-	, m_RegisteredImages()
-	, m_Images()
-	, m_AllViewsUpdated(0)
-	, m_pMDIChildWnd(nullptr)
+SVIPDoc::~SVIPDoc()
 {
-	init();
+	m_triggerRecord = nullptr;
+	m_TrcResetSubscriptionRAII.reset();
+	m_isDestroying = true;
+	::InterlockedExchange(&m_AllViewsUpdated, 1);
+	m_oDisplay.SetIPDocDisplayComplete();
+
+	m_oDisplay.Destroy();
+	setModuleEditing(SvDef::InvalidObjectId);
+
+	TheSVObserverApp().setCurrentDocument(nullptr);
 }
 #pragma endregion Constructor
+
 
 uint32_t SVIPDoc::GetInspectionID() const
 {
@@ -408,22 +413,22 @@ void SVIPDoc::UpdateAllData()
 	{
 		fixModuleMenuItems();
 
-		SVIPProductStruct l_ProductData;
-		if (S_OK == m_NewProductData.PopHead(l_ProductData))
+		SVIPProductStruct ProductData;
+		if (S_OK == m_NewProductData.PopHead(ProductData))
 		{
-			SVIPImageDataElementMap::const_iterator l_Iter = l_ProductData.m_ImageData.begin();
+			SVIPImageDataElementMap::const_iterator Iter = ProductData.m_ImageData.begin();
 
-			while (l_Iter != l_ProductData.m_ImageData.end())
+			while (Iter != ProductData.m_ImageData.end())
 			{
-				SetImageData(l_Iter->first, l_Iter->second.m_ImageDIB, l_Iter->second.m_OverlayData);
+				SetImageData(Iter->first, Iter->second.m_ImageDIB, Iter->second.m_OverlayData);
 
-				++l_Iter;
+				++Iter;
 			}
 
-			m_Results = l_ProductData.m_ResultData;
-			m_triggerRecord = l_ProductData.m_triggerRecord;
+			m_Results = ProductData.m_ResultData;
+			m_triggerRecord = ProductData.m_triggerRecord;
 
-			if (!(l_ProductData.m_ImageData.empty()))
+			if (!(ProductData.m_ImageData.empty()))
 			{
 				::InterlockedExchange(&m_AllViewsUpdated, 0);
 			}
@@ -470,22 +475,6 @@ void SVIPDoc::init()
 	}
 }
 
-//******************************************************************************
-// Destructor:
-//******************************************************************************
-SVIPDoc::~SVIPDoc()
-{
-	m_triggerRecord = nullptr;
-	m_TrcResetSubscriptionRAII.reset();
-	m_isDestroying = true;
-	::InterlockedExchange(&m_AllViewsUpdated, 1);
-	m_oDisplay.SetIPDocDisplayComplete();
-
-	m_oDisplay.Destroy();
-	setModuleEditing(SvDef::InvalidObjectId);
-
-	TheSVObserverApp().setCurrentDocument(nullptr);
-}
 
 CMDIChildWnd* SVIPDoc::GetMDIChild()
 {
@@ -501,9 +490,9 @@ CMDIChildWnd* SVIPDoc::GetMDIChild()
 
 	if (nullptr == m_pMDIChildWnd)
 	{
-		SVImageView* l_pView(GetImageView(0));
+		SVImageView* pView(GetImageView(0));
 
-		m_pMDIChildWnd = SVSearchForMDIChildWnd(l_pView);
+		m_pMDIChildWnd = SVSearchForMDIChildWnd(pView);
 	}
 
 	return m_pMDIChildWnd;
@@ -525,9 +514,9 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
-	bool l_bOk = (nullptr != pInspection);
+	bool bOk = (nullptr != pInspection);
 
-	if (l_bOk)
+	if (bOk)
 	{
 		if (IsNew)
 		{
@@ -567,11 +556,11 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 					if (nullptr != pSplitterFrame)
 					{
 						RECT IPRect = {0, 0, 0, 0};
-						CMDIChildWnd* l_pMDIChild = GetMDIChild();
+						CMDIChildWnd* pMDIChild = GetMDIChild();
 
-						if (nullptr != l_pMDIChild)
+						if (nullptr != pMDIChild)
 						{
-							l_pMDIChild->GetWindowRect(&IPRect);
+							pMDIChild->GetWindowRect(&IPRect);
 						}
 
 						pSplitterFrame->SetDefaultPaneSizes(IPRect);
@@ -609,7 +598,7 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 	m_bAllowRefresh = true;
 
 	GetResultView()->initializeResultTabControl();
-	return l_bOk;
+	return bOk;
 }
 
 std::string SVIPDoc::makeNameUnique(const std::string& rToolName, const std::vector<std::string>& rAdditionalNames, bool useExplorerStyle) const
@@ -802,20 +791,20 @@ SVImageView* SVIPDoc::GetImageView(int p_Index)
 {
 	SVImageView* pReturnView(nullptr);
 	POSITION pos(GetFirstViewPosition());
-	long l_Count(0);
+	long Count(0);
 
 	while (nullptr == pReturnView && nullptr != pos)
 	{
 		auto* pIPView = dynamic_cast<SVImageView*>(GetNextView(pos));
 		if (nullptr != pIPView)
 		{
-			if (l_Count == p_Index)
+			if (Count == p_Index)
 			{
 				pReturnView = pIPView;
 			}
 			else
 			{
-				++l_Count;
+				++Count;
 			}
 		}
 	}
@@ -838,23 +827,23 @@ ResultTabbedView* SVIPDoc::GetResultView()
 
 SVInspectionProcess* SVIPDoc::GetInspectionProcess() const
 {
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(m_InspectionID);
-	auto* pInspection(dynamic_cast<SVInspectionProcess*>(l_pObject));
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(m_InspectionID);
+	auto* pInspection(dynamic_cast<SVInspectionProcess*>(pObject));
 
 	return pInspection;
 }
 
 SVToolSet* SVIPDoc::GetToolSet() const
 {
-	SVToolSet* l_pObject(nullptr);
+	SVToolSet* pObject(nullptr);
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
 	if (nullptr != pInspection)
 	{
-		l_pObject = pInspection->GetToolSet();
+		pObject = pInspection->GetToolSet();
 	}
 
-	return l_pObject;
+	return pObject;
 }
 
 SvOi::ObjectInfoVector SVIPDoc::GetToolSetInfo() const
@@ -2051,7 +2040,7 @@ void SVIPDoc::OnCancelEditModule()
 void SVIPDoc::OnEditTool()
 {
 	constexpr int ImageTab = 0;
-	return OpenToolAdjustmentDialog(ImageTab);
+	OpenToolAdjustmentDialog(ImageTab);
 }
 
 void SVIPDoc::OnEditToolTab1()
@@ -2072,6 +2061,9 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		if (nullptr != pTool)
 		{
 			SvSml::TemporaryState_Editing tse;
+
+			GetSvoMainFrame()->updateStatusBar();
+
 			if (false == tse.stateWasEntered())
 			{
 				return;
@@ -2358,48 +2350,48 @@ void SVIPDoc::OnSaveResultsToFile()
 				std::string Value;
 				//std::string Color(_T(""));
 
-				SvIe::SVIPResultItemDefinition& l_rDef = ResultDefinitions[i];
+				SvIe::SVIPResultItemDefinition& rDef = ResultDefinitions[i];
 
-				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(l_rDef.GetObjectID());
+				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rDef.GetObjectID());
 
-				if (nullptr != l_pObject)
+				if (nullptr != pObject)
 				{
-					if (l_rDef.GetIndexPresent())
+					if (rDef.GetIndexPresent())
 					{
-						if (0 <= l_rDef.GetIndex())
+						if (0 <= rDef.GetIndex())
 						{
-							Name = std::format(_T("{}[{:d}]"), l_pObject->GetName(), l_rDef.GetIndex() + 1);
+							Name = std::format(_T("{}[{:d}]"), pObject->GetName(), rDef.GetIndex() + 1);
 						}
 						else
 						{
-							Name = std::format(_T("{}[]"), l_pObject->GetName());
+							Name = std::format(_T("{}[]"), pObject->GetName());
 						}
 					}
 					else
 					{
-						Name = l_pObject->GetName();
+						Name = pObject->GetName();
 					}
-					NameToType = l_pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
+					NameToType = pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				}
 
 				ItemIndex = std::format(_T("{:d}"), i);
 
-				SvIe::SVIPResultData::SVResultDataMap::const_iterator l_Iter = ResultData.m_ResultData.find(l_rDef);
+				SvIe::SVIPResultData::SVResultDataMap::const_iterator Iter = ResultData.m_ResultData.find(rDef);
 
-				if (l_Iter != ResultData.m_ResultData.end())
+				if (Iter != ResultData.m_ResultData.end())
 				{
-					Value = l_Iter->second.GetValue().c_str();
-					//Color = std::format(_T("{:#06X}"), l_Iter->second.GetColor());
+					Value = Iter->second.GetValue().c_str();
+					//Color = std::format(_T("{:#06X}"), Iter->second.GetColor());
 
-					if (l_Iter->second.IsIOTypePresent())
+					if (Iter->second.IsIOTypePresent())
 					{
 						ItemIndex.clear();
 
-						if (l_Iter->second.GetIOType() == IO_DIGITAL_INPUT)
+						if (Iter->second.GetIOType() == IO_DIGITAL_INPUT)
 						{
 							NameToType = SvUl::LoadStdString(IDS_OBJECTNAME_DIGITAL_INPUT);
 						}
-						else if (l_Iter->second.GetIOType() == IO_REMOTE_INPUT)
+						else if (Iter->second.GetIOType() == IO_REMOTE_INPUT)
 						{
 							NameToType = SvUl::LoadStdString(IDS_OBJECTNAME_REMOTE_INPUT);
 						}
@@ -2532,7 +2524,7 @@ void SVIPDoc::RunRegressionTest()
 
 	if (pInspection->CanRegressionGoOnline())
 	{
-		bool l_bAllowAccess = false;
+		bool bAllowAccess = false;
 
 		if (hasRunMode)
 		{
@@ -2540,7 +2532,7 @@ void SVIPDoc::RunRegressionTest()
 			if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_REGRESSION_TEST,
 				SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE))
 			{
-				l_bAllowAccess = true;
+				bAllowAccess = true;
 			}
 			else
 			{
@@ -2549,10 +2541,10 @@ void SVIPDoc::RunRegressionTest()
 		}
 		else if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_REGRESSION_TEST))
 		{
-			l_bAllowAccess = true;
+			bAllowAccess = true;
 		}
 
-		if (l_bAllowAccess)
+		if (bAllowAccess)
 		{
 			SvimState::changeState(SV_STATE_REGRESSION, SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_STOP);
 
@@ -2677,8 +2669,8 @@ void SVIPDoc::OnUpdateViewToolSetDraw(CCmdUI* pCmdUI)
 {
 	if (pCmdUI->m_pSubMenu)
 	{
-		unsigned int l_uiGray = SvimState::CheckState(SV_STATE_EDIT) ? 0 : MF_GRAYED;
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
+		unsigned int uiGray = SvimState::CheckState(SV_STATE_EDIT) ? 0 : MF_GRAYED;
+		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | uiGray);
 	}
 	else
 	{
@@ -2766,12 +2758,12 @@ void SVIPDoc::RefreshDocument()
 
 	for (int i = 0; i < MaxImageViews; ++i)
 	{
-		SVImageView* l_pImageView = GetImageView(i);
+		SVImageView* pImageView = GetImageView(i);
 
-		if (nullptr != l_pImageView)
+		if (nullptr != pImageView)
 		{
 			//@TODO[MZA][10.10][09.11.2020] if we want have different overlays depending of direct or over group tool input, this here have to be changed.
-			uint32_t imageId = l_pImageView->GetImageID().m_imageId;
+			uint32_t imageId = pImageView->GetImageID().m_imageId;
 			if (SvDef::InvalidObjectId != imageId)
 			{
 				imageIdSet.insert(imageId);
@@ -3529,21 +3521,21 @@ HRESULT SVIPDoc::RemoveImage(SvIe::SVImageClass* pImage)
 
 HRESULT SVIPDoc::RemoveImage(uint32_t imageId)
 {
-	HRESULT l_Status = S_FALSE;
+	HRESULT Status = S_FALSE;
 
 	for (int i = 0; i < MaxImageViews; ++i)
 	{
-		SVImageView* l_pView = GetImageView(i);
+		SVImageView* pView = GetImageView(i);
 
-		if (l_pView->GetImageID().m_imageId == imageId)
+		if (pView->GetImageID().m_imageId == imageId)
 		{
-			l_pView->DetachFromImage();
+			pView->DetachFromImage();
 
-			l_Status = S_OK;
+			Status = S_OK;
 		}
 	}
 
-	return l_Status;
+	return Status;
 }
 
 SvIe::SVVirtualCameraPtrVector SVIPDoc::GetCameras() const
@@ -3785,8 +3777,8 @@ void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 
 	if (pCmdUI->m_pSubMenu)
 	{
-		unsigned int l_uiGray = Enabled ? 0 : MF_GRAYED;
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
+		unsigned int uiGray = Enabled ? 0 : MF_GRAYED;
+		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | uiGray);
 	}
 	else
 	{
@@ -3962,13 +3954,13 @@ void SVIPDoc::SetSelectedToolID(uint32_t toolID)
 
 bool SVIPDoc::IsToolPreviousToSelected(uint32_t toolID) const
 {
-	bool l_Status = false;
+	bool Status = false;
 	if (nullptr != GetToolSet())
 	{
-		l_Status = GetToolSet()->IsToolPreviousToSelected(toolID);
+		Status = GetToolSet()->IsToolPreviousToSelected(toolID);
 	}
 
-	return l_Status;
+	return Status;
 }
 
 std::string SVIPDoc::GetCompleteToolSetName() const
@@ -4009,120 +4001,120 @@ void SVIPDoc::OnUpdateViewResetCountsCurrentIP(CCmdUI* pCmdUI)
 
 HRESULT SVIPDoc::RebuildImages()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	SVImageIdImageDataStructMap::iterator l_Iter = m_Images.begin();
+	SVImageIdImageDataStructMap::iterator Iter = m_Images.begin();
 
-	while (l_Iter != m_Images.end())
+	while (Iter != m_Images.end())
 	{
-		SVMasterImageRegisterMap::iterator l_RegisteredIter = m_RegisteredImages.find(l_Iter->first);
+		SVMasterImageRegisterMap::iterator RegisteredIter = m_RegisteredImages.find(Iter->first);
 
-		if (l_RegisteredIter != m_RegisteredImages.end())
+		if (RegisteredIter != m_RegisteredImages.end())
 		{
 			// If image from m_Images map is in m_RegisteredImages map
-			SVImageViewPtrImageViewStatusMap::iterator l_ViewIter = l_Iter->second.m_ImageViews.begin();
+			SVImageViewPtrImageViewStatusMap::iterator ViewIter = Iter->second.m_ImageViews.begin();
 
 			// While a view is found for the m_Images image 
-			while (l_ViewIter != l_Iter->second.m_ImageViews.end())
+			while (ViewIter != Iter->second.m_ImageViews.end())
 			{
 				// try to find the a view in the m_RegisteredImages map for the
 				// associated image that matched the m_Images based image.
-				SVImageViewPtrSet::iterator l_RegisteredViewIter = l_RegisteredIter->second.find(l_ViewIter->first);
+				SVImageViewPtrSet::iterator RegisteredViewIter = RegisteredIter->second.find(ViewIter->first);
 
-				if (l_RegisteredViewIter != l_RegisteredIter->second.end())
+				if (RegisteredViewIter != RegisteredIter->second.end())
 				{
 					// If the view was found in the m_RegisteredImage, then 
 					// move to the next m_Images view.
-					++l_ViewIter;
+					++ViewIter;
 				}
 				else
 				{
 					// else remove the m_Images view.
-					l_ViewIter = l_Iter->second.m_ImageViews.erase(l_ViewIter);
+					ViewIter = Iter->second.m_ImageViews.erase(ViewIter);
 				}
 			}
 
-			++l_Iter;  // m_Images iterator
+			++Iter;  // m_Images iterator
 		}
 		else
 		{
 			// If image from m_Images map is not in m_RegisteredImages map 
 			// then delete from m_Images map.
-			l_Iter = m_Images.erase(l_Iter);
+			Iter = m_Images.erase(Iter);
 		}
 	}
 
-	SVMasterImageRegisterMap::iterator l_RegisteredIter = m_RegisteredImages.begin();
+	SVMasterImageRegisterMap::iterator RegisteredIter = m_RegisteredImages.begin();
 
-	while (l_RegisteredIter != m_RegisteredImages.end())
+	while (RegisteredIter != m_RegisteredImages.end())
 	{
-		SVImageViewPtrSet::iterator l_RegisteredViewIter = l_RegisteredIter->second.begin();
+		SVImageViewPtrSet::iterator RegisteredViewIter = RegisteredIter->second.begin();
 
-		while (l_RegisteredViewIter != l_RegisteredIter->second.end())
+		while (RegisteredViewIter != RegisteredIter->second.end())
 		{
-			SVImageDataStruct& l_rImage = m_Images[l_RegisteredIter->first];
+			SVImageDataStruct& rImage = m_Images[RegisteredIter->first];
 
-			SVImageViewPtrImageViewStatusMap::iterator l_ViewIter = l_rImage.m_ImageViews.find(*l_RegisteredViewIter);
+			SVImageViewPtrImageViewStatusMap::iterator ViewIter = rImage.m_ImageViews.find(*RegisteredViewIter);
 
-			if (l_ViewIter == l_rImage.m_ImageViews.end())
+			if (ViewIter == rImage.m_ImageViews.end())
 			{
-				l_rImage.m_ImageViews[*l_RegisteredViewIter] = SVImageViewStatusStruct();
+				rImage.m_ImageViews[*RegisteredViewIter] = SVImageViewStatusStruct();
 			}
 
-			if (l_rImage.m_ImageData.empty())
+			if (rImage.m_ImageData.empty())
 			{
-				auto* pImage = dynamic_cast<SvIe::SVImageClass*>(SVObjectManagerClass::Instance().GetObject(l_RegisteredIter->first));
+				auto* pImage = dynamic_cast<SvIe::SVImageClass*>(SVObjectManagerClass::Instance().GetObject(RegisteredIter->first));
 
 				if ((nullptr != pImage))
 				{
-					SVBitmapInfo l_Info;
+					SVBitmapInfo Info;
 
-					BITMAPINFOHEADER l_Header = pImage->GetImageInfo().GetBitmapInfoHeader();
+					BITMAPINFOHEADER Header = pImage->GetImageInfo().GetBitmapInfoHeader();
 
-					l_Info.Assign(l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable(l_Header.biBitCount));
+					Info.Assign(Header.biWidth, Header.biHeight, Header.biBitCount, SVBitmapInfo::GetDefaultColorTable(Header.biBitCount));
 
-					l_rImage.m_ImageData.resize(l_Info.GetBitmapInfoSizeInBytes() + l_Info.GetBitmapImageSizeInBytes(), 0);
+					rImage.m_ImageData.resize(Info.GetBitmapInfoSizeInBytes() + Info.GetBitmapImageSizeInBytes(), 0);
 
-					::memcpy(&(l_rImage.m_ImageData[0]), l_Info.GetBitmapInfo(), l_Info.GetBitmapInfoSizeInBytes());
+					::memcpy(&(rImage.m_ImageData[0]), Info.GetBitmapInfo(), Info.GetBitmapInfoSizeInBytes());
 				}
 			}
 
-			++l_RegisteredViewIter;
+			++RegisteredViewIter;
 		}
 
-		++l_RegisteredIter;
+		++RegisteredIter;
 	}
 
 	::InterlockedExchange(&m_AllViewsUpdated, 0);
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::CheckImages()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
 	if (m_AllViewsUpdated == 0)
 	{
-		bool l_Refresh = true;
+		bool Refresh = true;
 
-		SVImageIdImageDataStructMap::iterator l_Iter = m_Images.begin();
+		SVImageIdImageDataStructMap::iterator Iter = m_Images.begin();
 
-		while (l_Refresh && l_Iter != m_Images.end())
+		while (Refresh && Iter != m_Images.end())
 		{
-			SVImageViewPtrImageViewStatusMap::iterator l_ViewIter = l_Iter->second.m_ImageViews.begin();
+			SVImageViewPtrImageViewStatusMap::iterator ViewIter = Iter->second.m_ImageViews.begin();
 
-			while (l_Refresh && l_ViewIter != l_Iter->second.m_ImageViews.end())
+			while (Refresh && ViewIter != Iter->second.m_ImageViews.end())
 			{
-				l_Refresh &= l_ViewIter->second.m_DisplayComplete;
+				Refresh &= ViewIter->second.m_DisplayComplete;
 
-				++l_ViewIter;
+				++ViewIter;
 			}
 
-			++l_Iter;
+			++Iter;
 		}
 
-		if (l_Refresh)
+		if (Refresh)
 		{
 			::InterlockedExchange(&m_AllViewsUpdated, 1);
 
@@ -4130,26 +4122,26 @@ HRESULT SVIPDoc::CheckImages()
 		}
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::RegisterImage(uint32_t imageId, SVImageView* p_pImageView)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	SVMasterImageRegisterMap::iterator l_Iter = m_RegisteredImages.begin();
+	SVMasterImageRegisterMap::iterator Iter = m_RegisteredImages.begin();
 
-	while (l_Iter != m_RegisteredImages.end())
+	while (Iter != m_RegisteredImages.end())
 	{
-		l_Iter->second.erase(p_pImageView);
+		Iter->second.erase(p_pImageView);
 
-		if (l_Iter->second.empty())
+		if (Iter->second.empty())
 		{
-			l_Iter = m_RegisteredImages.erase(l_Iter);
+			Iter = m_RegisteredImages.erase(Iter);
 		}
 		else
 		{
-			++l_Iter;
+			++Iter;
 		}
 	}
 
@@ -4157,221 +4149,221 @@ HRESULT SVIPDoc::RegisterImage(uint32_t imageId, SVImageView* p_pImageView)
 	{
 		m_RegisteredImages[imageId].insert(p_pImageView);
 
-		l_Status = RebuildImages();
+		Status = RebuildImages();
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		Status = E_FAIL;
 	}
 
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
 	if (nullptr != pInspection) { pInspection->LastProductNotify(); }
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::UnregisterImageView(SVImageView* p_pImageView)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	SVMasterImageRegisterMap::iterator l_Iter = m_RegisteredImages.begin();
+	SVMasterImageRegisterMap::iterator Iter = m_RegisteredImages.begin();
 
-	while (l_Iter != m_RegisteredImages.end())
+	while (Iter != m_RegisteredImages.end())
 	{
-		l_Iter->second.erase(p_pImageView);
+		Iter->second.erase(p_pImageView);
 
-		if (l_Iter->second.empty())
+		if (Iter->second.empty())
 		{
-			l_Iter = m_RegisteredImages.erase(l_Iter);
+			Iter = m_RegisteredImages.erase(Iter);
 		}
 		else
 		{
-			++l_Iter;
+			++Iter;
 		}
 	}
 
-	l_Status = RebuildImages();
+	Status = RebuildImages();
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::IsImageDataUpdated(uint32_t imageId, SVImageView* p_pImageView) const
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
 	if (m_AllViewsUpdated == 0)
 	{
-		SVImageIdImageDataStructMap::const_iterator l_Iter = m_Images.find(imageId);
+		SVImageIdImageDataStructMap::const_iterator Iter = m_Images.find(imageId);
 
-		if (l_Iter != m_Images.end())
+		if (Iter != m_Images.end())
 		{
-			SVImageViewPtrImageViewStatusMap::const_iterator l_ViewIter = l_Iter->second.m_ImageViews.find(p_pImageView);
+			SVImageViewPtrImageViewStatusMap::const_iterator ViewIter = Iter->second.m_ImageViews.find(p_pImageView);
 
-			if (l_ViewIter != l_Iter->second.m_ImageViews.end())
+			if (ViewIter != Iter->second.m_ImageViews.end())
 			{
-				if (!(l_ViewIter->second.m_ViewDataUpdated))
+				if (!(ViewIter->second.m_ViewDataUpdated))
 				{
-					l_Status = S_FALSE;
+					Status = S_FALSE;
 				}
 			}
 		}
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::GetBitmapInfo(uint32_t imageId, SVBitmapInfo& p_rBitmapInfo) const
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
 	auto* pImage = dynamic_cast<SvIe::SVImageClass*>(SVObjectManagerClass::Instance().GetObject(imageId));
 
 	if (nullptr != pImage)
 	{
-		BITMAPINFOHEADER l_Header = pImage->GetImageInfo().GetBitmapInfoHeader();
+		BITMAPINFOHEADER Header = pImage->GetImageInfo().GetBitmapInfoHeader();
 
-		p_rBitmapInfo.Assign(l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable(l_Header.biBitCount));
+		p_rBitmapInfo.Assign(Header.biWidth, Header.biHeight, Header.biBitCount, SVBitmapInfo::GetDefaultColorTable(Header.biBitCount));
 	}
 	else
 	{
 		p_rBitmapInfo.clear();
 
-		l_Status = E_FAIL;
+		Status = E_FAIL;
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::GetImageData(uint32_t imageId, std::string& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray) const
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	SVImageIdImageDataStructMap::const_iterator l_Iter = m_Images.find(imageId);
+	SVImageIdImageDataStructMap::const_iterator Iter = m_Images.find(imageId);
 
-	if (l_Iter != m_Images.end())
+	if (Iter != m_Images.end())
 	{
-		p_rImageData = l_Iter->second.m_ImageData;
-		p_rMultiLineArray = l_Iter->second.m_OverlayData;
+		p_rImageData = Iter->second.m_ImageData;
+		p_rMultiLineArray = Iter->second.m_OverlayData;
 	}
 	else
 	{
 		p_rImageData.clear();
 		p_rMultiLineArray.clear();
 
-		l_Status = E_FAIL;
+		Status = E_FAIL;
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::SetImageData(uint32_t imageId, const std::string& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	SVImageIdImageDataStructMap::iterator l_Iter = m_Images.find(imageId);
+	SVImageIdImageDataStructMap::iterator Iter = m_Images.find(imageId);
 
-	if (l_Iter != m_Images.end())
+	if (Iter != m_Images.end())
 	{
-		l_Iter->second.m_ImageData = p_rImageData;
-		l_Iter->second.m_OverlayData = p_rMultiLineArray;
+		Iter->second.m_ImageData = p_rImageData;
+		Iter->second.m_OverlayData = p_rMultiLineArray;
 
-		SVImageViewPtrImageViewStatusMap::iterator l_ViewIter = l_Iter->second.m_ImageViews.begin();
+		SVImageViewPtrImageViewStatusMap::iterator ViewIter = Iter->second.m_ImageViews.begin();
 
-		while (l_ViewIter != l_Iter->second.m_ImageViews.end())
+		while (ViewIter != Iter->second.m_ImageViews.end())
 		{
-			l_ViewIter->second.m_ViewNotified = false;
-			l_ViewIter->second.m_ViewDataUpdated = false;
-			l_ViewIter->second.m_DisplayComplete = false;
+			ViewIter->second.m_ViewNotified = false;
+			ViewIter->second.m_ViewDataUpdated = false;
+			ViewIter->second.m_DisplayComplete = false;
 
-			++l_ViewIter;
+			++ViewIter;
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		Status = E_FAIL;
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::MarkImageDataUpdated(uint32_t imageId, SVImageView* p_pImageView)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
 	if (m_AllViewsUpdated == 0)
 	{
-		SVImageIdImageDataStructMap::iterator l_Iter = m_Images.find(imageId);
+		SVImageIdImageDataStructMap::iterator Iter = m_Images.find(imageId);
 
-		if (l_Iter != m_Images.end())
+		if (Iter != m_Images.end())
 		{
-			SVImageViewPtrImageViewStatusMap::iterator l_ViewIter = l_Iter->second.m_ImageViews.find(p_pImageView);
+			SVImageViewPtrImageViewStatusMap::iterator ViewIter = Iter->second.m_ImageViews.find(p_pImageView);
 
-			if (l_ViewIter != l_Iter->second.m_ImageViews.end())
+			if (ViewIter != Iter->second.m_ImageViews.end())
 			{
-				l_ViewIter->second.m_ViewDataUpdated = true;
+				ViewIter->second.m_ViewDataUpdated = true;
 			}
 			else
 			{
-				l_Status = E_FAIL;
+				Status = E_FAIL;
 			}
 		}
 		else
 		{
-			l_Status = E_FAIL;
+			Status = E_FAIL;
 		}
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::MarkImageDataDisplayed(uint32_t imageId, SVImageView* p_pImageView)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
 	if (m_AllViewsUpdated == 0)
 	{
-		SVImageIdImageDataStructMap::iterator l_Iter = m_Images.find(imageId);
+		SVImageIdImageDataStructMap::iterator Iter = m_Images.find(imageId);
 
-		if (l_Iter != m_Images.end())
+		if (Iter != m_Images.end())
 		{
-			SVImageViewPtrImageViewStatusMap::iterator l_ViewIter = l_Iter->second.m_ImageViews.find(p_pImageView);
+			SVImageViewPtrImageViewStatusMap::iterator ViewIter = Iter->second.m_ImageViews.find(p_pImageView);
 
-			if (l_ViewIter != l_Iter->second.m_ImageViews.end())
+			if (ViewIter != Iter->second.m_ImageViews.end())
 			{
-				if (!(l_ViewIter->second.m_DisplayComplete))
+				if (!(ViewIter->second.m_DisplayComplete))
 				{
-					l_ViewIter->second.m_DisplayComplete = true;
+					ViewIter->second.m_DisplayComplete = true;
 
-					l_Status = CheckImages();
+					Status = CheckImages();
 				}
 			}
 			else
 			{
-				l_Status = E_FAIL;
+				Status = E_FAIL;
 			}
 		}
 		else
 		{
-			l_Status = E_FAIL;
+			Status = E_FAIL;
 		}
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVIPDoc::UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents)
 {
-	HRESULT l_Status = SVGuiExtentUpdater::UpdateImageExtent(pTask, rExtents);
-	if (S_OK == l_Status) { SetModifiedFlag(); }
-	return l_Status;
+	HRESULT Status = SVGuiExtentUpdater::UpdateImageExtent(pTask, rExtents);
+	if (S_OK == Status) { SetModifiedFlag(); }
+	return Status;
 }
 
 HRESULT SVIPDoc::UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents)
 {
-	HRESULT l_Status = SVGuiExtentUpdater::SetImageExtentToFit(pTask, rExtents);
-	if (S_OK == l_Status) { SetModifiedFlag(); }
-	return l_Status;
+	HRESULT Status = SVGuiExtentUpdater::SetImageExtentToFit(pTask, rExtents);
+	if (S_OK == Status) { SetModifiedFlag(); }
+	return Status;
 }
 
 HRESULT SVIPDoc::UpdateWithLastProduct()
@@ -4394,14 +4386,14 @@ HRESULT SVIPDoc::UpdateWithLastProduct()
 bool SVIPDoc::RunOnce()
 {
 	SVInspectionProcess* pInspection = GetInspectionProcess();
-	bool l_Status = (nullptr != pInspection);
+	bool Status = (nullptr != pInspection);
 
-	if (l_Status)
+	if (Status)
 	{
-		l_Status = (S_OK == SvCmd::RunOnceSynchronous(pInspection->getObjectId()));
+		Status = (S_OK == SvCmd::RunOnceSynchronous(pInspection->getObjectId()));
 	}
 
-	return l_Status;
+	return Status;
 }
 
 uint32_t SVIPDoc::GetObjectIdFromToolToInsertBefore(const std::string& rName) const
@@ -4700,7 +4692,7 @@ void SetAllIPDocumentsOffline()
 
 HRESULT RebuildOutputObjectListHelper(SVIODoc* pIODoc)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -4717,10 +4709,10 @@ HRESULT RebuildOutputObjectListHelper(SVIODoc* pIODoc)
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		Status = E_FAIL;
 	}
 
-	return l_Status;
+	return Status;
 }
 
 

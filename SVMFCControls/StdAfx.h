@@ -61,6 +61,7 @@
 #include <ctime>			//Used by static library
 #include <deque>			//Used by static library
 #include <Dlgs.h>
+#include <format>
 #include <functional>
 #include <Guiddef.h>
 #include <list>

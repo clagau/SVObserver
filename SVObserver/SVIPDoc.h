@@ -63,7 +63,7 @@ public:
 	};
 
 #pragma region Constructor
-	SVIPDoc();
+	SVIPDoc(){init();}
 	virtual ~SVIPDoc();
 #pragma endregion Constructor
 
@@ -339,13 +339,13 @@ protected:
 	HRESULT UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
 
 	bool m_bAllowRefresh;
-	SVProductDataQueue m_NewProductData;
+	SVProductDataQueue m_NewProductData {1};
 	SVMasterImageRegisterMap m_RegisteredImages;
 	SVImageIdImageDataStructMap m_Images;
 	SvIe::SVIPResultData m_Results;
 	SvOi::ITriggerRecordRPtr m_triggerRecord = nullptr;
 	SvOi::RAIIPtr m_TrcResetSubscriptionRAII;
-	long m_AllViewsUpdated;
+	long m_AllViewsUpdated = 0;
 
 	//
 	// View windows height and width saved for serialization. 15 Jun 1999 - frb.
@@ -387,7 +387,7 @@ private:
 	uint32_t m_InspectionID {0UL};
 	SVDisplayObject m_oDisplay;
 
-	CMDIChildWnd* m_pMDIChildWnd;
+	CMDIChildWnd* m_pMDIChildWnd = nullptr;
 	SVToolGrouping m_toolGroupings;
 	bool m_isDestroying = false;
 	HANDLE m_RegressionTestHandle = nullptr;
