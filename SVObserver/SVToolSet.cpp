@@ -105,8 +105,10 @@ void SVToolSet::init()
 	// Set Embedded defaults
 	m_MissingImageCountTS.SetDefaultValue(0, true);
 	m_MissingImageCountTS.setSaveValueFlag(false);
+	m_MissingImageCountTS.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_NotCompleteCountTS.SetDefaultValue(0, true);
 	m_NotCompleteCountTS.setSaveValueFlag(false);
+	m_NotCompleteCountTS.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 
 	m_isObjectValid.SetDefaultValue(BOOL(false), true);
 	m_isObjectValid.setSaveValueFlag(false);
@@ -125,9 +127,11 @@ void SVToolSet::init()
 	m_EnabledCount.setSaveValueFlag(false);
 	m_ProcessedCount.SetDefaultValue(0L);
 	m_ProcessedCount.setSaveValueFlag(false);
+	m_ProcessedCount.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 
 	m_ToolTime.SetDefaultValue(0L);
 	m_ToolTime.setSaveValueFlag(false);
+	m_ToolTime.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_ToolTime.SetName("Tool Set Time");
 
 	m_MinToolsetTime.SetDefaultValue(0LL);
@@ -142,8 +146,10 @@ void SVToolSet::init()
 	m_DrawFlag.SetDefaultValue(0L); // 0 Should be show 'All Tools'
 	m_TriggerCount.SetDefaultValue(0L);
 	m_TriggerCount.setSaveValueFlag(false);
+	m_TriggerCount.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_PPQIndexAtCompletion.SetDefaultValue(0L);
 	m_PPQIndexAtCompletion.setSaveValueFlag(false);
+	m_PPQIndexAtCompletion.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	for (int i = 0; i < ToolSetTimes::MaxCount; ++i)
 	{
 		m_Times[i].SetDefaultValue(0LL);
@@ -156,12 +162,15 @@ void SVToolSet::init()
 
 	m_ObjectID.setDefaultValue(0);
 	m_ObjectID.setSaveValueFlag(false);
+	m_ObjectID.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_ObjectType.setDefaultValue(0);
 	m_ObjectType.setSaveValueFlag(false);
 	m_TriggerIndex.setDefaultValue(0);
 	m_TriggerIndex.setSaveValueFlag(false);
+	m_TriggerIndex.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_TriggerPerObjectID.setDefaultValue(0);
 	m_TriggerPerObjectID.setSaveValueFlag(false);
+	m_TriggerPerObjectID.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_InspectedObjectID.setDefaultValue(0UL);
 	m_InspectedObjectID.setSaveValueFlag(false);
 	m_ObjectIdIndex.setDefaultValue(0);

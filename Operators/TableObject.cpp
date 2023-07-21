@@ -173,6 +173,7 @@ SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(SvPb::EmbeddedIdEnum
 			if (errorMessages.empty())
 			{
 				pValueObject->SetArraySize(arraysize);
+				pValueObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 			}
 			else
 			{
@@ -253,6 +254,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::Emb
 		// Construct new object...
 		SvVol::DoubleSortValueObject* pObject = dynamic_cast<SvVol::DoubleSortValueObject*>(SvOi::ConstructObject(SvPb::DoubleSortValueClassId));
 		RegisterEmbeddedObject(pObject, embeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemToolAndDependent, false);
+		pObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 		m_ValueList.push_back(SvVol::DoubleSortValuePtr {pObject});
 	}
 
@@ -273,6 +275,7 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SvPb::EmbeddedIdEnum e
 		RegisterEmbeddedObject(pObject, embeddedId, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemToolAndDependent, false);
 		pObject->SetName(name);
 		pObject->SetArraySize(arraySize);
+		pObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 		pRetObject = SvVol::DoubleSortValuePtr {pObject};
 		m_ValueList.push_back(pRetObject);
 	}

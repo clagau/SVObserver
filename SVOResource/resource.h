@@ -2499,6 +2499,7 @@
 #define IDC_BTN_REG_FOLDER_DEL          16263
 #define IDC_BTN_REG_TEST_DELETE         16264
 #define IDC_BUTTON_ADD_FOLDER           16265
+#define IDC_SHOW_ALL_NODES              16266
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002

@@ -26,8 +26,8 @@ namespace SvDef
 	};
 
 	//Combined object attributes
-	constexpr UINT viewableAndUseable = SvPb::viewable | SvPb::useable;
-	constexpr UINT defaultValueObjectAttributes = viewableAndUseable | SvPb::audittrail;
+	constexpr UINT viewableAndUseable = SvPb::ObjectAttributes::viewable | SvPb::ObjectAttributes::useable;
+	constexpr UINT defaultValueObjectAttributes = viewableAndUseable | SvPb::ObjectAttributes::audittrail;
 	
 	constexpr int c_maxTableColumn = 50;
 	constexpr int c_numberOfSortFeature = 3;

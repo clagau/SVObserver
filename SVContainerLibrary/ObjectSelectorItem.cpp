@@ -20,6 +20,7 @@ namespace SvCl
 	ObjectSelectorItem::ObjectSelectorItem(const SvPb::TreeItem& rTreeItem)
 	: m_Name {rTreeItem.name()}
 	, m_Location {rTreeItem.location()}
+	, m_shortMode{rTreeItem.shortmode()}
 	, m_CheckedState {SvCl::ObjectSelectorItem::UncheckedEnabled}
 	, m_NodeState {SvCl::ObjectSelectorItem::UncheckedEnabled}
 	, m_ItemTypeName {rTreeItem.type()}

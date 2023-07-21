@@ -89,7 +89,7 @@ namespace SvOsl
 			pParent = AfxGetApp()->GetMainWnd();
 		}
 		SvMc::ResizablePropertySheet Sheet( title, pParent );
-		ObjectSelectorPpg selectorPage(m_TreeContainer, mainTabTitle, isSingleObject, nodeToBeSelected);
+		ObjectSelectorPpg selectorPage(m_TreeContainer, mainTabTitle, isSingleObject, nodeToBeSelected, m_showAllNodes);
 		ObjectFilterPpg filterPage( m_TreeContainer, filterTabTitle, isSingleObject );
 
 		selectorPage.setHelpID(m_helpID);
@@ -119,6 +119,7 @@ namespace SvOsl
 	{
 		bool Result( false );
 
+		m_showAllNodes = false;
 		for(const auto& rItemName : rItems)
 		{
 			std::string Location = rItemName;
@@ -144,6 +145,7 @@ namespace SvOsl
 					if (iter->second->m_ItemKey == rItemName)
 					{
 						iter->second->m_CheckedState = SvCl::ObjectSelectorItem::CheckedEnabled;
+						m_showAllNodes |= (false == iter->second->m_shortMode);
 						break;
 					}
 					++iter;
@@ -155,6 +157,7 @@ namespace SvOsl
 				if (m_TreeContainer.end() != Iter)
 				{
 					Iter->second->m_CheckedState = SvCl::ObjectSelectorItem::CheckedEnabled;
+					m_showAllNodes |= (false == Iter->second->m_shortMode);
 					Result = true;
 				}
 			}

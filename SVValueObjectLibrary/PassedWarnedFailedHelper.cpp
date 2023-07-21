@@ -22,8 +22,10 @@ void PassedWarnedFailedHelper::registerPwfAndSetDefaults(SVObjectClass& rSvo)
 	// Set Embedded defaults
 	m_Passed.SetDefaultValue(BOOL(false), true);		// Default for Passed is FALSE !!!
 	m_Passed.setSaveValueFlag(false);
+	m_Passed.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_Failed.SetDefaultValue(BOOL(true), true);			// Default for Failed is TRUE !!!
 	m_Failed.setSaveValueFlag(false);
+	m_Failed.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_Warned.SetDefaultValue(BOOL(true), true);			// Default for Warned is TRUE !!!
 	m_Warned.setSaveValueFlag(false);
 }

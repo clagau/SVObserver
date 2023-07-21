@@ -34,13 +34,13 @@ public:
 
 	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	SvOi::ParameterPairForML getResultData() const { return SvOi::ParameterPairForML {result.GetCompleteName(), result.getObjectId()}; };
+	SvOi::ParameterPairForML getResultData() const { return SvOi::ParameterPairForML {m_result.GetCompleteName(), m_result.getObjectId()}; };
 
 protected:
 	void init();
 
 protected:
-	SvVol::SVBoolValueObjectClass result;			// resultant value
+	SvVol::SVBoolValueObjectClass m_result;			// resultant value
 };
 
 } //namespace SvOp

@@ -554,7 +554,7 @@ namespace SvOp
 			setObject(i);
 			m_TypeObjects[i]->GetValue(type);
 			m_objects[i]->UpdateContent();
-			UINT attributes = SvDef::viewableAndUseable;
+			UINT attributes = SvDef::viewableAndUseable | SvPb::ObjectAttributes::shortMode;
 			if (SvPb::ParameterInputObjectType == GetObjectSubType())
 			{
 				attributes |= SvPb::remotelySetable;

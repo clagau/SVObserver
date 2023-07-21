@@ -48,6 +48,7 @@ SVLongResult::SVLongResult( SVObjectClass* POwner, int StringResourceID )
 	// Set Embedded defaults
 	m_Value.SetDefaultValue( 0, true );
 	m_Value.setSaveValueFlag(false);
+	m_Value.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 
 	// Instantiate Dynamic Objects
 

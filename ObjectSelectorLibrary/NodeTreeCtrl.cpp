@@ -464,6 +464,7 @@ namespace SvOsl
 		std::string filter {getParentPropPage().getFilter()};
 		std::string parentLocation;
 		bool filterActive {false == filter.empty()};
+		bool showAllNodes {getParentPropPage().showAllNodes()};
 
 		SvCl::ObjectTreeItems::pre_order_iterator Iter(getParentPropPage().getTreeContainer().pre_order_begin());
 		while (getParentPropPage().getTreeContainer().pre_order_end() != Iter)
@@ -474,6 +475,7 @@ namespace SvOsl
 				++Iter;
 				continue;
 			}
+			bool displayItem {false};
 			if (filterActive)
 			{
 				if (false == showParent)
@@ -481,26 +483,29 @@ namespace SvOsl
 					if (PathMatchSpec(Iter->second->m_Location.c_str(), filter.c_str()) || PathMatchSpec(Iter->second->m_Location.c_str(), (filter + _T("*")).c_str()))
 					{
 						parentLocation = Iter->second->m_Location;
-						Iter->second->m_displayItem = true;
-						auto* pParent = Iter.node()->parent();
-						while (nullptr != pParent && false == pParent->get()->second->m_displayItem)
-						{
-							pParent->get()->second->m_displayItem = true;
-							pParent = pParent->parent();
-						}
-					}
-					else
-					{
-						parentLocation.clear();
-						Iter->second->m_displayItem = false;
-						Iter->second->m_NodeItem = nullptr;
-						Iter->second->m_LeafItem = nullptr;
+						displayItem = showAllNodes ? true : Iter->second->m_shortMode;
 					}
 				}
 			}
 			else
 			{
-				Iter->second->m_displayItem = true;
+				displayItem = showAllNodes ? true : Iter->second->m_shortMode;
+			}
+			Iter->second->m_displayItem = displayItem;
+			if (Iter->second->m_displayItem)
+			{
+				auto* pParent = Iter.node()->parent();
+				while (nullptr != pParent && false == pParent->get()->second->m_displayItem)
+				{
+					pParent->get()->second->m_displayItem = true;
+					pParent = pParent->parent();
+				}
+			}
+			else
+			{
+				parentLocation.clear();
+				Iter->second->m_NodeItem = nullptr;
+				Iter->second->m_LeafItem = nullptr;
 			}
 			++Iter;
 		}

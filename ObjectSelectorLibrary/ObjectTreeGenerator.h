@@ -134,6 +134,7 @@ namespace SvOsl
 		SelectorTypeEnum m_SelectorType{TypeNone};	//The selector type
 		int m_helpID{0};							//The ID for the help file
 		long m_LeafCount{0L};						//The number of leafs in the selector (only as debug information)
+		bool m_showAllNodes {false};
 	#pragma endregion Member Variables
 	};
 } //namespace SvOsl

@@ -35,7 +35,7 @@ namespace SvOsl
 
 	public:
 	#pragma region Constructor
-		ObjectSelectorPpg(SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect = true, LPCTSTR nodeToBeSelected = nullptr);
+		ObjectSelectorPpg(SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect = true, LPCTSTR nodeToBeSelected = nullptr , bool showAllNodes = true);
 
 		virtual ~ObjectSelectorPpg();
 	#pragma endregion Constructor
@@ -57,6 +57,7 @@ namespace SvOsl
 		void updateTreeData();
 
 		LPCTSTR getFilter() { return m_FilterNameControl.getEditText().GetString(); }
+		bool showAllNodes() { return m_showAllNodes; }
 	#pragma endregion Public Methods
 
 	protected:
@@ -66,6 +67,7 @@ namespace SvOsl
 		virtual void DoDataExchange(CDataExchange* pDX) override;
 		virtual BOOL OnInitDialog() override;
 		afx_msg void OnChangeFilter();
+		afx_msg void OnShowAllNodes();
 		virtual BOOL OnSetActive() override;
 		afx_msg void OnHelp();
 		afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
@@ -81,7 +83,8 @@ namespace SvOsl
 		CImageList m_ImageList;
 		std::string m_HighlightedNode;
 		std::string m_lastFilter;
-		int m_HelpID;
+		int m_HelpID {0};
+		BOOL m_showAllNodes{false};
 		LPCTSTR m_nodeToBeSelected;
 	#pragma endregion Member Variables
 	};

@@ -19,7 +19,7 @@ message TreeItem
 {
 	string name = 1;				//The name of the leaf or branch
 	string location = 2;			//The location which is the dotted name of leaf or branch
-	//bool selected = 3;				//obsolete (The flag which defines if the object is selected)
+	bool shortMode = 3;				//Flag for object selector short mode
 	string type = 4;				//The object type
 	string objectIDIndex = 5;		//The object ID including index for array values
 	repeated TreeItem children = 6;	//The children of this node

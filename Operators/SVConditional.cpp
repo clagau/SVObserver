@@ -52,11 +52,12 @@ void SVConditional::init()
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SvPb::ConditionalResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false );
+	RegisterEmbeddedObject( &m_result, SvPb::ConditionalResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone, false );
 
 	// Set Embedded defaults
-	result.SetDefaultValue( BOOL(false), true );
-	result.setSaveValueFlag(false);
+	m_result.SetDefaultValue( BOOL(false), true );
+	m_result.setSaveValueFlag(false);
+	m_result.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +72,7 @@ bool SVConditional::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_isCreated = SVEquation::CreateObject(rCreateStructure);
 
 	// Set/Reset printable Flags
-	result.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_result.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -89,7 +90,7 @@ bool SVConditional::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerV
 	// This is used to initially setup certain objects.
 	if( SvimState::CheckState( SV_STATE_INTERNAL_RUN ) )
 	{
-		result.SetValue(BOOL(true));
+		m_result.SetValue(BOOL(true));
 		return true;
 	}// end if
 
@@ -106,7 +107,7 @@ bool SVConditional::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerV
             Value = getResult() ? true : false;
 		}
 	}
-	result.SetValue(Value);
+	m_result.SetValue(Value);
 
 	return retVal;
 }

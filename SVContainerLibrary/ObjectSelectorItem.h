@@ -91,6 +91,7 @@ namespace SvCl
 		int					m_IconNumber{0};
 		bool				m_Modified{false};
 		bool				m_displayItem {true};
+		bool				m_shortMode {false};
 		CheckedStateEnum	m_NodeState {EmptyEnabled};
 		CheckedStateEnum	m_CheckedState{EmptyEnabled};
 		CheckedStateEnum	m_OrgCheckedState{EmptyEnabled};

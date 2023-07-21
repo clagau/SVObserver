@@ -271,8 +271,10 @@ void SVToolClass::init()
 
 	m_PassedCount.SetDefaultValue(0L, true);
 	m_PassedCount.setSaveValueFlag(false);
+	m_PassedCount.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_FailedCount.SetDefaultValue(0L, true);
 	m_FailedCount.setSaveValueFlag(false);
+	m_FailedCount.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
 	m_WarnedCount.SetDefaultValue(0L, true);
 	m_WarnedCount.setSaveValueFlag(false);
 

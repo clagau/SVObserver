@@ -412,6 +412,7 @@ void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<S
 	{
 		insertItem.set_type(pValueObject->getTypeName());
 	}
+	insertItem.set_shortmode(SvPb::ObjectAttributes::shortMode == (ObjectAttributesAllowed() & SvPb::ObjectAttributes::shortMode));
 
 	if (isArray())
 	{

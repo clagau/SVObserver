@@ -33,18 +33,19 @@ namespace SvOsl
 	BEGIN_MESSAGE_MAP(ObjectSelectorPpg, CPropertyPage)
 		ON_COMMAND(ID_HELP, OnHelp)
 		ON_EN_CHANGE(IDC_FILTER, OnChangeFilter)
+		ON_BN_CLICKED(IDC_SHOW_ALL_NODES, OnShowAllNodes)
 		ON_WM_SIZE()
 		ON_WM_HELPINFO()
 	END_MESSAGE_MAP()
 
 	#pragma region Constructor
-	ObjectSelectorPpg::ObjectSelectorPpg( SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect, LPCTSTR nodeToBeSelected)
+	ObjectSelectorPpg::ObjectSelectorPpg( SvCl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect /*= true*/, LPCTSTR nodeToBeSelected /*= nullptr*/, bool showAllNodes /*= true*/)
 		: CPropertyPage( ObjectSelectorPpg::IDD )
-		, m_rTreeContainer( rTreeContainer )
-		, m_NodeTree( *this, SingleSelect )
-		, m_LeafTree( *this, SingleSelect )
-		, m_HelpID(0)
-		, m_nodeToBeSelected(nodeToBeSelected)
+		, m_rTreeContainer {rTreeContainer}
+		, m_NodeTree {*this, SingleSelect}
+		, m_LeafTree {*this, SingleSelect}
+		, m_nodeToBeSelected {nodeToBeSelected}
+		,m_showAllNodes{showAllNodes}
 	{
 		m_psp.pszTitle = Title;
 		m_psp.dwFlags |= PSP_USETITLE;
@@ -73,6 +74,7 @@ namespace SvOsl
 		//This is ok when std::string is only being read, input from the dialog would be lost
 		CString tempStr{m_HighlightedNode.c_str()};
 		DDX_Text(pDX, IDC_HIGHLIGHTED_NODE, tempStr);
+		DDX_Check(pDX, IDC_SHOW_ALL_NODES, m_showAllNodes);
 	}
 
 	BOOL ObjectSelectorPpg::OnInitDialog()
@@ -117,6 +119,13 @@ namespace SvOsl
 			m_LeafTree.loadTree();
 			m_lastFilter = m_FilterNameControl.getEditText().GetString();
 		}
+	}
+	
+	void ObjectSelectorPpg::OnShowAllNodes()
+	{
+		UpdateData(true);
+		m_NodeTree.loadTree();
+		m_LeafTree.loadTree();
 	}
 
 	BOOL ObjectSelectorPpg::OnSetActive()
