@@ -58,7 +58,6 @@ BEGIN_MESSAGE_MAP(TADlgDrawPage, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-// cppcheck-suppress unknownMacro
 BEGIN_EVENTSINK_MAP(TADlgDrawPage, CDialog)
 	ON_EVENT(TADlgDrawPage, IDC_DIALOGIMAGE, 8, TADlgDrawPage::ObjectChangedExDialogImage, VTS_I4 VTS_I4 VTS_PVARIANT VTS_PVARIANT)
 END_EVENTSINK_MAP()
@@ -966,7 +965,7 @@ void TADlgDrawPage::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 void TADlgDrawPage::OnDragTree(NMHDR* pNMHDR, LRESULT*)
 {
-	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
+	NM_TREEVIEW* pNMTreeView = reinterpret_cast<NM_TREEVIEW*>(pNMHDR);
 	if (nullptr != pNMTreeView)
 	{
 		m_isDragging = m_treeCtrl.OnDragTree(*pNMTreeView);

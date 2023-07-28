@@ -1631,7 +1631,6 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 
 	if (nullptr != p_Image && nullptr != GetImageExtentPtr() && GetImageExtentPtr()->hasFigure())
 	{
-		// cppcheck-suppress nullPointer
 		const SVImageExtentClass& rImageExtents = *GetImageExtentPtr();
 		SVExtentMultiLineStruct l_MultiLine;
 		UpdateOverlayIDs(l_MultiLine);
