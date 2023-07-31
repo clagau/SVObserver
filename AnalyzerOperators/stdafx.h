@@ -59,7 +59,6 @@
 #include <comdef.h>
 
 #include <mil.h>
-#include <MILDyn\milblob.h>
 
 #include <boost/circular_buffer.hpp>				//Used by static library
 #pragma endregion Precompiled Headers

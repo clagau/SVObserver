@@ -9,7 +9,6 @@
 #include "CDllTool.h"
 #include <atlsafe.h>
 #include <iosfwd>
-#include <MilDyn/milim.h>
 
 
 
