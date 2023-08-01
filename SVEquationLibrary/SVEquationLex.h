@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #pragma once
+#include 	"SVParserScripts/RElement.h"
 
 #include "SVParserScripts/FlexLexer.h"
 #ifndef Y_TAB_H

@@ -30,8 +30,8 @@ SVEquationYaccClass::SVEquationYaccClass()
 {
 	yacc_err = 0;
 	sIndex = 0;
-	memset( lex_stack,'\0', sizeof( lex_stack ) );
-	equationResult = 0.0;	
+	memset(lex_stack, '\0', sizeof(lex_stack));
+	equationResult = 0.0;
 
 	// from original y.yab.c
 	yydebug = 0;
@@ -40,22 +40,22 @@ SVEquationYaccClass::SVEquationYaccClass()
 	yychar = 0;
 	yyssp = nullptr;
 	yyvsp = nullptr;
-	
-	memset(yyss,'\0',YYSTACKSIZE);
-	memset(yyvs,'\0',YYSTACKSIZE);
 
-	memset( &(iNumListEntries[0]), 0, sizeof(iNumListEntries[0]) * RECURSION_LIMIT );
-	memset( &(dValueList[0][0]), 0, sizeof(dValueList[0][0]) * RECURSION_LIMIT * LIST_LIMIT );
+	memset(yyss, '\0', YYSTACKSIZE);
+	memset(yyvs, '\0', YYSTACKSIZE);
+
+	memset(&(iNumListEntries[0]), 0, sizeof(iNumListEntries[0]) * RECURSION_LIMIT);
+	memset(&(dValueList[0][0]), 0, sizeof(dValueList[0][0]) * RECURSION_LIMIT * LIST_LIMIT);
 	current_recursive_depth = 0;
 	yylval.listPtr = &(dValueList[0][0]);	// THIS ISN'T EVEN REALLY USED!?
 }
 
 SVEquationYaccClass::~SVEquationYaccClass()
-{
-}
+{}
 
-int SVEquationYaccClass::yyerror(const char*) 
-{ 
+int SVEquationYaccClass::yyerror(const char* error)
+{
+	OutputDebugString(error);
 	yacc_err = 1;
 	current_recursive_depth = 0;	// reset this var on error
 	return(-1);
@@ -63,28 +63,28 @@ int SVEquationYaccClass::yyerror(const char*)
 
 int SVEquationYaccClass::yylex()
 {
-	if( lex_stack[sIndex].token == SV_IDENTIFIER )
+	if (lex_stack[sIndex].token == SV_IDENTIFIER)
 		yylval.index = lex_stack[sIndex].value.index;
 	else
 		yylval.val = lex_stack[sIndex].value.val;
 	return lex_stack[sIndex++].token;
 }
 
-double SVEquationYaccClass::GetPropertyValue(int symbolIndex )
+double SVEquationYaccClass::GetPropertyValue(int symbolIndex)
 {
-	return m_pEquation->GetPropertyValue( symbolIndex );
+	return m_pEquation->GetPropertyValue(symbolIndex);
 }
 
 double SVEquationYaccClass::GetAt(int symbolIndex, int index, double dDefault /*=0.0*/)
 {
-	return m_pEquation->GetSubscriptedPropertyValue( symbolIndex, index-1, dDefault );	// indexes in the Equation are 1-based
+	return m_pEquation->GetSubscriptedPropertyValue(symbolIndex, index - 1, dDefault);	// indexes in the Equation are 1-based
 }
 
 int SVEquationYaccClass::PushValues(int iSymbolIndex)
 {
 	std::vector<double> values;
 	/*HRESULT hr = */m_pEquation->GetArrayValues(iSymbolIndex, values);
-	int iNum =0;
+	int iNum = 0;
 	for (size_t i = 0; i < values.size(); i++)
 	{
 		iNum = AddToList(values[i]);
@@ -97,18 +97,21 @@ int SVEquationYaccClass::indexValue() const
 	return m_pEquation->GetIndexValue();
 }
 
+
+
 void SVEquationYaccClass::InitCurrentList()
 {
 	iNumListEntries[current_recursive_depth] = 0;
 }
 
+
 int SVEquationYaccClass::AddToList(double val)
 {
 	// Check if at max
-	if ( current_recursive_depth < RECURSION_LIMIT )
+	if (current_recursive_depth < RECURSION_LIMIT)
 	{
 		int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
-		if ( (rCurrentNumListEntries < LIST_LIMIT)  )
+		if ((rCurrentNumListEntries < LIST_LIMIT))
 		{
 			dValueList[current_recursive_depth][rCurrentNumListEntries++] = val;
 			return rCurrentNumListEntries;
@@ -129,6 +132,75 @@ int SVEquationYaccClass::AddToList(double val)
 	return 0;
 }
 
+RElement* SVEquationYaccClass::AddToRanges(double first, double last)
+{
+	RElement* ret {nullptr};
+	double val = first;
+	while (val <= last)
+	{
+		ret = AddToRanges(val);
+		val += 1.0;
+
+	}
+	return ret;
+}
+
+RElement* SVEquationYaccClass::AddToRanges(double value)
+{
+	RElement* ret {nullptr};
+	if (m_RangeStack.empty())
+	{
+		return ret;
+	}
+	RElement newElement;
+	if (!m_RangeStack.top().m_Indices.empty())
+	{
+		m_RangeStack.top().m_Indices.back().next = &newElement;
+	}
+
+	newElement.val = value;
+	m_RangeStack.top().m_Indices.push_back(newElement);
+	auto it = m_RangeStack.top().m_Indices.begin();
+	if (it != m_RangeStack.top().m_Indices.end())
+	{
+		ret = &(*m_RangeStack.top().m_Indices.begin());
+	}
+	return ret;
+}
+
+int SVEquationYaccClass::PushRangeToList()
+{
+	int ret = 0;
+	if (m_RangeStack.empty())
+		return ret;
+	std::vector<double> values;
+	int iSymbolIndex = m_RangeStack.top().id;
+	HRESULT hr = m_pEquation->GetArrayValues(iSymbolIndex, values);
+	if (hr != S_OK)
+		return ret;
+
+	for (const auto& e : m_RangeStack.top().m_Indices)
+	{
+		int index = e.val - 1;
+		if (index >= 0 && index < values.size())
+			ret = AddToList(values[index]);
+	}
+	return ret;
+}
+
+void SVEquationYaccClass::pushRangeStack(int id)
+{
+	m_RangeStack.emplace(id);
+}
+bool SVEquationYaccClass::emptyRangeStack(void)
+{
+	return m_RangeStack.empty();
+}
+void SVEquationYaccClass::popRangeStack(void)
+{
+	return m_RangeStack.pop();
+}
+
 double SVEquationYaccClass::CalcMin()
 {
 	double val = 0.0;
@@ -137,10 +209,10 @@ double SVEquationYaccClass::CalcMin()
 	if (rCurrentNumListEntries)
 	{
 		val = dValueList[current_recursive_depth][0];
-		
-		for(int i = 1;i < rCurrentNumListEntries; i++)
+
+		for (int i = 1; i < rCurrentNumListEntries; i++)
 		{
-			val = __min(dValueList[current_recursive_depth][i],val);
+			val = __min(dValueList[current_recursive_depth][i], val);
 		}
 	}
 	return val;
@@ -155,13 +227,13 @@ double SVEquationYaccClass::CalcMax()
 	if (rCurrentNumListEntries)
 	{
 		val = dValueList[current_recursive_depth][0];
-	
-		for (int i = 1;i < rCurrentNumListEntries; i++)
+
+		for (int i = 1; i < rCurrentNumListEntries; i++)
 		{
-			val = __max(dValueList[current_recursive_depth][i],val);
+			val = __max(dValueList[current_recursive_depth][i], val);
 		}
 	}
-	
+
 	return val;
 }
 
@@ -172,11 +244,11 @@ double SVEquationYaccClass::CalcAverage()
 
 	if (rCurrentNumListEntries)
 	{
-		for (int i = 0;i < rCurrentNumListEntries; i++)
+		for (int i = 0; i < rCurrentNumListEntries; i++)
 		{
 			val += dValueList[current_recursive_depth][i];
 		}
-		val /= (double) rCurrentNumListEntries;
+		val /= (double)rCurrentNumListEntries;
 	}
 	return val;
 }
@@ -188,7 +260,7 @@ double SVEquationYaccClass::CalcMedian()
 
 	if (rCurrentNumListEntries)
 	{
-		if ( g_bUseCorrectListRecursion )
+		if (g_bUseCorrectListRecursion)
 		{
 			std::sort(&(dValueList[current_recursive_depth][0]), &(dValueList[current_recursive_depth][rCurrentNumListEntries]));
 
@@ -198,12 +270,12 @@ double SVEquationYaccClass::CalcMedian()
 
 			if ((rCurrentNumListEntries % 2) == 0) // if even
 			{
-				val = (val + dValueList[current_recursive_depth][index+1]) / 2.0;
+				val = (val + dValueList[current_recursive_depth][index + 1]) / 2.0;
 			}
 		}
 		else
 		{
-			std::sort(&(dValueList[current_recursive_depth][0]), &(dValueList[current_recursive_depth][rCurrentNumListEntries-1]));
+			std::sort(&(dValueList[current_recursive_depth][0]), &(dValueList[current_recursive_depth][rCurrentNumListEntries - 1]));
 
 			int index = rCurrentNumListEntries / 2;
 
@@ -211,7 +283,7 @@ double SVEquationYaccClass::CalcMedian()
 
 			if ((rCurrentNumListEntries % 2) == 0) // if even
 			{
-				val = (val + dValueList[current_recursive_depth][index-1]) / 2.0;
+				val = (val + dValueList[current_recursive_depth][index - 1]) / 2.0;
 			}
 		}
 	}
@@ -222,10 +294,10 @@ double SVEquationYaccClass::CalcSum()
 {
 	double val = 0.0;
 	const int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
-	
+
 	if (rCurrentNumListEntries)
 	{
-		for (int i = 0;i < rCurrentNumListEntries; i++)
+		for (int i = 0; i < rCurrentNumListEntries; i++)
 		{
 			val += dValueList[current_recursive_depth][i];
 		}
@@ -238,10 +310,10 @@ double SVEquationYaccClass::CalcStdDeviation()
 	double val = 0.0;
 	const int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
 
-	if ( rCurrentNumListEntries )
+	if (rCurrentNumListEntries)
 	{
 		double avg = CalcAverage();
-		for (int i = 0;i < rCurrentNumListEntries; i++)
+		for (int i = 0; i < rCurrentNumListEntries; i++)
 		{
 			double dDistance = dValueList[current_recursive_depth][i] - avg;
 			val += dDistance * dDistance;

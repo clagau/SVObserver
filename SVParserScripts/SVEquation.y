@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+ struct RElement;
+
+
 %}
 
 %{
@@ -21,10 +24,12 @@
 
 */
 %}
+
 %union {
 int index;
 double val;
 double* listPtr;
+RElement*  firstElementPtr; ;
 }
 %{
 #endif
@@ -32,6 +37,7 @@ double* listPtr;
 
 %token  SV_IDENTIFIER
 %token  SV_NUMBER
+%token  SV_COLON
 %token  SV_PLUS SV_MINUS SV_TIMES SV_DIVIDE
 %token  SV_LEFT_PARENTHESIS SV_RIGHT_PARENTHESIS
 %token  SV_COMMA
@@ -45,8 +51,9 @@ double* listPtr;
 %token  SV_STARTSUBSCRIPT SV_ENDSUBSCRIPT
 %token  SV_STARTCURLYBRACE SV_ENDCURLYBRACE
 %token  SV_END
-%type <val> SV_NUMBER Expression ArrayIndexIdentifier
-%type <listPtr> ExpressionList ArrayIdentifier
+%type <val> SV_NUMBER  Expression ArrayIndexIdentifier
+%type <listPtr> ExpressionList ArrayIdentifier ArrayIdentifierWithRange 
+%type <firstElementPtr> Range   RangeList RangeElement
 %type <index> SV_IDENTIFIER 
 
 %right  SV_EQ SV_NE SV_LT SV_LTE SV_GT SV_GTE
@@ -77,6 +84,7 @@ Expression:
 		| SV_IDENTIFIER						{ $$=GetPropertyValue($1); }
 		| SV_IDX							{ $$=indexValue(); }
 		| ArrayIndexIdentifier				{ $$=$1; }
+		
 		| Expression SV_AND Expression		{ $$=($1 && $3); }
 		| Expression SV_OR Expression		{ $$=($1 || $3); }
 		| Expression SV_XOR Expression		{ $$=(($1-$3) ? 1.0 : 0.0); }
@@ -130,12 +138,31 @@ Expression:
 
 ArrayIdentifier:
 		  SV_IDENTIFIER SV_STARTSUBSCRIPT SV_ENDSUBSCRIPT { PushValues($1); }
+		  |   SV_IDENTIFIER SV_START_RANGE  SV_END_RANGE { PushValues($1); }  
 		;
 
 ArrayIndexIdentifier:
 		  SV_IDENTIFIER SV_STARTSUBSCRIPT Expression SV_STARTCURLYBRACE Expression SV_ENDCURLYBRACE SV_ENDSUBSCRIPT { $$=GetAt($1,$3,$5); }
 		| SV_IDENTIFIER SV_STARTSUBSCRIPT Expression SV_ENDSUBSCRIPT { $$=GetAt($1,$3); }
 		;
+		
+ArrayIdentifierWithRange:   SV_IDENTIFIER SV_STARTSUBSCRIPT SV_ENDSUBSCRIPT { PushValues($1); }
+			|   SV_IDENTIFIER SV_START_RANGE  SV_END_RANGE { PushValues($1); }  
+			| SV_IDENTIFIER SV_START_RANGE  { pushRangeStack($1);}
+			RangeList   {PushRangeToList();}
+			SV_END_RANGE  { popRangeStack();}
+
+											
+RangeList:    RangeElement SV_COMMA RangeElement {$$ = $1;}
+			| RangeElement	 {$$ = $1;}
+			|RangeList SV_COMMA RangeElement
+
+RangeElement:  Range         {$$ = $1;}
+			|  Expression 	{ AddToRanges($1);}
+
+Range :    Expression 	SV_COLON Expression   { AddToRanges($1,$3) ;}
+
+
 
 ExpressionList:
 		Expression SV_COMMA Expression { if(!AddToList($1))
@@ -143,20 +170,21 @@ ExpressionList:
 										if(!AddToList($3))
 											YYABORT;
 									   }
-		| ArrayIdentifier SV_COMMA Expression { if (!AddToList($3))
-													YYABORT;	}
-		| Expression SV_COMMA ArrayIdentifier { if (!AddToList($1))
-													YYABORT;	}
-		| ArrayIdentifier SV_COMMA ArrayIdentifier { }
+		| ArrayIdentifierWithRange SV_COMMA Expression { if (!AddToList($3))
+													YYABORT;	$$ = $1;}
+		| Expression SV_COMMA ArrayIdentifierWithRange { if (!AddToList($1))
+													YYABORT;	$$ = $3;}
+		| ArrayIdentifierWithRange SV_COMMA ArrayIdentifierWithRange { }
 		| ExpressionList SV_COMMA Expression { if(!AddToList($3))
 													YYABORT;
 												$$=$1;	 }
-		| ExpressionList SV_COMMA ArrayIdentifier { $$=$1; }
+		| ExpressionList SV_COMMA ArrayIdentifierWithRange { $$=$1; }
 		;
+
 
 ExpressionListOrArrayIdentifier:
 		ExpressionList
-		| ArrayIdentifier
+		| ArrayIdentifierWithRange
 		;
 
 %%

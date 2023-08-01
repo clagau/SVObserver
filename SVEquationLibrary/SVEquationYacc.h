@@ -12,9 +12,11 @@
 #pragma once
 
 #include "SVEquationGlobals.h"
+#include <stack>
+
 
 class SVEquationBase;
-
+struct RElement;
 /**
 @SVObjectName Equation YACC
 
@@ -70,12 +72,27 @@ protected:
 	int iNumListEntries[ RECURSION_LIMIT ];
 	double dValueList[ RECURSION_LIMIT ][ LIST_LIMIT ];
 
+	
+	
+
 protected:
 	double GetPropertyValue(int symbolIndex);
 	double GetAt(int symbolIndex, int index, double dDefault=0.0);
+	
 	int PushValues(int index);
 	int indexValue() const;
-
+	
+	
+	RElement* AddToRanges(double value);
+	RElement* AddToRanges(double first, double last);
+	int PushRangeToList(); 
+	
+	
+	void pushRangeStack(int id); //new actual  range
+	
+	bool emptyRangeStack(void);  //are there any actual ranges?
+	void popRangeStack(void);  //delete actual range;
+	
 	double CalcMin();
 	double CalcMax();
 	double CalcAverage();
@@ -83,7 +100,18 @@ protected:
 	double CalcSum();
 	double CalcStdDeviation();
 	int AddToList(double val);
+
 	void InitCurrentList();
+
+	
+	struct Rangestruct
+	{
+		explicit Rangestruct(int ID) :id(ID)
+		{;};
+		int id = {-1};
+		std::vector<RElement> m_Indices;
+	};
+	std::stack<Rangestruct> m_RangeStack;
 
 }; // end class SVEquationYaccClass
 

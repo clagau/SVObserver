@@ -10,10 +10,11 @@
 //******************************************************************************
 
 #pragma once
-
+#include 	"SVParserScripts/RElement.h"
 #ifndef Y_TAB_H
 #define Y_TAB_H
-	#include "SVParserScripts/y.tab.h"
+
+#include "SVParserScripts/y.tab.h"
 #endif // #ifndef Y_TAB_H
 
 #ifdef YYSTACKSIZE

@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FlexLexer.h" />
+    <ClInclude Include="RElement.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.txt" />

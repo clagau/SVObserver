@@ -80,6 +80,20 @@ identifier      {delimiter}{name}("."{name})*{delimiter}
 					return(SV_IDENTIFIER);
 				}
 
+"[:"			{
+					position = currentPos;
+					currentPos+= 2;
+					return(SV_START_RANGE);
+				}
+
+":]"       		{
+					position = currentPos;
+					currentPos+= 2;
+					return(SV_END_RANGE);
+				}
+      
+
+
 "+"				{
 					position = currentPos;
 					currentPos++;
@@ -383,6 +397,8 @@ identifier      {delimiter}{name}("."{name})*{delimiter}
 
 					return(SV_ENDCURLYBRACE);
 				}
+
+":"				{ return(SV_COLON); }
 
 "\n"			{ return(SV_END); }
 
