@@ -45,7 +45,7 @@ public:
 	virtual bool CloseObject() override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT onCollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
+	virtual void addOverlayGroups(SVExtentMultiLineStructVector& p_rMultiLineArray, const SVImageExtentClass& rImageExtents) const override;
 
 	bool Refresh();
 
@@ -83,7 +83,7 @@ protected:
 	SvStl::MessageTextEnum onRunImageType(SvIe::RunStatus& rRunStatus);
 	SvStl::MessageTextEnum onRunMask(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SvIe::RunStatus& rRunStatus, DWORD dwMaskType);
 	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
-	virtual void addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const override;
+	virtual void addOverlayGroups(SvPb::Overlay& rOverlay) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;
 	SvOi::SVImageBufferHandlePtr  m_MaskBufferHandlePtr;
@@ -111,8 +111,8 @@ protected:
 	};
 
 private:
-	HRESULT AddLine(int p_iCol, int p_iRow, const SVPoint<double>& rPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine );
-	HRESULT BuildMaskLines( SVExtentMultiLineStruct& p_MultiLine );
+	void AddLine(int p_iCol, int p_iRow, const SVPoint<double>& rPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine ) const;
+	HRESULT BuildMaskLines(SVExtentMultiLineStruct& p_MultiLine, const SVImageExtentClass& rImageExtents) const;
 	HRESULT CreateLocalImageBuffer();
 	void DestroyLocalImageBuffer();
 	void updateMaskImageFlags(DWORD dwMaskType);
@@ -120,6 +120,8 @@ private:
 	void init();
 
 	friend class SVShapeMaskHelperClass;
+
+	bool m_bUseOverlays;
 };
 
 } //namespace SvOp

@@ -59,7 +59,6 @@ SVOCVAnalyzerResult::SVOCVAnalyzerResult( SVObjectClass* POwner, int StringResou
 	}
 	
 	clearAll();
-	m_bUseOverlays = true;
 }
 
 
@@ -1399,19 +1398,15 @@ long SVOCVAnalyzerResult::CheckStringInTable(const std::string& rMatchString)
 	return Result;
 } 
 
-HRESULT SVOCVAnalyzerResult::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& rMultiLineArray)
+void SVOCVAnalyzerResult::addOverlayGroups(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const
 {
-	HRESULT l_hr = S_OK;
-
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
+	auto* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
 	if (nullptr != pTool && pTool->WasEnabled())
 	{
 		if( m_lCurrentFoundStringLength )
 		{
 			for( long i = 0; i < m_lCurrentFoundStringLength; i++ )
 			{
-				SVExtentFigureStruct l_svFigure;
-
 				SVOCVCharacterResult *pResult = m_OCVCharacterResults[i];
 
 				double Value;
@@ -1424,27 +1419,19 @@ HRESULT SVOCVAnalyzerResult::onCollectOverlays(SvIe::SVImageClass*, SVExtentMult
 				pResult->m_dvoOverlayHeight.GetValue( Value );
 				long lHeight = static_cast<long> (Value);
 
-				RECT l_oRect{lLeft, lTop, lLeft + lWidth, lTop + lHeight};
+				RECT oRect{lLeft, lTop, lLeft + lWidth, lTop + lHeight};
+				SVExtentFigureStruct svFigure {oRect};
 
-				l_svFigure = l_oRect;
+				rImageExtents.TranslateFromOutputSpace( svFigure, svFigure);
 
-				pTool->GetImageExtent().TranslateFromOutputSpace( l_svFigure, l_svFigure);
-
-				SVExtentMultiLineStruct l_multiLine;
-
-				l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
-					
-				l_multiLine.AssignExtentFigure( l_svFigure, SvDef::DefaultSubFunctionColor1 );
-
-				UpdateOverlayIDs( l_multiLine );
-
-				rMultiLineArray.push_back( l_multiLine );
-
+				SVExtentMultiLineStruct multiLine;
+				multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
+				multiLine.AssignExtentFigure( svFigure, SvDef::DefaultSubFunctionColor1 );
+				UpdateOverlayIDs( multiLine );
+				rMultiLineArray.push_back( multiLine );
 			}// end for
 		}
 	}
-
-	return l_hr;
 }
 
 } //namespace SvOp

@@ -23,7 +23,7 @@ struct PassedWarnedFailedHelper
 	bool isFailed();
 	bool isWarned();
 
-	std::tuple<bool, bool, bool> GetPassedWarnedFailedStatus();
+	std::tuple<bool, bool, bool> GetPassedWarnedFailedStatus() const;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
 	SVBoolValueObjectClass	m_Passed;

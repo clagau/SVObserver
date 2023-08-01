@@ -76,8 +76,8 @@ public:
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) override;
 	virtual void goingOffline() override;
 
-	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
-	virtual void collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
+	virtual void collectOverlays(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const override;
+	virtual void collectOverlays(SvPb::Overlay& rOverlay) const override;
 
 	/// The method destroys a child object. 
 	/// \param pTaskObject [in] object to destroy

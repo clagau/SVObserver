@@ -34,6 +34,14 @@ message ObjectNameIdPair
 	string objectName = 2; //name of the object.
 }
 
+message AncestorImageData
+{
+	uint32 objectId = 1; //ID of the object.
+	string objectName = 2; //name of the object.
+	SVExtentTranslationEnum translationType = 3;
+}
+
+
 message NameClassIdPair
 {
 	ClassIdEnum classId = 1; //classId of the object.
@@ -398,30 +406,14 @@ message AreAuxiliaryExtentsAvailableResponse
 	bool areAvailable = 1;
 }
 
-message GetAvailableAuxImagesRequest
+message GetAvailableAncestorImagesRequest
 {
 	uint32 objectId = 1;  //ID of the tool
 }
 
-message GetAvailableAuxImagesResponse
+message GetAvailableAncestorImagesResponse
 {
-	repeated ObjectNameIdPair list = 1;
-}
-
-message GetAuxImageObjectRequest
-{
-	uint32 objectId = 1;  //ID of the tool
-}
-
-message GetAuxImageObjectResponse
-{
-	ObjectNameIdPair auxObject = 1;
-}
-
-message SetAuxImageObjectRequest
-{
-	uint32 objectId = 1;  //ID of the tool
-	uint32 sourceImageId = 2;  //ID of the source image
+	repeated AncestorImageData list = 1;
 }
 
 message GetInputsRequest
@@ -1271,9 +1263,7 @@ message InspectionCmdRequest
 		TaskObjectListRequest taskObjectListRequest = 12;
 		GetImageRequest getImageRequest = 13;
 		AreAuxiliaryExtentsAvailableRequest areAuxiliaryExtentsAvailableRequest = 14;
-		GetAvailableAuxImagesRequest getAvailableAuxImagesRequest = 15;
-		GetAuxImageObjectRequest getAuxImageObjectRequest = 16;
-		SetAuxImageObjectRequest setAuxImageObjectRequest = 17;
+		GetAvailableAncestorImagesRequest getAvailableAncestorImagesRequest = 15;
 		GetInputsRequest getInputsRequest = 18;
 		ConnectToObjectRequest connectToObjectRequest = 19;
 		SaveImageRequest saveImageRequest = 20;
@@ -1365,8 +1355,7 @@ message InspectionCmdResponse
 		TaskObjectListResponse taskObjectListResponse = 7;
 		GetImageResponse getImageResponse = 8;
 		AreAuxiliaryExtentsAvailableResponse areAuxiliaryExtentsAvailableResponse = 9;
-		GetAvailableAuxImagesResponse getAvailableAuxImagesResponse = 10;
-		GetAuxImageObjectResponse getAuxImageObjectResponse = 11;
+		GetAvailableAncestorImagesResponse getAvailableAncestorImagesResponse = 10;
 		GetInputsResponse getInputsResponse = 12;
 		GetAvailableObjectsResponse getAvailableObjectsResponse = 13;
 		GetSpecialImageListResponse getSpecialImageListResponse = 14;

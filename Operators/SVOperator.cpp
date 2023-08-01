@@ -44,8 +44,6 @@ bool SVOperator::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure
 
 void SVOperator::init()
 {
-	m_bUseOverlays = false;	// in general, operators don't have overlays
-
 	// Identify our output type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVOperatorObjectType;
 }

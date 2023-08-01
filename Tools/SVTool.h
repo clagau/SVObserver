@@ -82,8 +82,14 @@ public:
 	SvVol::SVStringValueObjectClass m_svAuxiliaryDrawType;
 	SvVol::SVStringValueObjectClass m_svAuxiliarySourceImageName;
 	ToolExtType m_ToolExtType {ToolExtType::All};
+
+	SvVol::SVDoubleValueObjectClass m_ancestorOffsetX;
+	SvVol::SVDoubleValueObjectClass m_ancestorOffsetY;
+	SvVol::SVDoubleValueObjectClass m_ancestorOffsetAngle;
 };
 
+void getOverlays(const SvIe::SVImageClass& rImage, const SvIe::SVTaskObjectPtrVector& rVector, SVExtentMultiLineStructVector& rMultiLineArray);
+void getOverlays(const SvIe::SVImageClass& pImage, const SvIe::SVTaskObjectPtrVector& rVector, SvPb::OverlayDesc& rOverlay);
 
 constexpr int cResetDepth  = 1;
 uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  InIt, uint32_t toolobjectId);
@@ -106,7 +112,7 @@ public:
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
 
-	virtual void GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine) override;
+	virtual void GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine) const override;
 
 	bool IsEnabled() const;
 
@@ -148,13 +154,14 @@ public:
 
 	bool getConditionalResult(bool bRunMode = false) const;
 
-	virtual HRESULT CollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
+	virtual void getOverlays(const SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray) const;
+	virtual void addOverlays(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const;
 	virtual void UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const override;
-	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const;
+	virtual void getOverlays(const SvIe::SVImageClass& rImage, SvPb::OverlayDesc& rOverlay) const;
+	virtual void addOverlays(SvPb::OverlayDesc& rOverlay) const;
 
 	// Auxiliary Source Image functions
-	HRESULT GetSourceImages(SvIe::SVImageClassPtrVector* p_psvImageList) const;
-	HRESULT SetAuxSourceImage(SvIe::SVImageClass* p_psvImage);
+	void getAncestorImages(SvPb::GetAvailableAncestorImagesResponse& rResponse) const;
 
 	virtual SVObjectClass* overwriteInputObject(uint32_t uniqueId, SvPb::EmbeddedIdEnum embeddedId) override;
 
@@ -210,12 +217,12 @@ public:
 
 
 	 virtual void resetCounters();
-	 virtual const SVImageExtentClass* GetImageExtentPtr() const;
+	 virtual const SVImageExtentClass* GetImageExtentPtr() const override;
+	 uint32_t getAncestorIdForOverlay() const { return m_AncestorIdForOverlay; };
+
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
-	virtual SvUl::NameObjectIdList getAvailableAuxSourceImages() const override;
-	virtual SvUl::NameObjectIdPair getAuxSourceImage() const override;
-	virtual HRESULT setAuxSourceImage(uint32_t objectID) override;
+	virtual SvPb::GetAvailableAncestorImagesResponse getAvailableAncestorImages() const override;
 	virtual void SetToolImage(uint32_t objectID) override;
 	virtual uint32_t GetToolImage() const override;
 	virtual long getToolPosition() const override;
@@ -236,7 +243,6 @@ public:
 	virtual std::vector<std::string> getToolAdjustNameList() const override { return {}; }
 	virtual bool isToolActive() const;
 	virtual SvOi::ITool* getToolPtr() override { return this; };
-
 #pragma endregion ITool methods
 	
 
@@ -252,7 +258,7 @@ protected:
 
 	virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
-	virtual void UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) override;
+	virtual void UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) const override;
 	virtual bool createAllObjectsFromChild(SVObjectClass& rChildObject) override;
 	virtual void connectChildObject(SVTaskObjectClass& rChildObject) override;
 	virtual bool useOverlayColorTool() const { return true; };
@@ -276,6 +282,7 @@ protected:
 
 	SvOl::InputObject m_conditionBoolInput;
 	SvOl::InputObject m_AuxSourceImageInput;
+	SvOl::InputObject m_AncestorForOverlayInput;
 	bool m_OverlayColorToolInputIsSet = false;
 	SvOl::InputObject m_overlayColorToolInput;
 
@@ -303,14 +310,14 @@ protected:
 
 	//***** New source image extent value objects
 	SvVol::SVBoolValueObjectClass m_svUpdateAuxiliaryExtents;
+	SvVol::SVBoolValueObjectClass m_isShowOverlayInAncestorEnabled;
 
 	//SVImageExtentClass  is a member of SVToolExtentClass
 	SVToolExtentClass m_toolExtent;
 
 	bool m_canResizeToParent {false};
 	bool m_ressetAll_Active {false};
-	
-	
+	uint32_t m_AncestorIdForOverlay = SvDef::InvalidObjectId; //< only set if this overlay have to set to an ancestor.	
 };
 
 bool isValidScaleFactor(double value);

@@ -218,7 +218,7 @@ SvIe::SVImageClass* RingBufferTool::getOutputImage(int index)
 bool RingBufferTool::isInputImage(uint32_t) const
 {
 	bool Result(false);
-	//@Hack: [MZA][24.04.15] This method is only used by CollectOverlays and the recursive functionality of IsInputImage. 
+	//@Hack: [MZA][24.04.15] This method is only used by getOverlays and the recursive functionality of IsInputImage. 
 	// Always false, optimizes the CollectOverlay (there is no overlay of this tool). 
 	// In further implementation, it should be possible to return the right result and have nevertheless a optimized CollectOverlay method. 
 	return Result;

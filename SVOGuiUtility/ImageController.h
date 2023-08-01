@@ -52,7 +52,6 @@ namespace SvOgu
 		IPictureDisp* GetImage(uint32_t imageID) const;
 		IPictureDisp* GetImage(uint32_t imageID, long& rWidth, long& rHeight) const;
 				
-		HRESULT ConnectToImage(const std::string& inputName, const std::string& name, uint32_t instanceID = SvDef::InvalidObjectId) const;
 		HRESULT ConnectToImage(SvPb::EmbeddedIdEnum embeddedId, const std::string& name, uint32_t instanceID = SvDef::InvalidObjectId) const;
 		HRESULT SaveImage(const std::string& rImageName, const std::string& rFilename);
 		bool IsToolValid() const;

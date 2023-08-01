@@ -38,8 +38,6 @@ SVStdImageOperatorListClass::SVStdImageOperatorListClass(SVObjectClass* POwner, 
 
 void SVStdImageOperatorListClass::init()
 {
-	m_bUseOverlays = false;
-
 	// Identify our output type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVStdImageOperatorListObjectType;

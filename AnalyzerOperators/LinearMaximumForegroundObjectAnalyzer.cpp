@@ -136,7 +136,7 @@ bool LinearMaximumForegroundObjectAnalyzer::ResetObject(SvStl::MessageContainerV
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-HRESULT LinearMaximumForegroundObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct& rMultiLine )
+HRESULT LinearMaximumForegroundObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine ) const
 {
 	double dDistance = 0.0;
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
@@ -149,7 +149,7 @@ HRESULT LinearMaximumForegroundObjectAnalyzer::GetSelectedEdgeOverlays( SVExtent
 		{
 			rAnalyzerExtents.TranslateFromOutputSpace( line, line );
 
-			rMultiLine.m_svLineArray.push_back( line );
+			p_MultiLine.m_svLineArray.push_back( line );
 		}
 	}
 
@@ -161,7 +161,7 @@ HRESULT LinearMaximumForegroundObjectAnalyzer::GetSelectedEdgeOverlays( SVExtent
 		{
 			rAnalyzerExtents.TranslateFromOutputSpace( line, line );
 
-			rMultiLine.m_svLineArray.push_back( line );
+			p_MultiLine.m_svLineArray.push_back( line );
 		}
 	}
 

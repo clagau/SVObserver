@@ -200,19 +200,14 @@ bool LoopTool::usePropagateSizeAndPosition() const
 	return false;
 }
 
-void LoopTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+void LoopTool::getOverlays(const SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray) const
 {
-	if (nullptr != pImage)
-	{
-		for (auto* pTask : m_TaskObjectVector)
-		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pTask);
-			if (nullptr != pTool && pTool->isInputImage(pImage->getObjectId()))
-			{
-				pTool->addOverlays(pImage, rOverlay);
-			}
-		}
-	}
+	SvTo::getOverlays(rImage, m_TaskObjectVector, rMultiLineArray);
+}
+
+void LoopTool::getOverlays(const SvIe::SVImageClass& rImage, SvPb::OverlayDesc& rOverlay) const
+{
+	SvTo::getOverlays(rImage, m_TaskObjectVector, rOverlay);
 }
 
 std::vector<std::string> LoopTool::getToolAdjustNameList() const

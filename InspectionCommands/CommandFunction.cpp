@@ -564,62 +564,15 @@ SvPb::InspectionCmdResponse areAuxiliaryExtentsAvailable(SvPb::AreAuxiliaryExten
 	return cmdResponse;
 }
 
-SvPb::InspectionCmdResponse getAvailableAuxImages(SvPb::GetAvailableAuxImagesRequest request)
+SvPb::InspectionCmdResponse getAvailableAncestorImages(SvPb::GetAvailableAncestorImagesRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(request.objectid()));
 	if (nullptr != pTool)
 	{
-		SvPb::GetAvailableAuxImagesResponse* pResponse = cmdResponse.mutable_getavailableauximagesresponse();
-		auto list = pTool->getAvailableAuxSourceImages();
-		for (auto& item : list)
-		{
-			auto* pEntry = pResponse->add_list();
-			pEntry->set_objectname(item.first.c_str());
-			pEntry->set_objectid(item.second);
-		}
-	}
-	else
-	{
-		cmdResponse.set_hresult(E_POINTER);
-	}
-	return cmdResponse;
-}
-
-SvPb::InspectionCmdResponse getAuxImageObject(SvPb::GetAuxImageObjectRequest request)
-{
-	SvPb::InspectionCmdResponse cmdResponse;
-
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
-	if (nullptr != pTool)
-	{
-		auto sourceImage = pTool->getAuxSourceImage();
-		SvPb::GetAuxImageObjectResponse* pResponse = cmdResponse.mutable_getauximageobjectresponse();
-		pResponse->mutable_auxobject()->set_objectname(sourceImage.first.c_str());
-		pResponse->mutable_auxobject()->set_objectid(sourceImage.second);
-	}
-	else
-	{
-		cmdResponse.set_hresult(E_POINTER);
-	}
-	return cmdResponse;
-}
-
-SvPb::InspectionCmdResponse setAuxImageObject(SvPb::SetAuxImageObjectRequest request)
-{
-	SvPb::InspectionCmdResponse cmdResponse;
-
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(request.objectid()));
-	if (nullptr != pTool)
-	{
-		HRESULT result = pTool->setAuxSourceImage(request.sourceimageid());
-		if (S_OK != result)
-		{
-			cmdResponse.set_hresult(result);
-			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams));
-			SvPb::convertMessageToProtobuf(message, cmdResponse.mutable_errormessage()->add_messages());
-		}
+		SvPb::GetAvailableAncestorImagesResponse* pResponse = cmdResponse.mutable_getavailableancestorimagesresponse();
+		*pResponse = pTool->getAvailableAncestorImages();
 	}
 	else
 	{

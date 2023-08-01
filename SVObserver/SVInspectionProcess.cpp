@@ -315,7 +315,7 @@ void SVInspectionProcess::BuildWatchlist()
 {
 	m_WatchListDatas.clear();
 
-	if (m_StoreIndex < 0 || GetPPQ() == 0)
+	if (m_StoreIndex < 0 || GetPPQ() == nullptr)
 	{
 		return;
 	}
@@ -509,7 +509,7 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 
 void __stdcall SVInspectionProcess::ProcessCallback(ULONG_PTR pCaller)
 {
-	InspectionProcessFunction* pProcessFunction = reinterpret_cast<InspectionProcessFunction*> (pCaller);
+	auto* pProcessFunction = reinterpret_cast<InspectionProcessFunction*> (pCaller);
 	if (nullptr != pProcessFunction && nullptr != *pProcessFunction)
 	{
 		(*pProcessFunction)();
@@ -659,10 +659,8 @@ bool SVInspectionProcess::GoOffline()
 		{
 			break;
 		}
-		else
-		{
-			::Sleep(10);
-		}
+		
+		::Sleep(10);
 	}
 	//This should usually be false if inspection process has terminated normally
 	if (true == m_processActive)
@@ -812,7 +810,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 
 void SVInspectionProcess::RebuildInspectionInputList(const SVIOEntryHostStructPtrVector& rUsedInputs)
 {
-	long listSize = static_cast<long>(rUsedInputs.size());
+	auto listSize = static_cast<long>(rUsedInputs.size());
 
 	std::vector<std::shared_ptr<SvOi::IValueObject>> previousInputObjects;
 	previousInputObjects.resize(listSize);
@@ -822,7 +820,7 @@ void SVInspectionProcess::RebuildInspectionInputList(const SVIOEntryHostStructPt
 	for (long i = 0; i < listSize; ++i)
 	{
 		const auto& rEntry = rUsedInputs[i];
-		SVInputObject* pInput = dynamic_cast<SVInputObject*> (SVObjectManagerClass::Instance().GetObject(rEntry->m_IOId));
+		auto* pInput = dynamic_cast<SVInputObject*> (SVObjectManagerClass::Instance().GetObject(rEntry->m_IOId));
 		if (nullptr == rEntry || false == rEntry->m_Enabled || nullptr == pInput)
 		{
 			continue;
@@ -1016,7 +1014,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SvIe::SVImageClass* p_psvImage
 
 			try
 			{
-				SvIe::SVCameraImageTemplate* l_psvMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*>(p_psvImage);
+				auto* l_psvMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*>(p_psvImage);
 
 				l_Status = SvIe::SVImageProcessingClass::LoadImageBuffer((void*)p_rbstrValue,
 					l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr, l_ImageInfo);
@@ -1070,7 +1068,7 @@ HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SvIe::SVImageClass* pI
 		{
 			SVInputImageRequestInfoStructPtr l_pInRequest {new SVInputImageRequestInfoStruct};
 
-			SvIe::SVCameraImageTemplate* pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pImage);
+			auto* pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pImage);
 
 			l_Status = SvIe::SVImageProcessingClass::LoadImageBuffer(rImageFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
 			l_pInRequest->m_bUsingCameraName = nullptr != pMainImage;
@@ -1598,7 +1596,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 
 				// Value objects don't accept each different type for sets
 				// so convert to the appropriate type
-				if (SvVol::SVFileNameValueObjectClass* pFileNameObj = dynamic_cast<SvVol::SVFileNameValueObjectClass*> (ObjectRef.getObject()))
+				if (auto* pFileNameObj = dynamic_cast<SvVol::SVFileNameValueObjectClass*> (ObjectRef.getObject()))
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
@@ -1629,7 +1627,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 						}// end if
 					}
 				}
-				else if (SvVol::SVStringValueObjectClass* pStringValueObj = dynamic_cast<SvVol::SVStringValueObjectClass*> (ObjectRef.getObject()))
+				else if (auto* pStringValueObj = dynamic_cast<SvVol::SVStringValueObjectClass*> (ObjectRef.getObject()))
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
@@ -1649,7 +1647,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 						hrSet = pStringValueObj->SetValue(Value, ObjectRef.ArrayIndex());
 					}
 				}
-				else if (SvVol::SVBoolValueObjectClass* pBoolValueObj = dynamic_cast<SvVol::SVBoolValueObjectClass*> (ObjectRef.getObject()))
+				else if (auto* pBoolValueObj = dynamic_cast<SvVol::SVBoolValueObjectClass*> (ObjectRef.getObject()))
 				{
 					BOOL NewValue(false);
 
@@ -1675,7 +1673,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 
 					hrSet = pBoolValueObj->SetValue(NewValue, ObjectRef.ArrayIndex());
 				}// end else if SVBoolValueObjectClass
-				else if (SvVol::SVVariantValueObjectClass* pvValueObject = dynamic_cast <SvVol::SVVariantValueObjectClass*> (ObjectRef.getObject()))
+				else if (auto* pvValueObject = dynamic_cast <SvVol::SVVariantValueObjectClass*> (ObjectRef.getObject()))
 				{
 					// Convert to the appropriate type of value
 
@@ -1691,7 +1689,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 						hrSet = pvValueObject->SetValueKeepType(Value.c_str());
 					}
 				}// end else if SVVariantValueObjectClass
-				else if (SvVol::SVEnumerateValueObjectClass* pEnumerateValueObj = dynamic_cast <SvVol::SVEnumerateValueObjectClass*> (ObjectRef.getObject()))
+				else if (auto* pEnumerateValueObj = dynamic_cast <SvVol::SVEnumerateValueObjectClass*> (ObjectRef.getObject()))
 				{
 					// Convert to the appropriate type of value
 					bool l_bTempReset = false;
@@ -1704,7 +1702,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 
 					if (S_OK != (hrSet = pEnumerateValueObj->setValue(Value, ObjectRef.ArrayIndex())))
 					{
-						if (Value.size() > 0)
+						if (false == Value.empty())
 						{
 							if (_ismbcdigit(Value.c_str()[0]))
 							{
@@ -1722,7 +1720,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 
 					bResetObject = l_bTempReset;
 				}// end else if SVEnumerateValueObjectClass
-				else if (SvVol::SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast <SvVol::SVDoubleValueObjectClass*> (ObjectRef.getObject()))
+				else if (auto* pDoubleValueObj = dynamic_cast <SvVol::SVDoubleValueObjectClass*> (ObjectRef.getObject()))
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
@@ -1773,7 +1771,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 
 				if (SvOi::SVResetItemIP != rResetItem && bResetObject && SvOi::SVResetItemNone > ObjectRef.getValueObject()->getResetItem())
 				{
-					SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (ObjectRef.getObject()->GetAncestor(SvPb::SVToolObjectType));
+					auto* pTool = dynamic_cast<SvTo::SVToolClass*> (ObjectRef.getObject()->GetAncestor(SvPb::SVToolObjectType));
 
 					if (nullptr != pTool)
 					{
@@ -1869,7 +1867,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 		}
 		else if (l_pInRequest->m_bChangingToolInput)
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(l_pInRequest->m_toolId));
+			auto* pTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(l_pInRequest->m_toolId));
 			if (nullptr != pTool)
 			{
 				pTool->overwriteInputSource(l_pInRequest->m_ImageHandlePtr);
@@ -1890,7 +1888,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 		{
 			SvOi::ITRCImagePtr pImageBuffer;
 			SvIe::SVVirtualCamera* pVirtualCamera = nullptr;
-			if (SvIe::SVMainImageClass* l_psvMainImage = dynamic_cast<SvIe::SVMainImageClass*> (pImage))
+			if (auto* l_psvMainImage = dynamic_cast<SvIe::SVMainImageClass*> (pImage))
 			{
 				const auto l_svIter = rCameraInfos.find(l_psvMainImage->GetCamera()->getObjectId());
 				if (l_svIter != rCameraInfos.end())
@@ -1898,7 +1896,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 					pImageBuffer = l_psvMainImage->getTempImageBuffer();
 					///Here a const_cast is made to set the temporary image which uses a temporary product not from PPQ
 					///This is not called during normal run mode!
-					SvIe::SVCameraInfoStruct& rCameraInfo = const_cast<SvIe::SVCameraInfoStruct&> (l_svIter->second);
+					auto& rCameraInfo = const_cast<SvIe::SVCameraInfoStruct&> (l_svIter->second);
 					rCameraInfo.setImage(pImageBuffer);
 				}
 				pVirtualCamera = l_psvMainImage->GetCamera();
@@ -2061,17 +2059,17 @@ void SVInspectionProcess::SetObjectIdIndex(DWORD objectIdIndex)
 	}
 }
 
-HRESULT SVInspectionProcess::CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVInspectionProcess::getOverlays(SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
 	rMultiLineArray.clear();
 
-	SVToolSet* l_pToolSet = GetToolSet();
+	SVToolSet* pToolSet = GetToolSet();
 
-	if (nullptr != l_pToolSet)
+	if (nullptr != pToolSet)
 	{
-		l_Status = l_pToolSet->CollectOverlays(pImage, rMultiLineArray);
+		pToolSet->getOverlays(rImage, rMultiLineArray);
 	}
 	else
 	{
@@ -2215,7 +2213,7 @@ void SVInspectionProcess::LastProductNotify()
 
 bool SVInspectionProcess::IsColorCamera() const
 {
-	SvIe::SVVirtualCamera* pCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(getFirstCamera()));
+	auto* pCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(getFirstCamera()));
 
 	if (nullptr != pCamera)
 	{
@@ -2776,7 +2774,7 @@ HRESULT SVInspectionProcess::RegisterSubObject(SVObjectClass* pObject)
 	//! Object is an Image
 	if (SvPb::SVImageObjectType == pObject->GetObjectType())
 	{
-		SvIe::SVCameraImageTemplate* pCameraImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pObject);
+		auto* pCameraImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pObject);
 
 		if (nullptr != pCameraImage)
 		{
@@ -2802,7 +2800,7 @@ HRESULT SVInspectionProcess::UnregisterSubObject(SVObjectClass* pObject)
 	//! Object is an Image
 	if (SvPb::SVImageObjectType == pObject->GetObjectType())
 	{
-		SvIe::SVCameraImageTemplate* pCameraImage = dynamic_cast<SvIe::SVCameraImageTemplate*>(pObject);
+		auto* pCameraImage = dynamic_cast<SvIe::SVCameraImageTemplate*>(pObject);
 
 		if (nullptr != pCameraImage)
 		{
@@ -3004,7 +3002,7 @@ uint32_t SVInspectionProcess::getFirstCamera() const
 
 	if (!(m_ToolSetCameraName.empty()))
 	{
-		SvOi::IObjectClass* pCamera = SvOi::getObjectByDottedName(m_ToolSetCameraName.c_str());
+		SvOi::IObjectClass* pCamera = SvOi::getObjectByDottedName(m_ToolSetCameraName);
 		cameraId = (nullptr != pCamera) ? pCamera->getObjectId() : SvDef::InvalidObjectId;
 	}
 
@@ -3023,7 +3021,7 @@ HRESULT SVInspectionProcess::addSharedCamera(uint32_t cameraID)
 
 	SVPPQObject* pPPQ = GetPPQ();
 
-	SvIe::SVVirtualCamera* pCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(cameraID));
+	auto* pCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(cameraID));
 	if (nullptr != pCamera && nullptr != pPPQ)
 	{
 		pPPQ->AddSharedCamera(pCamera);
@@ -3101,7 +3099,7 @@ HRESULT SVInspectionProcess::propagateSizeAndPosition()
 	{
 		for (int index = 0; index < pToolSet->GetSize(); index++)
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->getTaskObject(index));
+			auto* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->getTaskObject(index));
 			if (nullptr != pTool)
 			{
 				result = pTool->propagateSizeAndPosition() || result;
@@ -3126,7 +3124,7 @@ bool SVInspectionProcess::usePropagateSizeAndPosition() const
 	{
 		for (int index = 0; index < pToolSet->GetSize(); index++)
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->getTaskObject(index));
+			auto* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->getTaskObject(index));
 			if (nullptr != pTool)
 			{
 				if (pTool->usePropagateSizeAndPosition())
@@ -3226,34 +3224,32 @@ bool SVInspectionProcess::createAllObjects()
 
 bool SVInspectionProcess::CreateChildObject(SVObjectClass* pChildObject, DWORD context)
 {
-	if (nullptr != pChildObject)
-	{
-		SVObjectLevelCreateStruct createStruct(*this);
-		createStruct.m_pInspection = this;
-
-		bool Return = pChildObject->createAllObjects(createStruct);
-
-		if (SvDef::SVMFResetObject == (context & SvDef::SVMFResetObject))
-		{
-			pChildObject->resetAllObjects();
-		}
-
-		if (SvDef::SVMFSetDefaultInputs == (context & SvDef::SVMFSetDefaultInputs))
-		{
-			SetDefaultInputs();
-		}
-
-		if (SvDef::SVMFResetInspection == (context & SvDef::SVMFResetInspection))
-		{
-			resetAllObjects();
-		}
-
-		return Return;
-	}
-	else // Not a Valid Object
+	if (nullptr == pChildObject)
 	{
 		return false;
 	}
+	
+	SVObjectLevelCreateStruct createStruct(*this);
+	createStruct.m_pInspection = this;
+
+	bool Return = pChildObject->createAllObjects(createStruct);
+
+	if (SvDef::SVMFResetObject == (context & SvDef::SVMFResetObject))
+	{
+		pChildObject->resetAllObjects();
+	}
+
+	if (SvDef::SVMFSetDefaultInputs == (context & SvDef::SVMFSetDefaultInputs))
+	{
+		SetDefaultInputs();
+	}
+
+	if (SvDef::SVMFResetInspection == (context & SvDef::SVMFResetInspection))
+	{
+		resetAllObjects();
+	}
+
+	return Return;
 }
 
 void SVInspectionProcess::ConnectObject(const SVObjectLevelCreateStruct& rCreateStructure)
@@ -3276,7 +3272,7 @@ bool SVInspectionProcess::DestroyChildObject(SVObjectClass* pChild)
 	// if we have an Object
 	if (nullptr != pChild)
 	{
-		SvIe::SVTaskObjectClass* pTaskObject = dynamic_cast<SvIe::SVTaskObjectClass*>(pChild);
+		auto* pTaskObject = dynamic_cast<SvIe::SVTaskObjectClass*>(pChild);
 		if (nullptr != pTaskObject)
 		{
 			// Notify the Owner of our inputs that they are not needed anymore
@@ -3365,8 +3361,8 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, uint32_t newId)
 				}
 				else
 				{
-					SvIe::SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SvIe::SVTaskObjectListClass*>(pOwner);
-					SvIe::SVTaskObjectListClass* pTaskList = dynamic_cast<SvIe::SVTaskObjectListClass*>(pDuplicateObject);
+					auto* pTaskListOwner = dynamic_cast<SvIe::SVTaskObjectListClass*>(pOwner);
+					auto* pTaskList = dynamic_cast<SvIe::SVTaskObjectListClass*>(pDuplicateObject);
 					if (nullptr != pTaskListOwner)
 					{
 						isDestroyed = pTaskList->DestroyChildObject(pTaskList);
@@ -3413,7 +3409,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, uint32_t newId)
 			}
 			else
 			{
-				SvOp::SVConditional* pConditional = dynamic_cast<SvOp::SVConditional*>(pObject);
+				auto* pConditional = dynamic_cast<SvOp::SVConditional*>(pObject);
 
 				if (nullptr != pConditional)
 				{
@@ -3600,7 +3596,7 @@ SvOi::SVResetItemEnum  SVInspectionProcess::AddToResetIds(SvOi::SVResetItemEnum 
 	{
 		return SvOi::SVResetItemIP;
 	}
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject->GetAncestor(SvPb::SVToolObjectType));
+	auto* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject->GetAncestor(SvPb::SVToolObjectType));
 	if (pTool == nullptr)
 	{
 		return SvOi::SVResetItemIP;

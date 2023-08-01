@@ -137,7 +137,7 @@ bool LinearMaximumObjectAnalyzer::ResetObject(SvStl::MessageContainerVector *pEr
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-HRESULT LinearMaximumObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
+HRESULT LinearMaximumObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine ) const
 {
 	double dDistance = 0.0;
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();

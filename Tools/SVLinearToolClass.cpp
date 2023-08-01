@@ -313,7 +313,7 @@ SvOi::ParametersForML SVLinearToolClass::getParameterForMonitorList(SvStl::Messa
 	return retList;
 }
 
-void SVLinearToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+void SVLinearToolClass::addOverlays(SvPb::OverlayDesc& rOverlay) const
 {
 	BOOL isRotation = false;
 	m_voUseProfileRotation.GetValue(isRotation);
@@ -336,7 +336,7 @@ void SVLinearToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Over
 	{
 		SvPb::setValueObject(m_svRotationAngle, *pRect->mutable_angle());
 	}
-	collectOverlays(pImage, *pOverlay);
+	collectOverlays(*pOverlay);
 }
 
 void SVLinearToolClass::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr)

@@ -44,8 +44,6 @@ SVResult::SVResult ( SVObjectClass* POwner, int StringResourceID )
 
 void SVResult::init()
 {
-	m_bUseOverlays = false;
-
 	// Identify our type in the Output List
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
 

@@ -158,7 +158,7 @@ public:
 	void SetObjectIdIndex(DWORD objectIdIndex);
 
 	//new GetOverlay method for use with the ActiveX
-	HRESULT CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray);
+	HRESULT getOverlays(SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray);
 
 	std::pair<SvTrig::SVTriggerInfoStruct, SVInspectionInfoStruct> getLastProductData() const;
 	void resetLastProduct();

@@ -1239,6 +1239,10 @@ enum EmbeddedIdEnum
 	LoopModeEId = 599;
 	RotationNumberEId = 600;
 	MeasurementValueEId = 601;
+	IsShowOverlayInAncestorEnabledEId = 602;
+	OverlayInAncestorOffsetXEId = 603;
+	OverlayInAncestorOffsetYEId = 604;
+	OverlayInAncestorOffsetAngleEId = 605;
 
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
@@ -1317,6 +1321,7 @@ enum EmbeddedIdEnum
 	MissingImageCountEId = 100056;
 	NotCompleteCountEId = 100057;
 	DeleteColumnInputEId = 100058;
+	AncestorForOverlayInputEId = 100059;
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	ImageInputEId = 150000;

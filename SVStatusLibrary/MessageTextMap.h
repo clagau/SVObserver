@@ -667,5 +667,7 @@ namespace SvStl
 		{Tid_ErrorMultiObjectID, _T("Multi Object ID per trigger can only be used in SVIM_NEO configurations\nChange the configuration type or use the Object ID index 0 for all inspections")},
 		{Tid_ErrorMultiObjectIDOrder, _T("NEO must use 'Extended Time Delay & Data Completion' PPQ mode. When using multi Object ID per trigger the object ID index in the inspection properties must match the order of the inspections in the inspection list (0-3 in ascending order)")},
 		{Tid_ActionNotPossibleInModuleEditingMode, _T("This action is not possible, while Module Instance \"{0}\" is editing.")},
+		{Tid_InvalidImageForAux, _T("No valid image selected for auxiliary extents.")},
+		{Tid_InvalidImageForAncestorOverlay, _T("No valid image selected for ancestor overlay.")}
 };
 } //namespace SvStl

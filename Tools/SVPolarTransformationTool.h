@@ -37,7 +37,7 @@ public:
 
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
-	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
+	virtual void addOverlays(SvPb::OverlayDesc& rOverlay) const override;
 
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 

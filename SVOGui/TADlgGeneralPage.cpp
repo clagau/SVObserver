@@ -24,6 +24,21 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+namespace
+{
+void fillComboBox(SvMc::AvailableObjectListComboBox<uint32_t>& rComboBox, const SvUl::NameObjectIdList& rAvailableImages, const std::string& rSelctedName)
+{
+	for (auto pair : rAvailableImages)
+	{
+		rComboBox.AddString(pair.first.c_str());
+	}
+	if (!rSelctedName.empty())
+	{
+		rComboBox.SelectString(-1, rSelctedName.c_str());
+	}
+}
+}
+
 namespace SvOg
 {
 	TADlgGeneralPage::TADlgGeneralPage(uint32_t inspectionId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum subType)
@@ -51,10 +66,11 @@ namespace SvOg
 		int CurrentSelection = m_drawToolCombo.GetCurSel();
 		if (CB_ERR != CurrentSelection)
 		{
-			long Value = static_cast<long> (m_drawToolCombo.GetItemData(CurrentSelection));
+			auto Value = static_cast<long> (m_drawToolCombo.GetItemData(CurrentSelection));
 			m_values.Set<long>(SvPb::ConditionalToolDrawFlagEId, Value);
 		}			
-		m_AuxExtentsController.EnableAuxExtents(m_bUpdateAuxiliaryExtents ? true : false);
+		m_AuxExtentsController.enableAuxExtents(m_bUpdateAuxiliaryExtents ? true : false);
+		m_AuxExtentsController.enableShowOverlayInAncestor(m_showOverlayInAncestor ? true : false);
 
 		m_AuxExtentsController.setUseUnitMapping(m_UseUnitMapping ? true : false);
 		
@@ -91,15 +107,12 @@ namespace SvOg
 		if (m_bAuxExtentsAvailable)
 		{
 			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
+			GetDlgItem(IDC_ANCESTOR_SELECTION_COMBO)->EnableWindow(m_showOverlayInAncestor);
 			if (m_IsExternalTool)
 			{
 				GetDlgItem(IDC_CHECK_USE_1_1)->EnableWindow(true);
 			}
 		}
-		
-		
-		
-
 
 		UpdateData(false); // Send Data to Dialog...
 	}
@@ -115,24 +128,17 @@ namespace SvOg
 	void TADlgGeneralPage::SetImages()
 	{
 		m_AvailableSourceImageCombo.ResetContent();
+		m_AncestorSelectionCombo.ResetContent();
 		if (m_bAuxExtentsAvailable)
 		{
-			const SvUl::NameObjectIdList& availImages = m_AuxExtentsController.GetAvailableImageList();
-			for (SvUl::NameObjectIdList::const_iterator it = availImages.begin();it != availImages.end();++it)
-			{
-				m_AvailableSourceImageCombo.AddString(it->first.c_str());
-			}
-			auto name = m_AuxExtentsController.GetAuxSourceImageName();
-			if (!name.empty())
-			{
-				m_AvailableSourceImageCombo.SelectString(-1, name.c_str());
-			}
+			fillComboBox(m_AvailableSourceImageCombo, m_AuxExtentsController.getAvailableImageList(), m_AuxExtentsController.getAuxSourceImageName());
+			fillComboBox(m_AncestorSelectionCombo, m_AuxExtentsController.getAvailableAncestorForOverlayImageList(), m_AuxExtentsController.getAncestorForOverlay().first);
 		}
 	}
 
 	bool TADlgGeneralPage::CheckAuxiliaryExtentsAvailable() const
 	{
-		bool bRetVal = m_AuxExtentsController.AreAuxiliaryExtentsAvailable();
+		bool bRetVal = m_AuxExtentsController.areAuxiliaryExtentsAvailable();
 		return bRetVal;
 	}
 
@@ -140,9 +146,11 @@ namespace SvOg
 	{
 		CPropertyPage::DoDataExchange(pDX);
 		//{{AFX_DATA_MAP(TADlgGeneralPage)
-		DDX_Control(pDX, IDC_SOURCE_IMAGE_COMBO, m_AvailableSourceImageCombo);
-		DDX_Control(pDX, IDC_DRAW_TOOL_COMBO, m_drawToolCombo);
 		DDX_Check(pDX, IDC_ENABLE_AUXILIARY_EXTENTS, m_bUpdateAuxiliaryExtents);
+		DDX_Control(pDX, IDC_SOURCE_IMAGE_COMBO, m_AvailableSourceImageCombo);
+		DDX_Check(pDX, IDC_SHOW_OVERLAY_IN_ANCESTOR, m_showOverlayInAncestor);
+		DDX_Control(pDX, IDC_ANCESTOR_SELECTION_COMBO, m_AncestorSelectionCombo);
+		DDX_Control(pDX, IDC_DRAW_TOOL_COMBO, m_drawToolCombo);
 		DDX_Control(pDX, IDC_TOOL_OVERLAYCOLOR_COMBO, m_AvailableToolForColorOverlayCombo);
 		DDX_Check(pDX, IDC_CLOSE_TOOL_CBOX, m_bCloseTool);
 		DDX_Check(pDX, IDC_CHECK_USE_1_1, m_UseUnitMapping);
@@ -151,10 +159,12 @@ namespace SvOg
 
 	BEGIN_MESSAGE_MAP(TADlgGeneralPage, CPropertyPage)
 		//{{AFX_MSG_MAP(TADlgGeneralPage)
-		ON_CBN_SELCHANGE(IDC_DRAW_TOOL_COMBO, OnSelchangeDrawToolCombo)
 		ON_BN_CLICKED(IDC_ENABLE_AUXILIARY_EXTENTS, OnUpdateAuxiliaryExtents)
-		ON_BN_CLICKED(IDC_CLOSE_TOOL_CBOX, OnUpdateCloseTool)
 		ON_CBN_SELCHANGE(IDC_SOURCE_IMAGE_COMBO, OnSelchangeSourceImageCombo)
+		ON_BN_CLICKED(IDC_SHOW_OVERLAY_IN_ANCESTOR, OnUpdateShowOverlayInAncestor)
+		ON_CBN_SELCHANGE(IDC_ANCESTOR_SELECTION_COMBO, OnSelchangeAncestorSelectionCombo)
+		ON_BN_CLICKED(IDC_CLOSE_TOOL_CBOX, OnUpdateCloseTool)
+		ON_CBN_SELCHANGE(IDC_DRAW_TOOL_COMBO, OnSelchangeDrawToolCombo)
 		ON_CBN_SELCHANGE(IDC_TOOL_OVERLAYCOLOR_COMBO, OnSelchangeToolForOverlayColorCombo)
 		ON_BN_CLICKED(ID_SHOW_RELATIONS, OnShowRelations)
 		ON_BN_CLICKED(IDC_CHECK_USE_1_1, OnUpdateUseUnitMapping)
@@ -180,25 +190,18 @@ namespace SvOg
 		if (!m_bAuxExtentsAvailable)
 		{
 			// Disable Auxiliary Extents
-			GetDlgItem(IDC_ENABLE_AUXILIARY_EXTENTS)->ShowWindow(SW_HIDE);
-			GetDlgItem(IDC_AUXILIARY_GROUP)->ShowWindow(SW_HIDE);
-			GetDlgItem(IDC_SOURCE_IMAGE_TEXT)->ShowWindow(SW_HIDE);
-			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->ShowWindow(SW_HIDE);
+			setAuxiliaryShowFlags(SW_HIDE);
 		}
 		else
 		{
 			// Enable Auxiliary Extents
-			GetDlgItem(IDC_ENABLE_AUXILIARY_EXTENTS)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_AUXILIARY_GROUP)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_SOURCE_IMAGE_TEXT)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->ShowWindow(SW_SHOW);
-		
+			setAuxiliaryShowFlags(SW_SHOW);		
 			
-			m_bUpdateAuxiliaryExtents = m_AuxExtentsController.IsUpdateAuxExtentsEnabled();
+			m_bUpdateAuxiliaryExtents = m_AuxExtentsController.isUpdateAuxExtentsEnabled();
+			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);	
 
-			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
-
-			
+			m_showOverlayInAncestor = m_AuxExtentsController.isShowOverlayInAncestorEnabled();
+			GetDlgItem(IDC_ANCESTOR_SELECTION_COMBO)->EnableWindow(m_showOverlayInAncestor);
 		}
 
 		if (!m_bAuxExtentsAvailable || !m_IsExternalTool)
@@ -249,23 +252,36 @@ namespace SvOg
 	{
 		SetInspectionData();
 
-		const SvUl::NameObjectIdPair& source = m_AuxExtentsController.GetAuxSourceImage();
+		const SvUl::NameObjectIdPair& source = m_AuxExtentsController.getAuxSourceImage();
 		if (!source.first.empty())
 		{
-			m_AuxExtentsController.SetAuxSourceImage(source.first);
+			m_AuxExtentsController.setAuxSourceImage(source.first);
 		}
 
 		GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
 		refresh();
 	}
 
+	void TADlgGeneralPage::OnUpdateShowOverlayInAncestor()
+	{
+		SetInspectionData();
+
+		const SvUl::NameObjectIdPair& source = m_AuxExtentsController.getAncestorForOverlay();
+		if (!source.first.empty())
+		{
+			m_AuxExtentsController.setAncestorforOverlay(source.first);
+		}
+
+		GetDlgItem(IDC_ANCESTOR_SELECTION_COMBO)->EnableWindow(m_showOverlayInAncestor);
+		refresh();
+	}
 
 	void TADlgGeneralPage::OnUpdateUseUnitMapping()
 	{
 		SetInspectionData();
 		
 		m_AuxExtentsController.resetTaskObject();
-		m_AuxExtentsController.FindAuxSourceImages();
+		m_AuxExtentsController.findAuxSourceImages();
 		SetImages();
 
 
@@ -317,7 +333,24 @@ namespace SvOg
 			m_AvailableSourceImageCombo.GetLBText(index, name);
 			if (!name.IsEmpty())
 			{
-				m_AuxExtentsController.SetAuxSourceImage( std::string(name.GetString() ));
+				m_AuxExtentsController.setAuxSourceImage( std::string(name.GetString() ));
+			}
+		}
+		refresh();
+	}
+
+	void TADlgGeneralPage::OnSelchangeAncestorSelectionCombo()
+	{
+		UpdateData(TRUE); // get data from dialog
+
+		int index = static_cast<int>(m_AncestorSelectionCombo.GetCurSel());
+		if (CB_ERR != index)
+		{
+			CString name;
+			m_AncestorSelectionCombo.GetLBText(index, name);
+			if (!name.IsEmpty())
+			{
+				m_AuxExtentsController.setAncestorforOverlay(std::string(name.GetString()));
 			}
 		}
 		refresh();
@@ -404,6 +437,19 @@ namespace SvOg
 		{
 			Log_Assert(false);
 		}
+	}
+
+	void TADlgGeneralPage::setAuxiliaryShowFlags(int cmdShow)
+	{
+		GetDlgItem(IDC_AUXILIARY_GROUP)->ShowWindow(cmdShow);
+		GetDlgItem(IDC_ENABLE_AUXILIARY_EXTENTS)->ShowWindow(cmdShow);
+		GetDlgItem(IDC_SOURCE_IMAGE_TEXT)->ShowWindow(cmdShow);
+		GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->ShowWindow(cmdShow);
+
+		GetDlgItem(IDC_OVERLAY_GROUP)->ShowWindow(cmdShow);
+		GetDlgItem(IDC_SHOW_OVERLAY_IN_ANCESTOR)->ShowWindow(cmdShow);
+		GetDlgItem(IDC_ANCESTOR_SELECTION_TEXT)->ShowWindow(cmdShow);
+		GetDlgItem(IDC_ANCESTOR_SELECTION_COMBO)->ShowWindow(cmdShow);
 	}
 } //namespace SvOg
 

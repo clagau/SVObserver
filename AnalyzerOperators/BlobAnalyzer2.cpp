@@ -510,22 +510,17 @@ namespace SvAo
 		return result;
 	}
 
-	HRESULT BlobAnalyzer2::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& rMultiLineArray)
+	void BlobAnalyzer2::addOverlayGroups(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const
 	{
 		// only if ToolSet/Tool was not Disabled
 		
 		auto pTool = GetToolInterface();
 		if (pTool && pTool->WasEnabled())
 		{
-			auto pToolExtend = getToolExtentPtr();
-			if (nullptr == pToolExtend)
-			{
-				return E_FAIL;
-			}
 			if (nullptr == m_ResultColumnForOverlayArray[0] || nullptr == m_ResultColumnForOverlayArray[1] || nullptr == m_ResultColumnForOverlayArray[2] || nullptr == m_ResultColumnForOverlayArray[3])
 			{
 				Log_Assert(false);
-				return E_FAIL;
+				return;
 			}
 			std::vector<double> minXArray;
 			m_ResultColumnForOverlayArray[0]->GetArrayValues(minXArray);
@@ -554,21 +549,18 @@ namespace SvAo
 				l_oRect.bottom = static_cast<long> (maxYArray[i]+1);
 				l_oRect.right = static_cast<long> (maxXArray[i]+1);
 
-				SVExtentFigureStruct l_svFigure{ l_oRect };
-			
-				pToolExtend->TranslateFromOutputSpace(l_svFigure, l_svFigure);;
-				SVExtentMultiLineStruct l_multiLine;
-				l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
-
-				l_multiLine.AssignExtentFigure(l_svFigure, SvDef::DefaultSubFunctionColor1);
-
-				UpdateOverlayIDs(l_multiLine);
-
-				rMultiLineArray.push_back(l_multiLine);
+				SVExtentFigureStruct svFigure{ l_oRect };			
+				rImageExtents.TranslateFromOutputSpace(svFigure, svFigure);;
+				
+				SVExtentMultiLineStruct multiLine;
+				multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
+				multiLine.AssignExtentFigure(svFigure, SvDef::DefaultSubFunctionColor1);
+				UpdateOverlayIDs(multiLine);
+				rMultiLineArray.push_back(multiLine);
 			}
 			
 		}
-		return S_OK;
+		return;
 	}
 
 	bool BlobAnalyzer2::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
@@ -579,7 +571,7 @@ namespace SvAo
 		return retVal;
 	}
 
-	void BlobAnalyzer2::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
+	void BlobAnalyzer2::addOverlayGroups(SvPb::Overlay& rOverlay) const
 	{
 		auto* pGroup = rOverlay.add_shapegroups();
 		pGroup->set_name("Blobs");

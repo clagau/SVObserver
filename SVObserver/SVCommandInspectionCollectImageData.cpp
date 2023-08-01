@@ -141,7 +141,7 @@ HRESULT CommandInspectionCollectImageData::UpdateBuffer(uint32_t imageId, const 
 		{
 			if (nullptr != pImage->GetInspection())
 			{
-				dynamic_cast<SVInspectionProcess*>(pImage->GetInspection())->CollectOverlays(pImage, rMultiLineArray);
+				dynamic_cast<SVInspectionProcess*>(pImage->GetInspection())->getOverlays(*pImage, rMultiLineArray);
 			}
 			else
 			{

@@ -46,8 +46,6 @@ SVRange::~SVRange()
 
 void SVRange::init()
 {
-	m_bUseOverlays = false;
-
 	// Identify our type in the Output List
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVRangeObjectType;
 

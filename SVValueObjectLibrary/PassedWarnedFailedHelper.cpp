@@ -59,7 +59,7 @@ bool PassedWarnedFailedHelper::isWarned()
 	return(TRUE == RVal);
 }
 
-std::tuple<bool, bool, bool> PassedWarnedFailedHelper::GetPassedWarnedFailedStatus()
+std::tuple<bool, bool, bool> PassedWarnedFailedHelper::GetPassedWarnedFailedStatus() const
 {
 	BOOL bPassed = true;
 	BOOL bWarned = true;

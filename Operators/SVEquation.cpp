@@ -283,8 +283,6 @@ SVEquation::SVEquation(SVObjectClass* POwner, int StringResourceID, bool enableF
 ////////////////////////////////////////////////////////////////////////////////
 void SVEquation::init()
 {
-	m_bUseOverlays = false;
-
 	// Identify our output type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
 

@@ -47,7 +47,6 @@ DWORD EQAdjustSize::GetObjectColor() const
 void EQAdjustSize::Init()
 {
 	m_enabled.SetDefaultValue( BOOL(false) );
-	m_bUseOverlays = false;
 	// Identify our output type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
 	m_ObjectTypeInfo.m_SubType = m_SubType;

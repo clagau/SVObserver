@@ -158,7 +158,7 @@ SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput(bool bRunMode
 	return m_TranslationYInput.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
 }
 
-void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+void SVShiftTool::addOverlays(SvPb::OverlayDesc& rOverlay) const
 {
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());
@@ -176,7 +176,7 @@ void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentHeight, *pRect->mutable_h());
 	}
 	setStateValueToOverlay(*pOverlay);
-	collectOverlays(pImage, *pOverlay);
+	collectOverlays(*pOverlay);
 }
 
 void SVShiftTool::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr)

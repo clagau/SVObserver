@@ -189,11 +189,10 @@ public:
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) override;
 	virtual void goingOffline() override;
 
-	virtual HRESULT CollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray);
+	virtual void collectOverlays(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const;
 	/// Collect all ShapeGroups for this overlay in the protoBuf-message and return it.
-	/// \param pImage [in] Image for with the overlay should be collected.
 	/// \param rOverlay [in,out] Protobuf Message.
-	virtual void collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const;
+	virtual void collectOverlays(SvPb::Overlay& rOverlay) const;
 
 	SVObjectClass* GetEmbeddedValueObject(SvPb::EmbeddedIdEnum embeddedID);
 
@@ -215,15 +214,15 @@ protected:
 	// NEVER call base class Run()! 
 	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
-	virtual void GetDrawInfo(SVExtentMultiLineStruct&) {};
-	virtual void UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine);
+	virtual void GetDrawInfo(SVExtentMultiLineStruct&) const {};
+	virtual void UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) const;
 	virtual void UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const;
-	void UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents);
-	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray);
+	void UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents) const;
+	
+	virtual void addOverlayGroups(SVExtentMultiLineStructVector&, const SVImageExtentClass& /*rImageExtents*/) const {};
 	/// Add a overlay group if available to the protoBuf-message.
-	/// \param pImage [in] Image for with the overlay should be collected.
 	/// \param rOverlay [in,out] Protobuf Message.
-	virtual void addOverlayGroups(const SVImageClass* , SvPb::Overlay& ) const {};
+	virtual void addOverlayGroups(SvPb::Overlay&) const {};
 
 	// Called by Run()
 	// NOTE:
@@ -253,8 +252,6 @@ protected:
 
 	std::vector<SvOl::InputObject*> m_inputs;
 
-	
-	bool m_bUseOverlays;
 
 	SvStl::MessageContainerVector m_ResetErrorMessages;  ///The list of task messages
 	SvStl::MessageContainerVector m_RunErrorMessages;  ///The list of task messages

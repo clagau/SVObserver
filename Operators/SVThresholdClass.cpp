@@ -46,8 +46,6 @@ SVThresholdClass::SVThresholdClass( SVObjectClass* POwner, int StringResourceID 
 
 void SVThresholdClass::init()
 {
-	m_bUseOverlays = false;
-
 	// Identify our output type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVThresholdObjectType;

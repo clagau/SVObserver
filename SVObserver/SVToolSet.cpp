@@ -248,7 +248,7 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_NotCompleteCountTS.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
 	//This is only required to be able to read old configurations with auxiliary extents set in the old format
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+	auto* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 	if (nullptr != pInspection)
 	{
 		m_EnableAuxiliaryExtents.SetValue(BOOL(pInspection->getInitialAuxiliaryExtents()));
@@ -312,7 +312,7 @@ void SVToolSet::updateToolPosition()
 	for (long i(0), position(1); i < GetSize(); i++)
 	{
 		//! For object values use one based index
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (getTaskObject(i));
+		auto* pTool = dynamic_cast<SvTo::SVToolClass*> (getTaskObject(i));
 		if (nullptr != pTool)
 		{
 			position = pTool->setToolPosition(position);
@@ -408,16 +408,14 @@ SvPb::OverlayDesc SVToolSet::getOverlayStruct(const SvOi::ISVImage& rImage) cons
 	auto* pImage = dynamic_cast<const SvIe::SVImageClass*>(&rImage);
 	if (nullptr != pImage)
 	{
-		for (auto* pTask : m_TaskObjectVector)
-		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pTask);
-			if (nullptr != pTool && pTool->isInputImage(pImage->getObjectId()))
-			{
-				pTool->addOverlays(pImage, overlayDesc);
-			}
-		}
+		SvTo::getOverlays(*pImage, m_TaskObjectVector, overlayDesc);
 	}
 	return overlayDesc;
+}
+
+void SVToolSet::getOverlays(SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray) const
+{
+	SvTo::getOverlays(rImage, m_TaskObjectVector, rMultiLineArray);
 }
 
 void SVToolSet::SetObjectIdIndex(DWORD objectIdIndex)
@@ -663,14 +661,6 @@ bool SVToolSet::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	updateToolPosition();
 
 	return Result;
-}
-
-
-
-HRESULT SVToolSet::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector&)
-{
-	// override TaskObjectList implementation
-	return S_FALSE;	// no overlays for toolset
 }
 
 bool SVToolSet::createAllObjectsFromChild(SVObjectClass& rChildObject)

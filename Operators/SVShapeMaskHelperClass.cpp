@@ -40,8 +40,6 @@ SVShapeMaskHelperClass::SVShapeMaskHelperClass( SVObjectClass* POwner, int Strin
 void SVShapeMaskHelperClass::init()
 {
 	m_pShape = nullptr;
-	m_bUseOverlays = false;
-
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
 	m_ObjectTypeInfo.m_SubType    = SvPb::SVShapeMaskHelperObjectType;
 

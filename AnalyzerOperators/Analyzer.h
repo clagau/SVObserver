@@ -42,7 +42,7 @@ public:
 
 	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& , std::back_insert_iterator<SvOi::ParametersForML> ) const {};
 	const SVImageExtentClass& GetImageExtent() const { return m_imageExtent; }
-	virtual const SVImageExtentClass* GetImageExtentPtr() const
+	virtual const SVImageExtentClass* GetImageExtentPtr() const override
 	{
 		return &(m_imageExtent);
 	};

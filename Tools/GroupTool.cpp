@@ -115,19 +115,14 @@ namespace SvTo
 		return false;
 	}
 
-	void GroupTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+	void GroupTool::getOverlays(const SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray) const
 	{
-		if (nullptr != pImage)
-		{
-			for (auto* pTask : m_TaskObjectVector)
-			{
-				SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pTask);
-				if (nullptr != pTool && pTool->isInputImage(pImage->getObjectId()))
-				{
-					pTool->addOverlays(pImage, rOverlay);
-				}
-			}
-		}
+		SvTo::getOverlays(rImage, m_TaskObjectVector, rMultiLineArray);
+	}
+
+	void GroupTool::getOverlays(const SvIe::SVImageClass& rImage, SvPb::OverlayDesc& rOverlay) const
+	{
+		SvTo::getOverlays(rImage, m_TaskObjectVector, rOverlay);
 	}
 
 	long  GroupTool::setToolPosition(long ToolPosition)

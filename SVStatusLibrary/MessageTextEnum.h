@@ -630,5 +630,7 @@ enum MessageTextEnum
 	Tid_ErrorMultiObjectID,
 	Tid_ErrorMultiObjectIDOrder,
 	Tid_ActionNotPossibleInModuleEditingMode,
+	Tid_InvalidImageForAux,
+	Tid_InvalidImageForAncestorOverlay,
 };
 } //namespace SvStl

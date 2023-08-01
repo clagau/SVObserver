@@ -112,7 +112,7 @@ bool LinearEdgeCountingAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::Mess
 	return Result;
 }
 
-HRESULT LinearEdgeCountingAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
+HRESULT LinearEdgeCountingAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine ) const
 {
 	if(nullptr != GetEdgeA())
 	{

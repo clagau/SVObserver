@@ -32,12 +32,15 @@ namespace SvOg
 		virtual BOOL OnInitDialog() override;
 
 		afx_msg void OnSelchangeDrawToolCombo();
+
 		afx_msg void OnUpdateAuxiliaryExtents();
+		afx_msg void OnSelchangeSourceImageCombo();
+		afx_msg void OnUpdateShowOverlayInAncestor();
+		afx_msg void OnSelchangeAncestorSelectionCombo();
 	
 		afx_msg void OnUpdateUseUnitMapping();
 
 		afx_msg void OnUpdateCloseTool();
-		afx_msg void OnSelchangeSourceImageCombo();
 		afx_msg void OnSelchangeToolForOverlayColorCombo();
 		afx_msg void OnShowRelations();
 		//}}AFX_MSG
@@ -55,18 +58,22 @@ namespace SvOg
 		HRESULT SetInspectionData();
 		void SetupDrawFlagComboBox();
 		void SetImages();
+
 		void initToolForOverlayColor();
+		void setAuxiliaryShowFlags(int cmdShow);
 
 	public:
 		enum { IDD = IDD_TA_GENERAL_DIALOG };
 
 	protected:
+		BOOL m_bUpdateAuxiliaryExtents = false; //calculate Auxextents for this tool 
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableSourceImageCombo;
+		BOOL m_showOverlayInAncestor = false; //enabled overlay on ancestor 
+		SvMc::AvailableObjectListComboBox<uint32_t> m_AncestorSelectionCombo;
 		long   m_SelectedInputImage {0};
 		BOOL  m_UseUnitMapping{FALSE}; // use 1:1 mapping if auxextants are enabled for the inspection 
 		bool m_IsExternalTool {false};
 		SvMc::SVEnumerateCombo m_drawToolCombo;
-		BOOL m_bUpdateAuxiliaryExtents = false; //calculate Auxextents for this tool 
 		BOOL m_bCloseTool = false;
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableToolForColorOverlayCombo;
 		SvUl::NameObjectIdList m_availableToolList;

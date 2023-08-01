@@ -186,7 +186,7 @@ SvVol::SVStringValueObjectClass* SVPolarTransformationToolClass::GetInputImageNa
 	return &m_SourceImageNames;
 }
 
-void SVPolarTransformationToolClass::addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc& rOverlay) const
+void SVPolarTransformationToolClass::addOverlays(SvPb::OverlayDesc& rOverlay) const
 {
 	SvDef::SVObjectTypeInfoStruct objectInfo;
 	objectInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;

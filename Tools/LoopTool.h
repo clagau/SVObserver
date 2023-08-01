@@ -29,7 +29,8 @@ public:
 	virtual int InsertBefore(uint32_t objectBeforeID, SVTaskObjectClass* pTaskObject) override;
 	virtual bool propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
-	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
+	virtual void getOverlays(const SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray) const override;
+	virtual void getOverlays(const SvIe::SVImageClass& rImage, SvPb::OverlayDesc& rOverlay) const override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 	virtual void resetCounters() override;

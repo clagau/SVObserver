@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "SVUtilityLibrary/NameObjectIdList.h"
 #pragma endregion Includes
 
 
@@ -18,7 +17,7 @@
 namespace SvStl
 {
 class MessageContainer;
-typedef std::vector<MessageContainer> MessageContainerVector;
+using MessageContainerVector = std::vector<MessageContainer>;
 }
 class SVImageExtentClass;
 namespace  SvTo
@@ -31,8 +30,8 @@ class SVToolExtentClass;
 
 namespace SvOi
 {
-typedef std::pair<std::string, uint32_t> ParameterPairForML;
-typedef std::vector<ParameterPairForML> ParametersForML;
+using ParameterPairForML = std::pair<std::string, uint32_t>;
+using ParametersForML = std::vector<ParameterPairForML>;
 
 	//this class is an interface. It should only have pure virtual public methods and no member variables
 	class ITool
@@ -41,9 +40,7 @@ typedef std::vector<ParameterPairForML> ParametersForML;
 		virtual ~ITool() {}
 
 		virtual bool areAuxExtentsAvailable() const = 0;
-		virtual SvUl::NameObjectIdList getAvailableAuxSourceImages() const = 0;
-		virtual SvUl::NameObjectIdPair getAuxSourceImage() const = 0;
-		virtual HRESULT setAuxSourceImage(uint32_t objectID) = 0;
+		virtual SvPb::GetAvailableAncestorImagesResponse getAvailableAncestorImages() const = 0;
 		virtual void SetToolImage(uint32_t objectID ) = 0;
 		virtual uint32_t GetToolImage() const = 0;
 		virtual HRESULT UpdateImageWithExtent() = 0;

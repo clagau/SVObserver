@@ -218,29 +218,11 @@ std::map<DWORD, FktPtrs > InspectionCommandMap =
 	)
 	},
 
-	{ SvPb::InspectionCmdRequest::kGetAvailableAuxImagesRequest,
+	{ SvPb::InspectionCmdRequest::kGetAvailableAncestorImagesRequest,
 	std::make_tuple(
 	[] {return ThreadPref::inspection; },
 	[] {return std::chrono::seconds{120}; } ,
-	[](const SvPb::InspectionCmdRequest& rRequest) {return  getAvailableAuxImages(rRequest.getavailableauximagesrequest()); },
-	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
-	)
-	},
-
-	{ SvPb::InspectionCmdRequest::kGetAuxImageObjectRequest,
-	std::make_tuple(
-	[] {return ThreadPref::inspection; },
-	[] {return std::chrono::seconds{120}; } ,
-	[](const SvPb::InspectionCmdRequest& rRequest) {return  getAuxImageObject(rRequest.getauximageobjectrequest()); },
-	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
-	)
-	},
-
-	{ SvPb::InspectionCmdRequest::kSetAuxImageObjectRequest,
-	std::make_tuple(
-	[] {return ThreadPref::inspection; },
-	[] {return std::chrono::seconds{120}; } ,
-	[](const SvPb::InspectionCmdRequest& rRequest) {return  setAuxImageObject(rRequest.setauximageobjectrequest()); },
+	[](const SvPb::InspectionCmdRequest& rRequest) {return  getAvailableAncestorImages(rRequest.getavailableancestorimagesrequest()); },
 	[](){return  SV_DEFAULT_NOT_ALLOWED_STATES; }
 	)
 	},

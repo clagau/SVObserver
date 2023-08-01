@@ -39,8 +39,8 @@ public:
 	std::vector<std::pair<time_t, std::string>> getHistory() const { return m_historyList; };
 	void setEditFlag(bool editFlag) { m_isEditing = editFlag; setViewFlag(); };
 
-	virtual HRESULT CollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector&) override { return S_OK; }; //Don't add overlays for ModuleTool by now.
-	virtual void addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc&) const override {}; //Don't add overlays for ModuleTool by now.
+	virtual void getOverlays(const SvIe::SVImageClass&, SVExtentMultiLineStructVector&) const override { }; //Don't add overlays for ModuleTool by now.
+	virtual void getOverlays(const SvIe::SVImageClass&, SvPb::OverlayDesc&) const override {}; //Don't add overlays for ModuleTool by now.
 	virtual bool canHasChildren() const override { return m_isEditing; };
 
 private:

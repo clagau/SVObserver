@@ -72,14 +72,14 @@ protected:
 
 	SVObjectClass* CreateResult();
 
-	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
-	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
+	virtual void addOverlayGroups(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const override;
+	virtual void addOverlayGroups(SvPb::Overlay& rOverlay) const override;
 	
 	void ResetResultValues();
 	void ResizeResultValues(int nNum);
 
 private:
-	std::vector<SVExtentFigureStruct> GetResultExtentFigureList( long lOccurances );
+	std::vector<SVExtentFigureStruct> GetResultExtentFigureList(long lOccurances, const SVImageExtentClass& rImageExtents) const;
 
 	/// Execute the matrox pattern command and set the result to the value-objects.
 	/// \param ImageBufId [in] Input image for the excute command.

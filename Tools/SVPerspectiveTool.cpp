@@ -510,7 +510,7 @@ HRESULT SVPerspectiveToolClass::SetImageExtent(const SVImageExtentClass& rImageE
 	return l_hrOk;
 }
 
-void SVPerspectiveToolClass::addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc& rOverlay) const
+void SVPerspectiveToolClass::addOverlays(SvPb::OverlayDesc& rOverlay) const
 {
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());

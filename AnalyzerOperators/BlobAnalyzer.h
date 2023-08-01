@@ -180,8 +180,8 @@ public:
 	SvVol::DoubleSortValuePtr m_ResultTableColumnValueObjects[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
 
 protected:
-	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray ) override;
-	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
+	virtual void addOverlayGroups(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const override;
+	virtual void addOverlayGroups(SvPb::Overlay& rOverlay) const override;
 
 /*- MapQuickSort () ----------------------------------------------------------*/
 /*- This should not be called directly, but through SortBlobs () -------------*/

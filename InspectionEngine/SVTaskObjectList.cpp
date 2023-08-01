@@ -430,37 +430,28 @@ void SVTaskObjectListClass::goingOffline()
 	}
 }
 
-HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
+void SVTaskObjectListClass::collectOverlays(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const
 {
-	HRESULT hrRet = SVTaskObjectClass::CollectOverlays(p_Image,p_MultiLineArray);
-
-	for ( int i = 0; i < static_cast<int> (numberOfTaskObjects()); i++ )
-	{
-		SVTaskObjectClass* pObject = dynamic_cast< SVTaskObjectClass* >(getTaskObject(i) );
-
-		if ( nullptr != pObject )
-		{
-			HRESULT l_Temp = pObject->CollectOverlays(p_Image, p_MultiLineArray);
-
-			if( S_OK == hrRet )
-			{
-				hrRet = l_Temp;
-			}
-		}
-	}
-
-	return hrRet;
-}
-
-void SVTaskObjectListClass::collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const
-{
-	__super::collectOverlays(pImage, rOverlay);
+	__super::collectOverlays(rMultiLineArray, rImageExtents);
 
 	for (auto* pObject : m_TaskObjectVector)
 	{
 		if (nullptr != pObject)
 		{
-			pObject->collectOverlays(pImage, rOverlay);
+			pObject->collectOverlays(rMultiLineArray, rImageExtents);
+		}
+	}
+}
+
+void SVTaskObjectListClass::collectOverlays(SvPb::Overlay& rOverlay) const
+{
+	__super::collectOverlays(rOverlay);
+
+	for (auto* pObject : m_TaskObjectVector)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->collectOverlays(rOverlay);
 		}
 	}
 }
@@ -573,8 +564,8 @@ void SVTaskObjectListClass::Delete(IObjectClass* pTaskObject)
 	if (nullptr == pTaskObject)
 	{
 		Log_Assert(false);
-		return;
-	}
+			return;
+		}
 		
 	auto objectID = pTaskObject->getObjectId();
 	bool isOk = RemoveFromTaskObjectVector(objectID) || RemoveFriend(objectID);

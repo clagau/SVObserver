@@ -31,6 +31,14 @@
 
 #pragma endregion Includes
 
+namespace
+{
+bool isTranslationValidForAncestorOverlay(SvPb::SVExtentTranslationEnum translation)
+{
+	return SvPb::SVExtentTranslationShift == translation || SvPb::SVExtentTranslationProfileShift == translation || SvPb::SVExtentTranslationFigureShift == translation;
+}
+}
+
 namespace SvTo
 {
 
@@ -47,6 +55,29 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+void getOverlays(const SvIe::SVImageClass& rImage, const SvIe::SVTaskObjectPtrVector& rVector, SVExtentMultiLineStructVector& rMultiLineArray)
+{
+	for (auto* pTask : rVector)
+	{
+		auto* pTool = dynamic_cast<SvTo::SVToolClass*>(pTask);
+		if (nullptr != pTool)
+		{
+			pTool->getOverlays(rImage, rMultiLineArray);
+		}
+	}
+}
+
+void getOverlays(const SvIe::SVImageClass& rImage, const SvIe::SVTaskObjectPtrVector& rVector, SvPb::OverlayDesc& rOverlay)
+{
+	for (auto* pTask : rVector)
+	{
+		auto* pTool = dynamic_cast<SvTo::SVToolClass*>(pTask);
+		if (nullptr != pTool)
+		{
+			pTool->getOverlays(rImage, rOverlay);
+		}
+	}
+}
 
 uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  InIt, uint32_t toolobjectId)
 {
@@ -65,8 +96,7 @@ uint32_t InsertDependentTools(std::back_insert_iterator<std::vector<uint32_t>>  
 	HRESULT hr = SvCmd::InspectionCommands(0, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getdependencyresponse())
 	{
-		SvPb::GetDependencyResponse dependencyResponse = responseCmd.getdependencyresponse();
-		for (const auto& pair : dependencyResponse.dependencypair())
+		for (const auto& pair : responseCmd.getdependencyresponse().dependencypair())
 		{
 			res++;
 			InIt = pair.client().toolobjectid();
@@ -132,6 +162,10 @@ void EmbeddedExtents::RegisterEmbeddedExtents()
 
 		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeightFactorFormat, SvPb::ExtentHeightFactorFormatEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_FORMAT, true, SvOi::SVResetItemToolAndDependent, true);
 		m_ExtentHeightFactorFormat.SetDefaultValue(_variant_t(0.0), true);
+
+		m_pOwner->RegisterEmbeddedObject(&m_ancestorOffsetX, SvPb::OverlayInAncestorOffsetXEId, IDS_OBJECTNAME_OVERLAY_IN_ANCESTOR_OFFSET_X, false, SvOi::SVResetItemNone, false);
+		m_pOwner->RegisterEmbeddedObject(&m_ancestorOffsetY, SvPb::OverlayInAncestorOffsetYEId, IDS_OBJECTNAME_OVERLAY_IN_ANCESTOR_OFFSET_Y, false, SvOi::SVResetItemNone, false);
+		m_pOwner->RegisterEmbeddedObject(&m_ancestorOffsetAngle, SvPb::OverlayInAncestorOffsetAngleEId, IDS_OBJECTNAME_OVERLAY_IN_ANCESTOR_OFFSET_ANGLE, false, SvOi::SVResetItemNone, false);
 	}
 }
 
@@ -154,8 +188,6 @@ void EmbeddedExtents::SetDefaults()
 	//this needs to be 0.0 rather than SvDef::cDefaultScaleFactor to ensure proper behaviour 
 	//with pre-10.10 configurations in ResizeTool::CreateObject()
 
-
-
 	m_svAuxiliarySourceX.SetDefaultValue(0.0, true);
 	m_svAuxiliarySourceX.setSaveValueFlag(false);
 	m_svAuxiliarySourceY.SetDefaultValue(0.0, true);
@@ -166,6 +198,13 @@ void EmbeddedExtents::SetDefaults()
 	m_svAuxiliarySourceImageName.setSaveValueFlag(false);
 	m_svAuxiliaryDrawType.SetDefaultValue("", true);
 	m_svAuxiliaryDrawType.setSaveValueFlag(false);
+
+	m_ancestorOffsetX.SetDefaultValue(0.0, true);
+	m_ancestorOffsetX.setSaveValueFlag(false);
+	m_ancestorOffsetY.SetDefaultValue(0.0, true);
+	m_ancestorOffsetY.setSaveValueFlag(false);
+	m_ancestorOffsetAngle.SetDefaultValue(0.0, true);
+	m_ancestorOffsetAngle.setSaveValueFlag(false);
 }
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
@@ -234,6 +273,7 @@ void SVToolClass::init()
 
 	RegisterEmbeddedObject(&m_drawToolFlag, SvPb::ConditionalToolDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone, true);
 	RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SvPb::UpdateAuxiliaryExtentsEId, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemToolAndDependent, true);
+	RegisterEmbeddedObject(&m_isShowOverlayInAncestorEnabled, SvPb::IsShowOverlayInAncestorEnabledEId, IDS_OBJECTNAME_Is_SHOW_OVERLAY_IN_ANCESTOR_ENABLED, false, SvOi::SVResetItemToolAndDependent, true);
 
 	m_toolExtent.SetTool(this);
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationShift);
@@ -301,7 +341,7 @@ void SVToolClass::init()
 	m_drawToolFlag.SetDefaultValue(0L, true);
 
 	m_svUpdateAuxiliaryExtents.SetDefaultValue(BOOL(false), true);
-
+	m_isShowOverlayInAncestorEnabled.SetDefaultValue(BOOL(false), true);
 
 	m_pCurrentToolSet = nullptr;
 
@@ -309,6 +349,9 @@ void SVToolClass::init()
 	m_AuxSourceImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject(&m_AuxSourceImageInput, _T("ToolAuxSourceImage"), SvPb::AuxImageInputEId);
 
+	m_AncestorForOverlayInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject(&m_AncestorForOverlayInput, _T("AncestorForOverlay"), SvPb::AncestorForOverlayInputEId);
+	
 	// instantiate the Conditional class
 	SvOp::SVConditional* pCondition = new SvOp::SVConditional(this);
 	AddFriend(pCondition);
@@ -372,6 +415,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 
 	//// Auxiliary Tool Source Extent
 	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_isShowOverlayInAncestorEnabled.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
 	m_drawToolFlag.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
@@ -380,10 +424,14 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 		BOOL bEnabled {false};
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
 		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled ? SvPb::audittrail | SvPb::useable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+
+		m_isShowOverlayInAncestorEnabled.GetValue(bEnabled);
+		m_AncestorForOverlayInput.SetObjectAttributesAllowed(bEnabled ? SvPb::audittrail | SvPb::useable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 	else
 	{
 		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		m_AncestorForOverlayInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 	if (false == useOverlayColorTool())
@@ -484,11 +532,11 @@ bool SVToolClass::WasEnabled() const
 	return bEnabled;
 }
 
-void SVToolClass::GetDrawInfo(SVExtentMultiLineStruct& rMultiLine)
+void SVToolClass::GetDrawInfo(SVExtentMultiLineStruct& rMultiLine) const
 {
 	if (m_pCurrentToolSet)
 	{
-		SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (m_pCurrentToolSet->GetDrawFlagObject());
+		auto* pObject = dynamic_cast<SVObjectClass*> (m_pCurrentToolSet->GetDrawFlagObject());
 
 		if (nullptr != pObject)
 		{
@@ -510,41 +558,72 @@ void SVToolClass::UpdateAuxiliaryExtents()
 		bool l_bForceOffsetReset = GetInspectionInterface()->IsOffsetUpdateForced();
 		m_toolExtent.UpdateOffsetData(l_bForceOffsetReset);
 
-		BOOL bUpdateSourceExtents = false;
-		HRESULT 	hr = m_svUpdateAuxiliaryExtents.GetValue(bUpdateSourceExtents);
-		if (m_pEmbeddedExtents && S_OK == hr && bUpdateSourceExtents)
+		if (m_pEmbeddedExtents)
 		{
-			SVExtentOffsetStruct l_svOffsetData;
-			SvIe::SVImageClass* pAuxSourceImage = m_AuxSourceImageInput.getInput<SvIe::SVImageClass>(true);
-
-			m_toolExtent.SetSelectedImage(pAuxSourceImage);
-
-			hr = m_toolExtent.GetSelectedOffsetData(l_svOffsetData);
-			if (S_OK != hr || !l_svOffsetData.m_bIsLinear)
+			BOOL isEnabled = false;
+			HRESULT 	hr = m_svUpdateAuxiliaryExtents.GetValue(isEnabled);
+			if (S_OK == hr && isEnabled)
 			{
-				m_toolExtent.UpdateOffsetDataToImage(l_svOffsetData, pAuxSourceImage);
+				SVExtentOffsetStruct l_svOffsetData;
+				SvIe::SVImageClass* pAuxSourceImage = m_AuxSourceImageInput.getInput<SvIe::SVImageClass>(true);
+
+				m_toolExtent.SetSelectedImage(pAuxSourceImage);
+
+				hr = m_toolExtent.GetSelectedOffsetData(l_svOffsetData);
+				if (S_OK != hr || !l_svOffsetData.m_bIsLinear)
+				{
+					m_toolExtent.UpdateOffsetDataToImage(l_svOffsetData, pAuxSourceImage);
+				}
+
+				if (nullptr != pAuxSourceImage)
+				{
+					m_pEmbeddedExtents->m_svAuxiliarySourceImageName.SetValue(pAuxSourceImage->GetCompleteName());
+				}
+
+				std::string DrawType = m_toolExtent.GetAuxiliaryDrawTypeString();
+				m_pEmbeddedExtents->m_svAuxiliaryDrawType.SetValue(DrawType);
+
+				SVPoint<double> point;
+				SvIe::SVImageClass* pImage = m_toolExtent.GetToolImage();
+				if (nullptr != pImage && nullptr != pAuxSourceImage)
+				{
+					//check
+					pImage->TranslateFromOutputSpaceToImageFromTool(pAuxSourceImage, point, point);
+				}
+				m_pEmbeddedExtents->m_svAuxiliarySourceX.SetValue(point.m_x);
+				m_pEmbeddedExtents->m_svAuxiliarySourceY.SetValue(point.m_y);
+
+				m_pEmbeddedExtents->m_svAuxiliarySourceAngle.SetValue(l_svOffsetData.m_dRotationAngle);
 			}
 
-			if (nullptr != pAuxSourceImage)
+			m_isShowOverlayInAncestorEnabled.GetValue(isEnabled);
+			if (isEnabled)
 			{
-				m_pEmbeddedExtents->m_svAuxiliarySourceImageName.SetValue(pAuxSourceImage->GetCompleteName());
+				SVExtentOffsetStruct l_svOffsetData;
+				SvIe::SVImageClass* pSourceImage = m_AncestorForOverlayInput.getInput<SvIe::SVImageClass>(true);
+
+				m_toolExtent.SetSelectedImage(pSourceImage);
+
+				hr = m_toolExtent.GetSelectedOffsetData(l_svOffsetData);
+				if (S_OK != hr || !l_svOffsetData.m_bIsLinear)
+				{
+					m_toolExtent.UpdateOffsetDataToImage(l_svOffsetData, pSourceImage);
+				}
+
+				SVPoint<double> point;
+				SvIe::SVImageClass* pImage = m_toolExtent.GetToolImage();
+				if (nullptr != pImage && nullptr != pSourceImage)
+				{
+					//check
+					pImage->TranslateFromOutputSpaceToImageFromTool(pSourceImage, point, point);
+				}
+				m_pEmbeddedExtents->m_ancestorOffsetX.SetValue(point.m_x);
+				m_pEmbeddedExtents->m_ancestorOffsetY.SetValue(point.m_y);
+
+				m_pEmbeddedExtents->m_ancestorOffsetAngle.SetValue(l_svOffsetData.m_dRotationAngle);
 			}
-
-			std::string DrawType = m_toolExtent.GetAuxiliaryDrawTypeString();
-			m_pEmbeddedExtents->m_svAuxiliaryDrawType.SetValue(DrawType);
-
-			SVPoint<double> point;
-			SvIe::SVImageClass* pImage = m_toolExtent.GetToolImage();
-			if (nullptr != pImage && nullptr != pAuxSourceImage)
-			{
-				//check
-				pImage->TranslateFromOutputSpaceToImageFromTool(pAuxSourceImage, point, point);
-			}
-			m_pEmbeddedExtents->m_svAuxiliarySourceX.SetValue(point.m_x);
-			m_pEmbeddedExtents->m_svAuxiliarySourceY.SetValue(point.m_y);
-
-			m_pEmbeddedExtents->m_svAuxiliarySourceAngle.SetValue(l_svOffsetData.m_dRotationAngle);
 		}
+
 	}
 }
 
@@ -790,11 +869,13 @@ HRESULT SVToolClass::TranslatePointToSource(SVPoint<double> inPoint, SVPoint<dou
 void SVToolClass::setAuxiliaryExtents()
 {
 	BOOL bEnabled {false};
+	BOOL bShowAncestorOverlay {false};
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 
 	if (nullptr != pInspection && pInspection->getEnableAuxiliaryExtent())
 	{
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
+		m_isShowOverlayInAncestorEnabled.GetValue(bShowAncestorOverlay);
 	}
 
 	UINT auxAttribute = bEnabled ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
@@ -810,6 +891,10 @@ void SVToolClass::setAuxiliaryExtents()
 		m_pEmbeddedExtents->m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 		m_pEmbeddedExtents->m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 		m_pEmbeddedExtents->m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+
+		m_pEmbeddedExtents->m_ancestorOffsetX.SetObjectAttributesAllowed(bShowAncestorOverlay, SvOi::SetAttributeType::OverwriteAttribute);
+		m_pEmbeddedExtents->m_ancestorOffsetY.SetObjectAttributesAllowed(bShowAncestorOverlay, SvOi::SetAttributeType::OverwriteAttribute);
+		m_pEmbeddedExtents->m_ancestorOffsetAngle.SetObjectAttributesAllowed(bShowAncestorOverlay, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 }
 
@@ -825,24 +910,77 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 
 	setAuxiliaryExtents();
 
+	m_AncestorIdForOverlay = SvDef::InvalidObjectId;
 	if (areAuxExtentsAvailable())
 	{
+		SvPb::GetAvailableAncestorImagesResponse ancestorList;
+		getAncestorImages(ancestorList);
 		BOOL bEnabled {false};
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
 		if (bEnabled)
 		{
 			m_AuxSourceImageInput.validateInput();
 			m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
+			auto objectId = m_AuxSourceImageInput.GetInputObjectInfo().getObjectId();
+			if (std::ranges::none_of(ancestorList.list(), [objectId](const auto& rEntry){ return rEntry.objectid() == objectId; }))
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidImageForAux, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+				Result = false;
+			}
 		}
 		else
 		{
 			m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		}
 
+		m_isShowOverlayInAncestorEnabled.GetValue(bEnabled);
+		if (bEnabled)
+		{
+			m_AncestorForOverlayInput.validateInput();
+			m_AncestorForOverlayInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::useable, SvOi::SetAttributeType::OverwriteAttribute);
+			m_AncestorIdForOverlay = m_AncestorForOverlayInput.GetInputObjectInfo().getObjectId();
+			auto objectId = m_AncestorForOverlayInput.GetInputObjectInfo().getObjectId();
+			auto iter = std::ranges::find_if(ancestorList.list(), [objectId](const auto& rEntry){ return rEntry.objectid() == objectId; });
+			if (ancestorList.list().end() != iter)
+			{
+				while (ancestorList.list().end() != iter)
+				{
+					if (false == isTranslationValidForAncestorOverlay(iter->translationtype()))
+					{
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidImageForAncestorOverlay, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+							pErrorMessages->push_back(Msg);
+						}
+						Result = false;
+						break;
+					}
+					++iter;
+				}
+			}
+			else
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidImageForAncestorOverlay, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+				Result = false;
+			}
+		}
+		else
+		{
+			m_AncestorForOverlayInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		}
 	}
 	else
 	{
 		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		m_AncestorForOverlayInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 	m_conditionBoolInput.validateInput();
@@ -1070,9 +1208,9 @@ HRESULT SVToolClass::SetExtentPropertyInfo(SvPb::SVExtentPropertyEnum p_ePropert
 	return m_toolExtent.SetExtentPropertyInfo(p_eProperty, p_rInfo);
 }
 
-void SVToolClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
+void SVToolClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) const
 {
-	SVTaskObjectListClass::UpdateOverlayIDs(p_rMultiLine);
+	__super::UpdateOverlayIDs(p_rMultiLine);
 
 	if (SvDef::InvalidObjectId == p_rMultiLine.m_ToolID)
 	{
@@ -1080,16 +1218,54 @@ void SVToolClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
 	}
 }
 
-HRESULT SVToolClass::CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray)
+void SVToolClass::getOverlays(const SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray) const
 {
-	HRESULT l_Status = S_OK;
-
-	if (nullptr != pImage && isInputImage(pImage->getObjectId()))
+	if (const auto* pImageExtent = GetImageExtentPtr(); nullptr != pImageExtent && pImageExtent->hasFigure())
 	{
-		l_Status = SVTaskObjectListClass::CollectOverlays(pImage, rMultiLineArray);
+		if (isInputImage(rImage.getObjectId()))
+		{
+			addOverlays(rMultiLineArray, *pImageExtent);
+		}
+		else if (getAncestorIdForOverlay() == rImage.getObjectId() && m_pEmbeddedExtents && isTranslationValidForAncestorOverlay(pImageExtent->GetTranslation()))
+		{
+			SVImageExtentClass rImageExtents = *pImageExtent;
+			double offsetX, offsetY;
+			m_pEmbeddedExtents->m_ancestorOffsetX.GetValue(offsetX);
+			m_pEmbeddedExtents->m_ancestorOffsetY.GetValue(offsetY);
+			rImageExtents.SetExtentProperty(SvPb::SVExtentPropertyPositionPointX, offsetX);
+			rImageExtents.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, offsetY);
+			//[MZA][10.40][24.07.2023] by now rotation is not implemented. 
+			//double offsetAngle;
+			//m_pEmbeddedExtents->m_ancestorOffsetAngle.GetValue(offsetAngle);
+			//rImageExtents.SetExtentProperty(SvPb::SVExtentPropertyRotationAngle, offsetAngle);
+			rImageExtents.UpdateDataRecalculateOutput();
+			
+			addOverlays(rMultiLineArray, rImageExtents);
+		}
+	}
+}
+
+void SVToolClass::addOverlays(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const
+{
+	SVExtentMultiLineStruct multiLine;
+	UpdateOverlayIDs(multiLine);
+	UpdateOverlayName(multiLine, rImageExtents);
+	auto* pTaskObject = dynamic_cast<SVTaskObjectClass*> (GetTool());
+	if (nullptr != pTaskObject)
+	{
+		pTaskObject->UpdateOverlayColor(multiLine);
+		pTaskObject->GetDrawInfo(multiLine);
+	}
+	else
+	{
+		UpdateOverlayColor(multiLine);
+		GetDrawInfo(multiLine);
 	}
 
-	return l_Status;
+	multiLine.AssignExtentFigure(rImageExtents.GetFigure(), multiLine.m_Color);
+	rMultiLineArray.push_back(multiLine);
+
+	collectOverlays(rMultiLineArray, rImageExtents);
 }
 
 void SVToolClass::UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const
@@ -1099,7 +1275,15 @@ void SVToolClass::UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) cons
 	p_rMultiLine.m_Color = color;
 }
 
-void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+void SVToolClass::getOverlays(const SvIe::SVImageClass& rImage, SvPb::OverlayDesc& rOverlay) const
+{
+	if (isInputImage(rImage.getObjectId()))
+	{
+		addOverlays(rOverlay);
+	}
+}
+
+void SVToolClass::addOverlays(SvPb::OverlayDesc& rOverlay) const
 {
 	auto figure = GetImageExtent().GetFigure();
 	switch (figure.m_eShape)
@@ -1120,7 +1304,7 @@ void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 				SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentHeight, *pRect->mutable_h());
 			}
 			setStateValueToOverlay(*pOverlay);
-			collectOverlays(pImage, *pOverlay);
+			collectOverlays(*pOverlay);
 			break;
 		}
 		default:
@@ -1128,11 +1312,8 @@ void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 	}
 }
 
-// Source Image Functions
-HRESULT SVToolClass::GetSourceImages(SvIe::SVImageClassPtrVector* pImageList) const
+void SVToolClass::getAncestorImages(SvPb::GetAvailableAncestorImagesResponse& rResponse) const
 {
-	HRESULT l_hr = S_OK;
-
 	if (m_toolExtent.GetToolImage())
 	{
 		SvIe::SVImageClass* pImageParent = m_toolExtent.GetToolImage()->GetParentImage();
@@ -1142,56 +1323,14 @@ HRESULT SVToolClass::GetSourceImages(SvIe::SVImageClassPtrVector* pImageList) co
 
 			if (nullptr != pTool && pTool != this)
 			{
-				pTool->GetSourceImages(pImageList);
+				pTool->getAncestorImages(rResponse);
 			}
-			pImageList->push_back(pImageParent);
+			auto* pEntry = rResponse.add_list();
+			pEntry->set_objectname(pImageParent->getDisplayedName().c_str());
+			pEntry->set_objectid(pImageParent->getObjectId());
+			pEntry->set_translationtype(m_toolExtent.GetTranslation());
 		}
 	}
-	else
-	{
-		l_hr = -77001;
-	}
-	return l_hr;
-}
-
-HRESULT SVToolClass::SetAuxSourceImage(SvIe::SVImageClass* pImage)
-{
-	HRESULT l_hr = S_FALSE;
-
-	SvIe::SVImageClassPtrVector imageList;
-
-	if (S_OK == GetSourceImages(&imageList))
-	{
-		if (0 < imageList.size())
-		{
-			auto iter = std::find_if(imageList.begin(), imageList.end(), [&pImage](const auto& rEntry) { return rEntry == pImage; });
-			if (imageList.end() != iter)
-			{
-				m_AuxSourceImageInput.SetInputObject(*iter);
-				l_hr = S_OK;
-			}
-			else
-			{
-				m_AuxSourceImageInput.SetInputObject(imageList[0]);
-			}
-		}
-		else
-		{
-			m_AuxSourceImageInput.SetInputObject(nullptr);
-		}
-
-		m_toolExtent.SetSelectedImage(m_AuxSourceImageInput.getInput<SvIe::SVImageClass>());
-
-		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-		if (nullptr != pInspection)
-		{
-			pInspection->ForceOffsetUpdate();
-		}
-		UpdateAuxiliaryExtents();
-		dynamic_cast<SVObjectClass*>(GetInspectionInterface())->resetAllObjects();
-	}
-
-	return l_hr;
 }
 
 SVObjectClass* SVToolClass::overwriteInputObject(uint32_t uniqueId, SvPb::EmbeddedIdEnum embeddedId)
@@ -1204,7 +1343,7 @@ const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
 {
 	const SVImageInfoClass* pRetVal = nullptr;
 	SvDef::SVObjectTypeInfoStruct objectInfo(SvPb::SVImageObjectType);
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*>(getFirstObject(objectInfo, false));
+	auto* pImage = dynamic_cast<SvIe::SVImageClass*>(getFirstObject(objectInfo, false));
 	if (nullptr != pImage)
 	{
 		pRetVal = &pImage->GetImageInfo();
@@ -1233,44 +1372,16 @@ bool SVToolClass::areAuxExtentsAvailable() const
 	return (SvDef::InvalidObjectId != GetToolImage()) ? GetInspectionInterface()->getEnableAuxiliaryExtent() : false;
 }
 
-SvUl::NameObjectIdList SVToolClass::getAvailableAuxSourceImages() const
+SvPb::GetAvailableAncestorImagesResponse SVToolClass::getAvailableAncestorImages() const
 {
-	SvUl::NameObjectIdList list;
-	SvIe::SVImageClassPtrVector ImageList;
-	HRESULT hr = GetSourceImages(&ImageList);
-	if (S_OK == hr)
-	{
-		std::transform(ImageList.begin(), ImageList.end(), std::back_inserter(list),
-			[](const auto& rEntry) { return std::make_pair(rEntry->getDisplayedName(), rEntry->getObjectId()); });
-	}
-	return list;
-}
-
-SvUl::NameObjectIdPair SVToolClass::getAuxSourceImage() const
-{
-	SvUl::NameObjectIdPair result;
-	SvIe::SVImageClass* pImage = m_AuxSourceImageInput.getInput<SvIe::SVImageClass>();
-	if (pImage)
-	{
-		result = std::make_pair(pImage->getDisplayedName(), pImage->getObjectId());
-	}
-	return result;
-}
-
-HRESULT SVToolClass::setAuxSourceImage(uint32_t objectID)
-{
-	HRESULT hr = E_POINTER;
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(objectID));
-	if (nullptr != pImage)
-	{
-		hr = SetAuxSourceImage(pImage);
-	}
-	return hr;
+	SvPb::GetAvailableAncestorImagesResponse response;
+	getAncestorImages(response);
+	return response;
 }
 
 void SVToolClass::SetToolImage(uint32_t objectID)
 {
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(objectID));
+	auto* pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(objectID));
 	m_toolExtent.SetToolImage(pImage);
 }
 
@@ -1474,11 +1585,7 @@ bool SVToolClass::isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Loc
 
 bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector* pErrorMessages) const
 {
-	if (m_conditionBoolInput.IsConnected() && m_conditionBoolInput.GetInputObjectInfo().getObject())
-	{
-		return true;
-	}
-	else
+	if (false == m_conditionBoolInput.IsConnected() && nullptr == m_conditionBoolInput.GetInputObjectInfo().getObject())
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -1489,6 +1596,8 @@ bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector* pErrorMessages) c
 		}
 		return false;
 	}
+
+	return true;
 }
 
 bool isValidScaleFactor(double value)

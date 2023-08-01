@@ -1558,12 +1558,11 @@ bool BlobAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-HRESULT BlobAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
+void BlobAnalyzer::addOverlayGroups(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const
 {
 	// only if ToolSet/Tool was not Disabled
 	auto pTool = GetToolInterface();
-	const SvTo::SVToolExtentClass* pToolExtent = getToolExtentPtr();
-	if (pTool && pToolExtent && pTool->WasEnabled())
+	if (pTool && pTool->WasEnabled())
 	{
 		long l_lCurrentNbrOfBlobs = 0;
 		m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs );
@@ -1594,25 +1593,21 @@ HRESULT BlobAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineS
 
 					SVExtentFigureStruct l_svFigure{ Rect };
 					
-					pToolExtent->TranslateFromOutputSpace( l_svFigure, l_svFigure );
+					rImageExtents.TranslateFromOutputSpace(l_svFigure, l_svFigure);
 
-					SVExtentMultiLineStruct l_multiLine;
-
-					l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
-					
-					l_multiLine.AssignExtentFigure( l_svFigure, SvDef::DefaultSubFunctionColor1 );
-
-					UpdateOverlayIDs( l_multiLine );
-
-					rMultiLineArray.push_back( l_multiLine );
+					SVExtentMultiLineStruct multiLine;
+					multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
+					multiLine.AssignExtentFigure( l_svFigure, SvDef::DefaultSubFunctionColor1 );
+					UpdateOverlayIDs( multiLine );
+					rMultiLineArray.push_back( multiLine );
 				}
 			}
 			else // if not running show all
 			{
-				double* pxMax = &(m_vec2dBlobResults[1][0]);
-				double* pxMin = &(m_vec2dBlobResults[2][0]);
-				double* pyMax = &(m_vec2dBlobResults[3][0]);
-				double* pyMin = &(m_vec2dBlobResults[4][0]);
+				const double* pxMax = &(m_vec2dBlobResults[1][0]);
+				const double* pxMin = &(m_vec2dBlobResults[2][0]);
+				const double* pyMax = &(m_vec2dBlobResults[3][0]);
+				const double* pyMin = &(m_vec2dBlobResults[4][0]);
 				
 				for (int i = 0; i < (int)l_lCurrentNbrOfBlobs; i++)
 				{
@@ -1625,24 +1620,20 @@ HRESULT BlobAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineS
 					l_oRect.right = static_cast<long> (pxMax[l]);
 
 					SVExtentFigureStruct l_svFigure{ l_oRect };
-					pToolExtent->TranslateFromOutputSpace( l_svFigure, l_svFigure );
-
-					SVExtentMultiLineStruct l_multiLine;
-					l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
-
-					l_multiLine.AssignExtentFigure( l_svFigure, SvDef::DefaultSubFunctionColor1 );
-
-					UpdateOverlayIDs( l_multiLine );
-
-					rMultiLineArray.push_back( l_multiLine );
+					rImageExtents.TranslateFromOutputSpace(l_svFigure, l_svFigure);
+					
+					SVExtentMultiLineStruct multiLine;
+					multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
+					multiLine.AssignExtentFigure( l_svFigure, SvDef::DefaultSubFunctionColor1 );
+					UpdateOverlayIDs( multiLine );
+					rMultiLineArray.push_back( multiLine );
 				}
 			}
 		}
 	}
-	return S_OK;
 }
 
-void BlobAnalyzer::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
+void BlobAnalyzer::addOverlayGroups(SvPb::Overlay& rOverlay) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_name("Blobs");

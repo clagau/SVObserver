@@ -301,23 +301,19 @@ bool SVUserMaskOperatorClass::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-HRESULT SVUserMaskOperatorClass::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& p_MultiLineArray )
+void SVUserMaskOperatorClass::addOverlayGroups(SVExtentMultiLineStructVector& multiLineArray, const SVImageExtentClass& rImageExtents) const
 {
-	HRESULT l_hr = S_FALSE;
 	if ( m_bUseOverlays )
 	{
-		SVExtentMultiLineStruct	l_MultiLine;
-
-		BuildMaskLines( l_MultiLine );
-		l_MultiLine.m_Color = RGB( 0, 255, 255 );
-		l_MultiLine.m_bDrawFigureHatched = true;
-		p_MultiLineArray.push_back( l_MultiLine );
-		l_hr = S_OK;
+		SVExtentMultiLineStruct	multiLine;
+		BuildMaskLines(multiLine, rImageExtents );
+		multiLine.m_Color = RGB( 0, 255, 255 );
+		multiLine.m_bDrawFigureHatched = true;
+		multiLineArray.push_back(multiLine);
 	}
-	return l_hr;
 }
 
-HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_MultiLine  )
+HRESULT SVUserMaskOperatorClass::BuildMaskLines(SVExtentMultiLineStruct& p_MultiLine, const SVImageExtentClass& rImageExtents) const
 {
 	HRESULT l_hr = S_OK;
 
@@ -337,103 +333,90 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 	m_dwvoMaskType.GetValue( dwMaskType );
 
 	SvIe::SVImageClass* pInputImage = getMaskInputImage();
-	if( l_eCriteria != SVNone && Activated && nullptr != m_MaskBufferHandlePtr &&
-		( MASK_TYPE_IMAGE != dwMaskType || nullptr != pInputImage ) )
+	if (l_eCriteria != SVNone && Activated && nullptr != m_MaskBufferHandlePtr &&
+		(MASK_TYPE_IMAGE != dwMaskType || nullptr != pInputImage))
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
-		if( nullptr != pTool)
+		RECT rec;
+		l_hr = m_MaskBufferInfo.GetOutputRectangle(rec);
+		// User Mask draw with lines 
+
+		unsigned char* pSrcLine = nullptr;
+		SVMatroxBufferInterface::GetHostAddress(&pSrcLine, m_MaskBufferHandlePtr->GetBuffer());
+		long l_lSrcBytes;
+		SVMatroxBufferInterface::Get(m_MaskBufferHandlePtr->GetBuffer(), SVPitchByte, l_lSrcBytes);
+
+		long l_lSkip = 1;
+
+		SVExtentLineStruct l_Line;
+		l_Line.m_dwColor = RGB(0, 255, 255);
+
+		for (int l_iRow = 0; l_iRow < rec.bottom; l_iRow += l_lSkip)
 		{
-			const SVImageExtentClass& rImageExtents = pTool->GetImageExtent();
+			SVPoint<double> startPoint;
 
-			RECT l_rec;
+			bool l_bDrewLastPixel = false;
 
-			l_hr = m_MaskBufferInfo.GetOutputRectangle( l_rec );
-			// User Mask draw with lines 
-
-			unsigned char* pSrcLine = nullptr;
-			SVMatroxBufferInterface::GetHostAddress( &pSrcLine, m_MaskBufferHandlePtr->GetBuffer() );
-			long l_lSrcBytes;
-			SVMatroxBufferInterface::Get(m_MaskBufferHandlePtr->GetBuffer(), SVPitchByte, l_lSrcBytes );
-
-			long l_lSkip = 1;
-		
-			SVExtentLineStruct l_Line;
-			l_Line.m_dwColor = RGB( 0, 255, 255 );
-
-			for( int l_iRow = 0 ; l_iRow < l_rec.bottom ; l_iRow += l_lSkip )
+			for (int l_iCol = 0; l_iCol < rec.right; l_iCol++)
 			{
-				SVPoint<double> startPoint;
-
-				bool l_bDrewLastPixel = false;
-
-				for( int l_iCol = 0 ; l_iCol < l_rec.right ; l_iCol++ )
+				switch (l_eCriteria)
 				{
-					switch( l_eCriteria )
+					case  SVNonBlackPixels:
 					{
-						case  SVNonBlackPixels :
+						if (pSrcLine[l_iCol] != 0)
 						{
-							if( pSrcLine[l_iCol] != 0 ) 
+							if (!l_bDrewLastPixel)
 							{
-								if( ! l_bDrewLastPixel )
-								{
-									l_bDrewLastPixel = true;
-									startPoint.m_x = l_iCol;
-									startPoint.m_y = l_iRow;
-									rImageExtents.TranslateFromOutputSpace( startPoint, startPoint );
-								}
+								l_bDrewLastPixel = true;
+								startPoint.m_x = l_iCol;
+								startPoint.m_y = l_iRow;
+								rImageExtents.TranslateFromOutputSpace(startPoint, startPoint);
 							}
-							else if( l_bDrewLastPixel )
-							{
-								l_bDrewLastPixel = false;
-								AddLine( l_iCol, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine  );
-							}
-							break;
 						}
-						case SVNonWhitePixels :
+						else if (l_bDrewLastPixel)
 						{
-							if( pSrcLine[l_iCol] != 255 )
-							{							
-								if( ! l_bDrewLastPixel )
-								{
-									l_bDrewLastPixel = true;
-									startPoint.m_x = l_iCol;
-									startPoint.m_y = l_iRow;
-									rImageExtents.TranslateFromOutputSpace( startPoint, startPoint );
-								}
-							}
-							else if( l_bDrewLastPixel ) 
-							{
-								l_bDrewLastPixel = false;
-								AddLine( l_iCol, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine  );
-							}
-							break;
+							l_bDrewLastPixel = false;
+							AddLine(l_iCol, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine);
 						}
+						break;
 					}
-				}//for( int l_iCol = 0 ; l_iCol < l_rec.right ; l_iCol++ )
-
-				if( l_bDrewLastPixel )  // Finish the last line if the pixels were the same to the end.
-				{
-					AddLine( l_rec.right-1, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine );
+					case SVNonWhitePixels:
+					{
+						if (pSrcLine[l_iCol] != 255)
+						{
+							if (!l_bDrewLastPixel)
+							{
+								l_bDrewLastPixel = true;
+								startPoint.m_x = l_iCol;
+								startPoint.m_y = l_iRow;
+								rImageExtents.TranslateFromOutputSpace(startPoint, startPoint);
+							}
+						}
+						else if (l_bDrewLastPixel)
+						{
+							l_bDrewLastPixel = false;
+							AddLine(l_iCol, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine);
+						}
+						break;
+					}
 				}
+			}//for( int l_iCol = 0 ; l_iCol < rec.right ; l_iCol++ )
 
-				pSrcLine += l_lSrcBytes*l_lSkip;
-			}//for( int l_iRow = 0 ; l_iRow < l_rec.bottom ; l_iRow += l_lSkip )
+			if (l_bDrewLastPixel)  // Finish the last line if the pixels were the same to the end.
+			{
+				AddLine(rec.right - 1, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine);
+			}
 
-			p_MultiLine.m_Color = RGB( 0, 255, 255 );
-		}
-		else
-		{
-			l_hr = E_POINTER;
-		}
+			pSrcLine += l_lSrcBytes * l_lSkip;
+		}//for( int l_iRow = 0 ; l_iRow < rec.bottom ; l_iRow += l_lSkip )
+
+		p_MultiLine.m_Color = RGB(0, 255, 255);
 	}
 
 	return l_hr;
 }
 
-HRESULT SVUserMaskOperatorClass::AddLine(int iCol, int iRow, const SVPoint<double>& rStartPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine  )
+void SVUserMaskOperatorClass::AddLine(int iCol, int iRow, const SVPoint<double>& rStartPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine) const
 {
-	HRESULT l_hr = S_OK;
-
 	SVPoint<double> endPoint{static_cast<double> (iCol),  static_cast<double> (iRow)};
 	rExtent.TranslateFromOutputSpace(endPoint, endPoint);
 	if(rLine.m_PointVector.size() < 2)
@@ -443,7 +426,6 @@ HRESULT SVUserMaskOperatorClass::AddLine(int iCol, int iRow, const SVPoint<doubl
 	rLine.m_PointVector[0] = rStartPoint ;
 	rLine.m_PointVector[1] = endPoint ;
 	rMultiLine.m_svLineArray.emplace_back( rLine );
-	return l_hr;
 }
 	
 HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
@@ -753,7 +735,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 	return false;
 }
 
-void SVUserMaskOperatorClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
+void SVUserMaskOperatorClass::addOverlayGroups(SvPb::Overlay& rOverlay) const
 {
 	BOOL activated;
 	m_bvoActivated.GetValue(activated);

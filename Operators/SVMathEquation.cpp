@@ -43,8 +43,6 @@ SVMathEquation::SVMathEquation( SVObjectClass* POwner, int StringResourceID )
 ////////////////////////////////////////////////////////////////////////////////
 void SVMathEquation::init()
 {
-	m_bUseOverlays = false;
-
 	// Identify our output type
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVMathEquationObjectType;

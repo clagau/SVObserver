@@ -100,6 +100,7 @@ public:
 
 	long getTriggerCount() const;
 	SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const;
+	void getOverlays(SvIe::SVImageClass& rImage, SVExtentMultiLineStructVector& rMultiLineArray) const;
 	
 	DWORD GetObjectIdIndex() const { DWORD objectIdIndex {0}; m_ObjectIdIndex.GetValue(objectIdIndex); return objectIdIndex; }
 	void SetObjectIdIndex(DWORD objectIdIndex);
@@ -119,7 +120,6 @@ protected:
 	virtual bool Run( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray ) override;
 
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 

@@ -63,8 +63,6 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 {
 	HRESULT l_hrOk = S_OK;
 
-	m_bUseOverlays = true;	// most objects use overlays; must change if needed in derived classes
-
 	SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::AddAttribute);
 
 	// Register Embedded Objects
@@ -549,7 +547,7 @@ SvStl::MessageContainer SVTaskObjectClass::getFirstTaskMessage() const
 		return m_ResetErrorMessages[0];
 	}
 
-	return SvStl::MessageContainer();
+	return {};
 }
 
 bool SVTaskObjectClass::getImage(SvPb::EmbeddedIdEnum embeddedId, SvOi::SVImageBufferHandlePtr& rImagePtr) const
@@ -695,7 +693,7 @@ void SVTaskObjectClass::getInputData(const SvPb::GetInputDataRequest& request, S
 void SVTaskObjectClass::DestroyFriend(SVObjectClass* pObject)
 {
 	// This was Added because SVTaskObjectClasses can also have Friends
-	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(pObject);
+	auto* pTaskObject = dynamic_cast<SVTaskObjectClass*>(pObject);
 
 	// Close the Friend Object
 	if (pTaskObject)
@@ -875,7 +873,7 @@ void SVTaskObjectClass::connectInput(SvOl::InputObject& rInput)
 				{
 					//GetInspection is still nullptr because in SVToolSet::createAllObjectsFromChild SetDefaultInputs is called before CreateObject !
 					//To still get the appropriate inspection we call GetAncestor
-					SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetAncestor(SvPb::SVInspectionObjectType));
+					auto* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetAncestor(SvPb::SVInspectionObjectType));
 					while (pOwner)
 					{
 						bool isColorInspection = (nullptr != pInspection) ? pInspection->IsColorCamera() : false;
@@ -883,7 +881,7 @@ void SVTaskObjectClass::connectInput(SvOl::InputObject& rInput)
 						// if color system & pOwner == SVToolSet
 						if (isColorInspection && SvPb::SVToolSetObjectType == pOwner->GetObjectType() && SvPb::SVImageObjectType == info.m_ObjectType && SvPb::SVImageMonoType == info.m_SubType)
 						{
-							SvOi::IToolSet* pToolSet(dynamic_cast<SvOi::IToolSet*> (pOwner));
+							auto* pToolSet(dynamic_cast<SvOi::IToolSet*> (pOwner));
 							if (nullptr != pToolSet)
 							{
 								pObject = pToolSet->getBand0Image();
@@ -1012,7 +1010,7 @@ HRESULT SVTaskObjectClass::connectToObject(const SvPb::ConnectToObjectRequest& r
 	}
 	else
 	{
-		auto inputName = rConnectData.inputname();
+		const auto& inputName = rConnectData.inputname();
 		auto it = std::find_if(m_inputs.begin(), m_inputs.end(), [inputName](const auto* pEntry) { return inputName == pEntry->GetName(); });
 		if (it != m_inputs.end() && nullptr != *it)
 		{
@@ -1539,121 +1537,79 @@ void SVTaskObjectClass::goingOffline()
 	}
 }
 
-void SVTaskObjectClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
+void SVTaskObjectClass::UpdateOverlayIDs(SVExtentMultiLineStruct& rMultiLine) const
 {
-	p_rMultiLine.m_ObjectID = getObjectId();
+	rMultiLine.m_ObjectID = getObjectId();
 
 	if (nullptr != GetAnalyzer())
 	{
-		p_rMultiLine.m_AnalyzerID = GetAnalyzer()->getObjectId();
+		rMultiLine.m_AnalyzerID = GetAnalyzer()->getObjectId();
 	}
 	else
 	{
-		p_rMultiLine.m_AnalyzerID = SvDef::InvalidObjectId;
+		rMultiLine.m_AnalyzerID = SvDef::InvalidObjectId;
 	}
 
 	if (nullptr != GetTool())
 	{
-		p_rMultiLine.m_ToolID = GetTool()->getObjectId();
+		rMultiLine.m_ToolID = GetTool()->getObjectId();
 	}
 	else
 	{
-		p_rMultiLine.m_ToolID = SvDef::InvalidObjectId;
+		rMultiLine.m_ToolID = SvDef::InvalidObjectId;
 	}
 
 	if (nullptr != GetInspection())
 	{
-		p_rMultiLine.m_InspectionID = GetInspection()->getObjectId();
+		rMultiLine.m_InspectionID = GetInspection()->getObjectId();
 	}
 	else
 	{
-		p_rMultiLine.m_InspectionID = SvDef::InvalidObjectId;
+		rMultiLine.m_InspectionID = SvDef::InvalidObjectId;
 	}
 }
 
-void SVTaskObjectClass::UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const
+void SVTaskObjectClass::UpdateOverlayColor(SVExtentMultiLineStruct& rMultiLine) const
 {
-	p_rMultiLine.m_Color = GetObjectColor();
+	rMultiLine.m_Color = GetObjectColor();
 }
 
-void SVTaskObjectClass::UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents)
+void SVTaskObjectClass::UpdateOverlayName(SVExtentMultiLineStruct& rMultiLine, const SVImageExtentClass& rImageExtents) const
 {
 	SVPoint<double> point;
 
-	if (S_OK == p_pImageExtents.GetTitlePoint(point))
+	if (S_OK == rImageExtents.GetTitlePoint(point))
 	{
-		p_rMultiLine.m_StringPoint = point;
-		p_rMultiLine.m_csString = GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
+		rMultiLine.m_StringPoint = point;
+		rMultiLine.m_csString = GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 	}
 }
 
-HRESULT SVTaskObjectClass::CollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray)
+void SVTaskObjectClass::collectOverlays(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const
 {
-	HRESULT hrRet = S_OK;
-
-	if (m_bUseOverlays)
-	{
-		hrRet = onCollectOverlays(p_Image, p_MultiLineArray);
-	}
+	addOverlayGroups(rMultiLineArray, rImageExtents);
 
 	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
 		if (nullptr != m_friendList[j])
 		{
-			HRESULT l_Temp = m_friendList[j]->CollectOverlays(p_Image, p_MultiLineArray);
-
-			if (S_OK == hrRet)
-			{
-				hrRet = l_Temp;
-			}
+			m_friendList[j]->collectOverlays(rMultiLineArray, rImageExtents);
 		}
 	}
-
-	return hrRet;
 }
 
-void SVTaskObjectClass::collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+void SVTaskObjectClass::collectOverlays(SvPb::Overlay& rOverlay) const
 {
-	addOverlayGroups(pImage, rOverlay);
+	addOverlayGroups(rOverlay);
 
 	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
 		if (nullptr != m_friendList[j])
 		{
-			m_friendList[j]->collectOverlays(pImage, rOverlay);
+			m_friendList[j]->collectOverlays(rOverlay);
 		}
 	}
-}
 
-HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray)
-{
-	HRESULT l_Status = E_FAIL;
-
-	if (nullptr != p_Image && nullptr != GetImageExtentPtr() && GetImageExtentPtr()->hasFigure())
-	{
-		const SVImageExtentClass& rImageExtents = *GetImageExtentPtr();
-		SVExtentMultiLineStruct l_MultiLine;
-		UpdateOverlayIDs(l_MultiLine);
-		UpdateOverlayName(l_MultiLine, rImageExtents);
-		SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*> (GetTool());
-		if (nullptr != pTaskObject)
-		{
-			pTaskObject->UpdateOverlayColor(l_MultiLine);
-			pTaskObject->GetDrawInfo(l_MultiLine);
-		}
-		else
-		{
-			UpdateOverlayColor(l_MultiLine);
-			GetDrawInfo(l_MultiLine);
-		}
-
-		l_MultiLine.AssignExtentFigure(rImageExtents.GetFigure(), l_MultiLine.m_Color);
-		p_MultiLineArray.push_back(l_MultiLine);
-		l_Status = S_OK;
-
-	}
-
-	return l_Status;
 }
 
 SVObjectClass* SVTaskObjectClass::GetEmbeddedValueObject(SvPb::EmbeddedIdEnum embeddedID)
@@ -1717,7 +1673,7 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetValueStruct& rEntry, 
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		SvDef::StringVector msgList;
-		SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
+		auto* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
 		if (nullptr != pObject)
 		{
 			msgList.push_back(pObject->GetName());
@@ -1763,7 +1719,7 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry,
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		SvDef::StringVector msgList;
-		SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
+		auto* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
 		if (nullptr != pObject)
 		{
 			msgList.push_back(pObject->GetName());

@@ -315,7 +315,7 @@ SvVol::SVStringValueObjectClass* SVImageToolClass::GetInputImageNames()
 	return &m_SourceImageNames;
 }
 
-void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+void SVImageToolClass::addOverlays(SvPb::OverlayDesc& rOverlay) const
 {
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());
@@ -331,7 +331,7 @@ void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Overl
 		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentHeight, *pRect->mutable_h());
 	}
 	setStateValueToOverlay(*pOverlay);
-	collectOverlays(pImage, *pOverlay);
+	collectOverlays(*pOverlay);
 }
 
 std::vector<std::string> SVImageToolClass::getToolAdjustNameList() const

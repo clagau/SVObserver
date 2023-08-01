@@ -42,7 +42,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine );
+	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine ) const;
 
 	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
 
@@ -58,8 +58,8 @@ public:
 	SvVol::SVBoolValueObjectClass m_svShowAllEdgeBOverlays;
 
 protected:
-	virtual HRESULT onCollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
-	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
+	virtual void addOverlayGroups(SVExtentMultiLineStructVector& rMultiLineArray, const SVImageExtentClass& rImageExtents) const override;
+	virtual void addOverlayGroups(SvPb::Overlay& rOverlay) const override;
 
 	virtual void addOverlayResults(SvPb::Overlay& , bool ) const {};
 	virtual void addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical = false) const;

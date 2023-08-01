@@ -94,7 +94,7 @@ bool LinearPixelCountingAnalyzer::CreateObject( const SVObjectLevelCreateStruct&
 	return bOk;
 }
 
-HRESULT LinearPixelCountingAnalyzer::GetSelectedEdgeOverlays(SVExtentMultiLineStruct&)
+HRESULT LinearPixelCountingAnalyzer::GetSelectedEdgeOverlays(SVExtentMultiLineStruct&) const
 {
 	return S_OK;
 }

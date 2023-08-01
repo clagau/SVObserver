@@ -1670,6 +1670,7 @@ BOOL SVImageView::GetObjectAtPoint(POINT point)
 		pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetIPDoc()->Get1stSelectedToolID()));
 	}
 
+	//@TODO[MZA][10.40][14.07.2023] add part to check if image is selected ancestor of this tool
 	if (nullptr != pTool && pTool->isInputImage(m_ImageIdPair.m_imageId))
 	{
 

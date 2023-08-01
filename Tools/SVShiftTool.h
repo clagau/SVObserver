@@ -63,7 +63,7 @@ public:
 	SvVol::SVDoubleValueObjectClass* GetTranslationXInput(bool bRunMode = false) const;
 	SvVol::SVDoubleValueObjectClass* GetTranslationYInput(bool bRunMode = false) const;
 
-	virtual void addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const override;
+	virtual void addOverlays(SvPb::OverlayDesc& rOverlay) const override;
 	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
 

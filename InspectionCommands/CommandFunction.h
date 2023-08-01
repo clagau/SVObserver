@@ -70,13 +70,7 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request);
 SvPb::InspectionCmdResponse areAuxiliaryExtentsAvailable(SvPb::AreAuxiliaryExtentsAvailableRequest request);
 
 // Get the list of possible auxiliary extents images.
-SvPb::InspectionCmdResponse getAvailableAuxImages(SvPb::GetAvailableAuxImagesRequest request);
-
-// Get the connected auxiliary extents image.
-SvPb::InspectionCmdResponse getAuxImageObject(SvPb::GetAuxImageObjectRequest request);
-
-// Set the connected auxiliary extents image.
-SvPb::InspectionCmdResponse setAuxImageObject(SvPb::SetAuxImageObjectRequest request);
+SvPb::InspectionCmdResponse getAvailableAncestorImages(SvPb::GetAvailableAncestorImagesRequest request);
 
 // Get the connected input of this object.
 SvPb::InspectionCmdResponse getInputs(SvPb::GetInputsRequest request);

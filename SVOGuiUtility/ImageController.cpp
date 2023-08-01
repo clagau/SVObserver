@@ -242,29 +242,6 @@ namespace SvOgu
 	}
 
 
-	HRESULT ImageController::ConnectToImage(const std::string& inputName, const std::string& name, uint32_t instanceID) const
-	{ 
-		HRESULT hr = E_INVALIDARG;
-		uint32_t objectID = m_TaskObjectID;
-		if (SvDef::InvalidObjectId != instanceID)
-		{
-			objectID = instanceID;
-		}
-		SvUl::NameObjectIdList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
-		if (it != m_availableList.end())
-		{
-			SvPb::InspectionCmdRequest requestCmd;
-			auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
-			pRequest->set_objectid( objectID);
-			pRequest->set_inputname(inputName);
-			pRequest->set_newconnectedid(it->second);
-			pRequest->set_objecttype(SvPb::SVImageObjectType);
-
-			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
-		}
-		return hr; 
-	}
-
 	HRESULT ImageController::ConnectToImage(SvPb::EmbeddedIdEnum embeddedId, const std::string& name, uint32_t instanceID) const
 	{
 		HRESULT hr = E_INVALIDARG;
