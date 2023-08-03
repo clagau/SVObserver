@@ -14,29 +14,31 @@
 //Moved to precompiled header: #include <deque>
 #include "Definitions/ObjectDefines.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #pragma endregion Includes
 
 ///struct holds information for one entry in Monitorlist 
 struct MonitoredObject
 {
-	uint32_t m_objectId{ SvDef::InvalidObjectId };
-	bool isArray{false};
-	bool wholeArray{false};
-	long arrayIndex{-1};
+	SVObjectReference m_objectRef;
 
 	MonitoredObject() = default;
-	bool operator==(const MonitoredObject& rhs) { return (m_objectId == rhs.m_objectId && isArray == rhs.isArray && wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex); }
+	bool operator==(const MonitoredObject& rhs)	
+	{
+		return m_objectRef == rhs.m_objectRef;
+	}
 
 	bool isSimilar(const MonitoredObject& rhs) const
 	{
-		return (m_objectId == rhs.m_objectId && (!isArray || (wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex)));
+		return m_objectRef.getObjectId() == rhs.m_objectRef.getObjectId() && 
+			(!m_objectRef.isArray() || (m_objectRef.isEntireArray() == rhs.m_objectRef.isEntireArray() && m_objectRef.ArrayIndex() == rhs.m_objectRef.ArrayIndex()));
 	}
 };
 
 /// deque of MonitorObjects 
 typedef std::deque<MonitoredObject> MonitoredObjectList; 
 /// class encapsulate 4 MonitoredObjectList  reject product productImage and failstatus 
-/// MonitorobjectList are basicly  lists with IDS 
+/// MonitorobjectList are basically lists with IDS 
 class RemoteMonitorNamedList
 {
 #pragma region PublicMethods

@@ -192,7 +192,7 @@ bool RemoteMonitorListController::ValidateMonitoredObject(MonitoredObjectList& r
 
 	for (MonitoredObjectList::iterator it = rList.begin(); it != rList.end();)
 	{
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(it->m_objectId);
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(it->m_objectRef.getObjectId());
 		if (!IsValidMonitoredObject(pObject))
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)

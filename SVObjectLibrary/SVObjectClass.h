@@ -160,6 +160,11 @@ public:
 	/// Move this object data to the other object: switch objectId, copy value and move connection.
 	/// \param rNewObject [inout] new object
 	virtual void moveObject(SVObjectClass& rNewObject);
+	
+	///  Move the children data to the other object: switch objectId, copy value and move connection.
+	///  Will only do anything if object has children (by now only LinkedValues)
+	/// \param rNewObject [inout] new object
+	virtual void moveChildObject(SVObjectClass&/* rNewObject*/) {};
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;

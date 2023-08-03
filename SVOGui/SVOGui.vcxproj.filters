@@ -168,7 +168,7 @@
     <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="EditModulesDialog.cpp">
+    <ClCompile Include="ModuleManagerDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TADlgColorToolPage.cpp">
@@ -404,7 +404,7 @@
     <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="EditModulesDialog.h">
+    <ClInclude Include="ModuleManagerDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADlgColorToolPage.h">

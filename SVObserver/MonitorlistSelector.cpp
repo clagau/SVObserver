@@ -210,19 +210,10 @@ MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvDef::Str
 	for (const auto& rEntry : rList)
 	{
 		SVObjectReference objectRef{rEntry};
-		MonitoredObject monitoredObj;
-		monitoredObj.m_objectId = (nullptr != objectRef.getObject()) ? objectRef.getObject()->getObjectId() : SvDef::InvalidObjectId;
-		if(nullptr != objectRef.getValueObject())
+		if (SvDef::InvalidObjectId != objectRef.getObjectId())
 		{
-			monitoredObj.isArray = objectRef.isArray();
-			monitoredObj.wholeArray = objectRef.isEntireArray();
-			if (monitoredObj.isArray)
-			{
-				monitoredObj.arrayIndex = objectRef.ArrayIndex();
-			}
-		}
-		if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
-		{
+			MonitoredObject monitoredObj;
+			monitoredObj.m_objectRef = objectRef;
 			monitoredObjectList.push_back(monitoredObj);
 		}
 	}

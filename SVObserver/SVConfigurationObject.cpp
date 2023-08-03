@@ -2427,6 +2427,8 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial(SVTreeType& rTree, SVTreeT
 bool SVConfigurationObject::DestroyConfiguration()
 {
 	bool bOk = true;
+	//Need to clear io controller before delete IOs because it use them.
+	m_pIOController = nullptr;
 
 	m_bConfigurationValid = false;
 
@@ -3502,7 +3504,10 @@ void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType, bool ne
 	SVIMProductEnum prevType{ SVIM_PRODUCT_TYPE_UNKNOWN == m_eProductType ? eProductType : m_eProductType };
 	m_eProductType = eProductType;
 	///When the product type is changed the IO controller needs to initialize outputs
-	m_pIOController->initializeOutputs();
+	if (m_pIOController)
+	{
+		m_pIOController->initializeOutputs();
+	}
 
 	///When changing from discrete IO to PLC or vice versa then we need to reset the inputs and outputs
 	if ((SVHardwareManifest::isPlcSystem(m_eProductType) != SVHardwareManifest::isPlcSystem(prevType)) ||
@@ -4411,7 +4416,7 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, uint32_t
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
-				if (SvDef::InvalidObjectId == monitoredObj.m_objectId)
+				if (SvDef::InvalidObjectId == monitoredObj.m_objectRef.getObjectId())
 				{
 					retVal = false;
 				}
@@ -4463,7 +4468,7 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
-				if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
+				if (SvDef::InvalidObjectId != monitoredObj.m_objectRef.getObjectId())
 				{
 					auto findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
 						{
@@ -4511,7 +4516,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
-				if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
+				if (SvDef::InvalidObjectId != monitoredObj.m_objectRef.getObjectId())
 				{
 					auto findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
 						{
@@ -4753,7 +4758,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 			}
 
 			const MonitoredObject& rObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(Name);
-			if (SvDef::InvalidObjectId != rObj.m_objectId)
+			if (SvDef::InvalidObjectId != rObj.m_objectRef.getObjectId())
 			{
 				// add object for this leaf to the list
 				rList.push_back(rObj);

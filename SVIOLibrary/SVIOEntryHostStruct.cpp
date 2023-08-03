@@ -16,6 +16,7 @@
 #include "SVOutputObject.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -24,13 +25,12 @@ void SVIOEntryHostStruct::clear()
 {
 	for (auto& rEntry : m_ioLinkedValues)
 	{
-		if (nullptr != rEntry.m_pObject && SvDef::InvalidObjectId != rEntry.m_inspectionId)
+		if (nullptr != rEntry.m_objectRef.getObject() && SvDef::InvalidObjectId != rEntry.m_inspectionId)
 		{
-			rEntry.m_pObject->disconnectObject(rEntry.m_inspectionId);
+			rEntry.m_objectRef.getObject()->disconnectObject(rEntry.m_inspectionId);
 		}
 		rEntry.m_inspectionId = SvDef::InvalidObjectId;
-		rEntry.m_pObject = nullptr;
-		rEntry.m_pValueObject = nullptr;
+		rEntry.m_objectRef = {};
 	}
 	m_Enabled = false;
 	m_PPQIndex = -1;
@@ -42,15 +42,14 @@ void SVIOEntryHostStruct::setValueObject(SVObjectClass* pObject, DWORD objectIDI
 {
 	if (objectIDIndex < SvDef::cObjectIndexMaxNr)
 	{
-		if (nullptr != m_ioLinkedValues[objectIDIndex].m_pObject)
+		if (nullptr != m_ioLinkedValues[objectIDIndex].m_objectRef.getObject())
 		{
-			m_ioLinkedValues[objectIDIndex].m_pObject->disconnectObject(m_ioLinkedValues[objectIDIndex].m_inspectionId);
+			m_ioLinkedValues[objectIDIndex].m_objectRef.getObject()->disconnectObject(m_ioLinkedValues[objectIDIndex].m_inspectionId);
 		}
 		if (nullptr != pObject)
 		{
 			//Required to avoid dynamic cast at run time
-			m_ioLinkedValues[objectIDIndex].m_pObject = pObject;
-			m_ioLinkedValues[objectIDIndex].m_pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
+			m_ioLinkedValues[objectIDIndex].m_objectRef = SVObjectReference {pObject};
 			SVObjectClass* pInspection = pObject->GetAncestor(SvPb::SVInspectionObjectType);
 			if (nullptr != pInspection)
 			{
@@ -66,8 +65,7 @@ void SVIOEntryHostStruct::setValueObject(SVObjectClass* pObject, DWORD objectIDI
 		}
 		else
 		{
-			m_ioLinkedValues[objectIDIndex].m_pObject = nullptr;
-			m_ioLinkedValues[objectIDIndex].m_pValueObject = nullptr;
+			m_ioLinkedValues[objectIDIndex].m_objectRef = SVObjectReference();
 			SVObjectClass* pIOObject = SVObjectManagerClass::Instance().GetObject(m_IOId);
 			SVOutputObject* pOutput = dynamic_cast<SVOutputObject*> (pIOObject);
 			if (nullptr != pOutput)
@@ -82,7 +80,7 @@ SVObjectClass* SVIOEntryHostStruct::getObject(DWORD objectIDIndex /*= 0*/) const
 {
 	if (objectIDIndex < SvDef::cObjectIndexMaxNr)
 	{
-		return m_ioLinkedValues[objectIDIndex].m_pObject;
+		return m_ioLinkedValues[objectIDIndex].m_objectRef.getObject();
 	}
 	return nullptr;
 }
@@ -91,7 +89,7 @@ SvOi::IValueObject* SVIOEntryHostStruct::getValueObject(DWORD objectIDIndex /*= 
 {
 	if (objectIDIndex < SvDef::cObjectIndexMaxNr)
 	{
-		return m_ioLinkedValues[objectIDIndex].m_pValueObject;
+		return m_ioLinkedValues[objectIDIndex].m_objectRef.getValueObject();
 	}
 	return nullptr;
 }
@@ -111,10 +109,10 @@ bool SVIOEntryHostStruct::PtrGreater(SVIOEntryHostStructPtr elem1, SVIOEntryHost
 
 	if(nullptr != elem1 && nullptr != elem2 )
 	{
-		if( ( nullptr != elem1->m_ioLinkedValues[0].m_pObject ) && ( nullptr != elem2->m_ioLinkedValues[0].m_pObject ) )
+		if( ( nullptr != elem1->m_ioLinkedValues[0].m_objectRef.getObject() ) && ( nullptr != elem2->m_ioLinkedValues[0].m_objectRef.getObject()) )
 		{
-			std::string Name1 = elem1->m_ioLinkedValues[0].m_pObject->GetCompleteName();
-			std::string Name2 = elem2->m_ioLinkedValues[0].m_pObject->GetCompleteName();
+			std::string Name1 = elem1->m_ioLinkedValues[0].m_objectRef.getObject()->GetCompleteName();
+			std::string Name2 = elem2->m_ioLinkedValues[0].m_objectRef.getObject()->GetCompleteName();
 
 			//We assume the name is a dotted name and only the last part of the name may have a number
 

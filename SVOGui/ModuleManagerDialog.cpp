@@ -2,12 +2,12 @@
 /// \copyright (c) 2023,2023 by Körber Pharma Inspection GmbH. All Rights Reserved
 /// All Rights Reserved 
 //*****************************************************************************
-/// This is the dialog of the Edit Modules.
+/// This is the dialog of the Module Manager.
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
-#include "EditModulesDialog.h"
+#include "ModuleManagerDialog.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -51,7 +51,7 @@ SvOg::ModuleDataList getModuleData()
 
 namespace SvOg
 {
-BEGIN_MESSAGE_MAP(EditModulesDialog, CDialog)
+BEGIN_MESSAGE_MAP(ModuleManagerDialog, CDialog)
 	ON_LBN_SELCHANGE(IDC_MODULE_LIST, OnSelchangeList)
 	ON_BN_CLICKED(IDC_DELETE, OnDeleteModule)
 	ON_BN_CLICKED(IDC_IMPORT, OnImportModule)
@@ -62,18 +62,18 @@ END_MESSAGE_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
-EditModulesDialog::EditModulesDialog(CWnd* pParent /*nullptr*/)
-	: CDialog(EditModulesDialog::IDD, pParent)
+ModuleManagerDialog::ModuleManagerDialog(CWnd* pParent /*nullptr*/)
+	: CDialog(ModuleManagerDialog::IDD, pParent)
 {
 
 }
 
-EditModulesDialog::~EditModulesDialog()
+ModuleManagerDialog::~ModuleManagerDialog()
 {}
 #pragma endregion Constructor
 
 #pragma region Protected Methods
-void EditModulesDialog::DoDataExchange(CDataExchange* pDX)
+void ModuleManagerDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_MODULE_LIST, m_moduleListBox);
@@ -81,7 +81,7 @@ void EditModulesDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_COMMENT, m_strComment);
 }
 
-BOOL EditModulesDialog::OnInitDialog()
+BOOL ModuleManagerDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -98,7 +98,7 @@ BOOL EditModulesDialog::OnInitDialog()
 	return TRUE;
 }
 
-void EditModulesDialog::OnSelchangeList()
+void ModuleManagerDialog::OnSelchangeList()
 {
 	int index = getSelectedIndex();
 	if (0 <= index && m_moduleList.size() > index)
@@ -129,7 +129,7 @@ void EditModulesDialog::OnSelchangeList()
 	UpdateData(FALSE);
 }
 
-void EditModulesDialog::OnDeleteModule()
+void ModuleManagerDialog::OnDeleteModule()
 {
 	int index = getSelectedIndex();
 	if (0 <= index && m_moduleList.size() > index && 0 == m_moduleList[index].m_numberOfUse)
@@ -185,7 +185,7 @@ SvPb::InspectionCmdResponse importModule(const std::string& moduleName, const st
 	return responseCmd;
 }
 
-void EditModulesDialog::OnImportModule()
+void ModuleManagerDialog::OnImportModule()
 {
 	std::string data;
 	std::string moduleName;
@@ -251,7 +251,7 @@ void EditModulesDialog::OnImportModule()
 	initModuleListControl();
 }
 
-void EditModulesDialog::OnExportModule()
+void ModuleManagerDialog::OnExportModule()
 {
 	auto index = getSelectedIndex();
 	if (0 <= index && m_moduleList.size() > index)
@@ -298,7 +298,7 @@ void EditModulesDialog::OnExportModule()
 	}
 }
 
-void EditModulesDialog::OnRenameModule()
+void ModuleManagerDialog::OnRenameModule()
 {
 	auto index = getSelectedIndex();
 	if (0 <= index && m_moduleList.size() > index)
@@ -332,12 +332,12 @@ void EditModulesDialog::OnRenameModule()
 	}
 }
 
-void EditModulesDialog::OnHelpButton()
+void ModuleManagerDialog::OnHelpButton()
 {
 	OnCommandHelp(0, GetWindowContextHelpId());
 }
 
-void EditModulesDialog::initModuleListControl()
+void ModuleManagerDialog::initModuleListControl()
 {
 	m_moduleListBox.ResetContent();
 	m_moduleList = getModuleData();
@@ -356,7 +356,7 @@ void EditModulesDialog::initModuleListControl()
 	OnSelchangeList();
 }
 
-int EditModulesDialog::getSelectedIndex()
+int ModuleManagerDialog::getSelectedIndex()
 {
 	return static_cast<int>(m_moduleListBox.GetItemData(m_moduleListBox.GetCurSel()));
 }

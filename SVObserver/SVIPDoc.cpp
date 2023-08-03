@@ -56,7 +56,7 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/InputConflictDlg.h"
-#include "SVOGui/EditModulesDialog.h"
+#include "SVOGui/ModuleManagerDialog.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
 #include "SVOGui/SVAdjustToolSizePositionDlg.h"
 #include "SVOGui/SVFormulaEditorSheet.h"
@@ -188,7 +188,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_TOOL_DEPENDENCIES, OnUpdateToolDependencies)
 	ON_COMMAND(ID_ADD_LOOPTOOL, OnAddLoopTool)
 	ON_COMMAND(ID_ADD_GROUPTOOL, OnAddGroupTool)
-	ON_COMMAND(ID_EDIT_MODULES, OnEditModules)
+	ON_COMMAND(ID_MODULE_MANAGER, OnModuleManager)
 	ON_COMMAND_RANGE(ID_ADD_MODULE_FIRST, ID_ADD_MODULE_LAST, OnAddModuleTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL, OnUpdateAddGeneralTool)
@@ -1267,9 +1267,9 @@ void SVIPDoc::OnAddGroupTool()
 	AddTool(SvPb::GroupToolClassId);
 }
 
-void SVIPDoc::OnEditModules()
+void SVIPDoc::OnModuleManager()
 {
-	SvOg::EditModulesDialog dialog;
+	SvOg::ModuleManagerDialog dialog;
 	dialog.DoModal();
 }
 
@@ -2012,6 +2012,7 @@ void SVIPDoc::OnEditModule()
 				startEditModule(toolIDs[0]);
 			}
 			UpdateAllViews(nullptr, SVIPDoc::RefreshView);
+			GetTheIODoc()->UpdateAllViews(nullptr);
 		}
 	}
 }
@@ -2034,6 +2035,7 @@ void SVIPDoc::OnCancelEditModule()
 		cancelEditModule(SvimState::getModuleEditingId());
 		setModuleEditing(SvDef::InvalidObjectId);
 		UpdateAllViews(nullptr, SVIPDoc::RefreshView);
+		GetTheIODoc()->UpdateAllViews(nullptr);
 	}
 }
 

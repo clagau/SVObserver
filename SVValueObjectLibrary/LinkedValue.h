@@ -129,6 +129,7 @@ public:
 	SvPb::LinkedValueTypeEnum getValueType() const { return m_valueType; };
 	void setExcludeSameLineageListForObjectSelector(std::vector<SvOi::IObjectClass*> value) { m_excludeSameLineageList = std::move(value); };
 	virtual UINT ObjectAttributesAllowed() const override;
+	virtual void moveChildObject(SVObjectClass& rNewObject) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

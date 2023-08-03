@@ -1206,7 +1206,7 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists(const SvDef:
 	for (SvDef::StringSet::const_iterator iter = rObjectNameList.begin(); iter != rObjectNameList.end(); ++iter)
 	{
 		const MonitoredObject& rObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(*iter);
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rObj.m_objectId);
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rObj.m_objectRef.getObjectId());
 		if (nullptr != pObject)
 		{
 			if (RemoteMonitorListController::IsValidMonitoredObject(pObject))

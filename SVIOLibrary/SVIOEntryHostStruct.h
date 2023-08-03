@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "Definitions/GlobalConst.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -20,6 +21,7 @@ class IValueObject;
 }
 
 class SVObjectClass;
+class SVObjectReference;
 
 
 enum SVIOObjectType
@@ -35,8 +37,7 @@ enum SVIOObjectType
 struct IOLinkedValueObj
 {
 	uint32_t m_inspectionId {0UL};
-	SVObjectClass* m_pObject {nullptr};
-	SvOi::IValueObject* m_pValueObject {nullptr};
+	SVObjectReference m_objectRef;
 };
 
 struct SVIOEntryHostStruct 

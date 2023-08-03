@@ -505,6 +505,7 @@ namespace SvOp
 				auto iter = std::ranges::find_if(rOldParamTask.m_embeddedList, [eId](const auto& rEntry) { return rEntry && eId == rEntry->GetEmbeddedID(); });
 				if (rOldParamTask.m_embeddedList.end() != iter && *iter)
 				{
+					(*iter)->moveChildObject(*pObject);
 					//do not change the value only the id and connections
 					(*iter)->SVObjectClass::moveObject(*pObject);
 				}

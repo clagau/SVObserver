@@ -27,24 +27,9 @@
 std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject, bool completeName /*=true*/)
 {
 	std::string Result;
-	SVObjectReference ObjectRef( SVObjectManagerClass::Instance().GetObject(rMonitoredObject.m_objectId) );
-	if( nullptr != ObjectRef.getObject() )
+	if( nullptr != rMonitoredObject.m_objectRef.getObject() )
 	{
-		if( ObjectRef.getValueObject() )
-		{
-			if (rMonitoredObject.isArray)
-			{
-				if (rMonitoredObject.wholeArray)
-				{
-					ObjectRef.SetEntireArray();
-				}
-				else
-				{
-					ObjectRef.SetArrayIndex(rMonitoredObject.arrayIndex);
-				}
-			}
-		}
-		Result = completeName ? ObjectRef.GetCompleteName(true) : ObjectRef.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, true);
+		Result = completeName ? rMonitoredObject.m_objectRef.GetCompleteName(true) : rMonitoredObject.m_objectRef.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, true);
 	}
 
 	if(!Result.empty() && false == Result.starts_with(SvDef::FqnInspections) && completeName)
@@ -58,23 +43,19 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 
 void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject, SvSml::MonitorEntryData &data)
 {
-	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.m_objectId));
-	data.wholeArray = rMonitoredObject.wholeArray;
-	data.isArray= rMonitoredObject.isArray;
-	data.arrayIndex = rMonitoredObject.arrayIndex;
-	if (auto* pFinalObj = ObjectRef.getFinalObject(); nullptr != pFinalObj)
+	if (auto* pFinalObj = rMonitoredObject.m_objectRef.getFinalObject(); nullptr != pFinalObj)
 	{
 		data.ObjectType = pFinalObj->GetObjectType();
 	}
 	
-	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>  (ObjectRef.getObject());
+	auto* pValueObject = dynamic_cast<SvOi::IValueObject*>  (rMonitoredObject.m_objectRef.getObject());
 	if (pValueObject)
 	{
 		data.variant_type = pValueObject->GetType();
 	}
 	else
 	{
-		SvIe::SVImageClass* pImageObject = dynamic_cast<SvIe::SVImageClass*>(ObjectRef.getObject());
+		auto* pImageObject = dynamic_cast<SvIe::SVImageClass*>(rMonitoredObject.m_objectRef.getObject());
 		if (nullptr != pImageObject)
 		{
 			SvOi::SVImageBufferHandlePtr pImageBuffer = pImageObject->getLastImage(true);
@@ -93,22 +74,11 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const std::s
 {
 	MonitoredObject Result;
 	SVObjectNameInfo nameInfo;
-	SVObjectNameInfo::ParseObjectName(nameInfo, name.c_str());
+	SVObjectNameInfo::ParseObjectName(nameInfo, name);
 	//Check to see that first part of name is Inspections
 	if (std::string(SvDef::FqnInspections) == nameInfo.m_NameArray[0])
 	{
-		SVObjectReference ObjectRef;
-		SVObjectManagerClass::Instance().GetObjectByDottedName(nameInfo.GetObjectArrayName(0), ObjectRef);
-		Result.m_objectId = (nullptr != ObjectRef.getObject()) ? ObjectRef.getObject()->getObjectId() : SvDef::InvalidObjectId;
-		if (nullptr != ObjectRef.getValueObject())
-		{
-			Result.isArray = ObjectRef.isArray();
-			Result.wholeArray = ObjectRef.isEntireArray();
-			if (Result.isArray)
-			{
-				Result.arrayIndex = ObjectRef.ArrayIndex();
-			}
-		}
+		SVObjectManagerClass::Instance().GetObjectByDottedName(nameInfo.GetObjectArrayName(0), Result.m_objectRef);
 	}
 	return Result;
 }
@@ -122,7 +92,7 @@ void RemoteMonitorListHelper::AddMonitorObject2MonitorListcpy(const MonitoredObj
 		std::string name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		SvSml::MonitorEntryPointer MeP = molcpy.AddEntry(listtype, name);
 		RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(*it, MeP->data);
-		MeP->m_objectId = it->m_objectId;
+		MeP->m_objectId = it->m_objectRef.getObjectId();
 		if(listtype == SvSml::ListType::productItemsImage)
 		{
 			Log_Assert(MeP->data.ObjectType== SvPb::SVObjectTypeEnum::SVImageObjectType );

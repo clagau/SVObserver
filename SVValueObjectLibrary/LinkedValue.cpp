@@ -283,20 +283,18 @@ HRESULT  LinkedValue::SetValue(const _variant_t& rValue, int Index)
 
 HRESULT LinkedValue::SetValueKeepType(LPCTSTR Value, int Index)
 {
-	if (SvPb::LinkedSelectedOption::DirectValue == getSelectedOption())
-	{
-		HRESULT hr = __super::SetValueKeepType(Value, Index);
-		if (S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr)
-		{
-			getValue(m_directValue);
-		}
-		UpdateContent();
-		return hr;
-	}
-	else
+	if (SvPb::LinkedSelectedOption::DirectValue != getSelectedOption())
 	{
 		return E_FAIL;
 	}
+	
+	HRESULT hr = __super::SetValueKeepType(Value, Index);
+	if (S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr)
+	{
+		getValue(m_directValue);
+	}
+	UpdateContent();
+	return hr;
 }
 
 HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
@@ -337,25 +335,22 @@ HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 
 HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool fixArrasize /*= false*/)
 {
-	if (SvPb::LinkedSelectedOption::DirectValue == getSelectedOption())
-	{
-		if (false == SvUl::isSameVar(rValue, m_directValue))
-		{
-			HRESULT hr = __super::setValue(rValue, Index, fixArrasize);
-			if (S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr)
-			{
-				getValue(m_directValue);
-			}
-			UpdateContent();
-			return hr;
-		}
-		return S_OK;
-	}
-	else
+	if (SvPb::LinkedSelectedOption::DirectValue != getSelectedOption())
 	{
 		Log_Assert(false);
 		return E_FAIL;
 	}
+	if (false == SvUl::isSameVar(rValue, m_directValue))
+	{
+		HRESULT hr = __super::setValue(rValue, Index, fixArrasize);
+		if (S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr)
+		{
+			getValue(m_directValue);
+		}
+		UpdateContent();
+		return hr;
+	}
+	return S_OK;
 }
 
 bool LinkedValue::setDirectValue(const _variant_t& rValue)
@@ -526,7 +521,18 @@ bool LinkedValue::CloseObject()
 	auto* pInsp = GetAncestorInterface(SvPb::SVInspectionObjectType);
 	if (nullptr != pTRC && nullptr != pInsp)
 	{
-		pTRC->removeLinkedImage(getObjectId(), SvOi::getInspectionPos(pInsp->getObjectId()));
+		if (int ipPos = SvOi::getInspectionPos(pInsp->getObjectId()); 0 <= ipPos)
+		{
+			try
+			{
+				pTRC->removeLinkedImage(getObjectId(), ipPos);
+			}
+			catch (const SvStl::MessageContainer& e)
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
+				Exception.setMessage(e.getMessage(), getObjectId());
+			}
+		}
 	}
 
 	for (auto& rLinked : m_children)
@@ -1094,12 +1100,12 @@ HRESULT LinkedValue::SetObjectValue(SVObjectAttributeClass* pDataObject)
 		m_directValue = convertType(m_directValue, GetDefaultType());
 		return S_OK;
 	}
-	else if (pDataObject->GetAttributeData(scLinkedIndirectValueTag, stringList))
+	if (pDataObject->GetAttributeData(scLinkedIndirectValueTag, stringList))
 	{
 		m_indirectValueRef = SVObjectReference(0 < stringList.size() ? stringList[0] : "");
 		return S_OK;
 	}
-	else if (pDataObject->GetAttributeData(scLinkedFormulaTag, stringList))
+	if (pDataObject->GetAttributeData(scLinkedFormulaTag, stringList))
 	{
 		m_formulaString = (0 < stringList.size() ? stringList[0] : "");
 		SvUl::RemoveEscapedSpecialCharacters(m_formulaString, true);
@@ -1193,6 +1199,34 @@ UINT  LinkedValue::ObjectAttributesAllowed() const
 		ret &= ~SvPb::useable;
 	}
 	return ret;
+}
+
+void LinkedValue::moveChildObject(SVObjectClass& rNewObject)
+{
+	auto* pNewObject = dynamic_cast<LinkedValue*>(&rNewObject);
+	if (nullptr != pNewObject)
+	{
+		for (int i = 0; i < m_children.size() && i < pNewObject->m_children.size(); ++i)
+		{
+			if (nullptr != m_children[i] && nullptr != pNewObject->m_children[i])
+			{
+				//do not change the value only the id and connections
+				m_children[i]->SVObjectClass::moveObject(*pNewObject->m_children[i]);
+			}
+		}
+		if (auto newChildrenSize = pNewObject->m_children.size(); newChildrenSize < m_children.size())
+		{
+			for (auto i = newChildrenSize; i < m_children.size(); ++i)
+			{
+				pNewObject->m_children.push_back(std::move(m_children[i]));
+				if (pNewObject->m_children[i])
+				{
+					pNewObject->m_children[i]->SetObjectOwner(pNewObject);
+				}
+			}
+			m_children.erase(m_children.begin() + newChildrenSize, m_children.end());
+		}
+	}
 }
 #pragma endregion Public Methods
 
@@ -1485,7 +1519,7 @@ bool LinkedValue::checkLinkedObjectRef(SvStl::MessageContainerVector* pErrorMess
 		}
 		return false;
 	}
-	else if (0 == m_LinkedObjectRef.getObject()->ObjectAttributesAllowed())
+	if (0 == m_LinkedObjectRef.getObject()->ObjectAttributesAllowed())
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -1943,40 +1977,36 @@ variant_t LinkedValue::validateIndirectValue(const std::string& rIndirectIdStrin
 
 variant_t LinkedValue::validateFormula(const std::string& rFormula) const
 {
-	if (SvPb::LinkedValueTypeEnum::TypeDecimal == m_valueType)
-	{
-		std::string oldString;
-		//save old string
-		oldString = m_equation.GetEquationText();
-		//To Test formula and get result the formula-text has to be set. But after the test the old formula will be set back.
-		//So it is "const" if you look from outside. For this reason the const_cast is done and acceptable here.
-		const_cast<SvOp::SVEquation*>(&m_equation)->SetEquationText(rFormula);
-
-		SvStl::MessageContainerVector messageContainers;
-		SvOi::EquationTestResult testResult = const_cast<SvOp::SVEquation*>(&m_equation)->Test(&messageContainers);
-		variant_t value = m_equation.GetYACCResult();
-		const_cast<SvOp::SVEquation*>(&m_equation)->SetEquationText(oldString);
-		if (false == testResult.bPassed)
-		{
-			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			if (messageContainers.size())
-			{
-				Exception.setMessage(messageContainers[0].getMessage());
-			}
-			else
-			{
-				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_FormulaFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
-			}
-			Exception.Throw();
-		}
-		return value;
-	}
-	else
+	if (SvPb::LinkedValueTypeEnum::TypeDecimal != m_valueType)
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), getObjectId());
 		Exception.Throw();
 	}
+	
+	std::string oldString = m_equation.GetEquationText();
+	//To Test formula and get result the formula-text has to be set. But after the test the old formula will be set back.
+	//So it is "const" if you look from outside. For this reason the const_cast is done and acceptable here.
+	const_cast<SvOp::SVEquation*>(&m_equation)->SetEquationText(rFormula);
+
+	SvStl::MessageContainerVector messageContainers;
+	SvOi::EquationTestResult testResult = const_cast<SvOp::SVEquation*>(&m_equation)->Test(&messageContainers);
+	variant_t value = m_equation.GetYACCResult();
+	const_cast<SvOp::SVEquation*>(&m_equation)->SetEquationText(oldString);
+	if (false == testResult.bPassed)
+	{
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		if (messageContainers.size())
+		{
+			Exception.setMessage(messageContainers[0].getMessage());
+		}
+		else
+		{
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_FormulaFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+		}
+		Exception.Throw();
+	}
+	return value;
 }
 
 bool LinkedValue::setValueFromDouble(double value)
@@ -2087,11 +2117,9 @@ void LinkedValue::tryToFixIndirectInput(SvDef::SVObjectTypeInfoStruct info)
 			setIndirectValue(SVObjectReference {pObject->getObjectId()});
 			break;
 		}
-		else
-		{
-			pOwner = pOwner->GetParent();
-			pRequestor = pRequestor->GetParent();
-		}
+
+		pOwner = pOwner->GetParent();
+		pRequestor = pRequestor->GetParent();
 	}// end while (pOwner)
 }
 

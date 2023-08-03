@@ -25,17 +25,17 @@ struct ModuleData
 };
 using ModuleDataList = std::vector<ModuleData>;
 
-class EditModulesDialog : public CDialog
+class ModuleManagerDialog : public CDialog
 {
 #pragma region Declarations
 private:
-	enum { IDD = IDD_EDIT_MODULES };
+	enum { IDD = IDD_MODULE_MANAGER };
 #pragma endregion Declarations
 
 #pragma region Constructor
 public:
-	explicit EditModulesDialog(CWnd* pParent = nullptr);
-	virtual ~EditModulesDialog();
+	explicit ModuleManagerDialog(CWnd* pParent = nullptr);
+	virtual ~ModuleManagerDialog();
 #pragma endregion Constructor
 
 #pragma region Protected Methods

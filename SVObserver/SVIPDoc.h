@@ -202,7 +202,7 @@ public:
 	afx_msg void OnAddPerspectiveTool();
 	afx_msg void OnAddLoopTool();
 	afx_msg void OnAddGroupTool();
-	afx_msg void OnEditModules();
+	afx_msg void OnModuleManager();
 	afx_msg void OnAddModuleTool(UINT nId);
 	afx_msg void OnViewResetAllCounts();
 	afx_msg void OnViewResetCountsCurrentIP();
