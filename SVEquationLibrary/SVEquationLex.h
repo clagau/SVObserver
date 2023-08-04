@@ -11,6 +11,7 @@
 
 #pragma once
 #include 	"SVParserScripts/RElement.h"
+//This is to avoid CheckInclude false positives RElement
 
 #include "SVParserScripts/FlexLexer.h"
 #ifndef Y_TAB_H
