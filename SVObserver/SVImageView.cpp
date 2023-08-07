@@ -221,9 +221,8 @@ void SVImageView::ReleaseImageSurface()
 }
 
 
-const SvTo::SVToolExtentClass* SVImageView::getToolExtentPtr()
+const SvTo::SVToolExtentClass* SVImageView::getToolExtentPtr() const
 {
-
 	if (nullptr != m_pTool)
 	{
 		return&(m_pTool->getToolExtent());
@@ -625,7 +624,7 @@ void SVImageView::OnContextMenu(CWnd*, CPoint point)
 	}
 }
 
-void SVImageView::TransformFromViewSpace(CPoint& point)
+void SVImageView::TransformFromViewSpace(CPoint& point) const
 {
 	SVDrawContext l_svDrawContext(nullptr, m_ZoomHelper.GetZoom());
 
@@ -811,9 +810,8 @@ void SVImageView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void SVImageView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if (!SvimState::CheckState(SV_STATE_RUNNING))
+	if (!SvimState::CheckState(SV_STATE_RUNNING) && GetIPDoc())
 	{
-		SVIPDoc* l_psvIPDoc = GetIPDoc();
 		CPoint l_point = point;
 
 		// Compensate for Scaling of Displayed Image
@@ -822,17 +820,9 @@ void SVImageView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		std::string Text = std::format( _T(" X: {:d}, Y: {:d} "), l_point.x, l_point.y );
 		SetStatusText( Text.c_str() );
 
-		if (false == ImageIsEmpty() && nullptr != l_psvIPDoc)
+		if (false == ImageIsEmpty() && nullptr != m_pTool && SvPb::SVExtentLocationPropertyUnknown != m_pTool->getLocationPropertyAtPoint(SVPoint<double>(l_point), m_isAncestorOverlay))
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->Get1stSelectedToolID()));
-
-			if (pTool)
-			{
-				if (nullptr != pTool->GetObjectAtPoint(SVPoint<double>(l_point)))
-				{
-					l_psvIPDoc->OnEditTool();
-				}
-			}
+			GetIPDoc()->OnEditTool();
 		}
 
 		CWnd::OnLButtonDblClk(nFlags, point);
@@ -971,48 +961,19 @@ void SVImageView::OnMouseMove(UINT nFlags, CPoint point)
 
 		HICON hCursor = nullptr;
 
-		SVIPDoc* pIPDoc = GetIPDoc();
-		if (auto  pToolExtentclass = getToolExtentPtr(); nullptr != pIPDoc && m_isPicked && pToolExtentclass)
+		CPoint startPoint = m_lastMouseMovePoint;
+		TransformFromViewSpace(startPoint);
+
+		hCursor = GetObjectCursor(m_svMousePickLocation, point1);
+		SVPoint<double> startSVPoint(startPoint);
+		
+		if (SVIPDoc* pIPDoc = GetIPDoc(); pIPDoc && m_isPicked && m_pTool)
 		{
-			CPoint startPoint = m_lastMouseMovePoint;
-
-
-			SvTo::SVToolExtentClass tempToolExtent;
-			SVImageExtentClass extent = pToolExtentclass->getImageExtent();
-			tempToolExtent.getImageExtent() = extent;
-			tempToolExtent.SetTranslation(extent.GetTranslation());
-			TransformFromViewSpace(startPoint);
-
-			hCursor = GetObjectCursor(m_svMousePickLocation, point1);
-			SVPoint<double> startSVPoint(startPoint);
-			if ((SvPb::SVExtentLocationPropertyRotate == m_svMousePickLocation ||
-				m_svMousePickLocation == pToolExtentclass->GetLocationPropertyAt(startSVPoint)) &&
-
-				S_OK == tempToolExtent.UpdateDraggingROI(m_svMousePickLocation, startSVPoint, SVPoint<double>(point1)))
+			auto [bUpdate, outRect] = pIPDoc->changeExtents(*m_pTool, startSVPoint, SVPoint<double>(point1), m_svMousePickLocation, m_isAncestorOverlay, rect.PtInRect(clientPoint));
+			if (bUpdate)
 			{
-				SVImageExtentClass tempExtent = tempToolExtent.getImageExtent();
-				bool bUpdate = S_OK == pIPDoc->UpdateExtents(m_pTool, tempExtent);
-
-				if (bUpdate || rect.PtInRect(clientPoint))
-				{
-					bUpdate = bUpdate || S_OK == pIPDoc->UpdateExtentsToFit(m_pTool, tempExtent);
-				}
-
-				if (bUpdate)
-				{
-					long left = 0;
-					long top = 0;
-					long width = 0;
-					long height = 0;
-
-					extent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointX, left);
-					extent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointY, top);
-					extent.GetExtentProperty(SvPb::SVExtentPropertyWidth, width);
-					extent.GetExtentProperty(SvPb::SVExtentPropertyHeight, height);
-						
-					// Status Text: Mouse Pos and Tool Extent
-					Text = std::format(_T(" Col: {:d}, Row: {:d}    X: {:d}, Y: {:d}    cX: {:d}, cY: {:d} "), point1.x, point1.y, left, top, width, height);
-				}
+				// Status Text: Mouse Pos and Tool Extent
+				Text = std::format(_T(" Col: {:d}, Row: {:d}    X: {:d}, Y: {:d}    cX: {:d}, cY: {:d} "), point1.x, point1.y, outRect.left, outRect.top, outRect.right - outRect.left, outRect.bottom - outRect.top);
 			}
 		}
 		else
@@ -1657,43 +1618,24 @@ HICON SVImageView::GetObjectCursor(SvPb::SVExtentLocationPropertyEnum svLocation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVImageView::GetObjectAtPoint(POINT point)
 {
-	BOOL l_bOk = FALSE;
-
 	m_pTool = nullptr;
-
+	m_isAncestorOverlay = false;
 	m_svLocation = SvPb::SVExtentLocationPropertyUnknown;
-
-	SvTo::SVToolClass* pTool = nullptr;
 
 	if (nullptr != GetIPDoc())
 	{
-		pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetIPDoc()->Get1stSelectedToolID()));
-	}
-
-	//@TODO[MZA][10.40][14.07.2023] add part to check if image is selected ancestor of this tool
-	if (nullptr != pTool && pTool->isInputImage(m_ImageIdPair.m_imageId))
-	{
-
-
-		SVImageExtentClass extent;
-		SVPoint<double> svPoint(point);
-		m_pTool = pTool->GetObjectAtPoint(svPoint);
-		auto  pToolExtentclass = getToolExtentPtr();
-		if (pToolExtentclass)
+		auto* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetIPDoc()->Get1stSelectedToolID()));
+		if (nullptr != pTool)
 		{
-			m_svLocation = pToolExtentclass->GetLocationPropertyAt(svPoint);
-		}
-
-		////check if move or sizing is allowed  
-		if (false == pTool->isAllowedLocation(m_svLocation))
-		{
-			m_svLocation = SvPb::SVExtentLocationPropertyDisabled;
+			std::tie(m_svLocation, m_isAncestorOverlay) = pTool->getLocationAtPointOnImage(m_ImageIdPair.m_imageId, SVPoint<double>{point});
+			if (SvPb::SVExtentLocationPropertyUnknown != m_svLocation)
+			{
+				m_pTool = pTool;
+			}
 		}
 	}
 
-	l_bOk = nullptr != m_pTool;
-
-	return l_bOk;
+	return nullptr != m_pTool;
 }
 
 void SVImageView::GetParameters(SvOi::IObjectWriter& rWriter)

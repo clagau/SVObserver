@@ -271,14 +271,9 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-SVToolClass* SVPerspectiveToolClass::GetObjectAtPoint( const SVPoint<double>& rPoint )
+SvPb::SVExtentLocationPropertyEnum SVPerspectiveToolClass::getLocationPropertyAtPoint( const SVPoint<double>& rPoint ) const
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
-	{
-		return this;
-	}
-
-	return nullptr;
+	return m_toolExtent.GetLocationPropertyAt(rPoint);
 }
 
 bool SVPerspectiveToolClass::DoesObjectHaveExtents() const

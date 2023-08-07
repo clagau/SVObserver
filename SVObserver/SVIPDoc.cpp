@@ -4354,6 +4354,24 @@ HRESULT SVIPDoc::MarkImageDataDisplayed(uint32_t imageId, SVImageView* p_pImageV
 	return Status;
 }
 
+std::pair<bool, RECT> SVIPDoc::changeExtents(SvTo::SVToolClass& rTool, const SVPoint<double>& startPoint, const SVPoint<double>& stopPoint, SvPb::SVExtentLocationPropertyEnum mousePickLocation, bool isAncestorOverlay, bool isInView)
+{
+	auto [isOK, imageExtent, outRect] = rTool.calcChangedExtents(startPoint, stopPoint, mousePickLocation, isAncestorOverlay);
+	if (isOK)
+	{
+		bool bUpdate = S_OK == UpdateExtents(&rTool, imageExtent);
+		if (false == bUpdate && isInView)
+		{
+			bUpdate = (S_OK == UpdateExtentsToFit(&rTool, imageExtent));
+		}
+		if (bUpdate)
+		{
+			return {true, outRect};
+		}
+	}
+	return {false, {}};
+}
+
 HRESULT SVIPDoc::UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents)
 {
 	HRESULT Status = SVGuiExtentUpdater::UpdateImageExtent(pTask, rExtents);

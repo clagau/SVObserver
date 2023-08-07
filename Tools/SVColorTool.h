@@ -56,7 +56,7 @@ public:
 
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
-	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SvPb::SVExtentLocationPropertyEnum getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const override;
 	SvIe::SVImageClass* getOutputImage() { return &m_OutputImage; };
 
 	bool isConverted() const { return m_ConvertTool; }

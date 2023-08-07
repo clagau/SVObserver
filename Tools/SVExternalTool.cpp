@@ -49,11 +49,6 @@ bool SVExternalTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	return bOk;
 }
 
-SVToolClass* SVExternalTool::GetObjectAtPoint(const SVPoint<double>&)
-{
-	return nullptr;
-}
-
 HRESULT SVExternalTool::UpdateImageWithExtent()
 {
 	return S_OK;

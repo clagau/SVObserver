@@ -113,12 +113,6 @@ bool SVTransformationToolClass::ResetObject(SvStl::MessageContainerVector *pErro
 	return Result;
 }
 
-
-SVToolClass* SVTransformationToolClass::GetObjectAtPoint( const SVPoint<double>&)
-{
-	return nullptr;
-}
-
 bool SVTransformationToolClass::DoesObjectHaveExtents() const
 {
 	return true;

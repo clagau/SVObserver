@@ -225,14 +225,9 @@ std::vector<std::string> SVColorToolClass::getToolAdjustNameList() const
 }
 
 
-SVToolClass* SVColorToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SvPb::SVExtentLocationPropertyEnum SVColorToolClass::getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
-	{
-		return this;
-	}
-
-	return nullptr;
+	return m_toolExtent.GetLocationPropertyAt(rPoint);
 }
 #pragma endregion Public Methods
 

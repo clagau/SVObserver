@@ -195,14 +195,9 @@ HRESULT SVLinearToolClass::SetImageExtentToParent()
 	return l_hrOk;
 }
 
-SVToolClass* SVLinearToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SvPb::SVExtentLocationPropertyEnum SVLinearToolClass::getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
-	{
-		return this;
-	}
-
-	return nullptr;
+	return m_toolExtent.GetLocationPropertyAt(rPoint);
 }
 
 bool SVLinearToolClass::DoesObjectHaveExtents() const

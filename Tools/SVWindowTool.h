@@ -35,7 +35,7 @@ public:
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtentToFit( const SVImageExtentClass& rImageExtent ) override;
 
-	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SvPb::SVExtentLocationPropertyEnum getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const override;
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;

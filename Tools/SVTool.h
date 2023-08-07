@@ -205,7 +205,8 @@ public:
 	
 	HRESULT UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SvIe::SVImageClass* p_svToolImage);
 
-	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& ) { return nullptr; };
+	virtual SvPb::SVExtentLocationPropertyEnum getLocationPropertyAtPoint(const SVPoint<double>&) const { return SvPb::SVExtentLocationPropertyUnknown; };
+	virtual SvPb::SVExtentLocationPropertyEnum getLocationPropertyAtPoint(const SVPoint<double>&, bool isAncestorOverlay) const;
 
 	virtual bool propagateSizeAndPosition();
 	virtual bool usePropagateSizeAndPosition() const;
@@ -219,6 +220,20 @@ public:
 	 virtual void resetCounters();
 	 virtual const SVImageExtentClass* GetImageExtentPtr() const override;
 	 uint32_t getAncestorIdForOverlay() const { return m_AncestorIdForOverlay; };
+
+	 /// Get the location type for this tool on the image at this point. If this tool has no overlay on this image type is SVExtentLocationPropertyUnknown
+	 /// \param imageId [in] ObjectId of the image search for.
+	 /// \param rPoint [in] Point to search for.
+	 /// \returns std::pair<SvPb::SVExtentLocationPropertyEnum, bool> 1. location type, 2. if true, the image is the ancestor image for the overlay, else it is the source image.
+	 std::pair<SvPb::SVExtentLocationPropertyEnum, bool> getLocationAtPointOnImage(uint32_t imageId, const SVPoint<double>& rPoint) const;
+	 
+	 /// Calculate the new Extents for this tool image.
+	 /// \param startPoint [in] start point to move.
+	 /// \param stopPoint [in] stop point to move.
+	 /// \param mousePickLocation [in] location type picked by the mouse (if it not fit to internal location calculation failed.
+	 /// \param isAncestorOverlay [in] If movement was done on the ancestor image, this parameter must be true. Then the points will be calculate from ancestor to source image coordinates.
+	 /// \returns std::tuple<bool, SVImageExtentClass, RECT> 1. True if calculate successfully, if false the next values are undefined. 2. Image extent depend of the source image, can be used to move the extent. 3. ROI-rect on the move image, if ancestor overlay then on the ancestor image.
+	 std::tuple<bool, SVImageExtentClass, RECT> calcChangedExtents(const SVPoint<double>& startPoint, const SVPoint<double>& stopPoint, SvPb::SVExtentLocationPropertyEnum mousePickLocation, bool isAncestorOverlay);
 
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
@@ -269,6 +284,9 @@ protected:
 private:
 	void init();
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages = nullptr) const;
+	void movePointFromAncestorToSourceImageCoordinate(SVPoint<double>& rPoint) const;
+	template<typename T>
+	void movePointFromSourceToAncestorImageCoordinate(SVPoint<T>& rPoint) const;
 
 protected:
 

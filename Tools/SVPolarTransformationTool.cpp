@@ -124,14 +124,9 @@ bool SVPolarTransformationToolClass::CreateObject( const SVObjectLevelCreateStru
 	return m_isCreated;
 }
 
-SVToolClass* SVPolarTransformationToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SvPb::SVExtentLocationPropertyEnum SVPolarTransformationToolClass::getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
-	{
-		return this;
-	}
-
-	return nullptr;
+	return m_toolExtent.GetLocationPropertyAt(rPoint);
 }
 
 bool SVPolarTransformationToolClass::DoesObjectHaveExtents() const

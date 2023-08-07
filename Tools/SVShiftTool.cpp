@@ -133,14 +133,9 @@ SvVol::SVStringValueObjectClass* SVShiftTool::GetInputImageNames()
 	return &m_SourceImageName;
 }
 
-SVToolClass* SVShiftTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SvPb::SVExtentLocationPropertyEnum SVShiftTool::getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
-	{
-		return this;
-	}
-
-	return nullptr;
+	return m_toolExtent.GetLocationPropertyAt(rPoint);
 }
 
 bool SVShiftTool::DoesObjectHaveExtents() const

@@ -77,7 +77,7 @@ public:
 
 	void ShowExtremeLUT( bool show = true );
 	
-	void TransformFromViewSpace( CPoint& point );
+	void TransformFromViewSpace( CPoint& point ) const;
 
 	BOOL GetObjectAtPoint( POINT point );
 
@@ -164,14 +164,13 @@ public:
 	/// \param showOverlays show overlays in saved image. ignored if ViewOnly is false
 	void SaveViewOrImageToDisk(bool ViewOnly,bool showOverlays);
 
-	const SvTo::SVToolExtentClass* getToolExtentPtr();
+	const SvTo::SVToolExtentClass* getToolExtentPtr() const;
 
 protected:
 	void Initialize();
 	bool GetScrollPosition( CPoint& point );
 	bool SetScrollPosition( CPoint& point );
 
-	bool SetScaleIndex( unsigned long scaleIndex );
 	bool SetImageRect( CRect& rect );
 
 	HRESULT ShouldDraw( const SVExtentMultiLineStruct& rMultiLine );
@@ -236,9 +235,8 @@ private:
 	// JMS - Extent Objects
 
 	SvTo::SVToolClass* m_pTool = nullptr;
-
 	SvPb::SVExtentLocationPropertyEnum m_svLocation;
-
+	bool m_isAncestorOverlay = false;
 	SvPb::SVExtentLocationPropertyEnum m_svMousePickLocation;
 
 	// JMS - Extent Objects

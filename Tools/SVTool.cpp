@@ -1023,6 +1023,16 @@ HRESULT SVToolClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetDa
 	return m_toolExtent.UpdateOffsetDataToImage(p_rsvOffsetData, pToolImage);
 }
 
+SvPb::SVExtentLocationPropertyEnum SVToolClass::getLocationPropertyAtPoint(const SVPoint<double>& rPoint, bool isAncestorOverlay) const
+{
+	auto point = rPoint;
+	if (isAncestorOverlay)
+	{
+		movePointFromAncestorToSourceImageCoordinate(point);
+	}
+	return getLocationPropertyAtPoint(point);
+}
+
 bool SVToolClass::propagateSizeAndPosition()
 {
 	if (SvOp::ToolSizeAdjustTask::UseSizeAdjust(this))
@@ -1064,6 +1074,73 @@ HRESULT SVToolClass::GetParentExtent(SVImageExtentClass& p_rParent) const
 	HRESULT l_hr = S_OK;
 	m_toolExtent.GetParentExtent(p_rParent);
 	return l_hr;
+}
+
+std::pair<SvPb::SVExtentLocationPropertyEnum, bool> SVToolClass::getLocationAtPointOnImage(uint32_t imageId, const SVPoint<double>& rPoint) const
+{
+	bool isValid = false;
+	bool isAncestorOverlay = false;
+	SvPb::SVExtentLocationPropertyEnum locationEnum = SvPb::SVExtentLocationPropertyUnknown;
+	if (isInputImage(imageId))
+	{
+		isValid = true;
+	}
+	else if (const auto* pImageExtent = GetImageExtentPtr(); nullptr != pImageExtent && pImageExtent->hasFigure() && getAncestorIdForOverlay() == imageId && isTranslationValidForAncestorOverlay(pImageExtent->GetTranslation()))
+	{
+		isAncestorOverlay = true;
+		isValid = true;
+	}
+
+	if (isValid)
+	{
+		locationEnum = getLocationPropertyAtPoint(rPoint, isAncestorOverlay);
+		if (SvPb::SVExtentLocationPropertyUnknown != locationEnum)
+		{
+			////check if move or sizing is allowed  
+			if (false == isAllowedLocation(locationEnum))
+			{
+				locationEnum = SvPb::SVExtentLocationPropertyDisabled;
+			}
+		}
+	}
+	return {locationEnum, isAncestorOverlay};
+}
+
+std::tuple<bool, SVImageExtentClass, RECT> SVToolClass::calcChangedExtents(const SVPoint<double>& startPoint, const SVPoint<double>& stopPoint, SvPb::SVExtentLocationPropertyEnum mousePickLocation, bool isAncestorOverlay)
+{
+	auto toolExtent = getToolExtent();
+
+	SvTo::SVToolExtentClass tempToolExtent;
+	SVImageExtentClass extent = toolExtent.getImageExtent();
+	tempToolExtent.getImageExtent() = extent;
+	tempToolExtent.SetTranslation(extent.GetTranslation());
+	auto l_startPoint {startPoint};
+	auto l_stopPoint {stopPoint};
+	if (isAncestorOverlay)
+	{
+		movePointFromAncestorToSourceImageCoordinate(l_startPoint);
+		movePointFromAncestorToSourceImageCoordinate(l_stopPoint);
+	}
+	if ((SvPb::SVExtentLocationPropertyRotate == mousePickLocation ||
+		mousePickLocation == toolExtent.GetLocationPropertyAt(l_startPoint)) &&
+		S_OK == tempToolExtent.UpdateDraggingROI(mousePickLocation, l_startPoint, l_stopPoint))
+	{
+		SVImageExtentClass tempExtent = tempToolExtent.getImageExtent();
+		SVPoint<long> tmpPoint;
+		long width = 0;
+		long height = 0;
+		extent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointX, tmpPoint.m_x);
+		extent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointY, tmpPoint.m_y);
+		extent.GetExtentProperty(SvPb::SVExtentPropertyWidth, width);
+		extent.GetExtentProperty(SvPb::SVExtentPropertyHeight, height);
+		if (isAncestorOverlay)
+		{
+			movePointFromSourceToAncestorImageCoordinate(tmpPoint);
+		}
+		return {true, tempExtent, {tmpPoint.m_x, tmpPoint.m_y, tmpPoint.m_x + width, tmpPoint.m_y + height}};
+	}
+
+	return {false, {}, {}};
 }
 
 SvPb::EAutoSize SVToolClass::GetAutoSizeEnabled() const
@@ -1598,6 +1675,40 @@ bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector* pErrorMessages) c
 	}
 
 	return true;
+}
+
+void SVToolClass::movePointFromAncestorToSourceImageCoordinate(SVPoint<double>& rPoint) const
+{
+	if (const auto* pImageExtent = GetImageExtentPtr(); nullptr != pImageExtent && pImageExtent->hasFigure() && isTranslationValidForAncestorOverlay(pImageExtent->GetTranslation()))
+	{
+		double offsetX, offsetY;
+		m_pEmbeddedExtents->m_ancestorOffsetX.GetValue(offsetX);
+		m_pEmbeddedExtents->m_ancestorOffsetY.GetValue(offsetY);
+		rPoint -= {offsetX, offsetY};
+		rPoint += pImageExtent->GetFigure().m_svTopLeft;
+	}
+	else
+	{
+		Log_Assert(false);
+	}
+}
+
+template<typename T>
+void SVToolClass::movePointFromSourceToAncestorImageCoordinate(SVPoint<T>& rPoint) const
+{
+	if (const auto* pImageExtent = GetImageExtentPtr(); nullptr != pImageExtent && pImageExtent->hasFigure() && isTranslationValidForAncestorOverlay(pImageExtent->GetTranslation()))
+	{
+		SVPoint<double> offsetPoint;
+		m_pEmbeddedExtents->m_ancestorOffsetX.GetValue(offsetPoint.m_x);
+		m_pEmbeddedExtents->m_ancestorOffsetY.GetValue(offsetPoint.m_y);
+		offsetPoint -= pImageExtent->GetFigure().m_svTopLeft;
+		rPoint.m_x += static_cast<T>(offsetPoint.m_x);
+		rPoint.m_y += static_cast<T>(offsetPoint.m_y);
+	}
+	else
+	{
+		Log_Assert(false);
+	}
 }
 
 bool isValidScaleFactor(double value)

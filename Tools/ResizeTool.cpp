@@ -240,14 +240,9 @@ HRESULT ResizeTool::SetImageExtentToFit(const SVImageExtentClass& rImageExtent)
 }
 
 
-SVToolClass* ResizeTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SvPb::SVExtentLocationPropertyEnum ResizeTool::getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
-	{
-		return this;
-	}
-
-	return nullptr;
+	return m_toolExtent.GetLocationPropertyAt(rPoint);
 }
 
 bool ResizeTool::DoesObjectHaveExtents() const

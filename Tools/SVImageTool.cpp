@@ -155,14 +155,9 @@ bool SVImageToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStru
 	return bOk;
 }
 
-SVToolClass* SVImageToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SvPb::SVExtentLocationPropertyEnum SVImageToolClass::getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const
 {
-	if (SvPb::SVExtentLocationPropertyUnknown != m_toolExtent.GetLocationPropertyAt(rPoint))
-	{
-		return this;
-	}
-
-	return nullptr;
+	return m_toolExtent.GetLocationPropertyAt(rPoint);
 }
 
 bool SVImageToolClass::DoesObjectHaveExtents() const

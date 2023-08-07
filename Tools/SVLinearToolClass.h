@@ -40,7 +40,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT SetImageExtentToParent() override;
-	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SvPb::SVExtentLocationPropertyEnum getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const override;
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual std::vector<std::string> getToolAdjustNameList() const override;

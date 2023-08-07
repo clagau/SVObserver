@@ -32,11 +32,7 @@ public:
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtentToFit(const SVImageExtentClass& rImageExtent) override;
 	
-	/// GetObjectAtPoint
-	///  Tests to see if the passed in point (usually from a mouse location)
-	///  is contained within itself (the ROI).  If so it returns itself (this),
-	///  otherwise returns a nullptr.
-	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SvPb::SVExtentLocationPropertyEnum getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const override;
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 

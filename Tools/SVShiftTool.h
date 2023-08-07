@@ -51,7 +51,7 @@ public:
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
-	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SvPb::SVExtentLocationPropertyEnum getLocationPropertyAtPoint(const SVPoint<double>& rPoint) const override;
 	virtual bool DoesObjectHaveExtents() const override;
 	//************************************
 	//! return Flag with enabled Autosize

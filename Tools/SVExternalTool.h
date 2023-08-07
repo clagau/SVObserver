@@ -28,8 +28,6 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
-
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
 	virtual std::vector<std::string> getToolAdjustNameList() const override;

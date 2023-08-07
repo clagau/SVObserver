@@ -335,6 +335,15 @@ protected:
 	HRESULT MarkImageDataUpdated( uint32_t imageId, SVImageView* p_pImageView );
 	HRESULT MarkImageDataDisplayed( uint32_t imageId, SVImageView* p_pImageView );
 
+	/// Try to move the extent for a tool.
+	/// \param rTool [in] tool where the extent have to be changed.
+	/// \param startPoint [in] start point to move.
+	/// \param stopPoint [in] stop point to move.
+	/// \param mousePickLocation [in] location type picked by the mouse (if it not fit to internal location calculation failed.
+	/// \param isAncestorOverlay [in] If movement was done on the ancestor image, this parameter must be true. Then the points will be calculate from ancestor to source image coordinates.
+	/// \param isInView [in] Show that mouse movement was in the view. In this case it try to fit the extent if update failed.
+	/// \returns std::pair<bool, RECT> 1. True if extent updated, if false the next value are undefined. 2. ROI-rect on the move image, if ancestor overlay then on the ancestor image.
+	std::pair<bool, RECT> changeExtents(SvTo::SVToolClass& rTool, const SVPoint<double>& startPoint, const SVPoint<double>& stopPoint, SvPb::SVExtentLocationPropertyEnum mousePickLocation, bool isAncestorOverlay, bool isInView);
 	HRESULT UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
 	HRESULT UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
 
