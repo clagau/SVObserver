@@ -33,7 +33,7 @@ SVStartWindow::SVStartWindow(CWnd* pParent /*=nullptr*/)
 
 	std::string Version = _T("Version ");
 
-	Version += SvSyl::SVVersionInfo::GetVersion();
+	Version += SvSyl::getSvoVersionAsString(false);
 
 	startImage.TextOut( 0.39, 0.60, RGB( 0, 0, 0 ), Version.c_str() );
 }

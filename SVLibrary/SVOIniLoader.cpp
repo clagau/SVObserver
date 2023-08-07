@@ -1,13 +1,7 @@
-// ******************************************************************************
-// * COPYRIGHT (c) 2006 by Körber Pharma Inspection GmbH. All Rights Reserved
-// * All Rights Reserved
-// ******************************************************************************
-// * .Module Name     : SVOIniLoader.cpp
-// * .File Name       : $Workfile:   SVOIniLoader.cpp  $
-// * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   10 Jun 2013 18:08:04  $
-// ******************************************************************************
+/// \copyright (c) 2006,2023 by Körber Pharma Inspection GmbH. All Rights Reserved
+/// \file SVOIniLoader.cpp
+/// All Rights Reserved 
+
 #pragma region Includes
 #include"stdafx.h"
 #include "InitialInformation.h"
@@ -37,6 +31,7 @@ constexpr const char* TriggerEdgeCameraTag = _T("Trigger Edge Camera_{}");
 constexpr const char* StrobeEdgeCameraTag = _T("Strobe Edge Camera_{}");
 constexpr const char* UseStrobeasStartFrameCameraTag = _T("Use Strobe as Start Frame Camera_{}");
 constexpr const char* ShowUpdateFirmwareTag = _T("ShowUpdateFirmware");
+constexpr const char* ReleasedSVOVersionTag = _T("ReleasedSVOVersion");
 constexpr const char* DisplaySectionTag = _T("Display");
 constexpr const char* ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
 constexpr const char* PreTriggerTimeWindowTag = _T("PreTriggerTimeWindow");
@@ -204,13 +199,16 @@ void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 	value = SvimIni.GetValueInt(SettingsTag, EnableTimerResolutionTag, 0);
 	m_rInitialInfo.m_timerResolution = (0 != value);
 
+	m_rInitialInfo.m_ReleasedSvoVersion = SvimIni.GetValueString(SVIMInfoSectionTag, ReleasedSVOVersionTag, _T(""));
+
 	m_rInitialInfo.m_PreloadTimeDelay = SvimIni.GetValueInt(FileAcquisitionSectionTag, PreloadTimeDelay, DefaultPreloadTimeDelay);
 	m_rInitialInfo.m_MaxPreloadFileNumber = SvimIni.GetValueInt(FileAcquisitionSectionTag, MaxPreloadFileNumber, DefaultMaxPreloadFileNumber);
+
 }
 
 HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT hrOk = S_OK;
 
 	SVOINIClass HardwareINI(hardwareIniFile); //@TODO [Arvid][10.00][20.8.2020] hier sollte geprüft werden, ob diese Datei überhaupt existiert! 
 	//aktuell: wenn nicht, erscheint keine Fehlermeldung!
@@ -319,27 +317,27 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 
 	m_rInitialInfo.m_HardwareOptions = HardwareINI.GetValueString(OptionsSectionTag, m_rInitialInfo.m_Options.c_str(), EmptyString);
 
-	bool l_UseFileAcq = !(m_rInitialInfo.m_DigitizerDLL.empty());
-	bool l_UseSoftTrig = !(m_rInitialInfo.m_TriggerResultDll.empty());
+	bool UseFileAcq = !(m_rInitialInfo.m_DigitizerDLL.empty());
+	bool UseSoftTrig = !(m_rInitialInfo.m_TriggerResultDll.empty());
 
 #ifdef _DEBUG
-	l_UseFileAcq = true;
-	l_UseSoftTrig = true;
+	UseFileAcq = true; 	// cppcheck-suppress redundantInitialization
+	UseSoftTrig = true; // cppcheck-suppress redundantInitialization
 #endif
 
-	if (l_UseFileAcq)
+	if (UseFileAcq) // cppcheck-suppress knownConditionTrueFalse
 	{
 		m_rInitialInfo.m_FileAcquisitionDLL = FileAcquisitionDeviceFilename;
 	}
 
-	if (l_UseSoftTrig)
+	if (UseSoftTrig) // cppcheck-suppress knownConditionTrueFalse
 	{
 		m_rInitialInfo.m_SoftwareTriggerDLL = SoftwareTriggerDeviceFilename;
 	}
 
 	m_rInitialInfo.m_CameraTriggerDLL = CameraTriggerDeviceFilename;
 
-	return l_hrOk;
+	return hrOk;
 }
 
 void SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
@@ -359,13 +357,13 @@ void SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
 
 	m_rInitialInfo.m_Trigger.clear();
 
-	int l_iCount = 0;
+	int iCount = 0;
 
 	for (int i = 0; i < CheckModelNumber.size(); i++)
 	{
 		if (::isalnum(CheckModelNumber[i]))
 		{
-			switch (++l_iCount)
+			switch (++iCount)
 			{
 				case 1:
 				case 2:

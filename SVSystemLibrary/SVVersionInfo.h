@@ -2,20 +2,14 @@
 //* COPYRIGHT (c) 2011 by Körber Pharma Inspection GmbH. All Rights Reserved
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVVersionInfo
 //* .File Name       : $Workfile:   SVVersionInfo.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:04:00  $
-//******************************************************************************
 #pragma once
 
 
 
 namespace SvSyl
 {
-	// Version numbering code:
-	//
+	// Version numbering code as used in getSvoVersionAsUnsignedLong()
 	// DwCurrentVersion, Type DWORD
 	// Meaning:		0x00mmssbb => Version m.s  - Beta b 
 	// EXCEPTION:	if b = 255 is the release indicator 
@@ -38,15 +32,8 @@ namespace SvSyl
 
 	};
 
-	class SVVersionInfo
-	{
-	public:
-		static std::string GetVersion();
-		static unsigned long GetLongVersion();
-		static std::string GetShortTitleVersion();
+	std::string getSvoVersionAsString(bool showRcInformation=true);
+	unsigned long getSvoVersionAsUnsignedLong();
+	void setReleasedSvoVersion(const std::string& rReleasedVersionString);
 
-	private:
-		SVVersionInfo() = delete;
-		~SVVersionInfo() = delete;
-	};
 } //namespace SvSyl

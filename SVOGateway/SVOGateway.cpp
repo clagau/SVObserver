@@ -68,7 +68,7 @@ void StartWebServer(DWORD argc, LPTSTR* argv)
 		SvOgw::Settings settings;
 		SvOgw::SettingsLoader settingsLoader;
 		settingsLoader.loadFromIni(settings);
-		settings.httpSettings.ServerVersionString = SvSyl::SVVersionInfo::GetVersion();
+		settings.httpSettings.ServerVersionString = SvSyl::getSvoVersionAsString();
 		settings.httpSettings.Host = "0.0.0.0";
 
 		try

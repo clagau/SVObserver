@@ -60,27 +60,27 @@ SVIOTestApp theApp;
 
 BOOL SVIOTestApp::InitInstance()
 {
-	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
-	CString l_csSystemDir;
+	TCHAR szSystemDir[ MAX_PATH + 1 ];
+	CString csSystemDir;
 
-	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );
-	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
+	::GetSystemDirectory( szSystemDir, MAX_PATH + 1 );
+	csSystemDir.Format( "%s\\OEMINFO.INI", szSystemDir );
 
 	SvLib::InitialInformation initialInfo;
-	SvLib::SVOIniLoader l_iniLoader(initialInfo);
+	SvLib::SVOIniLoader iniLoader(initialInfo);
 
-	l_iniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
+	iniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
-	bool l_bOk = true;
-	HMODULE dllHandle = ::LoadLibrary(l_iniLoader.GetInitialInfo().m_TriggerResultDll.c_str());
+	bool bOk = true;
+	HMODULE dllHandle = ::LoadLibrary(iniLoader.GetInitialInfo().m_TriggerResultDll.c_str());
 	// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 	Sleep(0);
 
-	l_bOk = S_OK == m_svTriggers.Open(dllHandle) && l_bOk;
+	bOk = S_OK == m_svTriggers.Open(dllHandle) && bOk;
 
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital(dllHandle) && l_bOk;
+	bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital(dllHandle) && bOk;
 
-	if ( ! l_bOk )
+	if ( ! bOk )
 	{
 		AfxMessageBox("Dll Not Connected");
 	}
@@ -91,9 +91,9 @@ BOOL SVIOTestApp::InitInstance()
 		m_pMainWnd = &dlg;
 
 		dlg.m_psvTriggers = &m_svTriggers;
-		dlg.m_csDigital = l_iniLoader.GetInitialInfo().m_TriggerResultDll.c_str();
-		dlg.m_csTrigger = l_iniLoader.GetInitialInfo().m_TriggerResultDll.c_str();
-		dlg.m_lSystemType = atol(l_iniLoader.GetInitialInfo().m_IOBoard.c_str());
+		dlg.m_csDigital = iniLoader.GetInitialInfo().m_TriggerResultDll.c_str();
+		dlg.m_csTrigger = iniLoader.GetInitialInfo().m_TriggerResultDll.c_str();
+		dlg.m_lSystemType = atol(iniLoader.GetInitialInfo().m_IOBoard.c_str());
 
 		dlg.DoModal();
 	}

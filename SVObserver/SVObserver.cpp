@@ -169,7 +169,7 @@ SVObserverApp::SVObserverApp() :
 
 	m_AutoRunDelayTime = 1000;
 
-	m_CurrentVersion = SvSyl::SVVersionInfo::GetLongVersion();
+	m_CurrentVersion = SvSyl::getSvoVersionAsUnsignedLong();
 	m_LoadingVersion = 0L;
 
 	m_pCurrentDocument = nullptr;	// Set by current Document!!!
@@ -425,7 +425,7 @@ BOOL SVObserverApp::InitInstance()
 
 	// add message to event viewer - SVObserver Started
 	SvDef::StringVector msgList;
-	msgList.push_back(SvSyl::SVVersionInfo::GetShortTitleVersion());
+	msgList.push_back(SvSyl::getSvoVersionAsString());
 	SvStl::MessageManager Info(SvStl::MsgType::Log);
 	Info.setMessage(SVMSG_SVO_25_SVOBSERVER_STARTED, SvStl::Tid_Version, msgList, SvStl::SourceFileParams(StdMessageParams));
 

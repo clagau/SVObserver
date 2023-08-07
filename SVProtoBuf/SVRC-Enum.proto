@@ -21,8 +21,8 @@ enum ListType
 	all = 3;
 }
 
-///General errors should be reporteted by the errorcode
-//State is usefull for states wich are not errors, or if only a part of bigger message is not valid 
+///General errors should be reported by the errorcode
+//State is useful for states wich are not errors, or if only a part of bigger message is not valid 
 enum State
 {
 	isValid = 0;

@@ -248,7 +248,7 @@ HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 	}
 	if (bResetAll)
 	{
-		//@TODO[MEC][10.20][06.04.2022] Check if next line is usefull
+		//@TODO[MEC][10.20][06.04.2022] Check if next line is useful
 		//m_refOption = SvPb::DirectValue; ?
 		m_directValue = rValue;
 	}

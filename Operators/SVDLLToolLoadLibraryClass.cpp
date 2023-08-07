@@ -296,7 +296,7 @@ namespace SvOp
 
 					try
 					{
-						long version = SvSyl::SVVersionInfo::GetLongVersion() >> 8;
+						long version = SvSyl::getSvoVersionAsUnsignedLong() >> 8;
 						long versionShort = (version >> 8) * 100;
 						versionShort += version & 0xFF;
 						long lTest = m_pfnSimpleTest(versionShort, 2); //the first parameter is the version number of the SVOberver (820 means 8.20).This makes it possible for an external DLL to know the (interface) version of the SVObserver calling it

@@ -1,6 +1,6 @@
 /// \copyright 2023 by Körber Pharma Inspection GmbH. All Rights Reserved.
 /// \file EditLock.cpp
-/// Contains functions for manging EditLocks from the SVObserver side
+/// Contains functions for managing EditLocks from the SVObserver side
 
 #include "stdafx.h"
 #include "EditLock.h"

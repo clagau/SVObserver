@@ -146,7 +146,7 @@ namespace SvMc
 		if (m_Caption.IsEmpty())
 		{
 			m_Caption = "SVObserver ";
-			m_Caption += SvSyl::SVVersionInfo::GetVersion().c_str();
+			m_Caption += SvSyl::getSvoVersionAsString().c_str();
 			m_Caption += " Message";
 		}
 		

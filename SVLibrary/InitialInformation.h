@@ -81,6 +81,9 @@ namespace SvLib
 		std::string m_IOBoard;
 		std::string m_Options;
 		std::string m_ProductName;
+
+		std::string m_ReleasedSvoVersion;
+
 		long m_gigePacketSize{0L};
 
 		SvDef::NakGeneration m_NAKMode{SvDef::NakGeneration::Bursts};

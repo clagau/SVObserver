@@ -46,7 +46,7 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Ta
 	if (false == SvimState::CheckState(notAllowedStates))
 	{
 		SvimState::TemporaryState remoteCmd {SV_STATE_REMOTE_CMD};
-		Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetShortTitleVersion()));
+		Response.set_version(SvUl::to_utf8(SvSyl::getSvoVersionAsString()));
 	}
 	task.finish(std::move(Response));
 }

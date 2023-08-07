@@ -19,6 +19,7 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVLibrary/SVOINILoader.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVSystemLibrary/SVVersionInfo.h"
 #include "Triggering/SVTriggerProcessingClass.h"
 #include "Triggering/SVTriggerConstants.h"
 #pragma endregion Includes
@@ -55,11 +56,11 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 {
 	SvLib::SVOIniLoader IniLoader(m_InitialInfo);
 
-	TCHAR l_szSystemDir[MAX_PATH + 1];
-	CString l_csSystemDir;
+	TCHAR szSystemDir[MAX_PATH + 1];
+	CString csSystemDir;
 
-	::GetSystemDirectory(l_szSystemDir, MAX_PATH + 1);
-	l_csSystemDir.Format("%s\\OEMINFO.INI", l_szSystemDir);
+	::GetSystemDirectory(szSystemDir, MAX_PATH + 1);
+	csSystemDir.Format("%s\\OEMINFO.INI", szSystemDir);
 
 	// clear these variables
 	m_InitialInfo.m_ProductName.clear();
@@ -69,7 +70,7 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 	m_InitialInfo.ResetModelNumberInformation();
 
 	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
-	IniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir, SvStl::GlobalPath::Inst().GetHardwareIniPath());
+	IniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), csSystemDir, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	if (true == IniLoader.isModelNumberDecodable())
 	{
@@ -96,6 +97,8 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 		m_InitializationStatusFlags |= LoadCameraTriggerDLL();
 		m_InitializationStatusFlags |= LoadAcquisitionDLL();
 		m_InitializationStatusFlags |= LoadFileAcquisitionDLL();
+
+		SvSyl::setReleasedSvoVersion(m_InitialInfo.m_ReleasedSvoVersion);
 	}
 	else
 	{
@@ -109,7 +112,7 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 
 HRESULT InitialInformationHandler::LoadTriggerResultDLL()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT hrOk = S_OK;
 
 	if (nullptr != m_triggerDllHandle)
 	{
@@ -129,23 +132,23 @@ HRESULT InitialInformationHandler::LoadTriggerResultDLL()
 
 	if(nullptr != m_triggerDllHandle)
 	{
-		l_hrOk = l_hrOk | LoadDigitalPart();
-		l_hrOk = l_hrOk | LoadTriggerPart();
+		hrOk = hrOk | LoadDigitalPart();
+		hrOk = hrOk | LoadTriggerPart();
 	}
 	else
 	{
 		if (m_InitialInfo.m_IOBoard != _T("00"))
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
+			hrOk = hrOk | SV_HARDWARE_FAILURE_IO;
 		}
 
 		if (m_InitialInfo.m_Trigger != _T("00"))
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
+			hrOk = hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
 	}
 
-	return l_hrOk;
+	return hrOk;
 }
 
 HRESULT InitialInformationHandler::CloseTriggerResultDLL()
@@ -173,33 +176,33 @@ HRESULT InitialInformationHandler::CloseTriggerResultDLL()
 
 HRESULT InitialInformationHandler::LoadSoftwareTriggerDLL()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT hrOk = S_OK;
 
 	if (!m_InitialInfo.m_SoftwareTriggerDLL.empty())
 	{
 		if (S_OK != m_svDLLSoftwareTriggers.Open(m_InitialInfo.m_SoftwareTriggerDLL.c_str()))
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
+			hrOk = hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
 
 		if (S_OK != SvTrig::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLSoftwareTriggers))
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
+			hrOk = hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
 	}
-	return l_hrOk;
+	return hrOk;
 }
 
 HRESULT InitialInformationHandler::LoadCameraTriggerDLL()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT hrOk = S_OK;
 
 	if (!m_InitialInfo.m_CameraTriggerDLL.empty())
 	{
 		HRESULT ResultLoadDLL(m_svDLLCameraTriggers.Open(m_InitialInfo.m_CameraTriggerDLL.c_str()));
 		if (S_OK != ResultLoadDLL)
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
+			hrOk = hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
 		}
 
 		if (S_OK == ResultLoadDLL)
@@ -209,16 +212,16 @@ HRESULT InitialInformationHandler::LoadCameraTriggerDLL()
 			m_svDLLCameraTriggers.SetParameterValue(1, SVIOParameterEnum::SVBoardName, value);
 			if (S_OK != SvTrig::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLCameraTriggers))
 			{
-				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
+				hrOk = hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
 			}
 		}
 	}
-	return l_hrOk;
+	return hrOk;
 }
 
 HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT hrOk = S_OK;
 
 	if (!m_InitialInfo.m_DigitizerDLL.empty())
 	{
@@ -233,14 +236,14 @@ HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 			}
 			else
 			{
-				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+				hrOk = hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
 			}
 		}
 		else
 		{
 			if (S_OK != SvIe::SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_dllDigitizers))
 			{
-				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+				hrOk = hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
 			}
 		}
 	}
@@ -248,11 +251,11 @@ HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 	{
 		if (m_InitialInfo.m_FrameGrabber != _T("00"))
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+			hrOk = hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
 		}
 	}
 
-	return l_hrOk;
+	return hrOk;
 }
 
 
@@ -269,26 +272,26 @@ HRESULT InitialInformationHandler::CloseAcquisitionDLL()
 
 HRESULT InitialInformationHandler::LoadFileAcquisitionDLL()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT hrOk = S_OK;
 
 	if (!m_InitialInfo.m_FileAcquisitionDLL.empty())
 	{
 		if (S_OK != m_dllFileAcquisition.Open(m_InitialInfo.m_FileAcquisitionDLL.c_str()))
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
+			hrOk = hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
 		}
 
 		if (S_OK != SvIe::SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_dllFileAcquisition))
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
+			hrOk = hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
 		}
 	}
-	return l_hrOk;
+	return hrOk;
 }
 
 HRESULT InitialInformationHandler::INIReset()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT hrOk = S_OK;
 
 	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadAcquisitionDLL, _T("Y")))
 	{
@@ -299,18 +302,18 @@ HRESULT InitialInformationHandler::INIReset()
 	{
 		CloseTriggerResultDLL();
 
-		l_hrOk = l_hrOk | LoadTriggerResultDLL();
-		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
-		l_hrOk = l_hrOk | LoadCameraTriggerDLL();
+		hrOk = hrOk | LoadTriggerResultDLL();
+		hrOk = hrOk | LoadSoftwareTriggerDLL();
+		hrOk = hrOk | LoadCameraTriggerDLL();
 	}
 
 	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadAcquisitionDLL, _T("Y")))
 	{
-		l_hrOk = l_hrOk | LoadAcquisitionDLL();
-		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
+		hrOk = hrOk | LoadAcquisitionDLL();
+		hrOk = hrOk | LoadFileAcquisitionDLL();
 	}
 
-	return l_hrOk;
+	return hrOk;
 }
 
 HRESULT InitialInformationHandler::INIClose()
@@ -339,19 +342,19 @@ HRESULT InitialInformationHandler::LoadDigitalPart()
 	}
 	else
 	{	// Send the System type to the IO Board.
-		VARIANT l_vt;
-		l_vt.vt = VT_I4;
+		VARIANT vt;
+		vt.vt = VT_I4;
 
 		// Hardware.ini has the new IOBoardOption.
 		if (!m_InitialInfo.m_IOBoardOption.empty())
 		{
-			l_vt.lVal = atol(m_InitialInfo.m_IOBoardOption.c_str());
-			SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &l_vt);
+			vt.lVal = atol(m_InitialInfo.m_IOBoardOption.c_str());
+			SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &vt);
 		}
 		else
 		{	// Legacy behavior.... Hardware.Ini file does not have new entry...
-			l_vt.lVal = atol(m_InitialInfo.m_IOBoard.c_str());
-			SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &l_vt);
+			vt.lVal = atol(m_InitialInfo.m_IOBoard.c_str());
+			SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &vt);
 		}
 	}
 	return S_OK;
@@ -359,15 +362,15 @@ HRESULT InitialInformationHandler::LoadDigitalPart()
 
 HRESULT InitialInformationHandler::LoadTriggerPart()
 {
-	HRESULT l_hrOk {S_OK};
+	HRESULT hrOk {S_OK};
 	if (S_OK != m_svDLLTriggers.Open(m_triggerDllHandle))
 	{
-		l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
+		hrOk = hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 	}
 
 	if (S_OK != SvTrig::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLTriggers))
 	{
-		l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
+		hrOk = hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 	}
 
 	for (int i = 0; i < 4; i++)
@@ -388,6 +391,6 @@ HRESULT InitialInformationHandler::LoadTriggerPart()
 			m_svDLLTriggers.SetParameterValue(triggerHandle, SVSignalEdge, value);
 		}
 	}
-	return l_hrOk;
+	return hrOk;
 }
 

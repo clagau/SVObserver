@@ -1,15 +1,7 @@
-//*****************************************************************************
-/// \copyright (c) 2018,2018 by Körber Pharma Inspection GmbH. All Rights Reserved
-/// \file AutoBuild.h
-/// All Rights Reserved 
-//*****************************************************************************
-//******************************************************************************
 /// \copyright (c) 2012,2018 by Körber Pharma Inspection GmbH. All Rights Reserved
-/// \file Autobuild.h
 /// All Rights Reserved
-//******************************************************************************
-/// The version for SVO Gateway application
-//******************************************************************************
+/// \file Autobuild.h
+/// This is the version of the SVO Gateway application
 
 #pragma once
 

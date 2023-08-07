@@ -319,14 +319,14 @@ BOOL SVMainFrame::PreCreateWindow( CREATESTRUCT& cs )
 
 void SVMainFrame::SetStatusInfoText( LPCTSTR SIText )
 {
-	size_t l_Size = ( nullptr != SIText ) ? ::strlen( SIText ) : 0;
+	size_t Size = ( nullptr != SIText ) ? ::strlen( SIText ) : 0;
 
-	if( 0 < l_Size )
+	if( 0 < Size )
 	{
 		CClientDC DC( nullptr );
-		int l_Width = DC.GetTextExtent( SIText, static_cast<int>(l_Size) ).cx - static_cast< int >( static_cast< double >( l_Size ) * 1.5 );
+		int Width = DC.GetTextExtent( SIText, static_cast<int>(Size) ).cx - static_cast< int >( static_cast< double >( Size ) * 1.5 );
 
-		m_wndStatusBar.SetPaneInfo( 1, ID_INDICATOR_INFO, 0, l_Width );
+		m_wndStatusBar.SetPaneInfo( 1, ID_INDICATOR_INFO, 0, Width );
 		m_wndStatusBar.SetPaneText( 1, SIText );
 		m_wndStatusBar.Invalidate();
 	}
@@ -363,7 +363,7 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 	// copy first part of title loaded at time of frame creation
 	TCHAR szText[ 256 +_MAX_PATH ];
 
-	CString l_Version = SvSyl::SVVersionInfo::GetShortTitleVersion().c_str();
+	CString Version = SvSyl::getSvoVersionAsString().c_str();
 
 	if( GetStyle() & FWS_PREFIXTITLE )
 	{
@@ -382,13 +382,13 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 		}
 		lstrcat( szText, m_strTitle );
 		lstrcat( szText, " " );
-		lstrcat( szText, l_Version );
+		lstrcat( szText, Version );
 	}
 	else
 	{
 		lstrcpy( szText, m_strTitle );
 		lstrcat( szText, " " );
-		lstrcat( szText, l_Version );
+		lstrcat( szText, Version );
 
 		// Get title of currently active SVC
 		if( SvimState::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) )
@@ -527,7 +527,7 @@ void SVMainFrame::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void SVMainFrame::OnClose()
 {
-	bool l_bAllowAccess = false;
+	bool bAllowAccess = false;
 
 	if ( SvimState::CheckState( SV_STATE_REGRESSION ) )
 	{
@@ -542,15 +542,15 @@ void SVMainFrame::OnClose()
 			SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) )
 		{
 			OnStop();
-			l_bAllowAccess = true;
+			bAllowAccess = true;
 		}
 	}
 	else if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) )
 	{
-		l_bAllowAccess = true;
+		bAllowAccess = true;
 	}
 
-	if( l_bAllowAccess )
+	if( bAllowAccess )
 	{
 		if( SvimState::CheckState( SV_STATE_TEST ) )
 		{
@@ -777,7 +777,7 @@ void SVMainFrame::OnStopTestMode()
 
 void SVMainFrame::OnModeEdit()
 {
-	bool l_bAllowAccess = false;
+	bool bAllowAccess = false;
 
 	if (SvimState::CheckState(SV_STATE_EDIT | SV_STATE_REMOTE_CMD))
 	{
@@ -797,15 +797,15 @@ void SVMainFrame::OnModeEdit()
 			SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 		{
 			OnStop();
-			l_bAllowAccess = true;
+			bAllowAccess = true;
 		}
 	}
 	else if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 	{
-		l_bAllowAccess = true;
+		bAllowAccess = true;
 	}
 
-	if (l_bAllowAccess)
+	if (bAllowAccess)
 	{
 		if (!SvimState::CheckState(SV_STATE_EDIT))
 		{
@@ -1193,7 +1193,7 @@ void SVMainFrame::OnUpdateAllIOViews()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnAppExit()
 {
-	bool l_bAllowAccess = true;
+	bool bAllowAccess = true;
 
 	if (SvimState::CheckState(SV_STATE_REGRESSION))
 	{
@@ -1206,15 +1206,15 @@ void SVMainFrame::OnAppExit()
 			SECURITY_POINT_FILE_MENU_EXIT))
 		{
 			OnStop();
-			l_bAllowAccess = true;
+			bAllowAccess = true;
 		}
 		else
 		{
-			l_bAllowAccess = false;
+			bAllowAccess = false;
 		}
 	}
 
-	if (l_bAllowAccess)
+	if (bAllowAccess)
 	{
 		TheSVObserverApp().OnAppExitWrapper();
 	}
@@ -1568,11 +1568,11 @@ void SVMainFrame::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI)
 {
 	if (pCmdUI->m_pSubMenu)
 	{
-		bool l_bEnable = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP) ||
+		bool bEnable = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP) ||
 			(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN) &&
 				!SvimState::CheckState(SV_STATE_RUNNING));
-		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
+		unsigned int uiGray = bEnable ? 0 : MF_GRAYED;
+		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | uiGray);
 	}
 	else
 	{
@@ -1608,33 +1608,33 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 		}
 		case ID_INDICATOR_USER:  // Status Bar User
 		{
-			BSTR l_bstUser = nullptr;
-			CString l_strUser = _T("User: ");
+			BSTR bstUser = nullptr;
+			CString strUser = _T("User: ");
 			if( TheSecurityManager().SVGetUseLogon() )
 			{
-				TheSecurityManager().SVGetUser( l_bstUser );
-				if( nullptr != l_bstUser )
+				TheSecurityManager().SVGetUser( bstUser );
+				if( nullptr != bstUser )
 				{
-					l_strUser += l_bstUser;
-					::SysFreeString( l_bstUser );
+					strUser += bstUser;
+					::SysFreeString( bstUser );
 				}
 			}
 			pCmdUI->Enable();
 
 			CClientDC DC( nullptr );
-			int l_Width = DC.GetTextExtent( l_strUser ).cx - ( l_strUser.GetLength() * 2 );
+			int Width = DC.GetTextExtent( strUser ).cx - ( strUser.GetLength() * 2 );
 
-			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_USER, 0, l_Width );
-			pCmdUI->SetText( l_strUser );
+			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_USER, 0, Width );
+			pCmdUI->SetText( strUser );
 
 			break;
 		}
 		case ID_INDICATOR_MODE:  // Status Bar Mode
 		{
 			std::string Mode = _T("Mode: ");
-			unsigned long l_lMode = 0;
-			GlobalRCGetMode( &l_lMode );
-			switch( l_lMode )
+			unsigned long lMode = 0;
+			GlobalRCGetMode( &lMode );
+			switch( lMode )
 			{
 				case SvPb::DeviceModeType::available:
 				{
@@ -1704,9 +1704,9 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 			pCmdUI->Enable();
 
 			CClientDC DC( nullptr );
-			int l_Width = DC.GetTextExtent( Mode.c_str() ).cx - static_cast<int> ( Mode.size() * 2 );
+			int Width = DC.GetTextExtent( Mode.c_str() ).cx - static_cast<int> ( Mode.size() * 2 );
 
-			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_MODE, 0, l_Width );
+			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_MODE, 0, Width );
 			pCtrl->SetText( Mode.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW );
 
 			break;
@@ -1723,13 +1723,13 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 		}
 		case ID_INDICATOR_GIGE_LICENSE_ERROR:
 		{
-			bool l_bMatroxError = false;
-			bool l_bGigeError = false;
+			bool bMatroxError = false;
+			bool bGigeError = false;
 			std::string Error;
 
 			if ( !SVOLicenseManager::Instance().HasMatroxLicense() )
 			{
-				l_bMatroxError = true;
+				bMatroxError = true;
 				Error += cMatroxNoLicense;
 			}
 			else
@@ -1740,13 +1740,13 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 				}
 			}
 
-			if ( (l_bMatroxError) || (l_bGigeError) )
+			if ( (bMatroxError) || (bGigeError) )
 			{
 				m_wndStatusBar.m_strErrorText = Error.c_str();
 
 				pCmdUI->Enable();
 
-				if (l_bMatroxError) 
+				if (bMatroxError) 
 				{
 					m_wndStatusBar.m_lErrorBKColor = SvDef::LightRed;
 					m_wndStatusBar.m_lErrorForeColor = SvDef::Black;
@@ -1968,11 +1968,11 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 
 	// Update the IO views. 
 
-	SVIODoc* l_pIODoc( GetTheIODoc() );
+	SVIODoc* pIODoc( GetTheIODoc() );
 
-	if( nullptr != l_pIODoc )
+	if( nullptr != pIODoc )
 	{
-		l_pIODoc->UpdateAllViews( nullptr );
+		pIODoc->UpdateAllViews( nullptr );
 	}// end if
 
 	TheSVObserverApp().UpdateAllMenuExtrasUtilities();
@@ -2046,11 +2046,11 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 		}
 
 		// check for pixel depth change
-		int l_PixelDepth(0);
-		hr = SVDirectX::GetPrimarySurfacePixelDepth(l_PixelDepth);
+		int PixelDepth(0);
+		hr = SVDirectX::GetPrimarySurfacePixelDepth(PixelDepth);
 		if (hr == DD_OK)
 		{
-			if (p_p1 / 8 != l_PixelDepth)
+			if (p_p1 / 8 != PixelDepth)
 			{
 				bResolutionChanged = true;
 			}
@@ -2113,7 +2113,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 		}
 
 		// if pixel depth changed - show mesage...
-		if ( p_p1 / 8 != l_PixelDepth )
+		if ( p_p1 / 8 != PixelDepth )
 		{
 			if( WAIT_TIMEOUT == WaitForSingleObject( m_hDisplayChangedEvent, 0 ) )
 			{

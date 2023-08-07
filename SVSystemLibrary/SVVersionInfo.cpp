@@ -1,16 +1,7 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2011 by Körber Pharma Inspection GmbH. All Rights Reserved
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVVersionInfo
-//* .File Name       : $Workfile:   SVVersionInfo.cpp  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2014 06:08:38  $
-//******************************************************************************
+/// \copyright COPYRIGHT (c) 2011,2023 by Körber Pharma Inspection GmbH. All Rights Reserved
+/// \file BlobAnalyzer2.cpp
+
 #include "stdafx.h"
-//Moved to precompiled header: #include <iomanip>
-//Moved to precompiled header: #include <sstream>
 #include "SVVersionInfo.h"
 
 #pragma comment (lib, "version.lib")
@@ -23,6 +14,9 @@ auto constexpr c_GitIdentifier = 0;
 
 namespace SvSyl
 {
+
+std::string g_releasedVersionString = _T("");
+
 bool getFileInfo(VS_FIXEDFILEINFO& rFileInfo)
 {
 	bool isValid = false;
@@ -50,7 +44,7 @@ bool getFileInfo(VS_FIXEDFILEINFO& rFileInfo)
 	return isValid;
 }
 
-std::string SVVersionInfo::GetVersion()
+std::string getSvoVersionAsString(bool showRcInformation)
 {
 	std::string Result;
 
@@ -69,97 +63,37 @@ std::string SVVersionInfo::GetVersion()
 		}
 		else if (patchOrSvnNumber >= 100)
 		{
-			buf << _T(", Revision ") << patchOrSvnNumber;
-		}
-
-		auto alphaOrBetaNumber = LOWORD(fileInfo.dwFileVersionLS);
-		if (alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
-		{
-			buf << _T(" Beta ") << std::setfill('0') << std::setw(3) << alphaOrBetaNumber;
-		}
-		else if (alphaOrBetaNumber > 1000)
-		{
-			buf << _T(" Alpha ") << std::setfill('0') << std::setw(3) << alphaOrBetaNumber;
-		}
-
-		Result = buf.str();
-	}
-
-
-#ifdef _DEBUG
-	Result += _T("d");        // For debug builds.
-#endif
-
-	if (c_instrumentedForBullseye)
-	{
-		Result += c_bullseyeVersionInfoString;
-	}
-
-	return Result;
-}
-
-unsigned long SVVersionInfo::GetLongVersion()
-{
-	unsigned long l_Version = 0;
-
-	VS_FIXEDFILEINFO fileInfo;
-	bool isValid = getFileInfo(fileInfo);
-	if (isValid)
-	{
-		SVVersionUnion l_TempVersion;
-		l_TempVersion.m_VersionParts.m_Unused = 0;
-		l_TempVersion.m_VersionParts.m_Major = static_cast<unsigned char>(std::min< WORD >(HIWORD(fileInfo.dwFileVersionMS), 255));
-		l_TempVersion.m_VersionParts.m_Minor = static_cast<unsigned char>(std::min< WORD >(LOWORD(fileInfo.dwFileVersionMS), 255));
-		l_TempVersion.m_VersionParts.m_Beta = static_cast<unsigned char>(std::min< WORD >(LOWORD(fileInfo.dwFileVersionLS), 255));
-
-		l_Version = l_TempVersion.m_Version;
-	}
-
-	return l_Version;
-}
-
-std::string SVVersionInfo::GetShortTitleVersion()
-{
-	std::string Result;
-
-	VS_FIXEDFILEINFO fileInfo;
-	bool isValid = getFileInfo(fileInfo);
-	if (isValid)
-	{
-		std::stringstream buf;
-
-		buf << HIWORD(fileInfo.dwFileVersionMS);
-		buf << _T(".");
-		buf << std::setfill('0') << std::setw(2) << LOWORD(fileInfo.dwFileVersionMS);
-
-		//Patch number when between 1-99,  SVN revision number when >= 100
-		auto patchOrSvnNumber = HIWORD(fileInfo.dwFileVersionLS);
-		if (patchOrSvnNumber > 0 && patchOrSvnNumber < 100)
-		{
-			buf << _T(".") << patchOrSvnNumber;
-		}
-		else if (patchOrSvnNumber >= 100)
-		{
 			buf << _T("r") << patchOrSvnNumber;
 		}
-
 		if (0 != c_GitIdentifier)
 		{
 			buf << _T("[") << std::hex << c_GitIdentifier << std::dec << _T("]");
 		}
+		
+		auto basicVersionString = buf.str(); // I.e., without alpha, beta or RC information
 
-		auto alphaOrBetaNumber = LOWORD(fileInfo.dwFileVersionLS);
-		// this signifies a beta if nonzero and below 255 and an alpha if above 1001
-		if (alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
+		auto alphaOrBetaOrRcIndex = LOWORD(fileInfo.dwFileVersionLS); // cf. Autobuild.h
+		if (alphaOrBetaOrRcIndex > 0 && alphaOrBetaOrRcIndex < 255)
 		{
-			buf << _T("b") << alphaOrBetaNumber;
+			buf << _T(" beta ") << alphaOrBetaOrRcIndex;
 		}
-		else if (alphaOrBetaNumber > 1000)
+		else if (alphaOrBetaOrRcIndex > 1000)
 		{
-			buf << _T("ALPHA") << alphaOrBetaNumber;
+			buf << _T(" ALPHA ") << alphaOrBetaOrRcIndex;
+		}
+		else if (true == showRcInformation)
+		{
+			buf << _T(" Release Candidate ") << alphaOrBetaOrRcIndex;
 		}
 
-		Result = buf.str();
+		if (buf.str() == g_releasedVersionString)
+		{
+			Result = basicVersionString;
+		}
+		else
+		{
+			Result = buf.str();
+		}
 	}
 
 #ifdef _DEBUG
@@ -173,5 +107,33 @@ std::string SVVersionInfo::GetShortTitleVersion()
 
 	return Result;
 }
+
+
+void setReleasedSvoVersion(const std::string& rReleasedVersionString)
+{
+	g_releasedVersionString = rReleasedVersionString;
+}
+
+
+unsigned long getSvoVersionAsUnsignedLong()
+{
+	unsigned long Version = 0;
+
+	VS_FIXEDFILEINFO fileInfo;
+	bool isValid = getFileInfo(fileInfo);
+	if (isValid)
+	{
+		SVVersionUnion TempVersion;
+		TempVersion.m_VersionParts.m_Unused = 0;
+		TempVersion.m_VersionParts.m_Major = static_cast<unsigned char>(std::min< WORD >(HIWORD(fileInfo.dwFileVersionMS), 255));
+		TempVersion.m_VersionParts.m_Minor = static_cast<unsigned char>(std::min< WORD >(LOWORD(fileInfo.dwFileVersionMS), 255));
+		TempVersion.m_VersionParts.m_Beta = static_cast<unsigned char>(std::min< WORD >(LOWORD(fileInfo.dwFileVersionLS), 255));
+
+		Version = TempVersion.m_Version;
+	}
+
+	return Version;
+}
+
 } //namespace SvSyl
 

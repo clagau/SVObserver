@@ -81,7 +81,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_Version += SvSyl::SVVersionInfo::GetVersion().c_str();
+	m_Version += SvSyl::getSvoVersionAsString().c_str();
 	UpdateData(false);
 
 	return true;  // return TRUE  unless you set the focus to a control

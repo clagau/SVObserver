@@ -66,7 +66,7 @@ BOOL SVAboutDialogClass::OnInitDialog()
 		CString Version = appTitle;
 		
 		Version += _T( " " );
-		Version += SvSyl::SVVersionInfo::GetVersion().c_str();
+		Version += SvSyl::getSvoVersionAsString().c_str();
 
 		pWnd->SetWindowText( Version );
 	}
