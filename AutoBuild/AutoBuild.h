@@ -20,7 +20,7 @@
 //		if > 1000: alpha
 //		otherwise: release candidate
 
-#define FILEVER        10,38,0,256
+#define FILEVER        10,40,0,6
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
