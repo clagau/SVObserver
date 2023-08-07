@@ -50,7 +50,7 @@ void FramedSplitterWnd::OnDrawSplitter(CDC* pDC, ESplitType nType, const CRect& 
 		}
 
 		SVImageViewScroll* pScrollView = dynamic_cast<SVImageViewScroll*>(pView);
-		if(nullptr == pScrollView )
+		if(nullptr == pScrollView && nullptr != pView)
 		{
 			pScrollView = dynamic_cast<SVImageViewScroll*>(pView->GetParent());
 		}
