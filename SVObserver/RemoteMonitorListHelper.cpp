@@ -43,6 +43,9 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 
 void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject, SvSml::MonitorEntryData &data)
 {
+	data.wholeArray = rMonitoredObject.m_objectRef.isEntireArray();
+	data.isArray = rMonitoredObject.m_objectRef.isArray();
+	data.arrayIndex = rMonitoredObject.m_objectRef.ArrayIndex();
 	if (auto* pFinalObj = rMonitoredObject.m_objectRef.getFinalObject(); nullptr != pFinalObj)
 	{
 		data.ObjectType = pFinalObj->GetObjectType();

@@ -24,6 +24,7 @@ public:
 #pragma region Public Methods
 public:
 	virtual void Persist(SvOi::IObjectWriter& rWriter, bool closeObject = true) const override;
+	virtual bool CloseObject() override;
 
 	virtual HRESULT Read( _variant_t& rValue ) const override;
 	virtual long GetChannel() const override { return m_Channel; }

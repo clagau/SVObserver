@@ -124,6 +124,10 @@ HRESULT SVInputObjectList::DetachInput(uint32_t inputID)
 	auto iter = m_inputObjectMap.find(inputID);
 	if(iter != m_inputObjectMap.end())
 	{
+		if (iter->second)
+		{
+			iter->second->CloseObject();
+		}
 		m_inputObjectMap.erase(iter);
 	}
 

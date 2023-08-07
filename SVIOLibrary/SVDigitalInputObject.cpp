@@ -57,6 +57,13 @@ void SVDigitalInputObject::Persist(SvOi::IObjectWriter& rWriter, bool /*closeObj
 	svVariant.Clear();
 }
 
+bool SVDigitalInputObject::CloseObject()
+{
+	__super::CloseObject();
+	m_ValueObject.CloseObject();
+	return true;
+}
+
 HRESULT SVDigitalInputObject::Read( _variant_t& rValue ) const
 {
 	HRESULT result{S_OK};
