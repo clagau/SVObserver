@@ -222,7 +222,7 @@ BOOL CreateInputResultDlg::OnInitDialog()
 	{
 		std::vector<SvOgu::GroupInputResultData> inputOldDataList;
 		loadDataList(inputOldDataList, m_inputValueCtrl, SvPb::ExternalInputEId, SvPb::InputObjectTypeEId, {});
-		if (SvDef::c_maxTableColumn < inputOldDataList.size() + m_inputMap.size())
+		if (SvDef::c_maxNumberOfParameter < inputOldDataList.size() + m_inputMap.size())
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, {SvOgu::c_inputName}, SvStl::SourceFileParams(StdMessageParams));
@@ -237,7 +237,7 @@ BOOL CreateInputResultDlg::OnInitDialog()
 	{
 		std::vector<SvOgu::GroupInputResultData> resultOldDataList;
 		loadDataList(resultOldDataList, m_resultValueCtrl, SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, {});
-		if (SvDef::c_maxTableColumn < resultOldDataList.size() + m_resultMap.size())
+		if (SvDef::c_maxNumberOfParameter < resultOldDataList.size() + m_resultMap.size())
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, {SvOgu::c_resultName}, SvStl::SourceFileParams(StdMessageParams));

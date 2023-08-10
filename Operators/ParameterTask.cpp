@@ -26,7 +26,7 @@ namespace SvOp
 
 	namespace
 	{
-	constexpr long cMaxNumberOfObjects = 50;
+	constexpr long cMaxNumberOfObjects = SvDef::c_maxNumberOfParameter;
 	constexpr const char* cObjectTypeEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5,States=6");
 	constexpr const char* cTypeNamePostfix = _T(" Type");
 	const std::array<std::string, 3> g_forbiddenNames {"Number of Objects" /*IDS_OBJECTNAME_NUMBER_OF_OBJECTS*/, "State" /*IDS_OBJECTNAME_STATUS*/, "Color" /*IDS_OBJECTNAME_COLOR*/};

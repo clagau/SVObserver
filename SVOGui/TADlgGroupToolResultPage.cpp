@@ -608,7 +608,7 @@ void TADlgGroupToolResultPage::UpdateEnableButtons()
 	}
 	GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(bRemoveEnable);
 
-	if (SvDef::c_maxTableColumn > m_resultData.size())
+	if (SvDef::c_maxNumberOfParameter > m_resultData.size())
 	{
 		GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(true);
 	}

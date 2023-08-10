@@ -135,7 +135,7 @@ bool addEntry(uint32_t ipId, uint32_t taskId, const std::string& firstNameTry, s
 		return false;
 	}
 
-	if (rDataList.size() < SvDef::c_maxTableColumn)
+	if (rDataList.size() < SvDef::c_maxNumberOfParameter)
 	{
 		GroupInputResultData& rData {rDataList.emplace_back(firstNameTry)};
 		int additionalValue = 1;
@@ -153,7 +153,7 @@ void loadDataList(std::vector<GroupInputResultData>& rDataList, ValueController&
 	rDataList.clear();
 	rValueCtrl.Init();
 
-	for (int i = 0; SvDef::c_maxTableColumn > i; ++i)
+	for (int i = 0; SvDef::c_maxNumberOfParameter > i; ++i)
 	{
 		if (0 == rValueCtrl.GetAllowedAttributeFlags(valueEId + i))
 		{	//stop loading values, because it is hidden.

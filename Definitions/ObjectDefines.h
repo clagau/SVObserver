@@ -30,6 +30,7 @@ namespace SvDef
 	constexpr UINT defaultValueObjectAttributes = viewableAndUseable | SvPb::ObjectAttributes::audittrail;
 	
 	constexpr int c_maxTableColumn = 50;
+	constexpr int c_maxNumberOfParameter = 100;
 	constexpr int c_numberOfSortFeature = 3;
 	constexpr int c_maxLoopGroupDepth = 3;
 } //namespace SvDef
