@@ -233,6 +233,13 @@ message ModuleData
 	int32 number_of_instances = 5;
 }
 
+message ExistingModule
+{
+	string name = 1;
+	repeated History oldHistory = 2;
+	repeated History newHistory = 3;
+}
+
 //***************************************************************************
 // InspectionCommands - can be send with method InspectionCommands
 //***************************************************************************
@@ -1185,6 +1192,18 @@ message ImportModuleRequest
 {
 	string name = 1;
 	string dataString = 2;
+	bool overwriteAllowed = 3;
+}
+
+message ImportModuleResponse
+{
+	string name = 1;
+	string guid = 2;
+	oneof error
+	{
+	MessageContainer invalidName = 3;
+	ExistingModule existing = 4;
+	}
 }
 
 message ExportModuleRequest
@@ -1403,5 +1422,6 @@ message InspectionCmdResponse
 		ExportModuleResponse exportModuleResponse = 60;
 		FixInputsAndGetInputListResponse fixInputsAndGetInputListResponse = 61;
 		GetSourceResultImageListResponse getSourceResultImageListResponse = 62; 
+		ImportModuleResponse importModuleResponse = 63;
 		}
 }

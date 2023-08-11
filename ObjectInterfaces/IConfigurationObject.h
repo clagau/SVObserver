@@ -36,8 +36,13 @@ SvPb::InspectionCmdResponse startEditModule(uint32_t moduleToolId);
 SvPb::InspectionCmdResponse saveEditModule(uint32_t moduleToolId, const std::string& rChangeText);
 SvPb::InspectionCmdResponse cancelEditModule(uint32_t moduleToolId);
 SvPb::InspectionCmdResponse renameModule(SVGUID moduleGuid, const std::string& newName);
-SvPb::InspectionCmdResponse importModule(const std::string& moduleName, const std::string& moduleContainerStr);
+SvPb::InspectionCmdResponse importModule(const std::string& moduleName, const std::string& moduleContainerStr, bool overwriteAllowed);
 SvPb::InspectionCmdResponse exportModule(SVGUID moduleGuid);
+
+///  Update module instances to the current active modules.
+/// \param rListOfNewTools [inout] List of tools instances to check and updated. If instance changed, the new objectId will be changed in the list.
+/// \param rModules [in] List of the GUIDs of the Modules which has to be updated.
+void updateModuleInstances(std::vector<uint32_t>& rListOfNewTools, const std::vector<SVGUID>& rModules);
 
 void registerModuleInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const HistoryList& rHistoryList, bool checkComment);
 void unregisterModuleInstance(SVGUID guid, uint32_t instanceId);

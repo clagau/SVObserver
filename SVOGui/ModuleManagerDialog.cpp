@@ -17,6 +17,7 @@
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVMessage/SVMessage.h"
 #include "FilesystemUtilities/FilepathUtilities.h"
+#include "ModuleDifferenceDialog.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -28,6 +29,14 @@ static char THIS_FILE[] = __FILE__;
 
 namespace
 {
+std::vector<std::pair<time_t, std::string>> getHistory(const ::google::protobuf::RepeatedPtrField<::SvPb::History>& rHistory)
+{
+	std::vector<std::pair<time_t, std::string>> historyList;
+	std::ranges::transform(rHistory, std::back_inserter(historyList),
+				   [](const auto& rHistory) -> std::pair<time_t, std::string> { return {rHistory.time(), rHistory.comment()}; });
+	return historyList;
+}
+
 SvOg::ModuleDataList getModuleData()
 {
 	SvOg::ModuleDataList dataList;
@@ -37,13 +46,8 @@ SvOg::ModuleDataList getModuleData()
 	HRESULT hr = SvCmd::InspectionCommands(SvDef::InvalidObjectId, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getmodulelistresponse())
 	{
-		for (const auto& rEntry : responseCmd.getmodulelistresponse().list())
-		{
-			std::vector<std::pair<time_t, std::string>> m_historyList;
-			std::transform(rEntry.historylist().begin(), rEntry.historylist().end(), std::back_inserter(m_historyList),
-						   [](const auto& rHistory) -> std::pair<time_t, std::string> { return {rHistory.time(), rHistory.comment()}; });
-			dataList.emplace_back(rEntry.name(), SVGUID {rEntry.guid()}, rEntry.number_of_instances(), rEntry.comment(), std::move(m_historyList));
-		}
+		std::ranges::transform(responseCmd.getmodulelistresponse().list(), std::back_inserter(dataList),
+				   [](const auto& rEntry) -> SvOg::ModuleData { return {rEntry.name(), SVGUID {rEntry.guid()}, rEntry.number_of_instances(), rEntry.comment(), std::move(getHistory(rEntry.historylist()))}; });
 	}
 	return dataList;
 }
@@ -98,22 +102,15 @@ BOOL ModuleManagerDialog::OnInitDialog()
 	return TRUE;
 }
 
+
 void ModuleManagerDialog::OnSelchangeList()
 {
 	int index = getSelectedIndex();
 	if (0 <= index && m_moduleList.size() > index)
 	{
 		m_strComment = m_moduleList[index].m_comment.c_str();
-		m_strHistory = "";
-		std::string guidForFirstLine {m_moduleList[index].m_guid.ToString()};
-		for (const auto& rPair : m_moduleList[index].m_historyList)
-		{
-			char mbstr[100];
-			std::strftime(mbstr, sizeof(mbstr), "%c", std::localtime(&rPair.first));
-			
-			m_strHistory = (std::string {mbstr} + ": " + rPair.second + guidForFirstLine + "\r\n").c_str() + m_strHistory;
-			guidForFirstLine = "";
-		}
+		m_strHistory = createHistoryText(m_moduleList[index].m_historyList, m_moduleList[index].m_guid.ToString());
+
 		GetDlgItem(IDC_DELETE)->EnableWindow(0 == m_moduleList[index].m_numberOfUse);
 		GetDlgItem(IDC_EXPORT)->EnableWindow(true);
 		GetDlgItem(IDC_RENAME)->EnableWindow(true);
@@ -174,13 +171,14 @@ std::string scanModuleName(const std::string& pathName)
 	return pathName.substr(startPos, endPos - startPos);
 }
 
-SvPb::InspectionCmdResponse importModule(const std::string& moduleName, const std::string& moduleContainerStr)
+SvPb::InspectionCmdResponse importModule(const std::string& moduleName, const std::string& moduleContainerStr, bool isAllowedToOverwrite)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_importmodulerequest();
 	pRequest->set_name(moduleName);
 	pRequest->set_datastring(moduleContainerStr);
+	pRequest->set_overwriteallowed(isAllowedToOverwrite);
 	SvCmd::InspectionCommands(SvDef::InvalidObjectId, requestCmd, &responseCmd);
 	return responseCmd;
 }
@@ -219,32 +217,57 @@ void ModuleManagerDialog::OnImportModule()
 		return;
 	}
 
-	auto response = importModule(moduleName, data);
+	bool shouldExistingModuleOverwrite = false;
+	auto response = importModule(moduleName, data, shouldExistingModuleOverwrite);
 	while (S_OK != response.hresult())
 	{
-		SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(response.errormessage());
-		if (errorMsgContainer.size() > 0)
+		if (response.has_importmoduleresponse())
 		{
-			if (SvStl::Tid_ModuleNameExistAlready == errorMsgContainer[0].getMessage().m_AdditionalTextId || SvStl::Tid_NameContainsInvalidChars == errorMsgContainer[0].getMessage().m_AdditionalTextId)
+			const auto& importResponse = response.importmoduleresponse();
+			switch (importResponse.error_case())
 			{
-				EnterStringDlg nameDlg {moduleName,  SvCmd::checkNewModuleName, "Name invalid or exists already, choose new Module Name", this};
-				if (IDOK != nameDlg.DoModal())
+				case SvPb::ImportModuleResponse::kInvalidName:
 				{
-					return;
+					EnterStringDlg nameDlg {moduleName,  SvCmd::checkNewModuleName, "Name invalid or exists already, choose new Module Name", this};
+					if (IDOK != nameDlg.DoModal())
+					{
+						return;
+					}
+					moduleName = nameDlg.getString();
+					response = importModule(moduleName, data, shouldExistingModuleOverwrite);
+					break;
 				}
-				moduleName = nameDlg.getString();
-				response = importModule(moduleName, data);
-			}
-			else
-			{
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(errorMsgContainer.at(0).getMessage());
-				return;
+				case SvPb::ImportModuleResponse::kExisting:
+				{
+
+					CString currentHistory = createHistoryText(getHistory(importResponse.existing().oldhistory()), "");
+					CString newHistory = createHistoryText(getHistory(importResponse.existing().newhistory()), "");
+					ModuleDifferenceDialog diffDlg {currentHistory, newHistory, importResponse.existing().name()};
+					auto retVal = diffDlg.DoModal();
+					if (IDNO == retVal || IDCANCEL == retVal)
+					{
+						return;
+					}
+					shouldExistingModuleOverwrite = true;
+					response = importModule(moduleName, data, shouldExistingModuleOverwrite);
+					break;
+				}
+				default:
+					Log_Assert(false);
+					break;
 			}
 		}
 		else
 		{
-			Log_Assert(false);
+			SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(response.errormessage());
+			if (errorMsgContainer.size() == 0)
+			{
+				Log_Assert(false);
+				return;
+			}
+			
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(errorMsgContainer.at(0).getMessage());
 			return;
 		}
 	}

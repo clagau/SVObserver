@@ -91,7 +91,7 @@ void findDependencyFiles(const std::string& rToolXmlString, std::back_insert_ite
 {
 	size_t StartPos(0);
 	size_t EndPos(0);
-	std::string SearchString(SvStl::GlobalPath::Inst().GetRunPath().c_str());
+	std::string SearchString(SvStl::GlobalPath::Inst().GetRunPath());
 	SearchString += _T("\\");
 
 	std::string ToolXmlString(rToolXmlString); // working on copy of the xml string keeps changes local to this function
@@ -105,7 +105,7 @@ void findDependencyFiles(const std::string& rToolXmlString, std::back_insert_ite
 		StartPos = ToolXmlString.find("\\\\");
 	}
 
-	StartPos = ToolXmlString.find(SearchString.c_str(), EndPos);
+	StartPos = ToolXmlString.find(SearchString, EndPos);
 
 	while (std::string::npos != StartPos)
 	{
@@ -113,7 +113,7 @@ void findDependencyFiles(const std::string& rToolXmlString, std::back_insert_ite
 		if (std::string::npos != EndPos)
 		{
 			inserter = ToolXmlString.substr(StartPos, EndPos - StartPos);
-			StartPos = ToolXmlString.find(SearchString.c_str(), EndPos);
+			StartPos = ToolXmlString.find(SearchString, EndPos);
 		}
 		else
 		{
@@ -184,19 +184,40 @@ std::string getModuleNameFromPath(const std::string& path)
 	return name;
 }
 
-void importModuleAndRemoveFromList(SvDef::StringVector& containedFilepaths)
+google::protobuf::RepeatedField<SvPb::ImportModuleResponse> importModuleAndRemoveFromList(SvDef::StringVector& containedFilepaths, std::vector<SVGUID> overwriteModules, std::vector<SVGUID> keepModules)
 {
+	google::protobuf::RepeatedField<SvPb::ImportModuleResponse> retValue;
 	auto iter = std::ranges::find_if(containedFilepaths, [](const auto& rPath){ return rPath.ends_with(SvO::ModuleExtension); });
 	while (containedFilepaths.end() != iter)
 	{
 		auto data = SvFs::readContentFromFile(*iter, true);
 		auto name = getModuleNameFromPath(*iter);
 
-		SvOi::importModule(name, data);
-
+		auto cmd = SvOi::importModule(name, data, false);
+		if (cmd.has_importmoduleresponse())
+		{
+			bool addCmd = true;
+			if (cmd.importmoduleresponse().has_existing())
+			{
+				SVGUID guid {cmd.importmoduleresponse().guid()};
+				if (std::ranges::any_of(overwriteModules, [guid](const auto& rEntry) { return rEntry == guid; }))
+				{
+					cmd = SvOi::importModule(name, data, true);
+				}
+				else if(std::ranges::any_of(keepModules, [guid](const auto& rEntry) { return rEntry == guid; }))
+				{
+					addCmd = false;
+				}
+			}
+			if (addCmd)
+			{
+				*(retValue.Add()) = cmd.importmoduleresponse();
+			}
+		}
 		containedFilepaths.erase(iter);
 		iter = std::ranges::find_if(containedFilepaths, [](const auto& rPath){ return rPath.ends_with(SvO::ModuleExtension); });
 	}
+	return retValue;
 }
 
 std::string readClipboardData()
@@ -438,7 +459,7 @@ HRESULT ToolExportImport::writeToolDataToClipboard(const std::vector<uint32_t>& 
 	return result;
 }
 
-std::string ToolExportImport::readlToolDataFromClipboard()
+std::string ToolExportImport::createFileFromClipboard()
 {
 	std::string ClipboardData = readClipboardData();
 
@@ -446,11 +467,7 @@ std::string ToolExportImport::readlToolDataFromClipboard()
 	clipboardZipFile += SvO::ExportToolsName;
 	clipboardZipFile += SvO::ZipExtension;
 	SvFs::writeStringToFile(clipboardZipFile, ClipboardData, false);
-
-	std::string result = importTools(clipboardZipFile.c_str());
-	::DeleteFile(clipboardZipFile.c_str());
-
-	return result;
+	return clipboardZipFile;
 }
 
 HRESULT ToolExportImport::exportTools(const std::vector<uint32_t>& rToolIds, LPCTSTR exportfileName, LPCTSTR xmlFileName, bool includeModuleFiles) const
@@ -470,7 +487,7 @@ HRESULT ToolExportImport::exportTools(const std::vector<uint32_t>& rToolIds, LPC
 	return result;
 }
 
-std::string ToolExportImport::importTools(LPCTSTR fileName) const
+std::pair<std::string, google::protobuf::RepeatedField<SvPb::ImportModuleResponse>> ToolExportImport::prepareImportTools(LPCTSTR fileName, const std::vector<SVGUID>& overwriteModules, const std::vector<SVGUID>& keepModules) const
 {
 	SvDef::StringVector containedFilepaths;
 	if (SvUl::unzipAll(fileName, SvStl::GlobalPath::Inst().GetTempPath(), containedFilepaths) == false)
@@ -487,11 +504,12 @@ std::string ToolExportImport::importTools(LPCTSTR fileName) const
 		xmlFile = *iter;
 	}
 
-	importModuleAndRemoveFromList(containedFilepaths);
+
+	auto cmdList = importModuleAndRemoveFromList(containedFilepaths, overwriteModules, keepModules);
 
 	SvFs::moveFilesToFolder(containedFilepaths, SvStl::GlobalPath::Inst().GetRunPath(), xmlFile);
 
-	return SvFs::readContentFromFile(xmlFile);
+	return {SvFs::readContentFromFile(xmlFile), cmdList};
 }
 
 std::vector<uint32_t> ToolExportImport::createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId, bool onlySameVersionValid /*= true*/, bool useExplorerStyle /*= true*/)
@@ -730,7 +748,7 @@ HRESULT ToolExportImport::replaceUniqueIds(std::string& rXmlData, SvXml::SVXMLMa
 
 			while (pos != std::string::npos)
 			{
-				size_t endPos = rXmlData.find("}", pos + 1);
+				size_t endPos = rXmlData.find('}', pos + 1);
 				if (endPos == std::string::npos)
 				{
 					Log_Assert(false);

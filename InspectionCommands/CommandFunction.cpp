@@ -2363,7 +2363,7 @@ SvPb::InspectionCmdResponse renameModule(SvPb::RenameModuleRequest request)
 
 SvPb::InspectionCmdResponse importModule(SvPb::ImportModuleRequest request)
 {
-	return SvOi::importModule(request.name(), request.datastring());
+	return SvOi::importModule(request.name(), request.datastring(), request.overwriteallowed());
 }
 
 SvPb::InspectionCmdResponse exportModule(SvPb::ExportModuleRequest request)

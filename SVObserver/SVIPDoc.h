@@ -130,7 +130,13 @@ public:
 	//Returns a Id of the ToolsetList.
 	uint32_t GetObjectIdFromToolToInsertBefore(const std::string& rName) const;
 
-	void updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uint32_t postID, uint32_t ownerID, const std::string& rSelectedName = _T(""));
+	///  Update tool set view and fix some stuff.
+	/// \param rPastedToolIDs [inout] List of tool instances which was added. If an instance is changed in this method, the corresponding objectId will be replaced by the new one.
+	/// \param postID [in] New tools must be added before tool with is id.
+	/// \param ownerID [in] Id of the owner of this tools.
+	/// \param rReloadModuleList [in] List of Module GUIDs for which the pasted objects have to reloaded with the current module data.
+	/// \param rSelectedName [in] Needed for the old tool grouping. Obsolete
+	void updateToolsetView(std::vector<uint32_t>& rPastedToolIDs, uint32_t postID, uint32_t ownerID, const std::vector<SVGUID>& rReloadModuleList = {}, const std::string& rSelectedName = _T(""));
 
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened. // @WARNING:  bad practice making members public
 

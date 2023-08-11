@@ -24,6 +24,7 @@
 #include "FilesystemUtilities/FilepathUtilities.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "Definitions/TextDefinesSvDef.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace
@@ -616,39 +617,9 @@ void ModuleController::saveEditModule(uint32_t toolId, const std::string& rChang
 			iter->m_comment = pModuleTool->getModuleComment();
 			pModuleTool->setHistory(iter->m_historyList);
 			createModuleFile(*pModuleTool, iter->m_name, m_xmlFilePath);
-			std::set<SVInspectionProcess*> resetIPList;
-			for (auto list = iter->m_moduleInstanceIds; auto id : list) //list will be changed, during switch, copy list before it will be used.
-			{
-				if (toolId != id)
-				{
-					auto* pModuleTool2 = dynamic_cast<SvTo::ModuleTool*>(SVObjectManagerClass::Instance().GetObject(id));
-					if (nullptr != pModuleTool2)
-					{
-						auto oldComment = pModuleTool2->getComment();
-						if (auto* pInsp = dynamic_cast<SVInspectionProcess*>(pModuleTool2->GetInspection()); pInsp)
-						{
-							resetIPList.insert(pInsp);
-						}
-						pModuleTool2 = switchModuleToAnotherVersion(iter->m_name, m_xmlFilePath, *pModuleTool2);
-						Log_Assert(pModuleTool2);
-						if (pModuleTool2)
-						{
-							pModuleTool2->setComment(oldComment);
-						}
-					}
-					else
-					{
-						Log_Assert(false);
-					}
-				}				
-			}
-			for (auto* pInsp : resetIPList)
-			{
-				//This is needed that the images is set correctly in TRC
-				pInsp->resetAllObjects();
-				pInsp->resetAllObjects();
-				pInsp->RunOnce(); //This is needed to update the overlays
-			}
+			auto list = iter->m_moduleInstanceIds;
+			std::erase(list, toolId);
+			switchListOfModuleInstancesToAnotherVersion(list, iter->m_name);
 		}		
 	}
 	else
@@ -850,8 +821,9 @@ std::string ModuleController::getModuleName(SVGUID guid) const
 	return {};
 }
 
-void ModuleController::importModule(const std::string& moduleName, const std::string& moduleContainerStr)
+SvPb::InspectionCmdResponse ModuleController::importModule(std::string moduleName, const std::string& moduleContainerStr, bool overwriteAllowed)
 {
+	SvPb::InspectionCmdResponse cmd;
 	auto tmpName = SvStl::GlobalPath::Inst().GetTempPath("Temp.svm");
 	::DeleteFile(tmpName.c_str());
 	SvFs::writeStringToFile(tmpName, moduleContainerStr, false);
@@ -865,31 +837,67 @@ void ModuleController::importModule(const std::string& moduleName, const std::st
 
 	auto xmlData = SvFs::readContentFromFile(m_xmlFilePath, false);
 
+	bool overwriteModule = false;
 	ModuleData data = getModuleData(xmlData);
+	cmd.mutable_importmoduleresponse()->set_name(moduleName);
+	cmd.mutable_importmoduleresponse()->set_guid(data.m_guid.ToString());
 	auto iter = std::ranges::find_if(m_moduleList, [data](const auto& rEntry) { return rEntry.m_guid == data.m_guid; });
 	if (m_moduleList.end() != iter)
 	{
-		for (const auto& rEntry : containedFilepaths)
+		if (iter->m_historyList != data.m_historyList && overwriteAllowed)
 		{
-			::DeleteFile(rEntry.c_str());
+			overwriteModule = true;
+			moduleName = iter->m_name;
+			data.m_moduleInstanceIds = iter->m_moduleInstanceIds;
 		}
-		::DeleteFile(tmpName.c_str());
-		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleExistAlready, {iter->m_name}, SvStl::SourceFileParams(StdMessageParams));
-		e.Throw();
-	}
+		else
+		{
+			for (const auto& rEntry : containedFilepaths)
+			{
+				::DeleteFile(rEntry.c_str());
+			}
+			::DeleteFile(tmpName.c_str());
+			if (iter->m_historyList == data.m_historyList)
+			{
+				return {};
+			}
 
-	checkIfNameValid(moduleName);
-	if (std::ranges::any_of(m_moduleList, [moduleName](const auto& rEntry) { return rEntry.m_name == moduleName; }))
-	{
-		for (const auto& rEntry : containedFilepaths)
-		{
-			::DeleteFile(rEntry.c_str());
+			
+			cmd.set_hresult(E_FAIL);
+			auto* pExistingMsg = cmd.mutable_importmoduleresponse()->mutable_existing();
+			pExistingMsg->set_name(iter->m_name);
+			for (const auto& rHist : iter->m_historyList)
+			{
+				auto* pHist = pExistingMsg->add_oldhistory();
+				pHist->set_time(rHist.first);
+				pHist->set_comment(rHist.second);
+			}
+			for (const auto& rHist : data.m_historyList)
+			{
+				auto* pHist = pExistingMsg->add_newhistory();
+				pHist->set_time(rHist.first);
+				pHist->set_comment(rHist.second);
+			}
+			return cmd;
 		}
-		::DeleteFile(tmpName.c_str());
-		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNameExistAlready, SvStl::SourceFileParams(StdMessageParams));
-		e.Throw();
+	}
+	else
+	{
+		try
+		{
+			checkIfNameValid(moduleName);
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			for (const auto& rEntry : containedFilepaths)
+			{
+				::DeleteFile(rEntry.c_str());
+			}
+			::DeleteFile(tmpName.c_str());
+			SvPb::convertMessageToProtobuf(rExp, cmd.mutable_importmoduleresponse()->mutable_invalidname());
+			cmd.set_hresult(E_FAIL);
+			return cmd;
+		}
 	}
 
 	if (moduleName != data.m_name)
@@ -902,6 +910,11 @@ void ModuleController::importModule(const std::string& moduleName, const std::st
 
 	::DeleteFile(tmpName.c_str());
 	const auto moduleFilePath = getModulePath(moduleName);
+	if (overwriteModule)
+	{
+		::DeleteFile(moduleFilePath.c_str());
+	}
+
 	if (!SvUl::makeZipFile(moduleFilePath, containedFilepaths, _T(""), true))
 	{
 		for (const auto& rEntry : containedFilepaths)
@@ -913,12 +926,20 @@ void ModuleController::importModule(const std::string& moduleName, const std::st
 	}
 
 	AddFileToConfig(moduleFilePath.c_str());
-	m_moduleList.push_back(std::move(data));
+	if (overwriteModule)
+	{
+		*iter = data;
+		switchListOfModuleInstancesToAnotherVersion(data.m_moduleInstanceIds, moduleName);
+	}
+	else
+	{
+		m_moduleList.push_back(std::move(data));
+	}
+	return cmd;
 }
 
 SvPb::InspectionCmdResponse ModuleController::exportModule(SVGUID moduleGuid) const
 {
-	
 	auto iter = std::ranges::find_if(m_moduleList, [moduleGuid](const auto& rEntry) { return rEntry.m_guid == moduleGuid; });
 	if (m_moduleList.end() != iter && std::filesystem::exists(getModulePath(iter->m_name)))
 	{
@@ -930,4 +951,70 @@ SvPb::InspectionCmdResponse ModuleController::exportModule(SVGUID moduleGuid) co
 	
 	SvStl::MessageContainer msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ModuleNotFound, SvStl::SourceFileParams(StdMessageParams));
 	throw msg;
+}
+
+void ModuleController::updateModuleInstances(std::vector<uint32_t>& rListOfNewTools, const std::vector<SVGUID>& rModules)
+{
+	for (auto& id : rListOfNewTools)
+	{
+		auto* pModuleTool = dynamic_cast<SvTo::ModuleTool*>(SVObjectManagerClass::Instance().GetObject(id));
+		if (nullptr != pModuleTool)
+		{
+			auto guid = pModuleTool->getModuleGuid();
+			auto oldComment = pModuleTool->getComment();
+			if (std::ranges::any_of(rModules, [guid](const auto& rEntry) { return guid == rEntry; }))
+			{
+				auto iter = std::ranges::find_if(m_moduleList, [guid](const auto& rEntry) { return rEntry.m_guid == guid; });
+				if (m_moduleList.end() != iter)
+				{
+					pModuleTool = switchModuleToAnotherVersion(iter->m_name, m_xmlFilePath, *pModuleTool);
+					if (pModuleTool)
+					{
+						id = pModuleTool->getObjectId();
+						pModuleTool->setComment(oldComment);
+					}
+				}
+				else
+				{
+					//This case should never happen: The module must be there - otherwise it would not be rejected.
+					Log_Assert(false);
+				}
+			}
+		}
+	}
+}
+
+void ModuleController::switchListOfModuleInstancesToAnotherVersion(const std::vector<uint32_t>& rList, const std::string& rModuleName)
+{
+	std::set<SVInspectionProcess*> resetIPList;
+	for (auto id : rList)
+	{
+		auto* pModuleTool2 = dynamic_cast<SvTo::ModuleTool*>(SVObjectManagerClass::Instance().GetObject(id));
+		if (nullptr != pModuleTool2)
+		{
+			auto oldComment = pModuleTool2->getComment();
+			if (auto* pInsp = dynamic_cast<SVInspectionProcess*>(pModuleTool2->GetInspection()); pInsp)
+			{
+				resetIPList.insert(pInsp);
+			}
+			pModuleTool2 = switchModuleToAnotherVersion(rModuleName, m_xmlFilePath, *pModuleTool2);
+			Log_Assert(pModuleTool2);
+			if (pModuleTool2)
+			{
+				pModuleTool2->setComment(oldComment);
+			}
+		}
+		else
+		{
+			Log_Assert(false);
+		}
+	}
+
+	for (auto* pInsp : resetIPList)
+	{
+		//This is needed to ensure that the images are set correctly in the TRC
+		pInsp->resetAllObjects();
+		pInsp->resetAllObjects();
+		pInsp->RunOnce(); //This is needed to update the overlays
+	}
 }

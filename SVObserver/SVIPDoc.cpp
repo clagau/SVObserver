@@ -56,6 +56,7 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/InputConflictDlg.h"
+#include "SVOGui/ModuleDifferenceDialog.h"
 #include "SVOGui/ModuleManagerDialog.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
 #include "SVOGui/SVAdjustToolSizePositionDlg.h"
@@ -1336,6 +1337,66 @@ void SVIPDoc::OnUpdateExportTools(CCmdUI* pCmdUI)
 	pCmdUI->Enable(Enabled);
 }
 
+std::pair<std::vector<uint32_t>, std::vector<SVGUID>> importTools(LPCTSTR fileName, uint32_t ownerId)
+{
+	std::vector<SVGUID> keepModules, overwriteModules;
+	ToolExportImport toolClipboard;
+	bool redoAddModules = false;
+	auto [XmlData, resultValues] = toolClipboard.prepareImportTools(fileName, {}, {});
+	for (const auto& importResponse : resultValues)
+	{
+		switch (importResponse.error_case())
+		{
+			case SvPb::ImportModuleResponse::kExisting:
+			{
+				CString currentHistory = SvOg::createHistoryText(importResponse.existing().oldhistory(), importResponse.guid());
+				CString newHistory = SvOg::createHistoryText(importResponse.existing().newhistory(), importResponse.guid());
+				SvOg::ModuleDifferenceDialog diffDlg {currentHistory, newHistory, importResponse.existing().name()};
+				switch (diffDlg.DoModal())
+				{
+					case IDNO:
+						keepModules.push_back(SVGUID{importResponse.guid()});
+						break;
+					case IDYES:
+						redoAddModules = true;
+						overwriteModules.push_back(SVGUID {importResponse.guid()});
+						break;
+					case IDCANCEL:
+					{
+						for (const auto& importResponseTmp : resultValues)
+						{
+							if (SvPb::ImportModuleResponse::ERROR_NOT_SET == importResponseTmp.error_case())
+							{
+								SvOi::deleteModule(SVGUID{importResponseTmp.guid()});
+							}
+						}
+						return {};
+					}
+					default:
+						Log_Assert(false);
+						break;
+				}
+				break;
+			}
+			case SvPb::ImportModuleResponse::ERROR_NOT_SET: //no error nothing to do
+				break;
+			default:
+				Log_Assert(false);
+				break;
+		}
+	}
+	if (redoAddModules)
+	{
+		std::tie(XmlData, resultValues) = toolClipboard.prepareImportTools(fileName, overwriteModules, keepModules);
+		if (XmlData.empty())
+		{
+			Log_Assert(false);
+		}
+	}
+	auto toolList = toolClipboard.createToolsFromXmlData(XmlData, ownerId, false);
+	return {toolList, keepModules};
+}
+
 void SVIPDoc::OnImportTools()
 {
 	if (!SvimState::CheckState(SV_STATE_READY) || !SvimState::CheckState(SV_STATE_EDIT))
@@ -1403,7 +1464,6 @@ void SVIPDoc::OnImportTools()
 			break;
 	}
 
-	ToolExportImport toolClipboard;
 	try
 	{
 		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
@@ -1412,8 +1472,7 @@ void SVIPDoc::OnImportTools()
 		fileDlg.m_ofn.lpstrTitle = _T("Select File");
 		if (fileDlg.DoModal() == IDOK)
 		{
-			auto XmlData = toolClipboard.importTools(fileDlg.GetPathName().GetString());
-			auto pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerId, false);
+			auto [pastedToolIDs, redoModules] = importTools(fileDlg.GetPathName().GetString(), ownerId);
 			if (pastedToolIDs.empty() == false)
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLCLIPBOARD)
@@ -1427,7 +1486,7 @@ void SVIPDoc::OnImportTools()
 				ss << _T("\n");
 				::OutputDebugString(ss.str().c_str());
 #endif
-				updateToolsetView(pastedToolIDs, postToolId, ownerId, pNavElement->m_DisplayName);
+				updateToolsetView(pastedToolIDs, postToolId, ownerId, redoModules, pNavElement->m_DisplayName);
 			}
 		}
 	}
@@ -1724,11 +1783,11 @@ void SVIPDoc::OnEditPaste()
 			break;
 	}
 
-	ToolExportImport toolClipboard;
 	try
 	{
-		auto XmlData = toolClipboard.readlToolDataFromClipboard();
-		auto pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerId);
+		auto fileName = ToolExportImport::createFileFromClipboard();
+		auto [pastedToolIDs, redoModules] = importTools(fileName.c_str(), ownerId);
+		::DeleteFile(fileName.c_str());
 		if (pastedToolIDs.empty() == false)
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLCLIPBOARD)
@@ -1742,7 +1801,7 @@ void SVIPDoc::OnEditPaste()
 			ss << _T("\n");
 			::OutputDebugString(ss.str().c_str());
 #endif
-			updateToolsetView(pastedToolIDs, postToolId, ownerId, pNavElement->m_DisplayName);
+			updateToolsetView(pastedToolIDs, postToolId, ownerId, redoModules, pNavElement->m_DisplayName);
 		}
 	}
 	catch (const SvStl::MessageContainer& rSvE)
@@ -1769,7 +1828,7 @@ void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
 }
 
 
-void SVIPDoc::updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uint32_t postID, uint32_t ownerID, const std::string& rSelectedName)
+void SVIPDoc::updateToolsetView(std::vector<uint32_t>& rPastedToolIDs, uint32_t postID, uint32_t ownerID, const std::vector<SVGUID>& rReloadModuleList, const std::string& rSelectedName)
 {
 	bool anythingAdded = false;
 
@@ -1838,6 +1897,7 @@ void SVIPDoc::updateToolsetView(const std::vector<uint32_t>& rPastedToolIDs, uin
 			pTool->resetAllObjects();
 		}
 	}
+	SvOi::updateModuleInstances(rPastedToolIDs, rReloadModuleList);
 
 	if (false == anythingAdded)
 	{

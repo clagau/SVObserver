@@ -850,7 +850,7 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 		SVDataDefinitionStructVector DataDefinitionList;
 
 		std::string InspectionName = SvUl::to_ansi(rRequest.inspectionname());
-		SVDataDefinitionListType DataDefinitionType = static_cast<SVDataDefinitionListType> (rRequest.type());
+		auto DataDefinitionType = static_cast<SVDataDefinitionListType> (rRequest.type());
 
 		{
 			SvimState::TemporaryState remoteCmd {SV_STATE_REMOTE_CMD};
@@ -1549,7 +1549,7 @@ void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::b
 		long toolPos {-1};
 		if (SvPb::SVToolObjectType == pObject->GetObjectType())
 		{
-			SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (pObject);
+			auto* pTool = dynamic_cast<SvOi::ITool*> (pObject);
 			if (nullptr != pTool)
 			{
 				toolPos = pTool->getToolPosition();
@@ -1628,38 +1628,53 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		{
 			if (toolClipboardDataPresent())
 			{
-				ToolExportImport toolClipboard;
 				uint32_t postID {rRequest.objectid()};
 				SvOi::IObjectClass* pObject = SvOi::getObject(postID);
 				if (nullptr != pObject)
 				{
 					uint32_t ownerID = pObject->GetParentID();
 					std::vector<uint32_t> pastedToolIDs;
-					HRESULT result {S_OK};
+					ToolExportImport toolClipboard;
 
 					{
 						SvimState::TemporaryState remoteCmd {SV_STATE_REMOTE_CMD};
-						auto XmlData = toolClipboard.readlToolDataFromClipboard();
+						auto clipboardZipFile = toolClipboard.createFileFromClipboard();
+						auto [XmlData, resultValues] = toolClipboard.prepareImportTools(clipboardZipFile.c_str(), {}, {});
+						::DeleteFile(clipboardZipFile.c_str());
+						for (const auto& importResponse : resultValues)
+						{
+							switch (importResponse.error_case())
+							{
+								case SvPb::ImportModuleResponse::kExisting:
+								{
+									SvStl::MessageManager message(SvStl::MsgType::Log);
+									message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ModuleExistAlready, {importResponse.name()}, SvStl::SourceFileParams(StdMessageParams));
+									convertMessageToProtobuf(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
+									pResponse->set_hresult(E_FAIL);
+									return;
+								}
+								case SvPb::ImportModuleResponse::kInvalidName:
+									pResponse->mutable_errormessages()->add_messages()->CopyFrom(importResponse.invalidname());
+									pResponse->set_hresult(E_FAIL);
+									return;
+								case SvPb::ImportModuleResponse::ERROR_NOT_SET: //no error nothing to do
+								default:
+									break;
+							}
+						}
+						
 						if (false == XmlData.empty())
 						{
 							pastedToolIDs = toolClipboard.createToolsFromXmlData(XmlData, ownerID);
 						}
 					}
-					pResponse->set_hresult(result);
-					if (S_OK == result)
+					pResponse->set_hresult(S_OK);
+					SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
+					///@WARNING [gra][10.10][21.05.2021] SVIPDoc should be done in the inspection commands
+					SVIPDoc* pDoc = (nullptr != pInspection) ? GetIPDocByInspectionID(pInspection->getObjectId()) : nullptr;
+					if (nullptr != pDoc)
 					{
-						SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
-						///@WARNING [gra][10.10][21.05.2021] SVIPDoc should be done in the inspection commands
-						SVIPDoc* pDoc = (nullptr != pInspection) ? GetIPDocByInspectionID(pInspection->getObjectId()) : nullptr;
-						if (nullptr != pDoc)
-						{
-							pDoc->updateToolsetView(pastedToolIDs, postID, ownerID);
-						}
-					}
-					else
-					{
-						const auto& rMessage = toolClipboard.getLastErrorMessage().getMessageContainer();
-						convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
+						pDoc->updateToolsetView(pastedToolIDs, postID, ownerID);
 					}
 				}
 			}

@@ -223,7 +223,7 @@ bool SVConfigurationObject::RemoveTrigger(SvTrig::SVTriggerObject* pTrigger)
 {
 	if (nullptr == pTrigger) { return false; }
 
-	int iSize = static_cast<int> (m_arTriggerArray.size());
+	auto iSize = m_arTriggerArray.size();
 	for (int i = 0; i < iSize; i++)
 	{
 		if (pTrigger == m_arTriggerArray[i])
@@ -494,7 +494,7 @@ bool SVConfigurationObject::RemovePPQ(const SVPPQObject* const pPPQ)
 {
 	if (nullptr == pPPQ) { return false; }
 
-	int Size = static_cast<int> (m_arPPQArray.size());
+	auto Size = m_arPPQArray.size();
 	for (int i = 0; i < Size; i++)
 	{
 		if (pPPQ == m_arPPQArray[i])
@@ -557,7 +557,7 @@ bool SVConfigurationObject::GetPPQByName(LPCTSTR name, SVPPQObject** ppPPQ) cons
 	//Only do an assert check so that in release mode no check is made
 	Log_Assert(nullptr != ppPPQ);
 
-	int Size = static_cast<int> (m_arPPQArray.size());
+	auto Size = m_arPPQArray.size();
 	for (int i = 0; i < Size && !bReturn; i++)
 	{
 		SVPPQObject* pPPQ = m_arPPQArray[i];
@@ -590,7 +590,7 @@ bool SVConfigurationObject::RemoveCamera(SvIe::SVVirtualCamera* pCamera)
 {
 	if (nullptr == pCamera) { return false; }
 
-	int iSize = static_cast<int> (m_arCameraArray.size());
+	auto iSize = m_arCameraArray.size();
 	for (int i = 0; i < iSize; i++)
 	{
 		if (pCamera == m_arCameraArray[i])
@@ -1024,7 +1024,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 					}
 
 					pOutput = m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get();
-					SVDigitalOutputObject* pDigitalOutput = dynamic_cast<SVDigitalOutputObject*> (pOutput);
+					auto* pDigitalOutput = dynamic_cast<SVDigitalOutputObject*> (pOutput);
 					if (nullptr != pDigitalOutput)
 					{
 						pDigitalOutput->SetChannel(channel);
@@ -1044,7 +1044,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 				else if (SvPb::PlcOutputObjectType == ioType)
 				{
 					pOutput = m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get();
-					PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (pOutput);
+					auto* pPlcOutput = dynamic_cast<PlcOutputObject*> (pOutput);
 					if (nullptr != pPlcOutput)
 					{
 						pPlcOutput->SetChannel(channel);
@@ -1270,7 +1270,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 									{
 										l_BandData = Value;
 
-										int lSize = static_cast<int>(l_BandData.size());
+										auto lSize = static_cast<int>(l_BandData.size());
 
 										if (!bLutCreated)
 										{
@@ -1284,7 +1284,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 									{
 										SvUl::SVSAFEARRAY l_Param(Value);
 
-										long lSize = static_cast<long>(l_Param.size());
+										auto lSize = l_Param.size();
 										// copy safearray to SVLutTransformParameters
 										for (long l = 0; l < lSize; l++)
 										{
@@ -1343,7 +1343,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 					{
 						SVCameraFormat cf;
 
-						cf.ParseAndAssignCameraFormat(pParam->strValue.c_str());
+						cf.ParseAndAssignCameraFormat(pParam->strValue);
 
 						// Band number depends on video type...
 						switch (cf.m_eImageType)
@@ -1428,7 +1428,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 								MsgCont.setMessage(SVMSG_SVO_IGNORE_EXCEPTION, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 								throw MsgCont;
 							}
-							else if (S_OK != CameraFileResult && ERROR_FILE_NOT_FOUND != CameraFileResult)
+							if (S_OK != CameraFileResult && ERROR_FILE_NOT_FOUND != CameraFileResult)
 							{
 								SvStl::MessageContainer MsgCont;
 								SvDef::StringVector msgList;
@@ -1531,7 +1531,7 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType& rTree, long& lNumCameras, b
 
 		std::string ItemName = rTree.getBranchName(hSubChild);
 
-		SvIe::SVVirtualCamera* pCamera = new SvIe::SVVirtualCamera;
+		auto* pCamera = new SvIe::SVVirtualCamera;
 		bOk = nullptr != pCamera;
 		if (bOk)
 		{
@@ -1672,7 +1672,7 @@ bool SVConfigurationObject::LoadTrigger(SVTreeType& rTree)
 	{
 		std::string ItemName = rTree.getBranchName(hSubChild);
 
-		SvTrig::SVTriggerObject* pTrigger = new SvTrig::SVTriggerObject;
+		auto* pTrigger = new SvTrig::SVTriggerObject;
 		bOk = nullptr != pTrigger;
 		if (bOk)
 		{
@@ -1877,7 +1877,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 	{
 		std::string ItemName = rTree.getBranchName(hSubChild);
 
-		SVPPQObject* pPPQ = new SVPPQObject;
+		auto* pPPQ = new SVPPQObject;
 		if (nullptr == pPPQ)
 		{
 			SvStl::MessageContainer MsgCont;
@@ -2380,7 +2380,7 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial(SVTreeType& rTree, SVTreeT
 	{
 	case DeviceParamCameraFormats:
 	{
-		SVCameraFormatsDeviceParam* pcf = dynamic_cast<SVCameraFormatsDeviceParam*> (pParam);
+		auto* pcf = dynamic_cast<SVCameraFormatsDeviceParam*> (pParam);
 		SVTreeType::SVBranchHandle hParam(nullptr);
 		if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_OPTIONS, hParent, hChild))
 		{
@@ -2650,7 +2650,7 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 		inputEntryVector = m_pInputObjectList->getInputList();
 	}
 
-	long lInSize = static_cast<long>(inputEntryVector.size());
+	auto lInSize = inputEntryVector.size();
 	long lCount = 0;
 
 	for (long lIn = 0; lIn < lInSize; lIn++)
@@ -3361,7 +3361,7 @@ void SVConfigurationObject::SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter,
 	{
 	case DeviceParamCameraFormats:
 	{
-		const SVCameraFormatsDeviceParam* pcf = dynamic_cast<const SVCameraFormatsDeviceParam*> (pParam);
+		const auto* pcf = dynamic_cast<const SVCameraFormatsDeviceParam*> (pParam);
 		std::string Parameter(SvXml::CTAG_OPTIONS);
 		rWriter.StartElement(Parameter.c_str());
 
@@ -3946,7 +3946,7 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 
 							if (l_Iter->second.m_StorageType == SVVisionProcessor::SVStorageImageFileName)
 							{
-								SvIe::SVImageClass* l_pImage = dynamic_cast<SvIe::SVImageClass*>(ObjectRef.getObject());
+								auto* l_pImage = dynamic_cast<SvIe::SVImageClass*>(ObjectRef.getObject());
 
 								if (nullptr != l_pImage)
 								{
@@ -4221,7 +4221,7 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 						{
 							LoopStatus = pValueObject->setValue(Iter->second.m_Variant);
 
-							SvIe::SVVirtualCamera* pVirtualCamera = dynamic_cast<SvIe::SVVirtualCamera*> (pValueObject->GetParent());
+							auto* pVirtualCamera = dynamic_cast<SvIe::SVVirtualCamera*> (pValueObject->GetParent());
 							if (nullptr != pVirtualCamera)
 							{
 								cameraChangedVector.emplace_back(pVirtualCamera);
@@ -4668,7 +4668,7 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList(SVTreeType& rTree)
 		hSubChild = rTree.getFirstBranch(hChild);
 		while (S_OK == result && nullptr != hSubChild)
 		{
-			std::string ppqName = "";
+			std::string ppqName;
 			int rejectDepth = 0;
 
 			std::string listName(rTree.getBranchName(hSubChild));
@@ -4937,7 +4937,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 			{
 				std::string Name = std::format(_T("DIO.Input{:d}"), l + 1);
 
-				SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l).get());
+				auto* pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l).get());
 
 				if (nullptr != pInput)
 				{
@@ -4954,7 +4954,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 		SVOutputObjectList* pOutputObjectList = GetOutputObjectList();
 		if (nullptr != pOutputObjectList)
 		{
-			SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::FqnEnvironmentModuleReady, SvPb::SVDigitalOutputObjectType, SvDef::cModuleReadyChannel).get());
+			auto* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::FqnEnvironmentModuleReady, SvPb::SVDigitalOutputObjectType, SvDef::cModuleReadyChannel).get());
 
 			if (nullptr != pOutput && nullptr != GetModuleReady())
 			{
@@ -4965,7 +4965,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 				}
 				pOutput->SetChannel(SvDef::cModuleReadyChannel);
 				SvOi::IValueObject* pValueObj = GetModuleReady()->getValueObject();
-				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (pValueObj);
+				auto* pObject = dynamic_cast<SvOi::IObjectClass*> (pValueObj);
 				if (nullptr != pObject)
 				{
 					pOutput->SetValueObjectID(pObject->getObjectId());
@@ -5067,7 +5067,7 @@ void SVConfigurationObject::UpdateAuditFiles(bool calculateHash)
 	std::vector<std::string> Filenames = SvFs::FileHelperManager::Instance().GetFileNameList();
 	///remove current config file 
 	std::string ConfigFilename, webAppIdsFilename;
-	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
+	auto* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	if (pApp)
 	{
 		ConfigFilename = GetFullSvxFileName();
@@ -5453,12 +5453,11 @@ SvPb::InspectionCmdResponse SvOi::renameModule(SVGUID moduleGuid, const std::str
 	return calcConfigFunction(func);
 }
 
-SvPb::InspectionCmdResponse SvOi::importModule(const std::string& moduleName, const std::string& moduleContainerStr)
+SvPb::InspectionCmdResponse SvOi::importModule(const std::string& moduleName, const std::string& moduleContainerStr, bool overwriteAllowed)
 {
-	auto func = [moduleName, moduleContainerStr](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
+	auto func = [moduleName, moduleContainerStr, overwriteAllowed](SVConfigurationObject& rConfig) -> SvPb::InspectionCmdResponse
 	{
-		rConfig.getModuleController().importModule(moduleName, moduleContainerStr);
-		return {};
+		return rConfig.getModuleController().importModule(moduleName, moduleContainerStr, overwriteAllowed);
 	};
 
 	return calcConfigFunction(func);
@@ -5472,6 +5471,22 @@ SvPb::InspectionCmdResponse SvOi::exportModule(SVGUID moduleGuid)
 	};
 
 	return calcConfigFunction(func);
+}
+
+void SvOi::updateModuleInstances(std::vector<uint32_t>& rListOfNewTools, const std::vector<SVGUID>& rModules)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		pConfig->getModuleController().updateModuleInstances(rListOfNewTools, rModules);
+		return;
+	}
+
+	SvStl::MessageContainer message;
+	message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConfigurationObjectNotFound, SvStl::SourceFileParams(StdMessageParams));
+	throw message;
 }
 
 void SvOi::registerModuleInstance(SVGUID guid, uint32_t instanceId, const std::string& rComment, const HistoryList& rHistoryList, bool checkComment)

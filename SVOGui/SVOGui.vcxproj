@@ -131,6 +131,7 @@
     <ClCompile Include="GlobalConstantConflictDlg.cpp" />
     <ClCompile Include="GlobalConstantDlg.cpp" />
     <ClCompile Include="InputConflictDlg.cpp" />
+    <ClCompile Include="ModuleDifferenceDialog.cpp" />
     <ClCompile Include="ModuleManagerDialog.cpp" />
     <ClCompile Include="RangeXDialogClass.cpp" />
     <ClCompile Include="Ranking2FilterDlg.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="GlobalConstantDlg.h" />
     <ClInclude Include="InputConflictDlg.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
+    <ClInclude Include="ModuleDifferenceDialog.h" />
     <ClInclude Include="ModuleManagerDialog.h" />
     <ClInclude Include="RangeXDialogClass.h" />
     <ClInclude Include="Ranking2FilterDlg.h" />

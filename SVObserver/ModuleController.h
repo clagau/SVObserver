@@ -24,6 +24,8 @@ namespace SvPb
 class InspectionCmdResponse;
 }
 
+class SVInspectionProcess;
+
 struct ModuleData
 {
 	std::string m_name;
@@ -67,10 +69,18 @@ public:
 	void renameModule(SVGUID guid, const std::string& newName);
 	std::string getModuleName(SVGUID guid) const;
 
-	void importModule(const std::string& moduleName, const std::string& moduleContainerStr);
+	SvPb::InspectionCmdResponse importModule(std::string moduleName, const std::string& moduleContainerStr, bool overwriteAllowed);
 	SvPb::InspectionCmdResponse exportModule(SVGUID moduleGuid) const;
 
+	///  Update module instances to the currently active modules.
+	/// \param rListOfNewTools [inout] List of tools instances to check and updated. If instance changed, the new objectId will be changed in the list.
+	/// \param rModules [in] List of the GUIDs of the Modules which has to be updated.
+	void updateModuleInstances(std::vector<uint32_t>& rListOfNewTools, const std::vector<SVGUID>& rModules);
+
 	std::vector<ModuleData> getModuleList() { return m_moduleList; };
+
+private:
+	void switchListOfModuleInstancesToAnotherVersion(const std::vector<uint32_t>& rList, const std::string& rModuleName);
 
 private:
 	std::vector<ModuleData> m_moduleList;

@@ -660,8 +660,7 @@ namespace SvStl
 		{Tid_OpenSvxFileError , _T("Open SVX file error")},
 		{Tid_CouldNotWrite_File ,  _T("PutConfig: Could not write {0}")},
 		{Tid_RetryValueLarge , _T("Large retry value required while loading SVLptIO.dll")},
-		{Tid_ModuleExistAlready, _T("Module with the GUID exist already with the name \"{0}\".")},
-		{Tid_ModuleNameExistAlready, _T("Module with this name exist already.")},
+		{Tid_ModuleExistAlready, _T("Module with the GUID exists already with the name \"{0}\".")},
 		{Tid_IllegalAttemptToModifyStateEditingDirectly, _T("Illegal attempt to modify SV_STATE_EDITING directly")},
 
 		{Tid_ErrorMultiObjectID, _T("Multi Object ID per trigger can only be used in SVIM_NEO configurations\nChange the configuration type or use the Object ID index 0 for all inspections")},

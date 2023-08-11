@@ -17,6 +17,8 @@
 #pragma region Includes
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#include "SVProtoBuf/InspectionCommands.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 //Forward declarations
@@ -59,14 +61,10 @@ public:
 	//************************************
 	HRESULT writeToolDataToClipboard(const std::vector<uint32_t>& rToolIds) const;
 
-	//************************************
-	// reads all XML tool data from the clipboard
-	// returns a string containing that information
-	//************************************
-	std::string readlToolDataFromClipboard();
+	static std::string createFileFromClipboard();
 
 	HRESULT exportTools(const std::vector<uint32_t>& rToolIds, LPCTSTR exportFileName, LPCTSTR xmlFileName, bool includeModuleFiles) const;
-	std::string importTools(LPCTSTR fileName) const;
+	std::pair<std::string, google::protobuf::RepeatedField<SvPb::ImportModuleResponse>>  prepareImportTools(LPCTSTR fileName, const std::vector<SVGUID>& overwriteModules, const std::vector<SVGUID>& keepModules) const;
 
 	std::vector<uint32_t> createToolsFromXmlData(const std::string& rXmlData, uint32_t ownerId, bool onlySameVersionValid = true, bool useExplorerStyle = true);
 

@@ -1122,6 +1122,7 @@
 #define IDR_TOOL_LIST_CONTEXT_MENU_MULTI 11152
 #define IDR_TOOL_LIST_CONTEXT_MENU_EMPTY 11153
 #define IDD_MODULE_MANAGER              11154
+#define IDD_MODULE_DIFFERENCE           11155
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -2508,6 +2509,7 @@
 #define IDC_BTN_REG_TEST_DELETE         16264
 #define IDC_BUTTON_ADD_FOLDER           16265
 #define IDC_SHOW_ALL_NODES              16266
+#define IDC_HISTORY_TEXT_NEW            16267
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002

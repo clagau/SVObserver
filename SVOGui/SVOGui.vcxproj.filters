@@ -243,6 +243,9 @@
     <ClCompile Include="TADlgCylindricalWarp.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleDifferenceDialog.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlobReconstructFilterDlg.h">
@@ -477,6 +480,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADlgCylindricalWarp.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleDifferenceDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
