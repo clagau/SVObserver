@@ -151,20 +151,11 @@ SVImageClass* SVImageClass::GetParentImage() const
 				}
 			}
 
-			if (nullptr != m_ParentImageInfo.second)
-			{
-				pParent = m_ParentImageInfo.second;
-			}
+			pParent = m_ParentImageInfo.second;
 		}
 		else
 		{
-			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(m_ParentImageInfo.first);
-
-			if (nullptr != pObject)
-			{
-				pParent = dynamic_cast<SVImageClass*>(pObject);
-			}
-
+			pParent = dynamic_cast<SVImageClass*>(SVObjectManagerClass::Instance().GetObject(m_ParentImageInfo.first));
 			m_ParentImageInfo.second = nullptr;
 		}
 	}

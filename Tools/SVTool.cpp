@@ -1394,7 +1394,7 @@ void SVToolClass::getAncestorImages(SvPb::GetAvailableAncestorImagesResponse& rR
 	if (m_toolExtent.GetToolImage())
 	{
 		SvIe::SVImageClass* pImageParent = m_toolExtent.GetToolImage()->GetParentImage();
-		if (nullptr != pImageParent)
+		if (nullptr != pImageParent && checkIfValidDependency(pImageParent))
 		{
 			const SVToolClass* pTool = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
