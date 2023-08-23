@@ -2,7 +2,7 @@
 /// \file GuiHelpers.h
 /// Functions taken out of the SVObserverApp that simplify access to GUI functionality
 
-#include "SVGlobal.h"
+#include "SVOGuiUtility/SVGlobal.h"
 
 class SVIODoc;
 

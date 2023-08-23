@@ -14,9 +14,9 @@
 #pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVPPQBar.h"
-#include "SVMFCControls\SVStatusBar.h"
-#include "ZoomToolBar.h"
+#include "SVMFCControls/SVStatusBar.h"
 #include "SVOGuiUtility/ZoomHelper.h"
+#include "SVOGuiUtility/ZoomToolBar.h"
 #pragma endregion Includes
 
 #pragma region Declarations

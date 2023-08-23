@@ -6,7 +6,7 @@
 
 #pragma once
 #include "SVInspectionProcess.h"
-#include "SVRegressionTestStruct.h"
+#include "Definitions/SVRegressionTestStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #include "Triggering/ObjectIDParameters.h"
 

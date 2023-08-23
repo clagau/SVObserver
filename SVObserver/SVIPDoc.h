@@ -14,14 +14,14 @@
 #pragma region Includes
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "NavigatorElement.h"
 #include "RegressionTestController.h"
 #include "SVConfigurationObject.h"
 #include "SVDisplayObject.h"
-#include "SVIPProductStruct.h"
-#include "SVRegressionTestStruct.h"
 #include "SVToolGrouping.h"
+#include "Definitions/SVRegressionTestStruct.h"
+#include "Definitions/NavigatorElement.h"
 #include "InspectionEngine/SVIPResultData.h"
+#include "InspectionEngine/SVIPProductStruct.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes

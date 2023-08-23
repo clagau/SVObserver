@@ -7,13 +7,11 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <limits>
+#include "TADlgResizePage.h"
 #include "SVOResource\resource.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "TADlgResizePage.h"
-#include "TADlgSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVOGuiUtility/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 

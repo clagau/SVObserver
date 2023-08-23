@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxImageInterface.h"
-#include "SVMatroxEnums.h"
 
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
@@ -21,6 +20,7 @@
 #include "SVMatroxImageRotateStruct.h"
 #include "SVMatroxPolarTransformStruct.h"
 #include "SVMatroxResourceMonitor.h"
+#include "Definitions/MatroxEnums.h"
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVMessage/SVMessage.h"
 #include "LookUp.h"

@@ -131,11 +131,11 @@ void BarCodeAnalyzer::init()
 	msv_RawData.setSaveValueFlag(false);
 
 	//set MIL Timeout default to be what is in the INI file...
-	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	SvLib::SVOINIClass SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
-	int l_mTimeout = l_SvimIni.GetValueInt(_T("SVIM Information"), _T("MILBarcodeTimeout"),20);
+	int mTimeout = SvimIni.GetValueInt(_T("SVIM Information"), _T("MILBarcodeTimeout"),20);
 
-	msv_lBarcodeTimeout.SetDefaultValue(l_mTimeout,TRUE);
+	msv_lBarcodeTimeout.SetDefaultValue(mTimeout,TRUE);
 
 	// Instantiate Children
 	SvOp::SVBarCodeResult* pAnalyzerResult = new SvOp::SVBarCodeResult (this, IDS_CLASSNAME_SVBARCODEANALYZERRESULT);
@@ -174,11 +174,11 @@ bool BarCodeAnalyzer::InitMil (SvStl::MessageContainerVector *pErrorMessages)
 			m_MilCodeId = svData.HBuffer.milBarCode;
 
 			// get M_TIMEOUT value from Registry
-			//int l_mTimeout = AfxGetApp()->GetProfileInt(_T( "Settings" ),_T( "MILTimeout" ), 2000 );
+			//int mTimeout = AfxGetApp()->GetProfileInt(_T( "Settings" ),_T( "MILTimeout" ), 2000 );
 
-			long l_mTimeout;
-			msv_lBarcodeTimeout.GetValue(l_mTimeout);
-			double dL1 = (double) l_mTimeout;
+			long mTimeout;
+			msv_lBarcodeTimeout.GetValue(mTimeout);
+			double dL1 = (double) mTimeout;
 
 			double dParm = 0.;
 			/*HRESULT MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCodeTimeout, dL1 );
@@ -207,9 +207,9 @@ bool BarCodeAnalyzer::InitMil (SvStl::MessageContainerVector *pErrorMessages)
 			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSpeed, dParm);
 
 			// Threshold
-			long l_lThresholdType ;
-			msv_lThresholdType.GetValue( l_lThresholdType );
-			switch( l_lThresholdType )
+			long lThresholdType ;
+			msv_lThresholdType.GetValue( lThresholdType );
+			switch( lThresholdType )
 			{
 				case 0:
 				{
@@ -445,9 +445,9 @@ bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContaine
 						}
 
 						// based on msv_eBarcodeStringFormat replace control characters...
-						long l_lTmpFormat=SVBCStringFormatReplaceCharacters;
-						msv_eStringFormat.GetValue( l_lTmpFormat );
-						switch( l_lTmpFormat )
+						long lTmpFormat=SVBCStringFormatReplaceCharacters;
+						msv_eStringFormat.GetValue( lTmpFormat );
+						switch( lTmpFormat )
 						{
 							case SVBCStringFormatReplaceCharacters:
 							{
@@ -459,8 +459,8 @@ bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContaine
 							}
 							case SVBCStringFormatRemoveCharacters:
 							{
-								std::string l_strRemoved;
-								l_strRemoved.resize( BarCodeString.size() + 1);
+								std::string strRemoved;
+								strRemoved.resize( BarCodeString.size() + 1);
 								int j = 0;
 								for( size_t i = 0 ; i < BarCodeString.size(); i++ )
 								{
@@ -468,41 +468,41 @@ bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContaine
 									{
 										continue;
 									}
-									l_strRemoved[j++]=BarCodeString[i];
+									strRemoved[j++]=BarCodeString[i];
 								}
-								l_strRemoved[j] = 0; // Teminate String...
-								l_strRemoved.resize(j);
-								BarCodeString = l_strRemoved;
+								strRemoved[j] = 0; // Teminate String...
+								strRemoved.resize(j);
+								BarCodeString = strRemoved;
 								break;
 							}
 							case SVBCStringFormatTranslateCharacters:
 							{
-								std::string l_strTranslated;
-								l_strTranslated.resize( BarCodeString.size()+256);
+								std::string strTranslated;
+								strTranslated.resize( BarCodeString.size()+256);
 								int j = 0;
 								for( size_t i = 0 ; i < BarCodeString.size(); i++ )
 								{
 									if( CharIsControl(BarCodeString[i]) )
 									{
 										std::string Temp = std::format(_T("{:3d}"), BarCodeString[i]);
-										l_strTranslated[j++] = '\\';
-										l_strTranslated[j++] = Temp[0];
-										l_strTranslated[j++] = Temp[1];
-										l_strTranslated[j++] = Temp[2];
+										strTranslated[j++] = '\\';
+										strTranslated[j++] = Temp[0];
+										strTranslated[j++] = Temp[1];
+										strTranslated[j++] = Temp[2];
 									}
 									else if ( BarCodeString[i] == '\\' )
 									{
-										l_strTranslated[j++] = '\\';
-										l_strTranslated[j++] = '\\';
+										strTranslated[j++] = '\\';
+										strTranslated[j++] = '\\';
 									}
 									else
 									{
-										l_strTranslated[j++]=BarCodeString[i];
+										strTranslated[j++]=BarCodeString[i];
 									}
 								}
-								l_strTranslated[j] = 0; // Terminate String...
-								l_strTranslated.resize(j);
-								BarCodeString = l_strTranslated;
+								strTranslated[j] = 0; // Terminate String...
+								strTranslated.resize(j);
+								BarCodeString = strTranslated;
 								break;
 							}
 							default:

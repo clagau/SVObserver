@@ -235,17 +235,14 @@ echo %time%
     <ClCompile Include="SVConfigurationPrint.cpp" />
     <ClCompile Include="SVConfigXMLPrint.cpp" />
     <ClCompile Include="SVDataDefinitionStruct.cpp" />
-    <ClCompile Include="SVDirectX.cpp" />
     <ClCompile Include="SVDiscreteInputsView.cpp" />
     <ClCompile Include="SVDiscreteOutputsView.cpp" />
     <ClCompile Include="SVDisplayImageSelect.cpp" />
     <ClCompile Include="SVDisplayObject.cpp" />
     <ClCompile Include="SVDlgImageEditor.cpp" />
     <ClCompile Include="SVDrawObject.cpp" />
-    <ClCompile Include="SVFigureEditor.cpp" />
     <ClCompile Include="SVGigeCameraManagerDlg.cpp" />
     <ClCompile Include="SVGigeCameraROIDlg.cpp" />
-    <ClCompile Include="SVGlobal.cpp" />
     <ClCompile Include="SVGuiExtentUpdater.cpp" />
     <ClCompile Include="SVHistogramAnalyzerSetup.cpp" />
     <ClCompile Include="SVImageView.cpp" />
@@ -272,7 +269,6 @@ echo %time%
     <ClCompile Include="SVMainFrm.cpp" />
     <ClCompile Include="SVMaskShapeEditorDlg.cpp" />
     <ClCompile Include="SVMeasureAnalyzerAdjustmentSheet.cpp" />
-    <ClCompile Include="SVMessageWindow.cpp" />
     <ClCompile Include="SVMultiDocTemplate.cpp" />
     <ClCompile Include="SVOApp_Helper.cpp" />
     <ClCompile Include="SVObjectScriptParser.cpp" />
@@ -317,9 +313,6 @@ echo %time%
     <ClCompile Include="SVROIFigureEditor.cpp" />
     <ClCompile Include="SVSetupDialogManager.cpp" />
     <ClCompile Include="SVShiftToolUtility.cpp" />
-    <ClCompile Include="SVStartWindow.cpp" />
-    <ClCompile Include="SVStorage.cpp" />
-    <ClCompile Include="SVStorageResult.cpp" />
     <ClCompile Include="SVToolGrouping.cpp" />
     <ClCompile Include="SVToolSet.cpp" />
     <ClCompile Include="SVToolSetListCtrl.cpp" />
@@ -342,7 +335,6 @@ echo %time%
     <ClCompile Include="TADlgLinearResultRangesPage.cpp" />
     <ClCompile Include="TADlgMaskPageClass.cpp" />
     <ClCompile Include="TADlgPolarTransformPage.cpp" />
-    <ClCompile Include="TADlgResizePage.cpp" />
     <ClCompile Include="TADlgRotationPage.cpp" />
     <ClCompile Include="TADlgSheetClass.cpp" />
     <ClCompile Include="TADlgStatisticsPage.cpp" />
@@ -352,8 +344,6 @@ echo %time%
     <ClCompile Include="TADlgTranslationShiftPage.cpp" />
     <ClCompile Include="ToolExportImport.cpp" />
     <ClCompile Include="ToolSetView.cpp" />
-    <ClCompile Include="WebSocketSettingsLoader.cpp" />
-    <ClCompile Include="ZoomToolBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -381,7 +371,6 @@ echo %time%
     <ClInclude Include="MonitorListPropertyDlg.h" />
     <ClInclude Include="MonitorListSelector.h" />
     <ClInclude Include="MonitorListView.h" />
-    <ClInclude Include="NavigatorElement.h" />
     <ClInclude Include="PlcOutputsView.h" />
     <ClInclude Include="RegressionTestController.h" />
     <ClInclude Include="RemoteCommand.h" />
@@ -412,17 +401,14 @@ echo %time%
     <ClInclude Include="SVConfigurationTreeWriter.h" />
     <ClInclude Include="SVConfigXMLPrint.h" />
     <ClInclude Include="SVDataDefinitionStruct.h" />
-    <ClInclude Include="SVDirectX.h" />
     <ClInclude Include="SVDiscreteInputsView.h" />
     <ClInclude Include="SVDiscreteOutputsView.h" />
     <ClInclude Include="SVDisplayImageSelect.h" />
     <ClInclude Include="SVDisplayObject.h" />
     <ClInclude Include="SVDlgImageEditor.h" />
     <ClInclude Include="SVDrawObject.h" />
-    <ClInclude Include="SVFigureEditor.h" />
     <ClInclude Include="SVGigeCameraManagerDlg.h" />
     <ClInclude Include="SVGigeCameraROIDlg.h" />
-    <ClInclude Include="SVGlobal.h" />
     <ClInclude Include="SVGuiExtentUpdater.h" />
     <ClInclude Include="SVHistogramAnalyzerSetup.h" />
     <ClInclude Include="SVImageView.h" />
@@ -441,8 +427,6 @@ echo %time%
     <ClInclude Include="SVIOTabbedView.h" />
     <ClInclude Include="SVIPDoc.h" />
     <ClInclude Include="SVIPDocInfoImporter.h" />
-    <ClInclude Include="SVIPImageDataElement.h" />
-    <ClInclude Include="SVIPProductStruct.h" />
     <ClInclude Include="SVIProgress.h" />
     <ClInclude Include="SVIPSplitterFrame.h" />
     <ClInclude Include="SVLightReferenceDialog.h" />
@@ -450,7 +434,6 @@ echo %time%
     <ClInclude Include="SVMainFrm.h" />
     <ClInclude Include="SVMaskShapeEditorDlg.h" />
     <ClInclude Include="SVMeasureAnalyzerAdjustmentSheet.h" />
-    <ClInclude Include="SVMessageWindow.h" />
     <ClInclude Include="MonitorListAttributeStruct.h" />
     <ClInclude Include="SVMultiDocTemplate.h" />
     <ClInclude Include="SVObjectScriptParser.h" />
@@ -487,7 +470,6 @@ echo %time%
     <ClInclude Include="SVRegressionFileSelectDlg.h" />
     <ClInclude Include="SVRegressionFileSelectSheet.h" />
     <ClInclude Include="SVRegressionRunDlg.h" />
-    <ClInclude Include="SVRegressionTestStruct.h" />
     <ClInclude Include="SVRemoteCommand.h" />
     <ClInclude Include="SVRemoteCommandData.h" />
     <ClInclude Include="SVRemoteControlConstants.h" />
@@ -497,15 +479,11 @@ echo %time%
     <ClInclude Include="SVROIFigureEditor.h" />
     <ClInclude Include="SVSetupDialogManager.h" />
     <ClInclude Include="SVShiftToolUtility.h" />
-    <ClInclude Include="SVStartWindow.h" />
-    <ClInclude Include="SVStorage.h" />
-    <ClInclude Include="SVStorageResult.h" />
     <ClInclude Include="SVToolGrouping.h" />
     <ClInclude Include="SVToolSet.h" />
     <ClInclude Include="SVToolSetListCtrl.h" />
     <ClInclude Include="SVUtilities.h" />
     <ClInclude Include="SVUtilitiesCustomizeDialog.h" />
-    <ClInclude Include="SVVisionProcessorConstants.h" />
     <ClInclude Include="SVVisionProcessorHelper.h" />
     <ClInclude Include="SVXFunctions.h" />
     <ClInclude Include="TADlgAcquisitionSourcePage.h" />
@@ -523,7 +501,6 @@ echo %time%
     <ClInclude Include="TADlgLinearResultRangesPage.h" />
     <ClInclude Include="TADlgMaskPageClass.h" />
     <ClInclude Include="TADlgPolarTransformPage.h" />
-    <ClInclude Include="TADlgResizePage.h" />
     <ClInclude Include="TADlgRotationPage.h" />
     <ClInclude Include="TADlgSheetClass.h" />
     <ClInclude Include="TADlgStatisticsPage.h" />
@@ -535,9 +512,6 @@ echo %time%
     <ClInclude Include="ToolExportImport.h" />
     <ClInclude Include="ToolSetView.h" />
     <ClInclude Include="TraceWin.h" />
-    <ClInclude Include="WebsocketSettings.h" />
-    <ClInclude Include="WebSocketSettingsLoader.h" />
-    <ClInclude Include="ZoomToolBar.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\SVCommand.rgs" />

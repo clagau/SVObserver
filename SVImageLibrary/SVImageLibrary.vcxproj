@@ -122,7 +122,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVCameraFormat.cpp" />
-    <ClCompile Include="SVDrawContext.cpp" />
     <ClCompile Include="SVExtentFigureStruct.cpp" />
     <ClCompile Include="SVExtentLineStruct.cpp" />
     <ClCompile Include="SVExtentMultiLineStruct.cpp" />
@@ -139,7 +138,6 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAcquisitionBufferInterface.h" />
     <ClInclude Include="SVCameraFormat.h" />
-    <ClInclude Include="SVDrawContext.h" />
     <ClInclude Include="SVExtentFigureStruct.h" />
     <ClInclude Include="SVExtentLineStruct.h" />
     <ClInclude Include="SVExtentMultiLineStruct.h" />

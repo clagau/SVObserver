@@ -14,13 +14,23 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
 
-#include "SVVisionProcessorConstants.h"
 #pragma endregion Includes
 //#define TRACE_SVSTORAGE TRUE
+
+namespace SVVisionProcessor
+{
+enum SVStorageType
+{
+	SVStorageUnknown = 0,
+	SVStorageValue = 1,
+	SVStorageImageFileName = 2,
+};
+}
+
 struct SVStorage
 {
 	SVStorage();
-	SVStorage( SVVisionProcessor::SVStorageType p_StorageType, const _variant_t& p_rVariant );
+	SVStorage( SVVisionProcessor::SVStorageType StorageType, const _variant_t& rVariant );
 	#if defined (TRACE_THEM_ALL) || defined (TRACE_SVSTORAGE)
 	SVStorage(const SVStorage& rhs) : m_StorageType(rhs.m_StorageType),
 										m_Variant(rhs.m_Variant)

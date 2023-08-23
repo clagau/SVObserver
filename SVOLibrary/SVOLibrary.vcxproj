@@ -97,6 +97,8 @@
     <ClCompile Include="SVLut.cpp" />
     <ClCompile Include="SVLutTransform.cpp" />
     <ClCompile Include="SVMemoryManager.cpp" />
+    <ClCompile Include="SVStorage.cpp" />
+    <ClCompile Include="SVStorageResult.cpp" />
     <ClCompile Include="SVTriggerDeviceParams.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +115,7 @@
     <ClInclude Include="SVObserverEnums.h" />
     <ClInclude Include="SVOLibrary.h" />
     <ClInclude Include="SVQueueObject.h" />
+    <ClInclude Include="SVStorage.h" />
     <ClInclude Include="SVTriggerDeviceParams.h" />
   </ItemGroup>
   <ItemGroup>

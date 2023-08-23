@@ -12,9 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOGui\SVDlgImage.h"
-#include "SVFigureEditor.h"
 #include "SVDrawObject.h"
+#include "SVOGui/SVDlgImage.h"
+#include "SVOGuiUtility/SVFigureEditor.h"
 #pragma endregion Includes
 
 struct SVDlgImageOverlayOptions

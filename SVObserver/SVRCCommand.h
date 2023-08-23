@@ -11,7 +11,7 @@
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
-#include "SVStorageResult.h"
+#include "SVOLibrary/SVStorageResult.h"
 #pragma endregion Includes
 
 

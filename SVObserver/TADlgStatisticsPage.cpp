@@ -53,9 +53,8 @@ void TADlgStatisticsPage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-TADlgStatisticsPage::TADlgStatisticsPage(uint32_t, uint32_t taskObjectId, TADlgSheetClass* pParent) 
+TADlgStatisticsPage::TADlgStatisticsPage(uint32_t, uint32_t taskObjectId) 
 : CPropertyPage( TADlgStatisticsPage::IDD )
-, m_pParent(pParent)
 , m_pTool(nullptr)
 {
 	 m_pTool = dynamic_cast <SvTo::SVStatTool*> (SvOi::getObject(taskObjectId));

@@ -96,6 +96,12 @@
     <ClInclude Include="RunStatus.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVIPImageDataElement.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIPProductStruct.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResultViewItemDef.cpp">

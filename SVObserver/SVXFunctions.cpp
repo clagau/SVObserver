@@ -8,7 +8,6 @@
 #include "LoadConfigWarning.h"
 #include "RootObject.h"
 #include "SVConfigurationObject.h"
-#include "SVGlobal.h"
 #include "SVIOController.h"
 #include "SVIODoc.h"
 #include "SVIPDoc.h"
@@ -19,6 +18,7 @@
 #include "SVXFunctions.h"
 
 #include "FilesystemUtilities/FileHelperManager.h"
+#include "SVOGuiUtility/SVGlobal.h"
 #include "SVOLibrary/ObsoleteItemChecker.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "SVStatusLibrary/SvimState.h"

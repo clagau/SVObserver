@@ -11,7 +11,7 @@
 
 #pragma once
 #pragma region Includes
-#include "SVGlobal.h"
+#include "SVOGuiUtility/SVGlobal.h"
 #pragma endregion Includes
 
 void GlobalRCGoOnline();

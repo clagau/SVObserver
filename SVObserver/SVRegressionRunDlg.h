@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/SVRegressionTestStruct.h"
 #include "SVMFCControls/SVSliderCtrl.h"
-#include "SVRegressionTestStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 

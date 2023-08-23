@@ -108,6 +108,8 @@
     <ClInclude Include="SVImageBuffer.h" />
     <ClInclude Include="SVImageClass.h" />
     <ClInclude Include="SVImageProcessingClass.h" />
+    <ClInclude Include="SVIPImageDataElement.h" />
+    <ClInclude Include="SVIPProductStruct.h" />
     <ClInclude Include="SVIPResultData.h" />
     <ClInclude Include="SVIPResultItemData.h" />
     <ClInclude Include="SVIPResultItemDefinition.h" />

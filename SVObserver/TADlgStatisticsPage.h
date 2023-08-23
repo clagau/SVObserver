@@ -25,7 +25,7 @@ class SVToolSet;
 class TADlgStatisticsPage : public CPropertyPage
 {
 public:
-	TADlgStatisticsPage(uint32_t inspectionId, uint32_t taskObjectId, TADlgSheetClass* pParent);
+	TADlgStatisticsPage(uint32_t inspectionId, uint32_t taskObjectId);
 	virtual ~TADlgStatisticsPage();
 
 	void UpdateStatisticsParameters();
@@ -63,7 +63,6 @@ public:
 	//}}AFX_DATA
 
 protected:
-	TADlgSheetClass* m_pParent;
 	SvTo::SVStatTool* m_pTool;
 	CString                 m_strFullNameOfVariable;
 };

@@ -43,7 +43,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 private:
 
-	TADlgSheetClass* m_pSheet{ nullptr };
 	SvOi::IObjectClass* m_pTaskObject{ nullptr };
 	SvIe::SVCameraImageTemplate* m_pMainImage{ nullptr };
 	SvMc::AvailableObjectListComboBox<uint32_t> m_CameraListBox;

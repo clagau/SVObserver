@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "SVGlobal.h"
+#include "SVOGuiUtility/SVGlobal.h"
 
 std::pair<bool, bool> OkToClose(bool AskForSavingOrClosing);
 

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "NavigatorElement.h"
+#include "Definitions/NavigatorElement.h"
 #pragma endregion Includes
 
 #pragma region Declarations

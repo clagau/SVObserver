@@ -33,13 +33,12 @@ END_MESSAGE_MAP()
 
 TADlgAcquisitionSourcePage::TADlgAcquisitionSourcePage(uint32_t, uint32_t , TADlgSheetClass* pSheet)
 : CPropertyPage(TADlgAcquisitionSourcePage::IDD)
-, m_pSheet(pSheet)
 {
+	m_pTaskObject = pSheet ? pSheet->GetTaskObject() : nullptr;
 }
 
 TADlgAcquisitionSourcePage::~TADlgAcquisitionSourcePage()
-{
-}
+{}
 
 void TADlgAcquisitionSourcePage::DoDataExchange(CDataExchange* pDX)
 {
@@ -56,7 +55,7 @@ BOOL TADlgAcquisitionSourcePage::OnInitDialog()
 
 	UpdateData( FALSE );
 
-	if( m_pSheet && nullptr != (m_pTaskObject = m_pSheet->GetTaskObject()) && SvPb::SVToolAcquisitionObjectType == m_pTaskObject->GetObjectSubType())
+	if( nullptr != m_pTaskObject && SvPb::SVToolAcquisitionObjectType == m_pTaskObject->GetObjectSubType())
 	{
 		// Try to get main image of the current acquisition tool...
 		SvDef::SVObjectTypeInfoStruct info;

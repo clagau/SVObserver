@@ -13,8 +13,8 @@
 
 #pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
+#include "SVOGuiUtility/SVFigureEditor.h"
 
-#include "SVFigureEditor.h"
 #pragma endregion Includes
 
 // MODELLED AFTER THE MASK SHAPE SYSTEM

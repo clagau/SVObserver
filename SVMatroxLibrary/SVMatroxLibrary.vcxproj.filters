@@ -167,9 +167,6 @@
     <ClInclude Include="SVMatroxEnumConvertor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVMatroxErrorEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

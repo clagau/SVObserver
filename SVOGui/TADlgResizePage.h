@@ -9,7 +9,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxEnums.h"
+#include "Definitions/MatroxEnums.h"
 #include "SVOGuiUtility/PictureDisplay.h"
 #include "SVOGui/ISVPropertyPageDialog.h"  // for QueryAllowExit()
 #include "SVOGuiUtility/ImageController.h"

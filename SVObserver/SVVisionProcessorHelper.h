@@ -15,11 +15,11 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
-#include "SVStorage.h"
-#include "SVStorageResult.h"
 #include "SVDataDefinitionStruct.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVPPQObject.h"
+#include "SVOLibrary/SVStorage.h"
+#include "SVOLibrary/SVStorageResult.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
 #pragma endregion Includes

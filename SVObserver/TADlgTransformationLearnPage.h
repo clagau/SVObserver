@@ -82,7 +82,6 @@ public:
 	//}}AFX_DATA
 
 protected:
-	TADlgSheetClass* m_pParentDialog;
 	SvOi::IObjectClass* m_pTaskObject = nullptr;
 
 	SvVol::SVBoolValueObjectClass* m_pPerformTranslation = nullptr;

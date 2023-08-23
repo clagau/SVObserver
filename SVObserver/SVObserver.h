@@ -15,7 +15,7 @@
 #include "InitialInformationHandler.h"
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVOLibrary/SVObserverEnums.h"
-#include "SVGlobal.h"
+#include "SVOGuiUtility/SVGlobal.h"
 #pragma endregion Includes
 
 #pragma region Declarations

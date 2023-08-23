@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVRegressionTestStruct.h"
+#include "Definitions/SVRegressionTestStruct.h"
 #pragma endregion Includes
 
 class SVRegressionFileSelectSheet;

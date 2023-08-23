@@ -13,11 +13,11 @@
 
 #pragma region Includes
 #include "Definitions/BandEnums.h"
-#include "SVDrawObject.h"
 #include "TADlgColorThresholdBasePage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVLibrary/SVValueBaseNormalizerClass.h"
 #include "SVOGuiUtility/DataController.h"
+#include "SVDrawObject.h"
 #pragma endregion Includes
 
 namespace SvOp

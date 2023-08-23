@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "TADlgSheetClass.h"
 #include "SVIPDoc.h"
-#include "SVInspectionProcess.h"
 #include "TADlgAcquisitionSourcePage.h"
 #include "TADlgArchiveImagePage.h"
 #include "TADlgArchiveResultsPage.h"
@@ -23,12 +22,13 @@
 #include "TADlgThresholdPage.h"
 #include "TADlgTransformationLearnPage.h"
 #include "TADlgTranslationPage.h"
-#include "TADlgResizePage.h"
 #include "TADlgTranslationShiftPage.h"
 #include "TADlgAnalyzerPageClass.h"
 #include "TADlgMaskPageClass.h"
+#include "TADlgLinearResultRangesPage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVOGui/TADlgCommentPage.h"
+#include "SVOGui/TADlgResizePage.h"
 #include "SVOGui/TADlgSizePage.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
 #include "SVOGui/TADlgCylindricalWarp.h"
@@ -52,14 +52,12 @@
 #include "SVOGui/TADlgTableAnalyzerPage.h"
 #include "SVOGui/TADlgDrawPage.h"
 #include "SVOGui/TADlgTableSourcePage.h"
+#include "SVOGui/TADlgGroupToolResultPage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SvimState.h"
-#include "Tools/SVTool.h"
-#include "SVOGui/TADlgGroupToolResultPage.h"
-#include "TADlgLinearResultRangesPage.h"
 #include "SVUtilityLibrary/VectorHelper.h"
 #include "Tools/ModuleTool.h"
-#include "ObjectInterfaces/IConfigurationObject.h"
+
 
 #pragma endregion Includes
 
@@ -289,7 +287,7 @@ void TADlgSheetClass::addPages()
 		break;
 
 		case SvPb::SVObjectSubTypeEnum::SVStatisticsToolObjectType:
-			AddPage(new TADlgStatisticsPage(m_InspectionID, m_TaskObjectID, this));
+			AddPage(new TADlgStatisticsPage(m_InspectionID, m_TaskObjectID));
 			addConditionalDialog();
 			break;
 

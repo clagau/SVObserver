@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <set>
-#include "SVStorageResult.h"
+#include "SVOLibrary/SVStorageResult.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
 

@@ -207,7 +207,7 @@ void TADlgAnalyzerPageClass::OnButtonDetails()
 
 void TADlgAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 {
-	CWaitCursor l_cwcMouse;
+	CWaitCursor cwcMouse;
 
 	UpdateData(TRUE); // get data from dialog
 
@@ -346,16 +346,16 @@ void TADlgAnalyzerPageClass::OnResultButton()
 		// Get Complete Name up to the tool level...
 		Title = m_pCurrentAnalyzer->GetObjectNameToObjectType() + _T(" ") + Title;
 
-		SVIPDoc* l_pIPDoc = nullptr;
+		SVIPDoc* pIPDoc = nullptr;
 
 		if (nullptr != m_pCurrentAnalyzer->GetInspection())
 		{
-			l_pIPDoc = m_pParentDialog->GetIPDoc();
+			pIPDoc = m_pParentDialog->GetIPDoc();
 		}
 
 		// Prepare result adjustment dialog...
 		SVChildrenSetupDialog dlg;
-		dlg.m_pDocument = l_pIPDoc;
+		dlg.m_pDocument = pIPDoc;
 		dlg.m_AllowMultipleChildrenInstances = FALSE;
 		dlg.m_pParentObject = m_pCurrentAnalyzer;
 		dlg.m_pAvailableChildrenList = &availableResults;

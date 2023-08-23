@@ -16,15 +16,15 @@ SVStorage::SVStorage()
 : m_StorageType( SVVisionProcessor::SVStorageUnknown ), m_Variant()
 {
 	#if defined (TRACE_THEM_ALL) || defined (TRACE_SVSTORAGE)
-	TRACE0("+++++++SVStorage() Konstruktor+++++++++++\n");
+	TRACE0("+++++++SVStorage() Constructor+++++++++++\n");
 	#endif
 }
 
-SVStorage::SVStorage( SVVisionProcessor::SVStorageType p_StorageType, const _variant_t& p_rVariant )
-: m_StorageType( p_StorageType ), m_Variant( p_rVariant )
+SVStorage::SVStorage( SVVisionProcessor::SVStorageType StorageType, const _variant_t& rVariant )
+: m_StorageType( StorageType ), m_Variant( rVariant )
 {
 	#if defined (TRACE_THEM_ALL) || defined (TRACE_SVSTORAGE)
-	TRACE0("+++++++SVStorage(Parameter) Konstruktor+++++++++++\n");
+	TRACE0("+++++++SVStorage(Parameter) Constructor+++++++++++\n");
 	#endif
 }
 

@@ -23,7 +23,7 @@
 #include "SVObserver.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVMFCControls/SVFileDialog.h"
-#include "SVGlobal.h"
+#include "SVOGuiUtility/SVGlobal.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/GlobalConst.h"
 #include "SVOResource\ConstGlobalSvOr.h"

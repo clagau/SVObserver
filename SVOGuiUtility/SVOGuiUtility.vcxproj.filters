@@ -84,6 +84,15 @@
     <ClCompile Include="ValueEditWidgetHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVGlobal.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFigureEditor.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoomToolBar.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -177,6 +186,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ValueEditWidgetHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGlobal.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFigureEditor.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoomToolBar.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

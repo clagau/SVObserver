@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <set>
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVIPProductStruct.h"
+#include "InspectionEngine/SVIPProductStruct.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
 

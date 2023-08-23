@@ -184,6 +184,8 @@
     <ClInclude Include="WebsocketClient.h" />
     <ClInclude Include="WebsocketClientFactory.h" />
     <ClInclude Include="WebsocketClientSettings.h" />
+    <ClInclude Include="WebsocketSettings.h" />
+    <ClInclude Include="WebSocketSettingsLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HttpClient.cpp" />
@@ -199,6 +201,7 @@
     <ClCompile Include="url.cpp" />
     <ClCompile Include="WebsocketClient.cpp" />
     <ClCompile Include="WebsocketClientFactory.cpp" />
+    <ClCompile Include="WebSocketSettingsLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HttpClient.inl" />

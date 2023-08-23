@@ -27,7 +27,8 @@ static char THIS_FILE[] = __FILE__;
 TADlgTransformationLearnPage::TADlgTransformationLearnPage( uint32_t, uint32_t , TADlgSheetClass* Parent )
 : CPropertyPage(TADlgTransformationLearnPage::IDD)
 {
-	m_pParentDialog	= Parent;
+	m_pTaskObject = (nullptr != Parent) ? Parent->GetTaskObject() : nullptr;
+
 }
 
 TADlgTransformationLearnPage::~TADlgTransformationLearnPage()
@@ -148,7 +149,7 @@ BOOL TADlgTransformationLearnPage::OnInitDialog()
 
 	pWnd->SetWindowText("q:");
 
-	if(nullptr != m_pParentDialog && nullptr != (m_pTaskObject = m_pParentDialog->GetTaskObject()))
+	if (nullptr != m_pTaskObject)
 	{
 		// Get EvaluateX Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;

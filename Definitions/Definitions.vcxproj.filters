@@ -84,5 +84,14 @@
     <ClInclude Include="ArchiveMethodEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="NavigatorElement.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRegressionTestStruct.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MatroxEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

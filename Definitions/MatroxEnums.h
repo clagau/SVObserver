@@ -3,7 +3,7 @@
 // * All Rights Reserved
 // ******************************************************************************
 // * .Module Name     : SVMatroxEnums
-// * .File Name       : $Workfile:   SVMatroxEnums.h  $
+// * .File Name       : $Workfile:   MatroxEnums.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   22 Apr 2013 15:13:12  $

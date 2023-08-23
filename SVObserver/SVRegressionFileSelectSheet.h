@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVRegressionTestStruct.h"
+#include "Definitions/SVRegressionTestStruct.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "FilesystemUtilities/ImageFileFormats.h"
 #include "SVMFCControls/ResizablePropertySheet.h"

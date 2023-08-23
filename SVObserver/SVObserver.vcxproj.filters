@@ -108,9 +108,6 @@
     <ClCompile Include="SVDataDefinitionStruct.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDirectX.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVDiscreteInputsView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -126,19 +123,10 @@
     <ClCompile Include="SVDlgImageEditor.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDrawObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFigureEditor.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVGigeCameraManagerDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVGigeCameraROIDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVGlobal.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVGuiExtentUpdater.cpp">
@@ -199,9 +187,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMeasureAnalyzerAdjustmentSheet.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMessageWindow.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMultiDocTemplate.cpp">
@@ -321,15 +306,6 @@
     <ClCompile Include="SVShiftToolUtility.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVStartWindow.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVStorage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVStorageResult.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVToolGrouping.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -352,12 +328,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ToolSetView.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="WebSocketSettingsLoader.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="ZoomToolBar.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Custom2Filter_ImportExport.cpp">
@@ -444,9 +414,6 @@
     <ClCompile Include="TADlgPolarTransformPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TADlgResizePage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TADlgRotationPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -475,6 +442,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TADlgLinearResultRangesPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDrawObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -509,9 +479,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MonitorListView.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NavigatorElement.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RemoteCommand.h">
@@ -589,9 +556,6 @@
     <ClInclude Include="SVDataDefinitionStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVDirectX.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVDiscreteInputsView.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -607,19 +571,10 @@
     <ClInclude Include="SVDlgImageEditor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVDrawObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFigureEditor.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVGigeCameraManagerDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraROIDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGlobal.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVGuiExtentUpdater.h">
@@ -676,12 +631,6 @@
     <ClInclude Include="SVIPDocInfoImporter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVIPImageDataElement.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIPProductStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVIProgress.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -698,9 +647,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMeasureAnalyzerAdjustmentSheet.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMessageWindow.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMultiDocTemplate.h">
@@ -802,9 +748,6 @@
     <ClInclude Include="SVRegressionRunDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVRegressionTestStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVRemoteCommand.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -829,15 +772,6 @@
     <ClInclude Include="SVShiftToolUtility.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVStartWindow.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVStorage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVStorageResult.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVToolGrouping.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -853,9 +787,6 @@
     <ClInclude Include="SVUtilitiesCustomizeDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVVisionProcessorConstants.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVVisionProcessorHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -869,15 +800,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TraceWin.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="WebsocketSettings.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="WebSocketSettingsLoader.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ZoomToolBar.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="LoadConfigWarning.h">
@@ -961,9 +883,6 @@
     <ClInclude Include="TADlgPolarTransformPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TADlgResizePage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="TADlgRotationPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -992,6 +911,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADlgLinearResultRangesPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDrawObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

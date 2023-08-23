@@ -6,7 +6,7 @@
 // * .File Name       : $Workfile:   SVImagingDeviceParams.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 10:51:32  $
+// * .Check In Date   : $Date:   22 Apr 2013 10:51:32  $ 
 // ******************************************************************************
 
 #pragma once

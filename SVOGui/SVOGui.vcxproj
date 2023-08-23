@@ -151,12 +151,15 @@
     <ClCompile Include="SVBlobAnalyzerDialog.cpp" />
     <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp" />
     <ClCompile Include="SVCustomFilterDlg.cpp" />
+    <ClCompile Include="SVDirectX.cpp" />
     <ClCompile Include="SVDlgImage.cpp" />
+    <ClCompile Include="SVDrawContext.cpp" />
     <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp" />
     <ClCompile Include="SVFillBlobDlg.cpp" />
     <ClCompile Include="SVFormulaEditorSheet.cpp" />
     <ClCompile Include="SVLicenseMgrModelessDlg.cpp" />
     <ClCompile Include="SVLuminanceAnalyzerDlg.cpp" />
+    <ClCompile Include="SVMessageWindow.cpp" />
     <ClCompile Include="SVOCVGeneralDlg.cpp" />
     <ClCompile Include="SVOCVMatchDlg.cpp" />
     <ClCompile Include="SVOCVSheet.cpp" />
@@ -170,6 +173,7 @@
     <ClCompile Include="SVRankingFilterDlg.cpp" />
     <ClCompile Include="SVSaveToolSetImageDialog.cpp" />
     <ClCompile Include="SVShowDependentsDialog.cpp" />
+    <ClCompile Include="SVStartWindow.cpp" />
     <ClCompile Include="SVTextEditDialog.cpp" />
     <ClCompile Include="SVThickeningFilterDlg.cpp" />
     <ClCompile Include="SVThinningFilterDlg.cpp" />
@@ -190,6 +194,7 @@
     <ClCompile Include="TADlgLUTPage.cpp" />
     <ClCompile Include="TADlgPassFailPage.cpp" />
     <ClCompile Include="TADlgPerspectiveWarpPage.cpp" />
+    <ClCompile Include="TADlgResizePage.cpp" />
     <ClCompile Include="TADlgRingBufferParameterPage.cpp" />
     <ClCompile Include="TADlgSizePage.cpp" />
     <ClCompile Include="TADlgTableAnalyzerPage.cpp" />
@@ -231,12 +236,15 @@
     <ClInclude Include="SVBlobAnalyzerDialog.h" />
     <ClInclude Include="SVBlobFeaturePropertiesDlg.h" />
     <ClInclude Include="SVCustomFilterDlg.h" />
+    <ClInclude Include="SVDirectX.h" />
     <ClInclude Include="SVDlgImage.h" />
+    <ClInclude Include="SVDrawContext.h" />
     <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h" />
     <ClInclude Include="SVFillBlobDlg.h" />
     <ClInclude Include="SVFormulaEditorSheet.h" />
     <ClInclude Include="SVLicenseMgrModelessDlg.h" />
     <ClInclude Include="SVLuminanceAnalyzerDlg.h" />
+    <ClInclude Include="SVMessageWindow.h" />
     <ClInclude Include="SVOCVGeneralDlg.h" />
     <ClInclude Include="SVOCVMatchDlg.h" />
     <ClInclude Include="SVOCVSheet.h" />
@@ -250,6 +258,7 @@
     <ClInclude Include="SVRankingFilterDlg.h" />
     <ClInclude Include="SVSaveToolSetImageDialog.h" />
     <ClInclude Include="SVShowDependentsDialog.h" />
+    <ClInclude Include="SVstartwindow.h" />
     <ClInclude Include="SVTextEditDialog.h" />
     <ClInclude Include="SVThickeningFilterDlg.h" />
     <ClInclude Include="SVThinningFilterDlg.h" />
@@ -270,6 +279,7 @@
     <ClInclude Include="TADlgLUTPage.h" />
     <ClInclude Include="TADlgPassFailPage.h" />
     <ClInclude Include="TADlgPerspectiveWarpPage.h" />
+    <ClInclude Include="TADlgResizePage.h" />
     <ClInclude Include="TADlgRingBufferParameterPage.h" />
     <ClInclude Include="TADlgSizePage.h" />
     <ClInclude Include="TADlgTableAnalyzerPage.h" />

@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <vector>
 #include "SVImageLibrary/SVExtentLineStruct.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVImageLibrary/SVDrawContext.h"
+#include "SVOGui/SVDrawContext.h"
 #pragma endregion Includes
 
 enum 
