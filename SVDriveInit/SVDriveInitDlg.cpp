@@ -162,7 +162,7 @@ BOOL SVDriveInitDlg::OnInitDialog()
 	// Get Info from OEMINFO.ini
 	GetOEMInfo();
 
-	bool rc = IsValidModelNumber();
+	bool rc = IsModelNumberValidAndAreBoardNamesPresent();
 	if (!rc)
 	{
 		CString title;
@@ -224,7 +224,7 @@ void SVDriveInitDlg::OnOK()
 	CString title;
 	GetWindowText(title);
 
-	bool rc = IsValidModelNumber();
+	bool rc = IsModelNumberValidAndAreBoardNamesPresent();
 	if (!rc)
 	{
 		int retCode = MessageBox(g_ModelNumberNotValidMsgPrompt, title, MB_ICONINFORMATION | MB_YESNO);
@@ -266,11 +266,10 @@ void SVDriveInitDlg::OnOK()
 	CDialog::OnOK();
 }
 
-bool SVDriveInitDlg::IsValidModelNumber() const
+bool SVDriveInitDlg::IsModelNumberValidAndAreBoardNamesPresent() const
 {
 	SvLib::InitialInformation initialInfo;
 	SvLib::SVOIniLoader iniLoader(initialInfo);
-	bool bValid(true);
 
 	CString Model;
 	m_modelNumber.GetWindowText(Model);
@@ -282,20 +281,10 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 	{
 		if (S_OK == iniLoader.LoadHardwareIni(SvStl::GlobalPath::Inst().GetHardwareIniPath()))
 		{
-			if (iniLoader.GetInitialInfo().m_ProcessorBoardName.empty() || //@TODO [Arvid][8.00][16.01.2018] better create a new method here
-				iniLoader.GetInitialInfo().m_TriggerBoardName.empty() ||
-				iniLoader.GetInitialInfo().m_AcquisitionBoardName.empty() ||
-				iniLoader.GetInitialInfo().m_DigitalBoardName.empty())
-			{
-				bValid = false;
-			}
+			return iniLoader.areBoardNamesPresent();
 		}
 	}
-	else
-	{
-		bValid = false;
-	}
-	return bValid;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

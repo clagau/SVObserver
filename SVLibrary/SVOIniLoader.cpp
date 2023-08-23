@@ -405,11 +405,32 @@ void SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
 }
 
 
-bool SVOIniLoader::TriggerEdgeEqualsNoCase(int i, const std::string& rS) {return (0 == SvUl::CompareNoCase(m_TriggerEdge[i], rS)); }
-bool SVOIniLoader::StrobeEdgeEqualsNoCase(int i, const std::string& rS) { return (0 == SvUl::CompareNoCase(m_StrobeEdge[i], rS)); }
-bool SVOIniLoader::StartFrameTypeEqualsNoCase(int i, const std::string& rS) { return (0 == SvUl::CompareNoCase(m_TriggerEdge[i], rS)); }
+bool SVOIniLoader::TriggerEdgeEqualsNoCase(int i, const std::string& rS)
+{
+	return (0 == SvUl::CompareNoCase(m_TriggerEdge[i], rS));
+}
 
 
+bool SVOIniLoader::StrobeEdgeEqualsNoCase(int i, const std::string& rS)
+{
+	return (0 == SvUl::CompareNoCase(m_StrobeEdge[i], rS));
+}
+
+
+bool SVOIniLoader::StartFrameTypeEqualsNoCase(int i, const std::string& rS) 
+{
+	return (0 == SvUl::CompareNoCase(m_TriggerEdge[i], rS));
+}
+
+
+bool SVOIniLoader::areBoardNamesPresent()
+{
+	return false == (m_rInitialInfo.m_ProcessorBoardName.empty() ||
+			m_rInitialInfo.m_TriggerBoardName.empty() ||
+			m_rInitialInfo.m_AcquisitionBoardName.empty() ||
+			m_rInitialInfo.m_DigitalBoardName.empty());
+}
+	
 
 bool readSerialNumberFromSystem(std::string& serialNumber)
 {

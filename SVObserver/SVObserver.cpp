@@ -579,12 +579,12 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	std::string loadPath{ szDrive };
 	loadPath += szDir;
 
-	// @Note: [SEJ] If DestroyConfig doesn't return S_OK, the MRU is updated incorrectly
+	// @Note: [SEJ] If CloseConfig doesn't return S_OK, the MRU is updated incorrectly
 	// The file to be loaded, if it was in the MRU, will be removed from the MRU !
-	HRESULT result = DestroyConfig();
+	HRESULT result = CloseConfig();
 	if (S_OK != result)
 	{
-		Log_Error(SvStl::Tid_DestroyConfigFailed);
+		Log_Error(SvStl::Tid_CloseConfigFailed);
 		return result;	//keep the cancel state so it does not remove from MRU
 	}
 
@@ -754,7 +754,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 			SvimState::RemoveState(SV_STATE_LOADING);
 
-			DestroyConfig(false, true);
+			CloseConfig(false, true);
 
 			setConfigFullFileName(nullptr, true);
 
@@ -981,7 +981,7 @@ void SVObserverApp::ResetAllCounts()
 	}
 }
 
-HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid ][10.20][18.10.2021]: this function is too long
+HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
 	HRESULT result {S_OK};
 

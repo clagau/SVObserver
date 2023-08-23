@@ -618,7 +618,7 @@ enum MessageTextEnum
 	Tid_ObjectIdToLarge_OID,
 	Tid_ConfigurationNotLoaded,
 	Tid_InvalidMainwindow,
-	Tid_DestroyConfigFailed,
+	Tid_CloseConfigFailed,
 	Tid_WrongExtensionInOpenFile,
 	Tid_OpenSvxFileError,
 	Tid_CouldNotWrite_File,

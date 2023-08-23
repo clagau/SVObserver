@@ -573,7 +573,7 @@ void SVMainFrame::OnClose()
 		TheSVObserverApp().Logout();
 
 		// Last checking...
-		if (S_OK == DestroyConfig())
+		if (S_OK == CloseConfig())
 		{
 			SvimState::changeState(SV_STATE_UNAVAILABLE, SV_STATE_READY);
 			CMDIFrameWnd::OnClose();
@@ -696,7 +696,7 @@ void SVMainFrame::OnFileCloseConfig()
 		TheSVObserverApp().ValidateMRUList();
 
 		// Check if current config is modified, ask for saving and try to close
-		auto hr = DestroyConfig();
+		auto hr = CloseConfig();
 
 		if (S_OK == hr)
 		{
@@ -1589,7 +1589,7 @@ void SVMainFrame::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI)
 
 void SVMainFrame::OnRCClose()
 {
-	DestroyConfig(false, true);
+	CloseConfig(false, true);
 }
 
 void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )

@@ -40,8 +40,8 @@ struct ConfigFilenames
 
 class SVConfigurationObject* UseConfigAssistant(class SVOConfigAssistantDlg& rDlg, class SVConfigurationObject*, bool newConfiguration);
 class SVConfigurationObject* CreateConfigAssistant(class SVOConfigAssistantDlg& rDlg, bool newConfiguration);
-HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint);
-void DestroyConfigOtherwise();
+HRESULT CloseConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint);
+void CloseConfigOtherwise();
 bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
 
 ConfigFilenames g_ConfigFilenames; 
@@ -138,7 +138,7 @@ bool CreateAndUseConfigAssistant(bool newConfiguration)
 bool PrepareForNewConfiguration()
 {
 	// Clean up SVObserver
-	if (S_OK != DestroyConfig())
+	if (S_OK != CloseConfig())
 	{
 		// Needs Attention !!!
 		// Should get error code if returned S_FALSE; 
@@ -158,7 +158,7 @@ bool PrepareForNewConfiguration()
 	// Check path, create if necessary and delete contents...
 	TheSVObserverApp().InitPath(std::string(SvFs::FileHelperManager::Instance().GetRunPathName() + _T("\\")).c_str(), true, true);
 
-	// Ensure that DestroyConfig() can do his work...
+	// Ensure that CloseConfig() can do its work...
 	SvimState::AddState(SV_STATE_READY);
 
 	return true;
@@ -503,9 +503,7 @@ void GetAndDestroyConfigurationObject()
 		SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 		if (nullptr != pRoot)
 		{
-
 			pRoot->destroyConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
-
 		}
 	}
 }
@@ -523,7 +521,7 @@ HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 
 	if (0 == _access(fileName.c_str(), 0))
 	{
-		DestroyConfig(false, true);
+		CloseConfig(false, true);
 	}
 	else
 	{
@@ -565,8 +563,7 @@ HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 	return l_Status;
 }
 
-HRESULT DestroyConfig(bool AskForSavingOrClosing /* = true */,
-	bool CloseWithoutHint /* = false */)
+HRESULT CloseConfig(bool AskForSavingOrClosing /* = true */, bool CloseWithoutHint /* = false */)
 {
 	SvimState::SVRCBlocker block;
 
@@ -574,11 +571,11 @@ HRESULT DestroyConfig(bool AskForSavingOrClosing /* = true */,
 
 	if (SvimState::CheckState(SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST))
 	{
-		hr = DestroyConfigStandard(AskForSavingOrClosing, CloseWithoutHint);
+		hr = CloseConfigStandard(AskForSavingOrClosing, CloseWithoutHint);
 	}
 	else
 	{
-		DestroyConfigOtherwise();
+		CloseConfigOtherwise();
 	}
 
 	if (ERROR_CANCELLED != hr)
@@ -593,7 +590,46 @@ HRESULT DestroyConfig(bool AskForSavingOrClosing /* = true */,
 }
 
 
-HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint) //@TODO [Arvid][10.20][3.11.2021]: this function is too long
+bool DestroyConfigAndPpq()
+{
+	_variant_t configName;
+	configName.SetString(getConfigFullFileName().c_str());
+	SVVisionProcessorHelper::Instance().FireNotification(SvPb::NotifyType::configUnloaded, configName);
+	SVOLicenseManager::Instance().ClearLicenseErrors();
+	SvimState::ConfigWasUnloaded();
+	SvimState::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
+
+	CWaitCursor wait;
+
+	wait.Restore();
+
+	GetAndDestroyConfigurationObject();
+
+	wait.Restore();
+
+	GetSvoMainFrame()->SetStatusInfoText(_T(""));
+
+	wait.Restore();
+
+	// Destroy the current PPQ
+	GetSvoMainFrame()->DestroyPPQButtons();
+	GetSvoMainFrame()->InitToolBars();
+
+	wait.Restore();
+
+	SvimState::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING);
+
+	bool bOk = setConfigFullFileName(nullptr, true);
+
+	wait.Restore();
+
+	getIniInfoHandler().INIReset();
+
+	return bOk;
+}
+
+
+HRESULT CloseConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 {
 	bool bOk = false;
 	bool bClose = true;
@@ -629,46 +665,12 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 
 	if (bClose)
 	{
-		bOk = bClose = SvimState::CheckState(SV_STATE_READY);
+		bClose = SvimState::CheckState(SV_STATE_READY);
 	}
 
 	if (bClose)
 	{
-		_variant_t configName;
-		configName.SetString(getConfigFullFileName().c_str());
-		SVVisionProcessorHelper::Instance().FireNotification(SvPb::NotifyType::configUnloaded, configName);
-		SVOLicenseManager::Instance().ClearLicenseErrors();
-		SvimState::ConfigWasUnloaded();
-		SvimState::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
-
-		if (bOk)
-		{
-			CWaitCursor wait;
-
-			wait.Restore();
-
-			GetAndDestroyConfigurationObject();
-
-			wait.Restore();
-
-			GetSvoMainFrame()->SetStatusInfoText(_T(""));
-
-			wait.Restore();
-
-			// Destroy the current PPQ
-			GetSvoMainFrame()->DestroyPPQButtons();
-			GetSvoMainFrame()->InitToolBars();
-
-			wait.Restore();
-
-			SvimState::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING);
-
-			bOk = setConfigFullFileName(nullptr, true);
-
-			wait.Restore();
-
-			getIniInfoHandler().INIReset();
-		}
+		bOk = DestroyConfigAndPpq();
 	}
 
 	if (S_OK == hr)
@@ -687,7 +689,7 @@ HRESULT DestroyConfigStandard(bool AskForSavingOrClosing, bool CloseWithoutHint)
 
 
 
-void DestroyConfigOtherwise()
+void CloseConfigOtherwise()
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);

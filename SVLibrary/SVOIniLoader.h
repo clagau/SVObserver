@@ -32,6 +32,8 @@ namespace SvLib
 		HRESULT LoadHardwareIni(LPCTSTR hardwareIniFile);
 		void DecodeModelNumber(LPCTSTR modelNumber);
 
+		bool areBoardNamesPresent();
+
 		bool isModelNumberDecodable() {return  m_modelNumberIsDecodable;}
 
 		auto ModelNumberString() const { return m_ModelNumber.c_str(); }

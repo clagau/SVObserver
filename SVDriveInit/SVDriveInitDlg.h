@@ -41,7 +41,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	bool IsValidModelNumber() const;
+	bool IsModelNumberValidAndAreBoardNamesPresent() const;
 
 	bool GetOEMInfo();
 	bool GetSysPrepInfo();

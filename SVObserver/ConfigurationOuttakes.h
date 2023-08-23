@@ -14,7 +14,7 @@ std::pair<bool, bool> OkToClose(bool AskForSavingOrClosing);
 
 bool CreateAndUseConfigAssistant(bool newConfiguration);
 bool PrepareForNewConfiguration();
-HRESULT DestroyConfig(bool AskForSavingOrClosing = true, bool CloseWithoutHint = false);
+HRESULT CloseConfig(bool AskForSavingOrClosing = true, bool CloseWithoutHint = false);
 
 void GetAndDestroyConfigurationObject();
 
