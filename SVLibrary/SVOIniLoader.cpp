@@ -405,6 +405,12 @@ void SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
 }
 
 
+bool SVOIniLoader::TriggerEdgeEqualsNoCase(int i, const std::string& rS) {return (0 == SvUl::CompareNoCase(m_TriggerEdge[i], rS)); }
+bool SVOIniLoader::StrobeEdgeEqualsNoCase(int i, const std::string& rS) { return (0 == SvUl::CompareNoCase(m_StrobeEdge[i], rS)); }
+bool SVOIniLoader::StartFrameTypeEqualsNoCase(int i, const std::string& rS) { return (0 == SvUl::CompareNoCase(m_TriggerEdge[i], rS)); }
+
+
+
 bool readSerialNumberFromSystem(std::string& serialNumber)
 {
 	const int cCharSize = 100;
@@ -424,4 +430,5 @@ bool readSerialNumberFromSystem(std::string& serialNumber)
 	serialNumber = SvUl::Trim(SvUl::createStdString(sn).c_str());
 	return (8 == serialNumber.size() || 9 == serialNumber.size());
 }
+
 } //namespace SvLib

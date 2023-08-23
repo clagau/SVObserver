@@ -31,7 +31,7 @@
 
 namespace
 {
-	HRESULT ConstructDocuments(SVTreeType& p_rTree) //@TODO [Arvid][10.20][18.10.2021]: this function is too long
+	HRESULT ConstructDocuments(SVTreeType& p_rTree) //@TODO [Arvid ][10.20][18.10.2021]: this function is too long
 	{
 		HRESULT l_Status(S_OK);
 

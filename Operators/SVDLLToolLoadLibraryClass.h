@@ -111,6 +111,7 @@ public:
 	HRESULT Open(const std::string& rDllPath, std::vector<std::string>& rStatusMsgs);
 	HRESULT Close();
 
+	HRESULT InitializeFunctions(SvStl::MessageContainer& rMessages, std::vector<std::string>& rStatusMsgs);
 	HRESULT GetToolName(BSTR* pbstrToolName);
 	HRESULT GetToolVersion(long* plVersionNumber);
 	HRESULT RunTool(uint32_t toolId, long* plStatus);

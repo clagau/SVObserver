@@ -981,7 +981,7 @@ void SVObserverApp::ResetAllCounts()
 	}
 }
 
-HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18.10.2021]: this function is too long
+HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid ][10.20][18.10.2021]: this function is too long
 {
 	HRESULT result {S_OK};
 

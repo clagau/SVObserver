@@ -84,11 +84,11 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 		for (int i = 0; i < SvLib::MaxTriggers; i++)
 		{
 			bool Value(false);
-			Value = (0 == SvUl::CompareNoCase(IniLoader.m_TriggerEdge[i], std::string(_T("R"))));
+			Value = IniLoader.TriggerEdgeEqualsNoCase(i, std::string(_T("R")));
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue(i, Value);
-			Value = (0 == SvUl::CompareNoCase(IniLoader.m_StrobeEdge[i], std::string(_T("R"))));
+			Value = IniLoader.StrobeEdgeEqualsNoCase(i, std::string(_T("R")));
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue(i, Value);
-			Value = (0 == SvUl::CompareNoCase(IniLoader.m_StartFrameType[i], std::string(_T("Y"))));
+			Value = IniLoader.StartFrameTypeEqualsNoCase(i, std::string(_T("Y")));
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive(i, Value);
 		}
 

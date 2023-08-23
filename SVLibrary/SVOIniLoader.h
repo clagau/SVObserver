@@ -39,10 +39,9 @@ namespace SvLib
 		auto WinKeyString() const {return m_WinKey.c_str(); }
 		bool UseCorrectListRecursion() const { return m_bUseCorrectListRecursion; }
 
-		//@TODO [Arvid][10.10][20.08.2020] the remaining public data members in this class should also be private
-		std::string m_TriggerEdge[MaxTriggers];
-		std::string m_StrobeEdge[MaxTriggers];
-		std::string m_StartFrameType[MaxTriggers];
+		bool TriggerEdgeEqualsNoCase(int i, const std::string& rS);
+		bool StrobeEdgeEqualsNoCase(int i, const std::string& rS);
+		bool StartFrameTypeEqualsNoCase(int i, const std::string& rS);
 
 	private:
 		struct InitialInformation &m_rInitialInfo;
@@ -58,6 +57,9 @@ namespace SvLib
 		std::string m_Opto22InputInvert;
 		std::string m_Opto22OutputInvert;
 
+		std::string m_TriggerEdge[MaxTriggers];
+		std::string m_StrobeEdge[MaxTriggers];
+		std::string m_StartFrameType[MaxTriggers];
 	};
 
 	/// Read SerialNumber from BIOS and if it a valid (8 oder 9 character) the return true
