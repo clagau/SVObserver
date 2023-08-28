@@ -114,6 +114,8 @@ namespace SvOsl
 		bool m_initFinished = false;
 		std::string m_nameFilterCurrent;
 		std::string m_locationFilterCurrent;
+		int m_checkSelectionCurrent = 0;
+		int m_typeSelectionCurrent = 0;
 	#pragma endregion Member Variables
 	};
 } //namespace SvOsl

@@ -166,10 +166,18 @@ namespace SvOsl
 		std::string nameFilterNew {m_FilterNameControl.getEditText()};
 		std::string locationFilterNew {m_FilterLocationControl.getEditText()};
 
-		if (m_initFinished && nameFilterNew != m_nameFilterCurrent || locationFilterNew != m_locationFilterCurrent)
+		int checkSelectionNew = m_checkedControl.GetCurSel();
+		int typeSelectionNew = m_TypeControl.GetCurSel();
+
+		if (m_initFinished && nameFilterNew != m_nameFilterCurrent 
+			|| locationFilterNew != m_locationFilterCurrent
+			|| checkSelectionNew != m_checkSelectionCurrent
+			|| typeSelectionNew != m_typeSelectionCurrent)
 		{
 			m_nameFilterCurrent = nameFilterNew;
 			m_locationFilterCurrent = locationFilterNew;
+			m_checkSelectionCurrent = checkSelectionNew;
+			m_typeSelectionCurrent = typeSelectionNew;
 			loadGridCtrl();
 		}
 	}
@@ -272,10 +280,8 @@ namespace SvOsl
 		//add leaves
 		int rowCount = 1;
 		m_Grid.SetRowCount(rowCount);
-		int checkSelection = m_checkedControl.GetCurSel();
-		int typeSelection = m_TypeControl.GetCurSel();
 		CString typeText = _T("");
-		m_TypeControl.GetLBText(typeSelection, typeText);
+		m_TypeControl.GetLBText(m_typeSelectionCurrent, typeText);
 
 		SvCl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 		while( m_rTreeContainer.pre_order_end() != Iter )
@@ -290,10 +296,10 @@ namespace SvOsl
 				bool isLocationValid = PathMatchSpecA(Iter->second->m_Location.c_str(), wildcardPatternPlusAsteriskLocation.c_str());
 
 				if ( (isNameValid && isLocationValid) &&
-					 (0 == checkSelection || 
-						( 1 == checkSelection && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState) || 
-						( 2 == checkSelection && SvCl::ObjectSelectorItem::CheckedEnabled != Iter->second->m_CheckedState) ) &&
-					 (0 == typeSelection || typeText == Iter->second->m_ItemTypeName.c_str() ))
+					 (0 == m_checkSelectionCurrent || 
+						( 1 == m_checkSelectionCurrent && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState) ||
+						( 2 == m_checkSelectionCurrent && SvCl::ObjectSelectorItem::CheckedEnabled != Iter->second->m_CheckedState) ) &&
+					 (0 == m_typeSelectionCurrent || typeText == Iter->second->m_ItemTypeName.c_str() ))
 				{
 					m_Grid.SetRowCount(rowCount + 1);
 					m_Grid.SetItemText(rowCount, NameColumn, Iter->second->m_Name.c_str());
