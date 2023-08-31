@@ -115,9 +115,15 @@ namespace SvCl
 			}
 
 			const_iterator IterChild( rIter.node()->begin() );
-			while( rIter.node()->end() != IterChild && LoopChildren )
+			while(rIter.node()->end() != IterChild && LoopChildren)
 			{
-				ObjectSelectorItem::CheckedStateEnum checkedState = IterChild->second->isNode() ? IterChild->second->m_NodeState : IterChild->second->m_CheckedState;
+				if (IterChild->second->m_displayItem == false)
+				{
+					++IterChild;
+					continue;
+				}
+
+				ObjectSelectorItem::CheckedStateEnum checkedState = IterChild->second->m_NodeItem != nullptr ? IterChild->second->m_NodeState : IterChild->second->m_CheckedState;
 				switch(checkedState)
 				{
 				case ObjectSelectorItem::UncheckedEnabled:
@@ -150,7 +156,7 @@ namespace SvCl
 					}
 				}
 				//If Tristate then don't need to check further
-				if( !AllChecked && SomeChecked )
+				if(AllChecked == false && SomeChecked == true)
 				{
 					LoopChildren = false;
 				}
@@ -158,9 +164,9 @@ namespace SvCl
 				++IterChild;
 			}
 
-			if( AllChecked )
+			if(AllChecked == true)
 			{
-				if( m_SingleSelect )
+				if( m_SingleSelect == true )
 				{
 					//For single select only use the tristate symbol
 					result = ObjectSelectorItem::TriStateEnabled;
@@ -170,7 +176,7 @@ namespace SvCl
 					result = ObjectSelectorItem::CheckedEnabled;
 				}
 			}
-			else if( SomeChecked )
+			else if(SomeChecked == true)
 			{
 				result = ObjectSelectorItem::TriStateEnabled;
 			}
@@ -264,41 +270,14 @@ namespace SvCl
 		return Iter;
 	}
 
-	SvDef::StringSet ObjectTreeItems::setParentState( const ObjectTreeItems::iterator& rIter )
+	void ObjectTreeItems::clearItem(const std::string &itemLocation)
 	{
-		SvDef::StringSet retValue;
-		if( !rIter.node()->parent()->is_root() )
-		{
-			ObjectTreeItems::iterator ParentIter = findItem( rIter.node()->parent()->get()->first );
-
-			if( end() != ParentIter )
-			{
-				ObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState( ParentIter );
-				if( ParentIter->second->m_NodeState != CheckedState )
-				{
-					ParentIter->second->m_NodeState = CheckedState;
-					retValue.insert( ParentIter->first );
-					SvDef::StringSet tmpValue = setParentState( ParentIter );
-					retValue.insert( tmpValue.begin(), tmpValue.end() );
-				}
-			}
-		}
-		return retValue;
-	}
-
-	SvDef::StringSet ObjectTreeItems::clearItem(const std::string &itemLocation)
-	{
-		SvDef::StringSet updateItems;
 		iterator Iter = findItem( itemLocation );
 		if( end() != Iter )
 		{
 			Iter->second->m_CheckedState = ObjectSelectorItem::UncheckedEnabled;
 			Iter->second->m_NodeState = m_SingleSelect ? ObjectSelectorItem::EmptyEnabled : ObjectSelectorItem::UncheckedEnabled;
-
-			updateItems = setParentState( Iter );
-			updateItems.insert( Iter->first );
 		}
-		return updateItems;
 	}
 	#pragma endregion Public Methods
 

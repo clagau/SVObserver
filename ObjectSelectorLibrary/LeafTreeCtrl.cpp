@@ -72,8 +72,8 @@ namespace SvOsl
 
 					Item = InsertItem(TVIF_TEXT | TVIF_IMAGE | TVIF_STATE | TVIF_PARAM, 
 						IterChild->second->m_Name.c_str(),
-						IterChild->second->m_IconNumber,
-						IterChild->second->m_IconNumber,
+						0,
+						0,
 						0,
 						0,
 						reinterpret_cast<LPARAM> (&IterChild->first),
@@ -238,10 +238,6 @@ namespace SvOsl
 
 				Iter->second->m_CheckedState = CheckedState;
 				SetItemState(*ParentIter, INDEXTOSTATEIMAGEMASK(CheckedState), TVIS_STATEIMAGEMASK);
-				getUpdateItems().insert(Iter->first);
-
-				SvDef::StringSet updateItems = getParentPropPage().getTreeContainer().setParentState(Iter);
-				getUpdateItems().insert(updateItems.begin(), updateItems.end());
 			}
 			++ParentIter;
 		}

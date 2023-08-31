@@ -313,7 +313,7 @@ void GlobalConstantView::insertGlobalConstant( const SvUl::GlobalConstantData& r
 	{
 		pGlobalObject->setDescription( rGlobalData.m_Description.c_str() );
 		//All Global constants can be remotely settable
-		pGlobalObject->SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+		pGlobalObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::remotelySetable | SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
 	}
 }
 

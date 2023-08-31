@@ -316,16 +316,39 @@ bool RootObject::createRootChildren()
 	Result = createRootChild(SvDef::FqnEnvironment, SvPb::SVEnvironmentObjectType);
 	if (Result)
 	{
-		//Default values for the mode
-		m_RootChildren.setValue(SvDef::FqnEnvironmentModeValue, 0L);
-		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsRun, false);
-		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsStop, false);
-		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsRegressionTest, false);
-		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsTest, false);
-		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsEdit, false);
-
-		//When Environment created then create the following variables to set their attributes
 		SvVol::BasicValueObjectPtr pValueObject(nullptr);
+		//Default values for the mode
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModeValue, 0L);
+		if (nullptr != pValueObject)
+		{
+			pValueObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
+		}
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsRun, false);
+		if (nullptr != pValueObject)
+		{
+			pValueObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
+		}
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsStop, false);
+		if (nullptr != pValueObject)
+		{
+			pValueObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
+		}
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsRegressionTest, false);
+		if (nullptr != pValueObject)
+		{
+			pValueObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
+		}
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsTest, false);
+		if (nullptr != pValueObject)
+		{
+			pValueObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
+		}
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsEdit, false);
+		if (nullptr != pValueObject)
+		{
+			pValueObject->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
+		}
+
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModuleReady, false);
 		SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValueObject.get(), ObjectIdEnum::ModuleReadyId);
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModelNumber, _T(""));
@@ -417,6 +440,7 @@ void SvOi::fillRootChildSelectorList(std::back_insert_iterator<std::vector<SvPb:
 			insertItem.set_location(rpObject->GetCompleteName());
 			insertItem.set_objectidindex(convertObjectIdToString(rpObject->getObjectId()));
 			insertItem.set_type(rpObject->getTypeName());
+			insertItem.set_shortmode(SvPb::ObjectAttributes::shortMode == (rpObject->ObjectAttributesAllowed() & SvPb::ObjectAttributes::shortMode));
 			treeInserter = insertItem;
 		}
 	}

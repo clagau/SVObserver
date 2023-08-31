@@ -109,24 +109,24 @@ bool SVColorThreshold::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 			BOOL Enabled(false);
 			m_BandThreshold[Band].m_ThresholdEnabled.GetValue(Enabled);
 			isThresholdEnabled |= (TRUE == Enabled);
-			m_BandThreshold[Band].m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
+			m_BandThreshold[Band].m_OutputImage.SetObjectAttributesAllowed(SvDef::viewableAndUseable | SvPb::ObjectAttributes::shortMode, Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
 		}
 		if (isThresholdEnabled)
 		{
-			m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, SvOi::SetAttributeType::AddAttribute);
+			m_OutputImage.SetObjectAttributesAllowed(SvDef::viewableAndUseable | SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
 		}
 		else
 		{
 			m_OutputThresholdEnabled.SetValue(BOOL(false));
-			m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
+			m_OutputImage.SetObjectAttributesAllowed(SvDef::viewableAndUseable | SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::RemoveAttribute);
 		}
 	}
 	else
 	{
-		m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
+		m_OutputImage.SetObjectAttributesAllowed(SvDef::viewableAndUseable | SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::RemoveAttribute);
 		for (SvDef::BandEnum Band : SvDef::BandList)
 		{
-			m_BandThreshold[Band].m_OutputImage.SetObjectAttributesAllowed(SvPb::useable | SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
+			m_BandThreshold[Band].m_OutputImage.SetObjectAttributesAllowed(SvDef::viewableAndUseable | SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::RemoveAttribute);
 		}
 	}
 

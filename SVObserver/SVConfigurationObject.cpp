@@ -4842,7 +4842,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 					SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), UniqueID);
 					pValue->setDescription(Description.c_str());
 					//All Global constants can be remotely settable
-					pValue->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+					pValue->SetObjectAttributesAllowed(SvPb::ObjectAttributes::remotelySetable | SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
 				}
 			}
 

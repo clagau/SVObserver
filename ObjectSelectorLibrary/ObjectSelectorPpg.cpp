@@ -130,7 +130,7 @@ namespace SvOsl
 
 	BOOL ObjectSelectorPpg::OnSetActive()
 	{
-		m_NodeTree.UpdateAllNodes();
+		m_NodeTree.updateTree();
 		if (m_nodeToBeSelected)
 		{ 
 			m_NodeTree.SelectNodeByName(m_nodeToBeSelected);

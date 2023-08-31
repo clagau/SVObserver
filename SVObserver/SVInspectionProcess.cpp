@@ -76,6 +76,7 @@ void fillList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> result, con
 					ObjectRef.SetArrayIndex(i);
 					insertItem.set_location(ObjectRef.GetCompleteName(true));
 					insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
+					insertItem.set_shortmode(SvPb::ObjectAttributes::shortMode == (ObjectRef.ObjectAttributesAllowed() & SvPb::ObjectAttributes::shortMode));
 					result = insertItem;
 				}
 			}
@@ -83,6 +84,7 @@ void fillList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> result, con
 			{
 				insertItem.set_location(ObjectRef.GetCompleteName(true));
 				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
+				insertItem.set_shortmode(SvPb::ObjectAttributes::shortMode == (ObjectRef.ObjectAttributesAllowed() & SvPb::ObjectAttributes::shortMode));
 				result = insertItem;
 			}
 		}
@@ -2942,6 +2944,7 @@ void SVInspectionProcess::fillPPQSelectorList(std::back_insert_iterator<std::vec
 				SvUl::searchAndReplace(location, InspectionName.c_str(), SvDef::FqnPPQVariables);
 				insertItem.set_location(location);
 				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
+				insertItem.set_shortmode(SvPb::ObjectAttributes::shortMode == (pObject->ObjectAttributesAllowed() & SvPb::ObjectAttributes::shortMode));
 				treeInserter = insertItem;
 			}
 		}

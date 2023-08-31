@@ -188,7 +188,7 @@ void SVExternalToolTask::SetAllAttributes()
 
 	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
-		UINT attribute = (i < m_Data.m_lNumResultValues) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
+		UINT attribute = (i < m_Data.m_lNumResultValues) ? SvDef::defaultValueObjectAttributes | SvPb::ObjectAttributes::shortMode : SvPb::noAttributes;
 		SVResult* pResultObject = GetResultRangeObject(i);
 		if (nullptr != pResultObject)
 		{

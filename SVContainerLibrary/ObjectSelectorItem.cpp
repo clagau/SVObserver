@@ -41,7 +41,6 @@ namespace SvCl
 			(m_NodeItem == rRhs.m_NodeItem) &&
 			(m_LeafItem == rRhs.m_LeafItem) &&
 			(m_Attribute == rRhs.m_Attribute) &&
-			(m_IconNumber == rRhs.m_IconNumber) &&
 			(m_Modified == rRhs.m_Modified) &&
 			(m_NodeState == rRhs.m_NodeState) &&
 			(m_CheckedState == rRhs.m_CheckedState) &&

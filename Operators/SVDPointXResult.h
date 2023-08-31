@@ -39,7 +39,7 @@ protected:
 
 protected:
 	// Output
-	SvVol::SVDoubleValueObjectClass		x;
+	SvVol::SVDoubleValueObjectClass m_X;
 };
 
 } //namespace SvOp

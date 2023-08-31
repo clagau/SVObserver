@@ -17,7 +17,6 @@
 //Moved to precompiled header: #include <map>
 #include "ObjectSelectorItem.h"
 #include "SVTree.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvCl
@@ -80,18 +79,11 @@ namespace SvCl
 		iterator findItem( const std::string& rDisplayLocation, bool CreateIfNone = false );
 
 		/**********
-		The method sets the state of the parent items
-		\param rIter <in> a reference to the parent iterator
-		\return string set (location names) of changed parent
-		***********/
-		SvDef::StringSet setParentState( const ObjectTreeItems::iterator& rIter );
-
-		/**********
 			The method clears (unchecked) a item at the specified location and update also the parents if necessary.
 			\param rLocation <in> a reference to the location of the item
 			\return string set (location names) of changed items.
 		***********/
-		SvDef::StringSet clearItem(const std::string& itemLocation);
+		void clearItem(const std::string& itemLocation);
 
 		void clearBranchMap() { m_BranchMap.clear(); };
 #pragma endregion Public Methods

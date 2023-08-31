@@ -386,7 +386,6 @@ namespace SvOsl
 				}
 
 				iter->second->m_CheckedState = isChecked ? SvCl::ObjectSelectorItem::CheckedEnabled : SvCl::ObjectSelectorItem::UncheckedEnabled;
-				m_rTreeContainer.setParentState(iter);
 			}
 		}
 	}

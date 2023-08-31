@@ -83,7 +83,8 @@ bool SVDoubleResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 {
 	bool bOk = SVResult::CreateObject(rCreateStructure ) && nullptr != getInput();
 
-	m_Value.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_Value.SetObjectAttributesAllowed(SvPb::ObjectAttributes::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_Value.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = bOk;
 

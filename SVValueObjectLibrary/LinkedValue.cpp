@@ -39,6 +39,8 @@ namespace SvVol
 static char THIS_FILE[] = __FILE__;
 #endif
 
+constexpr std::array<SvPb::EmbeddedIdEnum, 4> c_shortModeList = {SvPb::PassedEId, SvPb::FailedEId, SvPb::PassedCountEId, SvPb::FailedCountEId};
+
 namespace
 {
 _variant_t convertType(const _variant_t& rValue, VARTYPE newType)
@@ -1750,6 +1752,11 @@ bool LinkedValue::UpdateChildrenForDefaultState(SvStl::MessageContainerVector* p
 			m_children[i]->setDefaultValue(data[i].value);
 			m_children[i]->setDirectValue(data[i].value);
 
+			if (c_shortModeList.end() != std::find(c_shortModeList.begin(), c_shortModeList.end(), data[i].embeddedId))
+			{
+				m_children[i]->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
+			}
+
 			result = m_children[i]->resetAllObjects(pErrorMessages) && result;
 
 		}
@@ -2077,6 +2084,10 @@ bool LinkedValue::resetChild(int pos, SvOi::IValueObject* pValue, SvStl::Message
 			{
 				SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_children[pos].get(), m_childrenIds[pos]);
 			}
+			if (c_shortModeList.end() != std::find(c_shortModeList.begin(), c_shortModeList.end(), pObject->GetEmbeddedID()))
+			{
+				m_children[pos]->SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::AddAttribute);
+			}
 		}
 		m_children[pos]->donotCheckForDependency();
 		m_children[pos]->SetObjectOwner(this);
@@ -2084,6 +2095,7 @@ bool LinkedValue::resetChild(int pos, SvOi::IValueObject* pValue, SvStl::Message
 		m_children[pos]->setEmbeddedId(pObject->GetEmbeddedID());
 		m_children[pos]->setIndirectValue(pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
 		m_children[pos]->setDefaultValue(pValue->getDefaultValue());
+
 		return m_children[pos]->resetAllObjects(pErrorMessages);
 	}
 	return true;

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "ObjectTreeCtrl.h"
 #include "ObjectSelectorPpg.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -25,7 +24,6 @@ static char THIS_FILE[] = __FILE__;
 
 //ObjectTreeCtrl static variables 
 std::string SvOsl::ObjectTreeCtrl::m_CurrentSelection( _T("") );
-SvDef::StringSet SvOsl::ObjectTreeCtrl::m_UpdateItems;
 #pragma endregion Declarations
 
 namespace SvOsl
@@ -259,10 +257,7 @@ namespace SvOsl
 
 				Iter->second->m_CheckedState =  CheckedState;
 				SetItemState( *ParentIter, INDEXTOSTATEIMAGEMASK( CheckedState ), TVIS_STATEIMAGEMASK );
-				m_UpdateItems.insert( Iter->first );
 
-				SvDef::StringSet updateItems = getParentPropPage().getTreeContainer().setParentState( Iter );
-				m_UpdateItems.insert(updateItems.begin(), updateItems.end());
 				if( Iter->second->isNode() )
 				{
 					setChildrenState( Iter, CheckedState );
@@ -282,17 +277,12 @@ namespace SvOsl
 		while( rIter.node()->end() != ChildIter )
 		{
 			bool TriState = SvCl::ObjectSelectorItem::TriStateEnabled == rCheckedState || SvCl::ObjectSelectorItem::TriStateDisabled == rCheckedState;
-			if( !TriState || ChildIter->second->isNode() )
+			if(ChildIter->second->m_displayItem && (TriState == false || ChildIter->second->isNode()))
 			{
 				if (ChildIter->second->isLeaf())
 				{
 					ChildIter->second->m_CheckedState = rCheckedState;
 				}
-				if (ChildIter->second->isNode())
-				{
-					ChildIter->second->m_NodeState = rCheckedState;
-				}
-				m_UpdateItems.insert( ChildIter->first );
 				setChildrenState(ChildIter, rCheckedState);
 			}
 			++ChildIter;
@@ -308,8 +298,7 @@ namespace SvOsl
 			{
 				if( m_CurrentSelection != *pLocation )
 				{
-					SvDef::StringSet updateItems = getParentPropPage().getTreeContainer().clearItem (m_CurrentSelection);
-					m_UpdateItems.insert(updateItems.begin(), updateItems.end());
+					getParentPropPage().getTreeContainer().clearItem (m_CurrentSelection);
 
 					SvCl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( *pLocation );
 

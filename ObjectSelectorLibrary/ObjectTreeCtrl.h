@@ -15,7 +15,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <set>
 #include "SVContainerLibrary/ObjectTreeItems.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvOsl
@@ -168,12 +167,6 @@ namespace SvOsl
 		void setCurrentSelection(const std::string& rCurrentSelection) { m_CurrentSelection = rCurrentSelection; }
 
 		/**********
-		The method gets a reference to the update items
-		\return a reference to the list of updated items
-		***********/
-		SvDef::StringSet& getUpdateItems() const { return m_UpdateItems; }
-
-		/**********
 		The method gets the left button check flag
 		\return the check flag value
 		***********/
@@ -192,8 +185,7 @@ namespace SvOsl
 		CPoint m_ContextPoint;							//Point where context menu called
 		bool m_SingleSelect;							//True when tree has only single item selection
 		UINT m_LeftButtonCheckFlag;						//The left button click check flag
-		static std::string m_CurrentSelection;				//The current selection
-		static SvDef::StringSet m_UpdateItems;				//The list of items to update
+		static std::string m_CurrentSelection;			//The current selection
 	#pragma endregion Member Variables
 	};
 

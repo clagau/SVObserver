@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "NodeTreeCtrl.h"
 #include "ObjectSelectorPpg.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -54,6 +53,8 @@ namespace SvOsl
 	{
 		SetRedraw(FALSE);
 
+		std::string currentSelection = getParentPropPage().getHighlightedNode();
+
 		DeleteAllItems();
 
 		filterItems();
@@ -80,8 +81,8 @@ namespace SvOsl
 					HTREEITEM Item = nullptr;
 					Item = InsertItem(TVIF_TEXT | TVIF_STATE | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM,
 						Iter->second->m_Name.c_str(),
-						Iter->second->m_IconNumber,
-						Iter->second->m_IconNumber,
+						0,
+						0,
 						0,
 						0,
 						reinterpret_cast<LPARAM> (&Iter->first),
@@ -100,36 +101,42 @@ namespace SvOsl
 			}
 			++Iter;
 		}
+		updateTree();
+		SetRedraw(TRUE);
 		//Expand to checked items if none then expand to 2nd Level items
-		if( !ExpandToCheckedItems() )
+		if(ExpandToCheckedItems() == false)
 		{
 			OnCollapseTo2ndLevel();
 		}
-
-		selectFirstItem( CurrentItems );
-
-		SetRedraw(TRUE);
+		if (SelectNodeByName(currentSelection) == false)
+		{
+			selectFirstItem(CurrentItems);
+		}
 	}
 
 	void NodeTreeCtrl::updateTree()
 	{
-		SvDef::StringSet& rUpdateItems = getUpdateItems();
-		SvCl::ObjectTreeItems& rTreeItems = getParentPropPage().getTreeContainer();
+		SvCl::ObjectTreeItems::post_order_iterator Iter(getParentPropPage().getTreeContainer().post_order_begin());
 
-		SvDef::StringSet::const_iterator IterName = rUpdateItems.begin();
-
-		while( rUpdateItems.end() != IterName )
+		while (getParentPropPage().getTreeContainer().post_order_end() != Iter)
 		{
-			SvCl::ObjectTreeItems::iterator Iter( rTreeItems.findItem( *IterName ) );
-
-			if( rTreeItems.end() != Iter )
+			if (Iter.node()->is_root())
 			{
-				UpdateNode(*Iter->second);
+				++Iter;
+				continue;
 			}
-			++IterName;
-		}
 
-		rUpdateItems.clear();
+			if (Iter->second->m_displayItem && Iter->second->isNode())
+			{
+				UpdateNode(Iter.base());
+			}
+
+			if (isSingleSelect() && Iter->second->isLeaf() && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState)
+			{
+				setCurrentSelection(Iter->second->m_Location);
+			}
+			++Iter;
+		}
 	}
 
 	bool NodeTreeCtrl::SelectNodeByName(const std::string& rDottedName)
@@ -146,30 +153,6 @@ namespace SvOsl
 		return ret;
 	}
 
-	void NodeTreeCtrl::UpdateAllNodes()
-	{
-		SvCl::ObjectTreeItems::pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
-
-		while( getParentPropPage().getTreeContainer().pre_order_end() != Iter )
-		{
-			if( Iter.node()->is_root() )
-			{
-				++Iter;
-				continue;
-			}
-
-			if (Iter->second->m_displayItem)
-			{
-				UpdateNode(*Iter->second);
-			}
-
-			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState )
-			{
-				setCurrentSelection( Iter->second->m_Location );
-			}
-			++Iter;
-		}
-	}
 	#pragma endregion Public Methods
 
 	#pragma region Protected Methods
@@ -393,10 +376,7 @@ namespace SvOsl
 
 				Iter->second->m_NodeState = CheckedState;
 				SetItemState(*ParentIter, INDEXTOSTATEIMAGEMASK(CheckedState), TVIS_STATEIMAGEMASK);
-				getUpdateItems().insert(Iter->first);
 
-				SvDef::StringSet updateItems = getParentPropPage().getTreeContainer().setParentState(Iter);
-				getUpdateItems().insert(updateItems.begin(), updateItems.end());
 				if (Iter->second->isNode())
 				{
 					setChildrenState(Iter, CheckedState);
@@ -443,19 +423,30 @@ namespace SvOsl
 		return Result;
 	}
 
-	void NodeTreeCtrl::UpdateNode( SvCl::ObjectSelectorItem& rItem )
+	void NodeTreeCtrl::UpdateNode(SvCl::ObjectTreeItems::iterator Iter)
 	{
-		bool isNode = rItem.isNode();
-		const HTREEITEM treeItem = rItem.m_NodeItem;
-
-		if( isNode && ( nullptr != treeItem ) )
+		SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = getParentPropPage().getTreeContainer().getNodeCheckedState(Iter);
+		//Check if state has changed
+		if(Iter->second->m_NodeState != CheckedState )
 		{
-			SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = static_cast<SvCl::ObjectSelectorItem::CheckedStateEnum>(GetItemState(treeItem, TVIS_STATEIMAGEMASK)>>12);
-			//Check if state has changed
-			if(rItem.m_NodeState != CheckedState )
+			Iter->second->m_NodeState = CheckedState;
+			SetItemState(Iter->second->m_NodeItem, INDEXTOSTATEIMAGEMASK(CheckedState), TVIS_STATEIMAGEMASK );
+		}
+		bool nodeEmpty {Iter.node()->size() > 0};
+		SvCl::ObjectTreeItems::iterator IterChild(Iter.node()->begin());
+		while (Iter.node()->end() != IterChild)
+		{
+			if (IterChild->second->isNode() || (IterChild->second->isLeaf() && IterChild->second->m_displayItem))
 			{
-				SetItemState( treeItem, INDEXTOSTATEIMAGEMASK(rItem.m_NodeState), TVIS_STATEIMAGEMASK );
+				nodeEmpty = false;
+				break;
 			}
+			++IterChild;
+		}
+		if (nodeEmpty && Iter->second->m_NodeItem != nullptr)
+		{
+			DeleteItem(Iter->second->m_NodeItem);
+			Iter->second->m_NodeItem = nullptr;
 		}
 	}
 

@@ -47,11 +47,11 @@ SVDPointYResult::SVDPointYResult( SVObjectClass* POwner, int StringResourceID )
 	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &y, SvPb::DYEId, IDS_OBJECTNAME_DY, false, SvOi::SVResetItemNone, false );
+	RegisterEmbeddedObject( &m_Y, SvPb::DYEId, IDS_OBJECTNAME_DY, false, SvOi::SVResetItemNone, false );
 
 	// Set Embedded defaults
-	y.SetDefaultValue( 0.0, true);
-	y.setSaveValueFlag(false);
+	m_Y.SetDefaultValue( 0.0, true);
+	m_Y.setSaveValueFlag(false);
 
 	// Instantiate Dynamic Objects
 
@@ -90,7 +90,8 @@ bool SVDPointYResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	bOk &= nullptr != getInputPoint();
 
 	// Set / Reset Printable Flag
-	y.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_Y.SetObjectAttributesAllowed(SvPb::ObjectAttributes::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_Y.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = bOk;
 
@@ -115,7 +116,7 @@ bool SVDPointYResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContaine
 		{
 			pPoint->GetValue(dPoint);
 		}
-		y.SetValue(dPoint.m_y);
+		m_Y.SetValue(dPoint.m_y);
 	
 		return true;
 	}

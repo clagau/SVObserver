@@ -66,16 +66,7 @@ namespace SvCl
 		bool operator==( const ObjectSelectorItem& rRhs ) const;
 		bool operator!=( const ObjectSelectorItem& rRhs ) const;
 
-		/**********
-			The method checks if the item is a node
-			\return True if the item is a node
-		***********/
 		bool isNode() const;
-
-		/**********
-			The method checks if the item is a leaf
-			\return True if the item is a leaf
-		***********/
 		bool isLeaf() const;
 	#pragma endregion Public Methods
 
@@ -88,7 +79,6 @@ namespace SvCl
 		HTREEITEM			m_NodeItem {nullptr};
 		HTREEITEM			m_LeafItem {nullptr};
 		AttributeEnum		m_Attribute{AttributeNone};
-		int					m_IconNumber{0};
 		bool				m_Modified{false};
 		bool				m_displayItem {true};
 		bool				m_shortMode {false};

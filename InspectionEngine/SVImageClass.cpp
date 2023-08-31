@@ -170,7 +170,7 @@ void SVImageClass::init()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
 
-	SetObjectAttributesAllowed(SvDef::viewableAndUseable, SvOi::SetAttributeType::OverwriteAttribute);
+	SetObjectAttributesAllowed(SvDef::viewableAndUseable | SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_ParentImageInfo.second = nullptr;
 

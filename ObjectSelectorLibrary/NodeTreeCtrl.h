@@ -39,8 +39,6 @@ namespace SvOsl
 		virtual void loadTree() override;
 		virtual void updateTree() override;
 
-		void UpdateAllNodes();
-
 		bool SelectNodeByName(const std::string& rDottedName);
 
 	#pragma endregion Public Methods
@@ -61,7 +59,7 @@ namespace SvOsl
 		virtual bool setCheckState(const TreeItemSet& rParentItems, SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = SvCl::ObjectSelectorItem::EmptyEnabled);
 		bool ExpandToCheckedItems();
 
-		void UpdateNode( SvCl::ObjectSelectorItem& rItem );
+		void UpdateNode(SvCl::ObjectTreeItems::iterator Iter);
 
 		void filterItems();
 	#pragma endregion Protected Methods

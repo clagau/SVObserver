@@ -85,7 +85,8 @@ bool SVPointXResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 {
 	m_isCreated = SVResult::CreateObject(rCreateStructure) && nullptr != m_inputObject.getInput<SvVol::SVPointValueObjectClass>();
 	
-	m_X.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_X.SetObjectAttributesAllowed(SvPb::ObjectAttributes::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_X.SetObjectAttributesAllowed(SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
 
 	return m_isCreated;
 }
