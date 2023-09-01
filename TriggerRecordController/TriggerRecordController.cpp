@@ -735,6 +735,7 @@ SvOi::TRC_RAIIPtr TriggerRecordController::setGlobalInit()
 
 int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos /*= -1*/, bool shouldHidden /*= false*/)
 {
+
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
 	if (ResetEnum::Invalid == resetEnum)
 	{   //Not possible to add and change image.
@@ -846,7 +847,14 @@ int TriggerRecordController::addOrChangeChildImage(uint32_t imageId, uint32_t pa
 		imagePos = static_cast<int> (std::distance(pList->begin(), imageIter));
 		if (pImageDefinition->objectid() == imageId && pImageDefinition->parentimageid() == parentId)
 		{
-			return imagePos;
+			auto Tsize = pImageDefinition->type().size();
+			auto size = sizeof(rBufferStruct);
+			
+			if(size == Tsize  &&  memcmp( reinterpret_cast<const void*> (pImageDefinition->type().c_str()), reinterpret_cast<const void*> (&rBufferStruct), size)== 0)
+			{
+				//nothing has changed 
+				return imagePos;
+			}
 		}
 	}
 	else

@@ -126,14 +126,17 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer(const SVImageInfoClass& r
 	SVImageInfoClass& rChildInfo,
 	SvOi::SVImageBufferHandlePtr& rChildHandle)
 {
-	SVMatroxBufferCreateChildStruct childBufferStruct(rParentHandle->GetBuffer());
 
-	HRESULT Result = nullptr != rParentHandle ? S_OK : S_FALSE;
-	rChildHandle.reset();
-	if (S_OK == Result)
+	if (nullptr == rParentHandle.get())
 	{
-		Result = FillChildBufferStructFromInfo(rParentInfo, rChildInfo, childBufferStruct.m_data);
+		return S_FALSE;
 	}
+	rChildHandle.reset();
+	
+	SVMatroxBufferCreateChildStruct childBufferStruct(rParentHandle->GetBuffer());
+	
+	HRESULT Result = FillChildBufferStructFromInfo(rParentInfo, rChildInfo, childBufferStruct.m_data);
+
 	if (S_OK == Result)
 	{
 		SVMatroxBuffer NewBuffer;
@@ -481,7 +484,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 	}
 
 	// Copy the bits into the image object
-	if (nullptr != pBits && nullptr != oTempHandle  && nullptr != rBufferHandle)
+	if (nullptr != pBits && nullptr != oTempHandle && nullptr != rBufferHandle)
 	{
 		// Set buffer data...
 		memcpy(oTempHandle->GetBufferAddress(), pBits, pbmhInfo->biSizeImage);
@@ -534,7 +537,7 @@ HRESULT SVImageProcessingClass::CreateDataBuffer(SVDataBufferInfoClass* pDataInf
 	if (nullptr != pDataInfo && pDataInfo->Length > 0 &&
 		M_NULL == pDataInfo->HBuffer.milResult)
 	{
-		SVImageOperationTypeEnum l_eType{SVImageValue};
+		SVImageOperationTypeEnum l_eType {SVImageValue};
 
 		switch (pDataInfo->Type)
 		{
@@ -624,7 +627,7 @@ HRESULT SVImageProcessingClass::FillBufferStructFromInfo(const SVImageInfoClass&
 	int pixelDepth = 0;
 	long width = 0;
 	long height = 0;
-	SVMatroxBufferAttributeEnum bufferAttribute{SVBufAttUnknown};
+	SVMatroxBufferAttributeEnum bufferAttribute {SVBufAttUnknown};
 
 	HRESULT Result = GetOutputImageCreateData(rInfo, format, pixelDepth, bandNumber, bandLink, width, height);
 
@@ -858,13 +861,13 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::GetOutputImageCreateData(const SVImageInfoClass &rInfo,
-	SvDef::SVImageFormatEnum &rFormat,
-	int &rPixelDepth,
-	int &rBandNumber,
-	int &rBandLink,
-	long &rWidth,
-	long &rHeight)
+HRESULT SVImageProcessingClass::GetOutputImageCreateData(const SVImageInfoClass& rInfo,
+	SvDef::SVImageFormatEnum& rFormat,
+	int& rPixelDepth,
+	int& rBandNumber,
+	int& rBandLink,
+	long& rWidth,
+	long& rHeight)
 {
 	HRESULT Result = rInfo.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, rWidth);
 
@@ -903,13 +906,13 @@ HRESULT SVImageProcessingClass::GetOutputImageCreateData(const SVImageInfoClass 
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::GetChildImageCreateData(const SVImageInfoClass &rInfo,
-	SvDef::SVImageFormatEnum &rFormat,
-	int &rPixelDepth,
-	int &rBandNumber,
-	int &rBandLink,
-	long &rWidth,
-	long &rHeight)
+HRESULT SVImageProcessingClass::GetChildImageCreateData(const SVImageInfoClass& rInfo,
+	SvDef::SVImageFormatEnum& rFormat,
+	int& rPixelDepth,
+	int& rBandNumber,
+	int& rBandLink,
+	long& rWidth,
+	long& rHeight)
 {
 	HRESULT Result = rInfo.GetExtentProperty(SvPb::SVExtentPropertyWidth, rWidth);
 
@@ -948,7 +951,7 @@ HRESULT SVImageProcessingClass::GetChildImageCreateData(const SVImageInfoClass &
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::CreateImageBuffer(SVMatroxBufferCreateStruct& bufferStruct, SvOi::SVImageBufferHandlePtr &rHandle)
+HRESULT SVImageProcessingClass::CreateImageBuffer(SVMatroxBufferCreateStruct& bufferStruct, SvOi::SVImageBufferHandlePtr& rHandle)
 {
 	HRESULT Result(S_OK);
 
