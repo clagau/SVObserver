@@ -267,6 +267,7 @@ private:
 
 	//Size of the frame around the Client area
 	CSize m_ViewFrame;
+	bool m_firstTime {true};
 #pragma endregion Member Variables
 };
 

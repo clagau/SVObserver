@@ -330,8 +330,7 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 				}
 				m_BackgroundColor = BackgroundColor;
 
-				static bool firstTime = true;
-				if( AdjustZoom && (firstTime || m_Zoom.IsFit()) )
+				if( AdjustZoom && (m_firstTime || m_Zoom.IsFit()) )
 				{
 					SetZoom(ZoomEnum::ZoomFitAll);
 				}
@@ -340,7 +339,7 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 					// Set Default Zoom here.
 					SetZoom(ZoomEnum::ZoomNormal);
 				}
-				firstTime = false;
+				m_firstTime = false;
 			}
 			l_pPicture->Release();
 		}
