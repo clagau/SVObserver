@@ -286,6 +286,20 @@ void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std::back_
 	}
 }
 
+bool changeGlobalId(uint32_t newObjectId, SvUl::GlobalConstantData& rGlobalImport, std::string& rXmlString)
+{
+	bool mustReload {false};
+	if (SvDef::InvalidObjectId != rGlobalImport.m_objectId)
+	{
+		std::string oldIdString = convertObjectIdToString(rGlobalImport.m_objectId);
+		std::string newIdString = convertObjectIdToString(newObjectId);
+		SvUl::searchAndReplace(rXmlString, oldIdString.c_str(), newIdString.c_str());
+		mustReload = true;
+	}
+	rGlobalImport.m_objectId = newObjectId;
+	return mustReload;
+}
+
 void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& rXmlString, SvXml::SaxXMLHandler& rSaxHandler, SvUl::GlobalConflictPairVector& rGlobalConflicts)
 {
 	std::vector<SvUl::GlobalConstantData> importedGlobals;
@@ -305,12 +319,32 @@ void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& rXmlStr
 			pGlobalConstant = RootObject::setRootChildValue(rGlobalImport.m_DottedName.c_str(), rGlobalImport.m_Value);
 			if (nullptr != pGlobalConstant)
 			{
-				if (SvDef::InvalidObjectId != rGlobalImport.m_objectId)
+				if (SvDef::InvalidObjectId == rGlobalImport.m_objectId)
 				{
-					SVObjectManagerClass::Instance().ChangeUniqueObjectID(pGlobalConstant.get(), rGlobalImport.m_objectId);
+					Log_Assert(false);
+					continue;
 				}
-				pGlobalConstant->setDescription(rGlobalImport.m_Description.c_str());
-				rGlobalImport.m_objectId = pGlobalConstant->getObjectId();
+					
+				//check if ID is already used
+				if (nullptr == SVObjectManagerClass::Instance().GetObject(rGlobalImport.m_objectId))
+				{
+					bool ret = SVObjectManagerClass::Instance().ChangeUniqueObjectID(pGlobalConstant.get(), rGlobalImport.m_objectId);
+					if (false == ret)
+					{
+						Log_Assert(false);
+						continue;
+					}
+				}
+				else
+				{
+					mustReload = changeGlobalId(pGlobalConstant->getObjectId(), rGlobalImport, rXmlString) || mustReload;
+				}
+				
+				pGlobalConstant->setDescription(rGlobalImport.m_Description.c_str());				
+			}
+			else
+			{
+				Log_Assert(false);
 			}
 		}
 		else
@@ -328,14 +362,7 @@ void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::string& rXmlStr
 				rPair.second = rGlobalImport;
 			}
 
-			if (SvDef::InvalidObjectId != rGlobalImport.m_objectId)
-			{
-				std::string oldIdString = convertObjectIdToString(rGlobalImport.m_objectId);
-				std::string newIdString = convertObjectIdToString(pGlobalConstant->getObjectId());
-				SvUl::searchAndReplace(rXmlString, oldIdString.c_str(), newIdString.c_str());
-				mustReload = true;
-			}
-			rGlobalImport.m_objectId = pGlobalConstant->getObjectId();
+			mustReload = changeGlobalId(pGlobalConstant->getObjectId(), rGlobalImport, rXmlString) || mustReload;
 		}
 	}
 	if (mustReload)

@@ -631,5 +631,6 @@ enum MessageTextEnum
 	Tid_ActionNotPossibleInModuleEditingMode,
 	Tid_InvalidImageForAux,
 	Tid_InvalidImageForAncestorOverlay,
+	Tid_ErrorGlobalIdUsed,
 };
 } //namespace SvStl

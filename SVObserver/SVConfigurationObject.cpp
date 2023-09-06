@@ -4838,8 +4838,17 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 				}
 				else
 				{
-					//Set the unique id for the global constant that was saved
-					SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), UniqueID);
+					//check if uinqueId is already used (this is an error)
+					if (nullptr != SVObjectManagerClass::Instance().GetObject(UniqueID))
+					{	
+						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGlobalIdUsed, {GlobalConstantName}, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId);
+					}
+					else
+					{
+						//Set the unique id for the global constant that was saved
+						SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), UniqueID);
+					}
 					pValue->setDescription(Description.c_str());
 					//All Global constants can be remotely settable
 					pValue->SetObjectAttributesAllowed(SvPb::ObjectAttributes::remotelySetable | SvPb::ObjectAttributes::shortMode, SvOi::SetAttributeType::AddAttribute);
