@@ -18,7 +18,6 @@
 #include "RootObject.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
-#include "SVObserver.h"
 #include "SVIODoc.h"
 #include "SVToolGrouping.h"
 #include "SVToolSet.h"
@@ -37,7 +36,9 @@
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
+#include "SVIOLibrary/SVOutputObject.h"
 #include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "Tools/SVArchiveTool.h"
@@ -555,70 +556,48 @@ void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 
-	if (nullptr != pConfig && nullptr != pApp && GetTheIODoc())
+	if (nullptr != pConfig && nullptr != pConfig->GetOutputObjectList())
 	{
-		long lPPQSize = pConfig->GetPPQCount();
-
-		// Print Result Output title...
-		long maxOutput {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
-		writer->WriteStartElement(nullptr, L"ResultOutputs", nullptr);
-		wchar_t buff[64];
-		writer->WriteAttributeString(nullptr, L"NumberOfOutputs", nullptr, _itow(maxOutput, buff, 10));
-
-		// Result Outputs
-		for (long i = 0; i < maxOutput; ++i)
+		SVIOEntryHostStructPtrVector allOutputs = pConfig->GetOutputObjectList()->getOutputList();
+		std::sort(allOutputs.begin(), allOutputs.end(), [](const auto& A, const auto& B)
 		{
-			SVIOEntryHostStructPtr pModuleReady = pConfig->GetModuleReady();
+			return A->m_IOId < B->m_IOId;
+		});
+		long maxOutput {SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount()};
+		// Print Result Output title...
+		writer->WriteStartElement(nullptr, L"ResultOutputs", nullptr);
+		writer->WriteAttributeString(nullptr, L"NumberOfOutputs", nullptr, std::to_wstring(maxOutput).c_str());
 
-			// Check Module Ready first
-			SVDigitalOutputObject* pDigOutput = (nullptr == pModuleReady) ? nullptr : dynamic_cast<SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(pModuleReady->m_IOId));
-			if (pDigOutput)
+		for (const auto& pIoEntry : allOutputs)
+		{
+			if (pIoEntry->m_ObjectType != SVIOObjectType::IO_DIGITAL_OUTPUT && pIoEntry->m_ObjectType != SVIOObjectType::IO_PLC_OUTPUT)
 			{
-				if (i == pDigOutput->GetChannel())
-				{
-					writer->WriteStartElement(nullptr, L"DigitalOutput", nullptr);
-					writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
-					WriteIOEntryObject(writer, pModuleReady);
-					//writer->WriteComment(L"First");
-					writer->WriteEndElement();
-					continue;
-				}// end if
-			}// end if
+				continue;
+			}
 
-			for (int j = 0; j < lPPQSize; j++)
+			SVOutputObject* pOutput = dynamic_cast<SVOutputObject*> (SVObjectManagerClass::Instance().GetObject(pIoEntry->m_IOId));
+
+			if (nullptr != pOutput)
 			{
-				SVPPQObject* pPPQ = pConfig->GetPPQ(j);
-				if (nullptr != pPPQ)
+				writer->WriteStartElement(nullptr, (pIoEntry->m_ObjectType == SVIOObjectType::IO_PLC_OUTPUT) ? L"PlcOutput" : L"DigitalOutput", nullptr);
+				std::wstring output;
+				if (pIoEntry->m_ObjectType == SVIOObjectType::IO_PLC_OUTPUT)
 				{
-					// Find each digital output
-					for (const auto& pIoEntry : pPPQ->getUsedOutputs())
-					{
-						if (pIoEntry->m_ObjectType != IO_DIGITAL_OUTPUT)
-						{
-							continue;
-						}
-
-						pDigOutput = dynamic_cast<SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(pIoEntry->m_IOId));
-
-						if (!pDigOutput)
-						{
-							continue;
-						}
-
-						if (i == pDigOutput->GetChannel())
-						{
-							writer->WriteStartElement(nullptr, L"DigitalOutput", nullptr);
-							writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
-							WriteIOEntryObject(writer, pIoEntry);
-							writer->WriteEndElement();
-							continue;
-						}// end if
-					}
+					int ppqIDNr = (pOutput->GetChannel() / maxOutput) + 1;
+					int outputNr = (pOutput->GetChannel() % maxOutput) + 1;
+					output = std::format(L"{:d} PPQ {:d}", outputNr, ppqIDNr);
 				}
-			}// end for j
-		}// end for
+				else
+				{
+					output = std::to_wstring(pOutput->GetChannel() + 1);
+				}
+				writer->WriteAttributeString(nullptr, L"Number", nullptr, output.c_str());
+				WriteIOEntryObject(writer, pIoEntry);
+				writer->WriteEndElement();
+			}
+
+		}
 		writer->WriteEndElement();
 	}
 }
@@ -1301,10 +1280,29 @@ void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr 
 			break;
 		}
 
-		case IO_REMOTE_INPUT:
-			break;
+		case IO_PLC_OUTPUT:
+		{
+			SVOutputObject* pOutput = dynamic_cast<SVOutputObject*>(l_pObject);
 
-		case IO_REMOTE_OUTPUT:
+			sValue = pOutput->isCombined() ? L"1" : L" ";
+			WriteValueObject(writer, L"Property", L"Combined", sValue.c_str());
+
+			sValue = pOutput->isAndACK() ? L"AND w ACK" : L"OR w NAK";
+			WriteValueObject(writer, L"Property", L"Combined using", sValue.c_str());
+			for (int i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
+			{
+				uint32_t linkedObjectID = pOutput->GetValueObjectID(i);
+				if (linkedObjectID != SvDef::InvalidObjectId)
+				{
+					SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(IOEntry->m_IOId);
+					std::wstring name = std::format(L"Linked Object {}", i + 1);
+					WriteValueObject(writer, L"Property", name.c_str(), SvUl::to_utf16(pObject->GetName(), cp_dflt).c_str());
+				}
+			}
+			break;
+		}
+
+		default:
 			break;
 	}
 }
