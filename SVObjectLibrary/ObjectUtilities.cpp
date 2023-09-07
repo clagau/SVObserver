@@ -21,35 +21,38 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOl
 {
-std::pair<std::string, std::string> createPrefixNameForEquation(const SVObjectClass& rRenamedObject, const std::string& rOldName)
+std::string renameFormulaTextAfterRenameObject(const std::string& rFormula, const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	std::pair<std::string, std::string> prefixName; //new, old
-
 	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
 	if (SvPb::SVInspectionObjectType == type)
 	{
 		//InspectionName is not part of Equation, so nothing to do.
-		return {};
+		return rFormula;
 	}
-	else if (SvPb::SVBasicValueObjectType == type)
+	
+	std::string formula = rFormula;
+	std::pair<std::string, std::string> prefixName; //new, old
+	if (SvPb::SVBasicValueObjectType == type)
 	{
 		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType, false);
-		prefixName.first = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
-		prefixName.second = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
-	}
-	else if (SvPb::SVValueObjectType == type)
-	{
-		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, false);
-		prefixName.first = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
-		prefixName.second = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
+		std::string newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
+		std::string oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
+		SvUl::searchAndReplace(formula, oldPrefix.c_str(), newPrefix.c_str());
 	}
 	else
 	{
 		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, false);
-		prefixName.first = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T(".");
-		prefixName.second = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
+		std::string newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T(".");
+		std::string oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
+		SvUl::searchAndReplace(formula, oldPrefix.c_str(), newPrefix.c_str());
+		if (SvPb::SVValueObjectType == type)
+		{
+			newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
+			oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
+			SvUl::searchAndReplace(formula, oldPrefix.c_str(), newPrefix.c_str());
+		}
 	}
 
-	return prefixName;
+	return formula;
 }
 }

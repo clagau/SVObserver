@@ -714,12 +714,10 @@ void SVEquation::changeSource(const SVObjectReference& rOldObject, SVObjectClass
 
 void SVEquation::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	auto [newPrefix, oldPrefix] = SvOl::createPrefixNameForEquation(rRenamedObject, rOldName);
-
-	std::string equationBuff = GetEquationText();
+	std::string equationBuff = SvOl::renameFormulaTextAfterRenameObject(GetEquationText(), rRenamedObject, rOldName);
 
 	// Replace all occurrences
-	if (GetEquationText() != SvUl::searchAndReplace(equationBuff, oldPrefix.c_str(), newPrefix.c_str()))
+	if (GetEquationText() != equationBuff)
 	{
 		SetEquationText(equationBuff);
 	}

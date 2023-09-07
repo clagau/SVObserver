@@ -480,9 +480,7 @@ void LinkedValue::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IOb
 
 void LinkedValue::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	auto [newPrefix, oldPrefix] = SvOl::createPrefixNameForEquation(rRenamedObject, rOldName);
-
-	SvUl::searchAndReplace(m_formulaString, oldPrefix.c_str(), newPrefix.c_str());
+	m_formulaString = SvOl::renameFormulaTextAfterRenameObject(m_formulaString, rRenamedObject, rOldName);
 
 	if (0 < ObjectAttributesAllowed())
 	{

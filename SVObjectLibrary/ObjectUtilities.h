@@ -10,5 +10,5 @@
 
 namespace SvOl
 {
-std::pair<std::string, std::string> createPrefixNameForEquation(const SVObjectClass& rRenamedObject, const std::string& rOldName);
+std::string renameFormulaTextAfterRenameObject(const std::string& rFormula, const SVObjectClass& rRenamedObject, const std::string& rOldName);
 }
