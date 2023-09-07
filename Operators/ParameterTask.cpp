@@ -57,16 +57,17 @@ namespace SvOp
 	/// \param rNames [in] A container with contains the names.
 	/// \param rCmd [out] Fill the errormessage to the cmd.
 	/// \param nameFunc [in] Function to get the name-string from the rName container.
+	/// \param isNameChangedFunc [in] Function to get if name has changed. If name is invalid, but has not changed no error will created.
 	/// \returns int return the error row (-1 = no error)
 	template<typename T>
-	int checkNamesForUniquenessAndValidity(uint32_t objectId, const std::ranges::input_range auto& rNames, SvPb::InspectionCmdResponse& rCmd, std::function<std::string(const T&)> nameFunc)
+	int checkNamesForUniquenessAndValidity(uint32_t objectId, const std::ranges::input_range auto& rNames, SvPb::InspectionCmdResponse& rCmd, std::function<std::string(const T&)> nameFunc, std::function<bool(const T&)> isNameChangedFunc)
 	{
 		for (auto iter = rNames.begin(); rNames.end() != iter; ++iter)
 		{
 			std::string name = nameFunc(*iter);
 
-			if (!SvUl::isValidObjectName(name))
-			{ //invalid
+			if (false == SvUl::isValidObjectName(name) && isNameChangedFunc(*iter))
+			{
 				rCmd.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(objectId, SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_InvalidParameterName, {name}));
 				rCmd.set_hresult(E_FAIL);
 				return static_cast<int>(std::distance(rNames.begin(), iter));
@@ -243,15 +244,19 @@ namespace SvOp
 			return cmd;
 		}
 		
-		checkNamesForUniquenessAndValidity<SvPb::EmbeddedValueStruct>(getObjectId(), request.embeddedlist(), cmd, [](const auto& rRequest) { return rRequest.name(); });
+		checkNamesForUniquenessAndValidity<SvPb::EmbeddedValueStruct>(getObjectId(), request.embeddedlist(), cmd, 
+			[](const auto& rRequest) { return rRequest.name(); },
+			[this](const auto& rRequest) 
+			{	//check if parameter is exist and if yes if name have changed. If new or name have changed, name have to be valid.
+				auto pos = rRequest.oldembeddedid() - m_startEmbeddedIdValue;
+				return pos < 0 || pos > m_objects.size() || m_objects[pos]->GetName() != rRequest.name(); 
+			});
 		if (S_OK != cmd.hresult())
 		{
 			return cmd;
 		}
 
 		//Check values
-		//std::vector<bool> isValuesOK;
-		//isValuesOK.resize(request.embeddedlist_size());
 		std::vector<variant_t> defaults;
 		defaults.resize(request.embeddedlist_size());
 		for (int i = 0; request.embeddedlist_size() > i; ++i)
@@ -396,10 +401,18 @@ namespace SvOp
 		try
 		{
 			std::string newName = rRequest.parametername();
+			if (false == SvUl::isValidObjectName(newName))
+			{
+				resp.mutable_errormessage()->CopyFrom(SvPb::createErrorMessages(getObjectId(), SvStl::SourceFileParams(StdMessageParams), SvStl::Tid_InvalidParameterName, {newName}));
+				resp.set_hresult(E_FAIL);
+				return resp;
+			}
+
 			std::vector<std::string> nameVec;
 			std::ranges::transform(m_objects, back_inserter(nameVec), [](const auto& pObj) { return nullptr != pObj ? pObj->GetName() : ""; });
 			nameVec.push_back(newName);
-			if (-1 < checkNamesForUniquenessAndValidity<std::string>(getObjectId(), nameVec, resp, [](const auto& rRequest) { return rRequest; }))
+			//for the new values the old values have not changed.
+			if (-1 < checkNamesForUniquenessAndValidity<std::string>(getObjectId(), nameVec, resp, [](const auto& rRequest) { return rRequest; }, [](const auto&) { return false; }))
 			{
 				Log_Assert(false);
 				return resp;
@@ -451,7 +464,17 @@ namespace SvOp
 	SvPb::InspectionCmdResponse ParameterTask::checkParameterNames(const SvPb::CheckParameterNamesRequest& rRequest)
 	{
 		SvPb::InspectionCmdResponse resp;
-		resp.mutable_checkparameternamesresponse()->set_errorrow(checkNamesForUniquenessAndValidity<std::string>(getObjectId(), rRequest.parameter_names(), resp, [](const auto& rRequest) { return rRequest; }));
+		resp.mutable_checkparameternamesresponse()->set_errorrow(checkNamesForUniquenessAndValidity<std::string>(getObjectId(), rRequest.parameter_names(), resp, 
+			[](const auto& rRequest) { return rRequest; }, 
+			[this, rRequest](const auto& rEntry) { //only return an error for changed names.
+				auto iter = std::ranges::find(rRequest.parameter_names(), rEntry);
+				int64_t pos = -1;
+				if (rRequest.parameter_names().end() != iter)
+				{
+					pos = std::distance(rRequest.parameter_names().begin(), iter);
+				}
+				return pos < 0 || pos > static_cast<int64_t>(m_objects.size()) || m_objects[pos]->GetName() != rEntry; }));
+
 		return resp;
 	}
 
