@@ -90,14 +90,14 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 	{
 		for (long i = 0; i < pConfig->GetPPQCount(); ++i)
 		{
-			//For NEO display only the valid PPQ index
-			if (-1 != m_PpqIndex && i != m_PpqIndex)
-			{
-				continue;
-			}
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if (nullptr != pPPQ)
 			{
+				//For NEO display only the valid PPQ index
+				if (-1 != m_ppqIDNr && pPPQ->GetPpqIDNr() != m_ppqIDNr)
+				{
+					continue;
+				}
 				for (long j = 0; j < pPPQ->GetInspectionCount(); ++j)
 				{
 					SVInspectionProcess* pInspection(nullptr);

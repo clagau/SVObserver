@@ -129,11 +129,13 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 			}
 			else
 			{
+				long ppqIDNrZerobased {pPPQ->GetPpqIDNr() - 1};
 				long objectIDCount {pPPQ->GetObjectIDCount()};
 				m_maxObjectIDCount = std::max(m_maxObjectIDCount, objectIDCount);
 				for (long j = 0; j < m_maxOutputNumber; ++j)
 				{
-					int indexRow = j + m_maxOutputNumber * i;
+					int indexRow = (m_maxOutputNumber * i) + j;
+					int channelNr = (m_maxOutputNumber * ppqIDNrZerobased) + j;
 					std::string Item = std::format(cPlcOutputName, j + 1);
 					m_rCtrl.InsertItem(LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, indexRow, Item.c_str(), INDEXTOSTATEIMAGEMASK(1), LVIS_STATEIMAGEMASK, 1, 0);
 
@@ -146,7 +148,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 
 						if (nullptr == pPlcOutput) { continue; }
 
-						if (indexRow == pPlcOutput->GetChannel())
+						if (channelNr == pPlcOutput->GetChannel())
 						{
 							m_rCtrl.SetItem(indexRow, cOutputColIndex, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
 
@@ -212,6 +214,9 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 			{
 				pIOEntry = iter->second;
 			}
+			CString ppqName = m_rCtrl.GetItemText(item, cPpqColIndex);
+			int ppqIDNr = atoi(ppqName.Mid(static_cast<int> (strlen(SvDef::cPpqFixedName))).GetString());
+
 			SVOutputObjectPtr pOutput;
 			PlcOutputObject* pPlcOutput{nullptr};
 			if (nullptr != pOutputList)
@@ -223,14 +228,16 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				}
 				else
 				{
-					pOutputList->DetachOutput(ObjectIdEnum::PlcOutputId + item);
+					int outputNr = item % m_maxOutputNumber;
+					int channelNr = ((ppqIDNr - 1) * m_maxOutputNumber) + outputNr;
+					pOutputList->DetachOutput(ObjectIdEnum::PlcOutputId + channelNr);
 
 					pOutput = std::make_shared<PlcOutputObject>();
-					pOutput->updateObjectId(item);
+					pOutput->updateObjectId(channelNr);
 					pPlcOutput = dynamic_cast<PlcOutputObject*> (pOutput.get());
 					if (nullptr != pPlcOutput)
 					{
-						pPlcOutput->SetChannel(item);
+						pPlcOutput->SetChannel(channelNr);
 						pPlcOutput->SetName(_T(""));
 					}
 				}
@@ -246,7 +253,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				}
 				dlg.m_pObjectLinkList = pObjectLinkList;
 				dlg.m_pPlcOutput = pPlcOutput;
-				dlg.m_PpqIndex = item / m_maxOutputNumber;
+				dlg.m_ppqIDNr = ppqIDNr;
 				dlg.m_ioObjectType = SVIOObjectType::IO_PLC_OUTPUT;
 
 				SvSml::TemporaryState_Editing tse;
@@ -316,10 +323,14 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 					}
 
 					// Rebuild Outputs
-					SVPPQObject* pPPQ = pConfig->GetPPQ(dlg.m_PpqIndex);
-					if (nullptr != pPPQ)
+					for (long i = 0; i < pConfig->GetPPQCount(); ++i)
 					{
-						pPPQ->RebuildOutputList();
+						SVPPQObject* pPPQ = pConfig->GetPPQ(i);
+						if (nullptr != pPPQ && pPPQ->GetPpqIDNr() == dlg.m_ppqIDNr)
+						{
+							pPPQ->RebuildOutputList();
+							break;
+						}
 					}
 
 				}

@@ -33,10 +33,11 @@ public:
 	virtual HRESULT Reset() = 0;
 	virtual bool isCombined() const = 0;
 	virtual bool isAndACK() const = 0;		///The signal is combined is set either to And ACK or OR NAK
-	virtual long GetChannel() const = 0;
 	virtual void SetValueObjectID(uint32_t objectID, DWORD objectIDIndex = 0) = 0;
 	virtual uint32_t GetValueObjectID(DWORD objectIDIndex = 0) const = 0;
 
+	void SetChannel(long channel) { m_channel = channel; }
+	long GetChannel() const { return m_channel; }
 	/// Update the objectId to a fixed ID depended on an index (must between 0 and 0x100).
 	/// \param position [in]
 	void updateObjectId(int index)
@@ -48,6 +49,7 @@ public:
 	}
 
 protected:
+	long m_channel {-1L};
 	uint32_t m_startID{SvDef::InvalidObjectId};
 };
 

@@ -45,7 +45,7 @@ public:
 	SVDigitalInputObject* m_pDigInput {nullptr};
 	SVDigitalOutputObject* m_pDigOutput {nullptr};
 	PlcOutputObject* m_pPlcOutput {nullptr};
-	int m_PpqIndex {-1};		///This is only required when the type is PLC Output
+	int m_ppqIDNr {-1};		///This is only required when the type is PLC Output
 
 	//{{AFX_DATA(SVIOAdjustDialog)
 	enum { IDD = IDD_IOADJUST_DIALOG };

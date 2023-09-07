@@ -234,20 +234,16 @@ bool SVPPQObject::Create()
 	m_processFunctions[PpqFunction::ProductRequests] = [this]() {ProcessProductRequests(); };
 
 	std::string PpqName = GetName();
-	long PpqID(-1L);
 	const size_t PpqFixedNameLength = strlen(SvDef::cPpqFixedName);
 	if (PpqFixedNameLength < PpqName.size())
 	{
-		PpqID = atol(PpqName.c_str() + PpqFixedNameLength);
-		//Zero based PPQ ID, note PPQ name is one based!
-		PpqID--;
+		m_PpqIDNr = atol(PpqName.c_str() + PpqFixedNameLength);
 	}
 
-	//Make sure it is above 0
-	if (0 <= PpqID && nullptr != m_spPpqLength)
+	if (0 < m_PpqIDNr && nullptr != m_spPpqLength)
 	{
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_spTiggercount.get(), ObjectIdEnum::PpqBaseTriggerCountId + PpqID);
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_spPpqLength.get(), ObjectIdEnum::PpqBaseLengthId + PpqID);
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_spTiggercount.get(), ObjectIdEnum::PpqBaseTriggerCountId + m_PpqIDNr -1);
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_spPpqLength.get(), ObjectIdEnum::PpqBaseLengthId + m_PpqIDNr - 1);
 		m_spTiggercount->SetObjectOwner(this);
 		m_spPpqLength->SetObjectOwner(this);
 	}
@@ -1313,11 +1309,21 @@ bool SVPPQObject::RebuildOutputList()
 
 	if (nullptr != m_pOutputList)
 	{
+		std::string deletedOutputs;
+		bool isPlcSystem {false};
+		SVConfigurationObject* pConfig(nullptr);
+		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+		if (nullptr != pConfig)
+		{
+			isPlcSystem = SVHardwareManifest::isPlcSystem(pConfig->GetProductType());
+		}
+
 		m_UsedOutputs.clear();
 		SVIOEntryHostStructPtrVector allOutputs = m_pOutputList->getOutputList();
 		for (auto& pEntry : allOutputs)
 		{
 			bool isPpqOutput {false};
+			std::string outputLinks;
 			for (DWORD i = 0; i < SvDef::cObjectIndexMaxNr; ++i)
 			{
 				if (i >= m_objectIdCount)
@@ -1341,6 +1347,8 @@ bool SVPPQObject::RebuildOutputList()
 				}
 				else
 				{
+					outputLinks += outputLinks.empty() == false ? +_T(", ") : +_T("");
+					outputLinks += pObject->GetCompleteName();
 					uint32_t inspectionID {pEntry->getInspectionID(i)};
 					auto iterIpd = std::find_if(m_arInspections.begin(), m_arInspections.end(), [&inspectionID](const auto* pEntry) { return pEntry->getObjectId() == inspectionID; });
 					isPpqOutput |=  m_arInspections.end() != iterIpd;
@@ -1368,12 +1376,46 @@ bool SVPPQObject::RebuildOutputList()
 					}
 				}
 			}
+			//Check if the PLC outputs are valid otherwise delete them SVO-
+			if (isPlcSystem)
+			{
+				long outputCount {getOutputCount()};
+				long outputIndex = (pEntry->m_IOId - ObjectIdEnum::PlcOutputId) % outputCount;
+				uint32_t startIOId {ObjectIdEnum::PlcOutputId + ((m_PpqIDNr - 1) * outputCount)};
+				if (isPpqOutput == true && (pEntry->m_IOId < startIOId || pEntry->m_IOId >= startIOId + outputCount))
+				{
+					SVOutputObjectPtr pOutput {m_pOutputList->GetOutput(pEntry->m_IOId)};
+					m_pOutputList->DetachOutput(pEntry->m_IOId);
+					//Make sure the output id is not yet used then switch its unique Object ID
+					if (nullptr == SVObjectManagerClass::Instance().GetObject(startIOId + outputIndex))
+					{
+						long channelNr = ((m_PpqIDNr - 1) * outputCount) + outputIndex;
+						pOutput->updateObjectId(channelNr);
+						pOutput->SetChannel(channelNr);
+						m_pOutputList->AttachOutput(pOutput);
+						pEntry->m_IOId = pOutput->getObjectId();
+					}
+					else
+					{
+						constexpr const char* c_DeletedPlcOutput = _T("PLC Output {:d} Linked Objects: {}\r\n");
+						isPpqOutput = false;
+						deletedOutputs += std::format(c_DeletedPlcOutput, outputIndex + 1, outputLinks);
+					}
+				}
+			}
+
 			if (isPpqOutput)
 			{
 				m_UsedOutputs.push_back(pEntry);
 			}
 		}
 		std::sort(m_UsedOutputs.begin(), m_UsedOutputs.end(), &SVIOEntryHostStruct::PtrGreater);
+		if (deletedOutputs.empty() == false)
+		{
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputsDeleted, {GetName(), deletedOutputs}, SvStl::SourceFileParams(StdMessageParams));
+
+		}
 		return true;
 	}
 	return false;
@@ -1405,14 +1447,6 @@ void SVPPQObject::AddPpqResults()
 		true,		//Not Inspected
 		false		//Data Valid
 	};
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	Log_Assert(nullptr != pConfig);
-	if (nullptr == pConfig)
-	{
-		return;
-	}
 
 	for (int i = 0; i < PpqOutputEnums::OutputNr; ++i)
 	{

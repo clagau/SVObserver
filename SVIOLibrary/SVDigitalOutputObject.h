@@ -28,7 +28,6 @@ public:
 	virtual HRESULT Reset() override;
 	virtual bool isCombined() const override;
 	virtual bool isAndACK() const override;
-	virtual long GetChannel() const override { return m_channel;}
 	virtual void SetValueObjectID(uint32_t objectID, DWORD objectIDIndex = 0) override;
 	virtual uint32_t GetValueObjectID(DWORD objectIDIndex = 0) const override;
 
@@ -41,8 +40,6 @@ public:
 	bool IsInverted() const;
 	bool GetValue() const;
 
-	void SetChannel( long channel ) { m_channel = channel; }
-
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -52,7 +49,6 @@ private:
 
 #pragma region Member Variables
 private:
-	long m_channel {-1L};
 	bool m_bCombined {false};
 	bool m_bLastValue {false};
 	bool m_bDefaultValue {false};

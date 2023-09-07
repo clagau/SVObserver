@@ -215,6 +215,7 @@ public:
 	HRESULT setModuleReady(bool set);
 
 	int GetObjectIDCount() const { return m_objectIdCount; }
+	long GetPpqIDNr() const { return m_PpqIDNr; }
 
 protected:
 
@@ -413,8 +414,9 @@ private:
 	SvVol::BasicValueObjectPtr m_spMissingImageCount{ nullptr };
 	mutable SvVol::BasicValueObjectPtr m_spPpqLength{ nullptr };
 
-	int m_MissingImageCount{ 0 };
-	int m_NotCompleteCount{ 0 };
+	int m_MissingImageCount {0};
+	int m_NotCompleteCount {0};
+	long m_PpqIDNr {-1};
 
 	uint32_t m_ppqState {0UL};
 	

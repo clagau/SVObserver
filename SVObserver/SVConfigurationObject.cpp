@@ -484,6 +484,15 @@ bool SVConfigurationObject::AddPPQ(SVPPQObject* pPPQ)
 	{
 		m_arPPQArray.push_back(pPPQ);
 		Result = true;
+
+		std::sort(m_arPPQArray.begin(), m_arPPQArray.end(), [](const auto* pA, const auto* pB)
+		{
+			if (nullptr != pA && nullptr != pB)
+			{
+				return pA->GetCompleteName() < pB->GetCompleteName();
+			}
+			return false;
+		});
 	}
 
 	return Result;

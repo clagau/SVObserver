@@ -62,38 +62,31 @@ SVOutputObjectPtr SVOutputObjectList::GetOutput(const std::string& rName) const
 
 SVOutputObjectPtr SVOutputObjectList::GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int index)
 {
-	SVOutputObjectPtr pResult = findOutputName(rName);
+	SVOutputObjectPtr pResult;
 
-	if (nullptr == pResult)
+	switch (ObjectSubType)
 	{
-		switch (ObjectSubType)
+		case SvPb::SVDigitalOutputObjectType:
 		{
-			case SvPb::SVDigitalOutputObjectType:
-			{
-				pResult = std::make_shared<SVDigitalOutputObject>();
-				break;
-			}
-			case SvPb::PlcOutputObjectType:
-			{
-				pResult = std::make_shared<PlcOutputObject>();
-				break;
-			}
+			pResult = std::make_shared<SVDigitalOutputObject>();
+			break;
 		}
-
-		if (nullptr != pResult)
+		case SvPb::PlcOutputObjectType:
 		{
-			pResult->updateObjectId(index);
-			pResult->SetName(rName.c_str());
-
-			if(S_OK != AttachOutput(pResult))
-			{
-				pResult.reset();
-			}
+			pResult = std::make_shared<PlcOutputObject>();
+			break;
 		}
 	}
-	else
+
+	if (nullptr != pResult)
 	{
 		pResult->updateObjectId(index);
+		pResult->SetName(rName.c_str());
+
+		if(S_OK != AttachOutput(pResult))
+		{
+			pResult.reset();
+		}
 	}
 
 	return pResult;
