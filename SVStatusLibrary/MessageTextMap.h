@@ -667,7 +667,7 @@ namespace SvStl
 		{Tid_ErrorMultiObjectIDOrder, _T("NEO must use 'Extended Time Delay & Data Completion' PPQ mode. When using multi Object ID per trigger the object ID index in the inspection properties must match the order of the inspections in the inspection list (0-3 in ascending order)")},
 		{Tid_ActionNotPossibleInModuleEditingMode, _T("This action is not possible, while Module Instance \"{0}\" is editing.")},
 		{Tid_InvalidImageForAux, _T("No valid image selected for auxiliary extents.")},
-		{Tid_InvalidImageForAncestorOverlay, _T("No valid image selected for ancestor overlay.")}
+		{Tid_InvalidImageForAncestorOverlay, _T("No valid image selected for ancestor overlay.")},
 		{Tid_ErrorGlobalIdUsed, _T("Error during creating of the global constant \"{0}\". ObjectId is already used.\nThis problem is fixed, but please check all linked values and reconnect it.")},
 };
 } //namespace SvStl
