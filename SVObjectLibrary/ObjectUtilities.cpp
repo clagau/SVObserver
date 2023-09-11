@@ -31,7 +31,6 @@ std::string renameFormulaTextAfterRenameObject(const std::string& rFormula, cons
 	}
 	
 	std::string formula = rFormula;
-	std::pair<std::string, std::string> prefixName; //new, old
 	if (SvPb::SVBasicValueObjectType == type)
 	{
 		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType, false);
