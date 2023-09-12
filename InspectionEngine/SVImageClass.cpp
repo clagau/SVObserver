@@ -365,20 +365,31 @@ const double& SVImageClass::GetLastResetTimeStamp() const
 
 bool SVImageClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
-	
-#ifdef  TRACE_RESETALL
-	ResetImageIds[getObjectId()]++;
-	IdsName[getObjectId()] = GetCompleteName().c_str();
-	std::string traceText = std::format("SVImageClass::ResetObject {}: {}; {}; {}; {}; {}\n", (int)ResetImageIds[getObjectId()],
-	 (unsigned int)getObjectId(), (int)m_ObjectTypeInfo.m_ObjectType, (unsigned int)m_ObjectTypeInfo.m_SubType, static_cast<unsigned int> (m_ObjectTypeInfo.m_EmbeddedID), GetCompleteName());
-	if (ResetImageIds[getObjectId()] > 1 || true)
-	{
 
-		::OutputDebugString(traceText.c_str());
-	}
+#ifdef  TRACE_IMAGE
+
+	auto name = GetCompleteName();
+	std::string traceText = std::format("SVImageClass::ResetObject Name: {};  ObId: {}; Type: {}; SubType: {}\n",
+	 name, (unsigned int)getObjectId(), (int)m_ObjectTypeInfo.m_ObjectType, (unsigned int)m_ObjectTypeInfo.m_SubType, static_cast<unsigned int> (m_ObjectTypeInfo.m_EmbeddedID), GetCompleteName());
+
+	::OutputDebugString(traceText.c_str());
 #endif 
 	setInspectionPosForTrc();
-	bool Result = (S_OK == UpdateFromParentInformation(pErrorMessages)) && (S_OK == RebuildStorage(pErrorMessages)) ;
+
+	bool Result = (S_OK == UpdateFromParentInformation(pErrorMessages));
+	if (Result)
+	{
+		Result = (S_OK == RebuildStorage(pErrorMessages));
+		if (!Result)
+		{
+			if (nullptr != pErrorMessages && pErrorMessages->empty())
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+
+		}
+	}
 
 	if (!m_isCreated)
 	{
@@ -1322,7 +1333,7 @@ HRESULT SVImageClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttribu
 HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
 {
 
-	
+
 	HRESULT hr = E_FAIL;
 	rOutPoint.clear();
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
@@ -1361,19 +1372,19 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImageFromTool(SVImageClass* pIma
 	if (nullptr != pImage)
 	{
 		const SVImageClass* pCurrentImage {this};
-		SvOi::ITool*  pTool = pCurrentImage->GetToolInterface();
-		
+		SvOi::ITool* pTool = pCurrentImage->GetToolInterface();
+
 		bool newTool {true}; //This is to avoid counting color tool twice because parent of Band 1 is image 1 but this is same tool
 		do
 		{
 			SVPoint<double> InPoint2 = inPoint;
-			
+
 
 			if (pTool && newTool)
 			{
-				 SVImageExtentClass& rExtentsFromTool = pTool->GetImageExtentRef();
+				SVImageExtentClass& rExtentsFromTool = pTool->GetImageExtentRef();
 
-				
+
 				if (rExtentsFromTool.getIsUpdated() == false)
 				{
 
@@ -1393,7 +1404,7 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImageFromTool(SVImageClass* pIma
 			pCurrentImage = pCurrentImage->GetParentImage();
 			if (pCurrentImage)
 			{
-				SvOi::ITool*  pNextTool =  pCurrentImage->GetToolInterface();
+				SvOi::ITool* pNextTool = pCurrentImage->GetToolInterface();
 				if (pNextTool != pTool)
 				{
 					pTool = pNextTool;
@@ -1778,7 +1789,7 @@ std::string SVImageClass::getInfoString(bool addDetails)
 {
 	auto info = std::format(_T("'{}'"), getCompleteObjectNameForId(getObjectId()));
 
-	if(addDetails)
+	if (addDetails)
 	{
 		auto imageInfo = GetImageInfo();
 

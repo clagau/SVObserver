@@ -572,7 +572,7 @@ bool TADlgSheetClass::ValidateAllSheets()
 
 bool TADlgSheetClass::ResetTools()
 {
-	
+
 	bool resetResult = false;
 	//If parent is a tool then it must be reset
 	SvOi::IObjectClass* pTool = GetTopTool();
@@ -580,24 +580,33 @@ bool TADlgSheetClass::ResetTools()
 	{
 		return resetResult;
 	}
-	
-	resetResult = pTool->resetAllObjects();
 
-	
-	/// Reset Dependent
-	bool isOK {true};
-	for (const auto id : m_dependentTools)
+	SvStl::MessageContainerVector ResetToolErrorMessages;
+	resetResult = pTool->resetAllObjects(&ResetToolErrorMessages);
+
+	if (resetResult == false)
 	{
-		SVObjectClass* pObj = nullptr;
-		SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObj);
-		if (pObj)
-		{
-			isOK = pObj->resetAllObjects(nullptr, SvTo::cResetDepth ) && isOK;
-			Log_Assert(pObj->getToolPtr() != nullptr);
-		}
+		//In some cases a second reset is necessary because the parents are set during the first reset 
+		//and only after that a rebuild for the images is possible. (see e.g. SVO-4000)
 
+		resetResult = pTool->resetAllObjects(&ResetToolErrorMessages);
 	}
+	if (resetResult)
+	{
+		/// Reset Dependent
+		bool isOK {true};
+		for (const auto id : m_dependentTools)
+		{
+			SVObjectClass* pObj = nullptr;
+			SVObjectManagerClass::Instance().GetObjectByIdentifier(id, pObj);
+			if (pObj)
+			{
+				isOK = pObj->resetAllObjects(nullptr, SvTo::cResetDepth) && isOK;
+				Log_Assert(pObj->getToolPtr() != nullptr);
+			}
 
+		}
+	}
 	return resetResult;
 }
 
