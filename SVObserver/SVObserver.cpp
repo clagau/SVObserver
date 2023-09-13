@@ -1610,15 +1610,7 @@ void SVObserverApp::RunInspections(SVConfigurationObject* pConfig, DWORD desired
 	}
 	catch (const SvStl::MessageContainer&)
 	{
-		//cleanup goOnline, after fail, before exception leave this method
-		for (long l = 0; l < lSize; ++l)
-		{
-			auto* pPPQ = pConfig->GetPPQ(l);
-			if (nullptr != pPPQ)
-			{
-				pPPQ->GoOffline();
-			}
-		}// end for
+		PPQGoOffline(pConfig);
 
 		SvimState::RemoveState(SV_STATE_START_PENDING);
 
@@ -1642,13 +1634,30 @@ void SVObserverApp::RunInspections(SVConfigurationObject* pConfig, DWORD desired
 	SvimState::changeState(desiredState, SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
 
 	//Now that we are in the running state we allow trigger processing!
-	StartTrigger(pConfig);
+	SvStl::MessageContainer Msg;
+	StartTrigger(pConfig,Msg);
 
+	if (0 != Msg.getMessage().m_MessageCode)
+	{
+		PPQGoOffline(pConfig);
+		
+		if (nullptr != pTrcRW)
+		{
+			pTrcRW->unlockReset();
+		}
+
+		throw Msg;
+	}
 	//Module ready should be the last set!
 	if (pConfig->SetModuleReady(true) != S_OK)
 	{
 		RunAllIPDocuments();
-
+		PPQGoOffline(pConfig);
+		
+		if (nullptr != pTrcRW)
+		{
+			pTrcRW->unlockReset();
+		}
 		SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvStl::Tid_GoOnlineFailure_ModuleReadyOutput, SvStl::SourceFileParams(StdMessageParams));
 		throw Exception;
 	}// end if

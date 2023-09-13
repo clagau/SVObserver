@@ -417,13 +417,32 @@ HRESULT DisconnectCameras()
 }
 
 
-void StartTrigger(SVConfigurationObject* pConfig)
+void PPQGoOffline(SVConfigurationObject* pConfig)
+{
+	SvimState::SVRCBlocker block;
+	if (nullptr != pConfig)
+	{
+		long ppqCount = pConfig->GetPPQCount();
+		for (long i = 0; i < ppqCount; i++)
+		{
+			auto* pPPQ = pConfig->GetPPQ(i);
+			if (nullptr != pPPQ)
+			{
+				pPPQ->GoOffline();
+			}
+		}
+		
+
+	}
+}
+
+void StartTrigger(SVConfigurationObject* pConfig, SvStl::MessageContainer& Msg)
 {
 	SvimState::SVRCBlocker block;
 	//The pointer is usually checked by the caller
 	if (nullptr != pConfig)
 	{
-		SvStl::MessageContainer Msg;
+		
 		long ppqCount = pConfig->GetPPQCount();
 		for (long i = 0; i < ppqCount && 0 == Msg.getMessage().m_MessageCode; i++)
 		{
@@ -443,22 +462,9 @@ void StartTrigger(SVConfigurationObject* pConfig)
 				}
 			}
 		}
-		if (0 != Msg.getMessage().m_MessageCode)
-		{
-			//If an error has occurred need to clean up
-			for (long i = 0; i < ppqCount; i++)
-			{
-				auto* pPPQ = pConfig->GetPPQ(i);
-				if (nullptr != pPPQ)
-				{
-					pPPQ->GoOffline();
-				}
-			}
-			throw Msg;
-		}
+		
 	}
 }
-
 
 bool OpenConfigFileFromMostRecentList(CRecentFileList* pRecentFileList, int nID)
 {

@@ -783,16 +783,25 @@ void SVFormulaEditorPageClass::OnEquationFieldChanged(NMHDR*, LRESULT*)
 
 BOOL SVFormulaEditorPageClass::OnKillActive()
 {
-	if (!validateAndSetEquation())
+	try
 	{
-		// Equation must be valid or disabled
-		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams));
-		return FALSE;
+		if (!validateAndSetEquation())
+		{
+			// Equation must be valid or disabled
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams));
+			return FALSE;
+		}
+		else
+		{
+			return CPropertyPage::OnKillActive();
+		}
 	}
-	else
+	catch (const SvStl::MessageContainer& rSvE)
 	{
-		return CPropertyPage::OnKillActive();
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(rSvE.getMessage());
+		return FALSE;
 	}
 }
 

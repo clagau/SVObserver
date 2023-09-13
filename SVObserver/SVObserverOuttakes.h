@@ -7,6 +7,11 @@
 
 #pragma once
 
+namespace SvStl
+{
+class MessageContainer;
+
+}
 void StopSvo();
 void StopAll();
 bool AddSecurityNode(HMODULE hMessageDll, long lId, LPCTSTR NTGroup, bool bForcePrompt = false);
@@ -30,7 +35,8 @@ long getPreloadTimeDelay();
 
 long getSvoOfflineCount();
 
-void StartTrigger(SVConfigurationObject* pConfig);///< can throw an exception!
+void StartTrigger(SVConfigurationObject* pConfig,  SvStl::MessageContainer& Msg);
+void PPQGoOffline(SVConfigurationObject* pConfig);
 
 void EnableTriggerSettings(bool enable);
 
