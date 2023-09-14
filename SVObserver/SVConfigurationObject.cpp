@@ -4846,9 +4846,10 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 				{
 					//check if uinqueId is already used (this is an error)
 					if (nullptr != SVObjectManagerClass::Instance().GetObject(UniqueID))
-					{	
+					{
+						std::string objectID {std::format("{{#{}}}", UniqueID)};
 						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGlobalIdUsed, {GlobalConstantName}, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId);
+						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGlobalIdUsed, {GlobalConstantName, objectID}, SvStl::SourceFileParams(StdMessageParams), SvDef::InvalidObjectId);
 					}
 					else
 					{
