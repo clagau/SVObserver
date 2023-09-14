@@ -1952,7 +1952,6 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 									bool bNewDisableMethod = pInspection->IsNewDisableMethodSet();
 									NewDisableMethod = (bNewDisableMethod) ? _T( "Method 2" ): _T( "Method 1" );
 									EnableAuxiliaryExtent = pInspection->getEnableAuxiliaryExtent();
-									objectIdIndex = pInspection->GetObjectIdIndex();
 								}
 							}
 							resolveGlobalConflicts( importer.GlobalConflicts );
@@ -2215,6 +2214,13 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 						{
 							continue;
 						}
+						int objectIDIndex {-1};
+						SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (SVObjectManagerClass::Instance().GetObject(inspectionID));
+						if (nullptr != pInspection)
+						{
+							objectIDIndex = pInspection->GetObjectIdIndex();
+						}
+
 						for (const auto& rImportInput : rImportedInspectionInfo.m_inputList)
 						{
 							if (SvXml::cRemoteType == rImportInput.m_type)
@@ -2260,37 +2266,29 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 											{
 												pPlcOutput->SetChannel(channelNr);
 												pPlcOutput->Combine(rImportOutput.m_isCombined, rImportOutput.m_isAndAck);
-												for (int k = 0; k < SvDef::cObjectIndexMaxNr; ++k)
+												if (objectIDIndex >= 0 && objectIDIndex < SvDef::cObjectIndexMaxNr)
 												{
-													pPlcOutput->SetValueObjectID(rImportOutput.m_valueObjectIDList[k], k);
+													pPlcOutput->SetValueObjectID(rImportOutput.m_valueObjectIDList[rImportedInspectionInfo.m_objectIDIndex], objectIDIndex);
 												}
 											}
 											pOutputList->AttachOutput(pOutput);
 										}
 										else
 										{
-											for (int k = 0; k < SvDef::cObjectIndexMaxNr; ++k)
+											if (objectIDIndex >= 0 && objectIDIndex < SvDef::cObjectIndexMaxNr)
 											{
-												SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rImportOutput.m_valueObjectIDList[k]);
-												if (nullptr != pObject)
+												if (pOutput->GetValueObjectID(objectIDIndex) == SvDef::InvalidObjectId)
 												{
-													SvOi::IObjectClass* pInspectionOut = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
-													if (nullptr != pInspectionOut && rImportedInspectionInfo.m_inspectionId == pInspectionOut->getObjectId())
-													{
-														if (pOutput->GetValueObjectID(j) != SvDef::InvalidObjectId)
-														{
-															SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-															SvDef::StringVector msgList;
-															msgList.push_back(std::to_string(channelNr + 1));
-															msgList.push_back(pPPQ->GetName());
-															msgList.push_back(rImportOutput.m_name);
-															Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputAlreadyUsed, msgList, SvStl::SourceFileParams(StdMessageParams));
-														}
-														else
-														{
-															pOutput->SetValueObjectID(rImportOutput.m_valueObjectIDList[k], k);
-														}
-													}
+													pOutput->SetValueObjectID(rImportOutput.m_valueObjectIDList[rImportedInspectionInfo.m_objectIDIndex], objectIDIndex);
+												}
+												else
+												{
+													SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+													SvDef::StringVector msgList;
+													msgList.push_back(std::to_string(channelNr + 1));
+													msgList.push_back(pPPQ->GetName());
+													msgList.push_back(rImportOutput.m_name);
+													Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputAlreadyUsed, msgList, SvStl::SourceFileParams(StdMessageParams));
 												}
 											}
 										}

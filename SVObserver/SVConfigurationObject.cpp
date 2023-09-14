@@ -3262,15 +3262,12 @@ void SVConfigurationObject::SaveAdditionalFiles(SvOi::IObjectWriter& rWriter) co
 
 void SVConfigurationObject::ConvertColorToStandardProductType(bool& rConfigColor)
 {
-	SVIMProductEnum CurrentType(TheSVObserverApp().GetSVIMType());
-	SVIMProductEnum ConfigType(GetProductType());
-
-	//Need to change the product type from color to standard product type
-	bool isColor = SVHardwareManifest::IsColorSystem(ConfigType);
+	//Need to change the product type from color to SVIM_PRODUCT_X2_GD8A
+	bool isColor = SVHardwareManifest::IsColorSystem(GetProductType());
 	if (isColor)
 	{
 		rConfigColor = isColor;
-		SetProductType(CurrentType);
+		SetProductType(SVIMProductEnum::SVIM_PRODUCT_X2_GD8A);
 		SvimState::AddState(SV_STATE_MODIFIED);
 	}
 }

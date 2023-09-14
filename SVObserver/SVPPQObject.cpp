@@ -1317,7 +1317,8 @@ bool SVPPQObject::RebuildOutputList()
 		{
 			isPlcSystem = SVHardwareManifest::isPlcSystem(pConfig->GetProductType());
 		}
-
+		
+		int invalidCount {0};
 		m_UsedOutputs.clear();
 		SVIOEntryHostStructPtrVector allOutputs = m_pOutputList->getOutputList();
 		for (auto& pEntry : allOutputs)
@@ -1400,6 +1401,7 @@ bool SVPPQObject::RebuildOutputList()
 						constexpr const char* c_DeletedPlcOutput = _T("PLC Output {:d} Linked Objects: {}\r\n");
 						isPpqOutput = false;
 						deletedOutputs += std::format(c_DeletedPlcOutput, outputIndex + 1, outputLinks);
+						++invalidCount;
 					}
 				}
 			}
@@ -1412,9 +1414,12 @@ bool SVPPQObject::RebuildOutputList()
 		std::sort(m_UsedOutputs.begin(), m_UsedOutputs.end(), &SVIOEntryHostStruct::PtrGreater);
 		if (deletedOutputs.empty() == false)
 		{
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputsDeleted, {GetName(), deletedOutputs}, SvStl::SourceFileParams(StdMessageParams));
-
+			//Split what is displayed and logged due to list possibly to long
+			std::string invalidCountStr {std::to_string(invalidCount)};
+			SvStl::MessageManager MsgDisplay(SvStl::MsgType::Display);
+			MsgDisplay.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputsDeleted, {GetName(), invalidCountStr, std::string{}}, SvStl::SourceFileParams(StdMessageParams));
+			SvStl::MessageManager MsgLog(SvStl::MsgType::Log);
+			MsgLog.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputsDeleted, {GetName(), invalidCountStr, deletedOutputs}, SvStl::SourceFileParams(StdMessageParams));
 		}
 		return true;
 	}

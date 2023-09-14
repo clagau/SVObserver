@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
 #include "CameraLibrary\SVDeviceParamCollection.h"
+#include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #pragma endregion Includes
 
 class SVOCameraObj  
@@ -87,7 +88,7 @@ private:  //data members
 	std::string m_imageDirectory {};
 	bool m_imageSizeEditModeFileBased {true};
 	SIZE m_fileImageSize {640, 480};
-	long m_fileMode {false};
+	long m_fileMode {static_cast<long> (SVFileAcquisitonLoadingModeEnum::ContinuousMode)};
 };
 
 typedef std::shared_ptr< SVOCameraObj > SVOCameraObjPtr;

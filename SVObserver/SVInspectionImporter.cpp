@@ -506,6 +506,8 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 
 						rProgress.UpdateText(_T("Parsing Complete."));
 						rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
+
+						inspectionInfo.m_objectIDIndex = pInspection->GetObjectIdIndex();
 					}
 					else
 					{

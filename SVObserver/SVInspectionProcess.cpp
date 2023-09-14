@@ -2057,7 +2057,7 @@ void SVInspectionProcess::SetObjectIdIndex(DWORD objectIdIndex)
 {
 	if (nullptr != m_pCurrentToolset)
 	{
-		return m_pCurrentToolset->SetObjectIdIndex(objectIdIndex);
+		m_pCurrentToolset->SetObjectIdIndex(objectIdIndex);
 	}
 }
 

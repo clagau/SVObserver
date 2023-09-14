@@ -52,6 +52,7 @@ class SVImportedInspectionInfo
 {
 public:
 	uint32_t m_inspectionId{ SvDef::InvalidObjectId };
+	DWORD m_objectIDIndex {0};
 	ImportedInputList m_inputList;
 	ImportedOutputList m_outputList;
 	SVMaterialsTree m_materialsTree;

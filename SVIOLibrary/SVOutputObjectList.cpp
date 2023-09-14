@@ -68,7 +68,12 @@ SVOutputObjectPtr SVOutputObjectList::GetOutputFlyweight(const std::string& rNam
 	{
 		case SvPb::SVDigitalOutputObjectType:
 		{
-			pResult = std::make_shared<SVDigitalOutputObject>();
+			//This is required for module ready
+			pResult = findOutputName(rName);
+			if (pResult == nullptr)
+			{
+				pResult = std::make_shared<SVDigitalOutputObject>();
+			}
 			break;
 		}
 		case SvPb::PlcOutputObjectType:
@@ -76,6 +81,8 @@ SVOutputObjectPtr SVOutputObjectList::GetOutputFlyweight(const std::string& rNam
 			pResult = std::make_shared<PlcOutputObject>();
 			break;
 		}
+		default:
+			break;
 	}
 
 	if (nullptr != pResult)
