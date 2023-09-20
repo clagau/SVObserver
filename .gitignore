@@ -1,23 +1,308 @@
-*.bak
-#ignore all protobuf files
-*.pb.cc
-*.pb.h
-#ignore all user project files
-*.user
-.git/
-.vs/
-.svn/
-Debug/
-Release/
-#ignore specific files
-SVMessage/SVMessage.h
-SVMessage/SVMessage.rc
-SVMessage/USEnglish.bin
-SVObserver/SVObserver_i.c
-SVObserver/SVObserver_i.h
-SVParserScripts/lex.yy.cc
-SVParserScripts/y.output
-SVParserScripts/y.tab.c
-SVParserScripts/y.tab.h
-SVPictureDisplay/SVPictureDisplay_i.c
-SVPictureDisplay/SVPictureDisplayidl.h
+
+# /
+/SVRPropertyTree
+
+# /AnalyzerOperators/
+/AnalyzerOperators/[Bb]in
+/AnalyzerOperators/obj
+/AnalyzerOperators/[Dd]ebug
+/AnalyzerOperators/[Rr]elease
+/AnalyzerOperators/*.user
+/AnalyzerOperators/*.aps
+/AnalyzerOperators/*.eto
+/AnalyzerOperators/ClientBin
+/AnalyzerOperators/GeneratedArtifacts
+/AnalyzerOperators/_Pvt_Extensions
+
+# /AutoBuild/
+
+# /CameraLibrary/
+/CameraLibrary/[Bb]in
+/CameraLibrary/obj
+/CameraLibrary/[Dd]ebug
+/CameraLibrary/[Rr]elease
+/CameraLibrary/*.user
+/CameraLibrary/*.aps
+/CameraLibrary/*.eto
+/CameraLibrary/ClientBin
+/CameraLibrary/GeneratedArtifacts
+/CameraLibrary/_Pvt_Extensions
+
+# /FreeImage/
+
+# /FreeImage/Win32/
+
+# /FreeImage/x64/
+
+# /GridCtrlLibrary/
+
+# /InitializeIOSubsystem/
+/InitializeIOSubsystem/[Bb]in
+/InitializeIOSubsystem/obj
+/InitializeIOSubsystem/[Dd]ebug
+/InitializeIOSubsystem/[Rr]elease
+/InitializeIOSubsystem/*.user
+/InitializeIOSubsystem/*.aps
+/InitializeIOSubsystem/*.eto
+/InitializeIOSubsystem/ClientBin
+/InitializeIOSubsystem/GeneratedArtifacts
+/InitializeIOSubsystem/_Pvt_Extensions
+
+# /InspectionCommands/
+
+# /InspectionEngine/
+
+# /ObjectSelectorLibrary/
+
+# /Operators/
+/Operators/[Bb]in
+/Operators/obj
+/Operators/[Dd]ebug
+/Operators/[Rr]elease
+/Operators/*.user
+/Operators/*.aps
+/Operators/*.eto
+/Operators/ClientBin
+/Operators/GeneratedArtifacts
+/Operators/_Pvt_Extensions
+
+# /SMView/
+/SMView/[Bb]in
+/SMView/obj
+/SMView/[Dd]ebug
+/SMView/[Rr]elease
+/SMView/*.user
+/SMView/*.aps
+/SMView/*.eto
+/SMView/ClientBin
+/SMView/GeneratedArtifacts
+/SMView/_Pvt_Extensions
+
+# /SVAuthLibrary/
+
+# /SVAuthUtility/
+
+# /SVHttpLibrary/
+/SVHttpLibrary/[Bb]in
+/SVHttpLibrary/obj
+/SVHttpLibrary/[Dd]ebug
+/SVHttpLibrary/[Rr]elease
+/SVHttpLibrary/*.user
+/SVHttpLibrary/*.aps
+/SVHttpLibrary/*.eto
+/SVHttpLibrary/ClientBin
+/SVHttpLibrary/GeneratedArtifacts
+/SVHttpLibrary/_Pvt_Extensions
+
+# /SVLogLibrary/
+
+# /SVLptIO/
+
+# /SVLptIO/Lpt/
+
+# /SVLptIO/Lpt/x64/
+
+# /SVLptIO/Lpt/x86/
+
+# /SVLptIO/res/
+
+# /SVMFCControls/
+
+# /SVMessage/
+/SVMessage/SVMessage.h
+/SVMessage/SVMessage.rc
+/SVMessage/USEnglish.bin
+
+# /SVOGateway/
+/SVOGateway/[Bb]in
+/SVOGateway/obj
+/SVOGateway/[Dd]ebug
+/SVOGateway/[Rr]elease
+/SVOGateway/*.user
+/SVOGateway/*.aps
+/SVOGateway/*.eto
+/SVOGateway/ClientBin
+/SVOGateway/GeneratedArtifacts
+/SVOGateway/_Pvt_Extensions
+
+# /SVOResource/
+
+# /SVOResource/res/
+
+# /SVObserver/
+/SVObserver/SVObserver_i.c
+/SVObserver/SVObserver_i.h
+
+# /SVOverlayLibrary/
+
+# /SVParserScripts/
+/SVParserScripts/lex.yy.cc
+/SVParserScripts/y.output
+/SVParserScripts/y.tab.c
+/SVParserScripts/y.tab.h
+
+# /SVPictureDisplay/
+/SVPictureDisplay/SVPictureDisplay_i.c
+/SVPictureDisplay/SVPictureDisplayidl.h
+
+# /SVPlcIO/
+/SVPlcIO/[Bb]in
+/SVPlcIO/obj
+/SVPlcIO/[Dd]ebug
+/SVPlcIO/[Rr]elease
+/SVPlcIO/*.user
+/SVPlcIO/*.aps
+/SVPlcIO/*.eto
+/SVPlcIO/ClientBin
+/SVPlcIO/GeneratedArtifacts
+/SVPlcIO/_Pvt_Extensions
+
+# /SVProtoBuf/
+/SVProtoBuf/[Bb]in
+/SVProtoBuf/obj
+/SVProtoBuf/[Dd]ebug
+/SVProtoBuf/[Rr]elease
+/SVProtoBuf/*.user
+/SVProtoBuf/*.aps
+/SVProtoBuf/*.eto
+/SVProtoBuf/ClientBin
+/SVProtoBuf/GeneratedArtifacts
+/SVProtoBuf/_Pvt_Extensions
+
+# /SVRCTestClient/
+/SVRCTestClient/[Bb]in
+/SVRCTestClient/obj
+/SVRCTestClient/[Dd]ebug
+/SVRCTestClient/[Rr]elease
+/SVRCTestClient/*.user
+/SVRCTestClient/*.aps
+/SVRCTestClient/*.eto
+/SVRCTestClient/ClientBin
+/SVRCTestClient/GeneratedArtifacts
+/SVRCTestClient/_Pvt_Extensions
+
+# /SVRPCExampleServer/
+/SVRPCExampleServer/[Bb]in
+/SVRPCExampleServer/obj
+/SVRPCExampleServer/[Dd]ebug
+/SVRPCExampleServer/[Rr]elease
+/SVRPCExampleServer/*.user
+/SVRPCExampleServer/*.aps
+/SVRPCExampleServer/*.eto
+/SVRPCExampleServer/ClientBin
+/SVRPCExampleServer/GeneratedArtifacts
+/SVRPCExampleServer/_Pvt_Extensions
+
+# /SVRPCLibrary/
+/SVRPCLibrary/[Bb]in
+/SVRPCLibrary/obj
+/SVRPCLibrary/[Dd]ebug
+/SVRPCLibrary/[Rr]elease
+/SVRPCLibrary/*.user
+/SVRPCLibrary/*.aps
+/SVRPCLibrary/*.eto
+/SVRPCLibrary/ClientBin
+/SVRPCLibrary/GeneratedArtifacts
+/SVRPCLibrary/_Pvt_Extensions
+
+# /SVRPCLibraryTest/
+
+# /SVRemoteControl/
+
+# /SVRemoteTest/
+
+# /SVRemoteTest/Properties/
+
+# /SVRemoteTest/Resources/
+
+# /SVSharedMemoryLibrary/
+
+# /Tools/
+/Tools/[Bb]in
+/Tools/obj
+/Tools/[Dd]ebug
+/Tools/[Rr]elease
+/Tools/*.user
+/Tools/*.aps
+/Tools/*.eto
+/Tools/ClientBin
+/Tools/GeneratedArtifacts
+/Tools/_Pvt_Extensions
+
+# /TriggerRecordController/
+/TriggerRecordController/[Bb]in
+/TriggerRecordController/obj
+/TriggerRecordController/[Dd]ebug
+/TriggerRecordController/[Rr]elease
+/TriggerRecordController/*.user
+/TriggerRecordController/*.aps
+/TriggerRecordController/*.eto
+/TriggerRecordController/ClientBin
+/TriggerRecordController/GeneratedArtifacts
+/TriggerRecordController/_Pvt_Extensions
+
+# /TriggerRecordControllerReaderModulTest/
+/TriggerRecordControllerReaderModulTest/[Bb]in
+/TriggerRecordControllerReaderModulTest/obj
+/TriggerRecordControllerReaderModulTest/[Dd]ebug
+/TriggerRecordControllerReaderModulTest/[Rr]elease
+/TriggerRecordControllerReaderModulTest/*.user
+/TriggerRecordControllerReaderModulTest/*.aps
+/TriggerRecordControllerReaderModulTest/*.eto
+/TriggerRecordControllerReaderModulTest/ClientBin
+/TriggerRecordControllerReaderModulTest/GeneratedArtifacts
+/TriggerRecordControllerReaderModulTest/_Pvt_Extensions
+
+# /TriggerRecordControllerTest/
+/TriggerRecordControllerTest/[Bb]in
+/TriggerRecordControllerTest/obj
+/TriggerRecordControllerTest/[Dd]ebug
+/TriggerRecordControllerTest/[Rr]elease
+/TriggerRecordControllerTest/*.user
+/TriggerRecordControllerTest/*.aps
+/TriggerRecordControllerTest/*.eto
+/TriggerRecordControllerTest/ClientBin
+/TriggerRecordControllerTest/GeneratedArtifacts
+/TriggerRecordControllerTest/_Pvt_Extensions
+
+# /Triggering/
+/Triggering/[Bb]in
+/Triggering/obj
+/Triggering/[Dd]ebug
+/Triggering/[Rr]elease
+/Triggering/*.user
+/Triggering/*.aps
+/Triggering/*.eto
+/Triggering/ClientBin
+/Triggering/GeneratedArtifacts
+/Triggering/_Pvt_Extensions
+
+# /WebsocketLibrary/
+/WebsocketLibrary/[Bb]in
+/WebsocketLibrary/obj
+/WebsocketLibrary/[Dd]ebug
+/WebsocketLibrary/[Rr]elease
+/WebsocketLibrary/*.user
+/WebsocketLibrary/*.aps
+/WebsocketLibrary/*.eto
+/WebsocketLibrary/ClientBin
+/WebsocketLibrary/GeneratedArtifacts
+/WebsocketLibrary/_Pvt_Extensions
+
+# /WebsocketTestClient/
+/WebsocketTestClient/[Bb]in
+/WebsocketTestClient/obj
+/WebsocketTestClient/[Dd]ebug
+/WebsocketTestClient/[Rr]elease
+/WebsocketTestClient/*.user
+/WebsocketTestClient/*.aps
+/WebsocketTestClient/*.eto
+/WebsocketTestClient/ClientBin
+/WebsocketTestClient/GeneratedArtifacts
+/WebsocketTestClient/_Pvt_Extensions
+
+# /auth/
+
+# /bin/
+
+# /bin/ChangeModel/
